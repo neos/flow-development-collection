@@ -180,6 +180,26 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function objectsWithPersistedEntitiesCanBeSerializedMultipleTimes()
+    {
+        $persistedEntity = new Fixtures\TestEntity();
+        $persistedEntity->setName('Flow');
+        $this->testEntityRepository->add($persistedEntity);
+        $this->persistenceManager->persistAll();
+
+        $objectHoldingTheEntity = new Fixtures\ObjectHoldingAnEntity();
+        $objectHoldingTheEntity->testEntity = $persistedEntity;
+
+        for ($i = 0; $i < 2; $i++) {
+            $serializedData = serialize($objectHoldingTheEntity);
+            $unserializedObjectHoldingTheEntity = unserialize($serializedData);
+            $this->assertInstanceOf(Fixtures\TestEntity::class, $unserializedObjectHoldingTheEntity->testEntity);
+        }
+    }
+
+    /**
+     * @test
+     */
     public function newEntitiesWhichAreNotAddedToARepositoryYetAreAlreadyKnownToGetObjectByIdentifier()
     {
         $expectedEntity = new Fixtures\TestEntity();
