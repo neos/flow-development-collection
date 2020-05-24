@@ -161,7 +161,7 @@ To activate a middleware, it must be configured in the ``Settings.yaml``::
       http:
         middlewares:
           'custom':
-            position: 'before mvc-dispatch'
+            position: 'before dispatch'
             middleware: 'Some\Package\Http\SomeHttpMiddleware'
 
 With the ``position`` directive the order of a middleware within the chain can be defined. In this case the new component

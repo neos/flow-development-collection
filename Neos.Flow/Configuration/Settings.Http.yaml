@@ -26,7 +26,7 @@ Neos:
 
       # Defines the PSR-15 middlewares that a request goes through in a flow
       middlewares:
-        'mvc-dispatch':
+        'dispatch':
           position: 'end'
           middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
 
