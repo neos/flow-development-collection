@@ -26,20 +26,26 @@ jobs:
       addons:
         mariadb: '10.2'
     - php: 7.4
-      env: DB=pgsql
-      sudo: required
-      addons:
-        postgresql: "9.5"
-    - php: 7.4
-      env: DB=pgsql BEHAT=true
-      sudo: required
-      addons:
-        postgresql: "9.5"
-    - php: 7.4
       env: DB=mysql
       addons:
         mariadb: '10.2'
     - php: 7.4
+      env: DB=mysql BEHAT=true
+      addons:
+        mariadb: '10.2'
+    - php: nightly
+      env: DB=pgsql
+      addons:
+        postgresql: "9.5"
+    - php: nightly
+      env: DB=pgsql BEHAT=true
+      addons:
+        postgresql: "9.5"
+    - php: nightly
+      env: DB=mysql
+      addons:
+        mariadb: '10.2'
+    - php: nightly
       env: DB=mysql BEHAT=true
       addons:
         mariadb: '10.2'
