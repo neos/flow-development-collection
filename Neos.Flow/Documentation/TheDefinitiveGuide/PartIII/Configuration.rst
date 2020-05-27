@@ -214,6 +214,7 @@ configuration filenames.
                 'Models',
                 ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
                 true
+            );
         }
     );
 
