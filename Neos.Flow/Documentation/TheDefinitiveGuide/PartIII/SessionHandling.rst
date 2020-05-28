@@ -138,3 +138,23 @@ Also, sessions are shared among the application contexts, e.g. `Development` and
 your use case requires to have sessions separated for different contexts, you need to configure the
 `cacheDirectory` backend option for the `Flow_Session_Storage` and `Flow_Session_MetaData` caches for
 each individual context. Please refer to the :doc:`Caching` section of this guide for further information.
+
+
+Configuring Lifetime of Flow Sessions
+===============
+
+By default Flow creates sessions as soon as a user accesses it. This creates a cookie called `Neos_Flow_Session`.
+Using default settings these sessions will expire when a user closes his Browser.
+If you want to configure sessions to live longer, you need to modify two settings: the `inactivityTimeout` and the `lifetime` of Sessions. The inactivityTimeout configures when Flow will remove sessions on the server, the lifetime specifies how long the Cookie on a user's device will be valid.
+
+Here's an example that configures Flow to make Sessions valid for 10 hours (36.000 seconds).
+
+
+.. code-block:: yaml
+
+Neos:
+  Flow:
+    session:
+      inactivityTimeout: 36000
+      cookie:
+        lifetime: 36000
