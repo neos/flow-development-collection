@@ -25,6 +25,9 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @api
  * @Flow\Proxy(false)
+ * @Flow\Scope("singleton")
+ *
+ * @deprecated Will be removed without replacement with next major
  */
 class ComponentContext
 {
@@ -106,7 +109,7 @@ class ComponentContext
      */
     public function getParameter($componentClassName, $parameterName)
     {
-        return isset($this->parameters[$componentClassName][$parameterName]) ? $this->parameters[$componentClassName][$parameterName] : null;
+        return $this->parameters[$componentClassName][$parameterName] ?? null;
     }
 
     /**

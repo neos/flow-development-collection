@@ -988,7 +988,7 @@
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/RequestHandler.php">
     <PropertyTypeCoercion occurrences="1">
-      <code>$objectManager-&gt;get(ComponentChain::class)</code>
+      <code>$objectManager-&gt;get(Middleware\MiddlewaresChain::class)</code>
     </PropertyTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/UploadedFile.php">
