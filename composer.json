@@ -24,7 +24,7 @@
         "doctrine/orm": "^2.6",
         "doctrine/migrations": "^1.8",
         "doctrine/dbal": "^2.9",
-        "doctrine/common": "^2.4",
+        "doctrine/common": "^3.0",
         "symfony/yaml": "^4.2",
         "symfony/dom-crawler": "^4.2",
         "symfony/console": "^4.2",
@@ -118,7 +118,7 @@
         "phpunit/phpunit": "~8.1",
         "vimeo/psalm": "~3.10.0",
         "doctrine/orm": "^2.6",
-        "doctrine/common": "^2.4"
+        "doctrine/common": "^3.0"
     },
     "autoload-dev": {
         "psr-4": {
