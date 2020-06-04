@@ -100,7 +100,7 @@ class PersistenceManagerTest extends UnitTestCase
     public function persistAllThrowsExceptionIfTryingToPersistNonWhitelistedObjectsAndOnlyWhitelistedObjectsFlagIsTrue()
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessageRegExp('/^Detected modified or new objects/');
+        $this->expectExceptionMessageMatches('/^Detected modified or new objects/');
         $mockObject = new \stdClass();
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
         $scheduledEntityDeletes = [];
