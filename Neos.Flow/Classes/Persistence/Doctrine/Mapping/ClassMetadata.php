@@ -11,7 +11,7 @@ namespace Neos\Flow\Persistence\Doctrine\Mapping;
  * source code.
  */
 
-use Doctrine\Common\Persistence\Mapping\ReflectionService as DoctrineReflectionService;
+use Doctrine\Persistence\Mapping\ReflectionService as DoctrineReflectionService;
 use Neos\Flow\Reflection\ClassReflection;
 
 /**
