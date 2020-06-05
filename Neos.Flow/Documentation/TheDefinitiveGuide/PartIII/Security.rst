@@ -527,6 +527,44 @@ providers as you like, but keep in mind that the order matters.
   description to know if a specific provider needs more options to be configured and
   which.
 
+Parallel authentication for the same account
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Accounts are bound to an authentication provider and by default the ``PersistedUsernamePasswordProvider`` will only
+lookup accounts that belong to the provider (i.e. with an ``authenticationProviderName`` that is equal to the configured
+provider name, ``SomeAuthenticationProvider`` in this example.
+That lookup name can be changed via the ``lookupProviderName`` option that allows the provider to lookup accounts for
+a different configuration. This can be useful in order to re-use the same provider & accounts for multiple authentication
+types, for example classic form-based and HTTP basic auth:
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      security:
+        authentication:
+          providers:
+            'Acme.SomePackage:Default':
+              requestPatterns:
+                # ...
+              provider: PersistedUsernamePasswordProvider
+              token: UsernamePassword
+              entryPoint: WebRedirect
+              entryPointOptions:
+                routeValues:
+                  '@package': Acme.SomePackage
+                  '@controller': Authentication
+                  '@action': login
+
+            'Acme.SomePackage:Default.HttpBasic':
+              requestPatterns:
+                # ...
+              provider: PersistedUsernamePasswordProvider
+              providerOptions:
+                lookupProviderName: 'Acme.SomePackage:Default'
+              token: UsernamePasswordHttpBasic
+              entryPoint: HttpBasic
+
 Multi-factor authentication strategy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
