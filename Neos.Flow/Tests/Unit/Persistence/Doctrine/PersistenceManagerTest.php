@@ -97,7 +97,7 @@ class PersistenceManagerTest extends UnitTestCase
      * @expectedException \Neos\Flow\Persistence\Exception
      * @expectedExceptionMessageRegExp /^Detected modified or new objects/
      */
-    public function persistAllThrowsExceptionIfTryingToPersistNonWhitelistedObjectsAndOnlyWhitelistedObjectsFlagIsTrue()
+    public function persistAllThrowsExceptionIfTryingToPersistNonAllowedObjectsAndOnlyAllowedObjectsFlagIsTrue()
     {
         $mockObject = new \stdClass();
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
@@ -115,7 +115,7 @@ class PersistenceManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function persistAllRespectsObjectWhitelistIfOnlyWhitelistedObjectsFlagIsTrue()
+    public function persistAllRespectsObjectAllowedIfOnlyAllowedObjectsFlagIsTrue()
     {
         $mockObject = new \stdClass();
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
@@ -127,7 +127,7 @@ class PersistenceManagerTest extends UnitTestCase
 
         $this->mockEntityManager->expects($this->once())->method('flush');
 
-        $this->persistenceManager->whitelistObject($mockObject);
+        $this->persistenceManager->allowObject($mockObject);
         $this->persistenceManager->persistAll(true);
     }
 

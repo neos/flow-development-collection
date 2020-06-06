@@ -376,7 +376,7 @@ class PersistenceTest extends FunctionalTestCase
      * @expectedException \Neos\Flow\Persistence\Exception
      * @test
      */
-    public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreDirtyAndFlagIsSet()
+    public function persistAllThrowsExceptionIfNonAllowedObjectsAreDirtyAndFlagIsSet()
     {
         $testEntity = new Fixtures\TestEntity();
         $testEntity->setName('Surfer girl');
@@ -388,7 +388,7 @@ class PersistenceTest extends FunctionalTestCase
      * @expectedException \Neos\Flow\Persistence\Exception
      * @test
      */
-    public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreUpdatedAndFlagIsSet()
+    public function persistAllThrowsExceptionIfNonAllowedObjectsAreUpdatedAndFlagIsSet()
     {
         $this->removeExampleEntities();
         $this->insertExampleEntity();
@@ -404,13 +404,13 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function persistAllThrowsNoExceptionIfWhitelistedObjectsAreDirtyAndFlagIsSet()
+    public function persistAllThrowsNoExceptionIfAllowedObjectsAreDirtyAndFlagIsSet()
     {
         $testEntity = new Fixtures\TestEntity();
         $testEntity->setName('Surfer girl');
         $this->testEntityRepository->add($testEntity);
 
-        $this->persistenceManager->whitelistObject($testEntity);
+        $this->persistenceManager->allowObject($testEntity);
         $this->persistenceManager->persistAll(true);
         $this->assertTrue(true);
     }

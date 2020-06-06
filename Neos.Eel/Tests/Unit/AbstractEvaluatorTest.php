@@ -318,7 +318,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         $c = new Context($contextArray);
 
         $protectedContext = new \Neos\Eel\ProtectedContext($contextArray);
-        $protectedContext->whitelist('*');
+        $protectedContext->allow('*');
         return [
             // Call first-level method
             ['count(arr)', $c, 3],

@@ -76,12 +76,12 @@ class ProtectedContextTest extends UnitTestCase
     /**
      * @test
      */
-    public function methodCallToWhitelistedValueIsAllowed()
+    public function methodCallToAllowedValueIsAllowed()
     {
         $context = new ProtectedContext([
             'String' => new \Neos\Eel\Helper\StringHelper()
         ]);
-        $context->whitelist('String.*');
+        $context->allow('String.*');
 
         $evaluator = $this->createEvaluator();
 
@@ -94,7 +94,7 @@ class ProtectedContextTest extends UnitTestCase
      * @test
      * @expectedException \Neos\Eel\NotAllowedException
      */
-    public function firstLevelFunctionsHaveToBeWhitelisted()
+    public function firstLevelFunctionsHaveToBeAllowed()
     {
         $context = new ProtectedContext([
             'ident' => function ($value) {
@@ -121,7 +121,7 @@ class ProtectedContextTest extends UnitTestCase
             },
             'value' => $securedObject
         ]);
-        $context->whitelist(['ident']);
+        $context->allow(['ident']);
 
         $evaluator = $this->createEvaluator();
 
@@ -135,7 +135,7 @@ class ProtectedContextTest extends UnitTestCase
      * @test
      * @expectedException \Neos\Eel\NotAllowedException
      */
-    public function resultOfWhitelistedMethodCallIsProtected()
+    public function resultOfAllowedMethodCallIsProtected()
     {
         $securedObject = new TestObject();
 
@@ -147,7 +147,7 @@ class ProtectedContextTest extends UnitTestCase
             ],
             'value' => [$securedObject]
         ]);
-        $context->whitelist('Array');
+        $context->allow('Array');
 
         $evaluator = $this->createEvaluator();
 
@@ -168,12 +168,12 @@ class ProtectedContextTest extends UnitTestCase
                 $context = new ProtectedContext(['count' => function () use ($value) {
                     return count($value);
                 }]);
-                $context->whitelist('*');
+                $context->allow('*');
                 return $context;
             },
             'value' => ['Foo', 'Bar']
         ]);
-        $context->whitelist('q');
+        $context->allow('q');
 
         $evaluator = $this->createEvaluator();
 
@@ -184,7 +184,7 @@ class ProtectedContextTest extends UnitTestCase
     /**
      * @test
      */
-    public function protectedContextAwareInterfaceAllowsCallsDynamicallyWithoutWhitelist()
+    public function protectedContextAwareInterfaceAllowsCallsDynamicallyWithoutAllowlist()
     {
         $securedObject = new TestObject();
 
