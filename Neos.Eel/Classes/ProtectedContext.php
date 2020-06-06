@@ -87,7 +87,8 @@ class ProtectedContext extends Context
      * @return void
      * @deprecated Use allow() instead
      */
-    public function whitelist($pathOrMethods) {
+    public function whitelist($pathOrMethods)
+    {
         return $this->allow($pathOrMethods);
     }
 
