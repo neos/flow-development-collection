@@ -26,10 +26,10 @@ class ProtectedContext extends Context
     /**
      * @var array
      */
-    protected $allowlist = [];
+    protected $allowedMethods = [];
 
     /**
-     * Call a method if in allowlist
+     * Call a method if it is allowed
      *
      * @param string $method
      * @param array $arguments
@@ -38,7 +38,7 @@ class ProtectedContext extends Context
      */
     public function call($method, array $arguments = [])
     {
-        if ($this->value === null || isset($this->allowlist[$method]) || isset($this->allowlist['*']) || ($this->value instanceof ProtectedContextAwareInterface && $this->value->allowsCallOfMethod($method))) {
+        if ($this->value === null || isset($this->allowedMethods[$method]) || isset($this->allowedMethods['*']) || ($this->value instanceof ProtectedContextAwareInterface && $this->value->allowsCallOfMethod($method))) {
             return parent::call($method, $arguments);
         }
         throw new NotAllowedException('Method "' . $method . '" is not callable in untrusted context', 1369043080);
@@ -47,7 +47,7 @@ class ProtectedContext extends Context
     /**
      * Get a value by path and wrap it into another context
      *
-     * The allowlist for the given path is applied to the new context.
+     * The list of allowed methods for the given path is applied to the new context.
      *
      * @param string $path
      * @return Context The wrapped value
@@ -61,8 +61,8 @@ class ProtectedContext extends Context
         }
 
         $context = parent::getAndWrap($path);
-        if ($context instanceof ProtectedContext && isset($this->allowlist[$path]) && is_array($this->allowlist[$path])) {
-            $context->allowlist = $this->allowlist[$path];
+        if ($context instanceof ProtectedContext && isset($this->allowedMethods[$path]) && is_array($this->allowedMethods[$path])) {
+            $context->allowedMethods = $this->allowedMethods[$path];
         }
         return $context;
     }
@@ -117,7 +117,7 @@ class ProtectedContext extends Context
         }
         foreach ($pathOrMethods as $pathOrMethod) {
             $parts = explode('.', $pathOrMethod);
-            $current = &$this->allowlist;
+            $current = &$this->allowedMethods;
             $count = count($parts);
             for ($i = 0; $i < $count; $i++) {
                 if ($i === $count - 1) {
