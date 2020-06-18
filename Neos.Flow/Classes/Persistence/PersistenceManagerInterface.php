@@ -167,7 +167,7 @@ interface PersistenceManagerInterface
      * @param object $object The object
      * @return void
      * @api
-     * @deprecated Use allowObject() instead.
+     * @deprecated Use allowObject() instead. See https://github.com/neos/flow-development-collection/pull/2024
      */
     public function whitelistObject($object);
 

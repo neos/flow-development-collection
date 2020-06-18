@@ -82,7 +82,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @param boolean $onlyAllowedObjects If true an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "allowed" (see AbstractPersistenceManager::allowObject())
      * @return void
      * @throws PersistenceException
-     *@api
+     * @api
      */
     public function persistAll($onlyAllowedObjects = false)
     {

@@ -85,7 +85,7 @@ class ProtectedContext extends Context
      *
      * @param array|string $pathOrMethods
      * @return void
-     * @deprecated Use allow() instead
+     * @deprecated Use allow() instead. See https://github.com/neos/flow-development-collection/pull/2024
      */
     public function whitelist($pathOrMethods)
     {
