@@ -855,7 +855,7 @@ class Scripts
             return;
         }
 
-        if (strcmp(PHP_BINARY, $configuredPhpBinaryPathAndFilename) !== 0) {
+        if (strcasecmp(PHP_BINARY, $configuredPhpBinaryPathAndFilename) !== 0) {
             throw new FlowException(sprintf('You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
                 'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
