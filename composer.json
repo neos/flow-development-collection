@@ -116,7 +116,7 @@
     "require-dev": {
         "mikey179/vfsstream": "~1.6",
         "phpunit/phpunit": "~8.1",
-        "vimeo/psalm": "~3.10.0",
+        "vimeo/psalm": "~3.12.0",
         "doctrine/orm": "^2.6",
         "doctrine/common": "^2.4"
     },
