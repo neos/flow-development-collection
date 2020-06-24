@@ -126,6 +126,10 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
                     return false;
                 }
                 break;
+            default:
+                if ($methodDeclaringClassName !== null && $this->reflectionService->isMethodPrivate($methodDeclaringClassName, $methodName)) {
+                    throw new Aop\Exception('The method "' + $methodDeclaringClassName + ':' + $methodName + '" adviced by "' + $this->aspectClassName + ':' + $this->pointcutMethodName + '" is private. Private methods can not be adviced. Please change the scope to at least protected or explicitly specify the visibility you want to match.', 1593013922);
+                }
         }
 
         $methodArguments = ($methodDeclaringClassName === null ? [] : $this->reflectionService->getMethodParameters($methodDeclaringClassName, $methodName));
