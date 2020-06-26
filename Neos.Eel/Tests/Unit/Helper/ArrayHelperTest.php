@@ -166,7 +166,8 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'empty array' => [[], 42, null, -1],
             'array with values' => [['a', 'b', 'c', 'b'], 'b', null, 1],
             'with offset' => [['a', 'b', 'c', 'b'], 'b', 2, 3],
-            'associative' => [['a' => 'el1', 'b' => 'el2'], 'el2', null, 1]
+            'associative' => [['a' => 'el1', 'b' => 'el2'], 'el2', null, 1],
+            'associative with offset' => [['a' => 'el1', 'b' => 'el2'], 'el2', 1, 1]
         ];
     }
 
