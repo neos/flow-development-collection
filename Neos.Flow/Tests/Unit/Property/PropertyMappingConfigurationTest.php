@@ -83,7 +83,7 @@ class PropertyMappingConfigurationTest extends UnitTestCase
      * @test
      * @covers \Neos\Flow\Property\PropertyMappingConfiguration::shouldMap
      */
-    public function shouldMapReturnsFalseForBlacklistedProperties()
+    public function shouldMapReturnsFalseForExcludedProperties()
     {
         $this->propertyMappingConfiguration->allowAllPropertiesExcept('someSourceProperty', 'someOtherProperty');
         $this->assertFalse($this->propertyMappingConfiguration->shouldMap('someSourceProperty'));

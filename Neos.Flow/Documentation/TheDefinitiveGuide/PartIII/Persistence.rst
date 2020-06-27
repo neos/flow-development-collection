@@ -242,21 +242,21 @@ and perform better. In practice that means for any Flow application: if the curr
 request is a "safe request method", the persistence framework will NOT trigger
 ``persistAll()`` at the end of the script run.
 
-You are free to call ``PersistenceManager->persistAll()`` manually or use whitelisted objects
+You are free to call ``PersistenceManager->persistAll()`` manually or use allowed objects
 if you need to store some data during a safe request (for example, logging some data
 for your analytics).
 
-Whitelisted objects
--------------------
+Allowed objects
+---------------
 
 There are rare cases which still justify persisting objects during safe requests. For example,
 your application might want to generate thumbnails of images during a GET request and persist
 the resulting PersistentResource instances.
 
-For these cases it is possible to whitelist specific objects via the Persistence Manager::
+For these cases it is possible to allow specific objects via the Persistence Manager::
 
-	$this->persistenceManager->whitelistObject($thumbnail);
-	$this->persistenceManager->whitelistObject($thumbnail->getResource());
+	$this->persistenceManager->allowObject($thumbnail);
+	$this->persistenceManager->allowObject($thumbnail->getResource());
 
 Be very careful and think twice before using this method since many security measures are
 not active during "safe" request methods.

@@ -159,21 +159,21 @@ class PersistenceManager extends AbstractPersistenceManager
      * Commits new objects and changes to objects in the current persistence
      * session into the backend
      *
-     * @param boolean $onlyWhitelistedObjects
+     * @param boolean $onlyAllowedObjects
      * @return void
      * @api
      */
-    public function persistAll($onlyWhitelistedObjects = false)
+    public function persistAll($onlyAllowedObjects = false)
     {
-        if ($onlyWhitelistedObjects) {
+        if ($onlyAllowedObjects) {
             foreach ($this->changedObjects as $object) {
-                $this->throwExceptionIfObjectIsNotWhitelisted($object);
+                $this->throwExceptionIfObjectIsNotAllowed($object);
             }
             foreach ($this->removedObjects as $object) {
-                $this->throwExceptionIfObjectIsNotWhitelisted($object);
+                $this->throwExceptionIfObjectIsNotAllowed($object);
             }
             foreach ($this->addedObjects as $object) {
-                $this->throwExceptionIfObjectIsNotWhitelisted($object);
+                $this->throwExceptionIfObjectIsNotAllowed($object);
             }
         }
 
