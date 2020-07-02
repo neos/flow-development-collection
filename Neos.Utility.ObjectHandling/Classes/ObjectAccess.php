@@ -61,7 +61,7 @@ abstract class ObjectAccess
      * @param string|integer $propertyName Name or index of the property to retrieve
      * @param boolean $forceDirectAccess Directly access property using reflection(!)
      * @return mixed Value of the property
-     * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
+     * @throws \InvalidArgumentException in case $subject was not an array/object or $propertyName was not a string
      * @throws PropertyNotAccessibleException if the property was not accessible
      */
     public static function getProperty($subject, $propertyName, bool $forceDirectAccess = false)
@@ -230,7 +230,7 @@ abstract class ObjectAccess
      * @param mixed $propertyValue Value of the property
      * @param boolean $forceDirectAccess directly access property using reflection(!)
      * @return boolean true if the property could be set, false otherwise
-     * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
+     * @throws \InvalidArgumentException in case $object was not an array/object or $propertyName was not a string
      */
     public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
     {
@@ -276,6 +276,9 @@ abstract class ObjectAccess
      * - which can be get through a public getter method.
      * - public properties which can be directly get.
      *
+     * Instances of \ArrayObject are handled like arrays, i.e. only the "array
+     * properties" are returned, but not e.g. `arrayCopy` or `iterator`.
+     *
      * @param object $object Object to receive property names for
      * @return array Array of all gettable property names
      * @throws \InvalidArgumentException
@@ -285,23 +288,36 @@ abstract class ObjectAccess
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301369);
         }
+        $checkAccessorMethods = true;
         if ($object instanceof \stdClass) {
             $declaredPropertyNames = array_keys(get_object_vars($object));
-            $className = 'stdClass';
+            $className = \stdClass::class;
             unset(self::$gettablePropertyNamesCache[$className]);
+        } elseif ($object instanceof \ArrayObject) {
+            $checkAccessorMethods = false;
+            $declaredPropertyNames = [];
+            foreach ($object->getIterator() as $key => $value) {
+                $declaredPropertyNames[] = $key;
+            }
+            $className = TypeHandling::getTypeForValue($object);
+            if ($className === \ArrayObject::class) {
+                unset(self::$gettablePropertyNamesCache[$className]);
+            }
         } else {
             $className = TypeHandling::getTypeForValue($object);
             $declaredPropertyNames = array_keys(get_class_vars($className));
         }
 
         if (!isset(self::$gettablePropertyNamesCache[$className])) {
-            foreach (get_class_methods($object) as $methodName) {
-                if (is_callable([$object, $methodName])) {
-                    $methodNameLength = strlen($methodName);
-                    if ($methodNameLength > 2 && substr($methodName, 0, 2) === 'is') {
-                        $declaredPropertyNames[] = lcfirst(substr($methodName, 2));
-                    } elseif ($methodNameLength > 3 && (($methodNamePrefix = substr($methodName, 0, 3)) === 'get' || $methodNamePrefix === 'has')) {
-                        $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
+            if ($checkAccessorMethods) {
+                foreach (get_class_methods($object) as $methodName) {
+                    if (is_callable([$object, $methodName])) {
+                        $methodNameLength = strlen($methodName);
+                        if ($methodNameLength > 2 && substr($methodName, 0, 2) === 'is') {
+                            $declaredPropertyNames[] = lcfirst(substr($methodName, 2));
+                        } elseif ($methodNameLength > 3 && (($methodNamePrefix = substr($methodName, 0, 3)) === 'get' || $methodNamePrefix === 'has')) {
+                            $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
+                        }
                     }
                 }
             }
