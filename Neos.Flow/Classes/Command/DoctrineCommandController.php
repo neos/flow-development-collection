@@ -11,7 +11,7 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\Debug;
 use Doctrine\DBAL\Migrations\MigrationException;
 use Neos\Flow\Annotations as Flow;
