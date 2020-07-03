@@ -177,7 +177,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
 
     /**
      * Allow all properties during property mapping, but reject a few
-     * selected ones (blacklist).
+     * selected ones.
      *
      * Example: allowAllPropertiesExcept('password', 'userGroup')
      *

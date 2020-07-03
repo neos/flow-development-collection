@@ -444,6 +444,9 @@ class ConfigurationBuilder
                 continue;
             }
 
+            if ($objectConfiguration->isCreatedByFactory()) {
+                continue;
+            }
 
             $className = $objectConfiguration->getClassName();
             if (!$this->reflectionService->hasMethod($className, '__construct')) {

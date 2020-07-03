@@ -74,7 +74,7 @@ class ResourceRepository extends Repository
      */
     public function add($object)
     {
-        $this->persistenceManager->whitelistObject($object);
+        $this->persistenceManager->allowObject($object);
         if ($this->removedResources->contains($object)) {
             $this->removedResources->detach($object);
         }

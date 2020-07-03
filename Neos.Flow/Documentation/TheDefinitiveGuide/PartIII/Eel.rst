@@ -67,21 +67,21 @@ Two context types are available.
 ``Context`` will just provide everything you put into the array for the constructor.
 
 ``ProtectedContext`` will provide the same, except that methods are disallowed by default. You need
-to explicitly whitelist methods::
+to explicitly allow methods::
 
     $context = new ProtectedContext([
         'String' => new \Neos\Eel\Helper\StringHelper,
     ]);
-    $context->whitelist('String.*');
+    $context->allow('String.*');
     $result = (new CompilingEvaluator)->evaluate(
         'String.substr("Hello World", 6, 5)',
         $context
     );
 
-In the above example, all methods for ``String`` are whitelisted and therefore the result will be
+In the above example, all methods for ``String`` are allowed and therefore the result will be
 ``"World"``.
 
-In case a non whitelisted method is called, a ``\Neos\Eel\NotAllowedException`` is thrown.
+In case a non allowed method is called, a ``\Neos\Eel\NotAllowedException`` is thrown.
 
 .. _eel-evaluators:
 
