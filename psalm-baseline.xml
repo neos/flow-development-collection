@@ -387,8 +387,11 @@
     </UndefinedPropertyFetch>
   </file>
   <file src="Packages/Framework/Neos.Eel/Classes/ProtectedContext.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$this-&gt;allow($pathOrMethods)</code>
+    </InvalidReturnStatement>
     <PossiblyNullArrayOffset occurrences="1">
-      <code>$this-&gt;whitelist</code>
+      <code>$this-&gt;allowedMethods</code>
     </PossiblyNullArrayOffset>
   </file>
   <file src="Packages/Framework/Neos.Eel/Classes/Validation/ExpressionSyntaxValidator.php">
@@ -1732,9 +1735,6 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/PersistenceManager.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$this-&gt;entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
-    </ArgumentTypeCoercion>
     <NullableReturnStatement occurrences="2">
       <code>$this-&gt;entityManager-&gt;getReference($objectType, $identifier)</code>
       <code>$this-&gt;entityManager-&gt;find($objectType, $identifier)</code>
@@ -1786,9 +1786,6 @@
     </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Service.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$this-&gt;entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
-    </ArgumentTypeCoercion>
     <ImplicitToStringCast occurrences="3">
       <code>$executedUnavailableMigration</code>
       <code>$version</code>
@@ -2262,6 +2259,9 @@
       <code>logicalAnd</code>
       <code>logicalAnd</code>
     </TooManyArguments>
+    <UndefinedInterfaceMethod occurrences="1">
+      <code>allowObject</code>
+    </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/ResourceManagement/ResourceTypeConverter.php">
     <InvalidReturnStatement occurrences="9">
