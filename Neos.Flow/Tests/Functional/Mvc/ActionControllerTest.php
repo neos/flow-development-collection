@@ -16,9 +16,6 @@ use Neos\Flow\Http\ContentStream;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
-use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
-use Neos\Flow\Mvc\FlashMessage\FlashMessageStorageInterface;
-use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\StandardController;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -542,7 +539,9 @@ class ActionControllerTest extends FunctionalTestCase
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://localhost/test/mvc/actioncontrollertest/redirectWithFlashMessage'));
         $response = $this->browser->sendRequest($request);
 
-        $sessionCookies = array_map(static function ($cookie) { return Cookie::createFromRawSetCookieHeader($cookie); }, $response->getHeader('Set-Cookie'));
+        $sessionCookies = array_map(static function ($cookie) {
+            return Cookie::createFromRawSetCookieHeader($cookie);
+        }, $response->getHeader('Set-Cookie'));
         self::assertNotEmpty($sessionCookies);
 
         $redirect = $response->getHeaderLine('Location');
