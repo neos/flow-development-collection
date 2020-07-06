@@ -318,6 +318,9 @@
     </InvalidArgument>
   </file>
   <file src="Packages/Framework/Neos.Eel/Classes/Helper/ArrayHelper.php">
+    <PossiblyFalseOperand occurrences="1">
+      <code>array_search($result, array_keys($array), true)</code>
+    </PossiblyFalseOperand>
     <PossiblyNullArgument occurrences="1">
       <code>$callback</code>
     </PossiblyNullArgument>
@@ -3383,9 +3386,6 @@
     </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Utility.ObjectHandling/Classes/ObjectAccess.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$className</code>
-    </ArgumentTypeCoercion>
     <InvalidScalarArgument occurrences="4">
       <code>$propertyName</code>
       <code>$propertyName</code>
