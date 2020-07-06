@@ -158,6 +158,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
             $array = array_slice($array, $fromIndex, null, true);
         }
         $result = array_search($searchElement, $array, true);
+        if (is_string($result)) {
+            return array_search($result, array_keys($array), true) + (int)$fromIndex;
+        }
         if ($result === false) {
             return -1;
         }
