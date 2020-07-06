@@ -78,7 +78,7 @@ class JsonHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function parseWorks($arguments, $expected)
     {
         $helper = new JsonHelper();
-        $result = call_user_func_array([$helper, 'parse'], $arguments);
+        $result = $helper->parse(...$arguments);
         self::assertEquals($expected, $result);
     }
 }
