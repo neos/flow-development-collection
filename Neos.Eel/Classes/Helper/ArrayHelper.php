@@ -43,7 +43,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
                 $argument = [$argument];
             }
         }
-        return call_user_func_array('array_merge', $arguments);
+        return array_merge(...$arguments);
     }
 
     /**

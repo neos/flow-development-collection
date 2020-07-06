@@ -96,6 +96,6 @@ class DependencyProxy
      */
     public function __call($methodName, array $arguments)
     {
-        return call_user_func_array([$this->_activateDependency(), $methodName], $arguments);
+        return $this->_activateDependency()->$methodName(...$arguments);
     }
 }

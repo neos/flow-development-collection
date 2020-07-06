@@ -19,7 +19,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Security\Context;
 use Neos\Utility\Arrays;
-use Neos\Utility\ObjectAccess;
 
 /**
  * Object Manager
@@ -521,11 +520,7 @@ class ObjectManager implements ObjectManagerInterface
             }
         }
 
-        if (count($factoryMethodArguments) === 0) {
-            return $factory->$factoryMethodName();
-        } else {
-            return call_user_func_array([$factory, $factoryMethodName], $factoryMethodArguments);
-        }
+        return $factory->$factoryMethodName(...$factoryMethodArguments);
     }
 
     /**
@@ -544,7 +539,7 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         try {
-            $object = ObjectAccess::instantiateClass($className, $arguments);
+            $object = new $className(...$arguments);
             unset($this->classesBeingInstantiated[$className]);
             return $object;
         } catch (\Exception $exception) {
