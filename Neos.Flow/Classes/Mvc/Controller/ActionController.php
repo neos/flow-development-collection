@@ -471,7 +471,7 @@ class ActionController extends AbstractController
         $validationResult = $this->arguments->getValidationResults();
 
         if (!$validationResult->hasErrors()) {
-            $actionResult = call_user_func_array([$this, $this->actionMethodName], $preparedArguments);
+            $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
         } else {
             $actionIgnoredArguments = static::getActionIgnoredValidationArguments($this->objectManager);
             if (isset($actionIgnoredArguments[$this->actionMethodName])) {
@@ -496,9 +496,9 @@ class ActionController extends AbstractController
             }
 
             if ($shouldCallActionMethod) {
-                $actionResult = call_user_func_array([$this, $this->actionMethodName], $preparedArguments);
+                $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
             } else {
-                $actionResult = call_user_func([$this, $this->errorMethodName]);
+                $actionResult = $this->{$this->errorMethodName}();
             }
         }
 
