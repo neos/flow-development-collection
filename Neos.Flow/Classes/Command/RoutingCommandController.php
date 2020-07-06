@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Command;
 
 /*
@@ -11,7 +13,6 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
-use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -23,6 +24,7 @@ use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Http\Factories\ServerRequestFactory;
 
 /**
  * Command controller for tasks related to routing
@@ -48,6 +50,12 @@ class RoutingCommandController extends CommandController
      * @var ObjectManagerInterface
      */
     protected $objectManager;
+
+    /**
+     * @Flow\Inject
+     * @var ServerRequestFactory
+     */
+    protected $serverRequestFactory;
 
     /**
      * List the known routes
@@ -174,11 +182,7 @@ class RoutingCommandController extends CommandController
      */
     public function routePathCommand(string $path, string $method = 'GET'): void
     {
-        $server = [
-            'REQUEST_URI' => $path,
-            'REQUEST_METHOD' => $method
-        ];
-        $httpRequest = new ServerRequest($method, new Uri('http://localhost/'), [], '', '1.1', $server);
+        $httpRequest = $this->serverRequestFactory->createServerRequest($method, (new Uri('http://localhost/'))->withPath($path));
         $routeContext = new RouteContext($httpRequest, RouteParameters::createEmpty());
 
         /** @var Route $route */

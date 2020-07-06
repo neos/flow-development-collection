@@ -136,6 +136,7 @@ class Dispatcher
             if (!method_exists($object, $slotInformation['method'])) {
                 throw new Exception\InvalidSlotException('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
             }
+            // Need to use call_user_func_array here, because $object may be the class name when the slot is a static method
             call_user_func_array([$object, $slotInformation['method']], $finalSignalArguments);
         }
     }

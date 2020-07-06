@@ -822,7 +822,7 @@ class Scripts
         }
 
         // Try to resolve which binary file PHP is pointing to
-        exec($phpBinaryPathAndFilename . ' -r "echo PHP_BINARY;"', $output, $result);
+        exec($phpBinaryPathAndFilename . ' -r "echo realpath(PHP_BINARY);"', $output, $result);
         if ($result === 0 && sizeof($output) === 1) {
             // Resolve any wrapper
             $configuredPhpBinaryPathAndFilename = $output[0];
@@ -836,12 +836,13 @@ class Scripts
             return;
         }
 
-        if (strcmp(PHP_BINARY, $configuredPhpBinaryPathAndFilename) !== 0) {
+        $realPhpBinary = realpath(PHP_BINARY);
+        if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
             throw new FlowException(sprintf('You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
                 'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
                 'caches by removing the folder Data/Temporary before running ./flow again.',
-                PHP_BINARY, $configuredPhpBinaryPathAndFilename, PHP_BINARY), 1536303119);
+                $realPhpBinary, $configuredPhpBinaryPathAndFilename, $realPhpBinary), 1536303119);
         }
     }
 
