@@ -97,10 +97,10 @@ class PersistenceManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function persistAllThrowsExceptionIfTryingToPersistNonWhitelistedObjectsAndOnlyWhitelistedObjectsFlagIsTrue()
+    public function persistAllThrowsExceptionIfTryingToPersistNonAllowedObjectsAndOnlyAllowedObjectsFlagIsTrue()
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessageRegExp('/^Detected modified or new objects/');
+        $this->expectExceptionMessageMatches('/^Detected modified or new objects/');
         $mockObject = new \stdClass();
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
         $scheduledEntityDeletes = [];
@@ -117,7 +117,7 @@ class PersistenceManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function persistAllRespectsObjectWhitelistIfOnlyWhitelistedObjectsFlagIsTrue()
+    public function persistAllRespectsObjectAllowedIfOnlyAllowedObjectsFlagIsTrue()
     {
         $mockObject = new \stdClass();
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
@@ -129,7 +129,7 @@ class PersistenceManagerTest extends UnitTestCase
 
         $this->mockEntityManager->expects(self::once())->method('flush');
 
-        $this->persistenceManager->whitelistObject($mockObject);
+        $this->persistenceManager->allowObject($mockObject);
         $this->persistenceManager->persistAll(true);
     }
 

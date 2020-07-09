@@ -14,9 +14,8 @@ namespace Neos\Flow\Tests\Unit\Security;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Account;
-use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
+use Neos\Flow\Security\Authentication\Token\TestingToken;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -234,7 +233,7 @@ class ContextTest extends UnitTestCase
         $activeToken->method('getAuthenticationProviderName')->willReturn('activeTokenProvider');
         $activeToken->method('getAuthenticationStatus')->willReturn(TokenInterface::AUTHENTICATION_NEEDED);
 
-        $sessionlessToken = $this->createMock([TokenInterface::class, SessionlessTokenInterface::class]);
+        $sessionlessToken = $this->createMock(TestingToken::class);
         $sessionlessToken->expects(self::once())->method('hasRequestPatterns')->willReturn(false);
         $sessionlessToken->method('getAuthenticationProviderName')->willReturn('sessionlessTokenProvider');
         $sessionlessToken->method('getAuthenticationStatus')->willReturn(TokenInterface::AUTHENTICATION_NEEDED);

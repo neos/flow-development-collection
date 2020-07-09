@@ -20,10 +20,12 @@ use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Dispatcher;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\Routing\RouterInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\Flow\Validation\ValidatorResolver;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -124,10 +126,13 @@ class InternalRequestEngine implements RequestEngineInterface
         } catch (\Throwable $throwable) {
             $componentContext->replaceHttpResponse($this->prepareErrorResponse($throwable, $componentContext->getHttpResponse()));
         }
-        $session = $this->bootstrap->getObjectManager()->get(SessionInterface::class);
+        $session = $objectManager->get(SessionInterface::class);
         if ($session->isStarted()) {
             $session->close();
         }
+        // FIXME: ObjectManager should forget all instances created during the request
+        $objectManager->forgetInstance(SessionManager::class);
+        $objectManager->forgetInstance(FlashMessageService::class);
         $this->persistenceManager->clearState();
         return $componentContext->getHttpResponse();
     }

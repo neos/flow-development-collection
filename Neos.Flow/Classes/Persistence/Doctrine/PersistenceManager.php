@@ -79,20 +79,20 @@ class PersistenceManager extends AbstractPersistenceManager
      * Commits new objects and changes to objects in the current persistence
      * session into the backend
      *
-     * @param boolean $onlyWhitelistedObjects If true an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "whitelisted" (see AbstractPersistenceManager::whitelistObject())
+     * @param boolean $onlyAllowedObjects If true an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "allowed" (see AbstractPersistenceManager::allowObject())
      * @return void
-     * @api
      * @throws PersistenceException
+     * @api
      */
-    public function persistAll($onlyWhitelistedObjects = false)
+    public function persistAll($onlyAllowedObjects = false)
     {
-        if ($onlyWhitelistedObjects) {
+        if ($onlyAllowedObjects) {
             $unitOfWork = $this->entityManager->getUnitOfWork();
             /** @var \Doctrine\ORM\UnitOfWork $unitOfWork */
             $unitOfWork->computeChangeSets();
             $objectsToBePersisted = $unitOfWork->getScheduledEntityUpdates() + $unitOfWork->getScheduledEntityDeletions() + $unitOfWork->getScheduledEntityInsertions();
             foreach ($objectsToBePersisted as $object) {
-                $this->throwExceptionIfObjectIsNotWhitelisted($object);
+                $this->throwExceptionIfObjectIsNotAllowed($object);
             }
         }
 

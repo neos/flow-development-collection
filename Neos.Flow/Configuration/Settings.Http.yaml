@@ -24,9 +24,15 @@ Neos:
       # request (default).
       baseUri: NULL
 
+      # Defines the PSR-15 middlewares that a request goes through in a flow
+      middlewares:
+        'dispatch':
+          position: 'end'
+          middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
+
       # Defines the workflow of one request from bootstrap to the HTTP response
       #
-      # By default this workflow is devided in three sub-chains "preprocess", "process" and "postprocess" but the chain can be restructured as needed
+      # By default this workflow is divided in three sub-chains "preprocess", "process" and "postprocess" but the chain can be restructured as needed
       #
       chain:
 
@@ -68,7 +74,7 @@ Neos:
               position: 'start'
               component: 'Neos\Flow\Session\Http\SessionResponseComponent'
             'flashMessages':
-              position: 'after setSessionCookie'
+              position: 'before setSessionCookie'
               component: 'Neos\Flow\Mvc\FlashMessage\FlashMessageComponent'
             'poweredByHeader':
               component: 'Neos\Flow\Http\Component\PoweredByComponent'

@@ -626,7 +626,7 @@ class ResourceManager
         }
 
         if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->settings['uploadExtensionsExcluded']) && $this->settings['uploadExtensionsExcluded'][strtolower($pathInfo['extension'])] === true) {
-            throw new Exception('The extension of the given upload file "' . strip_tags($pathInfo['basename']) . '" is blacklisted. As it could pose a security risk it cannot be imported.', 1447148472);
+            throw new Exception('The extension of the given upload file "' . strip_tags($pathInfo['basename']) . '" is excluded. As it could pose a security risk it cannot be imported.', 1447148472);
         }
 
         if ($openBasedirEnabled === true) {

@@ -17,6 +17,10 @@
         </ignoreFiles>
     </projectFiles>
 
+    <stubs>
+        <file name="Packages/Framework/Neos.Flow/.phpstorm.meta.php" />
+    </stubs>
+
     <issueHandlers>
         <LessSpecificReturnType errorLevel="info" />
 

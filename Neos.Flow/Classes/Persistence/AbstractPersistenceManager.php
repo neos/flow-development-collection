@@ -39,14 +39,14 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
     /**
      * @var \SplObjectStorage
      */
-    protected $whitelistedObjects;
+    protected $allowedObjects;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->whitelistedObjects = new \SplObjectStorage();
+        $this->allowedObjects = new \SplObjectStorage();
     }
 
     /**
@@ -91,28 +91,42 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
     }
 
     /**
-     * Adds the given object to a whitelist of objects which may be persisted even if the current HTTP request
+     * Adds the given object to a list of allowed objects which may be persisted even if the current HTTP request
+     * is considered a "safe" request.
+     *
+     * @param object $object The object
+     * @return void
+     * @api
+     * @deprecated Use allowObject() instead. See https://github.com/neos/flow-development-collection/pull/2024
+     */
+    public function whitelistObject($object)
+    {
+        $this->allowObject($object);
+    }
+
+    /**
+     * Adds the given object to a list of allowed objects which may be persisted even if the current HTTP request
      * is considered a "safe" request.
      *
      * @param object $object The object
      * @return void
      * @api
      */
-    public function whitelistObject($object)
+    public function allowObject($object)
     {
-        $this->whitelistedObjects->attach($object);
+        $this->allowedObjects->attach($object);
     }
 
     /**
-     * Checks if the given object is whitelisted and if not, throws an exception
+     * Checks if the given object is allowed and if not, throws an exception
      *
      * @param object $object
      * @return void
      * @throws \Neos\Flow\Persistence\Exception
      */
-    protected function throwExceptionIfObjectIsNotWhitelisted($object)
+    protected function throwExceptionIfObjectIsNotAllowed($object)
     {
-        if (!$this->whitelistedObjects->contains($object)) {
+        if (!$this->allowedObjects->contains($object)) {
             $message = 'Detected modified or new objects (' . get_class($object) . ', uuid:' . $this->getIdentifierByObject($object) . ') to be persisted which is not allowed for "safe requests"' . chr(10) .
                     'According to the HTTP 1.1 specification, so called "safe request" (usually GET or HEAD requests)' . chr(10) .
                     'should not change your data on the server side and should be considered read-only. If you need to add,' . chr(10) .

@@ -16,12 +16,14 @@ use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentInterface;
 use Neos\Flow\Http\Component\Exception as ComponentException;
 use Neos\Flow\Http\Component\ComponentContext;
+use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
 use Neos\Flow\Mvc\ActionRequestFactory;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Utility\Arrays;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -89,6 +91,14 @@ class AjaxWidgetComponent implements ComponentInterface
 
         // stop processing the current component chain
         $componentContext->setParameter(ComponentChain::class, 'cancel', true);
+
+        // replace response, if the dispatched request returns a PSR-7 response
+        $possibleResponse = $componentContext->getParameter(ReplaceHttpResponseComponent::class, ReplaceHttpResponseComponent::PARAMETER_RESPONSE);
+        if (!$possibleResponse instanceof ResponseInterface) {
+            return;
+        }
+
+        $componentContext->replaceHttpResponse($possibleResponse);
     }
 
     /**

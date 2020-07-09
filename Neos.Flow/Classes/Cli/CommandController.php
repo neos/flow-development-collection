@@ -254,9 +254,9 @@ class CommandController implements CommandControllerInterface
             $this->outputLine('<b>Warning:</b> This command is <b>DEPRECATED</b>%s%s', [$suggestedCommandMessage, PHP_EOL]);
         }
 
-        $commandResult = call_user_func_array([$this, $this->commandMethodName], $preparedArguments);
+        $commandResult = $this->{$this->commandMethodName}(...$preparedArguments);
 
-        if (is_string($commandResult) && strlen($commandResult) > 0) {
+        if (is_string($commandResult) && $commandResult !== '') {
             $this->response->appendContent($commandResult);
         } elseif (is_object($commandResult) && method_exists($commandResult, '__toString')) {
             $this->response->appendContent((string)$commandResult);
