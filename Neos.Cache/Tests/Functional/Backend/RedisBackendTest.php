@@ -249,4 +249,20 @@ class RedisBackendTest extends BaseTestCase
         }
         $this->assertEmpty($actualEntries, 'Entries should be empty');
     }
+
+    /**
+     * @test
+     */
+    public function tagsAlsoReceiveTheTtl()
+    {
+        $this->backend->set('entry1', 'foo', ['bar', 'baz'], 1);
+        sleep(2);
+        $this->assertFalse($this->backend->has('entry1'));
+
+        $actualEntries = [];
+        foreach ($this->backend as $key => $value) {
+            $actualEntries[] = $key;
+        }
+        $this->assertEmpty($actualEntries, 'Entries should be empty');
+    }
 }

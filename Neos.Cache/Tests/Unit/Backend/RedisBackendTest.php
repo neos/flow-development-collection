@@ -113,7 +113,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $defaultLifetime = rand(1, 9999);
         $this->backend->setDefaultLifetime($defaultLifetime);
-        $expected = ['ex' => $defaultLifetime];
+        $expected = time() + $defaultLifetime;
 
         $this->redis->expects($this->any())
             ->method('multi')
@@ -121,7 +121,12 @@ class RedisBackendTest extends BaseTestCase
 
         $this->redis->expects($this->once())
             ->method('set')
-            ->with($this->anything(), $this->anything(), $expected)
+            ->with($this->anything(), $this->anything())
+            ->willReturn($this->redis);
+
+        $this->redis->expects($this->once())
+            ->method('expireAt')
+            ->with($this->anything(), $expected)
             ->willReturn($this->redis);
 
         $this->backend->set('foo', 'bar');
@@ -134,7 +139,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $defaultLifetime = 3600;
         $this->backend->setDefaultLifetime($defaultLifetime);
-        $expected = ['ex' => 1600];
+        $expected = time() + 1600;
 
         $this->redis->expects($this->any())
             ->method('multi')
@@ -142,7 +147,12 @@ class RedisBackendTest extends BaseTestCase
 
         $this->redis->expects($this->once())
             ->method('set')
-            ->with($this->anything(), $this->anything(), $expected)
+            ->with($this->anything(), $this->anything())
+            ->willReturn($this->redis);
+
+        $this->redis->expects($this->once())
+            ->method('expireAt')
+            ->with($this->anything(), $expected)
             ->willReturn($this->redis);
 
         $this->backend->set('foo', 'bar', [], 1600);

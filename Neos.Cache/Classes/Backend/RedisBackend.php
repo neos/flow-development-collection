@@ -132,21 +132,32 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $lifetime = $this->defaultLifetime;
         }
 
-        $setOptions = [];
-        if ($lifetime > 0) {
-            $setOptions['ex'] = $lifetime;
-        }
+        // calculate expireAt so all added keys will have the same TTL
+        $expireAt = $lifetime > self::UNLIMITED_LIFETIME ? (time() + $lifetime) : null;
+        $expireKeyIfNeeded = function (string $key) use ($expireAt) {
+            if ($expireAt === null) {
+                return;
+            }
+            $this->redis->expireAt($key, $expireAt);
+        };
 
         $this->redis->multi();
-        $result = $this->redis->set($this->buildKey('entry:' . $entryIdentifier), $this->compress($data), $setOptions);
+        $key = $this->buildKey('entry:' . $entryIdentifier);
+        $result = $this->redis->set($key, $this->compress($data));
         if ($result === false) {
             $this->verifyRedisVersionIsSupported();
         }
+        $expireKeyIfNeeded($key);
         $this->redis->lRem($this->buildKey('entries'), $entryIdentifier, 0);
         $this->redis->rPush($this->buildKey('entries'), $entryIdentifier);
         foreach ($tags as $tag) {
-            $this->redis->sAdd($this->buildKey('tag:' . $tag), $entryIdentifier);
-            $this->redis->sAdd($this->buildKey('tags:' . $entryIdentifier), $tag);
+            $tagKey = $this->buildKey('tag:' . $tag);
+            $this->redis->sAdd($tagKey, $entryIdentifier);
+            $expireKeyIfNeeded($tagKey);
+
+            $tagsKey = $this->buildKey('tags:' . $entryIdentifier);
+            $this->redis->sAdd($tagsKey, $tag);
+            $expireKeyIfNeeded($tagsKey);
         }
         $this->redis->exec();
     }
