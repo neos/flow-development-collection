@@ -113,7 +113,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $defaultLifetime = rand(1, 9999);
         $this->backend->setDefaultLifetime($defaultLifetime);
-        $expected = time() + $defaultLifetime;
+        $expected = ['ex' => $defaultLifetime];
 
         $this->redis->expects($this->any())
             ->method('multi')
@@ -121,12 +121,7 @@ class RedisBackendTest extends BaseTestCase
 
         $this->redis->expects($this->once())
             ->method('set')
-            ->with($this->anything(), $this->anything())
-            ->willReturn($this->redis);
-
-        $this->redis->expects($this->once())
-            ->method('expireAt')
-            ->with($this->anything(), $expected)
+            ->with($this->anything(), $this->anything(), $expected)
             ->willReturn($this->redis);
 
         $this->backend->set('foo', 'bar');
@@ -139,7 +134,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $defaultLifetime = 3600;
         $this->backend->setDefaultLifetime($defaultLifetime);
-        $expected = time() + 1600;
+        $expected = ['ex' => 1600];
 
         $this->redis->expects($this->any())
             ->method('multi')
@@ -147,12 +142,7 @@ class RedisBackendTest extends BaseTestCase
 
         $this->redis->expects($this->once())
             ->method('set')
-            ->with($this->anything(), $this->anything())
-            ->willReturn($this->redis);
-
-        $this->redis->expects($this->once())
-            ->method('expireAt')
-            ->with($this->anything(), $expected)
+            ->with($this->anything(), $this->anything(), $expected)
             ->willReturn($this->redis);
 
         $this->backend->set('foo', 'bar', [], 1600);
@@ -171,6 +161,42 @@ class RedisBackendTest extends BaseTestCase
             ->method('set')
             ->with('Foo_Cache:entry:entry_1', 'foo')
             ->willReturn($this->redis);
+
+        $this->backend->set('entry_1', 'foo');
+    }
+
+    /**
+     * @test
+     */
+    public function transactionWillBeRetriedIfItFails()
+    {
+        $this->redis->expects($this->exactly(3))
+            ->method('multi')
+            ->willReturn($this->redis);
+
+        $this->redis->expects($this->exactly(3))
+            ->method('set')
+            ->with('Foo_Cache:entry:entry_1', 'foo')
+            ->willReturn($this->redis);
+
+        $this->redis->expects($this->exactly(3))
+            ->method('exec')
+            ->willReturnOnConsecutiveCalls(false, false, $this->redis);
+
+        $this->backend->set('entry_1', 'foo');
+    }
+
+    /**
+     * @test
+     */
+    public function exceptionIsThrownIfTransactionCannotBeCompletedAfter4Retries()
+    {
+        $this->expectExceptionCode(1594725688);
+
+        // 4 retries = 5 tries in total
+        $this->redis->expects($this->exactly(5))
+            ->method('exec')
+            ->willReturn(false);
 
         $this->backend->set('entry_1', 'foo');
     }
