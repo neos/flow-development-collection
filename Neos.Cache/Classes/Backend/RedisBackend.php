@@ -611,6 +611,8 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * Calculate the max lifetime for a key
      *
+     * @see https://redis.io/commands/ttl
+     *
      * @param string $key The key of the key
      * @param int $lifetime The lifetime that should be used if no ttl is found
      * @return int
@@ -618,7 +620,10 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     private function calculateRemainingLifetimeForKey(string $key, int $lifetime)
     {
         $ttl = $this->redis->ttl($key);
-        if ($ttl < 0 || $lifetime === self::UNLIMITED_LIFETIME) {
+        if ($ttl === -2) {
+            // key does not exist
+            return $lifetime;
+        } elseif ($ttl < 0 || $lifetime === self::UNLIMITED_LIFETIME) {
             return self::UNLIMITED_LIFETIME;
         }
         return max($ttl, $lifetime);

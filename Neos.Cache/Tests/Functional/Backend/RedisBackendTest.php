@@ -259,10 +259,7 @@ class RedisBackendTest extends BaseTestCase
         sleep(2);
         $this->assertFalse($this->backend->has('entry1'));
 
-        $actualEntries = [];
-        foreach ($this->backend as $key => $value) {
-            $actualEntries[] = $key;
-        }
-        $this->assertEmpty($actualEntries, 'Entries should be empty');
+        $this->assertEmpty($this->backend->findIdentifiersByTag('bar'));
+        $this->assertEmpty($this->backend->findIdentifiersByTag('baz'));
     }
 }
