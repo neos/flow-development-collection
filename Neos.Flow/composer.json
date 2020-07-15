@@ -54,9 +54,6 @@
     "require-dev": {
         "vimeo/psalm": "~3.10.0"
     },
-    "replace": {
-        "typo3/flow": "self.version"
-    },
     "suggest": {
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",

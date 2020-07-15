@@ -19,9 +19,6 @@
             "Neos\\Kickstarter\\Tests\\": "Tests"
         }
     },
-    "replace": {
-        "typo3/kickstart": "self.version"
-    },
     "extra": {
         "neos": {
             "package-key": "Neos.Kickstarter"
