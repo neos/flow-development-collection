@@ -25,15 +25,15 @@
       <trans-unit id="1324314378" xml:space="preserve" approved="yes">
 				<source>The given value is not a valid date</source>
 			<target state="final">តម្លៃដែលផ្ដល់អោយ គឺមិនត្រឹមត្រូវតាមកាលបរិឆ្ឆេទនោះទេ</target></trans-unit>
-      <trans-unit id="1325615630" xml:space="preserve" approved="yes">
-				<source>The given date must be between {0} and {1}</source>
-			<target state="final">កាលបរិច្ឆេទដែលផ្ដល់អោយ ត្រូវតែនៅចន្លោះពី {០} ហើយនឹង {១}</target></trans-unit>
-      <trans-unit id="1324315107" xml:space="preserve" approved="yes">
-				<source>The given date must be after {0}</source>
-			<target state="final">កាលបរិច្ឆេទត្រូវនៅក្រោយ {0}</target></trans-unit>
-      <trans-unit id="1324315115" xml:space="preserve" approved="yes">
-				<source>The given date must be before {0}</source>
-			<target state="final">ថ្ងៃខែដែលអោយមកត្រូវមុនពេល {0}</target></trans-unit>
+      <trans-unit id="1325615630" xml:space="preserve">
+				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
+			<target state="needs-translation">The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</target></trans-unit>
+      <trans-unit id="1324315107" xml:space="preserve">
+				<source>The given date must be after {0,datetime,datetime}</source>
+			<target state="needs-translation">The given date must be after {0,datetime,datetime}</target></trans-unit>
+      <trans-unit id="1324315115" xml:space="preserve">
+				<source>The given date must be before {0,datetime,datetime}</source>
+			<target state="needs-translation">The given date must be before {0,datetime,datetime}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve" approved="yes">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
