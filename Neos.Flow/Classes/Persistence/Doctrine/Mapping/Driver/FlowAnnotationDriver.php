@@ -683,6 +683,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         if (!isset($inverseJoinColumn['unique'])) {
                             $inverseJoinColumn['unique'] = true;
                         }
+                        if (!isset($inverseJoinColumn['onDelete'])) {
+                            $inverseJoinColumn['onDelete'] = 'cascade';
+                        }
                     }
                     foreach ($joinTable['joinColumns'] as &$joinColumn) {
                         if (!isset($joinColumn['onDelete'])) {
