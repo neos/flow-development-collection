@@ -684,6 +684,11 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                             $inverseJoinColumn['unique'] = true;
                         }
                     }
+                    foreach ($joinTable['joinColumns'] as &$joinColumn) {
+                        if (!isset($joinColumn['onDelete'])) {
+                            $joinColumn['onDelete'] = 'cascade';
+                        }
+                    }
 
                     $mapping['joinTable'] = $joinTable;
                     $metadata->mapManyToMany($mapping);
