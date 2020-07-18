@@ -791,5 +791,5 @@ have this tag.
 		repository which allow you to find objects by properties. The
 		``BlogRepository`` for example would allow you to call magic methods
 		like ``findByDescription('foo')`` or ``findOneByTitle('bar')``.
-.. [#]  https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/unitofwork-associations.html#bidirectional-associations
-.. [#]  https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/association-mapping.html#one-to-many-unidirectional-with-join-table
+.. [#]	https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/unitofwork-associations.html#bidirectional-associations
+.. [#]	https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/association-mapping.html#one-to-many-unidirectional-with-join-table
