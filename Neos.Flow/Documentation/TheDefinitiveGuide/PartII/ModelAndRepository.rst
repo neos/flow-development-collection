@@ -702,7 +702,7 @@ Then adjust the post model code as follows:
 		 */
 		protected $blog;
 
-    ...
+		...
 
 		/**
 		 * @Flow\Validate(type="NotEmpty")
@@ -711,28 +711,28 @@ Then adjust the post model code as follows:
 		 */
 		protected $content;
 
-    /**
-     * @ORM\ManyToMany(orphanRemoval=true)
-     * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(unique=true)})
-     * @var Collection<Comment>
-     */
-    protected $comments;
+		/**
+		 * @ORM\ManyToMany(orphanRemoval=true)
+		 * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(unique=true)})
+		 * @var Collection<Comment>
+		 */
+		protected $comments;
 
-    /**
-     * @ORM\ManyToMany
-     * @var Collection<Tag>
-     */
-    protected $tags;
+		/**
+		 * @ORM\ManyToMany
+		 * @var Collection<Tag>
+		 */
+		protected $tags;
 
 		/**
 		 * Constructs this post
 		 */
 		public function __construct() {
 			$this->date = new \DateTime();
-      $this->comments = new ArrayCollection();
+			$this->comments = new ArrayCollection();
 		}
 
-    ...
+		...
 
 		/**
 		 * @return Collection<Comment>
@@ -741,19 +741,19 @@ Then adjust the post model code as follows:
 			return $this->comments;
 		}
 
-    /**
-     * @param Comment $comment
-     */
-    public function addComment(Comment $comment) {
-      $this->comments->add($comment);
-    }
+		/**
+		 * @param Comment $comment
+		 */
+		public function addComment(Comment $comment) {
+			$this->comments->add($comment);
+		}
 
-    /**
-     * @param Comment $comment
-     */
-    public function deleteComment(Comment $comment) {
-      $this->comments->remove($comment);
-    }
+		/**
+		 * @param Comment $comment
+		 */
+		public function deleteComment(Comment $comment) {
+			$this->comments->remove($comment);
+		}
 
 		/**
 		 * @return Collection<Tag>
@@ -762,19 +762,19 @@ Then adjust the post model code as follows:
 			return $this->tags;
 		}
 
-    /**
-     * @param Tag $tag
-     */
-    public function addTag(Tag $tag) {
-      $this->tags->add($tag);
-    }
+		/**
+		 * @param Tag $tag
+		 */
+		public function addTag(Tag $tag) {
+			$this->tags->add($tag);
+		}
 
-    /**
-     * @param Tag $comment
-     */
-    public function removeTag(Tag $tag) {
-      $this->tags->remove($tag);
-    }
+		/**
+		 * @param Tag $comment
+		 */
+		public function removeTag(Tag $tag) {
+			$this->tags->remove($tag);
+		}
 
 The ``@ORM\JoinTable`` annotation tells doctrine to enforce that each comment can only be referenced by one post. You might
 wonder why we have the ``orphanRemoval=true`` only on the comments, but not on the tags. ``Orphan removal`` tells doctrine
