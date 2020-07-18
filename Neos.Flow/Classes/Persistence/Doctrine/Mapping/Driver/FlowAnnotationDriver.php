@@ -658,7 +658,36 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                     $mapping['orderBy'] = $orderByAnnotation->value;
                 }
 
-                $metadata->mapOneToMany($mapping);
+                if ($oneToManyAnnotation->mappedBy !== null) {
+                    $metadata->mapOneToMany($mapping);
+                } else {
+                    // Transform a unidirectional OneToMany annotation to a ManyToMany with unique constraint
+                    /** @var ORM\JoinTable $joinTableAnnotation */
+                    if ($joinTableAnnotation = $this->reader->getPropertyAnnotation($property, ORM\JoinTable::class)) {
+                        $joinTable = $this->evaluateJoinTableAnnotation($joinTableAnnotation, $property, $className, $mapping);
+                    } else {
+                        $joinColumns = [
+                            [
+                                'name' => null,
+                                'referencedColumnName' => null,
+                            ]
+                        ];
+
+                        $joinTable = [
+                            'name' => $this->inferJoinTableNameFromClassAndPropertyName($className, $property->getName()),
+                            'joinColumns' => $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property, self::MAPPING_MM_REGULAR),
+                            'inverseJoinColumns' => $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property)
+                        ];
+                    }
+                    foreach ($joinTable['inverseJoinColumns'] as &$inverseJoinColumn) {
+                        if (!isset($inverseJoinColumn['unique'])) {
+                            $inverseJoinColumn['unique'] = true;
+                        }
+                    }
+
+                    $mapping['joinTable'] = $joinTable;
+                    $metadata->mapManyToMany($mapping);
+                }
             } elseif ($manyToOneAnnotation = $this->reader->getPropertyAnnotation($property, ORM\ManyToOne::class)) {
                 if ($this->reader->getPropertyAnnotation($property, ORM\Id::class) !== null) {
                     $mapping['id'] = true;
