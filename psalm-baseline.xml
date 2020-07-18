@@ -1683,11 +1683,12 @@
     </MoreSpecificReturnType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Mapping/Driver/FlowAnnotationDriver.php">
-    <ArgumentTypeCoercion occurrences="8">
+    <ArgumentTypeCoercion occurrences="9">
       <code>$metadata</code>
       <code>$metadata</code>
       <code>$metadata</code>
       <code>$metadata</code>
+      <code>$joinTableAnnotation</code>
       <code>$joinTableAnnotation</code>
       <code>$columnAnnotation</code>
       <code>$joinColumnAnnotation</code>
@@ -1769,9 +1770,6 @@
       <code>$pdoException-&gt;getCode()</code>
       <code>$pdoException-&gt;getCode()</code>
     </InvalidScalarArgument>
-    <NullArgument occurrences="1">
-      <code>null</code>
-    </NullArgument>
     <PropertyTypeCoercion occurrences="1">
       <code>$entityManager</code>
     </PropertyTypeCoercion>
@@ -2884,9 +2882,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Utility/Algorithms.php">
-    <InvalidCast occurrences="1">
-      <code>Uuid::uuid4()</code>
-    </InvalidCast>
     <UndefinedConstant occurrences="1">
       <code>UUID_TYPE_RANDOM</code>
     </UndefinedConstant>
