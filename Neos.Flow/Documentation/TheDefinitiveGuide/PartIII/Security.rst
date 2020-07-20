@@ -1583,7 +1583,7 @@ available interceptors, shipped with Flow:
 |                       | the current request.                  |
 +-----------------------+---------------------------------------+
 
-Of course you are able to configure as many request filters as
+Of course, you are able to configure as many request filters as
 you like. Have a look at the following example to get an idea how a
 firewall configuration will look like:
 
@@ -1637,32 +1637,32 @@ security interceptors.
 CSRF protection
 ---------------
 
-A special use case for the filter firewall is CSRF protection. A custom csrf filter is installed and active by default.
+A special use case for the filter firewall is CSRF protection. A custom CSRF filter is installed and active by default.
 It checks every non-safe request (requests are considered safe, if they do not manipulate any persistent data) for a
 CSRF token and blocks the request if the token is invalid or missing.
 
 .. note::
 
-  Besides safe requests csrf protection is also skipped for requests with an anonyous
+  Besides safe requests CSRF protection is also skipped for requests with an anonymous
   authentication status, as these requests are considered publicly callable anyways.
 
 The needed token is automatically added to all URIs generated in Fluid forms, sending data via POST, if any account is
 authenticated. To add CSRF tokens to URIs, e.g. used for AJAX calls, Fluid provides a special view helper, called
 ``Security.CsrfTokenViewHelper``, which makes the currently valid token available for custom use in templates. In
-general you can retrieve the token by callding ``getCsrfProtectionToken`` on the security context.
+general, you can retrieve the token by calling ``getCsrfProtectionToken`` on the security context.
 
 .. tip::
 
   There might be actions, which are considered non-safe by the framework but still cannot be
   protected by a CSRF token (e.g. authentication requests, send via HTTP POST). For these
   special cases you can tag the respective action with the ``@Flow\SkipCsrfProtection``
-  annotation. Make sure you know what your are doing when using this annotation, it might
+  annotation. Make sure you know what you are doing when using this annotation, it might
   decrease security for your application when used in the wrong place!
 
 Channel security
 ================
 
-Currently channel security is not a specific feature of Flow. Instead you have to make sure to transfer sensitive
+Currently, channel security is not a specific feature of Flow. Instead, you have to make sure to transfer sensitive
 data, like passwords, over a secure channel. This is e.g. to use an SSL connection.
 
 .. _Cryptography:
@@ -1675,7 +1675,7 @@ Hash service
 
 Creating cryptographically secure hashes is a crucial part to many security related tasks. To make sure the hashes are
 built correctly Flow provides a central hash service ``Neos\Flow\Security\Cryptography\HashService``, which
-brings well tested hashing algorithms to the developer. We highly recommend to use this service to make sure hashes are
+brings well tested hashing algorithms to the developer. We highly recommend using this service to make sure hashes are
 securely created.
 
 Flow’s hash services provides you with functions to generate and validate HMAC hashes for given strings, as well as
@@ -1684,12 +1684,12 @@ methods for hashing passwords with different hashing strategies.
 RSA wallet service
 ------------------
 
-Flow provides a so called RSA wallet service, to manage public/private key encryptions. The idea behind this
+Flow provides a so called RSA wallet service to manage public/private key encryption. The idea behind this
 service is to store private keys securely within the application by only exposing the public key via API. The default
-implementation shipped with Flow is based on the openssl functions shipped with PHP:
+implementation shipped with Flow is based on the OpenSSL functions shipped with PHP:
 ``Neos\Flow\Security\Cryptography\RsaWalletServicePhp``.
 
-The service can either create new key pairs itself, while returning the fingerprint as identifier for this keypair.
+The service can either create new key pairs itself, while returning the fingerprint as identifier for this key pair.
 This identifier can be used to export the public key, decrypt and encrypt data or sign data and verify signatures.
 
 To use existing keys the following commands can be used to import keys to be stored and used within the wallet:
