@@ -453,14 +453,12 @@ class Context
     }
 
     /**
-
      * Returns the account of the first authenticated authentication token.
      * Note: There might be a more currently authenticated account in the
-     * remaining tokens. If you need them you'll have to fetch them directly
-     * from the tokens.
-     * (@see getAuthenticationTokens())
+     * remaining tokens. If you need them use getAuthenticatedAccounts() instead.
+     * (@see getAuthenticatedAccounts())
      *
-     * @return Account The authenticated account
+     * @return Account|null The authenticated account
      */
     public function getAccount()
     {
@@ -495,6 +493,31 @@ class Context
             return $this->activeTokens[$authenticationProviderName]->getAccount();
         }
         return null;
+    }
+
+    /**
+     * Returns the list of all authenticated accounts.
+     * @return array<Account> The list of all currently authenticated accounts
+     */
+    public function getAuthenticatedAccounts(): array
+    {
+        if ($this->initialized === false) {
+            $this->initialize();
+        }
+
+        $accounts = [];
+        /** @var $token TokenInterface */
+        foreach ($this->getAuthenticationTokens() as $token) {
+            if ($token->isAuthenticated() === false) {
+                continue;
+            }
+            $account = $token->getAccount();
+            $key = spl_object_hash($account);
+            if (!isset($accounts[$key])) {
+                $accounts[$key] = $account;
+            }
+        }
+        return array_values($accounts);
     }
 
     /**
