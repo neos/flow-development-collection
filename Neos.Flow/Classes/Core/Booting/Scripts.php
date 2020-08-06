@@ -838,11 +838,15 @@ class Scripts
 
         $realPhpBinary = realpath(PHP_BINARY);
         if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
-            throw new FlowException(sprintf('You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
+            throw new FlowException(sprintf(
+                'You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
                 'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
                 'caches by removing the folder Data/Temporary before running ./flow again.',
-                $realPhpBinary, $configuredPhpBinaryPathAndFilename, $realPhpBinary), 1536303119);
+                $realPhpBinary,
+                $configuredPhpBinaryPathAndFilename,
+                $realPhpBinary
+            ), 1536303119);
         }
     }
 
@@ -869,11 +873,15 @@ class Scripts
 
         $configuredPHPVersion = $output[0];
         if (array_slice(explode('.', $configuredPHPVersion), 0, 2) !== array_slice(explode('.', PHP_VERSION), 0, 2)) {
-            throw new FlowException(sprintf('You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
+            throw new FlowException(sprintf(
+                'You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
                 'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
                 '%s. Flush the caches by removing the folder Data/Temporary before executing Flow/Neos again.',
-                PHP_VERSION, $configuredPHPVersion, PHP_VERSION), 1536563428);
+                PHP_VERSION,
+                $configuredPHPVersion,
+                PHP_VERSION
+            ), 1536563428);
         }
     }
 
