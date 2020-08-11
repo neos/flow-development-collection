@@ -119,8 +119,10 @@ class FileAdapter
         }
 
         if (!isset($this->fileData['translationUnits'][$transUnitId][$pluralFormIndex]['target'])) {
-            $this->i18nLogger->log('The target translation was empty for the trans-unit element with the id "' . $transUnitId . '" and the plural form index "' . $pluralFormIndex . '" in ' . $this->fileData['fileIdentifier'],
-                LOG_DEBUG);
+            $this->i18nLogger->log(
+                'The target translation was empty for the trans-unit element with the id "' . $transUnitId . '" and the plural form index "' . $pluralFormIndex . '" in ' . $this->fileData['fileIdentifier'],
+                LOG_DEBUG
+            );
         }
 
         return $this->fileData['translationUnits'][$transUnitId][$pluralFormIndex]['target'];
