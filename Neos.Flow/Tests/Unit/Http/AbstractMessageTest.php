@@ -177,7 +177,8 @@ class AbstractMessageTest extends UnitTestCase
     public function setterMethodsAreChainable()
     {
         $message = $this->getAbstractMessageMock();
-        $this->assertSame($message,
+        $this->assertSame(
+            $message,
             $message->setContent('Foo')->setCharset('UTF-8')->setHeader('X-Foo', 'Bar')
         );
     }

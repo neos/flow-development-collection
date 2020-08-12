@@ -127,8 +127,10 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
                 $package = $request->getControllerPackageKey();
             }
             if ($package === null) {
-                throw new ViewHelperException('The current package key can\'t be resolved. Make sure to initialize the Fluid view with a proper ActionRequest and/or specify the "package" argument when using the f:translate ViewHelper',
-                    1416832309);
+                throw new ViewHelperException(
+                    'The current package key can\'t be resolved. Make sure to initialize the Fluid view with a proper ActionRequest and/or specify the "package" argument when using the f:translate ViewHelper',
+                    1416832309
+                );
             }
         }
         $originalLabel = $value === null ? $this->renderChildren() : $value;
