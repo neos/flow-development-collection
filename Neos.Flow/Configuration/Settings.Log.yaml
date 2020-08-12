@@ -52,8 +52,8 @@ Neos:
                 maximumLogFileSize: 10485760
                 logFilesToKeep: 1
 
-          throwables:
-            storageClass: Neos\Flow\Log\ThrowableStorage\FileStorage
-            optionsByImplementation:
-              'Neos\Flow\Log\ThrowableStorage\FileStorage':
-                storagePath: '%FLOW_PATH_DATA%Logs/Exceptions'
+      throwables:
+        storageClass: Neos\Flow\Log\ThrowableStorage\FileStorage
+        optionsByImplementation:
+          'Neos\Flow\Log\ThrowableStorage\FileStorage':
+            storagePath: '%FLOW_PATH_DATA%Logs/Exceptions'
