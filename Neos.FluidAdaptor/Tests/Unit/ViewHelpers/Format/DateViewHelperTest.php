@@ -129,8 +129,10 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
             ->with($dateTime, $locale, array(0 => $formatType, 1 => null));
         $this->inject($this->viewHelper, 'datetimeFormatter', $mockDatetimeFormatter);
 
-        $this->viewHelper = $this->prepareArguments($this->viewHelper,
-            ['date' => $dateTime, 'format' => null, 'localeFormatType' => $formatType, 'forceLocale' => $locale]);
+        $this->viewHelper = $this->prepareArguments(
+            $this->viewHelper,
+            ['date' => $dateTime, 'format' => null, 'localeFormatType' => $formatType, 'forceLocale' => $locale]
+        );
         $this->viewHelper->render();
     }
 
@@ -189,8 +191,10 @@ class DateViewHelperTest extends ViewHelperBaseTestcase
             ->with($dateTime, $cldrFormatString, $locale);
         $this->inject($this->viewHelper, 'datetimeFormatter', $mockDatetimeFormatter);
 
-        $this->viewHelper = $this->prepareArguments($this->viewHelper,
-            ['date' => $dateTime, 'format' => null, 'localeFormatType' => null, 'localeFormatLength' => null, 'cldrFormat' => $cldrFormatString, 'forceLocale' => $locale]);
+        $this->viewHelper = $this->prepareArguments(
+            $this->viewHelper,
+            ['date' => $dateTime, 'format' => null, 'localeFormatType' => null, 'localeFormatLength' => null, 'cldrFormat' => $cldrFormatString, 'forceLocale' => $locale]
+        );
         $this->viewHelper->render();
     }
 }

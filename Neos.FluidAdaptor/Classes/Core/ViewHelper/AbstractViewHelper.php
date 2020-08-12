@@ -126,7 +126,8 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
                 throw $exception;
             }
 
-            $this->logger->error('A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')',
+            $this->logger->error(
+                'A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')',
                 ['exception' => $exception]
             );
 
