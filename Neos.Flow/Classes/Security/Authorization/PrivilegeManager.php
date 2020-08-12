@@ -88,7 +88,8 @@ class PrivilegeManager implements PrivilegeManagerInterface
             return true;
         }
 
-        $reason = sprintf('Evaluated following %d privilege target(s):' . chr(10) . '%s' . chr(10) . '(%d granted, %d denied, %d abstained)',
+        $reason = sprintf(
+            'Evaluated following %d privilege target(s):' . chr(10) . '%s' . chr(10) . '(%d granted, %d denied, %d abstained)',
             count($effectivePrivilegeIdentifiersWithPermission),
             implode(chr(10), $effectivePrivilegeIdentifiersWithPermission),
             $result->getGrants(),
