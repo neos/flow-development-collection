@@ -1,0 +1,40 @@
+`6.2.3 (2020-08-14) <https://github.com/neos/flow-development-collection/releases/tag/6.2.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Correct indention for throwables config <https://github.com/neos/flow-development-collection/pull/2081>`_
+------------------------------------------------------------------------------------------------------------------
+
+The configuration of the throwable exceptions should not be part of the `psr3` level. And the default config did not work since 6.0. The method `initializeExceptionStorage` still expects the configuration to be at the path `Neos.Flow.log.throwables`.
+
+Fixes: #2082
+
+* Packages: ``Flow``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/2070>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/3wJGPP).
+
+* Packages: ``Flow``
+
+`!!! BUGFIX: Browser arguments are the request parsed body <https://github.com/neos/flow-development-collection/pull/2050>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Since 6.0 the Browser `$arguments` were accidentially moved to the request query parameters, while they should reflect the post body arguments.
+
+The docblock even states that:
+`@param array $arguments Arguments to send in the request body`
+
+**Note**: this slightly changes behaviour if you adapted your usage of Browser since 6.0.0. If you want to send query parameters, you should instead provide an `Uri` instance with the parameters, as was already the case prior to 6.0. (This is the reason for marking this bugfix as breaking.)
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.2.2...6.2.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
