@@ -4,8 +4,27 @@ dist: bionic
 branches:
   only:
   - /(master|\d+\.\d+)/
+
+# the following two define the build matrix - while we want to define
+# it explicitly using jobs.include, we need these so we can use allow_failures
+# on PHP nightly builds. See this for more information:
+# https://docs.travis-ci.com/user/build-matrix/#rows-that-are-allowed-to-fail
+php:
+  - 7.2
+  - 7.3
+  - 7.4
+  - nightly
+env:
+  # the following is a trick to make jobs.exclude work
+  - DUMMY=true
+
 jobs:
+  allow_failures:
+    - php: nightly
   fast_finish: true
+  exclude:
+    # this excludes jobs with "no env" by using the single DUMMY defined above
+    - env: DUMMY=true
   include:
     - php: 7.2
       env: STATIC_ANALYSIS=true
