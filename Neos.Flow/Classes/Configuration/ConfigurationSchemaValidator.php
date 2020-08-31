@@ -92,7 +92,8 @@ class ConfigurationSchemaValidator
     {
         $availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
         if (in_array($configurationType, $availableConfigurationTypes) === false) {
-            throw new Exception\SchemaValidationException('The configuration type "' . $configurationType . '" was not found. Only the following configuration types are supported: "' . implode('", "', $availableConfigurationTypes) . '"', 1364984886);
+            throw new Exception\SchemaValidationException(
+                $this->translator->translateById('configuration.anErrorOccurredDuringValidationOfTheConfiguration.body', [$configurationType,implode('", "', $availableConfigurationTypes)], null, null, 'Main', 'Neos.Flow'), 1364984886);
         }
 
         $configuration = $this->configurationManager->getConfiguration($configurationType);
