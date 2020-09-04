@@ -11,6 +11,7 @@ namespace Neos\Flow\Configuration;
  * source code.
  */
 
+use Neos\Flow\I18n\Translator;
 use Symfony\Component\Yaml\Yaml;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Notice;
@@ -53,6 +54,12 @@ class ConfigurationSchemaValidator
      * @var \Neos\Utility\SchemaValidator
      */
     protected $schemaValidator;
+
+    /**
+     * @Flow\Inject
+     * @var Translator
+     */
+    protected $translator;
 
     /**
      * Validate the given $configurationType and $path
