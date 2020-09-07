@@ -1,39 +1,31 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="it">
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-        <target state="translated">Autenticazione richiesta</target>
-      </trans-unit>
+			<target state="translated">Autenticazione richiesta</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-        <target state="translated">Nome utente</target>
-      </trans-unit>
+			<target state="translated">Nome utente</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-        <target state="translated">Password</target>
-      </trans-unit>
+			<target state="translated">Password</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-        <target state="translated">Nuova password</target>
-      </trans-unit>
+			<target state="translated">Nuova password</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-        <target state="translated">Login</target>
-      </trans-unit>
+			<target state="translated">Login</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-        <target state="translated">Esci</target>
-      </trans-unit>
+			<target state="translated">Logout</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-        <target state="translated">Aggiornamento</target>
-      </trans-unit>
+			<target state="translated">Aggiornamento</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-        <target state="translated">Invia</target>
-      </trans-unit>
+			<target state="translated">Invia</target></trans-unit>
     </body>
   </file>
 </xliff>
