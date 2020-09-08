@@ -184,27 +184,6 @@ class StorageObject implements ResourceMetaDataInterface
     }
 
     /**
-     * Returns the md5 hash of the content of this storage object
-     *
-     * @return string The MD5 hash
-     */
-    public function getMd5()
-    {
-        return $this->md5;
-    }
-
-    /**
-     * Sets the md5 hash of the content of this storage object
-     *
-     * @param string $md5 The MD5 hash
-     * @return void
-     */
-    public function setMd5($md5)
-    {
-        $this->md5 = $md5;
-    }
-
-    /**
      * Sets the data stream which can deliver the content of this storage object
      *
      * Instead of providing a stream (PHP resource), you can also pass a Closure which returns a stream when it is

@@ -316,30 +316,6 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     }
 
     /**
-     * Returns the MD5 hash of the content of this resource
-     *
-     * @return string The MD5 hash
-     * @api
-     */
-    public function getMd5()
-    {
-        return $this->md5;
-    }
-
-    /**
-     * Sets the MD5 hash of the content of this resource
-     *
-     * @param string $md5 The MD5 hash
-     * @return void
-     * @api
-     */
-    public function setMd5($md5)
-    {
-        $this->throwExceptionIfProtected();
-        $this->md5 = $md5;
-    }
-
-    /**
      * Returns the path to a local file representing this resource for use with read-only file operations such as reading or copying.
      *
      * Note that you must not store or publish file paths returned from this method as they will change with every request.
