@@ -1,8 +1,8 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -52,24 +52,18 @@ class Version20200908155620 extends AbstractMigration
     {
         $resourceRepository = Bootstrap::$staticObjectManager->get(ResourceRepository::class);
         $persistenceManager = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class);
-        $filename = FLOW_PATH_DATA . 'tmp_md5_migration';
 
         $iterator = $resourceRepository->findAllIterator();
         foreach ($resourceRepository->iterate($iterator) as $resource) {
             /* @var PersistentResource $resource */
-            $stream = $resource->getStream();
-            if (is_resource($stream)) {
-                $file = fopen($filename, 'w');
-                stream_copy_to_stream($resource->getStream(), $file);
-                fclose($file);
-
-                $this->connection->executeUpdate(
-                    'UPDATE neos_flow_resourcemanagement_persistentresource SET md5 = ? WHERE persistence_object_identifier = ?',
-                    [md5_file($filename), $persistenceManager->getIdentifierByObject($resource)]
-                );
-
-                unlink($filename);
+            if (!is_resource($resource->getStream())) {
+                continue;
             }
+
+            $this->connection->executeUpdate(
+                'UPDATE neos_flow_resourcemanagement_persistentresource SET md5 = ? WHERE persistence_object_identifier = ?',
+                [md5(stream_get_contents($resource->getStream())), $persistenceManager->getIdentifierByObject($resource)]
+            );
         }
     }
 }
