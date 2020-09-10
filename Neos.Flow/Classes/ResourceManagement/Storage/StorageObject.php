@@ -62,13 +62,6 @@ class StorageObject implements ResourceMetaDataInterface
     protected $sha1;
 
     /**
-     * MD5 hash identifying this object's data
-     *
-     * @var string
-     */
-    protected $md5;
-
-    /**
      * A stream (or, before it is used the first time, a Closure which returns a stream) which can deliver the data of this Object
      *
      * @var \Closure|resource

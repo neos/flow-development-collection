@@ -78,14 +78,6 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     protected $sha1;
 
     /**
-     * MD5 hash identifying the content attached to this resource
-     *
-     * @var string
-     * @ORM\Column(length=32)
-     */
-    protected $md5;
-
-    /**
      * As soon as the PersistentResource has been published, modifying this object is not allowed
      *
      * @Flow\Transient
