@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<!-- Copyright © 1991-2020 Unicode, Inc.
+For terms of use, see http://www.unicode.org/copyright.html
+Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
+CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
+-->
 <ldml>
 	<identity>
-		<version number="$Revision: 4590 $"/>
-		<generation date="$Date: 2010-02-05 13:10:28 -0600 (Fri, 05 Feb 2010) $"/>
+		<version number="$Revision$"/>
 		<language type="lag"/>
 	</identity>
 	<localeDisplayNames>
@@ -62,7 +66,6 @@
 			<territory type="AI">Anguíila</territory>
 			<territory type="AL">Alubánia</territory>
 			<territory type="AM">Ariménia</territory>
-			<territory type="AN">Antili ya Ʉholáanzi</territory>
 			<territory type="AO">Angóola</territory>
 			<territory type="AR">Ajentíina</territory>
 			<territory type="AS">Samóoa ya Amerɨ́ka</territory>
@@ -100,7 +103,6 @@
 			<territory type="CN">Chíina</territory>
 			<territory type="CO">Kolómbia</territory>
 			<territory type="CR">Kósita Rɨ́ɨka</territory>
-			<territory type="CS">Sebíia na Montégiro</territory>
 			<territory type="CU">Kyúuba</territory>
 			<territory type="CV">Kepuvéede</territory>
 			<territory type="CY">Kupuróosi</territory>
@@ -182,7 +184,6 @@
 			<territory type="MD">Molidóova</territory>
 			<territory type="MG">Bukíini</territory>
 			<territory type="MH">Visíiwa vya Marisháali</territory>
-			<territory type="MK">Masedónia</territory>
 			<territory type="ML">Máali</territory>
 			<territory type="MM">Miáama</territory>
 			<territory type="MN">Mongólia</territory>
@@ -290,11 +291,60 @@
 	<delimiters>
 		<quotationStart>”</quotationStart>
 		<quotationEnd>”</quotationEnd>
-		<alternateQuotationStart>'</alternateQuotationStart>
-		<alternateQuotationEnd>'</alternateQuotationEnd>
+		<alternateQuotationStart>’</alternateQuotationStart>
+		<alternateQuotationEnd>’</alternateQuotationEnd>
 	</delimiters>
 	<dates>
 		<calendars>
+			<calendar type="generic">
+				<dateFormats>
+					<dateFormatLength type="full">
+						<dateFormat>
+							<pattern>EEEE, d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="long">
+						<dateFormat>
+							<pattern>d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="medium">
+						<dateFormat>
+							<pattern>d MMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="short">
+						<dateFormat>
+							<pattern>dd/MM/y GGGGG</pattern>
+						</dateFormat>
+					</dateFormatLength>
+				</dateFormats>
+				<dateTimeFormats>
+					<availableFormats>
+						<dateFormatItem id="d">d</dateFormatItem>
+						<dateFormatItem id="hm">h:mm a</dateFormatItem>
+						<dateFormatItem id="Hm">HH:mm</dateFormatItem>
+						<dateFormatItem id="Hms">HH:mm:ss</dateFormatItem>
+						<dateFormatItem id="M">L</dateFormatItem>
+						<dateFormatItem id="Md">M/d</dateFormatItem>
+						<dateFormatItem id="MEd">E, M/d</dateFormatItem>
+						<dateFormatItem id="MMM">LLL</dateFormatItem>
+						<dateFormatItem id="MMMd">MMM d</dateFormatItem>
+						<dateFormatItem id="MMMEd">E, MMM d</dateFormatItem>
+						<dateFormatItem id="MMMMd">MMMM d</dateFormatItem>
+						<dateFormatItem id="MMMMEd">E, MMMM d</dateFormatItem>
+						<dateFormatItem id="ms">mm:ss</dateFormatItem>
+						<dateFormatItem id="y">y</dateFormatItem>
+						<dateFormatItem id="yM">M/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E, M/d/y</dateFormatItem>
+						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E, MMM d, y</dateFormatItem>
+						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
+						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
+						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
+					</availableFormats>
+				</dateTimeFormats>
+			</calendar>
 			<calendar type="gregorian">
 				<months>
 					<monthContext type="format">
@@ -395,6 +445,10 @@
 				</quarters>
 				<dayPeriods>
 					<dayPeriodContext type="format">
+						<dayPeriodWidth type="abbreviated">
+							<dayPeriod type="am">TOO</dayPeriod>
+							<dayPeriod type="pm">MUU</dayPeriod>
+						</dayPeriodWidth>
 						<dayPeriodWidth type="wide">
 							<dayPeriod type="am">TOO</dayPeriod>
 							<dayPeriod type="pm">MUU</dayPeriod>
@@ -429,29 +483,29 @@
 					</dateFormatLength>
 					<dateFormatLength type="short">
 						<dateFormat>
-							<pattern>dd/MM/yyyy</pattern>
+							<pattern>dd/MM/y</pattern>
 						</dateFormat>
 					</dateFormatLength>
 				</dateFormats>
 				<timeFormats>
 					<timeFormatLength type="full">
 						<timeFormat>
-							<pattern>h:mm:ss a zzzz</pattern>
+							<pattern>HH:mm:ss zzzz</pattern>
 						</timeFormat>
 					</timeFormatLength>
 					<timeFormatLength type="long">
 						<timeFormat>
-							<pattern>h:mm:ss a z</pattern>
+							<pattern>HH:mm:ss z</pattern>
 						</timeFormat>
 					</timeFormatLength>
 					<timeFormatLength type="medium">
 						<timeFormat>
-							<pattern>h:mm:ss a</pattern>
+							<pattern>HH:mm:ss</pattern>
 						</timeFormat>
 					</timeFormatLength>
 					<timeFormatLength type="short">
 						<timeFormat>
-							<pattern>h:mm a</pattern>
+							<pattern>HH:mm</pattern>
 						</timeFormat>
 					</timeFormatLength>
 				</timeFormats>
@@ -472,56 +526,98 @@
 						<dateFormatItem id="ms">mm:ss</dateFormatItem>
 						<dateFormatItem id="y">y</dateFormatItem>
 						<dateFormatItem id="yM">M/y</dateFormatItem>
-						<dateFormatItem id="yMEd">EEE, M/d/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E, M/d/y</dateFormatItem>
 						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
-						<dateFormatItem id="yMMMEd">EEE, MMM d, y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E, MMM d, y</dateFormatItem>
 						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
-						<dateFormatItem id="yQ">Q y</dateFormatItem>
 						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
+						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
 					</availableFormats>
 				</dateTimeFormats>
-				<fields>
-					<field type="era">
-						<displayName>Mpɨɨndɨ</displayName>
-					</field>
-					<field type="year">
-						<displayName>Mwaáka</displayName>
-					</field>
-					<field type="month">
-						<displayName>Mweéri</displayName>
-					</field>
-					<field type="week">
-						<displayName>Wíiki</displayName>
-					</field>
-					<field type="day">
-						<displayName>Sikʉ</displayName>
-						<relative type="-1">Niijo</relative>
-						<relative type="0">Isikʉ</relative>
-						<relative type="1">Lamʉtoondo</relative>
-					</field>
-					<field type="weekday">
-						<displayName>Sikʉ ya júma</displayName>
-					</field>
-					<field type="dayperiod">
-						<displayName>Mpɨɨndɨ ja sikʉ</displayName>
-					</field>
-					<field type="hour">
-						<displayName>Sáa</displayName>
-					</field>
-					<field type="minute">
-						<displayName>Dakíka</displayName>
-					</field>
-					<field type="second">
-						<displayName>Sekúunde</displayName>
-					</field>
-					<field type="zone">
-						<displayName>Mpɨɨndɨ ja mɨɨtʉ</displayName>
-					</field>
-				</fields>
 			</calendar>
 		</calendars>
+		<fields>
+			<field type="era">
+				<displayName>Mpɨɨndɨ</displayName>
+			</field>
+			<field type="year">
+				<displayName>Mwaáka</displayName>
+			</field>
+			<field type="month">
+				<displayName>Mweéri</displayName>
+			</field>
+			<field type="week">
+				<displayName>Wíiki</displayName>
+			</field>
+			<field type="day">
+				<displayName>Sikʉ</displayName>
+				<relative type="-1">Niijo</relative>
+				<relative type="0">Isikʉ</relative>
+				<relative type="1">Lamʉtoondo</relative>
+			</field>
+			<field type="weekday">
+				<displayName>Sikʉ ya júma</displayName>
+			</field>
+			<field type="dayperiod">
+				<displayName>Mpɨɨndɨ ja sikʉ</displayName>
+			</field>
+			<field type="hour">
+				<displayName>Sáa</displayName>
+			</field>
+			<field type="minute">
+				<displayName>Dakíka</displayName>
+			</field>
+			<field type="second">
+				<displayName>Sekúunde</displayName>
+			</field>
+			<field type="zone">
+				<displayName>Mpɨɨndɨ ja mɨɨtʉ</displayName>
+			</field>
+		</fields>
 	</dates>
 	<numbers>
+		<currencyFormats numberSystem="latn">
+			<currencyFormatLength type="short">
+				<currencyFormat type="standard">
+					<pattern type="1000" count="zero" draft="provisional">¤ 0K</pattern>
+					<pattern type="1000" count="one" draft="provisional">¤ 0K</pattern>
+					<pattern type="1000" count="other" draft="provisional">¤ 0K</pattern>
+					<pattern type="10000" count="zero" draft="provisional">¤ 00K</pattern>
+					<pattern type="10000" count="one" draft="provisional">¤ 00K</pattern>
+					<pattern type="10000" count="other" draft="provisional">¤ 00K</pattern>
+					<pattern type="100000" count="zero" draft="provisional">¤ 000K</pattern>
+					<pattern type="100000" count="one" draft="provisional">¤ 000K</pattern>
+					<pattern type="100000" count="other" draft="provisional">¤ 000K</pattern>
+					<pattern type="1000000" count="zero" draft="provisional">¤ 0M</pattern>
+					<pattern type="1000000" count="one" draft="provisional">¤ 0M</pattern>
+					<pattern type="1000000" count="other" draft="provisional">¤ 0M</pattern>
+					<pattern type="10000000" count="zero" draft="provisional">¤ 00M</pattern>
+					<pattern type="10000000" count="one" draft="provisional">¤ 00M</pattern>
+					<pattern type="10000000" count="other" draft="provisional">¤ 00M</pattern>
+					<pattern type="100000000" count="zero" draft="provisional">¤ 000M</pattern>
+					<pattern type="100000000" count="one" draft="provisional">¤ 000M</pattern>
+					<pattern type="100000000" count="other" draft="provisional">¤ 000M</pattern>
+					<pattern type="1000000000" count="zero" draft="provisional">¤ 0G</pattern>
+					<pattern type="1000000000" count="one" draft="provisional">¤ 0G</pattern>
+					<pattern type="1000000000" count="other" draft="provisional">¤ 0G</pattern>
+					<pattern type="10000000000" count="zero" draft="provisional">¤ 00G</pattern>
+					<pattern type="10000000000" count="one" draft="provisional">¤ 00G</pattern>
+					<pattern type="10000000000" count="other" draft="provisional">¤ 00G</pattern>
+					<pattern type="100000000000" count="zero" draft="provisional">¤ 000G</pattern>
+					<pattern type="100000000000" count="one" draft="provisional">¤ 000G</pattern>
+					<pattern type="100000000000" count="other" draft="provisional">¤ 000G</pattern>
+					<pattern type="1000000000000" count="zero" draft="provisional">¤ 0T</pattern>
+					<pattern type="1000000000000" count="one" draft="provisional">¤ 0T</pattern>
+					<pattern type="1000000000000" count="other" draft="provisional">¤ 0T</pattern>
+					<pattern type="10000000000000" count="zero" draft="provisional">¤ 00T</pattern>
+					<pattern type="10000000000000" count="one" draft="provisional">¤ 00T</pattern>
+					<pattern type="10000000000000" count="other" draft="provisional">¤ 00T</pattern>
+					<pattern type="100000000000000" count="zero" draft="provisional">¤ 000T</pattern>
+					<pattern type="100000000000000" count="one" draft="provisional">¤ 000T</pattern>
+					<pattern type="100000000000000" count="other" draft="provisional">¤ 000T</pattern>
+				</currencyFormat>
+			</currencyFormatLength>
+		</currencyFormats>
 		<currencies>
 			<currency type="AED">
 				<displayName>Diriháamu ya Ʉtemi wa Kɨaráabu</displayName>
@@ -614,6 +710,9 @@
 				<displayName>Mpía ya bukini</displayName>
 			</currency>
 			<currency type="MRO">
+				<displayName>Ungwíiya ya Moritánia (1973–2017)</displayName>
+			</currency>
+			<currency type="MRU">
 				<displayName>Ungwíiya ya Moritánia</displayName>
 			</currency>
 			<currency type="MUR">
@@ -653,6 +752,9 @@
 				<displayName>Shilíingi ya Somália</displayName>
 			</currency>
 			<currency type="STD">
+				<displayName>Dóbura ya SaoTóome na Pirínsipe (1977–2017)</displayName>
+			</currency>
+			<currency type="STN">
 				<displayName>Dóbura ya SaoTóome na Pirínsipe</displayName>
 			</currency>
 			<currency type="SZL">
@@ -663,6 +765,7 @@
 			</currency>
 			<currency type="TZS">
 				<displayName>Shilíingi ya Taansanía</displayName>
+				<symbol>TSh</symbol>
 			</currency>
 			<currency type="UGX">
 				<displayName>Shilíingi ya Ugáanda</displayName>
@@ -680,6 +783,9 @@
 				<displayName>Ráandi ya Afɨrɨka ya Saame</displayName>
 			</currency>
 			<currency type="ZMK">
+				<displayName>Kwácha ya Sámbia (1968–2012)</displayName>
+			</currency>
+			<currency type="ZMW">
 				<displayName>Kwácha ya Sámbia</displayName>
 			</currency>
 			<currency type="ZWD">
