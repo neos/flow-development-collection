@@ -319,7 +319,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      * Returns the MD5 hash of the content of this resource
      *
      * @return string The MD5 hash
-     * @api
+     * @deprecated since 6.3 – use getSha1() instead or md5(stream_get_contents($resource->getStream())) if you need an MD5 hash
      */
     public function getMd5()
     {
@@ -331,7 +331,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      *
      * @param string $md5 The MD5 hash
      * @return void
-     * @api
+     * @deprecated since 6.3, @see getMd5()
      */
     public function setMd5($md5)
     {
