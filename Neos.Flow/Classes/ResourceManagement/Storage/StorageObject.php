@@ -187,6 +187,7 @@ class StorageObject implements ResourceMetaDataInterface
      * Returns the md5 hash of the content of this storage object
      *
      * @return string The MD5 hash
+     * @deprecated since 6.3, will be removed with 7.0 – use getSha1() instead or md5(stream_get_contents($resource->getStream())) if you need an MD5 hash
      */
     public function getMd5()
     {
@@ -198,6 +199,7 @@ class StorageObject implements ResourceMetaDataInterface
      *
      * @param string $md5 The MD5 hash
      * @return void
+     * @deprecated since 6.3, will be removed with 7.0 – @see getMd5()
      */
     public function setMd5($md5)
     {
