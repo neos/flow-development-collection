@@ -81,19 +81,4 @@ interface ResourceMetaDataInterface
      * @return void
      */
     public function setSha1($sha1);
-
-    /**
-     * Returns the md5 hash of the content of this storage object
-     *
-     * @return string The md5 hash
-     */
-    public function getMd5();
-
-    /**
-     * Sets the md5 hash of the content of this storage object
-     *
-     * @param string $md5 The md5 hash
-     * @return void
-     */
-    public function setMd5($md5);
 }
