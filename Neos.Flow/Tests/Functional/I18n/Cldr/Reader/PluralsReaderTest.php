@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Functional\I18n\Cldr\Reader;
  * source code.
  */
 
-use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
+use Neos\Flow\I18n\Cldr\Reader\PluralsReader;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\I18n;
 
@@ -29,7 +29,7 @@ class PluralsReaderTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->pluralsReader = $this->objectManager->get(NumbersReader::class);
+        $this->pluralsReader = $this->objectManager->get(PluralsReader::class);
     }
 
     /**
@@ -43,22 +43,22 @@ class PluralsReaderTest extends FunctionalTestCase
             [
                 'mo',
                 [
-                    [1, NumbersReader::RULE_ONE],
-                    [2, NumbersReader::RULE_FEW],
-                    [100, NumbersReader::RULE_OTHER],
-                    [101, NumbersReader::RULE_FEW],
-                    [101.1, NumbersReader::RULE_OTHER]
+                    [1, PluralsReader::RULE_ONE],
+                    [2, PluralsReader::RULE_FEW],
+                    [100, PluralsReader::RULE_OTHER],
+                    [101, PluralsReader::RULE_FEW],
+                    [101.1, PluralsReader::RULE_OTHER]
                 ]
             ],
             [
                 'ru',
                 [
-                    [1, NumbersReader::RULE_ONE],
-                    [2, NumbersReader::RULE_FEW],
-                    [11, NumbersReader::RULE_MANY],
-                    [100, NumbersReader::RULE_MANY],
-                    [101, NumbersReader::RULE_ONE],
-                    [101.1, NumbersReader::RULE_OTHER]
+                    [1, PluralsReader::RULE_ONE],
+                    [2, PluralsReader::RULE_FEW],
+                    [11, PluralsReader::RULE_MANY],
+                    [100, PluralsReader::RULE_MANY],
+                    [101, PluralsReader::RULE_ONE],
+                    [101.1, PluralsReader::RULE_OTHER]
                 ]
             ]
         ];
