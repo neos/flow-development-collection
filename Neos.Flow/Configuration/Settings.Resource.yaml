@@ -7,7 +7,7 @@ Neos:
     resource:
       # A list of filename extensions that must not be uploaded through the resource
       # management.
-      uploadExtensionBlacklist: &uploadExtensionBlacklist
+      extensionsBlockedFromUpload: &extensionsBlockedFromUpload
         'aspx': true
         'cgi': true
         'php3': true
@@ -62,7 +62,7 @@ Neos:
           targetOptions:
             path: '%FLOW_PATH_WEB%_Resources/Static/Packages/'
             baseUri: '_Resources/Static/Packages/'
-            extensionBlacklist: *uploadExtensionBlacklist
+            excludedExtensions: *extensionsBlockedFromUpload
 
             # If the symlinks should be relative instead of absolute
             #relativeSymlinks: false
@@ -73,7 +73,7 @@ Neos:
           targetOptions:
             path: '%FLOW_PATH_WEB%_Resources/Persistent/'
             baseUri: '_Resources/Persistent/'
-            extensionBlacklist: *uploadExtensionBlacklist
+            excludedExtensions: *extensionsBlockedFromUpload
 
             # If the generated URI path segment containing the sha1 should be divided into multiple segments (recommended if you expect many resources):
             subdivideHashPathSegment: true
