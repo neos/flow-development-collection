@@ -66,7 +66,7 @@ class NumbersReaderTest extends UnitTestCase
     public function formatIsCorrectlyReadFromCldr()
     {
         $mockModel = $this->createMock(I18n\Cldr\CldrModel::class, [], [[]]);
-        $mockModel->expects(self::once())->method('getElement')->with('numbers/decimalFormats/decimalFormatLength/decimalFormat/pattern')->will(self::returnValue('mockFormatString'));
+        $mockModel->expects(self::once())->method('getElement')->with('numbers/decimalFormats/decimalFormatLength/decimalFormat[@type="standard"]/pattern')->will(self::returnValue('mockFormatString'));
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
         $mockRepository->expects(self::once())->method('getModelForLocale')->with($this->sampleLocale)->will(self::returnValue($mockModel));
