@@ -59,4 +59,25 @@ class NumbersReaderTest extends FunctionalTestCase
         $actual = $this->numbersReader->parseFormatFromCldr($locale, NumbersReader::FORMAT_TYPE_CURRENCY);
         self::assertEquals($expected, $actual);
     }
+
+    public function numberSystemDataProvider(): array
+    {
+        return [
+            ['de', 'latn'],
+            ['ar', 'arab'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider numberSystemDataProvider
+     *
+     * @param string $localeString
+     * @param string $expected
+     * @throws I18n\Exception\InvalidLocaleIdentifierException
+     */
+    public function getDefaultNumberingSystem(string $localeString, string $expected): void
+    {
+        self::assertEquals($expected, $this->numbersReader->getDefaultNumberingSystem(new I18n\Locale($localeString)));
+    }
 }

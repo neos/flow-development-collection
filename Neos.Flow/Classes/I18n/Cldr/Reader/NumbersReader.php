@@ -201,7 +201,7 @@ class NumbersReader
      * @return void
      * @throws \Neos\Cache\Exception
      */
-    public function shutdownObject()
+    public function shutdownObject(): void
     {
         $this->cache->set('parsedFormats', $this->parsedFormats);
         $this->cache->set('parsedFormatsIndices', $this->parsedFormatsIndices);
@@ -251,6 +251,17 @@ class NumbersReader
 
         $this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength] = $format;
         return $this->parsedFormats[$format] = $parsedFormat;
+    }
+
+    /**
+     * @param Locale $locale
+     * @return string
+     */
+    public function getDefaultNumberingSystem(Locale $locale): string
+    {
+        $model = $this->cldrRepository->getModelForLocale($locale);
+        $result = $model->findNodesWithinPath('numbers', 'defaultNumberingSystem');
+        return $result['defaultNumberingSystem'] ?? 'latn';
     }
 
     /**
