@@ -9,3 +9,24 @@ Flow_Persistence_Doctrine:
   backend: Neos\Cache\Backend\TransientMemoryBackend
 Flow_Persistence_Doctrine_Results:
   backend: Neos\Cache\Backend\TransientMemoryBackend
+
+
+# Flow_I18n_*
+#
+# These caches contain precompiled data from the CLDR and information about available
+# locales and translations.
+Flow_I18n_AvailableLocalesCache:
+  backend: Neos\Cache\Backend\TransientMemoryBackend
+Flow_I18n_XmlModelCache:
+  backend: Neos\Cache\Backend\TransientMemoryBackend
+Flow_I18n_Cldr_CldrModelCache:
+  backend: Neos\Cache\Backend\TransientMemoryBackend
+Flow_I18n_Cldr_Reader_DatesReaderCache:
+  backend: Neos\Cache\Backend\TransientMemoryBackend
+Flow_I18n_Cldr_Reader_NumbersReaderCache:
+  backend: Neos\Cache\Backend\TransientMemoryBackend
+Flow_I18n_Cldr_Reader_PluralsReaderCache:
+  backend: Neos\Cache\Backend\TransientMemoryBackend
+Flow_I18n_Cldr_Reader_CurrencyReaderCache:
+  backend: Neos\Cache\Backend\TransientMemoryBackend
+  
