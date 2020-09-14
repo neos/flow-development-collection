@@ -235,7 +235,11 @@ class NumbersReader
         }
 
         if ($formatLength === self::FORMAT_LENGTH_DEFAULT) {
-            $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format[@type="standard"]/pattern';
+            if ($formatType === 'currency') {
+                $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format[@type="standard"]/pattern';
+            } else {
+                $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format/pattern';
+            }
         } else {
             $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength[@type="' . $formatLength . '"]/' . $formatType . 'Format[@type="standard"]/pattern';
         }
