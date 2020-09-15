@@ -104,6 +104,11 @@ class ProxyMethod
         $this->visibility = $visibility;
     }
 
+    /**
+     * Returns TRUE if this proxy belongs to a private method, otherwise FALSE
+     *
+     * @return bool
+     */
     public function isPrivate(): bool
     {
         return $this->getMethodVisibilityString() === 'private';
