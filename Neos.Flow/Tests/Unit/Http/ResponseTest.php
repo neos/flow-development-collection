@@ -635,7 +635,8 @@ class ResponseTest extends UnitTestCase
     public function setterMethodsAreChainable()
     {
         $response = new Response();
-        $this->assertSame($response,
+        $this->assertSame(
+            $response,
             $response->setContent('Foo')
                 ->appendContent('Bar')
                 ->setStatus(404)
