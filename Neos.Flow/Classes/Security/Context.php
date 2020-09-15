@@ -758,7 +758,8 @@ class Context
                 get_class($matchingSessionToken),
                 $matchingSessionToken->getAuthenticationProviderName(),
                 $this->tokenStatusLabels[$matchingSessionToken->getAuthenticationStatus()]
-            ), LogEnvironment::fromMethodName(__METHOD__)
+            ),
+            LogEnvironment::fromMethodName(__METHOD__)
         );
 
         return $matchingSessionToken;
