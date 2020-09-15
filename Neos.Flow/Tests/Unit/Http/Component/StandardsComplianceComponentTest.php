@@ -11,8 +11,12 @@ namespace Neos\Flow\Tests\Unit\Http\Component;
  * source code.
  */
 
-use Neos\Flow\Http;
+use GuzzleHttp\Psr7\Response;
+use Neos\Flow\Http\Component\ComponentContext;
+use Neos\Flow\Http\Component\StandardsComplianceComponent;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Test case for the StandardsComplianceComponent
@@ -20,35 +24,35 @@ use Neos\Flow\Tests\UnitTestCase;
 class StandardsComplianceComponentTest extends UnitTestCase
 {
     /**
-     * @var Http\Component\StandardsComplianceComponent
+     * @var StandardsComplianceComponent
      */
     protected $standardsComplianceComponent;
 
     /**
-     * @var Http\Component\ComponentContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var ComponentContext|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockComponentContext;
 
     /**
-     * @var Http\Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockHttpRequest;
 
     /**
-     * @var Http\Response|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResponseInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockHttpResponse;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
-        $this->response = new Http\Response();
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->response = new Response();
 
-        $this->mockComponentContext = $this->getMockBuilder(Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
-        $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->response));
+        $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
+        $this->mockComponentContext->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
+        $this->mockComponentContext->expects(self::any())->method('getHttpResponse')->will(self::returnValue($this->response));
 
-        $this->standardsComplianceComponent = new Http\Component\StandardsComplianceComponent([]);
+        $this->standardsComplianceComponent = new StandardsComplianceComponent([]);
     }
 
     /**

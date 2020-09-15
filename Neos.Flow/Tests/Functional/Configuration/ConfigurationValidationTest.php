@@ -66,7 +66,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -112,7 +112,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->objectManager->setInstance(ConfigurationManager::class, $this->originalConfigurationManager);
         $this->injectApplicationContextIntoConfigurationManager($this->objectManager->getContext());
@@ -125,13 +125,25 @@ class ConfigurationValidationTest extends FunctionalTestCase
      */
     protected function injectApplicationContextIntoConfigurationManager(ApplicationContext $context)
     {
-        ObjectAccess::setProperty($this->mockConfigurationManager, 'configurations',
-            [ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => []], true);
+        ObjectAccess::setProperty(
+            $this->mockConfigurationManager,
+            'configurations',
+            [ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => []],
+            true
+        );
         ObjectAccess::setProperty($this->mockConfigurationManager, 'context', $context, true);
-        ObjectAccess::setProperty($this->mockConfigurationManager, 'orderedListOfContextNames', [(string)$context],
-            true);
-        ObjectAccess::setProperty($this->mockConfigurationManager, 'includeCachedConfigurationsPathAndFilename',
-            FLOW_PATH_CONFIGURATION . (string)$context . '/IncludeCachedConfigurations.php', true);
+        ObjectAccess::setProperty(
+            $this->mockConfigurationManager,
+            'orderedListOfContextNames',
+            [(string)$context],
+            true
+        );
+        ObjectAccess::setProperty(
+            $this->mockConfigurationManager,
+            'includeCachedConfigurationsPathAndFilename',
+            FLOW_PATH_CONFIGURATION . (string)$context . '/IncludeCachedConfigurations.php',
+            true
+        );
     }
 
     /**
@@ -179,7 +191,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
             }
             $this->fail($output);
         }
-        $this->assertFalse($validationResult->hasErrors());
+        self::assertFalse($validationResult->hasErrors());
     }
 
     /**

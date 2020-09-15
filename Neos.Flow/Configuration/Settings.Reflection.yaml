@@ -7,17 +7,8 @@ Neos:
     reflection:
       # A list of tags to be ignored during reflection
       ignoredTags:
-        'api': true
-        'package': true
-        'subpackage': true
-        'license': true
-        'copyright': true
-        'author': true
         'const': true
-        'see': true
-        'todo': true
         'scope': true
-        'fixme': true
         'test': true
         'expectedException': true
         'expectedExceptionMessage': true
@@ -25,7 +16,6 @@ Neos:
         'depends': true
         'dataProvider': true
         'group': true
-        'codeCoverageIgnore': true
         'requires': true
         'Given': true
         'When': true
@@ -43,6 +33,7 @@ Neos:
         'doesNotPerformAssertions': true
         'template': true
         'psalm': true
+        'psalm-immutable': true
 
       # If enabled, the Reflection Service notes all incorrect or inconsistent usage
       # of @param annotations in the default log.

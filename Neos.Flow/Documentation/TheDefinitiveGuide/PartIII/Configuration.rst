@@ -65,11 +65,11 @@ defined in their own dedicated file:
 ``Objects.yaml``
   Contains object configuration, i.e. options which configure objects and the
   combination of those on a lower level. See the :ref:`ch-object-management` chapter for more
-  information.
+  information. Objects have `Split configuration sources`_ enabled.
 
 ``Policy.yaml``
   Contains the configuration of the security policies of the system. See the :ref:`ch-security`
-  chapter for details.
+  chapter for details. Policy has `Split configuration sources`_ enabled.
 
 ``PackageStates.php``
   Contains a list of packages and their current state, for  example if they are active
@@ -81,6 +81,7 @@ defined in their own dedicated file:
   configuration file are registered in an early stage of the boot process and profit
   from mechanisms such as automatic flushing by the File Monitor. See the chapter about
   the :ref:`ch-caching` for details.
+  Caches have `Split configuration sources`_ enabled.
 
 ``Views.yaml``
   Contains configurations for Views, for example the lookup paths for templates.
@@ -104,7 +105,7 @@ which come with the Flow distribution for getting more examples.
 .. code-block:: yaml
 
     #                                                                        #
-    # Settings Configuration for the Neos.Viewhelpertest Package            #
+    # Settings Configuration for the Neos.Viewhelpertest Package             #
     #                                                                        #
 
     Neos:
@@ -129,7 +130,7 @@ Constants and Environment
 Sometimes it is necessary to use values in your configuration files which are defined as
 PHP constants or are environment variables. These values can be included by special markers
 which are replaced by the actual value during parse time. The format is ``%<CONSTANT_NAME>%``
-where ``<CONSTANT_NAME>`` is the name of a constant or ``%env:<ENVIRONMENT_VARIABLE>``.
+where ``<CONSTANT_NAME>`` is the name of a constant or ``%env:<ENVIRONMENT_VARIABLE>%``.
 Note that the constant or environment variable name must be all uppercase.
 
 Some examples:
@@ -212,7 +213,7 @@ configuration filenames.
             $configurationManager->registerConfigurationType(
                 'Models',
                 ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
-                TRUE
+                true
             );
         }
     );
@@ -229,8 +230,8 @@ configuration of type ``Models`` is requested:
         Models.Quux.yaml
 
 .. note::
-    Split configuration is only supported for the ``CONFIGURATION_PROCESSING_TYPE_DEFAULT`` and
-    ``CONFIGURATION_PROCESSING_TYPE_SETTINGS`` processing types.
+    Split configuration is supported for all except ``CONFIGURATION_PROCESSING_TYPE_ROUTES`` processing types.
+    This is because Routing uses a custom include semantic that shares the naming convention with split sources.
 
 Accessing Settings
 ==================

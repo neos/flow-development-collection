@@ -22,24 +22,24 @@ use Neos\Flow\Tests\UnitTestCase;
 class RepositoryTest extends UnitTestCase
 {
     /**
-     * @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockEntityManager;
 
     /**
-     * @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject
+     * @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockClassMetadata;
 
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockEntityManager = $this->getMockBuilder(EntityManagerInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->mockClassMetadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
-        $this->mockEntityManager->expects($this->any())->method('getClassMetadata')->will($this->returnValue($this->mockClassMetadata));
+        $this->mockEntityManager->expects(self::any())->method('getClassMetadata')->will(self::returnValue($this->mockClassMetadata));
     }
 
     /**
@@ -66,6 +66,6 @@ class RepositoryTest extends UnitTestCase
 
         /** @var Repository $repository */
         $repository = new $mockClassName($this->mockEntityManager);
-        $this->assertEquals($modelClassName, $repository->getEntityClassName());
+        self::assertEquals($modelClassName, $repository->getEntityClassName());
     }
 }

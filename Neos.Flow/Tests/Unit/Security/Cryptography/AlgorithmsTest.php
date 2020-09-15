@@ -46,6 +46,6 @@ class AlgorithmsTest extends UnitTestCase
     public function pbkdf2TestVectorsAreCorrect($password, $salt, $iterationCount, $derivedKeyLength, $output)
     {
         $result = Algorithms::pbkdf2($password, $salt, $iterationCount, $derivedKeyLength, 'sha1');
-        $this->assertEquals(unpack('H*', pack('H*', $output)), unpack('H*', $result));
+        self::assertEquals(unpack('H*', pack('H*', $output)), unpack('H*', $result));
     }
 }

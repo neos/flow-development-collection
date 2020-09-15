@@ -33,10 +33,10 @@ class RouteParametersTest extends UnitTestCase
     /**
      * @test
      * @dataProvider withParameterThrowsExceptionForInvalidParameterValuesDataProvider
-     * @expectedException \InvalidArgumentException
      */
     public function withParameterThrowsExceptionForInvalidParameterValues($parameterValue)
     {
+        $this->expectException(\InvalidArgumentException::class);
         RouteParameters::createEmpty()->withParameter('someParameter', $parameterValue);
     }
 
@@ -69,7 +69,7 @@ class RouteParametersTest extends UnitTestCase
     {
         $originalParameters = RouteParameters::createEmpty();
         $originalParameters->withParameter('someParameter', 'someValue');
-        $this->assertFalse($originalParameters->has('someParameter'));
+        self::assertFalse($originalParameters->has('someParameter'));
     }
 
     /**
@@ -78,7 +78,7 @@ class RouteParametersTest extends UnitTestCase
     public function withParameterReturnsANewInstanceWithTheGivenParameter()
     {
         $originalParameters = RouteParameters::createEmpty()->withParameter('someParameter', 'someValue');
-        $this->assertSame('someValue', $originalParameters->getValue('someParameter'));
+        self::assertSame('someValue', $originalParameters->getValue('someParameter'));
     }
 
     /**
@@ -88,6 +88,6 @@ class RouteParametersTest extends UnitTestCase
     {
         $originalParameters = RouteParameters::createEmpty()->withParameter('someParameter', 'someValue');
         $originalParameters = $originalParameters->withParameter('someParameter', 'overriddenValue');
-        $this->assertSame('overriddenValue', $originalParameters->getValue('someParameter'));
+        self::assertSame('overriddenValue', $originalParameters->getValue('someParameter'));
     }
 }

@@ -198,7 +198,10 @@ It is very common that a full Domain Model should be validated instead of only a
 To make this use-case more easy, the ``ValidatorResolver`` has a method ``getBaseValidatorConjunction``
 which returns a fully-configured validator for an arbitrary Domain Object::
 
-    $commentValidator = $validatorResolver->getBaseValidatorConjunction('YourPackage\Domain\Model\Comment');
+    $commentValidator = $validatorResolver->getBaseValidatorConjunction(
+        \YourPackage\Domain\Model\Comment::class, // class name of the object to validate
+        ['Default']                               // optional validation groups to use during validation
+    );
     $result = $commentValidator->validate($comment);
 
 The returned validator checks the following things:
@@ -389,6 +392,11 @@ done.
 When implementing your own validators (see below), you need to pass the container around and check instances
 against it. See ``AbstractCompositeValidator`` and ``isValidatedAlready`` in the ``GenericObjectValidator``
 for examples of how to do this.
+
+Another optimization option of the ``GenericObjectValidator`` is the ``skipUnInitializedProxies`` flag. When
+set to true, it allows to skip validation of uninitialized proxy instances, to avoid recursions down into
+unchanged hierarchies. This can avoid loading of data for validation and is safe, if you can rely on your data
+not being changed and thus making an entity state invalid "from the outside."
 
 Writing Validators
 ==================

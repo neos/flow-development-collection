@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -53,7 +55,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     protected $cacheEntryFileExtension = '';
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $cacheEntryIdentifiers = [];
 
@@ -101,7 +103,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @throws Exception
      */
-    public function setCache(FrontendInterface $cache)
+    public function setCache(FrontendInterface $cache): void
     {
         parent::setCache($cache);
         $this->cacheEntryFileExtension = ($cache instanceof PhpFrontend) ? '.php' : '';
@@ -115,7 +117,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
-    public function setCacheDirectory(string $cacheDirectory)
+    public function setCacheDirectory(string $cacheDirectory): void
     {
         $this->cacheDirectory = rtrim($cacheDirectory, '/') . '/';
     }
@@ -143,7 +145,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756735);
@@ -271,10 +273,10 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Removes all cache entries of this cache.
      *
      * @return void
-     * @api
      * @throws FilesException
+     * @api
      */
-    public function flush()
+    public function flush(): void
     {
         Files::emptyDirectoryRecursively($this->cacheDirectory);
     }
@@ -298,7 +300,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
-    public function collectGarbage()
+    public function collectGarbage(): void
     {
     }
 
@@ -420,7 +422,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @throws Exception
      */
-    protected function throwExceptionIfPathExceedsMaximumLength(string $cacheEntryPathAndFilename)
+    protected function throwExceptionIfPathExceedsMaximumLength(string $cacheEntryPathAndFilename): void
     {
         if (strlen($cacheEntryPathAndFilename) > $this->environmentConfiguration->getMaximumPathLength()) {
             throw new Exception('The length of the cache entry path "' . $cacheEntryPathAndFilename . '" exceeds the maximum path length of ' . $this->environmentConfiguration->getMaximumPathLength() . '. Please consider setting the FLOW_PATH_TEMPORARY_BASE environment variable to a shorter path. ', 1248710426);
@@ -438,7 +440,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     /**
      * @param string $baseDirectory
      */
-    public function setBaseDirectory(string $baseDirectory)
+    public function setBaseDirectory(string $baseDirectory): void
     {
         $this->baseDirectory = $baseDirectory;
     }
@@ -446,7 +448,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     /**
      * @throws Exception
      */
-    protected function configureCacheDirectory()
+    protected function configureCacheDirectory(): void
     {
         $cacheDirectory = $this->cacheDirectory;
         if ($cacheDirectory === '') {
@@ -470,7 +472,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     /**
      * @throws Exception
      */
-    protected function verifyCacheDirectory()
+    protected function verifyCacheDirectory(): void
     {
         if (!is_dir($this->cacheDirectory) && !is_link($this->cacheDirectory)) {
             throw new Exception('The cache directory "' . $this->cacheDirectory . '" does not exist.', 1203965199);
@@ -522,9 +524,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      *
      * @param string $cacheEntryPathAndFilename
      * @param string $data
-     * @return boolean|integer Return value of file_put_contents
+     * @return bool Return value of file_put_contents
      */
-    protected function writeCacheFile(string $cacheEntryPathAndFilename, string $data)
+    protected function writeCacheFile(string $cacheEntryPathAndFilename, string $data): bool
     {
         for ($i = 0; $i < 3; $i++) {
             // This can be replaced by a simple file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX) once vfs
@@ -536,7 +538,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     continue;
                 }
                 if (flock($file, LOCK_EX) !== false) {
-                    $result = fwrite($file, $data);
+                    $result = fwrite($file, $data) === false ?: true;
                     flock($file, LOCK_UN);
                 }
                 fclose($file);
@@ -564,7 +566,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         try {
             $this->configureCacheDirectory();
         } catch (Exception $exception) {
-            $result->addError(new Error('Failed to configure cache directory: %s', $exception->getCode(), [$exception->getMessage()], 'Cache Directory'));
+            $result->addError(new Error('Failed to configure cache directory', (int)$exception->getCode(), [$exception->getMessage()], 'Cache Directory'));
         }
         return $result;
     }
@@ -581,7 +583,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         try {
             $this->verifyCacheDirectory();
         } catch (Exception $exception) {
-            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Cache Directory'));
+            $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Cache Directory'));
             return $result;
         }
         $result->addNotice(new Notice($this->baseDirectory ?? '-', null, [], 'Base Directory'));

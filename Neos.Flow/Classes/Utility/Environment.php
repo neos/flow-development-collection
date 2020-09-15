@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Utility;
 
 /*
@@ -17,6 +19,7 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Exception as ErrorException;
 use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 
 /**
@@ -41,7 +44,7 @@ class Environment
      * The base path of $temporaryDirectory. This property can (and should) be set from outside.
      * @var string
      */
-    protected $temporaryDirectoryBase;
+    protected $temporaryDirectoryBase = '';
 
     /**
      * @var string
@@ -64,7 +67,7 @@ class Environment
      * @param string $temporaryDirectoryBase Base path of the temporary directory, with trailing slash
      * @return void
      */
-    public function setTemporaryDirectoryBase($temporaryDirectoryBase)
+    public function setTemporaryDirectoryBase(string $temporaryDirectoryBase): void
     {
         $this->temporaryDirectoryBase = $temporaryDirectoryBase;
         $this->temporaryDirectory = null;
@@ -75,8 +78,10 @@ class Environment
      *
      * @return string Path to PHP's temporary directory
      * @api
+     * @throws Exception
+     * @throws FilesException
      */
-    public function getPathToTemporaryDirectory()
+    public function getPathToTemporaryDirectory(): string
     {
         if ($this->temporaryDirectory !== null) {
             return $this->temporaryDirectory;
@@ -92,7 +97,7 @@ class Environment
      *
      * @return integer The maximum available path length
      */
-    public function getMaximumPathLength()
+    public function getMaximumPathLength(): int
     {
         return PHP_MAXPATHLEN;
     }
@@ -100,11 +105,11 @@ class Environment
     /**
      * Whether or not URL rewriting is enabled.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isRewriteEnabled()
+    public function isRewriteEnabled(): bool
     {
-        return (boolean)Bootstrap::getEnvironmentConfigurationSetting('FLOW_REWRITEURLS');
+        return (bool)Bootstrap::getEnvironmentConfigurationSetting('FLOW_REWRITEURLS');
     }
 
     /**
@@ -116,8 +121,9 @@ class Environment
      * @param string $temporaryDirectoryBase Full path to the base for the temporary directory
      * @param ApplicationContext $context
      * @return string The full path to the temporary directory, with trailing slash
+     * @throws FilesException
      */
-    public static function composeTemporaryDirectoryName($temporaryDirectoryBase, ApplicationContext $context)
+    public static function composeTemporaryDirectoryName(string $temporaryDirectoryBase, ApplicationContext $context): string
     {
         $temporaryDirectoryBase = Files::getUnixStylePath($temporaryDirectoryBase);
         if (substr($temporaryDirectoryBase, -1, 1) !== '/') {
@@ -136,7 +142,7 @@ class Environment
      * @return string The full path to the temporary directory
      * @throws UtilityException if the temporary directory could not be created or is not writable
      */
-    protected function createTemporaryDirectory($temporaryDirectoryBase)
+    protected function createTemporaryDirectory(string $temporaryDirectoryBase): string
     {
         $temporaryDirectory = self::composeTemporaryDirectoryName($temporaryDirectoryBase, $this->context);
 
@@ -158,7 +164,7 @@ class Environment
     /**
      * @return ApplicationContext
      */
-    public function getContext()
+    public function getContext(): ApplicationContext
     {
         return $this->context;
     }

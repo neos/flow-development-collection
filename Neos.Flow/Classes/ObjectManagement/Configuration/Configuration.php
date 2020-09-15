@@ -53,10 +53,10 @@ class Configuration
     protected $factoryObjectName = '';
 
     /**
-     * Name of the factory method. Only used if $factoryObjectName is set.
+     * Name of the factory method.
      * @var string
      */
-    protected $factoryMethodName = 'create';
+    protected $factoryMethodName = '';
 
     /**
      * Arguments of the factory method
@@ -197,6 +197,11 @@ class Configuration
     public function setFactoryObjectName($objectName)
     {
         $this->factoryObjectName = $objectName;
+        if ($this->factoryMethodName === '') {
+            // Needed for b/c because all configured factory objects should default to 'create' method, but not having
+            // a factory object should not lead to a global static 'create' factory method
+            $this->factoryMethodName = 'create';
+        }
     }
 
     /**
@@ -235,13 +240,13 @@ class Configuration
     }
 
     /**
-     * Returns true if factoryObjectName and factoryMethodName are defined.
+     * Returns true if factoryObjectName or factoryMethodName are defined.
      *
      * @return boolean
      */
     public function isCreatedByFactory()
     {
-        return ($this->factoryObjectName !== '' && $this->factoryMethodName !== '');
+        return ($this->factoryObjectName !== '' || $this->factoryMethodName !== '');
     }
 
     /**

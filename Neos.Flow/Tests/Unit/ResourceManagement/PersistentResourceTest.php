@@ -26,8 +26,8 @@ class PersistentResourceTest extends UnitTestCase
     {
         $resource = new PersistentResource();
         $resource->setFilename('Something.Jpeg');
-        $this->assertSame('jpeg', $resource->getFileExtension());
-        $this->assertSame('Something.jpeg', $resource->getFilename());
+        self::assertSame('jpeg', $resource->getFileExtension());
+        self::assertSame('Something.jpeg', $resource->getFilename());
     }
 
     /**
@@ -38,13 +38,13 @@ class PersistentResourceTest extends UnitTestCase
         $resource = new PersistentResource();
 
         $resource->setFilename('Something.jpg');
-        $this->assertSame('image/jpeg', $resource->getMediaType());
+        self::assertSame('image/jpeg', $resource->getMediaType());
 
         $resource->setFilename('Something.png');
-        $this->assertSame('image/png', $resource->getMediaType());
+        self::assertSame('image/png', $resource->getMediaType());
 
         $resource->setFilename('Something.Jpeg');
-        $this->assertSame('image/jpeg', $resource->getMediaType());
+        self::assertSame('image/jpeg', $resource->getMediaType());
     }
 
     /**
@@ -54,8 +54,8 @@ class PersistentResourceTest extends UnitTestCase
     {
         $resource = new PersistentResource();
         $resource->setFilename('FileWithoutExtension');
-        $this->assertSame('', $resource->getFileExtension());
-        $this->assertSame('FileWithoutExtension', $resource->getFilename());
+        self::assertSame('', $resource->getFileExtension());
+        self::assertSame('FileWithoutExtension', $resource->getFilename());
     }
 
     /**
@@ -65,15 +65,15 @@ class PersistentResourceTest extends UnitTestCase
     {
         $resource = new PersistentResource();
         $resource->setFilename('file.jpg');
-        $this->assertSame('image/jpeg', $resource->getMediaType());
+        self::assertSame('image/jpeg', $resource->getMediaType());
 
         $resource = new PersistentResource();
         $resource->setFilename('file.zip');
-        $this->assertSame('application/zip', $resource->getMediaType());
+        self::assertSame('application/zip', $resource->getMediaType());
 
         $resource = new PersistentResource();
         $resource->setFilename('file.someunknownextension');
-        $this->assertSame('application/octet-stream', $resource->getMediaType());
+        self::assertSame('application/octet-stream', $resource->getMediaType());
     }
 
     /**
@@ -93,13 +93,13 @@ class PersistentResourceTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidSha1Values
-     * @expectedException \InvalidArgumentException
      */
     public function setSha1RejectsInvalidValues($invalidValue)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $resource = new PersistentResource();
         $resource->setSha1($invalidValue);
-        $this->assertSame('d0be2dc421be4fcd0172e5afceea3970e2f3d940', $resource->getSha1());
+        self::assertSame('d0be2dc421be4fcd0172e5afceea3970e2f3d940', $resource->getSha1());
     }
 
     /**
@@ -109,6 +109,6 @@ class PersistentResourceTest extends UnitTestCase
     {
         $resource = new PersistentResource();
         $resource->setSha1('D0BE2DC421BE4fCD0172E5AFCEEA3970E2f3d940');
-        $this->assertSame('d0be2dc421be4fcd0172e5afceea3970e2f3d940', $resource->getSha1());
+        self::assertSame('d0be2dc421be4fcd0172e5afceea3970e2f3d940', $resource->getSha1());
     }
 }

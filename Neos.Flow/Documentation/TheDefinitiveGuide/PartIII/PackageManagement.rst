@@ -210,37 +210,6 @@ of composer package names to "extra.neos.loading-order.after" as in this example
      }
  }
 
-Activating and Deactivating Packages
-====================================
-
-All directories which are found below the *Packages* folder can hold
-packages. Just make sure that you created a *composer.json* file in the
-root directory of your package.
-
-If no *PackageStates.php* exists in your *Configuration* folder, it will be created
-and all found packages will be activated. If *PackageStates.php* exists, you can use the
-package manager to activate and deactivate packages through the Flow command line script.
-
-The Flow command line interface is triggered through the *flow* script
-in the main directory of the Flow distribution. From a Unix
-shell you should be able to run the script by entering ``./flow`` (on windows,
-use ``flow.bat``).
-
-To activate a package, use the ``package:activate`` command:
-
-.. code-block:: bash
-
- $ ./flow package:activate <PackageKey>
-
-To deactivate a package, use ``package:deactivate``. For a listing of all packages
-(active and inactive) use ``package:list``.
-
-.. note::
-
-	We discourge using this feature. It is available for historical reasons and might
-	stay around for a while, but might be deprecated and removed in the future. Our
-	best practice is to remove packages that are not needed.
-
 Installing a Package
 ====================
 

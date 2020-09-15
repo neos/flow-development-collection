@@ -34,7 +34,7 @@ class DateTimeValidatorTest extends AbstractValidatorTestcase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->sampleLocale = new Locale('en_GB');
@@ -50,7 +50,7 @@ class DateTimeValidatorTest extends AbstractValidatorTestcase
     {
         $this->validatorOptions([]);
         $this->inject($this->validator, 'datetimeParser', $this->mockDatetimeParser);
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -60,7 +60,7 @@ class DateTimeValidatorTest extends AbstractValidatorTestcase
     {
         $this->validatorOptions([]);
         $this->inject($this->validator, 'datetimeParser', $this->mockDatetimeParser);
-        $this->assertFalse($this->validator->validate('')->hasErrors());
+        self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -70,7 +70,7 @@ class DateTimeValidatorTest extends AbstractValidatorTestcase
     {
         $this->validatorOptions([]);
         $this->inject($this->validator, 'datetimeParser', $this->mockDatetimeParser);
-        $this->assertFalse($this->validator->validate(new \DateTime())->hasErrors());
+        self::assertFalse($this->validator->validate(new \DateTime())->hasErrors());
     }
 
     /**
@@ -80,11 +80,11 @@ class DateTimeValidatorTest extends AbstractValidatorTestcase
     {
         $sampleInvalidTime = 'this is not a time string';
 
-        $this->mockDatetimeParser->expects($this->once())->method('parseTime', $sampleInvalidTime)->will($this->returnValue(false));
+        $this->mockDatetimeParser->expects(self::once())->method('parseTime', $sampleInvalidTime)->will(self::returnValue(false));
         $this->validatorOptions(['locale' => 'en_GB', 'formatLength' => I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, 'formatType' => I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME]);
         $this->inject($this->validator, 'datetimeParser', $this->mockDatetimeParser);
 
-        $this->assertTrue($this->validator->validate($sampleInvalidTime)->hasErrors());
+        self::assertTrue($this->validator->validate($sampleInvalidTime)->hasErrors());
     }
 
     /**
@@ -94,10 +94,10 @@ class DateTimeValidatorTest extends AbstractValidatorTestcase
     {
         $sampleValidDateTime = '10.08.2010, 18:00 CEST';
 
-        $this->mockDatetimeParser->expects($this->once())->method('parseDateAndTime', $sampleValidDateTime)->will($this->returnValue(['parsed datetime']));
+        $this->mockDatetimeParser->expects(self::once())->method('parseDateAndTime', $sampleValidDateTime)->will(self::returnValue(['parsed datetime']));
         $this->validatorOptions(['locale' => 'en_GB', 'formatLength' => I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL, 'formatType' => I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME]);
         $this->inject($this->validator, 'datetimeParser', $this->mockDatetimeParser);
 
-        $this->assertFalse($this->validator->validate($sampleValidDateTime)->hasErrors());
+        self::assertFalse($this->validator->validate($sampleValidDateTime)->hasErrors());
     }
 }

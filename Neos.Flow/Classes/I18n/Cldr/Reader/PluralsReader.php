@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\I18n\Cldr\Reader;
 
 /*
@@ -120,6 +122,7 @@ class PluralsReader
      * Constructs the reader, loading parsed data from cache if available.
      *
      * @return void
+     * @throws \Neos\Cache\Exception
      */
     public function initializeObject()
     {
@@ -144,7 +147,7 @@ class PluralsReader
      * @param Locale $locale
      * @return string One of plural form constants
      */
-    public function getPluralForm($quantity, Locale $locale)
+    public function getPluralForm($quantity, Locale $locale): string
     {
         if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
             return self::RULE_OTHER;
@@ -155,6 +158,8 @@ class PluralsReader
         if ($ruleset === null) {
             return self::RULE_OTHER;
         }
+
+        $subrulePassed = false;
 
         foreach ($ruleset as $form => $rule) {
             foreach ($rule as $subrule) {
@@ -220,7 +225,7 @@ class PluralsReader
      * @param Locale $locale Locale to return plural forms for
      * @return array Plural forms' names (one, zero, two, few, many, other) available for language set in this model
      */
-    public function getPluralForms(Locale $locale)
+    public function getPluralForms(Locale $locale): array
     {
         if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
             return [self::RULE_OTHER];
@@ -243,9 +248,10 @@ class PluralsReader
      * running this method.
      *
      * @return void
+     * @throws Exception\InvalidPluralRuleException
      * @see PluralsReader::$rulesets
      */
-    protected function generateRulesets()
+    protected function generateRulesets(): void
     {
         $model = $this->cldrRepository->getModel('supplemental/plurals');
         $pluralRulesSet = $model->getRawArray('plurals');
@@ -297,7 +303,7 @@ class PluralsReader
      * @return array Parsed rule
      * @throws Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
      */
-    protected function parseRule($rule)
+    protected function parseRule(string $rule): array
     {
         $parsedRule = [];
 

@@ -191,8 +191,23 @@ requested. An action method name must be camelCased and always end with the suff
 "Action". In the Action Request and other parts of the routing system, it is
 referred to simply by its *action name*, in this case ``index``.
 
-If an action returns a string or an object which can be cast to a string, it will
-be set as the content of the response automatically.
+If an action returns a string or an object which can be cast to a string, a PHP resource stream
+like an opened file or a PSR7 stream, it will be set as the content of the response automatically::
+
+	/**
+	 * Stream a file content to the browser
+	 *
+	 * @return resource
+	 */
+	public function exportAction() {
+		$this->response->setContentType('text/csv');
+		return fopen('/path/fo/file', 'r');
+	}
+
+.. note::
+
+   This also works for large files, in which case the file content will be streamed to the browser.
+
 
 Defining Arguments
 ~~~~~~~~~~~~~~~~~~
@@ -310,6 +325,12 @@ later sources replace earlier ones
 * query string (derived from $_GET)
 * body (typically from POST or PUT requests)
 * file uploads (derived from $_FILES)
+
+.. hint::
+
+	Sometimes you might need to map a whole request body into a single action argument.
+	In that case you can use an annotation ``@Flow\MapRequestBody("$argumentName")`` on
+	your action. Please refer to the :doc:`PropertyMapping` chapter for more details.
 
 Internal Arguments
 ~~~~~~~~~~~~~~~~~~
@@ -892,6 +913,29 @@ Creating a Flash Messages is a matter of a single line of code::
 The flash messages can be rendered inside the template using the ``<f:flashMessages />``
 ViewHelper. Please consult the ViewHelper for a full reference.
 
+Since Flash Messages need to possibly survive over requests until they get displayed, they need
+to be persisted somehow.
+Flash Messages can be stored in different ways, the Framework default is to store them in the session.
+The storage can be configured in Settings.yaml via the following options::
+
+	Neos:
+	  Flow:
+	    mvc:
+	      flashMessages:
+	        containers:
+	          'customFlashMessages':
+	            storage: 'Neos\Flow\Mvc\FlashMessage\Storage\FlashMessageCookieStorage'
+	            storageOptions:
+	              cookieName: 'Neos_Flow_FlashMessages_My_Custom'
+	            requestPatterns:
+	              'SomeControllers':
+	                pattern: 'ControllerObjectName'
+	                patternOptions:
+	                  'controllerObjectNamePattern': 'Some\Package\Controller\.*'
+
+With this you can specify to store the Flash Messages in an own cookie, and even separate them by
+request patterns. New storages can be created by implementing the ``FlashMessageStorageInterface`` and
+specifying the storage class in the settings.
 
 .. _IANA Media Type: http://www.iana.org/assignments/media-types/index.html
 

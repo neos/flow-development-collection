@@ -4,17 +4,30 @@ dist: bionic
 branches:
   only:
   - /(master|\d+\.\d+)/
+
+# the following two define the build matrix - while we want to define
+# it explicitly using jobs.include, we need these so we can use allow_failures
+# on PHP nightly builds. See this for more information:
+# https://docs.travis-ci.com/user/build-matrix/#rows-that-are-allowed-to-fail
+php:
+  - 7.2
+  - 7.3
+  - 7.4
+  - nightly
+env:
+  # the following is a trick to make jobs.exclude work
+  - DUMMY=true
+
 jobs:
+  allow_failures:
+    - php: nightly
   fast_finish: true
+  exclude:
+    # this excludes jobs with "no env" by using the single DUMMY defined above
+    - env: DUMMY=true
   include:
-    - php: 7.1
-      env: DB=mysql
-      addons:
-        mariadb: '10.2'
-    - php: 7.1
-      env: DB=mysql BEHAT=true
-      addons:
-        mariadb: '10.2'
+    - php: 7.2
+      env: STATIC_ANALYSIS=true
     - php: 7.2
       env: DB=mysql
       addons:
@@ -32,20 +45,26 @@ jobs:
       addons:
         mariadb: '10.2'
     - php: 7.4
+      env: DB=mysql
+      addons:
+        mariadb: '10.2'
+    - php: 7.4
+      env: DB=mysql BEHAT=true
+      addons:
+        mariadb: '10.2'
+    - php: nightly
       env: DB=pgsql
-      sudo: required
       addons:
         postgresql: "9.5"
-    - php: 7.4
+    - php: nightly
       env: DB=pgsql BEHAT=true
-      sudo: required
       addons:
         postgresql: "9.5"
-    - php: 7.4
+    - php: nightly
       env: DB=mysql
       addons:
         mariadb: '10.2'
-    - php: 7.4
+    - php: nightly
       env: DB=mysql BEHAT=true
       addons:
         mariadb: '10.2'
@@ -54,7 +73,7 @@ cache:
     - $HOME/.composer/cache
 before_install:
   - export NEOS_TARGET_REPOSITORY=neos/flow-development-collection
-  - export NEOS_TARGET_VERSION=5.3
+  - export NEOS_TARGET_VERSION=master
   - if [ "$DB" = "pgsql" ]; then sudo mount -o remount,size=25% /var/ramfs ; fi
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
   - env
@@ -82,13 +101,14 @@ before_script:
   - echo 'if [ $? -eq 139 ]; then exit 0 ; else exit $? ; fi' >> unittest.sh
   - rm -f Configuration/Routes.yaml
   - cp Configuration/Settings.yaml.example Configuration/Settings.yaml
-  - Build/BuildEssentials/TravisCi/SetupDatabase.sh
+  - if [ "$STATIC_ANALYSIS" != "true" ]; then Build/BuildEssentials/TravisCi/SetupDatabase.sh; fi
   - cp Configuration/Settings.yaml Configuration/Testing/
   - if [ "$BEHAT" = "true" ]; then FLOW_CONTEXT=Testing/Behat ./flow behat:setup ; fi
   - if [ "$DB" = "mysql" ]; then echo "MariaDB version ${TRAVIS_MARIADB_VERSION}"; fi
 script:
-  - if [ "$BEHAT" != "true" ]; then sh ./unittest.sh ; fi
-  - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Framework tests"; fi
+  - if [ "$STATIC_ANALYSIS" = "true" ]; then bin/psalm --config=Packages/Framework/psalm.xml --show-info=false; fi
+  - if [ "$STATIC_ANALYSIS" != "true" ] && [ "$BEHAT" != "true" ]; then sh ./unittest.sh ; fi
+  - if [ "$STATIC_ANALYSIS" != "true" ] && [ "$BEHAT" != "true" ]; then bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Framework tests"; fi
   - if [ "$BEHAT" = "true" ]; then FLOW_CONTEXT=Testing/Behat ./flow doctrine:create; fi
   - if [ "$BEHAT" = "true" ]; then bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist; fi
 notifications:

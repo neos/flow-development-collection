@@ -25,7 +25,7 @@ class ArrayFromObjectConverterTest extends UnitTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converter = new ArrayFromObjectConverter();
     }
@@ -35,9 +35,9 @@ class ArrayFromObjectConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['object'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        $this->assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
-        $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+        self::assertEquals(['object'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        self::assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
+        self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
     /**
@@ -48,7 +48,7 @@ class ArrayFromObjectConverterTest extends UnitTestCase
         $source = new \stdClass();
         $source->first = 'Foo';
         $source->second = new \stdClass();
-        $this->assertEquals(['second' => new \stdClass()], $this->converter->getSourceChildPropertiesToBeConverted($source));
+        self::assertEquals(['second' => new \stdClass()], $this->converter->getSourceChildPropertiesToBeConverted($source));
     }
 
     public function objectToArrayDataProvider()
@@ -73,6 +73,6 @@ class ArrayFromObjectConverterTest extends UnitTestCase
         $convertedChildProperties = array_map(function ($value) {
             return $this->converter->convertFrom($value, 'array', [], null);
         }, $this->converter->getSourceChildPropertiesToBeConverted($source));
-        $this->assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', $convertedChildProperties, null));
+        self::assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', $convertedChildProperties, null));
     }
 }

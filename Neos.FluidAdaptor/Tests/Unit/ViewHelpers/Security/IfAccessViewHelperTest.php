@@ -29,16 +29,16 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
     protected $ifAccessViewHelper;
 
     /**
-     * @var PrivilegeManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PrivilegeManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockPrivilegeManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockPrivilegeManager = $this->getMockBuilder(\Neos\Flow\Security\Authorization\PrivilegeManagerInterface::class)->disableOriginalConstructor()->getMock();
 
         $objectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $objectManager->expects($this->any())->method('get')->willReturnCallback(function ($objectName) {
+        $objectManager->expects(self::any())->method('get')->willReturnCallback(function ($objectName) {
             switch ($objectName) {
                 case PrivilegeManagerInterface::class:
                     return $this->mockPrivilegeManager;
@@ -47,7 +47,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
         });
 
         $renderingContext = $this->getMockBuilder(RenderingContext::class)->disableOriginalConstructor()->getMock();
-        $renderingContext->expects($this->any())->method('getObjectManager')->willReturn($objectManager);
+        $renderingContext->expects(self::any())->method('getObjectManager')->willReturn($objectManager);
 
         $this->ifAccessViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper::class, ['renderThenChild', 'renderElseChild']);
         $this->inject($this->ifAccessViewHelper, 'renderingContext', $renderingContext);
@@ -58,8 +58,8 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperRendersThenIfHasAccessToPrivilegeTargetReturnsTrue()
     {
-        $this->mockPrivilegeManager->expects($this->once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->will($this->returnValue(true));
-        $this->ifAccessViewHelper->expects($this->once())->method('renderThenChild')->will($this->returnValue('foo'));
+        $this->mockPrivilegeManager->expects(self::once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->will(self::returnValue(true));
+        $this->ifAccessViewHelper->expects(self::once())->method('renderThenChild')->will(self::returnValue('foo'));
 
         $arguments = [
             'privilegeTarget' => 'somePrivilegeTarget',
@@ -67,7 +67,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
         ];
         $this->ifAccessViewHelper->setArguments($arguments);
         $actualResult = $this->ifAccessViewHelper->render();
-        $this->assertEquals('foo', $actualResult);
+        self::assertEquals('foo', $actualResult);
     }
 
     /**
@@ -75,8 +75,8 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperRendersElseIfHasAccessToPrivilegeTargetReturnsFalse()
     {
-        $this->mockPrivilegeManager->expects($this->once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->will($this->returnValue(false));
-        $this->ifAccessViewHelper->expects($this->once())->method('renderElseChild')->will($this->returnValue('ElseViewHelperResults'));
+        $this->mockPrivilegeManager->expects(self::once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->will(self::returnValue(false));
+        $this->ifAccessViewHelper->expects(self::once())->method('renderElseChild')->will(self::returnValue('ElseViewHelperResults'));
 
         $arguments = [
             'privilegeTarget' => 'somePrivilegeTarget',
@@ -84,6 +84,6 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
         ];
         $this->ifAccessViewHelper->setArguments($arguments);
         $actualResult = $this->ifAccessViewHelper->render();
-        $this->assertEquals('ElseViewHelperResults', $actualResult);
+        self::assertEquals('ElseViewHelperResults', $actualResult);
     }
 }

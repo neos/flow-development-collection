@@ -11,11 +11,14 @@ namespace Neos\Flow\Security\Authorization;
  * source code.
  */
 
-use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\Exception\AccessDeniedException;
+use Neos\Flow\Security\Exception\AuthenticationRequiredException;
+use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 use Neos\Flow\Security\RequestPatternInterface;
 
 /**
- * A RequestFilter is configured to match specific \Neos\Flow\Mvc\RequestInterfaces and call
+ * A RequestFilter is configured to match specific ActionRequests and call
  * a InterceptorInterface if needed.
  *
  */
@@ -48,7 +51,7 @@ class RequestFilter
      *
      * @return RequestPatternInterface The set request pattern
      */
-    public function getRequestPattern()
+    public function getRequestPattern(): RequestPatternInterface
     {
         return $this->pattern;
     }
@@ -58,7 +61,7 @@ class RequestFilter
      *
      * @return InterceptorInterface The set security interceptor
      */
-    public function getSecurityInterceptor()
+    public function getSecurityInterceptor(): InterceptorInterface
     {
         return $this->securityInterceptor;
     }
@@ -66,14 +69,16 @@ class RequestFilter
     /**
      * Tries to match the given request against this filter and calls the set security interceptor on success.
      *
-     * @param RequestInterface $request The request to be matched
+     * @param ActionRequest $request The request to be matched
      * @return boolean Returns true if the filter matched, false otherwise
+     * @throws AccessDeniedException
+     * @throws AuthenticationRequiredException
+     * @throws NoTokensAuthenticatedException
      */
-    public function filterRequest(RequestInterface $request)
+    public function filterRequest(ActionRequest $request): bool
     {
         if ($this->pattern->matchRequest($request)) {
-            $this->securityInterceptor->invoke();
-            return true;
+            return $this->securityInterceptor->invoke() !== false;
         }
         return false;
     }

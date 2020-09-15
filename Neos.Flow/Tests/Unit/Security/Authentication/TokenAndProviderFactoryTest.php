@@ -12,7 +12,9 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
  */
 
 use Neos\Flow\Security\Authentication\AuthenticationProviderResolver;
+use Neos\Flow\Security\Authentication\AuthenticationTokenResolver;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
+use Neos\Flow\Security\Exception\InvalidAuthenticationProviderException;
 use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -28,19 +30,20 @@ class TokenAndProviderFactoryTest extends UnitTestCase
     {
         $mockProviderResolver = $this->getMockBuilder(AuthenticationProviderResolver::class)->disableOriginalConstructor()->getMock();
         $mockRequestPatternResolver = $this->getMockBuilder(RequestPatternResolver::class)->disableOriginalConstructor()->getMock();
+        $mockTokenResolver = $this->getMockBuilder(AuthenticationTokenResolver::class)->disableOriginalConstructor()->getMock();
 
-        $tokenAndProviderFactory = new TokenAndProviderFactory($mockProviderResolver, $mockRequestPatternResolver);
+        $tokenAndProviderFactory = new TokenAndProviderFactory($mockProviderResolver, $mockRequestPatternResolver, $mockTokenResolver);
 
-        $this->assertEquals([], $tokenAndProviderFactory->getProviders(), 'The array of providers should be empty.');
-        $this->assertEquals([], $tokenAndProviderFactory->getTokens(), 'The array of tokens should be empty.');
+        self::assertEquals([], $tokenAndProviderFactory->getProviders(), 'The array of providers should be empty.');
+        self::assertEquals([], $tokenAndProviderFactory->getTokens(), 'The array of tokens should be empty.');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidAuthenticationProviderException
      */
     public function anExceptionIsThrownIfTheConfiguredProviderDoesNotExist()
     {
+        $this->expectException(InvalidAuthenticationProviderException::class);
         $providerConfiguration = [
             'NotExistingProvider' => [
                 'providerClass' => 'NotExistingProviderClass'
@@ -49,8 +52,9 @@ class TokenAndProviderFactoryTest extends UnitTestCase
 
         $mockProviderResolver = $this->getMockBuilder(AuthenticationProviderResolver::class)->disableOriginalConstructor()->getMock();
         $mockRequestPatternResolver = $this->getMockBuilder(RequestPatternResolver::class)->disableOriginalConstructor()->getMock();
+        $mockTokenResolver = $this->getMockBuilder(AuthenticationTokenResolver::class)->disableOriginalConstructor()->getMock();
 
-        $tokenAndProviderFactory = new TokenAndProviderFactory($mockProviderResolver, $mockRequestPatternResolver);
+        $tokenAndProviderFactory = new TokenAndProviderFactory($mockProviderResolver, $mockRequestPatternResolver, $mockTokenResolver);
         $tokenAndProviderFactory->injectSettings(['security' => ['authentication' => ['providers' => $providerConfiguration]]]);
 
         $tokenAndProviderFactory->getProviders();

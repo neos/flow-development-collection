@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<!-- Copyright © 1991-2020 Unicode, Inc.
+For terms of use, see http://www.unicode.org/copyright.html
+Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
+CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
+-->
 <ldml>
 	<identity>
-		<version number="$Revision: 4685 $"/>
-		<generation date="$Date: 2010-02-18 01:54:20 -0600 (Thu, 18 Feb 2010) $"/>
+		<version number="$Revision$"/>
 		<language type="tzm"/>
 	</identity>
 	<localeDisplayNames>
@@ -46,7 +50,7 @@
 			<language type="ta">Tatamilt</language>
 			<language type="th">Taṭayt</language>
 			<language type="tr">Taturkit</language>
-			<language type="tzm">Tamaziɣt</language>
+			<language type="tzm">Tamaziɣt n laṭlaṣ</language>
 			<language type="uk">Tukranit</language>
 			<language type="ur">Turdut</language>
 			<language type="vi">Taviṭnamit</language>
@@ -62,7 +66,6 @@
 			<territory type="AI">Angwilla</territory>
 			<territory type="AL">Albanya</territory>
 			<territory type="AM">Arminya</territory>
-			<territory type="AN">Antil Tihulanḍiyyin</territory>
 			<territory type="AO">Angula</territory>
 			<territory type="AR">Arjuntin</territory>
 			<territory type="AS">Samwa Imirikaniyyin</territory>
@@ -100,7 +103,6 @@
 			<territory type="CN">Ṣṣin</territory>
 			<territory type="CO">Kulumbya</territory>
 			<territory type="CR">Kusṭa Rika</territory>
-			<territory type="CS">Ṣiṛbya d Muntinigru</territory>
 			<territory type="CU">kuba</territory>
 			<territory type="CV">Tigzirin n Iɣf Uzegzaw</territory>
 			<territory type="CY">Qubrus</territory>
@@ -182,7 +184,6 @@
 			<territory type="MD">Mulḍavya</territory>
 			<territory type="MG">Madaɣacqar</territory>
 			<territory type="MH">Tigzirin n Marcal</territory>
-			<territory type="MK">Maqdunya</territory>
 			<territory type="ML">Mali</territory>
 			<territory type="MM">Myanmar</territory>
 			<territory type="MN">Manɣulya</territory>
@@ -287,15 +288,65 @@
 		<exemplarCharacters>[a b c d ḍ e ɛ f g {gʷ} ɣ h ḥ i j k {kʷ} l m n q r ṛ s ṣ t ṭ u w x y z]</exemplarCharacters>
 		<exemplarCharacters type="auxiliary">[o p v]</exemplarCharacters>
 		<exemplarCharacters type="index">[A B C D Ḍ E Ɛ F G Ɣ H Ḥ I J K L M N Q R Ṛ S Ṣ T Ṭ U W X Y Z]</exemplarCharacters>
+		<exemplarCharacters type="numbers">[  \- ‑ , % ‰ + 0 1 2 3 4 5 6 7 8 9]</exemplarCharacters>
 	</characters>
 	<delimiters>
-		<quotationStart>‘</quotationStart>
-		<quotationEnd>’</quotationEnd>
-		<alternateQuotationStart>“</alternateQuotationStart>
-		<alternateQuotationEnd>”</alternateQuotationEnd>
+		<quotationStart>“</quotationStart>
+		<quotationEnd>”</quotationEnd>
+		<alternateQuotationStart>‘</alternateQuotationStart>
+		<alternateQuotationEnd>’</alternateQuotationEnd>
 	</delimiters>
 	<dates>
 		<calendars>
+			<calendar type="generic">
+				<dateFormats>
+					<dateFormatLength type="full">
+						<dateFormat>
+							<pattern>EEEE, d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="long">
+						<dateFormat>
+							<pattern>d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="medium">
+						<dateFormat>
+							<pattern>d MMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="short">
+						<dateFormat>
+							<pattern>dd/MM/y GGGGG</pattern>
+						</dateFormat>
+					</dateFormatLength>
+				</dateFormats>
+				<dateTimeFormats>
+					<availableFormats>
+						<dateFormatItem id="d">d</dateFormatItem>
+						<dateFormatItem id="hm">h:mm a</dateFormatItem>
+						<dateFormatItem id="Hm">HH:mm</dateFormatItem>
+						<dateFormatItem id="Hms">HH:mm:ss</dateFormatItem>
+						<dateFormatItem id="M">L</dateFormatItem>
+						<dateFormatItem id="Md">M/d</dateFormatItem>
+						<dateFormatItem id="MEd">E, M/d</dateFormatItem>
+						<dateFormatItem id="MMM">LLL</dateFormatItem>
+						<dateFormatItem id="MMMd">MMM d</dateFormatItem>
+						<dateFormatItem id="MMMEd">E, MMM d</dateFormatItem>
+						<dateFormatItem id="MMMMd">MMMM d</dateFormatItem>
+						<dateFormatItem id="MMMMEd">E, MMMM d</dateFormatItem>
+						<dateFormatItem id="ms">mm:ss</dateFormatItem>
+						<dateFormatItem id="y">y</dateFormatItem>
+						<dateFormatItem id="yM">M/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E, M/d/y</dateFormatItem>
+						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E, MMM d, y</dateFormatItem>
+						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
+						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
+						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
+					</availableFormats>
+				</dateTimeFormats>
+			</calendar>
 			<calendar type="gregorian">
 				<months>
 					<monthContext type="format">
@@ -396,6 +447,10 @@
 				</quarters>
 				<dayPeriods>
 					<dayPeriodContext type="format">
+						<dayPeriodWidth type="abbreviated">
+							<dayPeriod type="am">Zdat azal</dayPeriod>
+							<dayPeriod type="pm">Ḍeffir aza</dayPeriod>
+						</dayPeriodWidth>
 						<dayPeriodWidth type="wide">
 							<dayPeriod type="am">Zdat azal</dayPeriod>
 							<dayPeriod type="pm">Ḍeffir aza</dayPeriod>
@@ -430,32 +485,10 @@
 					</dateFormatLength>
 					<dateFormatLength type="short">
 						<dateFormat>
-							<pattern>dd/MM/yyyy</pattern>
+							<pattern>dd/MM/y</pattern>
 						</dateFormat>
 					</dateFormatLength>
 				</dateFormats>
-				<timeFormats>
-					<timeFormatLength type="full">
-						<timeFormat>
-							<pattern>h:mm:ss a zzzz</pattern>
-						</timeFormat>
-					</timeFormatLength>
-					<timeFormatLength type="long">
-						<timeFormat>
-							<pattern>h:mm:ss a z</pattern>
-						</timeFormat>
-					</timeFormatLength>
-					<timeFormatLength type="medium">
-						<timeFormat>
-							<pattern>h:mm:ss a</pattern>
-						</timeFormat>
-					</timeFormatLength>
-					<timeFormatLength type="short">
-						<timeFormat>
-							<pattern>h:mm a</pattern>
-						</timeFormat>
-					</timeFormatLength>
-				</timeFormats>
 				<dateTimeFormats>
 					<availableFormats>
 						<dateFormatItem id="d">d</dateFormatItem>
@@ -473,64 +506,92 @@
 						<dateFormatItem id="ms">mm:ss</dateFormatItem>
 						<dateFormatItem id="y">y</dateFormatItem>
 						<dateFormatItem id="yM">M/y</dateFormatItem>
-						<dateFormatItem id="yMEd">EEE, M/d/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E, M/d/y</dateFormatItem>
 						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
-						<dateFormatItem id="yMMMEd">EEE, MMM d, y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E, MMM d, y</dateFormatItem>
 						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
-						<dateFormatItem id="yQ">Q y</dateFormatItem>
 						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
+						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
 					</availableFormats>
 				</dateTimeFormats>
-				<fields>
-					<field type="era">
-						<displayName>Tallit</displayName>
-					</field>
-					<field type="year">
-						<displayName>Asseggas</displayName>
-					</field>
-					<field type="month">
-						<displayName>Ayur</displayName>
-					</field>
-					<field type="week">
-						<displayName>Imalass</displayName>
-					</field>
-					<field type="day">
-						<displayName>Ass</displayName>
-						<relative type="-1">Assenaṭ</relative>
-						<relative type="0">Assa</relative>
-						<relative type="1">Asekka</relative>
-					</field>
-					<field type="weekday">
-						<displayName>Ass n Imalass</displayName>
-					</field>
-					<field type="dayperiod">
-						<displayName>Zdat azal/Deffir azal</displayName>
-					</field>
-					<field type="hour">
-						<displayName>Tasragt</displayName>
-					</field>
-					<field type="minute">
-						<displayName>Tusdat</displayName>
-					</field>
-					<field type="second">
-						<displayName>Tusnat</displayName>
-					</field>
-					<field type="zone">
-						<displayName>Aseglem asergan</displayName>
-					</field>
-				</fields>
 			</calendar>
 		</calendars>
+		<fields>
+			<field type="era">
+				<displayName>Tallit</displayName>
+			</field>
+			<field type="year">
+				<displayName>Asseggas</displayName>
+			</field>
+			<field type="month">
+				<displayName>Ayur</displayName>
+			</field>
+			<field type="week">
+				<displayName>Imalass</displayName>
+			</field>
+			<field type="day">
+				<displayName>Ass</displayName>
+				<relative type="-1">Assenaṭ</relative>
+				<relative type="0">Assa</relative>
+				<relative type="1">Asekka</relative>
+			</field>
+			<field type="weekday">
+				<displayName>Ass n Imalass</displayName>
+			</field>
+			<field type="dayperiod">
+				<displayName>Zdat azal/Deffir azal</displayName>
+			</field>
+			<field type="hour">
+				<displayName>Tasragt</displayName>
+			</field>
+			<field type="minute">
+				<displayName>Tusdat</displayName>
+			</field>
+			<field type="second">
+				<displayName>Tusnat</displayName>
+			</field>
+			<field type="zone">
+				<displayName>Aseglem asergan</displayName>
+			</field>
+		</fields>
 	</dates>
 	<numbers>
-		<symbols>
+		<symbols numberSystem="latn">
 			<decimal>,</decimal>
 			<group> </group>
 		</symbols>
-		<currencyFormats>
+		<currencyFormats numberSystem="latn">
 			<currencyFormatLength>
-				<currencyFormat>
+				<currencyFormat type="standard">
 					<pattern>#,##0.00 ¤</pattern>
+				</currencyFormat>
+			</currencyFormatLength>
+			<currencyFormatLength type="short">
+				<currencyFormat type="standard">
+					<pattern type="1000" count="one" draft="provisional">0K ¤</pattern>
+					<pattern type="1000" count="other" draft="provisional">0K ¤</pattern>
+					<pattern type="10000" count="one" draft="provisional">00K ¤</pattern>
+					<pattern type="10000" count="other" draft="provisional">00K ¤</pattern>
+					<pattern type="100000" count="one" draft="provisional">000K ¤</pattern>
+					<pattern type="100000" count="other" draft="provisional">000K ¤</pattern>
+					<pattern type="1000000" count="one" draft="provisional">0M ¤</pattern>
+					<pattern type="1000000" count="other" draft="provisional">0M ¤</pattern>
+					<pattern type="10000000" count="one" draft="provisional">00M ¤</pattern>
+					<pattern type="10000000" count="other" draft="provisional">00M ¤</pattern>
+					<pattern type="100000000" count="one" draft="provisional">000M ¤</pattern>
+					<pattern type="100000000" count="other" draft="provisional">000M ¤</pattern>
+					<pattern type="1000000000" count="one" draft="provisional">0G ¤</pattern>
+					<pattern type="1000000000" count="other" draft="provisional">0G ¤</pattern>
+					<pattern type="10000000000" count="one" draft="provisional">00G ¤</pattern>
+					<pattern type="10000000000" count="other" draft="provisional">00G ¤</pattern>
+					<pattern type="100000000000" count="one" draft="provisional">000G ¤</pattern>
+					<pattern type="100000000000" count="other" draft="provisional">000G ¤</pattern>
+					<pattern type="1000000000000" count="one" draft="provisional">0T ¤</pattern>
+					<pattern type="1000000000000" count="other" draft="provisional">0T ¤</pattern>
+					<pattern type="10000000000000" count="one" draft="provisional">00T ¤</pattern>
+					<pattern type="10000000000000" count="other" draft="provisional">00T ¤</pattern>
+					<pattern type="100000000000000" count="one" draft="provisional">000T ¤</pattern>
+					<pattern type="100000000000000" count="other" draft="provisional">000T ¤</pattern>
 				</currencyFormat>
 			</currencyFormatLength>
 		</currencyFormats>
@@ -587,7 +648,7 @@
 				<displayName>Uṛu</displayName>
 			</currency>
 			<currency type="GBP">
-				<displayName>Junih Usterlini Ubriṭani</displayName>
+				<displayName>Junih Ubriṭani</displayName>
 			</currency>
 			<currency type="GHC">
 				<displayName>Sidi Uɣani</displayName>
@@ -626,6 +687,9 @@
 				<displayName>Aryari Umalɣaci</displayName>
 			</currency>
 			<currency type="MRO">
+				<displayName>Uqiyya Umuritani (1973–2017)</displayName>
+			</currency>
+			<currency type="MRU">
 				<displayName>Uqiyya Umuritani</displayName>
 			</currency>
 			<currency type="MUR">
@@ -668,6 +732,9 @@
 				<displayName>Cilin Uṣumali</displayName>
 			</currency>
 			<currency type="STD">
+				<displayName>Dubra Usawṭumi (1977–2017)</displayName>
+			</currency>
+			<currency type="STN">
 				<displayName>Dubra Usawṭumi</displayName>
 			</currency>
 			<currency type="SZL">
@@ -680,7 +747,7 @@
 				<displayName>Cilin Uṭanzani</displayName>
 			</currency>
 			<currency type="UGX">
-				<displayName>Cilin Uɣandi (1966-1987)</displayName>
+				<displayName>Cilin Uɣandi (1966–1987)</displayName>
 			</currency>
 			<currency type="USD">
 				<displayName>Ḍular Umirikani</displayName>
@@ -695,6 +762,9 @@
 				<displayName>Rand Ufriki Unzul</displayName>
 			</currency>
 			<currency type="ZMK">
+				<displayName>Kwača Uzambi (1968–2012)</displayName>
+			</currency>
+			<currency type="ZMW">
 				<displayName>Kwača Uzambi</displayName>
 			</currency>
 			<currency type="ZWD">

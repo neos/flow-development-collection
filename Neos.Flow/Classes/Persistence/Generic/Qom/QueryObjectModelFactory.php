@@ -17,6 +17,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  * The Query Object Model Factory
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 class QueryObjectModelFactory
 {

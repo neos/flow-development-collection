@@ -11,8 +11,7 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  * source code.
  */
 
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Uri;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -23,6 +22,8 @@ use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestACont
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\RoutingTestAController;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\Arrays;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Functional tests for the Router
@@ -33,11 +34,17 @@ use Neos\Utility\Arrays;
 class RoutingTest extends FunctionalTestCase
 {
     /**
+     * @var ServerRequestFactoryInterface
+     */
+    protected $serverRequestFactory;
+
+    /**
      * Validate that test routes are loaded
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
+        $this->serverRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
 
         $foundRoute = false;
         /** @var $route Route */
@@ -55,13 +62,13 @@ class RoutingTest extends FunctionalTestCase
     }
 
     /**
-     * @param Request $httpRequest
+     * @param ServerRequestInterface $httpRequest
      * @param array $matchResults
      * @return ActionRequest
      */
-    protected function createActionRequest(Request $httpRequest, array $matchResults = null)
+    protected function createActionRequest(ServerRequestInterface $httpRequest, array $matchResults = null)
     {
-        $actionRequest = new ActionRequest($httpRequest);
+        $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         if ($matchResults !== null) {
             $requestArguments = $actionRequest->getArguments();
             $mergedArguments = Arrays::arrayMergeRecursiveOverrule($requestArguments, $matchResults);
@@ -76,11 +83,11 @@ class RoutingTest extends FunctionalTestCase
     public function httpMethodsAreRespectedForGetRequests()
     {
         $requestUri = 'http://localhost/neos/flow/test/httpmethods';
-        $request = Request::create(new Uri($requestUri), 'GET');
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri));
         $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         $actionRequest = $this->createActionRequest($request, $matchResults);
-        $this->assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
-        $this->assertEquals('first', $actionRequest->getControllerActionName());
+        self::assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
+        self::assertEquals('first', $actionRequest->getControllerActionName());
     }
 
     /**
@@ -89,11 +96,11 @@ class RoutingTest extends FunctionalTestCase
     public function httpMethodsAreRespectedForPostRequests()
     {
         $requestUri = 'http://localhost/neos/flow/test/httpmethods';
-        $request = Request::create(new Uri($requestUri), 'POST');
+        $request = $this->serverRequestFactory->createServerRequest('POST', new Uri($requestUri));
         $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         $actionRequest = $this->createActionRequest($request, $matchResults);
-        $this->assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
-        $this->assertEquals('second', $actionRequest->getControllerActionName());
+        self::assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
+        self::assertEquals('second', $actionRequest->getControllerActionName());
     }
 
     /**
@@ -198,7 +205,7 @@ class RoutingTest extends FunctionalTestCase
      */
     public function routeTests($requestUri, $expectedMatchingRouteName, $expectedControllerObjectName = null, array $expectedArguments = null)
     {
-        $request = Request::create(new Uri($requestUri));
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri));
         try {
             $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
         } catch (NoMatchingRouteException $exception) {
@@ -214,12 +221,12 @@ class RoutingTest extends FunctionalTestCase
             if ($matchedRoute === null) {
                 $this->fail('Expected route "' . $expectedMatchingRouteName . '" to match, but no route matched request URI "' . $requestUri . '"');
             } else {
-                $this->assertEquals('Neos.Flow :: Functional Test: ' . $expectedMatchingRouteName, $matchedRoute->getName());
+                self::assertEquals('Neos.Flow :: Functional Test: ' . $expectedMatchingRouteName, $matchedRoute->getName());
             }
         }
-        $this->assertEquals($expectedControllerObjectName, $actionRequest->getControllerObjectName());
+        self::assertEquals($expectedControllerObjectName, $actionRequest->getControllerObjectName());
         if ($expectedArguments !== null) {
-            $this->assertEquals($expectedArguments, $actionRequest->getArguments());
+            self::assertEquals($expectedArguments, $actionRequest->getArguments());
         }
     }
 
@@ -236,43 +243,43 @@ class RoutingTest extends FunctionalTestCase
             [
                 'routeValues' => array_merge($defaults, ['dynamic' => 'DynamicDefault']),
                 'expectedResolvedRouteName' => 'dynamic part without default',
-                'expectedResolvedUriPath' => 'neos/flow/test/dynamic/part/without/default/dynamicdefault'
+                'expectedResolvedUriPath' => '/neos/flow/test/dynamic/part/without/default/dynamicdefault'
             ],
             [
                 'routeValues' => array_merge($defaults, ['dynamic' => 'OverwrittenDynamicValue']),
                 'expectedResolvedRouteName' => 'dynamic part without default',
-                'expectedResolvedUriPath' => 'neos/flow/test/dynamic/part/without/default/overwrittendynamicvalue'
+                'expectedResolvedUriPath' => '/neos/flow/test/dynamic/part/without/default/overwrittendynamicvalue'
             ],
 
             // if route value is omitted, only routes with a default value resolve
             [
                 'routeValues' => $defaults,
                 'expectedResolvedRouteName' => 'dynamic part with default',
-                'expectedResolvedUriPath' => 'neos/flow/test/dynamic/part/with/default/DynamicDefault'
+                'expectedResolvedUriPath' => '/neos/flow/test/dynamic/part/with/default/DynamicDefault'
             ],
             [
                 'routeValues' => array_merge($defaults, ['optionalDynamic' => 'OptionalDynamicDefault']),
                 'expectedResolvedRouteName' => 'optional dynamic part with default',
-                'expectedResolvedUriPath' => 'neos/flow/test/optional/dynamic/part/with/default'
+                'expectedResolvedUriPath' => '/neos/flow/test/optional/dynamic/part/with/default'
             ],
 
             // toLowerCase has an effect on generated URIs
             [
                 'routeValues' => array_merge($defaults, ['dynamic1' => 'DynamicRouteValue1', 'dynamic2' => 'DynamicRouteValue2']),
                 'expectedResolvedRouteName' => 'dynamic part case',
-                'expectedResolvedUriPath' => 'neos/flow/test/dynamic/part/case/DynamicRouteValue1/dynamicroutevalue2'
+                'expectedResolvedUriPath' => '/neos/flow/test/dynamic/part/case/DynamicRouteValue1/dynamicroutevalue2'
             ],
 
             // exceeding arguments are appended to resolved URI if appendExceedingArguments is set
             [
                 'routeValues' => array_merge($defaults, ['@action' => 'test1', 'dynamic' => 'DynamicDefault', 'exceedingArgument2' => 'foo', 'exceedingArgument1' => 'bar']),
                 'expectedResolvedRouteName' => 'exceeding arguments 01',
-                'expectedResolvedUriPath' => 'neos/flow/test/exceeding/arguments1?%40action=test1&exceedingArgument2=foo&exceedingArgument1=bar'
+                'expectedResolvedUriPath' => '/neos/flow/test/exceeding/arguments1?%40action=test1&exceedingArgument2=foo&exceedingArgument1=bar'
             ],
             [
                 'routeValues' => array_merge($defaults, ['@action' => 'test1', 'exceedingArgument2' => 'foo', 'exceedingArgument1' => 'bar', 'dynamic' => 'DynamicOther']),
                 'expectedResolvedRouteName' => 'exceeding arguments 02',
-                'expectedResolvedUriPath' => 'neos/flow/test/exceeding/arguments2/dynamicother?%40action=test1&exceedingArgument2=foo&exceedingArgument1=bar'
+                'expectedResolvedUriPath' => '/neos/flow/test/exceeding/arguments2/dynamicother?%40action=test1&exceedingArgument2=foo&exceedingArgument1=bar'
             ],
         ];
     }
@@ -297,10 +304,10 @@ class RoutingTest extends FunctionalTestCase
             if ($resolvedRoute === null) {
                 $this->fail('Expected route "' . $expectedResolvedRouteName . '" to resolve');
             } else {
-                $this->assertEquals('Neos.Flow :: Functional Test: ' . $expectedResolvedRouteName, $resolvedRoute->getName());
+                self::assertEquals('Neos.Flow :: Functional Test: ' . $expectedResolvedRouteName, $resolvedRoute->getName());
             }
         }
-        $this->assertEquals($expectedResolvedUriPath, $resolvedUriPath);
+        self::assertEquals($expectedResolvedUriPath, $resolvedUriPath);
     }
 
     /**
@@ -309,10 +316,10 @@ class RoutingTest extends FunctionalTestCase
     public function requestMethodAcceptArray()
     {
         return [
-            ['GET', '404 Not Found'],
-            ['PUT', '404 Not Found'],
-            ['POST', '200 OK'],
-            ['DELETE', '200 OK']
+            ['GET', 404],
+            ['PUT', 404],
+            ['POST', 200],
+            ['DELETE', 200]
         ];
     }
 
@@ -337,7 +344,7 @@ class RoutingTest extends FunctionalTestCase
         );
 
         $response = $this->browser->request('http://localhost/http-method-test/', $requestMethod);
-        $this->assertEquals($expectedStatus, $response->getStatus());
+        self::assertEquals($expectedStatus, $response->getStatusCode());
     }
 
     /**
@@ -355,7 +362,25 @@ class RoutingTest extends FunctionalTestCase
         $baseUri = new Uri('http://localhost');
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
 
-        $this->assertSame('neos/flow/test/http/foo', (string)$actualResult);
+        self::assertSame('/neos/flow/test/http/foo', (string)$actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function uriPathPrefixIsRespectedInRoute()
+    {
+        $routeValues = [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'Foo',
+            '@action' => 'index',
+            '@format' => 'html'
+        ];
+        $baseUri = new Uri('http://localhost');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, 'index.php/'));
+
+        $this->assertSame('/index.php/neos/flow/test/http/foo', (string)$actualResult);
     }
 
     /**
@@ -385,7 +410,7 @@ class RoutingTest extends FunctionalTestCase
         $this->router->setRoutesConfiguration($routesConfiguration);
         $baseUri = new Uri('http://localhost');
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
-        $this->assertSame('custom/uri/pattern', (string)$actualResult);
+        self::assertSame('/custom/uri/pattern', (string)$actualResult);
 
         // reset router configuration for following tests
         $this->router->setRoutesConfiguration(null);

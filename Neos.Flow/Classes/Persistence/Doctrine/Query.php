@@ -264,7 +264,7 @@ class Query implements QueryInterface
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return 0;
         } catch (\PDOException $pdoException) {
-            throw new Exception\DatabaseConnectionException($pdoException->getMessage(), $pdoException->getCode());
+            throw new Exception\DatabaseConnectionException($pdoException->getMessage(), (int)$pdoException->getCode());
         }
     }
 
@@ -423,7 +423,7 @@ class Query implements QueryInterface
         } else {
             $constraints = func_get_args();
         }
-        return call_user_func_array([$this->queryBuilder->expr(), 'andX'], $constraints);
+        return $this->queryBuilder->expr()->andX(...$constraints);
     }
 
     /**
@@ -442,7 +442,7 @@ class Query implements QueryInterface
         } else {
             $constraints = func_get_args();
         }
-        return call_user_func_array([$this->queryBuilder->expr(), 'orX'], $constraints);
+        return $this->queryBuilder->expr()->orX(...$constraints);
     }
 
     /**

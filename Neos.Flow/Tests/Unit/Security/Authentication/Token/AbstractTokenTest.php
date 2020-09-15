@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Token;
 use Neos\Flow\Security\Authentication\EntryPoint\WebRedirect;
 use Neos\Flow\Security\Authentication\Token\AbstractToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use Neos\Flow\Security\RequestPattern\Uri as UriRequestPattern;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -28,7 +29,7 @@ class AbstractTokenTest extends UnitTestCase
      */
     protected $token;
 
-    public function setup()
+    protected function setUp(): void
     {
         $this->token = $this->getMockForAbstractClass(AbstractToken::class);
     }
@@ -39,7 +40,7 @@ class AbstractTokenTest extends UnitTestCase
     public function authenticationProviderNameCanBeSetAndRetrieved()
     {
         $this->token->setAuthenticationProviderName('My Cool Provider');
-        $this->assertEquals('My Cool Provider', $this->token->getAuthenticationProviderName());
+        self::assertEquals('My Cool Provider', $this->token->getAuthenticationProviderName());
     }
 
     /**
@@ -49,7 +50,7 @@ class AbstractTokenTest extends UnitTestCase
     {
         $entryPoint = new WebRedirect();
         $this->token->setAuthenticationEntryPoint($entryPoint);
-        $this->assertSame($entryPoint, $this->token->getAuthenticationEntryPoint());
+        self::assertSame($entryPoint, $this->token->getAuthenticationEntryPoint());
     }
 
     /**
@@ -57,7 +58,7 @@ class AbstractTokenTest extends UnitTestCase
      */
     public function theAuthenticationStatusIsCorrectlyInitialized()
     {
-        $this->assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $this->token->getAuthenticationStatus());
+        self::assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $this->token->getAuthenticationStatus());
     }
 
     /**
@@ -80,21 +81,21 @@ class AbstractTokenTest extends UnitTestCase
     public function isAuthenticatedReturnsTheCorrectValueForAGivenStatus($status, $isAuthenticated)
     {
         $this->token->setAuthenticationStatus($status);
-        $this->assertEquals($isAuthenticated, $this->token->isAuthenticated());
+        self::assertEquals($isAuthenticated, $this->token->isAuthenticated());
         $this->token->setAuthenticationStatus($status);
-        $this->assertEquals($isAuthenticated, $this->token->isAuthenticated());
+        self::assertEquals($isAuthenticated, $this->token->isAuthenticated());
         $this->token->setAuthenticationStatus($status);
-        $this->assertEquals($isAuthenticated, $this->token->isAuthenticated());
+        self::assertEquals($isAuthenticated, $this->token->isAuthenticated());
         $this->token->setAuthenticationStatus($status);
-        $this->assertEquals($isAuthenticated, $this->token->isAuthenticated());
+        self::assertEquals($isAuthenticated, $this->token->isAuthenticated());
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Security\Exception\InvalidAuthenticationStatusException
      */
     public function setAuthenticationStatusThrowsAnExceptionForAnInvalidStatus()
     {
+        $this->expectException(InvalidAuthenticationStatusException::class);
         $this->token->setAuthenticationStatus(-1);
     }
 
@@ -103,21 +104,21 @@ class AbstractTokenTest extends UnitTestCase
      */
     public function requestPatternsCanBeSetRetrievedAndChecked()
     {
-        $this->assertFalse($this->token->hasRequestPatterns());
+        self::assertFalse($this->token->hasRequestPatterns());
 
         $uriRequestPattern = new UriRequestPattern(['uriPattern' => 'http://mydomain.com/some/path/pattern']);
         $this->token->setRequestPatterns([$uriRequestPattern]);
 
-        $this->assertTrue($this->token->hasRequestPatterns());
-        $this->assertEquals([$uriRequestPattern], $this->token->getRequestPatterns());
+        self::assertTrue($this->token->hasRequestPatterns());
+        self::assertEquals([$uriRequestPattern], $this->token->getRequestPatterns());
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function setRequestPatternsOnlyAcceptsRequestPatterns()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $uriRequestPattern = new UriRequestPattern(['uriPattern' => 'http://mydomain.com/some/path/pattern']);
         $this->token->setRequestPatterns([$uriRequestPattern, 'no valid pattern']);
     }

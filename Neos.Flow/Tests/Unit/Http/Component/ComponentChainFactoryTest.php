@@ -26,16 +26,16 @@ class ComponentChainFactoryTest extends UnitTestCase
     protected $componentChainFactory;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockObjectManager;
 
     /**
-     * @var Http\Component\ComponentInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var Http\Component\ComponentInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockComponent;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->componentChainFactory = new Http\Component\ComponentChainFactory();
 
@@ -64,19 +64,19 @@ class ComponentChainFactoryTest extends UnitTestCase
             ],
         ];
 
-        $this->mockObjectManager->expects($this->at(0))->method('get')->with('Bar\Component\ClassName')->will($this->returnValue($this->mockComponent));
-        $this->mockObjectManager->expects($this->at(1))->method('get')->with('Baz\Component\ClassName')->will($this->returnValue($this->mockComponent));
-        $this->mockObjectManager->expects($this->at(2))->method('get')->with('Foo\Component\ClassName')->will($this->returnValue($this->mockComponent));
+        $this->mockObjectManager->expects(self::at(0))->method('get')->with('Bar\Component\ClassName')->will(self::returnValue($this->mockComponent));
+        $this->mockObjectManager->expects(self::at(1))->method('get')->with('Baz\Component\ClassName')->will(self::returnValue($this->mockComponent));
+        $this->mockObjectManager->expects(self::at(2))->method('get')->with('Foo\Component\ClassName')->will(self::returnValue($this->mockComponent));
 
         $this->componentChainFactory->create($chainConfiguration);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Http\Component\Exception
      */
     public function createThrowsExceptionIfComponentClassNameIsNotConfigured()
     {
+        $this->expectException(Http\Component\Exception::class);
         $chainConfiguration = [
             'foo' => [
                 'position' => 'start',
@@ -88,17 +88,17 @@ class ComponentChainFactoryTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Http\Component\Exception
      */
     public function createThrowsExceptionIfComponentClassNameDoesNotImplementComponentInterface()
     {
+        $this->expectException(Http\Component\Exception::class);
         $chainConfiguration = [
             'foo' => [
                 'component' => 'Foo\Component\ClassName',
             ],
         ];
 
-        $this->mockObjectManager->expects($this->at(0))->method('get')->with('Foo\Component\ClassName')->will($this->returnValue(new \stdClass()));
+        $this->mockObjectManager->expects(self::at(0))->method('get')->with('Foo\Component\ClassName')->will(self::returnValue(new \stdClass()));
         $this->componentChainFactory->create($chainConfiguration);
     }
 }

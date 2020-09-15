@@ -12,7 +12,7 @@ namespace Neos\Flow\Http\Component;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Request;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Utility\Ip as IpUtility;
 use Psr\Http\Message\ServerRequestInterface;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
@@ -78,9 +78,9 @@ class TrustedProxiesComponent implements ComponentInterface
     {
         $request = $componentContext->getHttpRequest();
 
-        $trustedRequest = $request->withAttribute(Request::ATTRIBUTE_TRUSTED_PROXY, $this->isFromTrustedProxy($request));
+        $trustedRequest = $request->withAttribute(ServerRequestAttributes::TRUSTED_PROXY, $this->isFromTrustedProxy($request));
 
-        $trustedRequest = $trustedRequest->withAttribute(Request::ATTRIBUTE_CLIENT_IP, $this->getTrustedClientIpAddress($trustedRequest));
+        $trustedRequest = $trustedRequest->withAttribute(ServerRequestAttributes::CLIENT_IP, $this->getTrustedClientIpAddress($trustedRequest));
 
         $protocolHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_PROTOCOL, $trustedRequest);
         if ($protocolHeader !== null) {
@@ -117,7 +117,7 @@ class TrustedProxiesComponent implements ComponentInterface
      * @param array $array
      * @return array
      */
-    protected function unquoteArray($array)
+    protected function unquoteArray($array): array
     {
         return array_map(function ($value) {
             return trim($value, '"');
@@ -126,10 +126,10 @@ class TrustedProxiesComponent implements ComponentInterface
 
     /**
      * @param string $type The header value type to retrieve from the Forwarded header value. One of the HEADER_* constants.
-     * @param string $headerValue The Forwarded header value, e.g. "for=192.168.178.5; host=www.acme.org:8080"
+     * @param array $headerValues The Forwarded header value, e.g. "for=192.168.178.5; host=www.acme.org:8080"
      * @return array|null The array of values for the header type or null if the header
      */
-    protected function getForwardedHeader($type, $headerValue)
+    protected function getForwardedHeader($type, array $headerValues)
     {
         $patterns = [
             self::HEADER_CLIENT_IP => self::FOR_PATTERN,
@@ -139,6 +139,7 @@ class TrustedProxiesComponent implements ComponentInterface
         if (!isset($patterns[$type])) {
             return null;
         }
+        $headerValue = reset($headerValues);
         preg_match_all('/' . $patterns[$type] . '/i', $headerValue, $matches);
         $matchedHeader = $this->unquoteArray($matches[1]);
         if ($matchedHeader === []) {
@@ -161,7 +162,7 @@ class TrustedProxiesComponent implements ComponentInterface
         } else {
             $trustedHeaders = $this->settings['headers'][$type] ?? '';
         }
-        if ($trustedHeaders === '' || !$request->getAttribute(Request::ATTRIBUTE_TRUSTED_PROXY)) {
+        if ($trustedHeaders === '' || !$request->getAttribute(ServerRequestAttributes::TRUSTED_PROXY)) {
             yield null;
             return;
         }
@@ -177,7 +178,7 @@ class TrustedProxiesComponent implements ComponentInterface
                     yield $forwardedHeaderValue;
                 }
             } else {
-                yield array_map('trim', explode(',', $request->getHeader($trustedHeader)));
+                yield array_map('trim', explode(', ', implode(',', $request->getHeader($trustedHeader))));
             }
         }
 
@@ -188,10 +189,10 @@ class TrustedProxiesComponent implements ComponentInterface
      * Convenience getter for the first value of a given trusted proxy header.
      *
      * @param string $type One of the HEADER_* constants
-     * @param Request $request The request to get the trusted proxy header from
+     * @param ServerRequestInterface $request The request to get the trusted proxy header from
      * @return mixed|null The first value of this header type or NULL if this header type should not be trusted
      */
-    protected function getFirstTrustedProxyHeaderValue($type, Request $request)
+    protected function getFirstTrustedProxyHeaderValue($type, ServerRequestInterface $request)
     {
         $values = $this->getTrustedProxyHeaderValues($type, $request)->current();
         return $values !== null ? reset($values) : null;
@@ -203,7 +204,7 @@ class TrustedProxiesComponent implements ComponentInterface
      * @param string $ipAddress
      * @return bool
      */
-    protected function ipIsTrustedProxy($ipAddress)
+    protected function ipIsTrustedProxy($ipAddress): bool
     {
         if (filter_var($ipAddress, FILTER_VALIDATE_IP) === false) {
             return false;
@@ -223,10 +224,10 @@ class TrustedProxiesComponent implements ComponentInterface
     /**
      * Check if the given request is from a trusted proxy.
      *
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @return bool If the server REMOTE_ADDR is from a trusted proxy
      */
-    protected function isFromTrustedProxy(Request $request)
+    protected function isFromTrustedProxy(ServerRequestInterface $request): bool
     {
         $server = $request->getServerParams();
         if (!isset($server['REMOTE_ADDR'])) {

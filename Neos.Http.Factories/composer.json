@@ -1,0 +1,31 @@
+{
+    "name": "neos/http-factories",
+    "type": "neos-framework",
+    "description": "PSR-17 HTTP Factories",
+    "homepage": "http://flow.neos.io",
+    "license": [
+        "MIT"
+    ],
+    "require": {
+        "php": "^7.1 || ^8.0",
+        "psr/http-factory": "^1.0",
+        "guzzlehttp/psr7": "^1.4 || ~2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Http\\Factories\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Http\\Factories\\Tests\\": "Tests"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Neos.Http.Factories"
+        },
+        "applied-flow-migrations": [
+        ]
+    }
+}

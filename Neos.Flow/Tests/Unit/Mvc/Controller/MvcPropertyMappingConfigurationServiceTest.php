@@ -11,9 +11,10 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * source code.
  */
 
-use Neos\Flow\Property\PropertyMappingConfiguration;
+use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Cryptography\HashService;
+use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Mvc;
 
@@ -116,17 +117,17 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
     public function generateTrustedPropertiesTokenGeneratesTheCorrectHashesInNormalOperation($input, $expected)
     {
         $requestHashService = $this->getMockBuilder(Mvc\Controller\MvcPropertyMappingConfigurationService::class)->setMethods(['serializeAndHashFormFieldArray'])->getMock();
-        $requestHashService->expects($this->once())->method('serializeAndHashFormFieldArray')->with($expected);
+        $requestHashService->expects(self::once())->method('serializeAndHashFormFieldArray')->with($expected);
         $requestHashService->generateTrustedPropertiesToken($input);
     }
 
     /**
      * @test
      * @dataProvider dataProviderForgenerateTrustedPropertiesTokenWithUnallowedValues
-     * @expectedException \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
      */
     public function generateTrustedPropertiesTokenThrowsExceptionInWrongCases($input)
     {
+        $this->expectException(InvalidArgumentForHashGenerationException::class);
         $requestHashService = $this->getMockBuilder(Mvc\Controller\MvcPropertyMappingConfigurationService::class)->setMethods(['serializeAndHashFormFieldArray'])->getMock();
         $requestHashService->generateTrustedPropertiesToken($input);
     }
@@ -145,14 +146,14 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         $mockHash = '12345';
 
         $hashService = $this->getAccessibleMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class, ['appendHmac']);
-        $hashService->expects($this->once())->method('appendHmac')->with(serialize($formFieldArray))->will($this->returnValue(serialize($formFieldArray) . $mockHash));
+        $hashService->expects(self::once())->method('appendHmac')->with(serialize($formFieldArray))->will(self::returnValue(serialize($formFieldArray) . $mockHash));
 
         $requestHashService = $this->getAccessibleMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class, ['dummy']);
         $requestHashService->_set('hashService', $hashService);
 
         $expected = serialize($formFieldArray) . $mockHash;
         $actual = $requestHashService->_call('serializeAndHashFormFieldArray', $formFieldArray);
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
@@ -162,7 +163,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
     public function initializePropertyMappingConfigurationDoesNothingIfTrustedPropertiesAreNotSet()
     {
         $request = $this->getMockBuilder(Mvc\ActionRequest::class)->setMethods(['getInternalArgument'])->disableOriginalConstructor()->getMock();
-        $request->expects($this->any())->method('getInternalArgument')->with('__trustedProperties')->will($this->returnValue(null));
+        $request->expects(self::any())->method('getInternalArgument')->with('__trustedProperties')->will(self::returnValue(null));
         $arguments = new Mvc\Controller\Arguments();
 
         $requestHashService = new Mvc\Controller\MvcPropertyMappingConfigurationService();
@@ -189,7 +190,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
             'nonExistingArgument' => 1
         ];
         $arguments = $this->initializePropertyMappingConfiguration($trustedProperties);
-        $this->assertFalse($arguments->hasArgument('nonExistingArgument'));
+        self::assertFalse($arguments->hasArgument('nonExistingArgument'));
     }
 
     /**
@@ -207,13 +208,13 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         ];
         $arguments = $this->initializePropertyMappingConfiguration($trustedProperties);
         $propertyMappingConfiguration = $arguments->getArgument('foo')->getPropertyMappingConfiguration();
-        $this->assertTrue($propertyMappingConfiguration->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
-        $this->assertNull($propertyMappingConfiguration->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-        $this->assertFalse($propertyMappingConfiguration->shouldMap('someProperty'));
+        self::assertTrue($propertyMappingConfiguration->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+        self::assertNull($propertyMappingConfiguration->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        self::assertFalse($propertyMappingConfiguration->shouldMap('someProperty'));
 
-        $this->assertTrue($propertyMappingConfiguration->forProperty('nested')->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
-        $this->assertNull($propertyMappingConfiguration->forProperty('nested')->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-        $this->assertFalse($propertyMappingConfiguration->forProperty('nested')->shouldMap('someProperty'));
+        self::assertTrue($propertyMappingConfiguration->forProperty('nested')->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+        self::assertNull($propertyMappingConfiguration->forProperty('nested')->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        self::assertFalse($propertyMappingConfiguration->forProperty('nested')->shouldMap('someProperty'));
     }
 
     /**
@@ -228,13 +229,13 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         ];
         $arguments = $this->initializePropertyMappingConfiguration($trustedProperties);
         $propertyMappingConfiguration = $arguments->getArgument('foo')->getPropertyMappingConfiguration();
-        $this->assertNull($propertyMappingConfiguration->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
-        $this->assertTrue($propertyMappingConfiguration->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-        $this->assertFalse($propertyMappingConfiguration->shouldMap('someProperty'));
+        self::assertNull($propertyMappingConfiguration->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+        self::assertTrue($propertyMappingConfiguration->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        self::assertFalse($propertyMappingConfiguration->shouldMap('someProperty'));
 
-        $this->assertNull($propertyMappingConfiguration->forProperty('bar')->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
-        $this->assertTrue($propertyMappingConfiguration->forProperty('bar')->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-        $this->assertFalse($propertyMappingConfiguration->forProperty('bar')->shouldMap('someProperty'));
+        self::assertNull($propertyMappingConfiguration->forProperty('bar')->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+        self::assertTrue($propertyMappingConfiguration->forProperty('bar')->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        self::assertFalse($propertyMappingConfiguration->forProperty('bar')->shouldMap('someProperty'));
     }
 
     /**
@@ -249,8 +250,8 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         ];
         $arguments = $this->initializePropertyMappingConfiguration($trustedProperties);
         $propertyMappingConfiguration = $arguments->getArgument('foo')->getPropertyMappingConfiguration();
-        $this->assertFalse($propertyMappingConfiguration->shouldMap('someProperty'));
-        $this->assertTrue($propertyMappingConfiguration->shouldMap('bar'));
+        self::assertFalse($propertyMappingConfiguration->shouldMap('someProperty'));
+        self::assertTrue($propertyMappingConfiguration->shouldMap('bar'));
     }
 
     /**
@@ -267,9 +268,9 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         ];
         $arguments = $this->initializePropertyMappingConfiguration($trustedProperties);
         $propertyMappingConfiguration = $arguments->getArgument('foo')->getPropertyMappingConfiguration();
-        $this->assertFalse($propertyMappingConfiguration->shouldMap('someProperty'));
-        $this->assertTrue($propertyMappingConfiguration->shouldMap('bar'));
-        $this->assertTrue($propertyMappingConfiguration->forProperty('bar')->shouldMap('foo'));
+        self::assertFalse($propertyMappingConfiguration->shouldMap('someProperty'));
+        self::assertTrue($propertyMappingConfiguration->shouldMap('bar'));
+        self::assertTrue($propertyMappingConfiguration->forProperty('bar')->shouldMap('foo'));
     }
 
 
@@ -282,13 +283,13 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
     protected function initializePropertyMappingConfiguration(array $trustedProperties)
     {
         $request = $this->getMockBuilder(Mvc\ActionRequest::class)->setMethods(['getInternalArgument'])->disableOriginalConstructor()->getMock();
-        $request->expects($this->any())->method('getInternalArgument')->with('__trustedProperties')->will($this->returnValue('fooTrustedProperties'));
+        $request->expects(self::any())->method('getInternalArgument')->with('__trustedProperties')->will(self::returnValue('fooTrustedProperties'));
         $arguments = new Mvc\Controller\Arguments();
         $mockHashService = $this->getMockBuilder(HashService::class)->setMethods(['validateAndStripHmac'])->getMock();
-        $mockHashService->expects($this->once())->method('validateAndStripHmac')->with('fooTrustedProperties')->will($this->returnValue(serialize($trustedProperties)));
+        $mockHashService->expects(self::once())->method('validateAndStripHmac')->with('fooTrustedProperties')->will(self::returnValue(serialize($trustedProperties)));
 
         $arguments->addNewArgument('foo', 'something');
-        $this->inject($arguments->getArgument('foo'), 'propertyMappingConfiguration', new PropertyMappingConfiguration());
+        $this->inject($arguments->getArgument('foo'), 'propertyMappingConfiguration', new MvcPropertyMappingConfiguration());
 
         $requestHashService = new Mvc\Controller\MvcPropertyMappingConfigurationService();
         $this->inject($requestHashService, 'hashService', $mockHashService);

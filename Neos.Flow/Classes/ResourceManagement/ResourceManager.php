@@ -625,8 +625,8 @@ class ResourceManager
             throw new Exception('The given upload file "' . strip_tags($pathInfo['basename']) . '" was not uploaded through PHP. As it could pose a security risk it cannot be imported.', 1422461503);
         }
 
-        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->settings['uploadExtensionBlacklist']) && $this->settings['uploadExtensionBlacklist'][strtolower($pathInfo['extension'])] === true) {
-            throw new Exception('The extension of the given upload file "' . strip_tags($pathInfo['basename']) . '" is blacklisted. As it could pose a security risk it cannot be imported.', 1447148472);
+        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->settings['extensionsBlockedFromUpload']) && $this->settings['extensionsBlockedFromUpload'][strtolower($pathInfo['extension'])] === true) {
+            throw new Exception('The extension of the given upload file "' . strip_tags($pathInfo['basename']) . '" is excluded. As it could pose a security risk it cannot be imported.', 1447148472);
         }
 
         if ($openBasedirEnabled === true) {

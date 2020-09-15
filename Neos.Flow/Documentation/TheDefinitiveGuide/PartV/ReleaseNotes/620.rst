@@ -1,0 +1,230 @@
+========
+Flow 6.2
+========
+
+This minor release of Flow brings a few bigger features and a lot of
+modernisation of the existing code base.
+
+====================
+Upgrade Instructions
+====================
+
+This section contains instructions for upgrading your Flow 6.1
+based applications to Flow 6.2.
+
+In general just make sure to run the following commands::
+
+ ./flow flow:cache:flush --force
+ ./flow flow:core:migrate
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+If you are upgrading from a lower version than 6.1, be sure to read the
+upgrade instructions from the previous Release Notes first.
+
+Upgrading your Packages
+-----------------------
+
+Upgrading existing code
+^^^^^^^^^^^^^^^^^^^^^^^
+
+There have been major API changes in Flow 6.0 which require your code to be adjusted. As with earlier changes to Flow
+that required code changes on the user side we provide a code migration tool.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate --package-key Acme.Demo
+
+The package key is optional, if left out it will work on all packages it finds (except for library packages and packages
+prefixed with "Neos.*") - for the first run you might want to limit things a little to keep the overview,
+though.
+
+Make sure to run::
+
+ ./flow help core:migrate
+
+to see all the other helpful options this command provides.
+
+Also make sure to read the changes below.
+
+Inside core:migrate
+"""""""""""""""""""
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from all packages (except *Framework* and
+  *Libraries*) or the package given with ``--package-key``
+* For each migration and package
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit
+    messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.
+
+================
+What has changed
+================
+
+FEATURE: Configurable UsernamePassword fields and UsernamePasswordTokeninterface
+================================================================================
+Allows to configure the argument names for username and password to make interoperability with other services easier.
+The new options can be set for a specific provider with the following configuration:
+
+.. code-block: yaml
+  Neos:
+    Flow:
+      security:
+        authentication:
+          providers:
+            DefaultProvider:
+              provider: PersistedUsernamePasswordProvider
+                tokenOptions:
+                  usernamePostField: 'some.argument'
+                  passwordPostField: 'some.other.argument'
+
+FEATURE: Array Debugger tolerates iterables
+===========================================
+This change lets the debug-array-renderer use the pseudo type iterable (Array or Traversable) instead of array. That way all foreachachble objects are rendered as an array.
+This replaces the previous exceptions for ArrayObjects and DoctrineCollections and will also enable to properly debug other Traversable objects aswell.
+
+FEATURE: Improve 304 response handling
+=======================================
+For responses that match the following conditions an 304 status is returned:
+- The request method is GET or HEAD.
+- The response status is 200 status.
+- The response has has ETag header that matches one of the If-None-Match headers of the request.
+
+!!! The generation of the Etag header is not part of this change and is the job of the application.
+
+Other changes:
+- 304 responses now have an empty body
+- Only GET and HEAD Requests will receive 304 status based on ETag and Last-Modified headers
+
+FEATURE: Virtual Object Configuration
+=====================================
+The Flow Object Management has been built with the idea of virtual "object names".
+But so far it was not possible to have an object configuration with a name that is not equal to the class name.
+With this feature it is possible to create configurations for "virtual objects" within the `Objects.yaml`:
+
+
+.. code-block: yaml
+  # the colon ":" makes this a virtual object
+  'Some.Package:SystemLogger':
+    className: Psr\\Log\\LoggerInterface
+    scope: singleton
+    factoryObjectName: Neos\\Flow\\Log\\PsrLoggerFactoryInterface
+    factoryMethodName: get
+    arguments:
+      1:
+        value: systemLogger
+
+  'Some.Package:SecurityLogger':
+    className: Psr\\Log\\LoggerInterface
+    scope: singleton
+    factoryObjectName: Neos\\Flow\\Log\\PsrLoggerFactoryInterface
+    factoryMethodName: get
+    arguments:
+      1:
+        value: securityLogger
+
+
+..and to inject them:
+
+.. code-block: php
+  /**
+  * @Flow\\Inject(name="Some.Package:SystemLogger")
+  * @var LoggerInterface
+  */
+  protected $systemLogger;
+
+  /**
+  * @Flow\\Inject(name="Some.Package:SecurityLogger")
+  * @var LoggerInterface
+  */
+  protected $securityLogger;
+
+Or configure them in factories:
+
+.. code-block: yaml
+Some:
+  Package:
+    someLoggerClassName: 'Some.Package:SystemLogger'
+
+
+FEATURE: Add EEL Helper File.exists(filename)
+==============================================
+The EEL helper determines if a file exists. This is eg helpful, if file like templates are generated,
+and should only be rendered, if the template file exists, for example for generated favicon templates like this:
+
+.. code-block: fusion
+  prototype(Neos.Neos:Page) {
+  head.favicons = Neos.Fusion:Template {
+              resource = ${'resource://' + site.context.currentSite.siteResourcesPackageKey + '/Private/Templates/Page/Favicon.html'}
+              templatePath = ${this.resource}
+              @if.fileExists = ${File.exists(this.resource)}
+          }
+
+FEATURE: Allow configuring static factory methods in Objects.yaml
+=================================================================
+This change allows to configure static factory methods in `Objects.yaml` by only specifying a `factoryMethodName` and leaving out `factoryObjectName`.
+
+Example:
+
+.. code-block: yaml
+  Acme\\My\\Class:
+    factoryMethodName: Acme\\My\\Class::fromStatic
+    arguments:
+      1:
+        setting: Acme.My.Class.ConfigurableValue
+
+Before this would have required to create a non-static factory method inside a dedicated factory class (to avoid cyclic instanciation).
+
+FEATURE: Run garbage collection of configured caches
+====================================================
+In order to run garbage collection the following command
+has been introduced
+
+`./flow cache:collectgarbage`
+
+which will iterator over all configured caches and
+run the corresponding `collectGarbage` method.
+
+You can also run garbage collection on a single cache
+by definined the cache identifier
+
+`./flow cache:collectgarbage --cache-identifier Flow_Monitor`
+
+
+FEATURE: Resolve authentication token by simple name
+====================================================
+The documentation has long been showing that you can define
+a security token by it's simple name, if in the Neos.Flow
+package.
+
+This has not been really true, since there was no resolving
+from the simple string, similar to how providers has been
+resolved.
+
+This change brings the same resolving functionality as the
+provider.
+
+
+FEATURE: Emit a signal when view is resolved
+============================================
+In order for a package to interact with the rendering views available variables
+a signal is being emitted upon resolving of the view.
+
+The variables will be available in the view in the MVC context only

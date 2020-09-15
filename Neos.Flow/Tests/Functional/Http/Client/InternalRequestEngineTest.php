@@ -27,7 +27,7 @@ class InternalRequestEngineTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -55,6 +55,6 @@ class InternalRequestEngineTest extends FunctionalTestCase
     public function securityContextContainsTokens()
     {
         $response = $this->browser->request('http://localhost/test/security/restricted');
-        $this->assertEquals('1222268609', $response->getHeader('X-Flow-ExceptionCode'));
+        self::assertEquals('1222268609', $response->getHeaderLine('X-Flow-ExceptionCode'));
     }
 }

@@ -22,10 +22,10 @@ class ContentStreamTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function constructorThrowsExceptionWhenBeingPassedAnInvalidResource()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new ContentStream('invalid resource');
     }
 
@@ -34,6 +34,6 @@ class ContentStreamTest extends UnitTestCase
         $someContent = 'Lorem ipsum
         dolor';
         $contentStream = ContentStream::fromContents($someContent);
-        $this->assertSame($someContent, $contentStream->getContents());
+        self::assertSame($someContent, $contentStream->getContents());
     }
 }

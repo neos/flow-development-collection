@@ -19,6 +19,7 @@ use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
@@ -28,7 +29,6 @@ use Neos\Flow\Reflection\Exception\InvalidPropertyTypeException;
 use Neos\Flow\Reflection\Exception\InvalidValueObjectException;
 use Neos\Utility\Arrays;
 use Neos\Flow\Utility\Environment;
-use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\Files;
 use Neos\Utility\TypeHandling;
 use Psr\Log\LoggerInterface;
@@ -1183,7 +1183,7 @@ class ReflectionService
         $this->buildClassSchemata($classNamesToBuildSchemaFor);
 
         if ($count > 0) {
-            $this->log(sprintf('Reflected %s emerged classes.', $count), LogLevel::INFO);
+            $this->log(sprintf('Reflected %s emerged classes.', $count), LogLevel::INFO, LogEnvironment::fromMethodName(__METHOD__));
         }
     }
 
@@ -1461,7 +1461,7 @@ class ReflectionService
 
         // skip simple types and types with fully qualified namespaces
         if ($type === 'mixed' || $type[0] === '\\' || TypeHandling::isSimpleType($type)) {
-            return TypeHandling::normalizeType($type) . ($isNullable ? '|null' : '');
+            return TypeHandling::normalizeType($typeWithoutNull) . ($isNullable ? '|null' : '');
         }
 
         // we try to find the class relative to the current namespace...
@@ -1625,11 +1625,6 @@ class ReflectionService
         }
 
         $declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
-        try {
-            TypeHandling::parseType($declaredType);
-        } catch (InvalidTypeException $exception) {
-            throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $className . '" for property "' . $propertyName . '"'), 1315564475);
-        }
 
         if ($this->isPropertyAnnotatedWith($className, $propertyName, ORM\Id::class)) {
             $skipArtificialIdentity = true;
@@ -1803,9 +1798,9 @@ class ReflectionService
             $parameterInformation[self::DATA_PARAMETER_ALLOWS_NULL] = true;
         }
 
-        $parameterType = null;
-        if ($parameter->getType() !== null) {
-            $parameterType = $parameter->getType() instanceof \ReflectionNamedType ? $parameter->getType()->getName() : (string)$parameter->getType();
+        $parameterType = $parameter->getType();
+        if ($parameterType !== null) {
+            $parameterType = ($parameterType instanceof \ReflectionNamedType) ? $parameterType->getName() : $parameterType->__toString();
         }
         if ($parameter->getClass() !== null) {
             // We use parameter type here to make class_alias usage work and return the hinted class name instead of the alias
@@ -2227,7 +2222,7 @@ class ReflectionService
      * @param array $additionalData An array containing more information about the event to be logged
      * @return void
      */
-    protected function log($message, $severity = LogLevel::INFO, $additionalData = [])
+    protected function log(string $message, string $severity = LogLevel::INFO, array $additionalData = []): void
     {
         if (is_object($this->logger)) {
             $this->logger->log($severity, $message, $additionalData);
