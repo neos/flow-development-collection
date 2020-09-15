@@ -20,7 +20,7 @@ use org\bovigo\vfs\vfsStream;
  */
 class FileHelperTest extends UnitTestCase
 {
-    protected function setUp(): void
+    public function setUp()
     {
         vfsStream::setup('Foo');
     }

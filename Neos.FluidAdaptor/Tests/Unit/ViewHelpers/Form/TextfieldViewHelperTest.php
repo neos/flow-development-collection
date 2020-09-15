@@ -27,7 +27,7 @@ class TextfieldViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\
      */
     protected $viewHelper;
 
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\TextfieldViewHelper::class, ['setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration']);
@@ -42,7 +42,7 @@ class TextfieldViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\
     public function renderCorrectlySetsTagName()
     {
         $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['setTagName'])->getMock();
-        $mockTagBuilder->expects(self::atLeastOnce())->method('setTagName')->with('input');
+        $mockTagBuilder->expects($this->atLeastOnce())->method('setTagName')->with('input');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
         $this->viewHelper->initialize();
@@ -55,10 +55,10 @@ class TextfieldViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\
     public function renderCorrectlySetsTypeNameAndValueAttributes()
     {
         $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['setContent', 'render', 'addAttribute'])->getMock();
-        $mockTagBuilder->expects(self::at(0))->method('addAttribute')->with('name', 'NameOfTextfield');
-        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextfield');
-        $mockTagBuilder->expects(self::at(1))->method('addAttribute')->with('value', 'Current value');
-        $mockTagBuilder->expects(self::once())->method('render');
+        $mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('name', 'NameOfTextfield');
+        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextfield');
+        $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('value', 'Current value');
+        $mockTagBuilder->expects($this->once())->method('render');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
         $arguments = [
@@ -77,7 +77,7 @@ class TextfieldViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\
      */
     public function renderCallsSetErrorClassAttribute()
     {
-        $this->viewHelper->expects(self::once())->method('setErrorClassAttribute');
+        $this->viewHelper->expects($this->once())->method('setErrorClassAttribute');
         $this->viewHelper->render();
     }
 }

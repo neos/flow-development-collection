@@ -33,7 +33,7 @@ class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -68,7 +68,7 @@ class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
 
         $clonedEntityIdentifier = $this->persistenceManager->getIdentifierByObject($clonedRelatedEntity);
         $clonedLoadedEntity = $this->testEntityRepository->findByIdentifier($clonedEntityIdentifier);
-        self::assertInstanceOf(Fixtures\TestEntity::class, $clonedLoadedEntity);
+        $this->assertInstanceOf(Fixtures\TestEntity::class, $clonedLoadedEntity);
     }
 
     /**
@@ -87,7 +87,7 @@ class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
         $entity->setRelatedEntity($relatedEntity);
 
         $clonedRelatedEntity = clone $entity->getRelatedEntity();
-        self::assertNotNull($clonedRelatedEntity->getEmbedded(), 'Unproxied clone embedded is null');
+        $this->assertNotNull($clonedRelatedEntity->getEmbedded(), 'Unproxied clone embedded is null');
 
         $this->testEntityRepository->add($entity);
         $this->testEntityRepository->add($relatedEntity);
@@ -98,8 +98,8 @@ class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
         $loadedEntity = $this->testEntityRepository->findByIdentifier($entityIdentifier);
 
         $clonedRelatedEntity = clone $loadedEntity->getRelatedEntity();
-        self::assertNotNull($clonedRelatedEntity->getRelatedValueObject(), 'Proxied clone value object is null');
-        self::assertNotNull($clonedRelatedEntity->getEmbedded(), 'Proxied clone embedded is null');
-        self::assertEquals('Foo', $clonedRelatedEntity->getEmbedded()->getValue());
+        $this->assertNotNull($clonedRelatedEntity->getRelatedValueObject(), 'Proxied clone value object is null');
+        $this->assertNotNull($clonedRelatedEntity->getEmbedded(), 'Proxied clone embedded is null');
+        $this->assertEquals('Foo', $clonedRelatedEntity->getEmbedded()->getValue());
     }
 }

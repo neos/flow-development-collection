@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Core;
  */
 
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Exception;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -49,15 +48,15 @@ class BootstrapTest extends UnitTestCase
             $bootstrap->registerCompiletimeCommand($compiletimeCommandControllerIdentifier);
         }
 
-        self::assertSame($expectedResult, $bootstrap->isCompiletimeCommand($givenCommandIdentifier));
+        $this->assertSame($expectedResult, $bootstrap->isCompiletimeCommand($givenCommandIdentifier));
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Exception
      */
     public function resolveRequestHandlerThrowsUsefulExceptionIfNoRequestHandlerFound()
     {
-        $this->expectException(Exception::class);
         $bootstrap = $this->getAccessibleMock(Bootstrap::class, ['dummy'], [], '', false);
         $bootstrap->_call('resolveRequestHandler');
     }

@@ -11,7 +11,6 @@ namespace Neos\Eel\Tests\Unit\FlowQuery;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\OperationResolver;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -38,7 +37,7 @@ class FlowQueryTest extends UnitTestCase
         $flowQuery = new FlowQuery(['a', 'b', 'c']);
         $wrappedQuery = new FlowQuery($flowQuery);
 
-        self::assertEquals($flowQuery->getContext(), $wrappedQuery->getContext());
+        $this->assertEquals($flowQuery->getContext(), $wrappedQuery->getContext());
     }
 
     /**
@@ -50,9 +49,9 @@ class FlowQueryTest extends UnitTestCase
         $myObject2 = new \stdClass();
 
         $query = $this->createFlowQuery([$myObject, $myObject2]);
-        self::assertInstanceOf(FlowQuery::class, $query->first());
-        self::assertSame([$myObject], $query->first()->get());
-        self::assertSame([$myObject], iterator_to_array($query->first()));
+        $this->assertInstanceOf(FlowQuery::class, $query->first());
+        $this->assertSame([$myObject], $query->first()->get());
+        $this->assertSame([$myObject], iterator_to_array($query->first()));
     }
 
     /**
@@ -64,9 +63,9 @@ class FlowQueryTest extends UnitTestCase
         $myObject2 = new \stdClass();
 
         $query = $this->createFlowQuery([$myObject, $myObject2]);
-        self::assertInstanceOf(FlowQuery::class, $query->last());
-        self::assertSame([$myObject2], $query->last()->get());
-        self::assertSame([$myObject2], iterator_to_array($query->last()));
+        $this->assertInstanceOf(FlowQuery::class, $query->last());
+        $this->assertSame([$myObject2], $query->last()->get());
+        $this->assertSame([$myObject2], iterator_to_array($query->last()));
     }
 
     /**
@@ -79,13 +78,13 @@ class FlowQueryTest extends UnitTestCase
         $myObject3 = new \stdClass();
 
         $query = $this->createFlowQuery([$myObject, $myObject2, $myObject3]);
-        self::assertInstanceOf(FlowQuery::class, $query->slice());
-        self::assertSame([$myObject, $myObject2, $myObject3], $query->slice()->get());
-        self::assertSame([$myObject, $myObject2, $myObject3], iterator_to_array($query->slice()));
-        self::assertSame([$myObject, $myObject2], $query->slice(0, 2)->get());
-        self::assertSame([$myObject, $myObject2], iterator_to_array($query->slice(0, 2)));
-        self::assertSame([$myObject3], $query->slice(2)->get());
-        self::assertSame([$myObject3], iterator_to_array($query->slice(2)));
+        $this->assertInstanceOf(FlowQuery::class, $query->slice());
+        $this->assertSame([$myObject, $myObject2, $myObject3], $query->slice()->get());
+        $this->assertSame([$myObject, $myObject2, $myObject3], iterator_to_array($query->slice()));
+        $this->assertSame([$myObject, $myObject2], $query->slice(0, 2)->get());
+        $this->assertSame([$myObject, $myObject2], iterator_to_array($query->slice(0, 2)));
+        $this->assertSame([$myObject3], $query->slice(2)->get());
+        $this->assertSame([$myObject3], iterator_to_array($query->slice(2)));
     }
 
     /**
@@ -103,49 +102,49 @@ class FlowQueryTest extends UnitTestCase
         $query = $this->createFlowQuery([$myObject, $myObject2, $myObject3]);
 
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *= bar]'));
-        self::assertSame([$myObject], $query->filter('[arrayProperty *= bar]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *= bar]'));
+        $this->assertSame([$myObject], $query->filter('[arrayProperty *= bar]')->get());
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *= foo]'));
-        self::assertSame([$myObject, $myObject2], $query->filter('[arrayProperty *= foo]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *= foo]'));
+        $this->assertSame([$myObject, $myObject2], $query->filter('[arrayProperty *= foo]')->get());
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *= ding]'));
-        self::assertSame([], $query->filter('[arrayProperty *= ding]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *= ding]'));
+        $this->assertSame([], $query->filter('[arrayProperty *= ding]')->get());
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *= fo]'));
-        self::assertSame([], $query->filter('[arrayProperty *= fo]')->get());
-
-
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= zing]'));
-        self::assertSame([$myObject3], $query->filter('[arrayProperty ^= zing]')->get());
-
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= foo]'));
-        self::assertSame([$myObject, $myObject2], $query->filter('[arrayProperty ^= foo]')->get());
-
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= ding]'));
-        self::assertSame([], $query->filter('[arrayProperty ^= ding]')->get());
-
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= zi]'));
-        self::assertSame([], $query->filter('[arrayProperty ^= zi]')->get());
-
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= bar]'));
-        self::assertSame([], $query->filter('[arrayProperty ^= bar]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *= fo]'));
+        $this->assertSame([], $query->filter('[arrayProperty *= fo]')->get());
 
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= baz]'));
-        self::assertSame([$myObject], $query->filter('[arrayProperty $= baz]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= zing]'));
+        $this->assertSame([$myObject3], $query->filter('[arrayProperty ^= zing]')->get());
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= zong]'));
-        self::assertSame([$myObject2, $myObject3], $query->filter('[arrayProperty $= zong]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= foo]'));
+        $this->assertSame([$myObject, $myObject2], $query->filter('[arrayProperty ^= foo]')->get());
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= ding]'));
-        self::assertSame([], $query->filter('[arrayProperty $= ding]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= ding]'));
+        $this->assertSame([], $query->filter('[arrayProperty ^= ding]')->get());
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= az]'));
-        self::assertSame([], $query->filter('[arrayProperty $= az]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= zi]'));
+        $this->assertSame([], $query->filter('[arrayProperty ^= zi]')->get());
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= bar]'));
-        self::assertSame([], $query->filter('[arrayProperty $= bar]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= bar]'));
+        $this->assertSame([], $query->filter('[arrayProperty ^= bar]')->get());
+
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= baz]'));
+        $this->assertSame([$myObject], $query->filter('[arrayProperty $= baz]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= zong]'));
+        $this->assertSame([$myObject2, $myObject3], $query->filter('[arrayProperty $= zong]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= ding]'));
+        $this->assertSame([], $query->filter('[arrayProperty $= ding]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= az]'));
+        $this->assertSame([], $query->filter('[arrayProperty $= az]')->get());
+
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= bar]'));
+        $this->assertSame([], $query->filter('[arrayProperty $= bar]')->get());
     }
 
     /**
@@ -399,8 +398,8 @@ class FlowQueryTest extends UnitTestCase
     {
         $query = $this->createFlowQuery($sourceObjects);
         $filter = $query->filter($filterString);
-        self::assertInstanceOf(FlowQuery::class, $filter);
-        self::assertSame($expected, iterator_to_array($filter));
+        $this->assertInstanceOf(FlowQuery::class, $filter);
+        $this->assertSame($expected, iterator_to_array($filter));
     }
 
     /**
@@ -410,7 +409,7 @@ class FlowQueryTest extends UnitTestCase
     public function isCanFilterObjects($sourceObjects, $filterString, $expectedResultArray)
     {
         $query = $this->createFlowQuery($sourceObjects);
-        self::assertSame(count($expectedResultArray) > 0, $query->is($filterString));
+        $this->assertSame(count($expectedResultArray) > 0, $query->is($filterString));
     }
 
     /**
@@ -420,9 +419,9 @@ class FlowQueryTest extends UnitTestCase
     public function countReturnsCorrectNumber($sourceObjects, $filterString, $expectedResultArray)
     {
         $query = $this->createFlowQuery($sourceObjects);
-        self::assertSame(count($expectedResultArray), $query->filter($filterString)->count());
-        self::assertSame(count($sourceObjects), $query->count());
-        self::assertSame(count($sourceObjects), count($query));
+        $this->assertSame(count($expectedResultArray), $query->filter($filterString)->count());
+        $this->assertSame(count($sourceObjects), $query->count());
+        $this->assertSame(count($sourceObjects), count($query));
     }
 
     /**
@@ -438,20 +437,20 @@ class FlowQueryTest extends UnitTestCase
         $myObject3->stringProperty = "fing', 'fan33g', 'fong";
         $query = $this->createFlowQuery([$myObject, $myObject2, $myObject3]);
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty $= 2]'));
-        self::assertSame([$myObject], $query->filter('[stringProperty $= 2]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty $= 2]'));
+        $this->assertSame([$myObject], $query->filter('[stringProperty $= 2]')->get());
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= 33]'));
-        self::assertSame([$myObject3], $query->filter('[stringProperty *= 33]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= 33]'));
+        $this->assertSame([$myObject3], $query->filter('[stringProperty *= 33]')->get());
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= "n33g"]'));
-        self::assertSame([$myObject3], $query->filter('[stringProperty *= "n33g"]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= "n33g"]'));
+        $this->assertSame([$myObject3], $query->filter('[stringProperty *= "n33g"]')->get());
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty $= "2"]'));
-        self::assertSame([$myObject], $query->filter('[stringProperty $= "2"]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty $= "2"]'));
+        $this->assertSame([$myObject], $query->filter('[stringProperty $= "2"]')->get());
 
-        self::assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= 2]'));
-        self::assertSame([$myObject], $query->filter('[stringProperty *= 2]')->get());
+        $this->assertInstanceOf(FlowQuery::class, $query->filter('[stringProperty *= 2]'));
+        $this->assertSame([$myObject], $query->filter('[stringProperty *= 2]')->get());
     }
 
     /**
@@ -546,10 +545,10 @@ class FlowQueryTest extends UnitTestCase
         foreach ($expressions as $expression) {
             eval('$result = ' . $expression . ';');
             if (!$isFinal) {
-                self::assertInstanceOf(FlowQuery::class, $result);
+                $this->assertInstanceOf(FlowQuery::class, $result);
                 $result = iterator_to_array($result);
             }
-            self::assertSame($expectedResult, $result, 'Expression "' . $expression . '" did not match expected result');
+            $this->assertSame($expectedResult, $result, 'Expression "' . $expression . '" did not match expected result');
         }
     }
 
@@ -579,17 +578,16 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @dataProvider dataProviderForErrorQueries
      * @test
+     * @expectedException \Neos\Eel\FlowQuery\FizzleException
      */
     public function errorQueriesThrowError($expression)
     {
-        $this->expectException(FizzleException::class);
-
         $x = new \stdClass();
         $x->foo = new \stdClass();
         $x->foo->foo = 'asdf';
         $query = $this->createFlowQuery([$x]);
         eval('$result = ' . $expression . ';');
-        self::assertInstanceOf(FlowQuery::class, $result);
+        $this->assertInstanceOf(FlowQuery::class, $result);
         $result->getIterator(); // Throws exception
     }
 
@@ -603,7 +601,7 @@ class FlowQueryTest extends UnitTestCase
 
         // Set up mock persistence manager to return dummy object identifiers
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $this->mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnCallBack(function ($object) {
+        $this->mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnCallback(function ($object) {
             if (isset($object->__identity)) {
                 return $object->__identity;
             }
@@ -611,7 +609,7 @@ class FlowQueryTest extends UnitTestCase
 
         $mockPersistenceManager = $this->mockPersistenceManager;
         $objectManager = $this->createMock(ObjectManagerInterface::class);
-        $objectManager->expects(self::any())->method('get')->will(self::returnCallBack(function ($className) use ($mockPersistenceManager) {
+        $objectManager->expects($this->any())->method('get')->will($this->returnCallback(function ($className) use ($mockPersistenceManager) {
             $instance = new $className;
             // Special case to inject the mock persistence manager into the filter operation
             if ($className === Operations\Object\FilterOperation::class) {

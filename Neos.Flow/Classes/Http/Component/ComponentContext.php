@@ -12,7 +12,7 @@ namespace Neos\Flow\Http\Component;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -25,16 +25,13 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @api
  * @Flow\Proxy(false)
- * @Flow\Scope("singleton")
- *
- * @deprecated Will be removed without replacement with next major
  */
 class ComponentContext
 {
     /**
      * The current HTTP request
      *
-     * @var ServerRequestInterface
+     * @var RequestInterface
      */
     protected $httpRequest;
 
@@ -54,17 +51,17 @@ class ComponentContext
     protected $parameters = [];
 
     /**
-     * @param ServerRequestInterface $httpRequest
+     * @param RequestInterface $httpRequest
      * @param ResponseInterface $httpResponse
      */
-    public function __construct(ServerRequestInterface $httpRequest, ResponseInterface $httpResponse)
+    public function __construct(RequestInterface $httpRequest, ResponseInterface $httpResponse)
     {
         $this->httpRequest = $httpRequest;
         $this->httpResponse = $httpResponse;
     }
 
     /**
-     * @return ServerRequestInterface
+     * @return RequestInterface
      * @api
      */
     public function getHttpRequest()
@@ -73,11 +70,11 @@ class ComponentContext
     }
 
     /**
-     * @param ServerRequestInterface $httpRequest
+     * @param RequestInterface $httpRequest
      * @return void
      * @api
      */
-    public function replaceHttpRequest(ServerRequestInterface $httpRequest)
+    public function replaceHttpRequest(RequestInterface $httpRequest)
     {
         $this->httpRequest = $httpRequest;
     }
@@ -109,16 +106,7 @@ class ComponentContext
      */
     public function getParameter($componentClassName, $parameterName)
     {
-        return $this->parameters[$componentClassName][$parameterName] ?? null;
-    }
-
-    /**
-     * @param string $componentClassName
-     * @return array
-     */
-    public function getAllParametersFor($componentClassName): array
-    {
-        return $this->parameters[$componentClassName] ?? [];
+        return isset($this->parameters[$componentClassName][$parameterName]) ? $this->parameters[$componentClassName][$parameterName] : null;
     }
 
     /**

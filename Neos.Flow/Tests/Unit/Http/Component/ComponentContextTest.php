@@ -11,10 +11,8 @@ namespace Neos\Flow\Tests\Unit\Http\Component;
  * source code.
  */
 
-use Neos\Flow\Http\Component\ComponentContext;
+use Neos\Flow\Http;
 use Neos\Flow\Tests\UnitTestCase;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Test case for the Http Component Context
@@ -22,26 +20,26 @@ use Psr\Http\Message\ServerRequestInterface;
 class ComponentContextTest extends UnitTestCase
 {
     /**
-     * @var ComponentContext
+     * @var Http\Component\ComponentContext
      */
     protected $componentContext;
 
     /**
-     * @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var Http\Request|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpRequest;
 
     /**
-     * @var ResponseInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var Http\Response|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockHttpResponse;
 
-    protected function setUp(): void
+    public function setUp()
     {
-        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpResponse = $this->getMockBuilder(ResponseInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpResponse = $this->getMockBuilder(Http\Response::class)->disableOriginalConstructor()->getMock();
 
-        $this->componentContext = new ComponentContext($this->mockHttpRequest, $this->mockHttpResponse);
+        $this->componentContext = new Http\Component\ComponentContext($this->mockHttpRequest, $this->mockHttpResponse);
     }
 
     /**
@@ -49,7 +47,7 @@ class ComponentContextTest extends UnitTestCase
      */
     public function getHttpRequestReturnsTheCurrentRequest()
     {
-        self::assertSame($this->mockHttpRequest, $this->componentContext->getHttpRequest());
+        $this->assertSame($this->mockHttpRequest, $this->componentContext->getHttpRequest());
     }
 
     /**
@@ -57,10 +55,10 @@ class ComponentContextTest extends UnitTestCase
      */
     public function replaceHttpRequestReplacesTheCurrentRequest()
     {
-        /** @var ServerRequestInterface $mockNewHttpRequest */
-        $mockNewHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        /** @var Http\Request $mockNewHttpRequest */
+        $mockNewHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
         $this->componentContext->replaceHttpRequest($mockNewHttpRequest);
-        self::assertSame($mockNewHttpRequest, $this->componentContext->getHttpRequest());
+        $this->assertSame($mockNewHttpRequest, $this->componentContext->getHttpRequest());
     }
 
     /**
@@ -68,7 +66,7 @@ class ComponentContextTest extends UnitTestCase
      */
     public function getHttpResponseReturnsTheCurrentResponse()
     {
-        self::assertSame($this->mockHttpResponse, $this->componentContext->getHttpResponse());
+        $this->assertSame($this->mockHttpResponse, $this->componentContext->getHttpResponse());
     }
 
     /**
@@ -76,10 +74,10 @@ class ComponentContextTest extends UnitTestCase
      */
     public function replaceHttpResponseReplacesTheCurrentResponse()
     {
-        /** @var ResponseInterface $mockNewHttpResponse */
-        $mockNewHttpResponse = $this->getMockBuilder(ResponseInterface::class)->disableOriginalConstructor()->getMock();
+        /** @var Http\Response $mockNewHttpResponse */
+        $mockNewHttpResponse = $this->getMockBuilder(Http\Response::class)->disableOriginalConstructor()->getMock();
         $this->componentContext->replaceHttpResponse($mockNewHttpResponse);
-        self::assertSame($mockNewHttpResponse, $this->componentContext->getHttpResponse());
+        $this->assertSame($mockNewHttpResponse, $this->componentContext->getHttpResponse());
     }
 
 
@@ -88,7 +86,7 @@ class ComponentContextTest extends UnitTestCase
      */
     public function getParameterReturnsNullIfTheSpecifiedParameterIsNotDefined()
     {
-        self::assertNull($this->componentContext->getParameter('Some\Component\ClassName', 'nonExistingParameter'));
+        $this->assertNull($this->componentContext->getParameter('Some\Component\ClassName', 'nonExistingParameter'));
     }
 
     /**
@@ -97,6 +95,6 @@ class ComponentContextTest extends UnitTestCase
     public function setParameterStoresTheGivenParameter()
     {
         $this->componentContext->setParameter('Some\Component\ClassName', 'someParameter', 'someParameterValue');
-        self::assertSame('someParameterValue', $this->componentContext->getParameter('Some\Component\ClassName', 'someParameter'));
+        $this->assertSame('someParameterValue', $this->componentContext->getParameter('Some\Component\ClassName', 'someParameter'));
     }
 }

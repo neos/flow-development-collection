@@ -24,12 +24,7 @@ abstract class OpcodeCacheHelper
      *
      * @var array<\Closure>
      */
-    protected static $clearCacheCallbacks = [];
-
-    /**
-     * @var bool
-     */
-    protected static $initialized = false;
+    protected static $clearCacheCallbacks = null;
 
     /**
      * Initialize the ClearCache-Callbacks
@@ -73,7 +68,6 @@ abstract class OpcodeCacheHelper
                 }
             };
         }
-        self::$initialized = true;
     }
 
     /**
@@ -84,7 +78,7 @@ abstract class OpcodeCacheHelper
      */
     public static function clearAllActive(string $absolutePathAndFilename = null)
     {
-        if (self::$initialized === false) {
+        if (self::$clearCacheCallbacks === null) {
             self::initialize();
         }
         foreach (self::$clearCacheCallbacks as $clearCacheCallback) {

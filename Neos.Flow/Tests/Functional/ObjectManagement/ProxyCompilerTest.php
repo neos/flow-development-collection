@@ -29,9 +29,9 @@ class ProxyCompilerTest extends FunctionalTestCase
         $class = new ClassReflection(Fixtures\PrototypeClassA::class);
         $method = $class->getMethod('setSomeProperty');
 
-        self::assertTrue($class->implementsInterface(ProxyInterface::class));
-        self::assertTrue($class->isTaggedWith('scope'));
-        self::assertTrue($method->isTaggedWith('session'));
+        $this->assertTrue($class->implementsInterface(ProxyInterface::class));
+        $this->assertTrue($class->isTaggedWith('scope'));
+        $this->assertTrue($method->isTaggedWith('session'));
     }
 
     /**
@@ -43,7 +43,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         $expectedResult = 'This is a example doc comment which should be copied' . chr(10) . 'to the proxy class.';
         $actualResult = $class->getDescription();
 
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -54,7 +54,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         $class = new ClassReflection(Fixtures\PrototypeClassA::class);
         $method = $class->getMethod('getSingletonA');
 
-        self::assertEquals(['SingletonClassA The singleton class A'], $method->getTagValues('return'));
+        $this->assertEquals(['SingletonClassA The singleton class A'], $method->getTagValues('return'));
     }
 
     /**
@@ -65,7 +65,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         $class = new ClassReflection(Fixtures\PrototypeClassA::class);
         $method = $class->getMethod('setSomeProperty');
 
-        self::assertEquals(['string $someProperty The property value'], $method->getTagValues('param'));
+        $this->assertEquals(['string $someProperty The property value'], $method->getTagValues('param'));
     }
 
     /**
@@ -76,7 +76,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         $class = new ClassReflection(Fixtures\PrototypeClassA::class);
         $method = $class->getMethod('setSomeProperty');
 
-        self::assertEquals(['autoStart=true'], $method->getTagValues('session'));
+        $this->assertEquals(['autoStart=true'], $method->getTagValues('session'));
     }
 
     /**
@@ -94,14 +94,14 @@ class ProxyCompilerTest extends FunctionalTestCase
     public function setInstanceOfSubClassDoesNotOverrideParentClass()
     {
         $singletonE = $this->objectManager->get(Fixtures\SingletonClassE::class);
-        self::assertEquals(Fixtures\SingletonClassE::class, get_class($singletonE));
+        $this->assertEquals(Fixtures\SingletonClassE::class, get_class($singletonE));
 
         $singletonEsub = $this->objectManager->get(Fixtures\SingletonClassEsub::class);
-        self::assertEquals(Fixtures\SingletonClassEsub::class, get_class($singletonEsub));
+        $this->assertEquals(Fixtures\SingletonClassEsub::class, get_class($singletonEsub));
 
         $singletonE2 = $this->objectManager->get(Fixtures\SingletonClassE::class);
-        self::assertEquals(Fixtures\SingletonClassE::class, get_class($singletonE2));
-        self::assertSame($singletonE, $singletonE2);
+        $this->assertEquals(Fixtures\SingletonClassE::class, get_class($singletonE2));
+        $this->assertSame($singletonE, $singletonE2);
     }
 
     /**
@@ -117,8 +117,8 @@ class ProxyCompilerTest extends FunctionalTestCase
         $prototypeF = null;
 
         $prototypeF = unserialize($serializedObject);
-        self::assertSame($prototypeF->getNonTransientProperty(), 'bar');
-        self::assertSame($prototypeF->getTransientProperty(), null);
+        $this->assertSame($prototypeF->getNonTransientProperty(), 'bar');
+        $this->assertSame($prototypeF->getTransientProperty(), null);
     }
 
     /**
@@ -127,6 +127,6 @@ class ProxyCompilerTest extends FunctionalTestCase
     public function proxiedFinalClassesAreStillFinal()
     {
         $reflectionClass = new ClassReflection(Fixtures\FinalClassWithDependencies::class);
-        self::assertTrue($reflectionClass->isFinal());
+        $this->assertTrue($reflectionClass->isFinal());
     }
 }

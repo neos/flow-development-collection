@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * source code.
  */
 
-use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\TypeConverter\DateTimeConverter;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Property\PropertyMappingConfiguration;
@@ -30,7 +29,7 @@ class DateTimeConverterTest extends UnitTestCase
      */
     protected $converter;
 
-    protected function setUp(): void
+    public function setUp()
     {
         $this->converter = new DateTimeConverter();
     }
@@ -40,9 +39,9 @@ class DateTimeConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        self::assertEquals(['string', 'integer', 'array'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        self::assertEquals(\DateTimeInterface::class, $this->converter->getSupportedTargetType(), 'Target type does not match');
-        self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+        $this->assertEquals(['string', 'integer', 'array'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals(\DateTimeInterface::class, $this->converter->getSupportedTargetType(), 'Target type does not match');
+        $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
 
@@ -53,7 +52,7 @@ class DateTimeConverterTest extends UnitTestCase
      */
     public function canConvertFromReturnsFalseIfTargetTypeIsNotDateTime()
     {
-        self::assertFalse($this->converter->canConvertFrom('Foo', 'SomeOtherType'));
+        $this->assertFalse($this->converter->canConvertFrom('Foo', 'SomeOtherType'));
     }
 
     /**
@@ -61,7 +60,7 @@ class DateTimeConverterTest extends UnitTestCase
      */
     public function canConvertFromReturnsTrueIfSourceTypeIsAString()
     {
-        self::assertTrue($this->converter->canConvertFrom('Foo', 'DateTime'));
+        $this->assertTrue($this->converter->canConvertFrom('Foo', 'DateTime'));
     }
 
     /**
@@ -69,7 +68,7 @@ class DateTimeConverterTest extends UnitTestCase
      */
     public function canConvertFromReturnsTrueIfSourceTypeIsAnEmptyString()
     {
-        self::assertTrue($this->converter->canConvertFrom('', 'DateTime'));
+        $this->assertTrue($this->converter->canConvertFrom('', 'DateTime'));
     }
 
     /**
@@ -77,7 +76,7 @@ class DateTimeConverterTest extends UnitTestCase
      */
     public function canConvertFromReturnsTrueITargetTypeIsADateTimeImmutable()
     {
-        self::assertTrue($this->converter->canConvertFrom('', \DateTimeImmutable::class));
+        $this->assertTrue($this->converter->canConvertFrom('', \DateTimeImmutable::class));
     }
 
     /**
@@ -86,7 +85,7 @@ class DateTimeConverterTest extends UnitTestCase
     public function convertFromReturnsErrorIfGivenStringCantBeConverted()
     {
         $error = $this->converter->convertFrom('1980-12-13', 'DateTime');
-        self::assertInstanceOf(FlowError::class, $error);
+        $this->assertInstanceOf(FlowError::class, $error);
     }
 
     /**
@@ -97,7 +96,7 @@ class DateTimeConverterTest extends UnitTestCase
         $expectedResult = '1980-12-13T20:15:07+01:23';
         $date = $this->converter->convertFrom($expectedResult, 'DateTime');
         $actualResult = $date->format('Y-m-d\TH:i:sP');
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -107,7 +106,7 @@ class DateTimeConverterTest extends UnitTestCase
     {
         $expectedResult = '1980-12-13T20:15:07+01:23';
         $date = $this->converter->convertFrom($expectedResult, \DateTimeImmutable::class);
-        self::assertInstanceOf(\DateTimeImmutable::class, $date);
+        $this->assertInstanceOf(\DateTimeImmutable::class, $date);
     }
 
     /**
@@ -118,14 +117,14 @@ class DateTimeConverterTest extends UnitTestCase
         $expectedResult = '1980-12-13T20:15:07+01:23';
         $mockMappingConfiguration = $this->createMock(PropertyMappingConfigurationInterface::class);
         $mockMappingConfiguration
-            ->expects(self::atLeastOnce())
+            ->expects($this->atLeastOnce())
             ->method('getConfigurationValue')
             ->with(DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT)
-            ->will(self::returnValue(null));
+            ->will($this->returnValue(null));
 
         $date = $this->converter->convertFrom($expectedResult, 'DateTime', [], $mockMappingConfiguration);
         $actualResult = $date->format(DateTimeConverter::DEFAULT_DATE_FORMAT);
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -134,7 +133,7 @@ class DateTimeConverterTest extends UnitTestCase
     public function convertFromEmptyStringReturnsNull()
     {
         $date = $this->converter->convertFrom('', 'DateTime', [], null);
-        self::assertNull($date);
+        $this->assertNull($date);
     }
 
     /**
@@ -167,24 +166,24 @@ class DateTimeConverterTest extends UnitTestCase
         if ($dateFormat !== null) {
             $mockMappingConfiguration = $this->createMock(PropertyMappingConfigurationInterface::class);
             $mockMappingConfiguration
-                ->expects(self::atLeastOnce())
+                ->expects($this->atLeastOnce())
                 ->method('getConfigurationValue')
                 ->with(DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT)
-                ->will(self::returnValue($dateFormat));
+                ->will($this->returnValue($dateFormat));
         } else {
             $mockMappingConfiguration = null;
         }
         $date = $this->converter->convertFrom($source, 'DateTime', [], $mockMappingConfiguration);
         if ($isValid !== true) {
-            self::assertInstanceOf(FlowError::class, $date);
+            $this->assertInstanceOf(FlowError::class, $date);
             return;
         }
-        self::assertInstanceOf(\DateTime::class, $date);
+        $this->assertInstanceOf(\DateTime::class, $date);
 
         if ($dateFormat === null) {
             $dateFormat = DateTimeConverter::DEFAULT_DATE_FORMAT;
         }
-        self::assertSame($source, $date->format($dateFormat));
+        $this->assertSame($source, $date->format($dateFormat));
     }
 
     /**
@@ -208,8 +207,8 @@ class DateTimeConverterTest extends UnitTestCase
     public function convertFromIntegerOrDigitStringWithoutConfigurationTests($source)
     {
         $date = $this->converter->convertFrom($source, 'DateTime', [], null);
-        self::assertInstanceOf(\DateTime::class, $date);
-        self::assertSame(strval($source), $date->format('U'));
+        $this->assertInstanceOf(\DateTime::class, $date);
+        $this->assertSame(strval($source), $date->format('U'));
     }
 
     /**
@@ -234,14 +233,14 @@ class DateTimeConverterTest extends UnitTestCase
     {
         $mockMappingConfiguration = $this->createMock(PropertyMappingConfigurationInterface::class);
         $mockMappingConfiguration
-            ->expects(self::atLeastOnce())
+            ->expects($this->atLeastOnce())
             ->method('getConfigurationValue')
             ->with(DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT)
-            ->will(self::returnValue(null));
+            ->will($this->returnValue(null));
 
         $date = $this->converter->convertFrom($source, 'DateTime', [], $mockMappingConfiguration);
-        self::assertInstanceOf(\DateTime::class, $date);
-        self::assertSame(strval($source), $date->format('U'));
+        $this->assertInstanceOf(\DateTime::class, $date);
+        $this->assertSame(strval($source), $date->format('U'));
     }
 
     /** Array to DateTime testcases  **/
@@ -254,8 +253,8 @@ class DateTimeConverterTest extends UnitTestCase
     public function convertFromIntegerOrDigitStringInArrayWithoutConfigurationTests($source)
     {
         $date = $this->converter->convertFrom(['date' => $source], 'DateTime', [], null);
-        self::assertInstanceOf(\DateTime::class, $date);
-        self::assertSame(strval($source), $date->format('U'));
+        $this->assertInstanceOf(\DateTime::class, $date);
+        $this->assertSame(strval($source), $date->format('U'));
     }
 
     /**
@@ -263,7 +262,7 @@ class DateTimeConverterTest extends UnitTestCase
      */
     public function canConvertFromReturnsTrueIfSourceTypeIsAnArray()
     {
-        self::assertTrue($this->converter->canConvertFrom([], 'DateTime'));
+        $this->assertTrue($this->converter->canConvertFrom([], 'DateTime'));
     }
 
     /**
@@ -272,15 +271,15 @@ class DateTimeConverterTest extends UnitTestCase
     public function convertFromReturnsErrorIfGivenArrayCantBeConverted()
     {
         $error = $this->converter->convertFrom(['date' => '1980-12-13'], 'DateTime');
-        self::assertInstanceOf(FlowError::class, $error);
+        $this->assertInstanceOf(FlowError::class, $error);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Property\Exception\TypeConverterException
      */
     public function convertFromThrowsExceptionIfGivenArrayDoesNotSpecifyTheDate()
     {
-        $this->expectException(TypeConverterException::class);
         $this->converter->convertFrom(['hour' => '12', 'minute' => '30'], 'DateTime');
     }
 
@@ -292,7 +291,7 @@ class DateTimeConverterTest extends UnitTestCase
         $expectedResult = '1980-12-13T20:15:07+01:23';
         $date = $this->converter->convertFrom(['date' => $expectedResult], 'DateTime');
         $actualResult = $date->format('Y-m-d\TH:i:sP');
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -313,11 +312,11 @@ class DateTimeConverterTest extends UnitTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Property\Exception\TypeConverterException
      * @dataProvider invalidDatePartKeyValuesDataProvider
      */
     public function convertFromThrowsExceptionIfDatePartKeysHaveInvalidValuesSpecified($source)
     {
-        $this->expectException(TypeConverterException::class);
         $this->converter->convertFrom($source, 'DateTime');
     }
 
@@ -336,7 +335,7 @@ class DateTimeConverterTest extends UnitTestCase
 
         $date = $this->converter->convertFrom($source, 'DateTime', [], $mappingConfiguration);
         $actualResult = $date->format('Y-m-d');
-        self::assertSame('2010-10-13', $actualResult);
+        $this->assertSame('2010-10-13', $actualResult);
     }
 
     /**
@@ -352,10 +351,10 @@ class DateTimeConverterTest extends UnitTestCase
             'second' => '59',
         ];
         $date = $this->converter->convertFrom($source, 'DateTime');
-        self::assertSame('2011-06-16', $date->format('Y-m-d'));
-        self::assertSame('12', $date->format('H'));
-        self::assertSame('30', $date->format('i'));
-        self::assertSame('59', $date->format('s'));
+        $this->assertSame('2011-06-16', $date->format('Y-m-d'));
+        $this->assertSame('12', $date->format('H'));
+        $this->assertSame('30', $date->format('i'));
+        $this->assertSame('59', $date->format('s'));
     }
 
     /**
@@ -371,10 +370,10 @@ class DateTimeConverterTest extends UnitTestCase
             'second' => '59',
         ];
         $date = $this->converter->convertFrom($source, \DateTimeImmutable::class);
-        self::assertSame('2011-06-16', $date->format('Y-m-d'));
-        self::assertSame('12', $date->format('H'));
-        self::assertSame('30', $date->format('i'));
-        self::assertSame('59', $date->format('s'));
+        $this->assertSame('2011-06-16', $date->format('Y-m-d'));
+        $this->assertSame('12', $date->format('H'));
+        $this->assertSame('30', $date->format('i'));
+        $this->assertSame('59', $date->format('s'));
     }
 
     /**
@@ -388,11 +387,11 @@ class DateTimeConverterTest extends UnitTestCase
             'timezone' => 'Atlantic/Reykjavik',
         ];
         $date = $this->converter->convertFrom($source, 'DateTime');
-        self::assertSame('2011-06-16', $date->format('Y-m-d'));
-        self::assertSame('12', $date->format('H'));
-        self::assertSame('30', $date->format('i'));
-        self::assertSame('59', $date->format('s'));
-        self::assertSame('Atlantic/Reykjavik', $date->getTimezone()->getName());
+        $this->assertSame('2011-06-16', $date->format('Y-m-d'));
+        $this->assertSame('12', $date->format('H'));
+        $this->assertSame('30', $date->format('i'));
+        $this->assertSame('59', $date->format('s'));
+        $this->assertSame('Atlantic/Reykjavik', $date->getTimezone()->getName());
     }
 
     /**
@@ -406,19 +405,19 @@ class DateTimeConverterTest extends UnitTestCase
             'timezone' => 'Atlantic/Reykjavik',
         ];
         $date = $this->converter->convertFrom($source, \DateTimeImmutable::class);
-        self::assertSame('2011-06-16', $date->format('Y-m-d'));
-        self::assertSame('12', $date->format('H'));
-        self::assertSame('30', $date->format('i'));
-        self::assertSame('59', $date->format('s'));
-        self::assertSame('Atlantic/Reykjavik', $date->getTimezone()->getName());
+        $this->assertSame('2011-06-16', $date->format('Y-m-d'));
+        $this->assertSame('12', $date->format('H'));
+        $this->assertSame('30', $date->format('i'));
+        $this->assertSame('59', $date->format('s'));
+        $this->assertSame('Atlantic/Reykjavik', $date->getTimezone()->getName());
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Property\Exception\TypeConverterException
      */
     public function convertFromThrowsExceptionIfSpecifiedTimezoneIsInvalid()
     {
-        $this->expectException(TypeConverterException::class);
         $source = [
             'date' => '2011-06-16',
             'dateFormat' => 'Y-m-d',
@@ -429,10 +428,10 @@ class DateTimeConverterTest extends UnitTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Property\Exception\TypeConverterException
      */
     public function convertFromArrayThrowsExceptionForEmptyArray()
     {
-        $this->expectException(TypeConverterException::class);
         $this->converter->convertFrom([], 'DateTime', [], null);
     }
 
@@ -441,7 +440,7 @@ class DateTimeConverterTest extends UnitTestCase
      */
     public function convertFromArrayReturnsNullForEmptyDate()
     {
-        self::assertNull($this->converter->convertFrom(['date' => ''], 'DateTime', [], null));
+        $this->assertNull($this->converter->convertFrom(['date' => ''], 'DateTime', [], null));
     }
 
     /**
@@ -476,21 +475,21 @@ class DateTimeConverterTest extends UnitTestCase
         if ($dateFormat !== null) {
             $mockMappingConfiguration = $this->createMock(PropertyMappingConfigurationInterface::class);
             $mockMappingConfiguration
-                ->expects(self::atLeastOnce())
+                ->expects($this->atLeastOnce())
                 ->method('getConfigurationValue')
                 ->with(DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT)
-                ->will(self::returnValue($dateFormat));
+                ->will($this->returnValue($dateFormat));
         } else {
             $mockMappingConfiguration = null;
         }
         $date = $this->converter->convertFrom($source, 'DateTime', [], $mockMappingConfiguration);
 
         if ($isValid !== true) {
-            self::assertInstanceOf(FlowError::class, $date);
+            $this->assertInstanceOf(FlowError::class, $date);
             return;
         }
 
-        self::assertInstanceOf(\DateTime::class, $date);
+        $this->assertInstanceOf(\DateTime::class, $date);
         $dateAsString = isset($source['date']) ? strval($source['date']) : '';
         if ($dateFormat === null) {
             if (ctype_digit($dateAsString)) {
@@ -499,7 +498,7 @@ class DateTimeConverterTest extends UnitTestCase
                 $dateFormat = DateTimeConverter::DEFAULT_DATE_FORMAT;
             }
         }
-        self::assertSame($dateAsString, $date->format($dateFormat));
+        $this->assertSame($dateAsString, $date->format($dateFormat));
     }
 
     /**
@@ -529,8 +528,8 @@ class DateTimeConverterTest extends UnitTestCase
         }
         $date = $this->converter->convertFrom('2005-08-15T15:52:01+00:00', $className);
 
-        self::assertInstanceOf($className, $date);
-        self::assertSame('Bar', $date->foo());
+        $this->assertInstanceOf($className, $date);
+        $this->assertSame('Bar', $date->foo());
     }
 
     /**
@@ -542,7 +541,7 @@ class DateTimeConverterTest extends UnitTestCase
         // Serialize to an array with json_decode from an json_encoded string
         $source = json_decode(json_encode($sourceDate), true);
         $convertedDate = $this->converter->convertFrom($source, 'DateTime');
-        self::assertInstanceOf('DateTime', $convertedDate);
-        self::assertSame($sourceDate->getTimestamp(), $convertedDate->getTimestamp());
+        $this->assertInstanceOf('DateTime', $convertedDate);
+        $this->assertSame($sourceDate->getTimestamp(), $convertedDate->getTimestamp());
     }
 }

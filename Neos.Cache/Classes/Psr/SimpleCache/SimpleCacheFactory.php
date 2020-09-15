@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Cache\Psr\SimpleCache;
 
 /*
@@ -52,7 +50,7 @@ class SimpleCacheFactory
      * @return CacheInterface
      * @throws InvalidBackendException
      */
-    public function create(string $cacheIdentifier, string $backendObjectName, array $backendOptions = []): CacheInterface
+    public function create($cacheIdentifier, $backendObjectName, array $backendOptions = []): CacheInterface
     {
         $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $this->environmentConfiguration);
         $cache = $this->instantiateCache($cacheIdentifier, $backend);

@@ -26,7 +26,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function strtotitleWorksWithLatinCharacters()
     {
         $testString = 'this Is - my TestString.';
-        self::assertEquals('This Is - My Teststring.', Functions::strtotitle($testString), 'strtotitle() did not return the expected string.');
+        $this->assertEquals('This Is - My Teststring.', Functions::strtotitle($testString), 'strtotitle() did not return the expected string.');
     }
 
     /**
@@ -38,7 +38,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     {
         $testString = ' öl Ist nicht das GLEICHE wie øl.';
         $expectedString = ' Öl Ist Nicht Das Gleiche Wie Øl.';
-        self::assertEquals($expectedString, Functions::strtotitle($testString), 'strtotitle() did not return the expected string for the unicode test.');
+        $this->assertEquals($expectedString, Functions::strtotitle($testString), 'strtotitle() did not return the expected string for the unicode test.');
     }
 
     /**
@@ -49,7 +49,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function substrWorksWithLatinCharacters()
     {
         $testString = 'I say "hello world".';
-        self::assertEquals('hello world', Functions::substr($testString, 7, 11), 'substr() with latin characters did not return the expected string.');
+        $this->assertEquals('hello world', Functions::substr($testString, 7, 11), 'substr() with latin characters did not return the expected string.');
     }
 
     /**
@@ -60,7 +60,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function substrWorksWithUTF8Characters()
     {
         $testString = 'Kasper Skårhøj implemented most versions of TYPO3.';
-        self::assertEquals('Kasper Skårhøj', Functions::substr($testString, 0, 14), 'substr() with UTF8 characters did not return the expected string.');
+        $this->assertEquals('Kasper Skårhøj', Functions::substr($testString, 0, 14), 'substr() with UTF8 characters did not return the expected string.');
     }
 
     /**
@@ -71,7 +71,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function substrWorksWithUTF8CharactersSpecifyingNoLength()
     {
         $testString = 'Kasper Skårhøj implemented most versions of TYPO3.';
-        self::assertEquals('implemented most versions of TYPO3.', Functions::substr($testString, 15), 'substr() with UTF8 characters did not return the expected string after specifying no length.');
+        $this->assertEquals('implemented most versions of TYPO3.', Functions::substr($testString, 15), 'substr() with UTF8 characters did not return the expected string after specifying no length.');
     }
 
     /**
@@ -82,7 +82,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function strtoupperWorksWithLatinCharacters()
     {
         $testString = 'typo3';
-        self::assertEquals('TYPO3', Functions::strtoupper($testString), 'strtoupper() with latin characters didn\'t work out.');
+        $this->assertEquals('TYPO3', Functions::strtoupper($testString), 'strtoupper() with latin characters didn\'t work out.');
     }
 
     /**
@@ -95,7 +95,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
         $testString = 'Here are some characters: äöüÄÖÜßéèêåÅøØæÆœŒ ...';
         $expectedResult = 'HERE ARE SOME CHARACTERS: ÄÖÜÄÖÜSSÉÈÊÅÅØØÆÆŒŒ ...';
         $result = Functions::strtoupper($testString);
-        self::assertEquals($expectedResult, $result, 'strtoupper() could not convert our selection of special characters.');
+        $this->assertEquals($expectedResult, $result, 'strtoupper() could not convert our selection of special characters.');
     }
 
     /**
@@ -106,7 +106,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function strtolowerWorksWithLatinCharacters()
     {
         $testString = 'TYPO3';
-        self::assertEquals('typo3', Functions::strtolower($testString), 'strtolower() with latin characters didn\'t work out.');
+        $this->assertEquals('typo3', Functions::strtolower($testString), 'strtolower() with latin characters didn\'t work out.');
     }
 
     /**
@@ -119,7 +119,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
         $testString = 'HERE ARE SOME CHARACTERS: ÄÖÜÄÖÜßÉÈÊÅÅØØÆÆŒŒ ...';
         $expectedResult = 'here are some characters: äöüäöüßéèêååøøææœœ ...';
         $result = Functions::strtolower($testString);
-        self::assertEquals($expectedResult, $result, 'strtolower() could not convert our selection of special characters.');
+        $this->assertEquals($expectedResult, $result, 'strtolower() could not convert our selection of special characters.');
     }
 
     /**
@@ -130,7 +130,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function strlenWorksWithLatinCharacters()
     {
         $testString = 'Feugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
-        self::assertEquals(56, Functions::strlen($testString), 'strlen() did not return the correct string length for latin character string.');
+        $this->assertEquals(56, Functions::strlen($testString), 'strlen() did not return the correct string length for latin character string.');
     }
 
     /**
@@ -141,7 +141,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function strlenWorksWithCertainSpecialChars()
     {
         $testString = 'here are some characters: äöüäöüßéèêååøøææœœ“” ...';
-        self::assertEquals(50, Functions::strlen($testString), 'strlen() did not return the correct string length for unicode string.');
+        $this->assertEquals(50, Functions::strlen($testString), 'strlen() did not return the correct string length for unicode string.');
     }
 
     /**
@@ -153,7 +153,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     {
         $testString = 'feugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
         $expectedResult = 'Feugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
-        self::assertEquals($expectedResult, Functions::ucfirst($testString), 'ucfirst() did not return the correct string for latin string.');
+        $this->assertEquals($expectedResult, Functions::ucfirst($testString), 'ucfirst() did not return the correct string for latin string.');
     }
 
     /**
@@ -165,11 +165,11 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     {
         $testString = 'äeugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
         $expectedResult = 'Äeugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
-        self::assertEquals($expectedResult, Functions::ucfirst($testString), 'ucfirst() did not return the correct string for a umlaut.');
+        $this->assertEquals($expectedResult, Functions::ucfirst($testString), 'ucfirst() did not return the correct string for a umlaut.');
 
         $testString = 'åeugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
         $expectedResult = 'Åeugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
-        self::assertEquals($expectedResult, Functions::ucfirst($testString), 'ucfirst() did not return the correct string for danish a.');
+        $this->assertEquals($expectedResult, Functions::ucfirst($testString), 'ucfirst() did not return the correct string for danish a.');
     }
 
     /**
@@ -181,7 +181,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     {
         $testString = 'FEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
         $expectedResult = 'fEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
-        self::assertEquals($expectedResult, Functions::lcfirst($testString), 'lcfirst() did not return the correct string for latin string.');
+        $this->assertEquals($expectedResult, Functions::lcfirst($testString), 'lcfirst() did not return the correct string for latin string.');
     }
 
     /**
@@ -193,11 +193,11 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     {
         $testString = 'ÄEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
         $expectedResult = 'äEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
-        self::assertEquals($expectedResult, Functions::lcfirst($testString), 'lcfirst() did not return the correct string for a umlaut.');
+        $this->assertEquals($expectedResult, Functions::lcfirst($testString), 'lcfirst() did not return the correct string for a umlaut.');
 
         $testString = 'ÅEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
         $expectedResult = 'åEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
-        self::assertEquals($expectedResult, Functions::lcfirst($testString), 'lcfirst() did not return the correct string for danish a.');
+        $this->assertEquals($expectedResult, Functions::lcfirst($testString), 'lcfirst() did not return the correct string for danish a.');
     }
 
     /**
@@ -208,7 +208,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function strposWorksWithLatinCharacters()
     {
         $testString = 'Feugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
-        self::assertEquals(8, strpos($testString, 'tincidunt'), 'strpos() did not return the correct position for a latin character string.');
+        $this->assertEquals(8, strpos($testString, 'tincidunt'), 'strpos() did not return the correct position for a latin character string.');
     }
 
     /**
@@ -219,7 +219,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function strposWorksWithCertainSpecialChars()
     {
         $testString = 'Åeugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
-        self::assertEquals(8, Functions::strpos($testString, 'tincidunt'), 'strpos() did not return the correct positions for a unicode string.');
+        $this->assertEquals(8, Functions::strpos($testString, 'tincidunt'), 'strpos() did not return the correct positions for a unicode string.');
     }
 
     /**
@@ -233,7 +233,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
             'host' => 'www.mysite.org',
             'path' => '/he/פרויקטים/ByYear.html'
         ];
-        self::assertEquals($expected, Functions::parse_url($url), 'parse_url() did not return the correct result for a unicode URL.');
+        $this->assertEquals($expected, Functions::parse_url($url), 'parse_url() did not return the correct result for a unicode URL.');
     }
 
     /**
@@ -246,7 +246,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
             'scheme' => 'http',
             'host' => '[3b00:f59:1008::212:183:20]'
         ];
-        self::assertEquals($expected, Functions::parse_url($url), 'parse_url() did not return the correct result for a unicode URL.');
+        $this->assertEquals($expected, Functions::parse_url($url), 'parse_url() did not return the correct result for a unicode URL.');
     }
 
     /**
@@ -261,7 +261,7 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
             'port' => 443,
             'path' => '/he/פרויקטים/ByYear.html'
         ];
-        self::assertEquals($expected, Functions::parse_url($url), 'parse_url() did not return the correct result for a unicode URL.');
+        $this->assertEquals($expected, Functions::parse_url($url), 'parse_url() did not return the correct result for a unicode URL.');
     }
 
     /**
@@ -272,9 +272,9 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function pathinfoWorksWithCertainSpecialChars()
     {
         $testString = 'кириллическийПуть/кириллическоеИмя.расширение';
-        self::assertEquals('кириллическийПуть', Functions::pathinfo($testString, PATHINFO_DIRNAME), 'pathinfo() did not return the correct dirname for a unicode path.');
-        self::assertEquals('кириллическоеИмя.расширение', Functions::pathinfo($testString, PATHINFO_BASENAME), 'pathinfo() did not return the correct basename for a unicode path.');
-        self::assertEquals('расширение', Functions::pathinfo($testString, PATHINFO_EXTENSION), 'pathinfo() did not return the correct extension for a unicode path.');
-        self::assertEquals('кириллическоеИмя', Functions::pathinfo($testString, PATHINFO_FILENAME), 'pathinfo() did not return the correct filename for a unicode path.');
+        $this->assertEquals('кириллическийПуть', Functions::pathinfo($testString, PATHINFO_DIRNAME), 'pathinfo() did not return the correct dirname for a unicode path.');
+        $this->assertEquals('кириллическоеИмя.расширение', Functions::pathinfo($testString, PATHINFO_BASENAME), 'pathinfo() did not return the correct basename for a unicode path.');
+        $this->assertEquals('расширение', Functions::pathinfo($testString, PATHINFO_EXTENSION), 'pathinfo() did not return the correct extension for a unicode path.');
+        $this->assertEquals('кириллическоеИмя', Functions::pathinfo($testString, PATHINFO_FILENAME), 'pathinfo() did not return the correct filename for a unicode path.');
     }
 }

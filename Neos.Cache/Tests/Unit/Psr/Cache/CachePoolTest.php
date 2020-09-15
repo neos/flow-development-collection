@@ -14,7 +14,6 @@ namespace Neos\Cache\Tests\Unit\Psr\Cache;
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\Psr\Cache\CachePool;
 use Neos\Cache\Psr\Cache\CacheItem;
-use Neos\Cache\Psr\InvalidArgumentException;
 use Neos\Cache\Tests\BaseTestCase;
 
 /**
@@ -24,12 +23,12 @@ use Neos\Cache\Tests\BaseTestCase;
 class CachePoolTest extends BaseTestCase
 {
     /**
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      * @test
      */
     public function getItemChecksIfTheIdentifierIsValid()
     {
-        $this->expectException(InvalidArgumentException::class);
-        /** @var PsrFrontend|\PHPUnit\Framework\MockObject\MockObject $cache */
+        /** @var PsrFrontend|\PHPUnit_Framework_MockObject_MockObject $cache */
         $cache = $this->getMockBuilder(CachePool::class)
             ->setMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
@@ -138,7 +137,7 @@ class CachePoolTest extends BaseTestCase
     }
 
     /**
-     * @return AbstractBackend|\PHPUnit\Framework\MockObject\MockObject
+     * @return AbstractBackend|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function prepareDefaultBackend()
     {

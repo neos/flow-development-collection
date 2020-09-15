@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Flow\I18n\Cldr\Reader;
 
 /*
@@ -199,9 +197,8 @@ class NumbersReader
      * Shutdowns the object, saving parsed format strings to the cache.
      *
      * @return void
-     * @throws \Neos\Cache\Exception
      */
-    public function shutdownObject(): void
+    public function shutdownObject()
     {
         $this->cache->set('parsedFormats', $this->parsedFormats);
         $this->cache->set('parsedFormatsIndices', $this->parsedFormatsIndices);
@@ -219,12 +216,9 @@ class NumbersReader
      * @param string $formatType A type of format (one of constant values)
      * @param string $formatLength A length of format (one of constant values)
      * @return array An array representing parsed format
-     * @throws Exception\InvalidFormatLengthException
-     * @throws Exception\InvalidFormatTypeException
      * @throws Exception\UnableToFindFormatException When there is no proper format string in CLDR
-     * @throws Exception\UnsupportedNumberFormatException
      */
-    public function parseFormatFromCldr(Locale $locale, string $formatType, string $formatLength = self::FORMAT_LENGTH_DEFAULT): array
+    public function parseFormatFromCldr(Locale $locale, $formatType, $formatLength = self::FORMAT_LENGTH_DEFAULT)
     {
         self::validateFormatType($formatType);
         self::validateFormatLength($formatLength);
@@ -235,13 +229,9 @@ class NumbersReader
         }
 
         if ($formatLength === self::FORMAT_LENGTH_DEFAULT) {
-            if ($formatType === 'currency') {
-                $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format[@type="standard"]/pattern';
-            } else {
-                $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format/pattern';
-            }
+            $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format/pattern';
         } else {
-            $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength[@type="' . $formatLength . '"]/' . $formatType . 'Format[@type="standard"]/pattern';
+            $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength[@type="' . $formatLength . '"]/' . $formatType . 'Format/pattern';
         }
 
         $model = $this->cldrRepository->getModelForLocale($locale);
@@ -258,24 +248,12 @@ class NumbersReader
     }
 
     /**
-     * @param Locale $locale
-     * @return string
-     */
-    public function getDefaultNumberingSystem(Locale $locale): string
-    {
-        $model = $this->cldrRepository->getModelForLocale($locale);
-        $result = $model->findNodesWithinPath('numbers', 'defaultNumberingSystem');
-        return $result['defaultNumberingSystem'] ?? 'latn';
-    }
-
-    /**
      * Returns parsed date or time format string provided as parameter.
      *
      * @param string $format Format string to parse
      * @return array An array representing parsed format
-     * @throws Exception\UnsupportedNumberFormatException
      */
-    public function parseCustomFormat(string $format): array
+    public function parseCustomFormat($format)
     {
         if (isset($this->parsedFormats[$format])) {
             return $this->parsedFormats[$format];
@@ -296,7 +274,7 @@ class NumbersReader
      * @param Locale $locale
      * @return array Symbols array
      */
-    public function getLocalizedSymbolsForLocale(Locale $locale): array
+    public function getLocalizedSymbolsForLocale(Locale $locale)
     {
         if (isset($this->localizedSymbols[(string)$locale])) {
             return $this->localizedSymbols[(string)$locale];
@@ -314,7 +292,7 @@ class NumbersReader
      * @return void
      * @throws Exception\InvalidFormatTypeException When value is unallowed
      */
-    public static function validateFormatType(string $formatType): void
+    public static function validateFormatType($formatType)
     {
         if (!in_array($formatType, [self::FORMAT_TYPE_DECIMAL, self::FORMAT_TYPE_PERCENT, self::FORMAT_TYPE_CURRENCY])) {
             throw new Exception\InvalidFormatTypeException('Provided formatType, "' . $formatType . '", is not one of allowed values.', 1281439179);
@@ -329,7 +307,7 @@ class NumbersReader
      * @return void
      * @throws Exception\InvalidFormatLengthException When value is unallowed
      */
-    public static function validateFormatLength(string $formatLength): void
+    public static function validateFormatLength($formatLength)
     {
         if (!in_array($formatLength, [self::FORMAT_LENGTH_DEFAULT, self::FORMAT_LENGTH_FULL, self::FORMAT_LENGTH_LONG, self::FORMAT_LENGTH_MEDIUM, self::FORMAT_LENGTH_SHORT])) {
             throw new Exception\InvalidFormatLengthException('Provided formatLength, "' . $formatLength . '", is not one of allowed values.', 1281439180);
@@ -347,7 +325,7 @@ class NumbersReader
      * @throws Exception\UnsupportedNumberFormatException When unsupported format characters encountered
      * @see NumbersReader::$parsedFormats
      */
-    protected function parseFormat(string $format): array
+    protected function parseFormat($format)
     {
         foreach (['E', '@', '*', '\''] as $unsupportedFeature) {
             if (strpos($format, $unsupportedFeature) !== false) {
@@ -355,7 +333,7 @@ class NumbersReader
             }
         }
 
-        $parsedFormat = [
+        $parsedFormat =  [
             'positivePrefix' => '',
             'positiveSuffix' => '',
             'negativePrefix' => '-',

@@ -25,7 +25,6 @@ use Neos\Flow\Persistence\Exception as PersistenceException;
  * A data mapper to map raw records to objects
  *
  * @Flow\Scope("singleton")
- * @deprecated since Flow 6.0
  */
 class DataMapper
 {

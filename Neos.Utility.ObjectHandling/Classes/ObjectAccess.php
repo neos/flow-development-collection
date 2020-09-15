@@ -435,13 +435,45 @@ abstract class ObjectAccess
      * Instantiates the class named `$className` using the `$arguments` as constructor
      * arguments (in array order).
      *
+     * For less than 7 arguments `new` is used, for more a `ReflectionClass` is created
+     * and `newInstanceArgs` is used.
+     *
+     * Note: this should be used sparingly, just calling `new` yourself or using Dependency
+     * Injection are most probably better alternatives.
+     *
      * @param string $className
      * @param array $arguments
      * @return object
-     * @deprecated directly use "new $className(...$arguments)" instead
      */
     public static function instantiateClass($className, $arguments)
     {
-        return new $className(...$arguments);
+        switch (count($arguments)) {
+            case 0:
+                $object = new $className();
+            break;
+            case 1:
+                $object = new $className($arguments[0]);
+            break;
+            case 2:
+                $object = new $className($arguments[0], $arguments[1]);
+            break;
+            case 3:
+                $object = new $className($arguments[0], $arguments[1], $arguments[2]);
+            break;
+            case 4:
+                $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
+            break;
+            case 5:
+                $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]);
+            break;
+            case 6:
+                $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5]);
+            break;
+            default:
+                $class = new \ReflectionClass($className);
+                $object = $class->newInstanceArgs($arguments);
+        }
+
+        return $object;
     }
 }

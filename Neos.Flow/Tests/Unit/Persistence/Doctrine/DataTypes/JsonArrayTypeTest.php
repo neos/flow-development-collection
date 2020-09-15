@@ -17,19 +17,19 @@ use Neos\Flow\Tests\UnitTestCase;
 class JsonArrayTypeTest extends UnitTestCase
 {
     /**
-     * @var JsonArrayType|\PHPUnit\Framework\MockObject\MockObject
+     * @var JsonArrayType|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $jsonArrayTypeMock;
 
     /**
-     * @var \Doctrine\DBAL\Platforms\AbstractPlatform|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Doctrine\DBAL\Platforms\AbstractPlatform|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $abstractPlatformMock;
 
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $this->jsonArrayTypeMock = $this->getMockBuilder(JsonArrayType::class)
             ->setMethods(['initializeDependencies'])
@@ -45,7 +45,7 @@ class JsonArrayTypeTest extends UnitTestCase
     public function jsonConversionReturnsNullIfArrayIsNull()
     {
         $json = $this->jsonArrayTypeMock->convertToDatabaseValue(null, $this->abstractPlatformMock);
-        self::assertEquals(null, $json);
+        $this->assertEquals(null, $json);
     }
 
     /**
@@ -54,6 +54,6 @@ class JsonArrayTypeTest extends UnitTestCase
     public function passSimpleArrayAndConvertToJson()
     {
         $json = $this->jsonArrayTypeMock->convertToDatabaseValue(['simplestring',1,['nestedArray']], $this->abstractPlatformMock);
-        self::assertEquals("{\n    \"0\": \"simplestring\",\n    \"1\": 1,\n    \"2\": {\n        \"0\": \"nestedArray\"\n    }\n}", $json);
+        $this->assertEquals("{\n    \"0\": \"simplestring\",\n    \"1\": 1,\n    \"2\": {\n        \"0\": \"nestedArray\"\n    }\n}", $json);
     }
 }

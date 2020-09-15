@@ -47,7 +47,7 @@ class FilterFirewall implements FirewallInterface
 
     /**
      * If set to true the firewall will reject any request except the ones explicitly
-     * allowed by a \Neos\Flow\Security\Authorization\AccessGrantInterceptor
+     * whitelisted by a \Neos\Flow\Security\Authorization\AccessGrantInterceptor
      * @var boolean
      */
     protected $rejectAll = false;
@@ -59,11 +59,10 @@ class FilterFirewall implements FirewallInterface
      * @param RequestPatternResolver $requestPatternResolver The request pattern resolver
      * @param InterceptorResolver $interceptorResolver The interceptor resolver
      */
-    public function __construct(
-        ObjectManagerInterface $objectManager,
-        RequestPatternResolver $requestPatternResolver,
-        InterceptorResolver $interceptorResolver
-    ) {
+    public function __construct(ObjectManagerInterface $objectManager,
+                                RequestPatternResolver $requestPatternResolver,
+                                InterceptorResolver $interceptorResolver)
+    {
         $this->objectManager = $objectManager;
         $this->requestPatternResolver = $requestPatternResolver;
         $this->interceptorResolver = $interceptorResolver;
@@ -87,7 +86,7 @@ class FilterFirewall implements FirewallInterface
      *
      * @param ActionRequest $request The request to be analyzed
      * @return void
-     * @throws AccessDeniedException
+     * @throws AccessDeniedException if the
      */
     public function blockIllegalRequests(ActionRequest $request)
     {

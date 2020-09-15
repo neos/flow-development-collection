@@ -30,7 +30,7 @@ class RequestTest extends UnitTestCase
         $request->setControllerCommandName('flush');
 
         $command = $request->getCommand();
-        self::assertEquals('neos.flow:cache:flush', $command->getCommandIdentifier());
+        $this->assertEquals('neos.flow:cache:flush', $command->getCommandIdentifier());
     }
 
     /**
@@ -47,6 +47,6 @@ class RequestTest extends UnitTestCase
         $request->setControllerCommandName('drink');
 
         $command = $request->getCommand();
-        self::assertEquals('neos.flow:beer:drink', $command->getCommandIdentifier());
+        $this->assertEquals('neos.flow:beer:drink', $command->getCommandIdentifier());
     }
 }

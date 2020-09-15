@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Flow\Validation\Validator\UniqueEntityValidator;
 
 /**
@@ -24,114 +23,114 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     protected $validatorClassName = UniqueEntityValidator::class;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      * @see \Neos\Flow\Reflection\ClassSchema
      */
     protected $classSchema;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      * @see \Neos\Flow\Reflection\ReflectionService
      */
     protected $reflectionService;
 
     /**
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         $this->classSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
 
         $this->reflectionService = $this->createMock(ReflectionService::class);
-        $this->reflectionService->expects(self::any())->method('getClassSchema')->will(self::returnValue($this->classSchema));
+        $this->reflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($this->classSchema));
         $this->inject($this->validator, 'reflectionService', $this->reflectionService);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358454270
      */
     public function validatorThrowsExceptionIfValueIsNotAnObject()
     {
-        $this->expectException(InvalidValidationOptionsException::class);
-        $this->expectExceptionCode(1358454270);
         $this->validator->validate('a string');
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358454284
      */
     public function validatorThrowsExceptionIfValueIsNotReflectedAtAll()
     {
-        $this->expectException(InvalidValidationOptionsException::class);
-        $this->expectExceptionCode(1358454284);
-        $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(null));
+        $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(null));
 
         $this->validator->validate(new \stdClass());
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358454284
      */
     public function validatorThrowsExceptionIfValueIsNotAFlowEntity()
     {
-        $this->expectException(InvalidValidationOptionsException::class);
-        $this->expectExceptionCode(1358454284);
-        $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(ClassSchema::MODELTYPE_VALUEOBJECT));
+        $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(ClassSchema::MODELTYPE_VALUEOBJECT));
 
         $this->validator->validate(new \stdClass());
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358960500
      */
     public function validatorThrowsExceptionIfSetupPropertiesAreNotPresentInActualClass()
     {
-        $this->expectException(InvalidValidationOptionsException::class);
-        $this->expectExceptionCode(1358960500);
         $this->prepareMockExpectations();
         $this->inject($this->validator, 'options', ['identityProperties' => ['propertyWhichDoesntExist']]);
         $this->classSchema
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('hasProperty')
             ->with('propertyWhichDoesntExist')
-            ->will(self::returnValue(false));
+            ->will($this->returnValue(false));
 
         $this->validator->validate(new \StdClass());
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358459831
      */
     public function validatorThrowsExceptionIfThereIsNoIdentityProperty()
     {
-        $this->expectException(InvalidValidationOptionsException::class);
-        $this->expectExceptionCode(1358459831);
         $this->prepareMockExpectations();
         $this->classSchema
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getIdentityProperties')
-            ->will(self::returnValue([]));
+            ->will($this->returnValue([]));
 
         $this->validator->validate(new \StdClass());
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
+     * @expectedExceptionCode 1358501745
      */
     public function validatorThrowsExceptionOnMultipleOrmIdAnnotations()
     {
-        $this->expectException(InvalidValidationOptionsException::class);
-        $this->expectExceptionCode(1358501745);
         $this->prepareMockExpectations();
         $this->classSchema
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getIdentityProperties')
-            ->will(self::returnValue(['foo']));
+            ->will($this->returnValue(['foo']));
         $this->reflectionService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getPropertyNamesByAnnotation')
             ->with('FooClass', 'Doctrine\ORM\Mapping\Id')
-            ->will(self::returnValue(['dummy array', 'with more than', 'one count']));
+            ->will($this->returnValue(['dummy array', 'with more than', 'one count']));
 
         $this->validator->validate(new \StdClass());
     }
@@ -140,10 +139,10 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
      */
     protected function prepareMockExpectations()
     {
-        $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(ClassSchema::MODELTYPE_ENTITY));
+        $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(ClassSchema::MODELTYPE_ENTITY));
         $this->classSchema
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('getClassName')
-            ->will(self::returnValue('FooClass'));
+            ->will($this->returnValue('FooClass'));
     }
 }

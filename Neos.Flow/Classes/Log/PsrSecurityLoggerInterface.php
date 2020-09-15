@@ -13,9 +13,9 @@ namespace Neos\Flow\Log;
 
 /**
  * Marker interface for the security logger.
- * Convenience interface replacing the SecurityLoggerInterface, you should instead use the factory to get the "securityLogger"
- *
- * @deprecated since Flow 6.0
+ * Convenience interface replacing the SecurityLoggerInterface
+  *
+ * @see SecurityLoggerInterface
  */
 interface PsrSecurityLoggerInterface extends \Psr\Log\LoggerInterface
 {

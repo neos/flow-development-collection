@@ -132,9 +132,6 @@ class CldrParser extends AbstractXmlParser
         // we need this one for datetime parsing (default[@choice] nodes)
         $distinguishingAttributes[] = 'choice';
 
-        // these are needed for numberParsing
-        $distinguishingAttributes[] = 'numberSystem';
-
         return in_array($attributeName, $distinguishingAttributes);
     }
 }

@@ -10,11 +10,7 @@ namespace Neos\Flow\Mvc\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
 /**
  * Interface of a view
@@ -63,7 +59,7 @@ interface ViewInterface
     /**
      * Renders the view
      *
-     * @return string|ActionResponse|ResponseInterface|StreamInterface|object The rendered result; object is only handled if __toString() exists!
+     * @return string The rendered view
      * @api
      */
     public function render();

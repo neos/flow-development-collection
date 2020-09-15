@@ -1,0 +1,26 @@
+{
+  "name": "neos/utility-lock",
+  "description": "Flow Locking Implementation",
+  "type": "library",
+  "homepage": "http://flow.neos.io",
+  "license": "MIT",
+  "require": {
+    "neos/flow": "*",
+    "neos/utility-files": "*",
+    "php": "~7.1"
+  },
+  "require-dev": {
+    "mikey179/vfsstream": "~1.6",
+    "phpunit/phpunit": "~7.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Neos\\Utility\\Lock\\": "Classes"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Neos\\Flow\\Utility\\Lock\\Tests\\": "Tests"
+    }
+  }
+}

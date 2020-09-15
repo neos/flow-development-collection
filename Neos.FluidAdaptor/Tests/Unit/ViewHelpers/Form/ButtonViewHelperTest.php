@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  * source code.
  */
 
-use Neos\FluidAdaptor\ViewHelpers\Form\ButtonViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 require_once(__DIR__ . '/FormFieldViewHelperBaseTestcase.php');
@@ -19,38 +18,39 @@ require_once(__DIR__ . '/FormFieldViewHelperBaseTestcase.php');
 /**
  * Test for the "Button" Form view helper
  */
-class ButtonViewHelperTest extends FormFieldViewHelperBaseTestcase
+class ButtonViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form\FormFieldViewHelperBaseTestcase
 {
     /**
-     * @var ButtonViewHelper
+     * @var \Neos\FluidAdaptor\ViewHelpers\Form\ButtonViewHelper
      */
     protected $viewHelper;
 
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(ButtonViewHelper::class, ['renderChildren']);
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\ButtonViewHelper::class, ['renderChildren','registerRenderMethodArguments']);
         $this->arguments['name'] = '';
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
+        //$this->viewHelper->initializeArguments();
     }
 
     /**
      * @test
      */
-    public function renderCorrectlySetsTagNameAndDefaultAttributes(): void
+    public function renderCorrectlySetsTagNameAndDefaultAttributes()
     {
         $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['setTagName', 'addAttribute', 'setContent'])->getMock();
-        $mockTagBuilder->expects(self::any())->method('setTagName')->with('button');
-        $mockTagBuilder->expects(self::at(2))->method('addAttribute')->with('type', 'submit');
-        $mockTagBuilder->expects(self::at(3))->method('addAttribute')->with('name', '');
-        $mockTagBuilder->expects(self::at(4))->method('addAttribute')->with('value', '');
-        $mockTagBuilder->expects(self::at(5))->method('setContent')->with('Button Content');
+        $mockTagBuilder->expects($this->any())->method('setTagName')->with('button');
+        $mockTagBuilder->expects($this->at(2))->method('addAttribute')->with('type', 'submit');
+        $mockTagBuilder->expects($this->at(3))->method('addAttribute')->with('name', '');
+        $mockTagBuilder->expects($this->at(4))->method('addAttribute')->with('value', '');
+        $mockTagBuilder->expects($this->at(5))->method('setContent')->with('Button Content');
 
-        $this->viewHelper->expects(self::atLeastOnce())->method('renderChildren')->willReturn('Button Content');
+        $this->viewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('Button Content'));
 
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
-        $this->viewHelper = $this->prepareArguments($this->viewHelper);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
     }
 }

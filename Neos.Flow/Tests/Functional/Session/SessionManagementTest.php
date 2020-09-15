@@ -20,7 +20,7 @@ class SessionManagementTest extends FunctionalTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
 
@@ -44,7 +44,7 @@ class SessionManagementTest extends FunctionalTestCase
     {
         $session1 = $this->objectManager->get(Session\SessionInterface::class);
         $session2 = $this->objectManager->get(Session\SessionInterface::class);
-        self::assertSame($session1, $session2);
+        $this->assertSame($session1, $session2);
     }
 
     /**
@@ -54,7 +54,7 @@ class SessionManagementTest extends FunctionalTestCase
     {
         $session1 = $this->objectManager->get(Session\Session::class);
         $session2 = $this->objectManager->get(Session\Session::class);
-        self::assertNotSame($session1, $session2);
+        $this->assertNotSame($session1, $session2);
     }
 
     /**
@@ -70,8 +70,8 @@ class SessionManagementTest extends FunctionalTestCase
         $otherInjectedSession = $this->objectManager->get(Session\SessionInterface::class);
 
         $retrievedSession = $sessionManager->getCurrentSession();
-        self::assertSame($injectedSession, $retrievedSession);
-        self::assertSame($otherInjectedSession, $retrievedSession);
+        $this->assertSame($injectedSession, $retrievedSession);
+        $this->assertSame($otherInjectedSession, $retrievedSession);
     }
 
     /**
@@ -100,11 +100,11 @@ class SessionManagementTest extends FunctionalTestCase
     public function aSessionUsedInAFunctionalTestVirtualBrowserSendsCookiesOnEachRequest()
     {
         $response = $this->browser->request('http://localhost/test/session');
-        self::assertTrue($response->hasHeader('Set-Cookie'), 'Available Cookies are: ' . implode(', ', array_keys($response->getHeader('Set-Cookie'))));
-        self::assertStringContainsString('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
+        $this->assertTrue($response->hasHeader('Set-Cookie'), 'Available Cookies are: ' . implode(', ', array_keys($response->getHeader('Set-Cookie'))));
+        $this->assertContains('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
 
         $response = $this->browser->request('http://localhost/test/session');
-        self::assertTrue($response->hasHeader('Set-Cookie'), 'Available Cookies are: ' . implode(', ', array_keys($response->getHeader('Set-Cookie'))));
-        self::assertStringContainsString('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
+        $this->assertTrue($response->hasHeader('Set-Cookie'), 'Available Cookies are: ' . implode(', ', array_keys($response->getHeader('Set-Cookie'))));
+        $this->assertContains('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
     }
 }

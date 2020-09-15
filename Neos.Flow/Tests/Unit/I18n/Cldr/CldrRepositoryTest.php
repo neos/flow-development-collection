@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr;
  * source code.
  */
 
-use Neos\Utility\ObjectAccess;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
@@ -34,7 +33,7 @@ class CldrRepositoryTest extends UnitTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         vfsStream::setup('Foo');
 
@@ -52,10 +51,10 @@ class CldrRepositoryTest extends UnitTestCase
         file_put_contents('vfs://Foo/Bar.xml', '');
 
         $result = $this->repository->getModel('Bar');
-        self::assertContains('vfs://Foo/Bar.xml', ObjectAccess::getProperty($result, 'sourcePaths', true));
+        $this->assertAttributeContains('vfs://Foo/Bar.xml', 'sourcePaths', $result);
 
         $result = $this->repository->getModel('NoSuchFile');
-        self::assertEquals(false, $result);
+        $this->assertEquals(false, $result);
     }
 
     /**
@@ -67,10 +66,10 @@ class CldrRepositoryTest extends UnitTestCase
         file_put_contents('vfs://Foo/Directory/en.xml', '');
 
         $result = $this->repository->getModelForLocale($this->dummyLocale, 'Directory');
-        self::assertContains('vfs://Foo/Directory/root.xml', ObjectAccess::getProperty($result, 'sourcePaths', true));
-        self::assertContains('vfs://Foo/Directory/en.xml', ObjectAccess::getProperty($result, 'sourcePaths', true));
+        $this->assertAttributeContains('vfs://Foo/Directory/root.xml', 'sourcePaths', $result);
+        $this->assertAttributeContains('vfs://Foo/Directory/en.xml', 'sourcePaths', $result);
 
         $result = $this->repository->getModelForLocale($this->dummyLocale, 'NoSuchDirectory');
-        self::assertEquals(null, $result);
+        $this->assertEquals(null, $result);
     }
 }

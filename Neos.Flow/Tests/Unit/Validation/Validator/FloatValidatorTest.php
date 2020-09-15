@@ -28,7 +28,7 @@ class FloatValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
-        self::assertFalse($this->validator->validate(null)->hasErrors());
+        $this->assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -36,7 +36,7 @@ class FloatValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
-        self::assertFalse($this->validator->validate('')->hasErrors());
+        $this->assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -62,7 +62,7 @@ class FloatValidatorTest extends AbstractValidatorTestcase
      */
     public function floatValidatorReturnsNoErrorsForAValidFloat($float)
     {
-        self::assertFalse($this->validator->validate($float)->hasErrors());
+        $this->assertFalse($this->validator->validate($float)->hasErrors());
     }
 
     /**
@@ -86,7 +86,7 @@ class FloatValidatorTest extends AbstractValidatorTestcase
      */
     public function floatValidatorReturnsErrorForAnInvalidFloat($float)
     {
-        self::assertTrue($this->validator->validate($float)->hasErrors());
+        $this->assertTrue($this->validator->validate($float)->hasErrors());
     }
 
     /**
@@ -94,6 +94,6 @@ class FloatValidatorTest extends AbstractValidatorTestcase
      */
     public function floatValidatorCreatesTheCorrectErrorForAnInvalidSubject()
     {
-        self::assertEquals(1, count($this->validator->validate(123456)->getErrors()));
+        $this->assertEquals(1, count($this->validator->validate(123456)->getErrors()));
     }
 }

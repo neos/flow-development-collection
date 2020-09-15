@@ -11,11 +11,10 @@ namespace Neos\Flow\Tests\Unit\Security\RequestPattern;
  * source code.
  */
 
-use Neos\Flow\Http\ServerRequestAttributes;
+use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\RequestPattern\Ip;
 use Neos\Flow\Tests\UnitTestCase;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the IP request pattern
@@ -49,13 +48,13 @@ class IpTest extends UnitTestCase
      */
     public function requestMatchingBasicallyWorks($pattern, $ip, $expected)
     {
-        $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $requestMock->expects(self::once())->method('getAttribute')->with(ServerRequestAttributes::CLIENT_IP)->willReturn($ip);
+        $requestMock = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->setMethods(['getClientIpAddress'])->getMock();
+        $requestMock->expects($this->once())->method('getClientIpAddress')->will($this->returnValue($ip));
         $actionRequestMock = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $actionRequestMock->expects(self::any())->method('getHttpRequest')->will(self::returnValue($requestMock));
+        $actionRequestMock->expects($this->any())->method('getHttpRequest')->will($this->returnValue($requestMock));
 
         $requestPattern = new Ip(['cidrPattern' => $pattern]);
 
-        self::assertEquals($expected, $requestPattern->matchRequest($actionRequestMock));
+        $this->assertEquals($expected, $requestPattern->matchRequest($actionRequestMock));
     }
 }

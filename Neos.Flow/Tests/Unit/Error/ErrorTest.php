@@ -27,7 +27,7 @@ class ErrorTest extends UnitTestCase
         $errorMessage = 'The message';
         $error = new FlowError($errorMessage, 0);
 
-        self::assertEquals($errorMessage, $error->getMessage());
+        $this->assertEquals($errorMessage, $error->getMessage());
     }
 
     /**
@@ -38,6 +38,6 @@ class ErrorTest extends UnitTestCase
         $errorCode = 123456789;
         $error = new FlowError('', $errorCode);
 
-        self::assertEquals($errorCode, $error->getCode());
+        $this->assertEquals($errorCode, $error->getCode());
     }
 }

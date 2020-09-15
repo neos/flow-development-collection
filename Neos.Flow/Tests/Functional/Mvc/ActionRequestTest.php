@@ -11,8 +11,8 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  * source code.
  */
 
-use GuzzleHttp\Psr7\ServerRequest;
-use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
 
@@ -26,16 +26,16 @@ class ActionRequestTest extends FunctionalTestCase
      */
     public function actionRequestStripsParentHttpRequest()
     {
-        $httpRequest = new ServerRequest('GET', new Uri('http://neos.io'));
+        $httpRequest = Request::create(new Uri('http://neos.io'));
 
-        $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
+        $actionRequest = new ActionRequest($httpRequest);
         $actionRequest->setControllerActionName('foo');
         $serializedActionRequest = serialize($actionRequest);
 
         /* @var $unserializedActionRequest ActionRequest */
         $unserializedActionRequest = unserialize($serializedActionRequest);
-        self::assertNull($unserializedActionRequest->getParentRequest(), 'Parent HTTP request should be NULL after deserialization');
-        self::assertSame('foo', $unserializedActionRequest->getControllerActionName());
+        $this->assertNull($unserializedActionRequest->getParentRequest(), 'Parent HTTP request should be NULL after deserialization');
+        $this->assertSame('foo', $unserializedActionRequest->getControllerActionName());
     }
 
     /**
@@ -43,14 +43,14 @@ class ActionRequestTest extends FunctionalTestCase
      */
     public function actionRequestDoesNotStripParentActionRequest()
     {
-        $httpRequest = new ServerRequest('GET', new Uri('http://neos.io'));
+        $httpRequest = Request::create(new Uri('http://neos.io'));
 
-        $parentActionRequest = ActionRequest::fromHttpRequest($httpRequest);
-        $actionRequest = $parentActionRequest->createSubRequest();
+        $parentActionRequest = new ActionRequest($httpRequest);
+        $actionRequest = new ActionRequest($parentActionRequest);
         $serializedActionRequest = serialize($actionRequest);
 
         /* @var $unserializedActionRequest ActionRequest */
         $unserializedActionRequest = unserialize($serializedActionRequest);
-        self::assertNotNull($unserializedActionRequest->getParentRequest(), 'Parent action request should not be NULL after deserialization');
+        $this->assertNotNull($unserializedActionRequest->getParentRequest(), 'Parent action request should not be NULL after deserialization');
     }
 }

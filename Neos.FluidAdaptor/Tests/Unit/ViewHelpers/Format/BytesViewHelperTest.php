@@ -25,10 +25,10 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper::class)->setMethods(['renderChildren'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
 
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
@@ -129,7 +129,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $value, 'decimals' => $decimals, 'decimalSeparator' => $decimalSeparator, 'thousandsSeparator' => $thousandsSeparator]);
         $actualResult = $this->viewHelper->render();
-        self::assertEquals($expected, $actualResult);
+        $this->assertEquals($expected, $actualResult);
     }
 
     /**
@@ -137,9 +137,9 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderUsesChildNodesIfValueArgumentIsOmitted()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue(12345));
+        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(12345));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        self::assertEquals('12 KB', $actualResult);
+        $this->assertEquals('12 KB', $actualResult);
     }
 }

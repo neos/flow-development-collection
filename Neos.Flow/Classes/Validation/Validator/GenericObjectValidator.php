@@ -24,13 +24,6 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
     /**
      * @var array
      */
-    protected $supportedOptions = [
-        'skipUnInitializedProxies' => [false, 'Whether proxies not yet initialized should be skipped during validation', 'boolean']
-    ];
-
-    /**
-     * @var array
-     */
     protected $propertyValidators = [];
 
     /**
@@ -62,32 +55,16 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
         if (!is_object($object)) {
             $this->addError('Object expected, %1$s given.', 1241099149, [gettype($object)]);
             return;
-        }
-
-        if ($this->isValidatedAlready($object) === true) {
+        } elseif ($this->isValidatedAlready($object) === true) {
             return;
         }
-
-        if ($this->options['skipUnInitializedProxies'] && $this->isUnInitializedProxy($object) === true) {
-            return;
-        }
-
         foreach ($this->propertyValidators as $propertyName => $validators) {
             $propertyValue = $this->getPropertyValue($object, $propertyName);
             $result = $this->checkProperty($propertyValue, $validators);
             if ($result !== null) {
-                $this->getResult()->forProperty($propertyName)->merge($result);
+                $this->result->forProperty($propertyName)->merge($result);
             }
         }
-    }
-
-    /**
-     * @param $object
-     * @return boolean
-     */
-    protected function isUninitializedProxy($object)
-    {
-        return ($object instanceof \Doctrine\ORM\Proxy\Proxy && $object->__isInitialized() === false);
     }
 
     /**

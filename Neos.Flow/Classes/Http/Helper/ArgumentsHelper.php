@@ -11,6 +11,7 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
+use Neos\Flow\Http\ContentStream;
 use Neos\Utility\Arrays;
 
 /**
@@ -40,15 +41,12 @@ abstract class ArgumentsHelper
     }
 
     /**
-     * @param array ...$argumentArrays
-     * @return array
+     * @param string $content
+     * @return ContentStream
+     * @deprecated since Flow 5.2, use ContentStream::fromContents()
      */
-    public static function mergeArgumentArrays(array $arguments, array ...$argumentArrays): array
+    public static function createContentStreamFromString(string $content): ContentStream
     {
-        foreach ($argumentArrays as $argumentArray) {
-            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $argumentArray);
-        }
-
-        return $arguments;
+        return ContentStream::fromContents($content);
     }
 }

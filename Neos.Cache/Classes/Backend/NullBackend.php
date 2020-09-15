@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Cache\Backend;
 
 /*
@@ -34,7 +32,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return void
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
     {
     }
 
@@ -78,7 +76,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Returns an empty array
      *
      * @param string $tag ignored
-     * @return string[] An empty array
+     * @return array An empty array
      * @api
      */
     public function findIdentifiersByTag(string $tag): array
@@ -92,7 +90,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return void
      * @api
      */
-    public function flush(): void
+    public function flush()
     {
     }
 
@@ -114,7 +112,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return void
      * @api
      */
-    public function collectGarbage(): void
+    public function collectGarbage()
     {
     }
 

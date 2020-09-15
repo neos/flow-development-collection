@@ -27,7 +27,7 @@ abstract class AbstractValidatorTestcase extends UnitTestCase
      */
     protected $validator;
 
-    protected function setUp(): void
+    public function setUp()
     {
         $this->validator = $this->getValidator();
     }

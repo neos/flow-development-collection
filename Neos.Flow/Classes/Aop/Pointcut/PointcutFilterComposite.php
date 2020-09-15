@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Flow\Aop\Pointcut;
 
 /*
@@ -60,7 +58,9 @@ class PointcutFilterComposite implements PointcutFilterInterface
     {
         $this->runtimeEvaluationsDefinition = [];
         $matches = true;
-        foreach ($this->filters as [$operator, $filter]) {
+        foreach ($this->filters as &$operatorAndFilter) {
+            list($operator, $filter) = $operatorAndFilter;
+
             $currentFilterMatches = $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
             $currentRuntimeEvaluationsDefinition = $filter->getRuntimeEvaluationsDefinition();
 
@@ -167,24 +167,24 @@ class PointcutFilterComposite implements PointcutFilterInterface
      *
      * @return string The closure code
      */
-    public function getRuntimeEvaluationsClosureCode(): string
+    public function getRuntimeEvaluationsClosureCode()
     {
         $useGlobalObjects = false;
         $conditionCode = $this->buildRuntimeEvaluationsConditionCode('', $this->getRuntimeEvaluationsDefinition(), $useGlobalObjects);
 
         if ($conditionCode !== '') {
             $code = "function(\\Neos\\Flow\\Aop\\JoinPointInterface \$joinPoint, \$objectManager) {\n" .
-                "    \$currentObject = \$joinPoint->getProxy();\n";
+                    "    \$currentObject = \$joinPoint->getProxy();\n";
             if ($useGlobalObjects) {
-                $code .= "    \$globalObjectNames = \$objectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.aop.globalObjects');\n";
+                $code .= "    \$globalObjectNames = \$objectManager->getSettingsByPath(array('Neos', 'Flow', 'aop', 'globalObjects'));\n";
                 $code .= "    \$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n";
             }
-            $code .= '    return ' . $conditionCode . ';' .
-                "\n}";
+            $code .= "    return " . $conditionCode . ';' .
+                    "\n}";
             return $code;
+        } else {
+            return 'NULL';
         }
-
-        return 'NULL';
     }
 
     /**
@@ -196,14 +196,16 @@ class PointcutFilterComposite implements PointcutFilterInterface
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
     {
         $result = clone $classNameIndex;
-        foreach ($this->filters as [$operator, $filter]) {
+        foreach ($this->filters as &$operatorAndFilter) {
+            list($operator, $filter) = $operatorAndFilter;
+
             switch ($operator) {
                 case '&&':
                     $result->applyIntersect($filter->reduceTargetClassNames($result));
-                break;
+                    break;
                 case '||':
                     $result->applyUnion($filter->reduceTargetClassNames($classNameIndex));
-                break;
+                    break;
             }
         }
 
@@ -218,7 +220,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param boolean &$useGlobalObjects Set to true if global objects are used by the condition
      * @return string The condition code
      */
-    protected function buildRuntimeEvaluationsConditionCode($operator, array $conditions, &$useGlobalObjects = false): string
+    protected function buildRuntimeEvaluationsConditionCode($operator, array $conditions, &$useGlobalObjects = false)
     {
         $conditionsCode = [];
 
@@ -293,7 +295,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param boolean &$useGlobalObjects Set to true if global objects are used by the condition
      * @return string The arguments condition code
      */
-    protected function buildMethodArgumentsEvaluationConditionCode(array $conditions, &$useGlobalObjects = false): string
+    protected function buildMethodArgumentsEvaluationConditionCode(array $conditions, &$useGlobalObjects = false)
     {
         $argumentConstraintsConditionsCode = '';
 
@@ -306,13 +308,13 @@ class PointcutFilterComposite implements PointcutFilterInterface
                 $leftValue = '$joinPoint->getMethodArgument(\'' . $argumentName . '\')';
             }
 
-            for ($i = 0, $operatorCount = count($argumentConstraint['operator']); $i < $operatorCount; $i++) {
+            for ($i = 0; $i < count($argumentConstraint['operator']); $i++) {
                 $rightValue = $this->buildArgumentEvaluationAccessCode($argumentConstraint['value'][$i], $useGlobalObjects);
 
                 if ($argumentConstraint['operator'][$i] === 'in') {
-                    $argumentConstraintsConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage || ' . $rightValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
+                    $argumentConstraintsConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage || ' . $rightValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue  . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
                 } elseif ($argumentConstraint['operator'][$i] === 'contains') {
-                    $argumentConstraintsConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage || ' . $leftValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
+                    $argumentConstraintsConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage || ' . $leftValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue  . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
                 } elseif ($argumentConstraint['operator'][$i] === 'matches') {
                     $argumentConstraintsConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
                 } else {
@@ -333,7 +335,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param boolean &$useGlobalObjects Set to true if global objects are used by the condition
      * @return string The condition code
      */
-    protected function buildGlobalRuntimeEvaluationsConditionCode(array $conditions, &$useGlobalObjects = false): string
+    protected function buildGlobalRuntimeEvaluationsConditionCode(array $conditions, &$useGlobalObjects = false)
     {
         $evaluateConditionsCode = '';
 
@@ -343,9 +345,9 @@ class PointcutFilterComposite implements PointcutFilterInterface
             $rightValue = $this->buildArgumentEvaluationAccessCode($constraint['rightValue'], $useGlobalObjects);
 
             if ($constraint['operator'] === 'in') {
-                $evaluateConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage || ' . $rightValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
+                $evaluateConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage || ' . $rightValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue  . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
             } elseif ($constraint['operator'] === 'contains') {
-                $evaluateConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage || ' . $leftValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
+                $evaluateConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage || ' . $leftValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue  . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
             } elseif ($constraint['operator'] === 'matches') {
                 $evaluateConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
             } else {
@@ -365,7 +367,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * @param boolean &$useGlobalObjects Set to true if global objects are used by the condition
      * @return string The condition code
      */
-    protected function buildArgumentEvaluationAccessCode($argumentAccess, &$useGlobalObjects = false): string
+    protected function buildArgumentEvaluationAccessCode($argumentAccess, &$useGlobalObjects = false)
     {
         if (is_array($argumentAccess)) {
             $valuesAccessCodes = [];
@@ -374,7 +376,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
             }
             $argumentAccessCode = 'array(' . implode(', ', $valuesAccessCodes) . ')';
         } else {
-            $objectAccess = explode('.', (string)$argumentAccess, 2);
+            $objectAccess = explode('.', $argumentAccess, 2);
             if (count($objectAccess) === 2 && $objectAccess[0] === 'current') {
                 $objectAccess = explode('.', $objectAccess[1], 2);
                 if (count($objectAccess) === 1) {
@@ -387,7 +389,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
             } elseif (count($objectAccess) === 2 && $objectAccess[0] === 'this') {
                 $argumentAccessCode = '\Neos\Utility\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';
             } else {
-                $argumentAccessCode = (string)$argumentAccess;
+                $argumentAccessCode = $argumentAccess;
             }
         }
 

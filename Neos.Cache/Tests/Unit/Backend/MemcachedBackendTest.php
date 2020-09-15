@@ -15,7 +15,6 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\MemcachedBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use Neos\Cache\Exception;
 use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Frontend\AbstractFrontend;
 use Neos\Cache\Frontend\FrontendInterface;
@@ -32,7 +31,7 @@ class MemcachedBackendTest extends BaseTestCase
      *
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         try {
             if (!@fsockopen('localhost', 11211)) {
@@ -45,10 +44,10 @@ class MemcachedBackendTest extends BaseTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Exception
      */
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
-        $this->expectException(Exception::class);
         $backendOptions = ['servers' => ['localhost:11211']];
         $backend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $data = 'Some data';
@@ -58,19 +57,19 @@ class MemcachedBackendTest extends BaseTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Exception
      */
     public function initializeObjectThrowsExceptionIfNoMemcacheServerIsConfigured()
     {
-        $this->expectException(Exception::class);
         $backend = new MemcachedBackend($this->getEnvironmentConfiguration(), []);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Exception
      */
     public function setThrowsExceptionIfConfiguredServersAreUnreachable()
     {
-        $this->expectException(Exception::class);
         $backend = $this->setUpBackend(['servers' => ['localhost:11212']]);
         $data = 'Somedata';
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
@@ -87,7 +86,7 @@ class MemcachedBackendTest extends BaseTestCase
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
         $backend->set($identifier, $data);
         $inCache = $backend->has($identifier);
-        self::assertTrue($inCache, 'Memcache failed to set and check entry');
+        $this->assertTrue($inCache, 'Memcache failed to set and check entry');
     }
 
     /**
@@ -100,7 +99,7 @@ class MemcachedBackendTest extends BaseTestCase
         $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
         $backend->set($identifier, $data);
         $fetchedData = $backend->get($identifier);
-        self::assertEquals($data, $fetchedData, 'Memcache failed to set and retrieve data');
+        $this->assertEquals($data, $fetchedData, 'Memcache failed to set and retrieve data');
     }
 
     /**
@@ -114,7 +113,7 @@ class MemcachedBackendTest extends BaseTestCase
         $backend->set($identifier, $data);
         $backend->remove($identifier);
         $inCache = $backend->has($identifier);
-        self::assertFalse($inCache, 'Failed to set and remove data from Memcache');
+        $this->assertFalse($inCache, 'Failed to set and remove data from Memcache');
     }
 
     /**
@@ -129,7 +128,7 @@ class MemcachedBackendTest extends BaseTestCase
         $otherData = 'some other data';
         $backend->set($identifier, $otherData);
         $fetchedData = $backend->get($identifier);
-        self::assertEquals($otherData, $fetchedData, 'Memcache failed to overwrite and retrieve data');
+        $this->assertEquals($otherData, $fetchedData, 'Memcache failed to overwrite and retrieve data');
     }
 
     /**
@@ -144,10 +143,10 @@ class MemcachedBackendTest extends BaseTestCase
         $backend->set($identifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
-        self::assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
+        $this->assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
-        self::assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
+        $this->assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
     }
 
     /**
@@ -163,7 +162,7 @@ class MemcachedBackendTest extends BaseTestCase
         $backend->set($identifier, $data, ['UnitTestTag%tag3']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tagX');
-        self::assertEquals([], $retrieved, 'Found entry which should no longer exist.');
+        $this->assertEquals([], $retrieved, 'Found entry which should no longer exist.');
     }
 
     /**
@@ -174,7 +173,7 @@ class MemcachedBackendTest extends BaseTestCase
         $backend = $this->setUpBackend();
         $identifier = 'NonExistingIdentifier' . md5(uniqid(mt_rand(), true));
         $inCache = $backend->has($identifier);
-        self::assertFalse($inCache, '"has" did not return false when checking on non existing identifier');
+        $this->assertFalse($inCache, '"has" did not return false when checking on non existing identifier');
     }
 
     /**
@@ -185,7 +184,7 @@ class MemcachedBackendTest extends BaseTestCase
         $backend = $this->setUpBackend();
         $identifier = 'NonExistingIdentifier' . md5(uniqid(mt_rand(), true));
         $inCache = $backend->remove($identifier);
-        self::assertFalse($inCache, '"remove" did not return false when checking on non existing identifier');
+        $this->assertFalse($inCache, '"remove" did not return false when checking on non existing identifier');
     }
 
     /**
@@ -202,9 +201,9 @@ class MemcachedBackendTest extends BaseTestCase
 
         $backend->flushByTag('UnitTestTag%special');
 
-        self::assertTrue($backend->has('BackendMemcacheTest1'), 'BackendMemcacheTest1');
-        self::assertFalse($backend->has('BackendMemcacheTest2'), 'BackendMemcacheTest2');
-        self::assertTrue($backend->has('BackendMemcacheTest3'), 'BackendMemcacheTest3');
+        $this->assertTrue($backend->has('BackendMemcacheTest1'), 'BackendMemcacheTest1');
+        $this->assertFalse($backend->has('BackendMemcacheTest2'), 'BackendMemcacheTest2');
+        $this->assertTrue($backend->has('BackendMemcacheTest3'), 'BackendMemcacheTest3');
     }
 
     /**
@@ -221,9 +220,9 @@ class MemcachedBackendTest extends BaseTestCase
 
         $backend->flush();
 
-        self::assertFalse($backend->has('BackendMemcacheTest1'), 'BackendMemcacheTest1');
-        self::assertFalse($backend->has('BackendMemcacheTest2'), 'BackendMemcacheTest2');
-        self::assertFalse($backend->has('BackendMemcacheTest3'), 'BackendMemcacheTest3');
+        $this->assertFalse($backend->has('BackendMemcacheTest1'), 'BackendMemcacheTest1');
+        $this->assertFalse($backend->has('BackendMemcacheTest2'), 'BackendMemcacheTest2');
+        $this->assertFalse($backend->has('BackendMemcacheTest3'), 'BackendMemcacheTest3');
     }
 
     /**
@@ -234,12 +233,12 @@ class MemcachedBackendTest extends BaseTestCase
         $backendOptions = ['servers' => ['localhost:11211']];
 
         $thisCache = $this->getMockBuilder(AbstractFrontend::class)->disableOriginalConstructor()->getMock();
-        $thisCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thisCache'));
+        $thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
         $thisBackend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $thisBackend->setCache($thisCache);
 
         $thatCache = $this->getMockBuilder(AbstractFrontend::class)->disableOriginalConstructor()->getMock();
-        $thatCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thatCache'));
+        $thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
         $thatBackend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $thatBackend->setCache($thatCache);
 
@@ -247,8 +246,8 @@ class MemcachedBackendTest extends BaseTestCase
         $thatBackend->set('thatEntry', 'World!');
         $thatBackend->flush();
 
-        self::assertEquals('Hello', $thisBackend->get('thisEntry'));
-        self::assertFalse($thatBackend->has('thatEntry'));
+        $this->assertEquals('Hello', $thisBackend->get('thisEntry'));
+        $this->assertFalse($thatBackend->has('thatEntry'));
     }
 
     /**
@@ -264,8 +263,8 @@ class MemcachedBackendTest extends BaseTestCase
         $data = str_repeat('abcde', 1024 * 1024);
         $backend->set('tooLargeData', $data);
 
-        self::assertTrue($backend->has('tooLargeData'));
-        self::assertEquals($backend->get('tooLargeData'), $data);
+        $this->assertTrue($backend->has('tooLargeData'));
+        $this->assertEquals($backend->get('tooLargeData'), $data);
     }
 
     /**
@@ -287,7 +286,7 @@ class MemcachedBackendTest extends BaseTestCase
     }
 
     /**
-     * @return EnvironmentConfiguration|\PHPUnit\Framework\MockObject\MockObject
+     * @return EnvironmentConfiguration|\PHPUnit_Framework_MockObject_MockObject
      */
     public function getEnvironmentConfiguration()
     {

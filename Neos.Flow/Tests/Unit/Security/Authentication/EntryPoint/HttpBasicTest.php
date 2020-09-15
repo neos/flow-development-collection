@@ -11,10 +11,10 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\EntryPoint;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Response;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Response;
 use Neos\Flow\Security\Authentication\EntryPoint\HttpBasic;
 use Neos\Flow\Tests\UnitTestCase;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for HTTP Basic Auth authentication entry point
@@ -26,16 +26,18 @@ class HttpBasicTest extends UnitTestCase
      */
     public function startAuthenticationSetsTheCorrectValuesInTheResponseObject()
     {
-        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
-        $mockResponse = new Response();
+        $mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
+        $mockResponse = $this->getMockBuilder(Response::class)->getMock();
 
         $entryPoint = new HttpBasic();
         $entryPoint->setOptions(['realm' => 'realm string']);
 
-        $mockResponse = $entryPoint->startAuthentication($mockHttpRequest, $mockResponse);
+        $mockResponse->expects($this->once())->method('setStatus')->with(401);
+        $mockResponse->expects($this->once())->method('setHeader')->with('WWW-Authenticate', 'Basic realm="realm string"');
+        $mockResponse->expects($this->once())->method('setContent')->with('Authorization required');
 
-        $this->assertEquals(401, $mockResponse->getStatusCode());
-        self::assertEquals('Basic realm="realm string"', $mockResponse->getHeaderLine('WWW-Authenticate'));
-        $this->assertEquals('Authorization required', $mockResponse->getBody()->getContents());
+        $entryPoint->startAuthentication($mockHttpRequest, $mockResponse);
+
+        $this->assertEquals(['realm' => 'realm string'], $entryPoint->getOptions());
     }
 }

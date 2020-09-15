@@ -31,11 +31,11 @@ class FizzleParserTest extends \Neos\Flow\Tests\UnitTestCase
         $parser->assertDoesntMatch('FilterGroup', 'foo[baz] foo2[baz2]');
 
         $actual = $parser->match('FilterGroup', 'foo[baz], blah');
-        self::assertSame('foo', $actual['Filters'][0]['PropertyNameFilter']);
-        self::assertSame('blah', $actual['Filters'][1]['PropertyNameFilter']);
+        $this->assertSame('foo', $actual['Filters'][0]['PropertyNameFilter']);
+        $this->assertSame('blah', $actual['Filters'][1]['PropertyNameFilter']);
 
         $actual = $parser->match('FilterGroup', 'blah');
-        self::assertSame('blah', $actual['Filters'][0]['PropertyNameFilter']);
+        $this->assertSame('blah', $actual['Filters'][0]['PropertyNameFilter']);
     }
 
     /**
@@ -54,18 +54,18 @@ class FizzleParserTest extends \Neos\Flow\Tests\UnitTestCase
         $parser->assertMatches('Filter', '[baz][foo="asdf"]');
 
         $actual = $parser->match('Filter', 'foo[baz][foo  =  asdf]');
-        self::assertSame('foo', $actual['PropertyNameFilter']);
+        $this->assertSame('foo', $actual['PropertyNameFilter']);
 
-        self::assertSame('[baz]', $actual['AttributeFilters'][0]['text']);
-        self::assertSame('baz', $actual['AttributeFilters'][0]['PropertyPath']);
-        self::assertSame('[foo  =  asdf]', $actual['AttributeFilters'][1]['text']);
-        self::assertSame('foo', $actual['AttributeFilters'][1]['PropertyPath']);
-        self::assertSame('=', $actual['AttributeFilters'][1]['Operator']);
-        self::assertSame('asdf', $actual['AttributeFilters'][1]['Operand']);
+        $this->assertSame('[baz]', $actual['AttributeFilters'][0]['text']);
+        $this->assertSame('baz', $actual['AttributeFilters'][0]['PropertyPath']);
+        $this->assertSame('[foo  =  asdf]', $actual['AttributeFilters'][1]['text']);
+        $this->assertSame('foo', $actual['AttributeFilters'][1]['PropertyPath']);
+        $this->assertSame('=', $actual['AttributeFilters'][1]['Operator']);
+        $this->assertSame('asdf', $actual['AttributeFilters'][1]['Operand']);
 
         $actual = $parser->match('Filter', '[baz]');
-        self::assertSame('baz', $actual['AttributeFilters'][0]['PropertyPath']);
-        self::assertSame('baz', $actual['AttributeFilters'][0]['Identifier'], 'Identifier key is added for compatibility');
+        $this->assertSame('baz', $actual['AttributeFilters'][0]['PropertyPath']);
+        $this->assertSame('baz', $actual['AttributeFilters'][0]['Identifier'], 'Identifier key is added for compatibility');
 
         $parser->assertDoesntMatch('Filter', '*');
     }
@@ -99,7 +99,7 @@ class FizzleParserTest extends \Neos\Flow\Tests\UnitTestCase
         $parser->assertDoesntMatch('PathFilter', 'foo');
 
         $actual = $parser->match('Filter', 'foo/bar');
-        self::assertSame('foo/bar', $actual['PathFilter']);
+        $this->assertSame('foo/bar', $actual['PathFilter']);
     }
 
     /**
@@ -141,9 +141,9 @@ class FizzleParserTest extends \Neos\Flow\Tests\UnitTestCase
         $parser = new ParserTestWrapper($this, FizzleParser::class);
 
         $actual = $parser->match('Filter', 'foo[foo=true]');
-        self::assertSame(true, $actual['AttributeFilters'][0]['Operand']);
+        $this->assertSame(true, $actual['AttributeFilters'][0]['Operand']);
 
         $actual = $parser->match('Filter', 'foo[foo= false]');
-        self::assertSame(false, $actual['AttributeFilters'][0]['Operand']);
+        $this->assertSame(false, $actual['AttributeFilters'][0]['Operand']);
     }
 }

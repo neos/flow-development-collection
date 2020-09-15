@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Flow\Log\Backend;
 
 /*
@@ -12,8 +10,6 @@ namespace Neos\Flow\Log\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Log\Exception\CouldNotOpenResourceException;
 
 /**
  * Extended ANSI console backend with human friendly formatting
@@ -55,9 +51,8 @@ class AnsiConsoleBackend extends ConsoleBackend
      * Initializes tag formats.
      *
      * @return void
-     * @throws CouldNotOpenResourceException
      */
-    public function open(): void
+    public function open()
     {
         parent::open();
         $this->tagFormats = [
@@ -76,21 +71,21 @@ class AnsiConsoleBackend extends ConsoleBackend
      * Appends the given message along with the additional information into the log.
      *
      * @param string $message
-     * @param int $severity
+     * @param integer $severity
      * @param array $additionalData
      * @param string $packageKey
      * @param string $className
      * @param string $methodName
      * @return void
      */
-    public function append(string $message, int $severity = LOG_INFO, $additionalData = null, string $packageKey = null, string $className = null, string $methodName = null): void
+    public function append($message, $severity = LOG_INFO, $additionalData = null, $packageKey = null, $className = null, $methodName = null)
     {
         if ($severity > $this->severityThreshold) {
             return;
         }
 
         $severityName = strtolower(trim($this->severityLabels[$severity]));
-        $output = '<' . $severityName . '>' . $message . '</' . $severityName . '>';
+        $output = '<' . $severityName. '>' . $message . '</' . $severityName . '>';
 
         $output = $this->formatOutput($output);
 

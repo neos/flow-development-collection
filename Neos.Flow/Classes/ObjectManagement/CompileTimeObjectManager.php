@@ -308,7 +308,6 @@ class CompileTimeObjectManager extends ObjectManager
     protected function buildObjectsArray()
     {
         $objects = [];
-        /* @var $objectConfiguration Configuration */
         foreach ($this->objectConfigurations as $objectConfiguration) {
             $objectName = $objectConfiguration->getObjectName();
             $objects[$objectName] = [
@@ -319,7 +318,7 @@ class CompileTimeObjectManager extends ObjectManager
             if ($objectConfiguration->getClassName() !== $objectName) {
                 $objects[$objectName]['c'] = $objectConfiguration->getClassName();
             }
-            if ($objectConfiguration->isCreatedByFactory()) {
+            if ($objectConfiguration->getFactoryObjectName() !== '') {
                 $objects[$objectName]['f'] = [
                     $objectConfiguration->getFactoryObjectName(),
                     $objectConfiguration->getFactoryMethodName()
@@ -358,13 +357,12 @@ class CompileTimeObjectManager extends ObjectManager
      * defined in the object configuration of the specified object.
      *
      * @param string $objectName The name of the object to return an instance of
-     * @param mixed ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
      * @return object The object instance
      * @throws \Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException
      * @throws \Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException
      * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
      */
-    public function get($objectName, ...$constructorArguments)
+    public function get($objectName)
     {
         if (isset($this->objects[$objectName]['i'])) {
             return $this->objects[$objectName]['i'];

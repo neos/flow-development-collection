@@ -39,7 +39,7 @@ class ResourceManagerTest extends FunctionalTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {

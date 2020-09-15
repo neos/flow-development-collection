@@ -27,7 +27,7 @@ class TextareaViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
      */
     protected $viewHelper;
 
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\TextareaViewHelper::class, ['setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration']);
@@ -42,7 +42,7 @@ class TextareaViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
     public function renderCorrectlySetsTagName()
     {
         $mockTagBuilder = $this->createMock(TagBuilder::class);
-        $mockTagBuilder->expects(self::atLeastOnce())->method('setTagName')->with('textarea');
+        $mockTagBuilder->expects($this->atLeastOnce())->method('setTagName')->with('textarea');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
         $this->viewHelper->initialize();
@@ -55,10 +55,10 @@ class TextareaViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
     public function renderCorrectlySetsNameAttributeAndContent()
     {
         $mockTagBuilder = $this->createMock(TagBuilder::class);
-        $mockTagBuilder->expects(self::once())->method('addAttribute')->with('name', 'NameOfTextarea');
-        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextarea');
-        $mockTagBuilder->expects(self::once())->method('setContent')->with('Current value');
-        $mockTagBuilder->expects(self::once())->method('render');
+        $mockTagBuilder->expects($this->once())->method('addAttribute')->with('name', 'NameOfTextarea');
+        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextarea');
+        $mockTagBuilder->expects($this->once())->method('setContent')->with('Current value');
+        $mockTagBuilder->expects($this->once())->method('render');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
         $arguments = [
@@ -77,7 +77,7 @@ class TextareaViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
      */
     public function renderCallsSetErrorClassAttribute()
     {
-        $this->viewHelper->expects(self::once())->method('setErrorClassAttribute');
+        $this->viewHelper->expects($this->once())->method('setErrorClassAttribute');
         $this->viewHelper->render();
     }
 
@@ -87,10 +87,10 @@ class TextareaViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
     public function renderEscapesTextareaContent()
     {
         $mockTagBuilder = $this->createMock(TagBuilder::class);
-        $mockTagBuilder->expects(self::once())->method('addAttribute')->with('name', 'NameOfTextarea');
-        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextarea');
-        $mockTagBuilder->expects(self::once())->method('setContent')->with('some &lt;tag&gt; &amp; &quot;quotes&quot;');
-        $mockTagBuilder->expects(self::once())->method('render');
+        $mockTagBuilder->expects($this->once())->method('addAttribute')->with('name', 'NameOfTextarea');
+        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextarea');
+        $mockTagBuilder->expects($this->once())->method('setContent')->with('some &lt;tag&gt; &amp; &quot;quotes&quot;');
+        $mockTagBuilder->expects($this->once())->method('render');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
         $arguments = [

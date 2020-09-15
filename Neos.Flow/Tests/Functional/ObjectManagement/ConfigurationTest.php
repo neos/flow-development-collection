@@ -28,6 +28,6 @@ class ConfigurationTest extends FunctionalTestCase
         $instance = $this->objectManager->get(Fixtures\PrototypeClassD::class);
         /** @var $instanceE Fixtures\PrototypeClassE */
         $instanceE = ObjectAccess::getProperty($instance, 'objectE', true);
-        self::assertEquals('The constructor set value', $instanceE->getNullValue());
+        $this->assertEquals('The constructor set value', $instanceE->getNullValue());
     }
 }

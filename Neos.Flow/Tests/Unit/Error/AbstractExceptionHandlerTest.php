@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Error;
  */
 use Neos\Flow\Error\AbstractExceptionHandler;
 use Neos\Flow\Exception;
+use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Tests\UnitTestCase;
@@ -38,7 +39,7 @@ class AbstractExceptionHandlerTest extends UnitTestCase
         $exception = new \Exception('The Message', 12345);
 
         $mockThrowableStorage = $this->createMock(ThrowableStorageInterface::class);
-        $mockThrowableStorage->expects(self::once())->method('logThrowable')->with($exception);
+        $mockThrowableStorage->expects($this->once())->method('logThrowable')->with($exception);
 
         $mockLogger = $this->createMock(LoggerInterface::class);
 
@@ -75,17 +76,17 @@ class AbstractExceptionHandlerTest extends UnitTestCase
             ]
         ];
 
-        /** @var Exception|\PHPUnit\Framework\MockObject\MockObject $exception */
+        /** @var Exception|\PHPUnit_Framework_MockObject_MockObject $exception */
         $exception = new NoMatchingRouteException();
 
-        /** @var ThrowableStorageInterface|\PHPUnit\Framework\MockObject\MockObject $mockThrowableStorage */
-        $mockThrowableStorage = $this->getMockBuilder(ThrowableStorageInterface::class)->getMock();
-        $mockThrowableStorage->expects(self::never())->method('logThrowable');
+        /** @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject $mockSystemLogger */
+        $mockSystemLogger = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
+        $mockSystemLogger->expects($this->never())->method('logException');
 
         $exceptionHandler = $this->getMockForAbstractClass(AbstractExceptionHandler::class, [], '', false, true, true, ['echoExceptionCli']);
         /** @var AbstractExceptionHandler $exceptionHandler */
         $exceptionHandler->setOptions($options);
-        $exceptionHandler->injectThrowableStorage($mockThrowableStorage);
+        $exceptionHandler->injectSystemLogger($mockSystemLogger);
         $exceptionHandler->handleException($exception);
     }
 }

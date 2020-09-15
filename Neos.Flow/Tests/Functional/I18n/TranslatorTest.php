@@ -28,7 +28,7 @@ class TranslatorTest extends FunctionalTestCase
     /**
      * Initialize dependencies
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         $this->translator = $this->objectManager->get(I18n\Translator::class);
@@ -54,7 +54,7 @@ class TranslatorTest extends FunctionalTestCase
     public function simpleTranslationByIdWorks($id, $locale, $translation)
     {
         $result = $this->translator->translateById($id, [], null, $locale, 'Main', 'Neos.Flow');
-        self::assertEquals($translation, $result);
+        $this->assertEquals($translation, $result);
     }
 
     /**
@@ -75,7 +75,7 @@ class TranslatorTest extends FunctionalTestCase
     public function simpleTranslationByLabelWorks($label, $locale, $translation)
     {
         $result = $this->translator->translateByOriginalLabel($label, [], null, $locale, 'Main', 'Neos.Flow');
-        self::assertEquals($translation, $result);
+        $this->assertEquals($translation, $result);
     }
 
     /**
@@ -96,7 +96,7 @@ class TranslatorTest extends FunctionalTestCase
     public function translationByLabelUsesPlaceholders($label, $arguments, $translation)
     {
         $result = $this->translator->translateByOriginalLabel($label, $arguments, null, new I18n\Locale('en'), 'ValidationErrors', 'Neos.Flow');
-        self::assertEquals($translation, $result);
+        $this->assertEquals($translation, $result);
     }
 
     /**
@@ -105,6 +105,6 @@ class TranslatorTest extends FunctionalTestCase
     public function translationByIdReturnsNullOnFailure()
     {
         $result = $this->translator->translateById('non-existing-id');
-        self::assertNull($result);
+        $this->assertNull($result);
     }
 }

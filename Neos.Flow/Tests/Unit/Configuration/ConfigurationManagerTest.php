@@ -12,9 +12,6 @@ namespace Neos\Flow\Tests\Unit\Configuration;
  */
 
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
-use Neos\Flow\Configuration\Exception\ParseErrorException;
-use Neos\Flow\Configuration\Exception\RecursionException;
 use Neos\Flow\Configuration\RouteConfigurationProcessor;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
@@ -30,11 +27,11 @@ use org\bovigo\vfs\vfsStream;
 class ConfigurationManagerTest extends UnitTestCase
 {
     /**
-     * @var ApplicationContext|\PHPUnit\Framework\MockObject\MockObject
+     * @var ApplicationContext|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockContext;
 
-    protected function setUp(): void
+    public function setUp()
     {
         $this->mockContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
     }
@@ -51,7 +48,7 @@ class ConfigurationManagerTest extends UnitTestCase
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [new ApplicationContext('Testing')], '', false);
         $configurationManager->_set('configurations', $initialConfigurations);
 
-        $configurationManager->expects(self::once())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
+        $configurationManager->expects($this->once())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
         $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Foo');
     }
 
@@ -71,7 +68,7 @@ class ConfigurationManagerTest extends UnitTestCase
         $configurationManager->_set('configurations', $configurations);
 
         $actualConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'SomePackage');
-        self::assertSame($expectedConfiguration, $actualConfiguration);
+        $this->assertSame($expectedConfiguration, $actualConfiguration);
     }
 
     /**
@@ -84,7 +81,7 @@ class ConfigurationManagerTest extends UnitTestCase
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [], '', false);
         $configurationManager->_set('configurations', [ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => []]);
         $configurationManager->setPackages($packages);
-        $configurationManager->expects(self::once())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $packages);
+        $configurationManager->expects($this->once())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $packages);
 
         $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'SomePackage');
     }
@@ -99,7 +96,7 @@ class ConfigurationManagerTest extends UnitTestCase
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [], '', false);
         $configurationManager->_set('configurations', [ConfigurationManager::CONFIGURATION_TYPE_OBJECTS => []]);
         $configurationManager->setPackages($packages);
-        $configurationManager->expects(self::once())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, $packages);
+        $configurationManager->expects($this->once())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, $packages);
 
         $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'SomePackage');
     }
@@ -116,7 +113,7 @@ class ConfigurationManagerTest extends UnitTestCase
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [], '', false);
         $configurationManager->_set('configurations', $initialConfigurations);
 
-        $configurationManager->expects(self::at(0))->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_CACHES);
+        $configurationManager->expects($this->at(0))->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_CACHES);
 
         $configurationTypes = [
             ConfigurationManager::CONFIGURATION_TYPE_ROUTES,
@@ -139,20 +136,20 @@ class ConfigurationManagerTest extends UnitTestCase
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [], '', false);
         $configurationManager->_set('configurations', $expectedConfigurations);
-        $configurationManager->expects(self::never())->method('loadConfiguration');
+        $configurationManager->expects($this->never())->method('loadConfiguration');
 
         foreach ($expectedConfigurations as $configurationType => $expectedConfiguration) {
             $actualConfiguration = $configurationManager->getConfiguration($configurationType);
-            self::assertSame($expectedConfiguration, $actualConfiguration);
+            $this->assertSame($expectedConfiguration, $actualConfiguration);
         }
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
      */
     public function gettingUnregisteredConfigurationTypeFails()
     {
-        $this->expectException(InvalidConfigurationTypeException::class);
         $configurationManager = new ConfigurationManager(new ApplicationContext('Testing'));
         $configurationManager->getConfiguration('Custom');
     }
@@ -168,24 +165,24 @@ class ConfigurationManagerTest extends UnitTestCase
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [], '', false);
         $configurationManager->_set('configurations', $expectedConfigurations);
-        $configurationManager->expects(self::never())->method('loadConfiguration');
+        $configurationManager->expects($this->never())->method('loadConfiguration');
 
         foreach ($expectedConfigurations as $configurationType => $expectedConfiguration) {
             $configurationManager->registerConfigurationType($configurationType, ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_SETTINGS);
             $actualConfiguration = $configurationManager->getConfiguration($configurationType);
-            self::assertSame($expectedConfiguration, $actualConfiguration);
+            $this->assertSame($expectedConfiguration, $actualConfiguration);
         }
 
         $expectedConfigurationTypes = ['Caches', 'Objects', 'Routes', 'Policy', 'Settings', 'Custom'];
-        self::assertEquals($expectedConfigurationTypes, $configurationManager->getAvailableConfigurationTypes());
+        $this->assertEquals($expectedConfigurationTypes, $configurationManager->getAvailableConfigurationTypes());
     }
 
     /**
+     * @expectedException \InvalidArgumentException
      * @test
      */
     public function registerConfigurationTypeThrowsExceptionOnInvalidConfigurationProcessingType()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [], '', false);
         $configurationManager->registerConfigurationType('MyCustomType', 'Nonsense');
     }
@@ -196,11 +193,11 @@ class ConfigurationManagerTest extends UnitTestCase
     public function loadConfigurationOverridesSettingsByContext()
     {
         $mockConfigurationSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
-        $mockConfigurationSource->expects(self::any())->method('load')->will(self::returnCallBack([$this, 'packageSettingsCallback']));
+        $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback([$this, 'packageSettingsCallback']));
 
         $mockPackageA = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $mockPackageA->expects(self::any())->method('getConfigurationPath')->will(self::returnValue('PackageA/Configuration/'));
-        $mockPackageA->expects(self::any())->method('getPackageKey')->will(self::returnValue('PackageA'));
+        $mockPackageA->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('PackageA/Configuration/'));
+        $mockPackageA->expects($this->any())->method('getPackageKey')->will($this->returnValue('PackageA'));
 
         $mockPackages = [
             'PackageA' => $mockPackageA,
@@ -217,7 +214,7 @@ class ConfigurationManagerTest extends UnitTestCase
             'bar' => 'A'
         ];
 
-        self::assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]['PackageA']);
+        $this->assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]['PackageA']);
     }
 
     /**
@@ -245,7 +242,7 @@ class ConfigurationManagerTest extends UnitTestCase
             ]
         ];
 
-        self::assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
+        $this->assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
     }
 
     /**
@@ -381,7 +378,7 @@ class ConfigurationManagerTest extends UnitTestCase
             ]
         ];
 
-        self::assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_OBJECTS]);
+        $this->assertSame($expectedSettings, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_OBJECTS]);
     }
 
     /**
@@ -492,7 +489,7 @@ class ConfigurationManagerTest extends UnitTestCase
             ]
         ];
 
-        self::assertSame($expectedCachesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_CACHES]);
+        $this->assertSame($expectedCachesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_CACHES]);
     }
 
     /**
@@ -594,13 +591,13 @@ EOD;
         file_put_contents($cachedConfigurationsPathAndFilename, $configurationsCode);
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration', 'constructConfigurationCachePath', 'refreshConfiguration'], [], '', false);
-        $configurationManager->expects(self::any())->method('constructConfigurationCachePath')->willReturn('notfound.php', $cachedConfigurationsPathAndFilename);
+        $configurationManager->expects($this->any())->method('constructConfigurationCachePath')->willReturn('notfound.php', $cachedConfigurationsPathAndFilename);
         $configurationManager->_set('configurations', ['foo' => 'untouched']);
         $configurationManager->_call('loadConfigurationCache');
-        self::assertSame(['foo' => 'untouched'], $configurationManager->_get('configurations'));
+        $this->assertSame(['foo' => 'untouched'], $configurationManager->_get('configurations'));
 
         $configurationManager->_call('loadConfigurationCache');
-        self::assertSame(['bar' => 'touched'], $configurationManager->_get('configurations'));
+        $this->assertSame(['bar' => 'touched'], $configurationManager->_get('configurations'));
     }
 
     /**
@@ -609,7 +606,7 @@ EOD;
     public function loadConfigurationCorrectlyMergesSettings()
     {
         $mockConfigurationSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
-        $mockConfigurationSource->expects(self::any())->method('load')->will(self::returnCallBack([$this, 'packageSettingsCallback']));
+        $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback([$this, 'packageSettingsCallback']));
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration'], [new ApplicationContext('Testing')]);
         $configurationManager->_set('configurationSource', $mockConfigurationSource);
@@ -625,7 +622,7 @@ EOD;
                 ]
             ]
         ];
-        self::assertEquals($expectedConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
+        $this->assertEquals($expectedConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
     }
 
     /**
@@ -647,7 +644,7 @@ EOD;
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration', 'constructConfigurationCachePath'], [], '', false);
         $configurationManager->setTemporaryDirectoryPath($temporaryDirectoryPath);
-        $configurationManager->expects(self::any())->method('constructConfigurationCachePath')->willReturn($cachedConfigurationsPathAndFilename);
+        $configurationManager->expects($this->any())->method('constructConfigurationCachePath')->willReturn($cachedConfigurationsPathAndFilename);
         $configurationManager->_set('configurations', $mockConfigurations);
         $configurationManager->_set('unprocessedConfiguration', $mockConfigurations);
         $configurationManager->_set('configurationTypes', [
@@ -688,8 +685,8 @@ EOD;
         $settingsPhpString = var_export($settings, true);
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
-        self::assertStringContainsString("'baz' => (defined('PHP_VERSION') ? constant('PHP_VERSION') : null)", $processedPhpString);
-        self::assertStringContainsString("'to' => (defined('FLOW_PATH_ROOT') ? constant('FLOW_PATH_ROOT') : null)", $processedPhpString);
+        $this->assertContains("'baz' => (defined('PHP_VERSION') ? constant('PHP_VERSION') : null)", $processedPhpString);
+        $this->assertContains("'to' => (defined('FLOW_PATH_ROOT') ? constant('FLOW_PATH_ROOT') : null)", $processedPhpString);
     }
 
     /**
@@ -711,11 +708,11 @@ EOD;
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['dummy'], [], '', false);
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
         $settings = eval('return ' . $processedPhpString . ';');
-        $this->assertIsInt($settings['anIntegerConstant']);
-        self::assertSame(PHP_VERSION_ID, $settings['anIntegerConstant']);
+        $this->assertInternalType('integer', $settings['anIntegerConstant']);
+        $this->assertSame(PHP_VERSION_ID, $settings['anIntegerConstant']);
 
-        $this->assertIsString($settings['casted']['to']['string']);
-        self::assertSame('Version id is ' . PHP_VERSION_ID, $settings['casted']['to']['string']);
+        $this->assertInternalType('string', $settings['casted']['to']['string']);
+        $this->assertSame('Version id is ' . PHP_VERSION_ID, $settings['casted']['to']['string']);
     }
 
     /**
@@ -739,9 +736,9 @@ EOD;
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
         $settings = eval('return ' . $processedPhpString . ';');
 
-        self::assertSame(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $settings['baz']);
-        self::assertSame(Bootstrap::MINIMUM_PHP_VERSION, $settings['inspiring']['people']['to']);
-        self::assertSame(FlowPackageInterface::DIRECTORY_CLASSES, $settings['inspiring']['people']['share']);
+        $this->assertSame(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $settings['baz']);
+        $this->assertSame(Bootstrap::MINIMUM_PHP_VERSION, $settings['inspiring']['people']['to']);
+        $this->assertSame(FlowPackageInterface::DIRECTORY_CLASSES, $settings['inspiring']['people']['share']);
     }
 
     /**
@@ -771,10 +768,10 @@ EOD;
         $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
         $settings = eval('return ' . $processedPhpString . ';');
 
-        self::assertSame($envVarValue, $settings['bar']);
-        self::assertSame($envVarValue . ' inspiring people ' . $envVarValue . ' to share', $settings['baz']);
-        self::assertSame($envVarValue, $settings['inspiring']['people']['to']);
-        self::assertSame('foo ' . $envVarValue . ' bar', $settings['inspiring']['people']['share']);
+        $this->assertSame($envVarValue, $settings['bar']);
+        $this->assertSame($envVarValue . ' inspiring people ' . $envVarValue . ' to share', $settings['baz']);
+        $this->assertSame($envVarValue, $settings['inspiring']['people']['to']);
+        $this->assertSame('foo ' . $envVarValue . ' bar', $settings['inspiring']['people']['share']);
 
         putenv($envVarName);
     }
@@ -843,7 +840,7 @@ EOD;
             ]
         ];
 
-        self::assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
+        $this->assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
     }
 
     /**
@@ -979,7 +976,7 @@ EOD;
             ],
         ];
 
-        self::assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
+        $this->assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
     }
 
     /**
@@ -1080,7 +1077,7 @@ EOD;
     public function loadConfigurationForRoutesIncludesSubRoutesFromSettings()
     {
         $mockConfigurationSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
-        $mockConfigurationSource->expects(self::any())->method('load')->will(self::returnCallBack([$this, 'packageRoutesAndSettingsCallback']));
+        $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback([$this, 'packageRoutesAndSettingsCallback']));
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration'], [new ApplicationContext('Testing')]);
         $configurationManager->_set('configurationSource', $mockConfigurationSource);
@@ -1111,7 +1108,7 @@ EOD;
             ],
         ];
 
-        self::assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
+        $this->assertSame($expectedRoutesConfiguration, $actualConfigurations[ConfigurationManager::CONFIGURATION_TYPE_ROUTES]);
     }
 
     /**
@@ -1179,10 +1176,10 @@ EOD;
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Configuration\Exception\RecursionException
      */
     public function loadConfigurationForRoutesThrowsExceptionIfSubRoutesContainCircularReferences()
     {
-        $this->expectException(RecursionException::class);
         $mockSubRouteConfiguration =
             [
                 'name' => 'SomeRouteOrSubRoute',
@@ -1194,7 +1191,7 @@ EOD;
                 ],
             ];
         $mockConfigurationSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
-        $mockConfigurationSource->expects(self::any())->method('load')->will(self::returnValue([$mockSubRouteConfiguration]));
+        $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnValue([$mockSubRouteConfiguration]));
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration'], [new ApplicationContext('Production')]);
         $configurationManager->injectConfigurationSource($mockConfigurationSource);
@@ -1206,10 +1203,10 @@ EOD;
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Configuration\Exception\ParseErrorException
      */
     public function mergeRoutesWithSubRoutesThrowsExceptionIfRouteRefersToNonExistingOrInactivePackages()
     {
-        $this->expectException(ParseErrorException::class);
         $routesConfiguration = [
             [
                 'name' => 'Welcome',
@@ -1247,9 +1244,9 @@ EOD;
 
 
         $mockConfigurationSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
-        $mockConfigurationSource->expects(self::at(0))->method('load')->with('Flow/Configuration/Testing/System1/Routes.Foo')->will(self::returnValue([]));
-        $mockConfigurationSource->expects(self::at(1))->method('load')->with('Flow/Configuration/Testing/Routes.Foo')->will(self::returnValue([]));
-        $mockConfigurationSource->expects(self::at(2))->method('load')->with('Flow/Configuration/Routes.Foo')->will(self::returnValue([]));
+        $mockConfigurationSource->expects($this->at(0))->method('load')->with('Flow/Configuration/Testing/System1/Routes.Foo')->will($this->returnValue([]));
+        $mockConfigurationSource->expects($this->at(1))->method('load')->with('Flow/Configuration/Testing/Routes.Foo')->will($this->returnValue([]));
+        $mockConfigurationSource->expects($this->at(2))->method('load')->with('Flow/Configuration/Routes.Foo')->will($this->returnValue([]));
 
         $routeConfigurationProcessor = new RouteConfigurationProcessor([], ['Testing', 'Testing/System1'], $this->getMockPackages(), $mockConfigurationSource);
         $routeConfigurationProcessor->process($mockRoutesConfiguration);
@@ -1347,7 +1344,7 @@ EOD;
         $RouteConfigurationProcessor = $this->getAccessibleMock(RouteConfigurationProcessor::class, ['dummy'], [], '', false);
         $actualResult = $RouteConfigurationProcessor->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', []);
 
-        self::assertEquals($expectedResult, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -1426,7 +1423,7 @@ EOD;
         $routeConfigurationProcessor = $this->getAccessibleMock(RouteConfigurationProcessor::class, ['dummy'], [], '', false);
         $actualResult = $routeConfigurationProcessor->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', $subRouteOptions);
 
-        self::assertEquals($expectedResult, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -1464,7 +1461,7 @@ EOD;
             ],
         ];
 
-        self::assertSame($expectedRoutesConfiguration, $actualConfigurations['Views']);
+        $this->assertSame($expectedRoutesConfiguration, $actualConfigurations['Views']);
     }
 
 
@@ -1535,7 +1532,7 @@ EOD;
         $configurationManager->registerConfigurationType('MyCustomConfiguration', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_SETTINGS);
         $configurationManager->_call('loadConfiguration', 'MyCustomConfiguration', $this->getMockPackages());
         $configuration = $configurationManager->getConfiguration('MyCustomConfiguration');
-        self::assertArrayHasKey('SomeKey', $configuration);
+        $this->assertArrayHasKey('SomeKey', $configuration);
     }
 
     /**
@@ -1559,7 +1556,7 @@ EOD;
     protected function getConfigurationManagerWithFlowPackage($configurationSourceCallbackName, $contextName)
     {
         $mockConfigurationSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
-        $mockConfigurationSource->expects(self::any())->method('load')->will(self::returnCallBack([$this, $configurationSourceCallbackName]));
+        $mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback([$this, $configurationSourceCallbackName]));
 
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['postProcessConfiguration', 'includeSubRoutesFromSettings'], [new ApplicationContext($contextName)]);
         $configurationManager->_set('configurationSource', $mockConfigurationSource);
@@ -1573,8 +1570,8 @@ EOD;
     protected function getMockPackages()
     {
         $mockPackageFlow = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $mockPackageFlow->expects(self::any())->method('getConfigurationPath')->will(self::returnValue('Flow/Configuration/'));
-        $mockPackageFlow->expects(self::any())->method('getPackageKey')->will(self::returnValue('Neos.Flow'));
+        $mockPackageFlow->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('Flow/Configuration/'));
+        $mockPackageFlow->expects($this->any())->method('getPackageKey')->will($this->returnValue('Neos.Flow'));
 
         $mockPackages = [
             'Neos.Flow' => $mockPackageFlow

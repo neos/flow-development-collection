@@ -24,7 +24,7 @@ abstract class TypeHandling
     /**
      * A property type parse pattern.
      */
-    const PARSE_TYPE_PATTERN = '/^(?:null\|)?\\\\?(?P<type>[a-zA-Z0-9\\\\_]+)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\_]+)>)?(?:\|null)?(?:\s|$)/';
+    const PARSE_TYPE_PATTERN = '/^\\\\?(?P<type>integer|int|float|double|boolean|bool|string|DateTime(?:Immutable)?|[a-zA-Z0-9\\\\_]+|object|array|ArrayObject|SplObjectStorage|Doctrine\\\\Common\\\\Collections\\\\Collection|Doctrine\\\\Common\\\\Collections\\\\ArrayCollection)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\_]+)>)?/';
 
     /**
      * A type pattern to detect literal types.
@@ -51,9 +51,7 @@ abstract class TypeHandling
             throw new InvalidTypeException('Found an invalid element type declaration. A type "' . var_export($type, true) . '" does not exist.', 1264093630);
         }
 
-        $typeWithoutNull = self::stripNullableType($matches['type']);
-        $isNullable = $typeWithoutNull !== $matches['type'];
-        $type = self::normalizeType($typeWithoutNull);
+        $type = self::normalizeType($matches['type']);
         $elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : null;
 
         if ($elementType !== null && !self::isCollectionType($type)) {

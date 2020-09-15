@@ -24,7 +24,7 @@ class AbstractControllerTest extends FunctionalTestCase
     /**
      * Additional setup: Routes
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
 
@@ -49,7 +49,7 @@ class AbstractControllerTest extends FunctionalTestCase
     public function forwardPassesRequestToActionWithoutArguments()
     {
         $response = $this->browser->request('http://localhost/test/mvc/abstractcontrollertesta/forward?actionName=second');
-        self::assertEquals('Second action was called', $response->getBody()->getContents());
+        $this->assertEquals('Second action was called', $response->getContent());
     }
 
     /**
@@ -61,7 +61,7 @@ class AbstractControllerTest extends FunctionalTestCase
     public function forwardPassesRequestToActionWithArguments()
     {
         $response = $this->browser->request('http://localhost/test/mvc/abstractcontrollertesta/forward?actionName=third&arguments[firstArgument]=foo&arguments[secondArgument]=bar');
-        self::assertEquals('thirdAction-foo-bar--default', $response->getBody()->getContents());
+        $this->assertEquals('thirdAction-foo-bar--default', $response->getContent());
     }
 
     /**
@@ -73,6 +73,6 @@ class AbstractControllerTest extends FunctionalTestCase
     public function forwardPassesRequestToActionWithInternalArgumentsContainingObjects()
     {
         $response = $this->browser->request('http://localhost/test/mvc/abstractcontrollertesta/forward?actionName=fourth&passSomeObjectArguments=1&arguments[nonObject1]=First&arguments[nonObject2]=42');
-        self::assertEquals('fourthAction-First-42-Neos\Error\Messages\Message', $response->getBody()->getContents());
+        $this->assertEquals('fourthAction-First-42-Neos\Error\Messages\Message', $response->getContent());
     }
 }

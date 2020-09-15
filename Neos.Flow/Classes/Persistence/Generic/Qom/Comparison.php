@@ -56,7 +56,6 @@ namespace Neos\Flow\Persistence\Generic\Qom;
  *   all other characters match themselves.
  *
  * @api
- * @deprecated since Flow 6.0
  */
 class Comparison extends Constraint
 {

@@ -6,51 +6,46 @@ Neos:
   Flow:
     log:
       psr3:
-        loggerFactory: Neos\Flow\Log\PsrLoggerFactory
+        loggerFactory: legacy
+      # Settings for Flow's default loggers
+      systemLogger:
+        logger: Neos\Flow\Log\Logger
+        backend: Neos\Flow\Log\Backend\FileBackend
+        backendOptions:
+           logFileURL: '%FLOW_PATH_DATA%Logs/System.log'
+           createParentDirectories: true
+           severityThreshold: '%LOG_INFO%'
+           maximumLogFileSize: 10485760
+           logFilesToKeep: 1
+           logMessageOrigin: false
 
-        'Neos\Flow\Log\PsrLoggerFactory':
-          # Settings for Flow's default loggers
-          systemLogger:
-            default:
-              class: Neos\Flow\Log\Backend\FileBackend
-              options:
-                 logFileURL: '%FLOW_PATH_DATA%Logs/System.log'
-                 createParentDirectories: true
-                 severityThreshold: '%LOG_INFO%'
-                 maximumLogFileSize: 10485760
-                 logFilesToKeep: 1
-                 logMessageOrigin: false
+      securityLogger:
+        backend: Neos\Flow\Log\Backend\FileBackend
+        backendOptions:
+           logFileURL: '%FLOW_PATH_DATA%Logs/Security.log'
+           createParentDirectories: true
+           severityThreshold: '%LOG_INFO%'
+           maximumLogFileSize: 10485760
+           logFilesToKeep: 1
+           logIpAddress: true
 
-          securityLogger:
-            default:
-              class: Neos\Flow\Log\Backend\FileBackend
-              options:
-                 logFileURL: '%FLOW_PATH_DATA%Logs/Security.log'
-                 createParentDirectories: true
-                 severityThreshold: '%LOG_INFO%'
-                 maximumLogFileSize: 10485760
-                 logFilesToKeep: 1
-                 logIpAddress: true
+      sqlLogger:
+        backend: Neos\Flow\Log\Backend\FileBackend
+        backendOptions:
+          logFileURL: '%FLOW_PATH_DATA%Logs/Query.log'
+          createParentDirectories: true
+          severityThreshold: '%LOG_INFO%'
+          maximumLogFileSize: 10485760
+          logFilesToKeep: 1
 
-          sqlLogger:
-            default:
-              class: Neos\Flow\Log\Backend\FileBackend
-              options:
-                logFileURL: '%FLOW_PATH_DATA%Logs/Query.log'
-                createParentDirectories: true
-                severityThreshold: '%LOG_INFO%'
-                maximumLogFileSize: 10485760
-                logFilesToKeep: 1
-
-          i18nLogger:
-            default:
-              class: Neos\Flow\Log\Backend\FileBackend
-              options:
-                logFileURL: '%FLOW_PATH_DATA%Logs/I18n.log'
-                createParentDirectories: true
-                severityThreshold: '%LOG_INFO%'
-                maximumLogFileSize: 10485760
-                logFilesToKeep: 1
+      i18nLogger:
+        backend: Neos\Flow\Log\Backend\FileBackend
+        backendOptions:
+          logFileURL: '%FLOW_PATH_DATA%Logs/I18n.log'
+          createParentDirectories: true
+          severityThreshold: '%LOG_INFO%'
+          maximumLogFileSize: 1048576
+          logFilesToKeep: 1
 
       throwables:
         storageClass: Neos\Flow\Log\ThrowableStorage\FileStorage

@@ -29,31 +29,31 @@ class TranslationHelperTest extends UnitTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $mockTranslationParameterToken->expects(self::once())
+        $mockTranslationParameterToken->expects($this->once())
             ->method('value', 'SomeValue')
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects(self::once())
+        $mockTranslationParameterToken->expects($this->once())
             ->method('arguments', ['a', 'couple', 'of', 'arguments'])
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects(self::once())
+        $mockTranslationParameterToken->expects($this->once())
             ->method('source', 'SomeSource')
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects(self::once())
+        $mockTranslationParameterToken->expects($this->once())
             ->method('package', 'Some.PackageKey')
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects(self::once())
+        $mockTranslationParameterToken->expects($this->once())
             ->method('quantity', 42)
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects(self::once())
+        $mockTranslationParameterToken->expects($this->once())
             ->method('locale', 'SomeLocale')
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects(self::once())
+        $mockTranslationParameterToken->expects($this->once())
             ->method('translate')
             ->willReturn('I am a translation result');
 
@@ -64,7 +64,7 @@ class TranslationHelperTest extends UnitTestCase
 
 
         $result = $mockTranslationHelper->translate('SomeId', 'SomeValue', ['a', 'couple', 'of', 'arguments'], 'SomeSource', 'Some.PackageKey', 42, 'SomeLocale');
-        self::assertEquals('I am a translation result', $result);
+        $this->assertEquals('I am a translation result', $result);
     }
 
     /**
@@ -76,15 +76,15 @@ class TranslationHelperTest extends UnitTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $mockTranslationParameterToken->expects(self::once())
+        $mockTranslationParameterToken->expects($this->once())
             ->method('source', 'SomeSource')
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects(self::once())
+        $mockTranslationParameterToken->expects($this->once())
             ->method('package', 'Some.PackageKey')
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects(self::once())
+        $mockTranslationParameterToken->expects($this->once())
             ->method('translate')
             ->willReturn('I am a translation result');
 
@@ -94,7 +94,7 @@ class TranslationHelperTest extends UnitTestCase
             ->willReturn($mockTranslationParameterToken);
 
         $result = $mockTranslationHelper->translate('Some.PackageKey:SomeSource:SomeId');
-        self::assertEquals('I am a translation result', $result);
+        $this->assertEquals('I am a translation result', $result);
     }
 
     /**
@@ -108,7 +108,7 @@ class TranslationHelperTest extends UnitTestCase
             ->willReturn('TranslationParameterTokenWithPreconfiguredId');
 
         $result = $mockTranslationHelper->id('SomeId');
-        self::assertEquals('TranslationParameterTokenWithPreconfiguredId', $result);
+        $this->assertEquals('TranslationParameterTokenWithPreconfiguredId', $result);
     }
 
     /**
@@ -122,6 +122,6 @@ class TranslationHelperTest extends UnitTestCase
             ->willReturn('TranslationParameterTokenWithPreconfiguredValue');
 
         $result = $mockTranslationHelper->value('SomeValue');
-        self::assertEquals('TranslationParameterTokenWithPreconfiguredValue', $result);
+        $this->assertEquals('TranslationParameterTokenWithPreconfiguredValue', $result);
     }
 }

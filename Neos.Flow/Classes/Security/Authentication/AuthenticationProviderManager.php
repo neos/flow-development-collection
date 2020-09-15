@@ -17,7 +17,6 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Security\Exception;
-use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\SessionManagerInterface;
 
 /**
@@ -56,9 +55,9 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     protected $providerConfigurations;
 
     /**
-     * @var bool
+     * @var boolean
      */
-    protected $isAuthenticated;
+    protected $isAuthenticated = null;
 
     /**
      * @var bool
@@ -71,11 +70,11 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     protected $authenticationStrategy;
 
     /**
-     * @param TokenAndProviderFactoryInterface $tokenAndProviderFactory
+     * @param TokenAndProviderFactoryInterface $tokenAndProviderFacory
      */
-    public function __construct(TokenAndProviderFactoryInterface $tokenAndProviderFactory)
+    public function __construct(TokenAndProviderFactoryInterface $tokenAndProviderFacory)
     {
-        $this->tokenAndProviderFactory = $tokenAndProviderFactory;
+        $this->tokenAndProviderFactory = $tokenAndProviderFacory;
     }
 
     /**
@@ -109,13 +108,50 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     }
 
     /**
+     * Sets the security context
+     *
+     * @param Context $securityContext The security context of the current request
+     * @return void
+     * @deprecated Just get it injected
+     */
+    public function setSecurityContext(Context $securityContext)
+    {
+        $this->securityContext = $securityContext;
+    }
+
+    /**
      * Returns the security context
      *
      * @return Context $securityContext The security context of the current request
      */
-    public function getSecurityContext(): Context
+    public function getSecurityContext()
     {
         return $this->securityContext;
+    }
+
+    /**
+     * Returns clean tokens this manager is responsible for.
+     * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
+     *
+     * @return array Array of TokenInterface this manager is responsible for
+     * @deprecated Use TokenAndProviderFactory
+     * @see TokenAndProviderFactoryInterface::getTokens()
+     */
+    public function getTokens()
+    {
+        return $this->tokenAndProviderFactory->getTokens();
+    }
+
+    /**
+     * Returns all configured authentication providers
+     *
+     * @return array Array of \Neos\Flow\Security\Authentication\AuthenticationProviderInterface
+     * @deprecated Use TokenAndProviderFactory
+     * @see TokenAndProviderFactoryInterface::getProviders()
+     */
+    public function getProviders()
+    {
+        return $this->tokenAndProviderFactory->getProviders();
     }
 
     /**
@@ -131,7 +167,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * @throws AuthenticationRequiredException
      * @throws NoTokensAuthenticatedException
      */
-    public function authenticate(): void
+    public function authenticate()
     {
         $this->isAuthenticated = false;
         $anyTokenAuthenticated = false;
@@ -200,7 +236,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * @return boolean
      * @throws Exception
      */
-    public function isAuthenticated(): bool
+    public function isAuthenticated()
     {
         if ($this->isAuthenticated === null) {
             try {
@@ -216,9 +252,9 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      *
      * @return void
      * @throws Exception
-     * @throws SessionNotStartedException
+     * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      */
-    public function logout(): void
+    public function logout()
     {
         if ($this->isAuthenticated() !== true) {
             return;

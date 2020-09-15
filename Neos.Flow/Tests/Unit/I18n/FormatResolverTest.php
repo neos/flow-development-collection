@@ -29,7 +29,7 @@ class FormatResolverTest extends UnitTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $this->sampleLocale = new I18n\Locale('en_GB');
     }
@@ -40,17 +40,17 @@ class FormatResolverTest extends UnitTestCase
     public function placeholdersAreResolvedCorrectly()
     {
         $mockNumberFormatter = $this->createMock(I18n\Formatter\NumberFormatter::class);
-        $mockNumberFormatter->expects(self::at(0))->method('format')->with(1, $this->sampleLocale)->will(self::returnValue('1.0'));
-        $mockNumberFormatter->expects(self::at(1))->method('format')->with(2, $this->sampleLocale, ['percent'])->will(self::returnValue('200%'));
+        $mockNumberFormatter->expects($this->at(0))->method('format')->with(1, $this->sampleLocale)->will($this->returnValue('1.0'));
+        $mockNumberFormatter->expects($this->at(1))->method('format')->with(2, $this->sampleLocale, ['percent'])->will($this->returnValue('200%'));
 
         $formatResolver = $this->getAccessibleMock(I18n\FormatResolver::class, ['getFormatter']);
-        $formatResolver->expects(self::exactly(2))->method('getFormatter')->with('number')->will(self::returnValue($mockNumberFormatter));
+        $formatResolver->expects($this->exactly(2))->method('getFormatter')->with('number')->will($this->returnValue($mockNumberFormatter));
 
         $result = $formatResolver->resolvePlaceholders('Foo {0,number}, bar {1,number,percent}', [1, 2], $this->sampleLocale);
-        self::assertEquals('Foo 1.0, bar 200%', $result);
+        $this->assertEquals('Foo 1.0, bar 200%', $result);
 
         $result = $formatResolver->resolvePlaceHolders('Foo {0}{1} Bar', ['{', '}'], $this->sampleLocale);
-        self::assertEquals('Foo {} Bar', $result);
+        $this->assertEquals('Foo {} Bar', $result);
     }
 
     /**
@@ -60,46 +60,46 @@ class FormatResolverTest extends UnitTestCase
     {
         $formatResolver = new I18n\FormatResolver();
         $result = $formatResolver->resolvePlaceholders('{0}', [123], $this->sampleLocale);
-        self::assertEquals('123', $result);
+        $this->assertEquals('123', $result);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException
      */
     public function throwsExceptionWhenInvalidPlaceholderEncountered()
     {
-        $this->expectException(I18n\Exception\InvalidFormatPlaceholderException::class);
         $formatResolver = new I18n\FormatResolver();
         $formatResolver->resolvePlaceholders('{0,damaged {1}', [], $this->sampleLocale);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\I18n\Exception\IndexOutOfBoundsException
      */
     public function throwsExceptionWhenInsufficientNumberOfArgumentsProvided()
     {
-        $this->expectException(I18n\Exception\IndexOutOfBoundsException::class);
         $formatResolver = new I18n\FormatResolver();
         $formatResolver->resolvePlaceholders('{0}', [], $this->sampleLocale);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\I18n\Exception\UnknownFormatterException
      */
     public function throwsExceptionWhenFormatterDoesNotExist()
     {
-        $this->expectException(I18n\Exception\UnknownFormatterException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager
-            ->expects(self::at(0))
+            ->expects($this->at(0))
             ->method('isRegistered')
             ->with('foo')
-            ->will(self::returnValue(false));
+            ->will($this->returnValue(false));
         $mockObjectManager
-            ->expects(self::at(1))
+            ->expects($this->at(1))
             ->method('isRegistered')
             ->with('Neos\Flow\I18n\Formatter\FooFormatter')
-            ->will(self::returnValue(false));
+            ->will($this->returnValue(false));
 
         $formatResolver = new I18n\FormatResolver();
         $formatResolver->injectObjectManager($mockObjectManager);
@@ -109,23 +109,23 @@ class FormatResolverTest extends UnitTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Flow\I18n\Exception\InvalidFormatterException
      */
     public function throwsExceptionWhenFormatterDoesNotImplementFormatterInterface()
     {
-        $this->expectException(I18n\Exception\InvalidFormatterException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('isRegistered')
             ->with('Acme\Foobar\Formatter\SampleFormatter')
-            ->will(self::returnValue(true));
+            ->will($this->returnValue(true));
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('isClassImplementationOf')
             ->with('Acme\Foobar\Formatter\SampleFormatter', I18n\Formatter\FormatterInterface::class)
-            ->will(self::returnValue(false));
+            ->will($this->returnValue(false));
 
         $formatResolver = new I18n\FormatResolver();
         $formatResolver->injectObjectManager($mockObjectManager);
@@ -139,35 +139,35 @@ class FormatResolverTest extends UnitTestCase
     public function fullyQualifiedFormatterIsCorrectlyBeingUsed()
     {
         $mockFormatter = $this->createMock(I18n\Formatter\FormatterInterface::class);
-        $mockFormatter->expects(self::once())
+        $mockFormatter->expects($this->once())
             ->method('format')
             ->with(123, $this->sampleLocale, [])
-            ->will(self::returnValue('FormatterOutput42'));
+            ->will($this->returnValue('FormatterOutput42'));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('isRegistered')
             ->with('Acme\Foobar\Formatter\SampleFormatter')
-            ->will(self::returnValue(true));
+            ->will($this->returnValue(true));
         $mockObjectManager
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('get')
             ->with('Acme\Foobar\Formatter\SampleFormatter')
-            ->will(self::returnValue($mockFormatter));
+            ->will($this->returnValue($mockFormatter));
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('isClassImplementationOf')
             ->with('Acme\Foobar\Formatter\SampleFormatter', I18n\Formatter\FormatterInterface::class)
-            ->will(self::returnValue(true));
+            ->will($this->returnValue(true));
 
         $formatResolver = new I18n\FormatResolver();
         $formatResolver->injectObjectManager($mockObjectManager);
         $this->inject($formatResolver, 'reflectionService', $mockReflectionService);
         $actual = $formatResolver->resolvePlaceholders('{0,Acme\Foobar\Formatter\SampleFormatter}', [123], $this->sampleLocale);
-        self::assertEquals('FormatterOutput42', $actual);
+        $this->assertEquals('FormatterOutput42', $actual);
     }
 
     /**
@@ -176,35 +176,35 @@ class FormatResolverTest extends UnitTestCase
     public function fullyQualifiedFormatterWithLowercaseVendorNameIsCorrectlyBeingUsed()
     {
         $mockFormatter = $this->createMock(I18n\Formatter\FormatterInterface::class);
-        $mockFormatter->expects(self::once())
+        $mockFormatter->expects($this->once())
             ->method('format')
             ->with(123, $this->sampleLocale, [])
-            ->will(self::returnValue('FormatterOutput42'));
+            ->will($this->returnValue('FormatterOutput42'));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('isRegistered')
             ->with('acme\Foo\SampleFormatter')
-            ->will(self::returnValue(true));
+            ->will($this->returnValue(true));
         $mockObjectManager
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('get')
             ->with('acme\Foo\SampleFormatter')
-            ->will(self::returnValue($mockFormatter));
+            ->will($this->returnValue($mockFormatter));
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('isClassImplementationOf')
             ->with('acme\Foo\SampleFormatter', I18n\Formatter\FormatterInterface::class)
-            ->will(self::returnValue(true));
+            ->will($this->returnValue(true));
 
         $formatResolver = new I18n\FormatResolver();
         $formatResolver->injectObjectManager($mockObjectManager);
         $this->inject($formatResolver, 'reflectionService', $mockReflectionService);
         $actual = $formatResolver->resolvePlaceholders('{0,acme\Foo\SampleFormatter}', [123], $this->sampleLocale);
-        self::assertEquals('FormatterOutput42', $actual);
+        $this->assertEquals('FormatterOutput42', $actual);
     }
 
     /**
@@ -215,6 +215,6 @@ class FormatResolverTest extends UnitTestCase
         $formatResolver = $this->getMockBuilder(I18n\FormatResolver::class)->setMethods(['dummy'])->getMock();
 
         $result = $formatResolver->resolvePlaceholders('Key {keyName} is {valueName}', ['keyName' => 'foo', 'valueName' => 'bar'], $this->sampleLocale);
-        self::assertEquals('Key foo is bar', $result);
+        $this->assertEquals('Key foo is bar', $result);
     }
 }

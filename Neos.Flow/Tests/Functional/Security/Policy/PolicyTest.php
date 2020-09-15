@@ -39,12 +39,12 @@ class PolicyTest extends FunctionalTestCase
             }
         }
 
-        self::assertEquals(2, count($this->securityContext->getRoles()));
+        $this->assertEquals(2, count($this->securityContext->getRoles()));
 
-        self::assertTrue($this->securityContext->hasRole('Neos.Flow:Everybody'), 'Everybody - hasRole()');
-        self::assertTrue($hasEverybodyRole, 'Everybody - getRoles()');
+        $this->assertTrue($this->securityContext->hasRole('Neos.Flow:Everybody'), 'Everybody - hasRole()');
+        $this->assertTrue($hasEverybodyRole, 'Everybody - getRoles()');
 
-        self::assertTrue($this->securityContext->hasRole('Neos.Flow:Anonymous'), 'Anonymous - hasRole()');
-        self::assertTrue($hasAnonymousRole, 'Anonymous - getRoles()');
+        $this->assertTrue($this->securityContext->hasRole('Neos.Flow:Anonymous'), 'Anonymous - hasRole()');
+        $this->assertTrue($hasAnonymousRole, 'Anonymous - getRoles()');
     }
 }

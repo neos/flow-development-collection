@@ -27,7 +27,7 @@ class QueryResultTest extends UnitTestCase
     protected $queryResult;
 
     /**
-     * @var Query|\PHPUnit\Framework\MockObject\MockObject
+     * @var Query|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $query;
 
@@ -35,10 +35,10 @@ class QueryResultTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $this->query = $this->getMockBuilder(Query::class)->disableOriginalConstructor()->disableOriginalClone()->getMock();
-        $this->query->expects(self::any())->method('getResult')->will(self::returnValue(['First result', 'second result', 'third result']));
+        $this->query->expects($this->any())->method('getResult')->will($this->returnValue(['First result', 'second result', 'third result']));
         $this->queryResult = new QueryResult($this->query);
     }
 
@@ -47,7 +47,7 @@ class QueryResultTest extends UnitTestCase
      */
     public function getQueryReturnsQueryObject()
     {
-        self::assertInstanceOf(QueryInterface::class, $this->queryResult->getQuery());
+        $this->assertInstanceOf(QueryInterface::class, $this->queryResult->getQuery());
     }
 
     /**
@@ -55,7 +55,7 @@ class QueryResultTest extends UnitTestCase
      */
     public function getQueryReturnsAClone()
     {
-        self::assertNotSame($this->query, $this->queryResult->getQuery());
+        $this->assertNotSame($this->query, $this->queryResult->getQuery());
     }
 
     /**
@@ -63,7 +63,7 @@ class QueryResultTest extends UnitTestCase
      */
     public function offsetGetReturnsNullIfOffsetDoesNotExist()
     {
-        self::assertNull($this->queryResult->offsetGet('foo'));
+        $this->assertNull($this->queryResult->offsetGet('foo'));
     }
 
     /**
@@ -71,8 +71,8 @@ class QueryResultTest extends UnitTestCase
      */
     public function countCallsCountOnTheQuery()
     {
-        $this->query->expects(self::once())->method('count')->will(self::returnValue(123));
-        self::assertEquals(123, $this->queryResult->count());
+        $this->query->expects($this->once())->method('count')->will($this->returnValue(123));
+        $this->assertEquals(123, $this->queryResult->count());
     }
 
     /**
@@ -80,9 +80,9 @@ class QueryResultTest extends UnitTestCase
      */
     public function countCountsQueryResultDirectlyIfAlreadyInitialized()
     {
-        $this->query->expects(self::never())->method('count');
+        $this->query->expects($this->never())->method('count');
         $this->queryResult->toArray();
-        self::assertEquals(3, $this->queryResult->count());
+        $this->assertEquals(3, $this->queryResult->count());
     }
 
     /**
@@ -90,8 +90,8 @@ class QueryResultTest extends UnitTestCase
      */
     public function countCallsCountOnTheQueryOnlyOnce()
     {
-        $this->query->expects(self::once())->method('count')->will(self::returnValue(321));
+        $this->query->expects($this->once())->method('count')->will($this->returnValue(321));
         $this->queryResult->count();
-        self::assertEquals(321, $this->queryResult->count());
+        $this->assertEquals(321, $this->queryResult->count());
     }
 }

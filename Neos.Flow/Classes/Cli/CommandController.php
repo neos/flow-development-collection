@@ -14,11 +14,15 @@ namespace Neos\Flow\Cli;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Command\HelpCommandController;
 use Neos\Flow\Mvc\Controller\Argument;
+use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Exception\CommandException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchCommandException;
-use Neos\Flow\Cli\Exception\StopCommandException;
+use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
+use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Mvc\ResponseInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
@@ -26,7 +30,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  *
  * @Flow\Scope("singleton")
  */
-class CommandController implements CommandControllerInterface
+class CommandController implements ControllerInterface
 {
     /**
      * @var Request
@@ -102,15 +106,18 @@ class CommandController implements CommandControllerInterface
     /**
      * Processes a command line request.
      *
-     * @param Request $request The request object
-     * @param Response $response The response, modified by this handler
+     * @param RequestInterface $request The request object
+     * @param ResponseInterface $response The response, modified by this handler
      * @return void
-     * @throws InvalidArgumentTypeException
-     * @throws NoSuchCommandException
+     * @throws UnsupportedRequestTypeException if the controller doesn't support the current request type
      * @api
      */
-    public function processRequest(Request $request, Response $response): void
+    public function processRequest(RequestInterface $request, ResponseInterface $response)
     {
+        if (!$request instanceof Request) {
+            throw new UnsupportedRequestTypeException(sprintf('%s only supports command line requests – requests of type "%s" given.', get_class($this), get_class($request)), 1300787096);
+        }
+
         $this->request = $request;
         $this->request->setDispatched(true);
         $this->response = $response;
@@ -207,7 +214,7 @@ class CommandController implements CommandControllerInterface
      * @param string $controllerObjectName
      * @param array $arguments
      * @return void
-     * @throws StopCommandException
+     * @throws StopActionException
      */
     protected function forward(string $commandName, string $controllerObjectName = null, array $arguments = [])
     {
@@ -219,7 +226,7 @@ class CommandController implements CommandControllerInterface
         $this->request->setArguments($arguments);
 
         $this->arguments->removeAll();
-        throw new StopCommandException(sprintf('Forwarded to "%s".', $commandName));
+        throw new StopActionException();
     }
 
     /**
@@ -254,9 +261,9 @@ class CommandController implements CommandControllerInterface
             $this->outputLine('<b>Warning:</b> This command is <b>DEPRECATED</b>%s%s', [$suggestedCommandMessage, PHP_EOL]);
         }
 
-        $commandResult = $this->{$this->commandMethodName}(...$preparedArguments);
+        $commandResult = call_user_func_array([$this, $this->commandMethodName], $preparedArguments);
 
-        if (is_string($commandResult) && $commandResult !== '') {
+        if (is_string($commandResult) && strlen($commandResult) > 0) {
             $this->response->appendContent($commandResult);
         } elseif (is_object($commandResult) && method_exists($commandResult, '__toString')) {
             $this->response->appendContent((string)$commandResult);
@@ -331,13 +338,13 @@ class CommandController implements CommandControllerInterface
      * shutdown (such as the persistence framework), you must use quit() instead of exit().
      *
      * @param integer $exitCode Exit code to return on exit (see http://www.php.net/exit)
-     * @throws StopCommandException
+     * @throws StopActionException
      * @return void
      */
     protected function quit(int $exitCode = 0)
     {
         $this->response->setExitCode($exitCode);
-        throw new StopCommandException(sprintf('Quitting with exit code %s', $exitCode));
+        throw new StopActionException;
     }
 
     /**

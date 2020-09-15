@@ -15,23 +15,16 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Debugger;
-use Neos\Flow\Exception as FlowException;
-use Neos\Flow\Http\Component\ComponentChain;
+use Neos\Flow\Exception;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Dispatcher;
-use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\Routing\RouterInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
-use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\Flow\Validation\ValidatorResolver;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamFactoryInterface;
 
 /**
  * A Request Engine which uses Flow's request dispatcher directly for processing
@@ -84,27 +77,14 @@ class InternalRequestEngine implements RequestEngineInterface
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
-     * @var ResponseFactoryInterface
-     */
-    protected $responseFactory;
-
-    /**
-     * @Flow\Inject
-     * @var StreamFactoryInterface
-     */
-    protected $contentFactory;
-
-    /**
      * Sends the given HTTP request
      *
-     * @param ServerRequestInterface $httpRequest
-     * @return ResponseInterface
-     * @throws FlowException
+     * @param Http\Request $httpRequest
+     * @return Http\Response
      * @throws Http\Exception
      * @api
      */
-    public function sendRequest(ServerRequestInterface $httpRequest): ResponseInterface
+    public function sendRequest(Http\Request $httpRequest)
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         if (!$requestHandler instanceof FunctionalTestRequestHandler) {
@@ -114,25 +94,25 @@ class InternalRequestEngine implements RequestEngineInterface
         $this->securityContext->clearContext();
         $this->validatorResolver->reset();
 
-        $response = $this->responseFactory->createResponse();
+        $response = new Http\Response();
         $componentContext = new ComponentContext($httpRequest, $response);
         $requestHandler->setComponentContext($componentContext);
 
         $objectManager = $this->bootstrap->getObjectManager();
-        $baseComponentChain = $objectManager->get(ComponentChain::class);
+        $baseComponentChain = $objectManager->get(\Neos\Flow\Http\Component\ComponentChain::class);
+        $componentContext = new ComponentContext($httpRequest, $response);
 
         try {
             $baseComponentChain->handle($componentContext);
         } catch (\Throwable $throwable) {
-            $componentContext->replaceHttpResponse($this->prepareErrorResponse($throwable, $componentContext->getHttpResponse()));
+            $this->prepareErrorResponse($throwable, $componentContext->getHttpResponse());
+        } catch (\Exception $exception) {
+            $this->prepareErrorResponse($exception, $componentContext->getHttpResponse());
         }
-        $session = $objectManager->get(SessionInterface::class);
+        $session = $this->bootstrap->getObjectManager()->get(SessionInterface::class);
         if ($session->isStarted()) {
             $session->close();
         }
-        // FIXME: ObjectManager should forget all instances created during the request
-        $objectManager->forgetInstance(SessionManager::class);
-        $objectManager->forgetInstance(FlashMessageService::class);
         $this->persistenceManager->clearState();
         return $componentContext->getHttpResponse();
     }
@@ -142,7 +122,7 @@ class InternalRequestEngine implements RequestEngineInterface
      *
      * @return RouterInterface
      */
-    public function getRouter(): RouterInterface
+    public function getRouter()
     {
         return $this->router;
     }
@@ -151,10 +131,10 @@ class InternalRequestEngine implements RequestEngineInterface
      * Prepare a response in case an error occurred.
      *
      * @param object $exception \Exception or \Throwable
-     * @param ResponseInterface $response
-     * @return ResponseInterface
+     * @param Http\Response $response
+     * @return void
      */
-    protected function prepareErrorResponse($exception, ResponseInterface $response): ResponseInterface
+    protected function prepareErrorResponse($exception, Http\Response $response)
     {
         $pathPosition = strpos($exception->getFile(), 'Packages/');
         $filePathAndName = ($pathPosition !== false) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
@@ -164,16 +144,14 @@ class InternalRequestEngine implements RequestEngineInterface
         $content .= 'in line ' . $exception->getLine() . PHP_EOL . PHP_EOL;
         $content .= Debugger::getBacktraceCode($exception->getTrace(), false, true) . PHP_EOL;
 
-        if ($exception instanceof FlowException) {
+        if ($exception instanceof Exception) {
             $statusCode = $exception->getStatusCode();
         } else {
             $statusCode = 500;
         }
-
-        return $response
-            ->withStatus($statusCode)
-            ->withBody($this->contentFactory->createStream($content))
-            ->withHeader('X-Flow-ExceptionCode', $exception->getCode())
-            ->withHeader('X-Flow-ExceptionMessage', $exception->getMessage());
+        $response->setStatus($statusCode);
+        $response->setContent($content);
+        $response->setHeader('X-Flow-ExceptionCode', $exception->getCode());
+        $response->setHeader('X-Flow-ExceptionMessage', $exception->getMessage());
     }
 }

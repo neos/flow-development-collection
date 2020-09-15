@@ -34,15 +34,15 @@ class PointcutClassNameFilterTest extends UnitTestCase
 
         $classFilter = new Aop\Pointcut\PointcutClassNameFilter('Neos\Virtual\Foo\Bar');
         $classFilter->injectReflectionService($mockReflectionService);
-        self::assertTrue($classFilter->matches('Neos\Virtual\Foo\Bar', '', '', 1), 'No. 1');
+        $this->assertTrue($classFilter->matches('Neos\Virtual\Foo\Bar', '', '', 1), 'No. 1');
 
         $classFilter = new Aop\Pointcut\PointcutClassNameFilter('.*Virtual.*');
         $classFilter->injectReflectionService($mockReflectionService);
-        self::assertTrue($classFilter->matches('Neos\Virtual\Foo\Bar', '', '', 1), 'No. 2');
+        $this->assertTrue($classFilter->matches('Neos\Virtual\Foo\Bar', '', '', 1), 'No. 2');
 
         $classFilter = new Aop\Pointcut\PointcutClassNameFilter('Neos\Firtual.*');
         $classFilter->injectReflectionService($mockReflectionService);
-        self::assertFalse($classFilter->matches('Neos\Virtual\Foo\Bar', '', '', 1), 'No. 3');
+        $this->assertFalse($classFilter->matches('Neos\Virtual\Foo\Bar', '', '', 1), 'No. 3');
     }
 
     /**
@@ -70,7 +70,7 @@ class PointcutClassNameFilterTest extends UnitTestCase
         $classNameFilter = new Aop\Pointcut\PointcutClassNameFilter('TestPackage\Subpackage\SubSubPackage\Class3');
         $result = $classNameFilter->reduceTargetClassNames($availableClassNamesIndex);
 
-        self::assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
+        $this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
     }
 
     /**
@@ -99,6 +99,6 @@ class PointcutClassNameFilterTest extends UnitTestCase
         $classNameFilter = new Aop\Pointcut\PointcutClassNameFilter('TestPackage\Subpackage\.*');
         $result = $classNameFilter->reduceTargetClassNames($availableClassNamesIndex);
 
-        self::assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
+        $this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
     }
 }

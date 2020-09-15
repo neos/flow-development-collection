@@ -19,4 +19,4 @@ Dependencies
 ------------
 
 Uses the Flow Error objects to return structured validation results therefore depends on
-neos/flow for now.
+typo3/flow for now.

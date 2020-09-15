@@ -13,8 +13,6 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
@@ -134,8 +132,7 @@ class Router implements RouterInterface
                 return $matchResults;
             }
         }
-        $routePath = UriHelper::getRelativePath(RequestInformationHelper::generateBaseUri($httpRequest), $httpRequest->getUri());
-        $this->logger->debug(sprintf('Router route(): No route matched the route path "%s".', $routePath));
+        $this->logger->debug(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()));
         throw new NoMatchingRouteException('Could not match a route for the HTTP request.', 1510846308);
     }
 

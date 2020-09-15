@@ -244,7 +244,6 @@ class DatetimeFormatter implements FormatterInterface
                 } else {
                     return $localizedLiterals['months'][$formatType]['narrow'][$month];
                 }
-                // no break
             case 'y':
                 $year = (int)$dateTime->format('Y');
                 if ($formatLengthOfSubformat === 2) {
@@ -260,7 +259,6 @@ class DatetimeFormatter implements FormatterInterface
                 } else {
                     return $localizedLiterals['days']['format']['narrow'][$day];
                 }
-                // no break
             case 'w':
                 return $this->padString($dateTime->format('W'), $formatLengthOfSubformat);
             case 'W':
@@ -276,7 +274,6 @@ class DatetimeFormatter implements FormatterInterface
                 } else {
                     return $localizedLiterals['quarters'][$formatType]['wide'][$quarter];
                 }
-                // no break
             case 'G':
                 $era = (int)($dateTime->format('Y') > 0);
                 if ($formatLengthOfSubformat <= 3) {
@@ -286,7 +283,6 @@ class DatetimeFormatter implements FormatterInterface
                 } else {
                     return $localizedLiterals['eras']['eraNarrow'][$era];
                 }
-                // no break
             case 'v':
             case 'z':
                 if ($formatLengthOfSubformat <= 3) {
@@ -294,7 +290,6 @@ class DatetimeFormatter implements FormatterInterface
                 } else {
                     return $dateTime->format('e');
                 }
-                // no break
             case 'Y':
             case 'u':
             case 'l':

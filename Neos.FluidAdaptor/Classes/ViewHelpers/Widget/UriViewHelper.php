@@ -40,40 +40,28 @@ class UriViewHelper extends AbstractViewHelper
     protected $hashService;
 
     /**
-     * Initialize the arguments.
-     *
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function initializeArguments()
-    {
-        parent::initializeArguments();
-        $this->registerArgument('action', 'string', 'Target action', true);
-        $this->registerArgument('arguments', 'array', 'Arguments', false, []);
-        $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
-        $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"', false, '');
-        $this->registerArgument('ajax', 'boolean', 'true if the URI should be to an AJAX widget, false otherwise', false, false);
-        $this->registerArgument('includeWidgetContext', 'boolean', 'true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)', false, false);
-    }
-
-    /**
      * Render the Uri.
      *
+     * @param string $action Target action
+     * @param array $arguments Arguments
+     * @param string $section The anchor to be added to the URI
+     * @param string $format The requested format, e.g. ".html"
+     * @param boolean $ajax true if the URI should be to an AJAX widget, false otherwise.
+     * @param boolean $includeWidgetContext true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
      * @return string The rendered link
      * @throws ViewHelper\Exception if $action argument is not specified and $ajax is false
-     * @throws WidgetContextNotFoundException
      * @api
      */
-    public function render(): string
+    public function render($action = null, $arguments = [], $section = '', $format = '', $ajax = false, $includeWidgetContext = false)
     {
-        if ($this->arguments['ajax'] === true) {
+        if ($ajax === true) {
             return $this->getAjaxUri();
+        } else {
+            if ($action === null) {
+                throw new ViewHelper\Exception('You have to specify the target action when creating a widget URI with the widget.uri ViewHelper', 1357648232);
+            }
+            return $this->getWidgetUri();
         }
-
-        if (!$this->hasArgument('action')) {
-            throw new ViewHelper\Exception('You have to specify the target action when creating a widget URI with the widget.uri ViewHelper', 1357648232);
-        }
-        return $this->getWidgetUri();
     }
 
     /**
@@ -82,7 +70,7 @@ class UriViewHelper extends AbstractViewHelper
      * @return string the AJAX URI
      * @throws WidgetContextNotFoundException
      */
-    protected function getAjaxUri(): string
+    protected function getAjaxUri()
     {
         $action = $this->arguments['action'];
         $arguments = $this->arguments['arguments'];
@@ -91,12 +79,12 @@ class UriViewHelper extends AbstractViewHelper
             $action = $this->controllerContext->getRequest()->getControllerActionName();
         }
         $arguments['@action'] = $action;
-        if ($this->arguments['format'] !== '') {
+        if (strlen($this->arguments['format']) > 0) {
             $arguments['@format'] = $this->arguments['format'];
         }
         /** @var $widgetContext WidgetContext */
         $widgetContext = $this->controllerContext->getRequest()->getInternalArgument('__widgetContext');
-        if (!$widgetContext instanceof WidgetContext) {
+        if ($widgetContext === null) {
             throw new WidgetContextNotFoundException('Widget context not found in <f:widget.uri>', 1307450639);
         }
         if ($this->arguments['includeWidgetContext'] === true) {
@@ -115,7 +103,7 @@ class UriViewHelper extends AbstractViewHelper
      * @throws ViewHelper\Exception
      * @todo argumentsToBeExcludedFromQueryString does not work yet, needs to be fixed.
      */
-    protected function getWidgetUri(): string
+    protected function getWidgetUri()
     {
         $uriBuilder = $this->controllerContext->getUriBuilder();
 

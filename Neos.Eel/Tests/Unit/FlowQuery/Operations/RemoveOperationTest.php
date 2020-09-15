@@ -37,7 +37,7 @@ class RemoveOperationTest extends \Neos\Flow\Tests\UnitTestCase
         $operation = new RemoveOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        self::assertSame([$object1], $flowQuery->getContext());
+        $this->assertSame([$object1], $flowQuery->getContext());
     }
 
     /**
@@ -58,7 +58,7 @@ class RemoveOperationTest extends \Neos\Flow\Tests\UnitTestCase
         $operation = new RemoveOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        self::assertSame([$object1], $flowQuery->getContext());
+        $this->assertSame([$object1], $flowQuery->getContext());
     }
 
     /**
@@ -79,6 +79,6 @@ class RemoveOperationTest extends \Neos\Flow\Tests\UnitTestCase
         $operation = new RemoveOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        self::assertSame([$object1], $flowQuery->getContext());
+        $this->assertSame([$object1], $flowQuery->getContext());
     }
 }

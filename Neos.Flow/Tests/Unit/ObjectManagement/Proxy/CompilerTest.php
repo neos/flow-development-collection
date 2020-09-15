@@ -27,11 +27,11 @@ use Neos\Flow\Tests\UnitTestCase;
 class CompilerTest extends UnitTestCase
 {
     /**
-     * @var Compiler|\PHPUnit\Framework\MockObject\MockObject
+     * @var Compiler|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $compiler;
 
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->compiler = $this->getAccessibleMock(Compiler::class, null);
     }
@@ -101,7 +101,7 @@ class CompilerTest extends UnitTestCase
      */
     public function renderAnnotationRendersCorrectly($annotation, $expectedString)
     {
-        self::assertEquals($expectedString, Compiler::renderAnnotation($annotation));
+        $this->assertEquals($expectedString, Compiler::renderAnnotation($annotation));
     }
 
     /**
@@ -138,6 +138,6 @@ class CompilerTest extends UnitTestCase
     public function stripOpeningPhpTagCorrectlyStripsPhpTagTests($classCode, $expectedResult)
     {
         $actualResult = $this->compiler->_call('stripOpeningPhpTag', $classCode);
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 }

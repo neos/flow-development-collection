@@ -142,6 +142,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
         $resource->setFileSize(filesize($targetPathAndFilename));
         $resource->setCollectionName($collectionName);
         $resource->setSha1($sha1Hash);
+        $resource->setMd5(md5_file($targetPathAndFilename));
 
         return $resource;
     }

@@ -29,7 +29,7 @@ class TextValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
-        self::assertFalse($this->validator->validate(null)->hasErrors());
+        $this->assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -38,7 +38,7 @@ class TextValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
-        self::assertFalse($this->validator->validate('')->hasErrors());
+        $this->assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -46,7 +46,7 @@ class TextValidatorTest extends AbstractValidatorTestcase
      */
     public function textValidatorReturnsNoErrorForASimpleString()
     {
-        self::assertFalse($this->validator->validate('this is a very simple string')->hasErrors());
+        $this->assertFalse($this->validator->validate('this is a very simple string')->hasErrors());
     }
 
     /**
@@ -69,7 +69,7 @@ class TextValidatorTest extends AbstractValidatorTestcase
     public function textValidatorAcceptsValidInput($input)
     {
         $textValidator = new TextValidator();
-        self::assertFalse($textValidator->validate($input)->hasErrors());
+        $this->assertFalse($textValidator->validate($input)->hasErrors());
     }
 
     /**
@@ -90,7 +90,7 @@ class TextValidatorTest extends AbstractValidatorTestcase
      */
     public function textValidatorRejectsInvalidInput($input)
     {
-        self::assertTrue($this->validator->validate($input)->hasErrors());
+        $this->assertTrue($this->validator->validate($input)->hasErrors());
     }
 
     /**
@@ -99,6 +99,6 @@ class TextValidatorTest extends AbstractValidatorTestcase
     public function textValidatorCreatesTheCorrectErrorIfTheSubjectContainsHtmlEntities()
     {
         $expected = [new Validation\Error('Valid text without any XML tags is expected.', 1221565786)];
-        self::assertEquals($expected, $this->validator->validate('<span style="color: #BBBBBB;">a nice text</span>')->getErrors());
+        $this->assertEquals($expected, $this->validator->validate('<span style="color: #BBBBBB;">a nice text</span>')->getErrors());
     }
 }

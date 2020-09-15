@@ -13,8 +13,7 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Psr\Http\Message\ServerRequestInterface;
+use Neos\Flow\Http\Request as HttpRequest;
 
 /**
  * Simple DTO wrapping the values required for a Router::route() call
@@ -27,7 +26,7 @@ final class RouteContext implements CacheAwareInterface
     /**
      * The current HTTP request
      *
-     * @var ServerRequestInterface
+     * @var HttpRequest
      */
     private $httpRequest;
 
@@ -44,19 +43,19 @@ final class RouteContext implements CacheAwareInterface
     private $cacheEntryIdentifier;
 
     /**
-     * @param ServerRequestInterface $httpRequest The current HTTP request
+     * @param HttpRequest $httpRequest The current HTTP request
      * @param RouteParameters $parameters Routing RouteParameters
      */
-    public function __construct(ServerRequestInterface $httpRequest, RouteParameters $parameters)
+    public function __construct(HttpRequest $httpRequest, RouteParameters $parameters)
     {
         $this->httpRequest = $httpRequest;
         $this->parameters = $parameters;
     }
 
     /**
-     * @return ServerRequestInterface
+     * @return HttpRequest
      */
-    public function getHttpRequest(): ServerRequestInterface
+    public function getHttpRequest(): HttpRequest
     {
         return $this->httpRequest;
     }
@@ -75,10 +74,9 @@ final class RouteContext implements CacheAwareInterface
     public function getCacheEntryIdentifier(): string
     {
         if ($this->cacheEntryIdentifier === null) {
-            $this->cacheEntryIdentifier = md5(sprintf(
-                'host:%s|path:%s|method:%s|parameters:%s',
+            $this->cacheEntryIdentifier = md5(sprintf('host:%s|path:%s|method:%s|parameters:%s',
                 $this->httpRequest->getUri()->getHost(),
-                RequestInformationHelper::getRelativeRequestPath($this->httpRequest),
+                $this->httpRequest->getRelativePath(),
                 $this->httpRequest->getMethod(),
                 $this->parameters->getCacheEntryIdentifier()
             ));

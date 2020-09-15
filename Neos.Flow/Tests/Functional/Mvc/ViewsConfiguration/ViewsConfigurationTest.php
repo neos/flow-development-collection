@@ -32,7 +32,7 @@ class ViewsConfigurationTest extends FunctionalTestCase
     /**
      * Additional setup: Routes
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
 
@@ -69,9 +69,9 @@ class ViewsConfigurationTest extends FunctionalTestCase
     public function templatePathAndFilenameIsChanged()
     {
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationa/first');
-        self::assertEquals('Changed on Package Level', $response->getBody()->getContents());
+        $this->assertEquals('Changed on Package Level', $response->getContent());
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationb/first');
-        self::assertEquals('Changed on Controller Level', $response->getBody()->getContents());
+        $this->assertEquals('Changed on Controller Level', $response->getContent());
     }
 
     /**
@@ -82,7 +82,7 @@ class ViewsConfigurationTest extends FunctionalTestCase
     public function viewObjectNameChanged()
     {
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationc/index');
-        self::assertEquals(Fixtures\TemplateView::class, $response->getBody()->getContents());
+        $this->assertEquals(Fixtures\TemplateView::class, $response->getContent());
     }
 
     /**
@@ -95,6 +95,6 @@ class ViewsConfigurationTest extends FunctionalTestCase
         }
 
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationa/widget');
-        self::assertEquals('Changed on Package Level', trim($response->getBody()->getContents()));
+        $this->assertEquals('Changed on Package Level', trim($response->getContent()));
     }
 }

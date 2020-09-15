@@ -15,7 +15,6 @@ use Neos\Flow\I18n;
 use Neos\Flow\I18n\Cldr\CldrRepository;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\Files;
-use Neos\Utility\ObjectAccess;
 
 /**
  * Testcase for the I18N CLDR Repository
@@ -36,7 +35,7 @@ class CldrRepositoryTest extends FunctionalTestCase
     /**
      * Initialize dependencies
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         $this->cldrRepository = $this->objectManager->get(CldrRepository::class);
@@ -66,8 +65,8 @@ class CldrRepositoryTest extends FunctionalTestCase
 
         $cldrModel = $this->cldrRepository->getModelForLocale($localeImplementingChaining);
 
-        self::assertContains(Files::concatenatePaths([$this->cldrBasePath, 'main/root.xml']), ObjectAccess::getProperty($cldrModel, 'sourcePaths', true));
-        self::assertContains(Files::concatenatePaths([$this->cldrBasePath, 'main/de_DE.xml']), ObjectAccess::getProperty($cldrModel, 'sourcePaths', true));
-        self::assertContains(Files::concatenatePaths([$this->cldrBasePath, 'main/de.xml']), ObjectAccess::getProperty($cldrModel, 'sourcePaths', true));
+        $this->assertAttributeContains(Files::concatenatePaths([$this->cldrBasePath, 'main/root.xml']), 'sourcePaths', $cldrModel);
+        $this->assertAttributeContains(Files::concatenatePaths([$this->cldrBasePath, 'main/de_DE.xml']), 'sourcePaths', $cldrModel);
+        $this->assertAttributeContains(Files::concatenatePaths([$this->cldrBasePath, 'main/de.xml']), 'sourcePaths', $cldrModel);
     }
 }

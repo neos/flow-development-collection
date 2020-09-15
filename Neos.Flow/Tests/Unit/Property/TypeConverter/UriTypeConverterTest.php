@@ -11,11 +11,10 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Property\TypeConverter\UriTypeConverter;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Http;
 use Neos\Error\Messages as FlowError;
-use Psr\Http\Message\UriInterface;
 
 /**
  * Testcase for the URI type converter
@@ -29,7 +28,7 @@ class UriTypeConverterTest extends UnitTestCase
 
     /**
      */
-    protected function setUp(): void
+    protected function setUp()
     {
         parent::setUp();
         $this->typeConverter = new UriTypeConverter();
@@ -41,8 +40,8 @@ class UriTypeConverterTest extends UnitTestCase
     public function sourceTypeIsStringOnly()
     {
         $sourceTypes = $this->typeConverter->getSupportedSourceTypes();
-        self::assertCount(1, $sourceTypes);
-        self::assertSame('string', $sourceTypes[0]);
+        $this->assertCount(1, $sourceTypes);
+        $this->assertSame('string', $sourceTypes[0]);
     }
 
     /**
@@ -50,7 +49,7 @@ class UriTypeConverterTest extends UnitTestCase
      */
     public function targetTypeIsUri()
     {
-        self::assertSame(UriInterface::class, $this->typeConverter->getSupportedTargetType());
+        $this->assertSame(Http\Uri::class, $this->typeConverter->getSupportedTargetType());
     }
 
     /**
@@ -58,7 +57,7 @@ class UriTypeConverterTest extends UnitTestCase
      */
     public function typeConverterReturnsUriOnValidUri()
     {
-        self::assertInstanceOf(Uri::class, $this->typeConverter->convertFrom('http://localhost/foo', Uri::class));
+        $this->assertInstanceOf(Http\Uri::class, $this->typeConverter->convertFrom('http://localhost/foo', Http\Uri::class));
     }
 
     /**
@@ -66,7 +65,7 @@ class UriTypeConverterTest extends UnitTestCase
      */
     public function typeConverterReturnsErrorOnMalformedUri()
     {
-        $actual = $this->typeConverter->convertFrom('http:////localhost', Uri::class);
-        self::assertInstanceOf(FlowError\Error::class, $actual);
+        $actual = $this->typeConverter->convertFrom('http:////localhost', Http\Uri::class);
+        $this->assertInstanceOf(FlowError\Error::class, $actual);
     }
 }

@@ -56,7 +56,7 @@ class Argument
 
     /**
      * A custom validator, used supplementary to the base validation
-     * @var ValidatorInterface|null
+     * @var ValidatorInterface
      */
     protected $validator = null;
 
@@ -65,12 +65,6 @@ class Argument
      * @var Result
      */
     protected $validationResults = null;
-
-    /**
-     * If the request body should be mapped into this argument.
-     * @var bool
-     */
-    protected $mapRequestBody = false;
 
     /**
      * @var MvcPropertyMappingConfiguration
@@ -91,9 +85,12 @@ class Argument
      * @throws \InvalidArgumentException if $name is not a string or empty
      * @api
      */
-    public function __construct(string $name, string $dataType)
+    public function __construct($name, $dataType)
     {
-        if ($name === '') {
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException('$name must be of type string, ' . gettype($name) . ' given.', 1187951688);
+        }
+        if (strlen($name) === 0) {
             throw new \InvalidArgumentException('$name must be a non-empty string, ' . strlen($name) . ' characters given.', 1232551853);
         }
         $this->name = $name;
@@ -106,7 +103,7 @@ class Argument
      * @return string This argument's name
      * @api
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
@@ -117,7 +114,7 @@ class Argument
      * @return string The data type
      * @api
      */
-    public function getDataType(): string
+    public function getDataType()
     {
         return $this->dataType;
     }
@@ -129,9 +126,9 @@ class Argument
      * @return Argument $this
      * @api
      */
-    public function setRequired(bool $required): Argument
+    public function setRequired($required)
     {
-        $this->isRequired = $required;
+        $this->isRequired = (boolean)$required;
         return $this;
     }
 
@@ -141,7 +138,7 @@ class Argument
      * @return boolean true if this argument is required
      * @api
      */
-    public function isRequired(): bool
+    public function isRequired()
     {
         return $this->isRequired;
     }
@@ -153,7 +150,7 @@ class Argument
      * @return Argument $this
      * @api
      */
-    public function setDefaultValue($defaultValue): Argument
+    public function setDefaultValue($defaultValue)
     {
         $this->defaultValue = $defaultValue;
         return $this;
@@ -177,7 +174,7 @@ class Argument
      * @return Argument Returns $this (used for fluent interface)
      * @api
      */
-    public function setValidator(ValidatorInterface $validator): Argument
+    public function setValidator(ValidatorInterface $validator)
     {
         $this->validator = $validator;
         return $this;
@@ -186,10 +183,10 @@ class Argument
     /**
      * Returns the set validator
      *
-     * @return ValidatorInterface|null The set validator, NULL if none was set
+     * @return ValidatorInterface The set validator, NULL if none was set
      * @api
      */
-    public function getValidator(): ?ValidatorInterface
+    public function getValidator()
     {
         return $this->validator;
     }
@@ -199,10 +196,8 @@ class Argument
      *
      * @param mixed $rawValue The value of this argument
      * @return Argument $this
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
-    public function setValue($rawValue): Argument
+    public function setValue($rawValue)
     {
         if ($rawValue === null) {
             $this->value = null;
@@ -230,7 +225,7 @@ class Argument
      */
     public function getValue()
     {
-        return $this->value ?? $this->defaultValue;
+        return ($this->value === null) ? $this->defaultValue : $this->value;
     }
 
     /**
@@ -239,7 +234,7 @@ class Argument
      * @return MvcPropertyMappingConfiguration
      * @api
      */
-    public function getPropertyMappingConfiguration(): MvcPropertyMappingConfiguration
+    public function getPropertyMappingConfiguration()
     {
         if ($this->propertyMappingConfiguration === null) {
             $this->propertyMappingConfiguration = new MvcPropertyMappingConfiguration();
@@ -248,31 +243,11 @@ class Argument
     }
 
     /**
-     * @return Result|null Validation errors which have occurred.
+     * @return Result Validation errors which have occurred.
      * @api
      */
-    public function getValidationResults(): ?Result
+    public function getValidationResults()
     {
         return $this->validationResults;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getMapRequestBody(): bool
-    {
-        return $this->mapRequestBody;
-    }
-
-    /**
-     * Set if the request body should be mapped into this argument.
-     *
-     * @param bool $mapRequestBody
-     * @return Argument $this
-     */
-    public function setMapRequestBody(bool $mapRequestBody): Argument
-    {
-        $this->mapRequestBody = $mapRequestBody;
-        return $this;
     }
 }

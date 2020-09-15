@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Cache\Backend;
 
 /*
@@ -49,7 +47,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
 
     /**
      * @param string $tag
-     * @return int the maximum number flushed entries returned by the backends
+     * @return int
      * @throws \Throwable
      */
     public function flushByTag(string $tag): int
@@ -57,7 +55,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
         $count = 0;
         foreach ($this->backends as $backend) {
             try {
-                $count |= $backend->flushByTag($tag);
+                $count = $count | $backend->flushByTag($tag);
             } catch (\Throwable $t) {
                 $this->handleError($t);
             }
@@ -68,19 +66,19 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
 
     /**
      * @param string $tag
-     * @return string[]
+     * @return array
      */
     public function findIdentifiersByTag(string $tag): array
     {
         $identifiers = [];
         foreach ($this->backends as $backend) {
             try {
-                $identifiers[] = $backend->findIdentifiersByTag($tag);
+                $localIdentifiers = $backend->findIdentifiersByTag($tag);
+                $identifiers = array_merge($identifiers, $localIdentifiers);
             } catch (\Throwable $t) {
             }
         }
-        // avoid array_merge in the loop, this trades memory for speed
-        // the empty array covers cases when no loops were made
-        return array_values(array_unique(array_merge([], ...$identifiers)));
+
+        return array_values(array_unique($identifiers));
     }
 }

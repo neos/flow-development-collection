@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Flow\Log\Backend;
 
 /*
@@ -55,11 +53,11 @@ abstract class AbstractBackend implements BackendInterface
     /**
      * The maximum severity to log, anything less severe will not be logged.
      *
-     * @param int $severityThreshold One of the LOG_* constants
+     * @param integer $severityThreshold One of the LOG_* constants
      * @return void
      * @api
      */
-    public function setSeverityThreshold(int $severityThreshold): void
+    public function setSeverityThreshold($severityThreshold)
     {
         $this->severityThreshold = $severityThreshold;
     }
@@ -67,11 +65,25 @@ abstract class AbstractBackend implements BackendInterface
     /**
      * Enables or disables logging of IP addresses.
      *
-     * @param bool $logIpAddress Set to true to enable logging of IP address, or false to disable
+     * @param boolean $logIpAddress Set to true to enable logging of IP address, or false to disable
      * @return void
      */
-    public function setLogIpAddress(bool $logIpAddress): void
+    public function setLogIpAddress($logIpAddress)
     {
         $this->logIpAddress = $logIpAddress;
+    }
+
+    /**
+     * Returns a suitable form of a variable (be it a string, array, object ...) for logfile output
+     *
+     * @param mixed $var The variable
+     * @param integer $spaces Number of spaces to add before a line
+     * @return string text output
+     * @deprecated Use the PlainTextFormatter directly
+     * @see PlainTextFormatter
+     */
+    protected function getFormattedVarDump($var, $spaces = 4)
+    {
+        return (new PlainTextFormatter($var))->format($spaces);
     }
 }

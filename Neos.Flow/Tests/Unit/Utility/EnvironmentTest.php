@@ -29,7 +29,7 @@ class EnvironmentTest extends UnitTestCase
         $environment = new Environment(new ApplicationContext('Testing'));
         $environment->setTemporaryDirectoryBase(Files::concatenatePaths([sys_get_temp_dir(), 'FlowEnvironmentTest']));
         $path = $environment->getPathToTemporaryDirectory();
-        self::assertEquals('/', substr($path, -1, 1), 'The temporary path did not end with slash.');
+        $this->assertEquals('/', substr($path, -1, 1), 'The temporary path did not end with slash.');
     }
 
     /**
@@ -41,7 +41,7 @@ class EnvironmentTest extends UnitTestCase
         $environment->setTemporaryDirectoryBase(Files::concatenatePaths([sys_get_temp_dir(), 'FlowEnvironmentTest']));
 
         $path = $environment->getPathToTemporaryDirectory();
-        self::assertTrue(file_exists($path), 'The temporary path does not exist.');
+        $this->assertTrue(file_exists($path), 'The temporary path does not exist.');
     }
 
     /**
@@ -54,6 +54,6 @@ class EnvironmentTest extends UnitTestCase
         if ((integer)$expectedValue <= 0) {
             $this->fail('The PHP Constant PHP_MAXPATHLEN is not available on your system! Please file a PHP bug report.');
         }
-        self::assertEquals($expectedValue, $environment->getMaximumPathLength());
+        $this->assertEquals($expectedValue, $environment->getMaximumPathLength());
     }
 }

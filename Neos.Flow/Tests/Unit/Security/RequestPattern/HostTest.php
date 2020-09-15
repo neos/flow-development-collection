@@ -11,8 +11,8 @@ namespace Neos\Flow\Tests\Unit\Security\RequestPattern;
  * source code.
  */
 
-use GuzzleHttp\Psr7\ServerRequest;
-use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\Request;
+use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\RequestPattern\Host;
 use Neos\Flow\Tests\UnitTestCase;
@@ -43,11 +43,10 @@ class HostTest extends UnitTestCase
      */
     public function requestMatchingBasicallyWorks($uri, $pattern, $expected, $message)
     {
-        $httpRequest = new ServerRequest('GET', new Uri($uri));
-        $request = ActionRequest::fromHttpRequest($httpRequest);
+        $request = new ActionRequest(Request::create(new Uri($uri)));
 
         $requestPattern = new Host(['hostPattern' => $pattern]);
 
-        self::assertEquals($expected, $requestPattern->matchRequest($request), $message);
+        $this->assertEquals($expected, $requestPattern->matchRequest($request), $message);
     }
 }

@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Core;
  */
 
 use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\Exception;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -45,7 +44,7 @@ class ApplicationContextTest extends UnitTestCase
     public function contextStringCanBeSetInConstructorAndReadByCallingToString($allowedContext)
     {
         $context = new ApplicationContext($allowedContext);
-        self::assertSame($allowedContext, (string)$context);
+        $this->assertSame($allowedContext, (string)$context);
     }
 
     /**
@@ -66,10 +65,10 @@ class ApplicationContextTest extends UnitTestCase
     /**
      * @test
      * @dataProvider forbiddenContexts
+     * @expectedException \Neos\Flow\Exception
      */
     public function constructorThrowsExceptionIfMainContextIsForbidden($forbiddenContext)
     {
-        $this->expectException(Exception::class);
         new ApplicationContext($forbiddenContext);
     }
 
@@ -135,10 +134,10 @@ class ApplicationContextTest extends UnitTestCase
     public function contextMethodsReturnTheCorrectValues($contextName, $isDevelopment, $isProduction, $isTesting, $parentContext)
     {
         $context = new ApplicationContext($contextName);
-        self::assertSame($isDevelopment, $context->isDevelopment());
-        self::assertSame($isProduction, $context->isProduction());
-        self::assertSame($isTesting, $context->isTesting());
-        self::assertSame((string)$parentContext, (string)$context->getParent());
+        $this->assertSame($isDevelopment, $context->isDevelopment());
+        $this->assertSame($isProduction, $context->isProduction());
+        $this->assertSame($isTesting, $context->isTesting());
+        $this->assertSame((string)$parentContext, (string)$context->getParent());
     }
 
     /**
@@ -148,9 +147,9 @@ class ApplicationContextTest extends UnitTestCase
     {
         $context = new ApplicationContext('Production/Foo/Bar');
         $parentContext = $context->getParent();
-        self::assertSame('Production/Foo', (string) $parentContext);
+        $this->assertSame('Production/Foo', (string) $parentContext);
 
         $rootContext = $parentContext->getParent();
-        self::assertSame('Production', (string) $rootContext);
+        $this->assertSame('Production', (string) $rootContext);
     }
 }

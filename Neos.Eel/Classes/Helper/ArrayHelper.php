@@ -1,5 +1,4 @@
 <?php
-
 namespace Neos\Eel\Helper;
 
 /*
@@ -31,52 +30,44 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Concatenate arrays or values to a new array
      *
-     * @param iterable|mixed $array1 First array or value
-     * @param iterable|mixed $array2 Second array or value
-     * @param iterable|mixed $array_ Optional variable list of additional arrays / values
+     * @param array|mixed $array1 First array or value
+     * @param array|mixed $array2 Second array or value
+     * @param array|mixed $array_ Optional variable list of additional arrays / values
      * @return array The array with concatenated arrays or values
      */
     public function concat($array1, $array2, $array_ = null): array
     {
         $arguments = func_get_args();
         foreach ($arguments as &$argument) {
-            if ($argument instanceof \Traversable) {
-                $argument = iterator_to_array($argument);
-            } elseif (!is_array($argument)) {
+            if (!is_array($argument)) {
                 $argument = [$argument];
             }
         }
-        return array_merge(...$arguments);
+        return call_user_func_array('array_merge', $arguments);
     }
 
     /**
      * Join values of an array with a separator
      *
-     * @param iterable $array Array with values to join
+     * @param array $array Array with values to join
      * @param string $separator A separator for the values
      * @return string A string with the joined values separated by the separator
      */
-    public function join(iterable $array, $separator = ','): string
+    public function join(array $array, $separator = ','): string
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         return implode($separator, $array);
     }
 
     /**
      * Extract a portion of an indexed array
      *
-     * @param iterable $array The array (with numeric indices)
+     * @param array $array The array (with numeric indices)
      * @param int $begin
      * @param int $end
      * @return array
      */
-    public function slice(iterable $array, $begin, $end = null): array
+    public function slice(array $array, $begin, $end = null): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         if ($end === null) {
             $end = count($array);
         } elseif ($end < 0) {
@@ -89,88 +80,66 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Returns an array in reverse order
      *
-     * @param iterable $array The array
+     * @param array $array The array
      * @return array
      */
-    public function reverse(iterable $array): array
+    public function reverse(array $array): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         return array_reverse($array);
     }
 
     /**
      * Get the array keys
      *
-     * @param iterable $array The array
+     * @param array $array The array
      * @return array
      */
-    public function keys(iterable $array): array
+    public function keys(array $array): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         return array_keys($array);
     }
 
     /**
      * Get the length of an array
      *
-     * @param iterable $array The array
+     * @param array $array The array
      * @return int
      */
-    public function length(iterable $array): int
+    public function length(array $array): int
     {
-        if ($array instanceof \Traversable) {
-            return iterator_count($array);
-        }
         return count($array);
     }
 
     /**
      * Check if an array is empty
      *
-     * @param iterable $array The array
+     * @param array $array The array
      * @return bool true if the array is empty
      */
-    public function isEmpty(iterable $array): bool
+    public function isEmpty(array $array): bool
     {
-        return $this->length($array) === 0;
+        return count($array) === 0;
     }
 
     /**
      * Get the first element of an array
      *
-     * @param iterable $array The array
+     * @param array $array The array
      * @return mixed
      */
-    public function first(iterable $array)
+    public function first(array $array)
     {
-        if ($array instanceof \Traversable) {
-            foreach ($array as $value) {
-                return $value;
-            }
-            return false;
-        }
         return reset($array);
     }
 
     /**
      * Get the last element of an array
      *
-     * @param iterable $array The array
+     * @param array $array The array
      * @return mixed
      */
-    public function last(iterable $array)
+    public function last(array $array)
     {
-        if ($array instanceof \Traversable) {
-            $result = false;
-            foreach ($array as $value) {
-                $result = $value;
-            }
-            return $result;
-        }
         return end($array);
     }
 
@@ -178,23 +147,17 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Returns the first index at which a given element can be found in the array,
      * or -1 if it is not present
      *
-     * @param iterable $array The array
+     * @param array $array The array
      * @param mixed $searchElement The element value to find
      * @param int $fromIndex Position in the array to start the search.
      * @return int
      */
-    public function indexOf(iterable $array, $searchElement, $fromIndex = null): int
+    public function indexOf(array $array, $searchElement, $fromIndex = null): int
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         if ($fromIndex !== null) {
             $array = array_slice($array, $fromIndex, null, true);
         }
         $result = array_search($searchElement, $array, true);
-        if (is_string($result)) {
-            return array_search($result, array_keys($array), true) + (int)$fromIndex;
-        }
         if ($result === false) {
             return -1;
         }
@@ -207,11 +170,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param array $array
      * @return mixed A random entry or null if the array is empty
      */
-    public function random(iterable $array)
+    public function random(array $array)
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         if ($array === []) {
             return null;
         }
@@ -227,14 +187,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Internally natsort() is used as it most closely resembles javascript's sort().
      * Because there are no real associative arrays in Javascript, keys of the array will be preserved.
      *
-     * @param iterable $array
+     * @param array $array
      * @return array The sorted array
      */
-    public function sort(iterable $array): array
+    public function sort(array $array): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         if ($array === []) {
             return $array;
         }
@@ -253,35 +210,17 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Sort an array by key
-     *
-     * @param iterable $array The array to sort
-     * @return array The sorted array
-     */
-    public function ksort(iterable $array): array
-    {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
-        \ksort($array, SORT_NATURAL | SORT_FLAG_CASE);
-        return $array;
-    }
-
-    /**
      * Shuffle an array
      *
      * Randomizes entries an array with the option to preserve the existing keys.
      * When this option is set to false, all keys will be replaced
      *
-     * @param iterable $array
+     * @param array $array
      * @param bool $preserveKeys Wether to preserve the keys when shuffling the array
      * @return array The shuffled array
      */
-    public function shuffle(iterable $array, $preserveKeys = true): array
+    public function shuffle(array $array, $preserveKeys = true): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         if ($array === []) {
             return $array;
         }
@@ -300,34 +239,17 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Removes duplicate values from an array
-     *
-     * @param iterable $array The input array
-     * @return array The filtered array.
-     */
-    public function unique(iterable $array): array
-    {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
-        return array_unique($array);
-    }
-
-    /**
      * Removes the last element from an array
      *
      * Note: This differs from the JavaScript behavior of Array.pop which will return the popped element.
      *
      * An empty array will result in an empty array again.
      *
-     * @param iterable $array
+     * @param array $array
      * @return array The array without the last element
      */
-    public function pop(iterable $array): array
+    public function pop(array $array): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         if ($array === []) {
             return $array;
         }
@@ -342,15 +264,12 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      *     Array.push(array, e1, e2)
      *
-     * @param iterable $array
+     * @param array $array
      * @param mixed $element
      * @return array The array with the inserted elements
      */
-    public function push(iterable $array, $element): array
+    public function push(array $array, $element): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         $elements = func_get_args();
         array_shift($elements);
         foreach ($elements as $element) {
@@ -366,14 +285,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      * An empty array will result in an empty array again.
      *
-     * @param iterable $array
+     * @param array $array
      * @return array The array without the first element
      */
-    public function shift(iterable $array): array
+    public function shift(array $array): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         array_shift($array);
         return $array;
     }
@@ -385,15 +301,12 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      *     Array.unshift(array, e1, e2)
      *
-     * @param iterable $array
+     * @param array $array
      * @param mixed $element
      * @return array The array with the inserted elements
      */
-    public function unshift(iterable $array, $element): array
+    public function unshift(array $array, $element): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         // get all elements that are supposed to be added
         $elements = func_get_args();
         array_shift($elements);
@@ -410,17 +323,14 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      *     Array.splice(array, 3, 2, 'a', 'b')
      *
-     * @param iterable $array
+     * @param array $array
      * @param int $offset Index of the first element to remove
      * @param int $length Number of elements to remove
      * @param mixed $replacements Elements to insert instead of the removed range
      * @return array The array with removed and replaced elements
      */
-    public function splice(iterable $array, $offset, $length = 1, $replacements = null): array
+    public function splice(array $array, $offset, $length = 1, $replacements = null): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         $arguments = func_get_args();
         $replacements = array_slice($arguments, 3);
         array_splice($array, $offset, $length, $replacements);
@@ -433,14 +343,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Note that the values of array need to be valid keys, i.e. they need to be either int or string.
      * If a value has several occurrences, the latest key will be used as its value, and all others will be lost.
      *
-     * @param iterable $array
+     * @param array $array
      * @return array The array with flipped keys and values
      */
-    public function flip(iterable $array): array
+    public function flip(array $array): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         return array_flip($array);
     }
 
@@ -463,16 +370,13 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Set the specified key in the the array
      *
-     * @param iterable $array
+     * @param array $array
      * @param string|integer $key the key that should be set
      * @param mixed $value the value to assign to the key
      * @return array The modified array.
      */
-    public function set(iterable $array, $key, $value): array
+    public function set(array $array, $key, $value): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         $array[$key] = $value;
         return $array;
     }
@@ -485,11 +389,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *     Array.map([1, 2, 3, 4], x => x * x)
      *     Array.map([1, 2, 3, 4], (x, index) => x * index)
      *
-     * @param iterable $array Array of elements to map
+     * @param array $array Array of elements to map
      * @param callable $callback Callback to apply for each element, current value and key will be passed as arguments
      * @return array The array with callback applied, keys will be preserved
      */
-    public function map(iterable $array, callable $callback): array
+    public function map(array $array, callable $callback): array
     {
         $result = [];
         foreach ($array as $key => $element) {
@@ -506,23 +410,19 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *     Array.reduce([1, 2, 3, 4], (accumulator, currentValue) => accumulator + currentValue) // == 10
      *     Array.reduce([1, 2, 3, 4], (accumulator, currentValue) => accumulator + currentValue, 1) // == 11
      *
-     * @param iterable $array Array of elements to reduce to a value
+     * @param array $array Array of elements to reduce to a value
      * @param callable $callback Callback for accumulating values, accumulator, current value and key will be passed as arguments
      * @param mixed $initialValue Initial value, defaults to first item in array and callback starts with second entry
      * @return mixed
      */
-    public function reduce(iterable $array, callable $callback, $initialValue = null)
+    public function reduce(array $array, callable $callback, $initialValue = null)
     {
-        $accumulator = $initialValue;
-        $needsAccumulator = $initialValue === null;
+        if ($initialValue !== null) {
+            $accumulator = $initialValue;
+        } else {
+            $accumulator = array_shift($array);
+        }
         foreach ($array as $key => $element) {
-            // Lazily set the accumulator to prevent evaluation of the full array if a Traversable is given
-            if ($needsAccumulator) {
-                $accumulator = $element;
-                $needsAccumulator = false;
-                continue;
-            }
-
             $accumulator = $callback($accumulator, $element, $key);
         }
         return $accumulator;
@@ -536,15 +436,12 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *     Array.filter([1, 2, 3, 4], x => x % 2 == 0) // == [2, 4]
      *     Array.filter(['foo', 'bar', 'baz'], (x, index) => index < 2) // == ['foo', 'bar']
      *
-     * @param iterable $array Array of elements to filter
+     * @param array $array Array of elements to filter
      * @param callable $callback Callback for testing if an element should be included in the result, current value and key will be passed as arguments
      * @return array The array with elements where callback returned true
      */
-    public function filter(iterable $array, callable $callback = null): array
+    public function filter(array $array, callable $callback = null): array
     {
-        if ($array instanceof \Traversable) {
-            $array = iterator_to_array($array);
-        }
         return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
     }
 
@@ -557,11 +454,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *     Array.some([1, 2, 3, 4], x => x % 2 == 0) // == true
      *     Array.some([1, 2, 3, 4], x => x > 4) // == false
      *
-     * @param iterable $array Array of elements to test
+     * @param array $array Array of elements to test
      * @param callable $callback Callback for testing elements, current value and key will be passed as arguments
      * @return bool True if at least one element passed the test
      */
-    public function some(iterable $array, callable $callback): bool
+    public function some(array $array, callable $callback): bool
     {
         foreach ($array as $key => $value) {
             if ($callback($value, $key)) {
@@ -580,11 +477,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *     Array.every([1, 2, 3, 4], x => x % 2 == 0) // == false
      *     Array.every([2, 4, 6, 8], x => x % 2) // == true
      *
-     * @param iterable $array Array of elements to test
+     * @param array $array Array of elements to test
      * @param callable $callback Callback for testing elements, current value and key will be passed as arguments
      * @return bool True if all elements passed the test
      */
-    public function every(iterable $array, callable $callback): bool
+    public function every(array $array, callable $callback): bool
     {
         foreach ($array as $key => $value) {
             if (!$callback($value, $key)) {

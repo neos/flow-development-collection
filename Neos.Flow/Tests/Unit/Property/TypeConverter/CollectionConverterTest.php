@@ -25,7 +25,7 @@ class CollectionConverterTest extends UnitTestCase
      */
     protected $converter;
 
-    protected function setUp(): void
+    public function setUp()
     {
         $this->converter = new CollectionConverter();
     }
@@ -35,9 +35,9 @@ class CollectionConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        self::assertEquals(['string', 'array'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        self::assertEquals('Doctrine\Common\Collections\Collection', $this->converter->getSupportedTargetType(), 'Target type does not match');
-        self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+        $this->assertEquals(['string', 'array'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals('Doctrine\Common\Collections\Collection', $this->converter->getSupportedTargetType(), 'Target type does not match');
+        $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
     /**
@@ -45,7 +45,7 @@ class CollectionConverterTest extends UnitTestCase
      */
     public function getTypeOfChildPropertyReturnsElementTypeFromTargetTypeIfGiven()
     {
-        self::assertEquals('FooBar', $this->converter->getTypeOfChildProperty('array<FooBar>', '', $this->createMock(PropertyMappingConfigurationInterface::class)));
+        $this->assertEquals('FooBar', $this->converter->getTypeOfChildProperty('array<FooBar>', '', $this->createMock(PropertyMappingConfigurationInterface::class)));
     }
 
     /**
@@ -53,6 +53,6 @@ class CollectionConverterTest extends UnitTestCase
      */
     public function getTypeOfChildPropertyReturnsEmptyStringForElementTypeIfNotGivenInTargetType()
     {
-        self::assertEquals('', $this->converter->getTypeOfChildProperty('array', '', $this->createMock(PropertyMappingConfigurationInterface::class)));
+        $this->assertEquals('', $this->converter->getTypeOfChildProperty('array', '', $this->createMock(PropertyMappingConfigurationInterface::class)));
     }
 }

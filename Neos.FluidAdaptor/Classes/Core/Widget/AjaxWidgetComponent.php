@@ -12,33 +12,21 @@ namespace Neos\FluidAdaptor\Core\Widget;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\ComponentChain;
-use Neos\Flow\Http\Component\ComponentInterface;
 use Neos\Flow\Http\Component\Exception as ComponentException;
+use Neos\Flow\Http\Request;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
-use Neos\Flow\Mvc\ActionRequestFactory;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Dispatcher;
-use Neos\Flow\Security\Context;
+use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Security\Cryptography\HashService;
-use Neos\Utility\Arrays;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A HTTP component specifically for Ajax widgets
  * It's task is to interrupt the default dispatching as soon as possible if the current request is an AJAX request
  * triggered by a Fluid widget (e.g. contains the arguments "__widgetId" or "__widgetContext").
  */
-class AjaxWidgetComponent implements ComponentInterface
+class AjaxWidgetComponent extends DispatchComponent
 {
-    /**
-     * @Flow\Inject
-     * @var ActionRequestFactory
-     */
-    protected $actionRequestFactory;
-
     /**
      * @Flow\Inject
      * @var HashService
@@ -50,18 +38,6 @@ class AjaxWidgetComponent implements ComponentInterface
      * @var AjaxWidgetContextHolder
      */
     protected $ajaxWidgetContextHolder;
-
-    /**
-     * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * @Flow\Inject
-     * @var Dispatcher
-     */
-    protected $dispatcher;
 
     /**
      * Check if the current request contains a widget context.
@@ -79,26 +55,19 @@ class AjaxWidgetComponent implements ComponentInterface
             return;
         }
 
-        $actionRequest = $this->actionRequestFactory->createActionRequest($httpRequest, ['__widgetContext' => $widgetContext]);
+        $componentContext = $this->prepareActionRequest($componentContext);
+        /** @var $actionRequest ActionRequest */
+        $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
+        $actionRequest->setArgument('__widgetContext', $widgetContext);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
-        $this->securityContext->setRequest($actionRequest);
+        $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
 
-        $actionResponse = new ActionResponse();
+        $actionResponse = new ActionResponse($componentContext->getHttpResponse());
 
         $this->dispatcher->dispatch($actionRequest, $actionResponse);
-
-        $componentContext = $actionResponse->mergeIntoComponentContext($componentContext);
-
+        $componentContext->replaceHttpResponse($actionResponse);
         // stop processing the current component chain
-        $componentContext->setParameter(ComponentChain::class, 'cancel', true);
-
-        // replace response, if the dispatched request returns a PSR-7 response
-        $possibleResponse = $componentContext->getParameter(ReplaceHttpResponseComponent::class, ReplaceHttpResponseComponent::PARAMETER_RESPONSE);
-        if (!$possibleResponse instanceof ResponseInterface) {
-            return;
-        }
-
-        $componentContext->replaceHttpResponse($possibleResponse);
+        $componentContext->setParameter(\Neos\Flow\Http\Component\ComponentChain::class, 'cancel', true);
     }
 
     /**
@@ -106,29 +75,18 @@ class AjaxWidgetComponent implements ComponentInterface
      * If the request contains an argument "__widgetId" the context is fetched from the session (AjaxWidgetContextHolder).
      * Otherwise the argument "__widgetContext" is expected to contain the serialized WidgetContext (protected by a HMAC suffix)
      *
-     * @param ServerRequestInterface $httpRequest
+     * @param Request $httpRequest
      * @return WidgetContext
-     * @throws Exception\WidgetContextNotFoundException
-     * @throws \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
-     * @throws \Neos\Flow\Security\Exception\InvalidHashException
      */
-    protected function extractWidgetContext(ServerRequestInterface $httpRequest):? WidgetContext
+    protected function extractWidgetContext(Request $httpRequest)
     {
-        $arguments = $httpRequest->getQueryParams();
-        $parsedBody  = $httpRequest->getParsedBody();
-        if (is_array($parsedBody)) {
-            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
-        }
-        if (isset($arguments['__widgetId'])) {
-            return $this->ajaxWidgetContextHolder->get($arguments['__widgetId']);
-        }
-
-        if (isset($arguments['__widgetContext'])) {
-            $serializedWidgetContextWithHmac = $arguments['__widgetContext'];
+        if ($httpRequest->hasArgument('__widgetId')) {
+            return $this->ajaxWidgetContextHolder->get($httpRequest->getArgument('__widgetId'));
+        } elseif ($httpRequest->hasArgument('__widgetContext')) {
+            $serializedWidgetContextWithHmac = $httpRequest->getArgument('__widgetContext');
             $serializedWidgetContext = $this->hashService->validateAndStripHmac($serializedWidgetContextWithHmac);
             return unserialize(base64_decode($serializedWidgetContext));
         }
-
         return null;
     }
 }

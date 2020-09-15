@@ -11,15 +11,14 @@ namespace Neos\Flow\Http\Component;
  * source code.
  */
 
-use Psr\Http\Message\ResponseInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Response;
 
 /**
  * The HTTP component chain
  *
  * The chain is a HTTP component itself and handles all the configured components until one
  * component sets the "cancelled" flag.
- *
- * @deprecated Will be removed in the next major and is superseeded by the MiddlewaresChain
  */
 class ComponentChain implements ComponentInterface
 {
@@ -31,7 +30,7 @@ class ComponentChain implements ComponentInterface
     protected $options;
 
     /**
-     * @var ResponseInterface
+     * @var Response
      */
     protected $response;
 
@@ -69,9 +68,9 @@ class ComponentChain implements ComponentInterface
     }
 
     /**
-     * @return ResponseInterface
+     * @return Response
      */
-    public function getResponse(): ResponseInterface
+    public function getResponse()
     {
         return $this->response;
     }

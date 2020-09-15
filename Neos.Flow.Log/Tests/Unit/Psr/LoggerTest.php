@@ -46,20 +46,19 @@ class LoggerTest extends UnitTestCase
      * @param string $psrLogLevel
      * @param int $legacyLogLevel
      * @param bool $willError
-     * @throws \ReflectionException
      */
     public function logAcceptsOnlyValidLogLevels($psrLogLevel, $legacyLogLevel, $willError)
     {
         $mockBackend = $this->createMock(BackendInterface::class);
         if (!$willError) {
-            $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel);
+            $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel)->willReturn(null);
         }
         $psrLogger = new Logger([$mockBackend]);
 
         try {
             $psrLogger->log($psrLogLevel, 'some message');
         } catch (\Throwable $throwable) {
-            self::assertTrue($willError, $throwable->getMessage());
+            $this->assertTrue($willError, $throwable->getMessage());
         }
     }
 
@@ -70,12 +69,11 @@ class LoggerTest extends UnitTestCase
      * @param string $psrLogLevel
      * @param int $legacyLogLevel
      * @param bool $willError
-     * @throws \ReflectionException
      */
     public function levelSpecificMethodsAreSupported($psrLogLevel, $legacyLogLevel, $willError)
     {
         $mockBackend = $this->createMock(BackendInterface::class);
-        $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel);
+        $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel)->willReturn(null);
 
         $psrLogger = new Logger([$mockBackend]);
 
@@ -94,7 +92,7 @@ class LoggerTest extends UnitTestCase
         $message = 'some message';
         $context = ['something' => 123, 'else' => true];
         $mockBackend = $this->createMock(BackendInterface::class);
-        $mockBackend->expects(self::once())->method('append')->with('some message', LOG_INFO, $context);
+        $mockBackend->expects(self::once())->method('append')->with('some message', LOG_INFO, $context)->willReturn(null);
 
         $psrLogger = new Logger([$mockBackend]);
         $psrLogger->log(LogLevel::INFO, $message, $context);

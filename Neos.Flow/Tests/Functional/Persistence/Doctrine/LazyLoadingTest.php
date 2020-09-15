@@ -38,7 +38,7 @@ class LazyLoadingTest extends FunctionalTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -71,7 +71,7 @@ class LazyLoadingTest extends FunctionalTestCase
 
         $loadedRelatedEntity = $loadedEntity->getRelatedEntity();
 
-        self::assertNotNull($loadedRelatedEntity->getObjectManager());
+        $this->assertNotNull($loadedRelatedEntity->getObjectManager());
     }
 
     /**
@@ -97,7 +97,7 @@ class LazyLoadingTest extends FunctionalTestCase
 
         $loadedRelatedEntity = $loadedEntity->getRelatedEntity();
 
-        self::assertEquals($loadedRelatedEntity->sayHello(), 'Hello Andi!');
+        $this->assertEquals($loadedRelatedEntity->sayHello(), 'Hello Andi!');
     }
 
     /**
@@ -129,7 +129,7 @@ class LazyLoadingTest extends FunctionalTestCase
          * The CleanupObject is just a helper object to test that shutdownObject() on the Fixtures\Image is called
          */
         $cleanupObject = new Fixtures\CleanupObject();
-        self::assertFalse($cleanupObject->getState());
+        $this->assertFalse($cleanupObject->getState());
         $post->getImage()->setRelatedObject($cleanupObject);
 
         /*
@@ -138,6 +138,6 @@ class LazyLoadingTest extends FunctionalTestCase
          */
         \Neos\Flow\Core\Bootstrap::$staticObjectManager->shutdown();
 
-        self::assertTrue($cleanupObject->getState());
+        $this->assertTrue($cleanupObject->getState());
     }
 }

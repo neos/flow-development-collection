@@ -103,7 +103,7 @@ class ObjectConverter extends AbstractTypeConverter
      * Convert all properties in the source array
      *
      * @param mixed $source
-     * @return array<mixed>
+     * @return array
      */
     public function getSourceChildPropertiesToBeConverted($source)
     {

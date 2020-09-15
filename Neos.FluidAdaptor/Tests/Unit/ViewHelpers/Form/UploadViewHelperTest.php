@@ -44,7 +44,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
      */
     protected $mockMappingResult;
 
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         $this->viewHelper = $this->getAccessibleMock(UploadViewHelper::class, ['setErrorClassAttribute', 'registerFieldNameForFormTokenGeneration', 'getMappingResultsForProperty']);
@@ -52,14 +52,15 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         $this->viewHelper->_set('propertyMapper', $this->mockPropertyMapper);
         $this->arguments['name'] = '';
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
+        $this->viewHelper->initializeArguments();
     }
 
     /**
      * @test
      */
-    public function renderCorrectlySetsTagName(): void
+    public function renderCorrectlySetsTagName()
     {
-        $this->tagBuilder->expects(self::atLeastOnce())->method('setTagName')->with('input');
+        $this->tagBuilder->expects($this->atLeastOnce())->method('setTagName')->with('input');
 
         $this->viewHelper->initialize();
         $this->viewHelper->render();
@@ -68,13 +69,13 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
     /**
      * @test
      */
-    public function renderCorrectlySetsTypeNameAndValueAttributes(): void
+    public function renderCorrectlySetsTypeNameAndValueAttributes()
     {
         $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['setContent', 'render', 'addAttribute'])->getMock();
-        $mockTagBuilder->expects(self::at(0))->method('addAttribute')->with('type', 'file');
-        $mockTagBuilder->expects(self::at(1))->method('addAttribute')->with('name', 'someName');
-        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('someName');
-        $mockTagBuilder->expects(self::once())->method('render');
+        $mockTagBuilder->expects($this->at(0))->method('addAttribute')->with('type', 'file');
+        $mockTagBuilder->expects($this->at(1))->method('addAttribute')->with('name', 'someName');
+        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('someName');
+        $mockTagBuilder->expects($this->once())->method('render');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
         $arguments = [
@@ -90,32 +91,32 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
     /**
      * @test
      */
-    public function renderCallsSetErrorClassAttribute(): void
+    public function renderCallsSetErrorClassAttribute()
     {
-        $this->viewHelper->expects(self::once())->method('setErrorClassAttribute');
+        $this->viewHelper->expects($this->once())->method('setErrorClassAttribute');
         $this->viewHelper->render();
     }
 
     /**
      * @test
      */
-    public function hiddenFieldsAreNotRenderedByDefault(): void
+    public function hiddenFieldsAreNotRenderedByDefault()
     {
         $expectedResult = '';
         $this->viewHelper->initialize();
         $actualResult = $this->viewHelper->render();
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
      * @test
      */
-    public function hiddenFieldsContainDataOfTheSpecifiedResource(): void
+    public function hiddenFieldsContainDataOfTheSpecifiedResource()
     {
         $resource = new PersistentResource();
 
         $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects(self::atLeastOnce())->method('getIdentifierByObject')->with($resource)->willReturn('79ecda60-1a27-69ca-17bf-a5d9e80e6c39');
+        $mockPersistenceManager->expects($this->atLeastOnce())->method('getIdentifierByObject')->with($resource)->will($this->returnValue('79ecda60-1a27-69ca-17bf-a5d9e80e6c39'));
 
         $this->viewHelper->_set('persistenceManager', $mockPersistenceManager);
 
@@ -125,13 +126,13 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         $expectedResult = '<input type="hidden" name="[foo][originallySubmittedResource][__identity]" value="79ecda60-1a27-69ca-17bf-a5d9e80e6c39" />';
         $actualResult = $this->viewHelper->render();
 
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
      * @test
      */
-    public function hiddenFieldContainsDataOfAPreviouslyUploadedResource(): void
+    public function hiddenFieldContainsDataOfAPreviouslyUploadedResource()
     {
         $mockResourceUuid = '79ecda60-1a27-69ca-17bf-a5d9e80e6c39';
         $submittedData = [
@@ -146,42 +147,42 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
             ]
         ];
 
-        /** @var Result|\PHPUnit\Framework\MockObject\MockObject $mockValidationResults */
+        /** @var Result|\PHPUnit_Framework_MockObject_MockObject $mockValidationResults */
         $mockValidationResults = $this->getMockBuilder(Result::class)->disableOriginalConstructor()->getMock();
-        $mockValidationResults->expects(self::atLeastOnce())->method('hasErrors')->willReturn(true);
-        $this->request->expects(self::at(0))->method('getInternalArgument')->with('__submittedArgumentValidationResults')->willReturn($mockValidationResults);
-        $this->request->expects(self::at(1))->method('getInternalArgument')->with('__submittedArguments')->willReturn($submittedData);
+        $mockValidationResults->expects($this->atLeastOnce())->method('hasErrors')->will($this->returnValue(true));
+        $this->request->expects($this->at(0))->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($mockValidationResults));
+        $this->request->expects($this->at(1))->method('getInternalArgument')->with('__submittedArguments')->will($this->returnValue($submittedData));
 
-        /** @var PersistentResource|\PHPUnit\Framework\MockObject\MockObject $mockResource */
+        /** @var PersistentResource|\PHPUnit_Framework_MockObject_MockObject $mockResource */
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
         $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($mockResource)->willReturn($mockResourceUuid);
+        $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($mockResource)->will($this->returnValue($mockResourceUuid));
         $this->inject($this->viewHelper, 'persistenceManager', $mockPersistenceManager);
 
 
-        $this->mockPropertyMapper->expects(self::atLeastOnce())->method('convert')->with($submittedData['foo']['bar'], PersistentResource::class)->willReturn($mockResource);
+        $this->mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->with($submittedData['foo']['bar'], PersistentResource::class)->will($this->returnValue($mockResource));
 
         $mockValueResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
         $this->viewHelper->setArguments(['name' => 'foo[bar]', 'value' => $mockValueResource]);
         $expectedResult = '<input type="hidden" name="foo[bar][originallySubmittedResource][__identity]" value="' . $mockResourceUuid . '" />';
         $this->viewHelper->initialize();
         $actualResult = $this->viewHelper->render();
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
      * @test
      */
-    public function hiddenFieldsContainDataOfValueArgumentIfNoResourceHasBeenUploaded(): void
+    public function hiddenFieldsContainDataOfValueArgumentIfNoResourceHasBeenUploaded()
     {
         $mockValueResourceUuid = '79ecda60-1a27-69ca-17bf-a5d9e80e6c39';
 
-        /** @var Result|\PHPUnit\Framework\MockObject\MockObject $mockValidationResults */
+        /** @var Result|\PHPUnit_Framework_MockObject_MockObject $mockValidationResults */
         $mockValidationResults = $this->getMockBuilder(Result::class)->disableOriginalConstructor()->getMock();
-        $mockValidationResults->expects(self::atLeastOnce())->method('hasErrors')->willReturn(false);
-        $this->request->expects(self::atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->willReturn($mockValidationResults);
+        $mockValidationResults->expects($this->atLeastOnce())->method('hasErrors')->will($this->returnValue(false));
+        $this->request->expects($this->atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($mockValidationResults));
 
-        /** @var PersistentResource|\PHPUnit\Framework\MockObject\MockObject $mockPropertyResource */
+        /** @var PersistentResource|\PHPUnit_Framework_MockObject_MockObject $mockPropertyResource */
         $mockPropertyResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
         $mockFormObject = [
             'foo' => $mockPropertyResource
@@ -193,29 +194,29 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         $mockValueResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
 
         $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($this->identicalTo($mockValueResource))->willReturn($mockValueResourceUuid);
+        $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($this->identicalTo($mockValueResource))->will($this->returnValue($mockValueResourceUuid));
         $this->inject($this->viewHelper, 'persistenceManager', $mockPersistenceManager);
 
         $this->viewHelper->setArguments(['property' => 'foo', 'value' => $mockValueResource]);
 
         $expectedResult = '<input type="hidden" name="someObject[foo][originallySubmittedResource][__identity]" value="' . $mockValueResourceUuid . '" />';
         $actualResult = $this->viewHelper->render();
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
      * @test
      */
-    public function hiddenFieldsContainDataOfBoundPropertyIfNoValueArgumentIsSetAndNoResourceHasBeenUploaded(): void
+    public function hiddenFieldsContainDataOfBoundPropertyIfNoValueArgumentIsSetAndNoResourceHasBeenUploaded()
     {
         $mockResourceUuid = '79ecda60-1a27-69ca-17bf-a5d9e80e6c39';
 
-        /** @var Result|\PHPUnit\Framework\MockObject\MockObject $mockValidationResults */
+        /** @var Result|\PHPUnit_Framework_MockObject_MockObject $mockValidationResults */
         $mockValidationResults = $this->getMockBuilder(Result::class)->disableOriginalConstructor()->getMock();
-        $mockValidationResults->expects(self::atLeastOnce())->method('hasErrors')->willReturn(false);
-        $this->request->expects(self::atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->willReturn($mockValidationResults);
+        $mockValidationResults->expects($this->atLeastOnce())->method('hasErrors')->will($this->returnValue(false));
+        $this->request->expects($this->atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue($mockValidationResults));
 
-        /** @var PersistentResource|\PHPUnit\Framework\MockObject\MockObject $mockPropertyResource */
+        /** @var PersistentResource|\PHPUnit_Framework_MockObject_MockObject $mockPropertyResource */
         $mockPropertyResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
         $mockFormObject = [
             'foo' => $mockPropertyResource
@@ -226,13 +227,13 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         ];
 
         $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($this->identicalTo($mockPropertyResource))->willReturn($mockResourceUuid);
+        $mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($this->identicalTo($mockPropertyResource))->will($this->returnValue($mockResourceUuid));
         $this->inject($this->viewHelper, 'persistenceManager', $mockPersistenceManager);
 
         $this->viewHelper->setArguments(['property' => 'foo']);
 
         $expectedResult = '<input type="hidden" name="someObject[foo][originallySubmittedResource][__identity]" value="' . $mockResourceUuid . '" />';
         $actualResult = $this->viewHelper->render();
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 }

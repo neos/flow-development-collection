@@ -84,7 +84,7 @@ class Debugger
     /**
      * @var string
      */
-    protected static $excludedPropertyNames = '/
+    protected static $blacklistedPropertyNames = '/
 		(Flow_Aop_.*)
 		/xs';
 
@@ -140,7 +140,7 @@ class Debugger
             }
         } elseif (is_numeric($variable)) {
             $dump = sprintf('%s %s', gettype($variable), self::ansiEscapeWrap($variable, '35', $ansiColors));
-        } elseif (is_iterable($variable)) {
+        } elseif (is_array($variable)) {
             $dump = self::renderArrayDump($variable, $level + 1, $plaintext, $ansiColors);
         } elseif (is_object($variable)) {
             $dump = self::renderObjectDump($variable, $level + 1, true, $plaintext, $ansiColors);
@@ -158,13 +158,13 @@ class Debugger
     /**
      * Renders a dump of the given array
      *
-     * @param iterable $array
+     * @param array $array
      * @param integer $level
      * @param boolean $plaintext
      * @param boolean $ansiColors
      * @return string
      */
-    protected static function renderArrayDump(iterable $array, int $level, bool $plaintext = false, bool $ansiColors = false): string
+    protected static function renderArrayDump(array $array, int $level, bool $plaintext = false, bool $ansiColors = false): string
     {
         if (is_array($array)) {
             $dump = 'array' . (count($array) ? '(' . count($array) . ')' : '(empty)');
@@ -197,8 +197,9 @@ class Debugger
         $scope = '';
         $additionalAttributes = '';
 
-        if (is_iterable($object)) {
-            return self::renderArrayDump($object, $level, $plaintext, $ansiColors);
+        if ($object instanceof \Doctrine\Common\Collections\Collection || $object instanceof \ArrayObject) {
+            // The doctrine Debug utility usually returns a \stdClass object that we need to cast to array.
+            return self::renderArrayDump((array)\Doctrine\Common\Util\Debug::export($object, 3), $level, $plaintext, $ansiColors);
         }
 
         // Objects returned from Doctrine's Debug::export function are stdClass with special properties:
@@ -284,7 +285,7 @@ class Debugger
                 $objectReflection = new \ReflectionObject($object);
                 $properties = $objectReflection->getProperties();
                 foreach ($properties as $property) {
-                    if (preg_match(self::$excludedPropertyNames, $property->getName())) {
+                    if (preg_match(self::$blacklistedPropertyNames, $property->getName())) {
                         continue;
                     }
                     $dump .= chr(10);

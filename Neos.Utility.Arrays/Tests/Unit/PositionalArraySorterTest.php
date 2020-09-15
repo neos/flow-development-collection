@@ -11,7 +11,6 @@ namespace Neos\Utility\Arrays\Tests\Unit;
  * source code.
  */
 
-use Neos\Utility\Exception\InvalidPositionException;
 use Neos\Utility\PositionalArraySorter;
 
 /**
@@ -29,7 +28,7 @@ class PositionalArraySorterTest extends \PHPUnit\Framework\TestCase
 
         $positionalArraySorter = new PositionalArraySorter($array);
         $sortedArray = $positionalArraySorter->toArray();
-        self::assertSame($expectedResult, $sortedArray);
+        $this->assertSame($expectedResult, $sortedArray);
     }
 
     /**
@@ -50,10 +49,10 @@ class PositionalArraySorterTest extends \PHPUnit\Framework\TestCase
      * @dataProvider invalidPositions
      *
      * @param array $subject
+     * @expectedException \Neos\Utility\Exception\InvalidPositionException
      */
     public function toArrayThrowsExceptionForInvalidPositions(array $subject)
     {
-        $this->expectException(InvalidPositionException::class);
         $positionalArraySorter = new PositionalArraySorter($subject);
         $positionalArraySorter->toArray();
     }
@@ -165,7 +164,7 @@ class PositionalArraySorterTest extends \PHPUnit\Framework\TestCase
         $positionalArraySorter = new PositionalArraySorter($subject, $positionPropertyPath);
         $result = $positionalArraySorter->toArray();
 
-        self::assertSame($expectedKeyOrder, array_keys($result), $message);
+        $this->assertSame($expectedKeyOrder, array_keys($result), $message);
     }
 
     /**
@@ -182,6 +181,6 @@ class PositionalArraySorterTest extends \PHPUnit\Framework\TestCase
         $positionalArraySorter = new PositionalArraySorter($subject, $positionPropertyPath);
         $result = $positionalArraySorter->getSortedKeys();
 
-        self::assertSame($expectedKeyOrder, $result, $message);
+        $this->assertSame($expectedKeyOrder, $result, $message);
     }
 }

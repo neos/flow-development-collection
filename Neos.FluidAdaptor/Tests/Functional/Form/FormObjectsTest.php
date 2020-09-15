@@ -11,8 +11,6 @@ namespace Neos\FluidAdaptor\Tests\Functional\Form;
  * source code.
  */
 
-use Neos\Flow\Mvc\Routing\Route;
-
 /**
  * Testcase for Standalone View
  *
@@ -33,11 +31,11 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * Initializer
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
 
-        $route = new Route();
+        $route = new \Neos\Flow\Mvc\Routing\Route();
         $route->setUriPattern('test/fluid/formobjects(/{@action})');
         $route->setDefaults([
             '@package' => 'Neos.FluidAdaptor',
@@ -62,7 +60,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['post']['author']['emailAddress']->setValue('hello@neos.io');
 
         $response = $this->browser->submit($form);
-        self::assertSame('Neos Team|hello@neos.io', $response->getBody()->getContents());
+        $this->assertSame('Neos Team|hello@neos.io', $response->getContent());
     }
 
     /**
@@ -74,8 +72,8 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
         $form = $this->browser->getForm();
-        self::assertFalse(isset($form['post']['tags']['__identity']), 'Post tags identities not set.');
-        self::assertFalse(isset($form['tags']['__identity']), 'Tags identities not set.');
+        $this->assertFalse(isset($form['post']['tags']['__identity']), 'Post tags identities not set.');
+        $this->assertFalse(isset($form['tags']['__identity']), 'Tags identities not set.');
     }
 
     /**
@@ -87,7 +85,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
         $form = $this->browser->getForm();
-        self::assertFalse(isset($form['post']['author']['location']['__identity']));
+        $this->assertFalse(isset($form['post']['author']['location']['__identity']));
     }
 
     /**
@@ -103,14 +101,14 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
         $form = $this->browser->getForm();
-        self::assertSame('Neos Team', $form['post']['name']->getValue());
-        self::assertSame('test_noValidEmail', $form['post']['author']['emailAddress']->getValue());
-        self::assertSame('f3-form-error', $this->browser->getCrawler()->filterXPath('//*[@id="email"]')->attr('class'));
+        $this->assertSame('Neos Team', $form['post']['name']->getValue());
+        $this->assertSame('test_noValidEmail', $form['post']['author']['emailAddress']->getValue());
+        $this->assertSame('f3-form-error', $this->browser->getCrawler()->filterXPath('//*[@id="email"]')->attr('class'));
 
         $form['post']['author']['emailAddress']->setValue('another@email.org');
 
         $response = $this->browser->submit($form);
-        self::assertSame('Neos Team|another@email.org', $response->getBody()->getContents());
+        $this->assertSame('Neos Team|another@email.org', $response->getContent());
     }
 
     /**
@@ -128,14 +126,14 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
         $form = $this->browser->getForm();
-        self::assertSame('Egon Olsen', $form['post']['name']->getValue());
-        self::assertSame('test_noValidEmail', $form['post']['author']['emailAddress']->getValue());
-        self::assertSame('f3-form-error', $this->browser->getCrawler()->filterXPath('//*[@id="email"]')->attr('class'));
+        $this->assertSame('Egon Olsen', $form['post']['name']->getValue());
+        $this->assertSame('test_noValidEmail', $form['post']['author']['emailAddress']->getValue());
+        $this->assertSame('f3-form-error', $this->browser->getCrawler()->filterXPath('//*[@id="email"]')->attr('class'));
 
         $form['post']['author']['emailAddress']->setValue('another@email.org');
 
         $response = $this->browser->submit($form);
-        self::assertSame('Egon Olsen|another@email.org', $response->getBody()->getContents());
+        $this->assertSame('Egon Olsen|another@email.org', $response->getContent());
     }
 
     /**
@@ -151,7 +149,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $this->browser->submit($form);
 
         $form = $this->browser->getForm();
-        self::assertSame('f3-form-error', $this->browser->getCrawler()->filterXPath('//*[@id="email"]')->attr('class'));
+        $this->assertSame('f3-form-error', $this->browser->getCrawler()->filterXPath('//*[@id="email"]')->attr('class'));
     }
 
     /**
@@ -167,7 +165,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $this->browser->submit($form);
 
         $form = $this->browser->getForm();
-        self::assertSame('test_noValidEmail', $form['email']->getValue());
+        $this->assertSame('test_noValidEmail', $form['email']->getValue());
     }
 
     /**
@@ -181,7 +179,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['__trustedProperties']->setValue($form['__trustedProperties']->getValue() . 'a');
         $this->browser->submit($form);
 
-        self::assertSame(500, $this->browser->getLastResponse()->getStatusCode());
+        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
     }
 
     /**
@@ -198,7 +196,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
 
-        self::assertSame(500, $this->browser->getLastResponse()->getStatusCode());
+        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
     }
 
     /**
@@ -214,7 +212,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
 
-        self::assertSame(500, $this->browser->getLastResponse()->getStatusCode());
+        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
     }
 
     /**
@@ -228,7 +226,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         unset($form['__trustedProperties']);
         $this->browser->submit($form);
 
-        self::assertSame(500, $this->browser->getLastResponse()->getStatusCode());
+        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
     }
 
     /**
@@ -244,11 +242,11 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['post']['author']['emailAddress']->setValue('test_noValidEmail');
 
         $response = $this->browser->submit($form);
-        self::assertNotSame('Hello World|test_noValidEmail', $response->getBody()->getContents());
+        $this->assertNotSame('Hello World|test_noValidEmail', $response->getContent());
 
         $this->persistenceManager->clearState();
         $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, \Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post::class);
-        self::assertNotSame('test_noValidEmail', $post->getAuthor()->getEmailAddress(), 'The invalid email address "' . $post->getAuthor()->getEmailAddress() . '" was persisted!');
+        $this->assertNotSame('test_noValidEmail', $post->getAuthor()->getEmailAddress(), 'The invalid email address "' . $post->getAuthor()->getEmailAddress() . '" was persisted!');
     }
 
     /**
@@ -265,15 +263,15 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
 
-        self::assertSame($postIdentifier, $this->browser->getCrawler()->filterXPath('//input[@name="post[__identity]"]')->attr('value'));
+        $this->assertSame($postIdentifier, $this->browser->getCrawler()->filterXPath('//input[@name="post[__identity]"]')->attr('value'));
 
         $form['post']['name']->setValue('Hello World');
         $form['post']['author']['emailAddress']->setValue('foo@bar.org');
         $response = $this->browser->submit($form);
-        self::assertSame('Hello World|foo@bar.org', $response->getBody()->getContents());
+        $this->assertSame('Hello World|foo@bar.org', $response->getContent());
 
         $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, \Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post::class);
-        self::assertSame('foo@bar.org', $post->getAuthor()->getEmailAddress());
+        $this->assertSame('foo@bar.org', $post->getAuthor()->getEmailAddress());
     }
 
     /**
@@ -286,11 +284,11 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
         $form = $this->browser->getForm();
 
-        self::assertSame('myName', $form['post']['name']->getValue());
+        $this->assertSame('myName', $form['post']['name']->getValue());
 
         $form['post']['name']->setValue('Hello World');
         $response = $this->browser->submit($form);
-        self::assertSame('Hello World|foo@bar.org', $response->getBody()->getContents());
+        $this->assertSame('Hello World|foo@bar.org', $response->getContent());
     }
 
     /**
@@ -306,7 +304,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['__trustedProperties']->setValue($form['__trustedProperties']->getValue() . 'a');
         $this->browser->submit($form);
 
-        self::assertSame(500, $this->browser->getLastResponse()->getStatusCode());
+        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
     }
 
     /**
@@ -322,7 +320,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
 
-        self::assertSame(500, $this->browser->getLastResponse()->getStatusCode());
+        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
     }
 
     /**
@@ -340,7 +338,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
 
-        self::assertSame(500, $this->browser->getLastResponse()->getStatusCode());
+        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
     }
 
     /**
@@ -356,7 +354,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         unset($form['__trustedProperties']);
         $this->browser->submit($form);
 
-        self::assertSame(500, $this->browser->getLastResponse()->getStatusCode());
+        $this->assertSame('500 Internal Server Error', $this->browser->getLastResponse()->getStatus());
     }
 
     /**
@@ -395,11 +393,11 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['post']['private']->setValue(false);
 
         $this->browser->submit($form);
-        self::assertEmpty($this->browser->getCrawler()->filterXPath('//input[@id="private"]')->attr('checked'));
+        $this->assertEmpty($this->browser->getCrawler()->filterXPath('//input[@id="private"]')->attr('checked'));
 
         $form['post']['private']->setValue(true);
         $this->browser->submit($form);
-        self::assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="private"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="private"]')->attr('checked'));
     }
 
     /**
@@ -416,20 +414,20 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $this->browser->submit($form);
 
-        self::assertNull($this->browser->getCrawler()->filterXPath('//input[@id="category_foo"]')->attr('checked'));
-        self::assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
-        self::assertNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
-        self::assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
+        $this->assertNull($this->browser->getCrawler()->filterXPath('//input[@id="category_foo"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
+        $this->assertNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
 
         $form['post']['category']->setValue('foo');
         $form['post']['subCategory']->setValue('foo');
 
         $this->browser->submit($form);
 
-        self::assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="category_foo"]')->attr('checked'));
-        self::assertNull($this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
-        self::assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
-        self::assertNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="category_foo"]')->attr('checked'));
+        $this->assertNull($this->browser->getCrawler()->filterXPath('//input[@id="category_bar"]')->attr('checked'));
+        $this->assertNotNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_foo"]')->attr('checked'));
+        $this->assertNull($this->browser->getCrawler()->filterXPath('//input[@id="subCategory_bar"]')->attr('checked'));
     }
 
     /**
@@ -439,12 +437,12 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
     {
         $postIdentifier = $this->setupDummyPost();
         $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, \Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post::class);
-        self::assertEquals(true, $post->getPrivate());
+        $this->assertEquals(true, $post->getPrivate());
 
         $this->browser->request('http://localhost/test/fluid/formobjects/edit?fooPost=' . $postIdentifier);
         $checkboxDisabled = $this->browser->getCrawler()->filterXPath('//*[@id="private"]')->attr('disabled');
-        self::assertNotNull($checkboxDisabled, 'Private checkbox was not disabled.');
-        self::assertEquals($checkboxDisabled, $this->browser->getCrawler()->filterXPath('//input[@type="hidden" and contains(@name,"private")]')->attr('disabled'), 'The hidden checkbox field is not disabled like the connected checkbox.');
+        $this->assertNotNull($checkboxDisabled, 'Private checkbox was not disabled.');
+        $this->assertEquals($checkboxDisabled, $this->browser->getCrawler()->filterXPath('//input[@type="hidden" and contains(@name,"private")]')->attr('disabled'), 'The hidden checkbox field is not disabled like the connected checkbox.');
 
         $form = $this->browser->getForm();
         $this->browser->submit($form);
@@ -453,6 +451,6 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, \Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post::class);
         // This will currently never fail, because DomCrawler\Form does not handle hidden checkbox fields correctly!
         // Hence this test currently only relies on the correctly set "disabled" attribute on the hidden field.
-        self::assertEquals(true, $post->getPrivate(), 'The value for the checkbox field "private" was lost on form submit!');
+        $this->assertEquals(true, $post->getPrivate(), 'The value for the checkbox field "private" was lost on form submit!');
     }
 }

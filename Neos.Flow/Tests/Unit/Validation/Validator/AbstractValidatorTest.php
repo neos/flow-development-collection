@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Flow\Validation\Validator\AbstractValidator;
 
 /**
@@ -22,7 +21,7 @@ class AbstractValidatorTest extends UnitTestCase
 {
     protected $validator;
 
-    protected function setUp(): void
+    public function setUp()
     {
         $this->validator = $this->getAccessibleMockForAbstractClass(AbstractValidator::class, [], '', false);
         $this->validator->_set('supportedOptions', [
@@ -39,15 +38,15 @@ class AbstractValidatorTest extends UnitTestCase
     {
         $this->validator->__construct(['thirdPlaceHolder' => 'dummy']);
 
-        self::assertInstanceOf(AbstractValidator::class, $this->validator);
+        $this->assertInstanceOf(AbstractValidator::class, $this->validator);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Validation\Exception\InvalidValidationOptionsException
      */
     public function abstractValidatorConstructWithoutRequiredOptionShouldFail()
     {
-        $this->expectException(InvalidValidationOptionsException::class);
         $this->validator->__construct([]);
     }
 }

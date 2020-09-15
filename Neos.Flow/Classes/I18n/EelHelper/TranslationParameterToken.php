@@ -12,8 +12,6 @@ namespace Neos\Flow\I18n\EelHelper;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
-use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;
@@ -162,20 +160,18 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
      *
      * @param array $overrides An associative array to override the collected parameters
      * @return string
-     * @throws IndexOutOfBoundsException
-     * @throws InvalidFormatPlaceholderException
      */
     public function translate(array $overrides = [])
     {
         array_replace_recursive($this->parameters, $overrides);
 
-        $id = $this->parameters['id'] ?? null;
-        $value = $this->parameters['value'] ?? '';
-        $arguments = $this->parameters['arguments'] ?? [];
-        $source = $this->parameters['source'] ?? 'Main';
-        $package = $this->parameters['package'] ?? '';
-        $quantity = $this->parameters['quantity'] ?? null;
-        $locale = $this->parameters['locale'] ?? null;
+        $id = isset($this->parameters['id']) ? $this->parameters['id'] : null;
+        $value = isset($this->parameters['value']) ? $this->parameters['value'] : null;
+        $arguments = isset($this->parameters['arguments']) ? $this->parameters['arguments'] : [];
+        $source = isset($this->parameters['source']) ? $this->parameters['source'] : 'Main';
+        $package = isset($this->parameters['package']) ? $this->parameters['package'] : null;
+        $quantity = isset($this->parameters['quantity']) ? $this->parameters['quantity'] : null;
+        $locale = isset($this->parameters['locale']) ? $this->parameters['locale'] : null;
 
         if ($id === null) {
             return $this->translator->translateByOriginalLabel($value, $arguments, $quantity, $locale, $source, $package);

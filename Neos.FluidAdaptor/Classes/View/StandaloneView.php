@@ -11,10 +11,10 @@ namespace Neos\FluidAdaptor\View;
  * source code.
  */
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
@@ -45,10 +45,28 @@ class StandaloneView extends AbstractTemplateView
     protected $templatePathAndFilename = null;
 
     /**
+     * absolute root path of the folder that contains Fluid layouts
+     * @var string
+     */
+    protected $layoutRootPath = null;
+
+    /**
+     * absolute root path of the folder that contains Fluid partials
+     * @var string
+     */
+    protected $partialRootPath = null;
+
+    /**
      * @var \Neos\Flow\Utility\Environment
      * @Flow\Inject
      */
     protected $environment;
+
+    /**
+     * @var \Neos\Flow\Mvc\FlashMessageContainer
+     * @Flow\Inject
+     */
+    protected $flashMessageContainer;
 
     /**
      * @var ActionRequest
@@ -95,10 +113,10 @@ class StandaloneView extends AbstractTemplateView
         if ($this->request === null) {
             $requestHandler = $this->bootstrap->getActiveRequestHandler();
             if ($requestHandler instanceof HttpRequestHandlerInterface) {
-                $this->request = ActionRequest::fromHttpRequest($requestHandler->getHttpRequest());
+                $this->request = new ActionRequest($requestHandler->getHttpRequest());
             } else {
-                $httpRequest = ServerRequest::fromGlobals();
-                $this->request = ActionRequest::fromHttpRequest($httpRequest);
+                $httpRequest = Request::createFromEnvironment();
+                $this->request = new ActionRequest($httpRequest);
             }
         }
 

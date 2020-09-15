@@ -39,7 +39,7 @@ class ArgumentTest extends UnitTestCase
 
     /**
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $this->simpleValueArgument = new Mvc\Controller\Argument('someName', 'string');
         $this->objectArgument = new Mvc\Controller\Argument('someName', 'DateTime');
@@ -56,19 +56,19 @@ class ArgumentTest extends UnitTestCase
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function constructingArgumentWithoutNameThrowsException()
     {
-        $this->expectException(\InvalidArgumentException::class);
         new Mvc\Controller\Argument('', 'Text');
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function constructingArgumentWithInvalidNameThrowsException()
     {
-        $this->expectException(\TypeError::class);
         new Mvc\Controller\Argument(new \ArrayObject(), 'Text');
     }
 
@@ -77,8 +77,8 @@ class ArgumentTest extends UnitTestCase
      */
     public function passingDataTypeToConstructorReallySetsTheDataType()
     {
-        self::assertEquals('string', $this->simpleValueArgument->getDataType(), 'The specified data type has not been set correctly.');
-        self::assertEquals('someName', $this->simpleValueArgument->getName(), 'The specified name has not been set correctly.');
+        $this->assertEquals('string', $this->simpleValueArgument->getDataType(), 'The specified data type has not been set correctly.');
+        $this->assertEquals('someName', $this->simpleValueArgument->getName(), 'The specified name has not been set correctly.');
     }
 
     /**
@@ -87,8 +87,8 @@ class ArgumentTest extends UnitTestCase
     public function setRequiredShouldProvideFluentInterfaceAndReallySetRequiredState()
     {
         $returnedArgument = $this->simpleValueArgument->setRequired(true);
-        self::assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-        self::assertTrue($this->simpleValueArgument->isRequired());
+        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+        $this->assertTrue($this->simpleValueArgument->isRequired());
     }
 
     /**
@@ -97,8 +97,8 @@ class ArgumentTest extends UnitTestCase
     public function setDefaultValueShouldProvideFluentInterfaceAndReallySetDefaultValue()
     {
         $returnedArgument = $this->simpleValueArgument->setDefaultValue('default');
-        self::assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-        self::assertSame('default', $this->simpleValueArgument->getDefaultValue());
+        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+        $this->assertSame('default', $this->simpleValueArgument->getDefaultValue());
     }
 
     /**
@@ -108,8 +108,8 @@ class ArgumentTest extends UnitTestCase
     {
         $mockValidator = $this->createMock(ValidatorInterface::class);
         $returnedArgument = $this->simpleValueArgument->setValidator($mockValidator);
-        self::assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-        self::assertSame($mockValidator, $this->simpleValueArgument->getValidator());
+        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+        $this->assertSame($mockValidator, $this->simpleValueArgument->getValidator());
     }
 
     /**
@@ -118,7 +118,7 @@ class ArgumentTest extends UnitTestCase
     public function setValueProvidesFluentInterface()
     {
         $returnedArgument = $this->simpleValueArgument->setValue(null);
-        self::assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
     }
 
 
@@ -129,7 +129,7 @@ class ArgumentTest extends UnitTestCase
     {
         $this->simpleValueArgument = new Mvc\Controller\Argument('dummy', 'string');
         $this->simpleValueArgument->setValue(null);
-        self::assertNull($this->simpleValueArgument->getValue());
+        $this->assertNull($this->simpleValueArgument->getValue());
     }
 
     /**
@@ -137,14 +137,14 @@ class ArgumentTest extends UnitTestCase
      */
     public function setValueUsesMatchingInstanceAsIs()
     {
-        $this->mockPropertyMapper->expects(self::never())->method('convert');
+        $this->mockPropertyMapper->expects($this->never())->method('convert');
         $this->objectArgument->setValue(new \DateTime());
     }
 
     protected function setupPropertyMapperAndSetValue()
     {
-        $this->mockPropertyMapper->expects(self::once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->will(self::returnValue('convertedValue'));
-        $this->mockPropertyMapper->expects(self::once())->method('getMessages')->will(self::returnValue(new FLowError\Result()));
+        $this->mockPropertyMapper->expects($this->once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->will($this->returnValue('convertedValue'));
+        $this->mockPropertyMapper->expects($this->once())->method('getMessages')->will($this->returnValue(new FLowError\Result()));
         return $this->simpleValueArgument->setValue('someRawValue');
     }
 
@@ -154,7 +154,7 @@ class ArgumentTest extends UnitTestCase
     public function setValueShouldCallPropertyMapperCorrectlyAndStoreResultInValue()
     {
         $this->setupPropertyMapperAndSetValue();
-        self::assertSame('convertedValue', $this->simpleValueArgument->getValue());
+        $this->assertSame('convertedValue', $this->simpleValueArgument->getValue());
     }
 
     /**
@@ -162,7 +162,7 @@ class ArgumentTest extends UnitTestCase
      */
     public function setValueShouldBeFluentInterface()
     {
-        self::assertSame($this->simpleValueArgument, $this->setupPropertyMapperAndSetValue());
+        $this->assertSame($this->simpleValueArgument, $this->setupPropertyMapperAndSetValue());
     }
 
     /**
@@ -175,11 +175,11 @@ class ArgumentTest extends UnitTestCase
         $mockValidator = $this->createMock(ValidatorInterface::class);
         $validationMessages = new FLowError\Result();
         $validationMessages->addError($error);
-        $mockValidator->expects(self::once())->method('validate')->with('convertedValue')->will(self::returnValue($validationMessages));
+        $mockValidator->expects($this->once())->method('validate')->with('convertedValue')->will($this->returnValue($validationMessages));
 
         $this->simpleValueArgument->setValidator($mockValidator);
         $this->setupPropertyMapperAndSetValue();
-        self::assertEquals([$error], $this->simpleValueArgument->getValidationResults()->getErrors());
+        $this->assertEquals([$error], $this->simpleValueArgument->getValidationResults()->getErrors());
     }
 
     /**
@@ -187,7 +187,7 @@ class ArgumentTest extends UnitTestCase
      */
     public function defaultPropertyMappingConfigurationDoesNotAllowCreationOrModificationOfObjects()
     {
-        self::assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-        self::assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+        $this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        $this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
     }
 }

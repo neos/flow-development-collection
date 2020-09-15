@@ -89,7 +89,7 @@ class MvcPropertyMappingConfigurationService
             }
         }
         if ($fieldNamePrefix !== '') {
-            $formFieldArray = $formFieldArray[$fieldNamePrefix] ?? [];
+            $formFieldArray = (isset($formFieldArray[$fieldNamePrefix]) ? $formFieldArray[$fieldNamePrefix] : []);
         }
         return $this->serializeAndHashFormFieldArray($formFieldArray);
     }

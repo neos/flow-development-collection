@@ -24,7 +24,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
      */
     protected $result;
 
-    protected function setUp(): void
+    public function setUp()
     {
         $this->result = new Result();
     }
@@ -54,7 +54,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
         $this->result->$addMethodName($message);
 
         $getterMethodName = 'get' . $dataTypeInPlural;
-        self::assertEquals([$message], $this->result->$getterMethodName());
+        $this->assertEquals([$message], $this->result->$getterMethodName());
     }
 
     /**
@@ -68,7 +68,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
         $this->result->forProperty('foo')->$addMethodName($message);
 
         $getterMethodName = 'get' . $dataTypeInPlural;
-        self::assertEquals([], $this->result->$getterMethodName());
+        $this->assertEquals([], $this->result->$getterMethodName());
     }
 
     /**
@@ -84,7 +84,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
         $this->result->$addMethodName($message2);
 
         $getterMethodName = 'getFirst' . $dataTypeInSingular;
-        self::assertSame($message1, $this->result->$getterMethodName());
+        $this->assertSame($message1, $this->result->$getterMethodName());
     }
 
     /**
@@ -93,8 +93,8 @@ class ResultTest extends \PHPUnit\Framework\TestCase
     public function forPropertyShouldReturnSubResult()
     {
         $container2 = $this->result->forProperty('foo.bar');
-        self::assertInstanceOf(Result::class, $container2);
-        self::assertSame($container2, $this->result->forProperty('foo')->forProperty('bar'));
+        $this->assertInstanceOf(Result::class, $container2);
+        $this->assertSame($container2, $this->result->forProperty('foo')->forProperty('bar'));
     }
 
     /**
@@ -103,7 +103,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
     public function forPropertyWithEmptyStringShouldReturnSelf()
     {
         $container2 = $this->result->forProperty('');
-        self::assertSame($container2, $this->result);
+        $this->assertSame($container2, $this->result);
     }
 
     /**
@@ -112,7 +112,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
     public function forPropertyWithNullShouldReturnSelf()
     {
         $container2 = $this->result->forProperty(null);
-        self::assertSame($container2, $this->result);
+        $this->assertSame($container2, $this->result);
     }
 
     /**
@@ -126,7 +126,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
         $this->result->$addMethodName($message);
 
         $methodName = 'has' . $dataTypeInPlural;
-        self::assertTrue($this->result->$methodName());
+        $this->assertTrue($this->result->$methodName());
     }
 
     /**
@@ -140,7 +140,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
 
         $message = $this->getMockMessage($dataTypeInSingular);
         $this->result->forProperty('foo.bar')->$addMethodName($message);
-        self::assertTrue($this->result->$methodName());
+        $this->assertTrue($this->result->$methodName());
     }
 
     /**
@@ -153,7 +153,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
 
         $this->result->forProperty('foo.baz');
         $this->result->forProperty('foo.bar');
-        self::assertFalse($this->result->$methodName());
+        $this->assertFalse($this->result->$methodName());
     }
 
     /**
@@ -183,7 +183,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
             'foo.baz' => [$message2]
 
         ];
-        self::assertEquals($expected, $this->result->$getMethodName());
+        $this->assertEquals($expected, $this->result->$getMethodName());
     }
 
     /**
@@ -205,7 +205,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
             'foo.baz' => [$message2]
 
         ];
-        self::assertEquals($expected, $this->result->$getMethodName());
+        $this->assertEquals($expected, $this->result->$getMethodName());
     }
 
     /**
@@ -239,13 +239,13 @@ class ResultTest extends \PHPUnit\Framework\TestCase
 
         $this->result->merge($otherResult);
 
-        self::assertSame([$notice1], $this->result->getNotices(), 'Notices are not merged correctly without recursion');
-        self::assertSame([$notice3], $this->result->forProperty('foo')->getNotices(), 'Original sub-notices are overridden.');
-        self::assertSame([$notice2], $this->result->forProperty('foo')->forProperty('bar')->getNotices(), 'Sub-notices are not copied.');
+        $this->assertSame([$notice1], $this->result->getNotices(), 'Notices are not merged correctly without recursion');
+        $this->assertSame([$notice3], $this->result->forProperty('foo')->getNotices(), 'Original sub-notices are overridden.');
+        $this->assertSame([$notice2], $this->result->forProperty('foo')->forProperty('bar')->getNotices(), 'Sub-notices are not copied.');
 
-        self::assertSame([$warning2, $warning3, $warning1], $this->result->getWarnings());
+        $this->assertSame([$warning2, $warning3, $warning1], $this->result->getWarnings());
 
-        self::assertSame([$error3], $this->result->getErrors());
-        self::assertSame([$error1, $error2], $this->result->forProperty('foo')->getErrors());
+        $this->assertSame([$error3], $this->result->getErrors());
+        $this->assertSame([$error1, $error2], $this->result->forProperty('foo')->getErrors());
     }
 }

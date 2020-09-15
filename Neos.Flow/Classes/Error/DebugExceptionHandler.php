@@ -136,8 +136,7 @@ EOD;
         $footer .= '</tbody></table>';
         $footer .= '</div>';
 
-        echo sprintf(
-            $this->htmlExceptionTemplate,
+        echo sprintf($this->htmlExceptionTemplate,
             $statusCode . ' ' . $statusMessage,
             file_get_contents(__DIR__ . '/../../Resources/Public/Error/Exception.css'),
             $exceptionHeader,

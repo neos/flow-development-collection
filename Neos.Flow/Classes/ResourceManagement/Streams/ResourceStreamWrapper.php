@@ -12,12 +12,13 @@ namespace Neos\Flow\ResourceManagement\Streams;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Psr\Http\Message\UriInterface;
+use Neos\Flow\Http\Uri;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Exception as ResourceException;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Utility\Files;
+use Neos\Utility\Unicode\Functions;
 
 /**
  * A stream wrapper for resources.
@@ -40,7 +41,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
     protected $handle;
 
     /**
-     * @var UriInterface
+     * @var Uri
      */
     protected $uri;
 

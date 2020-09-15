@@ -26,8 +26,8 @@ class ObjectManagerTest extends FunctionalTestCase
         $objectByInterface = $this->objectManager->get(Fixtures\InterfaceA::class);
         $objectByClassName = $this->objectManager->get(Fixtures\InterfaceAImplementation::class);
 
-        self::assertInstanceOf(Fixtures\InterfaceAImplementation::class, $objectByInterface);
-        self::assertInstanceOf(Fixtures\InterfaceAImplementation::class, $objectByClassName);
+        $this->assertInstanceOf(Fixtures\InterfaceAImplementation::class, $objectByInterface);
+        $this->assertInstanceOf(Fixtures\InterfaceAImplementation::class, $objectByClassName);
     }
 
     /**
@@ -38,7 +38,7 @@ class ObjectManagerTest extends FunctionalTestCase
         $instanceA = new Fixtures\PrototypeClassB();
         $instanceB = new Fixtures\PrototypeClassB();
 
-        self::assertNotSame($instanceA, $instanceB);
+        $this->assertNotSame($instanceA, $instanceB);
     }
 
     /**
@@ -49,7 +49,7 @@ class ObjectManagerTest extends FunctionalTestCase
         $objectByInterface = $this->objectManager->get(Fixtures\InterfaceA::class);
         $objectByClassName = $this->objectManager->get(Fixtures\InterfaceAImplementation::class);
 
-        self::assertSame($objectByInterface, $objectByClassName);
+        $this->assertSame($objectByInterface, $objectByClassName);
     }
 
     /**
@@ -66,20 +66,17 @@ class ObjectManagerTest extends FunctionalTestCase
          */
         \Neos\Flow\Core\Bootstrap::$staticObjectManager->shutdown();
 
-        self::assertTrue($entity->isDestructed());
+        $this->assertTrue($entity->isDestructed());
     }
 
     /**
+     * XXX: Remove this with Flow 6.0
      * @test
      */
-    public function virtualObjectsCanBeInstantiated()
+    public function deprecatedDoctrineObjectManagerInjectsSameInstanceAsEntityManagerInterface()
     {
-        /** @var Fixtures\Flow175\OuterPrototype $object1 */
-        $object1 = $this->objectManager->get('Neos.Flow:VirtualObject1');
-        /** @var Fixtures\Flow175\OuterPrototype $object2 */
-        $object2 = $this->objectManager->get('Neos.Flow:VirtualObject2');
+        $classWithInjections = $this->objectManager->get(Fixtures\ClassWithDoctrineInjections::class);
 
-        self::assertSame('Hello Bastian!', $object1->getInner()->greet('Bastian'));
-        self::assertSame('Hello Bastian from a different greeter!', $object2->getInner()->greet('Bastian'));
+        $this->assertSame($classWithInjections->entityManager, $classWithInjections->objectManager);
     }
 }

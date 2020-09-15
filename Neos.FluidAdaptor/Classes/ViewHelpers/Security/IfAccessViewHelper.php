@@ -101,11 +101,11 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
         /** @var Context $securityContext */
         $securityContext = $objectManager->get(Context::class);
 
-        if ($securityContext !== null && !$securityContext->canBeInitialized()) {
+        if ($securityContext != null && !$securityContext->canBeInitialized()) {
             return false;
         }
         $privilegeManager = static::getPrivilegeManager($renderingContext);
-        return $privilegeManager->isPrivilegeTargetGranted($arguments['privilegeTarget'], $arguments['parameters'] ?? []);
+        return $privilegeManager->isPrivilegeTargetGranted($arguments['privilegeTarget'], $arguments['parameters']);
     }
 
     /**

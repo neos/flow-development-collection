@@ -33,7 +33,7 @@ class UniqueEntityValidatorTest extends \Neos\Flow\Tests\FunctionalTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof \Neos\Flow\Persistence\Doctrine\PersistenceManager) {
@@ -57,11 +57,11 @@ class UniqueEntityValidatorTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $differentPost = new Post();
         $differentPost->setTitle('A different title');
-        self::assertFalse($validator->validate($differentPost)->hasErrors());
+        $this->assertFalse($validator->validate($differentPost)->hasErrors());
 
         $nextPost = new Post();
         $nextPost->setTitle('The title of the initial post');
-        self::assertTrue($validator->validate($nextPost)->hasErrors());
+        $this->assertTrue($validator->validate($nextPost)->hasErrors());
     }
 
     /**
@@ -81,16 +81,16 @@ class UniqueEntityValidatorTest extends \Neos\Flow\Tests\FunctionalTestCase
         $richardsOtherBook = new AnnotatedIdentitiesEntity();
         $richardsOtherBook->setTitle('The Plague Dogs');
         $richardsOtherBook->setAuthor('Richard Adams');
-        self::assertFalse($validator->validate($richardsOtherBook)->hasErrors());
+        $this->assertFalse($validator->validate($richardsOtherBook)->hasErrors());
 
         $otherWatershipDown = new AnnotatedIdentitiesEntity();
         $otherWatershipDown->setTitle('Watership Down');
         $otherWatershipDown->setAuthor('Martin Rosen');
-        self::assertFalse($validator->validate($otherWatershipDown)->hasErrors());
+        $this->assertFalse($validator->validate($otherWatershipDown)->hasErrors());
 
         $sameWatershipDown = new AnnotatedIdentitiesEntity();
         $sameWatershipDown->setTitle('Watership Down');
         $sameWatershipDown->setAuthor('Richard Adams');
-        self::assertTrue($validator->validate($sameWatershipDown)->hasErrors());
+        $this->assertTrue($validator->validate($sameWatershipDown)->hasErrors());
     }
 }

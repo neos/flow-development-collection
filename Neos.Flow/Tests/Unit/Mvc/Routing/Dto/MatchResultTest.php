@@ -27,7 +27,7 @@ class MatchResultTest extends UnitTestCase
     {
         $matchedValue = new \stdClass();
         $matchResult = new MatchResult($matchedValue);
-        self::assertSame($matchedValue, $matchResult->getMatchedValue());
+        $this->assertSame($matchedValue, $matchResult->getMatchedValue());
     }
 
     /**
@@ -36,7 +36,7 @@ class MatchResultTest extends UnitTestCase
     public function hasTagsIsFalseByDefault()
     {
         $matchResult = new MatchResult('matchedValue');
-        self::assertFalse($matchResult->hasTags());
+        $this->assertFalse($matchResult->hasTags());
     }
 
     /**
@@ -46,7 +46,7 @@ class MatchResultTest extends UnitTestCase
     {
         $tags = RouteTags::createEmpty();
         $matchResult = new MatchResult('matchedValue', $tags);
-        self::assertTrue($matchResult->hasTags());
+        $this->assertTrue($matchResult->hasTags());
     }
 
     /**
@@ -55,7 +55,7 @@ class MatchResultTest extends UnitTestCase
     public function getTagsReturnsNullByDefault()
     {
         $matchResult = new MatchResult('matchedValue');
-        self::assertNull($matchResult->getTags());
+        $this->assertNull($matchResult->getTags());
     }
 
     /**
@@ -65,6 +65,6 @@ class MatchResultTest extends UnitTestCase
     {
         $tags = RouteTags::createEmpty()->withTag('foo');
         $matchResult = new MatchResult('matchedValue', $tags);
-        self::assertSame($tags, $matchResult->getTags());
+        $this->assertSame($tags, $matchResult->getTags());
     }
 }

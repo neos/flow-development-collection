@@ -38,7 +38,7 @@ class AggregateTest extends FunctionalTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -63,12 +63,12 @@ class AggregateTest extends FunctionalTestCase
         $imageIdentifier = $this->persistenceManager->getIdentifierByObject($image);
 
         $retrievedImage = $this->persistenceManager->getObjectByIdentifier($imageIdentifier, Fixtures\Image::class);
-        self::assertSame($image, $retrievedImage);
+        $this->assertSame($image, $retrievedImage);
 
         $this->postRepository->remove($post);
         $this->persistenceManager->persistAll();
 
-        self::assertTrue($this->persistenceManager->isNewObject($retrievedImage));
+        $this->assertTrue($this->persistenceManager->isNewObject($retrievedImage));
     }
 
     /**
@@ -88,13 +88,13 @@ class AggregateTest extends FunctionalTestCase
         $commentIdentifier = $this->persistenceManager->getIdentifierByObject($comment);
 
         $retrievedComment = $this->persistenceManager->getObjectByIdentifier($commentIdentifier, Fixtures\Comment::class);
-        self::assertSame($comment, $retrievedComment);
+        $this->assertSame($comment, $retrievedComment);
 
         $this->postRepository->remove($post);
         $this->persistenceManager->persistAll();
 
         $retrievedComment = $this->persistenceManager->getObjectByIdentifier($commentIdentifier, Fixtures\Comment::class);
-        self::assertSame($comment, $retrievedComment);
+        $this->assertSame($comment, $retrievedComment);
     }
 
     /**
@@ -118,44 +118,6 @@ class AggregateTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         // if all goes well the value object is not deleted
-        self::assertTrue(true);
-    }
-
-    /**
-     * @test
-     */
-    public function unidirectionalOneToManyRelationsAreMapped()
-    {
-        $tag1 = new Fixtures\Tag('Tag1');
-        $tag2 = new Fixtures\Tag('Tag2');
-        $post = new Fixtures\Post();
-        $post->addTag($tag1);
-        $post->addTag($tag2);
-
-        $this->postRepository->add($post);
-        $this->persistenceManager->persistAll();
-
-        $postIdentifier = $this->persistenceManager->getIdentifierByObject($post);
-        $tag1identifier = $this->persistenceManager->getIdentifierByObject($tag1);
-        $tag2identifier = $this->persistenceManager->getIdentifierByObject($tag2);
-
-        $retrievedTag1 = $this->persistenceManager->getObjectByIdentifier($tag1identifier, Fixtures\Tag::class);
-        self::assertSame($tag1, $retrievedTag1, 'Tag not persisted');
-
-        $post->removeTag($tag2);
-        $this->postRepository->update($post);
-        $this->persistenceManager->persistAll();
-        $this->persistenceManager->clearState();
-
-        $retrievedTag2 = $this->persistenceManager->getObjectByIdentifier($tag2identifier, Fixtures\Tag::class);
-        self::assertTrue($retrievedTag2 === null, 'Tag not deleted');
-
-        $post = $this->postRepository->find($postIdentifier);
-        $this->postRepository->remove($post);
-        $this->persistenceManager->persistAll();
-        $this->persistenceManager->clearState();
-
-        $retrievedTag1 = $this->persistenceManager->getObjectByIdentifier($tag1identifier, Fixtures\Tag::class);
-        self::assertTrue($retrievedTag1 === null, 'Tag not orphan removed');
+        $this->assertTrue(true);
     }
 }

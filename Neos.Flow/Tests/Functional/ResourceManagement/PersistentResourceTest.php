@@ -33,7 +33,7 @@ class PersistentResourceTest extends FunctionalTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -48,6 +48,6 @@ class PersistentResourceTest extends FunctionalTestCase
     public function fileGetContentsReturnFixtureContentForResourceUri()
     {
         $resource = $this->resourceManager->importResourceFromContent('fixture', 'fixture.txt');
-        self::assertEquals('fixture', file_get_contents('resource://' . $resource->getSha1()));
+        $this->assertEquals('fixture', file_get_contents('resource://' . $resource->getSha1()));
     }
 }

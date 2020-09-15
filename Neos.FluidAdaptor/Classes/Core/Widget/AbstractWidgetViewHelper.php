@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\Core\Widget;
  * source code.
  */
 
+use Neos\Flow\Http\Response;
+use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
@@ -190,7 +192,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     /**
      * Initiate a sub request to $this->controller. Make sure to fill $this->controller
      * via Dependency Injection.
-     * @return string the response content of this request.
+     * @return Response the response of this request.
      * @throws Exception\InvalidControllerException
      * @throws Exception\MissingControllerException
      * @throws InfiniteLoopException
@@ -207,21 +209,20 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         }
 
         /** @var $subRequest ActionRequest */
-        $subRequest = $this->controllerContext->getRequest()->createSubRequest();
+        $subRequest = $this->objectManager->get(ActionRequest::class, $this->controllerContext->getRequest());
+
+        // TODO: For next major with the PSR-7 / ActionResponse rework this must be re-evaluated and adjusted.
+        $subResponse = new ActionResponse($this->controllerContext->getResponse());
 
         $this->passArgumentsToSubRequest($subRequest);
         $subRequest->setArgument('__widgetContext', $this->widgetContext);
         $subRequest->setArgumentNamespace('--' . $this->widgetContext->getWidgetIdentifier());
 
         $dispatchLoopCount = 0;
-        $subResponse = new ActionResponse();
-        $content = '';
         while (!$subRequest->isDispatched()) {
             if ($dispatchLoopCount++ > 99) {
-                throw new InfiniteLoopException('Could not ultimately dispatch the widget request after ' . $dispatchLoopCount . ' iterations.', 1380282310);
+                throw new InfiniteLoopException('Could not ultimately dispatch the widget request after '  . $dispatchLoopCount . ' iterations.', 1380282310);
             }
-            $subResponse = new ActionResponse();
-
             $widgetControllerObjectName = $this->widgetContext->getControllerObjectName();
             if ($subRequest->getControllerObjectName() !== '' && $subRequest->getControllerObjectName() !== $widgetControllerObjectName) {
                 throw new Exception\InvalidControllerException(sprintf('You are not allowed to initiate requests to different controllers from a widget.' . chr(10) . 'widget controller: "%s", requested controller: "%s".', $widgetControllerObjectName, $subRequest->getControllerObjectName()), 1380284579);
@@ -229,22 +230,28 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             $subRequest->setControllerObjectName($this->widgetContext->getControllerObjectName());
             try {
                 $this->controller->processRequest($subRequest, $subResponse);
-
-                // We need to make sure to not merge content up into the parent ActionResponse because that _could_ break the parent response.
-                $content = $subResponse->getContent();
-                $subResponse->setContent('');
             } catch (StopActionException $exception) {
                 if ($exception instanceof ForwardException) {
                     $subRequest = $exception->getNextRequest();
                     continue;
                 }
-                $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
+
+                /** @var $parentResponse ActionResponse */
+                $parentResponse = $this->controllerContext->getResponse();
+                $parentResponse->setContent($subResponse->getContent());
+                $parentResponse->setStatusCode($subResponse->getStatusCode());
+                try {
+                    // TODO: With next major this part should just apply the sub (action) response to the parent (action) response
+                    $redirectUri = new Uri($subResponse->getHeader('Location'));
+                    $parentResponse->setRedirectUri($redirectUri, $subResponse->getStatusCode());
+                } catch (\InvalidArgumentException $innerException) {
+                    // FIXME: What do we do in this case? (probably nothing because there might not have been a location header).
+                }
+
                 throw $exception;
             }
-            $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
         }
-
-        return $content;
+        return $subResponse;
     }
 
     /**
@@ -266,7 +273,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             }
             $subRequest->setArguments($arguments[$widgetIdentifier]);
         }
-        if ($subRequest->getControllerActionName() === '') {
+        if ($subRequest->getControllerActionName() === null) {
             $subRequest->setControllerActionName($controllerActionName);
         }
     }

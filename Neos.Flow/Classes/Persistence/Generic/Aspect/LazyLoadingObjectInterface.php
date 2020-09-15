@@ -14,7 +14,6 @@ namespace Neos\Flow\Persistence\Generic\Aspect;
 /**
  * An interface used to introduce certain methods to support lazy loading objects
  *
- * @deprecated since Flow 6.0
  */
 interface LazyLoadingObjectInterface
 {

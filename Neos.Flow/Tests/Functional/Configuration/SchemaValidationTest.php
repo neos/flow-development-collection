@@ -50,7 +50,7 @@ class SchemaValidationTest extends FunctionalTestCase
      */
     protected $schemaValidator;
 
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         $this->schemaValidator = new SchemaValidator();
@@ -100,6 +100,6 @@ class SchemaValidationTest extends FunctionalTestCase
         $hasErrors = $result->hasErrors();
 
         $message = sprintf('Schema-file "%s" is not valid: %s', $schemaFile, $result->getFirstError());
-        self::assertFalse($hasErrors, $message);
+        $this->assertFalse($hasErrors, $message);
     }
 }

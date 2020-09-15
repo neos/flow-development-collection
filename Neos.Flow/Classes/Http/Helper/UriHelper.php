@@ -19,23 +19,6 @@ use Psr\Http\Message\UriInterface;
 abstract class UriHelper
 {
     /**
-     * @var array
-     */
-    private static $defaultPortsByScheme = [
-        'http' => 80,
-        'https' => 443,
-        'ftp' => 21,
-        'gopher' => 70,
-        'nntp' => 119,
-        'news' => 119,
-        'telnet' => 23,
-        'tn3270' => 23,
-        'imap' => 143,
-        'pop' => 110,
-        'ldap' => 389,
-    ];
-
-    /**
      * Get the username component of the given Uri
      *
      * @param UriInterface $uri
@@ -69,14 +52,13 @@ abstract class UriHelper
      */
     public static function getRelativePath(UriInterface $baseUri, UriInterface $uri): string
     {
-        $baseUriString = (string)$baseUri;
-        $uriString = (string)$uri;
-        if (empty($baseUriString) || strpos($uriString, $baseUriString) !== 0) {
+        // FIXME: We should probably do a strpos === 0 instead to make sure the baseUri actually matches the start of the Uri.
+        $baseUriLength = strlen($baseUri->getPath());
+        if ($baseUriLength >= strlen($uri->getPath())) {
             return '';
         }
 
-        $baseUriPath = $baseUri->getPath();
-        return substr_replace($uri->getPath(), '', 0, strlen($baseUriPath));
+        return substr($uri->getPath(), $baseUriLength);
     }
 
     /**
@@ -103,14 +85,5 @@ abstract class UriHelper
     {
         $query = http_build_query($arguments, '', '&', PHP_QUERY_RFC3986);
         return $uri->withQuery($query);
-    }
-
-    /**
-     * @param string $scheme
-     * @return int|null
-     */
-    public static function getDefaultPortForScheme(string $scheme): ?int
-    {
-        return self::$defaultPortsByScheme[strtolower($scheme)] ?? null;
     }
 }

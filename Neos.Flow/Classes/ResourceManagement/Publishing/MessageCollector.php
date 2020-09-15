@@ -66,12 +66,12 @@ class MessageCollector
     /**
      * @param string $message The message to log
      * @param string $severity An integer value, one of the Error::SEVERITY_* constants
-     * @param integer|null $code A unique error code
+     * @param integer $code A unique error code
      * @return void
      * @throws Exception
      * @api
      */
-    public function append(string $message, string $severity = Error::SEVERITY_ERROR, ?int $code = null): void
+    public function append($message, $severity = Error::SEVERITY_ERROR, $code = null)
     {
         switch ($severity) {
             case Error::SEVERITY_ERROR:
@@ -96,7 +96,7 @@ class MessageCollector
      * @return boolean
      * @api
      */
-    public function hasMessages(): bool
+    public function hasMessages()
     {
         return $this->messages->count() > 0;
     }
@@ -106,7 +106,7 @@ class MessageCollector
      * @return void
      * @api
      */
-    public function flush(callable $callback = null): void
+    public function flush(callable $callback = null)
     {
         foreach ($this->messages as $message) {
             /** @var Message $message */

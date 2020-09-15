@@ -360,6 +360,6 @@ class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $orderResolver = new PackageOrderResolver($packages, $packages);
         $sortedPackages = $orderResolver->sort();
-        self::assertEquals($expectedPackageOrder, array_keys($sortedPackages), 'The packages have not been ordered according to their require!');
+        $this->assertEquals($expectedPackageOrder, array_keys($sortedPackages), 'The packages have not been ordered according to their require!');
     }
 }

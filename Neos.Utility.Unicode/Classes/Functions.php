@@ -196,7 +196,7 @@ abstract class Functions
         }
 
         foreach ($components as &$currentComponent) {
-            $currentComponent = urldecode((string)$currentComponent);
+            $currentComponent = urldecode($currentComponent);
         }
 
         // the host and port must be used as is, to allow IPv6 syntax, e.g.: [3b00:f59:1008::212:183:20]:8080
@@ -213,21 +213,21 @@ abstract class Functions
             case -1:
                 return $components;
             case PHP_URL_SCHEME:
-                return $components['scheme'] ?? null;
+                return $components['scheme'];
             case PHP_URL_HOST:
-                return $components['host'] ?? null;
+                return $components['host'];
             case PHP_URL_PORT:
-                return $components['port'] ?? null;
+                return $components['port'];
             case PHP_URL_USER:
-                return $components['user'] ?? null;
+                return $components['user'];
             case PHP_URL_PASS:
-                return $components['pass'] ?? null;
+                return $components['pass'];
             case PHP_URL_PATH:
-                return $components['path'] ?? null;
+                return $components['path'];
             case PHP_URL_QUERY:
-                return $components['query'] ?? null;
+                return $components['query'];
             case PHP_URL_FRAGMENT:
-                return $components['fragment'] ?? null;
+                return $components['fragment'];
             default:
                 throw new \InvalidArgumentException('Invalid component requested for URL parsing.', 1406280743);
         }

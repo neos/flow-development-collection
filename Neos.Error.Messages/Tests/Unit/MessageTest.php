@@ -26,7 +26,7 @@ class MessageTest extends \PHPUnit\Framework\TestCase
         $someMessage = 'The message';
         $someMessageCode = 12345;
         $message = new Message($someMessage, $someMessageCode);
-        self::assertEquals($someMessage, $message->getMessage());
+        $this->assertEquals($someMessage, $message->getMessage());
     }
 
     /**
@@ -37,7 +37,7 @@ class MessageTest extends \PHPUnit\Framework\TestCase
         $someArguments = ['Foo', 'Bar'];
         $someMessageCode = 12345;
         $message = new Message('', $someMessageCode, $someArguments);
-        self::assertEquals($someArguments, $message->getArguments());
+        $this->assertEquals($someArguments, $message->getArguments());
     }
 
     /**
@@ -48,7 +48,7 @@ class MessageTest extends \PHPUnit\Framework\TestCase
         $someMessage = 'The message';
         $someMessageCode = 12345;
         $message = new Message($someMessage, $someMessageCode);
-        self::assertEquals($someMessageCode, $message->getCode());
+        $this->assertEquals($someMessageCode, $message->getCode());
     }
 
     /**
@@ -59,7 +59,7 @@ class MessageTest extends \PHPUnit\Framework\TestCase
         $someMessage = 'The message';
         $someMessageCode = 12345;
         $message = new Message($someMessage, $someMessageCode);
-        self::assertEquals($someMessage, $message->render());
+        $this->assertEquals($someMessage, $message->render());
     }
 
     /**
@@ -74,7 +74,7 @@ class MessageTest extends \PHPUnit\Framework\TestCase
 
         $expectedResult = 'The message with Bar and Foo';
         $actualResult = $message->render();
-        self::assertEquals($expectedResult, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -89,6 +89,6 @@ class MessageTest extends \PHPUnit\Framework\TestCase
 
         $expectedResult = 'The message with Bar and Foo';
         $actualResult = (string)$message;
-        self::assertEquals($expectedResult, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
     }
 }

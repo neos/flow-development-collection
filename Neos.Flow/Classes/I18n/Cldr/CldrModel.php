@@ -100,10 +100,8 @@ class CldrModel
      * When it's called, CLDR file is parsed or cache is loaded, if available.
      *
      * @return void
-     * @throws Exception\InvalidCldrDataException
-     * @throws \Neos\Cache\Exception
      */
-    public function initializeObject(): void
+    public function initializeObject()
     {
         if ($this->cache->has($this->cacheKey)) {
             $this->parsedData = $this->cache->get($this->cacheKey);
@@ -132,7 +130,7 @@ class CldrModel
      * @return mixed Array or string of matching data, or false on failure
      * @see CldrParser
      */
-    public function getRawData(string $path)
+    public function getRawData($path)
     {
         if ($path === '/') {
             return $this->parsedData;
@@ -163,7 +161,7 @@ class CldrModel
      * @see CldrParser
      * @see CldrModel::getRawData()
      */
-    public function getRawArray(string $path)
+    public function getRawArray($path)
     {
         $data = $this->getRawData($path);
 
@@ -182,15 +180,15 @@ class CldrModel
      * @param string $path A path to the element to get
      * @return mixed String with desired element, or false on failure
      */
-    public function getElement(string $path)
+    public function getElement($path)
     {
         $data = $this->getRawData($path);
 
         if (is_array($data)) {
             return false;
+        } else {
+            return $data;
         }
-
-        return $data;
     }
 
     /**
@@ -200,7 +198,7 @@ class CldrModel
      * @param string $nodeName A name of the nodes to return
      * @return mixed String with desired element, or false on failure
      */
-    public function findNodesWithinPath(string $path, string $nodeName)
+    public function findNodesWithinPath($path, $nodeName)
     {
         $data = $this->getRawArray($path);
 
@@ -210,7 +208,7 @@ class CldrModel
 
         $filteredData = [];
         foreach ($data as $nodeString => $children) {
-            if (static::getNodeName($nodeString) === $nodeName) {
+            if ($this->getNodeName($nodeString) === $nodeName) {
                 $filteredData[$nodeString] = $children;
             }
         }
@@ -228,7 +226,7 @@ class CldrModel
      * @param string $nodeString String with node name and optional attribute(s)
      * @return string Name of the node
      */
-    public static function getNodeName(string $nodeString): string
+    public static function getNodeName($nodeString)
     {
         $positionOfFirstAttribute = strpos($nodeString, '[@');
 
@@ -257,7 +255,7 @@ class CldrModel
      * @param string $attributeName Name of the attribute to find
      * @return mixed Value of desired attribute, or false if there is no such attribute
      */
-    public static function getAttributeValue(string $nodeString, string $attributeName)
+    public static function getAttributeValue($nodeString, $attributeName)
     {
         $attributeName = '[@' . $attributeName . '="';
         $positionOfAttributeName = strpos($nodeString, $attributeName);
@@ -278,7 +276,7 @@ class CldrModel
      * @param array<string> $sourcePaths Absolute paths to CLDR files (can be one file)
      * @return array Parsed and merged data
      */
-    protected function parseFiles(array $sourcePaths): array
+    protected function parseFiles(array $sourcePaths)
     {
         $parsedFiles = [];
 
@@ -337,7 +335,7 @@ class CldrModel
      * @return mixed Modified (or unchanged) $data
      * @throws Exception\InvalidCldrDataException When found alias tag which has unexpected structure
      */
-    protected function resolveAliases($data, string $currentPath)
+    protected function resolveAliases($data, $currentPath)
     {
         if (!is_array($data)) {
             return $data;
@@ -356,15 +354,13 @@ class CldrModel
                 $sourcePath = str_replace('../', '', $sourcePath, $countOfJumpsToParentNode);
                 $sourcePath = str_replace('\'', '"', $sourcePath);
                 $currentPathNodeNames = explode('/', $currentPath);
-
                 for ($i = 0; $i < $countOfJumpsToParentNode; ++$i) {
                     unset($currentPathNodeNames[count($currentPathNodeNames) - 1]);
                 }
-
                 $sourcePath = implode('/', $currentPathNodeNames) . '/' . $sourcePath;
+
                 unset($data[$nodeString]);
                 $sourceData = $this->getRawData($sourcePath);
-
                 if (is_array($sourceData)) {
                     $data = array_merge($sourceData, $data);
                 }
@@ -373,6 +369,7 @@ class CldrModel
                 $data[$nodeString] = $this->resolveAliases($data[$nodeString], ($currentPath === '') ? $nodeString : ($currentPath . '/' . $nodeString));
             }
         }
+
         return $data;
     }
 }

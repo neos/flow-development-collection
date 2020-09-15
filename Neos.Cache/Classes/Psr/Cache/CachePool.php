@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Cache\Psr\Cache;
 
 /*
@@ -165,7 +163,6 @@ class CachePool implements CacheItemPoolInterface
      *
      * @param CacheItemInterface $item
      * @return bool
-     * @throws \Neos\Cache\Exception
      */
     public function save(CacheItemInterface $item)
     {
@@ -199,7 +196,6 @@ class CachePool implements CacheItemPoolInterface
      * Persists any deferred cache items.
      *
      * @return bool
-     * @throws \Neos\Cache\Exception
      */
     public function commit()
     {

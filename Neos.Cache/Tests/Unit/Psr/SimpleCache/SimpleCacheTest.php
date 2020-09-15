@@ -3,7 +3,6 @@ namespace Neos\Cache\Tests\Unit\Psr\SimpleCache;
 
 use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Exception;
-use Neos\Cache\Psr\InvalidArgumentException;
 use Neos\Cache\Psr\SimpleCache\SimpleCache;
 use Neos\Cache\Tests\BaseTestCase;
 
@@ -13,14 +12,14 @@ use Neos\Cache\Tests\BaseTestCase;
 class SimpleCacheTest extends BaseTestCase
 {
     /**
-     * @var BackendInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var BackendInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockBackend;
 
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $this->mockBackend = $this->getMockBuilder(BackendInterface::class)->getMock();
     }
@@ -36,29 +35,29 @@ class SimpleCacheTest extends BaseTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function constructingWithInvalidIdentifierThrowsPsrInvalidArgumentException()
     {
-        $this->expectException(InvalidArgumentException::class);
         $this->createSimpleCache('Invalid #*<>/()=?!');
     }
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function setThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
-        $this->expectException(InvalidArgumentException::class);
         $simpleCache = $this->createSimpleCache();
         $simpleCache->set('Invalid #*<>/()=?!', 'does not matter');
     }
 
     /**
      * @test
+     * @expectedException Exception
      */
     public function setThrowsExceptionOnBackendError()
     {
-        $this->expectException(Exception::class);
         $this->mockBackend->expects(self::any())->method('set')->willThrowException(new Exception\InvalidDataException('Some other exception', 1234));
         $simpleCache = $this->createSimpleCache();
         $simpleCache->set('validkey', 'valid data');
@@ -69,7 +68,7 @@ class SimpleCacheTest extends BaseTestCase
      */
     public function setWillSetInBackendAndReturnBackendResponse()
     {
-        $this->mockBackend->expects(self::any())->method('set');
+        $this->mockBackend->expects(self::any())->method('set')->willReturn(true);
         $simpleCache = $this->createSimpleCache();
         $result = $simpleCache->set('validkey', 'valid data');
         self::assertEquals(true, $result);
@@ -77,20 +76,20 @@ class SimpleCacheTest extends BaseTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function getThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
-        $this->expectException(InvalidArgumentException::class);
         $simpleCache = $this->createSimpleCache();
         $simpleCache->get('Invalid #*<>/()=?!', false);
     }
 
     /**
      * @test
+     * @expectedException Exception
      */
     public function getThrowsExceptionOnBackendError()
     {
-        $this->expectException(Exception::class);
         $this->mockBackend->expects(self::any())->method('get')->willThrowException(new Exception\InvalidDataException('Some other exception', 1234));
         $simpleCache = $this->createSimpleCache();
         $simpleCache->get('validkey', false);
@@ -123,20 +122,20 @@ class SimpleCacheTest extends BaseTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function deleteThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
-        $this->expectException(InvalidArgumentException::class);
         $simpleCache = $this->createSimpleCache();
         $simpleCache->delete('Invalid #*<>/()=?!');
     }
 
     /**
      * @test
+     * @expectedException Exception
      */
     public function deleteThrowsExceptionOnBackendError()
     {
-        $this->expectException(Exception::class);
         $this->mockBackend->expects(self::any())->method('remove')->willThrowException(new Exception\InvalidDataException('Some other exception', 1234));
         $simpleCache = $this->createSimpleCache();
         $simpleCache->delete('validkey');
@@ -144,10 +143,10 @@ class SimpleCacheTest extends BaseTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function getMultipleThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
-        $this->expectException(InvalidArgumentException::class);
         $simpleCache = $this->createSimpleCache();
         $simpleCache->getMultiple(['validKey', 'Invalid #*<>/()=?!']);
     }
@@ -182,10 +181,10 @@ class SimpleCacheTest extends BaseTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function setMultipleThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
-        $this->expectException(InvalidArgumentException::class);
         $simpleCache = $this->createSimpleCache();
         $simpleCache->setMultiple(['validKey' => 'value', 'Invalid #*<>/()=?!' => 'value']);
     }
@@ -209,20 +208,20 @@ class SimpleCacheTest extends BaseTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function deleteMultipleThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
-        $this->expectException(InvalidArgumentException::class);
         $simpleCache = $this->createSimpleCache();
         $simpleCache->deleteMultiple(['validKey', 'Invalid #*<>/()=?!']);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Psr\InvalidArgumentException
      */
     public function hasThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
-        $this->expectException(InvalidArgumentException::class);
         $simpleCache = $this->createSimpleCache();
         $simpleCache->has('Invalid #*<>/()=?!');
     }

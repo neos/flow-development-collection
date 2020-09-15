@@ -19,7 +19,6 @@ use Neos\Flow\Aop\JoinPointInterface;
  *
  * @Flow\Scope("singleton")
  * @Flow\Aspect
- * @deprecated since Flow 6.0
  */
 class LazyLoadingObjectAspect
 {

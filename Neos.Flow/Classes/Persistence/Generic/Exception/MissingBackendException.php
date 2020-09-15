@@ -15,7 +15,6 @@ namespace Neos\Flow\Persistence\Generic\Exception;
  * A "Missing Backend" exception
  *
  * @api
- * @deprecated since Flow 6.0
  */
 class MissingBackendException extends \Neos\Flow\Persistence\Exception
 {

@@ -42,7 +42,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
      */
     public function getMediaTypeFromFilenameMapsFilenameOrExtensionToMediaType(string $filename, string $expectedMediaType)
     {
-        self::assertSame($expectedMediaType, MediaTypes::getMediaTypeFromFilename($filename));
+        $this->assertSame($expectedMediaType, MediaTypes::getMediaTypeFromFilename($filename));
     }
 
     /**
@@ -65,7 +65,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     {
         $filePath = __DIR__ . '/Fixtures/' . $filename;
         $fileContent = is_file($filePath) ? file_get_contents($filePath) : '';
-        self::assertSame($expectedMediaType, MediaTypes::getMediaTypeFromFileContent($fileContent));
+        $this->assertSame($expectedMediaType, MediaTypes::getMediaTypeFromFileContent($fileContent));
     }
 
     /**
@@ -87,7 +87,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
      */
     public function getFilenameExtensionFromMediaTypeReturnsFirstFileExtensionFoundForThatMediaType(string $mediaType, array $filenameExtensions)
     {
-        self::assertSame(($filenameExtensions === [] ? '' : $filenameExtensions[0]), MediaTypes::getFilenameExtensionFromMediaType($mediaType));
+        $this->assertSame(($filenameExtensions === [] ? '' : $filenameExtensions[0]), MediaTypes::getFilenameExtensionFromMediaType($mediaType));
     }
 
     /**
@@ -96,7 +96,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
      */
     public function getFilenameExtensionsFromMediaTypeReturnsAllFileExtensionForThatMediaType(string $mediaType, array $filenameExtensions)
     {
-        self::assertSame($filenameExtensions, MediaTypes::getFilenameExtensionsFromMediaType($mediaType));
+        $this->assertSame($filenameExtensions, MediaTypes::getFilenameExtensionsFromMediaType($mediaType));
     }
 
 
@@ -119,7 +119,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType(string $mediaType, array $expectedPieces)
     {
         $actualPieces = MediaTypes::parseMediaType($mediaType);
-        self::assertSame($expectedPieces, $actualPieces);
+        $this->assertSame($expectedPieces, $actualPieces);
     }
 
     /**
@@ -149,7 +149,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     public function mediaRangeMatchesChecksIfTheGivenMediaRangeMatchesTheGivenMediaType(string $mediaRange, string $mediaType, bool $expectedResult)
     {
         $actualResult = MediaTypes::mediaRangeMatches($mediaRange, $mediaType);
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -173,6 +173,6 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters(string $mediaType, string $expectedResult = null)
     {
         $actualResult = MediaTypes::trimMediaType($mediaType);
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 }

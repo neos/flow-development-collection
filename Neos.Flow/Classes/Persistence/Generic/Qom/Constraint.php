@@ -16,7 +16,6 @@ namespace Neos\Flow\Persistence\Generic\Qom;
  * Base class for constraints in the QOM.
  *
  * @api
- * @deprecated since Flow 6.0
  */
 class Constraint
 {

@@ -17,7 +17,6 @@ use Neos\Flow\Persistence\QueryInterface;
  * The QueryFactory used to create queries against the storage backend
  *
  * @api
- * @deprecated since Flow 6.0
  */
 class QueryFactory implements QueryFactoryInterface
 {

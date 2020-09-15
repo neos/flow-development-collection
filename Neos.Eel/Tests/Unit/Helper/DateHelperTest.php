@@ -40,8 +40,8 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new DateHelper();
         $result = $helper->parse($string, $format);
-        self::assertInstanceOf(\DateTime::class, $result);
-        self::assertEqualsWithDelta((float)$expected->format('U'), (float)$result->format('U'), 60, 'Timestamps should match');
+        $this->assertInstanceOf(\DateTime::class, $result);
+        $this->assertEquals((float)$expected->format('U'), (float)$result->format('U'), 'Timestamps should match', 60);
     }
 
     /**
@@ -66,7 +66,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new DateHelper();
         $result = $helper->format($dateOrString, $format);
-        self::assertSame($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -88,13 +88,13 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $expected = 'whatever-value';
 
         $configurationMock = $this->createMock(\Neos\Flow\I18n\Configuration::class);
-        $configurationMock->expects(self::atLeastOnce())->method('getCurrentLocale')->willReturn($locale);
+        $configurationMock->expects($this->atLeastOnce())->method('getCurrentLocale')->willReturn($locale);
 
         $localizationServiceMock = $this->createMock(\Neos\Flow\I18n\Service::class);
-        $localizationServiceMock->expects(self::atLeastOnce())->method('getConfiguration')->willReturn($configurationMock);
+        $localizationServiceMock->expects($this->atLeastOnce())->method('getConfiguration')->willReturn($configurationMock);
 
         $formatMock = $this->createMock(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class);
-        $formatMock->expects(self::atLeastOnce())->method('formatDateTimeWithCustomPattern')->willReturn($expected);
+        $formatMock->expects($this->atLeastOnce())->method('formatDateTimeWithCustomPattern')->willReturn($expected);
 
         $helper = new DateHelper();
         $this->inject($helper, 'datetimeFormatter', $formatMock);
@@ -116,7 +116,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $expected = '2013-07-03 12:34:56';
 
         $formatMock = $this->createMock(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class);
-        $formatMock->expects(self::atLeastOnce())->method('formatDateTimeWithCustomPattern');
+        $formatMock->expects($this->atLeastOnce())->method('formatDateTimeWithCustomPattern');
 
         $helper = new DateHelper();
         $this->inject($helper, 'datetimeFormatter', $formatMock);
@@ -131,8 +131,8 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new DateHelper();
         $result = $helper->now();
-        self::assertInstanceOf(\DateTime::class, $result);
-        self::assertEqualsWithDelta(time(), (integer)$result->format('U'), 1, 'Now should be now');
+        $this->assertInstanceOf(\DateTime::class, $result);
+        $this->assertEquals(time(), (integer)$result->format('U'), 'Now should be now', 1);
     }
 
     /**
@@ -143,8 +143,8 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new DateHelper();
         $result = $helper->create('yesterday noon');
         $expected = new \DateTime('yesterday noon');
-        self::assertInstanceOf(\DateTime::class, $result);
-        self::assertEqualsWithDelta($expected->getTimestamp(), $result->getTimestamp(), 1, 'Created DateTime object should match expected');
+        $this->assertInstanceOf(\DateTime::class, $result);
+        $this->assertEquals($expected->getTimestamp(), $result->getTimestamp(), 'Created DateTime object should match expected', 1);
     }
 
     /**
@@ -154,9 +154,9 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $helper = new DateHelper();
         $result = $helper->today();
-        self::assertInstanceOf(\DateTime::class, $result);
+        $this->assertInstanceOf(\DateTime::class, $result);
         $today = new \DateTime('today');
-        self::assertEqualsWithDelta($today->getTimestamp(), $result->getTimestamp(), 1, 'Today should be today');
+        $this->assertEquals($today->getTimestamp(), $result->getTimestamp(), 'Today should be today', 1);
     }
 
     /**
@@ -184,8 +184,8 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new DateHelper();
         $result = $helper->$method($dateTime, $interval);
 
-        self::assertEquals($timestamp, $dateTime->getTimeStamp(), 'DateTime should not be modified');
-        self::assertEquals($expected, $result->format('Y-m-d H:i:s'));
+        $this->assertEquals($timestamp, $dateTime->getTimeStamp(), 'DateTime should not be modified');
+        $this->assertEquals($expected, $result->format('Y-m-d H:i:s'));
     }
 
     /**
@@ -198,9 +198,9 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
         $helper = new DateHelper();
         $result = $helper->diff($earlierTime, $futureTime);
-        self::assertEquals(6, $result->d);
-        self::assertEquals(23, $result->h);
-        self::assertEquals(59, $result->i);
+        $this->assertEquals(6, $result->d);
+        $this->assertEquals(23, $result->h);
+        $this->assertEquals(59, $result->i);
     }
 
     /**
@@ -211,12 +211,12 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper = new DateHelper();
         $date = new \DateTime('2013-10-16 14:59:27');
 
-        self::assertSame(2013, $helper->year($date));
-        self::assertSame(10, $helper->month($date));
-        self::assertSame(16, $helper->dayOfMonth($date));
+        $this->assertSame(2013, $helper->year($date));
+        $this->assertSame(10, $helper->month($date));
+        $this->assertSame(16, $helper->dayOfMonth($date));
 
-        self::assertSame(14, $helper->hour($date));
-        self::assertSame(59, $helper->minute($date));
-        self::assertSame(27, $helper->second($date));
+        $this->assertSame(14, $helper->hour($date));
+        $this->assertSame(59, $helper->minute($date));
+        $this->assertSame(27, $helper->second($date));
     }
 }

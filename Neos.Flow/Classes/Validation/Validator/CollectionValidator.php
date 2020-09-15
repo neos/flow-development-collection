@@ -75,7 +75,7 @@ class CollectionValidator extends GenericObjectValidator
                 $collectionElementValidator->setValidatedInstancesContainer($this->validatedInstancesContainer);
             }
 
-            $this->getResult()->forProperty($index)->merge($collectionElementValidator->validate($collectionElement));
+            $this->result->forProperty($index)->merge($collectionElementValidator->validate($collectionElement));
         }
     }
 }

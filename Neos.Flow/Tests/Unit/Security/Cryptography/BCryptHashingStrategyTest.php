@@ -25,10 +25,10 @@ class BCryptHashingStrategyTest extends UnitTestCase
      */
     public function systemSupportsBlowfishCryptMethod()
     {
-        self::assertTrue(\CRYPT_BLOWFISH === 1);
+        $this->assertTrue(\CRYPT_BLOWFISH === 1);
 
         $cryptResult = crypt('rasmuslerdorf', '$2a$07$usesomesillystringforsalt$');
-        self::assertEquals('$2a$07$usesomesillystringfore2uDLvp1Ii2e./U9C8sBjqp8I90dH6hi', $cryptResult);
+        $this->assertEquals('$2a$07$usesomesillystringfore2uDLvp1Ii2e./U9C8sBjqp8I90dH6hi', $cryptResult);
     }
 
     /**
@@ -39,8 +39,8 @@ class BCryptHashingStrategyTest extends UnitTestCase
         $strategy = new BCryptHashingStrategy(10);
         $derivedKeyWithSalt = $strategy->hashPassword('password');
 
-        self::assertTrue($strategy->validatePassword('password', $derivedKeyWithSalt));
-        self::assertFalse($strategy->validatePassword('pass', $derivedKeyWithSalt));
+        $this->assertTrue($strategy->validatePassword('password', $derivedKeyWithSalt));
+        $this->assertFalse($strategy->validatePassword('pass', $derivedKeyWithSalt));
     }
 
     /**
@@ -51,7 +51,7 @@ class BCryptHashingStrategyTest extends UnitTestCase
         $strategy = new BCryptHashingStrategy(10);
         $derivedKeyWithSalt = $strategy->hashPassword('password');
 
-        self::assertFalse($strategy->validatePassword('pass', $derivedKeyWithSalt), 'Different password should not match');
+        $this->assertFalse($strategy->validatePassword('pass', $derivedKeyWithSalt), 'Different password should not match');
     }
 
     /**
@@ -64,7 +64,7 @@ class BCryptHashingStrategyTest extends UnitTestCase
         $otherStrategy = new BCryptHashingStrategy(6);
         $derivedKeyWithSalt = $otherStrategy->hashPassword('password');
 
-        self::assertTrue($strategy->validatePassword('password', $derivedKeyWithSalt), 'Hashing strategy should validate password with different cost');
+        $this->assertTrue($strategy->validatePassword('password', $derivedKeyWithSalt), 'Hashing strategy should validate password with different cost');
     }
 
     /**
@@ -74,8 +74,8 @@ class BCryptHashingStrategyTest extends UnitTestCase
     {
         $strategy = new BCryptHashingStrategy(10);
 
-        self::assertFalse($strategy->validatePassword('password', ''));
-        self::assertFalse($strategy->validatePassword('password', '$1$abc'));
-        self::assertFalse($strategy->validatePassword('password', '$2x$01$012345678901234567890123456789'));
+        $this->assertFalse($strategy->validatePassword('password', ''));
+        $this->assertFalse($strategy->validatePassword('password', '$1$abc'));
+        $this->assertFalse($strategy->validatePassword('password', '$2x$01$012345678901234567890123456789'));
     }
 }

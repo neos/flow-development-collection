@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Configuration\Source;
  * source code.
  */
 
-use Neos\Flow\Configuration\Exception;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Tests\UnitTestCase;
@@ -26,7 +25,7 @@ class YamlSourceTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    protected function setUp(): void
+    protected function setUp()
     {
         vfsStream::setup('testDirectory');
     }
@@ -38,7 +37,7 @@ class YamlSourceTest extends UnitTestCase
     {
         $configurationSource = new YamlSource();
         $configuration = $configurationSource->load('/ThisFileDoesNotExist');
-        self::assertEquals([], $configuration, 'No empty array was returned.');
+        $this->assertEquals([], $configuration, 'No empty array was returned.');
     }
 
     /**
@@ -49,7 +48,7 @@ class YamlSourceTest extends UnitTestCase
         $pathAndFilename = __DIR__ . '/../Fixture/YAMLConfigurationFile';
         $configurationSource = new YamlSource();
         $configuration = $configurationSource->load($pathAndFilename);
-        self::assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');
+        $this->assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');
     }
 
     /**
@@ -68,7 +67,7 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource->save($pathAndFilename, $mockConfiguration);
 
         $yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  bar: Baz' . chr(10);
-        self::assertStringContainsString($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
+        $this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
     }
 
     /**
@@ -87,7 +86,7 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource->save($pathAndFilename, $mockConfiguration);
 
         $yaml = 'configurationFileHasBeenLoaded: true' . chr(10) . 'foo:' . chr(10) . '  \'Foo.Bar:Baz\': \'a quoted key\'' . chr(10);
-        self::assertStringContainsString($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
+        $this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file as expected.');
     }
 
     /**
@@ -103,8 +102,8 @@ class YamlSourceTest extends UnitTestCase
         $configurationSource->save($pathAndFilename, ['configurationFileHasBeenLoaded' => true]);
 
         $yaml = file_get_contents($pathAndFilename . '.yaml');
-        self::assertStringContainsString('# This comment should stay' . chr(10) . chr(10), $yaml, 'Header comment was removed from file.');
-        self::assertStringNotContainsString('Test: foo', $yaml);
+        $this->assertContains('# This comment should stay' . chr(10) . chr(10), $yaml, 'Header comment was removed from file.');
+        $this->assertNotContains('Test: foo', $yaml);
     }
 
     /**
@@ -126,7 +125,7 @@ class YamlSourceTest extends UnitTestCase
         $pathAndFilename = __DIR__ . '/../Fixture/YAMLConfigurationFile';
         $configurationSource = new YamlSource();
         $configuration = $configurationSource->load($pathAndFilename);
-        self::assertSame($expectedConfiguration, $configuration);
+        $this->assertSame($expectedConfiguration, $configuration);
     }
 
     /**
@@ -149,15 +148,15 @@ class YamlSourceTest extends UnitTestCase
         $pathAndFilename = __DIR__ . '/../Fixture/SplitYamlConfigurationFile';
         $configurationSource = new YamlSource();
         $configuration = $configurationSource->load($pathAndFilename, true);
-        self::assertSame($expectedConfiguration, $configuration);
+        $this->assertSame($expectedConfiguration, $configuration);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Configuration\Exception
      */
     public function configurationFileWithYmlExtensionResultsInException()
     {
-        $this->expectException(Exception::class);
         $pathAndFilename = __DIR__ . '/../Fixture/YmlThrowsException';
         $configurationSource = new YamlSource();
         $configurationSource->load($pathAndFilename, true);

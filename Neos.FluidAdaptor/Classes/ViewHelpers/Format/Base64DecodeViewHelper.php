@@ -75,13 +75,11 @@ class Base64DecodeViewHelper extends AbstractViewHelper
         if ($value === null) {
             $value = $this->renderChildren();
         }
-        if (is_object($value) && method_exists($value, '__toString')) {
-            $value = $value->__toString();
-        } elseif (!is_string($value)) {
+        if (!is_string($value) && !(is_object($value) && method_exists($value, '__toString'))) {
             return $value;
         }
 
-        return base64_decode((string)$value);
+        return base64_decode($value);
     }
 
     /**

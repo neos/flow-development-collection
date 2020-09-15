@@ -242,7 +242,6 @@ class FilterOperation extends AbstractOperation
                 } else {
                     return strrpos($value, (string)$operand) === strlen($value) - strlen($operand);
                 }
-                // no break
             case '^=':
                 if (is_array($value)) {
                     if ($this->evaluateOperator(reset($value), '=', $operand)) {
@@ -252,7 +251,6 @@ class FilterOperation extends AbstractOperation
                 } else {
                     return strpos($value, (string)$operand) === 0;
                 }
-                // no break
             case '*=':
                 if (is_array($value)) {
                     foreach ($value as $item) {
@@ -264,21 +262,18 @@ class FilterOperation extends AbstractOperation
                 } else {
                     return strpos($value, (string)$operand) !== false;
                 }
-                // no break
             case 'instanceof':
                 if ($this->operandIsSimpleType($operand)) {
                     return $this->handleSimpleTypeOperand($operand, $value);
                 } else {
                     return ($value instanceof $operand);
                 }
-                // no break
             case '!instanceof':
                 if ($this->operandIsSimpleType($operand)) {
                     return !$this->handleSimpleTypeOperand($operand, $value);
                 } else {
                     return !($value instanceof $operand);
                 }
-                // no break
             default:
                 return ($value !== null);
         }

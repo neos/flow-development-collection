@@ -26,19 +26,19 @@ class ObjectSerializationTest extends FunctionalTestCase
     {
         $object = $this->objectManager->get(Fixtures\ClassToBeSerialized::class);
         $object->interfaceDeclaredSingletonButImplementationIsPrototype->getSingletonA();
-        self::assertInstanceOf(Fixtures\PrototypeClassA::class, $object->interfaceDeclaredSingletonButImplementationIsPrototype);
+        $this->assertInstanceOf(Fixtures\PrototypeClassA::class, $object->interfaceDeclaredSingletonButImplementationIsPrototype);
 
         $object->prototypeB->setSomeProperty('This is not a coffee machine.');
 
         $serializedObject = serialize($object);
         $object = unserialize($serializedObject);
 
-        self::assertInstanceOf(Fixtures\ClassToBeSerialized::class, $object);
+        $this->assertInstanceOf(Fixtures\ClassToBeSerialized::class, $object);
         $object->interfaceDeclaredSingletonButImplementationIsPrototype->getSingletonA();
-        self::assertInstanceOf(Fixtures\PrototypeClassA::class, $object->interfaceDeclaredSingletonButImplementationIsPrototype);
-        self::assertInstanceOf(Fixtures\SingletonClassC::class, $object->eagerC);
+        $this->assertInstanceOf(Fixtures\PrototypeClassA::class, $object->interfaceDeclaredSingletonButImplementationIsPrototype);
+        $this->assertInstanceOf(Fixtures\SingletonClassC::class, $object->eagerC);
 
-        self::assertEquals(null, $object->prototypeB->getSomeProperty(), 'An injected prototype instance will be overwritten with a fresh instance on unserialize.');
+        $this->assertEquals(null, $object->prototypeB->getSomeProperty(), 'An injected prototype instance will be overwritten with a fresh instance on unserialize.');
     }
 
     /**
@@ -48,13 +48,13 @@ class ObjectSerializationTest extends FunctionalTestCase
     {
         $object = $this->objectManager->get(Fixtures\ClassToBeSerialized::class);
         $object->interfaceDeclaredSingletonButImplementationIsPrototype->getSingletonA();
-        self::assertInstanceOf(Fixtures\PrototypeClassA::class, $object->interfaceDeclaredSingletonButImplementationIsPrototype);
+        $this->assertInstanceOf(Fixtures\PrototypeClassA::class, $object->interfaceDeclaredSingletonButImplementationIsPrototype);
 
         $propertiesToBeSerialized = $object->__sleep();
 
         // Note that the privateProperty is not serialized as it was declared in the parent class of the proxy.
-        self::assertCount(2, $propertiesToBeSerialized);
-        self::assertContains('someProperty', $propertiesToBeSerialized);
-        self::assertContains('protectedProperty', $propertiesToBeSerialized);
+        $this->assertCount(2, $propertiesToBeSerialized);
+        $this->assertContains('someProperty', $propertiesToBeSerialized);
+        $this->assertContains('protectedProperty', $propertiesToBeSerialized);
     }
 }

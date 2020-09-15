@@ -24,11 +24,39 @@ use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 interface AuthenticationManagerInterface
 {
     /**
+     * Returns the tokens this manager is responsible for.
+     * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
+     *
+     * @return array<TokenInterface> An array of tokens this manager is responsible for
+     * @deprecated Use the TokenAndProviderFactory
+     * @see TokenAndProviderFactoryInterface
+     */
+    public function getTokens();
+
+    /**
+     * Returns all configured authentication providers
+     *
+     * @return array Array of \Neos\Flow\Security\Authentication\AuthenticationProviderInterface
+     * @deprecated Use the TokenAndProviderFactory
+     * @see TokenAndProviderFactoryInterface
+     */
+    public function getProviders();
+
+    /**
+     * Sets the security context
+     *
+     * @param SecurityContext $securityContext The security context of the current request
+     * @return void
+     * @deprecated Just get it injected
+     */
+    public function setSecurityContext(SecurityContext $securityContext);
+
+    /**
      * Returns the security context
      *
      * @return SecurityContext $securityContext The security context of the current request
      */
-    public function getSecurityContext(): SecurityContext;
+    public function getSecurityContext();
 
     /**
      * Tries to authenticate the tokens in the security context, if needed.
@@ -38,19 +66,19 @@ interface AuthenticationManagerInterface
      * @throws AuthenticationRequiredException
      * @throws NoTokensAuthenticatedException
      */
-    public function authenticate(): void;
+    public function authenticate();
 
     /**
      * Checks if at least one token is authenticated
      *
-     * @return bool
+     * @return boolean
      */
-    public function isAuthenticated(): bool;
+    public function isAuthenticated();
 
     /**
      * Logs all active authentication tokens out
      *
      * @return void
      */
-    public function logout(): void;
+    public function logout();
 }

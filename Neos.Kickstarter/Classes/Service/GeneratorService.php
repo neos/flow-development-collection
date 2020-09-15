@@ -507,7 +507,7 @@ class GeneratorService
         $autoloadConfigurations = $package->getComposerManifest('autoload');
 
         $firstAutoloadType = null;
-        $firstAutoloadConfiguration = [];
+        $firstAutoloadConfiguration = null;
         foreach ($autoloadConfigurations as $autoloadType => $autoloadConfiguration) {
             if (ClassLoader::isAutoloadTypeWithPredictableClassPath($autoloadType)) {
                 $firstAutoloadType = $autoloadType;

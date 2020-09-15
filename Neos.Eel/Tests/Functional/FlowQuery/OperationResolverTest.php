@@ -16,7 +16,7 @@ class OperationResolverTest extends FunctionalTestCase
     protected $operationResolver;
 
 
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         $this->operationResolver = $this->objectManager->get(OperationResolver::class);
@@ -27,7 +27,7 @@ class OperationResolverTest extends FunctionalTestCase
      */
     public function isFinalOperationReturnsTrueForFinalOperations()
     {
-        self::assertTrue($this->operationResolver->isFinalOperation('exampleFinalOperation'));
+        $this->assertTrue($this->operationResolver->isFinalOperation('exampleFinalOperation'));
     }
 
     /**
@@ -35,7 +35,7 @@ class OperationResolverTest extends FunctionalTestCase
      */
     public function isFinalOperationReturnsFalseForNonFinalOperations()
     {
-        self::assertFalse($this->operationResolver->isFinalOperation('exampleNonFinalOperation'));
+        $this->assertFalse($this->operationResolver->isFinalOperation('exampleNonFinalOperation'));
     }
 
     /**
@@ -43,6 +43,6 @@ class OperationResolverTest extends FunctionalTestCase
      */
     public function higherPriorityOverridesLowerPriority()
     {
-        self::assertInstanceOf(Fixtures\ExampleFinalOperationWithHigherPriority::class, $this->operationResolver->resolveOperation('exampleFinalOperation', []));
+        $this->assertInstanceOf(Fixtures\ExampleFinalOperationWithHigherPriority::class, $this->operationResolver->resolveOperation('exampleFinalOperation', []));
     }
 }

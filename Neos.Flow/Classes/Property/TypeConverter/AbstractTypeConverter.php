@@ -119,7 +119,7 @@ abstract class AbstractTypeConverter implements TypeConverterInterface
      * Returns an empty list of sub property names
      *
      * @param mixed $source
-     * @return array<mixed>
+     * @return array<string>
      * @api
      */
     public function getSourceChildPropertiesToBeConverted($source)

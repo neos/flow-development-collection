@@ -383,7 +383,6 @@ class DatetimeParser
                             $using12HourClock = true;
                             break;
                         }
-                        // no break
                     case 'h':
                         if (!isset($hour)) {
                             $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
@@ -397,7 +396,6 @@ class DatetimeParser
                             $using12HourClock = true;
                             break;
                         }
-                        // no break
                     case 'H':
                         if (!isset($hour)) {
                             $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
@@ -407,7 +405,6 @@ class DatetimeParser
                             $datetimeElements['hour'] = (int)$hour;
                             break;
                         }
-                        // no break
                     case 'k':
                         if (!isset($hour)) {
                             $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
@@ -422,7 +419,6 @@ class DatetimeParser
                         } else {
                             throw new Exception\InvalidParseStringException('Unable to match number string to any hour format.', 1280488645);
                         }
-                        // no break
                     case 'a':
                         $dayPeriods = $localizedLiterals['dayPeriods']['format']['wide'];
                         $positionOfDayPeriod = strpos($datetimeToParse, $dayPeriods['am']);
@@ -491,7 +487,6 @@ class DatetimeParser
                                 if ($datetimeElements['month'] !== null) {
                                     break;
                                 }
-                                // no break
                             case 4:
                                 foreach ($localizedLiterals['months'][$typeOfLiteral]['wide'] as $monthId => $monthName) {
                                     $positionOfMonthName = strpos($datetimeToParse, $monthName);
@@ -505,7 +500,6 @@ class DatetimeParser
                                 if ($datetimeElements['month'] === null) {
                                     throw new Exception\InvalidParseStringException('Neither month name or number were matched.', 1280497950);
                                 }
-                                // no break
                             default:
                                 throw new InvalidArgumentException('Cannot parse formats with narrow month pattern as it is not unique.', 1280495827);
                         }

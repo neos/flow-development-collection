@@ -40,7 +40,7 @@ class ConsoleOutputTest extends UnitTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp(): void
     {
         $this->input = new ArrayInput([]);
         $this->answerNothing();
@@ -60,7 +60,7 @@ class ConsoleOutputTest extends UnitTestCase
         $string = 'simple output';
         $this->consoleOutput->output($string);
 
-        self::assertSame($string, $this->getActualConsoleOutput());
+        $this->assertSame($string, $this->getActualConsoleOutput());
     }
 
     /**
@@ -71,7 +71,7 @@ class ConsoleOutputTest extends UnitTestCase
         $string = 'simple line';
         $this->consoleOutput->outputLine($string);
 
-        self::assertSame($string . PHP_EOL, $this->getActualConsoleOutput());
+        $this->assertSame($string . PHP_EOL, $this->getActualConsoleOutput());
     }
 
     /**
@@ -92,7 +92,7 @@ class ConsoleOutputTest extends UnitTestCase
             '  content and one line is longer than 79 characters, it\'s exactly this line to' . PHP_EOL .
             '  be precice ' . PHP_EOL;
 
-        self::assertSame($formattedString, $this->getActualConsoleOutput());
+        $this->assertSame($formattedString, $this->getActualConsoleOutput());
     }
 
     /**
@@ -103,7 +103,7 @@ class ConsoleOutputTest extends UnitTestCase
         $this->answerNo();
         $userAnswer = $this->consoleOutput->askConfirmation('Is this a test?');
 
-        self::assertSame(false, $userAnswer);
+        $this->assertSame(false, $userAnswer);
     }
 
     /**
@@ -114,7 +114,7 @@ class ConsoleOutputTest extends UnitTestCase
         $this->answerYes();
         $userAnswer = $this->consoleOutput->askConfirmation('Are you lying?');
 
-        self::assertSame(true, $userAnswer);
+        $this->assertSame(true, $userAnswer);
     }
 
     /**
@@ -125,7 +125,7 @@ class ConsoleOutputTest extends UnitTestCase
         $this->answerYes();
         $this->consoleOutput->ask('Is this a test?');
 
-        self::assertSame('Is this a test?', $this->getActualConsoleOutput());
+        $this->assertSame('Is this a test?', $this->getActualConsoleOutput());
     }
 
     /**
@@ -136,7 +136,7 @@ class ConsoleOutputTest extends UnitTestCase
         $this->answerYes();
         $this->consoleOutput->ask(['First line', 'Second line']);
 
-        self::assertSame('First line'.PHP_EOL.'Second line', $this->getActualConsoleOutput());
+        $this->assertSame('First line'.PHP_EOL.'Second line', $this->getActualConsoleOutput());
     }
 
     /**
@@ -155,7 +155,7 @@ class ConsoleOutputTest extends UnitTestCase
 
         $userAnswer = $this->consoleOutput->askAndValidate('Enter a number higher than 4', $validator);
 
-        self::assertSame('5', $userAnswer);
+        $this->assertSame('5', $userAnswer);
     }
 
     /**
@@ -181,7 +181,7 @@ class ConsoleOutputTest extends UnitTestCase
      */
     public function questionWasAskedFallBackToDefaultAnswer()
     {
-        self::assertSame('Not Sure', $this->consoleOutput->ask('Enter your name', 'Not Sure'));
+        $this->assertSame('Not Sure', $this->consoleOutput->ask('Enter your name', 'Not Sure'));
     }
 
     /**
@@ -191,14 +191,12 @@ class ConsoleOutputTest extends UnitTestCase
     {
         $this->consoleOutput->outputTable([['column1', 'column2']], ['header 1', 'header 2']);
 
-        self::assertSame(
+        $this->assertSame(
             '+----------+----------+' . PHP_EOL .
             '| header 1 | header 2 |' . PHP_EOL .
             '+----------+----------+' . PHP_EOL .
             '| column1  | column2  |' . PHP_EOL .
-            '+----------+----------+' . PHP_EOL,
-            $this->getActualConsoleOutput()
-        );
+            '+----------+----------+' . PHP_EOL, $this->getActualConsoleOutput());
     }
 
 
@@ -211,13 +209,11 @@ class ConsoleOutputTest extends UnitTestCase
         $this->consoleOutput->progressAdvance();
         $this->consoleOutput->progressSet(50);
         $this->consoleOutput->progressFinish();
-        self::assertSame(
+        $this->assertSame(
             '   0/100 [>---------------------------]   0%' . PHP_EOL .
             '   1/100 [>---------------------------]   1%' . PHP_EOL .
             '  50/100 [==============>-------------]  50%' . PHP_EOL .
-            ' 100/100 [============================] 100%',
-            $this->getActualConsoleOutput()
-        );
+            ' 100/100 [============================] 100%', $this->getActualConsoleOutput());
     }
 
     /**
@@ -232,7 +228,7 @@ class ConsoleOutputTest extends UnitTestCase
         ];
         $userAnswer = $this->consoleOutput->select('Is this a good test?', $choices, 'yes', true);
 
-        self::assertEquals(
+        $this->assertEquals(
             'Is this a good test?' . PHP_EOL .
             '  [n] No' . PHP_EOL .
             '  [y] Yes' . PHP_EOL .
@@ -240,7 +236,7 @@ class ConsoleOutputTest extends UnitTestCase
             $this->getActualConsoleOutput()
         );
 
-        self::assertSame(['y'], $userAnswer, 'The answer is the key, NOT the value from the choices');
+        $this->assertSame(['y'], $userAnswer, 'The answer is the key, NOT the value from the choices');
     }
 
     /**
@@ -256,7 +252,7 @@ class ConsoleOutputTest extends UnitTestCase
         ];
         $userAnswer = $this->consoleOutput->select('Is this a good test?', $choices, 1, true);
 
-        self::assertEquals(
+        $this->assertEquals(
             'Is this a good test?' . PHP_EOL .
             '  [1] No' . PHP_EOL .
             '  [2] Yes' . PHP_EOL .
@@ -264,7 +260,7 @@ class ConsoleOutputTest extends UnitTestCase
             $this->getActualConsoleOutput()
         );
 
-        self::assertSame(['Yes'], $userAnswer, 'The answer is the value, NOT the key from the choices');
+        $this->assertSame(['Yes'], $userAnswer, 'The answer is the value, NOT the key from the choices');
     }
 
     /**
@@ -279,7 +275,7 @@ class ConsoleOutputTest extends UnitTestCase
         ];
         $userAnswer = $this->consoleOutput->select('Is this a good test?', $choices, 'yes', true);
 
-        self::assertSame(['yes'], $userAnswer, 'The default value is returned');
+        $this->assertSame(['yes'], $userAnswer, 'The default value is returned');
     }
 
     /**

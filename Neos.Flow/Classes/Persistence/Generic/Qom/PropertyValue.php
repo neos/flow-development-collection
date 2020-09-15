@@ -24,7 +24,6 @@ namespace Neos\Flow\Persistence\Generic\Qom;
  * property is not a syntactically valid property name.
  *
  * @api
- * @deprecated since Flow 6.0
  */
 class PropertyValue extends DynamicOperand
 {

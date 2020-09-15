@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Error\Messages\Message;
 
 /**
  * A controller fixture
@@ -28,25 +27,5 @@ class StandardController extends ActionController
     public function indexAction()
     {
         return 'index action';
-    }
-
-    /**
-     * @return string
-     */
-    public function targetAction()
-    {
-        $flashMessages = $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush();
-        return json_encode(array_map(static function (Message $message) {
-            return $message->getMessage();
-        }, $flashMessages));
-    }
-
-    /**
-     * @return string
-     */
-    public function redirectWithFlashMessageAction()
-    {
-        $this->addFlashMessage('Redirect FlashMessage');
-        $this->redirect('target');
     }
 }

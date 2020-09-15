@@ -1,7 +1,6 @@
 <?php
 namespace Neos\Flow\Http;
 
-use GuzzleHttp\Psr7\Stream;
 use InvalidArgumentException;
 use Neos\Utility\Files;
 use Psr\Http\Message\StreamInterface;
@@ -77,17 +76,13 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function setStreamOrFile($streamOrFile)
     {
-        if (is_string($streamOrFile)) {
+        if (is_string($streamOrFile) || $streamOrFile instanceof StreamInterface) {
             $this->file = $streamOrFile;
             return;
         }
 
-        if ($streamOrFile instanceof StreamInterface) {
-            $this->stream = $streamOrFile;
-        }
-
         if (is_resource($streamOrFile)) {
-            $this->stream = new Stream($streamOrFile);
+            $this->stream = new ContentStream($streamOrFile);
             return;
         }
 
@@ -135,7 +130,7 @@ class UploadedFile implements UploadedFileInterface
             return $this->stream;
         }
 
-        return new Stream(fopen($this->file, 'rb+'));
+        return new ContentStream($this->file, 'r+');
     }
 
     /**

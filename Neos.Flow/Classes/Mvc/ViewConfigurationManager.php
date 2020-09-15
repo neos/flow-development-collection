@@ -94,10 +94,10 @@ class ViewConfigurationManager
      * Create a complete cache identifier for the given
      * request that conforms to cache identifier syntax
      *
-     * @param ActionRequest $request
+     * @param RequestInterface $request
      * @return string
      */
-    protected function createCacheIdentifier(ActionRequest $request)
+    protected function createCacheIdentifier($request)
     {
         $cacheIdentifiersParts = [];
         do {

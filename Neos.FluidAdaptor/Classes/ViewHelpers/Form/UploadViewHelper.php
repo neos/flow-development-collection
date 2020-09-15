@@ -94,7 +94,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
      * @return string
      * @api
      */
-    public function render(): string
+    public function render()
     {
         $nameAttribute = $this->getName();
         $this->registerFieldNameForFormTokenGeneration($nameAttribute);
@@ -129,10 +129,8 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
      * If errors occurred during property mapping for this property, NULL is returned
      *
      * @return PersistentResource or NULL if no resource was uploaded and the "value" argument is not set
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
-    protected function getUploadedResource(): ?PersistentResource
+    protected function getUploadedResource()
     {
         $resource = null;
         if ($this->hasMappingErrorOccurred()) {
@@ -155,12 +153,11 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
      * Get the name of this form element, without prefix.
      *
      * Note: This is overridden here because the "value" argument should not have an effect on the name attribute of the <input type="file" /> tag
-     * In the original implementation, setting a value will influence the name, @return string name
+     * In the original implementation, setting a value will influence the name, @see AbstractFormFieldViewHelper::getNameWithoutPrefix()
      *
-     * @see AbstractFormFieldViewHelper::getNameWithoutPrefix()
-     *
+     * @return string name
      */
-    protected function getNameWithoutPrefix(): string
+    protected function getNameWithoutPrefix()
     {
         if ($this->isObjectAccessorMode()) {
             $propertySegments = explode('.', $this->arguments['property']);

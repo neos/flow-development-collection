@@ -1,7 +1,7 @@
 type: dictionary
 additionalProperties: false
 properties:
-  'extensionsBlockedFromUpload':
+  'uploadExtensionBlacklist':
     type: dictionary
     additionalProperties:
       type: boolean

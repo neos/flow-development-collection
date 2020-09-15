@@ -332,9 +332,10 @@ class MathHelper implements ProtectedContextAwareInterface
     {
         $arguments = func_get_args();
         if ($arguments !== []) {
-            return max(...$arguments);
+            return call_user_func_array('max', func_get_args());
+        } else {
+            return -INF;
         }
-        return -INF;
     }
 
     /**
@@ -346,9 +347,10 @@ class MathHelper implements ProtectedContextAwareInterface
     {
         $arguments = func_get_args();
         if ($arguments !== []) {
-            return min(...$arguments);
+            return call_user_func_array('min', func_get_args());
+        } else {
+            return INF;
         }
-        return INF;
     }
 
     /**

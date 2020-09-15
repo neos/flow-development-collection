@@ -40,7 +40,7 @@ class AccountTest extends UnitTestCase
     /**
      * Setup function for the test case
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $administratorRole = new Role('Neos.Flow:Administrator');
         $this->administratorRole = $administratorRole;
@@ -48,7 +48,7 @@ class AccountTest extends UnitTestCase
         $this->customerRole = $customerRole;
 
         $mockPolicyService = $this->createMock(PolicyService::class);
-        $mockPolicyService->expects(self::any())->method('getRole')->will(self::returnCallBack(function ($roleIdentifier) use ($administratorRole, $customerRole) {
+        $mockPolicyService->expects($this->any())->method('getRole')->will($this->returnCallback(function ($roleIdentifier) use ($administratorRole, $customerRole) {
             switch ($roleIdentifier) {
                 case 'Neos.Flow:Administrator':
                     return $administratorRole;
@@ -58,7 +58,7 @@ class AccountTest extends UnitTestCase
                     throw new NoSuchRoleException();
             }
         }));
-        $mockPolicyService->expects(self::any())->method('hasRole')->will(self::returnCallBack(function ($roleIdentifier) use ($administratorRole, $customerRole) {
+        $mockPolicyService->expects($this->any())->method('hasRole')->will($this->returnCallback(function ($roleIdentifier) use ($administratorRole, $customerRole) {
             switch ($roleIdentifier) {
                 case 'Neos.Flow:Administrator':
                 case 'Neos.Flow:Customer':
@@ -79,7 +79,7 @@ class AccountTest extends UnitTestCase
     {
         $this->account->setRoles([$this->administratorRole]);
         $this->account->addRole($this->customerRole);
-        self::assertCount(2, $this->account->getRoles());
+        $this->assertCount(2, $this->account->getRoles());
     }
 
     /**
@@ -90,7 +90,7 @@ class AccountTest extends UnitTestCase
         $this->account->setRoles([$this->administratorRole]);
         $this->account->addRole($this->administratorRole);
 
-        self::assertCount(1, $this->account->getRoles());
+        $this->assertCount(1, $this->account->getRoles());
     }
 
     /**
@@ -101,7 +101,7 @@ class AccountTest extends UnitTestCase
         $this->account->setRoles([$this->administratorRole, $this->customerRole]);
         $this->account->removeRole($this->customerRole);
 
-        self::assertCount(1, $this->account->getRoles());
+        $this->assertCount(1, $this->account->getRoles());
     }
 
     /**
@@ -112,7 +112,7 @@ class AccountTest extends UnitTestCase
         $this->account->setRoles([$this->administratorRole]);
         $this->account->removeRole($this->customerRole);
 
-        self::assertCount(1, $this->account->getRoles());
+        $this->assertCount(1, $this->account->getRoles());
     }
 
     /**
@@ -122,8 +122,8 @@ class AccountTest extends UnitTestCase
     {
         $this->account->setRoles([$this->administratorRole]);
 
-        self::assertTrue($this->account->hasRole($this->administratorRole));
-        self::assertFalse($this->account->hasRole($this->customerRole));
+        $this->assertTrue($this->account->hasRole($this->administratorRole));
+        $this->assertFalse($this->account->hasRole($this->customerRole));
     }
 
     /**
@@ -134,8 +134,8 @@ class AccountTest extends UnitTestCase
         $this->inject($this->account, 'roleIdentifiers', ['Acme.Demo:NoLongerThere', $this->administratorRole->getIdentifier()]);
 
         $roles = $this->account->getRoles();
-        self::assertCount(1, $roles);
-        self::assertArrayHasKey($this->administratorRole->getIdentifier(), $roles);
+        $this->assertCount(1, $roles);
+        $this->assertArrayHasKey($this->administratorRole->getIdentifier(), $roles);
     }
 
     /**
@@ -145,8 +145,8 @@ class AccountTest extends UnitTestCase
     {
         $this->inject($this->account, 'roleIdentifiers', ['Acme.Demo:NoLongerThere', $this->administratorRole->getIdentifier()]);
 
-        self::assertTrue($this->account->hasRole($this->administratorRole));
-        self::assertFalse($this->account->hasRole(new Role('Acme.Demo:NoLongerThere')));
+        $this->assertTrue($this->account->hasRole($this->administratorRole));
+        $this->assertFalse($this->account->hasRole(new Role('Acme.Demo:NoLongerThere')));
     }
 
     /**
@@ -158,7 +158,7 @@ class AccountTest extends UnitTestCase
         $expectedRoles = [$this->administratorRole->getIdentifier() => $this->administratorRole, $this->customerRole->getIdentifier() => $this->customerRole];
         $this->account->setRoles($roles);
 
-        self::assertSame($expectedRoles, $this->account->getRoles());
+        $this->assertSame($expectedRoles, $this->account->getRoles());
     }
 
     /**
@@ -169,7 +169,7 @@ class AccountTest extends UnitTestCase
         $this->account->setExpirationDate(new \DateTime());
         $this->account->setExpirationDate(null);
 
-        self::assertEquals(null, $this->account->getExpirationDate());
+        $this->assertEquals(null, $this->account->getExpirationDate());
     }
 
     /**
@@ -178,7 +178,7 @@ class AccountTest extends UnitTestCase
     public function isActiveReturnsTrueIfTheAccountHasNoExpirationDate()
     {
         $this->account->setExpirationDate(null);
-        self::assertTrue($this->account->isActive());
+        $this->assertTrue($this->account->isActive());
     }
 
     /**
@@ -189,7 +189,7 @@ class AccountTest extends UnitTestCase
         $this->inject($this->account, 'now', new \DateTime());
 
         $this->account->setExpirationDate(new \DateTime('tomorrow'));
-        self::assertTrue($this->account->isActive());
+        $this->assertTrue($this->account->isActive());
     }
 
     /**
@@ -200,6 +200,6 @@ class AccountTest extends UnitTestCase
         $this->inject($this->account, 'now', new \DateTime());
 
         $this->account->setExpirationDate(new \DateTime('yesterday'));
-        self::assertFalse($this->account->isActive());
+        $this->assertFalse($this->account->isActive());
     }
 }

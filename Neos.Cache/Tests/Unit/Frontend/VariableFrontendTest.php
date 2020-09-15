@@ -14,7 +14,6 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  */
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\Backend\NullBackend;
-use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Backend\TaggableBackendInterface;
 use Neos\Cache\Frontend\StringFrontend;
@@ -27,16 +26,16 @@ use Neos\Cache\Frontend\VariableFrontend;
 class VariableFrontendTest extends BaseTestCase
 {
     /**
+     * @expectedException \InvalidArgumentException
      * @test
      */
     public function setChecksIfTheIdentifierIsValid()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
             ->setMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-        $cache->expects(self::once())->method('isValidEntryIdentifier')->with('foo')->will(self::returnValue(false));
+        $cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->will($this->returnValue(false));
         $cache->set('foo', 'bar');
     }
 
@@ -47,7 +46,7 @@ class VariableFrontendTest extends BaseTestCase
     {
         $theString = 'Just some value';
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('set')->with(self::equalTo('VariableCacheTest'), self::equalTo(serialize($theString)));
+        $backend->expects($this->once())->method('set')->with($this->equalTo('VariableCacheTest'), $this->equalTo(serialize($theString)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->set('VariableCacheTest', $theString);
@@ -60,7 +59,7 @@ class VariableFrontendTest extends BaseTestCase
     {
         $theArray = ['Just some value', 'and another one.'];
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('set')->with(self::equalTo('VariableCacheTest'), self::equalTo(serialize($theArray)));
+        $backend->expects($this->once())->method('set')->with($this->equalTo('VariableCacheTest'), $this->equalTo(serialize($theArray)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->set('VariableCacheTest', $theArray);
@@ -74,7 +73,7 @@ class VariableFrontendTest extends BaseTestCase
         $theString = 'Just some value';
         $theLifetime = 1234;
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('set')->with(self::equalTo('VariableCacheTest'), self::equalTo(serialize($theString)), self::equalTo([]), self::equalTo($theLifetime));
+        $backend->expects($this->once())->method('set')->with($this->equalTo('VariableCacheTest'), $this->equalTo(serialize($theString)), $this->equalTo([]), $this->equalTo($theLifetime));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->set('VariableCacheTest', $theString, [], $theLifetime);
@@ -88,7 +87,7 @@ class VariableFrontendTest extends BaseTestCase
     {
         $theString = 'Just some value';
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('set')->with(self::equalTo('VariableCacheTest'), self::equalTo(igbinary_serialize($theString)));
+        $backend->expects($this->once())->method('set')->with($this->equalTo('VariableCacheTest'), $this->equalTo(igbinary_serialize($theString)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->initializeObject();
@@ -101,10 +100,10 @@ class VariableFrontendTest extends BaseTestCase
     public function getFetchesStringValueFromBackend()
     {
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('get')->will(self::returnValue(serialize('Just some value')));
+        $backend->expects($this->once())->method('get')->will($this->returnValue(serialize('Just some value')));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        self::assertEquals('Just some value', $cache->get('VariableCacheTest'), 'The returned value was not the expected string.');
+        $this->assertEquals('Just some value', $cache->get('VariableCacheTest'), 'The returned value was not the expected string.');
     }
 
     /**
@@ -114,10 +113,10 @@ class VariableFrontendTest extends BaseTestCase
     {
         $theArray = ['Just some value', 'and another one.'];
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('get')->will(self::returnValue(serialize($theArray)));
+        $backend->expects($this->once())->method('get')->will($this->returnValue(serialize($theArray)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        self::assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
+        $this->assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
     }
 
     /**
@@ -126,10 +125,10 @@ class VariableFrontendTest extends BaseTestCase
     public function getFetchesFalseBooleanValueFromBackend()
     {
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('get')->will(self::returnValue(serialize(false)));
+        $backend->expects($this->once())->method('get')->will($this->returnValue(serialize(false)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        self::assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the false.');
+        $this->assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the false.');
     }
 
     /**
@@ -140,12 +139,12 @@ class VariableFrontendTest extends BaseTestCase
     {
         $theArray = ['Just some value', 'and another one.'];
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('get')->will(self::returnValue(igbinary_serialize($theArray)));
+        $backend->expects($this->once())->method('get')->will($this->returnValue(igbinary_serialize($theArray)));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->initializeObject();
 
-        self::assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
+        $this->assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
     }
 
     /**
@@ -154,10 +153,10 @@ class VariableFrontendTest extends BaseTestCase
     public function hasReturnsResultFromBackend()
     {
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('has')->with(self::equalTo('VariableCacheTest'))->will(self::returnValue(true));
+        $backend->expects($this->once())->method('has')->with($this->equalTo('VariableCacheTest'))->will($this->returnValue(true));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        self::assertTrue($cache->has('VariableCacheTest'), 'has() did not return true.');
+        $this->assertTrue($cache->has('VariableCacheTest'), 'has() did not return true.');
     }
 
     /**
@@ -168,20 +167,20 @@ class VariableFrontendTest extends BaseTestCase
         $cacheIdentifier = 'someCacheIdentifier';
         $backend = $this->prepareDefaultBackend();
 
-        $backend->expects(self::once())->method('remove')->with(self::equalTo($cacheIdentifier))->will(self::returnValue(true));
+        $backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(true));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        self::assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
+        $this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function getByTagRejectsInvalidTags()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $backend = $this->createMock(TaggableBackendInterface::class);
-        $backend->expects(self::never())->method('findIdentifiersByTag');
+        $backend->expects($this->never())->method('findIdentifiersByTag');
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->getByTag('SomeInvalid\Tag');
@@ -189,10 +188,10 @@ class VariableFrontendTest extends BaseTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Exception\NotSupportedByBackendException
      */
     public function getByTagThrowAnExceptionWithoutTaggableBackend()
     {
-        $this->expectException(NotSupportedByBackendException::class);
         $backend = $this->prepareDefaultBackend();
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->getByTag('foo');
@@ -208,11 +207,11 @@ class VariableFrontendTest extends BaseTestCase
         $entries = ['one' => 'one value', 'two' => 'two value'];
         $backend = $this->prepareTaggableBackend();
 
-        $backend->expects(self::once())->method('findIdentifiersByTag')->with(self::equalTo($tag))->will(self::returnValue($identifiers));
-        $backend->expects(self::exactly(2))->method('get')->will($this->onConsecutiveCalls(serialize('one value'), serialize('two value')));
+        $backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
+        $backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls(serialize('one value'), serialize('two value')));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
-        self::assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
+        $this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
     }
 
     /**
@@ -226,17 +225,17 @@ class VariableFrontendTest extends BaseTestCase
         $entries = ['one' => 'one value', 'two' => 'two value'];
         $backend = $this->prepareTaggableBackend();
 
-        $backend->expects(self::once())->method('findIdentifiersByTag')->with(self::equalTo($tag))->will(self::returnValue($identifiers));
-        $backend->expects(self::exactly(2))->method('get')->will($this->onConsecutiveCalls(igbinary_serialize('one value'), igbinary_serialize('two value')));
+        $backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
+        $backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls(igbinary_serialize('one value'), igbinary_serialize('two value')));
 
         $cache = new VariableFrontend('VariableFrontend', $backend);
         $cache->initializeObject();
 
-        self::assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
+        $this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
     }
 
     /**
-     * @return AbstractBackend|\PHPUnit\Framework\MockObject\MockObject
+     * @return AbstractBackend|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function prepareDefaultBackend()
     {
@@ -248,7 +247,7 @@ class VariableFrontendTest extends BaseTestCase
 
     /**
      * @param array $methods
-     * @return AbstractBackend|\PHPUnit\Framework\MockObject\MockObject
+     * @return AbstractBackend|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function prepareTaggableBackend(array $methods = ['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
     {

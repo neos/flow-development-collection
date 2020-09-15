@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Cache\Psr\SimpleCache;
 
 /*
@@ -99,7 +97,7 @@ class SimpleCache implements CacheInterface
             return $defaultValue;
         }
 
-        return unserialize((string)$rawResult);
+        return unserialize($rawResult);
     }
 
     /**
@@ -190,17 +188,16 @@ class SimpleCache implements CacheInterface
      * @param string $key
      * @return bool
      */
-    protected function isValidEntryIdentifier(string $key): bool
+    protected function isValidEntryIdentifier(string $key)
     {
         return (preg_match(self::PATTERN_ENTRYIDENTIFIER, $key) === 1);
     }
 
     /**
-     * @param string $key
-     * @return void
+     * @param $key
      * @throws InvalidArgumentException
      */
-    protected function ensureValidEntryIdentifier($key): void
+    protected function ensureValidEntryIdentifier($key)
     {
         if ($this->isValidEntryIdentifier($key) === false) {
             throw new InvalidArgumentException('"' . $key . '" is not a valid cache key.', 1515192768083);

@@ -11,11 +11,11 @@ namespace Neos\Flow\Tests\Unit\Mvc;
  * source code.
  */
 
-use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Response;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
- * Testcase for the MVC Generic ActionResponse
+ * Testcase for the MVC Generic Response
  */
 class ResponseTest extends UnitTestCase
 {
@@ -24,10 +24,11 @@ class ResponseTest extends UnitTestCase
      */
     public function toStringReturnsContentOfResponse()
     {
-        $response = new ActionResponse();
+        $response = new Response();
         $response->setContent('SomeContent');
 
         $expected = 'SomeContent';
-        self::assertEquals($expected, $response->getContent());
+        $actual = $response->__toString();
+        $this->assertEquals($expected, $actual);
     }
 }

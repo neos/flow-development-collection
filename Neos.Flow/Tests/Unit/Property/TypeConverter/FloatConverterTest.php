@@ -28,7 +28,7 @@ class FloatConverterTest extends UnitTestCase
      */
     protected $converter;
 
-    protected function setUp(): void
+    public function setUp()
     {
         $this->converter = new FloatConverter();
     }
@@ -38,9 +38,9 @@ class FloatConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        self::assertEquals(['float', 'integer', 'string'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        self::assertEquals('float', $this->converter->getSupportedTargetType(), 'Target type does not match');
-        self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+        $this->assertEquals(['float', 'integer', 'string'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        $this->assertEquals('float', $this->converter->getSupportedTargetType(), 'Target type does not match');
+        $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
     /**
@@ -48,7 +48,7 @@ class FloatConverterTest extends UnitTestCase
      */
     public function convertFromShouldCastTheStringToFloat()
     {
-        self::assertSame(1.5, $this->converter->convertFrom('1.5', 'float'));
+        $this->assertSame(1.5, $this->converter->convertFrom('1.5', 'float'));
     }
 
     /**
@@ -56,7 +56,7 @@ class FloatConverterTest extends UnitTestCase
      */
     public function convertFromReturnsNullIfEmptyStringSpecified()
     {
-        self::assertNull($this->converter->convertFrom('', 'float'));
+        $this->assertNull($this->converter->convertFrom('', 'float'));
     }
 
     /**
@@ -64,7 +64,7 @@ class FloatConverterTest extends UnitTestCase
      */
     public function convertFromShouldAcceptIntegers()
     {
-        self::assertSame((float)123, $this->converter->convertFrom(123, 'float'));
+        $this->assertSame((float)123, $this->converter->convertFrom(123, 'float'));
     }
 
     /**
@@ -72,7 +72,7 @@ class FloatConverterTest extends UnitTestCase
      */
     public function convertFromReturnsAnErrorIfSpecifiedStringIsNotNumeric()
     {
-        self::assertInstanceOf(Error\Error::class, $this->converter->convertFrom('not numeric', 'float'));
+        $this->assertInstanceOf(Error\Error::class, $this->converter->convertFrom('not numeric', 'float'));
     }
 
     /**
@@ -80,7 +80,7 @@ class FloatConverterTest extends UnitTestCase
      */
     public function canConvertFromShouldReturnTrue()
     {
-        self::assertTrue($this->converter->canConvertFrom('1.5', 'float'));
+        $this->assertTrue($this->converter->canConvertFrom('1.5', 'float'));
     }
 
     /**
@@ -88,7 +88,7 @@ class FloatConverterTest extends UnitTestCase
      */
     public function canConvertFromShouldReturnTrueForAnEmptyValue()
     {
-        self::assertTrue($this->converter->canConvertFrom('', 'integer'));
+        $this->assertTrue($this->converter->canConvertFrom('', 'integer'));
     }
 
     /**
@@ -96,7 +96,7 @@ class FloatConverterTest extends UnitTestCase
      */
     public function canConvertFromShouldReturnTrueForANullValue()
     {
-        self::assertTrue($this->converter->canConvertFrom(null, 'integer'));
+        $this->assertTrue($this->converter->canConvertFrom(null, 'integer'));
     }
 
     /**
@@ -104,6 +104,6 @@ class FloatConverterTest extends UnitTestCase
      */
     public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray()
     {
-        self::assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted('myString'));
+        $this->assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted('myString'));
     }
 }

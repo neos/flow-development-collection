@@ -15,7 +15,7 @@ namespace Neos\Flow\Cli;
  * A CLI specific response implementation
  *
  */
-class Response
+class Response extends \Neos\Flow\Mvc\Response
 {
     /**
      * Constants for output styles
@@ -42,11 +42,6 @@ class Response
     private $exitCode = 0;
 
     /**
-     * @var string
-     */
-    private $content = '';
-
-    /**
      * @var
      */
     private $colorSupport;
@@ -64,7 +59,7 @@ class Response
      * @throws \InvalidArgumentException
      * @api
      */
-    public function setExitCode(int $exitCode): void
+    public function setExitCode(int $exitCode)
     {
         $this->exitCode = $exitCode;
     }
@@ -81,47 +76,12 @@ class Response
     }
 
     /**
-     * Overrides and sets the content of the response
-     *
-     * @param string $content The response content
-     * @return void
-     * @api
-     */
-    public function setContent(string $content): void
-    {
-        $this->content = $content;
-    }
-
-    /**
-     * Appends content to the already existing content.
-     *
-     * @param string $content More response content
-     * @return void
-     * @api
-     */
-    public function appendContent(string $content): void
-    {
-        $this->content .= $content;
-    }
-
-    /**
-     * Returns the response content without sending it.
-     *
-     * @return string The response content
-     * @api
-     */
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
-    /**
      * Sets color support / styled output to yes, no or auto detection
      *
      * @param boolean $colorSupport true, false or NULL (= autodetection)
      * @return void
      */
-    public function setColorSupport(bool $colorSupport): void
+    public function setColorSupport(bool $colorSupport)
     {
         $this->colorSupport = $colorSupport;
     }
@@ -141,8 +101,9 @@ class Response
         }
         if (DIRECTORY_SEPARATOR !== '\\') {
             return function_exists('posix_isatty') && posix_isatty(STDOUT);
+        } else {
+            return getenv('ANSICON') !== false;
         }
-        return getenv('ANSICON') !== false;
     }
 
     /**
@@ -151,7 +112,7 @@ class Response
      * @param integer $outputFormat One of the OUTPUTFORMAT_* constants
      * @return void
      */
-    public function setOutputFormat(int $outputFormat): void
+    public function setOutputFormat(int $outputFormat)
     {
         $this->outputFormat = $outputFormat;
     }
@@ -172,9 +133,9 @@ class Response
      * @return void
      * @api
      */
-    public function send(): void
+    public function send()
     {
-        if ($this->content === '') {
+        if ($this->content === null) {
             return;
         }
 

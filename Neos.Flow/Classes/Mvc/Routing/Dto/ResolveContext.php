@@ -54,7 +54,7 @@ final class ResolveContext
      * @param UriInterface $baseUri The base URI, retrieved from the current request URI or from configuration, if specified. Required to fill in parts of the result when resolving absolute URIs
      * @param array $routeValues Route values to build the URI, for example ['@action' => 'index', 'someArgument' => 'foo', ...]
      * @param bool $forceAbsoluteUri Whether or not an absolute URI is to be returned
-     * @param string $uriPathPrefix A prefix to be prepended to any resolved URI. Not allowed to start with "/".
+     * @param string $uriPathPrefix A prefix to be prepended to any resolved URI
      */
     public function __construct(UriInterface $baseUri, array $routeValues, bool $forceAbsoluteUri, string $uriPathPrefix = '')
     {
@@ -62,10 +62,15 @@ final class ResolveContext
         $this->routeValues = $routeValues;
         $this->forceAbsoluteUri = $forceAbsoluteUri;
         $this->uriPathPrefix = $uriPathPrefix;
+    }
 
-        if (strpos($this->uriPathPrefix, '/') === 0) {
-            throw new \InvalidArgumentException('UriPathPrefix "' . $uriPathPrefix . '" is not allowed to start with "/".', 1570187176);
-        }
+    /**
+     * @return UriInterface
+     * @deprecated This getter has been renamed. @see getBaseUri()
+     */
+    public function getRequestUri(): UriInterface
+    {
+        return $this->getBaseUri();
     }
 
     /**

@@ -15,7 +15,6 @@ namespace Neos\Flow\Persistence\Generic\Exception;
  * An "Invalid Number Of Constraints" exception
  *
  * @api
- * @deprecated since Flow 6.0
  */
 class InvalidNumberOfConstraintsException extends \Neos\Flow\Persistence\Exception
 {

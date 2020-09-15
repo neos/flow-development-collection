@@ -15,7 +15,6 @@ namespace Neos\Flow\Persistence\Generic\Qom;
 /**
  * An operand whose value can only be determined in evaluating the query.
  *
- * @deprecated since Flow 6.0
  */
 class DynamicOperand extends Operand
 {

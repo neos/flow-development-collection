@@ -17,9 +17,6 @@ use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Cryptography\PasswordHashingStrategyInterface;
-use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
-use Neos\Flow\Security\Exception\InvalidHashException;
-use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Neos\Flow\Tests\Unit\Cryptography\Fixture\TestHashingStrategy;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -39,7 +36,7 @@ class HashServiceTest extends UnitTestCase
     protected $cache;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockObjectManager;
 
@@ -62,7 +59,7 @@ class HashServiceTest extends UnitTestCase
      *
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $this->cache = new StringFrontend('TestCache', new TransientMemoryBackend(new EnvironmentConfiguration('Hash Testing', '/some/path', PHP_MAXPATHLEN)));
         $this->cache->initializeObject();
@@ -81,7 +78,7 @@ class HashServiceTest extends UnitTestCase
     public function generateHmacReturnsHashStringIfStringIsGiven()
     {
         $hash = $this->hashService->generateHmac('asdf');
-        self::assertTrue(is_string($hash));
+        $this->assertTrue(is_string($hash));
     }
 
     /**
@@ -90,7 +87,7 @@ class HashServiceTest extends UnitTestCase
     public function generateHmacReturnsHashStringWhichContainsSomeSalt()
     {
         $hash = $this->hashService->generateHmac('asdf');
-        self::assertNotEquals(sha1('asdf'), $hash);
+        $this->assertNotEquals(sha1('asdf'), $hash);
     }
 
     /**
@@ -100,15 +97,15 @@ class HashServiceTest extends UnitTestCase
     {
         $hash1 = $this->hashService->generateHmac('asdf');
         $hash2 = $this->hashService->generateHmac('blubb');
-        self::assertNotEquals($hash1, $hash2);
+        $this->assertNotEquals($hash1, $hash2);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
      */
     public function generateHmacThrowsExceptionIfNoStringGiven()
     {
-        $this->expectException(InvalidArgumentForHashGenerationException::class);
         $this->hashService->generateHmac(null);
     }
 
@@ -119,7 +116,7 @@ class HashServiceTest extends UnitTestCase
     {
         $string = 'asdf';
         $hash = $this->hashService->generateHmac($string);
-        self::assertTrue($this->hashService->validateHmac($string, $hash));
+        $this->assertTrue($this->hashService->validateHmac($string, $hash));
     }
 
     /**
@@ -129,7 +126,7 @@ class HashServiceTest extends UnitTestCase
     {
         $string = 'asdf';
         $hash = 'myhash';
-        self::assertFalse($this->hashService->validateHmac($string, $hash));
+        $this->assertFalse($this->hashService->validateHmac($string, $hash));
     }
 
     /**
@@ -139,8 +136,8 @@ class HashServiceTest extends UnitTestCase
     {
         $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
 
-        $this->mockObjectManager->expects(self::atLeastOnce())->method('get')->with(TestHashingStrategy::class)->will(self::returnValue($mockStrategy));
-        $mockStrategy->expects(self::atLeastOnce())->method('hashPassword')->will(self::returnValue('---hashed-password---'));
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(TestHashingStrategy::class)->will($this->returnValue($mockStrategy));
+        $mockStrategy->expects($this->atLeastOnce())->method('hashPassword')->will($this->returnValue('---hashed-password---'));
 
         $this->hashService->hashPassword('myTestPassword');
     }
@@ -152,8 +149,8 @@ class HashServiceTest extends UnitTestCase
     {
         $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
 
-        $this->mockObjectManager->expects(self::atLeastOnce())->method('get')->with(TestHashingStrategy::class)->will(self::returnValue($mockStrategy));
-        $mockStrategy->expects(self::atLeastOnce())->method('validatePassword')->will(self::returnValue(true));
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(TestHashingStrategy::class)->will($this->returnValue($mockStrategy));
+        $mockStrategy->expects($this->atLeastOnce())->method('validatePassword')->will($this->returnValue(true));
 
         $this->hashService->validatePassword('myTestPassword', '---hashed-password---');
     }
@@ -164,29 +161,29 @@ class HashServiceTest extends UnitTestCase
     public function hashPasswordWillIncludeStrategyIdentifierInHashedPassword()
     {
         $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
-        $mockStrategy->expects(self::any())->method('hashPassword')->will(self::returnValue('---hashed-password---'));
-        $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnValue($mockStrategy));
+        $mockStrategy->expects($this->any())->method('hashPassword')->will($this->returnValue('---hashed-password---'));
+        $this->mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockStrategy));
 
         $result = $this->hashService->hashPassword('myTestPassword', 'TestStrategy');
-        self::assertEquals('TestStrategy=>---hashed-password---', $result);
+        $this->assertEquals('TestStrategy=>---hashed-password---', $result);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Security\Exception\MissingConfigurationException
      */
     public function hashPasswordThrowsExceptionIfTheGivenHashingStrategyIsNotConfigured()
     {
-        $this->expectException(MissingConfigurationException::class);
         $this->hashService->hashPassword('myTestPassword', 'nonExistingHashingStrategy');
     }
 
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Security\Exception\MissingConfigurationException
      */
     public function hashPasswordThrowsExceptionIfNoDefaultHashingStrategyIsConfigured()
     {
-        $this->expectException(MissingConfigurationException::class);
         $mockSettings = [
             'security' => [
                 'cryptography' => [
@@ -206,12 +203,12 @@ class HashServiceTest extends UnitTestCase
     public function validatePasswordWillUseStrategyIdentifierFromHashedPassword()
     {
         $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
-        $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnValue($mockStrategy));
+        $this->mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockStrategy));
 
-        $mockStrategy->expects(self::atLeastOnce())->method('validatePassword')->with('myTestPassword', '---hashed-password---')->will(self::returnValue(true));
+        $mockStrategy->expects($this->atLeastOnce())->method('validatePassword')->with('myTestPassword', '---hashed-password---')->will($this->returnValue(true));
 
         $result = $this->hashService->validatePassword('myTestPassword', 'TestStrategy=>---hashed-password---');
-        self::assertEquals(true, $result);
+        $this->assertEquals(true, $result);
     }
 
     /**
@@ -220,15 +217,15 @@ class HashServiceTest extends UnitTestCase
     public function generatedHashReturnsAHashOf40Characters()
     {
         $hash = $this->hashService->generateHmac('asdf');
-        self::assertSame(40, strlen($hash));
+        $this->assertSame(40, strlen($hash));
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
      */
     public function appendHmacThrowsExceptionIfNoStringGiven()
     {
-        $this->expectException(InvalidArgumentForHashGenerationException::class);
         $this->hashService->appendHmac(null);
     }
 
@@ -239,42 +236,42 @@ class HashServiceTest extends UnitTestCase
     {
         $string = 'This is some arbitrary string ';
         $hashedString = $this->hashService->appendHmac($string);
-        self::assertSame($string, substr($hashedString, 0, -40));
+        $this->assertSame($string, substr($hashedString, 0, -40));
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
      */
     public function validateAndStripHmacThrowsExceptionIfNoStringGiven()
     {
-        $this->expectException(InvalidArgumentForHashGenerationException::class);
         $this->hashService->validateAndStripHmac(null);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
      */
     public function validateAndStripHmacThrowsExceptionIfGivenStringIsTooShort()
     {
-        $this->expectException(InvalidArgumentForHashGenerationException::class);
         $this->hashService->validateAndStripHmac('string with less than 40 characters');
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Security\Exception\InvalidHashException
      */
     public function validateAndStripHmacThrowsExceptionIfGivenStringHasNoHashAppended()
     {
-        $this->expectException(InvalidHashException::class);
         $this->hashService->validateAndStripHmac('string with exactly a length 40 of chars');
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Security\Exception\InvalidHashException
      */
     public function validateAndStripHmacThrowsExceptionIfTheAppendedHashIsInvalid()
     {
-        $this->expectException(InvalidHashException::class);
         $this->hashService->validateAndStripHmac('some Stringac43682075d36592d4cb320e69ff0aa515886eab');
     }
 
@@ -286,6 +283,6 @@ class HashServiceTest extends UnitTestCase
         $string = ' Some arbitrary string with special characters: öäüß!"§$ ';
         $hashedString = $this->hashService->appendHmac($string);
         $actualResult = $this->hashService->validateAndStripHmac($hashedString);
-        self::assertSame($string, $actualResult);
+        $this->assertSame($string, $actualResult);
     }
 }

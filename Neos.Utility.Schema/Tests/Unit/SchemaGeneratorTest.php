@@ -23,7 +23,7 @@ class SchemaGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     private $configurationGenerator;
 
-    protected function setUp(): void
+    public function setUp()
     {
         $this->configurationGenerator = new SchemaGenerator();
     }
@@ -50,7 +50,7 @@ class SchemaGeneratorTest extends \PHPUnit\Framework\TestCase
     public function testSchemaGenerationForSimpleTypes($value, array $expectedSchema)
     {
         $schema = $this->configurationGenerator->generate($value);
-        self::assertEquals($schema, $expectedSchema);
+        $this->assertEquals($schema, $expectedSchema);
     }
 
     /**
@@ -72,6 +72,6 @@ class SchemaGeneratorTest extends \PHPUnit\Framework\TestCase
     public function testSchemaGenerationForArrayOfTypes(array $value, array $expectedSchema)
     {
         $schema = $this->configurationGenerator->generate($value);
-        self::assertEquals($schema, $expectedSchema);
+        $this->assertEquals($schema, $expectedSchema);
     }
 }

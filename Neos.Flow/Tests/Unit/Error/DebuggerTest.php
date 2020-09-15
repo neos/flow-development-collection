@@ -20,7 +20,7 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class DebuggerTest extends UnitTestCase
 {
-    protected function setUp(): void
+    public function setUp()
     {
         Debugger::clearState();
     }
@@ -42,7 +42,7 @@ class DebuggerTest extends UnitTestCase
     {
         $object = new \stdClass();
         $object->__IS_PROXY__ = true;
-        self::assertRegExp('/\sclass=\"debug\-proxy\"/', Debugger::renderDump($object, 0, false));
+        $this->assertRegExp('/\sclass=\"debug\-proxy\"/', Debugger::renderDump($object, 0, false));
     }
 
     /**
@@ -51,7 +51,7 @@ class DebuggerTest extends UnitTestCase
     public function ignoredClassesRegexContainsFallback()
     {
         $ignoredClassesRegex = Debugger::getIgnoredClassesRegex();
-        self::assertStringContainsString('Neos\\\\Flow\\\\Core\\\\.*', $ignoredClassesRegex);
+        $this->assertContains('Neos\\\\Flow\\\\Core\\\\.*', $ignoredClassesRegex);
     }
 
     /**
@@ -60,6 +60,6 @@ class DebuggerTest extends UnitTestCase
     public function ignoredClassesAreNotRendered()
     {
         $object = new ApplicationContext('Development');
-        self::assertEquals('Neos\Flow\Core\ApplicationContext object', Debugger::renderDump($object, 0, true));
+        $this->assertEquals('Neos\Flow\Core\ApplicationContext object', Debugger::renderDump($object, 0, true));
     }
 }

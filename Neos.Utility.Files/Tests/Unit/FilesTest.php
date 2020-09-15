@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Utility;
  * source code.
  */
 
-use Neos\Utility\Exception\FilesException;
 use org\bovigo\vfs\vfsStream;
 use Neos\Utility\Files;
 
@@ -25,7 +24,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     protected $temporaryDirectory;
 
-    protected function setUp(): void
+    public function setUp()
     {
         vfsStream::setup('Foo');
 
@@ -36,7 +35,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         $this->temporaryDirectory = realpath($intendedTemporaryDirectory);
     }
 
-    protected function tearDown(): void
+    public function tearDown()
     {
         Files::removeDirectoryRecursively($this->temporaryDirectory);
     }
@@ -66,7 +65,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     public function getUnixStylePathWorksForPathWithoutSlashes()
     {
         $path = 'foobar';
-        self::assertEquals('foobar', Files::getUnixStylePath($path));
+        $this->assertEquals('foobar', Files::getUnixStylePath($path));
     }
 
     /**
@@ -75,7 +74,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     public function getUnixStylePathWorksForPathWithForwardSlashes()
     {
         $path = 'foo/bar/test/';
-        self::assertEquals('foo/bar/test/', Files::getUnixStylePath($path));
+        $this->assertEquals('foo/bar/test/', Files::getUnixStylePath($path));
     }
 
     /**
@@ -84,7 +83,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     public function getUnixStylePathWorksForPathWithBackwardSlashes()
     {
         $path = 'foo\\bar\\test\\';
-        self::assertEquals('foo/bar/test/', Files::getUnixStylePath($path));
+        $this->assertEquals('foo/bar/test/', Files::getUnixStylePath($path));
     }
 
     /**
@@ -93,7 +92,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     public function getUnixStylePathWorksForPathWithForwardAndBackwardSlashes()
     {
         $path = 'foo/bar\\test/';
-        self::assertEquals('foo/bar/test/', Files::getUnixStylePath($path));
+        $this->assertEquals('foo/bar/test/', Files::getUnixStylePath($path));
     }
 
     /**
@@ -101,7 +100,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     public function concatenatePathsWorksForEmptyPath()
     {
-        self::assertEquals('', Files::concatenatePaths([]));
+        $this->assertEquals('', Files::concatenatePaths([]));
     }
 
     /**
@@ -109,7 +108,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     public function concatenatePathsWorksForOnePath()
     {
-        self::assertEquals('foo', Files::concatenatePaths(['foo']));
+        $this->assertEquals('foo', Files::concatenatePaths(['foo']));
     }
 
     /**
@@ -117,7 +116,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     public function concatenatePathsWorksForTwoPath()
     {
-        self::assertEquals('foo/bar', Files::concatenatePaths(['foo', 'bar']));
+        $this->assertEquals('foo/bar', Files::concatenatePaths(['foo', 'bar']));
     }
 
     /**
@@ -125,7 +124,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     public function concatenatePathsWorksForPathsWithLeadingSlash()
     {
-        self::assertEquals('/foo/bar', Files::concatenatePaths(['/foo', 'bar']));
+        $this->assertEquals('/foo/bar', Files::concatenatePaths(['/foo', 'bar']));
     }
 
     /**
@@ -133,7 +132,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     public function concatenatePathsWorksForPathsWithTrailingSlash()
     {
-        self::assertEquals('foo/bar', Files::concatenatePaths(['foo', 'bar/']));
+        $this->assertEquals('foo/bar', Files::concatenatePaths(['foo', 'bar/']));
     }
 
     /**
@@ -141,7 +140,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     public function concatenatePathsWorksForPathsWithLeadingAndTrailingSlash()
     {
-        self::assertEquals('/foo/bar/bar/foo', Files::concatenatePaths(['/foo/bar/', '/bar/foo/']));
+        $this->assertEquals('/foo/bar/bar/foo', Files::concatenatePaths(['/foo/bar/', '/bar/foo/']));
     }
 
     /**
@@ -149,7 +148,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     public function concatenatePathsWorksForBrokenPaths()
     {
-        self::assertEquals('/foo/bar/bar', Files::concatenatePaths(['\\foo/bar\\', '\\bar']));
+        $this->assertEquals('/foo/bar/bar', Files::concatenatePaths(['\\foo/bar\\', '\\bar']));
     }
 
     /**
@@ -157,7 +156,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     public function concatenatePathsWorksForEmptyPathArrayElements()
     {
-        self::assertEquals('foo/bar', Files::concatenatePaths(['foo', '', 'bar']));
+        $this->assertEquals('foo/bar', Files::concatenatePaths(['foo', '', 'bar']));
     }
 
     /**
@@ -166,7 +165,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     public function getUnixStylePathWorksForPathWithDriveLetterAndBackwardSlashes()
     {
         $path = 'c:\\foo\\bar\\test\\';
-        self::assertEquals('c:/foo/bar/test/', Files::getUnixStylePath($path));
+        $this->assertEquals('c:/foo/bar/test/', Files::getUnixStylePath($path));
     }
 
     /**
@@ -188,7 +187,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     public function getUnixStylePathWorksForPathWithProtocol($path, $expected)
     {
-        self::assertEquals($expected, Files::getUnixStylePath($path));
+        $this->assertEquals($expected, Files::getUnixStylePath($path));
     }
 
     /**
@@ -196,7 +195,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     public function is_linkReturnsFalseForNonExistingFiles()
     {
-        self::assertFalse(Files::is_link('NonExistingPath'));
+        $this->assertFalse(Files::is_link('NonExistingPath'));
     }
 
     /**
@@ -206,7 +205,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     {
         $targetPathAndFilename = tempnam($this->temporaryDirectory, 'FlowFilesTestFile');
         file_put_contents($targetPathAndFilename, 'some data');
-        self::assertFalse(Files::is_link($targetPathAndFilename));
+        $this->assertFalse(Files::is_link($targetPathAndFilename));
     }
 
     /**
@@ -221,7 +220,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
             @unlink($linkPathAndFilename);
         }
         $this->trySymlink($targetPathAndFilename, $linkPathAndFilename);
-        self::assertTrue(Files::is_link($linkPathAndFilename));
+        $this->assertTrue(Files::is_link($linkPathAndFilename));
     }
 
     /**
@@ -233,7 +232,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         if (!is_dir($targetPath)) {
             Files::createDirectoryRecursively($targetPath);
         }
-        self::assertFalse(Files::is_link($targetPath));
+        $this->assertFalse(Files::is_link($targetPath));
     }
 
     /**
@@ -250,7 +249,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
             Files::removeDirectoryRecursively($linkPath);
         }
         $this->trySymlink($targetPath, $linkPath);
-        self::assertTrue(Files::is_link($linkPath));
+        $this->assertTrue(Files::is_link($linkPath));
     }
 
     /**
@@ -262,24 +261,24 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         if (!is_dir($targetPath)) {
             Files::createDirectoryRecursively($targetPath);
         }
-        self::assertFalse(Files::is_link($targetPath));
+        $this->assertFalse(Files::is_link($targetPath));
     }
 
     /**
      * @test
+     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function emptyDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist()
     {
-        $this->expectException(FilesException::class);
         Files::emptyDirectoryRecursively('NonExistingPath');
     }
 
     /**
      * @test
+     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function removeDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist()
     {
-        $this->expectException(FilesException::class);
         Files::removeDirectoryRecursively('NonExistingPath');
     }
 
@@ -290,7 +289,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     {
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux');
-        self::assertFalse(file_exists('vfs://Foo'));
+        $this->assertFalse(file_exists('vfs://Foo'));
     }
 
     /**
@@ -301,8 +300,8 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         file_put_contents('vfs://Foo/Bar/someFile.txt', 'x');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux');
-        self::assertTrue(file_exists('vfs://Foo/Bar/someFile.txt'));
-        self::assertFalse(file_exists('vfs://Foo/Bar/Baz'));
+        $this->assertTrue(file_exists('vfs://Foo/Bar/someFile.txt'));
+        $this->assertFalse(file_exists('vfs://Foo/Bar/Baz'));
     }
 
     /**
@@ -313,7 +312,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         file_put_contents('vfs://Foo/Bar/Baz/Quux/someFile.txt', 'x');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux');
-        self::assertTrue(file_exists('vfs://Foo/Bar/Baz/Quux/someFile.txt'));
+        $this->assertTrue(file_exists('vfs://Foo/Bar/Baz/Quux/someFile.txt'));
     }
 
     /**
@@ -325,8 +324,8 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         file_put_contents('vfs://Foo/Bar/someFile.txt', 'x');
         file_put_contents('vfs://Foo/Bar/Baz/.DS_Store', 'x');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux');
-        self::assertTrue(file_exists('vfs://Foo/Bar/someFile.txt'));
-        self::assertFalse(file_exists('vfs://Foo/Bar/Baz'));
+        $this->assertTrue(file_exists('vfs://Foo/Bar/someFile.txt'));
+        $this->assertFalse(file_exists('vfs://Foo/Bar/Baz'));
     }
 
     /**
@@ -336,21 +335,21 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     {
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux', 'vfs://Foo/Bar');
-        self::assertFalse(file_exists('vfs://Foo/Bar/Baz'));
-        self::assertTrue(file_exists('vfs://Foo/Bar'));
+        $this->assertFalse(file_exists('vfs://Foo/Bar/Baz'));
+        $this->assertTrue(file_exists('vfs://Foo/Bar'));
 
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux', 'vfs://Foo/Bar/');
-        self::assertFalse(file_exists('vfs://Foo/Bar/Baz'));
-        self::assertTrue(file_exists('vfs://Foo/Bar'));
+        $this->assertFalse(file_exists('vfs://Foo/Bar/Baz'));
+        $this->assertTrue(file_exists('vfs://Foo/Bar'));
     }
 
     /**
      * @test
+     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function removeEmptyDirectoriesOnPathThrowsExceptionIfBasePathIsNotParentOfPath()
     {
-        $this->expectException(FilesException::class);
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux', 'vfs://Other/Bar');
     }
@@ -367,9 +366,9 @@ class FilesTest extends \PHPUnit\Framework\TestCase
             @unlink($linkPathAndFilename);
         }
         $this->trySymlink($targetPathAndFilename, $linkPathAndFilename);
-        self::assertTrue(Files::unlink($linkPathAndFilename));
-        self::assertTrue(file_exists($targetPathAndFilename));
-        self::assertFalse(file_exists($linkPathAndFilename));
+        $this->assertTrue(Files::unlink($linkPathAndFilename));
+        $this->assertTrue(file_exists($targetPathAndFilename));
+        $this->assertFalse(file_exists($linkPathAndFilename));
     }
 
     /**
@@ -386,9 +385,9 @@ class FilesTest extends \PHPUnit\Framework\TestCase
             Files::removeDirectoryRecursively($linkPath);
         }
         $this->trySymlink($targetPath, $linkPath);
-        self::assertTrue(Files::unlink($linkPath));
-        self::assertTrue(file_exists($targetPath));
-        self::assertFalse(file_exists($linkPath));
+        $this->assertTrue(Files::unlink($linkPath));
+        $this->assertTrue(file_exists($targetPath));
+        $this->assertFalse(file_exists($linkPath));
     }
 
     /**
@@ -398,7 +397,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     public function unlinkReturnsTrueIfSpecifiedPathDoesNotExist()
     {
-        self::assertTrue(Files::unlink('NonExistingPath'));
+        $this->assertTrue(Files::unlink('NonExistingPath'));
     }
 
     /**
@@ -411,9 +410,9 @@ class FilesTest extends \PHPUnit\Framework\TestCase
 
         Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target');
 
-        self::assertTrue(is_dir('vfs://Foo/target/bar/baz'));
-        self::assertTrue(is_file('vfs://Foo/target/bar/baz/file.txt'));
-        self::assertEquals('source content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
+        $this->assertTrue(is_dir('vfs://Foo/target/bar/baz'));
+        $this->assertTrue(is_file('vfs://Foo/target/bar/baz/file.txt'));
+        $this->assertEquals('source content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
     }
 
     /**
@@ -426,9 +425,9 @@ class FilesTest extends \PHPUnit\Framework\TestCase
 
         Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target', false, true);
 
-        self::assertTrue(is_dir('vfs://Foo/target/bar/baz'));
-        self::assertTrue(is_file('vfs://Foo/target/bar/baz/.file.txt'));
-        self::assertEquals('source content', file_get_contents('vfs://Foo/target/bar/baz/.file.txt'));
+        $this->assertTrue(is_dir('vfs://Foo/target/bar/baz'));
+        $this->assertTrue(is_file('vfs://Foo/target/bar/baz/.file.txt'));
+        $this->assertEquals('source content', file_get_contents('vfs://Foo/target/bar/baz/.file.txt'));
     }
 
     /**
@@ -443,7 +442,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         file_put_contents('vfs://Foo/target/bar/baz/file.txt', 'target content');
 
         Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target');
-        self::assertEquals('source content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
+        $this->assertEquals('source content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
     }
 
     /**
@@ -458,7 +457,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         file_put_contents('vfs://Foo/target/bar/baz/file.txt', 'target content');
 
         Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target', true);
-        self::assertEquals('target content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
+        $this->assertEquals('target content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
     }
 
     /**
@@ -577,7 +576,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     public function bytesToSizeStringTests($bytes, $decimals, $decimalSeparator, $thousandsSeparator, $expected)
     {
         $actualResult = Files::bytesToSizeString($bytes, $decimals, $decimalSeparator, $thousandsSeparator);
-        self::assertSame($expected, $actualResult);
+        $this->assertSame($expected, $actualResult);
     }
 
     /**
@@ -650,15 +649,15 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     public function sizeStringToBytesTests($sizeString, $expected)
     {
         $actualResult = Files::sizeStringToBytes($sizeString);
-        self::assertSame($expected, $actualResult);
+        $this->assertSame($expected, $actualResult);
     }
 
     /**
      * @test
+     * @expectedException \Neos\Utility\Exception\FilesException
      */
     public function sizeStringThrowsExceptionIfTheSpecifiedUnitIsUnknown()
     {
-        $this->expectException(FilesException::class);
         Files::sizeStringToBytes('123 UnknownUnit');
     }
 }

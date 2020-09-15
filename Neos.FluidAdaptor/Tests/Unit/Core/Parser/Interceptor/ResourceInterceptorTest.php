@@ -42,15 +42,15 @@ class ResourceInterceptorTest extends UnitTestCase
 			}';
         $originalText = $originalText1 . $originalText2 . $originalText3;
         $mockTextNode = $this->getMockBuilder(TextNode::class)->setMethods(['evaluateChildNodes'])->setConstructorArgs([$originalText])->getMock();
-        self::assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
+        $this->assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
 
         $interceptor = new ResourceInterceptor();
         $resultingNodeTree = $interceptor->process($mockTextNode, InterceptorInterface::INTERCEPT_TEXT, $this->createMock(ParsingState::class));
-        self::assertInstanceOf(RootNode::class, $resultingNodeTree);
-        self::assertCount(3, $resultingNodeTree->getChildNodes());
+        $this->assertInstanceOf(RootNode::class, $resultingNodeTree);
+        $this->assertCount(3, $resultingNodeTree->getChildNodes());
         foreach ($resultingNodeTree->getChildNodes() as $parserNode) {
             if ($parserNode instanceof ResourceUriNode) {
-                self::assertEquals([
+                $this->assertEquals([
                     'path' => $path
                 ], $parserNode->getArguments());
             }
@@ -112,17 +112,17 @@ class ResourceInterceptorTest extends UnitTestCase
     {
         $originalText = $part1 . $part2 . $part3;
         $mockTextNode = $this->getMockBuilder(TextNode::class)->setMethods(['evaluateChildNodes'])->setConstructorArgs([$originalText])->getMock();
-        self::assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
+        $this->assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
 
         $interceptor = new ResourceInterceptor();
         $interceptor->setDefaultPackageKey('Acme.Demo');
         $resultingNodeTree = $interceptor->process($mockTextNode, InterceptorInterface::INTERCEPT_TEXT, $this->createMock(ParsingState::class));
 
-        self::assertInstanceOf(RootNode::class, $resultingNodeTree);
-        self::assertCount(3, $resultingNodeTree->getChildNodes());
+        $this->assertInstanceOf(RootNode::class, $resultingNodeTree);
+        $this->assertCount(3, $resultingNodeTree->getChildNodes());
         foreach ($resultingNodeTree->getChildNodes() as $parserNode) {
             if ($parserNode instanceof ResourceUriNode) {
-                self::assertEquals([
+                $this->assertEquals([
                     'path' => $expectedPath,
                     'package' => $expectedPackageKey
                 ], $parserNode->getArguments());

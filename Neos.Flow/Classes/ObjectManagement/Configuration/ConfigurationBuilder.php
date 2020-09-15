@@ -19,7 +19,6 @@ use Neos\Flow\ObjectManagement\Exception as ObjectException;
 use Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException;
 use Neos\Flow\ObjectManagement\Exception\UnknownClassException;
 use Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException;
-use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Reflection\ReflectionService;
 use Psr\Log\LoggerInterface;
 
@@ -119,33 +118,17 @@ class ConfigurationBuilder
                 if (isset($rawObjectConfiguration['className'])) {
                     $rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($rawObjectConfiguration['className'], $rawObjectConfiguration);
                 }
-                // Virtual objects are determined by a colon ":" in the name (e.g. "Some.Package:Some.Virtual.Object")
-                $isVirtualObject = strpos($objectName, ':') !== false;
-                if ($isVirtualObject && empty($rawObjectConfiguration['className'])) {
-                    throw new InvalidObjectConfigurationException(sprintf('Missing className for virtual object configuration "%s" of package %s. Please check your Objects.yaml.', $objectName, $packageKey), 1585758850);
-                }
-                if ($isVirtualObject && !isset($rawObjectConfiguration['factoryObjectName']) && !isset($rawObjectConfiguration['factoryMethodName'])) {
-                    $rawObjectConfiguration['factoryObjectName'] = ObjectManager::class;
-                    $rawObjectConfiguration['factoryMethodName'] = 'get';
-                    $newArguments = [1 => ['value' => $rawObjectConfiguration['className']]];
-                    if (isset($rawObjectConfiguration['arguments'])) {
-                        foreach ($rawObjectConfiguration['arguments'] as $index => $value) {
-                            $newArguments[$index + 1] = $value;
-                        }
-                    }
-                    $rawObjectConfiguration['arguments'] = $newArguments;
-                }
                 $newObjectConfiguration = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'configuration of package ' . $packageKey . ', definition for object "' . $objectName . '"', $existingObjectConfiguration);
 
-                if (!$isVirtualObject && !isset($objectConfigurations[$objectName]) && !interface_exists($objectName, true) && !class_exists($objectName, false)) {
+                if (!isset($objectConfigurations[$objectName]) && !interface_exists($objectName, true) && !class_exists($objectName, false)) {
                     throw new InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey . '". Please check your Objects.yaml.', 1184926175);
                 }
 
-                if (!$isVirtualObject && $objectName !== $newObjectConfiguration->getClassName() && !interface_exists($objectName, true)) {
+                if ($objectName !== $newObjectConfiguration->getClassName() && !interface_exists($objectName, true)) {
                     throw new InvalidObjectConfigurationException('Tried to set a differing class name for class "' . $objectName . '" in the object configuration of package "' . $packageKey . '". Setting "className" is only allowed for interfaces, please check your Objects.yaml."', 1295954589);
                 }
 
-                if (empty($newObjectConfiguration->getClassName()) && !$newObjectConfiguration->isCreatedByFactory()) {
+                if (empty($newObjectConfiguration->getClassName()) && empty($newObjectConfiguration->getFactoryObjectName())) {
                     $count = count($this->reflectionService->getAllImplementationClassNamesForInterface($objectName));
                     $hint = ($count ? 'It seems like there is no class which implements that interface, maybe the object configuration is obsolete?' : sprintf('There are %s classes implementing that interface, therefore you must specify a specific class in your object configuration.', $count));
                     throw new InvalidObjectConfigurationException('The object configuration for "' . $objectName . '" in the object configuration of package "' . $packageKey . '" lacks a "className" entry. ' . $hint, 1422566751);
@@ -170,7 +153,6 @@ class ConfigurationBuilder
 
         $this->autowireArguments($objectConfigurations);
         $this->autowireProperties($objectConfigurations);
-        $this->wireFactoryArguments($objectConfigurations);
 
         return $objectConfigurations;
     }
@@ -206,7 +188,7 @@ class ConfigurationBuilder
      */
     protected function parseConfigurationArray($objectName, array $rawConfigurationOptions, $configurationSourceHint = '', $existingObjectConfiguration = null)
     {
-        $className = $rawConfigurationOptions['className'] ?? $objectName;
+        $className = (isset($rawConfigurationOptions['className']) ? $rawConfigurationOptions['className'] : $objectName);
         $objectConfiguration = ($existingObjectConfiguration instanceof Configuration) ? $existingObjectConfiguration : new Configuration($objectName, $className);
         $objectConfiguration->setConfigurationSourceHint($configurationSourceHint);
 
@@ -243,7 +225,7 @@ class ConfigurationBuilder
                             } else {
                                 throw new InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
                             }
-                            if (isset($rawConfigurationOptions['factoryObjectName']) || isset($rawConfigurationOptions['factoryMethodName'])) {
+                            if (isset($rawConfigurationOptions['factoryObjectName'])) {
                                 $objectConfiguration->setFactoryArgument($argument);
                             } else {
                                 $objectConfiguration->setArgument($argument);
@@ -327,7 +309,7 @@ class ConfigurationBuilder
                 $objectName = $objectNameOrConfiguration['name'];
                 unset($objectNameOrConfiguration['name']);
             } else {
-                if (isset($objectNameOrConfiguration['factoryObjectName']) || isset($objectNameOrConfiguration['factoryMethodName'])) {
+                if (isset($objectNameOrConfiguration['factoryObjectName'])) {
                     $objectName = null;
                 } else {
                     $annotations = $this->reflectionService->getPropertyTagValues($parentObjectConfiguration->getClassName(), $propertyName, 'var');
@@ -361,10 +343,10 @@ class ConfigurationBuilder
                 $objectName = $objectNameOrConfiguration['name'];
                 unset($objectNameOrConfiguration['name']);
             } else {
-                if (isset($objectNameOrConfiguration['factoryObjectName']) || isset($objectNameOrConfiguration['factoryMethodName'])) {
+                if (isset($objectNameOrConfiguration['factoryObjectName'])) {
                     $objectName = null;
                 } else {
-                    throw new InvalidObjectConfigurationException('Object configuration for argument "' . $argumentName . '" contains neither object name nor factory object or method name in ' . $configurationSourceHint, 1417431742);
+                    throw new InvalidObjectConfigurationException('Object configuration for argument "' . $argumentName . '" contains neither object name nor factory object name in ' . $configurationSourceHint, 1417431742);
                 }
             }
             $objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ', argument "' . $argumentName . '"');
@@ -373,55 +355,6 @@ class ConfigurationBuilder
             $argument = new ConfigurationArgument($argumentName, $objectNameOrConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
         }
         return $argument;
-    }
-
-    /**
-     * Creates a "virtual object configuration" for factory arguments, turning:
-     *
-     * 'Some\Class\Name':
-     *   factoryObjectName: 'Some\Factory\Class'
-     *   arguments:
-     *     1:
-     *       object:
-     *         factoryObjectName: 'Some\Other\Factory\Class'
-     *
-     * into:
-     *
-     * 'Some\Class\Name':
-     *   factoryObjectName: 'Some\Factory\Class'
-     *   arguments:
-     *     1:
-     *       object: 'Some\Class\Name:argument:1'
-     *
-     * 'Some\Class\Name:argument:1':
-     *   factoryObjectName: 'Some\Other\Factory\Class'
-     *
-     *
-     * @param array &$objectConfigurations
-     * @return void
-     */
-    protected function wireFactoryArguments(array &$objectConfigurations)
-    {
-        /** @var Configuration $objectConfiguration */
-        foreach ($objectConfigurations as $objectConfiguration) {
-            /** @var ConfigurationArgument $argument */
-            foreach ($objectConfiguration->getFactoryArguments() as $index => $argument) {
-                if ($argument === null || $argument->getType() !== ConfigurationArgument::ARGUMENT_TYPES_OBJECT) {
-                    continue;
-                }
-                $argumentValue = $argument->getValue();
-                if (!$argumentValue instanceof Configuration) {
-                    continue;
-                }
-                $argumentObjectName = $objectConfiguration->getObjectName() . ':argument:' . $index;
-                $argumentValue->setObjectName($argumentObjectName);
-                if ($argumentValue->getClassName() === null) {
-                    $argumentValue->setClassName('');
-                }
-                $objectConfigurations[$argumentObjectName] = $argument->getValue();
-                $argument->set((int)$argument->getIndex(), $argumentObjectName, $argument->getType());
-            }
-        }
     }
 
     /**
@@ -444,9 +377,6 @@ class ConfigurationBuilder
                 continue;
             }
 
-            if ($objectConfiguration->isCreatedByFactory()) {
-                continue;
-            }
 
             $className = $objectConfiguration->getClassName();
             if (!$this->reflectionService->hasMethod($className, '__construct')) {
@@ -555,7 +485,7 @@ class ConfigurationBuilder
                 if (!array_key_exists($propertyName, $properties)) {
                     /** @var Inject $injectAnnotation */
                     $injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, Inject::class);
-                    $objectName = $injectAnnotation->name !== null ? $injectAnnotation->name : trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
+                    $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
                     $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $injectAnnotation->lazy);
                     $properties[$propertyName] = $configurationProperty;
                 }

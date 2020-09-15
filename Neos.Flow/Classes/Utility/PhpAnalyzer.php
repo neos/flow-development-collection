@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Flow\Utility;
 
 /*
@@ -37,7 +35,7 @@ class PhpAnalyzer
     /**
      * @param string $phpCode
      */
-    public function __construct(string $phpCode)
+    public function __construct($phpCode)
     {
         $this->phpCode = $phpCode;
     }
@@ -45,9 +43,9 @@ class PhpAnalyzer
     /**
      * Extracts the Fully Qualified Class name from the given PHP code
      *
-     * @return string|null FQN in the format "Some\Fully\Qualified\ClassName" or NULL if no class was detected
+     * @return string FQN in the format "Some\Fully\Qualified\ClassName" or NULL if no class was detected
      */
-    public function extractFullyQualifiedClassName(): ?string
+    public function extractFullyQualifiedClassName()
     {
         $fullyQualifiedClassName = $this->extractClassName();
         if ($fullyQualifiedClassName === null) {
@@ -57,16 +55,15 @@ class PhpAnalyzer
         if ($namespace !== null) {
             $fullyQualifiedClassName = $namespace . '\\' . $fullyQualifiedClassName;
         }
-
         return $fullyQualifiedClassName;
     }
 
     /**
      * Extracts the PHP namespace from the given PHP code
      *
-     * @return string|null the PHP namespace in the form "Some\Namespace" (w/o leading backslash) - or NULL if no namespace modifier was found
+     * @return string the PHP namespace in the form "Some\Namespace" (w/o leading backslash) - or NULL if no namespace modifier was found
      */
-    public function extractNamespace(): ?string
+    public function extractNamespace()
     {
         $namespaceParts = [];
         $tokens = token_get_all($this->phpCode);
@@ -102,9 +99,9 @@ class PhpAnalyzer
      * Extracts the className of the given PHP code
      * Note: This only returns the class name without namespace, @see extractFullyQualifiedClassName()
      *
-     * @return string|null
+     * @return string
      */
-    public function extractClassName(): ?string
+    public function extractClassName()
     {
         $tokens = token_get_all($this->phpCode);
         $numberOfTokens = count($tokens);

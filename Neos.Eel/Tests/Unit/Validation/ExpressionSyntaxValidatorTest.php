@@ -19,9 +19,8 @@ class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase
      */
     public function validExpressionPasses()
     {
-        self::assertFalse(
-            $this->validator->validate('foo.bar() * (18 + 2)')->hasErrors()
-        );
+        $this->assertFalse(
+            $this->validator->validate('foo.bar() * (18 + 2)')->hasErrors());
     }
 
     /**
@@ -29,9 +28,8 @@ class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase
      */
     public function invalidExpressionIsConsideredErroneous()
     {
-        self::assertTrue(
-            $this->validator->validate('foo.bar( + (18 + 2)')->hasErrors()
-        );
+        $this->assertTrue(
+            $this->validator->validate('foo.bar( + (18 + 2)')->hasErrors());
     }
 
     /**
@@ -44,8 +42,8 @@ class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase
                 ->getFirstError()
                     ->getArguments();
 
-        self::assertEquals('foo.bar( + (18 + 2)', $errorArguments[0]);
-        self::assertEquals(7, $errorArguments[1]);
-        self::assertEquals('( + (18 + 2)', $errorArguments[2]);
+        $this->assertEquals('foo.bar( + (18 + 2)', $errorArguments[0]);
+        $this->assertEquals(7, $errorArguments[1]);
+        $this->assertEquals('( + (18 + 2)', $errorArguments[2]);
     }
 }

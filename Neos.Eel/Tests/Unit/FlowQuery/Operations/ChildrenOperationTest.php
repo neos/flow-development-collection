@@ -47,6 +47,6 @@ class ChildrenOperationTest extends \Neos\Flow\Tests\UnitTestCase
         $operation = new ChildrenOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        self::assertEquals($expected, $flowQuery->getContext());
+        $this->assertEquals($expected, $flowQuery->getContext());
     }
 }

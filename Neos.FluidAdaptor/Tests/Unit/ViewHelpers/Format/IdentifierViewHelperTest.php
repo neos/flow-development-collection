@@ -33,10 +33,10 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
     /**
      * Sets up this test case
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper::class, ['renderChildren']);
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper::class, ['renderChildren', 'registerRenderMethodArguments']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         $this->viewHelper->_set('persistenceManager', $this->mockPersistenceManager);
@@ -49,17 +49,17 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
     {
         $object = new \stdClass();
         $this->mockPersistenceManager
-            ->expects(self::atLeastOnce())
+            ->expects($this->atLeastOnce())
             ->method('getIdentifierByObject')
             ->with($object)
-            ->will(self::returnValue('6f487e40-4483-11de-8a39-0800200c9a66'));
+            ->will($this->returnValue('6f487e40-4483-11de-8a39-0800200c9a66'));
 
         $expectedResult = '6f487e40-4483-11de-8a39-0800200c9a66';
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $object]);
         $actualResult = $this->viewHelper->render();
 
-        self::assertEquals($expectedResult, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -69,18 +69,18 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
     {
         $object = new \stdClass();
         $this->viewHelper
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('renderChildren')
-            ->will(self::returnValue($object));
+            ->will($this->returnValue($object));
 
         $this->mockPersistenceManager
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getIdentifierByObject')
             ->with($object)
-            ->will(self::returnValue('b59292c5-1a28-4b36-8615-10d3c5b3a4d8'));
+            ->will($this->returnValue('b59292c5-1a28-4b36-8615-10d3c5b3a4d8'));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
-        self::assertEquals('b59292c5-1a28-4b36-8615-10d3c5b3a4d8', $this->viewHelper->render());
+        $this->assertEquals('b59292c5-1a28-4b36-8615-10d3c5b3a4d8', $this->viewHelper->render());
     }
 
     /**
@@ -89,20 +89,20 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
     public function renderReturnsNullIfGivenValueIsNull()
     {
         $this->viewHelper
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('renderChildren')
-            ->will(self::returnValue(null));
+            ->will($this->returnValue(null));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
-        self::assertEquals(null, $this->viewHelper->render());
+        $this->assertEquals(null, $this->viewHelper->render());
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function renderThrowsExceptionIfGivenValueIsNoObject()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $notAnObject = [];
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $notAnObject]);
         $this->viewHelper->render();

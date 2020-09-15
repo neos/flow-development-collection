@@ -22,7 +22,6 @@ use Neos\Flow\Persistence\QueryInterface;
  *
  * @Flow\Scope("singleton")
  * @api
- * @deprecated since Flow 6.0
  */
 class PersistenceManager extends AbstractPersistenceManager
 {
@@ -160,21 +159,21 @@ class PersistenceManager extends AbstractPersistenceManager
      * Commits new objects and changes to objects in the current persistence
      * session into the backend
      *
-     * @param boolean $onlyAllowedObjects
+     * @param boolean $onlyWhitelistedObjects
      * @return void
      * @api
      */
-    public function persistAll($onlyAllowedObjects = false)
+    public function persistAll($onlyWhitelistedObjects = false)
     {
-        if ($onlyAllowedObjects) {
+        if ($onlyWhitelistedObjects) {
             foreach ($this->changedObjects as $object) {
-                $this->throwExceptionIfObjectIsNotAllowed($object);
+                $this->throwExceptionIfObjectIsNotWhitelisted($object);
             }
             foreach ($this->removedObjects as $object) {
-                $this->throwExceptionIfObjectIsNotAllowed($object);
+                $this->throwExceptionIfObjectIsNotWhitelisted($object);
             }
             foreach ($this->addedObjects as $object) {
-                $this->throwExceptionIfObjectIsNotAllowed($object);
+                $this->throwExceptionIfObjectIsNotWhitelisted($object);
             }
         }
 

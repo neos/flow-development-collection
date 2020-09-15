@@ -140,8 +140,7 @@ class XliffFileProvider
             $relevantOffset = null;
             $documentVersion = null;
 
-            $this->xliffReader->readFiles(
-                $filePath,
+            $this->xliffReader->readFiles($filePath,
                 function (\XMLReader $file, $offset, $version) use ($fileId, &$documentVersion, &$relevantOffset, $defaultPackageName, $defaultSource) {
                     $documentVersion = $version;
                     switch ($version) {

@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement\Configuration;
  * source code.
  */
 
-use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\ObjectManagement\Configuration;
 
@@ -29,7 +28,7 @@ class ConfigurationTest extends UnitTestCase
      * Prepares everything for a test
      *
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $this->objectConfiguration = new Configuration\Configuration('Neos\Foo\Bar');
     }
@@ -38,10 +37,10 @@ class ConfigurationTest extends UnitTestCase
      * Checks if setProperties accepts only valid values
      *
      * @test
+     * @expectedException \Neos\Flow\Configuration\Exception\InvalidConfigurationException
      */
     public function setPropertiesOnlyAcceptsValidValues()
     {
-        $this->expectException(InvalidConfigurationException::class);
         $invalidProperties = [
             'validProperty' => new Configuration\ConfigurationProperty('validProperty', 'simple string'),
             'invalidProperty' => 'foo'
@@ -60,20 +59,20 @@ class ConfigurationTest extends UnitTestCase
             'prop2' => new Configuration\ConfigurationProperty('prop2', 'another string')
         ];
         $this->objectConfiguration->setProperties($someProperties);
-        self::assertEquals($someProperties, $this->objectConfiguration->getProperties(), 'The set properties could not be retrieved again.');
+        $this->assertEquals($someProperties, $this->objectConfiguration->getProperties(), 'The set properties could not be retrieved again.');
 
         $this->objectConfiguration->setProperties([]);
-        self::assertEquals([], $this->objectConfiguration->getProperties(), 'The properties have not been cleared.');
+        $this->assertEquals([], $this->objectConfiguration->getProperties(), 'The properties have not been cleared.');
     }
 
     /**
      * Checks if setArguments accepts only valid values
      *
      * @test
+     * @expectedException \Neos\Flow\Configuration\Exception\InvalidConfigurationException
      */
     public function setArgumentsOnlyAcceptsValidValues()
     {
-        $this->expectException(InvalidConfigurationException::class);
         $invalidArguments = [
             1 => new Configuration\ConfigurationArgument(1, 'simple string'),
             2 => 'foo'
@@ -92,10 +91,10 @@ class ConfigurationTest extends UnitTestCase
             2 => new Configuration\ConfigurationArgument(2, 'another string')
         ];
         $this->objectConfiguration->setArguments($someArguments);
-        self::assertEquals($someArguments, $this->objectConfiguration->getArguments(), 'The set arguments could not be retrieved again.');
+        $this->assertEquals($someArguments, $this->objectConfiguration->getArguments(), 'The set arguments could not be retrieved again.');
 
         $this->objectConfiguration->setArguments([]);
-        self::assertEquals([], $this->objectConfiguration->getArguments(), 'The constructor arguments have not been cleared.');
+        $this->assertEquals([], $this->objectConfiguration->getArguments(), 'The constructor arguments have not been cleared.');
     }
 
     /**
@@ -104,7 +103,7 @@ class ConfigurationTest extends UnitTestCase
     public function setFactoryObjectNameAcceptsValidClassNames()
     {
         $this->objectConfiguration->setFactoryObjectName(__CLASS__);
-        self::assertSame(__CLASS__, $this->objectConfiguration->getFactoryObjectName());
+        $this->assertSame(__CLASS__, $this->objectConfiguration->getFactoryObjectName());
     }
 
     /**
@@ -113,15 +112,15 @@ class ConfigurationTest extends UnitTestCase
     public function setFactoryMethodNameAcceptsValidStrings()
     {
         $this->objectConfiguration->setFactoryMethodName('someMethodName');
-        self::assertSame('someMethodName', $this->objectConfiguration->getFactoryMethodName());
+        $this->assertSame('someMethodName', $this->objectConfiguration->getFactoryMethodName());
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function setFactoryMethodNameRejectsAnythingElseThanAString()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $this->objectConfiguration->setFactoryMethodName([]);
     }
 
@@ -130,7 +129,6 @@ class ConfigurationTest extends UnitTestCase
      */
     public function theDefaultFactoryMethodNameIsCreate()
     {
-        $this->objectConfiguration->setFactoryObjectName(__CLASS__);
-        self::assertSame('create', $this->objectConfiguration->getFactoryMethodName());
+        $this->assertSame('create', $this->objectConfiguration->getFactoryMethodName());
     }
 }

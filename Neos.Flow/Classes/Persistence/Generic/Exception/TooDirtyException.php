@@ -15,7 +15,6 @@ namespace Neos\Flow\Persistence\Generic\Exception;
  * A "Too Dirty" exception
  *
  * @api
- * @deprecated since Flow 6.0
  */
 class TooDirtyException extends \Neos\Flow\Persistence\Exception
 {

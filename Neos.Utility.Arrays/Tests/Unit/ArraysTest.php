@@ -23,7 +23,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
      */
     public function containsMultipleTypesReturnsFalseOnEmptyArray()
     {
-        self::assertFalse(Arrays::containsMultipleTypes([]), 'An empty array was seen as containing multiple types');
+        $this->assertFalse(Arrays::containsMultipleTypes([]), 'An empty array was seen as containing multiple types');
     }
 
     /**
@@ -31,7 +31,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
      */
     public function containsMultipleTypesReturnsFalseOnArrayWithIntegers()
     {
-        self::assertFalse(Arrays::containsMultipleTypes([1, 2, 3]), 'An array with only integers was seen as containing multiple types');
+        $this->assertFalse(Arrays::containsMultipleTypes([1, 2, 3]), 'An array with only integers was seen as containing multiple types');
     }
 
     /**
@@ -39,7 +39,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
      */
     public function containsMultipleTypesReturnsFalseOnArrayWithObjects()
     {
-        self::assertFalse(Arrays::containsMultipleTypes([new \stdClass(), new \stdClass(), new \stdClass()]), 'An array with only \stdClass was seen as containing multiple types');
+        $this->assertFalse(Arrays::containsMultipleTypes([new \stdClass(), new \stdClass(), new \stdClass()]), 'An array with only \stdClass was seen as containing multiple types');
     }
 
     /**
@@ -47,7 +47,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
      */
     public function containsMultipleTypesReturnsTrueOnMixedArray()
     {
-        self::assertTrue(Arrays::containsMultipleTypes([1, 'string', 1.25, new \stdClass()]), 'An array with mixed contents was not seen as containing multiple types');
+        $this->assertTrue(Arrays::containsMultipleTypes([1, 'string', 1.25, new \stdClass()]), 'An array with mixed contents was not seen as containing multiple types');
     }
 
     /**
@@ -56,7 +56,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
     public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenSimplePath()
     {
         $array = ['Foo' => 'the value'];
-        self::assertSame('the value', Arrays::getValueByPath($array, ['Foo']));
+        $this->assertSame('the value', Arrays::getValueByPath($array, ['Foo']));
     }
 
     /**
@@ -65,7 +65,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
     public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPath()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
-        self::assertSame('the value', Arrays::getValueByPath($array, ['Foo', 'Bar', 'Baz', 2]));
+        $this->assertSame('the value', Arrays::getValueByPath($array, ['Foo', 'Bar', 'Baz', 2]));
     }
 
     /**
@@ -77,15 +77,15 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         $expectedResult = 'the value';
         $actualResult = Arrays::getValueByPath($array, $path);
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function getValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         Arrays::getValueByPath($array, null);
     }
@@ -96,7 +96,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
     public function getValueByPathReturnsNullIfTheSegementsOfThePathDontExist()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
-        self::assertNull(Arrays::getValueByPath($array, ['Foo', 'Bar', 'Bax', 2]));
+        $this->assertNULL(Arrays::getValueByPath($array, ['Foo', 'Bar', 'Bax', 2]));
     }
 
     /**
@@ -105,7 +105,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
     public function getValueByPathReturnsNullIfThePathHasMoreSegmentsThanTheGivenArray()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => 'the value']]];
-        self::assertNull(Arrays::getValueByPath($array, ['Foo', 'Bar', 'Baz', 'Bux']));
+        $this->assertNULL(Arrays::getValueByPath($array, ['Foo', 'Bar', 'Baz', 'Bux']));
     }
 
     /**
@@ -133,7 +133,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
             ]
         ];
 
-        self::assertEquals($expected, $array);
+        $this->assertEquals($expected, $array);
     }
 
     /**
@@ -145,7 +145,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $path = ['foo', 'bar', 'baz'];
         $expectedValue = ['foo' => ['bar' => ['baz' => 'The Value']]];
         $actualValue = Arrays::setValueByPath($array, $path, 'The Value');
-        self::assertEquals($expectedValue, $actualValue);
+        $this->assertEquals($expectedValue, $actualValue);
     }
 
     /**
@@ -157,7 +157,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $path = 'foo.bar.baz';
         $expectedValue = ['foo' => ['bar' => ['baz' => 'The Value']]];
         $actualValue = Arrays::setValueByPath($array, $path, 'The Value');
-        self::assertEquals($expectedValue, $actualValue);
+        $this->assertEquals($expectedValue, $actualValue);
     }
 
     /**
@@ -169,35 +169,35 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $path = ['foo', 'bar', 'baz'];
         $expectedValue = ['foo' => ['bar' => ['baz' => 'The Value']], 'bar' => 'Baz'];
         $actualValue = Arrays::setValueByPath($array, $path, 'The Value');
-        self::assertEquals($expectedValue, $actualValue);
+        $this->assertEquals($expectedValue, $actualValue);
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function setValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         Arrays::setValueByPath($array, null, 'Some Value');
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function setValueByPathThrowsExceptionIfSubjectIsNoArray()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $subject = 'foobar';
         Arrays::setValueByPath($subject, 'foo', 'bar');
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function setValueByPathThrowsExceptionIfSubjectIsNoArrayAccess()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $subject = new \stdClass();
         Arrays::setValueByPath($subject, 'foo', 'bar');
     }
@@ -209,7 +209,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
     {
         $subject = $subjectBackup = ['foo' => 'bar'];
         Arrays::setValueByPath($subject, 'foo', 'baz');
-        self::assertEquals($subject, $subjectBackup);
+        $this->assertEquals($subject, $subjectBackup);
     }
 
     /**
@@ -221,7 +221,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $path = ['foo', 'bar', 'nonExistingKey'];
         $expectedValue = $array;
         $actualValue = Arrays::unsetValueByPath($array, $path);
-        self::assertEquals($expectedValue, $actualValue);
+        $this->assertEquals($expectedValue, $actualValue);
     }
 
     /**
@@ -234,7 +234,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $expectedValue = ['foo' => ['bar' => []], 'bar' => 'Baz'];
         ;
         $actualValue = Arrays::unsetValueByPath($array, $path);
-        self::assertEquals($expectedValue, $actualValue);
+        $this->assertEquals($expectedValue, $actualValue);
     }
 
     /**
@@ -247,7 +247,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $expectedValue = ['foo' => ['bar' => []], 'bar' => 'Baz'];
         ;
         $actualValue = Arrays::unsetValueByPath($array, $path);
-        self::assertEquals($expectedValue, $actualValue);
+        $this->assertEquals($expectedValue, $actualValue);
     }
 
     /**
@@ -260,15 +260,15 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $expectedValue = ['bar' => 'Baz'];
         ;
         $actualValue = Arrays::unsetValueByPath($array, $path);
-        self::assertEquals($expectedValue, $actualValue);
+        $this->assertEquals($expectedValue, $actualValue);
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function unsetValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         Arrays::unsetValueByPath($array, null);
     }
@@ -281,7 +281,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $array = ['EmptyElement' => null, 'Foo' => ['Bar' => ['Baz' => ['NotNull' => '', 'AnotherEmptyElement' => null]]]];
         $expectedResult = ['Foo' => ['Bar' => ['Baz' => ['NotNull' => '']]]];
         $actualResult = Arrays::removeEmptyElementsRecursively($array);
-        self::assertEquals($expectedResult, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -292,7 +292,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $array = ['EmptyElement' => [], 'Foo' => ['Bar' => ['Baz' => ['AnotherEmptyElement' => null]]], 'NotNull' => 123];
         $expectedResult = ['NotNull' => 123];
         $actualResult = Arrays::removeEmptyElementsRecursively($array);
-        self::assertEquals($expectedResult, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
     }
 
     public function arrayMergeRecursiveOverruleData()
@@ -504,7 +504,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
     public function arrayMergeRecursiveOverruleMergesSimpleArrays(array $inputArray1, array $inputArray2, bool $dontAddNewKeys, bool $emptyValuesOverride, array $expected)
     {
         $actual = Arrays::arrayMergeRecursiveOverrule($inputArray1, $inputArray2, $dontAddNewKeys, $emptyValuesOverride);
-        self::assertSame($expected, $actual);
+        $this->assertSame($expected, $actual);
     }
 
     /**
@@ -534,7 +534,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $actual = Arrays::arrayMergeRecursiveOverruleWithCallback($inputArray1, $inputArray2, function ($simpleType) {
             return ['__convertedValue' => $simpleType];
         });
-        self::assertSame($expected, $actual);
+        $this->assertSame($expected, $actual);
     }
 
     /**
@@ -570,45 +570,6 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
             }
             return ['__convertedValue' => $simpleType];
         });
-        self::assertSame($expected, $actual);
-    }
-
-    /**
-     * @test
-     */
-    public function arrayMergeRecursiveCallbackOverrideFirstArrayValuesGivenClosure()
-    {
-        $inputArray1 = [
-            'k1' => 'v1',
-            'k2' => [
-                'k2.1' => 'v2.1'
-            ],
-        ];
-        $inputArray2 = [
-            'k2' => [
-                'k2.2' => 'v2.2'
-            ],
-            'k3' => 'v3'
-        ];
-        $expected = [
-            'k1' => 'v1',
-            'k2' => [
-                'k2.2' => 'v2.2'
-            ],
-            'k3' => 'v3'
-        ];
-
-        $actual = Arrays::arrayMergeRecursiveOverruleWithCallback(
-            $inputArray1,
-            $inputArray2,
-            function ($simpleType) {
-                return ['__convertedValue' => $simpleType];
-            },
-            function ($value) {
-                return true;
-            }
-        );
-
-        self::assertSame($expected, $actual);
+        $this->assertSame($expected, $actual);
     }
 }

@@ -11,8 +11,6 @@ namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
  * source code.
  */
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
@@ -54,13 +52,7 @@ class Post
     protected $comment;
 
     /**
-     * @var Collection<Fixtures\Tag>
-     * @ORM\OneToMany
-     */
-    protected $tags;
-
-    /**
-     * @var Collection<Fixtures\Post>
+     * @var \Doctrine\Common\Collections\Collection<Fixtures\Post>
      * @ORM\ManyToMany
      * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(name="related_post_id")})
      */
@@ -71,12 +63,6 @@ class Post
      * @ORM\ManyToOne
      */
     protected $author;
-
-    public function __construct()
-    {
-        $this->tags = new ArrayCollection();
-        $this->related = new ArrayCollection();
-    }
 
     /**
      * @return string
@@ -127,30 +113,6 @@ class Post
     public function getComment()
     {
         return $this->comment;
-    }
-
-    /**
-     * @param Tag $tag
-     */
-    public function addTag(Tag $tag)
-    {
-        $this->tags->add($tag);
-    }
-
-    /**
-     * @param Tag $tag
-     */
-    public function removeTag(Tag $tag)
-    {
-        $this->tags->removeElement($tag);
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getTags()
-    {
-        return $this->tags;
     }
 
     /**

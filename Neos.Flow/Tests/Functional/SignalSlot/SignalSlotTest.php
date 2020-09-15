@@ -30,11 +30,11 @@ class SignalSlotTest extends FunctionalTestCase
         $dispatcher->connect(Fixtures\SubClass::class, 'something', $subClass, 'somethingSlot');
 
         $subClass->triggerSomethingSignalFromSubClass();
-        self::assertTrue($subClass->slotWasCalled, 'from sub class');
+        $this->assertTrue($subClass->slotWasCalled, 'from sub class');
 
         $subClass->slotWasCalled = false;
 
         $subClass->triggerSomethingSignalFromAbstractClass();
-        self::assertTrue($subClass->slotWasCalled, 'from abstract class');
+        $this->assertTrue($subClass->slotWasCalled, 'from abstract class');
     }
 }

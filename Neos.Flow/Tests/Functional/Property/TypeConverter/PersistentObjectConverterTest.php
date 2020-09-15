@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Property\TypeConverter;
  * source code.
  */
 
-use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Tests\Functional\Property\Fixtures;
@@ -35,7 +34,7 @@ class PersistentObjectConverterTest extends FunctionalTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);
@@ -47,8 +46,8 @@ class PersistentObjectConverterTest extends FunctionalTestCase
     public function entityWithImmutablePropertyIsCreatedCorrectly()
     {
         $result = $this->propertyMapper->convert($this->sourceProperties, Fixtures\TestEntityWithImmutableProperty::class);
-        self::assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
-        self::assertEquals('Christian M', $result->getName());
+        $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
+        $this->assertEquals('Christian M', $result->getName());
     }
 
     /**
@@ -69,8 +68,8 @@ class PersistentObjectConverterTest extends FunctionalTestCase
 
         $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithImmutableProperty::class);
 
-        self::assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
-        self::assertEquals('Christian M', $result->getName());
+        $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
+        $this->assertEquals('Christian M', $result->getName());
     }
 
     /**
@@ -92,16 +91,16 @@ class PersistentObjectConverterTest extends FunctionalTestCase
 
         $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithImmutableProperty::class);
 
-        self::assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
-        self::assertEquals('Christian M', $result->getName());
+        $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
+        $this->assertEquals('Christian M', $result->getName());
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Property\Exception
      */
     public function entityWithImmutablePropertyCanNotBeUpdatedWhenImmutablePropertyChanged()
     {
-        $this->expectException(Exception::class);
         $result = $this->propertyMapper->convert($this->sourceProperties, Fixtures\TestEntityWithImmutableProperty::class);
         $identifier = $this->persistenceManager->getIdentifierByObject($result);
         $this->persistenceManager->add($result);
@@ -116,7 +115,7 @@ class PersistentObjectConverterTest extends FunctionalTestCase
 
         $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithImmutableProperty::class);
 
-        self::assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
-        self::assertEquals('Christian M', $result->getName());
+        $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
+        $this->assertEquals('Christian M', $result->getName());
     }
 }

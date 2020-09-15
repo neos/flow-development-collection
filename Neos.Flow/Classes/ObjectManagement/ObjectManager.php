@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Flow\ObjectManagement;
 
 /*
@@ -14,13 +12,14 @@ namespace Neos\Flow\ObjectManagement;
  */
 
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Security\Context;
+use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Object Manager
@@ -98,7 +97,7 @@ class ObjectManager implements ObjectManagerInterface
      * @param array $objects An array of object names and some information about each registered object (scope, lower cased name etc.)
      * @return void
      */
-    public function setObjects(array $objects): void
+    public function setObjects(array $objects)
     {
         $this->objects = $objects;
         $this->objects[ObjectManagerInterface::class]['i'] = $this;
@@ -112,7 +111,7 @@ class ObjectManager implements ObjectManagerInterface
      * @return void
      * @Flow\Autowiring(false)
      */
-    public function injectAllSettings(array $settings): void
+    public function injectAllSettings(array $settings)
     {
         $this->allSettings = $settings;
     }
@@ -180,17 +179,19 @@ class ObjectManager implements ObjectManagerInterface
      * Returns a fresh or existing instance of the object specified by $objectName.
      *
      * @param string $objectName The name of the object to return an instance of
-     * @param mixed ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
      * @return object The object instance
-     * @throws Exception\CannotBuildObjectException
      * @throws Exception\UnknownObjectException if an object with the given name does not exist
      * @throws \InvalidArgumentException
-     * @throws InvalidConfigurationTypeException
      * @api
      */
-    public function get($objectName, ...$constructorArguments)
+    public function get($objectName)
     {
-        if (!empty($constructorArguments) && isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
+        // XXX: This is a b/c fix for the deprecation of doctrine ObjectManager. Remove this with Flow 6.0
+        if ($objectName === \Doctrine\Common\Persistence\ObjectManager::class) {
+            $objectName = \Doctrine\ORM\EntityManagerInterface::class;
+        }
+
+        if (func_num_args() > 1 && isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
             throw new \InvalidArgumentException('You cannot provide constructor arguments for singleton objects via get(). If you need to pass arguments to the constructor, define them in the Objects.yaml configuration.', 1298049934);
         }
 
@@ -214,7 +215,7 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         if (!isset($this->objects[$objectName]) || $this->objects[$objectName]['s'] === ObjectConfiguration::SCOPE_PROTOTYPE) {
-            return $this->instantiateClass($className, $constructorArguments);
+            return $this->instantiateClass($className, array_slice(func_get_args(), 1));
         }
 
         $this->objects[$objectName]['i'] = $this->instantiateClass($className, []);
@@ -249,12 +250,12 @@ class ObjectManager implements ObjectManagerInterface
      * rare cases.
      *
      * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
-     * @return string|null Either the mixed case object name or false if no object of that name was found.
-     * @internal
+     * @return mixed Either the mixed case object name or false if no object of that name was found.
+     * @api
      */
-    public function getCaseSensitiveObjectName($caseInsensitiveObjectName): ?string
+    public function getCaseSensitiveObjectName($caseInsensitiveObjectName)
     {
-        $lowerCasedObjectName = strtolower(ltrim($caseInsensitiveObjectName, '\\'));
+        $lowerCasedObjectName = ltrim(strtolower($caseInsensitiveObjectName), '\\');
         if (isset($this->cachedLowerCasedObjectNames[$lowerCasedObjectName])) {
             return $this->cachedLowerCasedObjectNames[$lowerCasedObjectName];
         }
@@ -266,7 +267,7 @@ class ObjectManager implements ObjectManagerInterface
             }
         }
 
-        return null;
+        return false;
     }
 
     /**
@@ -305,9 +306,9 @@ class ObjectManager implements ObjectManagerInterface
     public function getClassNameByObjectName($objectName)
     {
         if (!isset($this->objects[$objectName])) {
-            return class_exists($objectName) ? $objectName : false;
+            return (class_exists($objectName)) ? $objectName : false;
         }
-        return $this->objects[$objectName]['c'] ?? $objectName;
+        return (isset($this->objects[$objectName]['c']) ? $this->objects[$objectName]['c'] : $objectName);
     }
 
     /**
@@ -315,7 +316,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param string $objectName The object name
      * @return string The package key or false if no such object exists
-     * @internal
+     * @api
      */
     public function getPackageKeyByObjectName($objectName)
     {
@@ -356,7 +357,7 @@ class ObjectManager implements ObjectManagerInterface
      * @param string $objectName The object name
      * @return boolean true if an instance already exists
      */
-    public function hasInstance($objectName): bool
+    public function hasInstance($objectName)
     {
         return isset($this->objects[$objectName]['i']);
     }
@@ -370,7 +371,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function getInstance($objectName)
     {
-        return $this->objects[$objectName]['i'] ?? null;
+        return isset($this->objects[$objectName]['i']) ? $this->objects[$objectName]['i'] : null;
     }
 
     /**
@@ -408,7 +409,7 @@ class ObjectManager implements ObjectManagerInterface
      * @param \Closure $builder An anonymous function which creates the instance to be injected
      * @return DependencyProxy
      */
-    public function createLazyDependency($hash, &$propertyReferenceVariable, $className, \Closure $builder): DependencyProxy
+    public function createLazyDependency($hash, &$propertyReferenceVariable, $className, \Closure $builder)
     {
         $this->dependencyProxies[$hash] = new DependencyProxy($className, $builder);
         $this->dependencyProxies[$hash]->_addPropertyVariable($propertyReferenceVariable);
@@ -452,9 +453,6 @@ class ObjectManager implements ObjectManagerInterface
      * object instances which were configured to be shut down.
      *
      * @return void
-     * @throws Exception\CannotBuildObjectException
-     * @throws Exception\UnknownObjectException
-     * @throws InvalidConfigurationTypeException
      */
     public function shutdown()
     {
@@ -472,12 +470,24 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
+     * Returns the an array of package settings or a single setting value by the given path.
+     *
+     * @param array $settingsPath Path to the setting(s) as an array, for example array('Neos', 'Flow', 'persistence', 'backendOptions')
+     * @return mixed Either an array of settings or the value of a single setting
+     * @deprecated Use settings injection or the ConfigurationManager to get settings.
+     */
+    public function getSettingsByPath(array $settingsPath)
+    {
+        return Arrays::getValueByPath($this->allSettings, $settingsPath);
+    }
+
+    /**
      * Returns all current object configurations.
      * For internal use in bootstrap only. Can change anytime.
      *
      * @return array
      */
-    public function getAllObjectConfigurations(): array
+    public function getAllObjectConfigurations()
     {
         return $this->objects;
     }
@@ -489,20 +499,18 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param string $objectName Name of the object to build
      * @return object The built object
-     * @throws Exception\UnknownObjectException
-     * @throws InvalidConfigurationTypeException
-     * @throws Exception\CannotBuildObjectException
      */
     protected function buildObjectByFactory($objectName)
     {
-        $factory = $this->objects[$objectName]['f'][0] ? $this->get($this->objects[$objectName]['f'][0]) : null;
+        $configurationManager = $this->get(ConfigurationManager::class);
+        $factory = $this->get($this->objects[$objectName]['f'][0]);
         $factoryMethodName = $this->objects[$objectName]['f'][1];
 
         $factoryMethodArguments = [];
         foreach ($this->objects[$objectName]['fa'] as $index => $argumentInformation) {
             switch ($argumentInformation['t']) {
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING:
-                    $factoryMethodArguments[$index] = $this->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $argumentInformation['v']);
+                    $factoryMethodArguments[$index] = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $argumentInformation['v']);
                 break;
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                     $factoryMethodArguments[$index] = $argumentInformation['v'];
@@ -513,11 +521,11 @@ class ObjectManager implements ObjectManagerInterface
             }
         }
 
-        if ($factory !== null) {
-            return $factory->$factoryMethodName(...$factoryMethodArguments);
+        if (count($factoryMethodArguments) === 0) {
+            return $factory->$factoryMethodName();
+        } else {
+            return call_user_func_array([$factory, $factoryMethodName], $factoryMethodArguments);
         }
-
-        return $factoryMethodName(...$factoryMethodArguments);
     }
 
     /**
@@ -536,7 +544,7 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         try {
-            $object = new $className(...$arguments);
+            $object = ObjectAccess::instantiateClass($className, $arguments);
             unset($this->classesBeingInstantiated[$className]);
             return $object;
         } catch (\Exception $exception) {
@@ -551,7 +559,7 @@ class ObjectManager implements ObjectManagerInterface
      * @param \SplObjectStorage $shutdownObjects
      * @return void
      */
-    protected function callShutdownMethods(\SplObjectStorage $shutdownObjects): void
+    protected function callShutdownMethods(\SplObjectStorage $shutdownObjects)
     {
         foreach ($shutdownObjects as $object) {
             $methodName = $shutdownObjects[$object];

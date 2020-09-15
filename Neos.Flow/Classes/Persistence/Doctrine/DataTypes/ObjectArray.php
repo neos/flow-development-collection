@@ -95,16 +95,12 @@ class ObjectArray extends Types\ArrayType
      * Converts a value from its PHP representation to its database representation
      * of this type.
      *
-     * @param mixed $array The value to convert.
+     * @param array $array The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
      * @return mixed The database representation of the value.
      */
     public function convertToDatabaseValue($array, AbstractPlatform $platform)
     {
-        if (!is_array($array)) {
-            throw new \InvalidArgumentException(sprintf('The ObjectArray type only converts arrays, %s given', gettype($array)), 1569945649);
-        }
-
         $this->initializeDependencies();
 
         $this->encodeObjectReferences($array);

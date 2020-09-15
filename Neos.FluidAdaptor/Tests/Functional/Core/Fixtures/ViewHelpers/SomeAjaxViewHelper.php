@@ -30,32 +30,16 @@ class SomeAjaxViewHelper extends AbstractWidgetViewHelper
      */
     protected $controller;
 
-
-    /**
-     * Initialize the arguments.
-     *
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function initializeArguments()
-    {
-        parent::initializeArguments();
-        $this->registerArgument('option1', 'string', 'Option for testing if parameters can be passed', false, '');
-        $this->registerArgument('option2', 'string', 'Option for testing if parameters can be passed', false, '');
-    }
-
     /**
      * The actual render method does nothing more than initiating the sub request
      * which invokes the controller.
      *
+     * @param string $option1 Option for testing if parameters can be passed
+     * @param string $option2 Option for testing if parameters can be passed
      * @return string
-     * @throws \Neos\Flow\Mvc\Exception\InfiniteLoopException
-     * @throws \Neos\FluidAdaptor\Core\Widget\Exception\InvalidControllerException
-     * @throws \Neos\FluidAdaptor\Core\Widget\Exception\MissingControllerException
      */
-    public function render(): string
+    public function render($option1 = '', $option2 = '')
     {
-        $response = $this->initiateSubRequest();
-        return $response;
+        return $this->initiateSubRequest();
     }
 }

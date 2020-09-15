@@ -20,7 +20,6 @@ use Neos\Flow\Reflection\ReflectionService;
  * persistence framework.
  *
  * @Flow\Scope("singleton")
- * @deprecated since Flow 6.0
  */
 class Session
 {

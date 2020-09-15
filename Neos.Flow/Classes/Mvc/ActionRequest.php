@@ -12,8 +12,7 @@ namespace Neos\Flow\Mvc;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Http\Factories\FlowUploadedFile;
-use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
+use Neos\Flow\Http\Request as HttpRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
@@ -50,11 +49,11 @@ class ActionRequest implements RequestInterface
      * Package key of the controller which is supposed to handle this request.
      * @var string
      */
-    protected $controllerPackageKey = '';
+    protected $controllerPackageKey = null;
 
     /**
      * Subpackage key of the controller which is supposed to handle this request.
-     * @var string|null
+     * @var string
      */
     protected $controllerSubpackageKey = null;
 
@@ -62,13 +61,13 @@ class ActionRequest implements RequestInterface
      * Object name of the controller which is supposed to handle this request.
      * @var string
      */
-    protected $controllerName = '';
+    protected $controllerName = null;
 
     /**
      * Name of the action the controller is supposed to take.
      * @var string
      */
-    protected $controllerActionName = '';
+    protected $controllerActionName = null;
 
     /**
      * The arguments for this request. They must be only simple types, no
@@ -104,7 +103,7 @@ class ActionRequest implements RequestInterface
      * The requested representation format
      * @var string
      */
-    protected $format = '';
+    protected $format = null;
 
     /**
      * If this request has been changed and needs to be dispatched again
@@ -114,13 +113,13 @@ class ActionRequest implements RequestInterface
 
     /**
      * The parent request – either another ActionRequest or Http Request
-     * @var ActionRequest
+     * @var ActionRequest|HttpRequest
      */
     protected $parentRequest;
 
     /**
      * Cached pointer to the root request (usually an HTTP request)
-     * @var HttpRequestInterface
+     * @var object
      */
     protected $rootRequest;
 
@@ -133,73 +132,40 @@ class ActionRequest implements RequestInterface
     /**
      * Constructs this action request
      *
-     * @param ActionRequest|HttpRequestInterface $parentRequest Either an HTTP request or another ActionRequest
+     * @param ActionRequest|HttpRequest $parentRequest Either an HTTP request or another ActionRequest
      * @throws \InvalidArgumentException
      * @api
      */
-    protected function __construct($parentRequest)
+    public function __construct($parentRequest)
     {
-        if (!$parentRequest instanceof HttpRequestInterface && !$parentRequest instanceof ActionRequest) {
+        if (!$parentRequest instanceof HttpRequest && !$parentRequest instanceof ActionRequest) {
             throw new \InvalidArgumentException('The parent request passed to ActionRequest::__construct() must be either an HTTP request or another ActionRequest', 1327846149);
         }
-
-
-        // TODO: Cleaner constructor now that it is protected
-        if ($parentRequest instanceof HttpRequestInterface) {
-            $this->rootRequest = $parentRequest;
-        }
-
-        if ($parentRequest instanceof ActionRequest) {
-            $this->parentRequest = $parentRequest;
-        }
-    }
-
-    /**
-     * @param HttpRequestInterface $request
-     * @return ActionRequest
-     */
-    public static function fromHttpRequest(HttpRequestInterface $request): ActionRequest
-    {
-        return new ActionRequest($request);
-    }
-
-    /**
-     * Create a sub request from this action request.
-     *
-     * @return ActionRequest
-     */
-    public function createSubRequest(): ActionRequest
-    {
-        return new ActionRequest($this);
+        $this->parentRequest = $parentRequest;
     }
 
     /**
      * Returns the parent request
      *
-     * @return ActionRequest
+     * @return ActionRequest|HttpRequest
      * @api
      */
-    public function getParentRequest(): ?ActionRequest
+    public function getParentRequest()
     {
-        if ($this->isMainRequest()) {
-            return null;
-        }
-
         return $this->parentRequest;
     }
 
     /**
      * Returns the top level request: the HTTP request object
      *
-     * @return HttpRequestInterface
+     * @return HttpRequest
      * @api
      */
-    public function getHttpRequest(): HttpRequestInterface
+    public function getHttpRequest()
     {
-        if ($this->rootRequest === null && $this->isMainRequest() === false) {
-            $this->rootRequest = $this->getMainRequest()->getHttpRequest();
+        if ($this->rootRequest === null) {
+            $this->rootRequest = ($this->parentRequest instanceof HttpRequest) ? $this->parentRequest : $this->parentRequest->getHttpRequest();
         }
-
         return $this->rootRequest;
     }
 
@@ -209,14 +175,9 @@ class ActionRequest implements RequestInterface
      * @return ActionRequest
      * @api
      */
-    public function getMainRequest(): ActionRequest
+    public function getMainRequest()
     {
-        $parentRequest = $this->getParentRequest();
-        if ($parentRequest instanceof ActionRequest) {
-            return $parentRequest->getMainRequest();
-        }
-
-        return $this;
+        return ($this->parentRequest instanceof HttpRequest) ? $this : $this->parentRequest->getMainRequest();
     }
 
     /**
@@ -226,9 +187,9 @@ class ActionRequest implements RequestInterface
      * @return boolean
      * @api
      */
-    public function isMainRequest(): bool
+    public function isMainRequest()
     {
-        return ($this->parentRequest === null);
+        return ($this->parentRequest instanceof HttpRequest);
     }
 
     /**
@@ -238,15 +199,9 @@ class ActionRequest implements RequestInterface
      * explicitly set through the corresponding internal argument "__referrer".
      * This mechanism is used by Flow's form and validation mechanisms.
      *
-     * @return ActionRequest|null the referring request, or NULL if no referrer found
-     * @throws Exception\InvalidActionNameException
-     * @throws Exception\InvalidArgumentNameException
-     * @throws Exception\InvalidArgumentTypeException
-     * @throws Exception\InvalidControllerNameException
-     * @throws \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException
-     * @throws \Neos\Flow\Security\Exception\InvalidHashException
+     * @return ActionRequest the referring request, or NULL if no referrer found
      */
-    public function getReferringRequest(): ?ActionRequest
+    public function getReferringRequest()
     {
         if ($this->referringRequest !== null) {
             return $this->referringRequest;
@@ -257,7 +212,7 @@ class ActionRequest implements RequestInterface
         if (is_array($this->internalArguments['__referrer'])) {
             $referrerArray = $this->internalArguments['__referrer'];
 
-            $referringRequest = ActionRequest::fromHttpRequest($this->getHttpRequest());
+            $referringRequest = new ActionRequest($this->getHttpRequest());
 
             $arguments = [];
             if (isset($referrerArray['arguments'])) {
@@ -269,8 +224,9 @@ class ActionRequest implements RequestInterface
 
             $referringRequest->setArguments(Arrays::arrayMergeRecursiveOverrule($arguments, $referrerArray));
             return $referringRequest;
+        } else {
+            $this->referringRequest = $this->internalArguments['__referrer'];
         }
-        $this->referringRequest = $this->internalArguments['__referrer'];
         return $this->referringRequest;
     }
 
@@ -279,12 +235,11 @@ class ActionRequest implements RequestInterface
      *
      * @param boolean $flag If this request has been dispatched
      * @return void
-     * @throws \Neos\Flow\SignalSlot\Exception\InvalidSlotException
      * @api
      */
-    public function setDispatched($flag): void
+    public function setDispatched($flag)
     {
-        $this->dispatched = (bool)$flag;
+        $this->dispatched = $flag ? true : false;
 
         if ($flag) {
             $this->emitRequestDispatched($this);
@@ -301,7 +256,7 @@ class ActionRequest implements RequestInterface
      * @return boolean true if this request has been dispatched successfully
      * @api
      */
-    public function isDispatched(): bool
+    public function isDispatched()
     {
         return $this->dispatched;
     }
@@ -313,24 +268,16 @@ class ActionRequest implements RequestInterface
      * @return string The controller's Object Name
      * @api
      */
-    public function getControllerObjectName(): string
+    public function getControllerObjectName()
     {
         $possibleObjectName = '@package\@subpackage\Controller\@controllerController';
-
-        $possibleObjectName = str_replace([
-            '@package',
-            '@subpackage',
-            '@controller',
-            '\\\\'
-        ], [
-            str_replace('.', '\\', $this->controllerPackageKey),
-            $this->controllerSubpackageKey ?? '',
-            $this->controllerName,
-            '\\'
-        ], $possibleObjectName);
+        $possibleObjectName = str_replace('@package', str_replace('.', '\\', $this->controllerPackageKey), $possibleObjectName);
+        $possibleObjectName = str_replace('@subpackage', $this->controllerSubpackageKey, $possibleObjectName);
+        $possibleObjectName = str_replace('@controller', $this->controllerName, $possibleObjectName);
+        $possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
 
         $controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleObjectName);
-        return $controllerObjectName ?: '';
+        return ($controllerObjectName !== false) ? $controllerObjectName : '';
     }
 
     /**
@@ -341,11 +288,11 @@ class ActionRequest implements RequestInterface
      * @throws UnknownObjectException
      * @api
      */
-    public function setControllerObjectName(string $unknownCasedControllerObjectName): void
+    public function setControllerObjectName($unknownCasedControllerObjectName)
     {
         $controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($unknownCasedControllerObjectName);
 
-        if ($controllerObjectName === null) {
+        if ($controllerObjectName === false) {
             throw new UnknownObjectException('The object "' . $unknownCasedControllerObjectName . '" is not registered.', 1268844071);
         }
 
@@ -353,20 +300,17 @@ class ActionRequest implements RequestInterface
 
         $matches = [];
         $subject = substr($controllerObjectName, strlen($this->controllerPackageKey) + 1);
-        preg_match(
-            '/
+        preg_match('/
 			^(
 				Controller
 			|
 				(?P<subpackageKey>.+)\\\\Controller
 			)
 			\\\\(?P<controllerName>[a-z\\\\]+)Controller
-			$/ix',
-            $subject,
-            $matches
+			$/ix', $subject, $matches
         );
 
-        $this->controllerSubpackageKey = $matches['subpackageKey'] ?? null;
+        $this->controllerSubpackageKey = (isset($matches['subpackageKey'])) ? $matches['subpackageKey'] : null;
         $this->controllerName = $matches['controllerName'];
     }
 
@@ -381,7 +325,7 @@ class ActionRequest implements RequestInterface
      * @return void
      * @api
      */
-    public function setControllerPackageKey(string $packageKey): void
+    public function setControllerPackageKey($packageKey)
     {
         $correctlyCasedPackageKey = $this->packageManager->getCaseSensitivePackageKey($packageKey);
         $this->controllerPackageKey = ($correctlyCasedPackageKey !== false) ? $correctlyCasedPackageKey : $packageKey;
@@ -393,7 +337,7 @@ class ActionRequest implements RequestInterface
      * @return string The package key
      * @api
      */
-    public function getControllerPackageKey(): string
+    public function getControllerPackageKey()
     {
         return $this->controllerPackageKey;
     }
@@ -401,10 +345,10 @@ class ActionRequest implements RequestInterface
     /**
      * Sets the subpackage key of the controller.
      *
-     * @param string|null $subpackageKey The subpackage key.
+     * @param string $subpackageKey The subpackage key.
      * @return void
      */
-    public function setControllerSubpackageKey(?string $subpackageKey): void
+    public function setControllerSubpackageKey($subpackageKey)
     {
         $this->controllerSubpackageKey = (empty($subpackageKey) ? null : $subpackageKey);
     }
@@ -413,17 +357,19 @@ class ActionRequest implements RequestInterface
      * Returns the subpackage key of the specified controller.
      * If there is no subpackage key set, the method returns NULL.
      *
-     * @return string|null The subpackage key
+     * @return string The subpackage key
      * @api
      */
-    public function getControllerSubpackageKey(): ?string
+    public function getControllerSubpackageKey()
     {
         $controllerObjectName = $this->getControllerObjectName();
         if ($this->controllerSubpackageKey !== null && $controllerObjectName !== '') {
+
             // Extract the subpackage key from the controller object name to assure that the case is correct.
-            return substr($controllerObjectName, strlen($this->controllerPackageKey) + 1, strlen((string)$this->controllerSubpackageKey));
+            return substr($controllerObjectName, strlen($this->controllerPackageKey) + 1, strlen($this->controllerSubpackageKey));
+        } else {
+            return $this->controllerSubpackageKey;
         }
-        return $this->controllerSubpackageKey;
     }
 
     /**
@@ -436,8 +382,11 @@ class ActionRequest implements RequestInterface
      * @return void
      * @throws Exception\InvalidControllerNameException
      */
-    public function setControllerName(string $controllerName): void
+    public function setControllerName($controllerName)
     {
+        if (!is_string($controllerName)) {
+            throw new Exception\InvalidControllerNameException('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
+        }
         if (strpos($controllerName, '_') !== false) {
             throw new Exception\InvalidControllerNameException('The controller name must not contain underscores.', 1217846412);
         }
@@ -451,7 +400,7 @@ class ActionRequest implements RequestInterface
      * @return string Name of the controller
      * @api
      */
-    public function getControllerName(): string
+    public function getControllerName()
     {
         $controllerObjectName = $this->getControllerObjectName();
         if ($controllerObjectName !== '') {
@@ -459,8 +408,9 @@ class ActionRequest implements RequestInterface
             // Extract the controller name from the controller object name to assure that the case is correct.
             // Note: Controller name can also contain sub structure like "Foo\Bar\Baz"
             return substr($controllerObjectName, -(strlen($this->controllerName) + 10), - 10);
+        } else {
+            return $this->controllerName;
         }
-        return $this->controllerName;
     }
 
     /**
@@ -472,8 +422,11 @@ class ActionRequest implements RequestInterface
      * @return void
      * @throws Exception\InvalidActionNameException if the action name is not valid
      */
-    public function setControllerActionName(string $actionName): void
+    public function setControllerActionName($actionName)
     {
+        if (!is_string($actionName)) {
+            throw new Exception\InvalidActionNameException('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
+        }
         if ($actionName === '') {
             throw new Exception\InvalidActionNameException('The action name must not be an empty string.', 1289472991);
         }
@@ -489,7 +442,7 @@ class ActionRequest implements RequestInterface
      * @return string Action name
      * @api
      */
-    public function getControllerActionName(): string
+    public function getControllerActionName()
     {
         $controllerObjectName = $this->getControllerObjectName();
         if ($controllerObjectName !== '' && ($this->controllerActionName === strtolower($this->controllerActionName))) {
@@ -513,11 +466,10 @@ class ActionRequest implements RequestInterface
      * @return void
      * @throws Exception\InvalidArgumentNameException if the given argument name is no string
      * @throws Exception\InvalidArgumentTypeException if the given argument value is an object
-     * @throws Exception\InvalidControllerNameException
-     * @throws Exception\InvalidActionNameException
      */
-    public function setArgument(string $argumentName, $value): void
+    public function setArgument($argumentName, $value)
     {
+        $argumentName = (string)$argumentName;
         if ($argumentName === '') {
             throw new Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
         }
@@ -527,8 +479,7 @@ class ActionRequest implements RequestInterface
             return;
         }
 
-        // Allowing FlowUploadedFile because that already comes from the HTTP request.
-        if (is_object($value) && !($value instanceof FlowUploadedFile)) {
+        if (is_object($value)) {
             throw new Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
         }
 
@@ -562,11 +513,11 @@ class ActionRequest implements RequestInterface
      * Returns the value of the specified argument
      *
      * @param string $argumentName Name of the argument
-     * @return string|array Value of the argument
+     * @return string Value of the argument
      * @throws Exception\NoSuchArgumentException if such an argument does not exist
      * @api
      */
-    public function getArgument(string $argumentName)
+    public function getArgument($argumentName)
     {
         if (!isset($this->arguments[$argumentName])) {
             throw new Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
@@ -581,7 +532,7 @@ class ActionRequest implements RequestInterface
      * @return boolean true if the argument is set, otherwise false
      * @api
      */
-    public function hasArgument(string $argumentName): bool
+    public function hasArgument($argumentName)
     {
         return isset($this->arguments[$argumentName]);
     }
@@ -596,10 +547,8 @@ class ActionRequest implements RequestInterface
      * @return void
      * @throws Exception\InvalidArgumentNameException if an argument name is not a string
      * @throws Exception\InvalidArgumentTypeException if an argument value is an object
-     * @throws Exception\InvalidControllerNameException
-     * @throws Exception\InvalidActionNameException
      */
-    public function setArguments(array $arguments): void
+    public function setArguments(array $arguments)
     {
         $this->arguments = [];
         foreach ($arguments as $key => $value) {
@@ -613,7 +562,7 @@ class ActionRequest implements RequestInterface
      * @return array Array of arguments and their values (which may be arguments and values as well)
      * @api
      */
-    public function getArguments(): array
+    public function getArguments()
     {
         return $this->arguments;
     }
@@ -625,11 +574,11 @@ class ActionRequest implements RequestInterface
      * internal argument, its name must start with two underscores.
      *
      * @param string $argumentName Name of the argument, for example "__fooBar"
-     * @return string|object Value of the argument, or NULL if not set.
+     * @return string Value of the argument, or NULL if not set.
      */
-    public function getInternalArgument(string $argumentName)
+    public function getInternalArgument($argumentName)
     {
-        return ($this->internalArguments[$argumentName] ?? null);
+        return (isset($this->internalArguments[$argumentName]) ? $this->internalArguments[$argumentName] : null);
     }
 
     /**
@@ -638,7 +587,7 @@ class ActionRequest implements RequestInterface
      *
      * @return array
      */
-    public function getInternalArguments(): array
+    public function getInternalArguments()
     {
         return $this->internalArguments;
     }
@@ -653,7 +602,7 @@ class ActionRequest implements RequestInterface
      * @param string $namespace Argument namespace
      * @return void
      */
-    public function setArgumentNamespace(string $namespace): void
+    public function setArgumentNamespace($namespace)
     {
         $this->argumentNamespace = $namespace;
     }
@@ -663,7 +612,7 @@ class ActionRequest implements RequestInterface
      *
      * @return string
      */
-    public function getArgumentNamespace(): string
+    public function getArgumentNamespace()
     {
         return $this->argumentNamespace;
     }
@@ -673,7 +622,7 @@ class ActionRequest implements RequestInterface
      *
      * @return array
      */
-    public function getPluginArguments(): array
+    public function getPluginArguments()
     {
         return $this->pluginArguments;
     }
@@ -684,7 +633,7 @@ class ActionRequest implements RequestInterface
      * @param string $format The desired format, something like "html", "xml", "png", "json" or the like. Can even be something like "rss.xml".
      * @return void
      */
-    public function setFormat(string $format): void
+    public function setFormat($format)
     {
         $this->format = strtolower($format);
     }
@@ -695,7 +644,7 @@ class ActionRequest implements RequestInterface
      * @return string The desired format, something like "html", "xml", "png", "json" or the like.
      * @api
      */
-    public function getFormat(): string
+    public function getFormat()
     {
         return $this->format;
     }
@@ -709,9 +658,8 @@ class ActionRequest implements RequestInterface
      * @param ActionRequest $request
      * @return void
      * @Flow\Signal
-     * @throws \Neos\Flow\SignalSlot\Exception\InvalidSlotException
      */
-    protected function emitRequestDispatched($request): void
+    protected function emitRequestDispatched($request)
     {
         if ($this->objectManager !== null) {
             $dispatcher = $this->objectManager->get(SignalSlotDispatcher::class);

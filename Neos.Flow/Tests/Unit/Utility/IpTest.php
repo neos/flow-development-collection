@@ -46,6 +46,6 @@ class IpTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function cidrMatchCorrectlyMatchesIpRanges($range, $ip, $expected)
     {
-        self::assertEquals($expected, Ip::cidrMatch($ip, $range));
+        $this->assertEquals($expected, Ip::cidrMatch($ip, $range));
     }
 }

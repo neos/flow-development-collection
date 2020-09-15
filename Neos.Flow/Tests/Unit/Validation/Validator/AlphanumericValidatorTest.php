@@ -28,7 +28,7 @@ class AlphanumericValidatorTest extends AbstractValidatorTestcase
      */
     public function alphanumericValidatorShouldReturnNoErrorsIfTheGivenValueIsNull()
     {
-        self::assertFalse($this->validator->validate(null)->hasErrors());
+        $this->assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -36,7 +36,7 @@ class AlphanumericValidatorTest extends AbstractValidatorTestcase
      */
     public function alphanumericValidatorShouldReturnNoErrorsIfTheGivenStringIsEmpty()
     {
-        self::assertFalse($this->validator->validate('')->hasErrors());
+        $this->assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -44,7 +44,7 @@ class AlphanumericValidatorTest extends AbstractValidatorTestcase
      */
     public function alphanumericValidatorShouldReturnNoErrorsForAnAlphanumericString()
     {
-        self::assertFalse($this->validator->validate('12ssDF34daweidf')->hasErrors());
+        $this->assertFalse($this->validator->validate('12ssDF34daweidf')->hasErrors());
     }
 
     /**
@@ -52,7 +52,7 @@ class AlphanumericValidatorTest extends AbstractValidatorTestcase
      */
     public function alphanumericValidatorShouldReturnNoErrorsForAnAlphanumericStringWithUmlauts()
     {
-        self::assertFalse($this->validator->validate('12ssDF34daweidfäøüößØLīgaestevimīlojuņščļœøÅ')->hasErrors());
+        $this->assertFalse($this->validator->validate('12ssDF34daweidfäøüößØLīgaestevimīlojuņščļœøÅ')->hasErrors());
     }
 
     /**
@@ -60,7 +60,7 @@ class AlphanumericValidatorTest extends AbstractValidatorTestcase
      */
     public function alphanumericValidatorReturnsErrorsForAStringWithSpecialCharacters()
     {
-        self::assertTrue($this->validator->validate('adsf%&/$jklsfdö')->hasErrors());
+        $this->assertTrue($this->validator->validate('adsf%&/$jklsfdö')->hasErrors());
     }
 
     /**
@@ -68,6 +68,6 @@ class AlphanumericValidatorTest extends AbstractValidatorTestcase
      */
     public function alphanumericValidatorCreatesTheCorrectErrorForAnInvalidSubject()
     {
-        self::assertEquals(1, count($this->validator->validate('adsf%&/$jklsfdö')->getErrors()));
+        $this->assertEquals(1, count($this->validator->validate('adsf%&/$jklsfdö')->getErrors()));
     }
 }

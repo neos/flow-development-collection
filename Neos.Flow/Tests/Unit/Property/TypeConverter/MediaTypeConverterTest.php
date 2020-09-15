@@ -27,14 +27,14 @@ class MediaTypeConverterTest extends UnitTestCase
     protected $mediaTypeConverter;
 
     /**
-     * @var PropertyMappingConfigurationInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var PropertyMappingConfigurationInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockPropertyMappingConfiguration;
 
     /**
      * Set up this test case
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $this->mediaTypeConverter = new MediaTypeConverter();
 
@@ -48,7 +48,7 @@ class MediaTypeConverterTest extends UnitTestCase
     {
         $actualResult = $this->mediaTypeConverter->convertFrom('{"jsonArgument":"jsonValue"}', 'array');
         $expectedResult = ['jsonArgument' => 'jsonValue'];
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -58,7 +58,7 @@ class MediaTypeConverterTest extends UnitTestCase
     {
         $actualResult = $this->mediaTypeConverter->convertFrom('<root><xmlArgument>xmlValue</xmlArgument></root>', 'array');
         $expectedResult = [];
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -66,11 +66,11 @@ class MediaTypeConverterTest extends UnitTestCase
      */
     public function convertReturnsEmptyArrayIfGivenMediaTypeIsInvalid()
     {
-        $this->mockPropertyMappingConfiguration->expects(self::atLeastOnce())->method('getConfigurationValue')->with(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE)->will(self::returnValue('someInvalidMediaType'));
+        $this->mockPropertyMappingConfiguration->expects($this->atLeastOnce())->method('getConfigurationValue')->with(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE)->will($this->returnValue('someInvalidMediaType'));
 
         $actualResult = $this->mediaTypeConverter->convertFrom('{"jsonArgument":"jsonValue"}', 'array', [], $this->mockPropertyMappingConfiguration);
         $expectedResult = [];
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -102,9 +102,9 @@ class MediaTypeConverterTest extends UnitTestCase
      */
     public function convertTests($mediaType, $requestBody, array $expectedResult)
     {
-        $this->mockPropertyMappingConfiguration->expects(self::atLeastOnce())->method('getConfigurationValue')->with(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE)->will(self::returnValue($mediaType));
+        $this->mockPropertyMappingConfiguration->expects($this->atLeastOnce())->method('getConfigurationValue')->with(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE)->will($this->returnValue($mediaType));
 
         $actualResult = $this->mediaTypeConverter->convertFrom($requestBody, 'array', [], $this->mockPropertyMappingConfiguration);
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 }

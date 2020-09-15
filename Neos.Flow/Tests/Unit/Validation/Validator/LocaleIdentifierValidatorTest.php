@@ -28,8 +28,8 @@ class LocaleIdentifierValidatorTest extends AbstractValidatorTestcase
      */
     public function localeIdentifierReturnsNoErrorIfLocaleIsEmpty()
     {
-        self::assertFalse($this->validator->validate('')->hasErrors());
-        self::assertFalse($this->validator->validate(null)->hasErrors());
+        $this->assertFalse($this->validator->validate('')->hasErrors());
+        $this->assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -37,10 +37,10 @@ class LocaleIdentifierValidatorTest extends AbstractValidatorTestcase
      */
     public function localeIdentifierReturnsNoErrorIfLocaleIsValid()
     {
-        self::assertFalse($this->validator->validate('de_DE')->hasErrors());
-        self::assertFalse($this->validator->validate('en_Latn_US')->hasErrors());
-        self::assertFalse($this->validator->validate('de')->hasErrors());
-        self::assertFalse($this->validator->validate('AR-arab_ae')->hasErrors());
+        $this->assertFalse($this->validator->validate('de_DE')->hasErrors());
+        $this->assertFalse($this->validator->validate('en_Latn_US')->hasErrors());
+        $this->assertFalse($this->validator->validate('de')->hasErrors());
+        $this->assertFalse($this->validator->validate('AR-arab_ae')->hasErrors());
     }
 
     /**
@@ -48,6 +48,6 @@ class LocaleIdentifierValidatorTest extends AbstractValidatorTestcase
      */
     public function localeIdentifierReturnsErrorIfLocaleIsInvalid()
     {
-        self::assertTrue($this->validator->validate('ThisIsOfCourseNoValidLocaleIdentifier')->hasErrors());
+        $this->assertTrue($this->validator->validate('ThisIsOfCourseNoValidLocaleIdentifier')->hasErrors());
     }
 }

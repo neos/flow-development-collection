@@ -26,7 +26,7 @@ class WidgetContextTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $this->widgetContext = new \Neos\FluidAdaptor\Core\Widget\WidgetContext();
     }
@@ -37,7 +37,7 @@ class WidgetContextTest extends \Neos\Flow\Tests\UnitTestCase
     public function widgetIdentifierCanBeReadAgain()
     {
         $this->widgetContext->setWidgetIdentifier('myWidgetIdentifier');
-        self::assertEquals('myWidgetIdentifier', $this->widgetContext->getWidgetIdentifier());
+        $this->assertEquals('myWidgetIdentifier', $this->widgetContext->getWidgetIdentifier());
     }
 
     /**
@@ -46,7 +46,7 @@ class WidgetContextTest extends \Neos\Flow\Tests\UnitTestCase
     public function ajaxWidgetIdentifierCanBeReadAgain()
     {
         $this->widgetContext->setAjaxWidgetIdentifier(42);
-        self::assertEquals(42, $this->widgetContext->getAjaxWidgetIdentifier());
+        $this->assertEquals(42, $this->widgetContext->getAjaxWidgetIdentifier());
     }
 
     /**
@@ -56,7 +56,7 @@ class WidgetContextTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $this->widgetContext->setNonAjaxWidgetConfiguration(['key' => 'value']);
         $this->widgetContext->setAjaxWidgetConfiguration(['keyAjax' => 'valueAjax']);
-        self::assertEquals(['key' => 'value'], $this->widgetContext->getWidgetConfiguration());
+        $this->assertEquals(['key' => 'value'], $this->widgetContext->getWidgetConfiguration());
     }
 
     /**
@@ -68,7 +68,7 @@ class WidgetContextTest extends \Neos\Flow\Tests\UnitTestCase
         $this->widgetContext->setAjaxWidgetConfiguration(['keyAjax' => 'valueAjax']);
         $this->widgetContext = serialize($this->widgetContext);
         $this->widgetContext = unserialize($this->widgetContext);
-        self::assertEquals(['keyAjax' => 'valueAjax'], $this->widgetContext->getWidgetConfiguration());
+        $this->assertEquals(['keyAjax' => 'valueAjax'], $this->widgetContext->getWidgetConfiguration());
     }
 
     /**
@@ -77,7 +77,7 @@ class WidgetContextTest extends \Neos\Flow\Tests\UnitTestCase
     public function controllerObjectNameCanBeReadAgain()
     {
         $this->widgetContext->setControllerObjectName('TYPO3\My\Object\Name');
-        self::assertEquals('TYPO3\My\Object\Name', $this->widgetContext->getControllerObjectName());
+        $this->assertEquals('TYPO3\My\Object\Name', $this->widgetContext->getControllerObjectName());
     }
 
     /**
@@ -89,7 +89,7 @@ class WidgetContextTest extends \Neos\Flow\Tests\UnitTestCase
         $renderingContext = $this->createMock(RenderingContextInterface::class);
 
         $this->widgetContext->setViewHelperChildNodes($viewHelperChildNodes, $renderingContext);
-        self::assertSame($viewHelperChildNodes, $this->widgetContext->getViewHelperChildNodes());
-        self::assertSame($renderingContext, $this->widgetContext->getViewHelperChildNodeRenderingContext());
+        $this->assertSame($viewHelperChildNodes, $this->widgetContext->getViewHelperChildNodes());
+        $this->assertSame($renderingContext, $this->widgetContext->getViewHelperChildNodeRenderingContext());
     }
 }

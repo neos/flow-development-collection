@@ -12,8 +12,6 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Backend\PhpCapableBackendInterface;
 use Neos\Cache\Frontend\PhpFrontend;
@@ -26,16 +24,16 @@ use Neos\Cache\Frontend\StringFrontend;
 class PhpFrontendTest extends BaseTestCase
 {
     /**
+     * @expectedException \InvalidArgumentException
      * @test
      */
     public function setChecksIfTheIdentifierIsValid()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
             ->setMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-        $cache->expects(self::once())->method('isValidEntryIdentifier')->with('foo')->will(self::returnValue(false));
+        $cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->will($this->returnValue(false));
         $cache->set('foo', 'bar');
     }
 
@@ -48,7 +46,7 @@ class PhpFrontendTest extends BaseTestCase
         $modifiedSourceCode = '<?php ' . $originalSourceCode . chr(10) . '#';
 
         $mockBackend = $this->createMock(PhpCapableBackendInterface::class);
-        $mockBackend->expects(self::once())->method('set')->with('Foo-Bar', $modifiedSourceCode, ['tags'], 1234);
+        $mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, ['tags'], 1234);
 
         $cache = $this->getMockBuilder(PhpFrontend::class)
             ->setMethods(null)
@@ -60,10 +58,10 @@ class PhpFrontendTest extends BaseTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Cache\Exception\InvalidDataException
      */
     public function setThrowsInvalidDataExceptionOnNonStringValues()
     {
-        $this->expectException(InvalidDataException::class);
         $cache = $this->getMockBuilder(PhpFrontend::class)
             ->setMethods(null)
             ->disableOriginalConstructor()
@@ -77,7 +75,7 @@ class PhpFrontendTest extends BaseTestCase
     public function requireOnceCallsTheBackendsRequireOnceMethod()
     {
         $mockBackend = $this->createMock(PhpCapableBackendInterface::class);
-        $mockBackend->expects(self::once())->method('requireOnce')->with('Foo-Bar')->will(self::returnValue('hello world!'));
+        $mockBackend->expects($this->once())->method('requireOnce')->with('Foo-Bar')->will($this->returnValue('hello world!'));
 
         $cache = $this->getMockBuilder(PhpFrontend::class)
             ->setMethods(null)
@@ -86,6 +84,6 @@ class PhpFrontendTest extends BaseTestCase
         $this->inject($cache, 'backend', $mockBackend);
 
         $result = $cache->requireOnce('Foo-Bar');
-        self::assertSame('hello world!', $result);
+        $this->assertSame('hello world!', $result);
     }
 }

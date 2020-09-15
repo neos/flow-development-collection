@@ -35,9 +35,9 @@ class LoggingAspectTest extends UnitTestCase
         $mockJoinPoint = new JoinPoint($testSession, TransientSession::class, 'destroy', ['reason' => 'session timed out']);
         $mockSystemLogger = $this->createMock(LoggerInterface::class);
         $mockSystemLogger
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('debug')
-            ->with(self::equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': session timed out'));
+            ->with($this->equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': session timed out'));
 
         $loggingAspect = new LoggingAspect();
         $this->inject($loggingAspect, 'logger', $mockSystemLogger);
@@ -58,9 +58,9 @@ class LoggingAspectTest extends UnitTestCase
         $mockJoinPoint = new JoinPoint($testSession, TransientSession::class, 'destroy', []);
         $mockSystemLogger = $this->createMock(LoggerInterface::class);
         $mockSystemLogger
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('debug')
-            ->with(self::equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': no reason given'));
+            ->with($this->equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': no reason given'));
 
         $loggingAspect = new LoggingAspect();
         $this->inject($loggingAspect, 'logger', $mockSystemLogger);

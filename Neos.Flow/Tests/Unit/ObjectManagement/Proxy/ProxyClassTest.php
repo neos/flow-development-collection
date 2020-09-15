@@ -74,11 +74,11 @@ class ProxyClassTest extends UnitTestCase
     public function renderWorksAsExpected($originalClassName, $originalClassAnnotations, $originalClassDocumentation, $originalClassConstants, $expectedProxyCode)
     {
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects(self::any())->method('isClassAbstract')->will(self::returnValue(strpos($expectedProxyCode, 'abstract ') !== false));
-        $mockReflectionService->expects(self::any())->method('getClassAnnotations')->will(self::returnValue($originalClassAnnotations));
+        $mockReflectionService->expects($this->any())->method('isClassAbstract')->will($this->returnValue(strpos($expectedProxyCode, 'abstract ') !== false));
+        $mockReflectionService->expects($this->any())->method('getClassAnnotations')->will($this->returnValue($originalClassAnnotations));
 
         $mockProxyClass = $this->getAccessibleMock(ProxyClass::class, ['buildClassDocumentation'], [$originalClassName], '', true);
-        $mockProxyClass->expects(self::any())->method('buildClassDocumentation')->will(self::returnValue($originalClassDocumentation));
+        $mockProxyClass->expects($this->any())->method('buildClassDocumentation')->will($this->returnValue($originalClassDocumentation));
         $mockProxyClass->injectReflectionService($mockReflectionService);
         foreach ($originalClassConstants as $originalClassConstant) {
             $mockProxyClass->addConstant($originalClassConstant['name'], $originalClassConstant['value']);
@@ -86,6 +86,6 @@ class ProxyClassTest extends UnitTestCase
 
         $proxyCode = $mockProxyClass->render();
 
-        self::assertEquals($expectedProxyCode, $proxyCode);
+        $this->assertEquals($expectedProxyCode, $proxyCode);
     }
 }

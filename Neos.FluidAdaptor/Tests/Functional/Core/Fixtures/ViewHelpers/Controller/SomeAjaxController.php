@@ -12,17 +12,12 @@ namespace Neos\FluidAdaptor\Tests\Functional\Core\Fixtures\ViewHelpers\Controlle
  */
 
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
-use Neos\FluidAdaptor\Tests\Functional\Core\Fixtures\ViewHelpers\Controller\View\CustomView;
 
 /**
  * Controller of the test AJAX widget
  */
 class SomeAjaxController extends AbstractWidgetController
 {
-    protected $viewFormatToObjectNameMap = [
-        'custom' => CustomView::class
-    ];
-
     /**
      * The default action which is invoked when the widget is rendered as part of a
      * Fluid template.
@@ -46,9 +41,5 @@ class SomeAjaxController extends AbstractWidgetController
         $options = (isset($this->widgetConfiguration['option1']) ? '"' . $this->widgetConfiguration['option1'] . '"' : '""') . ', ';
         $options .= (isset($this->widgetConfiguration['option2']) ? '"' . $this->widgetConfiguration['option2'] . '"' : '""') . '';
         return sprintf('SomeAjaxController::ajaxAction(%s)', $options);
-    }
-
-    public function ajaxWithCustomViewAction()
-    {
     }
 }

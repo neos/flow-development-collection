@@ -14,6 +14,7 @@ namespace Neos\Flow\Security\RequestPattern;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
@@ -77,16 +78,16 @@ class CsrfProtection implements RequestPatternInterface
     }
 
     /**
-     * Matches an ActionRequest against the configured CSRF pattern rules and
+     * Matches a \Neos\Flow\Mvc\RequestInterface against the configured CSRF pattern rules and
      * searches for invalid csrf tokens. If this returns true, the request is invalid!
      *
-     * @param ActionRequest $request The request that should be matched
+     * @param RequestInterface $request The request that should be matched
      * @return boolean true if the pattern matched, false otherwise
      * @throws AuthenticationRequiredException
      */
-    public function matchRequest(ActionRequest $request)
+    public function matchRequest(RequestInterface $request)
     {
-        if (SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
+        if (!$request instanceof ActionRequest || SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
             $this->logger->debug('CSRF: No token required, safe request');
             return false;
         }
@@ -113,10 +114,10 @@ class CsrfProtection implements RequestPatternInterface
 
         $httpRequest = $request->getHttpRequest();
         if ($httpRequest->hasHeader('X-Flow-Csrftoken')) {
-            $csrfToken = $httpRequest->getHeaderLine('X-Flow-Csrftoken');
+            $csrfToken = $httpRequest->getHeader('X-Flow-Csrftoken');
         } else {
             $internalArguments = $request->getMainRequest()->getInternalArguments();
-            $csrfToken = $internalArguments['__csrfToken'] ?? null;
+            $csrfToken = isset($internalArguments['__csrfToken']) ? $internalArguments['__csrfToken'] : null;
         }
 
         if (empty($csrfToken)) {

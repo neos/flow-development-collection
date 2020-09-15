@@ -24,7 +24,7 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $configurationValidator;
 
-    protected function setUp(): void
+    public function setUp()
     {
         $this->configurationValidator = $this->getMockBuilder(SchemaValidator::class)->setMethods(['getError'])->getMock();
     }
@@ -39,9 +39,9 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
     protected function assertError(Error\Result $result, bool $expectError = true)
     {
         if ($expectError === true) {
-            self::assertTrue($result->hasErrors());
+            $this->assertTrue($result->hasErrors());
         } else {
-            self::assertFalse($result->hasErrors());
+            $this->assertFalse($result->hasErrors());
         }
     }
 
@@ -55,9 +55,9 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
     protected function assertSuccess(Error\Result $result, bool $expectSuccess = true)
     {
         if ($expectSuccess === true) {
-            self::assertFalse($result->hasErrors());
+            $this->assertFalse($result->hasErrors());
         } else {
-            self::assertTrue($result->hasErrors());
+            $this->assertTrue($result->hasErrors());
         }
     }
 
@@ -180,12 +180,12 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertError($result);
 
         $allErrors = $result->getFlattenedErrors();
-        self::assertTrue(array_key_exists('foo.bar.baz', $allErrors));
+        $this->assertTrue(array_key_exists('foo.bar.baz', $allErrors));
 
         $pathErrors = $result->forProperty('foo.bar.baz')->getErrors();
         $firstPathError = $pathErrors[0];
-        self::assertEquals($firstPathError->getCode(), 1328557141);
-        self::assertEquals($firstPathError->getArguments(), ['type=number', 'type=string']);
+        $this->assertEquals($firstPathError->getCode(), 1328557141);
+        $this->assertEquals($firstPathError->getArguments(), ['type=number', 'type=string']);
     }
 
     /**

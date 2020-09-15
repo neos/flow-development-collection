@@ -11,11 +11,9 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
+use Neos\Flow\Http;
+use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
-use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
-use Neos\Flow\Mvc\Exception\InvalidUriPatternException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Fixtures\MockRoutePartHandler;
@@ -23,7 +21,6 @@ use Neos\Flow\Mvc\Routing;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 require_once(__DIR__ . '/Fixtures/MockRoutePartHandler.php');
@@ -39,12 +36,12 @@ class RouteTest extends UnitTestCase
     protected $route;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ObjectManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockObjectManager;
 
     /**
-     * @var PersistenceManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var PersistenceManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockPersistenceManager;
 
@@ -57,14 +54,14 @@ class RouteTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->route = $this->getAccessibleMock(Routing\Route::class, ['dummy']);
         $this->route->_set('objectManager', $this->mockObjectManager);
 
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $this->mockPersistenceManager->method('convertObjectsToIdentityArrays')->will(self::returnCallBack(function ($array) {
+        $this->mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnCallback(function ($array) {
             return $array;
         }));
         $this->inject($this->route, 'persistenceManager', $this->mockPersistenceManager);
@@ -76,10 +73,12 @@ class RouteTest extends UnitTestCase
      */
     protected function routeMatchesPath($routePath)
     {
-        $mockUri = new Uri('http://localhost/' . $routePath);
-        /** @var Http\Request|\PHPUnit\Framework\MockObject\MockObject $mockHttpRequest */
-        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->method('getUri')->willReturn($mockUri);
+        $mockUri = $this->getMockBuilder(UriInterface::class)->getMock();
+
+        /** @var Http\Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
+        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
+        $mockHttpRequest->expects($this->any())->method('getRelativePath')->will($this->returnValue($routePath));
+        $mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
 
         $routeContext = new RouteContext($mockHttpRequest, RouteParameters::createEmpty());
         return $this->route->matches($routeContext);
@@ -96,7 +95,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setName('SomeName');
 
-        self::assertEquals('SomeName', $this->route->getName());
+        $this->assertEquals('SomeName', $this->route->getName());
     }
 
     /**
@@ -104,13 +103,13 @@ class RouteTest extends UnitTestCase
      */
     public function httpMethodConstraintsCanBeSetAndRetrieved()
     {
-        self::assertFalse($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be false by default');
+        $this->assertFalse($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be false by default');
         $httpMethods = ['POST', 'PUT'];
         $this->route->setHttpMethods($httpMethods);
-        self::assertTrue($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be true if httpMethods are set');
-        self::assertEquals($httpMethods, $this->route->getHttpMethods());
+        $this->assertTrue($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be true if httpMethods are set');
+        $this->assertEquals($httpMethods, $this->route->getHttpMethods());
         $this->route->setHttpMethods([]);
-        self::assertFalse($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be false if httpMethods is empty');
+        $this->assertFalse($this->route->hasHttpMethodConstraints(), 'hasHttpMethodConstraints should be false if httpMethods is empty');
     }
 
     /**
@@ -121,7 +120,7 @@ class RouteTest extends UnitTestCase
         $this->route->_set('isParsed', true);
         $this->route->setUriPattern('foo/{key3}/foo');
 
-        self::assertFalse($this->route->_get('isParsed'));
+        $this->assertFalse($this->route->_get('isParsed'));
     }
 
     /**
@@ -138,17 +137,17 @@ class RouteTest extends UnitTestCase
             ]
         );
         $mockRoutePartHandler = $this->createMock(Routing\DynamicRoutePartInterface::class);
-        $this->mockObjectManager->expects(self::once())->method('get')->with('SomeRoutePartHandler')->willReturn($mockRoutePartHandler);
+        $this->mockObjectManager->expects($this->once())->method('get')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
 
         $this->route->parse();
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Mvc\Exception\InvalidRoutePartHandlerException
      */
     public function settingInvalidRoutePartHandlerThrowsException()
     {
-        $this->expectException(InvalidRoutePartHandlerException::class);
         $this->route->setUriPattern('{key1}/{key2}');
         $this->route->setRoutePartsConfiguration(
             [
@@ -158,7 +157,7 @@ class RouteTest extends UnitTestCase
             ]
         );
         $mockRoutePartHandler = $this->createMock(Routing\StaticRoutePart::class);
-        $this->mockObjectManager->expects(self::once())->method('get')->with(Routing\StaticRoutePart::class)->willReturn($mockRoutePartHandler);
+        $this->mockObjectManager->expects($this->once())->method('get')->with(Routing\StaticRoutePart::class)->will($this->returnValue($mockRoutePartHandler));
 
         $this->route->parse();
     }
@@ -179,8 +178,8 @@ class RouteTest extends UnitTestCase
 
         $this->route->parse();
         $identityRoutePart = current($this->route->_get('routeParts'));
-        self::assertInstanceOf(Routing\IdentityRoutePart::class, $identityRoutePart);
-        self::assertSame('SomeObjectType', $identityRoutePart->getObjectType());
+        $this->assertInstanceOf(Routing\IdentityRoutePart::class, $identityRoutePart);
+        $this->assertSame('SomeObjectType', $identityRoutePart->getObjectType());
     }
 
     /**
@@ -200,65 +199,65 @@ class RouteTest extends UnitTestCase
 
         $this->route->parse();
         $identityRoutePart = current($this->route->_get('routeParts'));
-        self::assertSame('SomeUriPattern', $identityRoutePart->getUriPattern());
+        $this->assertSame('SomeUriPattern', $identityRoutePart->getUriPattern());
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function uriPatternWithTrailingSlashThrowsException()
     {
-        $this->expectException(InvalidUriPatternException::class);
         $this->route->setUriPattern('some/uri/pattern/');
         $this->route->parse();
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function uriPatternWithLeadingSlashThrowsException()
     {
-        $this->expectException(InvalidUriPatternException::class);
         $this->route->setUriPattern('/some/uri/pattern');
         $this->route->parse();
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function uriPatternWithSuccessiveDynamicRoutepartsThrowsException()
     {
-        $this->expectException(InvalidUriPatternException::class);
         $this->route->setUriPattern('{key1}{key2}');
         $this->route->parse();
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function uriPatternWithSuccessiveOptionalSectionsThrowsException()
     {
-        $this->expectException(InvalidUriPatternException::class);
         $this->route->setUriPattern('(foo/bar)(/bar/foo)');
         $this->route->parse();
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function uriPatternWithUnterminatedOptionalSectionsThrowsException()
     {
-        $this->expectException(InvalidUriPatternException::class);
         $this->route->setUriPattern('foo/(bar');
         $this->route->parse();
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Mvc\Exception\InvalidUriPatternException
      */
     public function uriPatternWithUnopenedOptionalSectionsThrowsException()
     {
-        $this->expectException(InvalidUriPatternException::class);
         $this->route->setUriPattern('foo)/bar');
         $this->route->parse();
     }
@@ -272,7 +271,7 @@ class RouteTest extends UnitTestCase
      */
     public function routeDoesNotMatchEmptyRequestPathIfUriPatternIsNotSet()
     {
-        self::assertFalse($this->routeMatchesPath(''), 'Route should not match if no URI Pattern is set.');
+        $this->assertFalse($this->routeMatchesPath(''), 'Route should not match if no URI Pattern is set.');
     }
 
     /**
@@ -282,7 +281,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('foo/bar');
 
-        self::assertFalse($this->routeMatchesPath('bar/foo'), '"foo/bar"-Route should not match "bar/foo"-request.');
+        $this->assertFalse($this->routeMatchesPath('bar/foo'), '"foo/bar"-Route should not match "bar/foo"-request.');
     }
 
     /**
@@ -292,7 +291,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('foo/{bar}');
 
-        self::assertFalse($this->routeMatchesPath('bar/someValue'), '"foo/{bar}"-Route should not match "bar/someValue"-request.');
+        $this->assertFalse($this->routeMatchesPath('bar/someValue'), '"foo/{bar}"-Route should not match "bar/someValue"-request.');
     }
 
     /**
@@ -302,7 +301,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('');
 
-        self::assertTrue($this->routeMatchesPath(''), 'Route should match if URI Pattern and RequestPath are empty.');
+        $this->assertTrue($this->routeMatchesPath(''), 'Route should match if URI Pattern and RequestPath are empty.');
     }
 
     /**
@@ -312,7 +311,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('foo/bar');
 
-        self::assertTrue($this->routeMatchesPath('foo/bar'), '"foo/bar"-Route should match "foo/bar"-request.');
+        $this->assertTrue($this->routeMatchesPath('foo/bar'), '"foo/bar"-Route should match "foo/bar"-request.');
     }
 
     /**
@@ -322,7 +321,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('required1/required2');
 
-        self::assertFalse($this->routeMatchesPath('required1required2'));
+        $this->assertFalse($this->routeMatchesPath('required1required2'));
     }
 
     /**
@@ -332,7 +331,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('foo/{bar}');
 
-        self::assertTrue($this->routeMatchesPath('foo/someValue'), '"foo/{bar}"-Route should match "foo/someValue"-request.');
+        $this->assertTrue($this->routeMatchesPath('foo/someValue'), '"foo/{bar}"-Route should match "foo/someValue"-request.');
     }
 
     /**
@@ -343,7 +342,7 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('foo/{bar}');
         $this->routeMatchesPath('foo/someValue');
 
-        self::assertEquals(['bar' => 'someValue'], $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
+        $this->assertEquals(['bar' => 'someValue'], $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
     }
 
     /**
@@ -353,9 +352,9 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('{key1}/foo/{key2}/bar');
 
-        self::assertFalse($this->routeMatchesPath('value1/foo/value2/foo'), '"{key1}/foo/{key2}/bar"-Route should not match "value1/foo/value2/foo"-request.');
-        self::assertTrue($this->routeMatchesPath('value1/foo/value2/bar'), '"{key1}/foo/{key2}/bar"-Route should match "value1/foo/value2/bar"-request.');
-        self::assertEquals(['key1' => 'value1', 'key2' => 'value2'], $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
+        $this->assertFalse($this->routeMatchesPath('value1/foo/value2/foo'), '"{key1}/foo/{key2}/bar"-Route should not match "value1/foo/value2/foo"-request.');
+        $this->assertTrue($this->routeMatchesPath('value1/foo/value2/bar'), '"{key1}/foo/{key2}/bar"-Route should match "value1/foo/value2/bar"-request.');
+        $this->assertEquals(['key1' => 'value1', 'key2' => 'value2'], $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
     }
 
     /**
@@ -365,9 +364,9 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('user/{firstName}-{lastName}');
 
-        self::assertFalse($this->routeMatchesPath('user/johndoe'), '"user/{firstName}-{lastName}"-Route should not match "user/johndoe"-request.');
-        self::assertTrue($this->routeMatchesPath('user/john-doe'), '"user/{firstName}-{lastName}"-Route should match "user/john-doe"-request.');
-        self::assertEquals(['firstName' => 'john', 'lastName' => 'doe'], $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
+        $this->assertFalse($this->routeMatchesPath('user/johndoe'), '"user/{firstName}-{lastName}"-Route should not match "user/johndoe"-request.');
+        $this->assertTrue($this->routeMatchesPath('user/john-doe'), '"user/{firstName}-{lastName}"-Route should match "user/john-doe"-request.');
+        $this->assertEquals(['firstName' => 'john', 'lastName' => 'doe'], $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
     }
 
     /**
@@ -377,9 +376,9 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
 
-        self::assertFalse($this->routeMatchesPath('value1-value2/value3.value4value5'), '"{key1}-{key2}/{key3}.{key4}.{@format}"-Route should not match "value1-value2/value3.value4value5"-request.');
-        self::assertTrue($this->routeMatchesPath('value1-value2/value3.value4.value5'), '"{key1}-{key2}/{key3}.{key4}.{@format}"-Route should match "value1-value2/value3.value4.value5"-request.');
-        self::assertEquals(['key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '@format' => 'value5'], $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
+        $this->assertFalse($this->routeMatchesPath('value1-value2/value3.value4value5'), '"{key1}-{key2}/{key3}.{key4}.{@format}"-Route should not match "value1-value2/value3.value4value5"-request.');
+        $this->assertTrue($this->routeMatchesPath('value1-value2/value3.value4.value5'), '"{key1}-{key2}/{key3}.{key4}.{@format}"-Route should match "value1-value2/value3.value4.value5"-request.');
+        $this->assertEquals(['key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '@format' => 'value5'], $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
     }
 
     /**
@@ -390,7 +389,7 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('{foo}');
         $this->route->setDefaults(['foo' => 'bar']);
 
-        self::assertFalse($this->routeMatchesPath(''), 'Route should not match if required Route Part does not match.');
+        $this->assertFalse($this->routeMatchesPath(''), 'Route should not match if required Route Part does not match.');
     }
 
     /**
@@ -410,8 +409,8 @@ class RouteTest extends UnitTestCase
         $this->routeMatchesPath('SomePackage');
         $matchResults = $this->route->getMatchResults();
 
-        self::assertEquals($defaults['@controller'], $matchResults['@controller']);
-        self::assertEquals($defaults['@action'], $matchResults['@action']);
+        $this->assertEquals($defaults['@controller'], $matchResults['@controller']);
+        $this->assertEquals($defaults['@action'], $matchResults['@action']);
     }
 
     /**
@@ -428,10 +427,10 @@ class RouteTest extends UnitTestCase
             ]
         );
         $mockRoutePartHandler = new MockRoutePartHandler();
-        $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
+        $this->mockObjectManager->expects($this->once())->method('get')->with(MockRoutePartHandler::class)->will($this->returnValue($mockRoutePartHandler));
         $this->routeMatchesPath('foo/bar');
 
-        self::assertEquals(['key1' => '_match_invoked_', 'key2' => 'bar'], $this->route->getMatchResults());
+        $this->assertEquals(['key1' => '_match_invoked_', 'key2' => 'bar'], $this->route->getMatchResults());
     }
 
     /**
@@ -446,9 +445,9 @@ class RouteTest extends UnitTestCase
             $this->expectException(InvalidRoutePartValueException::class);
         }
         $mockRoutePart = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart->expects(self::once())->method('match')->with('foo')->willReturn(true);
-        $mockRoutePart->method('getName')->willReturn('TestRoutePart');
-        $mockRoutePart->expects(self::once())->method('getValue')->willReturn($routePartValue);
+        $mockRoutePart->expects($this->once())->method('match')->with('foo')->will($this->returnValue(true));
+        $mockRoutePart->expects($this->any())->method('getName')->will($this->returnValue('TestRoutePart'));
+        $mockRoutePart->expects($this->once())->method('getValue')->will($this->returnValue($routePartValue));
 
         $this->route->setUriPattern('foo');
         $this->route->_set('routeParts', [$mockRoutePart]);
@@ -478,19 +477,19 @@ class RouteTest extends UnitTestCase
     public function matchesRecursivelyMergesMatchResults()
     {
         $mockRoutePart1 = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart1->expects(self::once())->method('match')->willReturn(true);
-        $mockRoutePart1->expects(self::atLeastOnce())->method('getName')->willReturn('firstLevel.secondLevel.routePart1');
-        $mockRoutePart1->expects(self::once())->method('getValue')->willReturn('foo');
+        $mockRoutePart1->expects($this->once())->method('match')->will($this->returnValue(true));
+        $mockRoutePart1->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('firstLevel.secondLevel.routePart1'));
+        $mockRoutePart1->expects($this->once())->method('getValue')->will($this->returnValue('foo'));
 
         $mockRoutePart2 = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart2->expects(self::once())->method('match')->willReturn(true);
-        $mockRoutePart2->expects(self::atLeastOnce())->method('getName')->willReturn('someOtherRoutePart');
-        $mockRoutePart2->expects(self::once())->method('getValue')->willReturn('bar');
+        $mockRoutePart2->expects($this->once())->method('match')->will($this->returnValue(true));
+        $mockRoutePart2->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('someOtherRoutePart'));
+        $mockRoutePart2->expects($this->once())->method('getValue')->will($this->returnValue('bar'));
 
         $mockRoutePart3 = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart3->expects(self::once())->method('match')->willReturn(true);
-        $mockRoutePart3->expects(self::atLeastOnce())->method('getName')->willReturn('firstLevel.secondLevel.routePart2');
-        $mockRoutePart3->expects(self::once())->method('getValue')->willReturn('baz');
+        $mockRoutePart3->expects($this->once())->method('match')->will($this->returnValue(true));
+        $mockRoutePart3->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('firstLevel.secondLevel.routePart2'));
+        $mockRoutePart3->expects($this->once())->method('getValue')->will($this->returnValue('baz'));
 
         $this->route->setUriPattern('');
         $this->route->_set('routeParts', [$mockRoutePart1, $mockRoutePart2, $mockRoutePart3]);
@@ -499,7 +498,7 @@ class RouteTest extends UnitTestCase
 
         $expectedResult = ['firstLevel' => ['secondLevel' => ['routePart1' => 'foo', 'routePart2' => 'baz']], 'someOtherRoutePart' => 'bar'];
         $actualResult = $this->route->getMatchResults();
-        self::assertEquals($expectedResult, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
     }
 
     /*                                                                        *
@@ -513,7 +512,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('(optional)');
 
-        self::assertTrue($this->routeMatchesPath(''));
+        $this->assertTrue($this->routeMatchesPath(''));
     }
 
     /**
@@ -523,7 +522,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('required(optional)');
 
-        self::assertTrue($this->routeMatchesPath('requiredoptional'));
+        $this->assertTrue($this->routeMatchesPath('requiredoptional'));
     }
 
     /**
@@ -533,7 +532,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('required(optional)');
 
-        self::assertTrue($this->routeMatchesPath('required'));
+        $this->assertTrue($this->routeMatchesPath('required'));
     }
 
     /**
@@ -543,7 +542,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('(optional)required');
 
-        self::assertTrue($this->routeMatchesPath('required'));
+        $this->assertTrue($this->routeMatchesPath('required'));
     }
 
     /**
@@ -553,7 +552,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('(optional)required(optional2)');
 
-        self::assertTrue($this->routeMatchesPath('required'));
+        $this->assertTrue($this->routeMatchesPath('required'));
     }
 
     /**
@@ -563,18 +562,18 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('(optional)required(optional2)');
 
-        self::assertTrue($this->routeMatchesPath('optionalrequiredoptional2'));
+        $this->assertTrue($this->routeMatchesPath('optionalrequiredoptional2'));
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Mvc\Exception\InvalidRouteSetupException
      */
     public function routeThrowsExceptionIfUriPatternContainsOneOptionalDynamicRoutePartWithoutDefaultValue()
     {
-        $this->expectException(InvalidRouteSetupException::class);
         $this->route->setUriPattern('({optional})');
 
-        self::assertFalse($this->routeMatchesPath(''));
+        $this->assertFalse($this->routeMatchesPath(''));
     }
 
     /**
@@ -585,7 +584,7 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('({optional})');
         $this->route->setDefaults(['optional' => 'defaultValue']);
 
-        self::assertTrue($this->routeMatchesPath(''));
+        $this->assertTrue($this->routeMatchesPath(''));
     }
 
     /**
@@ -596,7 +595,7 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('page(.{@format})');
         $this->route->setDefaults(['@format' => 'html']);
 
-        self::assertFalse($this->routeMatchesPath('page.'));
+        $this->assertFalse($this->routeMatchesPath('page.'));
     }
 
     /**
@@ -607,7 +606,7 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('page(.{@format})');
         $this->route->setDefaults(['@format' => 'html']);
 
-        self::assertTrue($this->routeMatchesPath('page'));
+        $this->assertTrue($this->routeMatchesPath('page'));
     }
 
     /**
@@ -618,7 +617,7 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('page(.{@format})');
         $this->route->setDefaults(['@format' => 'html']);
 
-        self::assertTrue($this->routeMatchesPath('page.html'));
+        $this->assertTrue($this->routeMatchesPath('page.html'));
     }
 
     /**
@@ -628,7 +627,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('required(/optional1/optional2)');
 
-        self::assertTrue($this->routeMatchesPath('required'));
+        $this->assertTrue($this->routeMatchesPath('required'));
     }
 
     /**
@@ -638,7 +637,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('required(/optional1/optional2)');
 
-        self::assertFalse($this->routeMatchesPath('required/optional1'));
+        $this->assertFalse($this->routeMatchesPath('required/optional1'));
     }
 
     /**
@@ -648,7 +647,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('required(/optional1/optional2)');
 
-        self::assertTrue($this->routeMatchesPath('required/optional1/optional2'));
+        $this->assertTrue($this->routeMatchesPath('required/optional1/optional2'));
     }
 
     /**
@@ -658,7 +657,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('required1(/optional1/optional2)/required2');
 
-        self::assertTrue($this->routeMatchesPath('required1/required2'));
+        $this->assertTrue($this->routeMatchesPath('required1/required2'));
     }
 
     /**
@@ -668,7 +667,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('required1/(optional1/optional2/)required2');
 
-        self::assertFalse($this->routeMatchesPath('required1/optional1/required2'));
+        $this->assertFalse($this->routeMatchesPath('required1/optional1/required2'));
     }
 
     /**
@@ -678,7 +677,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('required1/(optional1/optional2/)required2');
 
-        self::assertTrue($this->routeMatchesPath('required1/optional1/optional2/required2'));
+        $this->assertTrue($this->routeMatchesPath('required1/optional1/optional2/required2'));
     }
 
     /**
@@ -688,7 +687,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('(optional1/optional2/)required1/required2');
 
-        self::assertTrue($this->routeMatchesPath('required1/required2'));
+        $this->assertTrue($this->routeMatchesPath('required1/required2'));
     }
 
     /**
@@ -698,7 +697,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('(optional1/optional2/)required1/required2');
 
-        self::assertFalse($this->routeMatchesPath('optional1/required1/required2'));
+        $this->assertFalse($this->routeMatchesPath('optional1/required1/required2'));
     }
 
     /**
@@ -708,7 +707,7 @@ class RouteTest extends UnitTestCase
     {
         $this->route->setUriPattern('(optional1/optional2/)required1/required2');
 
-        self::assertTrue($this->routeMatchesPath('optional1/optional2/required1/required2'));
+        $this->assertTrue($this->routeMatchesPath('optional1/optional2/required1/required2'));
     }
 
     /**
@@ -719,7 +718,7 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('({foo})');
         $this->route->setDefaults(['foo' => 'bar']);
 
-        self::assertTrue($this->routeMatchesPath(''), 'Route should match if optional Route Part has a default value.');
+        $this->assertTrue($this->routeMatchesPath(''), 'Route should match if optional Route Part has a default value.');
     }
 
     /**
@@ -738,7 +737,7 @@ class RouteTest extends UnitTestCase
         $this->route->setDefaults($defaults);
         $this->routeMatchesPath('foo-/.bar.xml');
 
-        self::assertEquals(['key1' => 'foo', 'key2' => 'defaultValue2', 'key3' => 'defaultValue3', 'key4' => 'bar', '@format' => 'xml'], $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
+        $this->assertEquals(['key1' => 'foo', 'key2' => 'defaultValue2', 'key3' => 'defaultValue3', 'key4' => 'bar', '@format' => 'xml'], $this->route->getMatchResults(), 'Route match results should be set correctly on successful match');
     }
 
     /**
@@ -749,18 +748,19 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('');
         $this->route->setHttpMethods(['POST', 'PUT']);
 
-        /** @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject $mockHttpRequest */
-        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
+        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
 
-        $mockUri = $this->getMockBuilder(UriInterface::class)->disableOriginalConstructor()->getMock();
-        $mockUri->expects(self::any())->method('getPath')->will(self::returnValue('/'));
-        $mockUri->method('withQuery')->willReturn($mockUri);
-        $mockUri->method('withFragment')->willReturn($mockUri);
-        $mockUri->method('withPath')->willReturn($mockUri);
-        $mockHttpRequest->method('getUri')->willReturn($mockUri);
+        $mockUri = $this->getMockBuilder(Http\Uri::class)->disableOriginalConstructor()->getMock();
+        $mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
+        $mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
 
-        $mockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->willReturn('GET');
-        self::assertFalse($this->route->matches(new RouteContext($mockHttpRequest, RouteParameters::createEmpty())), 'Route must not match GET requests if only POST or PUT requests are accepted.');
+        $mockBaseUri = $this->getMockBuilder(Http\Uri::class)->disableOriginalConstructor()->getMock();
+        $mockBaseUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
+        $mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
+
+        $mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('GET'));
+        $this->assertFalse($this->route->matches(new RouteContext($mockHttpRequest, RouteParameters::createEmpty())), 'Route must not match GET requests if only POST or PUT requests are accepted.');
     }
 
     /**
@@ -771,21 +771,20 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('');
         $this->route->setHttpMethods(['POST', 'PUT']);
 
-        /** @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject $mockHttpRequest */
-        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $mockHttpRequest */
+        $mockHttpRequest = $this->getMockBuilder(Http\Request::class)->disableOriginalConstructor()->getMock();
 
-        $mockUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
-        $mockUri->expects(self::any())->method('getPath')->will(self::returnValue('/'));
-        $mockUri->method('withQuery')->willReturn($mockUri);
-        $mockUri->method('withFragment')->willReturn($mockUri);
-        $mockUri->method('withPath')->willReturn($mockUri);
-        $mockHttpRequest->method('getUri')->willReturn($mockUri);
+        $mockUri = $this->getMockBuilder(Http\Uri::class)->disableOriginalConstructor()->getMock();
+        $mockUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
+        $mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($mockUri));
 
-        $mockBaseUri = new Uri('http://localhost/');
+        $mockBaseUri = $this->getMockBuilder(Http\Uri::class)->disableOriginalConstructor()->getMock();
+        $mockBaseUri->expects($this->any())->method('getPath')->will($this->returnValue('/'));
+        $mockHttpRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue($mockBaseUri));
 
-        $mockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->willReturn('PUT');
+        $mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->will($this->returnValue('PUT'));
 
-        self::assertTrue($this->route->matches(new RouteContext($mockHttpRequest, RouteParameters::createEmpty())), 'Route should match PUT requests if POST and PUT requests are accepted.');
+        $this->assertTrue($this->route->matches(new RouteContext($mockHttpRequest, RouteParameters::createEmpty())), 'Route should match PUT requests if POST and PUT requests are accepted.');
     }
 
     /*                                                                        *
@@ -802,8 +801,8 @@ class RouteTest extends UnitTestCase
         $this->route->setDefaults(['@format' => 'xml']);
         $this->routeValues = ['key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4'];
 
-        self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('value1-value2/value3.value4.xml', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        $this->assertTrue($this->route->resolves($this->routeValues));
+        $this->assertEquals('value1-value2/value3.value4.xml', $this->route->getResolvedUriConstraints()->getPathConstraint());
     }
 
     /**
@@ -815,7 +814,7 @@ class RouteTest extends UnitTestCase
         $this->route->setDefaults(['@format' => 'xml']);
         $this->routeValues = ['key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', 'nonexistingkey' => 'foo'];
 
-        self::assertFalse($this->route->resolves($this->routeValues));
+        $this->assertFalse($this->route->resolves($this->routeValues));
     }
 
     /**
@@ -827,8 +826,8 @@ class RouteTest extends UnitTestCase
         $this->route->setDefaults(['@format' => 'xml']);
         $this->routeValues = ['key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '__someInternalArgument' => 'someValue'];
 
-        self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('value1-value2/value3.value4.xml?__someInternalArgument=someValue', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        $this->assertTrue($this->route->resolves($this->routeValues));
+        $this->assertEquals('value1-value2/value3.value4.xml?__someInternalArgument=someValue', $this->route->getResolvedUriConstraints()->getPathConstraint());
     }
 
     /**
@@ -840,8 +839,8 @@ class RouteTest extends UnitTestCase
         $this->route->setDefaults(['@format' => 'xml']);
         $this->routeValues = ['key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '--subRequest' => ['__someInternalArgument' => 'someValue']];
 
-        self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('value1-value2/value3.value4.xml?--subRequest%5B__someInternalArgument%5D=someValue', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        $this->assertTrue($this->route->resolves($this->routeValues));
+        $this->assertEquals('value1-value2/value3.value4.xml?--subRequest%5B__someInternalArgument%5D=someValue', $this->route->getResolvedUriConstraints()->getPathConstraint());
     }
 
     /**
@@ -853,7 +852,7 @@ class RouteTest extends UnitTestCase
         $this->route->setDefaults(['@format' => 'xml']);
         $this->routeValues = ['key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', 'someArgument' => ['__identity' => 'someUuid']];
 
-        self::assertFalse($this->route->resolves($this->routeValues));
+        $this->assertFalse($this->route->resolves($this->routeValues));
     }
 
     /**
@@ -866,8 +865,8 @@ class RouteTest extends UnitTestCase
         $this->routeValues = ['key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '__someInternalArgument' => 'someValue', 'nonexistingkey' => 'foo'];
         $this->route->setAppendExceedingArguments(true);
 
-        self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('value1-value2/value3.value4.xml?__someInternalArgument=someValue&nonexistingkey=foo', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        $this->assertTrue($this->route->resolves($this->routeValues));
+        $this->assertEquals('value1-value2/value3.value4.xml?__someInternalArgument=someValue&nonexistingkey=foo', $this->route->getResolvedUriConstraints()->getPathConstraint());
     }
 
     /**
@@ -879,7 +878,7 @@ class RouteTest extends UnitTestCase
         $this->route->setDefaults(['key1' => 'value1', 'key2' => 'value2']);
         $this->routeValues = ['key1' => 'value1'];
 
-        self::assertTrue($this->route->resolves($this->routeValues));
+        $this->assertTrue($this->route->resolves($this->routeValues));
     }
 
     /**
@@ -891,8 +890,8 @@ class RouteTest extends UnitTestCase
         $this->route->setDefaults(['key1' => ['key1a' => 'key1aValue', 'key1b' => 'key1bValue'], 'key2' => ['key2a' => 'key2aValue', 'key2b' => 'key2bValue']]);
         $this->routeValues = ['key1' => ['key1a' => 'key1aValue', 'key1b' => 'key1bValue'], 'key2' => ['key2a' => 'key2aValue']];
 
-        self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('key2bValue', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        $this->assertTrue($this->route->resolves($this->routeValues));
+        $this->assertEquals('key2bValue', $this->route->getResolvedUriConstraints()->getPathConstraint());
     }
 
     /**
@@ -907,7 +906,7 @@ class RouteTest extends UnitTestCase
         $this->route->resolves($this->routeValues);
         $expectedResult = 'foo/barDefaultValue/bazvalue';
         $actualResult = $this->route->getResolvedUriConstraints()->getPathConstraint();
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -918,8 +917,8 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('CamelCase/{someKey}');
         $this->routeValues = ['someKey' => 'CamelCase'];
 
-        self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('camelcase/camelcase', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        $this->assertTrue($this->route->resolves($this->routeValues));
+        $this->assertEquals('camelcase/camelcase', $this->route->getResolvedUriConstraints()->getPathConstraint());
     }
 
     /**
@@ -931,8 +930,8 @@ class RouteTest extends UnitTestCase
         $this->route->setLowerCase(false);
         $this->routeValues = ['someKey' => 'CamelCase'];
 
-        self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('CamelCase/CamelCase', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        $this->assertTrue($this->route->resolves($this->routeValues));
+        $this->assertEquals('CamelCase/CamelCase', $this->route->getResolvedUriConstraints()->getPathConstraint());
     }
 
     /**
@@ -944,7 +943,7 @@ class RouteTest extends UnitTestCase
         $this->route->setDefaults(['key1' => 'value1', 'key2' => 'value2']);
         $this->routeValues = ['key2' => 'differentValue'];
 
-        self::assertFalse($this->route->resolves($this->routeValues));
+        $this->assertFalse($this->route->resolves($this->routeValues));
     }
 
     /**
@@ -957,11 +956,11 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('{key1}');
         $this->routeValues = ['key1' => 'value1'];
 
-        self::assertTrue($this->route->resolves($this->routeValues));
+        $this->assertTrue($this->route->resolves($this->routeValues));
 
         $this->routeValues = ['differentKey' => 'value1'];
-        self::assertFalse($this->route->resolves($this->routeValues));
-        self::assertNull($this->route->getResolvedUriConstraints()->getPathConstraint());
+        $this->assertFalse($this->route->resolves($this->routeValues));
+        $this->assertNull($this->route->getResolvedUriConstraints()->getPathConstraint());
     }
 
     /**
@@ -979,10 +978,10 @@ class RouteTest extends UnitTestCase
         );
         $this->routeValues = ['key2' => 'value2'];
         $mockRoutePartHandler = new MockRoutePartHandler();
-        $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
+        $this->mockObjectManager->expects($this->once())->method('get')->with(MockRoutePartHandler::class)->will($this->returnValue($mockRoutePartHandler));
         $this->route->resolves($this->routeValues);
 
-        self::assertEquals('_resolve_invoked_/value2', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        $this->assertEquals('_resolve_invoked_/value2', $this->route->getResolvedUriConstraints()->getPathConstraint());
     }
 
     /**
@@ -993,7 +992,7 @@ class RouteTest extends UnitTestCase
         $this->route->setUriPattern('foo');
         $this->route->_set('isParsed', true);
         $routeValues = ['foo' => 'bar', 'baz' => ['foo2' => 'bar2']];
-        self::assertFalse($this->route->resolves($routeValues));
+        $this->assertFalse($this->route->resolves($routeValues));
     }
 
     /**
@@ -1010,7 +1009,7 @@ class RouteTest extends UnitTestCase
         $actualResult = $this->route->getResolvedUriConstraints()->getPathConstraint();
         $expectedResult = '?foo=bar&baz%5Bfoo2%5D=bar2';
 
-        self::assertEquals($expectedResult, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -1026,7 +1025,7 @@ class RouteTest extends UnitTestCase
 
 
         $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects(self::once())->method('convertObjectsToIdentityArrays')->with($originalArray)->willReturn($convertedArray);
+        $mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->with($originalArray)->will($this->returnValue($convertedArray));
         $this->inject($this->route, 'persistenceManager', $mockPersistenceManager);
 
         $this->route->setUriPattern('foo');
@@ -1037,7 +1036,7 @@ class RouteTest extends UnitTestCase
         $actualResult = $this->route->getResolvedUriConstraints()->getPathConstraint();
         $expectedResult = '?foo=bar&someObject%5B__identity%5D=x&baz%5BsomeOtherObject%5D%5B__identity%5D=y';
 
-        self::assertEquals($expectedResult, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -1049,19 +1048,19 @@ class RouteTest extends UnitTestCase
         $this->route->setDefaults(['@package' => 'SomePackage', '@controller' => 'SomeExistingController']);
         $this->routeValues = ['@subpackage' => 'Some\Subpackage'];
 
-        self::assertTrue($this->route->resolves($this->routeValues));
+        $this->assertTrue($this->route->resolves($this->routeValues));
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Mvc\Exception\InvalidRoutePartValueException
      */
     public function resolvesThrowsExceptionIfRoutePartValueIsNoString()
     {
-        $this->expectException(InvalidRoutePartValueException::class);
         $mockRoutePart = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart->method('resolve')->willReturn(true);
-        $mockRoutePart->method('hasValue')->willReturn(true);
-        $mockRoutePart->expects(self::once())->method('getValue')->willReturn(['not a' => 'string']);
+        $mockRoutePart->expects($this->any())->method('resolve')->will($this->returnValue(true));
+        $mockRoutePart->expects($this->any())->method('hasValue')->will($this->returnValue(true));
+        $mockRoutePart->expects($this->once())->method('getValue')->will($this->returnValue(['not a' => 'string']));
 
         $this->route->setUriPattern('foo');
         $this->route->_set('isParsed', true);
@@ -1071,14 +1070,14 @@ class RouteTest extends UnitTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Mvc\Exception\InvalidRoutePartValueException
      */
     public function resolvesThrowsExceptionIfRoutePartDefaultValueIsNoString()
     {
-        $this->expectException(InvalidRoutePartValueException::class);
         $mockRoutePart = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart->method('resolve')->willReturn(true);
-        $mockRoutePart->method('hasValue')->willReturn(false);
-        $mockRoutePart->expects(self::once())->method('getDefaultValue')->willReturn(['not a' => 'string']);
+        $mockRoutePart->expects($this->any())->method('resolve')->will($this->returnValue(true));
+        $mockRoutePart->expects($this->any())->method('hasValue')->will($this->returnValue(false));
+        $mockRoutePart->expects($this->once())->method('getDefaultValue')->will($this->returnValue(['not a' => 'string']));
 
         $this->route->setUriPattern('foo');
         $this->route->_set('isParsed', true);
@@ -1095,11 +1094,11 @@ class RouteTest extends UnitTestCase
         $routeValues = ['bar' => 'baz'];
 
         $mockRoutePart = $this->createMock(Routing\RoutePartInterface::class);
-        $mockRoutePart->method('resolve')->willReturn(true);
-        $mockRoutePart->method('hasValue')->willReturn(false);
-        $mockRoutePart->expects(self::once())->method('getDefaultValue')->willReturn('defaultValue');
+        $mockRoutePart->expects($this->any())->method('resolve')->will($this->returnValue(true));
+        $mockRoutePart->expects($this->any())->method('hasValue')->will($this->returnValue(false));
+        $mockRoutePart->expects($this->once())->method('getDefaultValue')->will($this->returnValue('defaultValue'));
 
-        /** @var Route|\PHPUnit\Framework\MockObject\MockObject $route */
+        /** @var Route|\PHPUnit_Framework_MockObject_MockObject $route */
         $route = $this->getAccessibleMock(Routing\Route::class, ['compareAndRemoveMatchingDefaultValues']);
         $route->setAppendExceedingArguments(true);
         $this->inject($route, 'persistenceManager', $this->mockPersistenceManager);
@@ -1108,9 +1107,9 @@ class RouteTest extends UnitTestCase
         $route->_set('isParsed', true);
         $route->_set('routeParts', [$mockRoutePart]);
 
-        $route->expects(self::once())->method('compareAndRemoveMatchingDefaultValues')->with($defaultValues, $routeValues)->willReturn(true);
+        $route->expects($this->once())->method('compareAndRemoveMatchingDefaultValues')->with($defaultValues, $routeValues)->will($this->returnValue(true));
 
-        self::assertTrue($route->resolves($routeValues));
+        $this->assertTrue($route->resolves($routeValues));
     }
 
     /**
@@ -1195,9 +1194,9 @@ class RouteTest extends UnitTestCase
     public function compareAndRemoveMatchingDefaultValuesTests(array $defaults, array $routeValues, $expectedModifiedRouteValues, $expectedResult)
     {
         $actualResult = $this->route->_callRef('compareAndRemoveMatchingDefaultValues', $defaults, $routeValues);
-        self::assertEquals($expectedResult, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
         if ($expectedResult === true) {
-            self::assertEquals($expectedModifiedRouteValues, $routeValues);
+            $this->assertEquals($expectedModifiedRouteValues, $routeValues);
         }
     }
 
@@ -1220,8 +1219,8 @@ class RouteTest extends UnitTestCase
             ]
         );
         $mockRoutePartHandler = $this->createMock(Routing\DynamicRoutePartInterface::class);
-        $mockRoutePartHandler->expects(self::once())->method('setDefaultValue')->with('SomeDefaultValue');
-        $this->mockObjectManager->expects(self::once())->method('get')->with('SomeRoutePartHandler')->willReturn($mockRoutePartHandler);
+        $mockRoutePartHandler->expects($this->once())->method('setDefaultValue')->with('SomeDefaultValue');
+        $this->mockObjectManager->expects($this->once())->method('get')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
 
         $this->route->parse();
     }
@@ -1247,8 +1246,8 @@ class RouteTest extends UnitTestCase
             ]
         );
         $mockRoutePartHandler = $this->createMock(Routing\DynamicRoutePartInterface::class);
-        $mockRoutePartHandler->expects(self::once())->method('setDefaultValue')->with('SomeDefaultValue');
-        $this->mockObjectManager->expects(self::once())->method('get')->with('SomeRoutePartHandler')->willReturn($mockRoutePartHandler);
+        $mockRoutePartHandler->expects($this->once())->method('setDefaultValue')->with('SomeDefaultValue');
+        $this->mockObjectManager->expects($this->once())->method('get')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
 
         $this->route->parse();
     }

@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Validation\Exception\NoSuchValidatorException;
 use Neos\Flow\Validation\Validator\ConjunctionValidator;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
 use Neos\Error\Messages as Error;
@@ -32,7 +31,7 @@ class ConjunctionValidatorTest extends UnitTestCase
 
         $mockValidator = $this->createMock(ValidatorInterface::class);
         $conjunctionValidator->addValidator($mockValidator);
-        self::assertTrue($conjunctionValidator->_get('validators')->contains($mockValidator));
+        $this->assertTrue($conjunctionValidator->_get('validators')->contains($mockValidator));
     }
 
     /**
@@ -42,15 +41,15 @@ class ConjunctionValidatorTest extends UnitTestCase
     {
         $validatorConjunction = new ConjunctionValidator([]);
         $validatorObject = $this->createMock(ValidatorInterface::class);
-        $validatorObject->expects(self::once())->method('validate')->will(self::returnValue(new Error\Result()));
+        $validatorObject->expects($this->once())->method('validate')->will($this->returnValue(new Error\Result()));
 
         $errors = new Error\Result();
         $errors->addError(new Error\Error('Error', 123));
         $secondValidatorObject = $this->createMock(ValidatorInterface::class);
-        $secondValidatorObject->expects(self::once())->method('validate')->will(self::returnValue($errors));
+        $secondValidatorObject->expects($this->once())->method('validate')->will($this->returnValue($errors));
 
         $thirdValidatorObject = $this->createMock(ValidatorInterface::class);
-        $thirdValidatorObject->expects(self::once())->method('validate')->will(self::returnValue(new Error\Result()));
+        $thirdValidatorObject->expects($this->once())->method('validate')->will($this->returnValue(new Error\Result()));
 
         $validatorConjunction->addValidator($validatorObject);
         $validatorConjunction->addValidator($secondValidatorObject);
@@ -66,15 +65,15 @@ class ConjunctionValidatorTest extends UnitTestCase
     {
         $validatorConjunction = new ConjunctionValidator([]);
         $validatorObject = $this->createMock(ValidatorInterface::class);
-        $validatorObject->expects(self::any())->method('validate')->will(self::returnValue(new Error\Result()));
+        $validatorObject->expects($this->any())->method('validate')->will($this->returnValue(new Error\Result()));
 
         $secondValidatorObject = $this->createMock(ValidatorInterface::class);
-        $secondValidatorObject->expects(self::any())->method('validate')->will(self::returnValue(new Error\Result()));
+        $secondValidatorObject->expects($this->any())->method('validate')->will($this->returnValue(new Error\Result()));
 
         $validatorConjunction->addValidator($validatorObject);
         $validatorConjunction->addValidator($secondValidatorObject);
 
-        self::assertFalse($validatorConjunction->validate('some subject')->hasErrors());
+        $this->assertFalse($validatorConjunction->validate('some subject')->hasErrors());
     }
 
     /**
@@ -88,11 +87,11 @@ class ConjunctionValidatorTest extends UnitTestCase
         $errors = new Error\Result();
         $errors->addError(new Error\Error('Error', 123));
 
-        $validatorObject->expects(self::any())->method('validate')->will(self::returnValue($errors));
+        $validatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors));
 
         $validatorConjunction->addValidator($validatorObject);
 
-        self::assertTrue($validatorConjunction->validate('some subject')->hasErrors());
+        $this->assertTrue($validatorConjunction->validate('some subject')->hasErrors());
     }
 
     /**
@@ -110,16 +109,16 @@ class ConjunctionValidatorTest extends UnitTestCase
 
         $validatorConjunction->removeValidator($validator1);
 
-        self::assertFalse($validatorConjunction->_get('validators')->contains($validator1));
-        self::assertTrue($validatorConjunction->_get('validators')->contains($validator2));
+        $this->assertFalse($validatorConjunction->_get('validators')->contains($validator1));
+        $this->assertTrue($validatorConjunction->_get('validators')->contains($validator2));
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Validation\Exception\NoSuchValidatorException
      */
     public function removingANotExistingValidatorIndexThrowsException()
     {
-        $this->expectException(NoSuchValidatorException::class);
         $validatorConjunction = new ConjunctionValidator([]);
         $validator = $this->createMock(ValidatorInterface::class);
         $validatorConjunction->removeValidator($validator);
@@ -135,11 +134,11 @@ class ConjunctionValidatorTest extends UnitTestCase
         $validator1 = $this->createMock(ValidatorInterface::class);
         $validator2 = $this->createMock(ValidatorInterface::class);
 
-        self::assertSame(0, count($validatorConjunction));
+        $this->assertSame(0, count($validatorConjunction));
 
         $validatorConjunction->addValidator($validator1);
         $validatorConjunction->addValidator($validator2);
 
-        self::assertSame(2, count($validatorConjunction));
+        $this->assertSame(2, count($validatorConjunction));
     }
 }

@@ -26,11 +26,11 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $validateFoo2 = new Flow\Validate(['value' => 'foo2', 'type' => 'bar2']);
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects(self::any())->method('hasMethod')->will(self::returnValue(true));
-        $mockReflectionService->expects(self::any())->method('getMethodTagsValues')->with('My\Class\Name', 'myMethod')->will(self::returnValue([
+        $mockReflectionService->expects($this->any())->method('hasMethod')->will($this->returnValue(true));
+        $mockReflectionService->expects($this->any())->method('getMethodTagsValues')->with('My\Class\Name', 'myMethod')->will($this->returnValue([
             'param' => ['string $name']
         ]));
-        $mockReflectionService->expects(self::any())->method('getMethodAnnotations')->with('My\Class\Name', 'myMethod')->will(self::returnValue([
+        $mockReflectionService->expects($this->any())->method('getMethodAnnotations')->with('My\Class\Name', 'myMethod')->will($this->returnValue([
             $validateFoo1,
             $validateFoo2,
             new Flow\SkipCsrfProtection([])
@@ -48,7 +48,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
             '     * @\Neos\Flow\Annotations\Validate(type="bar2", argumentName="foo2")' . chr(10) .
             '     * @\Neos\Flow\Annotations\SkipCsrfProtection' . chr(10) .
             '     */' . chr(10);
-        self::assertEquals($expected, $methodDocumentation);
+        $this->assertEquals($expected, $methodDocumentation);
     }
 
     /**
@@ -126,7 +126,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         ];
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue($methodParameters));
+        $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue($methodParameters));
 
         $expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = true, array $arg6 = array(0 => true, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3)';
 
@@ -134,7 +134,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $builder->injectReflectionService($mockReflectionService);
 
         $actualCode = $builder->buildMethodParametersCode($className, 'foo', true);
-        self::assertSame($expectedCode, $actualCode);
+        $this->assertSame($expectedCode, $actualCode);
     }
 
     /**
@@ -150,7 +150,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         ');
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue([
+        $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue([
             'arg1' => [],
             'arg2' => [],
             'arg3' => [],
@@ -164,7 +164,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $builder->injectReflectionService($mockReflectionService);
 
         $actualCode = $builder->buildMethodParametersCode($className, 'foo', false);
-        self::assertSame($expectedCode, $actualCode);
+        $this->assertSame($expectedCode, $actualCode);
     }
 
     /**
@@ -175,6 +175,6 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
 
         $actualCode = $builder->buildMethodParametersCode(null, 'foo', true);
-        self::assertSame('', $actualCode);
+        $this->assertSame('', $actualCode);
     }
 }

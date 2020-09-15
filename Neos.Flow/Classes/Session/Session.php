@@ -303,10 +303,9 @@ class Session implements CookieEnabledInterface
      * Starts the session, if it has not been already started
      *
      * @return void
-     * @throws \Exception
+     * @api
      * @deprecated This method is not deprecated, but be aware that from next major a cookie will no longer be auto generated.
      * @see CookieEnabledInterface
-     * @api
      */
     public function start()
     {

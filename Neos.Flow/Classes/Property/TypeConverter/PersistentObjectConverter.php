@@ -99,7 +99,7 @@ class PersistentObjectConverter extends ObjectConverter
      * All properties in the source array except __identity are sub-properties.
      *
      * @param mixed $source
-     * @return array<mixed>
+     * @return array
      */
     public function getSourceChildPropertiesToBeConverted($source)
     {

@@ -28,7 +28,7 @@ class FileAdapterTest extends UnitTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $mockParsedXliffData = require(__DIR__ . '/../../Fixtures/MockParsedXliffData.php');
         $this->mockParsedXliffFile = $mockParsedXliffData[0];
@@ -43,16 +43,16 @@ class FileAdapterTest extends UnitTestCase
         $fileAdapter = new I18n\Xliff\Model\FileAdapter($this->mockParsedXliffFile, new I18n\Locale('de'));
 
         $result = $fileAdapter->getTargetBySource('Source string');
-        self::assertEquals('Übersetzte Zeichenkette', $result);
+        $this->assertEquals('Übersetzte Zeichenkette', $result);
 
         $result = $fileAdapter->getTargetBySource('Source singular', 0);
-        self::assertEquals('Übersetzte Einzahl', $result);
+        $this->assertEquals('Übersetzte Einzahl', $result);
 
         $result = $fileAdapter->getTargetBySource('Source singular', 2);
-        self::assertEquals('Übersetzte Mehrzahl 2', $result);
+        $this->assertEquals('Übersetzte Mehrzahl 2', $result);
 
         $result = $fileAdapter->getTargetBySource('Not existing label');
-        self::assertFalse($result);
+        $this->assertFalse($result);
     }
 
     /**
@@ -63,10 +63,10 @@ class FileAdapterTest extends UnitTestCase
         $fileAdapter = new I18n\Xliff\Model\FileAdapter($this->mockParsedXliffFile, new I18n\Locale('de'));
 
         $result = $fileAdapter->getTargetByTransUnitId('key1');
-        self::assertEquals('Übersetzte Zeichenkette', $result);
+        $this->assertEquals('Übersetzte Zeichenkette', $result);
 
         $result = $fileAdapter->getTargetByTransUnitId('key2', 1);
-        self::assertEquals('Übersetzte Mehrzahl 1', $result);
+        $this->assertEquals('Übersetzte Mehrzahl 1', $result);
 
         $mockLogger = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
@@ -74,7 +74,7 @@ class FileAdapterTest extends UnitTestCase
         $this->inject($fileAdapter, 'i18nLogger', $mockLogger);
 
         $result = $fileAdapter->getTargetByTransUnitId('not.existing');
-        self::assertFalse($result);
+        $this->assertFalse($result);
     }
 
     /**
@@ -85,7 +85,7 @@ class FileAdapterTest extends UnitTestCase
         $fileAdapter = new I18n\Xliff\Model\FileAdapter($this->mockParsedXliffFile, new I18n\Locale('en_US'));
 
         $result = $fileAdapter->getTargetByTransUnitId('key3');
-        self::assertEquals('No target', $result);
+        $this->assertEquals('No target', $result);
     }
 
     /**
@@ -100,7 +100,7 @@ class FileAdapterTest extends UnitTestCase
         $mockLogger = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $mockLogger->expects(self::once())
+        $mockLogger->expects($this->once())
             ->method('debug')
             ->with($this->stringStartsWith('No trans-unit elements were found'));
         $this->inject($fileAdapter, 'i18nLogger', $mockLogger);

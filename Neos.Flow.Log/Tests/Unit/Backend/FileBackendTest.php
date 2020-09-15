@@ -11,7 +11,6 @@ namespace Neos\Flow\Log\Tests\Unit\Backend;
  * source code.
  */
 
-use Neos\Flow\Log\Exception\CouldNotOpenResourceException;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Log\Backend\FileBackend;
@@ -24,7 +23,7 @@ class FileBackendTest extends UnitTestCase
 {
     /**
      */
-    protected function setUp(): void
+    public function setUp()
     {
         vfsStream::setup('testDirectory');
     }
@@ -37,15 +36,15 @@ class FileBackendTest extends UnitTestCase
         $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
         $backend = new FileBackend(['logFileUrl' => $logFileUrl]);
         $backend->open();
-        self::assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log'));
+        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log'));
     }
 
     /**
      * @test
+     * @expectedException \Neos\Flow\Log\Exception\CouldNotOpenResourceException
      */
     public function openDoesNotCreateParentDirectoriesByDefault()
     {
-        $this->expectException(CouldNotOpenResourceException::class);
         $logFileUrl = vfsStream::url('testDirectory') . '/foo/test.log';
         $backend = new FileBackend(['logFileUrl' => $logFileUrl]);
         $backend->open();
@@ -59,7 +58,7 @@ class FileBackendTest extends UnitTestCase
         $logFileUrl = vfsStream::url('testDirectory') . '/foo/test.log';
         $backend = new FileBackend(['logFileUrl' => $logFileUrl, 'createParentDirectories' => true]);
         $backend->open();
-        self::assertTrue(vfsStreamWrapper::getRoot()->hasChild('foo'));
+        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('foo'));
     }
 
     /**
@@ -74,7 +73,7 @@ class FileBackendTest extends UnitTestCase
         $backend->append('foo');
 
         $pidOffset = function_exists('posix_getpid') ? 10 : 0;
-        self::assertSame(53 + $pidOffset + strlen(PHP_EOL), vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+        $this->assertSame(53 + $pidOffset + strlen(PHP_EOL), vfsStreamWrapper::getRoot()->getChild('test.log')->size());
     }
 
     /**
@@ -90,7 +89,7 @@ class FileBackendTest extends UnitTestCase
         $backend->append('foo');
 
         $pidOffset = function_exists('posix_getpid') ? 10 : 0;
-        self::assertSame(68 + $pidOffset + strlen(PHP_EOL), vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+        $this->assertSame(68 + $pidOffset + strlen(PHP_EOL), vfsStreamWrapper::getRoot()->getChild('test.log')->size());
     }
 
     /**
@@ -105,7 +104,7 @@ class FileBackendTest extends UnitTestCase
 
         $backend->append('foo', LOG_INFO);
 
-        self::assertSame(0, vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+        $this->assertSame(0, vfsStreamWrapper::getRoot()->getChild('test.log')->size());
     }
 
     /**
@@ -122,8 +121,8 @@ class FileBackendTest extends UnitTestCase
         $backend->setLogFilesToKeep(1);
         $backend->open();
 
-        self::assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log'));
-        self::assertSame('', file_get_contents($logFileUrl));
-        self::assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log.1'));
+        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log'));
+        $this->assertSame('', file_get_contents($logFileUrl));
+        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log.1'));
     }
 }

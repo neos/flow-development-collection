@@ -10,8 +10,7 @@ namespace Neos\Flow\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\RequestInterface;
 
 /**
  * A generic Controller exception
@@ -21,7 +20,7 @@ use Neos\Flow\Mvc\ActionRequest;
 class Exception extends \Neos\Flow\Mvc\Exception
 {
     /**
-     * @var ActionRequest
+     * @var RequestInterface
      */
     protected $request;
 
@@ -31,10 +30,10 @@ class Exception extends \Neos\Flow\Mvc\Exception
      * @param string $message
      * @param integer $code
      * @param \Exception $previousException
-     * @param ActionRequest $request
+     * @param RequestInterface $request
      * @see \Exception
      */
-    public function __construct($message = '', $code = 0, \Exception $previousException = null, ActionRequest $request)
+    public function __construct($message = '', $code = 0, \Exception $previousException = null, RequestInterface $request)
     {
         $this->request = $request;
         parent::__construct($message, $code, $previousException);
@@ -43,7 +42,7 @@ class Exception extends \Neos\Flow\Mvc\Exception
     /**
      * Returns the request object that exception belongs to.
      *
-     * @return ActionRequest
+     * @return RequestInterface
      */
     protected function getRequest()
     {

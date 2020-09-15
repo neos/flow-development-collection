@@ -15,7 +15,6 @@ namespace Neos\Flow\Persistence\Generic\Qom;
 /**
  * An operand to a binary operation specified by a Comparison.
  *
- * @deprecated since Flow 6.0
  */
 class Operand
 {

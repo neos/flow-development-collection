@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Link;
  * source code.
  */
 
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
 
@@ -88,13 +87,8 @@ class ActionViewHelper extends AbstractTagBasedViewHelper
             if ($request->isMainRequest()) {
                 throw new ViewHelper\Exception('You can\'t use the parent Request, you are already in the MainRequest.', 1360163536);
             }
-            $parentRequest = $request->getParentRequest();
-            if (!$parentRequest instanceof ActionRequest) {
-                throw new ViewHelper\Exception('The parent requests was unexpectedly empty, probably the current request is broken.', 1565948237);
-            }
-
             $uriBuilder = clone $uriBuilder;
-            $uriBuilder->setRequest($parentRequest);
+            $uriBuilder->setRequest($request->getParentRequest());
         } elseif ($this->arguments['useMainRequest'] === true) {
             $request = $this->controllerContext->getRequest();
             if (!$request->isMainRequest()) {

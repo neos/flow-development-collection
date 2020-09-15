@@ -128,6 +128,6 @@ class UriTemplateTest extends UnitTestCase
     public function uriTemplatesAreExpandedCorrectly($templateString, array $variables, $expectedString)
     {
         $expandedTemplate = UriTemplate::expand($templateString, $variables);
-        self::assertEquals($expectedString, $expandedTemplate);
+        $this->assertEquals($expectedString, $expandedTemplate);
     }
 }

@@ -13,8 +13,6 @@ namespace Neos\Eel\Tests\Unit;
 
 use Neos\Eel\Context;
 use Neos\Eel\EelEvaluatorInterface;
-use Neos\Eel\EvaluationException;
-use Neos\Eel\ParserException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -320,7 +318,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         $c = new Context($contextArray);
 
         $protectedContext = new \Neos\Eel\ProtectedContext($contextArray);
-        $protectedContext->allow('*');
+        $protectedContext->whitelist('*');
         return [
             // Call first-level method
             ['count(arr)', $c, 3],
@@ -572,10 +570,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Eel\EvaluationException
      */
     public function methodCallOfUndefinedFunctionThrowsException()
     {
-        $this->expectException(EvaluationException::class);
         $c = new Context([
             'arr' => [
                 'func' => function ($arg) {
@@ -588,10 +586,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
 
     /**
      * @test
+     * @expectedException \Neos\Eel\EvaluationException
      */
     public function methodCallOfUnknownMethodThrowsException()
     {
-        $this->expectException(EvaluationException::class);
         $o = new \Neos\Eel\Tests\Unit\Fixtures\TestObject();
 
         $c = new Context([
@@ -673,10 +671,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidExpressions
+     * @expectedException \Neos\Eel\ParserException
      */
     public function invalidExpressionsThrowExceptions($expression)
     {
-        $this->expectException(ParserException::class);
         $this->assertEvaluated(false, $expression, new Context());
     }
 
@@ -710,10 +708,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     protected function assertEvaluated($expected, $expression, $context)
     {
         $evaluator = $this->createEvaluator();
-        self::assertSame($expected, $evaluator->evaluate($expression, $context));
+        $this->assertSame($expected, $evaluator->evaluate($expression, $context));
 
         $wrappedExpression = '${' . $expression . '}';
-        self::assertSame(1, preg_match(\Neos\Eel\Package::EelExpressionRecognizer, $wrappedExpression), 'The wrapped expression ' . $wrappedExpression . ' was not detected as Eel expression');
+        $this->assertSame(1, preg_match(\Neos\Eel\Package::EelExpressionRecognizer, $wrappedExpression), 'The wrapped expression ' . $wrappedExpression . ' was not detected as Eel expression');
     }
 
     /**

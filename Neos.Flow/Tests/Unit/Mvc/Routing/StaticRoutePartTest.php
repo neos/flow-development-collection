@@ -32,10 +32,10 @@ class StaticRoutePartTest extends UnitTestCase
         $routePart->setName('foo');
 
         $routePath = null;
-        self::assertFalse($routePart->match($routePath), 'Static Route Part should never match if $routePath is NULL.');
+        $this->assertFalse($routePart->match($routePath), 'Static Route Part should never match if $routePath is NULL.');
 
         $routePath = '';
-        self::assertFalse($routePart->match($routePath), 'Static Route Part should never match if $routePath is empty.');
+        $this->assertFalse($routePart->match($routePath), 'Static Route Part should never match if $routePath is empty.');
     }
 
     /**
@@ -48,7 +48,7 @@ class StaticRoutePartTest extends UnitTestCase
         $routePart->setDefaultValue('bar');
 
         $routePath = '';
-        self::assertFalse($routePart->match($routePath), 'Static Route Part should never match if $routePath is empty.');
+        $this->assertFalse($routePart->match($routePath), 'Static Route Part should never match if $routePath is empty.');
     }
 
     /**
@@ -58,7 +58,7 @@ class StaticRoutePartTest extends UnitTestCase
     {
         $routePart = new Mvc\Routing\StaticRoutePart();
         $routePath = 'foo/bar';
-        self::assertFalse($routePart->match($routePath), 'Static Route Part should not match if name is not set.');
+        $this->assertFalse($routePart->match($routePath), 'Static Route Part should not match if name is not set.');
     }
 
     /**
@@ -70,7 +70,7 @@ class StaticRoutePartTest extends UnitTestCase
         $routePart->setName('foo');
         $routePath = 'bar/foo';
 
-        self::assertFalse($routePart->match($routePath), 'Static Route Part should not match if name is not equal to beginning of request path.');
+        $this->assertFalse($routePart->match($routePath), 'Static Route Part should not match if name is not equal to beginning of request path.');
     }
 
     /**
@@ -82,7 +82,7 @@ class StaticRoutePartTest extends UnitTestCase
         $routePart->setName('foo');
         $routePath = 'foo/bar';
 
-        self::assertTrue($routePart->match($routePath), 'Static Route Part should match if name equals beginning of request path.');
+        $this->assertTrue($routePart->match($routePath), 'Static Route Part should match if name equals beginning of request path.');
     }
 
     /**
@@ -94,7 +94,7 @@ class StaticRoutePartTest extends UnitTestCase
         $routePart->setName('SomeName');
         $routePath = 'somename';
 
-        self::assertFalse($routePart->match($routePath), 'Static Route Part should not match if case of name is not equal to case of request path.');
+        $this->assertFalse($routePart->match($routePath), 'Static Route Part should not match if case of name is not equal to case of request path.');
     }
 
     /**
@@ -106,11 +106,11 @@ class StaticRoutePartTest extends UnitTestCase
         $routePart->setName('foo');
 
         $routePath = 'foo/bar';
-        self::assertTrue($routePart->match($routePath));
+        $this->assertTrue($routePart->match($routePath));
 
         $routePath = 'bar/foo';
-        self::assertFalse($routePart->match($routePath));
-        self::assertNull($routePart->getValue(), 'Static Route Part value should be NULL after unsuccessful match.');
+        $this->assertFalse($routePart->match($routePath));
+        $this->assertNull($routePart->getValue(), 'Static Route Part value should be NULL after unsuccessful match.');
     }
 
     /**
@@ -122,8 +122,8 @@ class StaticRoutePartTest extends UnitTestCase
         $routePart->setName('bar');
 
         $routePath = 'foo/bar';
-        self::assertFalse($routePart->match($routePath));
-        self::assertSame('foo/bar', $routePath, 'Static Route Part should not change $routePath on unsuccessful match.');
+        $this->assertFalse($routePart->match($routePath));
+        $this->assertSame('foo/bar', $routePath, 'Static Route Part should not change $routePath on unsuccessful match.');
     }
 
     /**
@@ -135,8 +135,8 @@ class StaticRoutePartTest extends UnitTestCase
         $routePart->setName('bar/');
         $routePath = 'bar/foo/test';
 
-        self::assertTrue($routePart->match($routePath));
-        self::assertSame('foo/test', $routePath, 'Static Route Part should shorten $routePath by matching substring on successful match.');
+        $this->assertTrue($routePart->match($routePath));
+        $this->assertSame('foo/test', $routePath, 'Static Route Part should shorten $routePath by matching substring on successful match.');
     }
 
     /**
@@ -148,11 +148,11 @@ class StaticRoutePartTest extends UnitTestCase
         $routePart->setName('foo');
         $routeValues = [];
         $routePart->resolve($routeValues);
-        self::assertSame('foo', $routePart->getValue());
+        $this->assertSame('foo', $routePart->getValue());
 
         $routePath = 'foo';
         $routePart->match($routePath);
-        self::assertNull($routePart->getValue(), 'Static Route Part must reset their value to NULL.');
+        $this->assertNull($routePart->getValue(), 'Static Route Part must reset their value to NULL.');
     }
 
     /*                                                                        *
@@ -168,8 +168,8 @@ class StaticRoutePartTest extends UnitTestCase
         $routePart->setName('foo');
         $routeValues = [];
 
-        self::assertTrue($routePart->resolve($routeValues));
-        self::assertEquals('foo', $routePart->getValue(), 'Static Route Part should resolve empty routeValues-array');
+        $this->assertTrue($routePart->resolve($routeValues));
+        $this->assertEquals('foo', $routePart->getValue(), 'Static Route Part should resolve empty routeValues-array');
     }
 
     /**
@@ -181,8 +181,8 @@ class StaticRoutePartTest extends UnitTestCase
         $routePart->setName('foo');
         $routeValues = ['@controller' => 'foo', '@action' => 'bar'];
 
-        self::assertTrue($routePart->resolve($routeValues));
-        self::assertEquals('foo', $routePart->getValue(), 'Static Route Part should resolve non-empty routeValues-array');
+        $this->assertTrue($routePart->resolve($routeValues));
+        $this->assertEquals('foo', $routePart->getValue(), 'Static Route Part should resolve non-empty routeValues-array');
     }
 
     /**
@@ -192,7 +192,7 @@ class StaticRoutePartTest extends UnitTestCase
     {
         $routePart = new Mvc\Routing\StaticRoutePart();
         $routeValues = [];
-        self::assertFalse($routePart->resolve($routeValues), 'Static Route Part should not resolve if name is not set');
+        $this->assertFalse($routePart->resolve($routeValues), 'Static Route Part should not resolve if name is not set');
     }
 
     /**
@@ -204,8 +204,8 @@ class StaticRoutePartTest extends UnitTestCase
         $routePart->setName('foo');
         $routeValues = ['@controller' => 'foo', '@action' => 'bar'];
 
-        self::assertTrue($routePart->resolve($routeValues));
-        self::assertEquals(['@controller' => 'foo', '@action' => 'bar'], $routeValues, 'when resolve() is called on Static Route Part, specified routeValues-array should never be changed');
+        $this->assertTrue($routePart->resolve($routeValues));
+        $this->assertEquals(['@controller' => 'foo', '@action' => 'bar'], $routeValues, 'when resolve() is called on Static Route Part, specified routeValues-array should never be changed');
     }
 
     /**
@@ -218,7 +218,7 @@ class StaticRoutePartTest extends UnitTestCase
         $routeValues = [];
 
         $routePart->resolve($routeValues);
-        self::assertEquals('somename', $routePart->getValue(), 'Static Route Part should lowercase the value if lowerCase is true');
+        $this->assertEquals('somename', $routePart->getValue(), 'Static Route Part should lowercase the value if lowerCase is true');
     }
 
     /**
@@ -232,6 +232,6 @@ class StaticRoutePartTest extends UnitTestCase
         $routeValues = [];
 
         $routePart->resolve($routeValues);
-        self::assertEquals('SomeName', $routePart->getValue(), 'By default Static Route Part should not alter the case of name');
+        $this->assertEquals('SomeName', $routePart->getValue(), 'By default Static Route Part should not alter the case of name');
     }
 }

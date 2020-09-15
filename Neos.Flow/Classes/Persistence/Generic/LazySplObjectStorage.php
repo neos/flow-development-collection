@@ -16,7 +16,6 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
  * A lazy loading variant of \SplObjectStorage
  *
  * @api
- * @deprecated since Flow 6.0
  */
 class LazySplObjectStorage extends \SplObjectStorage
 {

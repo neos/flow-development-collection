@@ -275,21 +275,16 @@ class StringHelper implements ProtectedContextAwareInterface
      * Examples::
      *
      *     String.pregReplace("Some.String with sp:cial characters", "/[[:^alnum:]]/", "-") == "Some-String-with-sp-cial-characters"
-     *     String.pregReplace("Some.String with sp:cial characters", "/[[:^alnum:]]/", "-", 1) == "Some-String with sp:cial characters"
      *     String.pregReplace("2016-08-31", "/([0-9]+)-([0-9]+)-([0-9]+)/", "$3.$2.$1") == "31.08.2016"
      *
      * @param string $string The input string
      * @param string $pattern A PREG pattern
      * @param string $replace A replacement string, can contain references to capture groups with "\\n" or "$n"
-     * @param integer $limit The maximum possible replacements for each pattern in each subject string. Defaults to -1 (no limit).
      * @return string The string with all occurrences replaced
      */
-    public function pregReplace($string, $pattern, $replace, $limit = -1)
+    public function pregReplace($string, $pattern, $replace)
     {
-        if ($limit === null) {
-            $limit = -1;
-        }
-        return preg_replace($pattern, $replace, (string)$string, $limit);
+        return preg_replace($pattern, $replace, (string)$string);
     }
 
     /**
@@ -584,7 +579,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function htmlSpecialChars($string, $preserveEntities = false)
     {
-        return htmlspecialchars((string)$string, ENT_NOQUOTES | ENT_HTML401, ini_get("default_charset"), !$preserveEntities);
+        return htmlspecialchars((string)$string, null, null, !$preserveEntities);
     }
 
     /**

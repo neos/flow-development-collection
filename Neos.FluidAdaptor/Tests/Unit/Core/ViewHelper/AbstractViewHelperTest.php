@@ -12,12 +12,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\ViewHelper;
  */
 
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\FluidAdaptor\Core\ViewHelper\Exception;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\UnitTestCase;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ArgumentDefinition;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
@@ -29,15 +25,15 @@ require_once(__DIR__ . '/../Fixtures/TestViewHelper2.php');
  * Testcase for AbstractViewHelper
  *
  */
-class AbstractViewHelperTest extends UnitTestCase
+class AbstractViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 {
     /**
-     * @var ReflectionService
+     * @var \Neos\Flow\Reflection\ReflectionService
      */
     protected $mockReflectionService;
 
     /**
-     * @var ObjectManagerInterface
+     * @var \Neos\Flow\ObjectManagement\ObjectManagerInterface
      */
     protected $mockObjectManager;
 
@@ -78,19 +74,19 @@ class AbstractViewHelperTest extends UnitTestCase
         ]
     ];
 
-    protected function setUp(): void
+    public function setUp()
     {
-        $this->mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockObjectManager->expects(self::any())->method('get')->with(ReflectionService::class)->willReturn($this->mockReflectionService);
+        $this->mockReflectionService = $this->getMockBuilder(\Neos\Flow\Reflection\ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $this->mockObjectManager = $this->createMock(\Neos\Flow\ObjectManagement\ObjectManagerInterface::class);
+        $this->mockObjectManager->expects($this->any())->method('get')->with(\Neos\Flow\Reflection\ReflectionService::class)->will($this->returnValue($this->mockReflectionService));
     }
 
     /**
      * @test
      */
-    public function argumentsCanBeRegistered(): void
+    public function argumentsCanBeRegistered()
     {
-        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->willReturn([]);
+        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue([]));
 
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
@@ -102,15 +98,15 @@ class AbstractViewHelperTest extends UnitTestCase
         $expected = new ArgumentDefinition($name, $type, $description, $isRequired);
 
         $viewHelper->_call('registerArgument', $name, $type, $description, $isRequired);
-        self::assertEquals([$name => $expected], $viewHelper->prepareArguments(), 'Argument definitions not returned correctly.');
+        $this->assertEquals([$name => $expected], $viewHelper->prepareArguments(), 'Argument definitions not returned correctly.');
     }
 
     /**
      * @test
+     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function registeringTheSameArgumentNameAgainThrowsException(): void
+    public function registeringTheSameArgumentNameAgainThrowsException()
     {
-        $this->expectException(Exception::class);
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render'], [], '', false);
 
         $name = 'shortName';
@@ -125,9 +121,9 @@ class AbstractViewHelperTest extends UnitTestCase
     /**
      * @test
      */
-    public function overrideArgumentOverwritesExistingArgumentDefinition(): void
+    public function overrideArgumentOverwritesExistingArgumentDefinition()
     {
-        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->willReturn([]);
+        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue([]));
 
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
@@ -142,15 +138,15 @@ class AbstractViewHelperTest extends UnitTestCase
 
         $viewHelper->_call('registerArgument', $name, $type, $description, $isRequired);
         $viewHelper->_call('overrideArgument', $name, $overriddenType, $overriddenDescription, $isRequired);
-        self::assertEquals($viewHelper->prepareArguments(), [$name => $expected], 'Argument definitions not returned correctly. The original ArgumentDefinition could not be overridden.');
+        $this->assertEquals($viewHelper->prepareArguments(), [$name => $expected], 'Argument definitions not returned correctly. The original ArgumentDefinition could not be overridden.');
     }
 
     /**
      * @test
+     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function overrideArgumentThrowsExceptionWhenTryingToOverwriteAnNonexistingArgument(): void
+    public function overrideArgumentThrowsExceptionWhenTryingToOverwriteAnNonexistingArgument()
     {
-        $this->expectException(Exception::class);
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
 
@@ -160,14 +156,14 @@ class AbstractViewHelperTest extends UnitTestCase
     /**
      * @test
      */
-    public function prepareArgumentsCallsInitializeArguments(): void
+    public function prepareArgumentsCallsInitializeArguments()
     {
-        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->willReturn([]);
+        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue([]));
 
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render', 'initializeArguments'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
 
-        $viewHelper->expects(self::once())->method('initializeArguments');
+        $viewHelper->expects($this->once())->method('initializeArguments');
 
         $viewHelper->prepareArguments();
     }
@@ -175,12 +171,60 @@ class AbstractViewHelperTest extends UnitTestCase
     /**
      * @test
      */
-    public function validateArgumentsCallsPrepareArguments(): void
+    public function prepareArgumentsRegistersAnnotationBasedArgumentsWithDescriptionIfDebugModeIsEnabled()
+    {
+        $dataCacheMock = $this->getMockBuilder(\Neos\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
+        $dataCacheMock->expects($this->any())->method('has')->will($this->returnValue(true));
+        $dataCacheMock->expects($this->any())->method('get')->will($this->returnValue([]));
+
+        $viewHelper = new \Neos\FluidAdaptor\Core\Fixtures\TestViewHelper();
+
+        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(\Neos\FluidAdaptor\Core\Fixtures\TestViewHelper::class, 'render')->will($this->returnValue($this->fixtureMethodParameters));
+        $this->mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(\Neos\FluidAdaptor\Core\Fixtures\TestViewHelper::class, 'render')->will($this->returnValue($this->fixtureMethodTags));
+        $viewHelper->injectObjectManager($this->mockObjectManager);
+
+        $expected = [
+            'param1' => new \Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition('param1', 'integer', 'P1 Stuff', true, null, true),
+            'param2' => new \Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition('param2', 'array', 'P2 Stuff', true, null, true),
+            'param3' => new \Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition('param3', 'string', 'P3 Stuff', false, 'default', true)
+        ];
+
+        $this->assertEquals($expected, $viewHelper->prepareArguments(), 'Annotation based arguments were not registered.');
+    }
+
+    /**
+     * @test
+     */
+    public function prepareArgumentsRegistersAnnotationBasedArgumentsWithoutDescriptionIfDebugModeIsDisabled()
+    {
+        $dataCacheMock = $this->getMockBuilder(\Neos\Cache\Frontend\VariableFrontend::class)->disableOriginalConstructor()->getMock();
+        $dataCacheMock->expects($this->any())->method('has')->will($this->returnValue(true));
+        $dataCacheMock->expects($this->any())->method('get')->will($this->returnValue([]));
+
+        $viewHelper = new \Neos\FluidAdaptor\Core\Fixtures\TestViewHelper2();
+
+        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(\Neos\FluidAdaptor\Core\Fixtures\TestViewHelper2::class, 'render')->will($this->returnValue($this->fixtureMethodParameters));
+        $this->mockReflectionService->expects($this->once())->method('getMethodTagsValues');
+        $viewHelper->injectObjectManager($this->mockObjectManager);
+
+        $expected = [
+            'param1' => new \Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition('param1', 'integer', '', true, null, true),
+            'param2' => new \Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition('param2', 'array', '', true, null, true),
+            'param3' => new \Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition('param3', 'string', '', false, 'default', true),
+        ];
+
+        $this->assertEquals($expected, $viewHelper->prepareArguments(), 'Annotation based arguments were not registered.');
+    }
+
+    /**
+     * @test
+     */
+    public function validateArgumentsCallsPrepareArguments()
     {
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render', 'prepareArguments'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
 
-        $viewHelper->expects(self::once())->method('prepareArguments')->willReturn([]);
+        $viewHelper->expects($this->once())->method('prepareArguments')->will($this->returnValue([]));
 
         $viewHelper->validateArguments();
     }
@@ -188,46 +232,46 @@ class AbstractViewHelperTest extends UnitTestCase
     /**
      * @test
      */
-    public function validateArgumentsAcceptsAllObjectsImplemtingArrayAccessAsAnArray(): void
+    public function validateArgumentsAcceptsAllObjectsImplemtingArrayAccessAsAnArray()
     {
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render', 'prepareArguments'], [], '', false);
 
         $viewHelper->setArguments(['test' => new \ArrayObject]);
-        $viewHelper->expects(self::once())->method('prepareArguments')->willReturn(['test' => new ArgumentDefinition('test', 'array', false, 'documentation')]);
+        $viewHelper->expects($this->once())->method('prepareArguments')->will($this->returnValue(['test' => new \Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition('test', 'array', false, 'documentation')]));
         $viewHelper->validateArguments();
     }
 
     /**
      * @test
      */
-    public function validateArgumentsCallsTheRightValidators(): void
+    public function validateArgumentsCallsTheRightValidators()
     {
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render', 'prepareArguments'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
 
         $viewHelper->setArguments(['test' => 'Value of argument']);
 
-        $viewHelper->expects(self::once())->method('prepareArguments')->willReturn([
-            'test' => new ArgumentDefinition('test', 'string', false, 'documentation')
-        ]);
+        $viewHelper->expects($this->once())->method('prepareArguments')->will($this->returnValue([
+            'test' => new \Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition('test', 'string', false, 'documentation')
+        ]));
 
         $viewHelper->validateArguments();
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
-    public function validateArgumentsCallsTheRightValidatorsAndThrowsExceptionIfValidationIsWrong(): void
+    public function validateArgumentsCallsTheRightValidatorsAndThrowsExceptionIfValidationIsWrong()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render', 'prepareArguments'], [], '', false);
         $viewHelper->injectObjectManager($this->mockObjectManager);
 
         $viewHelper->setArguments(['test' => 'test']);
 
-        $viewHelper->expects(self::once())->method('prepareArguments')->willReturn([
-            'test' => new ArgumentDefinition('test', 'stdClass', false, 'documentation')
-        ]);
+        $viewHelper->expects($this->once())->method('prepareArguments')->will($this->returnValue([
+            'test' => new \Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition('test', 'stdClass', false, 'documentation')
+        ]));
 
         $viewHelper->validateArguments();
     }
@@ -235,22 +279,22 @@ class AbstractViewHelperTest extends UnitTestCase
     /**
      * @test
      */
-    public function initializeArgumentsAndRenderCallsTheCorrectSequenceOfMethods(): void
+    public function initializeArgumentsAndRenderCallsTheCorrectSequenceOfMethods()
     {
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['validateArguments', 'initialize', 'callRenderMethod']);
-        $viewHelper->expects(self::at(0))->method('validateArguments');
-        $viewHelper->expects(self::at(1))->method('initialize');
-        $viewHelper->expects(self::at(2))->method('callRenderMethod')->willReturn('Output');
+        $viewHelper->expects($this->at(0))->method('validateArguments');
+        $viewHelper->expects($this->at(1))->method('initialize');
+        $viewHelper->expects($this->at(2))->method('callRenderMethod')->will($this->returnValue('Output'));
 
         $expectedOutput = 'Output';
         $actualOutput = $viewHelper->initializeArgumentsAndRender(['argument1' => 'value1']);
-        self::assertEquals($expectedOutput, $actualOutput);
+        $this->assertEquals($expectedOutput, $actualOutput);
     }
 
     /**
      * @test
      */
-    public function setRenderingContextShouldSetInnerVariables(): void
+    public function setRenderingContextShouldSetInnerVariables()
     {
         $templateVariableContainer = $this->createMock(TemplateVariableContainer::class);
         $viewHelperVariableContainer = $this->createMock(ViewHelperVariableContainer::class);
@@ -266,8 +310,25 @@ class AbstractViewHelperTest extends UnitTestCase
 
         $viewHelper->setRenderingContext($renderingContext);
 
-        self::assertSame($viewHelper->_get('templateVariableContainer'), $templateVariableContainer);
-        self::assertSame($viewHelper->_get('viewHelperVariableContainer'), $viewHelperVariableContainer);
-        self::assertSame($viewHelper->_get('controllerContext'), $controllerContext);
+        $this->assertSame($viewHelper->_get('templateVariableContainer'), $templateVariableContainer);
+        $this->assertSame($viewHelper->_get('viewHelperVariableContainer'), $viewHelperVariableContainer);
+        $this->assertSame($viewHelper->_get('controllerContext'), $controllerContext);
+    }
+
+    /**
+     * @test
+     */
+    public function renderMethodParametersWithMultipleTypesAreRegisteredAsMixed()
+    {
+        $this->mockReflectionService->expects(self::any())->method('getMethodTagsValues')->willReturn([]);
+        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->willReturn(['someArgument' => [
+            'type' => 'array|\Iterator',
+            'optional' => false
+        ]]);
+
+        $argumentDefinitions = AbstractViewHelper::getRenderMethodArgumentDefinitions($this->mockObjectManager);
+        $this->assertCount(1, $argumentDefinitions);
+        $this->assertArrayHasKey('someArgument', $argumentDefinitions);
+        $this->assertEquals('mixed', $argumentDefinitions['someArgument'][1]);
     }
 }

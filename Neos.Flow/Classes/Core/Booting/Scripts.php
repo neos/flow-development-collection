@@ -17,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheFactory;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\ClassLoader;
@@ -26,9 +25,13 @@ use Neos\Flow\Core\ProxyClassLoader;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Error\ErrorHandler;
 use Neos\Flow\Error\ProductionExceptionHandler;
-use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Log\Logger;
+use Neos\Flow\Log\LoggerBackendConfigurationHelper;
+use Neos\Flow\Log\LoggerFactory;
+use Neos\Flow\Log\PsrLoggerFactory;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
+use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorage\FileStorage;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Monitor\FileMonitor;
@@ -37,16 +40,17 @@ use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
+use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Reflection\ReflectionServiceFactory;
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
+use Neos\Utility\Lock\Lock;
+use Neos\Utility\Lock\LockManager;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Exception as FlowException;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -173,6 +177,7 @@ class Scripts
     public static function initializePackageManagement(Bootstrap $bootstrap)
     {
         $packageManager = new PackageManager(PackageManager::DEFAULT_PACKAGE_INFORMATION_CACHE_FILEPATH, FLOW_PATH_PACKAGES);
+        $bootstrap->setEarlyInstance(PackageManagerInterface::class, $packageManager);
         $bootstrap->setEarlyInstance(PackageManager::class, $packageManager);
 
         // The package:rescan must happen as early as possible, compiletime alone is not enough.
@@ -211,6 +216,15 @@ class Scripts
             $configurationManager->refreshConfiguration();
         }
 
+        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
+
+        $lockManager = new LockManager($settings['utility']['lockStrategyClassName'], ['lockDirectory' => Files::concatenatePaths([
+            $environment->getPathToTemporaryDirectory(),
+            'Lock'
+        ])]);
+        Lock::setLockManager($lockManager);
+        $packageManager->injectSettings($settings);
+
         $bootstrap->getSignalSlotDispatcher()->dispatch(ConfigurationManager::class, 'configurationManagerReady', [$configurationManager]);
         $bootstrap->setEarlyInstance(ConfigurationManager::class, $configurationManager);
     }
@@ -220,10 +234,8 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
-     * @throws FlowException
-     * @throws InvalidConfigurationTypeException
      */
-    public static function initializeSystemLogger(Bootstrap $bootstrap): void
+    public static function initializeSystemLogger(Bootstrap $bootstrap)
     {
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
@@ -234,10 +246,22 @@ class Scripts
         /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
         $psrLoggerFactoryName = $settings['log']['psr3']['loggerFactory'];
         $psrLogConfigurations = $settings['log']['psr3'][$psrLoggerFactoryName] ?? [];
+        if ($psrLoggerFactoryName === 'legacy') {
+            $psrLoggerFactoryName = PsrLoggerFactory::class;
+            $psrLogConfigurations = (new LoggerBackendConfigurationHelper($settings['log']))->getNormalizedLegacyConfiguration();
+        }
         $psrLogFactory = $psrLoggerFactoryName::create($psrLogConfigurations);
 
+        // This is all deprecated and can be removed with the removal of respective interfaces and classes.
+        $loggerFactory = new LoggerFactory($psrLogFactory, $throwableStorage);
         $bootstrap->setEarlyInstance($psrLoggerFactoryName, $psrLogFactory);
         $bootstrap->setEarlyInstance(PsrLoggerFactoryInterface::class, $psrLogFactory);
+        $bootstrap->setEarlyInstance(LoggerFactory::class, $loggerFactory);
+        $deprecatedLogger = $settings['log']['systemLogger']['logger'] ?? Logger::class;
+        $deprecatedLoggerBackend = $settings['log']['systemLogger']['backend'] ?? '';
+        $deprecatedLoggerBackendOptions = $settings['log']['systemLogger']['backendOptions'] ?? [];
+        $systemLogger = $loggerFactory->create('SystemLogger', $deprecatedLogger, $deprecatedLoggerBackend, $deprecatedLoggerBackendOptions);
+        $bootstrap->setEarlyInstance(SystemLoggerInterface::class, $systemLogger);
     }
 
     /**
@@ -246,7 +270,7 @@ class Scripts
      * @param Bootstrap $bootstrap
      * @return ThrowableStorageInterface
      * @throws FlowException
-     * @throws InvalidConfigurationTypeException
+     * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
      */
     protected static function initializeExceptionStorage(Bootstrap $bootstrap): ThrowableStorageInterface
     {
@@ -267,14 +291,11 @@ class Scripts
         /** @var ThrowableStorageInterface $throwableStorage */
         $throwableStorage = $storageClassName::createWithOptions($storageOptions);
 
-        $throwableStorage->setBacktraceRenderer(static function ($backtrace) {
+        $throwableStorage->setBacktraceRenderer(function ($backtrace) {
             return Debugger::getBacktraceCode($backtrace, false, true);
         });
 
-        $throwableStorage->setRequestInformationRenderer(static function () {
-            // The following lines duplicate FileStorage::__construct(), which is intended to provide a renderer
-            // to alternative implementations of ThrowableStorageInterface
-
+        $throwableStorage->setRequestInformationRenderer(function () {
             $output = '';
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
                 return $output;
@@ -287,11 +308,10 @@ class Scripts
                 return $output;
             }
 
-            $request = $requestHandler->getComponentContext()->getHttpRequest();
-            $response = $requestHandler->getComponentContext()->getHttpResponse();
-            // TODO: Sensible error output
-            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestHeaders($request) : '[request was empty]') . PHP_EOL;
-            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response instanceof ResponseInterface ? $response->getStatusCode() : '[response was empty]') . PHP_EOL;
+            $request = $requestHandler->getHttpRequest();
+            $response = $requestHandler->getHttpResponse();
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;
@@ -305,8 +325,6 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
-     * @throws FlowException
-     * @throws InvalidConfigurationTypeException
      */
     public static function initializeErrorHandling(Bootstrap $bootstrap)
     {
@@ -316,6 +334,9 @@ class Scripts
         $errorHandler = new ErrorHandler();
         $errorHandler->setExceptionalErrors($settings['error']['errorHandler']['exceptionalErrors']);
         $exceptionHandler = class_exists($settings['error']['exceptionHandler']['className']) ? new $settings['error']['exceptionHandler']['className'] : new ProductionExceptionHandler();
+        if (is_callable([$exceptionHandler, 'injectSystemLogger'])) {
+            $exceptionHandler->injectSystemLogger($bootstrap->getEarlyInstance(SystemLoggerInterface::class));
+        }
 
         if (is_callable([$exceptionHandler, 'injectLogger'])) {
             $exceptionHandler->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
@@ -333,8 +354,6 @@ class Scripts
      *
      * @param Bootstrap $bootstrap
      * @return void
-     * @throws FlowException
-     * @throws InvalidConfigurationTypeException
      */
     public static function initializeCacheManagement(Bootstrap $bootstrap)
     {
@@ -822,7 +841,7 @@ class Scripts
         }
 
         // Try to resolve which binary file PHP is pointing to
-        exec($phpBinaryPathAndFilename . ' -r "echo realpath(PHP_BINARY);"', $output, $result);
+        exec($phpBinaryPathAndFilename . ' -r "echo PHP_BINARY;"', $output, $result);
         if ($result === 0 && sizeof($output) === 1) {
             // Resolve any wrapper
             $configuredPhpBinaryPathAndFilename = $output[0];
@@ -836,17 +855,12 @@ class Scripts
             return;
         }
 
-        $realPhpBinary = realpath(PHP_BINARY);
-        if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
-            throw new FlowException(sprintf(
-                'You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
+        if (strcmp(PHP_BINARY, $configuredPhpBinaryPathAndFilename) !== 0) {
+            throw new FlowException(sprintf('You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
                 'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
                 'caches by removing the folder Data/Temporary before running ./flow again.',
-                $realPhpBinary,
-                $configuredPhpBinaryPathAndFilename,
-                $realPhpBinary
-            ), 1536303119);
+                PHP_BINARY, $configuredPhpBinaryPathAndFilename, PHP_BINARY), 1536303119);
         }
     }
 
@@ -873,15 +887,11 @@ class Scripts
 
         $configuredPHPVersion = $output[0];
         if (array_slice(explode('.', $configuredPHPVersion), 0, 2) !== array_slice(explode('.', PHP_VERSION), 0, 2)) {
-            throw new FlowException(sprintf(
-                'You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
+            throw new FlowException(sprintf('You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
                 'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
                 '%s. Flush the caches by removing the folder Data/Temporary before executing Flow/Neos again.',
-                PHP_VERSION,
-                $configuredPHPVersion,
-                PHP_VERSION
-            ), 1536563428);
+                PHP_VERSION, $configuredPHPVersion, PHP_VERSION), 1536563428);
         }
     }
 

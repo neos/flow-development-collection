@@ -28,7 +28,7 @@ class IntegerValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
-        self::assertFalse($this->validator->validate(null)->hasErrors());
+        $this->assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -36,7 +36,7 @@ class IntegerValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
-        self::assertFalse($this->validator->validate('')->hasErrors());
+        $this->assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -60,7 +60,7 @@ class IntegerValidatorTest extends AbstractValidatorTestcase
      */
     public function integerValidatorReturnsNoErrorsForAValidInteger($integer)
     {
-        self::assertFalse($this->validator->validate($integer)->hasErrors());
+        $this->assertFalse($this->validator->validate($integer)->hasErrors());
     }
 
     /**
@@ -83,7 +83,7 @@ class IntegerValidatorTest extends AbstractValidatorTestcase
      */
     public function integerValidatorReturnsErrorForAnInvalidInteger($invalidInteger)
     {
-        self::assertTrue($this->validator->validate($invalidInteger)->hasErrors());
+        $this->assertTrue($this->validator->validate($invalidInteger)->hasErrors());
     }
 
     /**
@@ -91,6 +91,6 @@ class IntegerValidatorTest extends AbstractValidatorTestcase
      */
     public function integerValidatorCreatesTheCorrectErrorForAnInvalidSubject()
     {
-        self::assertEquals(1, count($this->validator->validate('not a number')->getErrors()));
+        $this->assertEquals(1, count($this->validator->validate('not a number')->getErrors()));
     }
 }

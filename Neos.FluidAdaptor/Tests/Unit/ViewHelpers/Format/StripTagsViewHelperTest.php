@@ -25,14 +25,14 @@ use Neos\FluidAdaptor\ViewHelpers\Fixtures\UserWithToString;
 class StripTagsViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * @var \Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $viewHelper;
 
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper::class)->setMethods(['buildRenderChildrenClosure', 'renderChildren'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper::class)->setMethods(['buildRenderChildrenClosure', 'renderChildren', 'registerRenderMethodArguments'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
@@ -41,7 +41,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperDeactivatesEscapingInterceptor()
     {
-        self::assertFalse($this->viewHelper->isEscapingInterceptorEnabled());
+        $this->assertFalse($this->viewHelper->isEscapingInterceptorEnabled());
     }
 
     /**
@@ -55,7 +55,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $string]);
         $actualResult = $this->viewHelper->render();
-        self::assertEquals($string, $actualResult);
+        $this->assertEquals($string, $actualResult);
     }
 
     /**
@@ -64,10 +64,10 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesChildnodesAsSourceIfSpecified()
     {
         $string = 'Some string';
-        $this->viewHelper->expects(self::once())->method('renderChildren')->willReturn($string);
+        $this->viewHelper->expects($this->once())->method('renderChildren')->willReturn($string);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
-        self::assertEquals($string, $actualResult);
+        $this->assertEquals($string, $actualResult);
     }
 
     /**
@@ -95,7 +95,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $actualResult = $this->viewHelper->render();
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -109,7 +109,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
         $actualResult = $this->viewHelper->render();
-        self::assertSame($source, $actualResult);
+        $this->assertSame($source, $actualResult);
     }
 
     /**
@@ -124,15 +124,15 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $user]);
         $actualResult = $this->viewHelper->render();
-        self::assertSame($expectedResult, $actualResult);
+        $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function renderDoesNotModifySourceIfItIsAnObjectThatCantBeConvertedToAString()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $user = new UserWithoutToString('Xaver <b>Cross-Site</b>');
         $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
             throw new \Exception('renderChildrenClosure was invoked but should not have been');

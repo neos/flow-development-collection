@@ -29,7 +29,7 @@ class FormatResolverTest extends FunctionalTestCase
     /**
      * Initialize dependencies
      */
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
         $this->formatResolver = $this->objectManager->get(FormatResolver::class);
@@ -38,41 +38,35 @@ class FormatResolverTest extends FunctionalTestCase
     /**
      * @return array
      */
-    public function placeholderAndDateValues(): array
+    public function placeholderAndDateValues()
     {
         $date = new \DateTime('@1322228231');
         return [
             ['{0,datetime,date,short}', [$date], new I18n\Locale('de'), '25.11.11'],
             ['{0,datetime,date,short}', [$date], new I18n\Locale('en'), '11/25/11'],
             ['{0,datetime,time,full}', [$date], new I18n\Locale('de'), '13:37:11 +00:00'],
-            ['{0,datetime,dateTime,short}', [$date], new I18n\Locale('en'), '11/25/11, 1:37 pm']
+            ['{0,datetime,dateTime,short}', [$date], new I18n\Locale('en'), '11/25/11 1:37 p.m.']
         ];
     }
 
     /**
      * @test
      * @dataProvider placeholderAndDateValues
-     * @param string $stringWithPlaceholders
-     * @param array $arguments
-     * @param I18n\Locale $locale
-     * @param string $expected
-     * @throws I18n\Exception\IndexOutOfBoundsException
-     * @throws I18n\Exception\InvalidFormatPlaceholderException
      */
-    public function formatResolverWithDatetimeReplacesCorrectValues(string  $stringWithPlaceholders, array $arguments, I18n\Locale $locale, string $expected): void
+    public function formatResolverWithDatetimeReplacesCorrectValues($stringWithPlaceholders, $arguments, $locale, $expected)
     {
         $result = $this->formatResolver->resolvePlaceholders($stringWithPlaceholders, $arguments, $locale);
-        self::assertEquals($expected, $result);
+        $this->assertEquals($expected, $result);
     }
 
     /**
      * @test
      */
-    public function formatResolverWorksCorrectlyForFullyQualifiedFormatterClassNames(): void
+    public function formatResolverWorksCorrectlyForFullyQualifiedFormatterClassNames()
     {
         $actualFormatter = new Fixtures\SampleFormatter;
         $locale = new I18n\Locale('de');
         $testResult = $this->formatResolver->resolvePlaceholders(sprintf('{0,%s}', Fixtures\SampleFormatter::class), ['foo'], $locale);
-        self::assertEquals($actualFormatter->format('foo', $locale), $testResult);
+        $this->assertEquals($actualFormatter->format('foo', $locale), $testResult);
     }
 }

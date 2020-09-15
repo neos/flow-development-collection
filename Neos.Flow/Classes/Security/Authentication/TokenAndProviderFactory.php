@@ -12,7 +12,6 @@ namespace Neos\Flow\Security\Authentication;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Exception;
 use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Security\RequestPatternResolver;
@@ -50,31 +49,18 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
     protected $providerResolver;
 
     /**
-     * @var AuthenticationTokenResolver
-     */
-    protected $tokenResolver;
-
-    /**
      * @var RequestPatternResolver
      */
     protected $requestPatternResolver;
 
     /**
-     * @Flow\Inject
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
      * @param AuthenticationProviderResolver $providerResolver The provider resolver
      * @param RequestPatternResolver $requestPatternResolver The request pattern resolver
-     * @param AuthenticationTokenResolver $tokenResolver The token resolver
      */
-    public function __construct(AuthenticationProviderResolver $providerResolver, RequestPatternResolver $requestPatternResolver, AuthenticationTokenResolver $tokenResolver)
+    public function __construct(AuthenticationProviderResolver $providerResolver, RequestPatternResolver $requestPatternResolver)
     {
         $this->providerResolver = $providerResolver;
         $this->requestPatternResolver = $requestPatternResolver;
-        $this->tokenResolver = $tokenResolver;
     }
 
     /**
@@ -166,14 +152,11 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
             /** @var $tokenInstance TokenInterface */
             $tokenInstance = null;
             foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
-                if (isset($providerConfiguration['token'])) {
-                    $tokenClassName = $this->tokenResolver->resolveTokenClass((string)$providerConfiguration['token']);
+                if (isset($providerConfiguration['token']) && $providerConfiguration['token'] !== $tokenClassName) {
+                    continue;
                 }
-                /** @noinspection PhpMethodParametersCountMismatchInspection */
-                $tokenInstance = $this->objectManager->get($tokenClassName, $providerConfiguration['tokenOptions'] ?? []);
-                if (!$tokenInstance instanceof TokenInterface) {
-                    throw new Exception\InvalidAuthenticationProviderException(sprintf('The specified token is not an instance of %s but a %s. Please adjust the "token" configuration of the "%s" authentication provider', TokenInterface::class, is_object($tokenInstance) ? get_class($tokenInstance) : gettype($tokenInstance), $providerName), 1585921152);
-                }
+
+                $tokenInstance = new $tokenClassName();
                 $tokenInstance->setAuthenticationProviderName($providerName);
                 $this->tokens[] = $tokenInstance;
                 break;

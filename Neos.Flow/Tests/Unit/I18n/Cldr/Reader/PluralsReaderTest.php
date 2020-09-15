@@ -29,7 +29,7 @@ class PluralsReaderTest extends UnitTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $samplePluralRulesData = [
             'pluralRules[@locales="ro mo"]' => [
@@ -44,15 +44,15 @@ class PluralsReaderTest extends UnitTestCase
         ];
 
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getRawArray'], [['fake/path']]);
-        $mockModel->expects(self::once())->method('getRawArray')->with('plurals')->will(self::returnValue($samplePluralRulesData));
+        $mockModel->expects($this->once())->method('getRawArray')->with('plurals')->will($this->returnValue($samplePluralRulesData));
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
-        $mockRepository->expects(self::once())->method('getModel')->with('supplemental/plurals')->will(self::returnValue($mockModel));
+        $mockRepository->expects($this->once())->method('getModel')->with('supplemental/plurals')->will($this->returnValue($mockModel));
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects(self::at(0))->method('has')->with('rulesets')->will(self::returnValue(false));
-        $mockCache->expects(self::at(1))->method('set')->with('rulesets');
-        $mockCache->expects(self::at(2))->method('set')->with('rulesetsIndices');
+        $mockCache->expects($this->at(0))->method('has')->with('rulesets')->will($this->returnValue(false));
+        $mockCache->expects($this->at(1))->method('set')->with('rulesets');
+        $mockCache->expects($this->at(2))->method('set')->with('rulesetsIndices');
 
         $this->reader = new PluralsReader();
         $this->reader->injectCldrRepository($mockRepository);
@@ -102,7 +102,7 @@ class PluralsReaderTest extends UnitTestCase
         foreach ($quantities as $value) {
             list($quantity, $pluralForm) = $value;
             $result = $this->reader->getPluralForm($quantity, $locale);
-            self::assertEquals($pluralForm, $result);
+            $this->assertEquals($pluralForm, $result);
         }
     }
 }

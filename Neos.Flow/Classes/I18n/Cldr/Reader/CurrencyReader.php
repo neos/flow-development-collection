@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 namespace Neos\Flow\I18n\Cldr\Reader;
 
 /*
@@ -65,7 +63,6 @@ class CurrencyReader
      * Constructs the reader, loading parsed data from cache if available.
      *
      * @return void
-     * @throws \Neos\Cache\Exception
      */
     public function initializeObject()
     {
@@ -83,7 +80,7 @@ class CurrencyReader
      * @param string $currencyCode
      * @return array ['digits' => int, 'rounding => int]
      */
-    public function getFraction(string $currencyCode): array
+    public function getFraction($currencyCode)
     {
         if (array_key_exists($currencyCode, $this->fractions)) {
             return $this->fractions[$currencyCode];
@@ -99,7 +96,7 @@ class CurrencyReader
      * @return void
      * @see CurrencyReader::$fractions
      */
-    protected function generateFractions(): void
+    protected function generateFractions()
     {
         $model = $this->cldrRepository->getModel('supplemental/supplementalData');
         $currencyData = $model->getRawArray('currencyData');

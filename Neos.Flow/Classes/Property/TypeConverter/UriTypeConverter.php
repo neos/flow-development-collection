@@ -13,9 +13,8 @@ namespace Neos\Flow\Property\TypeConverter;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error;
-use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\Uri;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
-use Psr\Http\Message\UriInterface;
 
 /**
  * A type converter for converting URI strings to Http Uri objects.
@@ -34,7 +33,7 @@ class UriTypeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    protected $targetType = UriInterface::class;
+    protected $targetType = Uri::class;
 
     /**
      * @var integer

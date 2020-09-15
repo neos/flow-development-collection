@@ -53,29 +53,16 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
     protected $controller;
 
     /**
-     * Initialize the arguments.
-     *
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function initializeArguments()
-    {
-        parent::initializeArguments();
-        $this->registerArgument('objects', QueryResultInterface::class, 'Objects', true);
-        $this->registerArgument('as', 'string', 'as', true);
-        $this->registerArgument('configuration', 'array', 'Widget configuration', false, ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99]);
-    }
-
-    /**
      * Render this view helper
      *
+     * @param QueryResultInterface $objects
+     * @param string $as
+     * @param array $configuration
      * @return string
-     * @throws \Neos\Flow\Mvc\Exception\InfiniteLoopException
-     * @throws \Neos\FluidAdaptor\Core\Widget\Exception\InvalidControllerException
-     * @throws \Neos\FluidAdaptor\Core\Widget\Exception\MissingControllerException
      */
-    public function render(): string
+    public function render(QueryResultInterface $objects, $as, array $configuration = ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99])
     {
-        return $this->initiateSubRequest();
+        $response = $this->initiateSubRequest();
+        return $response->getContent();
     }
 }

@@ -13,8 +13,6 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement;
 
 require_once(__DIR__ . '/Fixture/BasicClass.php');
 
-use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass;
 use Neos\Flow\Tests\UnitTestCase;
@@ -49,8 +47,8 @@ class ObjectManagerTest extends UnitTestCase
         $objectManager = $this->getMockBuilder(ObjectManager::class)
             ->disableOriginalConstructor()
             ->setMethods(['buildObjectByFactory'])->getMock();
-        $objectManager->expects(self::exactly($factoryCalls))
-            ->method('buildObjectByFactory')->will(self::returnCallBack(function () {
+        $objectManager->expects($this->exactly($factoryCalls))
+            ->method('buildObjectByFactory')->will($this->returnCallback(function () {
                 return new BasicClass();
             }));
 
@@ -66,33 +64,9 @@ class ObjectManagerTest extends UnitTestCase
         $object2 = $objectManager->get(BasicClass::class);
 
         if ($scope == ObjectConfiguration::SCOPE_PROTOTYPE) {
-            self::assertNotSame($object1, $object2);
+            $this->assertNotSame($object1, $object2);
         } else {
-            self::assertSame($object1, $object2);
+            $this->assertSame($object1, $object2);
         }
-    }
-
-    /**
-     * @test
-     */
-    public function staticFactoryGeneratedPrototypeObject()
-    {
-        $objects = [
-            BasicClass::class => [
-                'f' => ['', 'Neos\Flow\Tests\Unit\ObjectManagement\Fixture\StaticFactory::create'],
-                'fa' => [
-                    ['t' => ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE, 'v' => 'Foo']
-                ],
-                's' => ObjectConfiguration::SCOPE_PROTOTYPE
-            ]
-        ];
-
-        $context = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
-        $objectManager = new ObjectManager($context);
-        $objectManager->setObjects($objects);
-
-        $instance = $objectManager->get(BasicClass::class);
-        self::assertInstanceOf(BasicClass::class, $instance);
-        self::assertSame($instance->getSomeProperty(), 'Foo');
     }
 }

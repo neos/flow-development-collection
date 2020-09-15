@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
-<!-- Copyright © 1991-2020 Unicode, Inc.
-For terms of use, see http://www.unicode.org/copyright.html
-Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
-CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
--->
 <ldml>
 	<identity>
-		<version number="$Revision$"/>
+		<version number="$Revision: 4753 $"/>
+		<generation date="$Date: 2010-02-26 00:32:00 -0600 (Fri, 26 Feb 2010) $"/>
 		<language type="ak"/>
 	</identity>
 	<localeDisplayNames>
@@ -65,6 +61,7 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 			<territory type="AI">Anguila</territory>
 			<territory type="AL">Albenia</territory>
 			<territory type="AM">Aamenia</territory>
+			<territory type="AN">Nɛdɛland Antelez</territory>
 			<territory type="AO">Angola</territory>
 			<territory type="AR">Agyɛntina</territory>
 			<territory type="AS">Amɛrika Samoa</territory>
@@ -95,13 +92,14 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 			<territory type="CF">Afrika Finimfin Man</territory>
 			<territory type="CG">Kongo</territory>
 			<territory type="CH">Swetzaland</territory>
-			<territory type="CI">La Côte d’Ivoire</territory>
+			<territory type="CI">La Côte d'Ivoire</territory>
 			<territory type="CK">Kook Nsupɔw</territory>
 			<territory type="CL">Kyili</territory>
 			<territory type="CM">Kamɛrun</territory>
 			<territory type="CN">Kyaena</territory>
 			<territory type="CO">Kolombia</territory>
 			<territory type="CR">Kɔsta Rika</territory>
+			<territory type="CS">Sɛɛbea ne Mɔntenɛgro</territory>
 			<territory type="CU">Kuba</territory>
 			<territory type="CV">Kepvɛdfo Islands</territory>
 			<territory type="CY">Saeprɔs</territory>
@@ -183,6 +181,7 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 			<territory type="MD">Mɔldova</territory>
 			<territory type="MG">Madagaska</territory>
 			<territory type="MH">Marshall Islands</territory>
+			<territory type="MK">Masedonia</territory>
 			<territory type="ML">Mali</territory>
 			<territory type="MM">Miyanma</territory>
 			<territory type="MN">Mɔngolia</territory>
@@ -287,66 +286,15 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 		<exemplarCharacters>[a b d e ɛ f g h i k l m n o ɔ p r s t u w y]</exemplarCharacters>
 		<exemplarCharacters type="auxiliary">[c j q v z]</exemplarCharacters>
 		<exemplarCharacters type="index">[A B C D E Ɛ F G H I J K L M N O Ɔ P Q R S T U V W X Y Z]</exemplarCharacters>
-		<exemplarCharacters type="numbers">[\- ‑ , . % ‰ + 0 1 2 3 4 5 6 7 8 9]</exemplarCharacters>
 	</characters>
 	<delimiters>
-		<quotationStart>“</quotationStart>
-		<quotationEnd>”</quotationEnd>
-		<alternateQuotationStart>‘</alternateQuotationStart>
-		<alternateQuotationEnd>’</alternateQuotationEnd>
+		<quotationStart>‘</quotationStart>
+		<quotationEnd>’</quotationEnd>
+		<alternateQuotationStart>“</alternateQuotationStart>
+		<alternateQuotationEnd>”</alternateQuotationEnd>
 	</delimiters>
 	<dates>
 		<calendars>
-			<calendar type="generic">
-				<dateFormats>
-					<dateFormatLength type="full">
-						<dateFormat>
-							<pattern>EEEE, G y MMMM dd</pattern>
-						</dateFormat>
-					</dateFormatLength>
-					<dateFormatLength type="long">
-						<dateFormat>
-							<pattern>G y MMMM d</pattern>
-						</dateFormat>
-					</dateFormatLength>
-					<dateFormatLength type="medium">
-						<dateFormat>
-							<pattern>G y MMM d</pattern>
-						</dateFormat>
-					</dateFormatLength>
-					<dateFormatLength type="short">
-						<dateFormat>
-							<pattern>GGGGG yy/MM/dd</pattern>
-						</dateFormat>
-					</dateFormatLength>
-				</dateFormats>
-				<dateTimeFormats>
-					<availableFormats>
-						<dateFormatItem id="d">d</dateFormatItem>
-						<dateFormatItem id="hm">h:mm a</dateFormatItem>
-						<dateFormatItem id="Hm">HH:mm</dateFormatItem>
-						<dateFormatItem id="Hms">HH:mm:ss</dateFormatItem>
-						<dateFormatItem id="M">L</dateFormatItem>
-						<dateFormatItem id="Md">M/d</dateFormatItem>
-						<dateFormatItem id="MEd">E, M/d</dateFormatItem>
-						<dateFormatItem id="MMM">LLL</dateFormatItem>
-						<dateFormatItem id="MMMd">MMM d</dateFormatItem>
-						<dateFormatItem id="MMMEd">E, MMM d</dateFormatItem>
-						<dateFormatItem id="MMMMd">MMMM d</dateFormatItem>
-						<dateFormatItem id="MMMMEd">E, MMMM d</dateFormatItem>
-						<dateFormatItem id="ms">mm:ss</dateFormatItem>
-						<dateFormatItem id="y">y</dateFormatItem>
-						<dateFormatItem id="yM">M/y</dateFormatItem>
-						<dateFormatItem id="yMd">y/M/d</dateFormatItem>
-						<dateFormatItem id="yMEd">E, M/d/y</dateFormatItem>
-						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
-						<dateFormatItem id="yMMMEd">E, MMM d, y</dateFormatItem>
-						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
-						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
-						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
-					</availableFormats>
-				</dateTimeFormats>
-			</calendar>
 			<calendar type="gregorian">
 				<months>
 					<monthContext type="format">
@@ -415,10 +363,6 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 				</days>
 				<dayPeriods>
 					<dayPeriodContext type="format">
-						<dayPeriodWidth type="abbreviated">
-							<dayPeriod type="am">AN</dayPeriod>
-							<dayPeriod type="pm">EW</dayPeriod>
-						</dayPeriodWidth>
 						<dayPeriodWidth type="wide">
 							<dayPeriod type="am">AN</dayPeriod>
 							<dayPeriod type="pm">EW</dayPeriod>
@@ -460,22 +404,22 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 				<timeFormats>
 					<timeFormatLength type="full">
 						<timeFormat>
-							<pattern>h:mm:ss a zzzz</pattern>
+							<pattern>HH:mm:ss zzzz</pattern>
 						</timeFormat>
 					</timeFormatLength>
 					<timeFormatLength type="long">
 						<timeFormat>
-							<pattern>h:mm:ss a z</pattern>
+							<pattern>HH:mm:ss z</pattern>
 						</timeFormat>
 					</timeFormatLength>
 					<timeFormatLength type="medium">
 						<timeFormat>
-							<pattern>h:mm:ss a</pattern>
+							<pattern>HH:mm:ss</pattern>
 						</timeFormat>
 					</timeFormatLength>
 					<timeFormatLength type="short">
 						<timeFormat>
-							<pattern>h:mm a</pattern>
+							<pattern>HH:mm</pattern>
 						</timeFormat>
 					</timeFormatLength>
 				</timeFormats>
@@ -494,95 +438,66 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 						<dateFormatItem id="MMMMd">MMMM d</dateFormatItem>
 						<dateFormatItem id="MMMMEd">E, MMMM d</dateFormatItem>
 						<dateFormatItem id="ms">mm:ss</dateFormatItem>
-						<dateFormatItem id="y">y</dateFormatItem>
-						<dateFormatItem id="yM">M/y</dateFormatItem>
-						<dateFormatItem id="yMd">y/M/d</dateFormatItem>
-						<dateFormatItem id="yMEd">E, M/d/y</dateFormatItem>
-						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
-						<dateFormatItem id="yMMMEd">E, MMM d, y</dateFormatItem>
-						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
-						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
-						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
+						<dateFormatItem id="y">yyyy</dateFormatItem>
+						<dateFormatItem id="yM">M/yyyy</dateFormatItem>
+						<dateFormatItem id="yMEd">EEE, M/d/yyyy</dateFormatItem>
+						<dateFormatItem id="yMMM">MMM yyyy</dateFormatItem>
+						<dateFormatItem id="yMMMEd">EEE, MMM d, yyyy</dateFormatItem>
+						<dateFormatItem id="yMMMM">MMMM yyyy</dateFormatItem>
+						<dateFormatItem id="yQ">Q yyyy</dateFormatItem>
+						<dateFormatItem id="yQQQ">QQQ yyyy</dateFormatItem>
+						<dateFormatItem id="yyQ">Q yy</dateFormatItem>
 					</availableFormats>
 				</dateTimeFormats>
+				<fields>
+					<field type="era">
+						<displayName>Bere</displayName>
+					</field>
+					<field type="year">
+						<displayName>Afe</displayName>
+					</field>
+					<field type="month">
+						<displayName>Bosome</displayName>
+					</field>
+					<field type="week">
+						<displayName>Dapɛn</displayName>
+					</field>
+					<field type="day">
+						<displayName>Da</displayName>
+						<relative type="-1">Ndeda</relative>
+						<relative type="0">Ndɛ</relative>
+						<relative type="1">Ɔkyena</relative>
+					</field>
+					<field type="weekday">
+						<displayName>Dapɛn mu da</displayName>
+					</field>
+					<field type="dayperiod">
+						<displayName>Da bere</displayName>
+					</field>
+					<field type="hour">
+						<displayName>Dɔnhwer</displayName>
+					</field>
+					<field type="minute">
+						<displayName>Sema</displayName>
+					</field>
+					<field type="second">
+						<displayName>Sɛkɛnd</displayName>
+					</field>
+					<field type="zone">
+						<displayName>Bere apaamu</displayName>
+					</field>
+				</fields>
 			</calendar>
 		</calendars>
-		<fields>
-			<field type="era">
-				<displayName>Bere</displayName>
-			</field>
-			<field type="year">
-				<displayName>Afe</displayName>
-			</field>
-			<field type="month">
-				<displayName>Bosome</displayName>
-			</field>
-			<field type="week">
-				<displayName>Dapɛn</displayName>
-			</field>
-			<field type="day">
-				<displayName>Da</displayName>
-				<relative type="-1">Ndeda</relative>
-				<relative type="0">Ndɛ</relative>
-				<relative type="1">Ɔkyena</relative>
-			</field>
-			<field type="weekday">
-				<displayName>Dapɛn mu da</displayName>
-			</field>
-			<field type="dayperiod">
-				<displayName>Da bere</displayName>
-			</field>
-			<field type="hour">
-				<displayName>Dɔnhwer</displayName>
-			</field>
-			<field type="minute">
-				<displayName>Sema</displayName>
-			</field>
-			<field type="second">
-				<displayName>Sɛkɛnd</displayName>
-			</field>
-			<field type="zone">
-				<displayName>Bere apaamu</displayName>
-			</field>
-		</fields>
 	</dates>
 	<numbers>
-		<symbols numberSystem="latn">
-			<decimal>.</decimal>
-			<group>,</group>
+		<symbols>
+			<group> </group>
 		</symbols>
-		<currencyFormats numberSystem="latn">
+		<currencyFormats>
 			<currencyFormatLength>
-				<currencyFormat type="standard">
+				<currencyFormat>
 					<pattern>¤#,##0.00</pattern>
-				</currencyFormat>
-			</currencyFormatLength>
-			<currencyFormatLength type="short">
-				<currencyFormat type="standard">
-					<pattern type="1000" count="one" draft="provisional">¤0K</pattern>
-					<pattern type="1000" count="other" draft="provisional">¤0K</pattern>
-					<pattern type="10000" count="one" draft="provisional">¤00K</pattern>
-					<pattern type="10000" count="other" draft="provisional">¤00K</pattern>
-					<pattern type="100000" count="one" draft="provisional">¤000K</pattern>
-					<pattern type="100000" count="other" draft="provisional">¤000K</pattern>
-					<pattern type="1000000" count="one" draft="provisional">¤0M</pattern>
-					<pattern type="1000000" count="other" draft="provisional">¤0M</pattern>
-					<pattern type="10000000" count="one" draft="provisional">¤00M</pattern>
-					<pattern type="10000000" count="other" draft="provisional">¤00M</pattern>
-					<pattern type="100000000" count="one" draft="provisional">¤000M</pattern>
-					<pattern type="100000000" count="other" draft="provisional">¤000M</pattern>
-					<pattern type="1000000000" count="one" draft="provisional">¤0G</pattern>
-					<pattern type="1000000000" count="other" draft="provisional">¤0G</pattern>
-					<pattern type="10000000000" count="one" draft="provisional">¤00G</pattern>
-					<pattern type="10000000000" count="other" draft="provisional">¤00G</pattern>
-					<pattern type="100000000000" count="one" draft="provisional">¤000G</pattern>
-					<pattern type="100000000000" count="other" draft="provisional">¤000G</pattern>
-					<pattern type="1000000000000" count="one" draft="provisional">¤0T</pattern>
-					<pattern type="1000000000000" count="other" draft="provisional">¤0T</pattern>
-					<pattern type="10000000000000" count="one" draft="provisional">¤00T</pattern>
-					<pattern type="10000000000000" count="other" draft="provisional">¤00T</pattern>
-					<pattern type="100000000000000" count="one" draft="provisional">¤000T</pattern>
-					<pattern type="100000000000000" count="other" draft="provisional">¤000T</pattern>
 				</currencyFormat>
 			</currencyFormatLength>
 		</currencyFormats>
@@ -610,6 +525,9 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 			</currency>
 			<currency type="CDF">
 				<displayName>Kongo Frank</displayName>
+			</currency>
+			<currency type="CHF">
+				<displayName>Sweden Frank</displayName>
 			</currency>
 			<currency type="CNY">
 				<displayName>Yuan</displayName>
@@ -639,11 +557,7 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 				<displayName>Breten Pɔn</displayName>
 			</currency>
 			<currency type="GHC">
-				<displayName>Ghana Sidi (1979–2007)</displayName>
-			</currency>
-			<currency type="GHS">
 				<displayName>Ghana Sidi</displayName>
-				<symbol>GH₵</symbol>
 			</currency>
 			<currency type="GMD">
 				<displayName>Gambia Dalasi</displayName>
@@ -679,9 +593,6 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 				<displayName>Madagasi Frank</displayName>
 			</currency>
 			<currency type="MRO">
-				<displayName>Mɔretenia Ouguiya (1973–2017)</displayName>
-			</currency>
-			<currency type="MRU">
 				<displayName>Mɔretenia Ouguiya</displayName>
 			</currency>
 			<currency type="MUR">
@@ -724,9 +635,6 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 				<displayName>Somailia Hyelen</displayName>
 			</currency>
 			<currency type="STD">
-				<displayName>Sao Tome ne Principe Dobra (1977–2017)</displayName>
-			</currency>
-			<currency type="STN">
 				<displayName>Sao Tome ne Principe Dobra</displayName>
 			</currency>
 			<currency type="SZL">
@@ -751,20 +659,12 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 				<displayName>Afrika Anaafo Rand</displayName>
 			</currency>
 			<currency type="ZMK">
-				<displayName>Zambia Kwacha (1968–2012)</displayName>
-			</currency>
-			<currency type="ZMW">
 				<displayName>Zambia Kwacha</displayName>
 			</currency>
 			<currency type="ZWD">
 				<displayName>Zimbabwe Dɔla</displayName>
 			</currency>
 		</currencies>
-		<minimalPairs>
-			<pluralMinimalPairs count="one">da {0}</pluralMinimalPairs>
-			<pluralMinimalPairs count="other">nda {0}</pluralMinimalPairs>
-			<ordinalMinimalPairs ordinal="other">Fa nyimfa {0}.</ordinalMinimalPairs>
-		</minimalPairs>
 	</numbers>
 	<posix>
 		<messages>
@@ -772,4 +672,9 @@ CLDR data files are interpreted according to the LDML specification (http://unic
 			<nostr>Daabi:D</nostr>
 		</messages>
 	</posix>
+	<references>
+		<reference type="R003" uri="http://kasa.ghanathink.org/akan/lg/languageGuide.htm">Akan Language Guide</reference>
+		<reference type="R004" uri="http://www.omniglot.com/writing/akan.htm">Omniglot on Akan alphabet</reference>
+	</references>
 </ldml>
+

@@ -25,10 +25,10 @@ class PaddingViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $viewHelper;
 
-    protected function setUp(): void
+    public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\PaddingViewHelper::class)->setMethods(['renderChildren'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\PaddingViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
@@ -37,10 +37,10 @@ class PaddingViewHelperTest extends ViewHelperBaseTestcase
      */
     public function stringsArePaddedWithBlanksByDefault()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('foo'));
+        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('foo'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['padLength' => 10]);
         $actualResult = $this->viewHelper->render();
-        self::assertEquals('foo       ', $actualResult);
+        $this->assertEquals('foo       ', $actualResult);
     }
 
     /**
@@ -48,10 +48,10 @@ class PaddingViewHelperTest extends ViewHelperBaseTestcase
      */
     public function paddingStringCanBeSpecified()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('foo'));
+        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('foo'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['padLength' => 10, 'padString' => '-=']);
         $actualResult = $this->viewHelper->render();
-        self::assertEquals('foo-=-=-=-', $actualResult);
+        $this->assertEquals('foo-=-=-=-', $actualResult);
     }
 
     /**
@@ -59,10 +59,10 @@ class PaddingViewHelperTest extends ViewHelperBaseTestcase
      */
     public function stringIsNotTruncatedIfPadLengthIsBelowStringLength()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('some long string'));
+        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('some long string'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['padLength' => 5]);
         $actualResult = $this->viewHelper->render();
-        self::assertEquals('some long string', $actualResult);
+        $this->assertEquals('some long string', $actualResult);
     }
 
     /**
@@ -70,9 +70,9 @@ class PaddingViewHelperTest extends ViewHelperBaseTestcase
      */
     public function integersArePaddedCorrectly()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue(123));
+        $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue(123));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['padLength' => 5, 'padString' => '0']);
         $actualResult = $this->viewHelper->render(5, '0');
-        self::assertEquals('12300', $actualResult);
+        $this->assertEquals('12300', $actualResult);
     }
 }

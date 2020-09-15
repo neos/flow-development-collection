@@ -3,6 +3,7 @@ namespace Neos\Flow\Tests\Behavior\Features\Bootstrap;
 
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Exception;
+use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -18,7 +19,6 @@ use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController;
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert;
-use Psr\Http\Message\ServerRequestFactoryInterface;
 
 /**
  * A trait with shared step definitions for testing compile time security privilege types
@@ -52,11 +52,6 @@ trait SecurityOperationsTrait
      * @var AuthenticationProviderManager
      */
     protected $authenticationManager;
-
-    /**
-     * @var Security\Authentication\TokenAndProviderFactoryInterface
-     */
-    protected $tokenAndProviderFactory;
 
     /**
      * @var PolicyService
@@ -183,7 +178,7 @@ trait SecurityOperationsTrait
             $instance = $this->objectManager->get($className);
 
             try {
-                $result = $instance->$methodName(...Arrays::trimExplode(',', $arguments));
+                $result = call_user_func_array([$instance, $methodName], Arrays::trimExplode(',', $arguments));
                 if ($not === 'not') {
                     Assert::fail('Method should not be callable');
                 }
@@ -215,18 +210,17 @@ trait SecurityOperationsTrait
         $this->policyService = $this->objectManager->get(PolicyService::class);
         $this->accountRepository = $this->objectManager->get(Security\AccountRepository::class);
         $this->authenticationManager = $this->objectManager->get(AuthenticationProviderManager::class);
-        $this->tokenAndProviderFactory = $this->objectManager->get(Security\Authentication\TokenAndProviderFactoryInterface::class);
 
         // Making sure providers and tokens were actually build, so the singleton TestingProvider exists.
-        $this->tokenAndProviderFactory->getProviders();
+        $this->authenticationManager->getProviders();
 
         $this->testingProvider = $this->objectManager->get(TestingProvider::class);
         $this->testingProvider->setName('TestingProvider');
 
         $this->securityContext = $this->objectManager->get(Security\Context::class);
         $this->securityContext->clearContext();
-        $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost/');
-        $this->mockActionRequest = ActionRequest::fromHttpRequest($httpRequest);
+        $httpRequest = Request::createFromEnvironment();
+        $this->mockActionRequest = new ActionRequest($httpRequest);
         $this->mockActionRequest->setControllerObjectName(AuthenticationController::class);
         $this->securityContext->setRequest($this->mockActionRequest);
 

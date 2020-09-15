@@ -27,7 +27,7 @@ class DetectorTest extends UnitTestCase
     /**
      * @return void
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $findBestMatchingLocaleCallback = function () {
             $args = func_get_args();
@@ -45,10 +45,10 @@ class DetectorTest extends UnitTestCase
         };
 
         $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
-        $mockLocaleCollection->expects(self::any())->method('findBestMatchingLocale')->will(self::returnCallBack($findBestMatchingLocaleCallback));
+        $mockLocaleCollection->expects($this->any())->method('findBestMatchingLocale')->will($this->returnCallback($findBestMatchingLocaleCallback));
 
         $mockLocalizationService = $this->createMock(I18n\Service::class);
-        $mockLocalizationService->expects(self::any())->method('getConfiguration')->will(self::returnValue(new I18n\Configuration('sv_SE')));
+        $mockLocalizationService->expects($this->any())->method('getConfiguration')->will($this->returnValue(new I18n\Configuration('sv_SE')));
 
         $this->detector = $this->getAccessibleMock(I18n\Detector::class, ['dummy']);
         $this->detector->_set('localeBasePath', 'vfs://Foo/');
@@ -77,7 +77,7 @@ class DetectorTest extends UnitTestCase
     public function detectingBestMatchingLocaleFromHttpAcceptLanguageHeaderWorksCorrectly($acceptLanguageHeader, $expectedResult)
     {
         $locale = $this->detector->detectLocaleFromHttpHeader($acceptLanguageHeader);
-        self::assertEquals($expectedResult, $locale);
+        $this->assertEquals($expectedResult, $locale);
     }
 
     /**
@@ -101,6 +101,6 @@ class DetectorTest extends UnitTestCase
     public function detectingBestMatchingLocaleFromLocaleIdentifierWorksCorrectly($localeIdentifier, $expectedResult)
     {
         $locale = $this->detector->detectLocaleFromLocaleTag($localeIdentifier);
-        self::assertEquals($expectedResult, $locale);
+        $this->assertEquals($expectedResult, $locale);
     }
 }

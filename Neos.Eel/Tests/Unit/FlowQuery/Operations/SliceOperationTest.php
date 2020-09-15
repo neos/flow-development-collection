@@ -43,6 +43,6 @@ class SliceOperationTest extends \Neos\Flow\Tests\UnitTestCase
         $operation = new SliceOperation();
         $operation->evaluate($flowQuery, $arguments);
 
-        self::assertEquals($expected, $flowQuery->getContext());
+        $this->assertEquals($expected, $flowQuery->getContext());
     }
 }
