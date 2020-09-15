@@ -651,15 +651,13 @@ Remember how we found that the comments and tags are parts of the ``Post Aggrega
 This means, that we should not have any means to directly access tags or comments outside of a post. Therefore they
 should not have a repository. Also, since we never directly access either one, there is no reason we need to reach the
 post they belong to. The access path is always in one direction starting from the post.
-In the terms of data modelling, we have a unidirectional one-to-many relation. To encode those in our domain model properly,
-unfortunately we have to go a non-obvious route.
-As we learned earlier, Doctrine provides a ``OneToMany`` annotation. This would seem like the right choice, but it isn't.
-``OneToMany`` relations in Doctrine are always bidirectional and, even worse, the many side is the so called "owning side" [#]_ of
-the relation. This means, that to update the relation in any way, the owning side entity needs to be persisted. This is not
-matching our domain model, where the post is the ``Aggregate Root`` and hence the entity we persist from. To make Doctrine work
-as we intend our domain model, we need to annotate the relation as a ``ManyToMany`` and add a unique constraint on the "one" side [#]_.
-In ``ManyToMany`` relations we can define the "owning side" freely and the additional constraint will prevent us from accidentally
-having more than one post referring to a specific comment.
+In the terms of data modelling, we have a unidirectional one-to-many relation.
+As we learned earlier, Doctrine provides a ``OneToMany`` annotation. ``OneToMany`` relations in Doctrine are always bidirectional
+and, even worse, the many side is the so called "owning side" [#]_ of the relation. This means, that to update the relation in any
+way, the owning side entity needs to be persisted. This is not matching our domain model, where the post is the ``Aggregate Root``
+and hence the entity we persist from. To make Doctrine work as we intend our domain model, we'd need to annotate the relation as a
+``ManyToMany`` and add a unique constraint on the "one" side [#]_. Since this is not intuitive, Flow 7+ will translate a ``OneToMany``
+relation without a specified ``mappedBy`` attribute to an according ``ManyToMany`` relation, so this modelling mismatch becomes transparent.
 
 First, let's add models for the comment and tag:
 
@@ -712,8 +710,7 @@ Then adjust the post model code as follows:
 		protected $content;
 
 		/**
-		 * @ORM\ManyToMany(orphanRemoval=true)
-		 * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(unique=true)})
+		 * @ORM\OneToMany
 		 * @var Collection<Comment>
 		 */
 		protected $comments;
@@ -776,8 +773,7 @@ Then adjust the post model code as follows:
 			$this->tags->remove($tag);
 		}
 
-The ``@ORM\JoinTable`` annotation tells doctrine to enforce that each comment can only be referenced by one post. You might
-wonder why we have the ``orphanRemoval=true`` only on the comments, but not on the tags. ``Orphan removal`` tells doctrine
+We dot not have a ``orphanRemoval=true`` on the tags relations. ``Orphan removal`` tells doctrine
 to delete an entity, when the relation to it is unset, i.e. when the collections ``remove()`` method is invoked. Of course
 we do not want to delete a tag from the database completely, when we just untag a single post, since another post might still
 have this tag.
