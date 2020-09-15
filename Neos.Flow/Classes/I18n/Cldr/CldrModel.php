@@ -356,13 +356,15 @@ class CldrModel
                 $sourcePath = str_replace('../', '', $sourcePath, $countOfJumpsToParentNode);
                 $sourcePath = str_replace('\'', '"', $sourcePath);
                 $currentPathNodeNames = explode('/', $currentPath);
+
                 for ($i = 0; $i < $countOfJumpsToParentNode; ++$i) {
                     unset($currentPathNodeNames[count($currentPathNodeNames) - 1]);
                 }
-                $sourcePath = implode('/', $currentPathNodeNames) . '/' . $sourcePath;
 
+                $sourcePath = implode('/', $currentPathNodeNames) . '/' . $sourcePath;
                 unset($data[$nodeString]);
                 $sourceData = $this->getRawData($sourcePath);
+
                 if (is_array($sourceData)) {
                     $data = array_merge($sourceData, $data);
                 }
@@ -371,7 +373,6 @@ class CldrModel
                 $data[$nodeString] = $this->resolveAliases($data[$nodeString], ($currentPath === '') ? $nodeString : ($currentPath . '/' . $nodeString));
             }
         }
-
         return $data;
     }
 }
