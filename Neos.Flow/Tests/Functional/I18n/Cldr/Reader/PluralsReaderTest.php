@@ -21,7 +21,7 @@ class PluralsReaderTest extends FunctionalTestCase
 {
 
     /**
-     * @var NumbersReader
+     * @var PluralsReader
      */
     protected $pluralsReader;
 

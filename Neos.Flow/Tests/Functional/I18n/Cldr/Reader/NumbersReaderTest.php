@@ -36,8 +36,8 @@ class NumbersReaderTest extends FunctionalTestCase
     public function currencyFormatExampleDataProvider(): array
     {
         return [
-            ['de', ['positivePrefix' => '', 'positiveSuffix' => " ¤", 'negativePrefix' => '-', 'negativeSuffix' => " ¤", 'multiplier' => 1, 'minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'minIntegerDigits' => 1, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0,]],
-            ['en', ['positivePrefix' => '¤', 'positiveSuffix' => '', 'negativePrefix' => '(¤', 'negativeSuffix' => ')', 'multiplier' => 1, 'minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'minIntegerDigits' => 1, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.0,]],
+            ['de', ['positivePrefix' => '', 'positiveSuffix' => " ¤", 'negativePrefix' => '-', 'negativeSuffix' => " ¤", 'multiplier' => 1, 'minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'minIntegerDigits' => 1, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.0,]],
+            ['en', ['positivePrefix' => '¤', 'positiveSuffix' => '', 'negativePrefix' => '-¤', 'negativeSuffix' => '', 'multiplier' => 1, 'minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'minIntegerDigits' => 1, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.0,]],
         ];
     }
 
@@ -58,5 +58,26 @@ class NumbersReaderTest extends FunctionalTestCase
         $locale = new I18n\Locale($localeName);
         $actual = $this->numbersReader->parseFormatFromCldr($locale, NumbersReader::FORMAT_TYPE_CURRENCY);
         self::assertEquals($expected, $actual);
+    }
+
+    public function numberSystemDataProvider(): array
+    {
+        return [
+            ['de', 'latn'],
+            ['ar', 'arab'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider numberSystemDataProvider
+     *
+     * @param string $localeString
+     * @param string $expected
+     * @throws I18n\Exception\InvalidLocaleIdentifierException
+     */
+    public function getDefaultNumberingSystem(string $localeString, string $expected): void
+    {
+        self::assertEquals($expected, $this->numbersReader->getDefaultNumberingSystem(new I18n\Locale($localeString)));
     }
 }

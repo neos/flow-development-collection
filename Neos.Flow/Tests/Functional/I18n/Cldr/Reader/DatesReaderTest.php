@@ -40,7 +40,7 @@ class DatesReaderTest extends FunctionalTestCase
     public function formatStringsAndParsedFormats(): array
     {
         return [
-            ['de',  ['dd', ['.'], 'MM', ['.'], 'yyyy']],
+            ['de',  ['dd', ['.'], 'MM', ['.'], 'y']],
             ['en',  ['MMM', [' '], 'd', [','], [' '], 'y']],
         ];
     }

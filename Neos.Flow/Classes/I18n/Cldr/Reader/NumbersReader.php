@@ -201,7 +201,7 @@ class NumbersReader
      * @return void
      * @throws \Neos\Cache\Exception
      */
-    public function shutdownObject()
+    public function shutdownObject(): void
     {
         $this->cache->set('parsedFormats', $this->parsedFormats);
         $this->cache->set('parsedFormatsIndices', $this->parsedFormatsIndices);
@@ -235,9 +235,13 @@ class NumbersReader
         }
 
         if ($formatLength === self::FORMAT_LENGTH_DEFAULT) {
-            $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format/pattern';
+            if ($formatType === 'currency') {
+                $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format[@type="standard"]/pattern';
+            } else {
+                $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format/pattern';
+            }
         } else {
-            $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength[@type="' . $formatLength . '"]/' . $formatType . 'Format/pattern';
+            $formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength[@type="' . $formatLength . '"]/' . $formatType . 'Format[@type="standard"]/pattern';
         }
 
         $model = $this->cldrRepository->getModelForLocale($locale);
@@ -251,6 +255,17 @@ class NumbersReader
 
         $this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength] = $format;
         return $this->parsedFormats[$format] = $parsedFormat;
+    }
+
+    /**
+     * @param Locale $locale
+     * @return string
+     */
+    public function getDefaultNumberingSystem(Locale $locale): string
+    {
+        $model = $this->cldrRepository->getModelForLocale($locale);
+        $result = $model->findNodesWithinPath('numbers', 'defaultNumberingSystem');
+        return $result['defaultNumberingSystem'] ?? 'latn';
     }
 
     /**
