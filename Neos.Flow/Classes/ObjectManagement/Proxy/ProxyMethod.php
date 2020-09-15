@@ -106,7 +106,7 @@ class ProxyMethod
 
     public function isPrivate(): bool
     {
-        return $this->visibility === 'private';
+        return $this->getMethodVisibilityString() === 'private';
     }
 
     /**
@@ -356,7 +356,7 @@ class ProxyMethod
      *
      * @return string One of 'public', 'protected' or 'private'
      */
-    public function getMethodVisibilityString()
+    protected function getMethodVisibilityString()
     {
         if ($this->visibility !== null) {
             return $this->visibility;
