@@ -11,6 +11,8 @@ namespace Neos\Flow\Validation\Validator;
  * source code.
  */
 
+use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\RFCValidation;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -21,6 +23,12 @@ use Neos\Flow\Annotations as Flow;
  */
 class EmailAddressValidator extends AbstractValidator
 {
+    /**
+     * @Flow\Inject
+     * @var EmailValidator
+     */
+    protected $emailValidator;
+
     /**
      * Checks if the given value is a valid email address.
      *
@@ -39,10 +47,10 @@ class EmailAddressValidator extends AbstractValidator
      * Checking syntax of input email address
      *
      * @param string $emailAddress Input string to evaluate
-     * @return boolean Returns true if the $email address (input string) is valid
+     * @return bool Returns true if the $email address (input string) is valid
      */
-    protected function validEmail($emailAddress)
+    protected function validEmail($emailAddress): bool
     {
-        return (filter_var($emailAddress, FILTER_VALIDATE_EMAIL) !== false);
+        return $this->emailValidator->isValid($emailAddress, new RFCValidation());
     }
 }
