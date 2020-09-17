@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Validation\Validator\CollectionValidator;
-use Neos\Flow\Validation\Validator\EmailAddressValidator;
 use Neos\Flow\Validation\Validator\GenericObjectValidator;
 use Neos\Flow\Validation\Validator\IntegerValidator;
 use Neos\Flow\Validation\Validator\NumberRangeValidator;
