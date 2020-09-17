@@ -58,13 +58,13 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
      */
     public function collectionValidatorValidatesEveryElementOfACollectionWithTheGivenElementValidator()
     {
-        $this->validator->_set('options', ['elementValidator' => 'EmailAddress', 'elementValidatorOptions' => []]);
-        $this->mockValidatorResolver->expects($this->exactly(4))->method('createValidator')->with('EmailAddress')->will($this->returnValue(new EmailAddressValidator()));
+        $this->validator->_set('options', ['elementValidator' => 'Integer', 'elementValidatorOptions' => []]);
+        $this->mockValidatorResolver->expects($this->exactly(4))->method('createValidator')->with('Integer')->willReturn(new IntegerValidator());
 
         $arrayOfEmailAddresses = [
-            'andreas@neos.io',
-            'not a valid address',
-            'robert@neos.io',
+            1,
+            'not a valid integer',
+            10,
             'also not valid'
         ];
 

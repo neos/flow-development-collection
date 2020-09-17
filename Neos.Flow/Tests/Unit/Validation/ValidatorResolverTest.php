@@ -19,8 +19,8 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Validation\Validator\CollectionValidator;
 use Neos\Flow\Validation\Validator\ConjunctionValidator;
 use Neos\Flow\Validation\Validator\DateTimeValidator;
-use Neos\Flow\Validation\Validator\EmailAddressValidator;
 use Neos\Flow\Validation\Validator\GenericObjectValidator;
+use Neos\Flow\Validation\Validator\IntegerValidator;
 use Neos\Flow\Validation\Validator\PolyTypeObjectValidatorInterface;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
 use Neos\Flow\Validation\ValidatorResolver;
@@ -416,13 +416,13 @@ class ValidatorResolverTest extends UnitTestCase
         $validatorResolver = $this->getAccessibleMock(ValidatorResolver::class, ['resolveValidatorObjectName', 'createValidator']);
         $validatorResolver->_set('reflectionService', $mockReflectionService);
         $validatorResolver->_set('objectManager', $mockObjectManager);
-        $validatorResolver->expects($this->once())->method('createValidator')->with($validatorClassName)->will($this->returnValue(new EmailAddressValidator()));
+        $validatorResolver->expects($this->once())->method('createValidator')->with($validatorClassName)->will($this->returnValue(new IntegerValidator()));
         $mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with(PolyTypeObjectValidatorInterface::class)->will($this->returnValue([]));
 
         $validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName, $modelClassName, ['Default']);
         $builtValidators = $validatorResolver->_get('baseValidatorConjunctions');
 
-        $this->assertFalse($builtValidators[$modelClassName]->validate('foo@example.com')->hasErrors());
+        $this->assertFalse($builtValidators[$modelClassName]->validate(10)->hasErrors());
         $this->assertTrue($builtValidators[$modelClassName]->validate('foo')->hasErrors());
     }
 
