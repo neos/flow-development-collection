@@ -127,12 +127,37 @@ class EmailAddressValidatorTest extends AbstractValidatorTestcase
     }
 
     /**
+     * Data provider with invalid email addresses
+     *
+     * @return array
+     */
+    public function addressesWithWarnings()
+    {
+        return [
+            ['1234567890123456789012345678901234567890123456789012345678901234xyz@example.com'], // (local part is longer than 64 characters)
+            ['local@[192.168.2]'], // incomplete IPv4 address
+            ['local@[192.168.270.1]'], // invalid IPv4 address
+            ['some@one.net '], // ends with space char
+        ];
+    }
+
+    /**
      * @test
      * @dataProvider invalidAddresses
      */
     public function emailAddressValidatorReturnsFalseForAnInvalidEmailAddress($address)
     {
-        $this->assertTrue($this->validator->validate($address)->hasErrors());
+        self::assertTrue($this->validator->validate($address)->hasErrors());
+    }
+
+    /**
+     * @test
+     * @dataProvider addressesWithWarnings
+     */
+    public function emailAddressValidatorUsingStrictReturnsFalseForAnEmailAddressWithWarnings($address)
+    {
+        $this->validatorOptions(['strict' => true]);
+        self::assertTrue($this->validator->validate($address)->hasErrors());
     }
 
     /**
