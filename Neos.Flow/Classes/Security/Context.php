@@ -13,7 +13,6 @@ namespace Neos\Flow\Security;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use Neos\Flow\Log\PsrSecurityLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
