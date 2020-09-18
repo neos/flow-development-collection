@@ -217,13 +217,10 @@ html_static_path = ['_static']
 htmlhelp_basename = 'FlowFrameworkdoc'
 
 # Configure links to view/edit source to point to development collection
-html_context = {
-    'source_url_prefix': 'https://github.com/neos/flow-development-collection/blob/5.3/Neos.Flow/Documentation/',
-    'github_user': 'neos',
-    'github_repo': 'flow-development-collection',
-    'github_version': '5.3',
-    'conf_py_path': '/Neos.Flow/Documentation/',
-}
+'github_user': 'neos',
+'github_repo': 'flow-development-collection',
+'github_version': '5.3',
+'conf_py_path': '/Neos.Flow/Documentation/',
 
 # -- Options for LaTeX output ---------------------------------------------
 
