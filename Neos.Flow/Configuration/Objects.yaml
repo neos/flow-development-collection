@@ -151,9 +151,8 @@ Neos\Flow\Log\PsrLoggerFactory:
 Neos\Flow\Log\PsrLoggerFactoryInterface:
   className: Neos\Flow\Log\PsrLoggerFactory
 
-# Deprecated as of Flow 6.0, you should inject Psr\Log\LoggerInterface
-# or use the factory to get the "systemLogger"
-Neos\Flow\Log\PsrSystemLoggerInterface:
+'Neos.Flow:SystemLogger':
+  className: Psr\Log\LoggerInterface
   scope: singleton
   factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
   factoryMethodName: get
@@ -161,8 +160,8 @@ Neos\Flow\Log\PsrSystemLoggerInterface:
     1:
       value: systemLogger
 
-# Deprecated as of Flow 6.0, use the factory to get the "securityLogger" instead
-Neos\Flow\Log\PsrSecurityLoggerInterface:
+'Neos.Flow:SecurityLogger':
+  className: Psr\Log\LoggerInterface
   scope: singleton
   factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
   factoryMethodName: get
