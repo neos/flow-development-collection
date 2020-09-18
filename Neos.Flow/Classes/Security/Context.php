@@ -171,8 +171,8 @@ class Context
     protected $sessionManager;
 
     /**
-     * @Flow\Inject
-     * @var PsrSecurityLoggerInterface
+     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
+     * @var \Psr\Log\LoggerInterface
      */
     protected $securityLogger;
 
