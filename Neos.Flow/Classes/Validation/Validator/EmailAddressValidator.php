@@ -35,10 +35,13 @@ class EmailAddressValidator extends AbstractValidator
     ];
 
     /**
-     * @Flow\Inject
      * @var EmailValidator
      */
     protected $emailValidator;
+
+    protected function initializeObject(): void {
+        $this->emailValidator = new EmailValidator();
+    }
 
     /**
      * Checks if the given value is a valid email address.
