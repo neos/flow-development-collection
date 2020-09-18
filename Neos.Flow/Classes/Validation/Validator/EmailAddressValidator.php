@@ -39,7 +39,8 @@ class EmailAddressValidator extends AbstractValidator
      */
     protected $emailValidator;
 
-    protected function initializeObject(): void {
+    protected function initializeObject(): void
+    {
         $this->emailValidator = new EmailValidator();
     }
 
