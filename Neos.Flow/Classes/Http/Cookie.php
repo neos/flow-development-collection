@@ -122,7 +122,7 @@ class Cookie
         }
 
         $this->name = $name;
-        $this->value = $value;
+        $this->value = $value === null ? null : preg_replace('/^"(.*)"$/', '$1', $value);
         $this->expiresTimestamp = $expires;
         $this->maximumAge = $maximumAge;
         $this->domain = $domain;
