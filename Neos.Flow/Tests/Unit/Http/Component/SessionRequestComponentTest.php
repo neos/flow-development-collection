@@ -81,7 +81,8 @@ class SessionRequestComponentTest extends UnitTestCase
     /**
      * @test
      */
-    public function handleCreatesSessionIfNoCookiesAreSet(): void {
+    public function handleCreatesSessionIfNoCookiesAreSet(): void
+    {
         $this->mockHttpRequest->method('getCookieParams')->willReturn([]);
 
         $this->mockSessionManager->expects($this->once())->method('createCurrentSessionFromCookie')->willReturnCallback(static function (Cookie $cookie) {
@@ -94,7 +95,8 @@ class SessionRequestComponentTest extends UnitTestCase
     /**
      * @test
      */
-    public function handleCreatesSessionIfNoSessionCookieIsSet(): void {
+    public function handleCreatesSessionIfNoSessionCookieIsSet(): void
+    {
         $this->mockHttpRequest->method('getCookieParams')->willReturn([
             'some_cookie' => 'some_value',
             'some_other_cookie' => 'some other value',
@@ -110,7 +112,8 @@ class SessionRequestComponentTest extends UnitTestCase
     /**
      * @test
      */
-    public function handleCreatesSessionIfSessionCookieIsNull(): void {
+    public function handleCreatesSessionIfSessionCookieIsNull(): void
+    {
         $this->mockHttpRequest->method('getCookieParams')->willReturn([
             'session_cookie_name' => null,
         ]);
@@ -125,7 +128,8 @@ class SessionRequestComponentTest extends UnitTestCase
     /**
      * @test
      */
-    public function handleInitializesSessionFromSessionCookieIfItExists(): void {
+    public function handleInitializesSessionFromSessionCookieIfItExists(): void
+    {
         $this->mockHttpRequest->method('getCookieParams')->willReturn([
             'session_cookie_name' => 'some_value',
         ]);
@@ -156,7 +160,8 @@ class SessionRequestComponentTest extends UnitTestCase
      * @test
      * @dataProvider sessionCookieSettingsProvider
      */
-    public function newSessionCookiesTakeSessionCookieSettingsIntoAccount(array $sessionCookieSettings, string $expectedCookie): void {
+    public function newSessionCookiesTakeSessionCookieSettingsIntoAccount(array $sessionCookieSettings, string $expectedCookie): void
+    {
         $this->mockHttpRequest->method('getCookieParams')->willReturn(['session_cookie_name' => 'session-id']);
 
         $this->inject($this->sessionRequestComponent, 'sessionSettings', [
@@ -196,7 +201,8 @@ class SessionRequestComponentTest extends UnitTestCase
      * @test
      * @dataProvider cookieValueDataProvider
      */
-    public function valueFromSessionCookieIsCleanedBeforeANewCookieIsCreated($sessionCookieValue, $expectedNewCookieValue): void {
+    public function valueFromSessionCookieIsCleanedBeforeANewCookieIsCreated($sessionCookieValue, $expectedNewCookieValue): void
+    {
         $this->mockHttpRequest->method('getCookieParams')->willReturn([
             'session_cookie_name' => $sessionCookieValue,
         ]);
