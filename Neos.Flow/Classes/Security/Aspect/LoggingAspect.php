@@ -15,7 +15,6 @@ namespace Neos\Flow\Security\Aspect;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Log\PsrSecurityLoggerInterface;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
@@ -29,8 +28,8 @@ use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 class LoggingAspect
 {
     /**
-     * @var PsrSecurityLoggerInterface
-     * @Flow\Inject
+     * @var \Psr\Log\LoggerInterface
+     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
      */
     protected $securityLogger;
 
