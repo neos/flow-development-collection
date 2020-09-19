@@ -7,18 +7,23 @@ Logging
 .. sectionauthor:: Alexander Berl <alexander@neos.io>
 
 In Flow logging is implemented according to the `PSR-3 Standard`_. This means you can use any logging facility that implements this interface.
-The concrete implementation can easily be configured with the :doc:`Object Management` of Flow.
+The concrete implementation can easily be configured with the :doc:`Object Management` of Flow. By default, Flow comes with an PSR-3 implementation
+in the ``Neos.Flow.Log`` package that can be configured with one or more storage backends and supports log rotation. The supported backends currently
+consist of a FileBackend, (Ansi)ConsoleBackend, JsonFileBackend and a NullBackend.
 
 Default loggers
 ===============
 
-By default Flow comes with two basic loggers, the so called "system logger" and "security logger".
-As the name implies, the former is responsible for logging general system level messages and the latter for
-logging security related information. Under the hood they use a ``FileBackend`` for storing the messages, but
-that can be configured differently via the settings.
+By default Flow comes with four loggers, the so called "system logger", "security logger", "sql logger" and "i18n logger".
+As the names imply, the first is responsible for logging general system level messages, the second for
+logging security related information. The SQL logger needs to be enabled first via ``Neos.Flow.persistence.doctrine.sqlLogger`` setting and will
+create a log of all database queries, so this can become a big performance penalty and should only be used for debugging purposes.
+Last but not least is the i18n logger which will log away all messages related to the translation framework, for example when the XLIFF translation
+sources are badly formatted.
+Under the hood they all use a ``FileBackend`` for storing the messages, but that can be configured differently via the settings keys ``Neos.Flow.log.psr3.Neos\Flow\Log\PsrLoggerFactory.*``.
 
-You can use these two loggers for example if you extend the system via signals or AOP, or you are debugging
-your code. For that you inject a ``Psr\LoggerInterface`` wherever you need it like this::
+You can use these loggers for example if you extend the system via signals or AOP, or you are debugging
+your code. For that you inject a ``Psr\Log\LoggerInterface`` wherever you need it like this::
 
 	/**
 	 * @Flow\Inject(name="Neos.Flow:SystemLogger")
@@ -32,8 +37,29 @@ your code. For that you inject a ``Psr\LoggerInterface`` wherever you need it li
 	 */
 	protected $securityLogger;
 
+	/**
+	 * @Flow\Inject(name="Neos.Flow:SqlLogger")
+	 * @var LoggerInterface
+	 */
+	protected $sqlLogger;
+
+	/**
+	 * @Flow\Inject(name="Neos.Flow:I18nLogger")
+	 * @var LoggerInterface
+	 */
+	protected $i18nLogger;
+
 This is achieved via the :ref:`virtual objects configuration <sect-virtual-objects>` that allows to configure a single class in multiple
 versions with different constructor arguments and assign a name for this configuration, which can be referenced in the ``@Flow\Inject`` annotation.
+
+Alternatively, if you prefer to keep your class free of framework specific annotations (``@Flow\Inject(...)``), you could as well just inject the specific
+configuration of the logger via the ``Objects.yaml`` like this::
+
+	Acme\Your\Class:
+		properties:
+			systemLogger:
+				object:
+          name: 'Neos.Flow:SystemLogger'
 
 Exception logging
 =================
@@ -79,5 +105,53 @@ You might already have stumbled across such an exception (though hopefully not!)
   GID: 1
   User: 
 
+.. _throwable-storage:
+
+In order to log such exceptions yourself you have to inject both a ``ThrowableStorageInterface`` as well as a ``LoggerInterface`` at a place where you can reach them
+from your ``try/catch`` block. This would roughly look as follows::
+
+	use Neos\Flow\Log\ThrowableStorageInterface;
+	use Psr\Log\LoggerInterface;
+
+	...
+
+	/**
+	 * @Flow\Inject
+	 * @var ThrowableStorageInterface
+	 */
+	protected $throwableStorage;
+
+	/**
+	 * @Flow\Inject(name="Neos.Flow:SystemLogger")
+	 * @var LoggerInterface
+	 */
+	protected $logger;
+
+	...
+
+	public function trySomething()
+	{
+		try {
+			...
+		} catch (\Throwable $exception) {
+			$logMessage = $this->throwableStorage->logThrowable($exception);
+			$this->logger->error($logMessage, LogEnvironment::fromMethodName(__METHOD__));
+		}
+	}
+
+The ``LogEnvironment::fromMethodName(__METHOD__)`` is a helper that builds an additional data array for the log in the structure of::
+
+	[
+			'FLOW_LOG_ENVIRONMENT' => [
+					'packageKey' => PackageKeyFromClassName($className),
+					'className' => $className,
+					'methodName' => $functionName
+			]
+	]
+
+This is used so the log contains helpful information about where the log is coming from. It derives the package key from the namespace
+of the method (``__METHOD__``) the log is called from. Of course you can freely customize the additional context and everything in the
+array will be serialized and formatted into your log with the backends provided through the ``Neos.Flow.Log`` package. Just don't use
+the ``FLOW_LOG_ENVIRONMENT`` key, as that is used internally and only accepts the three keys above.
 
 .. _PSR-3 Standard: https://www.php-fig.org/psr/psr-3/
