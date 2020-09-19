@@ -25,20 +25,10 @@ use Psr\Log\LoggerInterface;
 class LoggingAspect
 {
     /**
+     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
      * @var LoggerInterface
      */
     protected $logger;
-
-    /**
-     * Injects the (system) logger based on PSR-3.
-     *
-     * @param LoggerInterface $logger
-     * @return void
-     */
-    public function injectLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
 
     /**
      * Logs calls of start()

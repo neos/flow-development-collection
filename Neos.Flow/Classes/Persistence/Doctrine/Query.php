@@ -35,6 +35,7 @@ class Query implements QueryInterface
     protected $entityClassName;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -138,14 +139,6 @@ class Query implements QueryInterface
     public function injectSettings(array $settings)
     {
         $this->settings = $settings['persistence'];
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function injectLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
     }
 
     /**

@@ -89,6 +89,7 @@ class FileSystemTarget implements TargetInterface
     protected $resourceRepository;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -115,17 +116,6 @@ class FileSystemTarget implements TargetInterface
     {
         $this->name = $name;
         $this->options = $options;
-    }
-
-    /**
-     * Injects the (system) logger based on PSR-3.
-     *
-     * @param LoggerInterface $logger
-     * @return void
-     */
-    public function injectLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
     }
 
     /**

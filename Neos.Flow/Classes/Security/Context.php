@@ -23,6 +23,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\TypeHandling;
+use Psr\Log\LoggerInterface;
 
 /**
  * This is the default implementation of a security context, which holds current
@@ -171,7 +172,7 @@ class Context
 
     /**
      * @Flow\Inject(name="Neos.Flow:SecurityLogger")
-     * @var \Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     protected $securityLogger;
 

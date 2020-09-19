@@ -57,6 +57,7 @@ class DoctrineCommandController extends CommandController
     protected $throwableStorage;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -70,14 +71,6 @@ class DoctrineCommandController extends CommandController
     public function injectSettings(array $settings)
     {
         $this->settings = $settings['persistence'];
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function injectLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
     }
 
     /**

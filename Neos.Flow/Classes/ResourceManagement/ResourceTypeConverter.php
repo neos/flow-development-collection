@@ -113,6 +113,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected $persistenceManager;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -121,17 +122,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * @var array
      */
     protected $convertedResources = [];
-
-    /**
-     * Injects the (system) logger based on PSR-3.
-     *
-     * @param LoggerInterface $logger
-     * @return void
-     */
-    public function injectLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
 
     /**
      * Converts the given string or array to a PersistentResource object.
