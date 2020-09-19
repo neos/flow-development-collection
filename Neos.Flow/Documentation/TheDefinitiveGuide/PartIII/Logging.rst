@@ -9,13 +9,13 @@ Logging
 In Flow logging is implemented according to the `PSR-3 Standard`_. This means you can use any logging facility that implements this interface.
 The concrete implementation can easily be configured with the :doc:`Object Management` of Flow. By default, Flow comes with an PSR-3 implementation
 in the ``Neos.Flow.Log`` package that can be configured with one or more storage backends and supports log rotation. The supported backends currently
-consist of a FileBackend, (Ansi)ConsoleBackend, JsonFileBackend and a NullBackend.
+consist of a ``FileBackend``, ``(Ansi)ConsoleBackend``, ``JsonFileBackend`` and a ``NullBackend``.
 
 Default loggers
 ===============
 
 By default Flow comes with four loggers, the so called "system logger", "security logger", "sql logger" and "i18n logger".
-As the names imply, the first is responsible for logging general system level messages, the second for
+As the names imply, the first is responsible for logging general system level messages and is used by default if an instance of the ``LoggerInterface`` is injected. The second for
 logging security related information. The SQL logger needs to be enabled first via ``Neos.Flow.persistence.doctrine.sqlLogger`` setting and will
 create a log of all database queries, so this can become a big performance penalty and should only be used for debugging purposes.
 Last but not least is the i18n logger which will log away all messages related to the translation framework, for example when the XLIFF translation
