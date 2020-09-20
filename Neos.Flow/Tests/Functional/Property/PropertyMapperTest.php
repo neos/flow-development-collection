@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Property;
  * source code.
  */
 
-use Neos\Flow\Property\Exception\InvalidDataTypeException;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
@@ -473,14 +472,13 @@ class PropertyMapperTest extends FunctionalTestCase
 
     /**
      * @test
-     * @expectedException InvalidDataTypeException
      */
     public function collectionPropertyWithMissingElementTypeThrowsHelpfulException()
     {
+        $this->expectExceptionMessageMatches('/missing an element type/');
         $source = [
             'values' => []
         ];
         $this->propertyMapper->convert($source, TestClassWithMissingCollectionElementType::class);
-        $this->expectExceptionCode(1600530641);
     }
 }
