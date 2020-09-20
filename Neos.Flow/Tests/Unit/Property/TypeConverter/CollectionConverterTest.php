@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * source code.
  */
 
-use Neos\Flow\Property\Exception\InvalidDataTypeException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\CollectionConverter;
 use Neos\Flow\Tests\UnitTestCase;
@@ -51,7 +50,7 @@ class CollectionConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException InvalidDataTypeException
+     * @expectedException \Neos\Flow\Property\Exception\InvalidDataTypeException
      */
     public function getTypeOfChildPropertyReturnsEmptyStringForElementTypeIfNotGivenInTargetType()
     {

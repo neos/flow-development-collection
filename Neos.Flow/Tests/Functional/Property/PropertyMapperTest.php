@@ -472,10 +472,10 @@ class PropertyMapperTest extends FunctionalTestCase
 
     /**
      * @test
+     * @expectedExceptionMessage missing an element type
      */
     public function collectionPropertyWithMissingElementTypeThrowsHelpfulException()
     {
-        $this->expectExceptionMessageMatches('/missing an element type/');
         $source = [
             'values' => []
         ];
