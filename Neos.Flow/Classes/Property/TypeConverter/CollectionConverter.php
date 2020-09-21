@@ -87,7 +87,7 @@ class CollectionConverter extends AbstractTypeConverter
     {
         $parsedTargetType = TypeHandling::parseType($targetType);
         if ($parsedTargetType['elementType'] === null) {
-            throw new InvalidDataTypeException(sprintf('The collection type property "%s" is missing an element type (got "%s")', $propertyName, $targetType), 1600530641);
+            throw new InvalidDataTypeException(sprintf('The annotated collection property "%s" is missing an element type. Should be given in the format "Collection<$elementType>" and "$elementType" is the class name of the contained objects.', $propertyName), 1600530641);
         }
         return $parsedTargetType['elementType'];
     }
