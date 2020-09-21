@@ -22,8 +22,8 @@ Last but not least is the i18n logger which will log away all messages related t
 sources are badly formatted.
 Under the hood they all use a ``FileBackend`` for storing the messages, but that can be configured differently via the settings keys ``Neos.Flow.log.psr3.Neos\Flow\Log\PsrLoggerFactory.*``.
 
-You can use these loggers for example if you extend the system via signals or AOP, or you are debugging
-your code. For that you inject a ``Psr\Log\LoggerInterface`` wherever you need it like this::
+Loggers can be used to record events that happen in an application, for example a failed login attempt or a caught exception.
+To make use of a logger, the ``Psr\Log\LoggerInterface`` can be injected, that refers to the ``SystemLogger`` which – by default – persists any log message in the file system::
 
 	/**
 	 * @Flow\Inject(name="Neos.Flow:SystemLogger")
