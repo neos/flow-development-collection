@@ -10,6 +10,8 @@ use Psr\Http\Message\ServerRequestInterface;
  * Central authority to get hold of the active HTTP request.
  * When no active HTTP request can be determined (for example in CLI context) a new instance is built using a ServerRequestFactoryInterface implementation
  *
+ * Note: Naturally this class is not being used explicitly. But it is configured as factory for Psr\Http\Message\ServerRequestInterface instances
+ *
  * @Flow\Scope("singleton")
  */
 final class ActiveHttpRequestProvider
