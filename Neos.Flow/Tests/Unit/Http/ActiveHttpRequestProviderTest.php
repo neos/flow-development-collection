@@ -126,5 +126,4 @@ class ActiveHttpRequestProviderTest extends UnitTestCase
         $this->mockServerRequestFactory->expects(self::once())->method('createServerRequest')->with('GET', 'http://localhost')->willReturn($mockServerRequest);
         self::assertSame($mockServerRequest, $this->activeHttpRequestProvider->getActiveHttpRequest());
     }
-
 }
