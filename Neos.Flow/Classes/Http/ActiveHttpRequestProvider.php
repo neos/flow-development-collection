@@ -8,18 +8,23 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Central authority to get hold of the active HTTP request.
- *
  * When no active HTTP request can be determined (for example in CLI context) a new instance is built using a ServerRequestFactoryInterface implementation
  *
  * @Flow\Scope("singleton")
  */
-final class ActiveServerRequestProvider
+final class ActiveHttpRequestProvider
 {
     /**
      * @Flow\Inject
      * @var Bootstrap
      */
     protected $bootstrap;
+
+    /**
+     * @Flow\Inject
+     * @var BaseUriProvider
+     */
+    protected $baseUriProvider;
 
     /**
      * @Flow\Inject
@@ -33,12 +38,17 @@ final class ActiveServerRequestProvider
      *
      * @return ServerRequestInterface
      */
-    public function getActiveServerRequest(): ServerRequestInterface
+    public function getActiveHttpRequest(): ServerRequestInterface
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         if ($requestHandler instanceof HttpRequestHandlerInterface) {
             return $requestHandler->getHttpRequest();
         }
-        return $this->serverRequestFactory->createServerRequest('GET', 'http://localhost');
+        try {
+            $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
+        } catch (Exception $e) {
+            $baseUri = 'http://localhost';
+        }
+        return $this->serverRequestFactory->createServerRequest('GET', $baseUri);
     }
 }
