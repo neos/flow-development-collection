@@ -281,6 +281,14 @@ controller through the ``ActionRequest`` for inspecting::
 		...
 	}
 
+Alternatively, starting with Flow version 7.0, you can just inject an instance of the PSR-7 ``ServerRequestInterface``::
+
+	public function __construct(\Psr\Http\Message\ServerRequestInterface $httpRequest) {
+		...
+	}
+
+This will inject the currently active ``ServerRequest`` or create a new instance if that is not available (for example in CLI context).
+
 Creating an ActionRequest
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
