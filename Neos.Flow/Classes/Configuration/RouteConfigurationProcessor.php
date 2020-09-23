@@ -197,10 +197,11 @@ class RouteConfigurationProcessor
                         $mergedSubRouteConfiguration['defaults'][$key] = $this->replacePlaceholders($defaultValue, $variables);
                     }
                 }
-                foreach ($mergedSubRouteConfiguration['routeParts'] ?? [] as $routePartKey => $routePartValue) {
-                    $mergedSubRouteConfiguration['routeParts'][$routePartKey] = $this->replacePlaceholders($routePartValue, $variables);
-                    foreach ($mergedSubRouteConfiguration['routeParts'][$routePartKey]['options'] ?? [] as $optionKey => $optionValue) {
-                        $mergedSubRouteConfiguration['routeParts'][$routePartKey]['options'][$optionKey] = $this->replacePlaceholders($optionValue, $variables);
+                if (isset($mergedSubRouteConfiguration['routeParts'])) {
+                    foreach ($mergedSubRouteConfiguration['routeParts'] as $routePartKey => $routePartValue) {
+                        foreach ($mergedSubRouteConfiguration['routeParts'][$routePartKey]['options'] ?? [] as $optionKey => $optionValue) {
+                            $mergedSubRouteConfiguration['routeParts'][$routePartKey]['options'][$optionKey] = $this->replacePlaceholders($optionValue, $variables);
+                        }
                     }
                 }
                 $mergedSubRouteConfiguration = Arrays::arrayMergeRecursiveOverrule($routeConfiguration, $mergedSubRouteConfiguration);
