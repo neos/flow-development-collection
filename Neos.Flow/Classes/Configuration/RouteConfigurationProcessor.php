@@ -176,12 +176,12 @@ class RouteConfigurationProcessor
      */
     protected function buildSubRouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, $subRouteKey, array $subRouteOptions)
     {
-        $variables = isset($subRouteOptions['variables']) ? $subRouteOptions['variables'] : [];
+        $variables = $subRouteOptions['variables'] ?? [];
         $mergedSubRoutesConfigurations = [];
         foreach ($subRoutesConfiguration as $subRouteConfiguration) {
             foreach ($routesConfiguration as $routeConfiguration) {
                 $mergedSubRouteConfiguration = $subRouteConfiguration;
-                $mergedSubRouteConfiguration['name'] = sprintf('%s :: %s', isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'Unnamed Route', isset($subRouteConfiguration['name']) ? $subRouteConfiguration['name'] : 'Unnamed Subroute');
+                $mergedSubRouteConfiguration['name'] = sprintf('%s :: %s', $routeConfiguration['name'] ?? 'Unnamed Route', $subRouteConfiguration['name'] ?? 'Unnamed Subroute');
                 $mergedSubRouteConfiguration['name'] = $this->replacePlaceholders($mergedSubRouteConfiguration['name'], $variables);
                 if (!isset($mergedSubRouteConfiguration['uriPattern'])) {
                     throw new Exception\ParseErrorException('No uriPattern defined in route configuration "' . $mergedSubRouteConfiguration['name'] . '".', 1274197615);
@@ -195,6 +195,12 @@ class RouteConfigurationProcessor
                 if (isset($mergedSubRouteConfiguration['defaults'])) {
                     foreach ($mergedSubRouteConfiguration['defaults'] as $key => $defaultValue) {
                         $mergedSubRouteConfiguration['defaults'][$key] = $this->replacePlaceholders($defaultValue, $variables);
+                    }
+                }
+                foreach ($mergedSubRouteConfiguration['routeParts'] ?? [] as $routePartKey => $routePartValue) {
+                    $mergedSubRouteConfiguration['routeParts'][$routePartKey] = $this->replacePlaceholders($routePartValue, $variables);
+                    foreach ($mergedSubRouteConfiguration['routeParts'][$routePartKey]['options'] ?? [] as $optionKey => $optionValue) {
+                        $mergedSubRouteConfiguration['routeParts'][$routePartKey]['options'][$optionKey] = $this->replacePlaceholders($optionValue, $variables);
                     }
                 }
                 $mergedSubRouteConfiguration = Arrays::arrayMergeRecursiveOverrule($routeConfiguration, $mergedSubRouteConfiguration);
