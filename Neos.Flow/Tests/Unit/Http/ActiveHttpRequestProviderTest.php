@@ -14,14 +14,11 @@ namespace Neos\Flow\Tests\Unit\Http;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\RequestHandlerInterface;
 use Neos\Flow\Http\ActiveHttpRequestProvider;
-use Neos\Flow\Http\BaseUriProvider;
-use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
 
 /**
  * Test cases for the ActiveHttpRequestProvider class
@@ -40,11 +37,6 @@ class ActiveHttpRequestProviderTest extends UnitTestCase
     private $mockBootstrap;
 
     /**
-     * @var BaseUriProvider|MockObject
-     */
-    private $mockBaseUriProvider;
-
-    /**
      * @var ServerRequestFactoryInterface|MockObject
      */
     private $mockServerRequestFactory;
@@ -56,9 +48,6 @@ class ActiveHttpRequestProviderTest extends UnitTestCase
 
         $this->mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->activeHttpRequestProvider, 'bootstrap', $this->mockBootstrap);
-
-        $this->mockBaseUriProvider = $this->getMockBuilder(BaseUriProvider::class)->disableOriginalConstructor()->getMock();
-        $this->inject($this->activeHttpRequestProvider, 'baseUriProvider', $this->mockBaseUriProvider);
 
         $this->mockServerRequestFactory = $this->getMockBuilder(ServerRequestFactoryInterface::class)->getMock();
         $this->inject($this->activeHttpRequestProvider, 'serverRequestFactory', $this->mockServerRequestFactory);
@@ -104,10 +93,10 @@ class ActiveHttpRequestProviderTest extends UnitTestCase
 
         $mockServerRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
 
-        $mockBaseUri = $this->getMockBuilder(UriInterface::class)->getMock();
-        $this->mockBaseUriProvider->expects(self::once())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willReturn($mockBaseUri);
+        $configuredBaseUri = 'http://some-base.uri/';
+        $this->inject($this->activeHttpRequestProvider, 'configuredBaseUri', $configuredBaseUri);
 
-        $this->mockServerRequestFactory->expects(self::once())->method('createServerRequest')->with('GET', $mockBaseUri)->willReturn($mockServerRequest);
+        $this->mockServerRequestFactory->expects(self::once())->method('createServerRequest')->with('GET', $configuredBaseUri)->willReturn($mockServerRequest);
         self::assertSame($mockServerRequest, $this->activeHttpRequestProvider->getActiveHttpRequest());
     }
 
@@ -120,8 +109,6 @@ class ActiveHttpRequestProviderTest extends UnitTestCase
         $this->mockBootstrap->method('getActiveRequestHandler')->willReturn($mockOtherRequestHandler);
 
         $mockServerRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
-
-        $this->mockBaseUriProvider->expects(self::once())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willThrowException(new HttpException());
 
         $this->mockServerRequestFactory->expects(self::once())->method('createServerRequest')->with('GET', 'http://localhost')->willReturn($mockServerRequest);
         self::assertSame($mockServerRequest, $this->activeHttpRequestProvider->getActiveHttpRequest());

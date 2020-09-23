@@ -16,17 +16,18 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 final class ActiveHttpRequestProvider
 {
+
+    /**
+     * @Flow\InjectConfiguration(package="Neos.Flow", path="http.baseUri")
+     * @var string|null
+     */
+    protected $configuredBaseUri;
+
     /**
      * @Flow\Inject
      * @var Bootstrap
      */
     protected $bootstrap;
-
-    /**
-     * @Flow\Inject
-     * @var BaseUriProvider
-     */
-    protected $baseUriProvider;
 
     /**
      * @Flow\Inject
@@ -46,11 +47,6 @@ final class ActiveHttpRequestProvider
         if ($requestHandler instanceof HttpRequestHandlerInterface) {
             return $requestHandler->getHttpRequest();
         }
-        try {
-            $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
-        } catch (Exception $e) {
-            $baseUri = 'http://localhost';
-        }
-        return $this->serverRequestFactory->createServerRequest('GET', $baseUri);
+        return $this->serverRequestFactory->createServerRequest('GET', $this->configuredBaseUri ?? 'http://localhost');
     }
 }
