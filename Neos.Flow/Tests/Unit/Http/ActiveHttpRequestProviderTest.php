@@ -71,5 +71,4 @@ class ActiveHttpRequestProviderTest extends UnitTestCase
         $this->expectException(HttpException::class);
         $this->activeHttpRequestProvider->getActiveHttpRequest();
     }
-
 }
