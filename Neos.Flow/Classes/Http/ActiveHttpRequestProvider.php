@@ -3,26 +3,18 @@ namespace Neos\Flow\Http;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Central authority to get hold of the active HTTP request.
- * When no active HTTP request can be determined (for example in CLI context) a new instance is built using a ServerRequestFactoryInterface implementation
+ * When no active HTTP request can be determined (for example in CLI context) an exception will be thrown
  *
- * Note: Naturally this class is not being used explicitly. But it is configured as factory for Psr\Http\Message\ServerRequestInterface instances
+ * Note: Naturally this class is not being used directly. But it is configured as factory for Psr\Http\Message\ServerRequestInterface instances
  *
  * @Flow\Scope("singleton")
  */
 final class ActiveHttpRequestProvider
 {
-
-    /**
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="http.baseUri")
-     * @var string|null
-     */
-    protected $configuredBaseUri;
-
     /**
      * @Flow\Inject
      * @var Bootstrap
@@ -30,23 +22,18 @@ final class ActiveHttpRequestProvider
     protected $bootstrap;
 
     /**
-     * @Flow\Inject
-     * @var ServerRequestFactoryInterface
-     */
-    protected $serverRequestFactory;
-
-    /**
      * Returns the currently active HTTP request, if available.
-     * If the HTTP request can't be determined, a new instance is created using an instance of ServerRequestFactoryInterface
+     * If the HTTP request can't be determined (for example in CLI context) a \Neos\Flow\Http\Exception is thrown
      *
      * @return ServerRequestInterface
+     * @throws Exception
      */
     public function getActiveHttpRequest(): ServerRequestInterface
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
-        if ($requestHandler instanceof HttpRequestHandlerInterface) {
-            return $requestHandler->getHttpRequest();
+        if (!$requestHandler instanceof HttpRequestHandlerInterface) {
+            throw new Exception(sprintf('The active HTTP request can\'t be determined because the request handler is not an instance of %s but a %s. Use a ServerRequestFactory to create a HTTP requests in CLI context', HttpRequestHandlerInterface::class, get_class($requestHandler)), 1600869131);
         }
-        return $this->serverRequestFactory->createServerRequest('GET', $this->configuredBaseUri ?? 'http://localhost');
+        return $requestHandler->getHttpRequest();
     }
 }

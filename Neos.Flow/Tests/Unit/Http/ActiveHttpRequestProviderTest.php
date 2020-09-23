@@ -14,10 +14,10 @@ namespace Neos\Flow\Tests\Unit\Http;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\RequestHandlerInterface;
 use Neos\Flow\Http\ActiveHttpRequestProvider;
+use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -36,11 +36,6 @@ class ActiveHttpRequestProviderTest extends UnitTestCase
      */
     private $mockBootstrap;
 
-    /**
-     * @var ServerRequestFactoryInterface|MockObject
-     */
-    private $mockServerRequestFactory;
-
 
     public function setUp(): void
     {
@@ -48,9 +43,6 @@ class ActiveHttpRequestProviderTest extends UnitTestCase
 
         $this->mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
         $this->inject($this->activeHttpRequestProvider, 'bootstrap', $this->mockBootstrap);
-
-        $this->mockServerRequestFactory = $this->getMockBuilder(ServerRequestFactoryInterface::class)->getMock();
-        $this->inject($this->activeHttpRequestProvider, 'serverRequestFactory', $this->mockServerRequestFactory);
     }
 
     /**
@@ -65,52 +57,19 @@ class ActiveHttpRequestProviderTest extends UnitTestCase
 
         $this->mockBootstrap->method('getActiveRequestHandler')->willReturn($mockHttpRequestHandler);
 
-        $this->mockServerRequestFactory->expects(self::never())->method('createServerRequest');
         self::assertSame($mockServerRequest, $this->activeHttpRequestProvider->getActiveHttpRequest());
     }
 
     /**
      * @test
      */
-    public function getActiveServerRequestCreatesANewInstanceIfTheCurrentRequestHandlerIsNotAHttpHandler(): void
+    public function getActiveServerRequestThrowsAnExceptionIfTheCurrentRequestHandlerIsNotAHttpHandler(): void
     {
         $mockOtherRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
         $this->mockBootstrap->method('getActiveRequestHandler')->willReturn($mockOtherRequestHandler);
 
-        $mockServerRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
-
-        $this->mockServerRequestFactory->expects(self::once())->method('createServerRequest')->willReturn($mockServerRequest);
-        self::assertSame($mockServerRequest, $this->activeHttpRequestProvider->getActiveHttpRequest());
+        $this->expectException(HttpException::class);
+        $this->activeHttpRequestProvider->getActiveHttpRequest();
     }
 
-    /**
-     * @test
-     */
-    public function getActiveServerRequestSetsConfiguredBaseUriIfTheCurrentRequestHandlerIsNotAHttpHandler(): void
-    {
-        $mockOtherRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
-        $this->mockBootstrap->method('getActiveRequestHandler')->willReturn($mockOtherRequestHandler);
-
-        $mockServerRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
-
-        $configuredBaseUri = 'http://some-base.uri/';
-        $this->inject($this->activeHttpRequestProvider, 'configuredBaseUri', $configuredBaseUri);
-
-        $this->mockServerRequestFactory->expects(self::once())->method('createServerRequest')->with('GET', $configuredBaseUri)->willReturn($mockServerRequest);
-        self::assertSame($mockServerRequest, $this->activeHttpRequestProvider->getActiveHttpRequest());
-    }
-
-    /**
-     * @test
-     */
-    public function getActiveServerRequestDefaultBaseUriIfTheCurrentRequestHandlerIsNotAHttpHandlerAndTheBaseUriIsNotConfigured(): void
-    {
-        $mockOtherRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
-        $this->mockBootstrap->method('getActiveRequestHandler')->willReturn($mockOtherRequestHandler);
-
-        $mockServerRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
-
-        $this->mockServerRequestFactory->expects(self::once())->method('createServerRequest')->with('GET', 'http://localhost')->willReturn($mockServerRequest);
-        self::assertSame($mockServerRequest, $this->activeHttpRequestProvider->getActiveHttpRequest());
-    }
 }
