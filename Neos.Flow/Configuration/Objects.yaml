@@ -251,6 +251,10 @@ Psr\Http\Message\UploadedFileFactoryInterface:
 Psr\Http\Message\UriFactoryInterface:
   className: Neos\Http\Factories\UriFactory
 
+Psr\Http\Message\ServerRequestInterface:
+  factoryObjectName: Neos\Flow\Http\ActiveHttpRequestProvider
+  factoryMethodName: getActiveHttpRequest
+
 Neos\Flow\Http\Component\ComponentContext:
   arguments:
     1:
