@@ -310,7 +310,7 @@ class ValidatorResolver
                     continue;
                 }
                 if ($classSchema !== null
-                    && $classSchema->hasProperty($classPropertyName) 
+                    && $classSchema->hasProperty($classPropertyName)
                     && $classSchema->isPropertyTransient($classPropertyName)
                     && $validationGroups === ['Persistence', 'Default']) {
                     continue;
