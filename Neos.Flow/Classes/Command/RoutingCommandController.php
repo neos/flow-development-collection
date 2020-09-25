@@ -152,8 +152,9 @@ class RoutingCommandController extends CommandController
                 $this->outputLine('  Name: ' . $route->getName());
                 $this->outputLine('  Pattern: ' . $route->getUriPattern());
 
-                $this->outputLine('<b>Generated Path:</b>');
-                $this->outputLine('  ' . $route->getResolvedUriConstraints()->getPathConstraint());
+                $this->outputLine('<b>Generated URI:</b>');
+                $resolvedUri = $route->getResolvedUriConstraints() !== null ? $route->getResolvedUriConstraints()->applyTo(new Uri(''), false) : '-';
+                $this->outputLine('  ' . $resolvedUri);
 
                 if ($controllerObjectName !== null) {
                     $this->outputLine('<b>Controller:</b>');

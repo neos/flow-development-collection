@@ -30,7 +30,7 @@ class UriConstraintsTest extends UnitTestCase
         $uriConstraints2 = UriConstraints::create()->withPath('some/overridden/path');
 
         $mergedUriConstraints = $uriConstraints1->merge($uriConstraints2);
-        self::assertSame('some/overridden/path', $mergedUriConstraints->getPathConstraint());
+        self::assertSame('/some/overridden/path', (string)$mergedUriConstraints->toUri());
     }
 
     public function applyToDataProvider()
@@ -74,6 +74,10 @@ class UriConstraintsTest extends UnitTestCase
 
             ['constraints' => [UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => '/some/path'],
             ['constraints' => [UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tld/some/path'],
+            ['constraints' => [UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld/base/path', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tld/base/path/some/path'],
+            ['constraints' => [UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld/base/path', 'forceAbsoluteUri' => false, 'expectedUri' => '/base/path/some/path'],
+            ['constraints' => [UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld/base/path/', 'forceAbsoluteUri' => false, 'expectedUri' => '/base/path/some/path'],
+            ['constraints' => [UriConstraints::CONSTRAINT_PATH => '/some/path/'], 'templateUri' => 'http://some-domain.tld/base/path/', 'forceAbsoluteUri' => false, 'expectedUri' => '/base/path/some/path/'],
 
             ['constraints' => [UriConstraints::CONSTRAINT_PATH_PREFIX => 'prefix'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => '/prefix'],
             ['constraints' => [UriConstraints::CONSTRAINT_PATH_PREFIX => 'prefix'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tld/prefix'],
@@ -86,6 +90,15 @@ class UriConstraintsTest extends UnitTestCase
             ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tld/suffix'],
             ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix', UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => '/some/pathsuffix'],
             ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix', UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tld/some/pathsuffix'],
+
+            ['constraints' => [UriConstraints::CONSTRAINT_QUERY_STRING => 'some-query-string'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => '/?some-query-string'],
+            ['constraints' => [UriConstraints::CONSTRAINT_QUERY_STRING => 'foo=bar&bar=fös'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tld/?foo=bar&bar=f%C3%B6s'],
+            ['constraints' => [UriConstraints::CONSTRAINT_QUERY_STRING => 'query'], 'templateUri' => 'http://some-domain.tld/some/path/', 'forceAbsoluteUri' => false, 'expectedUri' => '/some/path?query'],
+
+            ['constraints' => [UriConstraints::CONSTRAINT_FRAGMENT => 'fragment'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => '/#fragment'],
+            ['constraints' => [UriConstraints::CONSTRAINT_FRAGMENT => 'fragment'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tld/#fragment'],
+            ['constraints' => [UriConstraints::CONSTRAINT_FRAGMENT => 'frägment'], 'templateUri' => 'http://some-domain.tld/some/path', 'forceAbsoluteUri' => false, 'expectedUri' => '/some/path#fr%C3%A4gment'],
+            ['constraints' => [UriConstraints::CONSTRAINT_FRAGMENT => 'fragment'], 'templateUri' => 'http://some-domain.tld/some/path#replaceme', 'forceAbsoluteUri' => false, 'expectedUri' => '/some/path#fragment'],
         ];
     }
 
@@ -128,7 +141,7 @@ class UriConstraintsTest extends UnitTestCase
     /**
      * @test
      */
-    public function withHostPrefixReturnsANewInstanceWitSubDomainConstraintSet()
+    public function withHostPrefixReturnsANewInstanceWithSubDomainConstraintSet()
     {
         $uriConstraints = UriConstraints::create()->withHostPrefix('host-prefix', ['replace', 'prefixes']);
         $expectedResult = [
@@ -143,7 +156,7 @@ class UriConstraintsTest extends UnitTestCase
     /**
      * @test
      */
-    public function withHostSuffixReturnsANewInstanceWitSubDomainConstraintSet()
+    public function withHostSuffixReturnsANewInstanceWithSubDomainConstraintSet()
     {
         $uriConstraints = UriConstraints::create()->withHostSuffix('host-suffix', ['replace', 'suffixes']);
         $expectedResult = [
@@ -159,7 +172,7 @@ class UriConstraintsTest extends UnitTestCase
     /**
      * @test
      */
-    public function withPortReturnsANewInstanceWitPortConstraintSet()
+    public function withPortReturnsANewInstanceWithPortConstraintSet()
     {
         $uriConstraints = UriConstraints::create()->withPort(1234);
         $expectedResult = [
@@ -171,7 +184,7 @@ class UriConstraintsTest extends UnitTestCase
     /**
      * @test
      */
-    public function withPathReturnsANewInstanceWitPathConstraintSet()
+    public function withPathReturnsANewInstanceWithPathConstraintSet()
     {
         $uriConstraints = UriConstraints::create()->withPath('path-constraint');
         $expectedResult = [
@@ -183,7 +196,31 @@ class UriConstraintsTest extends UnitTestCase
     /**
      * @test
      */
-    public function withPathPrefixReturnsANewInstanceWitPathPrefixConstraintSet()
+    public function withQueryStringReturnsANewInstanceWithQueryStringConstraintSet()
+    {
+        $uriConstraints = UriConstraints::create()->withQueryString('some=query&string');
+        $expectedResult = [
+            UriConstraints::CONSTRAINT_QUERY_STRING => 'some=query&string'
+        ];
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+    }
+
+    /**
+     * @test
+     */
+    public function withFragmentReturnsANewInstanceWithFragmentConstraintSet()
+    {
+        $uriConstraints = UriConstraints::create()->withFragment('some-fragment');
+        $expectedResult = [
+            UriConstraints::CONSTRAINT_FRAGMENT => 'some-fragment'
+        ];
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+    }
+
+    /**
+     * @test
+     */
+    public function withPathPrefixReturnsANewInstanceWithPathPrefixConstraintSet()
     {
         $uriConstraints = UriConstraints::create()->withPathPrefix('path-prefix-constraint');
         $expectedResult = [
@@ -214,6 +251,26 @@ class UriConstraintsTest extends UnitTestCase
             UriConstraints::CONSTRAINT_PATH_PREFIX => 'prefix1prefix2'
         ];
         self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+    }
+
+    /**
+     * Note: This test merely documents the current behavior – I'm not sure if it makes sense really
+     * @test
+     */
+    public function withPathPrefixReturnsTheCurrentInstanceIfPathPrefixIsEmpty()
+    {
+        $uriConstraints = UriConstraints::create();
+        $uriConstraints2 = $uriConstraints->withPathPrefix('');
+        self::assertSame($uriConstraints, $uriConstraints2);
+    }
+
+    /**
+     * @test
+     */
+    public function withPathPrefixThrowsExceptionIfPrefixStartsWithASlash()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        UriConstraints::create()->withPathPrefix('/prefix1');
     }
 
     /**
@@ -270,5 +327,31 @@ class UriConstraintsTest extends UnitTestCase
             ->withPathPrefix('prefix')
             ->withPathSuffix('suffix');
         self::assertSame('some/path', $uriConstraints->getPathConstraint());
+    }
+
+    public function fromUriDataProvider()
+    {
+        return [
+            ['uri' => '', 'expectedConstraints' => []],
+            ['uri' => 'https://neos.io', 'expectedConstraints' => [UriConstraints::CONSTRAINT_SCHEME => 'https', UriConstraints::CONSTRAINT_HOST => 'neos.io']],
+            ['uri' => 'http://localhost:8080', 'expectedConstraints' => [UriConstraints::CONSTRAINT_SCHEME => 'http', UriConstraints::CONSTRAINT_HOST => 'localhost', UriConstraints::CONSTRAINT_PORT => 8080]],
+            ['uri' => '/some/path', 'expectedConstraints' => [UriConstraints::CONSTRAINT_PATH => '/some/path']],
+            ['uri' => '?some&query=string', 'expectedConstraints' => [UriConstraints::CONSTRAINT_QUERY_STRING => 'some&query=string']],
+            ['uri' => '#fragment', 'expectedConstraints' => [UriConstraints::CONSTRAINT_FRAGMENT => 'fragment']],
+
+            ['uri' => 'https://neos.io:1234/some/path?the[query]=string#some-fragment', 'expectedConstraints' => [UriConstraints::CONSTRAINT_SCHEME => 'https', UriConstraints::CONSTRAINT_HOST => 'neos.io', UriConstraints::CONSTRAINT_PORT => 1234, UriConstraints::CONSTRAINT_PATH => '/some/path', UriConstraints::CONSTRAINT_QUERY_STRING => 'the%5Bquery%5D=string', UriConstraints::CONSTRAINT_FRAGMENT => 'some-fragment']],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider fromUriDataProvider
+     * @param string $uri
+     * @param array $expectedConstraints
+     */
+    public function fromUriTests(string $uri, array $expectedConstraints)
+    {
+        $uriConstraints = UriConstraints::fromUri(new Uri($uri));
+        self::assertSame($expectedConstraints, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 }
