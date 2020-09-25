@@ -309,6 +309,9 @@ class ValidatorResolver
                 if ($this->reflectionService->isPropertyAnnotatedWith($targetClassName, $classPropertyName, Flow\IgnoreValidation::class)) {
                     continue;
                 }
+                if ($classSchema !== null && $classSchema->isPropertyTransient($classPropertyName) && $validationGroups === ['Persistence', 'Default']) {
+                    continue;
+                }
 
                 $propertyTargetClassName = $parsedType['type'];
                 $needsCollectionValidator = TypeHandling::isCollectionType($propertyTargetClassName);
