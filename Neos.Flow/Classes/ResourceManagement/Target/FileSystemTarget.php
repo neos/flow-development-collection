@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ResourceManagement\Target;
 
 /*
@@ -404,19 +405,18 @@ class FileSystemTarget implements TargetInterface
      * @param ResourceMetaDataInterface $object PersistentResource or Storage Object
      * @return string The relative path and filename, for example "c/8/2/8/c828d0f88ce197be1aff7cc2e5e86b1244241ac6/MyPicture.jpg" (if subdivideHashPathSegment is on) or "c828d0f88ce197be1aff7cc2e5e86b1244241ac6/MyPicture.jpg" (if it's off)
      */
-    protected function getRelativePublicationPathAndFilename(ResourceMetaDataInterface $object)
+    protected function getRelativePublicationPathAndFilename(ResourceMetaDataInterface $object): string
     {
         if ($object->getRelativePublicationPath() !== '') {
-            $pathAndFilename = $object->getRelativePublicationPath() . $object->getFilename();
-        } else {
-            if ($this->subdivideHashPathSegment) {
-                $sha1Hash = $object->getSha1();
-                $pathAndFilename = $sha1Hash[0] . '/' . $sha1Hash[1] . '/' . $sha1Hash[2] . '/' . $sha1Hash[3] . '/' . $sha1Hash . '/' . $object->getFilename();
-            } else {
-                $pathAndFilename = $object->getSha1() . '/' . $object->getFilename();
-            }
+            return $object->getRelativePublicationPath() . $object->getFilename();
         }
-        return $pathAndFilename;
+
+        if ($this->subdivideHashPathSegment) {
+            $sha1Hash = $object->getSha1();
+            return $sha1Hash[0] . '/' . $sha1Hash[1] . '/' . $sha1Hash[2] . '/' . $sha1Hash[3] . '/' . $sha1Hash . '/' . $object->getFilename();
+        }
+
+        return $object->getSha1() . '/' . $object->getFilename();
     }
 
     /**
