@@ -25,6 +25,9 @@ Under the hood they all use a ``FileBackend`` for storing the messages, but that
 Loggers can be used to record events that happen in an application, for example a failed login attempt or a caught exception.
 To make use of a logger, the ``Psr\Log\LoggerInterface`` can be injected, that refers to the ``SystemLogger`` which – by default – persists any log message in the file system::
 
+	use Psr\Log\LoggerInterface;
+  ...
+  
 	/**
 	 * @Flow\Inject(name="Neos.Flow:SystemLogger")
 	 * @var LoggerInterface
@@ -52,14 +55,23 @@ To make use of a logger, the ``Psr\Log\LoggerInterface`` can be injected, that r
 This is achieved via the :ref:`virtual objects configuration <sect-virtual-objects>` that allows to configure a single class in multiple
 versions with different constructor arguments and assign a name for this configuration, which can be referenced in the ``@Flow\Inject`` annotation.
 
+If you just need a default logger and don't really care for the specific type of logger, you can also skip the ``(name="Neos.Flow:...")`` part and you will
+receive an instance of the ``SystemLogger`` by default::
+
+	/**
+	 * @Flow\Inject
+	 * @var LoggerInterface
+	 */
+	protected $logger;
+
 Alternatively, if you prefer to keep your class free of framework specific annotations (``@Flow\Inject(...)``), you could as well just inject the specific
 configuration of the logger via the ``Objects.yaml`` like this::
 
 	Acme\Your\Class:
-		properties:
-			systemLogger:
-				object:
-          name: 'Neos.Flow:SystemLogger'
+	  properties:
+	    systemLogger:
+	      object:
+	        name: 'Neos.Flow:SystemLogger'
 
 Exception logging
 =================
@@ -122,7 +134,7 @@ from your ``try/catch`` block. This would roughly look as follows::
 	protected $throwableStorage;
 
 	/**
-	 * @Flow\Inject(name="Neos.Flow:SystemLogger")
+	 * @Flow\Inject
 	 * @var LoggerInterface
 	 */
 	protected $logger;
