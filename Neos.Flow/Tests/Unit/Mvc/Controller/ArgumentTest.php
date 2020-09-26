@@ -45,7 +45,6 @@ class ArgumentTest extends UnitTestCase
         $this->objectArgument = new Mvc\Controller\Argument('someName', 'DateTime');
 
         $this->mockPropertyMapper = $this->createMock(PropertyMapper::class);
-        $this->mockPropertyMapper->method('getMessages')->willReturn(new FlowError\Result());
         $this->inject($this->simpleValueArgument, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($this->objectArgument, 'propertyMapper', $this->mockPropertyMapper);
 
@@ -107,6 +106,7 @@ class ArgumentTest extends UnitTestCase
      */
     public function setValidatorShouldProvideFluentInterfaceAndReallySetValidator()
     {
+        $this->mockPropertyMapper->method('getMessages')->willReturn(new FlowError\Result());
         $mockValidator = $this->createMock(ValidatorInterface::class);
         $returnedArgument = $this->simpleValueArgument->setValidator($mockValidator);
         self::assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
@@ -169,7 +169,7 @@ class ArgumentTest extends UnitTestCase
     /**
      * @test
      */
-    public function setValueShouldSetValidationErrorsIfValidatorIsSetAndValidationFailed()
+    public function setValidatorShouldSetValidationErrorsIfValidationFailed()
     {
         $error = new FLowError\Error('Some Error', 1234);
 
@@ -178,8 +178,8 @@ class ArgumentTest extends UnitTestCase
         $validationMessages->addError($error);
         $mockValidator->expects(self::once())->method('validate')->with('convertedValue')->will(self::returnValue($validationMessages));
 
-        $this->simpleValueArgument->setValidator($mockValidator);
         $this->setupPropertyMapperAndSetValue();
+        $this->simpleValueArgument->setValidator($mockValidator);
         self::assertEquals([$error], $this->simpleValueArgument->getValidationResults()->getErrors());
     }
 
