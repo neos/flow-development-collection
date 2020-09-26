@@ -182,6 +182,7 @@ class Argument
     {
         $this->validator = $validator;
         if ($validator !== null) {
+            $this->validationResults = $this->propertyMapper->getMessages();
             $validationMessages = $validator->validate($this->value);
             $this->validationResults->merge($validationMessages);
         }
