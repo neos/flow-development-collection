@@ -45,6 +45,7 @@ class ArgumentTest extends UnitTestCase
         $this->objectArgument = new Mvc\Controller\Argument('someName', 'DateTime');
 
         $this->mockPropertyMapper = $this->createMock(PropertyMapper::class);
+        $this->mockPropertyMapper->method('getMessages')->willReturn(new FlowError\Result());
         $this->inject($this->simpleValueArgument, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($this->objectArgument, 'propertyMapper', $this->mockPropertyMapper);
 
