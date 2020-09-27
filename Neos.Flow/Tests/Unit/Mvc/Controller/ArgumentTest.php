@@ -45,6 +45,7 @@ class ArgumentTest extends UnitTestCase
         $this->objectArgument = new Mvc\Controller\Argument('someName', 'DateTime');
 
         $this->mockPropertyMapper = $this->createMock(PropertyMapper::class);
+        $this->mockPropertyMapper->method('getMessages')->willReturn(new FlowError\Result());
         $this->inject($this->simpleValueArgument, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($this->objectArgument, 'propertyMapper', $this->mockPropertyMapper);
 
@@ -145,7 +146,6 @@ class ArgumentTest extends UnitTestCase
     protected function setupPropertyMapperAndSetValue()
     {
         $this->mockPropertyMapper->expects(self::once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->willReturn('convertedValue');
-        $this->mockPropertyMapper->method('getMessages')->willReturn(new FlowError\Result());
         return $this->simpleValueArgument->setValue('someRawValue');
     }
 
