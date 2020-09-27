@@ -144,8 +144,8 @@ class ArgumentTest extends UnitTestCase
 
     protected function setupPropertyMapperAndSetValue()
     {
-        $this->mockPropertyMapper->expects(self::once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->will(self::returnValue('convertedValue'));
-        $this->mockPropertyMapper->expects(self::once())->method('getMessages')->will(self::returnValue(new FLowError\Result()));
+        $this->mockPropertyMapper->expects(self::once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->willReturn('convertedValue');
+        $this->mockPropertyMapper->method('getMessages')->willReturn(new FLowError\Result());
         return $this->simpleValueArgument->setValue('someRawValue');
     }
 
