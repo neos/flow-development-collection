@@ -181,7 +181,7 @@ class Argument
     public function setValidator(ValidatorInterface $validator): Argument
     {
         $this->validator = $validator;
-        if ($validator !== null) {
+        if ($validator !== null && $this->value !== null) {
             $this->validationResults = $this->propertyMapper->getMessages();
             $validationMessages = $validator->validate($this->value);
             $this->validationResults->merge($validationMessages);
