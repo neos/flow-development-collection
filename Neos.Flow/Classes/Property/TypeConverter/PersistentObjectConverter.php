@@ -51,17 +51,17 @@ class PersistentObjectConverter extends ObjectConverter
     /**
      * @var integer
      */
-    const CONFIGURATION_MODIFICATION_ALLOWED = 1;
+    const CONFIGURATION_MODIFICATION_ALLOWED = 'modificationAllowed';
 
     /**
      * @var integer
      */
-    const CONFIGURATION_CREATION_ALLOWED = 2;
+    const CONFIGURATION_CREATION_ALLOWED = 'creationAllowed';
 
     /**
      * @var integer
      */
-    const CONFIGURATION_IDENTITY_CREATION_ALLOWED = 5;
+    const CONFIGURATION_IDENTITY_CREATION_ALLOWED = 'identityCreationAllowed';
 
     /**
      * @var array
