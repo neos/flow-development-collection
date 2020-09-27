@@ -108,7 +108,6 @@ class ArgumentTest extends UnitTestCase
     public function setValidatorShouldProvideFluentInterfaceAndReallySetValidator()
     {
         $mockValidator = $this->createMock(ValidatorInterface::class);
-        $mockValidator->expects(self::once())->method('validate')->willReturn(new FlowError\Result());
         $returnedArgument = $this->simpleValueArgument->setValidator($mockValidator);
         self::assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
         self::assertSame($mockValidator, $this->simpleValueArgument->getValidator());
