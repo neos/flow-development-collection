@@ -16,7 +16,7 @@ use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Mvc;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
-use Neos\Error\Messages as FLowError;
+use Neos\Error\Messages as FlowError;
 
 /**
  * Testcase for the MVC Controller Argument
@@ -106,8 +106,8 @@ class ArgumentTest extends UnitTestCase
      */
     public function setValidatorShouldProvideFluentInterfaceAndReallySetValidator()
     {
-        $this->mockPropertyMapper->method('getMessages')->willReturn(new FlowError\Result());
         $mockValidator = $this->createMock(ValidatorInterface::class);
+        $mockValidator->expects(self::once())->method('validate')->willReturn(new FlowError\Result());
         $returnedArgument = $this->simpleValueArgument->setValidator($mockValidator);
         self::assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
         self::assertSame($mockValidator, $this->simpleValueArgument->getValidator());
@@ -145,7 +145,7 @@ class ArgumentTest extends UnitTestCase
     protected function setupPropertyMapperAndSetValue()
     {
         $this->mockPropertyMapper->expects(self::once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->willReturn('convertedValue');
-        $this->mockPropertyMapper->method('getMessages')->willReturn(new FLowError\Result());
+        $this->mockPropertyMapper->method('getMessages')->willReturn(new FlowError\Result());
         return $this->simpleValueArgument->setValue('someRawValue');
     }
 
@@ -171,12 +171,12 @@ class ArgumentTest extends UnitTestCase
      */
     public function setValidatorShouldSetValidationErrorsIfValidationFailed()
     {
-        $error = new FLowError\Error('Some Error', 1234);
+        $error = new FlowError\Error('Some Error', 1234);
 
         $mockValidator = $this->createMock(ValidatorInterface::class);
-        $validationMessages = new FLowError\Result();
+        $validationMessages = new FlowError\Result();
         $validationMessages->addError($error);
-        $mockValidator->expects(self::once())->method('validate')->with('convertedValue')->will(self::returnValue($validationMessages));
+        $mockValidator->expects(self::once())->method('validate')->with('convertedValue')->willReturn($validationMessages);
 
         $this->setupPropertyMapperAndSetValue();
         $this->simpleValueArgument->setValidator($mockValidator);
