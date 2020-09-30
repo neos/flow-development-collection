@@ -13,6 +13,7 @@ namespace Neos\Flow\Property\TypeConverter;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Property\Exception\InvalidDataTypeException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Utility\TypeHandling;
 
@@ -85,6 +86,9 @@ class CollectionConverter extends AbstractTypeConverter
     public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration)
     {
         $parsedTargetType = TypeHandling::parseType($targetType);
+        if ($parsedTargetType['elementType'] === null) {
+            throw new InvalidDataTypeException(sprintf('The annotated collection property "%s" is missing an element type. Should be given in the format "Collection<$elementType>" and "$elementType" is the class name of the contained objects.', $propertyName), 1600530641);
+        }
         return $parsedTargetType['elementType'];
     }
 }
