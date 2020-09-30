@@ -3,7 +3,7 @@
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2020-09-08
+This reference was automatically generated from code on 2020-09-30
 
 
 .. _`Flow Annotation Reference: After`:
@@ -262,6 +262,10 @@ Arguments
 
 * ``lazy`` (boolean): Whether the dependency should be injected instantly or if a lazy dependency
   proxy should be injected instead
+
+* ``name`` (string): Optional object name
+  This is useful if the object name does not match the class name of the object to be injected:
+  (at)Inject(name="Some.Package:Some.Virtual.Object")
 
 
 
