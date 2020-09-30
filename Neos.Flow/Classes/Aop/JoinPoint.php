@@ -172,7 +172,7 @@ class JoinPoint implements JoinPointInterface
      */
     public function isMethodArgument($argumentName): bool
     {
-        return isset($this->methodArguments[$argumentName]);
+        return array_key_exists($argumentName, $this->methodArguments);
     }
 
     /**

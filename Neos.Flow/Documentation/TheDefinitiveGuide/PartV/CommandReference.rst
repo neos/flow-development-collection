@@ -19,38 +19,13 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2020-09-12
+The following reference was automatically generated from code on 2020-09-08
 
 
 .. _`Flow Command Reference: NEOS.FLOW`:
 
 Package *NEOS.FLOW*
 -------------------
-
-
-.. _`Flow Command Reference: NEOS.FLOW neos.flow:cache:collectgarbage`:
-
-``neos.flow:cache:collectgarbage``
-**********************************
-
-**Cache Garbage Collection**
-
-Runs the Garbage Collection (collectGarbage) method on all registered caches.
-
-Though the method is defined in the BackendInterface, the implementation
-can differ and might not remove any data, depending on possibilities of
-the backend.
-
-
-
-Options
-^^^^^^^
-
-``--cache-identifier``
-  If set, this command only applies to the given cache
-
-
-
 
 
 .. _`Flow Command Reference: NEOS.FLOW neos.flow:cache:flush`:
@@ -1000,6 +975,14 @@ Options
   The returned packages are ordered by their loading order.
 
 
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``neos.flow:package:activate``
+  *Command not available*
+``neos.flow:package:deactivate``
+  *Command not available*
 
 
 

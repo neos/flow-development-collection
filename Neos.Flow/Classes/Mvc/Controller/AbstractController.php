@@ -113,6 +113,7 @@ abstract class AbstractController implements ControllerInterface
         if ($mediaType === null) {
             $this->throwStatus(406);
         }
+        $this->response->setContentType($mediaType);
         if ($request->getFormat() === '') {
             $this->request->setFormat(MediaTypes::getFilenameExtensionFromMediaType($mediaType));
         }

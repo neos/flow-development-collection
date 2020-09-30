@@ -216,6 +216,12 @@ html_static_path = ['_static']
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'FlowFrameworkdoc'
 
+# Configure links to view/edit source to point to development collection
+github_user' = 'neos'
+github_repo' = 'flow-development-collection'
+github_version' = '5.3'
+conf_py_path = '/Neos.Flow/Documentation/'
+
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
