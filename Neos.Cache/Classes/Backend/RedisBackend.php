@@ -340,7 +340,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function findIdentifiersByTag(string $tag): array
     {
-        return $this->redis->sMembers($this->buildKey('tag:' . $tag));
+        $identifiers = $this->redis->sMembers($this->buildKey('tag:' . $tag));
+
+        return array_values(array_filter($identifiers, function (string $entryIdentifier) {
+            return $this->has($entryIdentifier);
+        }));
     }
 
     /**

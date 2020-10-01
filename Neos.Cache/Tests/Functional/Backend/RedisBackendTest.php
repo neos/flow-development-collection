@@ -15,8 +15,8 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the redis cache backend
@@ -60,7 +60,8 @@ class RedisBackendTest extends BaseTestCase
             $this->markTestSkipped('redis server not reachable');
         }
         $this->backend = new RedisBackend(
-            new EnvironmentConfiguration('Redis a wonderful color Testing', '/some/path', PHP_MAXPATHLEN), ['hostname' => '127.0.0.1', 'database' => 0]
+            new EnvironmentConfiguration('Redis a wonderful color Testing', '/some/path', PHP_MAXPATHLEN),
+            ['hostname' => '127.0.0.1', 'database' => 0]
         );
         $this->cache = $this->createMock(FrontendInterface::class);
         $this->cache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
@@ -261,5 +262,19 @@ class RedisBackendTest extends BaseTestCase
 
         $this->assertEmpty($this->backend->findIdentifiersByTag('bar'));
         $this->assertEmpty($this->backend->findIdentifiersByTag('baz'));
+    }
+
+    /**
+     * @test
+     */
+    public function tagsForMultipleEntriesExpireIndividually()
+    {
+        $this->backend->set('entry1', 'foo', ['bar', 'baz'], 1);
+        $this->backend->set('entry2', 'foo', ['baz'], 10);
+        sleep(2);
+        $this->assertFalse($this->backend->has('entry1'));
+
+        $this->assertEmpty($this->backend->findIdentifiersByTag('bar'));
+        $this->assertEquals(['entry2'], $this->backend->findIdentifiersByTag('baz'));
     }
 }
