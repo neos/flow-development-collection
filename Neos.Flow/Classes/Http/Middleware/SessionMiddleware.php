@@ -1,5 +1,7 @@
 <?php
-namespace Neos\Flow\Session\Http;
+declare(strict_types=1);
+
+namespace Neos\Flow\Http\Middleware;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -12,18 +14,21 @@ namespace Neos\Flow\Session\Http;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Component\ComponentInterface;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Utility\Algorithms;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * A HTTP component that initialises the standard Flow session with cookie information.
+ * A middleware that handles the session in a HTTP request
  */
-class SessionRequestComponent implements ComponentInterface
+class SessionMiddleware implements MiddlewareInterface
 {
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="session")
@@ -37,30 +42,36 @@ class SessionRequestComponent implements ComponentInterface
      */
     protected $sessionManager;
 
-    /**
-     * @param ComponentContext $componentContext
-     */
-    public function handle(ComponentContext $componentContext)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->sessionManager instanceof SessionManager) {
-            return;
+            return $handler->handle($request);
         }
 
         $sessionCookieName = $this->sessionSettings['name'];
         /** @var ServerRequestInterface $request */
-        $request = $componentContext->getHttpRequest();
         $cookies = $request->getCookieParams();
 
         if (!isset($cookies[$sessionCookieName])) {
             $sessionCookie = $this->prepareCookie($sessionCookieName, Algorithms::generateRandomString(32));
             $this->sessionManager->createCurrentSessionFromCookie($sessionCookie);
-            return;
+            return $handler->handle($request);
         }
 
         $sessionIdentifier = $cookies[$sessionCookieName];
         $sessionCookie = $this->prepareCookie($sessionCookieName, $sessionIdentifier);
         $this->sessionManager->initializeCurrentSessionFromCookie($sessionCookie);
         $this->sessionManager->getCurrentSession()->resume();
+
+        $response = $handler->handle($request);
+
+        $currentSession = $this->sessionManager->getCurrentSession();
+        if (!$currentSession->isStarted()) {
+            return $response;
+        }
+
+        $response = $response->withAddedHeader('Set-Cookie', (string)$currentSession->getSessionCookie());
+        return $response;
     }
 
     /**
@@ -85,4 +96,5 @@ class SessionRequestComponent implements ComponentInterface
             $this->sessionSettings['cookie']['samesite']
         );
     }
+
 }
