@@ -58,7 +58,7 @@
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
         "neos/party": "To make use of basic user handling",
         "php-uuid": "For fast generation of UUIDs used in the persistence.",
-        "neos/fluid-adaptor": "To make use of the template engine Fluid"
+        "neos/fluid-adaptor": "For rendering templates with TYPO3.Fluid"
     },
     "autoload": {
         "psr-4": {
