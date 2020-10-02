@@ -15,8 +15,6 @@ namespace Neos\Flow\Http\Middleware;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
-use Neos\Flow\Http\Component\ComponentChain;
-use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Utility\Ip as IpUtility;
 use Psr\Http\Message\ResponseInterface;
@@ -285,7 +283,4 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
 
         return $ipAddress;
     }
-
-
-
 }
