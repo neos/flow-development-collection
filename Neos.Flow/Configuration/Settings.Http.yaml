@@ -26,6 +26,9 @@ Neos:
 
       # Defines the PSR-15 middlewares that a request goes through in a flow
       middlewares:
+        'trustedProxies':
+          position: 'start'
+          middleware: 'Neos\Flow\Http\Middleware\TrustedProxiesMiddleware'
         'dispatch':
           position: 'end'
           middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
@@ -39,9 +42,6 @@ Neos:
         'preprocess':
           position: 'before process'
           chain:
-            'trustedProxies':
-              position: 'start'
-              component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
             'getSessionCookieFromRequest':
               position: 'after trustedProxies'
               component: 'Neos\Flow\Session\Http\SessionRequestComponent'
