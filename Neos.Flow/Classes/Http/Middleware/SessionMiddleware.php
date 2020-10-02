@@ -14,8 +14,6 @@ namespace Neos\Flow\Http\Middleware;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\ComponentChain;
-use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Session\SessionManagerInterface;
@@ -96,5 +94,4 @@ class SessionMiddleware implements MiddlewareInterface
             $this->sessionSettings['cookie']['samesite']
         );
     }
-
 }
