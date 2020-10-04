@@ -23,7 +23,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Midd leware that checks request headers against a configured list of trusted proxy IP addresses.
+ * Middleware that checks request headers against a configured list of trusted proxy IP addresses.
  */
 class TrustedProxiesMiddleware implements MiddlewareInterface
 {
