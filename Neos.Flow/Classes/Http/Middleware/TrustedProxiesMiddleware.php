@@ -95,7 +95,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
                 $portSeparatorIndex = strrpos($hostHeader, ':');
             }
             if ($portSeparatorIndex !== false) {
-                $portFromHost = substr($hostHeader, $portSeparatorIndex + 1);
+                $portFromHost = (int)substr($hostHeader, $portSeparatorIndex + 1);
                 $trustedRequest = $trustedRequest->withUri($trustedRequest->getUri()->withPort($portFromHost), true);
                 $hostHeader = substr($hostHeader, 0, $portSeparatorIndex);
             }
