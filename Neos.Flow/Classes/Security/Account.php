@@ -20,6 +20,7 @@ use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Security\Policy\RoleIdentifiers;
 use Neos\Flow\Security\Policy\Roles;
 use Neos\Flow\Utility\Now;
 
@@ -203,6 +204,12 @@ class Account implements AccountInterface
     {
         $this->credentialsSource = $credentialsSource;
     }
+
+    public function getRoleIdentifiers(): RoleIdentifiers
+    {
+        return RoleIdentifiers::fromArray($this->roleIdentifiers);
+    }
+
 
     /**
      * Returns the roles this account has assigned

@@ -16,6 +16,7 @@ namespace Neos\Flow\Security;
 use Neos\Flow\Security\Authentication\AuthenticationProviderName;
 use Neos\Flow\Security\Authentication\CredentialsSource;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Security\Policy\RoleIdentifiers;
 use Neos\Flow\Security\Policy\Roles;
 
 interface AccountInterface
@@ -36,9 +37,9 @@ interface AccountInterface
     public function getCredentialsSource(): CredentialsSource;
 
     /**
-     * @return Roles
+     * @return RoleIdentifiers
      */
-    public function getRoles(): Roles;
+    public function getRoleIdentifiers(): RoleIdentifiers;
 
     /**
      * @param Role $role

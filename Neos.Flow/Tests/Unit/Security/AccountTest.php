@@ -15,6 +15,7 @@ use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Security\Policy\RoleIdentifiers;
 use Neos\Flow\Security\Policy\Roles;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -183,6 +184,36 @@ class AccountTest extends UnitTestCase
 
         self::assertTrue($this->account->getRoles()->has($this->administratorRole));
         self::assertTrue($this->account->getRoles()->has($this->customerRole));
+    }
+
+    /**
+     * @test
+     */
+    public function getRoleIdentifiersReturnsRoleIdentifiersInstance()
+    {
+        self::assertTrue($this->account->getRoleIdentifiers() instanceof RoleIdentifiers);
+    }
+
+    /**
+     * @test
+     */
+    public function getRoleIdentifiersReturnsRoleIdentifiersOfAssignedRoles()
+    {
+        $this->account->setRoles([$this->administratorRole]);
+
+        self::assertTrue($this->account->getRoleIdentifiers()->has('Neos.Flow:Administrator'));
+    }
+
+    /**
+     * @test
+     */
+    public function getRoleIdentifiersUpdatesIfRoleIsRemoved()
+    {
+        $this->account->setRoles([$this->administratorRole]);
+        self::assertTrue($this->account->getRoleIdentifiers()->has('Neos.Flow:Administrator'));
+
+        $this->account->removeRole($this->administratorRole);
+        self::assertFalse($this->account->getRoleIdentifiers()->has('Neos.Flow:Administrator'));
     }
 
     /**
