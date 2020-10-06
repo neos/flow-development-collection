@@ -14,7 +14,8 @@ class SpyRequestHandler implements RequestHandlerInterface
      */
     protected $handledRequest;
 
-    public function handle(ServerRequestInterface $request): ResponseInterface {
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
         $this->handledRequest = $request;
         return new Response();
     }
