@@ -57,7 +57,7 @@ class SessionMiddleware implements MiddlewareInterface
         }
 
         $sessionIdentifier = $cookies[$sessionCookieName];
-        $sessionCookie = $this->prepareCookie($sessionCookieName, $sessionIdentifier);
+        $sessionCookie = $this->prepareCookie((string) $sessionCookieName, (string) $sessionIdentifier);
         $this->sessionManager->initializeCurrentSessionFromCookie($sessionCookie);
         $this->sessionManager->getCurrentSession()->resume();
 

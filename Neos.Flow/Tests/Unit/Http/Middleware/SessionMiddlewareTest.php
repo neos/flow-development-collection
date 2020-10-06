@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Unit\Http\Component;
+namespace Neos\Flow\Tests\Unit\Http\Middleware;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -11,25 +11,26 @@ namespace Neos\Flow\Tests\Unit\Http\Component;
  * source code.
  */
 
-use Neos\Flow\Http\Component\ComponentContext;
+use Psr\Http\Server\RequestHandlerInterface;
 use Neos\Flow\Http\Cookie;
-use Neos\Flow\Session\Http\SessionRequestComponent;
+use Neos\Flow\Http\Middleware\SessionMiddleware;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Test case for the SessionRequestComponent
  */
-class SessionRequestComponentTest extends UnitTestCase
+class SessionMiddlewareTest extends UnitTestCase
 {
 
     /**
-     * @var SessionRequestComponent
+     * @var SessionMiddleware
      */
-    private $sessionRequestComponent;
+    private $sessionMiddleware;
 
     /**
      * @var SessionManager|MockObject
@@ -42,10 +43,9 @@ class SessionRequestComponentTest extends UnitTestCase
     private $mockHttpRequest;
 
     /**
-     * @var ComponentContext|MockObject
+     * @var RequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $mockComponentContext;
-
+    protected $mockHttpRequestHandler;
     /**
      * @var array
      */
@@ -60,19 +60,17 @@ class SessionRequestComponentTest extends UnitTestCase
 
     public function setUp(): void
     {
-        $this->sessionRequestComponent = new SessionRequestComponent();
+        $this->sessionMiddleware = new SessionMiddleware();
 
         $this->mockSessionManager = $this->getMockBuilder(SessionManager::class)->disableOriginalConstructor()->getMock();
         $this->mockSessionManager->method('getCurrentSession')->willReturn($this->getMockBuilder(SessionInterface::class)->getMock());
-        $this->inject($this->sessionRequestComponent, 'sessionManager', $this->mockSessionManager);
+        $this->inject($this->sessionMiddleware, 'sessionManager', $this->mockSessionManager);
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
-
-        $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockComponentContext->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockHttpRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->disableOriginalConstructor()->getMock();
 
 
-        $this->inject($this->sessionRequestComponent, 'sessionSettings', [
+        $this->inject($this->sessionMiddleware, 'sessionSettings', [
             'name' => 'session_cookie_name',
             'cookie' => $this->defaultSessionCookieSettings,
         ]);
@@ -89,7 +87,7 @@ class SessionRequestComponentTest extends UnitTestCase
             self::assertSame('session_cookie_name', $cookie->getName());
         });
 
-        $this->sessionRequestComponent->handle($this->mockComponentContext);
+        $this->sessionMiddleware->process($this->mockHttpRequest, $this->mockHttpRequestHandler);
     }
 
     /**
@@ -106,7 +104,7 @@ class SessionRequestComponentTest extends UnitTestCase
             self::assertSame('session_cookie_name', $cookie->getName());
         });
 
-        $this->sessionRequestComponent->handle($this->mockComponentContext);
+        $this->sessionMiddleware->process($this->mockHttpRequest, $this->mockHttpRequestHandler);
     }
 
     /**
@@ -122,7 +120,7 @@ class SessionRequestComponentTest extends UnitTestCase
             self::assertSame('session_cookie_name', $cookie->getName());
         });
 
-        $this->sessionRequestComponent->handle($this->mockComponentContext);
+        $this->sessionMiddleware->process($this->mockHttpRequest, $this->mockHttpRequestHandler);
     }
 
     /**
@@ -138,7 +136,7 @@ class SessionRequestComponentTest extends UnitTestCase
             self::assertSame('session_cookie_name', $cookie->getName());
         });
 
-        $this->sessionRequestComponent->handle($this->mockComponentContext);
+        $this->sessionMiddleware->process($this->mockHttpRequest, $this->mockHttpRequestHandler);
     }
 
     public function sessionCookieSettingsProvider(): array
@@ -164,7 +162,7 @@ class SessionRequestComponentTest extends UnitTestCase
     {
         $this->mockHttpRequest->method('getCookieParams')->willReturn(['session_cookie_name' => 'session-id']);
 
-        $this->inject($this->sessionRequestComponent, 'sessionSettings', [
+        $this->inject($this->sessionMiddleware, 'sessionSettings', [
             'name' => 'session_cookie_name',
             'cookie' => array_merge($this->defaultSessionCookieSettings, $sessionCookieSettings),
         ]);
@@ -173,7 +171,7 @@ class SessionRequestComponentTest extends UnitTestCase
             self::assertSame($expectedCookie, (string)$cookie);
         });
 
-        $this->sessionRequestComponent->handle($this->mockComponentContext);
+        $this->sessionMiddleware->process($this->mockHttpRequest, $this->mockHttpRequestHandler);
     }
 
     public function cookieValueDataProvider(): array
@@ -211,6 +209,6 @@ class SessionRequestComponentTest extends UnitTestCase
             self::assertSame($expectedNewCookieValue, $cookie->getValue());
         });
 
-        $this->sessionRequestComponent->handle($this->mockComponentContext);
+        $this->sessionMiddleware->process($this->mockHttpRequest, $this->mockHttpRequestHandler);
     }
 }
