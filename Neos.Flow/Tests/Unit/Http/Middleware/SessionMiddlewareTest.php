@@ -18,7 +18,6 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
