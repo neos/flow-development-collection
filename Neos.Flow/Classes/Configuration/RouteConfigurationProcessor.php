@@ -212,7 +212,7 @@ class RouteConfigurationProcessor
      *
      * @param string|array $value
      * @param array $variables
-     * @return string
+     * @return mixed
      */
     protected function replacePlaceholders($value, array $variables)
     {
