@@ -193,16 +193,10 @@ class RouteConfigurationProcessor
                     $mergedSubRouteConfiguration['uriPattern'] = rtrim($this->replacePlaceholders($routeConfiguration['uriPattern'], [$subRouteKey => '']), '/');
                 }
                 if (isset($mergedSubRouteConfiguration['defaults'])) {
-                    foreach ($mergedSubRouteConfiguration['defaults'] as $key => $defaultValue) {
-                        $mergedSubRouteConfiguration['defaults'][$key] = $this->replacePlaceholders($defaultValue, $variables);
-                    }
+                    $mergedSubRouteConfiguration['defaults'] = $this->replacePlaceholders($mergedSubRouteConfiguration['defaults'], $variables);
                 }
                 if (isset($mergedSubRouteConfiguration['routeParts'])) {
-                    foreach ($mergedSubRouteConfiguration['routeParts'] as $routePartKey => $routePartValue) {
-                        foreach ($mergedSubRouteConfiguration['routeParts'][$routePartKey]['options'] ?? [] as $optionKey => $optionValue) {
-                            $mergedSubRouteConfiguration['routeParts'][$routePartKey]['options'][$optionKey] = $this->replacePlaceholders($optionValue, $variables);
-                        }
-                    }
+                    $mergedSubRouteConfiguration['routeParts'] = $this->replacePlaceholders($mergedSubRouteConfiguration['routeParts'], $variables);
                 }
                 $mergedSubRouteConfiguration = Arrays::arrayMergeRecursiveOverrule($routeConfiguration, $mergedSubRouteConfiguration);
                 unset($mergedSubRouteConfiguration['subRoutes']);
@@ -216,16 +210,21 @@ class RouteConfigurationProcessor
     /**
      * Replaces placeholders in the format <variableName> with the corresponding variable of the specified $variables collection.
      *
-     * @param string $string
+     * @param string|array $value
      * @param array $variables
      * @return string
      */
-    protected function replacePlaceholders($string, array $variables)
+    protected function replacePlaceholders($value, array $variables)
     {
-        foreach ($variables as $variableName => $variableValue) {
-            $string = str_replace('<' . $variableName . '>', $variableValue, $string);
+        if (is_array($value)) {
+            foreach($value as $arrayKey => $arrayValue) {
+                $value[$arrayKey] = $this->replacePlaceholders($arrayValue, $variables);
+            }
+        } elseif (is_string($value)) {
+            foreach ($variables as $variableName => $variableValue) {
+                $value = str_replace('<' . $variableName . '>', $variableValue, $value);
+            }
         }
-
-        return $string;
+        return $value;
     }
 }

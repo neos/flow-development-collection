@@ -1441,7 +1441,58 @@ EOD;
         $routeConfigurationProcessor = $this->getAccessibleMock(RouteConfigurationProcessor::class, ['dummy'], [], '', false);
         $actualResult = $routeConfigurationProcessor->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', $subRouteOptions);
 
-        self::assertEquals($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function buildSubrouteConfigurationsWontReplaceNonStringValues()
+    {
+        $routesConfiguration = [
+            [
+                'name' => 'Root',
+                'uriPattern' => '<Subroutes>',
+            ]
+        ];
+        $subRouteOptions = [
+            'package' => 'Subroutes',
+            'variables' => [
+                'suffix' => '.html',
+            ]
+        ];
+        $subRoutesConfiguration = [
+            [
+                'name' => 'SubRoute',
+                'uriPattern' => '{foo}<suffix>',
+                'routeParts' => [
+                    'foo' => [
+                        'handler' => 'Some\RoutePart\Handler',
+                        'options' => [
+                            'someOption' => true
+                        ],
+                    ],
+                ],
+            ]
+        ];
+        $expectedResult = [
+            [
+                'name' => 'Root :: SubRoute',
+                'uriPattern' => '{foo}.html',
+                'routeParts' => [
+                    'foo' => [
+                        'handler' => 'Some\RoutePart\Handler',
+                        'options' => [
+                            'someOption' => true
+                        ],
+                    ],
+                ],
+            ]
+        ];
+        $routeConfigurationProcessor = $this->getAccessibleMock(RouteConfigurationProcessor::class, ['dummy'], [], '', false);
+        $actualResult = $routeConfigurationProcessor->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'Subroutes', $subRouteOptions);
+
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
