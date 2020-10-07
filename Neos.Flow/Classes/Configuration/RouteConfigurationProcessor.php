@@ -217,7 +217,7 @@ class RouteConfigurationProcessor
     protected function replacePlaceholders($value, array $variables)
     {
         if (is_array($value)) {
-            foreach($value as $arrayKey => $arrayValue) {
+            foreach ($value as $arrayKey => $arrayValue) {
                 $value[$arrayKey] = $this->replacePlaceholders($arrayValue, $variables);
             }
         } elseif (is_string($value)) {
