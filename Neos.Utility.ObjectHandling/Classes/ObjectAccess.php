@@ -12,7 +12,6 @@ namespace Neos\Utility;
  */
 
 use Neos\Utility\Exception\PropertyNotAccessibleException;
-use Neos\Utility\TypeHandling;
 
 /**
  * Provides methods to call appropriate getter/setter on an object given the
@@ -256,7 +255,7 @@ abstract class ObjectAccess
             } else {
                 $subject->$propertyName = $propertyValue;
             }
-        } elseif (is_callable(array($subject, $setterMethodName = self::buildSetterMethodName($propertyName)))) {
+        } elseif (is_callable([$subject, $setterMethodName = self::buildSetterMethodName($propertyName)])) {
             $subject->$setterMethodName($propertyValue);
         } elseif ($subject instanceof \ArrayAccess) {
             $subject[$propertyName] = $propertyValue;

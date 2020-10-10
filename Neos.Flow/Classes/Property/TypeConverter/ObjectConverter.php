@@ -90,7 +90,7 @@ class ObjectConverter extends AbstractTypeConverter
      *
      * @var array
      */
-    protected $methodNamesFirstLevelCache = array();
+    protected $methodNamesFirstLevelCache = [];
 
     /**
      * @var RulesetInflector
@@ -373,7 +373,8 @@ class ObjectConverter extends AbstractTypeConverter
      * @param string $propertyName
      * @return string
      */
-    protected function singularize(string $propertyName): string {
+    protected function singularize(string $propertyName): string
+    {
         if ($this->methodNameInflector === null) {
             $this->methodNameInflector = new RulesetInflector(
                 ...English\Rules::getSingularRuleset()
