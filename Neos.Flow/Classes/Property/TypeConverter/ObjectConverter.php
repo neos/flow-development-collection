@@ -11,7 +11,8 @@ namespace Neos\Flow\Property\TypeConverter;
  * source code.
  */
 
-use Doctrine\Common\Util\Inflector;
+use Doctrine\Inflector\Rules\English;
+use Doctrine\Inflector\RulesetInflector;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -90,6 +91,11 @@ class ObjectConverter extends AbstractTypeConverter
      * @var array
      */
     protected $methodNamesFirstLevelCache = array();
+
+    /**
+     * @var RulesetInflector
+     */
+    protected $methodNameInflector;
 
     /**
      * Only convert non-persistent types
@@ -305,12 +311,12 @@ class ObjectConverter extends AbstractTypeConverter
 
     /**
      * Check if the given $property is any type that can be assigned to a collection type property and $subject
-     * has add* and remove* methods for that property.
+     * has add* and remove* methods but no setter for that property.
      *
      * @param mixed $subject The subject to check the collection property on
      * @param string $propertyName The property name of the collection property
      * @param mixed $propertyValue The new value for the collection property
-     * @return boolean TRUE if $value is either NULL or any collection Type and $subject has both an add* and remove* method for this property
+     * @return boolean TRUE if $value is either NULL or any collection Type and $subject has both an add* and remove* method but no setter for this property
      */
     protected function isCollectionPropertyWithAddRemoveMethods($subject, $propertyName, $propertyValue)
     {
@@ -323,7 +329,9 @@ class ObjectConverter extends AbstractTypeConverter
             return false;
         }
 
-        return is_callable(array($subject, $this->buildAdderMethodName($propertyName))) && is_callable(array($subject, $this->buildRemoverMethodName($propertyName)));
+        return !is_callable([$subject, $this->buildSetterMethodName($propertyName)])
+                && is_callable([$subject, $this->buildAdderMethodName($propertyName)])
+                && is_callable([$subject, $this->buildRemoverMethodName($propertyName)]);
     }
 
     /**
@@ -332,10 +340,10 @@ class ObjectConverter extends AbstractTypeConverter
      * @param mixed $propertyValue The new value to change the collection property to
      * @return boolean
      */
-    protected function updateCollectionWithAddRemoveCalls($subject, $propertyName, $propertyValue)
+    protected function updateCollectionWithAddRemoveCalls($subject, string $propertyName, $propertyValue): bool
     {
         $itemsToAdd = ($propertyValue instanceof \Traversable) ? iterator_to_array($propertyValue) : (array)$propertyValue;
-        $itemsToRemove = array();
+        $itemsToRemove = [];
         $currentValue = ObjectAccess::getProperty($subject, $propertyName);
         $currentValue = ($currentValue instanceof \Traversable) ? iterator_to_array($currentValue) : (array)$currentValue;
         foreach ($currentValue as $currentItem) {
@@ -362,16 +370,44 @@ class ObjectConverter extends AbstractTypeConverter
     }
 
     /**
+     * @param string $propertyName
+     * @return string
+     */
+    protected function singularize(string $propertyName): string {
+        if ($this->methodNameInflector === null) {
+            $this->methodNameInflector = new RulesetInflector(
+                ...English\Rules::getSingularRuleset()
+            );
+        }
+        return $this->methodNameInflector->inflect($propertyName);
+    }
+
+    /**
+     * Build the setter method name for a given property by capitalizing the first letter of the property,
+     * then prepending it with "set".
+     *
+     * @param string $propertyName Name of the property
+     * @return string Name of the setter method name
+     */
+    protected function buildSetterMethodName(string $propertyName): string
+    {
+        if (!isset($this->methodNamesFirstLevelCache['set'][$propertyName])) {
+            $this->methodNamesFirstLevelCache['set'][$propertyName] =  'set' . ucfirst($propertyName);
+        }
+        return $this->methodNamesFirstLevelCache['set'][$propertyName];
+    }
+
+    /**
      * Build the remover method name for a given property by singularizing the name
      * and capitalizing the first letter of the property, then prepending it with "remove".
      *
      * @param string $propertyName Name of the property
      * @return string Name of the remover method name
      */
-    protected function buildRemoverMethodName($propertyName)
+    protected function buildRemoverMethodName(string $propertyName): string
     {
         if (!isset($this->methodNamesFirstLevelCache['remove'][$propertyName])) {
-            $this->methodNamesFirstLevelCache['remove'][$propertyName] =  'remove' . ucfirst(Inflector::singularize($propertyName));
+            $this->methodNamesFirstLevelCache['remove'][$propertyName] =  'remove' . ucfirst($this->singularize($propertyName));
         }
         return $this->methodNamesFirstLevelCache['remove'][$propertyName];
     }
@@ -383,10 +419,10 @@ class ObjectConverter extends AbstractTypeConverter
      * @param string $propertyName Name of the property
      * @return string Name of the adder method name
      */
-    protected function buildAdderMethodName($propertyName)
+    protected function buildAdderMethodName(string $propertyName): string
     {
         if (!isset($this->methodNamesFirstLevelCache['add'][$propertyName])) {
-            $this->methodNamesFirstLevelCache['add'][$propertyName] =  'add' . ucfirst(Inflector::singularize($propertyName));
+            $this->methodNamesFirstLevelCache['add'][$propertyName] =  'add' . ucfirst($this->singularize($propertyName));
         }
         return $this->methodNamesFirstLevelCache['add'][$propertyName];
     }
