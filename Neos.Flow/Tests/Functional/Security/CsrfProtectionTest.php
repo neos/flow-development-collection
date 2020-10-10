@@ -57,13 +57,17 @@ class CsrfProtectionTest extends FunctionalTestCase
             '@format' => 'html'
         ]);
 
-        $this->registerRoute('controller', 'test/security/restricted(/{@action})', [
+        $this->registerRoute(
+            'controller',
+            'test/security/restricted(/{@action})',
+            [
             '@package' => 'Neos.Flow',
             '@subpackage' => 'Tests\Functional\Security\Fixtures',
             '@controller' => 'Restricted',
             '@action' => 'public',
             '@format' =>'html'
-            ], true
+            ],
+            true
         );
     }
 
