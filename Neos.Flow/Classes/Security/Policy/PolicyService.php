@@ -225,7 +225,9 @@ class PolicyService
      *
      * @param string $roleIdentifier The role identifier of the role, format: (<PackageKey>:)<Role>
      * @return Role
+     * @throws InvalidConfigurationTypeException
      * @throws NoSuchRoleException
+     * @throws SecurityException
      */
     public function getRole(string $roleIdentifier): Role
     {

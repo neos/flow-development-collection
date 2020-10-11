@@ -396,6 +396,7 @@ class Context
      * @return Role[]
      * @throws Exception
      * @throws Exception\NoSuchRoleException
+     * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
      */
     public function getRoles()
     {
@@ -409,7 +410,7 @@ class Context
 
         $this->roles = ['Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody')];
 
-        $authenticatedTokens = array_filter($this->getAuthenticationTokens(), function (TokenInterface $token) {
+        $authenticatedTokens = array_filter($this->getAuthenticationTokens(), static function (TokenInterface $token) {
             return $token->isAuthenticated();
         });
 
