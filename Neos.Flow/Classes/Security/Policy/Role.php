@@ -47,9 +47,23 @@ class Role
     /**
      * Whether or not the role is "abstract", meaning it can't be assigned to accounts directly but only serves as a "template role" for other roles to inherit from
      *
-     * @var boolean
+     * @var bool
      */
     protected $abstract = false;
+
+    /**
+     * A human readable label for this role
+     *
+     * @var string
+     */
+    protected $label;
+
+    /**
+     * A description for this role
+     *
+     * @var string
+     */
+    protected $description;
 
     /**
      * @Flow\Transient
@@ -75,6 +89,7 @@ class Role
         $this->identifier = $identifier;
         $this->packageKey = $matches[1];
         $this->name = $matches[2];
+        $this->label = $matches[2];
         $this->parentRoles = $parentRoles;
     }
 
@@ -265,5 +280,37 @@ class Role
     public function __toString()
     {
         return $this->identifier;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    /**
+     * @param string $label
+     */
+    public function setLabel(string $label): void
+    {
+        $this->label = $label;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
     }
 }
