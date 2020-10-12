@@ -19,9 +19,9 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 /**
  * A role. These roles can be structured in a tree.
  */
-class Role
+final class Role
 {
-    protected const ROLE_IDENTIFIER_PATTERN = '/^(\w+(?:\.\w+)*)\:(\w+)$/';   // Vendor(.Package)?:RoleName
+    private const ROLE_IDENTIFIER_PATTERN = '/^(\w+(?:\.\w+)*)\:(\w+)$/';   // Vendor(.Package)?:RoleName
 
     /**
      * The identifier of this role

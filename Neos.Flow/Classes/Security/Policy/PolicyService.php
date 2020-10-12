@@ -291,7 +291,7 @@ class PolicyService
      * Returns the privilege target identified by the given string
      *
      * @param string $privilegeTargetIdentifier Identifier of a privilege target
-     * @return PrivilegeTarget
+     * @return PrivilegeTarget|null
      * @throws InvalidConfigurationTypeException
      * @throws SecurityException
      */

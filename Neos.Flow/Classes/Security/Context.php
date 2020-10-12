@@ -19,6 +19,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Session\SessionManagerInterface;
@@ -396,7 +397,7 @@ class Context
      * @return Role[]
      * @throws Exception
      * @throws Exception\NoSuchRoleException
-     * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
+     * @throws InvalidConfigurationTypeException
      */
     public function getRoles()
     {
