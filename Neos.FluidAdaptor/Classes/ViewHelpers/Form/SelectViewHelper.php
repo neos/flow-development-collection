@@ -257,7 +257,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
                         '$optionValueField must be provided for array $options',
                         1602432325183
                     );
-                } elseif (!$this->persistenceManager->isNewObject($value)) {
+                } elseif ($this->persistenceManager->getIdentifierByObject($value) !== null) {
                     $key = $this->persistenceManager->getIdentifierByObject($value);
                 } elseif (method_exists($value, '__toString')) {
                     $key = (string)$value;
@@ -281,7 +281,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
                     );
                 } elseif (method_exists($value, '__toString')) {
                     $value = (string)$value;
-                } elseif (!$this->persistenceManager->isNewObject($value)) {
+                } elseif ($this->persistenceManager->getIdentifierByObject($value) !== null) {
                     $value = $this->persistenceManager->getIdentifierByObject($value);
                 }
             }

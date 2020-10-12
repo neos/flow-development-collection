@@ -510,7 +510,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     public function selectOnDomainObjectsThrowsExceptionIfNoValueCanBeFound()
     {
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects(static::once())->method('isNewObject')->willReturn(true);
+        $mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue(null));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
         $user = new \Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass(1, 'Ingmar', 'Schlecht');
