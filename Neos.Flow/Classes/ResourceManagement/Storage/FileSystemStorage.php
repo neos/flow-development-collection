@@ -167,6 +167,10 @@ class FileSystemStorage implements StorageInterface
             }
             $iteration++;
         }
+        if ($iteration === 0) {
+            // required because if the collection is empty, this should still return an empty generator
+            yield from [];
+        }
     }
 
     /**
