@@ -131,12 +131,12 @@ class FileSystemStorage implements StorageInterface
      * Retrieve all Objects stored in this storage.
      *
      * @param callable $callback Function called after each iteration
-     * @return \Generator<Object>
+     * @return \Generator<StorageObject>
      */
     public function getObjects(callable $callback = null)
     {
         foreach ($this->resourceManager->getCollectionsByStorage($this) as $collection) {
-            yield $this->getObjectsByCollection($collection, $callback);
+            yield from $this->getObjectsByCollection($collection, $callback);
         }
     }
 
@@ -145,7 +145,7 @@ class FileSystemStorage implements StorageInterface
      *
      * @param callable $callback Function called after each iteration
      * @param CollectionInterface $collection
-     * @return \Generator<Object>
+     * @return \Generator<StorageObject>
      */
     public function getObjectsByCollection(CollectionInterface $collection, callable $callback = null)
     {
