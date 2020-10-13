@@ -91,7 +91,8 @@ class RouteTest extends UnitTestCase
      * @return bool
      * @throws InvalidRoutePartValueException
      */
-    protected function resolveRouteValues(array $routeValues) {
+    protected function resolveRouteValues(array $routeValues)
+    {
         $baseUri = new Uri('http://localhost/');
         $resolveContext = new Routing\Dto\ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty());
         return $this->route->resolves($resolveContext);
