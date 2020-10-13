@@ -1012,7 +1012,7 @@ class RouteTest extends UnitTestCase
         );
         $this->routeValues = ['part1' => 'some-value'];
         $mockRoutePartHandler = new MockRoutePartHandler();
-        $mockRoutePartHandler->setResolveClosure(static function() {
+        $mockRoutePartHandler->setResolveClosure(static function () {
             return new ResolveResult('', UriConstraints::create()->withQueryString('some=query[string]'));
         });
         $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
@@ -1050,7 +1050,7 @@ class RouteTest extends UnitTestCase
         );
         $this->routeValues = ['part1' => 'some-value', 'exceeding' => 'argument'];
         $mockRoutePartHandler = new MockRoutePartHandler();
-        $mockRoutePartHandler->setResolveClosure(static function() {
+        $mockRoutePartHandler->setResolveClosure(static function () {
             return new ResolveResult('', UriConstraints::create()->withQueryString('some=query[string]'));
         });
         $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
@@ -1075,7 +1075,7 @@ class RouteTest extends UnitTestCase
         );
         $this->routeValues = ['part1' => 'some-value', 'exceeding' => 'argument'];
         $mockRoutePartHandler = new MockRoutePartHandler();
-        $mockRoutePartHandler->setResolveClosure(static function() {
+        $mockRoutePartHandler->setResolveClosure(static function () {
             return new ResolveResult('', UriConstraints::fromUri(new Uri('https://neos.io:8080/some/path?some[query]=string#some-fragment')));
         });
         $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
