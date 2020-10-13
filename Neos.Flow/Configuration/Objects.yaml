@@ -367,6 +367,10 @@ Doctrine\ORM\EntityManagerInterface:
   scope: singleton
   factoryObjectName: Neos\Flow\Persistence\Doctrine\EntityManagerFactory
 
+Doctrine\DBAL\Connection:
+  scope: singleton
+  factoryObjectName: Neos\Flow\Persistence\Doctrine\ConnectionFactory
+
 Neos\Flow\Persistence\PersistenceManagerInterface:
   className: Neos\Flow\Persistence\Doctrine\PersistenceManager
 
