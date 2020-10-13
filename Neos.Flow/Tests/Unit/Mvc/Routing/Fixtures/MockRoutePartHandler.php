@@ -18,15 +18,44 @@ use Neos\Flow\Mvc\Routing\DynamicRoutePart;
  */
 class MockRoutePartHandler extends DynamicRoutePart
 {
+
+    /**
+     * @var \Closure|null
+     */
+    private $matchValueClosure;
+
+    /**
+     * @var \Closure|null
+     */
+    private $resolveValueClosure;
+
+    public function __construct(\Closure $matchValueClosure = null, \Closure $resolveValueClosure = null)
+    {
+        $this->matchValueClosure = $matchValueClosure;
+        $this->resolveValueClosure = $resolveValueClosure;
+    }
+
     protected function matchValue($value)
     {
-        $this->value = '_match_invoked_';
-        return true;
+        if ($this->matchValueClosure !== null) {
+            $result = call_user_func($this->matchValueClosure, $value, $this->parameters);
+            if ($result !== null) {
+                $this->value = $result;
+                return true;
+            }
+        }
+        return false;
     }
 
     protected function resolveValue($value)
     {
-        $this->value = '_resolve_invoked_';
-        return true;
+        if ($this->resolveValueClosure !== null) {
+            $result = call_user_func($this->resolveValueClosure, $value, $this->parameters);
+            if ($result !== null) {
+                $this->value = $result;
+                return true;
+            }
+        }
+        return false;
     }
 }

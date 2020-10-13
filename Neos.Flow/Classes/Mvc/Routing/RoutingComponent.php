@@ -65,7 +65,9 @@ class RoutingComponent implements ComponentInterface
         if ($parameters === null) {
             $parameters = RouteParameters::createEmpty();
         }
-        $routeContext = new RouteContext($componentContext->getHttpRequest(), $parameters);
+        $httpRequest = $componentContext->getHttpRequest();
+        $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, $parameters);
+        $routeContext = new RouteContext($httpRequest, $parameters);
 
         try {
             $matchResults = $this->router->route($routeContext);
@@ -78,7 +80,7 @@ class RoutingComponent implements ComponentInterface
         }
 
         $componentContext->setParameter(RoutingComponent::class, 'matchResults', $matchResults);
-        $httpRequest = $componentContext->getHttpRequest()->withAttribute(ServerRequestAttributes::ROUTING_RESULTS, $matchResults);
+        $httpRequest = $httpRequest->withAttribute(ServerRequestAttributes::ROUTING_RESULTS, $matchResults);
         $componentContext->replaceHttpRequest($httpRequest);
     }
 }
