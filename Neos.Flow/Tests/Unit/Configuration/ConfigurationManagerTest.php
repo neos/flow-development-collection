@@ -1367,20 +1367,28 @@ EOD;
         $subRouteOptions = [
             'package' => 'Welcome',
             'variables' => [
-                'someVariable' => 'someValue'
+                'someVariable' => 'someValue',
+                'someOtherVariable' => 'someOtherValue'
             ]
         ];
         $subRoutesConfiguration = [
             [
                 'name' => 'Standard Route',
-                'uriPattern' => 'foo',
+                'uriPattern' => '{foo}',
                 'defaults' => [
                     '@package' => 'OverriddenPackage',
                     '@controller' => 'Standard',
                     '@action' => '<someVariable>'
-                ]
-            ],
-            [
+                ],
+                'routeParts' => [
+                    'foo' => [
+                        'handler' => 'Some\RoutePart\Handler',
+                        'options' => [
+                            'someOption' => '<someOtherVariable>'
+                        ],
+                    ],
+                ],
+            ], [
                 'name' => 'Fallback',
                 'uriPattern' => '',
                 'defaults' => [
@@ -1390,7 +1398,7 @@ EOD;
                       '@package' => '',
                       '@subpackage' => '',
                       '@controller' => '',
-                      '@action' => 'index',
+                      '@action' => '<someOtherVariable>',
                       'currentPage' => '1'
                     ]
                 ],
@@ -1399,14 +1407,21 @@ EOD;
         $expectedResult = [
             [
                 'name' => 'Welcome :: Standard Route',
-                'uriPattern' => 'welcome/foo',
+                'uriPattern' => 'welcome/{foo}',
                 'defaults' => [
                     '@package' => 'OverriddenPackage',
                     '@controller' => 'Standard',
                     '@action' => 'someValue'
                 ],
-            ],
-            [
+                'routeParts' => [
+                    'foo' => [
+                        'handler' => 'Some\RoutePart\Handler',
+                        'options' => [
+                            'someOption' => 'someOtherValue'
+                        ],
+                    ],
+                ],
+            ], [
                 'name' => 'Welcome :: Fallback',
                 'uriPattern' => 'welcome',
                 'defaults' => [
@@ -1417,7 +1432,7 @@ EOD;
                         '@package' => '',
                         '@subpackage' => '',
                         '@controller' => '',
-                        '@action' => 'index',
+                        '@action' => 'someOtherValue',
                         'currentPage' => '1'
                     ]
                 ],
@@ -1426,7 +1441,58 @@ EOD;
         $routeConfigurationProcessor = $this->getAccessibleMock(RouteConfigurationProcessor::class, ['dummy'], [], '', false);
         $actualResult = $routeConfigurationProcessor->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes', $subRouteOptions);
 
-        self::assertEquals($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function buildSubrouteConfigurationsWontReplaceNonStringValues()
+    {
+        $routesConfiguration = [
+            [
+                'name' => 'Root',
+                'uriPattern' => '<Subroutes>',
+            ]
+        ];
+        $subRouteOptions = [
+            'package' => 'Subroutes',
+            'variables' => [
+                'suffix' => '.html',
+            ]
+        ];
+        $subRoutesConfiguration = [
+            [
+                'name' => 'SubRoute',
+                'uriPattern' => '{foo}<suffix>',
+                'routeParts' => [
+                    'foo' => [
+                        'handler' => 'Some\RoutePart\Handler',
+                        'options' => [
+                            'someOption' => true
+                        ],
+                    ],
+                ],
+            ]
+        ];
+        $expectedResult = [
+            [
+                'name' => 'Root :: SubRoute',
+                'uriPattern' => '{foo}.html',
+                'routeParts' => [
+                    'foo' => [
+                        'handler' => 'Some\RoutePart\Handler',
+                        'options' => [
+                            'someOption' => true
+                        ],
+                    ],
+                ],
+            ]
+        ];
+        $routeConfigurationProcessor = $this->getAccessibleMock(RouteConfigurationProcessor::class, ['dummy'], [], '', false);
+        $actualResult = $routeConfigurationProcessor->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'Subroutes', $subRouteOptions);
+
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**

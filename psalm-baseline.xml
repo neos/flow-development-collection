@@ -687,6 +687,9 @@
     <PossiblyUndefinedMethod occurrences="1">
       <code>matchesMethod</code>
     </PossiblyUndefinedMethod>
+    <PossiblyNullReference occurrences="1">
+      <code>createPrivilege</code>
+    </PossiblyNullReference>
     <PropertyTypeCoercion occurrences="1">
       <code>$cacheManager-&gt;getCache('Flow_Security_Authorization_Privilege_Method')</code>
     </PropertyTypeCoercion>

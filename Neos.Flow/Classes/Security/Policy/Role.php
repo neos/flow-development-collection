@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Security\Policy;
 
 /*
@@ -19,7 +21,7 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
  */
 class Role
 {
-    const ROLE_IDENTIFIER_PATTERN = '/^(\w+(?:\.\w+)*)\:(\w+)$/';   // Vendor(.Package)?:RoleName
+    private const ROLE_IDENTIFIER_PATTERN = '/^(\w+(?:\.\w+)*)\:(\w+)$/';   // Vendor(.Package)?:RoleName
 
     /**
      * The identifier of this role
@@ -65,11 +67,8 @@ class Role
      * @param Role[] $parentRoles
      * @throws \InvalidArgumentException
      */
-    public function __construct($identifier, array $parentRoles = [])
+    public function __construct(string $identifier, array $parentRoles = [])
     {
-        if (!is_string($identifier)) {
-            throw new \InvalidArgumentException('The role identifier must be a string, "' . gettype($identifier) . '" given. Please check the code or policy configuration creating or defining this role.', 1296509556);
-        }
         if (preg_match(self::ROLE_IDENTIFIER_PATTERN, $identifier, $matches) !== 1) {
             throw new \InvalidArgumentException('The role identifier must follow the pattern "Vendor.Package:RoleName", but "' . $identifier . '" was given. Please check the code or policy configuration creating or defining this role.', 1365446549);
         }
@@ -84,7 +83,7 @@ class Role
      *
      * @return string
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
@@ -94,7 +93,7 @@ class Role
      *
      * @return string
      */
-    public function getPackageKey()
+    public function getPackageKey(): string
     {
         return $this->packageKey;
     }
@@ -104,16 +103,16 @@ class Role
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @param boolean $abstract
+     * @param bool $abstract
      * @return void
      */
-    public function setAbstract($abstract)
+    public function setAbstract(bool $abstract): void
     {
         $this->abstract = $abstract;
     }
@@ -121,9 +120,9 @@ class Role
     /**
      * Whether or not this role is "abstract", meaning it can't be assigned to accounts directly but only serves as a "template role" for other roles to inherit from
      *
-     * @return boolean
+     * @return bool
      */
-    public function isAbstract()
+    public function isAbstract(): bool
     {
         return $this->abstract;
     }
@@ -134,7 +133,7 @@ class Role
      * @param Role[] $parentRoles indexed by role identifier
      * @return void
      */
-    public function setParentRoles(array $parentRoles)
+    public function setParentRoles(array $parentRoles): void
     {
         $this->parentRoles = [];
         foreach ($parentRoles as $parentRole) {
@@ -147,7 +146,7 @@ class Role
      *
      * @return Role[] Array of direct parent roles, indexed by role identifier
      */
-    public function getParentRoles()
+    public function getParentRoles(): array
     {
         return $this->parentRoles;
     }
@@ -157,9 +156,9 @@ class Role
      *
      * @return Role[] Array of parent roles, indexed by role identifier
      */
-    public function getAllParentRoles()
+    public function getAllParentRoles(): array
     {
-        $reducer = function (array $result, Role $role) {
+        $reducer = static function (array $result, Role $role) {
             $result[$role->getIdentifier()] = $role;
             return array_merge($result, $role->getAllParentRoles());
         };
@@ -173,7 +172,7 @@ class Role
      * @param Role $parentRole
      * @return void
      */
-    public function addParentRole(Role $parentRole)
+    public function addParentRole(Role $parentRole): void
     {
         if (!$this->hasParentRole($parentRole)) {
             $parentRoleIdentifier = $parentRole->getIdentifier();
@@ -185,9 +184,9 @@ class Role
      * Returns true if the given role is a directly assigned parent of this role.
      *
      * @param Role $role
-     * @return boolean
+     * @return bool
      */
-    public function hasParentRole(Role $role)
+    public function hasParentRole(Role $role): bool
     {
         return isset($this->parentRoles[$role->getIdentifier()]);
     }
@@ -198,7 +197,7 @@ class Role
      * @param PrivilegeInterface[] $privileges
      * @return void
      */
-    public function setPrivileges(array $privileges)
+    public function setPrivileges(array $privileges): void
     {
         foreach ($privileges as $privilege) {
             $this->privileges[$privilege->getCacheEntryIdentifier()] = $privilege;
@@ -208,7 +207,7 @@ class Role
     /**
      * @return PrivilegeInterface[] Array of privileges assigned to this role
      */
-    public function getPrivileges()
+    public function getPrivileges(): array
     {
         return $this->privileges;
     }
@@ -217,7 +216,7 @@ class Role
      * @param string $className Fully qualified name of the Privilege class to filter for
      * @return PrivilegeInterface[]
      */
-    public function getPrivilegesByType($className)
+    public function getPrivilegesByType(string $className): array
     {
         $privileges = [];
         foreach ($this->privileges as $privilege) {
@@ -233,7 +232,7 @@ class Role
      * @param array $privilegeParameters
      * @return PrivilegeInterface the matching privilege or NULL if no privilege exists for the given constraints
      */
-    public function getPrivilegeForTarget($privilegeTargetIdentifier, array $privilegeParameters = [])
+    public function getPrivilegeForTarget(string $privilegeTargetIdentifier, array $privilegeParameters = []): ?PrivilegeInterface
     {
         foreach ($this->privileges as $privilege) {
             if ($privilege->getPrivilegeTargetIdentifier() !== $privilegeTargetIdentifier) {
@@ -253,7 +252,7 @@ class Role
      * @param PrivilegeInterface $privilege
      * @return void
      */
-    public function addPrivilege($privilege)
+    public function addPrivilege(PrivilegeInterface $privilege): void
     {
         $this->privileges[$privilege->getCacheEntryIdentifier()] = $privilege;
     }

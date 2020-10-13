@@ -53,7 +53,7 @@ class PrivilegeTarget
      * @param string $matcher
      * @param Parameter\PrivilegeParameterDefinition[] $parameterDefinitions
      */
-    public function __construct($identifier, $privilegeClassName, $matcher, array $parameterDefinitions = [])
+    public function __construct(string $identifier, string $privilegeClassName, string $matcher, array $parameterDefinitions = [])
     {
         $this->identifier = $identifier;
         $this->privilegeClassName = $privilegeClassName;
@@ -67,7 +67,7 @@ class PrivilegeTarget
      * @param ObjectManagerInterface $objectManager
      * @return void
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
@@ -76,7 +76,7 @@ class PrivilegeTarget
     /**
      * @return string
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
@@ -84,7 +84,7 @@ class PrivilegeTarget
     /**
      * @return string
      */
-    public function getPrivilegeClassName()
+    public function getPrivilegeClassName(): string
     {
         return $this->privilegeClassName;
     }
@@ -92,7 +92,7 @@ class PrivilegeTarget
     /**
      * @return string
      */
-    public function getMatcher()
+    public function getMatcher(): string
     {
         return $this->matcher;
     }
@@ -100,15 +100,15 @@ class PrivilegeTarget
     /**
      * @return Parameter\PrivilegeParameterDefinition[]
      */
-    public function getParameterDefinitions()
+    public function getParameterDefinitions(): array
     {
         return $this->parameterDefinitions;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function hasParameters()
+    public function hasParameters(): bool
     {
         return $this->parameterDefinitions !== [];
     }
@@ -119,7 +119,7 @@ class PrivilegeTarget
      * @return PrivilegeInterface
      * @throws SecurityException
      */
-    public function createPrivilege($permission, array $parameters = [])
+    public function createPrivilege(string $permission, array $parameters = []): PrivilegeInterface
     {
         $permission = strtolower($permission);
         if ($permission !== PrivilegeInterface::GRANT && $permission !== PrivilegeInterface::DENY && $permission !== PrivilegeInterface::ABSTAIN) {

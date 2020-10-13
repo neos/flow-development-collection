@@ -281,6 +281,20 @@ controller through the ``ActionRequest`` for inspecting::
 		...
 	}
 
+Alternatively, starting with Flow version 7.0, you can just inject an instance of the PSR-7 ``ServerRequestInterface``::
+
+	public function __construct(\Psr\Http\Message\ServerRequestInterface $httpRequest) {
+		...
+	}
+
+This will inject the currently active ``ServerRequest`` as long as the active request handler is an instance of ``HttpRequestHandlerInterface``.
+Otherwise (for example in CLI context) you'll have to create a new instance::
+
+	public function __construct(LoggerInterface $logger, ServerRequestFactoryInterface $serverRequestFactory)
+	{
+		$this->httpRequest = $serverRequestFactory->createServerRequest('GET', 'http://localhost');
+	}
+
 Creating an ActionRequest
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -307,6 +321,10 @@ to dispatch, such a request is always bound to an HTTP ``ServerRequest``::
         $actionRequest = ActionRequest::fromHttpRequest($requestHandler->getHttpRequest());
         // ...
     }
+
+..note::
+
+  With Flow version 7.0 and higher, you can just inject an instance of the ``ServerRequest`` as described in the previous section
 
 Arguments
 ~~~~~~~~~
