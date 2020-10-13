@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
 use Neos\Flow\I18n\Exception as I18nException;
 use Neos\Flow\I18n\Formatter\NumberFormatter;
