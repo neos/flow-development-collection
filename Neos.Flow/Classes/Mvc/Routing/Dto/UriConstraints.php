@@ -224,7 +224,7 @@ final class UriConstraints
             $existingValues = parse_query($this->constraints[self::CONSTRAINT_QUERY_STRING]);
             $values = Arrays::arrayMergeRecursiveOverrule($existingValues, $values);
         }
-        $newConstraints[self::CONSTRAINT_QUERY_STRING] = http_build_query($values, null, '&');
+        $newConstraints[self::CONSTRAINT_QUERY_STRING] = http_build_query($values, '', '&');
         return new static($newConstraints);
     }
 
