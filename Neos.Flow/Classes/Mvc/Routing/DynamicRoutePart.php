@@ -178,7 +178,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      *
      * @param array $routeValues
      * @param RouteParameters $parameters
-     * @return bool|ResolveResult|void
+     * @return bool|ResolveResult
      */
     final public function resolveWithParameters(array &$routeValues, RouteParameters $parameters)
     {
