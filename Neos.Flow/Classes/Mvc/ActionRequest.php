@@ -353,14 +353,17 @@ class ActionRequest implements RequestInterface
 
         $matches = [];
         $subject = substr($controllerObjectName, strlen($this->controllerPackageKey) + 1);
-        preg_match('/
+        preg_match(
+            '/
 			^(
 				Controller
 			|
 				(?P<subpackageKey>.+)\\\\Controller
 			)
 			\\\\(?P<controllerName>[a-z\\\\]+)Controller
-			$/ix', $subject, $matches
+			$/ix',
+            $subject,
+            $matches
         );
 
         $this->controllerSubpackageKey = $matches['subpackageKey'] ?? null;
