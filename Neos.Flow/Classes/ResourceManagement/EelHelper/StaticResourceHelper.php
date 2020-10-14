@@ -42,7 +42,7 @@ class StaticResourceHelper implements ProtectedContextAwareInterface
      */
     public function uri(string $packageKey, string $pathAndFilename, bool $localize = false): string
     {
-        $resourcePath = sprintf('resource://%s/%s', $packageKey, $pathAndFilename);
+        $resourcePath = $this->getResourcePath($packageKey, $pathAndFilename);
         if ($localize === true) {
             $localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
             $resourcePath = $localizedResourcePathData[0] ?? $resourcePath;
@@ -60,13 +60,25 @@ class StaticResourceHelper implements ProtectedContextAwareInterface
      */
     public function content(string $packageKey, string $pathAndFilename, bool $localize = false): string
     {
-        $resourcePath = sprintf('resource://%s/%s', $packageKey, $pathAndFilename);
+        $resourcePath = $this->getResourcePath($packageKey, $pathAndFilename);
         if ($localize === true) {
             $localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
             $resourcePath = $localizedResourcePathData[0] ?? $resourcePath;
         }
         $content = file_get_contents($resourcePath);
         return $content ?: '';
+    }
+
+    /**
+     * Get a resource://.. url for the given arguments
+     *
+     * @param string $packageKey
+     * @param string $pathAndFilename
+     * @return string
+     */
+    protected function getResourcePath(string $packageKey, string $pathAndFilename): string
+    {
+        return sprintf('resource://%s/%s', $packageKey, $pathAndFilename);
     }
 
     /**
