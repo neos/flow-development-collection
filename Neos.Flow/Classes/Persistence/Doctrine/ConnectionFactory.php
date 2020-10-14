@@ -20,7 +20,7 @@ use Doctrine\ORM\EntityManagerInterface;
  *
  * @Flow\Scope("singleton")
  */
-class ConnectionFactory
+final class ConnectionFactory
 {
     /**
      * @Flow\Inject
