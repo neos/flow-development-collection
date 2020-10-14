@@ -430,18 +430,4 @@ abstract class ObjectAccess
     {
         return 'set' . ucfirst($propertyName);
     }
-
-    /**
-     * Instantiates the class named `$className` using the `$arguments` as constructor
-     * arguments (in array order).
-     *
-     * @param string $className
-     * @param array $arguments
-     * @return object
-     * @deprecated directly use "new $className(...$arguments)" instead
-     */
-    public static function instantiateClass($className, $arguments)
-    {
-        return new $className(...$arguments);
-    }
 }

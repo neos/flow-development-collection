@@ -22,28 +22,4 @@ use Psr\Http\Message\ServerRequestInterface;
  * @api
  */
 interface HttpRequestHandlerInterface extends RequestHandlerInterface
-{
-    /**
-     * Returns the currently processed HTTP request
-     *
-     * @return ServerRequestInterface
-     * @deprecated since 6.0 use getComponentContext()->getHttpRequest() instead
-     */
-    public function getHttpRequest();
-
-    /**
-     * Returns the HTTP response corresponding to the currently handled request
-     *
-     * @return ResponseInterface
-     * @deprecated since 6.0 use getComponentContext()->getHttpResponse() instead
-     */
-    public function getHttpResponse();
-
-    /**
-     * Get the ComponentContext for this request handlers component chain
-     *
-     * @return ComponentContext
-     * @api
-     */
-    public function getComponentContext(): ComponentContext;
-}
+{}

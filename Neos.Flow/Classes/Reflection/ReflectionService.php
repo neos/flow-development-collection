@@ -1198,10 +1198,6 @@ class ReflectionService
         if (isset($this->settings['ignoredTags'][$tagName]) && $this->settings['ignoredTags'][$tagName] === true) {
             return true;
         }
-        // Make this setting backwards compatible with old array schema (deprecated since 3.0)
-        if (in_array($tagName, $this->settings['ignoredTags'], true)) {
-            return true;
-        }
 
         return false;
     }
