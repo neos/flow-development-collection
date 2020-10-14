@@ -137,12 +137,12 @@ class CommandRequestHandler implements RequestHandlerInterface
 
         $this->response->appendContent(
             sprintf(
-            "<b>Unrecognized Command</b>\n\n" .
+                "<b>Unrecognized Command</b>\n\n" .
                 "Sorry, but the command \"%s\" must be specified by its full command\n" .
                 "identifier because it is a compile time command which cannot be resolved\n" .
                 "from an abbreviated command identifier.\n\n",
-            $command->getCommandIdentifier()
-        )
+                $command->getCommandIdentifier()
+            )
         );
         $this->response->send();
         $this->shutdown($runlevel);
