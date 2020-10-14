@@ -60,7 +60,8 @@ class RedisBackendTest extends BaseTestCase
             $this->markTestSkipped('redis server not reachable');
         }
         $this->backend = new RedisBackend(
-            new EnvironmentConfiguration('Redis a wonderful color Testing', '/some/path', PHP_MAXPATHLEN), ['hostname' => '127.0.0.1', 'database' => 0]
+            new EnvironmentConfiguration('Redis a wonderful color Testing', '/some/path', PHP_MAXPATHLEN),
+            ['hostname' => '127.0.0.1', 'database' => 0]
         );
         $this->cache = $this->createMock(FrontendInterface::class);
         $this->cache->expects(self::any())->method('getIdentifier')->will(self::returnValue('TestCache'));

@@ -610,10 +610,12 @@ class PackageManager
             $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest);
             if (isset($newPackageStatesConfiguration['packages'][$composerManifest['name']])) {
                 throw new PackageException(
-                    sprintf('The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
+                    sprintf(
+                        'The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
                         $composerManifest['name'],
                         $packageConfiguration['packagePath'],
-                        $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']),
+                        $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']
+                    ),
                     1493030262
                 );
             }

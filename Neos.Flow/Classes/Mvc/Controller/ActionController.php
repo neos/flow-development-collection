@@ -586,8 +586,12 @@ class ActionController extends AbstractController
         }
 
         if (!is_a($viewObjectName, ViewInterface::class, true)) {
-            throw new ViewNotFoundException(sprintf('View class has to implement ViewInterface but "%s" in action "%s" of controller "%s" does not.',
-                $viewObjectName, $this->request->getControllerActionName(), get_class($this)), 1355153188);
+            throw new ViewNotFoundException(sprintf(
+                'View class has to implement ViewInterface but "%s" in action "%s" of controller "%s" does not.',
+                $viewObjectName,
+                $this->request->getControllerActionName(),
+                get_class($this)
+            ), 1355153188);
         }
 
         $viewOptions = isset($viewsConfiguration['options']) ? $viewsConfiguration['options'] : [];
