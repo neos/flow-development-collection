@@ -89,6 +89,13 @@ abstract class AbstractController implements ControllerInterface
     protected $supportedMediaTypes = ['text/html'];
 
     /**
+     * The media type that was negotiated by this controller
+     *
+     * @var string
+     */
+    protected $negotiatedMediaType;
+
+    /**
      * Initializes the controller
      *
      * This method should be called by the concrete processRequest() method.
@@ -113,7 +120,7 @@ abstract class AbstractController implements ControllerInterface
         if ($mediaType === null) {
             $this->throwStatus(406);
         }
-        $this->response->setContentType($mediaType);
+        $this->negotiatedMediaType = $mediaType;
         if ($request->getFormat() === '') {
             $this->request->setFormat(MediaTypes::getFilenameExtensionFromMediaType($mediaType));
         }

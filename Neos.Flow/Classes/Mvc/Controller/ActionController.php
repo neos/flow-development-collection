@@ -212,6 +212,10 @@ class ActionController extends AbstractController
         }
 
         $this->callActionMethod();
+
+        if ($this->response->getContentType() === '') {
+            $this->response->setContentType($this->negotiatedMediaType);
+        }
     }
 
     /**
