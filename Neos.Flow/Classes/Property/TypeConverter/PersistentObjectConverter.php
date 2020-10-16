@@ -19,6 +19,7 @@ use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use Neos\Flow\Property\Exception\InvalidSourceException;
 use Neos\Flow\Property\Exception\InvalidTargetException;
 use Neos\Flow\Property\Exception\TargetNotFoundException;
+use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Utility\ObjectAccess;
@@ -205,6 +206,12 @@ class PersistentObjectConverter extends ObjectConverter
                     throw new InvalidTargetException($exceptionMessage, 1421498771);
                 }
             }
+            $propertyType = TypeHandling::getTypeForValue($propertyValue);
+            $isCollectionType = TypeHandling::isCollectionType($propertyType);
+            //$isAggregateRelation = TODO: Check if element type is aggregate root
+            if ($isCollectionType) {
+                $originalValue = ObjectAccess::getProperty($object, $propertyName);
+            }
             $result = ObjectAccess::setProperty($object, $propertyName, $propertyValue);
             if ($result === false) {
                 $exceptionMessage = sprintf(
@@ -214,6 +221,9 @@ class PersistentObjectConverter extends ObjectConverter
                     $targetType
                 );
                 throw new InvalidTargetException($exceptionMessage, 1297935345);
+            }
+            if ($isCollectionType && $originalValue !== ObjectAccess::getProperty($object, $propertyName)) {
+                throw new TypeConverterException(sprintf('You overwrote the collection property "%s" of type "%s". This will lead to data loss. Read more about it and how to prevent this here: ', $propertyName, $targetType), 1602324196);
             }
         }
 
