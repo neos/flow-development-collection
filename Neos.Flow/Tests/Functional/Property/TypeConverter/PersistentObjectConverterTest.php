@@ -118,4 +118,90 @@ class PersistentObjectConverterTest extends FunctionalTestCase
         $this->assertInstanceOf(Fixtures\TestEntityWithImmutableProperty::class, $result);
         $this->assertEquals('Christian M', $result->getName());
     }
+
+    /**
+     * @test
+     */
+    public function newEntityWithOneToManyRelationIsMappedWithAddMethods()
+    {
+        $source = [
+            'values' => [
+                ['name' => 'one'],
+                ['name' => 'two']
+            ]
+        ];
+        /* @var $result Fixtures\TestEntityWithOneToMany */
+        $result = $this->propertyMapper->convert($source, Fixtures\TestEntityWithOneToMany::class);
+        $expectedAdditions = ['one', 'two'];
+        $this->assertSame($expectedAdditions, $result->getCollectionAdditions());
+        $this->assertEmpty($result->getCollectionRemovals());
+    }
+
+    /**
+     * @test
+     */
+    public function entityWithOneToManyRelationIsMappedWithAddMethods()
+    {
+        $source = [
+            'values' => [
+                ['name' => 'one'],
+                ['name' => 'two']
+            ]
+        ];
+        /* @var $result Fixtures\TestEntityWithOneToMany */
+        $result = $this->propertyMapper->convert($source, Fixtures\TestEntityWithOneToMany::class);
+
+        $identifier = $this->persistenceManager->getIdentifierByObject($result);
+        $this->persistenceManager->add($result);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        $update = [
+            '__identity' => $identifier,
+            'values' => [
+                ['__identity' => $this->persistenceManager->getIdentifierByObject($result->getValues()->first()), 'name' => 'one'],
+                ['name' => 'three']
+            ]
+        ];
+        $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithOneToMany::class);
+
+        $expectedAdditions = ['three'];
+        $expectedRemovals = ['two'];
+        $this->assertSame($expectedAdditions, $result->getCollectionAdditions());
+        $this->assertSame($expectedRemovals, $result->getCollectionRemovals());
+    }
+
+    /**
+     * @test
+     */
+    public function entityWithManyToManyRelationIsMappedWithAddMethods()
+    {
+        $source = [
+            'values' => [
+                ['name' => 'one'],
+                ['name' => 'two']
+            ]
+        ];
+        /* @var $result Fixtures\TestEntityWithUnidirectionalManyToMany */
+        $result = $this->propertyMapper->convert($source, Fixtures\TestEntityWithUnidirectionalManyToMany::class);
+
+        $identifier = $this->persistenceManager->getIdentifierByObject($result);
+        $this->persistenceManager->add($result);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        $update = [
+            '__identity' => $identifier,
+            'values' => [
+                ['__identity' => $this->persistenceManager->getIdentifierByObject($result->getValues()->first()), 'name' => 'one'],
+                ['name' => 'three']
+            ]
+        ];
+        $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithUnidirectionalManyToMany::class);
+
+        $expectedAdditions = ['three'];
+        $expectedRemovals = ['two'];
+        $this->assertSame($expectedAdditions, $result->getCollectionAdditions());
+        $this->assertSame($expectedRemovals, $result->getCollectionRemovals());
+    }
 }
