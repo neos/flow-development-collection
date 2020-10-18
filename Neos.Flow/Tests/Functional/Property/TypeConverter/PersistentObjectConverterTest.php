@@ -12,6 +12,8 @@ namespace Neos\Flow\Tests\Functional\Property\TypeConverter;
  */
 
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Property\PropertyMappingConfiguration;
+use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Tests\Functional\Property\Fixtures;
 
@@ -122,24 +124,6 @@ class PersistentObjectConverterTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function newEntityWithOneToManyRelationIsMappedWithAddMethods()
-    {
-        $source = [
-            'values' => [
-                ['name' => 'one'],
-                ['name' => 'two']
-            ]
-        ];
-        /* @var $result Fixtures\TestEntityWithOneToMany */
-        $result = $this->propertyMapper->convert($source, Fixtures\TestEntityWithOneToMany::class);
-        $expectedAdditions = ['one', 'two'];
-        $this->assertSame($expectedAdditions, $result->getCollectionAdditions());
-        $this->assertEmpty($result->getCollectionRemovals());
-    }
-
-    /**
-     * @test
-     */
     public function entityWithOneToManyRelationIsMappedWithAddMethods()
     {
         $source = [
@@ -148,8 +132,22 @@ class PersistentObjectConverterTest extends FunctionalTestCase
                 ['name' => 'two']
             ]
         ];
+        $propertyMappingConfiguration = new PropertyMappingConfiguration();
+        $propertyMappingConfiguration
+            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true)
+            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true)
+            ->allowAllProperties()
+            ->forProperty('values.*')
+            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true)
+            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true)
+            ->allowAllProperties();
+
         /* @var $result Fixtures\TestEntityWithOneToMany */
-        $result = $this->propertyMapper->convert($source, Fixtures\TestEntityWithOneToMany::class);
+        $result = $this->propertyMapper->convert($source, Fixtures\TestEntityWithOneToMany::class, $propertyMappingConfiguration);
+
+        $expectedAdditions = ['one', 'two'];
+        $this->assertSame($expectedAdditions, $result->getCollectionAdditions());
+        $this->assertEmpty($result->getCollectionRemovals());
 
         $identifier = $this->persistenceManager->getIdentifierByObject($result);
         $this->persistenceManager->add($result);
@@ -163,7 +161,7 @@ class PersistentObjectConverterTest extends FunctionalTestCase
                 ['name' => 'three']
             ]
         ];
-        $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithOneToMany::class);
+        $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithOneToMany::class, $propertyMappingConfiguration);
 
         $expectedAdditions = ['three'];
         $expectedRemovals = ['two'];
@@ -182,8 +180,22 @@ class PersistentObjectConverterTest extends FunctionalTestCase
                 ['name' => 'two']
             ]
         ];
+        $propertyMappingConfiguration = new PropertyMappingConfiguration();
+        $propertyMappingConfiguration
+            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true)
+            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true)
+            ->allowAllProperties()
+            ->forProperty('values.*')
+            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true)
+            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true)
+            ->allowAllProperties();
+
         /* @var $result Fixtures\TestEntityWithUnidirectionalManyToMany */
-        $result = $this->propertyMapper->convert($source, Fixtures\TestEntityWithUnidirectionalManyToMany::class);
+        $result = $this->propertyMapper->convert($source, Fixtures\TestEntityWithUnidirectionalManyToMany::class, $propertyMappingConfiguration);
+
+        $expectedAdditions = ['one', 'two'];
+        $this->assertSame($expectedAdditions, $result->getCollectionAdditions());
+        $this->assertEmpty($result->getCollectionRemovals());
 
         $identifier = $this->persistenceManager->getIdentifierByObject($result);
         $this->persistenceManager->add($result);
@@ -197,7 +209,7 @@ class PersistentObjectConverterTest extends FunctionalTestCase
                 ['name' => 'three']
             ]
         ];
-        $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithUnidirectionalManyToMany::class);
+        $result = $this->propertyMapper->convert($update, Fixtures\TestEntityWithUnidirectionalManyToMany::class, $propertyMappingConfiguration);
 
         $expectedAdditions = ['three'];
         $expectedRemovals = ['two'];

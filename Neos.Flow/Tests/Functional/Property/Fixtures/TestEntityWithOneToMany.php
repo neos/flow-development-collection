@@ -13,6 +13,8 @@ namespace Neos\Flow\Tests\Functional\Property\Fixtures;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A simple entity with a bidirectional one-to-many relation for PropertyMapper test
@@ -59,6 +61,8 @@ class TestEntityWithOneToMany
      */
     public function addValue(TestEntityWithManyToOne $value)
     {
+        if ($this->values->contains($value)) return;
+        $value->setRelated($this);
         $this->valuesAdded[] = $value->getName();
         $this->values->add($value);
     }
@@ -68,6 +72,8 @@ class TestEntityWithOneToMany
      */
     public function removeValue(TestEntityWithManyToOne $value)
     {
+        if (!$this->values->contains($value)) return;
+        $value->setRelated(null);
         $this->valuesRemoved[] = $value->getName();
         $this->values->removeElement($value);
     }

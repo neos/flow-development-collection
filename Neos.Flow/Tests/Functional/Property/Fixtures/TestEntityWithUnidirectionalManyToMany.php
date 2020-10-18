@@ -13,6 +13,8 @@ namespace Neos\Flow\Tests\Functional\Property\Fixtures;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A simple class with a bidirectional one-to-many relation for PropertyMapper test

@@ -11,8 +11,8 @@ namespace Neos\Flow\Tests\Functional\Property\Fixtures;
  * source code.
  */
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A simple class with a bidirectional many-to-one relation for PropertyMapper test
@@ -59,10 +59,10 @@ class TestEntityWithManyToOne
     }
 
     /**
-     * @param TestEntityWithOneToMany $related
+     * @param TestEntityWithOneToMany|null $related
      * @return void
      */
-    public function setRelated(TestEntityWithOneToMany $related)
+    public function setRelated(?TestEntityWithOneToMany $related)
     {
         $this->related = $related;
     }

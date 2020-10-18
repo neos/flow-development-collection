@@ -11,8 +11,8 @@ namespace Neos\Flow\Tests\Functional\Property\Fixtures;
  * source code.
  */
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A simple entity for unidirectional ToMany relations for PropertyMapper test
