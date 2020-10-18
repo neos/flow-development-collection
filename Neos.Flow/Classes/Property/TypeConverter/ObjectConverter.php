@@ -368,7 +368,7 @@ class ObjectConverter extends AbstractTypeConverter
      */
     protected function singularize(string $propertyName): string
     {
-        return \Doctrine\Common\Inflector::singularize($propertyName);
+        return \Doctrine\Common\Inflector\Inflector::singularize($propertyName);
     }
 
     /**
