@@ -377,7 +377,7 @@ class ObjectConverter extends AbstractTypeConverter
     {
         if ($this->methodNameInflector === null) {
             $this->methodNameInflector = new RulesetInflector(
-                ...English\Rules::getSingularRuleset()
+                English\Rules::getSingularRuleset()
             );
         }
         return $this->methodNameInflector->inflect($propertyName);
