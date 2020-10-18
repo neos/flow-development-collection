@@ -61,7 +61,9 @@ class TestEntityWithOneToMany
      */
     public function addValue(TestEntityWithManyToOne $value)
     {
-        if ($this->values->contains($value)) return;
+        if ($this->values->contains($value)) {
+            return;
+        }
         $value->setRelated($this);
         $this->valuesAdded[] = $value->getName();
         $this->values->add($value);
@@ -72,7 +74,9 @@ class TestEntityWithOneToMany
      */
     public function removeValue(TestEntityWithManyToOne $value)
     {
-        if (!$this->values->contains($value)) return;
+        if (!$this->values->contains($value)) {
+            return;
+        }
         $value->setRelated(null);
         $this->valuesRemoved[] = $value->getName();
         $this->values->removeElement($value);
