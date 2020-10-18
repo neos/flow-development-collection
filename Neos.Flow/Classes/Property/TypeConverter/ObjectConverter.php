@@ -11,8 +11,6 @@ namespace Neos\Flow\Property\TypeConverter;
  * source code.
  */
 
-use Doctrine\Inflector\Rules\English;
-use Doctrine\Inflector\RulesetInflector;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -91,11 +89,6 @@ class ObjectConverter extends AbstractTypeConverter
      * @var array
      */
     protected $methodNamesFirstLevelCache = [];
-
-    /**
-     * @var RulesetInflector
-     */
-    protected $methodNameInflector;
 
     /**
      * Only convert non-persistent types
@@ -375,12 +368,7 @@ class ObjectConverter extends AbstractTypeConverter
      */
     protected function singularize(string $propertyName): string
     {
-        if ($this->methodNameInflector === null) {
-            $this->methodNameInflector = new RulesetInflector(
-                English\Rules::getSingularRuleset()
-            );
-        }
-        return $this->methodNameInflector->inflect($propertyName);
+        return \Doctrine\Common\Inflector::singularize($propertyName);
     }
 
     /**
