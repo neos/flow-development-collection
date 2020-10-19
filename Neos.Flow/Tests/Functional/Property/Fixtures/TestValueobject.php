@@ -16,7 +16,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A simple valueobject for PropertyMapper test
  *
- * @Flow\ValueObject
+ * @Flow\ValueObject(embedded=false)
  */
 class TestValueobject
 {
