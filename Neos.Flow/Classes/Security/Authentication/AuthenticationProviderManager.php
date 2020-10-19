@@ -109,18 +109,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     }
 
     /**
-     * Sets the security context
-     *
-     * @param Context $securityContext The security context of the current request
-     * @return void
-     * @deprecated Just get it injected
-     */
-    public function setSecurityContext(Context $securityContext): void
-    {
-        $this->securityContext = $securityContext;
-    }
-
-    /**
      * Returns the security context
      *
      * @return Context $securityContext The security context of the current request

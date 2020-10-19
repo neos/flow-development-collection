@@ -19,6 +19,7 @@ use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
@@ -28,7 +29,6 @@ use Neos\Flow\Reflection\Exception\InvalidPropertyTypeException;
 use Neos\Flow\Reflection\Exception\InvalidValueObjectException;
 use Neos\Utility\Arrays;
 use Neos\Flow\Utility\Environment;
-use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\Files;
 use Neos\Utility\TypeHandling;
 use Psr\Log\LoggerInterface;
@@ -177,7 +177,7 @@ class ReflectionService
     /**
      * @var array
      */
-    protected $settings;
+    protected $settings = [];
 
     /**
      * Array of annotation classnames and the names of classes which are annotated with them
@@ -1183,7 +1183,7 @@ class ReflectionService
         $this->buildClassSchemata($classNamesToBuildSchemaFor);
 
         if ($count > 0) {
-            $this->log(sprintf('Reflected %s emerged classes.', $count), LogLevel::INFO);
+            $this->log(sprintf('Reflected %s emerged classes.', $count), LogLevel::INFO, LogEnvironment::fromMethodName(__METHOD__));
         }
     }
 
@@ -1406,7 +1406,7 @@ class ReflectionService
         $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
 
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
-        if ($this->settings['logIncorrectDocCommentHints'] !== true) {
+        if (!isset($this->settings['logIncorrectDocCommentHints']) || $this->settings['logIncorrectDocCommentHints'] !== true) {
             return;
         }
 
@@ -1461,7 +1461,7 @@ class ReflectionService
 
         // skip simple types and types with fully qualified namespaces
         if ($type === 'mixed' || $type[0] === '\\' || TypeHandling::isSimpleType($type)) {
-            return TypeHandling::normalizeType($type) . ($isNullable ? '|null' : '');
+            return TypeHandling::normalizeType($typeWithoutNull) . ($isNullable ? '|null' : '');
         }
 
         // we try to find the class relative to the current namespace...
@@ -1625,11 +1625,6 @@ class ReflectionService
         }
 
         $declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
-        try {
-            TypeHandling::parseType($declaredType);
-        } catch (InvalidTypeException $exception) {
-            throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $className . '" for property "' . $propertyName . '"'), 1315564475);
-        }
 
         if ($this->isPropertyAnnotatedWith($className, $propertyName, ORM\Id::class)) {
             $skipArtificialIdentity = true;
@@ -1766,11 +1761,11 @@ class ReflectionService
                 'position' => $parameterData[self::DATA_PARAMETER_POSITION],
                 'optional' => isset($parameterData[self::DATA_PARAMETER_OPTIONAL]),
                 'type' => $parameterData[self::DATA_PARAMETER_TYPE],
-                'class' => isset($parameterData[self::DATA_PARAMETER_CLASS]) ? $parameterData[self::DATA_PARAMETER_CLASS] : null,
+                'class' => $parameterData[self::DATA_PARAMETER_CLASS] ?? null,
                 'array' => isset($parameterData[self::DATA_PARAMETER_ARRAY]),
                 'byReference' => isset($parameterData[self::DATA_PARAMETER_BY_REFERENCE]),
                 'allowsNull' => isset($parameterData[self::DATA_PARAMETER_ALLOWS_NULL]),
-                'defaultValue' => isset($parameterData[self::DATA_PARAMETER_DEFAULT_VALUE]) ? $parameterData[self::DATA_PARAMETER_DEFAULT_VALUE] : null,
+                'defaultValue' => $parameterData[self::DATA_PARAMETER_DEFAULT_VALUE] ?? null,
                 'scalarDeclaration' => isset($parameterData[self::DATA_PARAMETER_SCALAR_DECLARATION])
             ];
         }
@@ -1785,7 +1780,7 @@ class ReflectionService
      * @param MethodReflection $method The parameter's method
      * @return array Parameter information array
      */
-    protected function convertParameterReflectionToArray(ParameterReflection $parameter, MethodReflection $method = null)
+    protected function convertParameterReflectionToArray(ParameterReflection $parameter, MethodReflection $method)
     {
         $parameterInformation = [
             self::DATA_PARAMETER_POSITION => $parameter->getPosition()
@@ -1803,32 +1798,33 @@ class ReflectionService
             $parameterInformation[self::DATA_PARAMETER_ALLOWS_NULL] = true;
         }
 
-        $parameterClass = $parameter->getClass();
-        if ($parameterClass !== null) {
-            $parameterInformation[self::DATA_PARAMETER_CLASS] = $parameterClass->getName();
+        $parameterType = $parameter->getType();
+        if ($parameterType !== null) {
+            $parameterType = ($parameterType instanceof \ReflectionNamedType) ? $parameterType->getName() : $parameterType->__toString();
+        }
+        if ($parameter->getClass() !== null) {
+            // We use parameter type here to make class_alias usage work and return the hinted class name instead of the alias
+            $parameterInformation[self::DATA_PARAMETER_CLASS] = $parameterType;
         }
         if ($parameter->isOptional() && $parameter->isDefaultValueAvailable()) {
             $parameterInformation[self::DATA_PARAMETER_DEFAULT_VALUE] = $parameter->getDefaultValue();
         }
-        if ($method !== null) {
-            $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
-            if (isset($paramAnnotations[$parameter->getPosition()])) {
-                $explodedParameters = explode(' ', $paramAnnotations[$parameter->getPosition()]);
-                if (count($explodedParameters) >= 2) {
-                    $parameterType = $this->expandType($method->getDeclaringClass(), $explodedParameters[0]);
-                    $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanClassName($parameterType);
-                }
-            }
-            if (!$parameter->isArray()) {
-                $builtinType = $parameter->getBuiltinType();
-                if ($builtinType !== null) {
-                    $parameterInformation[self::DATA_PARAMETER_TYPE] = $builtinType;
-                    $parameterInformation[self::DATA_PARAMETER_SCALAR_DECLARATION] = true;
-                }
+        $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
+        if (isset($paramAnnotations[$parameter->getPosition()])) {
+            $explodedParameters = explode(' ', $paramAnnotations[$parameter->getPosition()]);
+            if (count($explodedParameters) >= 2) {
+                $parameterType = $this->expandType($method->getDeclaringClass(), $explodedParameters[0]);
             }
         }
-        if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterClass !== null) {
-            $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanClassName($parameterClass->getName());
+        if (!$parameter->isArray()) {
+            $builtinType = $parameter->getBuiltinType();
+            if ($builtinType !== null) {
+                $parameterInformation[self::DATA_PARAMETER_TYPE] = $builtinType;
+                $parameterInformation[self::DATA_PARAMETER_SCALAR_DECLARATION] = true;
+            }
+        }
+        if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterType !== null) {
+            $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanClassName($parameterType);
         } elseif (!isset($parameterInformation[self::DATA_PARAMETER_TYPE])) {
             $parameterInformation[self::DATA_PARAMETER_TYPE] = $parameter->isArray() ? 'array' : 'mixed';
         }
@@ -2150,6 +2146,7 @@ class ReflectionService
     protected function saveProductionData()
     {
         $this->reflectionDataRuntimeCache->flush();
+        $this->classSchemataRuntimeCache->flush();
 
         $classNames = [];
         foreach ($this->classReflectionData as $className => $reflectionData) {
@@ -2225,7 +2222,7 @@ class ReflectionService
      * @param array $additionalData An array containing more information about the event to be logged
      * @return void
      */
-    protected function log($message, $severity = LogLevel::INFO, $additionalData = [])
+    protected function log(string $message, string $severity = LogLevel::INFO, array $additionalData = []): void
     {
         if (is_object($this->logger)) {
             $this->logger->log($severity, $message, $additionalData);

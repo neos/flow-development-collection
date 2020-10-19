@@ -11,10 +11,9 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
-use Doctrine\Tests\Models\Cache\Action;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Utility\Arrays;
@@ -37,6 +36,12 @@ class UriBuilder
      * @var \Neos\Flow\Utility\Environment
      */
     protected $environment;
+
+    /**
+     * @Flow\Inject
+     * @var BaseUriProvider
+     */
+    protected $baseUriProvider;
 
     /**
      * @var ActionRequest
@@ -280,29 +285,30 @@ class UriBuilder
      * @api
      * @see build()
      * @throws Exception\MissingActionNameException if $actionName parameter is empty
+     * @throws \Neos\Flow\Http\Exception
      */
-    public function uriFor($actionName, $controllerArguments = [], $controllerName = null, $packageKey = null, $subPackageKey = null)
+    public function uriFor(string $actionName, array $controllerArguments = [], string $controllerName = null, string $packageKey = null, string $subPackageKey = null)
     {
-        if ($actionName === null || $actionName === '') {
+        if (empty($actionName)) {
             throw new Exception\MissingActionNameException('The URI Builder could not build a URI linking to an action controller because no action name was specified. Please check the stack trace to see which code or template was requesting the link and check the arguments passed to the URI Builder.', 1354629891);
         }
-        $controllerArguments['@action'] = strtolower($actionName);
-        if ($controllerName !== null) {
-            $controllerArguments['@controller'] = strtolower($controllerName);
-        } else {
-            $controllerArguments['@controller'] = strtolower($this->request->getControllerName());
+        if (empty($controllerName)) {
+            $controllerName = $this->request->getControllerName();
         }
-        if ($packageKey === null && $subPackageKey === null) {
+        if (empty($packageKey) && empty($subPackageKey)) {
             $subPackageKey = $this->request->getControllerSubpackageKey();
         }
-        if ($packageKey === null) {
+        if (empty($packageKey)) {
             $packageKey = $this->request->getControllerPackageKey();
         }
+
+        $controllerArguments['@action'] = strtolower($actionName);
+        $controllerArguments['@controller'] = strtolower($controllerName);
         $controllerArguments['@package'] = strtolower($packageKey);
         if ($subPackageKey !== null) {
             $controllerArguments['@subpackage'] = strtolower($subPackageKey);
         }
-        if ($this->format !== null && $this->format !== '') {
+        if (!empty($this->format)) {
             $controllerArguments['@format'] = $this->format;
         }
 
@@ -341,6 +347,7 @@ class UriBuilder
      *
      * @param array $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
      * @return string the (absolute or relative) URI as string
+     * @throws \Neos\Flow\Http\Exception
      * @api
      */
     public function build(array $arguments = [])
@@ -352,7 +359,9 @@ class UriBuilder
 
         $uriPathPrefix = $this->environment->isRewriteEnabled() ? '' : 'index.php/';
         $uriPathPrefix = RequestInformationHelper::getScriptRequestPath($httpRequest) . $uriPathPrefix;
-        $resolveContext = new ResolveContext($httpRequest->getAttribute(ServerRequestAttributes::BASE_URI), $arguments, $this->createAbsoluteUri, $uriPathPrefix);
+        $uriPathPrefix = ltrim($uriPathPrefix, '/');
+
+        $resolveContext = new ResolveContext($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($httpRequest), $arguments, $this->createAbsoluteUri, $uriPathPrefix);
         $resolvedUri = $this->router->resolve($resolveContext);
         if ($this->section !== '') {
             $resolvedUri = $resolvedUri->withFragment($this->section);

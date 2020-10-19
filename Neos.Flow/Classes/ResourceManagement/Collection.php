@@ -14,6 +14,7 @@ namespace Neos\Flow\ResourceManagement;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
 use Neos\Flow\ResourceManagement\Storage\StorageInterface;
+use Neos\Flow\ResourceManagement\Storage\StorageObject;
 use Neos\Flow\ResourceManagement\Storage\WritableStorageInterface;
 use Neos\Flow\ResourceManagement\Target\TargetInterface;
 use Neos\Flow\ResourceManagement\Exception as ResourceException;
@@ -152,26 +153,22 @@ class Collection implements CollectionInterface
      * Returns all internal data objects of the storage attached to this collection.
      *
      * @param callable $callback Function called after each object
-     * @return \Generator<Storage\Object>
+     * @return \Generator<StorageObject>
      */
     public function getObjects(callable $callback = null)
     {
-        $objects = [];
         if ($this->storage instanceof PackageStorage && $this->pathPatterns !== []) {
-            $objects = new \AppendIterator();
             foreach ($this->pathPatterns as $pathPattern) {
-                $objects->append($this->storage->getObjectsByPathPattern($pathPattern, $callback));
+                foreach ($this->storage->getObjectsByPathPattern($pathPattern, $callback) as $storageObject) {
+                    yield $storageObject;
+                }
             }
         } else {
-            $objects = $this->storage->getObjectsByCollection($this, $callback);
+            yield from $this->storage->getObjectsByCollection($this, $callback);
         }
 
-        // TODO: Implement filter manipulation here:
-        // foreach ($objects as $object) {
-        // 	$object->setStream(function() { return fopen('/tmp/test.txt', 'rb');});
-        // }
-
-        return $objects;
+        // NOTE: NEVER mix "return" and "yield" in the same function; this
+        // leads to totally unpredictable effects.
     }
 
     /**

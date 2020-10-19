@@ -243,43 +243,43 @@ class RoutingTest extends FunctionalTestCase
             [
                 'routeValues' => array_merge($defaults, ['dynamic' => 'DynamicDefault']),
                 'expectedResolvedRouteName' => 'dynamic part without default',
-                'expectedResolvedUriPath' => 'neos/flow/test/dynamic/part/without/default/dynamicdefault'
+                'expectedResolvedUriPath' => '/neos/flow/test/dynamic/part/without/default/dynamicdefault'
             ],
             [
                 'routeValues' => array_merge($defaults, ['dynamic' => 'OverwrittenDynamicValue']),
                 'expectedResolvedRouteName' => 'dynamic part without default',
-                'expectedResolvedUriPath' => 'neos/flow/test/dynamic/part/without/default/overwrittendynamicvalue'
+                'expectedResolvedUriPath' => '/neos/flow/test/dynamic/part/without/default/overwrittendynamicvalue'
             ],
 
             // if route value is omitted, only routes with a default value resolve
             [
                 'routeValues' => $defaults,
                 'expectedResolvedRouteName' => 'dynamic part with default',
-                'expectedResolvedUriPath' => 'neos/flow/test/dynamic/part/with/default/DynamicDefault'
+                'expectedResolvedUriPath' => '/neos/flow/test/dynamic/part/with/default/DynamicDefault'
             ],
             [
                 'routeValues' => array_merge($defaults, ['optionalDynamic' => 'OptionalDynamicDefault']),
                 'expectedResolvedRouteName' => 'optional dynamic part with default',
-                'expectedResolvedUriPath' => 'neos/flow/test/optional/dynamic/part/with/default'
+                'expectedResolvedUriPath' => '/neos/flow/test/optional/dynamic/part/with/default'
             ],
 
             // toLowerCase has an effect on generated URIs
             [
                 'routeValues' => array_merge($defaults, ['dynamic1' => 'DynamicRouteValue1', 'dynamic2' => 'DynamicRouteValue2']),
                 'expectedResolvedRouteName' => 'dynamic part case',
-                'expectedResolvedUriPath' => 'neos/flow/test/dynamic/part/case/DynamicRouteValue1/dynamicroutevalue2'
+                'expectedResolvedUriPath' => '/neos/flow/test/dynamic/part/case/DynamicRouteValue1/dynamicroutevalue2'
             ],
 
             // exceeding arguments are appended to resolved URI if appendExceedingArguments is set
             [
                 'routeValues' => array_merge($defaults, ['@action' => 'test1', 'dynamic' => 'DynamicDefault', 'exceedingArgument2' => 'foo', 'exceedingArgument1' => 'bar']),
                 'expectedResolvedRouteName' => 'exceeding arguments 01',
-                'expectedResolvedUriPath' => 'neos/flow/test/exceeding/arguments1?%40action=test1&exceedingArgument2=foo&exceedingArgument1=bar'
+                'expectedResolvedUriPath' => '/neos/flow/test/exceeding/arguments1?%40action=test1&exceedingArgument2=foo&exceedingArgument1=bar'
             ],
             [
                 'routeValues' => array_merge($defaults, ['@action' => 'test1', 'exceedingArgument2' => 'foo', 'exceedingArgument1' => 'bar', 'dynamic' => 'DynamicOther']),
                 'expectedResolvedRouteName' => 'exceeding arguments 02',
-                'expectedResolvedUriPath' => 'neos/flow/test/exceeding/arguments2/dynamicother?%40action=test1&exceedingArgument2=foo&exceedingArgument1=bar'
+                'expectedResolvedUriPath' => '/neos/flow/test/exceeding/arguments2/dynamicother?%40action=test1&exceedingArgument2=foo&exceedingArgument1=bar'
             ],
         ];
     }
@@ -316,10 +316,10 @@ class RoutingTest extends FunctionalTestCase
     public function requestMethodAcceptArray()
     {
         return [
-            ['GET', '404 Not Found'],
-            ['PUT', '404 Not Found'],
-            ['POST', '200 OK'],
-            ['DELETE', '200 OK']
+            ['GET', 404],
+            ['PUT', 404],
+            ['POST', 200],
+            ['DELETE', 200]
         ];
     }
 
@@ -344,7 +344,7 @@ class RoutingTest extends FunctionalTestCase
         );
 
         $response = $this->browser->request('http://localhost/http-method-test/', $requestMethod);
-        self::assertEquals($expectedStatus, $response->getStatus());
+        self::assertEquals($expectedStatus, $response->getStatusCode());
     }
 
     /**
@@ -362,7 +362,25 @@ class RoutingTest extends FunctionalTestCase
         $baseUri = new Uri('http://localhost');
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
 
-        self::assertSame('neos/flow/test/http/foo', (string)$actualResult);
+        self::assertSame('/neos/flow/test/http/foo', (string)$actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function uriPathPrefixIsRespectedInRoute()
+    {
+        $routeValues = [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'Foo',
+            '@action' => 'index',
+            '@format' => 'html'
+        ];
+        $baseUri = new Uri('http://localhost');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, 'index.php/'));
+
+        $this->assertSame('/index.php/neos/flow/test/http/foo', (string)$actualResult);
     }
 
     /**
@@ -392,7 +410,7 @@ class RoutingTest extends FunctionalTestCase
         $this->router->setRoutesConfiguration($routesConfiguration);
         $baseUri = new Uri('http://localhost');
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
-        self::assertSame('custom/uri/pattern', (string)$actualResult);
+        self::assertSame('/custom/uri/pattern', (string)$actualResult);
 
         // reset router configuration for following tests
         $this->router->setRoutesConfiguration(null);

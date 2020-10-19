@@ -118,10 +118,10 @@ class DateTimeConverterTest extends UnitTestCase
         $expectedResult = '1980-12-13T20:15:07+01:23';
         $mockMappingConfiguration = $this->createMock(PropertyMappingConfigurationInterface::class);
         $mockMappingConfiguration
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('getConfigurationValue')
             ->with(DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT)
-            ->will($this->returnValue(null));
+            ->will(self::returnValue(null));
 
         $date = $this->converter->convertFrom($expectedResult, 'DateTime', [], $mockMappingConfiguration);
         $actualResult = $date->format(DateTimeConverter::DEFAULT_DATE_FORMAT);
@@ -167,10 +167,10 @@ class DateTimeConverterTest extends UnitTestCase
         if ($dateFormat !== null) {
             $mockMappingConfiguration = $this->createMock(PropertyMappingConfigurationInterface::class);
             $mockMappingConfiguration
-                ->expects($this->atLeastOnce())
+                ->expects(self::atLeastOnce())
                 ->method('getConfigurationValue')
                 ->with(DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT)
-                ->will($this->returnValue($dateFormat));
+                ->will(self::returnValue($dateFormat));
         } else {
             $mockMappingConfiguration = null;
         }
@@ -234,10 +234,10 @@ class DateTimeConverterTest extends UnitTestCase
     {
         $mockMappingConfiguration = $this->createMock(PropertyMappingConfigurationInterface::class);
         $mockMappingConfiguration
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('getConfigurationValue')
             ->with(DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT)
-            ->will($this->returnValue(null));
+            ->will(self::returnValue(null));
 
         $date = $this->converter->convertFrom($source, 'DateTime', [], $mockMappingConfiguration);
         self::assertInstanceOf(\DateTime::class, $date);
@@ -476,10 +476,10 @@ class DateTimeConverterTest extends UnitTestCase
         if ($dateFormat !== null) {
             $mockMappingConfiguration = $this->createMock(PropertyMappingConfigurationInterface::class);
             $mockMappingConfiguration
-                ->expects($this->atLeastOnce())
+                ->expects(self::atLeastOnce())
                 ->method('getConfigurationValue')
                 ->with(DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT)
-                ->will($this->returnValue($dateFormat));
+                ->will(self::returnValue($dateFormat));
         } else {
             $mockMappingConfiguration = null;
         }

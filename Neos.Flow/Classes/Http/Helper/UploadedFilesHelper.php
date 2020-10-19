@@ -10,9 +10,11 @@ namespace Neos\Flow\Http\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Http\UploadedFile;
 use Neos\Http\Factories\FlowUploadedFile;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\UploadedFileInterface;
+use function GuzzleHttp\Psr7\stream_for;
 
 /**
  * Helper to re-organize uploaded file data for requests.
@@ -20,7 +22,7 @@ use Psr\Http\Message\UploadedFileInterface;
 abstract class UploadedFilesHelper
 {
     /**
-     * @param UploadedFileInterface[] $uploadedFiles
+     * @param UploadedFileInterface[]|mixed[][] $uploadedFiles A (deep) array of UploadedFile or an untangled $_FILES array
      * @param array $arguments
      * @param array $currentPath internal argument for recursion
      * @return array The nested array of paths and uploaded files
@@ -30,19 +32,29 @@ abstract class UploadedFilesHelper
         $upcastedUploads = [];
 
         foreach ($uploadedFiles as $key => $value) {
-            $currentPath[] = $key;
+            if (is_array($value) && isset($value['tmp_name'], $value['size'], $value['error'])) {
+                $value = new UploadedFile(
+                    $value['tmp_name'],
+                    (int) $value['size'],
+                    (int) $value['error'],
+                    $value['name'],
+                    $value['type']
+                );
+            }
             if ($value instanceof UploadedFileInterface) {
-                $originallySubmittedResourcePath = array_merge($currentPath, ['originallySubmittedResource']);
-                $collectionNamePath = array_merge($currentPath, ['__collectionName']);
+                $originallySubmittedResourcePath = array_merge($currentPath, [$key, 'originallySubmittedResource']);
+                $collectionNamePath = array_merge($currentPath, [$key, '__collectionName']);
                 $upcastedUploads[$key] = self::upcastUploadedFile(
                     $value,
                     Arrays::getValueByPath($arguments, $originallySubmittedResourcePath),
                     Arrays::getValueByPath($arguments, $collectionNamePath)
                 );
-            }
-
-            if (is_array($value)) {
-                $upcastedUploads[$key] = self::upcastUploadedFiles($value, $arguments, $currentPath);
+            } elseif (is_array($value)) {
+                $upcastedUploads[$key] = self::upcastUploadedFiles(
+                    $value,
+                    $arguments,
+                    array_merge($currentPath, [$key])
+                );
             }
         }
 
@@ -57,7 +69,9 @@ abstract class UploadedFilesHelper
      */
     protected static function upcastUploadedFile(UploadedFileInterface $uploadedFile, $originallySubmittedResource = null, string $collectionName = null): FlowUploadedFile
     {
-        $flowUploadedFile = new FlowUploadedFile($uploadedFile->getStream(), ($uploadedFile->getSize() ?: 0), $uploadedFile->getError(), $uploadedFile->getClientFilename(), $uploadedFile->getClientMediaType());
+        // If upload failed, just accessing the stream will throwin guzzle
+        $stream = $uploadedFile->getError() === UPLOAD_ERR_OK ? $uploadedFile->getStream() : stream_for(null);
+        $flowUploadedFile = new FlowUploadedFile($stream, ($uploadedFile->getSize() ?: 0), $uploadedFile->getError(), $uploadedFile->getClientFilename(), $uploadedFile->getClientMediaType());
         if ($originallySubmittedResource) {
             $flowUploadedFile->setOriginallySubmittedResource($originallySubmittedResource);
         }
@@ -91,10 +105,10 @@ abstract class UploadedFilesHelper
 
         foreach ($fieldPaths as $fieldPath) {
             if (count($fieldPath) === 1) {
-                $fileInformation = $convolutedFiles[$fieldPath{0}];
+                $fileInformation = $convolutedFiles[$fieldPath[0]];
             } else {
                 $fileInformation = [];
-                foreach ($convolutedFiles[$fieldPath{0}] as $key => $subStructure) {
+                foreach ($convolutedFiles[$fieldPath[0]] as $key => $subStructure) {
                     $fileInformation[$key] = Arrays::getValueByPath($subStructure, array_slice($fieldPath, 1));
                 }
             }
@@ -104,23 +118,6 @@ abstract class UploadedFilesHelper
         }
 
         return $untangledFiles;
-    }
-
-    /**
-     * Returns an array of all possible "field paths" for the given array.
-     *
-     * @param array $structure The array to walk through
-     * @param string $firstLevelFieldName
-     * @return array An array of paths (as strings) in the format "key1/key2/key3" ...
-     * @deprecated
-     */
-    protected static function calculateFieldPaths(array $structure, string $firstLevelFieldName = null): array
-    {
-        $fieldPaths = self::calculateFieldPathsAsArray($structure, $firstLevelFieldName);
-        array_walk($fieldPaths, function (&$fieldPath) {
-            $fieldPath = implode('/', $fieldPath);
-        });
-        return $fieldPaths;
     }
 
     /**

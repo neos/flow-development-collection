@@ -34,6 +34,7 @@ use Psr\Log\LoggerInterface;
  * An abstract storage backend for the Flow persistence
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 abstract class AbstractBackend implements BackendInterface
 {
@@ -473,6 +474,7 @@ abstract class AbstractBackend implements BackendInterface
                 case Collection::class:
                 case ArrayCollection::class:
                     $propertyValue = $propertyValue === null ? [] : $propertyValue->toArray();
+                    // no break
                 case 'array':
                     $propertyData[$propertyName] = [
                         'multivalue' => true,

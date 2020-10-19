@@ -33,7 +33,7 @@ class CacheFactoryTest extends UnitTestCase
     protected $mockEnvironment;
 
     /**
-     * @var CacheManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockCacheManager;
 
@@ -50,15 +50,15 @@ class CacheFactoryTest extends UnitTestCase
         vfsStream::setup('Foo');
 
         $this->mockEnvironment = $this->createMock(Utility\Environment::class);
-        $this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
-        $this->mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(1024));
-        $this->mockEnvironment->expects($this->any())->method('getContext')->will($this->returnValue(new ApplicationContext('Testing')));
+        $this->mockEnvironment->expects(self::any())->method('getPathToTemporaryDirectory')->will(self::returnValue('vfs://Foo/'));
+        $this->mockEnvironment->expects(self::any())->method('getMaximumPathLength')->will(self::returnValue(1024));
+        $this->mockEnvironment->expects(self::any())->method('getContext')->will(self::returnValue(new ApplicationContext('Testing')));
 
         $this->mockCacheManager = $this->getMockBuilder(CacheManager::class)
             ->setMethods(['registerCache', 'isCachePersistent'])
             ->disableOriginalConstructor()
             ->getMock();
-        $this->mockCacheManager->expects($this->any())->method('isCachePersistent')->will($this->returnValue(false));
+        $this->mockCacheManager->expects(self::any())->method('isCachePersistent')->will(self::returnValue(false));
 
         $this->mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
             ->setMethods(null)

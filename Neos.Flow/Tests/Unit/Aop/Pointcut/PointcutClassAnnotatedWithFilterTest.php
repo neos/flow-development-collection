@@ -26,7 +26,7 @@ class PointcutClassAnnotatedWithFilterTest extends UnitTestCase
     public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenAnnotation()
     {
         $mockReflectionService = $this->createMock(ReflectionService::class, ['getClassAnnotations'], [], '', false, true);
-        $mockReflectionService->expects($this->any())->method('getClassAnnotations')->with('Acme\Some\Class', 'Acme\Some\Annotation')->will($this->onConsecutiveCalls(['SomeAnnotation'], []));
+        $mockReflectionService->expects(self::any())->method('getClassAnnotations')->with('Acme\Some\Class', 'Acme\Some\Annotation')->will($this->onConsecutiveCalls(['SomeAnnotation'], []));
 
         $filter = new Aop\Pointcut\PointcutClassAnnotatedWithFilter('Acme\Some\Annotation');
         $filter->injectReflectionService($mockReflectionService);
@@ -51,7 +51,7 @@ class PointcutClassAnnotatedWithFilterTest extends UnitTestCase
         $availableClassNamesIndex->setClassNames($availableClassNames);
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getClassNamesByAnnotation')->with('SomeAnnotationClass')->will($this->returnValue(['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
+        $mockReflectionService->expects(self::any())->method('getClassNamesByAnnotation')->with('SomeAnnotationClass')->will(self::returnValue(['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
 
         $classAnnotatedWithFilter = new Aop\Pointcut\PointcutClassAnnotatedWithFilter('SomeAnnotationClass');
         $classAnnotatedWithFilter->injectReflectionService($mockReflectionService);

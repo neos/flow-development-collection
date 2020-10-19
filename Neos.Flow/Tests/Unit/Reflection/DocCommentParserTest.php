@@ -38,4 +38,24 @@ class DocCommentParserTest extends UnitTestCase
         $parser->parseDocComment('/**' . chr(10) . ' * @var $foo integer' . chr(13) . chr(10) . ' * @var $bar string' . chr(10) . ' */');
         self::assertEquals(['$foo integer', '$bar string'], $parser->getTagValues('var'));
     }
+
+    /**
+     * @test
+     */
+    public function singleLineTagIsParsedCorrectly()
+    {
+        $parser = new DocCommentParser();
+        $parser->parseDocComment('/** @return Foo[] */');
+        $this->assertEquals([ 'Foo[]' ], $parser->getTagValues('return'));
+    }
+    /**
+     * @test
+     */
+    public function singleLineDescriptionIsParsedCorrectly()
+    {
+        $parser = new DocCommentParser();
+        $parser->parseDocComment('/** Description goes here */');
+
+        $this->assertEquals('Description goes here', $parser->getDescription());
+    }
 }

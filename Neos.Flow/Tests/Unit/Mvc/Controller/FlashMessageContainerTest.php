@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 
 use Neos\Error\Messages as FlowError;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Mvc;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
 
 /**
  * Testcase for the Flash Messages Container
@@ -21,13 +21,13 @@ use Neos\Flow\Mvc;
 class FlashMessageContainerTest extends UnitTestCase
 {
     /**
-     * @var Mvc\FlashMessageContainer
+     * @var FlashMessageContainer
      */
     protected $flashMessageContainer;
 
     protected function setUp(): void
     {
-        $this->flashMessageContainer = new Mvc\FlashMessageContainer();
+        $this->flashMessageContainer = new FlashMessageContainer();
     }
 
     /**

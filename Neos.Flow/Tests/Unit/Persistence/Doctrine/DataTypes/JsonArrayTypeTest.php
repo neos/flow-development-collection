@@ -17,12 +17,12 @@ use Neos\Flow\Tests\UnitTestCase;
 class JsonArrayTypeTest extends UnitTestCase
 {
     /**
-     * @var JsonArrayType|\PHPUnit_Framework_MockObject_MockObject
+     * @var JsonArrayType|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $jsonArrayTypeMock;
 
     /**
-     * @var \Doctrine\DBAL\Platforms\AbstractPlatform|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Doctrine\DBAL\Platforms\AbstractPlatform|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $abstractPlatformMock;
 

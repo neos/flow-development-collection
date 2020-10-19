@@ -32,7 +32,7 @@ class PackageFactoryTest extends UnitTestCase
     protected $packageFactory;
 
     /**
-     * @var PackageManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var PackageManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockPackageManager;
 

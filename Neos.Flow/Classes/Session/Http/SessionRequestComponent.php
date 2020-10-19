@@ -74,13 +74,15 @@ class SessionRequestComponent implements ComponentInterface
     {
         return new Cookie(
             $name,
-            $value,
+            // @see https://github.com/neos/flow-development-collection/issues/2133
+            trim(urldecode($value), '"'),
             0,
             $this->sessionSettings['cookie']['lifetime'],
             $this->sessionSettings['cookie']['domain'],
             $this->sessionSettings['cookie']['path'],
             $this->sessionSettings['cookie']['secure'],
-            $this->sessionSettings['cookie']['httponly']
+            $this->sessionSettings['cookie']['httponly'],
+            $this->sessionSettings['cookie']['samesite']
         );
     }
 }

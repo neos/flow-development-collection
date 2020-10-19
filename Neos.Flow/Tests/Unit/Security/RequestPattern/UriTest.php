@@ -41,12 +41,12 @@ class UriTest extends UnitTestCase
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
 
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($mockHttpRequest));
+        $mockActionRequest->expects(self::atLeastOnce())->method('getHttpRequest')->will(self::returnValue($mockHttpRequest));
 
         $mockUri = $this->getMockBuilder(UriInterface::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->expects($this->atLeastOnce())->method('getUri')->will($this->returnValue($mockUri));
+        $mockHttpRequest->expects(self::atLeastOnce())->method('getUri')->will(self::returnValue($mockUri));
 
-        $mockUri->expects($this->atLeastOnce())->method('getPath')->will($this->returnValue($uriPath));
+        $mockUri->expects(self::atLeastOnce())->method('getPath')->will(self::returnValue($uriPath));
 
         $requestPattern = new UriPattern(['uriPattern' => $pattern]);
 

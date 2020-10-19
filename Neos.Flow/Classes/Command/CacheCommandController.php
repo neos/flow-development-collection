@@ -419,6 +419,40 @@ class CacheCommandController extends CommandController
     }
 
     /**
+     * Cache Garbage Collection
+     *
+     * Runs the Garbage Collection (collectGarbage) method on all registered caches.
+     *
+     * Though the method is defined in the BackendInterface, the implementation
+     * can differ and might not remove any data, depending on possibilities of
+     * the backend.
+     *
+     * @param string $cacheIdentifier If set, this command only applies to the given cache
+     * @return void
+     * @throws NoSuchCacheException
+     */
+    public function collectGarbageCommand(string $cacheIdentifier = null): void
+    {
+        if ($cacheIdentifier !== null) {
+            $cache = $this->cacheManager->getCache($cacheIdentifier);
+            $cache->collectGarbage();
+
+            $this->outputLine('<success>Garbage Collection for cache "%s" completed</success>', [$cacheIdentifier]);
+        } else {
+            $cacheConfigurations = $this->cacheManager->getCacheConfigurations();
+            unset($cacheConfigurations['Default']);
+            ksort($cacheConfigurations);
+
+            foreach ($cacheConfigurations as $identifier => $configuration) {
+                $this->outputLine('Garbage Collection for cache "%s"', [$identifier]);
+                $cache = $this->cacheManager->getCache($identifier);
+                $cache->collectGarbage();
+                $this->outputLine('<success>Completed</success>');
+            }
+        }
+    }
+
+    /**
      * Call system function
      *
      * @Flow\Internal
@@ -450,7 +484,7 @@ class CacheCommandController extends CommandController
         if ($result->hasNotices()) {
             /** @var Notice $notice */
             foreach ($result->getNotices() as $notice) {
-                if (!empty($notice->getTitle())) {
+                if ($notice->hasTitle()) {
                     $this->outputLine('<b>%s</b>: %s', [$notice->getTitle(), $notice->render()]);
                 } else {
                     $this->outputLine($notice->render());
@@ -467,7 +501,7 @@ class CacheCommandController extends CommandController
         if ($result->hasWarnings()) {
             /** @var Warning $warning */
             foreach ($result->getWarnings() as $warning) {
-                if (!empty($warning->getTitle())) {
+                if ($warning->hasTitle()) {
                     $this->outputLine('<b>%s</b>: <comment>%s</comment>', [$warning->getTitle(), $warning->render()]);
                 } else {
                     $this->outputLine('<comment>%s</comment>', [$warning->render()]);

@@ -5,11 +5,11 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">Hanya karakter biasa (A sampai z, umlauts,...) dan angka yang diperbolehkan.</target><alt-trans><target>Hanya biasa karakter (sampai z, umlauts,...) dan angka yang diperbolehkan.</target></alt-trans></trans-unit>
+			<target state="translated">Hanya karakter biasa (A sampai z, umlauts,...) dan angka yang diperbolehkan.</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
-			<target state="translated">Nilai yang diberikan diharapkan {0}.</target><alt-trans><target>Nilai yang diberikan ini diharapkan akan {0}.</target></alt-trans></trans-unit>
+			<target state="translated">Nilai yang diberikan diharapkan {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
@@ -40,7 +40,7 @@
 			<target state="translated">Opsi "locale" dapat diatur hanya untuk string pengenal, atau objek lokal</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
-			<target state="translated">Di harapkan waktu yang valid</target><alt-trans><target>Waktu yang valid diharapkan</target></alt-trans></trans-unit>
+			<target state="translated">Di harapkan waktu yang valid</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
 			<target state="translated">Tanggal dan waktu yang valid diharapkan</target></trans-unit>
@@ -65,7 +65,7 @@
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
 				<source>A valid integer number is expected</source>
-			<target state="translated">Bilangan bulat yang valid diharapkan</target><alt-trans><target>Sejumlah integer yang valid diharapkan</target></alt-trans></trans-unit>
+			<target state="translated">Bilangan bulat yang valid diharapkan</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve">
 				<source>"{0}" is no integer.</source>
 			<target state="translated">"{0}" bukan bilangan bulat.</target></trans-unit>
@@ -164,16 +164,16 @@
 			<target state="translated">Nilai yang diberikan bukanlah sebuah contoh gambar</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target state="translated">Panjang asli gambar {0,number} lebih rendah daripada lebar minimal yang diperbolehkan {1,number}</target><alt-trans><target>Panjang asli gambar {0,number} lebih rendah daripada lebar minimal yang diizinkan {1,number}</target></alt-trans></trans-unit>
+			<target state="translated">Panjang asli gambar {0,number} lebih rendah daripada lebar minimal yang diperbolehkan {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target state="translated">Panjang asli gambar {0,number} lebih rendah daripada lebar minimal yang diperbolehkan {1,number}</target><alt-trans><target>Panjang asli gambar {0,number} lebih rendah daripada lebar minimal yang diizinkan {1,number}</target></alt-trans></trans-unit>
+			<target state="translated">Panjang asli gambar {0,number} lebih rendah daripada lebar minimal yang diperbolehkan {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target state="translated">Tinggi asli gambar {0,number} lebih rendah dari ketinggian minimum yang diperbolehkan {1,number}</target><alt-trans><target>Tinggi asli gambar {0,number} lebih rendah dari ketinggian minimum diperbolehkan {1,number}</target></alt-trans></trans-unit>
+			<target state="translated">Tinggi asli gambar {0,number} lebih rendah dari ketinggian minimum yang diperbolehkan {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target state="translated">Tinggi asli gambar {0,number} lebih rendah dari ketinggian minimum yang diperbolehkan {1,number}</target><alt-trans><target>Tinggi asli gambar {0,number} lebih rendah dari ketinggian minimum diperbolehkan {1,number}</target></alt-trans></trans-unit>
+			<target state="translated">Tinggi asli gambar {0,number} lebih rendah dari ketinggian minimum yang diperbolehkan {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
 			<target state="translated">Ukuran gambar yang diberikan {0,number} x {1,number} terlalu rendah dari resolusi minimal yang diperlukan {2,number}</target></trans-unit>

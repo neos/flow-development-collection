@@ -1,4 +1,4 @@
-==========
+﻿==========
 Validation
 ==========
 
@@ -83,7 +83,9 @@ itself possibly fail the validation and try to redirect to previous action, endi
 	validation, or else you might end up with an infinite loop on failing validation.
 
 Furthermore, it is also possible to execute *additional validators* only for specific action
-arguments using ``@Flow\Validate`` inside a controller action::
+arguments using ``@Flow\Validate`` inside a controller action:
+
+.. code-block:: php
 
     class CommentController extends \Neos\Flow\Mvc\Controller\ActionController {
 
@@ -111,7 +113,9 @@ A validator is a PHP class being responsible for checking validity of a certain 
 simple type.
 
 All validators implement ``\Neos\Flow\Validation\Validator\ValidatorInterface``, and
-the API of every validator is demonstrated in the following code example::
+the API of every validator is demonstrated in the following code example:
+
+.. code-block:: php
 
     // NOTE: you should always use the ValidatorResolver to create new
     // validators, as it is demonstrated in the next section.
@@ -206,19 +210,19 @@ The returned validator checks the following things:
 
   .. code-block:: php
 
-  	namespace YourPackage\Domain\Model;
-  	use Neos\Flow\Annotations as Flow;
+    namespace YourPackage\Domain\Model;
+    use Neos\Flow\Annotations as Flow;
 
-  	class Comment
+    class Comment
     {
 
-  	    /**
-  	     * @Flow\Validate(type="NotEmpty")
-  	     */
-  	    protected $text;
+        /**
+         * @Flow\Validate(type="NotEmpty")
+         */
+        protected $text;
 
-  	    // Add getters and setters here
-  	}
+        // Add getters and setters here
+    }
 
   It also correctly builds up validators for ``Collections`` or ``arrays``, if they are properly
   typed (``Doctrine\Common\Collection<YourPackage\Domain\Model\Author>``).
@@ -230,7 +234,7 @@ The returned validator checks the following things:
 
   These *Domain Model Validators* can also mark some specific properties as failed and add specific error messages:
 
-  .. code-block::php
+  .. code-block:: php
 
     class CommentValidator extends AbstractValidator
     {
@@ -247,19 +251,19 @@ The returned validator checks the following things:
 Normally, you would need to annotate Collection and Model type properties, so that the collection elements and
 the model would be validated like this:
 
-.. code-block::php
+.. code-block:: php
 
-  	    /**
-  	     * @var SomeDomainModel
-  	     * @Flow\Validate(type="GenericObject")
-  	     */
-  	    protected $someRelatedModel;
+        /**
+         * @var SomeDomainModel
+         * @Flow\Validate(type="GenericObject")
+         */
+        protected $someRelatedModel;
 
-  	    /**
-  	     * @var Collection<SomeOtherDomainModel>
-  	     * @Flow\Validate(type="Collection")
-  	     */
-  	    protected $someOtherRelatedModels;
+        /**
+         * @var Collection<SomeOtherDomainModel>
+         * @Flow\Validate(type="Collection")
+         */
+        protected $someOtherRelatedModels;
 
 For convenience, those validators will be added automatically if they are left out, because Flow will always validate
 Model hierarchies. In some cases, it might be necessary to override validation behaviour of those properties,
@@ -312,7 +316,9 @@ validate uniqueness of a property like an e-mail adress only in your createActio
 
 A validator is only executed if at least one validation group overlap.
 
-The following example demonstrates this::
+The following example demonstrates this:
+
+.. code-block:: php
 
     class Comment
     {
@@ -387,12 +393,19 @@ When implementing your own validators (see below), you need to pass the containe
 against it. See ``AbstractCompositeValidator`` and ``isValidatedAlready`` in the ``GenericObjectValidator``
 for examples of how to do this.
 
+Another optimization option of the ``GenericObjectValidator`` is the ``skipUnInitializedProxies`` flag. When
+set to true, it allows to skip validation of uninitialized proxy instances, to avoid recursions down into
+unchanged hierarchies. This can avoid loading of data for validation and is safe, if you can rely on your data
+not being changed and thus making an entity state invalid "from the outside."
+
 Writing Validators
 ==================
 
 Usually, when writing your own validator, you will not directly implement ``ValidatorInterface``, but
 rather subclass ``AbstractValidator``. You only need to specify any options your validator might use and
-implement the ``isValid()`` method then::
+implement the ``isValid()`` method then:
+
+.. code-block:: php
 
     /**
      * A validator for checking items against foos.
@@ -408,14 +421,12 @@ implement the ``isValid()`` method then::
         );
 
         /**
-         * Check if the given value is a valid foo item. What constitutes a valid foo
-         is determined through the 'foo' option.
+         * Check if the given value is a valid foo item. What constitutes a valid foo is determined through the 'foo' option.
          *
          * @param mixed $value
          * @return void
          */
-        protected function isValid($value)
-        {
+        protected function isValid($value) {
             if (!isset($this->options['foo'])) {
                 throw new \Neos\Flow\Validation\Exception\InvalidValidationOptionsException(
                     'The option "foo" for this validator needs to be specified', 12346788

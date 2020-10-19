@@ -43,13 +43,13 @@ class RequestBodyParsingComponent implements ComponentInterface
      * Parses the request body according to the media type.
      *
      * @param ServerRequestInterface $httpRequest
-     * @return array
+     * @return null|array|string|integer
      */
-    protected function parseRequestBody(ServerRequestInterface $httpRequest): array
+    protected function parseRequestBody(ServerRequestInterface $httpRequest)
     {
         $requestBody = $httpRequest->getBody()->getContents();
         if ($requestBody === null || $requestBody === '') {
-            return [];
+            return $requestBody;
         }
 
         /** @var MediaTypeConverterInterface $mediaTypeConverter */
@@ -58,6 +58,7 @@ class RequestBodyParsingComponent implements ComponentInterface
         $propertyMappingConfiguration->setTypeConverter($mediaTypeConverter);
         $requestedContentType = $httpRequest->getHeaderLine('Content-Type');
         $propertyMappingConfiguration->setTypeConverterOption(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $requestedContentType);
+        // FIXME: The MediaTypeConverter returns an empty array for "error cases", which might be unintended
         $arguments = $this->propertyMapper->convert($requestBody, 'array', $propertyMappingConfiguration);
 
         return $arguments;

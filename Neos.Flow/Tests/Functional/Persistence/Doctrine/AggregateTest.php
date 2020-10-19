@@ -120,4 +120,42 @@ class AggregateTest extends FunctionalTestCase
         // if all goes well the value object is not deleted
         self::assertTrue(true);
     }
+
+    /**
+     * @test
+     */
+    public function unidirectionalOneToManyRelationsAreMapped()
+    {
+        $tag1 = new Fixtures\Tag('Tag1');
+        $tag2 = new Fixtures\Tag('Tag2');
+        $post = new Fixtures\Post();
+        $post->addTag($tag1);
+        $post->addTag($tag2);
+
+        $this->postRepository->add($post);
+        $this->persistenceManager->persistAll();
+
+        $postIdentifier = $this->persistenceManager->getIdentifierByObject($post);
+        $tag1identifier = $this->persistenceManager->getIdentifierByObject($tag1);
+        $tag2identifier = $this->persistenceManager->getIdentifierByObject($tag2);
+
+        $retrievedTag1 = $this->persistenceManager->getObjectByIdentifier($tag1identifier, Fixtures\Tag::class);
+        self::assertSame($tag1, $retrievedTag1, 'Tag not persisted');
+
+        $post->removeTag($tag2);
+        $this->postRepository->update($post);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        $retrievedTag2 = $this->persistenceManager->getObjectByIdentifier($tag2identifier, Fixtures\Tag::class);
+        self::assertTrue($retrievedTag2 === null, 'Tag not deleted');
+
+        $post = $this->postRepository->find($postIdentifier);
+        $this->postRepository->remove($post);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        $retrievedTag1 = $this->persistenceManager->getObjectByIdentifier($tag1identifier, Fixtures\Tag::class);
+        self::assertTrue($retrievedTag1 === null, 'Tag not orphan removed');
+    }
 }

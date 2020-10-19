@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ResourceManagement\Target;
 
 /*
@@ -12,10 +13,8 @@ namespace Neos\Flow\ResourceManagement\Target;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Core\Bootstrap;
 use Neos\Error\Messages\Error;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Http\ServerRequestAttributes;
+use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -63,15 +62,6 @@ class FileSystemTarget implements TargetInterface
     protected $baseUri = '';
 
     /**
-     * The configured Neos.Flow.http.baseUri to use as fallback if no absolute baseUri is configured
-     * and if it can't be determined from the current request (e.g. in CLI mode)
-     *
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="http.baseUri")
-     * @var string
-     */
-    protected $httpBaseUri;
-
-    /**
      * The resolved absolute web URI for this target. If $baseUri was absolute this will be the same,
      * otherwise the request base uri will be prepended.
      *
@@ -87,23 +77,17 @@ class FileSystemTarget implements TargetInterface
     protected $subdivideHashPathSegment = true;
 
     /**
-     * A list of extensions that are blacklisted and must not be published by this target.
+     * A list of extensions that are excluded and must not be published by this target.
      *
      * @var array
      */
-    protected $extensionBlacklist = [];
+    protected $excludedExtensions = [];
 
     /**
      * @Flow\Inject
      * @var ResourceRepository
      */
     protected $resourceRepository;
-
-    /**
-     * @Flow\Inject
-     * @var Bootstrap
-     */
-    protected $bootstrap;
 
     /**
      * @var LoggerInterface
@@ -115,6 +99,12 @@ class FileSystemTarget implements TargetInterface
      * @var MessageCollector
      */
     protected $messageCollector;
+
+    /**
+     * @Flow\Inject
+     * @var BaseUriProvider
+     */
+    protected $baseUriProvider;
 
     /**
      * Constructor
@@ -310,8 +300,8 @@ class FileSystemTarget implements TargetInterface
     protected function publishFile($sourceStream, $relativeTargetPathAndFilename)
     {
         $pathInfo = UnicodeFunctions::pathinfo($relativeTargetPathAndFilename);
-        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->extensionBlacklist) && $this->extensionBlacklist[strtolower($pathInfo['extension'])] === true) {
-            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is blacklisted.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447148472);
+        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->excludedExtensions) && $this->excludedExtensions[strtolower($pathInfo['extension'])] === true) {
+            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is excluded.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447148472);
         }
 
         $targetPathAndFilename = $this->path . $relativeTargetPathAndFilename;
@@ -392,7 +382,7 @@ class FileSystemTarget implements TargetInterface
      * Detects and returns the website's absolute base URI
      *
      * @return string The resolved resource base URI, @see getResourcesBaseUri()
-     * @throws TargetException if the baseUri can't be resolved
+     * @throws \Neos\Flow\Http\Exception
      */
     protected function detectResourcesBaseUri()
     {
@@ -400,15 +390,8 @@ class FileSystemTarget implements TargetInterface
             return $this->baseUri;
         }
 
-        $requestHandler = $this->bootstrap->getActiveRequestHandler();
-        if ($requestHandler instanceof HttpRequestHandlerInterface) {
-            return $requestHandler->getHttpRequest()->getAttribute(ServerRequestAttributes::BASE_URI) . $this->baseUri;
-        }
-
-        if ($this->httpBaseUri === null) {
-            throw new TargetException(sprintf('The base URI for resources could not be detected. Please specify the "Neos.Flow.http.baseUri" setting or use an absolute "baseUri" option for target "%s".', $this->name), 1438093977);
-        }
-        return $this->httpBaseUri . $this->baseUri;
+        $httpBaseUri = (string)$this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
+        return $httpBaseUri . $this->baseUri;
     }
 
     /**
@@ -422,19 +405,18 @@ class FileSystemTarget implements TargetInterface
      * @param ResourceMetaDataInterface $object PersistentResource or Storage Object
      * @return string The relative path and filename, for example "c/8/2/8/c828d0f88ce197be1aff7cc2e5e86b1244241ac6/MyPicture.jpg" (if subdivideHashPathSegment is on) or "c828d0f88ce197be1aff7cc2e5e86b1244241ac6/MyPicture.jpg" (if it's off)
      */
-    protected function getRelativePublicationPathAndFilename(ResourceMetaDataInterface $object)
+    protected function getRelativePublicationPathAndFilename(ResourceMetaDataInterface $object): string
     {
         if ($object->getRelativePublicationPath() !== '') {
-            $pathAndFilename = $object->getRelativePublicationPath() . $object->getFilename();
-        } else {
-            if ($this->subdivideHashPathSegment) {
-                $sha1Hash = $object->getSha1();
-                $pathAndFilename = $sha1Hash[0] . '/' . $sha1Hash[1] . '/' . $sha1Hash[2] . '/' . $sha1Hash[3] . '/' . $sha1Hash . '/' . $object->getFilename();
-            } else {
-                $pathAndFilename = $object->getSha1() . '/' . $object->getFilename();
-            }
+            return $object->getRelativePublicationPath() . $object->getFilename();
         }
-        return $pathAndFilename;
+
+        if ($this->subdivideHashPathSegment) {
+            $sha1Hash = $object->getSha1();
+            return $sha1Hash[0] . '/' . $sha1Hash[1] . '/' . $sha1Hash[2] . '/' . $sha1Hash[3] . '/' . $sha1Hash . '/' . $object->getFilename();
+        }
+
+        return $object->getSha1() . '/' . $object->getFilename();
     }
 
     /**
@@ -449,8 +431,12 @@ class FileSystemTarget implements TargetInterface
         switch ($key) {
             case 'baseUri':
             case 'path':
-            case 'extensionBlacklist':
+            case 'excludedExtensions':
                 $this->$key = $value;
+                break;
+            // Only for b/c - remove with next major
+            case 'extensionBlacklist':
+                $this->excludedExtensions = $value;
                 break;
             case 'subdivideHashPathSegment':
                 $this->subdivideHashPathSegment = (boolean)$value;

@@ -28,7 +28,7 @@ class ReflectionServiceTest extends UnitTestCase
     protected $reflectionService;
 
     /**
-     * @var Reader|\PHPUnit_Framework_MockObject_MockObject
+     * @var Reader|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockAnnotationReader;
 
@@ -37,8 +37,10 @@ class ReflectionServiceTest extends UnitTestCase
         $this->reflectionService = $this->getAccessibleMock(ReflectionService::class, null);
 
         $this->mockAnnotationReader = $this->getMockBuilder('Doctrine\Common\Annotations\Reader')->disableOriginalConstructor()->getMock();
-        $this->mockAnnotationReader->expects($this->any())->method('getClassAnnotations')->will($this->returnValue([]));
+        $this->mockAnnotationReader->method('getClassAnnotations')->willReturn([]);
+        $this->mockAnnotationReader->method('getMethodAnnotations')->willReturn([]);
         $this->inject($this->reflectionService, 'annotationReader', $this->mockAnnotationReader);
+        $this->reflectionService->_set('initialized', true);
     }
 
     /**
@@ -66,6 +68,16 @@ class ReflectionServiceTest extends UnitTestCase
     {
         $this->expectException(ClassLoadingForReflectionFailedException::class);
         $this->reflectionService->_call('reflectClass', Fixture\ClassWithDifferentNameDifferent::class);
+    }
+
+    /**
+     * @test
+     */
+    public function getMethodParametersReturnsCorrectTypeForAliasedClass()
+    {
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithAliasDependency::class);
+        $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithAliasDependency::class, 'injectDependency');
+        $this->assertEquals(Fixture\AliasedClass::class, array_pop($parameters)['class']);
     }
 
     /**

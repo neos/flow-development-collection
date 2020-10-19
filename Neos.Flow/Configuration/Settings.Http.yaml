@@ -24,9 +24,15 @@ Neos:
       # request (default).
       baseUri: NULL
 
+      # Defines the PSR-15 middlewares that a request goes through in a flow
+      middlewares:
+        'dispatch':
+          position: 'end'
+          middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
+
       # Defines the workflow of one request from bootstrap to the HTTP response
       #
-      # By default this workflow is devided in three sub-chains "preprocess", "process" and "postprocess" but the chain can be restructured as needed
+      # By default this workflow is divided in three sub-chains "preprocess", "process" and "postprocess" but the chain can be restructured as needed
       #
       chain:
 
@@ -36,11 +42,8 @@ Neos:
             'trustedProxies':
               position: 'start'
               component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
-            'baseUri':
-              position: 'after trustedProxies'
-              component: 'Neos\Flow\Http\Component\BaseUriComponent'
             'getSessionCookieFromRequest':
-              position: 'after baseUri'
+              position: 'after trustedProxies'
               component: 'Neos\Flow\Session\Http\SessionRequestComponent'
         'process':
           chain:
@@ -70,6 +73,9 @@ Neos:
             'setSessionCookie':
               position: 'start'
               component: 'Neos\Flow\Session\Http\SessionResponseComponent'
+            'flashMessages':
+              position: 'before setSessionCookie'
+              component: 'Neos\Flow\Mvc\FlashMessage\FlashMessageComponent'
             'poweredByHeader':
               component: 'Neos\Flow\Http\Component\PoweredByComponent'
             'standardsCompliance':
@@ -95,8 +101,7 @@ Neos:
         # Defines request headers which are trusted from proxies to override important request information
         # Each value can be a single header or a comma separated list of headers
         headers:
-          # This is a list mainly for backwards-compatibility. You should only set a single header, e.g. 'X-Forwarded-For'
-          clientIp: 'Client-Ip,X-Forwarded-For,X-Forwarded,X-Cluster-Client-Ip,Forwarded-For,Forwarded'
+          clientIp: 'X-Forwarded-For'
           host: 'X-Forwarded-Host'
           port: 'X-Forwarded-Port'
           proto: 'X-Forwarded-Proto'

@@ -118,7 +118,6 @@ class StringHelperTest extends UnitTestCase
         return [
             ['value' => 65, 'expected' => 'A'],
             ['value' => 256, 'expected' => chr(256)],
-            ['value' => 'not a number', 'expected' => chr('not a number')],
             ['value' => 0, 'expected' => chr(0)],
         ];
     }
@@ -243,10 +242,11 @@ class StringHelperTest extends UnitTestCase
     public function pregReplaceExamples()
     {
         return [
-            'replace non-alphanumeric characters' => ['Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', 'Some-String-with-sp-cial-characters'],
-            'no match' => ['canal', '/x/', 'y', 'canal'],
-            'unicode replacement' => ['Öaßaü', '/aßa/', 'g', 'Ögü'],
-            'references' => ['2016-08-31', '/([0-9]+)-([0-9]+)-([0-9]+)/', '$3.$2.$1', '31.08.2016']
+            'replace non-alphanumeric characters' => ['Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', null, 'Some-String-with-sp-cial-characters'],
+            'replace non-alphanumeric characters width limit' => ['Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', 1, 'Some-String with sp:cial characters'],
+            'no match' => ['canal', '/x/', 'y', null, 'canal'],
+            'unicode replacement' => ['Öaßaü', '/aßa/', 'g', null, 'Ögü'],
+            'references' => ['2016-08-31', '/([0-9]+)-([0-9]+)-([0-9]+)/', '$3.$2.$1', null, '31.08.2016']
         ];
     }
 
@@ -254,10 +254,10 @@ class StringHelperTest extends UnitTestCase
      * @test
      * @dataProvider pregReplaceExamples
      */
-    public function pregReplaceWorks($string, $pattern, $replace, $expected)
+    public function pregReplaceWorks($string, $pattern, $replace, $limit, $expected)
     {
         $helper = new StringHelper();
-        $result = $helper->pregReplace($string, $pattern, $replace);
+        $result = $helper->pregReplace($string, $pattern, $replace, $limit);
         self::assertSame($expected, $result);
     }
 

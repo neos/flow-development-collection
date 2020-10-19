@@ -215,9 +215,10 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
 
         $dispatchLoopCount = 0;
         $subResponse = new ActionResponse();
+        $content = '';
         while (!$subRequest->isDispatched()) {
             if ($dispatchLoopCount++ > 99) {
-                throw new InfiniteLoopException('Could not ultimately dispatch the widget request after '  . $dispatchLoopCount . ' iterations.', 1380282310);
+                throw new InfiniteLoopException('Could not ultimately dispatch the widget request after ' . $dispatchLoopCount . ' iterations.', 1380282310);
             }
             $subResponse = new ActionResponse();
 
@@ -228,6 +229,10 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             $subRequest->setControllerObjectName($this->widgetContext->getControllerObjectName());
             try {
                 $this->controller->processRequest($subRequest, $subResponse);
+
+                // We need to make sure to not merge content up into the parent ActionResponse because that _could_ break the parent response.
+                $content = $subResponse->getContent();
+                $subResponse->setContent('');
             } catch (StopActionException $exception) {
                 if ($exception instanceof ForwardException) {
                     $subRequest = $exception->getNextRequest();
@@ -239,7 +244,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
         }
 
-        return $subResponse->getContent();
+        return $content;
     }
 
     /**

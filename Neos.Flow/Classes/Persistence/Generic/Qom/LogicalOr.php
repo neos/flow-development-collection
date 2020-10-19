@@ -21,6 +21,7 @@ namespace Neos\Flow\Persistence\Generic\Qom;
  *  satisfy both constraint1 and constraint2.
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 class LogicalOr extends Constraint
 {

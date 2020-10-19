@@ -423,7 +423,7 @@ class Query implements QueryInterface
         } else {
             $constraints = func_get_args();
         }
-        return call_user_func_array([$this->queryBuilder->expr(), 'andX'], $constraints);
+        return $this->queryBuilder->expr()->andX(...$constraints);
     }
 
     /**
@@ -442,7 +442,7 @@ class Query implements QueryInterface
         } else {
             $constraints = func_get_args();
         }
-        return call_user_func_array([$this->queryBuilder->expr(), 'orX'], $constraints);
+        return $this->queryBuilder->expr()->orX(...$constraints);
     }
 
     /**
@@ -663,7 +663,9 @@ class Query implements QueryInterface
     {
         $aliases = $this->queryBuilder->getRootAliases();
         $previousJoinAlias = $aliases[0];
-        if (strpos($propertyPath, '.') === false) {
+        if (strpos($propertyPath, '.') === false
+            || $this->entityManager->getClassMetadata($this->entityClassName)->hasField($propertyPath)
+        ) {
             return $previousJoinAlias . '.' . $propertyPath;
         }
 

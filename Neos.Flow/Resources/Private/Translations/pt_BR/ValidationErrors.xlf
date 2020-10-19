@@ -13,7 +13,7 @@
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target state="translated">O assunto fornecido não é uma coleção</target><alt-trans><target>O determinado assunto não é uma coleção</target></alt-trans></trans-unit>
+			<target state="translated">O assunto fornecido não é uma coleção</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
@@ -27,13 +27,13 @@
 			<target state="translated">o valor fornecido não é uma data válida</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
-			<target state="needs-translation">The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</target></trans-unit>
+			<target state="translated">A data dada deve estar entre {0,datetime,datetime} e {1,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0,datetime,datetime}</source>
-			<target state="needs-translation">The given date must be after {0,datetime,datetime}</target></trans-unit>
+			<target state="translated">A data dada deve ser depois de {0,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0,datetime,datetime}</source>
-			<target state="needs-translation">The given date must be before {0,datetime,datetime}</target></trans-unit>
+			<target state="translated">A data dada deve ser antes de {0,datetime,datetime}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>

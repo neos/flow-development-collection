@@ -222,29 +222,33 @@ class ResourceCommandController extends CommandController
             /* @var PersistentResource $resource */
             $stream = $resource->getStream();
             if (!is_resource($stream)) {
-                $brokenResources[] = $resource->getSha1();
+                $brokenResources[] = $this->persistenceManager->getIdentifierByObject($resource);
             }
         }
 
         $this->output->progressFinish();
         $this->outputLine();
 
-        if ($mediaPackagePresent && count($brokenResources) > 0) {
-            /* @var AssetRepository $assetRepository */
-            $assetRepository = $this->objectManager->get(AssetRepository::class);
-            /* @var ThumbnailRepository $thumbnailRepository */
-            $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
+        if (count($brokenResources) > 0) {
+            if ($mediaPackagePresent) {
+                /* @var AssetRepository $assetRepository */
+                $assetRepository = $this->objectManager->get(AssetRepository::class);
+                /* @var ThumbnailRepository $thumbnailRepository */
+                $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
+            }
 
-            foreach ($brokenResources as $key => $resourceSha1) {
-                $resource = $this->resourceRepository->findOneBySha1($resourceSha1);
+            foreach ($brokenResources as $key => $resourceIdentifier) {
+                $resource = $this->resourceRepository->findByIdentifier($resourceIdentifier);
                 $brokenResources[$key] = $resource;
-                $assets = $assetRepository->findByResource($resource);
-                if ($assets !== null) {
-                    $relatedAssets[$resource] = $assets;
-                }
-                $thumbnails = $thumbnailRepository->findByResource($resource);
-                if ($assets !== null) {
-                    $relatedThumbnails[$resource] = $thumbnails;
+                if ($mediaPackagePresent) {
+                    $assets = $assetRepository->findByResource($resource);
+                    if ($assets !== null) {
+                        $relatedAssets[$resource] = $assets;
+                    }
+                    $thumbnails = $thumbnailRepository->findByResource($resource);
+                    if ($assets !== null) {
+                        $relatedThumbnails[$resource] = $thumbnails;
+                    }
                 }
             }
         }
@@ -270,7 +274,7 @@ class ResourceCommandController extends CommandController
                 case 'y':
                     $brokenAssetCounter = 0;
                     $brokenThumbnailCounter = 0;
-                    foreach ($brokenResources as $sha1 => $resource) {
+                    foreach ($brokenResources as $resource) {
                         $this->outputLine('- delete %s (%s) from "%s" collection', [
                             $resource->getFilename(),
                             $resource->getSha1(),

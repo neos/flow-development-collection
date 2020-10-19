@@ -50,7 +50,7 @@ class CollectionValidator extends GenericObjectValidator
      */
     protected function isValid($value)
     {
-        if ($value instanceof \Doctrine\ORM\PersistentCollection && !$value->isInitialized()) {
+        if ($value instanceof \Doctrine\Common\Collections\AbstractLazyCollection && !$value->isInitialized()) {
             return;
         } elseif ((is_object($value) && !TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
             $this->addError('The given subject was not a collection.', 1317204797);
@@ -75,7 +75,7 @@ class CollectionValidator extends GenericObjectValidator
                 $collectionElementValidator->setValidatedInstancesContainer($this->validatedInstancesContainer);
             }
 
-            $this->result->forProperty($index)->merge($collectionElementValidator->validate($collectionElement));
+            $this->getResult()->forProperty($index)->merge($collectionElementValidator->validate($collectionElement));
         }
     }
 }

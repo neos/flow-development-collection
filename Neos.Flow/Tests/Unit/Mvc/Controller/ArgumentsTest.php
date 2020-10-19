@@ -185,10 +185,10 @@ class ArgumentsTest extends UnitTestCase
         $results2->addError($error2);
 
         $argument1 = $this->getMockBuilder(Argument::class)->setMethods(['getValidationResults'])->setConstructorArgs(['name1', 'string'])->getMock();
-        $argument1->expects($this->once())->method('getValidationResults')->will($this->returnValue($results1));
+        $argument1->expects(self::once())->method('getValidationResults')->will(self::returnValue($results1));
 
         $argument2 = $this->getMockBuilder(Argument::class)->setMethods(['getValidationResults'])->setConstructorArgs(['name2', 'string'])->getMock();
-        $argument2->expects($this->once())->method('getValidationResults')->will($this->returnValue($results2));
+        $argument2->expects(self::once())->method('getValidationResults')->will(self::returnValue($results2));
 
         $arguments = new Arguments();
         $arguments->addArgument($argument1);

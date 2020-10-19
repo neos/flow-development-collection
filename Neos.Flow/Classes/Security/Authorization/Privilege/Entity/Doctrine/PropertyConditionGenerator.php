@@ -11,7 +11,7 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  * source code.
  */
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\QuoteStrategy;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
@@ -482,7 +482,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
                     }
                 }
                 $parameter = implode(',', $parameters);
-            } elseif ($this->getRawParameterValue($operandDefinition) !== null) {
+            } elseif (!($this->getRawParameterValue($operandDefinition) === null || ($this->operator === 'in' && $this->getRawParameterValue($operandDefinition) === []))) {
                 $parameter = $sqlFilter->getParameter($operandDefinition);
             }
         } catch (\InvalidArgumentException $exception) {

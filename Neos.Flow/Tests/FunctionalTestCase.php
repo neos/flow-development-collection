@@ -193,7 +193,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $this->testingProvider = $this->objectManager->get(\Neos\Flow\Security\Authentication\Provider\TestingProvider::class);
             $this->testingProvider->setName('TestingProvider');
 
-            $this->registerRoute('functionaltestroute', 'typo3/flow/test', [
+            $this->registerRoute('functionaltestroute', 'neos/flow/test', [
                 '@package' => 'Neos.Flow',
                 '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
                 '@controller' => 'Standard',
@@ -410,7 +410,8 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             'REQUEST_URI' => '',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
-            'REQUEST_TIME' => 1326472534,
+            'REQUEST_TIME' => $_SERVER['REQUEST_TIME'] ?? null,
+            'REQUEST_TIME_FLOAT' => $_SERVER['REQUEST_TIME_FLOAT'] ?? null,
         ];
     }
 
@@ -431,7 +432,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $responseFactory = new ResponseFactory();
 
         $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost/typo3/flow/test');
+        $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost/neos/flow/test');
         $componentContext = new ComponentContext($request, $responseFactory->createResponse());
         $requestHandler->setComponentContext($componentContext);
     }

@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Utility\Ip as IpUtility;
 use Psr\Http\Message\ServerRequestInterface;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 
 /**
  * HTTP component that checks request headers against a configured list of trusted proxy IP addresses.
@@ -32,10 +33,41 @@ class TrustedProxiesComponent implements ComponentInterface
     const HOST_PATTERN = '(?:host=(?<host>"[^"]+"|[0-9a-z_\.:\-]+))';
 
     /**
-     * @Flow\InjectConfiguration("http.trustedProxies")
      * @var array
      */
     protected $settings;
+
+    /**
+     * Injects the configuration settings
+     *
+     * @param array $settings
+     * @return void
+     * @throws InvalidConfigurationException
+     */
+    public function injectSettings(array $settings)
+    {
+        $this->settings = $settings['http']['trustedProxies'];
+
+        if ($this->settings['proxies'] === false) {
+            $this->settings['proxies'] = [];
+            return;
+        }
+
+        if ($this->settings['proxies'] === ['*']) {
+            $this->settings['proxies'] = '*';
+        }
+
+        if (is_string($this->settings['proxies']) && $this->settings['proxies'] !== '*') {
+            $this->settings['proxies'] = array_map('trim', explode(',', $this->settings['proxies']));
+        }
+
+        if (!is_array($this->settings['proxies']) && $this->settings['proxies'] !== '*') {
+            throw new InvalidConfigurationException('The Neos.Flow.http.trustedProxies.proxies setting may only be the single string "*" or a list of IP addresses or address ranges (in CIDR notation) given as an array or comma separated string. Got "' . var_export($this->settings['proxies'], true) . '" instead.', 1564659249);
+        }
+        if (is_array($this->settings['proxies']) && in_array('*', $this->settings['proxies'], true)) {
+            throw new InvalidConfigurationException('The Neos.Flow.http.trustedProxies.proxies setting is an array of IP addresses or address ranges (in CIDR notation) but also contains the string "*". Did you intend to allow all proxies? If so set the setting to the explicit string "*".', 1564659250);
+        }
+    }
 
     /**
      * @param ComponentContext $componentContext
@@ -180,12 +212,6 @@ class TrustedProxiesComponent implements ComponentInterface
         $allowedProxies = $this->settings['proxies'];
         if ($allowedProxies === '*') {
             return true;
-        }
-        if (is_string($allowedProxies)) {
-            $allowedProxies = array_map('trim', explode(',', $allowedProxies));
-        }
-        if (!is_array($allowedProxies)) {
-            return false;
         }
         foreach ($allowedProxies as $ipPattern) {
             if (IpUtility::cidrMatch($ipAddress, $ipPattern)) {

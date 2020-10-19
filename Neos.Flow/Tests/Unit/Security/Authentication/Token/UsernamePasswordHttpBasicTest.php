@@ -51,7 +51,7 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
 
         $httpRequest = (new ServerRequestFactory(new UriFactory()))->createServerRequest('GET', new Uri('http://foo.com'), $serverEnvironment);
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+        $mockActionRequest->expects(self::atLeastOnce())->method('getHttpRequest')->will(self::returnValue($httpRequest));
 
         $this->token->updateCredentials($mockActionRequest);
 
@@ -73,7 +73,7 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
 
         $httpRequest = (new ServerRequestFactory(new UriFactory()))->createServerRequest('GET', new Uri('http://foo.com'), $serverEnvironment);
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+        $mockActionRequest->expects(self::atLeastOnce())->method('getHttpRequest')->will(self::returnValue($httpRequest));
         $this->token->updateCredentials($mockActionRequest);
 
         self::assertEquals($expectedCredentials, $this->token->getCredentials());
@@ -87,7 +87,7 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
     {
         $httpRequest = new ServerRequest('GET', new Uri('http://foo.com'));
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->will($this->returnValue($httpRequest));
+        $mockActionRequest->expects(self::atLeastOnce())->method('getHttpRequest')->will(self::returnValue($httpRequest));
         $this->token->updateCredentials($mockActionRequest);
 
         self::assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $this->token->getAuthenticationStatus());

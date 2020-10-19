@@ -31,7 +31,7 @@ class PointcutTest extends UnitTestCase
         $methodName = 'TheMethod';
 
         $mockPointcutFilterComposite = $this->getMockBuilder(Pointcut\PointcutFilterComposite::class)->disableOriginalConstructor()->setMethods(['matches'])->getMock();
-        $mockPointcutFilterComposite->expects($this->once())->method('matches')->with($className, $methodName, $className, 1)->will($this->returnValue(true));
+        $mockPointcutFilterComposite->expects(self::once())->method('matches')->with($className, $methodName, $className, 1)->will(self::returnValue(true));
 
         $pointcut = $this->getMockBuilder(Pointcut\Pointcut::class)->setMethods(['dummy'])->setConstructorArgs([$pointcutExpression, $mockPointcutFilterComposite, $aspectClassName])->getMock();
         self::assertTrue($pointcut->matches($className, $methodName, $className, 1));
@@ -108,7 +108,7 @@ class PointcutTest extends UnitTestCase
         $className = 'TheClass';
 
         $mockPointcutFilterComposite = $this->getMockBuilder(Pointcut\PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilterComposite->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(['runtimeEvaluationsDefinition']));
+        $mockPointcutFilterComposite->expects(self::once())->method('getRuntimeEvaluationsDefinition')->will(self::returnValue(['runtimeEvaluationsDefinition']));
 
         $pointcut = new Pointcut\Pointcut($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName, $className);
 
@@ -128,7 +128,7 @@ class PointcutTest extends UnitTestCase
         $targetClassNameIndex = new Aop\Builder\ClassNameIndex();
 
         $mockPointcutFilterComposite = $this->getMockBuilder(Pointcut\PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilterComposite->expects($this->once())->method('reduceTargetClassNames')->with($targetClassNameIndex)->willReturn($resultClassNameIndex);
+        $mockPointcutFilterComposite->expects(self::once())->method('reduceTargetClassNames')->with($targetClassNameIndex)->willReturn($resultClassNameIndex);
 
         $pointcut = new Pointcut\Pointcut($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName, $className);
 

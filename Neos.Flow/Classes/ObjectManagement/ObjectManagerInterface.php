@@ -44,6 +44,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * Dependency Injection.
      *
      * @param string $objectName The name of the object to return an instance of
+     * @param mixed[] ...$arguments Any number of arguments that should be passed to the constructor of the object
      * @return object The object instance
      * @api
      */

@@ -106,7 +106,7 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
             [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]
         ]);
 
-        $this->mockActionRequest->expects($this->once())->method('setArguments')->with([
+        $this->mockActionRequest->expects(self::once())->method('setArguments')->with([
             '__internalArgument1' => 'request',
             '__internalArgument2' => 'requestBody',
             '__internalArgument3' => 'routing'
@@ -124,7 +124,7 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
         $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
         $this->mockHttpRequest->method('getParsedBody')->willReturn([]);
 
-        $this->mockComponentContext->expects($this->atLeastOnce())->method('setParameter')->with(DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
+        $this->mockComponentContext->expects(self::atLeastOnce())->method('setParameter')->with(DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
         $this->mockComponentContext->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]
@@ -201,12 +201,12 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
      */
     public function handleMergesArgumentsWithRoutingMatchResults(array $requestArguments, array $requestBodyArguments, array $routingMatchResults = null, array $expectedArguments)
     {
-        $this->mockActionRequest->expects($this->once())->method('setArguments')->with($expectedArguments);
-        $this->mockSecurityContext->expects($this->once())->method('setRequest')->with($this->mockActionRequest);
+        $this->mockActionRequest->expects(self::once())->method('setArguments')->with($expectedArguments);
+        $this->mockSecurityContext->expects(self::once())->method('setRequest')->with($this->mockActionRequest);
         $this->mockHttpRequest->method('getQueryParams')->willReturn($requestArguments);
         $this->mockHttpRequest->method('getParsedBody')->willReturn($requestBodyArguments);
 
-        $this->mockComponentContext->expects($this->atLeastOnce())->method('setParameter')->with(DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
+        $this->mockComponentContext->expects(self::atLeastOnce())->method('setParameter')->with(DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
         $this->mockComponentContext->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', $routingMatchResults],
             [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]
@@ -227,7 +227,7 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
             [RoutingComponent::class, 'matchResults', []],
             [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]
         ]);
-        $this->mockSecurityContext->expects($this->once())->method('setRequest')->with($this->mockActionRequest);
+        $this->mockSecurityContext->expects(self::once())->method('setRequest')->with($this->mockActionRequest);
 
         $this->prepareMvcRequestComponent->handle($this->mockComponentContext);
     }
@@ -241,10 +241,10 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
         $this->mockHttpRequest->method('getParsedBody')->willReturn([]);
         $this->mockPropertyMapper->method('convert')->with('', 'array', new PropertyMappingConfiguration())->willReturn([]);
 
-        $this->mockActionRequest->expects($this->once())->method('getControllerName')->willReturn('');
-        $this->mockActionRequest->expects($this->once())->method('getControllerActionName')->willReturn('');
-        $this->mockActionRequest->expects($this->once())->method('setControllerName')->with('Standard');
-        $this->mockActionRequest->expects($this->once())->method('setControllerActionName')->with('index');
+        $this->mockActionRequest->expects(self::once())->method('getControllerName')->willReturn('');
+        $this->mockActionRequest->expects(self::once())->method('getControllerActionName')->willReturn('');
+        $this->mockActionRequest->expects(self::once())->method('setControllerName')->with('Standard');
+        $this->mockActionRequest->expects(self::once())->method('setControllerActionName')->with('index');
 
         $this->mockComponentContext->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', []],
@@ -268,8 +268,8 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
 
         $this->mockActionRequest->method('getControllerName')->willReturn('SomeController');
         $this->mockActionRequest->method('getControllerActionName')->willReturn('someAction');
-        $this->mockActionRequest->expects($this->never())->method('setControllerName');
-        $this->mockActionRequest->expects($this->never())->method('setControllerActionName');
+        $this->mockActionRequest->expects(self::never())->method('setControllerName');
+        $this->mockActionRequest->expects(self::never())->method('setControllerActionName');
 
         $this->mockComponentContext->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', []],
@@ -296,7 +296,7 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
             'newValue' => 'new value from route'
         ];
 
-        $this->mockActionRequest->expects($this->once())->method('setArguments')->with($matchResults);
+        $this->mockActionRequest->expects(self::once())->method('setArguments')->with($matchResults);
         $this->mockComponentContext->method('getParameter')->willReturnMap([
             [RoutingComponent::class, 'matchResults', $matchResults],
             [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]

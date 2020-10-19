@@ -18,6 +18,7 @@ use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
+use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
 
 /**
@@ -535,7 +536,7 @@ class Bootstrap
 
         if (!defined('FLOW_PATH_TEMPORARY_BASE')) {
             define('FLOW_PATH_TEMPORARY_BASE', self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY_BASE') ?: FLOW_PATH_DATA . '/Temporary');
-            $temporaryDirectoryPath = Files::concatenatePaths([FLOW_PATH_TEMPORARY_BASE, str_replace('/', '/SubContext', (string)$this->context)]) . '/';
+            $temporaryDirectoryPath = Environment::composeTemporaryDirectoryName(FLOW_PATH_TEMPORARY_BASE, $this->context);
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
 
@@ -547,7 +548,7 @@ class Bootstrap
         }
 
         define('FLOW_ONLY_COMPOSER_LOADER', $onlyUseComposerAutoLoaderForPackageClasses);
-        define('FLOW_VERSION_BRANCH', 'master');
+        define('FLOW_VERSION_BRANCH', 'dev-master');
         define('FLOW_APPLICATION_CONTEXT', (string)$this->context);
     }
 

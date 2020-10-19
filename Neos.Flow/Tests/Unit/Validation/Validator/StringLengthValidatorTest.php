@@ -206,4 +206,22 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
         $this->validatorOptions(['maximum' => 8]);
         self::assertFalse($this->validator->validate('überlang')->hasErrors());
     }
+
+    /**
+     * @test
+     */
+    public function validateCountsHtmlTagsByDefault()
+    {
+        $this->validatorOptions(['maximum' => 14]);
+        $this->assertTrue($this->validator->validate('Some <b>bold</b> text')->hasErrors());
+    }
+
+    /**
+     * @test
+     */
+    public function validateStripsHtmlTagsIfIgnoreHtmlOptionIsSet()
+    {
+        $this->validatorOptions(['maximum' => 14, 'ignoreHtml' => true]);
+        $this->assertFalse($this->validator->validate('Some <b>bold</b> text')->hasErrors());
+    }
 }

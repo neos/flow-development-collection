@@ -21,7 +21,6 @@ use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Security\Context;
-use Neos\Utility\ObjectAccess;
 
 /**
  * Object Manager
@@ -181,6 +180,7 @@ class ObjectManager implements ObjectManagerInterface
      * Returns a fresh or existing instance of the object specified by $objectName.
      *
      * @param string $objectName The name of the object to return an instance of
+     * @param mixed ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
      * @return object The object instance
      * @throws Exception\CannotBuildObjectException
      * @throws Exception\UnknownObjectException if an object with the given name does not exist
@@ -188,9 +188,9 @@ class ObjectManager implements ObjectManagerInterface
      * @throws InvalidConfigurationTypeException
      * @api
      */
-    public function get($objectName)
+    public function get($objectName, ...$constructorArguments)
     {
-        if (isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE && func_num_args() > 1) {
+        if (!empty($constructorArguments) && isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
             throw new \InvalidArgumentException('You cannot provide constructor arguments for singleton objects via get(). If you need to pass arguments to the constructor, define them in the Objects.yaml configuration.', 1298049934);
         }
 
@@ -214,7 +214,7 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         if (!isset($this->objects[$objectName]) || $this->objects[$objectName]['s'] === ObjectConfiguration::SCOPE_PROTOTYPE) {
-            return $this->instantiateClass($className, array_slice(func_get_args(), 1));
+            return $this->instantiateClass($className, $constructorArguments);
         }
 
         $this->objects[$objectName]['i'] = $this->instantiateClass($className, []);
@@ -495,15 +495,14 @@ class ObjectManager implements ObjectManagerInterface
      */
     protected function buildObjectByFactory($objectName)
     {
-        $configurationManager = $this->get(ConfigurationManager::class);
-        $factory = $this->get($this->objects[$objectName]['f'][0]);
+        $factory = $this->objects[$objectName]['f'][0] ? $this->get($this->objects[$objectName]['f'][0]) : null;
         $factoryMethodName = $this->objects[$objectName]['f'][1];
 
         $factoryMethodArguments = [];
         foreach ($this->objects[$objectName]['fa'] as $index => $argumentInformation) {
             switch ($argumentInformation['t']) {
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING:
-                    $factoryMethodArguments[$index] = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $argumentInformation['v']);
+                    $factoryMethodArguments[$index] = $this->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $argumentInformation['v']);
                 break;
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                     $factoryMethodArguments[$index] = $argumentInformation['v'];
@@ -514,11 +513,11 @@ class ObjectManager implements ObjectManagerInterface
             }
         }
 
-        if (count($factoryMethodArguments) === 0) {
-            return $factory->$factoryMethodName();
+        if ($factory !== null) {
+            return $factory->$factoryMethodName(...$factoryMethodArguments);
         }
 
-        return call_user_func_array([$factory, $factoryMethodName], $factoryMethodArguments);
+        return $factoryMethodName(...$factoryMethodArguments);
     }
 
     /**
@@ -537,7 +536,7 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         try {
-            $object = ObjectAccess::instantiateClass($className, $arguments);
+            $object = new $className(...$arguments);
             unset($this->classesBeingInstantiated[$className]);
             return $object;
         } catch (\Exception $exception) {

@@ -56,14 +56,14 @@ class RequestBuilderTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockObjectManager->expects($this->any())->method('getObjectNameByClassName')->with('Acme\Test\Command\DefaultCommandController')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
+        $this->mockObjectManager->expects(self::any())->method('getObjectNameByClassName')->with('Acme\Test\Command\DefaultCommandController')->will(self::returnValue('Acme\Test\Command\DefaultCommandController'));
 
         $this->mockCommand = $this->getMockBuilder(Cli\Command::class)->disableOriginalConstructor()->getMock();
-        $this->mockCommand->expects($this->any())->method('getControllerClassName')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
-        $this->mockCommand->expects($this->any())->method('getControllerCommandName')->will($this->returnValue('list'));
+        $this->mockCommand->expects(self::any())->method('getControllerClassName')->will(self::returnValue('Acme\Test\Command\DefaultCommandController'));
+        $this->mockCommand->expects(self::any())->method('getControllerCommandName')->will(self::returnValue('list'));
 
         $this->mockCommandManager = $this->createMock(Cli\CommandManager::class);
-        $this->mockCommandManager->expects($this->any())->method('getCommandByIdentifier')->with('acme.test:default:list')->will($this->returnValue($this->mockCommand));
+        $this->mockCommandManager->expects(self::any())->method('getCommandByIdentifier')->with('acme.test:default:list')->will(self::returnValue($this->mockCommand));
 
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
 
@@ -79,7 +79,7 @@ class RequestBuilderTest extends UnitTestCase
      */
     public function cliAccessWithPackageControllerAndActionNameBuildsCorrectRequest()
     {
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->will($this->returnValue([]));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->will(self::returnValue([]));
 
         $request = $this->requestBuilder->build('acme.test:default:list');
         self::assertSame('Acme\Test\Command\DefaultCommandController', $request->getControllerObjectName());
@@ -97,7 +97,7 @@ class RequestBuilderTest extends UnitTestCase
         $this->mockCommandManager->getCommandByIdentifier('acme.test:default:list');
 
         $mockCommandManager = $this->createMock(Cli\CommandManager::class);
-        $mockCommandManager->expects($this->any())->method('getCommandByIdentifier')->with('test:default:list')->will($this->throwException(new NoSuchCommandException()));
+        $mockCommandManager->expects(self::any())->method('getCommandByIdentifier')->with('test:default:list')->will(self::throwException(new NoSuchCommandException()));
         $this->requestBuilder->injectCommandManager($mockCommandManager);
 
         $request = $this->requestBuilder->build('test:default:list');
@@ -115,7 +115,7 @@ class RequestBuilderTest extends UnitTestCase
             'testArgument' => ['optional' => false, 'type' => 'string'],
             'testArgument2' => ['optional' => false, 'type' => 'string']
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $request = $this->requestBuilder->build('acme.test:default:list --test-argument=value --test-argument2=value2');
         self::assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
@@ -137,7 +137,7 @@ class RequestBuilderTest extends UnitTestCase
             'testArgument3' => ['optional' => false, 'type' => 'string'],
             'testArgument4' => ['optional' => false, 'type' => 'string']
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $request = $this->requestBuilder->build('acme.test:default:list --test-argument= value --test-argument2 =value2 --test-argument3 = value3 --test-argument4=value4');
         self::assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
@@ -162,7 +162,7 @@ class RequestBuilderTest extends UnitTestCase
             'd' => ['optional' => false, 'type' => 'string'],
             'f' => ['optional' => false, 'type' => 'string'],
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $request = $this->requestBuilder->build('acme.test:default:list -d valued -f=valuef -a = valuea');
         self::assertTrue($request->hasArgument('d'), 'The given "d" was not found in the built request.');
@@ -197,7 +197,7 @@ class RequestBuilderTest extends UnitTestCase
             'k' => ['optional' => false, 'type' => 'string'],
             'm' => ['optional' => false, 'type' => 'string'],
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $request = $this->requestBuilder->build('acme.test:default:list --test-argument=value --test-argument2= value2 -k --test-argument-3 = value3 --test-argument4=value4 -f valuef -d=valued -a = valuea -c --testArgument7 --test-argument5 = 5 --test-argument6 -j kjk -m');
         self::assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
@@ -233,7 +233,7 @@ class RequestBuilderTest extends UnitTestCase
         $methodParameters = [
             'testArgument' => ['optional' => false, 'type' => 'string']
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $request = $this->requestBuilder->build('acme.test:default:list --test-argument=value');
         self::assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
@@ -249,7 +249,7 @@ class RequestBuilderTest extends UnitTestCase
             'testArgument1' => ['optional' => false, 'type' => 'string'],
             'testArgument2' => ['optional' => false, 'type' => 'string'],
         ];
-        $this->mockCommandManager->expects($this->any())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::any())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $request = $this->requestBuilder->build('acme.test:default:list --test-argument1 firstArgumentValue --test-argument2 secondArgumentValue');
         self::assertSame('firstArgumentValue', $request->getArgument('testArgument1'));
@@ -271,7 +271,7 @@ class RequestBuilderTest extends UnitTestCase
             'argument1' => ['optional' => false, 'type' => 'string'],
             'argument2' => ['optional' => false, 'type' => 'string'],
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $request = $this->requestBuilder->build('acme.test:default:list --some -option=value file1 file2');
         self::assertSame('list', $request->getControllerCommandName());
@@ -289,7 +289,7 @@ class RequestBuilderTest extends UnitTestCase
             'testArgument1' => ['optional' => false, 'type' => 'string'],
             'testArgument2' => ['optional' => false, 'type' => 'string'],
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $expectedArguments = ['testArgument1' => 'firstArgumentValue', 'testArgument2' => 'secondArgumentValue'];
 
@@ -308,7 +308,7 @@ class RequestBuilderTest extends UnitTestCase
             'testArgument1' => ['optional' => false, 'type' => 'string'],
             'testArgument2' => ['optional' => false, 'type' => 'string'],
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $this->requestBuilder->build('acme.test:default:list --test-argument1 firstArgumentValue secondArgumentValue');
     }
@@ -323,7 +323,7 @@ class RequestBuilderTest extends UnitTestCase
             'requiredArgument1' => ['optional' => false, 'type' => 'string'],
             'requiredArgument2' => ['optional' => false, 'type' => 'string'],
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $this->requestBuilder->build('acme.test:default:list firstArgumentValue --required-argument2 secondArgumentValue');
     }
@@ -338,7 +338,7 @@ class RequestBuilderTest extends UnitTestCase
             'requiredArgument2' => ['optional' => false, 'type' => 'string'],
             'booleanOption' => ['optional' => true, 'type' => 'boolean'],
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $expectedArguments = ['requiredArgument1' => 'firstArgumentValue', 'requiredArgument2' => 'secondArgumentValue', 'booleanOption' => true];
 
@@ -356,7 +356,7 @@ class RequestBuilderTest extends UnitTestCase
             'requiredArgument2' => ['optional' => false, 'type' => 'string'],
             'booleanOption' => ['optional' => true, 'type' => 'boolean'],
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $expectedArguments = ['requiredArgument1' => 'firstArgumentValue', 'requiredArgument2' => 'secondArgumentValue'];
 
@@ -374,7 +374,7 @@ class RequestBuilderTest extends UnitTestCase
             'requiredArgument2' => ['optional' => false, 'type' => 'string'],
             'booleanOption' => ['optional' => true, 'type' => 'boolean'],
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $expectedExceedingArguments = ['true'];
 
@@ -395,7 +395,7 @@ class RequestBuilderTest extends UnitTestCase
             'b5' => ['optional' => true, 'type' => 'boolean'],
             'b6' => ['optional' => true, 'type' => 'boolean'],
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $expectedArguments = ['b1' => true, 'b2' => true, 'b3' => true, 'b4' => false, 'b5' => false, 'b6' => false];
 
@@ -434,7 +434,7 @@ class RequestBuilderTest extends UnitTestCase
             'requiredArgument1' => ['optional' => false, 'type' => 'string'],
             'requiredArgument2' => ['optional' => false, 'type' => 'string'],
         ];
-        $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
         $expectedArguments = ['requiredArgument1' => 'firstArgumentValue', 'requiredArgument2' => $expectedResult];
 

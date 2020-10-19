@@ -28,7 +28,7 @@ class AjaxWidgetContextHolderTest extends \Neos\Flow\Tests\UnitTestCase
         $ajaxWidgetContextHolder->_set('nextFreeAjaxWidgetId', 123);
 
         $widgetContext = $this->createMock(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class, ['setAjaxWidgetIdentifier']);
-        $widgetContext->expects($this->once())->method('setAjaxWidgetIdentifier')->with(123);
+        $widgetContext->expects(self::once())->method('setAjaxWidgetIdentifier')->with(123);
 
         $ajaxWidgetContextHolder->store($widgetContext);
         self::assertEquals(124, $ajaxWidgetContextHolder->_get('nextFreeAjaxWidgetId'));

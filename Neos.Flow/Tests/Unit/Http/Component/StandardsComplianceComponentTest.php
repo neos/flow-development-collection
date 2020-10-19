@@ -29,17 +29,17 @@ class StandardsComplianceComponentTest extends UnitTestCase
     protected $standardsComplianceComponent;
 
     /**
-     * @var ComponentContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var ComponentContext|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockComponentContext;
 
     /**
-     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockHttpRequest;
 
     /**
-     * @var ResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResponseInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockHttpResponse;
 
@@ -49,8 +49,8 @@ class StandardsComplianceComponentTest extends UnitTestCase
         $this->response = new Response();
 
         $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
-        $this->mockComponentContext->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->response));
+        $this->mockComponentContext->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
+        $this->mockComponentContext->expects(self::any())->method('getHttpResponse')->will(self::returnValue($this->response));
 
         $this->standardsComplianceComponent = new StandardsComplianceComponent([]);
     }

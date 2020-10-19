@@ -13,7 +13,7 @@ use Neos\Cache\Tests\BaseTestCase;
 class SimpleCacheTest extends BaseTestCase
 {
     /**
-     * @var BackendInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var BackendInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockBackend;
 
@@ -69,7 +69,7 @@ class SimpleCacheTest extends BaseTestCase
      */
     public function setWillSetInBackendAndReturnBackendResponse()
     {
-        $this->mockBackend->expects(self::any())->method('set')->willReturn(true);
+        $this->mockBackend->expects(self::any())->method('set');
         $simpleCache = $this->createSimpleCache();
         $result = $simpleCache->set('validkey', 'valid data');
         self::assertEquals(true, $result);

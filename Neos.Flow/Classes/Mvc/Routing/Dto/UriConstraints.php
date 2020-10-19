@@ -44,6 +44,8 @@ final class UriConstraints
     const CONSTRAINT_PATH_SUFFIX = 'pathSuffix';
     const CONSTRAINT_QUERY_STRING = 'queryString';
 
+    const HTTP_DEFAULT_HOST = 'localhost';
+
     /**
      * @var array
      */
@@ -127,7 +129,7 @@ final class UriConstraints
      * Create a new instance with the host suffix constraint added
      *
      * @param string $suffix The URI host suffix to force, for example ".com"
-     * @param string[] $replaceSuffixes a list of prefixes that should be replaced with the given prefix. if the list is empty or does not match the current host $prefix will be prepended as is
+     * @param string[] $replaceSuffixes a list of suffixes that should be replaced with the given suffix. if the list is empty or does not match, no replacement happens
      * @return UriConstraints
      */
     public function withHostSuffix(string $suffix, array $replaceSuffixes = []): self
@@ -196,6 +198,11 @@ final class UriConstraints
         if (isset($newConstraints[self::CONSTRAINT_PATH_PREFIX])) {
             $pathPrefix = $append ? $newConstraints[self::CONSTRAINT_PATH_PREFIX] . $pathPrefix : $pathPrefix . $newConstraints[self::CONSTRAINT_PATH_PREFIX];
         }
+
+        if (strpos($pathPrefix, '/') === 0) {
+            throw new \InvalidArgumentException('path prefix is not allowed to start with "/". The passed-in path prefix was "' . $pathPrefix . '", and the computed path prefix (including previously set path prefixes) is "' . $pathPrefix . '". The computed path prefix may never start with "/".', 1570187341);
+        }
+
         $newConstraints[self::CONSTRAINT_PATH_PREFIX] = $pathPrefix;
         return new static($newConstraints);
     }
@@ -237,23 +244,23 @@ final class UriConstraints
      * Applies all constraints of this instance to the given $templateUri and returns a new UriInterface instance
      * satisfying all of the constraints (see example above)
      *
-     * @param UriInterface $templateUri The base URI to transform, usually the current request URI
+     * @param UriInterface $baseUri The base URI to transform, usually the current request's base URI
      * @param bool $forceAbsoluteUri Whether or not to enforce the resulting URI to contain scheme and host (note: some of the constraints force an absolute URI by default)
      * @return UriInterface The transformed URI with all constraints applied
      */
-    public function applyTo(UriInterface $templateUri, bool $forceAbsoluteUri): UriInterface
+    public function applyTo(UriInterface $baseUri, bool $forceAbsoluteUri): UriInterface
     {
         $uri = new Uri('');
-        if (isset($this->constraints[self::CONSTRAINT_SCHEME]) && $this->constraints[self::CONSTRAINT_SCHEME] !== $templateUri->getScheme()) {
+        if (isset($this->constraints[self::CONSTRAINT_SCHEME]) && $this->constraints[self::CONSTRAINT_SCHEME] !== $baseUri->getScheme()) {
             $forceAbsoluteUri = true;
             $uri = $uri->withScheme($this->constraints[self::CONSTRAINT_SCHEME]);
         }
-        if (isset($this->constraints[self::CONSTRAINT_HOST]) && $this->constraints[self::CONSTRAINT_HOST] !== $templateUri->getHost()) {
+        if (isset($this->constraints[self::CONSTRAINT_HOST]) && $this->constraints[self::CONSTRAINT_HOST] !== $baseUri->getHost()) {
             $forceAbsoluteUri = true;
             $uri = $uri->withHost($this->constraints[self::CONSTRAINT_HOST]);
         }
         if (isset($this->constraints[self::CONSTRAINT_HOST_PREFIX])) {
-            $originalHost = $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
+            $originalHost = $host = !empty($uri->getHost()) ? $uri->getHost() : $baseUri->getHost();
             $prefix = $this->constraints[self::CONSTRAINT_HOST_PREFIX]['prefix'];
             $replacePrefixes = $this->constraints[self::CONSTRAINT_HOST_PREFIX]['replacePrefixes'];
             foreach ($replacePrefixes as $replacePrefix) {
@@ -269,31 +276,39 @@ final class UriConstraints
             }
         }
         if (isset($this->constraints[self::CONSTRAINT_HOST_SUFFIX])) {
-            $originalHost = $host = !empty($uri->getHost()) ? $uri->getHost() : $templateUri->getHost();
+            $originalHost = $host = !empty($uri->getHost()) ? $uri->getHost() : $baseUri->getHost();
             $suffix = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['suffix'];
             $replaceSuffixes = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['replaceSuffixes'];
-            foreach ($replaceSuffixes as $replaceSuffix) {
-                if ($this->stringEndsWith($host, $replaceSuffix)) {
-                    $host = substr($host, 0, -strlen($replaceSuffix));
-                    break;
+
+            // This is different from prefix handling, because we don't want a suffix added if no replacement match was found
+            if ($replaceSuffixes === []) {
+                $host .= $suffix;
+            } else {
+                foreach ($replaceSuffixes as $replaceSuffix) {
+                    if ($this->stringEndsWith($host, $replaceSuffix)) {
+                        $host = substr($host, 0, -strlen($replaceSuffix)) . $suffix;
+                        break;
+                    }
                 }
             }
-            $host = $host . $suffix;
             if ($host !== $originalHost) {
                 $forceAbsoluteUri = true;
                 $uri = $uri->withHost($host);
             }
         }
-        if (isset($this->constraints[self::CONSTRAINT_PORT]) && $this->constraints[self::CONSTRAINT_PORT] !== $templateUri->getPort()) {
+        if (isset($this->constraints[self::CONSTRAINT_PORT]) && $this->constraints[self::CONSTRAINT_PORT] !== $baseUri->getPort()) {
             $forceAbsoluteUri = true;
             $uri = $uri->withPort($this->constraints[self::CONSTRAINT_PORT]);
         }
 
-        if (isset($this->constraints[self::CONSTRAINT_PATH]) && $this->constraints[self::CONSTRAINT_PATH] !== $templateUri->getPath()) {
+        if (isset($this->constraints[self::CONSTRAINT_PATH]) && $this->constraints[self::CONSTRAINT_PATH] !== $baseUri->getPath()) {
             $uri = $uri->withPath($this->constraints[self::CONSTRAINT_PATH]);
         }
         if (isset($this->constraints[self::CONSTRAINT_PATH_PREFIX])) {
-            $uri = $uri->withPath($this->constraints[self::CONSTRAINT_PATH_PREFIX] . $uri->getPath());
+            // we need to trim the leading "/" from $uri->getPath() (as it is always absolute); so
+            // that the Path Prefix can build strings like <prepended><url>, or
+            // <prepended>/<url>
+            $uri = $uri->withPath($this->constraints[self::CONSTRAINT_PATH_PREFIX] . ltrim($uri->getPath(), '/'));
         }
         if (isset($this->constraints[self::CONSTRAINT_PATH_SUFFIX])) {
             $uri = $uri->withPath($uri->getPath() . $this->constraints[self::CONSTRAINT_PATH_SUFFIX]);
@@ -302,15 +317,27 @@ final class UriConstraints
             $uri = $uri->withQuery($this->constraints[self::CONSTRAINT_QUERY_STRING]);
         }
 
+        // In case the base URL contains a path segment, prepend this to the URL (to generate proper host-absolute URLs)
+        if ($baseUri->getPath() !== '' && $baseUri->getPath() !== '/') {
+            $uri = $uri->withPath(trim($baseUri->getPath(), '/') . '/' . ltrim($uri->getPath(), '/'));
+        }
+
+        // Ensure the URL always starts with "/", no matter if it is empty of non-empty.
+        // HINT: We need to enforce at least a "/" URL,a s otherwise e.g. linking to the root node of a Neos
+        // site would not work.
+        if ($uri->getPath() === '' || $uri->getPath()[0] !== '/') {
+            $uri = $uri->withPath('/' . $uri->getPath());
+        }
+
         if ($forceAbsoluteUri) {
             if (empty($uri->getScheme())) {
-                $uri = $uri->withScheme($templateUri->getScheme());
+                $uri = $uri->withScheme($baseUri->getScheme());
             }
-            if (empty($uri->getHost()) || $uri->getHost() === Uri::HTTP_DEFAULT_HOST) {
-                $uri = $uri->withHost($templateUri->getHost());
+            if (empty($uri->getHost()) || $uri->getHost() === self::HTTP_DEFAULT_HOST) {
+                $uri = $uri->withHost($baseUri->getHost());
             }
             if (empty($uri->getPort()) && !isset($this->constraints[self::CONSTRAINT_PORT])) {
-                $port = $templateUri->getPort() ?? UriHelper::getDefaultPortForScheme($templateUri->getScheme());
+                $port = $baseUri->getPort() ?? UriHelper::getDefaultPortForScheme($baseUri->getScheme());
                 $uri = $uri->withPort($port);
             }
         }

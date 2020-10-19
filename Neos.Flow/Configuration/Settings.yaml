@@ -11,6 +11,3 @@ Neos:
   Flow:
     # A section for compatibility flags that are deprecated.
     compatibility: []
-
-    utility:
-      lockStrategyClassName: 'Neos\Utility\Lock\FlockLockStrategy'

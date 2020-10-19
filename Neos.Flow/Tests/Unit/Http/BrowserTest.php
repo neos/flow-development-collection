@@ -47,10 +47,10 @@ class BrowserTest extends UnitTestCase
     {
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('sendRequest')
             ->with($this->isInstanceOf(RequestInterface::class))
-            ->will($this->returnValue(new Response()));
+            ->will(self::returnValue(new Response()));
         $this->browser->setRequestEngine($requestEngine);
         $this->browser->request('http://localhost/foo');
     }
@@ -62,7 +62,7 @@ class BrowserTest extends UnitTestCase
     {
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('sendRequest')
             ->willReturn(new Response());
         $this->browser->setRequestEngine($requestEngine);
@@ -84,9 +84,9 @@ class BrowserTest extends UnitTestCase
     {
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('sendRequest')
-            ->will($this->returnValue(new Response()));
+            ->will(self::returnValue(new Response()));
         $this->browser->setRequestEngine($requestEngine);
 
         $this->browser->addAutomaticRequestHeader('X-Test-Header', 'Acme');
@@ -108,14 +108,14 @@ class BrowserTest extends UnitTestCase
 
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
-            ->expects($this->at(0))
+            ->expects(self::at(0))
             ->method('sendRequest')
             ->with($this->callback(function (ServerRequestInterface $request) use ($initialUri) {
                 return (string)$request->getUri() === (string)$initialUri;
             }))
             ->willReturn($firstResponse);
         $requestEngine
-            ->expects($this->at(1))
+            ->expects(self::at(1))
             ->method('sendRequest')
             ->with($this->callback(function (ServerRequestInterface $request) use ($redirectUri) {
                 return (string)$request->getUri() === (string)$redirectUri;
@@ -136,9 +136,9 @@ class BrowserTest extends UnitTestCase
 
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('sendRequest')
-            ->will($this->returnValue($twoZeroOneResponse));
+            ->will(self::returnValue($twoZeroOneResponse));
 
         $this->browser->setRequestEngine($requestEngine);
         $actual = $this->browser->request('http://localhost/createSomeResource');
@@ -160,9 +160,9 @@ class BrowserTest extends UnitTestCase
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         for ($i=0; $i<=3; $i++) {
             $requestEngine
-                ->expects($this->at($i))
+                ->expects(self::at($i))
                 ->method('sendRequest')
-                ->will($this->returnValue($wildResponses[$i]));
+                ->will(self::returnValue($wildResponses[$i]));
         }
 
         $this->browser->setRequestEngine($requestEngine);
@@ -179,9 +179,9 @@ class BrowserTest extends UnitTestCase
         for ($i=0; $i<=10; $i++) {
             $response = new Response(301, ['Location' => 'http://localhost/this/willLead/you/knowhere/' . $i]);
             $requestEngine
-                ->expects($this->at($i))
+                ->expects(self::at($i))
                 ->method('sendRequest')
-                ->will($this->returnValue($response));
+                ->will(self::returnValue($response));
         }
 
         $this->browser->setRequestEngine($requestEngine);

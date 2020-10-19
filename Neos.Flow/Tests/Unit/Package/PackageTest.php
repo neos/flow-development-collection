@@ -103,7 +103,7 @@ class PackageTest extends UnitTestCase
      */
     public function getInstalledVersionReturnsFallback()
     {
-        /** @var Package|\PHPUnit_Framework_MockObject_MockObject $package */
+        /** @var Package|\PHPUnit\Framework\MockObject\MockObject $package */
         $package = $this->getMockBuilder(\Neos\Flow\Package\Package::class)->setMethods(['getComposerManifest'])->setConstructorArgs(['Some.Package', 'some/package', 'vfs://Packages/Some/Path/Some.Package/', []])->getMock();
         $package->method('getComposerManifest')->willReturn('1.2.3');
 

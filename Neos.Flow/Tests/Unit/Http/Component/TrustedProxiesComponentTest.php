@@ -38,12 +38,12 @@ class TrustedProxiesComponentTest extends UnitTestCase
     protected $trustedProxiesSettings;
 
     /**
-     * @var ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockHttpRequest;
 
     /**
-     * @var ResponseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ResponseInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockHttpResponse;
 
@@ -107,7 +107,6 @@ class TrustedProxiesComponentTest extends UnitTestCase
             'SERVER_PORT' => '80',
             'REMOTE_ADDR' => '127.0.0.1',
             'REQUEST_URI' => '/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2',
-            'REQUEST_TIME' => 1326472534
         ]);
 
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://dev.blog.rob/foo/bar?baz=quux&coffee=due'), $server);
@@ -132,7 +131,6 @@ class TrustedProxiesComponentTest extends UnitTestCase
             'SERVER_PORT' => '80',
             'REMOTE_ADDR' => '127.0.0.1',
             'REQUEST_URI' => '/posts/2011/11/28/laboriosam-soluta-est-minus-molestiae?getKey1=getValue1&getKey2=getValue2',
-            'REQUEST_TIME' => 1326472534
         ]);
 
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://[2a00:f48:1008::212:183:10]:2727/foo/bar?baz=quux&coffee=due'), $server);

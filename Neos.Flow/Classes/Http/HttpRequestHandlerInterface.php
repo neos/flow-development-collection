@@ -12,6 +12,7 @@ namespace Neos\Flow\Http;
  */
 
 use Neos\Flow\Core\RequestHandlerInterface;
+use Neos\Flow\Http\Component\ComponentContext;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -26,7 +27,7 @@ interface HttpRequestHandlerInterface extends RequestHandlerInterface
      * Returns the currently processed HTTP request
      *
      * @return ServerRequestInterface
-     * @api
+     * @deprecated since 6.0 use getComponentContext()->getHttpRequest() instead
      */
     public function getHttpRequest();
 
@@ -34,7 +35,15 @@ interface HttpRequestHandlerInterface extends RequestHandlerInterface
      * Returns the HTTP response corresponding to the currently handled request
      *
      * @return ResponseInterface
-     * @api
+     * @deprecated since 6.0 use getComponentContext()->getHttpResponse() instead
      */
     public function getHttpResponse();
+
+    /**
+     * Get the ComponentContext for this request handlers component chain
+     *
+     * @return ComponentContext
+     * @api
+     */
+    public function getComponentContext(): ComponentContext;
 }

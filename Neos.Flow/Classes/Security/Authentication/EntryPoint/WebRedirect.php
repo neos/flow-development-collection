@@ -13,7 +13,7 @@ namespace Neos\Flow\Security\Authentication\EntryPoint;
 
 use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\ServerRequestAttributes;
+use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
@@ -33,6 +33,13 @@ class WebRedirect extends AbstractEntryPoint
     protected $uriBuilder;
 
     /**
+     * @Flow\Inject
+     * @Flow\Transient
+     * @var BaseUriProvider
+     */
+    protected $baseUriProvider;
+
+    /**
      * Starts the authentication: Redirect to login page
      *
      * @param ServerRequestInterface $request The current request
@@ -45,7 +52,7 @@ class WebRedirect extends AbstractEntryPoint
         $uri = null;
 
         if (isset($this->options['uri'])) {
-            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : $request->getAttribute(ServerRequestAttributes::BASE_URI) . $this->options['uri'];
+            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : (string)$this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest() . $this->options['uri'];
         }
 
         if (isset($this->options['routeValues'])) {

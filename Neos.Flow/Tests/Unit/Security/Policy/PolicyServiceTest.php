@@ -36,17 +36,17 @@ class PolicyServiceTest extends UnitTestCase
     protected $mockPolicyConfiguration = [];
 
     /**
-     * @var ConfigurationManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigurationManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockConfigurationManager;
 
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockObjectManager;
 
     /**
-     * @var AbstractPrivilege|\PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractPrivilege|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockPrivilege;
 
@@ -55,7 +55,7 @@ class PolicyServiceTest extends UnitTestCase
         $this->policyService = new PolicyService();
 
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
-        $this->mockConfigurationManager->expects($this->any())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnCallback(function () {
+        $this->mockConfigurationManager->expects(self::any())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will(self::returnCallBack(function () {
             return $this->mockPolicyConfiguration;
         }));
         $this->inject($this->policyService, 'configurationManager', $this->mockConfigurationManager);

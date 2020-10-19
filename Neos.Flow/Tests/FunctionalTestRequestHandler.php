@@ -132,7 +132,7 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
      *
      * @return ComponentContext
      */
-    public function getComponentContext()
+    public function getComponentContext(): ComponentContext
     {
         // FIXME: Use PSR-15 factories
         if ($this->componentContext === null) {

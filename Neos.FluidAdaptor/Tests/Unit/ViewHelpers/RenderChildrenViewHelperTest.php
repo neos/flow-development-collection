@@ -51,11 +51,11 @@ class RenderChildrenViewHelperTest extends ViewHelperBaseTestcase
         $rootNode = $this->createMock(RootNode::class);
 
         $widgetContext = $this->createMock(WidgetContext::class);
-        $this->request->expects($this->any())->method('getInternalArgument')->with('__widgetContext')->willReturn($widgetContext);
-        $widgetContext->expects($this->any())->method('getViewHelperChildNodeRenderingContext')->willReturn($renderingContext);
-        $widgetContext->expects($this->any())->method('getViewHelperChildNodes')->willReturn($rootNode);
+        $this->request->expects(self::any())->method('getInternalArgument')->with('__widgetContext')->willReturn($widgetContext);
+        $widgetContext->expects(self::any())->method('getViewHelperChildNodeRenderingContext')->willReturn($renderingContext);
+        $widgetContext->expects(self::any())->method('getViewHelperChildNodes')->willReturn($rootNode);
 
-        $rootNode->expects($this->any())->method('evaluate')->with($renderingContext)->willReturn('Rendered Results');
+        $rootNode->expects(self::any())->method('evaluate')->with($renderingContext)->willReturn('Rendered Results');
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['k1' => 'v1', 'k2' => 'v2']);
         $output = $this->viewHelper->render();
@@ -84,9 +84,9 @@ class RenderChildrenViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->initializeArguments();
 
         $widgetContext = $this->createMock(WidgetContext::class);
-        $this->request->expects($this->any())->method('getInternalArgument')->with('__widgetContext')->willReturn($widgetContext);
-        $widgetContext->expects($this->any())->method('getViewHelperChildNodeRenderingContext')->willReturn(null);
-        $widgetContext->expects($this->any())->method('getViewHelperChildNodes')->willReturn(null);
+        $this->request->expects(self::any())->method('getInternalArgument')->with('__widgetContext')->willReturn($widgetContext);
+        $widgetContext->expects(self::any())->method('getViewHelperChildNodeRenderingContext')->willReturn(null);
+        $widgetContext->expects(self::any())->method('getViewHelperChildNodes')->willReturn(null);
 
         $this->viewHelper->render();
     }

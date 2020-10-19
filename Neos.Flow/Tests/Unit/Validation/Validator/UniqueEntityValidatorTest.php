@@ -24,13 +24,13 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     protected $validatorClassName = UniqueEntityValidator::class;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      * @see \Neos\Flow\Reflection\ClassSchema
      */
     protected $classSchema;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      * @see \Neos\Flow\Reflection\ReflectionService
      */
     protected $reflectionService;
@@ -43,7 +43,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->classSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
 
         $this->reflectionService = $this->createMock(ReflectionService::class);
-        $this->reflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($this->classSchema));
+        $this->reflectionService->expects(self::any())->method('getClassSchema')->will(self::returnValue($this->classSchema));
         $this->inject($this->validator, 'reflectionService', $this->reflectionService);
     }
 
@@ -64,7 +64,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     {
         $this->expectException(InvalidValidationOptionsException::class);
         $this->expectExceptionCode(1358454284);
-        $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(null));
+        $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(null));
 
         $this->validator->validate(new \stdClass());
     }
@@ -76,7 +76,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     {
         $this->expectException(InvalidValidationOptionsException::class);
         $this->expectExceptionCode(1358454284);
-        $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(ClassSchema::MODELTYPE_VALUEOBJECT));
+        $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(ClassSchema::MODELTYPE_VALUEOBJECT));
 
         $this->validator->validate(new \stdClass());
     }
@@ -91,10 +91,10 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->prepareMockExpectations();
         $this->inject($this->validator, 'options', ['identityProperties' => ['propertyWhichDoesntExist']]);
         $this->classSchema
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('hasProperty')
             ->with('propertyWhichDoesntExist')
-            ->will($this->returnValue(false));
+            ->will(self::returnValue(false));
 
         $this->validator->validate(new \StdClass());
     }
@@ -108,9 +108,9 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->expectExceptionCode(1358459831);
         $this->prepareMockExpectations();
         $this->classSchema
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getIdentityProperties')
-            ->will($this->returnValue([]));
+            ->will(self::returnValue([]));
 
         $this->validator->validate(new \StdClass());
     }
@@ -124,14 +124,14 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->expectExceptionCode(1358501745);
         $this->prepareMockExpectations();
         $this->classSchema
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getIdentityProperties')
-            ->will($this->returnValue(['foo']));
+            ->will(self::returnValue(['foo']));
         $this->reflectionService
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getPropertyNamesByAnnotation')
             ->with('FooClass', 'Doctrine\ORM\Mapping\Id')
-            ->will($this->returnValue(['dummy array', 'with more than', 'one count']));
+            ->will(self::returnValue(['dummy array', 'with more than', 'one count']));
 
         $this->validator->validate(new \StdClass());
     }
@@ -140,10 +140,10 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
      */
     protected function prepareMockExpectations()
     {
-        $this->classSchema->expects($this->once())->method('getModelType')->will($this->returnValue(ClassSchema::MODELTYPE_ENTITY));
+        $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(ClassSchema::MODELTYPE_ENTITY));
         $this->classSchema
-            ->expects($this->any())
+            ->expects(self::any())
             ->method('getClassName')
-            ->will($this->returnValue('FooClass'));
+            ->will(self::returnValue('FooClass'));
     }
 }

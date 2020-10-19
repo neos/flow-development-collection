@@ -100,7 +100,7 @@ class FileAdapterTest extends UnitTestCase
         $mockLogger = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $mockLogger->expects($this->once())
+        $mockLogger->expects(self::once())
             ->method('debug')
             ->with($this->stringStartsWith('No trans-unit elements were found'));
         $this->inject($fileAdapter, 'i18nLogger', $mockLogger);

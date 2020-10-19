@@ -138,7 +138,7 @@ class SessionTest extends UnitTestCase
     public function isDirtyReturnsTrueForUnregisteredReconstitutedEntities()
     {
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['isReconstitutedEntity'])->getMock();
-        $session->expects($this->once())->method('isReconstitutedEntity')->will($this->returnValue(false));
+        $session->expects(self::once())->method('isReconstitutedEntity')->will(self::returnValue(false));
         self::assertTrue($session->isDirty(new \stdClass(), 'foo'));
     }
 
@@ -151,9 +151,19 @@ class SessionTest extends UnitTestCase
         eval('class ' . $className . ' { public $foo; }');
         $object = new $className();
 
+        $cleanData = [
+            'identifier' => 'fakeUuid',
+            'properties' => [
+                'foo' => [
+                    'type' => 'string',
+                    'multivalue' => false,
+                    'value' => null
+                ]
+            ]
+        ];
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['getIdentifierByObject'])->getMock();
-        $session->registerReconstitutedEntity($object, ['identifier' => 'fakeUuid']);
-        $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
+        $session->registerReconstitutedEntity($object, $cleanData);
+        $session->expects(self::once())->method('getIdentifierByObject')->will(self::returnValue('fakeUuid'));
 
         self::assertFalse($session->isDirty($object, 'foo'));
     }
@@ -180,8 +190,8 @@ class SessionTest extends UnitTestCase
         ];
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['getIdentifierByObject', 'isSingleValuedPropertyDirty'])->getMock();
         $session->registerReconstitutedEntity($object, $cleanData);
-        $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
-        $session->expects($this->once())->method('isSingleValuedPropertyDirty')->with('string', 'bar', 'different')->will($this->returnValue(true));
+        $session->expects(self::once())->method('getIdentifierByObject')->will(self::returnValue('fakeUuid'));
+        $session->expects(self::once())->method('isSingleValuedPropertyDirty')->with('string', 'bar', 'different')->will(self::returnValue(true));
 
         self::assertTrue($session->isDirty($object, 'foo'));
     }
@@ -223,7 +233,7 @@ class SessionTest extends UnitTestCase
         ];
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['getIdentifierByObject'])->getMock();
         $session->registerReconstitutedEntity($object, $cleanData);
-        $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
+        $session->expects(self::once())->method('getIdentifierByObject')->will(self::returnValue('fakeUuid'));
 
         self::assertTrue($session->isDirty($object, 'foo'));
     }
@@ -257,7 +267,7 @@ class SessionTest extends UnitTestCase
         ];
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['getIdentifierByObject'])->getMock();
         $session->registerReconstitutedEntity($object, $cleanData);
-        $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
+        $session->expects(self::once())->method('getIdentifierByObject')->will(self::returnValue('fakeUuid'));
 
         self::assertTrue($session->isDirty($object, 'foo'));
     }
@@ -292,7 +302,7 @@ class SessionTest extends UnitTestCase
         ];
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['getIdentifierByObject'])->getMock();
         $session->registerReconstitutedEntity($parent, $cleanData);
-        $session->expects($this->atLeastOnce())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
+        $session->expects(self::atLeastOnce())->method('getIdentifierByObject')->will(self::returnValue('fakeUuid'));
 
         self::assertTrue($session->isDirty($parent, 'splObjectStorage'));
     }
@@ -329,8 +339,8 @@ class SessionTest extends UnitTestCase
         ];
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['getIdentifierByObject', 'isSingleValuedPropertyDirty'])->getMock();
         $session->registerReconstitutedEntity($parent, $cleanData);
-        $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
-        $session->expects($this->once())->method('isSingleValuedPropertyDirty')->will($this->returnValue(true));
+        $session->expects(self::once())->method('getIdentifierByObject')->will(self::returnValue('fakeUuid'));
+        $session->expects(self::once())->method('isSingleValuedPropertyDirty')->will(self::returnValue(true));
 
         self::assertTrue($session->isDirty($parent, 'array'));
     }
@@ -367,8 +377,8 @@ class SessionTest extends UnitTestCase
         ];
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['getIdentifierByObject', 'isSingleValuedPropertyDirty'])->getMock();
         $session->registerReconstitutedEntity($parent, $cleanData);
-        $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
-        $session->expects($this->once())->method('isSingleValuedPropertyDirty')->with('Some\Object', ['identifier' => 'cleanHash'], $object)->will($this->returnValue(false));
+        $session->expects(self::once())->method('getIdentifierByObject')->will(self::returnValue('fakeUuid'));
+        $session->expects(self::once())->method('isSingleValuedPropertyDirty')->with('Some\Object', ['identifier' => 'cleanHash'], $object)->will(self::returnValue(false));
 
         self::assertFalse($session->isDirty($parent, 'array'));
     }
@@ -410,8 +420,8 @@ class SessionTest extends UnitTestCase
         ];
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['getIdentifierByObject', 'isSingleValuedPropertyDirty'])->getMock();
         $session->registerReconstitutedEntity($parent, $cleanData);
-        $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
-        $session->expects($this->once())->method('isSingleValuedPropertyDirty')->will($this->returnValue(false));
+        $session->expects(self::once())->method('getIdentifierByObject')->will(self::returnValue('fakeUuid'));
+        $session->expects(self::once())->method('isSingleValuedPropertyDirty')->will(self::returnValue(false));
 
         self::assertFalse($session->isDirty($parent, 'array'));
     }
@@ -448,7 +458,7 @@ class SessionTest extends UnitTestCase
         ];
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['getIdentifierByObject'])->getMock();
         $session->registerReconstitutedEntity($parent, $cleanData);
-        $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
+        $session->expects(self::once())->method('getIdentifierByObject')->will(self::returnValue('fakeUuid'));
 
         self::assertTrue($session->isDirty($parent, 'array'));
     }
@@ -509,8 +519,8 @@ class SessionTest extends UnitTestCase
         $session = $this->getAccessibleMock(Persistence\Generic\Session::class, ['isReconstitutedEntity', 'getIdentifierByObject']);
         $session->_set('reconstitutedEntitiesData', $reconstitutedEntitiesData);
 
-        $session->expects($this->any())->method('isReconstitutedEntity')->with($entity)->will($this->returnValue(true));
-        $session->expects($this->any())->method('getIdentifierByObject')->with($entity)->will($this->returnValue('abc'));
+        $session->expects(self::any())->method('isReconstitutedEntity')->with($entity)->will(self::returnValue(true));
+        $session->expects(self::any())->method('getIdentifierByObject')->with($entity)->will(self::returnValue('abc'));
 
         $state = $session->getCleanStateOfProperty($entity, 'bar');
         self::assertNull($state);
@@ -525,7 +535,7 @@ class SessionTest extends UnitTestCase
 
         $session = $this->getAccessibleMock(Persistence\Generic\Session::class, ['isReconstitutedEntity']);
 
-        $session->expects($this->any())->method('isReconstitutedEntity')->with($entity)->will($this->returnValue(false));
+        $session->expects(self::any())->method('isReconstitutedEntity')->with($entity)->will(self::returnValue(false));
 
         $state = $session->getCleanStateOfProperty($entity, 'bar');
         self::assertNull($state);
@@ -549,8 +559,8 @@ class SessionTest extends UnitTestCase
         $session = $this->getAccessibleMock(Persistence\Generic\Session::class, ['isReconstitutedEntity', 'getIdentifierByObject']);
         $session->_set('reconstitutedEntitiesData', $reconstitutedEntitiesData);
 
-        $session->expects($this->any())->method('isReconstitutedEntity')->with($entity)->will($this->returnValue(true));
-        $session->expects($this->any())->method('getIdentifierByObject')->with($entity)->will($this->returnValue('abc'));
+        $session->expects(self::any())->method('isReconstitutedEntity')->with($entity)->will(self::returnValue(true));
+        $session->expects(self::any())->method('getIdentifierByObject')->with($entity)->will(self::returnValue('abc'));
 
         $state = $session->getCleanStateOfProperty($entity, 'foo');
         self::assertEquals(['type' => 'string'], $state);
@@ -584,7 +594,7 @@ class SessionTest extends UnitTestCase
         $knownObject->Persistence_Object_Identifier = 'fakeUuid';
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->setMethods(['getPropertyNamesByTag'])->getMock();
-        $mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue([]));
+        $mockReflectionService->expects(self::any())->method('getPropertyNamesByTag')->will(self::returnValue([]));
 
         $session = new Persistence\Generic\Session();
         $session->injectReflectionService($mockReflectionService);
@@ -604,7 +614,7 @@ class SessionTest extends UnitTestCase
         $knownObject->Persistence_Object_Identifier = 'fakeHash';
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->setMethods(['getPropertyNamesByTag'])->getMock();
-        $mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue([]));
+        $mockReflectionService->expects(self::any())->method('getPropertyNamesByTag')->will(self::returnValue([]));
 
         $session = new Persistence\Generic\Session();
         $session->injectReflectionService($mockReflectionService);
@@ -623,7 +633,7 @@ class SessionTest extends UnitTestCase
         $unknownObject = $this->createMock(ProxyInterface::class);
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->setMethods(['getPropertyNamesByTag'])->getMock();
-        $mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue([]));
+        $mockReflectionService->expects(self::any())->method('getPropertyNamesByTag')->will(self::returnValue([]));
 
         $session = new Persistence\Generic\Session();
         $session->injectReflectionService($mockReflectionService);
@@ -641,7 +651,7 @@ class SessionTest extends UnitTestCase
         $object->customId = 'customId';
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue(['customId']));
+        $mockReflectionService->expects(self::any())->method('getPropertyNamesByTag')->will(self::returnValue(['customId']));
 
         $session = new Persistence\Generic\Session();
         $session->injectReflectionService($mockReflectionService);

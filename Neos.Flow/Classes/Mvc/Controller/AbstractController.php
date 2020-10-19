@@ -11,24 +11,24 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use Neos\Error\Messages as Error;
+use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
+use Psr\Http\Message\UriInterface;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
-use Neos\Flow\Mvc\FlashMessageContainer;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Utility\MediaTypes;
-use Neos\Error\Messages as Error;
 use Neos\Flow\Validation\ValidatorResolver;
-use Psr\Http\Message\UriInterface;
+use Neos\Utility\MediaTypes;
 
 /**
  * An abstract base class for HTTP based controllers
@@ -73,15 +73,6 @@ abstract class AbstractController implements ControllerInterface
      * @var ControllerContext
      */
     protected $controllerContext;
-
-    /**
-     * The flash messages. Use $this->flashMessageContainer->addMessage(...) to add a new Flash
-     * Message.
-     *
-     * @Flow\Inject
-     * @var FlashMessageContainer
-     */
-    protected $flashMessageContainer;
 
     /**
      * @Flow\Inject
@@ -173,7 +164,7 @@ abstract class AbstractController implements ControllerInterface
                 $message = new Error\Message($messageBody, $messageCode, $messageArguments, $messageTitle);
             break;
         }
-        $this->flashMessageContainer->addMessage($message);
+        $this->controllerContext->getFlashMessageContainer()->addMessage($message);
     }
 
     /**
@@ -265,7 +256,7 @@ abstract class AbstractController implements ControllerInterface
      * @see forward()
      * @api
      */
-    protected function redirect($actionName, $controllerName = null, $packageKey = null, array $arguments = null, $delay = 0, $statusCode = 303, $format = null)
+    protected function redirect($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $delay = 0, $statusCode = 303, $format = null)
     {
         if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
             list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
@@ -349,7 +340,9 @@ abstract class AbstractController implements ControllerInterface
         $this->response->setStatusCode($statusCode);
         if ($content === null) {
             $content = sprintf(
-                '%s %s', $statusCode, $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
+                '%s %s',
+                $statusCode,
+                $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
             );
         }
         $this->response->setContent($content);
@@ -365,9 +358,12 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function mapRequestArgumentsToControllerArguments()
     {
+        /* @var $argument \Neos\Flow\Mvc\Controller\Argument */
         foreach ($this->arguments as $argument) {
             $argumentName = $argument->getName();
-            if ($this->request->hasArgument($argumentName)) {
+            if ($argument->getMapRequestBody()) {
+                $argument->setValue($this->request->getHttpRequest()->getParsedBody());
+            } elseif ($this->request->hasArgument($argumentName)) {
                 $argument->setValue($this->request->getArgument($argumentName));
             } elseif ($argument->isRequired()) {
                 throw new RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1298012500);

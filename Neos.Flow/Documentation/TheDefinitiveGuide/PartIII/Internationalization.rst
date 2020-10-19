@@ -38,7 +38,7 @@ use the i18n service API to obtain these verified ``Locale`` objects.
   You can configure which folders Flow should scan for finding available locales through
   the ``Neos.Flow.i18n.scan.includePaths`` setting. This is useful to restrict the scanning
   to specific paths when you have a big file structure in your package ``Resources``.
-  You can also blacklist folders through ``Neos.Flow.i18n.scan.excludePatterns``.
+  You can also exclude folders through ``Neos.Flow.i18n.scan.excludePatterns``.
   By default the ``Public`` and ``Private/Translations`` folders, except 'node_modules',
   'bower_components' and any folder starting with a dot will be scanned.
 

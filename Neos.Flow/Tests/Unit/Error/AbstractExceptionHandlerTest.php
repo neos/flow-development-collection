@@ -38,7 +38,7 @@ class AbstractExceptionHandlerTest extends UnitTestCase
         $exception = new \Exception('The Message', 12345);
 
         $mockThrowableStorage = $this->createMock(ThrowableStorageInterface::class);
-        $mockThrowableStorage->expects($this->once())->method('logThrowable')->with($exception);
+        $mockThrowableStorage->expects(self::once())->method('logThrowable')->with($exception);
 
         $mockLogger = $this->createMock(LoggerInterface::class);
 
@@ -75,12 +75,12 @@ class AbstractExceptionHandlerTest extends UnitTestCase
             ]
         ];
 
-        /** @var Exception|\PHPUnit_Framework_MockObject_MockObject $exception */
+        /** @var Exception|\PHPUnit\Framework\MockObject\MockObject $exception */
         $exception = new NoMatchingRouteException();
 
-        /** @var ThrowableStorageInterface|\PHPUnit_Framework_MockObject_MockObject $mockThrowableStorage */
+        /** @var ThrowableStorageInterface|\PHPUnit\Framework\MockObject\MockObject $mockThrowableStorage */
         $mockThrowableStorage = $this->getMockBuilder(ThrowableStorageInterface::class)->getMock();
-        $mockThrowableStorage->expects($this->never())->method('logThrowable');
+        $mockThrowableStorage->expects(self::never())->method('logThrowable');
 
         $exceptionHandler = $this->getMockForAbstractClass(AbstractExceptionHandler::class, [], '', false, true, true, ['echoExceptionCli']);
         /** @var AbstractExceptionHandler $exceptionHandler */

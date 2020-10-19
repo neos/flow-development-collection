@@ -45,15 +45,15 @@ class DatesReaderTest extends UnitTestCase
      */
     public function createCacheExpectations(MockObject $mockCache)
     {
-        $mockCache->expects($this->at(0))->method('has')->with('parsedFormats')->will($this->returnValue(true));
-        $mockCache->expects($this->at(1))->method('has')->with('parsedFormatsIndices')->will($this->returnValue(true));
-        $mockCache->expects($this->at(2))->method('has')->with('localizedLiterals')->will($this->returnValue(true));
-        $mockCache->expects($this->at(3))->method('get')->with('parsedFormats')->will($this->returnValue([]));
-        $mockCache->expects($this->at(4))->method('get')->with('parsedFormatsIndices')->will($this->returnValue([]));
-        $mockCache->expects($this->at(5))->method('get')->with('localizedLiterals')->will($this->returnValue([]));
-        $mockCache->expects($this->at(6))->method('set')->with('parsedFormats');
-        $mockCache->expects($this->at(7))->method('set')->with('parsedFormatsIndices');
-        $mockCache->expects($this->at(8))->method('set')->with('localizedLiterals');
+        $mockCache->expects(self::at(0))->method('has')->with('parsedFormats')->will(self::returnValue(true));
+        $mockCache->expects(self::at(1))->method('has')->with('parsedFormatsIndices')->will(self::returnValue(true));
+        $mockCache->expects(self::at(2))->method('has')->with('localizedLiterals')->will(self::returnValue(true));
+        $mockCache->expects(self::at(3))->method('get')->with('parsedFormats')->will(self::returnValue([]));
+        $mockCache->expects(self::at(4))->method('get')->with('parsedFormatsIndices')->will(self::returnValue([]));
+        $mockCache->expects(self::at(5))->method('get')->with('localizedLiterals')->will(self::returnValue([]));
+        $mockCache->expects(self::at(6))->method('set')->with('parsedFormats');
+        $mockCache->expects(self::at(7))->method('set')->with('parsedFormatsIndices');
+        $mockCache->expects(self::at(8))->method('set')->with('localizedLiterals');
     }
 
     /**
@@ -62,23 +62,22 @@ class DatesReaderTest extends UnitTestCase
     public function formatIsCorrectlyReadFromCldr()
     {
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getRawArray', 'getElement'], [[]]);
-        $mockModel->expects($this->once())->method('getRawArray')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats')->will($this->returnValue(['default[@choice="medium"]' => '']));
-        $mockModel->expects($this->once())->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="medium"]/dateFormat/pattern')->will($this->returnValue('mockFormatString'));
+        $mockModel->expects(self::once())->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="medium"]/dateFormat/pattern')->will(self::returnValue('mockFormatString'));
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
-        $mockRepository->expects($this->once())->method('getModelForLocale')->with($this->sampleLocale)->will($this->returnValue($mockModel));
+        $mockRepository->expects(self::once())->method('getModelForLocale')->with($this->sampleLocale)->will(self::returnValue($mockModel));
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $this->createCacheExpectations($mockCache);
 
         $reader = $this->getAccessibleMock(I18n\Cldr\Reader\DatesReader::class, ['parseFormat']);
-        $reader->expects($this->once())->method('parseFormat')->with('mockFormatString')->will($this->returnValue('mockParsedFormat'));
+        $reader->expects(self::once())->method('parseFormat')->with('mockFormatString')->will(self::returnValue(['mockParsedFormat']));
         $reader->injectCldrRepository($mockRepository);
         $reader->injectCache($mockCache);
         $reader->initializeObject();
 
         $result = $reader->parseFormatFromCldr($this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT);
-        self::assertEquals('mockParsedFormat', $result);
+        self::assertEquals(['mockParsedFormat'], $result);
 
         $reader->shutdownObject();
     }
@@ -89,12 +88,12 @@ class DatesReaderTest extends UnitTestCase
     public function dateTimeFormatIsParsedCorrectly()
     {
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getElement'], [[]]);
-        $mockModel->expects($this->at(0))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateTimeFormats/dateTimeFormatLength[@type="full"]/dateTimeFormat/pattern')->will($this->returnValue('foo {0} {1} bar'));
-        $mockModel->expects($this->at(1))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern')->will($this->returnValue('dMy'));
-        $mockModel->expects($this->at(2))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/timeFormats/timeFormatLength[@type="full"]/timeFormat/pattern')->will($this->returnValue('hms'));
+        $mockModel->expects(self::at(0))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateTimeFormats/dateTimeFormatLength[@type="full"]/dateTimeFormat/pattern')->will(self::returnValue('foo {0} {1} bar'));
+        $mockModel->expects(self::at(1))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern')->will(self::returnValue('dMy'));
+        $mockModel->expects(self::at(2))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/timeFormats/timeFormatLength[@type="full"]/timeFormat/pattern')->will(self::returnValue('hms'));
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
-        $mockRepository->expects($this->exactly(3))->method('getModelForLocale')->with($this->sampleLocale)->will($this->returnValue($mockModel));
+        $mockRepository->expects(self::exactly(3))->method('getModelForLocale')->with($this->sampleLocale)->will(self::returnValue($mockModel));
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $this->createCacheExpectations($mockCache);
@@ -128,10 +127,10 @@ class DatesReaderTest extends UnitTestCase
         };
 
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getRawArray'], [[]]);
-        $mockModel->expects($this->exactly(5))->method('getRawArray')->will($this->returnCallback($getRawArrayCallback));
+        $mockModel->expects(self::exactly(5))->method('getRawArray')->will(self::returnCallBack($getRawArrayCallback));
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
-        $mockRepository->expects($this->once())->method('getModelForLocale')->with($this->sampleLocale)->will($this->returnValue($mockModel));
+        $mockRepository->expects(self::once())->method('getModelForLocale')->with($this->sampleLocale)->will(self::returnValue($mockModel));
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $this->createCacheExpectations($mockCache);

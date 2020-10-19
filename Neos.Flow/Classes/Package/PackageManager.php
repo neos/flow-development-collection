@@ -22,6 +22,8 @@ use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Package\Exception as PackageException;
+use Composer\Console\Application as ComposerApplication;
+use Symfony\Component\Console\Input\ArrayInput;
 
 /**
  * The default Flow Package Manager
@@ -354,8 +356,9 @@ class PackageManager
             $composerManifestRepositories = ComposerUtility::getComposerManifest(FLOW_PATH_ROOT, 'repositories');
             if (is_array($composerManifestRepositories)) {
                 foreach ($composerManifestRepositories as $repository) {
-                    if (is_array($repository) && $repository['type'] === 'path' && isset($repository['type'], $repository['url'])
-                        && strpos($repository['url'], './') === 0 && substr($repository['url'], -2) === '/*'
+                    if (is_array($repository) &&
+                        isset($repository['type']) && $repository['type'] === 'path' &&
+                        isset($repository['url']) && substr($repository['url'], 0, 2) === './' && substr($repository['url'], -2) === '/*'
                     ) {
                         $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([FLOW_PATH_ROOT, substr($repository['url'], 0, -2)]));
                         $runComposerRequireForTheCreatedPackage = true;
@@ -391,7 +394,19 @@ class PackageManager
         $manifest = ComposerUtility::writeComposerManifest($packagePath, $packageKey, $manifest);
 
         if ($runComposerRequireForTheCreatedPackage) {
-            exec('composer require ' . $manifest['name'] . ' @dev');
+            $composerRequireArguments = new ArrayInput([
+                'command' => 'require',
+                'packages' => [$manifest['name'] . ' @dev'],
+                '--working-dir' => FLOW_PATH_ROOT
+            ]);
+
+            $composerApplication = new ComposerApplication();
+            $composerApplication->setAutoExit(false);
+            $composerErrorCode = $composerApplication->run($composerRequireArguments);
+
+            if ($composerErrorCode !== 0) {
+                throw new Exception("The installation was not successful. Composer returned the error code: $composerErrorCode", 1572187932);
+            }
         }
 
         $refreshedPackageStatesConfiguration = $this->rescanPackages();
@@ -595,10 +610,12 @@ class PackageManager
             $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest);
             if (isset($newPackageStatesConfiguration['packages'][$composerManifest['name']])) {
                 throw new PackageException(
-                    sprintf('The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
+                    sprintf(
+                        'The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
                         $composerManifest['name'],
                         $packageConfiguration['packagePath'],
-                        $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']),
+                        $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']
+                    ),
                     1493030262
                 );
             }
@@ -886,7 +903,7 @@ class PackageManager
      * @param string $autoloadNamespace
      * @return string
      */
-    protected function derivePackageKey($composerName, $packageType = null, $packagePath = null, $autoloadNamespace = null): string
+    protected function derivePackageKey(string $composerName, string $packageType = null, string $packagePath = '', string $autoloadNamespace = null): string
     {
         $packageKey = '';
 

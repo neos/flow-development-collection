@@ -27,7 +27,7 @@ class AbstractXmlParserTest extends UnitTestCase
         $sampleXmlFilePath = __DIR__ . '/Fixtures/MockCldrData.xml';
 
         $parser = $this->getAccessibleMock(I18n\AbstractXmlParser::class, ['doParsingFromRoot']);
-        $parser->expects($this->once())->method('doParsingFromRoot');
+        $parser->expects(self::once())->method('doParsingFromRoot');
         $parser->getParsedData($sampleXmlFilePath);
     }
 

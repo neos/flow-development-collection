@@ -345,7 +345,7 @@ class DynamicRoutePartTest extends UnitTestCase
     public function resolveValueReturnsMatchResultsAndSetTheValueToTheLowerCasedIdentifierIfTheValueToBeResolvedIsAnObject()
     {
         $object = new \stdClass();
-        $this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+        $this->mockPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($object)->will(self::returnValue('TheIdentifier'));
         /** @var ResolveResult $resolveResult */
         $resolveResult = $this->dynamicRoutPart->_call('resolveValue', $object);
         self::assertSame('theidentifier', $resolveResult->getResolvedValue());
@@ -357,7 +357,7 @@ class DynamicRoutePartTest extends UnitTestCase
     public function resolveValueReturnsMatchResultsAndSetTheValueToTheCorrectlyCasedIdentifierIfTheValueToBeResolvedIsAnObjectAndLowerCaseIsFalse()
     {
         $object = new \stdClass();
-        $this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+        $this->mockPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($object)->will(self::returnValue('TheIdentifier'));
         $this->dynamicRoutPart->setLowerCase(false);
         /** @var ResolveResult $resolveResult */
         $resolveResult = $this->dynamicRoutPart->_call('resolveValue', $object);
@@ -370,7 +370,7 @@ class DynamicRoutePartTest extends UnitTestCase
     public function resolveValueReturnsMatchResultsIfTheValueToBeResolvedIsAnObjectWithANumericIdentifier()
     {
         $object = new \stdClass();
-        $this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(123));
+        $this->mockPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($object)->will(self::returnValue(123));
         self::assertNotFalse($this->dynamicRoutPart->_call('resolveValue', $object));
     }
 
@@ -380,7 +380,7 @@ class DynamicRoutePartTest extends UnitTestCase
     public function resolveValueReturnsFalseIfTheValueToBeResolvedIsAnObjectWithAMultiValueIdentifier()
     {
         $object = new \stdClass();
-        $this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(['foo' => 'Foo', 'bar' => 'Bar']));
+        $this->mockPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($object)->will(self::returnValue(['foo' => 'Foo', 'bar' => 'Bar']));
         self::assertFalse($this->dynamicRoutPart->_call('resolveValue', $object));
     }
 
@@ -392,7 +392,7 @@ class DynamicRoutePartTest extends UnitTestCase
     public function resolveValueReturnsFalseIfTheValueToBeResolvedIsAnObjectThatIsUnknownToThePersistenceManager()
     {
         $object = new \stdClass();
-        $this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(null));
+        $this->mockPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($object)->will(self::returnValue(null));
         self::assertFalse($this->dynamicRoutPart->_call('resolveValue', $object));
     }
 

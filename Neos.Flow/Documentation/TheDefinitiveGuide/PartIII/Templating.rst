@@ -393,6 +393,51 @@ You can pass arbitrary objects to the view, using ``$this->view->assign($identif
 from within the controller. See the above paragraphs about Object Accessors for details
 how to use the passed data.
 
+Passing data to the view from outside a controller
+--------------------------------------------------
+
+You can also pass data to the view from outside a controller. This can be useful for
+general data, that you want to be available without having to assign it in each action.
+
+Once the view is resolved inside the ``ActionController``, the signal ``viewResolved``
+is being emitted and you can add data.
+
+This is possible with the Signal/Slot dispatcher from your ``Package.php`` file::
+
+    <?php
+    namespace Vendor\Namespace;
+
+    use Neos\Flow\Core\Bootstrap;
+    use Neos\Flow\Mvc\Controller\ActionController;
+    use Neos\Flow\Mvc\View\ViewInterface;
+    use Neos\Flow\Package\Package as BasePackage;
+
+
+    /**
+     * The Flow Package
+     */
+    class Package extends BasePackage
+    {
+
+        /**
+         * Invokes custom PHP code directly after the package manager has been initialized.
+         *
+         * @param Bootstrap $bootstrap The current bootstrap
+         * @return void
+         */
+        public function boot(Bootstrap $bootstrap)
+        {
+
+            $dispatcher = $bootstrap->getSignalSlotDispatcher();
+
+            $dispatcher->connect(ActionController::class, 'viewResolved', static function (ViewInterface $view) {
+                $view->assign('settingPassedFromSignal', 'sun is shining');
+            });
+
+        }
+    }
+
+
 Layouts
 =======
 
@@ -675,36 +720,40 @@ This attribute is available in all tags that inherit from ``Neos\FluidAdaptor\Co
 AbstractConditionViewHelper
 ---------------------------
 
-If you want to build some kind of ``if/else`` condition, you should base the ViewHelper
-on the ``AbstractConditionViewHelper``, as it gives you convenient methods to render
-the ``then`` or ``else`` parts of a ViewHelper. Let's look at the ``<f:if>``-ViewHelper
-for a usage example, which should be quite self-explanatory:
+To create a custom condition ViewHelper, you need to subclass the ``AbstractConditionViewHelper`` class, and implement your own static evaluateCondition() method that should return a boolean.
+The given RenderingContext can provide you with an object manager to get anything you might need to evaluate the condition together with the given arguments.
+ Depending on the result of this method either the then or the else part is rendered.
+
+@see \Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper::evaluateCondition for a simple usage example.
+
+Every Condition ViewHelper has a "then" and "else" argument, so it can be used like:
+<[aConditionViewHelperName] .... then="condition true" else="condition false" />, or as well use the "then" and "else" child nodes.
 
 .. code-block:: php
 
-    class IfViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper {
+    class IfAccessViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper {
 
-        /**
-         * renders <f:then> child if $condition is true, otherwise renders <f:else> child.
-         *
-         * @param boolean $condition View helper condition
-         * @return string the rendered string
-         */
-        public function render($condition) {
-            if ($condition) {
-                return $this->renderThenChild();
-            } else {
-                return $this->renderElseChild();
-            }
+    /**
+     * @param null $arguments
+     * @param RenderingContextInterface $renderingContext
+     * @return boolean
+     */
+    protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
+    {
+        $objectManager = $renderingContext->getObjectManager();
+        /** @var Context $securityContext */
+        $securityContext = $objectManager->get(Context::class);
+
+        if ($securityContext != null && !$securityContext->canBeInitialized()) {
+            return false;
         }
-
+        $privilegeManager = static::getPrivilegeManager($renderingContext);
+        return $privilegeManager->isPrivilegeTargetGranted($arguments['privilegeTarget'], $arguments['parameters']);
     }
 
 By basing your condition ViewHelper on the ``AbstractConditionViewHelper``,
 you will get the following features:
 
-* Two API methods ``renderThenChild()`` and ``renderElseChild()``, which should be
-  used in the ``then`` / ``else`` case.
 * The ViewHelper will have two arguments defined, called ``then`` and ``else``,
   which are very helpful in the Inline Notation.
 * The ViewHelper will automatically work with the ``<f:then>`` and ``<f:else>``-Tags.

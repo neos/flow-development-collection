@@ -106,6 +106,11 @@ class Session implements CookieEnabledInterface
     protected $sessionCookieHttpOnly = true;
 
     /**
+     * @var string
+     */
+    protected $sessionCookieSameSite;
+
+    /**
      * @var Cookie
      */
     protected $sessionCookie;
@@ -232,6 +237,7 @@ class Session implements CookieEnabledInterface
         $this->sessionCookiePath = $settings['session']['cookie']['path'];
         $this->sessionCookieSecure = (boolean)$settings['session']['cookie']['secure'];
         $this->sessionCookieHttpOnly = (boolean)$settings['session']['cookie']['httponly'];
+        $this->sessionCookieSameSite = $settings['session']['cookie']['samesite'];
         $this->garbageCollectionProbability = $settings['session']['garbageCollection']['probability'];
         $this->garbageCollectionMaximumPerRun = $settings['session']['garbageCollection']['maximumPerRun'];
         $this->inactivityTimeout = (integer)$settings['session']['inactivityTimeout'];
@@ -297,16 +303,17 @@ class Session implements CookieEnabledInterface
      * Starts the session, if it has not been already started
      *
      * @return void
-     * @api
+     * @throws \Exception
      * @deprecated This method is not deprecated, but be aware that from next major a cookie will no longer be auto generated.
      * @see CookieEnabledInterface
+     * @api
      */
     public function start()
     {
         if ($this->started === false) {
             $this->sessionIdentifier = Algorithms::generateRandomString(32);
             $this->storageIdentifier = Algorithms::generateUUID();
-            $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
+            $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly, $this->sessionCookieSameSite);
             $this->lastActivityTimestamp = $this->now;
             $this->started = true;
 
@@ -630,11 +637,17 @@ class Session implements CookieEnabledInterface
             if ($sessionIdentifier === '_garbage-collection-running') {
                 continue;
             }
+            if (!is_array($sessionInfo)) {
+                $sessionInfo = [
+                    'sessionMetaData' => $sessionInfo,
+                    'lastActivityTimestamp' => 0,
+                    'storageIdentifier' => null
+                ];
+                $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo + LogEnvironment::fromMethodName(__METHOD__));
+            }
             $lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
-                if ($sessionInfo['storageIdentifier'] === null) {
-                    $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo + LogEnvironment::fromMethodName(__METHOD__));
-                } else {
+                if ($sessionInfo['storageIdentifier'] !== null) {
                     $this->storageCache->flushByTag($sessionInfo['storageIdentifier']);
                     $sessionRemovalCount++;
                 }

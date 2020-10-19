@@ -79,7 +79,7 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
         ];
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, 'foo')->will($this->returnValue($methodParameters));
+        $mockReflectionService->expects(self::any())->method('getMethodParameters')->with($className, 'foo')->will(self::returnValue($methodParameters));
 
         $expectedCode = "
                 \$methodArguments = [];
@@ -160,7 +160,7 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
         ];
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, '__construct')->will($this->returnValue($methodParameters));
+        $mockReflectionService->expects(self::any())->method('getMethodParameters')->with($className, '__construct')->will(self::returnValue($methodParameters));
 
         $builder = $this->getAccessibleMock(AdvicedConstructorInterceptorBuilder::class, ['dummy'], [], '', false);
         $builder->injectReflectionService($mockReflectionService);

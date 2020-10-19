@@ -50,9 +50,9 @@ class IpTest extends UnitTestCase
     public function requestMatchingBasicallyWorks($pattern, $ip, $expected)
     {
         $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $requestMock->expects($this->once())->method('getAttribute')->with(ServerRequestAttributes::CLIENT_IP)->willReturn($ip);
+        $requestMock->expects(self::once())->method('getAttribute')->with(ServerRequestAttributes::CLIENT_IP)->willReturn($ip);
         $actionRequestMock = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $actionRequestMock->expects($this->any())->method('getHttpRequest')->will($this->returnValue($requestMock));
+        $actionRequestMock->expects(self::any())->method('getHttpRequest')->will(self::returnValue($requestMock));
 
         $requestPattern = new Ip(['cidrPattern' => $pattern]);
 

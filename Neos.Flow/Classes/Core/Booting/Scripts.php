@@ -43,10 +43,10 @@ use Neos\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
-use Neos\Utility\Lock\Lock;
-use Neos\Utility\Lock\LockManager;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Exception as FlowException;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -211,15 +211,6 @@ class Scripts
             $configurationManager->refreshConfiguration();
         }
 
-        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
-
-        $lockManager = new LockManager($settings['utility']['lockStrategyClassName'], ['lockDirectory' => Files::concatenatePaths([
-            $environment->getPathToTemporaryDirectory(),
-            'Lock'
-        ])]);
-        Lock::setLockManager($lockManager);
-        $packageManager->injectSettings($settings);
-
         $bootstrap->getSignalSlotDispatcher()->dispatch(ConfigurationManager::class, 'configurationManagerReady', [$configurationManager]);
         $bootstrap->setEarlyInstance(ConfigurationManager::class, $configurationManager);
     }
@@ -276,11 +267,14 @@ class Scripts
         /** @var ThrowableStorageInterface $throwableStorage */
         $throwableStorage = $storageClassName::createWithOptions($storageOptions);
 
-        $throwableStorage->setBacktraceRenderer(function ($backtrace) {
+        $throwableStorage->setBacktraceRenderer(static function ($backtrace) {
             return Debugger::getBacktraceCode($backtrace, false, true);
         });
 
-        $throwableStorage->setRequestInformationRenderer(function () {
+        $throwableStorage->setRequestInformationRenderer(static function () {
+            // The following lines duplicate FileStorage::__construct(), which is intended to provide a renderer
+            // to alternative implementations of ThrowableStorageInterface
+
             $output = '';
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
                 return $output;
@@ -293,11 +287,11 @@ class Scripts
                 return $output;
             }
 
-            $request = $requestHandler->getHttpRequest();
-            $response = $requestHandler->getHttpResponse();
+            $request = $requestHandler->getComponentContext()->getHttpRequest();
+            $response = $requestHandler->getComponentContext()->getHttpResponse();
             // TODO: Sensible error output
-            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request ? '[request was empty]' : RequestInformationHelper::renderRequestHeaders($request)) . PHP_EOL;
-            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response ? '[response was empty]' : $response->getStatusCode()) . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestHeaders($request) : '[request was empty]') . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response instanceof ResponseInterface ? $response->getStatusCode() : '[response was empty]') . PHP_EOL;
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;
@@ -777,7 +771,7 @@ class Scripts
             $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
         }
 
-        self::ensureCLISubrequestsUseCurrentlyRunningPhpBinary($settings['core']['phpBinaryPathAndFilename']);
+        static::ensureCLISubrequestsUseCurrentlyRunningPhpBinary($settings['core']['phpBinaryPathAndFilename']);
 
         $command = '';
         foreach ($subRequestEnvironmentVariables as $argumentKey => $argumentValue) {
@@ -803,7 +797,7 @@ class Scripts
             $command .= ' -c ' . escapeshellarg($useIniFile);
         }
 
-        self::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
+        static::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
 
         return $command;
     }
@@ -822,20 +816,37 @@ class Scripts
             return;
         }
 
-        // Resolve any symlinks that the configured php might be pointing to
-        $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
+        // Ensure the actual PHP binary is known before checking if it is correct. If empty, we ignore it because it is checked later in the script.
+        if (strlen($phpBinaryPathAndFilename) === 0) {
+            return;
+        }
+
+        // Try to resolve which binary file PHP is pointing to
+        exec($phpBinaryPathAndFilename . ' -r "echo realpath(PHP_BINARY);"', $output, $result);
+        if ($result === 0 && sizeof($output) === 1) {
+            // Resolve any wrapper
+            $configuredPhpBinaryPathAndFilename = $output[0];
+        } else {
+            // Resolve any symlinks that the configured php might be pointing to
+            $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
+        }
 
         // if the configured PHP binary is empty here, the file does not exist. We ignore that here because it is checked later in the script.
         if ($configuredPhpBinaryPathAndFilename === false || strlen($configuredPhpBinaryPathAndFilename) === 0) {
             return;
         }
 
-        if (strcmp(PHP_BINARY, $configuredPhpBinaryPathAndFilename) !== 0) {
-            throw new FlowException(sprintf('You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
+        $realPhpBinary = realpath(PHP_BINARY);
+        if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
+            throw new FlowException(sprintf(
+                'You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
                 'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
                 'caches by removing the folder Data/Temporary before running ./flow again.',
-                PHP_BINARY, $configuredPhpBinaryPathAndFilename, PHP_BINARY), 1536303119);
+                $realPhpBinary,
+                $configuredPhpBinaryPathAndFilename,
+                $realPhpBinary
+            ), 1536303119);
         }
     }
 
@@ -862,11 +873,15 @@ class Scripts
 
         $configuredPHPVersion = $output[0];
         if (array_slice(explode('.', $configuredPHPVersion), 0, 2) !== array_slice(explode('.', PHP_VERSION), 0, 2)) {
-            throw new FlowException(sprintf('You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
+            throw new FlowException(sprintf(
+                'You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
                 'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
                 '%s. Flush the caches by removing the folder Data/Temporary before executing Flow/Neos again.',
-                PHP_VERSION, $configuredPHPVersion, PHP_VERSION), 1536563428);
+                PHP_VERSION,
+                $configuredPHPVersion,
+                PHP_VERSION
+            ), 1536563428);
         }
     }
 

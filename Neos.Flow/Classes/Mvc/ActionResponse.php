@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Flow\Mvc;
 
+use Neos\Flow\Http\Cookie;
+use Psr\Http\Message\ResponseInterface;
 use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
@@ -36,18 +38,26 @@ final class ActionResponse
     /**
      * The HTTP status code
      *
-     * @var integer
+     * Note the getter has a default value,
+     * but internally this can be null to signify a status code was never set explicitly.
+     *
+     * @var integer|null
      */
-    protected $statusCode = 200;
+    protected $statusCode;
 
     /**
      * @var string
      */
     protected $contentType;
 
+    /**
+     * @var Cookie[]
+     */
+    protected $cookies = [];
+
     public function __construct()
     {
-        $this->content = stream_for('');
+        $this->content = stream_for();
     }
 
     /**
@@ -104,6 +114,32 @@ final class ActionResponse
     }
 
     /**
+     * Set a cookie in the HTTP response
+     * This leads to a corresponding `Set-Cookie` header to be set in the HTTP response
+     *
+     * @param Cookie $cookie Cookie to be set in the HTTP response
+     * @api
+     */
+    public function setCookie(Cookie $cookie): void
+    {
+        $this->cookies[$cookie->getName()] = clone $cookie;
+    }
+
+    /**
+     * Delete a cooke from the HTTP response
+     * This leads to a corresponding `Set-Cookie` header with an expired Cookie to be set in the HTTP response
+     *
+     * @param string $cookieName Name of the cookie to delete
+     * @api
+     */
+    public function deleteCookie(string $cookieName): void
+    {
+        $cookie = new Cookie($cookieName);
+        $cookie->expire();
+        $this->cookies[$cookie->getName()] = $cookie;
+    }
+
+    /**
      * Set a (HTTP) component parameter for use later in the chain.
      * This can be used to adjust all aspects of the later processing if needed.
      *
@@ -152,7 +188,7 @@ final class ActionResponse
      */
     public function getStatusCode(): int
     {
-        return $this->statusCode;
+        return $this->statusCode ?? 200;
     }
 
     /**
@@ -169,9 +205,10 @@ final class ActionResponse
      */
     public function mergeIntoParentResponse(ActionResponse $actionResponse): ActionResponse
     {
-        if (!empty($this->content)) {
+        if ($this->hasContent()) {
             $actionResponse->setContent($this->content);
         }
+
         if ($this->contentType !== null) {
             $actionResponse->setContentType($this->contentType);
         }
@@ -189,6 +226,9 @@ final class ActionResponse
                 $actionResponse->setComponentParameter($componentClass, $parameterName, $parameterValue);
             }
         }
+        foreach ($this->cookies as $cookie) {
+            $actionResponse->setCookie($cookie);
+        }
 
         return $actionResponse;
     }
@@ -200,10 +240,11 @@ final class ActionResponse
     public function mergeIntoComponentContext(ComponentContext $componentContext): ComponentContext
     {
         $httpResponse = $componentContext->getHttpResponse();
-        $httpResponse = $httpResponse
-            ->withStatus($this->statusCode);
+        if ($this->statusCode !== null) {
+            $httpResponse = $httpResponse->withStatus($this->statusCode);
+        }
 
-        if ($this->content !== null) {
+        if ($this->hasContent()) {
             $httpResponse = $httpResponse->withBody($this->content);
         }
 
@@ -221,8 +262,59 @@ final class ActionResponse
             }
         }
 
+        foreach ($this->cookies as $cookie) {
+            $httpResponse = $httpResponse->withAddedHeader('Set-Cookie', (string)$cookie);
+        }
+
         $componentContext->replaceHttpResponse($httpResponse);
 
         return $componentContext;
+    }
+
+    /**
+     * Note this is a special use case method that will apply the internal properties (Content-Type, StatusCode, Location, Set-Cookie and Content)
+     * to the given PSR-7 Response and return a modified response. This is used to merge the ActionResponse properties into a possible HttpResponse
+     * created in a View (see ActionController::renderView()) because those would be overwritten otherwise. Note that any component parameters will
+     * still run through the component chain and will not be propagated here.
+     *
+     * WARNING: Should this ActionResponse contain body content it would replace any content in the given HttpReponse.
+     *
+     * @param ResponseInterface $httpResponse
+     * @return ResponseInterface
+     * @internal
+     */
+    public function applyToHttpResponse(ResponseInterface $httpResponse): ResponseInterface
+    {
+        if ($this->statusCode !== null) {
+            $httpResponse = $httpResponse->withStatus($this->statusCode);
+        }
+
+        if ($this->hasContent()) {
+            $httpResponse = $httpResponse->withBody($this->content);
+        }
+
+        if ($this->contentType !== null) {
+            $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);
+        }
+
+        if ($this->redirectUri !== null) {
+            $httpResponse = $httpResponse->withHeader('Location', (string)$this->redirectUri);
+        }
+
+        foreach ($this->cookies as $cookie) {
+            $httpResponse = $httpResponse->withAddedHeader('Set-Cookie', (string)$cookie);
+        }
+
+        return $httpResponse;
+    }
+
+    /**
+     * Does this action response have content?
+     *
+     * @return bool
+     */
+    private function hasContent(): bool
+    {
+        return $this->content->getSize() > 0;
     }
 }

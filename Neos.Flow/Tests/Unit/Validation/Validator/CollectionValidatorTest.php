@@ -59,7 +59,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
     public function collectionValidatorValidatesEveryElementOfACollectionWithTheGivenElementValidator()
     {
         $this->validator->_set('options', ['elementValidator' => 'EmailAddress', 'elementValidatorOptions' => []]);
-        $this->mockValidatorResolver->expects($this->exactly(4))->method('createValidator')->with('EmailAddress')->will($this->returnValue(new EmailAddressValidator()));
+        $this->mockValidatorResolver->expects(self::exactly(4))->method('createValidator')->with('EmailAddress')->will(self::returnValue(new EmailAddressValidator()));
 
         $arrayOfEmailAddresses = [
             'andreas@neos.io',
@@ -89,8 +89,8 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
         $B->a = $A;
         $B->c = [$A];
 
-        $this->mockValidatorResolver->expects($this->any())->method('createValidator')->with('Integer')->will($this->returnValue(new IntegerValidator()));
-        $this->mockValidatorResolver->expects($this->any())->method('buildBaseValidatorConjunction')->will($this->returnValue(new GenericObjectValidator()));
+        $this->mockValidatorResolver->expects(self::any())->method('createValidator')->with('Integer')->will(self::returnValue(new IntegerValidator()));
+        $this->mockValidatorResolver->expects(self::any())->method('buildBaseValidatorConjunction')->will(self::returnValue(new GenericObjectValidator()));
 
         // Create validators
         $aValidator = new GenericObjectValidator([]);
@@ -114,9 +114,22 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
         $persistentCollection = new \Doctrine\ORM\PersistentCollection($entityManager, new \Doctrine\ORM\Mapping\ClassMetadata(''), new \Doctrine\Common\Collections\ArrayCollection());
         ObjectAccess::setProperty($persistentCollection, 'initialized', false, true);
 
-        $this->mockValidatorResolver->expects($this->never())->method('createValidator');
+        $this->mockValidatorResolver->expects(self::never())->method('createValidator');
 
         $this->validator->validate($persistentCollection);
+    }
+
+    /**
+     * @test
+     */
+    public function collectionValidatorIsValidEarlyReturnsOnUnitializedDoctrineAbstractLazyCollections()
+    {
+        $doctrineArrayCollection = $this->getMockBuilder(\Doctrine\Common\Collections\AbstractLazyCollection::class)->disableOriginalConstructor()->getMock();
+        $doctrineArrayCollection->method('isInitialized')->willReturn(false);
+
+        $this->mockValidatorResolver->expects(self::never())->method('createValidator');
+
+        $this->validator->validate($doctrineArrayCollection);
     }
 
     /**
@@ -126,7 +139,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
     {
         $elementValidatorOptions = ['minimum' => 5];
         $this->validator->_set('options', ['elementValidator' => 'NumberRange', 'elementValidatorOptions' => $elementValidatorOptions]);
-        $this->mockValidatorResolver->expects($this->any())->method('createValidator')->with('NumberRange', $elementValidatorOptions)->will($this->returnValue(new NumberRangeValidator($elementValidatorOptions)));
+        $this->mockValidatorResolver->expects(self::any())->method('createValidator')->with('NumberRange', $elementValidatorOptions)->will(self::returnValue(new NumberRangeValidator($elementValidatorOptions)));
 
         $result = $this->validator->validate([5, 6, 1]);
 

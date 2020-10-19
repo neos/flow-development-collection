@@ -30,17 +30,24 @@ The basic walk through a Flow-based web application is as follows:
   request handler
 * by default, the :abbr:`HTTP Request Handler (\\Neos\\Flow\\Http\\RequestHandler)` takes over and runs a boot sequence
   which initializes all important parts of Flow
-* the HTTP Request Handler builds an HTTP Request and Response object. The
-  :abbr:`Request object (\\Neos\\Flow\\Http\\Request)` contains all important properties of the real HTTP request.
-  The :abbr:`Response object (\\Neos\\Flow\\Http\\Response)` in turn is empty and will be filled with information by a
+* the HTTP Request Handler builds an PSR-7 HTTP Request and Response object. The
+  :abbr:`Request object (\\Psr\\Http\\Message\\ServerRequestInterface)` contains all important properties of the real HTTP request.
+  The :abbr:`Response object (\\Psr\Http\\Message\\ResponseInterface)` in turn is empty and will be filled with information by a
   controller at a later point
+  Both are stored in the so-called :abbr:`ComponentContext (\\Neos\\Flow\\Http\\Component\\ComponentContext)`, which you need to use to access and/or replace any of the two.
 * the HTTP Request Handler initializes the
-  :abbr:`HTTP Component Chain (\\Neos\\Flow\\Http\\Component\\ComponentChain)`, a set of independent units that have
+  :abbr:`HTTP Middlewares chain (\\Neos\\Flow\\Http\\Middleware\\MiddlewaresChain)`, which is a PSR-15 RequestHandler
+  implementation wrapping a configurable list of `PSR-15 Middlewares`_.
+  Currently this `Middlewares chain`_ only consists of a middleware that invokes the deprecated
+  :abbr:`HTTP Component chain (\\Neos\\Flow\\Http\\Component\\ComponentChain)`, a set of independent units that have
   access to the current HTTP request and response and can share information amongst each other.
-  The chain is fully configurable, but by default it consists of the following steps:
+  The `Component chain`_ is fully configurable, but by default it consists of the following steps:
+* the ``trusted proxies`` component verifies headers that override request information, like the host, port or client IP address to
+  come from a server (reverse proxy) who's IP address is safe-listed in the settings.
+* the ``session cookie`` component, which restores the session from a cookie and later sets the session cookie in the response.
 * the ``routing`` component invokes the :abbr:`Router (\\Neos\\Flow\\Mvc\\Routing\\Router)` to determine which
   controller and action is responsible for processing the request. This information (controller name, action name,
-  arguments) is stored in the :abbr:`ComponentContext (\\Neos\\Flow\\Http\\Component\\ComponentContext)`
+  arguments) is stored in the ``ComponentContext``
 * the ``dispatching`` component tries to invoke the corresponding controller action via the
   :abbr:`Dispatcher (Neos\\Flow\\Mvc\\Dispatcher)`
 * the controller, usually an :abbr:`Action Controller (\\Neos\\Flow\\Mvc\\Controller\\ActionController)`, processes the
@@ -59,7 +66,7 @@ essence, this is the path a request is taking.
 
 	Simplified application flow
 
-The Response is modified within the HTTP Component Chain, visualized by the highlighted "loop" block above. The
+The Response is modified within the HTTP Middlewares/Component Chain, visualized by the highlighted "loop" block above. The
 component chain is configurable. If no components were registered every request would result in a blank HTTP Response.
 The component chain is a component too, so chains can be nested. By default the base component chain is divided into
 three sub chains "preprocess", "process" and "postprocess".
@@ -78,7 +85,7 @@ Request Handler
 ---------------
 
 The request handler is responsible for taking a request and responding in a manner the client understands. The default
-HTTP Request Handler invokes the ``Bootstrap runtime sequence`` and initializes the ``HTTP Component chain``. Other
+HTTP Request Handler invokes the ``Bootstrap runtime sequence`` and initializes the ``HTTP Middlewares chain``. Other
 request handlers may choose a completely different way to handle requests.
 Although Flow also supports other types of requests (most notably, from the command line interface), this chapter
 only deals with HTTP requests.
@@ -114,8 +121,63 @@ the ``Package`` class of the package containing the request handler::
 
 	}
 
+Middlewares Chain
+-----------------
+
+Instead of registering a new RequestHandler the application workflow can also be altered by a custom ``PSR-15 Middleware``.
+A HTTP middleware must implement the :abbr:`Middleware interface (\\Psr\\Http\\Server\\MiddlewareInterface)`
+that defines the ``process($request, $next)`` method::
+
+  use Psr\Http\Message\ResponseInterface;
+  use Psr\Http\Message\ServerRequestInterface;
+  use Psr\Http\Server\MiddlewareInterface;
+  use Psr\Http\Server\RequestHandlerInterface;
+
+  /**
+   * A sample HTTP middleware that intercepts the default handling and returns "bar" if the request contains an argument "foo"
+   */
+  class SomeMiddleware implements MiddlewareInterface {
+
+    /**
+     * @param ServerRequestInterface $httpRequest
+     * @param RequestHandlerInterface $next
+     * @return ResponseInterface
+     */
+    public function process(ServerRequestInterface $httpRequest, RequestHandlerInterface $next): ResponseInterface;
+      if (!$httpRequest->hasArgument('foo')) {
+        // You may also return a new HttpResponse here and thereby short-cut the further handling
+        return $next->handle($httpRequest);
+      }
+      $httpResponse = $next->handle($httpRequest);
+      return $httpResponse->withContent('bar');
+    }
+
+  }
+
+To activate a middleware, it must be configured in the ``Settings.yaml``::
+
+  Neos:
+    Flow:
+      http:
+        middlewares:
+          'custom':
+            position: 'before dispatch'
+            middleware: 'Some\Package\Http\SomeHttpMiddleware'
+
+With the ``position`` directive the order of a middleware within the chain can be defined. In this case the new component
+will be handled before the dispatch middleware that is configured in the Neos.Flow package. Note though, that any middleware
+will always be able to act on the request, so *before* any following middleware and also on the response, hence *after*
+the following middleware. A middleware chain basically works like a onion ring, where each middleware is a single layer
+of the onion around the inner core of the application. Each request passes inside through the layer and a response passes
+outside through the layer.
+
 Component Chain
 ---------------
+
+..note::
+
+  The Component Chain is considered deprecated as of Flow 6.3 and will be removed in a later version. All components will
+  be replaced by `PSR-15 Middlewares`_ and an easy upgrade-path will be provided.
 
 Instead of registering a new RequestHandler the application workflow can also be altered by a custom ``HTTP Component``.
 A HTTP component must implement the :abbr:`Component interface (\\Neos\\Flow\\Http\\Component\\ComponentInterface)`
@@ -151,7 +213,8 @@ that defines the ``handle()`` method::
 				return;
 			}
 			$httpResponse = $componentContext->getHttpResponse();
-			$httpResponse->setContent('bar');
+      $modifiedResponse = $httpResponse->withContent('bar');
+			$componentContext->replaceHttpResponse($modifiedResponse);
 		}
 	}
 
@@ -200,49 +263,44 @@ still handled even if the new component cancels the current chain.
 Request
 -------
 
-The ``Neos\Flow\Http\Request`` class is, like most other classes in the ``Http`` sub package, a relatively close match
-of a request according to the HTTP 1.1 specification. You'll be best off studying the API of the class and reading the
-respective comments for getting an idea about the available functions. That being said, we'll pick a few important
-methods which may need some further explanation.
+In the PSR-7 specification, a distinction is made between two different types of requests - incoming (``ServerRequest``)
+and outgoing (``Request``). Whenever you want to make an outgoing request, you can easily use the Guzzle
+``Request`` class constructor for example with the respective arguments for method, uri, etc. and then pass that to e.g. a PSR-18
+Http Client implementation.
+On the other side the incoming request is something you should never try to create an instance of yourself, as it is
+provided by the framework. In theory, you could also call the ``ServerRequestFactory::createServerRequest`` or
+the Guzzle ``ServerRequest::fromGlobals()`` convenience method, but this does not have any relation to the current request
+object handled by the framework. It will not have any of the processing from components applied and might therefore lead
+to unexpected results, like the trusted proxy headers ``X-Forwarded-*`` not being applied and the ``ServerRequest`` providing
+wrong protocol, host or client IP address.
+If you need access to the **current** HTTP ``Request``, either create a :ref:`Http Component<Component Chain>` or only access it inside the
+controller through the ``ActionRequest`` for inspecting::
 
-Constructing a Request
-~~~~~~~~~~~~~~~~~~~~~~
+	public function myAction() {
+		$requestBody = $this->request->getHttpRequest()->getParsedBody();
+		...
+	}
 
-You can, in theory, create a new ``Request`` instance by simply using the ``new`` operator and passing the required
-arguments to the constructor. However, there are two static factory methods which make life much easier. We recommend
-using these instead of the low-level constructor method.
+Alternatively, starting with Flow version 7.0, you can just inject an instance of the PSR-7 ``ServerRequestInterface``::
 
-.. warning::
+	public function __construct(\Psr\Http\Message\ServerRequestInterface $httpRequest) {
+		...
+	}
 
-	You should only create a ``Request`` manually if you want to send out requests or if you know exactly what you are
-	doing. The created ``Request`` will not have any ``HTTP Components`` affect him and might therefore lead to
-	unexpected results, like the trusted proxy headers ``X-Forwarded-*`` not being applied and the ``Request`` providing
-	wrong protocol, host or client IP address.
-	If you need access to the **current** HTTP ``Request`` or ``Response``, instead inject the ``Bootstrap`` and
-	get the ``HttpRequest`` and ``HttpResponse`` through the ``getActiveRequestHandler()``.
+This will inject the currently active ``ServerRequest`` as long as the active request handler is an instance of ``HttpRequestHandlerInterface``.
+Otherwise (for example in CLI context) you'll have to create a new instance::
 
-create()
-~~~~~~~~
-
-The method ``create()`` accepts an URI, the request method, arguments and a few more parameters and returns a new
-``Request`` instance with sensible default properties set. This method is best used if you need to create a new
-``Request`` object from scratch without taking any real HTTP request into account.
-
-createFromEnvironment()
-~~~~~~~~~~~~~~~~~~~~~~~
-
-The second method, ``createFromEnvironment()``, take the environment provided by PHP's superglobals and specialized
-functions into account. It creates a ``Request`` instance which reflects the current HTTP request received from the web
-server. This method is best used if you need a ``Request`` object with all properties set according to the current
-server environment and incoming HTTP request.
-Note though, that you should not expect this ``Request`` to match the current ``Request``, since the latter will still
-have been affected by some ``HTTP Components``. If you need the **current** Request, get it from the ``RequestHandler`` instead.
+	public function __construct(LoggerInterface $logger, ServerRequestFactoryInterface $serverRequestFactory)
+	{
+		$this->httpRequest = $serverRequestFactory->createServerRequest('GET', 'http://localhost');
+	}
 
 Creating an ActionRequest
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to dispatch a request to a controller, you need an ``ActionRequest``.
-Such a request is always bound to an ``Http\Request``::
+Normally, you should not need to create an ``ActionRequest`` yourself. It only has meaning inside the ``MVC`` layer of
+the framework and is created before invoking the MVC dispatcher. If you do need to create an ``ActionRequest`` yourself
+to dispatch, such a request is always bound to an HTTP ``ServerRequest``::
 
     use Neos\Flow\Core\Bootstrap;
     use Neos\Flow\Http\HttpRequestHandlerInterface;
@@ -260,27 +318,33 @@ Such a request is always bound to an ``Http\Request``::
 
     $requestHandler = $this->bootstrap->getActiveRequestHandler();
     if ($requestHandler instanceof HttpRequestHandlerInterface) {
-        $actionRequest = new ActionRequest($requestHandler->getHttpRequest());
+        $actionRequest = ActionRequest::fromHttpRequest($requestHandler->getHttpRequest());
         // ...
     }
+
+..note::
+
+  With Flow version 7.0 and higher, you can just inject an instance of the ``ServerRequest`` as described in the previous section
 
 Arguments
 ~~~~~~~~~
 
-The request features a few methods for retrieving and setting arguments. These arguments are the result of merging any
-GET, POST and PUT arguments and even the information about uploaded files. Be aware that these arguments have not been
-sanitized or further processed and thus are not suitable for being used in controller actions. If you, however, need to
-access the raw data, these API function are the right way to retrieve them.
+The ``ActionRequest`` features a few methods for retrieving and setting arguments. These arguments are the result of merging any
+GET, POST and PUT arguments and even the information about uploaded files. Note that these arguments have already been processed
+by the validation and property mapping layerns and thus are suitable for being used in controller actions. If you, however, need to
+access the raw data, you can access these via the ``getCookieParams()``, ``getQueryParams()``, ``getUploadedFiles()`` and ``getParsedBody()``
+methods of the ``HttpRequest``  respectively.
 
 Arguments provided by POST or PUT requests are usually encoded in one or the other way. Flow detects the encoding
-through the ``Content-Type`` header and decodes the arguments and their values automatically.
+through the ``Content-Type`` header and decodes the arguments and their values automatically into the parsed body.
 
-getContent()
-~~~~~~~~~~~~
+getParsedBody()
+~~~~~~~~~~~~~~~
 
-You can access the request body easily by calling the ``getContent()`` method. For performance reasons you may also
-retrieve the content as a stream instead of a string. Please be aware though that, due to how input streams work in PHP,
-it is not possible to retrieve the content as a stream a second time.
+You can access the request body easily by calling the ``getParsedBody()`` method. For performance reasons you may also
+retrieve the content as a stream instead of a parsed structure by calling ``getBody()`` before the ``RequestBodyParsingComponent``.
+Please be aware though that, due to how input streams work in PHP, it is not possible to retrieve the content as a stream a second
+time, so the ``RequestBodyParsingComponent`` will not be able to parse the request body then.
 
 Media Types
 ~~~~~~~~~~~
@@ -407,7 +471,7 @@ Cookies
 -------
 
 The HTTP foundation provides a very convenient way to deal with cookies. Instead of calling the PHP cookie functions
-(like ``setcookie()``), we recommend using the respective methods available in the ``Request`` and ``Response`` classes.
+(like ``setcookie()``), we recommend using the respective methods available in the ``ActionResponse`` class.
 
 Like requests and responses, a cookie also is represented by a PHP class. Instead of working on arrays with values,
 instances of the ``Cookie`` class are used.
@@ -420,13 +484,13 @@ In order to set a cookie, just create a new ``Cookie`` object and add it to the 
 
 As soon as the response is sent to the browser, the cookie is sent as part of it. With the next request, the user agent
 will send the cookie through the ``Cookie`` header. These headers are parsed automatically and can be retrieved from the
-``Request`` object::
+``HttpRequest`` object::
 
 	public function myAction() {
 		$httpRequest = $this->request->getHttpRequest();
-		if ($httpRequest->hasCookie('myCounter')) {
-			$cookie = $httpRequest->getCookie('myCounter');
-			$this->view->assign('counter', $cookie->getValue());
+		$cookieParams = $httpRequest->getCookieParams();
+		if (isset($cookieParams['myCounter']) {
+			$this->view->assign('counter', (int)$cookieParams['myCounter']);
 		}
 	}
 
@@ -434,24 +498,17 @@ The cookie value can be updated and re-assigned to the response::
 
 	public function myAction() {
 		$httpRequest = $this->request->getHttpRequest();
-		if ($httpRequest->hasCookie('myCounter')) {
-			$cookie = $httpRequest->getCookie('myCounter');
-		} else {
-			$cookie = new Cookie('myCounter', 1);
-		}
-		$this->view->assign('counter', $cookie->getValue());
+		$counter = $httpRequest->getCookieParams()['myCounter'] ?? 0;
+		$this->view->assign('counter', $counter);
 
-		$cookie->setValue((integer)$cookie->getValue() + 1);
+		$cookie = new Cookie('myCounter', $counter + 1);
 		$this->response->setCookie($cookie);
 	}
 
-Finally, a cookie can be deleted by calling the ``expire()`` method::
+Finally, a cookie can be deleted by calling the ``deleteCookie()`` method::
 
 	public function myAction() {
-		$httpRequest = $this->request->getHttpRequest();
-		$cookie = $httpRequest->getCookie('myCounter');
-		$cookie->expire();
-		$this->response->setCookie($cookie);
+		$this->response->deleteCookie('myCounter');
 	}
 
 Uri
@@ -579,3 +636,6 @@ other application parts which are accessible via HTTP. This browser has the ``In
 .. _Coordinated Universal Time: http://en.wikipedia.org/wiki/Coordinated_Universal_Time
 .. _Greenwich Mean Time: http://en.wikipedia.org/wiki/Greenwich_Mean_Time
 .. _Forwarded Header: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
+.. _Middlewares chain: https://github.com/neos/flow-development-collection/blob/6.3/Neos.Flow/Configuration/Settings.Http.yaml#L28-L31
+.. _Component chain: https://github.com/neos/flow-development-collection/blob/5.3/Neos.Flow/Configuration/Settings.Http.yaml#L31-L57
+.. _PSR-15 Middlewares: https://www.php-fig.org/psr/psr-15/#22-psrhttpservermiddlewareinterface

@@ -52,7 +52,7 @@ class SessionTest extends UnitTestCase
     protected $httpResponse;
 
     /**
-     * @var Context|\PHPUnit_Framework_MockObject_MockObject
+     * @var Context|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockSecurityContext;
 
@@ -82,7 +82,8 @@ class SessionTest extends UnitTestCase
                 'path' => '/',
                 'secure' => false,
                 'httponly' => true,
-                'domain' => null
+                'domain' => null,
+                'samesite' => null
             ]
         ]
     ];
@@ -101,16 +102,16 @@ class SessionTest extends UnitTestCase
         $this->httpResponse = new Response();
 
         $mockRequestHandler = $this->createMock(RequestHandler::class);
-        $mockRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->httpRequest));
-        $mockRequestHandler->expects($this->any())->method('getHttpResponse')->will($this->returnValue($this->httpResponse));
+        $mockRequestHandler->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->httpRequest));
+        $mockRequestHandler->expects(self::any())->method('getHttpResponse')->will(self::returnValue($this->httpResponse));
 
         $this->mockBootstrap = $this->createMock(Bootstrap::class);
-        $this->mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockRequestHandler));
+        $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockRequestHandler));
 
         $this->mockSecurityContext = $this->createMock(Context::class);
 
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockObjectManager->expects($this->any())->method('get')->with(Context::class)->will($this->returnValue($this->mockSecurityContext));
+        $this->mockObjectManager->expects(self::any())->method('get')->with(Context::class)->will(self::returnValue($this->mockSecurityContext));
     }
 
     /**
@@ -808,8 +809,8 @@ class SessionTest extends UnitTestCase
         $token->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
         $token->setAccount($account);
 
-        $this->mockSecurityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(true));
-        $this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue([$token]));
+        $this->mockSecurityContext->expects(self::any())->method('isInitialized')->will(self::returnValue(true));
+        $this->mockSecurityContext->expects(self::any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
 
         $sessionCookie = $session->getSessionCookie();
         $session->close();
@@ -1041,6 +1042,28 @@ class SessionTest extends UnitTestCase
         self::assertFalse($storageCache->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 2')), 'session 1 key 2 still there');
         self::assertTrue($storageCache->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 1')), 'session 2 key 1 not there');
         self::assertTrue($storageCache->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 2')), 'session 2 key 2 not there');
+    }
+
+    /**
+     * @test for #1674
+     */
+    public function garbageCollectionWorksCorrectlyWithInvalidMetadataEntry()
+    {
+        $settings = $this->settings;
+
+        $metaDataCache = $this->createCache('Meta');
+        $metaDataCache->set('foo', null);
+        $storageCache = $this->createCache('Storage');
+
+        $session = new Session();
+        $this->inject($session, 'objectManager', $this->mockObjectManager);
+        $this->inject($session, 'metaDataCache', $metaDataCache);
+        $this->inject($session, 'storageCache', $storageCache);
+        $this->inject($session, 'logger', $this->createMock(LoggerInterface::class));
+        $session->injectSettings($settings);
+        $session->initializeObject();
+
+        $this->assertSame(0, $session->collectGarbage());
     }
 
     /**

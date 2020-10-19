@@ -32,17 +32,17 @@ class CommandControllerTest extends UnitTestCase
     protected $commandController;
 
     /**
-     * @var ReflectionService|\PHPUnit_Framework_MockObject_MockObject
+     * @var ReflectionService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockReflectionService;
 
     /**
-     * @var CommandManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CommandManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockCommandManager;
 
     /**
-     * @var ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockConsoleOutput;
 
@@ -51,7 +51,7 @@ class CommandControllerTest extends UnitTestCase
         $this->commandController = $this->getAccessibleMock(CommandController::class, ['resolveCommandMethodName', 'callCommandMethod']);
 
         $this->mockCommandManager = $this->getMockBuilder(CommandManager::class)->disableOriginalConstructor()->getMock();
-        $this->mockCommandManager->expects($this->any())->method('getCommandMethodParameters')->will($this->returnValue([]));
+        $this->mockCommandManager->expects(self::any())->method('getCommandMethodParameters')->will(self::returnValue([]));
         $this->inject($this->commandController, 'commandManager', $this->mockCommandManager);
 
         $this->mockConsoleOutput = $this->getMockBuilder(ConsoleOutput::class)->disableOriginalConstructor()->getMock();
@@ -79,7 +79,7 @@ class CommandControllerTest extends UnitTestCase
         $mockRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $mockResponse = $this->getMockBuilder(Response::class)->getMock();
 
-        $mockRequest->expects($this->once())->method('setDispatched')->with(true);
+        $mockRequest->expects(self::once())->method('setDispatched')->with(true);
 
         $this->commandController->processRequest($mockRequest, $mockResponse);
     }
@@ -106,7 +106,7 @@ class CommandControllerTest extends UnitTestCase
      */
     public function outputWritesGivenStringToTheConsoleOutput()
     {
-        $this->mockConsoleOutput->expects($this->once())->method('output')->with('some text');
+        $this->mockConsoleOutput->expects(self::once())->method('output')->with('some text');
         $this->commandController->_call('output', 'some text');
     }
 
@@ -115,7 +115,7 @@ class CommandControllerTest extends UnitTestCase
      */
     public function outputReplacesArgumentsInGivenString()
     {
-        $this->mockConsoleOutput->expects($this->once())->method('output')->with('%2$s %1$s', ['text', 'some']);
+        $this->mockConsoleOutput->expects(self::once())->method('output')->with('%2$s %1$s', ['text', 'some']);
         $this->commandController->_call('output', '%2$s %1$s', ['text', 'some']);
     }
 }

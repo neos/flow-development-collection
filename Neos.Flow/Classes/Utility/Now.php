@@ -24,6 +24,7 @@ use Neos\Flow\Annotations as Flow;
  * object with the current time, you can instead use this instance.
  *
  * @Flow\Scope("singleton")
+ * @psalm-immutable
  * @api
  */
 class Now extends \DateTimeImmutable

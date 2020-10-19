@@ -29,31 +29,31 @@ class TranslationHelperTest extends UnitTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $mockTranslationParameterToken->expects($this->once())
+        $mockTranslationParameterToken->expects(self::once())
             ->method('value', 'SomeValue')
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects($this->once())
+        $mockTranslationParameterToken->expects(self::once())
             ->method('arguments', ['a', 'couple', 'of', 'arguments'])
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects($this->once())
+        $mockTranslationParameterToken->expects(self::once())
             ->method('source', 'SomeSource')
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects($this->once())
+        $mockTranslationParameterToken->expects(self::once())
             ->method('package', 'Some.PackageKey')
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects($this->once())
+        $mockTranslationParameterToken->expects(self::once())
             ->method('quantity', 42)
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects($this->once())
+        $mockTranslationParameterToken->expects(self::once())
             ->method('locale', 'SomeLocale')
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects($this->once())
+        $mockTranslationParameterToken->expects(self::once())
             ->method('translate')
             ->willReturn('I am a translation result');
 
@@ -76,15 +76,15 @@ class TranslationHelperTest extends UnitTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $mockTranslationParameterToken->expects($this->once())
+        $mockTranslationParameterToken->expects(self::once())
             ->method('source', 'SomeSource')
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects($this->once())
+        $mockTranslationParameterToken->expects(self::once())
             ->method('package', 'Some.PackageKey')
             ->willReturn($mockTranslationParameterToken);
 
-        $mockTranslationParameterToken->expects($this->once())
+        $mockTranslationParameterToken->expects(self::once())
             ->method('translate')
             ->willReturn('I am a translation result');
 

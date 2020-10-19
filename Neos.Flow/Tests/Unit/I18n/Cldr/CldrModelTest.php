@@ -36,12 +36,12 @@ class CldrModelTest extends UnitTestCase
         $sampleParsedFile3 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile3.php');
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects($this->once())->method('has')->with(md5('foo;bar;baz'))->will($this->returnValue(false));
+        $mockCache->expects(self::once())->method('has')->with(md5('foo;bar;baz'))->will(self::returnValue(false));
 
         $mockCldrParser = $this->createMock(I18n\Cldr\CldrParser::class);
-        $mockCldrParser->expects($this->at(0))->method('getParsedData')->with('foo')->will($this->returnValue($sampleParsedFile1));
-        $mockCldrParser->expects($this->at(1))->method('getParsedData')->with('bar')->will($this->returnValue($sampleParsedFile2));
-        $mockCldrParser->expects($this->at(2))->method('getParsedData')->with('baz')->will($this->returnValue($sampleParsedFile3));
+        $mockCldrParser->expects(self::at(0))->method('getParsedData')->with('foo')->will(self::returnValue($sampleParsedFile1));
+        $mockCldrParser->expects(self::at(1))->method('getParsedData')->with('bar')->will(self::returnValue($sampleParsedFile2));
+        $mockCldrParser->expects(self::at(2))->method('getParsedData')->with('baz')->will(self::returnValue($sampleParsedFile3));
 
         $this->model = new I18n\Cldr\CldrModel($samplePaths);
         $this->model->injectCache($mockCache);

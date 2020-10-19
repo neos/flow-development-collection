@@ -6,11 +6,11 @@
     "license": ["MIT"],
 
     "require": {
-        "php": "^7.2",
+        "php": "^7.2 || ^8.0",
 
         "ext-zlib": "*",
         "ext-SPL": "*",
-        "ext-json": "^1.2",
+        "ext-json": "*",
         "ext-reflection": "*",
         "ext-xml": "*",
 
@@ -19,7 +19,6 @@
         "neos/error-messages": "*",
         "neos/utility-arrays": "*",
         "neos/utility-files": "*",
-        "neos/utility-lock": "*",
         "neos/utility-mediatypes": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-opcodecache": "*",
@@ -33,6 +32,8 @@
         "psr/http-factory": "^1.0",
         "psr/container": "^1.0",
         "psr/log": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "psr/http-server-handler": "^1.0",
 
         "ramsey/uuid": "^3.0",
 
@@ -46,10 +47,12 @@
         "symfony/console": "^4.2",
 
         "neos/composer-plugin": "^2.0",
-        "neos/utility-pdo": "*"
+        "neos/utility-pdo": "*",
+
+        "composer/composer": "^1.9"
     },
-    "replace": {
-        "typo3/flow": "self.version"
+    "require-dev": {
+        "vimeo/psalm": "~3.10.0"
     },
     "suggest": {
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",

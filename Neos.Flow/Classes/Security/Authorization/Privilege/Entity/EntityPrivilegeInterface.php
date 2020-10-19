@@ -11,7 +11,7 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity;
  * source code.
  */
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 
@@ -19,7 +19,9 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
  * An entity privilege
  *
  * This privilege is capable of filtering entities retrieved from
- * the persistence layer. Usually by rewriting SQL queries.
+ * the persistence layer and of blocking creation, update and delete
+ * operations on them. Read access is usually controlled by rewriting
+ * SQL queries, other operations are blocked by throwing an exception.
  */
 interface EntityPrivilegeInterface extends PrivilegeInterface
 {

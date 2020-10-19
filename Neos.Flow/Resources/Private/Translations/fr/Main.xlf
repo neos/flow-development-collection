@@ -4,28 +4,31 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
-			<target state="translated">Authentication obligatoire</target><alt-trans><target>Authentification obligatoire</target></alt-trans></trans-unit>
+			<target state="final">Authentication obligatoire</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target state="translated">Nom d'utilisateur</target></trans-unit>
+			<target state="final">Nom d'utilisateur</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target state="translated">Mot de passe</target></trans-unit>
+			<target state="final">Mot de passe</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve" approved="yes">
 				<source>New password</source>
-			<target state="translated">Nouveau mot de passe</target></trans-unit>
+			<target state="final">Nouveau mot de passe</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
 				<source>Login</source>
-			<target state="translated">Se connecter</target><alt-trans><target>Connexion</target></alt-trans></trans-unit>
+			<target state="final">Se connecter</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
-			<target state="translated">Déconnexion</target></trans-unit>
+			<target state="final">Déconnexion</target></trans-unit>
       <trans-unit id="update" xml:space="preserve" approved="yes">
 				<source>Update</source>
-			<target state="translated">Mise à jour</target></trans-unit>
+			<target state="final">Mise à jour</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve" approved="yes">
 				<source>Submit</source>
-			<target state="translated">Soumettre</target><alt-trans><target>Envoyer</target></alt-trans></trans-unit>
+			<target state="final">Soumettre</target></trans-unit>
+      <trans-unit id="configurationSchemaValidator.anErrorOccurredDuringValidationOfTheConfiguration.body" xml:space="preserve">
+				<source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
+			<target state="needs-translation">The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</target></trans-unit>
     </body>
   </file>
 </xliff>

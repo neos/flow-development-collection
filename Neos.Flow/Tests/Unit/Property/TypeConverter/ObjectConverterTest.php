@@ -76,10 +76,10 @@ class ObjectConverterTest extends UnitTestCase
     public function canConvertFromReturnsTrueIfClassIsTaggedWithEntityOrValueObject($isEntity, $isValueObject, $expected)
     {
         if ($isEntity) {
-            $this->mockReflectionService->expects($this->once())->method('isClassAnnotatedWith')->with('TheTargetType', Flow\Entity::class)->will($this->returnValue($isEntity));
+            $this->mockReflectionService->expects(self::once())->method('isClassAnnotatedWith')->with('TheTargetType', Flow\Entity::class)->will(self::returnValue($isEntity));
         } else {
-            $this->mockReflectionService->expects($this->at(0))->method('isClassAnnotatedWith')->with('TheTargetType', Flow\Entity::class)->will($this->returnValue($isEntity));
-            $this->mockReflectionService->expects($this->at(1))->method('isClassAnnotatedWith')->with('TheTargetType', Flow\ValueObject::class)->will($this->returnValue($isValueObject));
+            $this->mockReflectionService->expects(self::at(0))->method('isClassAnnotatedWith')->with('TheTargetType', Flow\Entity::class)->will(self::returnValue($isEntity));
+            $this->mockReflectionService->expects(self::at(1))->method('isClassAnnotatedWith')->with('TheTargetType', Flow\ValueObject::class)->will(self::returnValue($isValueObject));
         }
 
         self::assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));
@@ -90,8 +90,8 @@ class ObjectConverterTest extends UnitTestCase
      */
     public function getTypeOfChildPropertyShouldUseReflectionServiceToDetermineType()
     {
-        $this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setThePropertyName')->will($this->returnValue(false));
-        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->with('TheTargetType', '__construct')->will($this->returnValue([
+        $this->mockReflectionService->expects(self::any())->method('hasMethod')->with('TheTargetType', 'setThePropertyName')->will(self::returnValue(false));
+        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->with('TheTargetType', '__construct')->will(self::returnValue([
             'thePropertyName' => [
                 'type' => 'TheTypeOfSubObject',
                 'elementType' => null
@@ -107,12 +107,12 @@ class ObjectConverterTest extends UnitTestCase
      */
     public function getTypeOfChildPropertyShouldRemoveLeadingBackslashesForAnnotationParameters()
     {
-        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->with('TheTargetType', '__construct')->will($this->returnValue([]));
-        $this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setThePropertyName')->will($this->returnValue(false));
-        $this->mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with('TheTargetType')->will($this->returnValue([
+        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->with('TheTargetType', '__construct')->will(self::returnValue([]));
+        $this->mockReflectionService->expects(self::any())->method('hasMethod')->with('TheTargetType', 'setThePropertyName')->will(self::returnValue(false));
+        $this->mockReflectionService->expects(self::any())->method('getClassPropertyNames')->with('TheTargetType')->will(self::returnValue([
             'thePropertyName'
         ]));
-        $this->mockReflectionService->expects($this->any())->method('getPropertyTagValues')->with('TheTargetType', 'thePropertyName')->will($this->returnValue([
+        $this->mockReflectionService->expects(self::any())->method('getPropertyTagValues')->with('TheTargetType', 'thePropertyName')->will(self::returnValue([
             '\TheTypeOfSubObject'
         ]));
         $configuration = new PropertyMappingConfiguration();

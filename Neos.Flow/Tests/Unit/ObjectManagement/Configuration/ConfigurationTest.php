@@ -130,6 +130,7 @@ class ConfigurationTest extends UnitTestCase
      */
     public function theDefaultFactoryMethodNameIsCreate()
     {
+        $this->objectConfiguration->setFactoryObjectName(__CLASS__);
         self::assertSame('create', $this->objectConfiguration->getFactoryMethodName());
     }
 }

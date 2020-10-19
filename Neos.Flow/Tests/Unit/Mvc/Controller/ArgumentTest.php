@@ -68,7 +68,7 @@ class ArgumentTest extends UnitTestCase
      */
     public function constructingArgumentWithInvalidNameThrowsException()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         new Mvc\Controller\Argument(new \ArrayObject(), 'Text');
     }
 
@@ -137,14 +137,14 @@ class ArgumentTest extends UnitTestCase
      */
     public function setValueUsesMatchingInstanceAsIs()
     {
-        $this->mockPropertyMapper->expects($this->never())->method('convert');
+        $this->mockPropertyMapper->expects(self::never())->method('convert');
         $this->objectArgument->setValue(new \DateTime());
     }
 
     protected function setupPropertyMapperAndSetValue()
     {
-        $this->mockPropertyMapper->expects($this->once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->will($this->returnValue('convertedValue'));
-        $this->mockPropertyMapper->expects($this->once())->method('getMessages')->will($this->returnValue(new FLowError\Result()));
+        $this->mockPropertyMapper->expects(self::once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->will(self::returnValue('convertedValue'));
+        $this->mockPropertyMapper->expects(self::once())->method('getMessages')->will(self::returnValue(new FLowError\Result()));
         return $this->simpleValueArgument->setValue('someRawValue');
     }
 
@@ -175,7 +175,7 @@ class ArgumentTest extends UnitTestCase
         $mockValidator = $this->createMock(ValidatorInterface::class);
         $validationMessages = new FLowError\Result();
         $validationMessages->addError($error);
-        $mockValidator->expects($this->once())->method('validate')->with('convertedValue')->will($this->returnValue($validationMessages));
+        $mockValidator->expects(self::once())->method('validate')->with('convertedValue')->will(self::returnValue($validationMessages));
 
         $this->simpleValueArgument->setValidator($mockValidator);
         $this->setupPropertyMapperAndSetValue();

@@ -264,11 +264,12 @@ class ActionController extends AbstractController
             if ($dataType === null) {
                 throw new InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.', 1253175643);
             }
-            $defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : null);
-            if ($parameterInfo['optional'] === true && $defaultValue === null) {
+            $defaultValue = ($parameterInfo['defaultValue'] ?? null);
+            if ($defaultValue === null && $parameterInfo['optional'] === true) {
                 $dataType = TypeHandling::stripNullableType($dataType);
             }
-            $this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue);
+            $mapRequestBody = isset($parameterInfo['mapRequestBody']) && $parameterInfo['mapRequestBody'] === true;
+            $this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue, $mapRequestBody);
         }
     }
 
@@ -290,6 +291,16 @@ class ActionController extends AbstractController
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
                 $result[$methodName] = $reflectionService->getMethodParameters($className, $methodName);
+
+                /* @var $requestBodyAnnotation Flow\MapRequestBody */
+                $requestBodyAnnotation = $reflectionService->getMethodAnnotation($className, $methodName, Flow\MapRequestBody::class);
+                if ($requestBodyAnnotation !== null) {
+                    $requestBodyArgument = $requestBodyAnnotation->argumentName;
+                    if (!isset($result[$methodName][$requestBodyArgument])) {
+                        throw new \Neos\Flow\Mvc\Exception('Can not map request body to non existing argument $' . $requestBodyArgument . ' of ' . $className . '->' . $methodName . '().', 1559236782);
+                    }
+                    $result[$methodName][$requestBodyArgument]['mapRequestBody'] = true;
+                }
             }
         }
 
@@ -460,7 +471,7 @@ class ActionController extends AbstractController
         $validationResult = $this->arguments->getValidationResults();
 
         if (!$validationResult->hasErrors()) {
-            $actionResult = call_user_func_array([$this, $this->actionMethodName], $preparedArguments);
+            $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
         } else {
             $actionIgnoredArguments = static::getActionIgnoredValidationArguments($this->objectManager);
             if (isset($actionIgnoredArguments[$this->actionMethodName])) {
@@ -485,18 +496,16 @@ class ActionController extends AbstractController
             }
 
             if ($shouldCallActionMethod) {
-                $actionResult = call_user_func_array([$this, $this->actionMethodName], $preparedArguments);
+                $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
             } else {
-                $actionResult = call_user_func([$this, $this->errorMethodName]);
+                $actionResult = $this->{$this->errorMethodName}();
             }
         }
 
         if ($actionResult === null && $this->view instanceof ViewInterface) {
             $this->renderView();
-        } elseif (is_string($actionResult) && strlen($actionResult) > 0) {
+        } else {
             $this->response->setContent($actionResult);
-        } elseif (is_object($actionResult) && method_exists($actionResult, '__toString')) {
-            $this->response->setContent((string)$actionResult);
         }
     }
 
@@ -577,14 +586,32 @@ class ActionController extends AbstractController
         }
 
         if (!is_a($viewObjectName, ViewInterface::class, true)) {
-            throw new ViewNotFoundException(sprintf('View class has to implement ViewInterface but "%s" in action "%s" of controller "%s" does not.',
-                $viewObjectName, $this->request->getControllerActionName(), get_class($this)), 1355153188);
+            throw new ViewNotFoundException(sprintf(
+                'View class has to implement ViewInterface but "%s" in action "%s" of controller "%s" does not.',
+                $viewObjectName,
+                $this->request->getControllerActionName(),
+                get_class($this)
+            ), 1355153188);
         }
 
         $viewOptions = isset($viewsConfiguration['options']) ? $viewsConfiguration['options'] : [];
         $view = $viewObjectName::createWithOptions($viewOptions);
 
+        $this->emitViewResolved($view);
+
         return $view;
+    }
+
+    /**
+     * Emit that the view is resolved. The passed ViewInterface reference,
+     * gives the possibility to add variables to the view,
+     * before passing it on to further rendering
+     *
+     * @param ViewInterface $view
+     * @Flow\Signal
+     */
+    protected function emitViewResolved(ViewInterface $view)
+    {
     }
 
     /**
@@ -679,7 +706,7 @@ class ActionController extends AbstractController
     {
         $errorFlashMessage = $this->getErrorFlashMessage();
         if ($errorFlashMessage !== false) {
-            $this->flashMessageContainer->addMessage($errorFlashMessage);
+            $this->controllerContext->getFlashMessageContainer()->addMessage($errorFlashMessage);
         }
     }
 
@@ -758,7 +785,8 @@ class ActionController extends AbstractController
         }
 
         if ($result instanceof ResponseInterface) {
-            $this->response->setComponentParameter(ReplaceHttpResponseComponent::class, ReplaceHttpResponseComponent::PARAMETER_RESPONSE, $result);
+            $finalResponse = $this->response->applyToHttpResponse($result);
+            $this->response->setComponentParameter(ReplaceHttpResponseComponent::class, ReplaceHttpResponseComponent::PARAMETER_RESPONSE, $finalResponse);
         }
 
         if (is_object($result) && is_callable([$result, '__toString'])) {
