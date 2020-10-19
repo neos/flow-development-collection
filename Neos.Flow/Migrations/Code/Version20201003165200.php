@@ -29,6 +29,6 @@ class Version20201003165200 extends AbstractMigration
      */
     public function up()
     {
-        $this->searchAndReplaceRegex('~(@Flow\ValueObject)([^(]*)~s', '${1}(embedded=false)${2}', ['php']);
+        $this->searchAndReplaceRegex('~(@Flow\\\\ValueObject)(?:([^(]*)|\(\s*\))$~mi', '${1}(embedded=false)${2}', ['php']);
     }
 }
