@@ -118,6 +118,7 @@ class InternalRequestEngine implements RequestEngineInterface
         $requestHandler->setComponentContext($componentContext);
 
         $objectManager = $this->bootstrap->getObjectManager();
+        $objectManager->setInstance(ComponentContext::class, $componentContext);
         $middlewaresChain = $objectManager->get(Http\Middleware\MiddlewaresChain::class);
 
         try {
