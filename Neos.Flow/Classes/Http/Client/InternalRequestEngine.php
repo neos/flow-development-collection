@@ -18,6 +18,7 @@ use Neos\Flow\Error\Debugger;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
+use Neos\Flow\Http\Middleware\MiddlewaresChainFactory;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\Routing\RouterInterface;
@@ -115,7 +116,6 @@ class InternalRequestEngine implements RequestEngineInterface
 
         $response = $this->responseFactory->createResponse();
         $componentContext = new ComponentContext($httpRequest, $response);
-        $requestHandler->setComponentContext($componentContext);
 
         $objectManager = $this->bootstrap->getObjectManager();
         $objectManager->setInstance(ComponentContext::class, $componentContext);
@@ -133,6 +133,8 @@ class InternalRequestEngine implements RequestEngineInterface
         // FIXME: ObjectManager should forget all instances created during the request
         $objectManager->forgetInstance(SessionManager::class);
         $objectManager->forgetInstance(FlashMessageService::class);
+        // Necessary to forget the ComponentContext injection
+        $objectManager->forgetInstance(MiddlewaresChainFactory::class);
         $this->persistenceManager->clearState();
         return $response;
     }
