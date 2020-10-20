@@ -32,6 +32,8 @@ Neos:
         'standardsCompliance':
           position: 'after trustedProxies'
           middleware: 'Neos\Flow\Http\Middleware\StandardsComplianceMiddleware'
+        'poweredByHeader':
+          middleware: 'Neos\Flow\Http\Middleware\PoweredByMiddleware'
         'session':
           position: '10'
           middleware: 'Neos\Flow\Http\Middleware\SessionMiddleware'
@@ -75,9 +77,7 @@ Neos:
               component: 'Neos\Flow\Http\Component\SecurityEntryPointComponent'
 
         'postprocess':
-          chain:
-            'poweredByHeader':
-              component: 'Neos\Flow\Http\Component\PoweredByComponent'
+          chain: []
 
       trustedProxies:
 
