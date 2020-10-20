@@ -32,6 +32,9 @@ Neos:
         'session':
           position: '10'
           middleware: 'Neos\Flow\Http\Middleware\SessionMiddleware'
+        'flashMessages':
+          position: 'after session'
+          middleware: 'Neos\Flow\Mvc\FlashMessage\FlashMessageMiddleware'
         'dispatch':
           position: 'end'
           middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
