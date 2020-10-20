@@ -1,5 +1,7 @@
 <?php
-namespace Neos\Flow\Http\Component;
+declare(strict_types=1);
+
+namespace Neos\Flow\Http\Middleware;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -13,11 +15,15 @@ namespace Neos\Flow\Http\Component;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * HTTP component that makes sure that the current response is standards-compliant. It is usually the last component in the chain.
  */
-class StandardsComplianceComponent implements ComponentInterface
+class StandardsComplianceMiddleware implements MiddlewareInterface
 {
     /**
      * @var array
@@ -32,16 +38,9 @@ class StandardsComplianceComponent implements ComponentInterface
         $this->options = $options;
     }
 
-    /**
-     * Just call makeStandardsCompliant on the Response for now
-     *
-     * @param ComponentContext $componentContext
-     * @return void
-     */
-    public function handle(ComponentContext $componentContext)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
-        $response = $componentContext->getHttpResponse();
-        $response = ResponseInformationHelper::makeStandardsCompliant($response, $componentContext->getHttpRequest());
-        $componentContext->replaceHttpResponse($response);
+        $response = $next->handle($request);
+        return ResponseInformationHelper::makeStandardsCompliant($response, $request);
     }
 }
