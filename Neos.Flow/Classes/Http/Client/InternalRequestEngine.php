@@ -116,6 +116,7 @@ class InternalRequestEngine implements RequestEngineInterface
 
         $response = $this->responseFactory->createResponse();
         $componentContext = new ComponentContext($httpRequest, $response);
+        $requestHandler->setComponentContext($componentContext);
 
         $objectManager = $this->bootstrap->getObjectManager();
         $objectManager->setInstance(ComponentContext::class, $componentContext);
