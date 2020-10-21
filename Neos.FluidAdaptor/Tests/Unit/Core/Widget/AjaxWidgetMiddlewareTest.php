@@ -102,8 +102,8 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpResponse = new Response();
-        $this->mockHttpRequest->method('getQueryParams')->willreturn([]);
-        $this->mockHttpRequest->method('getUploadedFiles')->willreturn([]);
+        $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
+        $this->mockHttpRequest->method('getUploadedFiles')->willReturn([]);
 
         $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockRequestHandler->method('handle')->willReturn($this->mockHttpResponse);
