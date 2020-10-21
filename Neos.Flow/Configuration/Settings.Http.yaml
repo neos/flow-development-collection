@@ -76,9 +76,6 @@ Neos:
             'setHeader':
               position: 'after dispatching'
               component: 'Neos\Flow\Http\Component\SetHeaderComponent'
-            'securityEntryPoint':
-              position: 'after setHeaders'
-              component: 'Neos\Flow\Http\Component\SecurityEntryPointComponent'
 
         'postprocess':
           chain: []
