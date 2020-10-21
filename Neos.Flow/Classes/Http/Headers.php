@@ -73,7 +73,7 @@ class Headers implements \Iterator
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set($name, $values, $replaceExistingHeader = true)
+    public function set(string $name, $values, bool $replaceExistingHeader = true): void
     {
         if ($values instanceof \DateTimeInterface) {
             $date = clone $values;
@@ -146,7 +146,7 @@ class Headers implements \Iterator
      * @return array|string|\DateTime|null An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
      * @api
      */
-    public function get($name)
+    public function get(string $name)
     {
         if (strtolower($name) === 'cache-control') {
             return $this->getCacheControlHeader();
@@ -185,7 +185,7 @@ class Headers implements \Iterator
      * @return array
      * @api
      */
-    public function getAll()
+    public function getAll(): array
     {
         $fields = $this->fields;
         $cacheControlHeader = $this->getCacheControlHeader();
@@ -203,7 +203,7 @@ class Headers implements \Iterator
      * @return boolean
      * @api
      */
-    public function has($name)
+    public function has(string $name): bool
     {
         if ($name === 'Cache-Control') {
             return ($this->getCacheControlHeader() !== null);
@@ -218,7 +218,7 @@ class Headers implements \Iterator
      * @return void
      * @api
      */
-    public function remove($name)
+    public function remove(string $name): void
     {
         unset($this->fields[$name]);
     }
@@ -230,7 +230,7 @@ class Headers implements \Iterator
      * @return void
      * @api
      */
-    public function setCookie(Cookie $cookie)
+    public function setCookie(Cookie $cookie): void
     {
         $this->cookies[$cookie->getName()] = clone $cookie;
     }
@@ -242,7 +242,7 @@ class Headers implements \Iterator
      * @return Cookie The cookie or NULL if no such cookie exists
      * @api
      */
-    public function getCookie($name)
+    public function getCookie(string $name): ?Cookie
     {
         return $this->cookies[$name] ?? null;
     }
@@ -253,7 +253,7 @@ class Headers implements \Iterator
      * @return Cookie[]
      * @api
      */
-    public function getCookies()
+    public function getCookies(): array
     {
         return $this->cookies;
     }
@@ -265,7 +265,7 @@ class Headers implements \Iterator
      * @return boolean
      * @api
      */
-    public function hasCookie($name)
+    public function hasCookie(string $name): bool
     {
         return isset($this->cookies[$name]);
     }
@@ -281,7 +281,7 @@ class Headers implements \Iterator
      * @return void
      * @api
      */
-    public function removeCookie($name)
+    public function removeCookie(string $name): void
     {
         unset($this->cookies[$name]);
     }
@@ -293,7 +293,7 @@ class Headers implements \Iterator
      * @return void
      * @api
      */
-    public function eatCookie($name)
+    public function eatCookie(string $name): void
     {
         $this->removeCookie($name);
     }
@@ -305,7 +305,7 @@ class Headers implements \Iterator
      * @return void
      * @api
      */
-    public function deleteCookie($name)
+    public function deleteCookie(string $name): void
     {
         if (!$this->hasCookie($name)) {
             $cookie = new Cookie($name);
@@ -321,11 +321,11 @@ class Headers implements \Iterator
      * RFC 2616 / 14.9
      *
      * @param string $name Name of the directive, for example "max-age"
-     * @param string $value An optional value
+     * @param string|null $value An optional value
      * @return void
      * @api
      */
-    public function setCacheControlDirective($name, $value = null)
+    public function setCacheControlDirective(string $name, ?string $value = null): void
     {
         switch ($name) {
             case 'public':
@@ -354,7 +354,7 @@ class Headers implements \Iterator
      * @param string $name Name of the directive, for example "public"
      * @return void
      */
-    public function removeCacheControlDirective($name)
+    public function removeCacheControlDirective(string $name): void
     {
         switch ($name) {
             case 'public':
@@ -384,7 +384,7 @@ class Headers implements \Iterator
      * @return mixed
      * @api
      */
-    public function getCacheControlDirective($name)
+    public function getCacheControlDirective(string $name)
     {
         $value = null;
 
@@ -429,7 +429,7 @@ class Headers implements \Iterator
      * @return void
      * @see set()
      */
-    protected function setCacheControlDirectivesFromRawHeader($rawFieldValue)
+    protected function setCacheControlDirectivesFromRawHeader(string $rawFieldValue): void
     {
         foreach (array_keys($this->cacheDirectives) as $key) {
             $this->cacheDirectives[$key] = '';
@@ -462,7 +462,7 @@ class Headers implements \Iterator
      * @return string Either the value of the header or NULL if it shall be omitted
      * @see get()
      */
-    protected function getCacheControlHeader()
+    protected function getCacheControlHeader(): ?string
     {
         $cacheControl = '';
         foreach ($this->cacheDirectives as $cacheDirective) {
@@ -479,7 +479,7 @@ class Headers implements \Iterator
      * @return void
      * @see set()
      */
-    protected function setCookiesFromRawHeader($rawFieldValue)
+    protected function setCookiesFromRawHeader(string $rawFieldValue): void
     {
         $cookiePairs = explode(';', $rawFieldValue);
         foreach ($cookiePairs as $cookiePair) {
@@ -500,7 +500,7 @@ class Headers implements \Iterator
      *
      * @return array
      */
-    public function getPreparedValues()
+    public function getPreparedValues(): array
     {
         $preparedValues = [];
         foreach ($this->getAll() as $name => $values) {
@@ -515,7 +515,7 @@ class Headers implements \Iterator
      * @param array $values
      * @return array
      */
-    private function prepareValues($headerName, array $values)
+    private function prepareValues(string $headerName, array $values): array
     {
         $preparedValues = [];
         foreach ($values as $value) {
@@ -530,7 +530,7 @@ class Headers implements \Iterator
      * @param array $values
      * @return string
      */
-    private function renderValuesFor($headerName, array $values)
+    private function renderValuesFor(string $headerName, array $values): string
     {
         return implode("\r\n", $this->prepareValues($headerName, $values));
     }

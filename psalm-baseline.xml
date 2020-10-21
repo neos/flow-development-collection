@@ -960,13 +960,9 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/Headers.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>string</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="2">
-      <code>null</code>
-      <code>$cacheControl === '' ? null : $cacheControl</code>
-    </NullableReturnStatement>
+    <PossiblyNullReference occurrences="1">
+      <code>expire</code>
+    </PossiblyNullReference>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/Helper/ResponseInformationHelper.php">
     <InvalidScalarArgument occurrences="1">
@@ -1236,6 +1232,12 @@
       <code>null</code>
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Mvc/ActionResponse.php">
+    <UndefinedClass occurrences="2">
+      <code>SetHeaderComponent</code>
+      <code>ReplaceHttpResponseComponent</code>
+    </UndefinedClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/AbstractController.php">
     <PossiblyNullArgument occurrences="1">

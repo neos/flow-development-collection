@@ -95,6 +95,7 @@ final class ActionResponse
     public function setContentType(string $contentType): void
     {
         $this->contentType = $contentType;
+        $this->headers->set('Content-Type', $contentType);
     }
 
     /**
@@ -183,7 +184,7 @@ final class ActionResponse
      * @param array|string|\DateTime $headerValue An array of values or a single value for the specified header field
      * @return void
      */
-    public function setHttpHeader($headerName, $headerValue)
+    public function setHttpHeader(string $headerName, $headerValue): void
     {
         $this->headers->set($headerName, $headerValue);
     }
@@ -195,7 +196,7 @@ final class ActionResponse
      * @param array|string|\DateTime $headerValue An array of values or a single value for the specified header field
      * @return void
      */
-    public function addHttpHeader($headerName, $headerValue)
+    public function addHttpHeader(string $headerName, $headerValue): void
     {
         $this->headers->set($headerName, $headerValue, false);
     }
@@ -205,9 +206,9 @@ final class ActionResponse
      * Dates are returned as DateTime objects with the timezone set to GMT.
      *
      * @param string $headerName The name of the header to get the value(s) for
-     * @return array|string|\DateTime An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
+     * @return array|string|\DateTime|null An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
      */
-    public function getHttpHeader($headerName)
+    public function getHttpHeader(string $headerName)
     {
         return $this->headers->get($headerName);
     }
@@ -241,9 +242,10 @@ final class ActionResponse
     /**
      * @return string
      */
-    public function getContentType(): string
+    public function getContentType(): ?string
     {
-        return $this->headers->get('Content-Type');
+        $contentType = $this->headers->get('Content-Type');
+        return is_string($contentType) ? $contentType : null;
         return $this->contentType;
     }
 
@@ -343,7 +345,7 @@ final class ActionResponse
      * A response flagged as "public" may be cached by any cache, even if it normally
      * wouldn't be cacheable in a shared cache.
      */
-    public function setPublic()
+    public function setPublic(): void
     {
         $this->headers->setCacheControlDirective('public');
     }
@@ -354,7 +356,7 @@ final class ActionResponse
      * A response flagged as "private" tells that it is intended for a specific
      * user and must not be cached by a shared cache.
      */
-    public function setPrivate()
+    public function setPrivate(): void
     {
         $this->headers->setCacheControlDirective('private');
     }
@@ -368,7 +370,7 @@ final class ActionResponse
      *
      * @param string|\DateTime $date
      */
-    public function setDate($date)
+    public function setDate($date): void
     {
         $this->headers->set('Date', $date);
     }
@@ -380,9 +382,10 @@ final class ActionResponse
      *
      * @return \DateTime|null The date of this response
      */
-    public function getDate()
+    public function getDate(): ?\DateTime
     {
-        return $this->headers->get('Date');
+        $dateHeaderValue = $this->headers->get('Date');
+        return $dateHeaderValue instanceof \DateTime ? $dateHeaderValue : null;
     }
 
     /**
@@ -394,7 +397,7 @@ final class ActionResponse
      *
      * @param string|\DateTime $date
      */
-    public function setLastModified($date)
+    public function setLastModified($date): void
     {
         $this->headers->set('Last-Modified', $date);
     }
@@ -407,9 +410,10 @@ final class ActionResponse
      *
      * @return \DateTime|null The last modification date or NULL
      */
-    public function getLastModified()
+    public function getLastModified(): ?\DateTime
     {
-        return $this->headers->get('Last-Modified');
+        $lastModifiedHeaderValue = $this->headers->get('Last-Modified');
+        return $lastModifiedHeaderValue instanceof \DateTime ? $lastModifiedHeaderValue : null;
     }
 
     /**
@@ -428,7 +432,7 @@ final class ActionResponse
      *
      * @param string|\DateTime $date
      */
-    public function setExpires($date)
+    public function setExpires($date): void
     {
         $this->headers->set('Expires', $date);
     }
@@ -441,9 +445,10 @@ final class ActionResponse
      *
      * @return \DateTime|null The expiration date or NULL
      */
-    public function getExpires()
+    public function getExpires(): ?\DateTime
     {
-        return $this->headers->get('Expires');
+        $expiresHeaderValue = $this->headers->get('Expires');
+        return $expiresHeaderValue instanceof \DateTime ? $expiresHeaderValue : null;
     }
 
     /**
@@ -453,9 +458,9 @@ final class ActionResponse
      *
      * @param integer $age The maximum age in seconds
      */
-    public function setMaximumAge($age)
+    public function setMaximumAge(int $age): void
     {
-        $this->headers->setCacheControlDirective('max-age', $age);
+        $this->headers->setCacheControlDirective('max-age', (string)$age);
     }
 
     /**
@@ -464,9 +469,9 @@ final class ActionResponse
      * This method returns the value from the "max-age" directive in the
      * Cache-Control header.
      *
-     * @return integer The maximum age in seconds, or NULL if none has been defined
+     * @return integer|null The maximum age in seconds, or NULL if none has been defined
      */
-    public function getMaximumAge()
+    public function getMaximumAge(): ?int
     {
         return $this->headers->getCacheControlDirective('max-age');
     }
@@ -479,9 +484,9 @@ final class ActionResponse
      *
      * @param integer $maximumAge The maximum age in seconds
      */
-    public function setSharedMaximumAge($maximumAge)
+    public function setSharedMaximumAge(int $maximumAge): void
     {
-        $this->headers->setCacheControlDirective('s-maxage', $maximumAge);
+        $this->headers->setCacheControlDirective('s-maxage', (string)$maximumAge);
     }
 
     /**
@@ -491,9 +496,9 @@ final class ActionResponse
      * This method returns the value from the "s-maxage" directive in the
      * Cache-Control header.
      *
-     * @return integer The maximum age in seconds, or NULL if none has been defined
+     * @return integer|null The maximum age in seconds, or NULL if none has been defined
      */
-    public function getSharedMaximumAge()
+    public function getSharedMaximumAge(): ?int
     {
         return $this->headers->getCacheControlDirective('s-maxage');
     }
