@@ -14,7 +14,6 @@ namespace Neos\Flow\Http\Middleware;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\PositionalArraySorter;
 use Psr\Http\Server\MiddlewareInterface;
@@ -31,20 +30,6 @@ class MiddlewaresChainFactory
      * @var ObjectManagerInterface
      */
     protected $objectManager;
-
-    /**
-     * @var ComponentContext
-     */
-    protected $componentContext;
-
-    /**
-     * MiddlewaresChainFactory constructor.
-     * @param ComponentContext $componentContext
-     */
-    public function __construct(ComponentContext $componentContext)
-    {
-        $this->componentContext = $componentContext;
-    }
 
     /**
      * @param array $chainConfiguration
@@ -68,9 +53,6 @@ class MiddlewaresChainFactory
             $middleware = $this->objectManager->get($configuration['middleware']);
             if (!$middleware instanceof MiddlewareInterface) {
                 throw new Exception(sprintf('Middleware chain could not be created because the class "%s" does not implement the MiddlewareInterface in middleware "%s"', $configuration['middleware'], $middlewareName), 1401718283);
-            }
-            if (method_exists($middleware, 'setComponentContext')) {
-                $middleware->setComponentContext($this->componentContext);
             }
             $middlewaresChain[] = $middleware;
         }

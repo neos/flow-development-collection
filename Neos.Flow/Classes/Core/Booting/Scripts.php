@@ -287,8 +287,8 @@ class Scripts
                 return $output;
             }
 
-            $request = $requestHandler->getComponentContext()->getHttpRequest();
-            $response = $requestHandler->getComponentContext()->getHttpResponse();
+            $request = $requestHandler->getHttpRequest();
+            $response = $requestHandler->getHttpResponse();
             // TODO: Sensible error output
             $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestHeaders($request) : '[request was empty]') . PHP_EOL;
             $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response instanceof ResponseInterface ? $response->getStatusCode() : '[response was empty]') . PHP_EOL;
