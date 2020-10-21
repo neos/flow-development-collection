@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Http\Factories\ResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,11 +41,6 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
      * @var \Neos\Flow\Core\Bootstrap
      */
     protected $bootstrap;
-
-    /**
-     * @var ComponentContext
-     */
-    protected $componentContext;
 
     /**
      * Constructor
@@ -100,7 +94,7 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
      */
     public function getHttpRequest(): ServerRequestInterface
     {
-        return $this->getComponentContext()->getHttpRequest();
+        return ServerRequest::fromGlobals();
     }
 
     /**
@@ -111,34 +105,7 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
      */
     public function getHttpResponse()
     {
-        return $this->getComponentContext()->getHttpResponse();
-    }
-
-    /**
-     * Allows to set the currently processed HTTP component chain context by the base functional
-     * test case.
-     *
-     * @param ComponentContext $context
-     * @return void
-     * @see InternalRequestEngine::sendRequest()
-     */
-    public function setComponentContext(ComponentContext $context)
-    {
-        $this->componentContext = $context;
-    }
-
-    /**
-     * Internal getter to ensure an existing ComponentContext.
-     *
-     * @return ComponentContext
-     */
-    public function getComponentContext(): ComponentContext
-    {
-        // FIXME: Use PSR-15 factories
-        if ($this->componentContext === null) {
-            $responseFactory = new ResponseFactory();
-            $this->componentContext = new ComponentContext(ServerRequest::fromGlobals(), $responseFactory->createResponse());
-        }
-        return $this->componentContext;
+        $responseFactory = new ResponseFactory();
+        return $responseFactory->createResponse();
     }
 }
