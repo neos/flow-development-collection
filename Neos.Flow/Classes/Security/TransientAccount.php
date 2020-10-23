@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authentication\AuthenticationProviderName;
 use Neos\Flow\Security\Authentication\CredentialsSource;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Security\Policy\RoleIdentifiers;
 use Neos\Flow\Security\Policy\Roles;
 
 /**
@@ -72,6 +73,14 @@ final class TransientAccount implements AccountInterface
             $roles,
             $authenticationProviderName
         );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRoleIdentifiers(): RoleIdentifiers
+    {
+        return RoleIdentifiers::fromArray(iterator_to_array($this->roles->getIterator()));
     }
 
     /**
