@@ -55,7 +55,7 @@ class Compiler
      * Hardcoded list of Flow sub packages which must be immune proxying for security, technical or conceptual reasons.
      * @var array
      */
-    protected $blacklistedSubPackages = ['Neos\Flow\Aop', 'Neos\Flow\Cor', 'Neos\Flow\Obj', 'Neos\Flow\Pac', 'Neos\Flow\Ref', 'Neos\Flow\Uti'];
+    protected $excludedSubPackages = ['Neos\Flow\Aop', 'Neos\Flow\Cor', 'Neos\Flow\Obj', 'Neos\Flow\Pac', 'Neos\Flow\Ref', 'Neos\Flow\Uti'];
 
     /**
      * Length of the prefix that will be checked for exclusion of proxy building.
@@ -63,7 +63,7 @@ class Compiler
      *
      * @var integer
      */
-    protected $blacklistedSubPackagesLength;
+    protected $excludedSubPackagesLength;
 
     /**
      * The final map of proxy classes that end up in the cache.
@@ -77,7 +77,7 @@ class Compiler
      */
     public function __construct()
     {
-        $this->blacklistedSubPackagesLength = strlen('Neos\Flow') + 4;
+        $this->excludedSubPackagesLength = strlen('Neos\Flow') + 4;
     }
 
     /**
@@ -141,7 +141,7 @@ class Compiler
             return false;
         }
 
-        if (in_array(substr($fullClassName, 0, $this->blacklistedSubPackagesLength), $this->blacklistedSubPackages)) {
+        if (in_array(substr($fullClassName, 0, $this->excludedSubPackagesLength), $this->excludedSubPackages)) {
             return false;
         }
         // Annotation classes (like \Neos\Flow\Annotations\Entity) must never be proxied because that would break the Doctrine AnnotationParser

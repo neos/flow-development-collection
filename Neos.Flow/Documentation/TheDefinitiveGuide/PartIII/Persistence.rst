@@ -246,21 +246,21 @@ and perform better. In practice that means for any Flow application: if the curr
 request is a "safe request method", the persistence framework will NOT trigger
 ``persistAll()`` at the end of the script run.
 
-You are free to call ``PersistenceManager->persistAll()`` manually or use whitelisted objects
+You are free to call ``PersistenceManager->persistAll()`` manually or use allowed objects
 if you need to store some data during a safe request (for example, logging some data
 for your analytics).
 
-Whitelisted objects
--------------------
+Allowed objects
+---------------
 
 There are rare cases which still justify persisting objects during safe requests. For example,
 your application might want to generate thumbnails of images during a GET request and persist
 the resulting PersistentResource instances.
 
-For these cases it is possible to whitelist specific objects via the Persistence Manager::
+For these cases it is possible to allow specific objects via the Persistence Manager::
 
-	$this->persistenceManager->whitelistObject($thumbnail);
-	$this->persistenceManager->whitelistObject($thumbnail->getResource());
+	$this->persistenceManager->allowObject($thumbnail);
+	$this->persistenceManager->allowObject($thumbnail->getResource());
 
 Be very careful and think twice before using this method since many security measures are
 not active during "safe" request methods.
@@ -400,6 +400,8 @@ with their name, scope and meaning:
 | ``OneToOne``     |          | ``targetEntity`` parameter can be omitted, it is taken   |
 |                  |          | from the ``@var`` annotation.                            |
 |                  |          |                                                          |
+|                  |          | See below for unidirectional ``OneToMany`` relations!    |
+|                  |          |                                                          |
 |                  |          | The ``cascade`` attribute is set to cascade all          |
 |                  |          | operations on associations within aggregate boundaries.  |
 |                  |          | In that case orphanRemoval is turned on as well.         |
@@ -419,6 +421,35 @@ with their name, scope and meaning:
 
 Doctrine supports many more annotations, for a full reference please consult the Doctrine
 2 ORM documentation.
+
+On unidirectional ``OneToMany`` relations
+-----------------------------------------
+
+Inside a single aggregate `OneToMany` relations are normally best modeled unidirectionally.
+Bidirectional relations always are harder to manage correctly and can easily lead to
+unintentional traversal of entity hierarchies with all the drawbacks.
+
+Since Doctrines `OneToMany` annotation is always bidrectional and also dictates the owning
+side of the relation (at the unexpected side from a modeling PoV), it is not straightforward
+to model this correctly.
+
+In Flow specifically, we try to follow DDD best practices in modelling and this means, that
+the aggregate root is the entry point and the entity that is sent to a repository to persist
+it and all its sub-entities. This can not be achieved with the standard doctrine `OneToMany`
+annotation when the one side is supposed to be closer to the root.
+
+So Flow allows the you to annotate such a relation simply as:
+
+
+.. code-block:: php
+
+  /**
+   * @ORM\OneToMany
+   * @var Collection<Comment>
+   */
+
+This is done by remapping `OneToMany` annotations without a `mappedBy` as `ManyToMany` with
+an unique constraint.
 
 On Value Object handling with Doctrine
 --------------------------------------

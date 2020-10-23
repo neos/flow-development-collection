@@ -12,6 +12,7 @@ namespace Neos\Flow\Security\Authentication;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Exception;
 use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Security\RequestPatternResolver;
@@ -57,6 +58,12 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
      * @var RequestPatternResolver
      */
     protected $requestPatternResolver;
+
+    /**
+     * @Flow\Inject
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
 
     /**
      * @param AuthenticationProviderResolver $providerResolver The provider resolver
@@ -160,14 +167,13 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
             $tokenInstance = null;
             foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
                 if (isset($providerConfiguration['token'])) {
-                    $tokenObjectName = $this->tokenResolver->resolveTokenClass((string)$providerConfiguration['token']);
-
-                    if ($tokenObjectName !== $tokenClassName) {
-                        continue;
-                    }
+                    $tokenClassName = $this->tokenResolver->resolveTokenClass((string)$providerConfiguration['token']);
                 }
-
-                $tokenInstance = new $tokenClassName();
+                /** @noinspection PhpMethodParametersCountMismatchInspection */
+                $tokenInstance = $this->objectManager->get($tokenClassName, $providerConfiguration['tokenOptions'] ?? []);
+                if (!$tokenInstance instanceof TokenInterface) {
+                    throw new Exception\InvalidAuthenticationProviderException(sprintf('The specified token is not an instance of %s but a %s. Please adjust the "token" configuration of the "%s" authentication provider', TokenInterface::class, is_object($tokenInstance) ? get_class($tokenInstance) : gettype($tokenInstance), $providerName), 1585921152);
+                }
                 $tokenInstance->setAuthenticationProviderName($providerName);
                 $this->tokens[] = $tokenInstance;
                 break;

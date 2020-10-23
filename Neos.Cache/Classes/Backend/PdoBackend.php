@@ -206,6 +206,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
         $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
+        /** @var false|string|null $fetchedColumn */
         $fetchedColumn = $statementHandle->fetchColumn();
 
         // Convert hexadecimal data into binary string,
@@ -575,6 +576,10 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         }
         if ($this->pdoDriver === 'sqlite') {
             $result->addNotice(new Notice('SQLite database tables are created automatically and don\'t need to be set up'));
+            return $result;
+        }
+        if ($this->tableExists($this->cacheTableName) && $this->tableExists($this->tagsTableName)) {
+            $result->addNotice(new Notice('The database tables already exist and don\'t need to be set up'));
             return $result;
         }
         $result->addNotice(new Notice('Creating database tables "%s" & "%s"...', null, [$this->cacheTableName, $this->tagsTableName]));

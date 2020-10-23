@@ -213,7 +213,7 @@ configuration filenames.
             $configurationManager->registerConfigurationType(
                 'Models',
                 ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
-                TRUE
+                true
             );
         }
     );

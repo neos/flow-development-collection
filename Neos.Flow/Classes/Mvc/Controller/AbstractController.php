@@ -113,6 +113,7 @@ abstract class AbstractController implements ControllerInterface
         if ($mediaType === null) {
             $this->throwStatus(406);
         }
+        $this->response->setContentType($mediaType);
         if ($request->getFormat() === '') {
             $this->request->setFormat(MediaTypes::getFilenameExtensionFromMediaType($mediaType));
         }
@@ -340,7 +341,9 @@ abstract class AbstractController implements ControllerInterface
         $this->response->setStatusCode($statusCode);
         if ($content === null) {
             $content = sprintf(
-                '%s %s', $statusCode, $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
+                '%s %s',
+                $statusCode,
+                $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
             );
         }
         $this->response->setContent($content);

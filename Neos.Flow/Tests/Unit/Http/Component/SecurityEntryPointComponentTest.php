@@ -16,7 +16,7 @@ use Neos\Flow\Http\Component\SecurityEntryPointComponent;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Security\Authentication\EntryPointInterface;
-use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
+use Neos\Flow\Security\Authentication\Token\TestingToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
@@ -218,11 +218,11 @@ class SecurityEntryPointComponentTest extends UnitTestCase
      */
     public function handleDoesNotSetInterceptedRequestIfAllAuthenticatedTokensAreSessionless(): void
     {
-        $mockAuthenticationToken1 = $this->getMockBuilder([TokenInterface::class, SessionlessTokenInterface::class])->getMock();
+        $mockAuthenticationToken1 = $this->getMockBuilder(TestingToken::class)->getMock();
         $mockEntryPoint1 = $this->getMockBuilder(EntryPointInterface::class)->getMock();
         $mockAuthenticationToken1->method('getAuthenticationEntryPoint')->willReturn($mockEntryPoint1);
 
-        $mockAuthenticationToken2 = $this->getMockBuilder([TokenInterface::class, SessionlessTokenInterface::class])->getMock();
+        $mockAuthenticationToken2 = $this->getMockBuilder(TestingToken::class)->getMock();
         $mockEntryPoint2 = $this->getMockBuilder(EntryPointInterface::class)->getMock();
         $mockAuthenticationToken2->method('getAuthenticationEntryPoint')->willReturn($mockEntryPoint2);
 

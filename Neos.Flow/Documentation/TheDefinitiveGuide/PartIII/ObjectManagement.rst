@@ -328,6 +328,9 @@ depending on other classes without the need to be specific about the implementat
 implementation will actually be used can be set at a later point in time by simple means
 of configuration.
 
+With Flow version 6.2 it's also possible to use "virtual object names" that don't represent
+an interface or class name (see :ref:`sect-virtual-objects`).
+
 Object Dependencies
 ===================
 
@@ -1186,9 +1189,9 @@ the object configuration:
 .. code-block:: yaml
 
 	MyCompany\MyPackage\MyObject:
-	  autowiring: off
+	  autowiring: false
 
-Autowiring can also be switched off through the ``@autowiring off`` annotation - either
+Autowiring can also be switched off through the ``@Flow\Autowiring(false)`` annotation - either
 in the documentation block of a whole class or of a single method. For the latter the
 annotation only has an effect when used in comment blocks of a constructor or of a method
 whose name starts with ``inject``.
@@ -1232,6 +1235,19 @@ passed through to the custom factory method:
 	  arguments:
 	    1:
 	      value: 'systemLogger'
+
+*Example: YAML configuration for a static custom factory method*
+
+.. code-block:: yaml
+
+	Acme\Foo\Object:
+	  scope: prototype
+	  factoryMethodName: Acme\Foo\ObjectFactory::fromValue
+	  arguments:
+	    1:
+	      settings: 'Acme.Foo.Object.ConfigurableValue'
+
+Note that if you only specify the `factoryMethodName`, it needs to be the fully qualified name.
 
 *Example: PHP code using the custom factory* ::
 
@@ -1358,6 +1374,90 @@ classes of the ``Acme.Objects`` package::
 	argument) because the argument passed could actually be a ``DependencyProxy`` and
 	not the real ObjectManager. Please refer to the section about Lazy Dependency
 	Injection for more information about ``DependencyProxy``.
+
+.. _sect-virtual-objects:
+
+Virtual Objects
+===============
+
+With the ``Objects.yaml`` configuration, the default behavior of classes can be changed globally. Sometimes
+it can be useful to configure the same class for multiple different use cases. For example two logger implementations
+that use the same instance but are configured separately.
+
+With Flow version 6.2 and above it's possible to configure "Virtual Objects". The syntax is the same as described above
+(see :ref:`sect-configuring-objects`) with two differences:
+
+* The object name has to contain a colon (to tell it apart from regular object names)
+* The ``className`` configuration is required (since it can't be inferred from the object name)
+
+*Example: Objects.yaml for two virtual logger objects*
+
+.. code-block:: yaml
+
+	'Some.Package:SystemLogger':
+	  className: Psr\Log\LoggerInterface
+	  scope: singleton
+	  factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
+	  factoryMethodName: get
+	  arguments:
+	    1:
+	      value: systemLogger
+
+	'Some.Package:SecurityLogger':
+	  className: Psr\Log\LoggerInterface
+	  scope: singleton
+	  factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
+	  factoryMethodName: get
+	  arguments:
+	    1:
+	      value: securityLogger
+
+With those objects configured, the respective loggers can be instantiated via::
+
+	$systemLogger = $objectManager->get('Some.Package:SystemLogger');
+	$securityLogger = $objectManager->get('Some.Package:SecurityLogger');
+
+
+Injecting Virtual Objects
+-------------------------
+
+To inject a Virtual Object you can simply use the ``name`` property of the ``Inject`` annotation
+to refer to the Virtual Object name:
+
+*Example: SomeClass.php*
+
+.. code-block:: php
+
+	class SomeClass {
+	    /**
+	     * @Flow\Inject(name="Some.Package:SystemLogger")
+	     * @var LoggerInterface
+	     */
+	    protected $systemLogger;
+
+Alternatively you can use constructor- or setter injection with a corresponding configuration:
+
+*Example: Objects.yaml*
+
+.. code-block:: yaml
+
+	# ...
+	'Some\Package\SomeClass':
+	  properties:
+	    'systemLogger':
+	      object: 'Some.Package:SystemLogger'
+
+*Example: SomeClass.php*
+
+.. code-block:: php
+
+	class SomeClass {
+
+	    public function injectSystemLogger(LoggerInterface $systemLogger): void
+	    {
+	        $this->systemLogger = $systemLogger;
+	    }
+
 
 .. _Martin Fowler's article: http://martinfowler.com/articles/injection.html
 .. _his blog:                http://tapestryjava.blogspot.com/2004/08/dependency-injection-mirror-of-garbage.html

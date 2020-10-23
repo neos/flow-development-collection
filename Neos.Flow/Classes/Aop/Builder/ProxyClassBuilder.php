@@ -74,7 +74,7 @@ class ProxyClassBuilder
      * Hardcoded list of Flow sub packages (first 15 characters) which must be immune to AOP proxying for security, technical or conceptual reasons.
      * @var array
      */
-    protected $blacklistedSubPackages = ['Neos\Flow\Aop\\', 'Neos\Flow\Cach', 'Neos\Flow\Erro', 'Neos\Flow\Log\\', 'Neos\Flow\Moni', 'Neos\Flow\Obje', 'Neos\Flow\Pack', 'Neos\Flow\Prop', 'Neos\Flow\Refl', 'Neos\Flow\Util', 'Neos\Flow\Vali'];
+    protected $excludedSubPackages = ['Neos\Flow\Aop\\', 'Neos\Flow\Cach', 'Neos\Flow\Erro', 'Neos\Flow\Log\\', 'Neos\Flow\Moni', 'Neos\Flow\Obje', 'Neos\Flow\Pack', 'Neos\Flow\Prop', 'Neos\Flow\Refl', 'Neos\Flow\Util', 'Neos\Flow\Vali'];
 
     /**
      * A registry of all known aspects
@@ -274,7 +274,7 @@ class ProxyClassBuilder
         $proxyableClasses = [];
         foreach ($classNamesByPackage as $classNames) {
             foreach ($classNames as $className) {
-                if (in_array(substr($className, 0, 15), $this->blacklistedSubPackages)) {
+                if (in_array(substr($className, 0, 15), $this->excludedSubPackages)) {
                     continue;
                 }
                 if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Aspect::class)) {

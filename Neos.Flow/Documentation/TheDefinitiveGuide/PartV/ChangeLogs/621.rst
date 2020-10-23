@@ -1,0 +1,15 @@
+`6.2.1 (2020-05-18) <https://github.com/neos/flow-development-collection/releases/tag/6.2.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix typo <https://github.com/neos/flow-development-collection/pull/2003>`_
+-----------------------------------------------------------------------------------
+
+Well... sorry 😲
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.2.0...6.2.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

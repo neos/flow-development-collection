@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<!-- Copyright © 1991-2020 Unicode, Inc.
+For terms of use, see http://www.unicode.org/copyright.html
+Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
+CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
+-->
 <ldml>
 	<identity>
-		<version number="$Revision: 4590 $"/>
-		<generation date="$Date: 2010-02-05 13:10:28 -0600 (Fri, 05 Feb 2010) $"/>
+		<version number="$Revision$"/>
 		<language type="bez"/>
 	</identity>
 	<localeDisplayNames>
@@ -62,7 +66,6 @@
 			<territory type="AI">Huanguila</territory>
 			<territory type="AL">Hualbania</territory>
 			<territory type="AM">Huamenia</territory>
-			<territory type="AN">Huantili dza Huuholanzi</territory>
 			<territory type="AO">Huangola</territory>
 			<territory type="AR">Huajendina</territory>
 			<territory type="AS">Husamoa ya Humalekani</territory>
@@ -100,7 +103,6 @@
 			<territory type="CN">Huchina</territory>
 			<territory type="CO">Hukolombia</territory>
 			<territory type="CR">Hukostarika</territory>
-			<territory type="CS">Huselbia na Humonteneglo</territory>
 			<territory type="CU">Hukuba</territory>
 			<territory type="CV">Hukepuvede</territory>
 			<territory type="CY">Hukuprosi</territory>
@@ -182,7 +184,6 @@
 			<territory type="MD">Humoldova</territory>
 			<territory type="MG">Hubukini</territory>
 			<territory type="MH">Ifisima fya Marshal</territory>
-			<territory type="MK">Humasedonia</territory>
 			<territory type="ML">Humali</territory>
 			<territory type="MM">Humyama</territory>
 			<territory type="MN">Humongolia</territory>
@@ -289,13 +290,64 @@
 		<exemplarCharacters type="index">[A B C D E F G H I J K L M N O P Q R S T U V W Y Z]</exemplarCharacters>
 	</characters>
 	<delimiters>
-		<quotationStart>‘</quotationStart>
-		<quotationEnd>’</quotationEnd>
-		<alternateQuotationStart>“</alternateQuotationStart>
-		<alternateQuotationEnd>”</alternateQuotationEnd>
+		<quotationStart>“</quotationStart>
+		<quotationEnd>”</quotationEnd>
+		<alternateQuotationStart>‘</alternateQuotationStart>
+		<alternateQuotationEnd>’</alternateQuotationEnd>
 	</delimiters>
 	<dates>
 		<calendars>
+			<calendar type="generic">
+				<dateFormats>
+					<dateFormatLength type="full">
+						<dateFormat>
+							<pattern>EEEE, d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="long">
+						<dateFormat>
+							<pattern>d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="medium">
+						<dateFormat>
+							<pattern>d MMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="short">
+						<dateFormat>
+							<pattern>dd/MM/y GGGGG</pattern>
+						</dateFormat>
+					</dateFormatLength>
+				</dateFormats>
+				<dateTimeFormats>
+					<availableFormats>
+						<dateFormatItem id="d">d</dateFormatItem>
+						<dateFormatItem id="hm">h:mm a</dateFormatItem>
+						<dateFormatItem id="Hm">HH:mm</dateFormatItem>
+						<dateFormatItem id="Hms">HH:mm:ss</dateFormatItem>
+						<dateFormatItem id="M">L</dateFormatItem>
+						<dateFormatItem id="Md">M/d</dateFormatItem>
+						<dateFormatItem id="MEd">E, M/d</dateFormatItem>
+						<dateFormatItem id="MMM">LLL</dateFormatItem>
+						<dateFormatItem id="MMMd">MMM d</dateFormatItem>
+						<dateFormatItem id="MMMEd">E, MMM d</dateFormatItem>
+						<dateFormatItem id="MMMMd">MMMM d</dateFormatItem>
+						<dateFormatItem id="MMMMEd">E, MMMM d</dateFormatItem>
+						<dateFormatItem id="ms">mm:ss</dateFormatItem>
+						<dateFormatItem id="y">y</dateFormatItem>
+						<dateFormatItem id="yM">M/y</dateFormatItem>
+						<dateFormatItem id="yMd">d/M/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E, M/d/y</dateFormatItem>
+						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMd">d MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E, MMM d, y</dateFormatItem>
+						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
+						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
+						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
+					</availableFormats>
+				</dateTimeFormats>
+			</calendar>
 			<calendar type="gregorian">
 				<months>
 					<monthContext type="format">
@@ -396,6 +448,10 @@
 				</quarters>
 				<dayPeriods>
 					<dayPeriodContext type="format">
+						<dayPeriodWidth type="abbreviated">
+							<dayPeriod type="am">pamilau</dayPeriod>
+							<dayPeriod type="pm">pamunyi</dayPeriod>
+						</dayPeriodWidth>
 						<dayPeriodWidth type="wide">
 							<dayPeriod type="am">pamilau</dayPeriod>
 							<dayPeriod type="pm">pamunyi</dayPeriod>
@@ -430,29 +486,29 @@
 					</dateFormatLength>
 					<dateFormatLength type="short">
 						<dateFormat>
-							<pattern>dd/MM/yyyy</pattern>
+							<pattern>dd/MM/y</pattern>
 						</dateFormat>
 					</dateFormatLength>
 				</dateFormats>
 				<timeFormats>
 					<timeFormatLength type="full">
 						<timeFormat>
-							<pattern>h:mm:ss a zzzz</pattern>
+							<pattern>HH:mm:ss zzzz</pattern>
 						</timeFormat>
 					</timeFormatLength>
 					<timeFormatLength type="long">
 						<timeFormat>
-							<pattern>h:mm:ss a z</pattern>
+							<pattern>HH:mm:ss z</pattern>
 						</timeFormat>
 					</timeFormatLength>
 					<timeFormatLength type="medium">
 						<timeFormat>
-							<pattern>h:mm:ss a</pattern>
+							<pattern>HH:mm:ss</pattern>
 						</timeFormat>
 					</timeFormatLength>
 					<timeFormatLength type="short">
 						<timeFormat>
-							<pattern>h:mm a</pattern>
+							<pattern>HH:mm</pattern>
 						</timeFormat>
 					</timeFormatLength>
 				</timeFormats>
@@ -473,60 +529,90 @@
 						<dateFormatItem id="ms">mm:ss</dateFormatItem>
 						<dateFormatItem id="y">y</dateFormatItem>
 						<dateFormatItem id="yM">M/y</dateFormatItem>
-						<dateFormatItem id="yMEd">EEE, M/d/y</dateFormatItem>
+						<dateFormatItem id="yMd">d/M/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E, M/d/y</dateFormatItem>
 						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
-						<dateFormatItem id="yMMMEd">EEE, MMM d, y</dateFormatItem>
+						<dateFormatItem id="yMMMd">d MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E, MMM d, y</dateFormatItem>
 						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
-						<dateFormatItem id="yQ">Q y</dateFormatItem>
 						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
+						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
 					</availableFormats>
 				</dateTimeFormats>
-				<fields>
-					<field type="era">
-						<displayName>Amajira</displayName>
-					</field>
-					<field type="year">
-						<displayName>Mwaha</displayName>
-					</field>
-					<field type="month">
-						<displayName>Mwedzi</displayName>
-					</field>
-					<field type="week">
-						<displayName>Mlungu gumamfu</displayName>
-					</field>
-					<field type="day">
-						<displayName>Sihu</displayName>
-						<relative type="-1">Igolo</relative>
-						<relative type="0">Neng'u ni</relative>
-						<relative type="1">Hilawu</relative>
-					</field>
-					<field type="weekday">
-						<displayName>Sihudza kasi</displayName>
-					</field>
-					<field type="dayperiod">
-						<displayName>Lwamelau</displayName>
-					</field>
-					<field type="hour">
-						<displayName>Saa</displayName>
-					</field>
-					<field type="minute">
-						<displayName>Dakika</displayName>
-					</field>
-					<field type="second">
-						<displayName>Sekunde</displayName>
-					</field>
-					<field type="zone">
-						<displayName>Amajira ga saa</displayName>
-					</field>
-				</fields>
 			</calendar>
 		</calendars>
+		<fields>
+			<field type="era">
+				<displayName>Amajira</displayName>
+			</field>
+			<field type="year">
+				<displayName>Mwaha</displayName>
+			</field>
+			<field type="month">
+				<displayName>Mwedzi</displayName>
+			</field>
+			<field type="week">
+				<displayName>Mlungu gumamfu</displayName>
+			</field>
+			<field type="day">
+				<displayName>Sihu</displayName>
+				<relative type="-1">Igolo</relative>
+				<relative type="0">Neng’u ni</relative>
+				<relative type="1">Hilawu</relative>
+			</field>
+			<field type="weekday">
+				<displayName>Sihudza kasi</displayName>
+			</field>
+			<field type="dayperiod">
+				<displayName>Lwamelau</displayName>
+			</field>
+			<field type="hour">
+				<displayName>Saa</displayName>
+			</field>
+			<field type="minute">
+				<displayName>Dakika</displayName>
+			</field>
+			<field type="second">
+				<displayName>Sekunde</displayName>
+			</field>
+			<field type="zone">
+				<displayName>Amajira ga saa</displayName>
+			</field>
+		</fields>
 	</dates>
 	<numbers>
-		<currencyFormats>
+		<currencyFormats numberSystem="latn">
 			<currencyFormatLength>
-				<currencyFormat>
+				<currencyFormat type="standard">
 					<pattern>#,##0.00¤</pattern>
+				</currencyFormat>
+			</currencyFormatLength>
+			<currencyFormatLength type="short">
+				<currencyFormat type="standard">
+					<pattern type="1000" count="one" draft="provisional">0K¤</pattern>
+					<pattern type="1000" count="other" draft="provisional">0K¤</pattern>
+					<pattern type="10000" count="one" draft="provisional">00K¤</pattern>
+					<pattern type="10000" count="other" draft="provisional">00K¤</pattern>
+					<pattern type="100000" count="one" draft="provisional">000K¤</pattern>
+					<pattern type="100000" count="other" draft="provisional">000K¤</pattern>
+					<pattern type="1000000" count="one" draft="provisional">0M¤</pattern>
+					<pattern type="1000000" count="other" draft="provisional">0M¤</pattern>
+					<pattern type="10000000" count="one" draft="provisional">00M¤</pattern>
+					<pattern type="10000000" count="other" draft="provisional">00M¤</pattern>
+					<pattern type="100000000" count="one" draft="provisional">000M¤</pattern>
+					<pattern type="100000000" count="other" draft="provisional">000M¤</pattern>
+					<pattern type="1000000000" count="one" draft="provisional">0G¤</pattern>
+					<pattern type="1000000000" count="other" draft="provisional">0G¤</pattern>
+					<pattern type="10000000000" count="one" draft="provisional">00G¤</pattern>
+					<pattern type="10000000000" count="other" draft="provisional">00G¤</pattern>
+					<pattern type="100000000000" count="one" draft="provisional">000G¤</pattern>
+					<pattern type="100000000000" count="other" draft="provisional">000G¤</pattern>
+					<pattern type="1000000000000" count="one" draft="provisional">0T¤</pattern>
+					<pattern type="1000000000000" count="other" draft="provisional">0T¤</pattern>
+					<pattern type="10000000000000" count="one" draft="provisional">00T¤</pattern>
+					<pattern type="10000000000000" count="other" draft="provisional">00T¤</pattern>
+					<pattern type="100000000000000" count="one" draft="provisional">000T¤</pattern>
+					<pattern type="100000000000000" count="other" draft="provisional">000T¤</pattern>
 				</currencyFormat>
 			</currencyFormatLength>
 		</currencyFormats>
@@ -622,6 +708,9 @@
 				<displayName>Lupila lwa Hubukini</displayName>
 			</currency>
 			<currency type="MRO">
+				<displayName>Lupila lwa Humolitania (1973–2017)</displayName>
+			</currency>
+			<currency type="MRU">
 				<displayName>Lupila lwa Humolitania</displayName>
 			</currency>
 			<currency type="MUR">
@@ -661,6 +750,9 @@
 				<displayName>Lupila lwa Husomalia</displayName>
 			</currency>
 			<currency type="STD">
+				<displayName>Lupila lwa Husaotome na Huprinisipe (1977–2017)</displayName>
+			</currency>
+			<currency type="STN">
 				<displayName>Lupila lwa Husaotome na Huprinisipe</displayName>
 			</currency>
 			<currency type="SZL">
@@ -671,6 +763,7 @@
 			</currency>
 			<currency type="TZS">
 				<displayName>Shilingi ya Hutanzania</displayName>
+				<symbol>TSh</symbol>
 			</currency>
 			<currency type="UGX">
 				<displayName>Shilingi ya Huuganda</displayName>
@@ -688,6 +781,9 @@
 				<displayName>Lupila lwa Huafriaka ya Hukusini</displayName>
 			</currency>
 			<currency type="ZMK">
+				<displayName>Lupila lwa Huzambia (1968–2012)</displayName>
+			</currency>
+			<currency type="ZMW">
 				<displayName>Lupila lwa Huzambia</displayName>
 			</currency>
 			<currency type="ZWD">

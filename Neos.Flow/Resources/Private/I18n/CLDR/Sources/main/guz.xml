@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<!-- Copyright © 1991-2020 Unicode, Inc.
+For terms of use, see http://www.unicode.org/copyright.html
+Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
+CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
+-->
 <ldml>
 	<identity>
-		<version number="$Revision: 4590 $"/>
-		<generation date="$Date: 2010-02-05 13:10:28 -0600 (Fri, 05 Feb 2010) $"/>
+		<version number="$Revision$"/>
 		<language type="guz"/>
 	</identity>
 	<localeDisplayNames>
@@ -62,7 +66,6 @@
 			<territory type="AI">Anguilla</territory>
 			<territory type="AL">Albania</territory>
 			<territory type="AM">Armenia</territory>
-			<territory type="AN">Antili za Uholanzi</territory>
 			<territory type="AO">Angola</territory>
 			<territory type="AR">Ajentina</territory>
 			<territory type="AS">Samoa ya Marekani</territory>
@@ -100,7 +103,6 @@
 			<territory type="CN">China</territory>
 			<territory type="CO">Kolombia</territory>
 			<territory type="CR">Kostarika</territory>
-			<territory type="CS">Serbia na Montenegro</territory>
 			<territory type="CU">Kuba</territory>
 			<territory type="CV">Kepuvede</territory>
 			<territory type="CY">Kuprosi</territory>
@@ -182,7 +184,6 @@
 			<territory type="MD">Moldova</territory>
 			<territory type="MG">Bukini</territory>
 			<territory type="MH">Visiwa vya Marshal</territory>
-			<territory type="MK">Masedonia</territory>
 			<territory type="ML">Mali</territory>
 			<territory type="MM">Myama</territory>
 			<territory type="MN">Mongolia</territory>
@@ -289,13 +290,62 @@
 		<exemplarCharacters type="index">[A B C D E F G H I J K L M N O P R S T U V W Y Z]</exemplarCharacters>
 	</characters>
 	<delimiters>
-		<quotationStart>'</quotationStart>
-		<quotationEnd>‘</quotationEnd>
-		<alternateQuotationStart>“</alternateQuotationStart>
-		<alternateQuotationEnd>“</alternateQuotationEnd>
+		<quotationStart>“</quotationStart>
+		<quotationEnd>”</quotationEnd>
+		<alternateQuotationStart>‘</alternateQuotationStart>
+		<alternateQuotationEnd>’</alternateQuotationEnd>
 	</delimiters>
 	<dates>
 		<calendars>
+			<calendar type="generic">
+				<dateFormats>
+					<dateFormatLength type="full">
+						<dateFormat>
+							<pattern>EEEE, d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="long">
+						<dateFormat>
+							<pattern>d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="medium">
+						<dateFormat>
+							<pattern>d MMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="short">
+						<dateFormat>
+							<pattern>dd/MM/y GGGGG</pattern>
+						</dateFormat>
+					</dateFormatLength>
+				</dateFormats>
+				<dateTimeFormats>
+					<availableFormats>
+						<dateFormatItem id="d">d</dateFormatItem>
+						<dateFormatItem id="hm">h:mm a</dateFormatItem>
+						<dateFormatItem id="Hm">HH:mm</dateFormatItem>
+						<dateFormatItem id="Hms">HH:mm:ss</dateFormatItem>
+						<dateFormatItem id="M">L</dateFormatItem>
+						<dateFormatItem id="Md">M/d</dateFormatItem>
+						<dateFormatItem id="MEd">E, M/d</dateFormatItem>
+						<dateFormatItem id="MMM">LLL</dateFormatItem>
+						<dateFormatItem id="MMMd">MMM d</dateFormatItem>
+						<dateFormatItem id="MMMEd">E, MMM d</dateFormatItem>
+						<dateFormatItem id="MMMMd">MMMM d</dateFormatItem>
+						<dateFormatItem id="MMMMEd">E, MMMM d</dateFormatItem>
+						<dateFormatItem id="ms">mm:ss</dateFormatItem>
+						<dateFormatItem id="y">y</dateFormatItem>
+						<dateFormatItem id="yM">M/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E, M/d/y</dateFormatItem>
+						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E, MMM d, y</dateFormatItem>
+						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
+						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
+						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
+					</availableFormats>
+				</dateTimeFormats>
+			</calendar>
 			<calendar type="gregorian">
 				<months>
 					<monthContext type="format">
@@ -387,7 +437,7 @@
 							<quarter type="4">E4</quarter>
 						</quarterWidth>
 						<quarterWidth type="wide">
-							<quarter type="1">Erobo entang'ani</quarter>
+							<quarter type="1">Erobo entang’ani</quarter>
 							<quarter type="2">Erobo yakabere</quarter>
 							<quarter type="3">Erobo yagatato</quarter>
 							<quarter type="4">Erobo yakane</quarter>
@@ -396,9 +446,13 @@
 				</quarters>
 				<dayPeriods>
 					<dayPeriodContext type="format">
+						<dayPeriodWidth type="abbreviated">
+							<dayPeriod type="am">Ma</dayPeriod>
+							<dayPeriod type="pm">Mo</dayPeriod>
+						</dayPeriodWidth>
 						<dayPeriodWidth type="wide">
-							<dayPeriod type="am">Ma/Mo</dayPeriod>
-							<dayPeriod type="pm">Mambia/Mog</dayPeriod>
+							<dayPeriod type="am">Mambia</dayPeriod>
+							<dayPeriod type="pm">Mog</dayPeriod>
 						</dayPeriodWidth>
 					</dayPeriodContext>
 				</dayPeriods>
@@ -430,29 +484,29 @@
 					</dateFormatLength>
 					<dateFormatLength type="short">
 						<dateFormat>
-							<pattern>dd/MM/yyyy</pattern>
+							<pattern>dd/MM/y</pattern>
 						</dateFormat>
 					</dateFormatLength>
 				</dateFormats>
 				<timeFormats>
 					<timeFormatLength type="full">
 						<timeFormat>
-							<pattern>h:mm:ss a zzzz</pattern>
+							<pattern>HH:mm:ss zzzz</pattern>
 						</timeFormat>
 					</timeFormatLength>
 					<timeFormatLength type="long">
 						<timeFormat>
-							<pattern>h:mm:ss a z</pattern>
+							<pattern>HH:mm:ss z</pattern>
 						</timeFormat>
 					</timeFormatLength>
 					<timeFormatLength type="medium">
 						<timeFormat>
-							<pattern>h:mm:ss a</pattern>
+							<pattern>HH:mm:ss</pattern>
 						</timeFormat>
 					</timeFormatLength>
 					<timeFormatLength type="short">
 						<timeFormat>
-							<pattern>h:mm a</pattern>
+							<pattern>HH:mm</pattern>
 						</timeFormat>
 					</timeFormatLength>
 				</timeFormats>
@@ -473,60 +527,79 @@
 						<dateFormatItem id="ms">mm:ss</dateFormatItem>
 						<dateFormatItem id="y">y</dateFormatItem>
 						<dateFormatItem id="yM">M/y</dateFormatItem>
-						<dateFormatItem id="yMEd">EEE, M/d/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E, M/d/y</dateFormatItem>
 						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
-						<dateFormatItem id="yMMMEd">EEE, MMM d, y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E, MMM d, y</dateFormatItem>
 						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
-						<dateFormatItem id="yQ">Q y</dateFormatItem>
 						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
+						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
 					</availableFormats>
 				</dateTimeFormats>
-				<fields>
-					<field type="era">
-						<displayName>Ebiro</displayName>
-					</field>
-					<field type="year">
-						<displayName>Omwaka</displayName>
-					</field>
-					<field type="month">
-						<displayName>Omotienyi</displayName>
-					</field>
-					<field type="week">
-						<displayName>Omokubio</displayName>
-					</field>
-					<field type="day">
-						<displayName>Rituko</displayName>
-						<relative type="-1">Igoro</relative>
-						<relative type="0">Rero</relative>
-						<relative type="1">Mambia</relative>
-					</field>
-					<field type="weekday">
-						<displayName>Rituko r'ewiki</displayName>
-					</field>
-					<field type="dayperiod">
-						<displayName>Mambia gose Morogoba</displayName>
-					</field>
-					<field type="hour">
-						<displayName>Ensa</displayName>
-					</field>
-					<field type="minute">
-						<displayName>Edakika</displayName>
-					</field>
-					<field type="second">
-						<displayName>Esekendi</displayName>
-					</field>
-					<field type="zone">
-						<displayName>Chinse 'chimo</displayName>
-					</field>
-				</fields>
 			</calendar>
 		</calendars>
+		<fields>
+			<field type="era">
+				<displayName>Ebiro</displayName>
+			</field>
+			<field type="year">
+				<displayName>Omwaka</displayName>
+			</field>
+			<field type="month">
+				<displayName>Omotienyi</displayName>
+			</field>
+			<field type="week">
+				<displayName>Omokubio</displayName>
+			</field>
+			<field type="day">
+				<displayName>Rituko</displayName>
+				<relative type="-1">Igoro</relative>
+				<relative type="0">Rero</relative>
+				<relative type="1">Mambia</relative>
+			</field>
+			<field type="weekday">
+				<displayName>Rituko r’ewiki</displayName>
+			</field>
+			<field type="dayperiod">
+				<displayName>Mambia gose Morogoba</displayName>
+			</field>
+			<field type="hour">
+				<displayName>Ensa</displayName>
+			</field>
+			<field type="minute">
+				<displayName>Edakika</displayName>
+			</field>
+			<field type="second">
+				<displayName>Esekendi</displayName>
+			</field>
+			<field type="zone">
+				<displayName>Chinse ‘chimo</displayName>
+			</field>
+		</fields>
 	</dates>
 	<numbers>
-		<currencyFormats>
+		<currencyFormats numberSystem="latn">
 			<currencyFormatLength>
-				<currencyFormat>
+				<currencyFormat type="standard">
+					<pattern>¤#,##0.00</pattern>
+				</currencyFormat>
+				<currencyFormat type="accounting">
 					<pattern>¤#,##0.00;(¤#,##0.00)</pattern>
+				</currencyFormat>
+			</currencyFormatLength>
+			<currencyFormatLength type="short">
+				<currencyFormat type="standard">
+					<pattern type="1000" count="other" draft="provisional">¤0K</pattern>
+					<pattern type="10000" count="other" draft="provisional">¤00K</pattern>
+					<pattern type="100000" count="other" draft="provisional">¤000K</pattern>
+					<pattern type="1000000" count="other" draft="provisional">¤0M</pattern>
+					<pattern type="10000000" count="other" draft="provisional">¤00M</pattern>
+					<pattern type="100000000" count="other" draft="provisional">¤000M</pattern>
+					<pattern type="1000000000" count="other" draft="provisional">¤0G</pattern>
+					<pattern type="10000000000" count="other" draft="provisional">¤00G</pattern>
+					<pattern type="100000000000" count="other" draft="provisional">¤000G</pattern>
+					<pattern type="1000000000000" count="other" draft="provisional">¤0T</pattern>
+					<pattern type="10000000000000" count="other" draft="provisional">¤00T</pattern>
+					<pattern type="100000000000000" count="other" draft="provisional">¤000T</pattern>
 				</currencyFormat>
 			</currencyFormatLength>
 		</currencyFormats>
@@ -602,6 +675,7 @@
 			</currency>
 			<currency type="KES">
 				<displayName>Shilingi ya Kenya</displayName>
+				<symbol>Ksh</symbol>
 			</currency>
 			<currency type="KMF">
 				<displayName>Faranga ya Komoro</displayName>
@@ -622,6 +696,9 @@
 				<displayName>Ariary ya Bukini</displayName>
 			</currency>
 			<currency type="MRO">
+				<displayName>Ugwiya ya Moritania (1973–2017)</displayName>
+			</currency>
+			<currency type="MRU">
 				<displayName>Ugwiya ya Moritania</displayName>
 			</currency>
 			<currency type="MUR">
@@ -661,6 +738,9 @@
 				<displayName>Shilingi ya Somalia</displayName>
 			</currency>
 			<currency type="STD">
+				<displayName>Dobra ya Sao Tome na Principe (1977–2017)</displayName>
+			</currency>
+			<currency type="STN">
 				<displayName>Dobra ya Sao Tome na Principe</displayName>
 			</currency>
 			<currency type="SZL">
@@ -688,6 +768,9 @@
 				<displayName>Randi ya Afrika Kusini</displayName>
 			</currency>
 			<currency type="ZMK">
+				<displayName>Kwacha ya Zambia (1968–2012)</displayName>
+			</currency>
+			<currency type="ZMW">
 				<displayName>Kwacha ya Zambia</displayName>
 			</currency>
 			<currency type="ZWD">

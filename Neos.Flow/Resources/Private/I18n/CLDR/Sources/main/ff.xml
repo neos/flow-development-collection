@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<!-- Copyright © 1991-2020 Unicode, Inc.
+For terms of use, see http://www.unicode.org/copyright.html
+Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
+CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
+-->
 <ldml>
 	<identity>
-		<version number="$Revision: 4685 $"/>
-		<generation date="$Date: 2010-02-18 01:54:20 -0600 (Thu, 18 Feb 2010) $"/>
+		<version number="$Revision$"/>
 		<language type="ff"/>
 	</identity>
 	<localeDisplayNames>
@@ -56,56 +60,35 @@
 		</languages>
 		<territories>
 			<territory type="AD">Anndoora</territory>
-			<territory type="AD" alt="proposed-x1001" draft="unconfirmed">anndoora</territory>
 			<territory type="AE">Emiraat Araab Denntuɗe</territory>
 			<territory type="AF">Afganistaan</territory>
-			<territory type="AF" alt="proposed-x1001" draft="unconfirmed">afganistaan</territory>
 			<territory type="AG">Antiguwaa e Barbudaa</territory>
-			<territory type="AG" alt="proposed-x1001" draft="unconfirmed">antiguwaa e barbudaa</territory>
 			<territory type="AI">Anngiyaa</territory>
-			<territory type="AI" alt="proposed-x1001" draft="unconfirmed">anngiyaa</territory>
 			<territory type="AL">Albanii</territory>
-			<territory type="AL" alt="proposed-x1001" draft="unconfirmed">albanii</territory>
 			<territory type="AM">Armenii</territory>
-			<territory type="AM" alt="proposed-x1001" draft="unconfirmed">armenii</territory>
-			<territory type="AN">Antiiye Nederlanndeeje</territory>
 			<territory type="AO">Anngolaa</territory>
-			<territory type="AO" alt="proposed-x1001" draft="unconfirmed">anngolaa</territory>
 			<territory type="AR">Arjantiin</territory>
-			<territory type="AR" alt="proposed-x1001" draft="unconfirmed">arjantiin</territory>
 			<territory type="AS">Samowa Amerik</territory>
-			<territory type="AS" alt="proposed-x1001" draft="unconfirmed">samowa amerik</territory>
 			<territory type="AT">Otiriis</territory>
 			<territory type="AU">Ostaraalii</territory>
-			<territory type="AU" alt="proposed-x1001" draft="unconfirmed">ostaraalii</territory>
 			<territory type="AW">Aruuba</territory>
-			<territory type="AW" alt="proposed-x1001" draft="unconfirmed">aruuba</territory>
 			<territory type="AZ">Ajerbayjaan</territory>
-			<territory type="BA">Bosnii  Hersegowiin</territory>
+			<territory type="BA">Bosnii Hersegowiin</territory>
 			<territory type="BB">Barbadoos</territory>
-			<territory type="BB" alt="proposed-x1001" draft="unconfirmed">barbadoos</territory>
 			<territory type="BD">Banglaadees</territory>
-			<territory type="BD" alt="proposed-x1001" draft="unconfirmed">banglaadees</territory>
 			<territory type="BE">Beljik</territory>
 			<territory type="BF">Burkibaa Faaso</territory>
-			<territory type="BF" alt="proposed-x1001" draft="unconfirmed">burkibaa faaso</territory>
 			<territory type="BG">Bulgarii</territory>
-			<territory type="BG" alt="proposed-x1001" draft="unconfirmed">bulgarii</territory>
 			<territory type="BH">Bahreyn</territory>
-			<territory type="BH" alt="proposed-x1001" draft="unconfirmed">bahreyn</territory>
 			<territory type="BI">Burunndi</territory>
 			<territory type="BJ">Benee</territory>
 			<territory type="BM">Bermudaa</territory>
 			<territory type="BN">Burnaay</territory>
-			<territory type="BN" alt="proposed-x1001" draft="unconfirmed">burnaay</territory>
 			<territory type="BO">Boliwii</territory>
 			<territory type="BR">Beresiil</territory>
-			<territory type="BR" alt="proposed-x1001" draft="unconfirmed">beresiil</territory>
 			<territory type="BS">Bahamaas</territory>
-			<territory type="BS" alt="proposed-x1001" draft="unconfirmed">bahamaas</territory>
 			<territory type="BT">Butaan</territory>
 			<territory type="BW">Botswaana</territory>
-			<territory type="BW" alt="proposed-x1001" draft="unconfirmed">botswaana</territory>
 			<territory type="BY">Belaruus</territory>
 			<territory type="BZ">Beliise</territory>
 			<territory type="CA">Kanadaa</territory>
@@ -120,7 +103,6 @@
 			<territory type="CN">Siin</territory>
 			<territory type="CO">Kolombiya</territory>
 			<territory type="CR">Kosta Rikaa</territory>
-			<territory type="CS">Serbii e Montenegoroo</territory>
 			<territory type="CU">Kubaa</territory>
 			<territory type="CV">Duuɗe Kap Weer</territory>
 			<territory type="CY">Siipar</territory>
@@ -131,7 +113,6 @@
 			<territory type="DM">Dominika</territory>
 			<territory type="DO">Ndenndanndi Dominika</territory>
 			<territory type="DZ">Alaseri</territory>
-			<territory type="DZ" alt="proposed-x1001" draft="unconfirmed">alaseri</territory>
 			<territory type="EC">Ekuwatoor</territory>
 			<territory type="EE">Estoni</territory>
 			<territory type="EG">Ejipt</territory>
@@ -166,10 +147,9 @@
 			<territory type="HU">Onngiri</territory>
 			<territory type="ID">Enndonesii</territory>
 			<territory type="IE">Irlannda</territory>
-			<territory type="IL">Israa'iila</territory>
+			<territory type="IL">Israa’iila</territory>
 			<territory type="IN">Enndo</territory>
 			<territory type="IO">Keeriindi britaani to maayo enndo</territory>
-			<territory type="IO" alt="proposed-x1001" draft="unconfirmed">keeriindi britaani to maayo enndo</territory>
 			<territory type="IQ">Iraak</territory>
 			<territory type="IR">Iraan</territory>
 			<territory type="IS">Islannda</territory>
@@ -204,7 +184,6 @@
 			<territory type="MD">Moldawii</territory>
 			<territory type="MG">Madagaskaar</territory>
 			<territory type="MH">Duuɗe Marsaal</territory>
-			<territory type="MK">Meceduwaan</territory>
 			<territory type="ML">Maali</territory>
 			<territory type="MM">Miyamaar</territory>
 			<territory type="MN">Monngolii</territory>
@@ -309,15 +288,64 @@
 		<exemplarCharacters>[a b ɓ c d ɗ e f g h i j k l m n ñ ŋ o p r s t u w y ƴ]</exemplarCharacters>
 		<exemplarCharacters type="auxiliary">[q v x z]</exemplarCharacters>
 		<exemplarCharacters type="index">[A B Ɓ C D Ɗ E F G H I J K L M N Ñ Ŋ O P R S T U W Y Ƴ]</exemplarCharacters>
+		<exemplarCharacters type="numbers">[  \- ‑ , % ‰ + 0 1 2 3 4 5 6 7 8 9]</exemplarCharacters>
 	</characters>
 	<delimiters>
 		<quotationStart>„</quotationStart>
 		<quotationEnd>”</quotationEnd>
-		<alternateQuotationStart>'</alternateQuotationStart>
-		<alternateQuotationEnd>'</alternateQuotationEnd>
+		<alternateQuotationStart>‚</alternateQuotationStart>
+		<alternateQuotationEnd>’</alternateQuotationEnd>
 	</delimiters>
 	<dates>
 		<calendars>
+			<calendar type="generic">
+				<dateFormats>
+					<dateFormatLength type="full">
+						<dateFormat>
+							<pattern>EEEE d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="long">
+						<dateFormat>
+							<pattern>d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="medium">
+						<dateFormat>
+							<pattern>d MMM, y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="short">
+						<dateFormat>
+							<pattern>d/M/y GGGGG</pattern>
+						</dateFormat>
+					</dateFormatLength>
+				</dateFormats>
+				<dateTimeFormats>
+					<availableFormats>
+						<dateFormatItem id="M">M</dateFormatItem>
+						<dateFormatItem id="Md">d/M</dateFormatItem>
+						<dateFormatItem id="MMd">d/MM</dateFormatItem>
+						<dateFormatItem id="MMdd">dd/MM</dateFormatItem>
+						<dateFormatItem id="MMM">MMM</dateFormatItem>
+						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
+						<dateFormatItem id="MMMEd">E d MMM</dateFormatItem>
+						<dateFormatItem id="MMMMd">d MMMM</dateFormatItem>
+						<dateFormatItem id="MMMMEd">E d MMMM</dateFormatItem>
+						<dateFormatItem id="ms">m:ss</dateFormatItem>
+						<dateFormatItem id="y">y</dateFormatItem>
+						<dateFormatItem id="yM">M/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E d/M/y</dateFormatItem>
+						<dateFormatItem id="yMM">MM/y</dateFormatItem>
+						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMd">d MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E d MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
+						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
+						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
+					</availableFormats>
+				</dateTimeFormats>
+			</calendar>
 			<calendar type="gregorian">
 				<months>
 					<monthContext type="format">
@@ -418,6 +446,10 @@
 				</quarters>
 				<dayPeriods>
 					<dayPeriodContext type="format">
+						<dayPeriodWidth type="abbreviated">
+							<dayPeriod type="am">subaka</dayPeriod>
+							<dayPeriod type="pm">kikiiɗe</dayPeriod>
+						</dayPeriodWidth>
 						<dayPeriodWidth type="wide">
 							<dayPeriod type="am">subaka</dayPeriod>
 							<dayPeriod type="pm">kikiiɗe</dayPeriod>
@@ -452,7 +484,7 @@
 					</dateFormatLength>
 					<dateFormatLength type="short">
 						<dateFormat>
-							<pattern>d/M/yyyy</pattern>
+							<pattern>d/M/y</pattern>
 						</dateFormat>
 					</dateFormatLength>
 				</dateFormats>
@@ -482,81 +514,117 @@
 					<availableFormats>
 						<dateFormatItem id="M">M</dateFormatItem>
 						<dateFormatItem id="Md">d/M</dateFormatItem>
-						<dateFormatItem id="Med">EEE d/M</dateFormatItem>
 						<dateFormatItem id="MMd">d/MM</dateFormatItem>
 						<dateFormatItem id="MMdd">dd/MM</dateFormatItem>
 						<dateFormatItem id="MMM">MMM</dateFormatItem>
 						<dateFormatItem id="MMMd">d MMM</dateFormatItem>
-						<dateFormatItem id="MMMdd">dd MMM</dateFormatItem>
 						<dateFormatItem id="MMMEd">E d MMM</dateFormatItem>
 						<dateFormatItem id="MMMMd">d MMMM</dateFormatItem>
-						<dateFormatItem id="MMMMEd">EEE d MMMM</dateFormatItem>
+						<dateFormatItem id="MMMMEd">E d MMMM</dateFormatItem>
 						<dateFormatItem id="ms">m:ss</dateFormatItem>
 						<dateFormatItem id="y">y</dateFormatItem>
 						<dateFormatItem id="yM">M/y</dateFormatItem>
-						<dateFormatItem id="yMEd">EEE d/M/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E d/M/y</dateFormatItem>
+						<dateFormatItem id="yMM">MM/y</dateFormatItem>
 						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
-						<dateFormatItem id="yMMMEd">EEE d MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMd">d MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E d MMM y</dateFormatItem>
 						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
-						<dateFormatItem id="yQ">'T'Q y</dateFormatItem>
 						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
-						<dateFormatItem id="yyMM">MM/y</dateFormatItem>
-						<dateFormatItem id="yyMMM">MMM yy</dateFormatItem>
-						<dateFormatItem id="yyMMMd">d MMM yy</dateFormatItem>
-						<dateFormatItem id="yyMMMEEEd">EEE d MMM yy</dateFormatItem>
-						<dateFormatItem id="yyyyMMMM">MMMM yyyy</dateFormatItem>
+						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
 					</availableFormats>
+					<appendItems>
+						<appendItem request="Day">{0} ({2}: {1})</appendItem>
+						<appendItem request="Day-Of-Week">{0} {1}</appendItem>
+						<appendItem request="Era">{1} {0}</appendItem>
+						<appendItem request="Hour">{0} ({2}: {1})</appendItem>
+						<appendItem request="Minute">{0} ({2}: {1})</appendItem>
+						<appendItem request="Month">{0} ({2}: {1})</appendItem>
+						<appendItem request="Quarter">{0} ({2}: {1})</appendItem>
+						<appendItem request="Second">{0} ({2}: {1})</appendItem>
+						<appendItem request="Timezone">{0} {1}</appendItem>
+						<appendItem request="Week">{0} ({2}: {1})</appendItem>
+						<appendItem request="Year">{1} {0}</appendItem>
+					</appendItems>
 				</dateTimeFormats>
-				<fields>
-					<field type="era">
-						<displayName>Jamaanu</displayName>
-					</field>
-					<field type="year">
-						<displayName>Hitaande</displayName>
-					</field>
-					<field type="month">
-						<displayName>Lewru</displayName>
-					</field>
-					<field type="week">
-						<displayName>Yontere</displayName>
-					</field>
-					<field type="day">
-						<displayName>Ñalnde</displayName>
-						<relative type="-1">Haŋki</relative>
-						<relative type="0">Hannde</relative>
-						<relative type="1">Jaŋngo</relative>
-					</field>
-					<field type="weekday">
-						<displayName>Ñalɗi yontere</displayName>
-					</field>
-					<field type="dayperiod">
-						<displayName>Sahnga</displayName>
-					</field>
-					<field type="hour">
-						<displayName>Waktu</displayName>
-					</field>
-					<field type="minute">
-						<displayName>Hoƴom</displayName>
-					</field>
-					<field type="second">
-						<displayName>Majaango</displayName>
-					</field>
-					<field type="zone">
-						<displayName>Diiwaan waktu</displayName>
-					</field>
-				</fields>
 			</calendar>
 		</calendars>
+		<fields>
+			<field type="era">
+				<displayName>Jamaanu</displayName>
+			</field>
+			<field type="year">
+				<displayName>Hitaande</displayName>
+			</field>
+			<field type="month">
+				<displayName>Lewru</displayName>
+			</field>
+			<field type="week">
+				<displayName>Yontere</displayName>
+			</field>
+			<field type="day">
+				<displayName>Ñalnde</displayName>
+				<relative type="-1">Haŋki</relative>
+				<relative type="0">Hannde</relative>
+				<relative type="1">Jaŋngo</relative>
+			</field>
+			<field type="weekday">
+				<displayName>Ñalɗi yontere</displayName>
+			</field>
+			<field type="dayperiod">
+				<displayName>Sahnga</displayName>
+			</field>
+			<field type="hour">
+				<displayName>Waktu</displayName>
+			</field>
+			<field type="minute">
+				<displayName>Hoƴom</displayName>
+			</field>
+			<field type="second">
+				<displayName>Majaango</displayName>
+			</field>
+			<field type="zone">
+				<displayName>Diiwaan waktu</displayName>
+			</field>
+		</fields>
 	</dates>
 	<numbers>
-		<symbols>
+		<symbols numberSystem="latn">
 			<decimal>,</decimal>
 			<group> </group>
 		</symbols>
-		<currencyFormats>
+		<currencyFormats numberSystem="latn">
 			<currencyFormatLength>
-				<currencyFormat>
+				<currencyFormat type="standard">
 					<pattern>#,##0.00 ¤</pattern>
+				</currencyFormat>
+			</currencyFormatLength>
+			<currencyFormatLength type="short">
+				<currencyFormat type="standard">
+					<pattern type="1000" count="one" draft="provisional">0K ¤</pattern>
+					<pattern type="1000" count="other" draft="provisional">0K ¤</pattern>
+					<pattern type="10000" count="one" draft="provisional">00K ¤</pattern>
+					<pattern type="10000" count="other" draft="provisional">00K ¤</pattern>
+					<pattern type="100000" count="one" draft="provisional">000K ¤</pattern>
+					<pattern type="100000" count="other" draft="provisional">000K ¤</pattern>
+					<pattern type="1000000" count="one" draft="provisional">0M ¤</pattern>
+					<pattern type="1000000" count="other" draft="provisional">0M ¤</pattern>
+					<pattern type="10000000" count="one" draft="provisional">00M ¤</pattern>
+					<pattern type="10000000" count="other" draft="provisional">00M ¤</pattern>
+					<pattern type="100000000" count="one" draft="provisional">000M ¤</pattern>
+					<pattern type="100000000" count="other" draft="provisional">000M ¤</pattern>
+					<pattern type="1000000000" count="one" draft="provisional">0G ¤</pattern>
+					<pattern type="1000000000" count="other" draft="provisional">0G ¤</pattern>
+					<pattern type="10000000000" count="one" draft="provisional">00G ¤</pattern>
+					<pattern type="10000000000" count="other" draft="provisional">00G ¤</pattern>
+					<pattern type="100000000000" count="one" draft="provisional">000G ¤</pattern>
+					<pattern type="100000000000" count="other" draft="provisional">000G ¤</pattern>
+					<pattern type="1000000000000" count="one" draft="provisional">0T ¤</pattern>
+					<pattern type="1000000000000" count="other" draft="provisional">0T ¤</pattern>
+					<pattern type="10000000000000" count="one" draft="provisional">00T ¤</pattern>
+					<pattern type="10000000000000" count="other" draft="provisional">00T ¤</pattern>
+					<pattern type="100000000000000" count="one" draft="provisional">000T ¤</pattern>
+					<pattern type="100000000000000" count="other" draft="provisional">000T ¤</pattern>
 				</currencyFormat>
 			</currencyFormatLength>
 		</currencyFormats>
@@ -652,6 +720,9 @@
 				<displayName>Ariyari Madagaskaar</displayName>
 			</currency>
 			<currency type="MRO">
+				<displayName>Ugiyya Muritani (1973–2017)</displayName>
+			</currency>
+			<currency type="MRU">
 				<displayName>Ugiyya Muritani</displayName>
 			</currency>
 			<currency type="MUR">
@@ -691,6 +762,9 @@
 				<displayName>Siling Soomali</displayName>
 			</currency>
 			<currency type="STD">
+				<displayName>Dobra Sawo Tome e Prensipe (1977–2017)</displayName>
+			</currency>
+			<currency type="STN">
 				<displayName>Dobra Sawo Tome e Prensipe</displayName>
 			</currency>
 			<currency type="SZL">
@@ -718,6 +792,9 @@
 				<displayName>Rannda Afrik Bŋ Worgo</displayName>
 			</currency>
 			<currency type="ZMK">
+				<displayName>Kuwacca Sammbi (1968–2012)</displayName>
+			</currency>
+			<currency type="ZMW">
 				<displayName>Kuwacca Sammbi</displayName>
 			</currency>
 			<currency type="ZWD">

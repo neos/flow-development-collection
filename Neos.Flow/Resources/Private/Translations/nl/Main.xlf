@@ -16,7 +16,7 @@
 			<target state="final">Nieuw wachtwoord</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
 				<source>Login</source>
-			<target state="final">Login</target><alt-trans><target>Log in</target></alt-trans></trans-unit>
+			<target state="final">Login</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
 			<target state="final">Log uit</target></trans-unit>
@@ -26,6 +26,9 @@
       <trans-unit id="submit" xml:space="preserve" approved="yes">
 				<source>Submit</source>
 			<target state="final">Verstuur</target></trans-unit>
+      <trans-unit id="configurationSchemaValidator.anErrorOccurredDuringValidationOfTheConfiguration.body" xml:space="preserve">
+				<source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
+			<target state="needs-translation">The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</target></trans-unit>
     </body>
   </file>
 </xliff>

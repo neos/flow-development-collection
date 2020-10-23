@@ -62,7 +62,6 @@ class DatesReaderTest extends UnitTestCase
     public function formatIsCorrectlyReadFromCldr()
     {
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getRawArray', 'getElement'], [[]]);
-        $mockModel->expects(self::once())->method('getRawArray')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats')->will(self::returnValue(['default[@choice="medium"]' => '']));
         $mockModel->expects(self::once())->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="medium"]/dateFormat/pattern')->will(self::returnValue('mockFormatString'));
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);

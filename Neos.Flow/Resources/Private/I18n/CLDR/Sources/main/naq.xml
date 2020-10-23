@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<!-- Copyright © 1991-2020 Unicode, Inc.
+For terms of use, see http://www.unicode.org/copyright.html
+Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
+CLDR data files are interpreted according to the LDML specification (http://unicode.org/reports/tr35/)
+-->
 <ldml>
 	<identity>
-		<version number="$Revision: 4685 $"/>
-		<generation date="$Date: 2010-02-18 01:54:20 -0600 (Thu, 18 Feb 2010) $"/>
+		<version number="$Revision$"/>
 		<language type="naq"/>
 	</identity>
 	<localeDisplayNames>
@@ -62,7 +66,6 @@
 			<territory type="AI">Anguillab</territory>
 			<territory type="AL">Albaniab</territory>
 			<territory type="AM">Armeniab</territory>
-			<territory type="AN">Netherlands Antilles</territory>
 			<territory type="AO">Angolab</territory>
 			<territory type="AR">Argentinab</territory>
 			<territory type="AS">Americab Samoab</territory>
@@ -100,7 +103,6 @@
 			<territory type="CN">Chinab</territory>
 			<territory type="CO">Colombiab</territory>
 			<territory type="CR">Costa Rica</territory>
-			<territory type="CS">Serbiab tsî Montenegrob</territory>
 			<territory type="CU">Cubab</territory>
 			<territory type="CV">Cape Verde Islands</territory>
 			<territory type="CY">Cyprus</territory>
@@ -182,7 +184,6 @@
 			<territory type="MD">Moldova</territory>
 			<territory type="MG">Madagascari</territory>
 			<territory type="MH">Marshall Islands</territory>
-			<territory type="MK">Macedoniab</territory>
 			<territory type="ML">Malib</territory>
 			<territory type="MM">Myanmar</territory>
 			<territory type="MN">Mongolia</territory>
@@ -289,13 +290,62 @@
 		<exemplarCharacters type="index">[A B C D E F G H I K M N O P Q R S T U W X Y Z]</exemplarCharacters>
 	</characters>
 	<delimiters>
-		<quotationStart>'</quotationStart>
-		<quotationEnd>'</quotationEnd>
-		<alternateQuotationStart>“</alternateQuotationStart>
-		<alternateQuotationEnd>”</alternateQuotationEnd>
+		<quotationStart>“</quotationStart>
+		<quotationEnd>”</quotationEnd>
+		<alternateQuotationStart>‘</alternateQuotationStart>
+		<alternateQuotationEnd>’</alternateQuotationEnd>
 	</delimiters>
 	<dates>
 		<calendars>
+			<calendar type="generic">
+				<dateFormats>
+					<dateFormatLength type="full">
+						<dateFormat>
+							<pattern>EEEE, d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="long">
+						<dateFormat>
+							<pattern>d MMMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="medium">
+						<dateFormat>
+							<pattern>d MMM y G</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="short">
+						<dateFormat>
+							<pattern>dd/MM/y GGGGG</pattern>
+						</dateFormat>
+					</dateFormatLength>
+				</dateFormats>
+				<dateTimeFormats>
+					<availableFormats>
+						<dateFormatItem id="d">d</dateFormatItem>
+						<dateFormatItem id="hm">h:mm a</dateFormatItem>
+						<dateFormatItem id="Hm">HH:mm</dateFormatItem>
+						<dateFormatItem id="Hms">HH:mm:ss</dateFormatItem>
+						<dateFormatItem id="M">L</dateFormatItem>
+						<dateFormatItem id="Md">M/d</dateFormatItem>
+						<dateFormatItem id="MEd">E, M/d</dateFormatItem>
+						<dateFormatItem id="MMM">LLL</dateFormatItem>
+						<dateFormatItem id="MMMd">MMM d</dateFormatItem>
+						<dateFormatItem id="MMMEd">E, MMM d</dateFormatItem>
+						<dateFormatItem id="MMMMd">MMMM d</dateFormatItem>
+						<dateFormatItem id="MMMMEd">E, MMMM d</dateFormatItem>
+						<dateFormatItem id="ms">mm:ss</dateFormatItem>
+						<dateFormatItem id="y">y</dateFormatItem>
+						<dateFormatItem id="yM">M/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E, M/d/y</dateFormatItem>
+						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E, MMM d, y</dateFormatItem>
+						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
+						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
+						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
+					</availableFormats>
+				</dateTimeFormats>
+			</calendar>
 			<calendar type="gregorian">
 				<months>
 					<monthContext type="format">
@@ -384,7 +434,7 @@
 							<quarter type="1">KW1</quarter>
 							<quarter type="2">KW2</quarter>
 							<quarter type="3">KW3</quarter>
-							<quarter type="4">KW3</quarter>
+							<quarter type="4">KW4</quarter>
 						</quarterWidth>
 						<quarterWidth type="wide">
 							<quarter type="1">1ro kwartals</quarter>
@@ -396,6 +446,10 @@
 				</quarters>
 				<dayPeriods>
 					<dayPeriodContext type="format">
+						<dayPeriodWidth type="abbreviated">
+							<dayPeriod type="am">ǁgoagas</dayPeriod>
+							<dayPeriod type="pm">ǃuias</dayPeriod>
+						</dayPeriodWidth>
 						<dayPeriodWidth type="wide">
 							<dayPeriod type="am">ǁgoagas</dayPeriod>
 							<dayPeriod type="pm">ǃuias</dayPeriod>
@@ -430,7 +484,7 @@
 					</dateFormatLength>
 					<dateFormatLength type="short">
 						<dateFormat>
-							<pattern>dd/MM/yyyy</pattern>
+							<pattern>dd/MM/y</pattern>
 						</dateFormat>
 					</dateFormatLength>
 				</dateFormats>
@@ -473,60 +527,100 @@
 						<dateFormatItem id="ms">mm:ss</dateFormatItem>
 						<dateFormatItem id="y">y</dateFormatItem>
 						<dateFormatItem id="yM">M/y</dateFormatItem>
-						<dateFormatItem id="yMEd">EEE, M/d/y</dateFormatItem>
+						<dateFormatItem id="yMEd">E, M/d/y</dateFormatItem>
 						<dateFormatItem id="yMMM">MMM y</dateFormatItem>
-						<dateFormatItem id="yMMMEd">EEE, MMM d, y</dateFormatItem>
+						<dateFormatItem id="yMMMEd">E, MMM d, y</dateFormatItem>
 						<dateFormatItem id="yMMMM">MMMM y</dateFormatItem>
-						<dateFormatItem id="yQ">Q y</dateFormatItem>
 						<dateFormatItem id="yQQQ">QQQ y</dateFormatItem>
+						<dateFormatItem id="yQQQQ">QQQQ y</dateFormatItem>
 					</availableFormats>
 				</dateTimeFormats>
-				<fields>
-					<field type="era">
-						<displayName>ǁAeǃgâs</displayName>
-					</field>
-					<field type="year">
-						<displayName>Kurib</displayName>
-					</field>
-					<field type="month">
-						<displayName>ǁKhâb</displayName>
-					</field>
-					<field type="week">
-						<displayName>Wekheb</displayName>
-					</field>
-					<field type="day">
-						<displayName>Tsees</displayName>
-						<relative type="-1">ǁAri</relative>
-						<relative type="0">Neetsee</relative>
-						<relative type="1">ǁAri</relative>
-					</field>
-					<field type="weekday">
-						<displayName>Wekheb tsees</displayName>
-					</field>
-					<field type="dayperiod">
-						<displayName>ǁgoas/ǃuis</displayName>
-					</field>
-					<field type="hour">
-						<displayName>Iiri</displayName>
-					</field>
-					<field type="minute">
-						<displayName>Haib</displayName>
-					</field>
-					<field type="second">
-						<displayName>ǀGâub</displayName>
-					</field>
-					<field type="zone">
-						<displayName>ǁAeb ǀharib</displayName>
-					</field>
-				</fields>
 			</calendar>
 		</calendars>
+		<fields>
+			<field type="era">
+				<displayName>ǁAeǃgâs</displayName>
+			</field>
+			<field type="year">
+				<displayName>Kurib</displayName>
+			</field>
+			<field type="month">
+				<displayName>ǁKhâb</displayName>
+			</field>
+			<field type="week">
+				<displayName>Wekheb</displayName>
+			</field>
+			<field type="day">
+				<displayName>Tsees</displayName>
+				<relative type="-1">yesterday</relative>
+				<relative type="0">Neetsee</relative>
+				<relative type="1">tomorrow</relative>
+			</field>
+			<field type="weekday">
+				<displayName>Wekheb tsees</displayName>
+			</field>
+			<field type="dayperiod">
+				<displayName>ǁgoas/ǃuis</displayName>
+			</field>
+			<field type="hour">
+				<displayName>Iiri</displayName>
+			</field>
+			<field type="minute">
+				<displayName>Haib</displayName>
+			</field>
+			<field type="second">
+				<displayName>ǀGâub</displayName>
+			</field>
+			<field type="zone">
+				<displayName>ǁAeb ǀharib</displayName>
+			</field>
+		</fields>
 	</dates>
 	<numbers>
-		<currencyFormats>
+		<currencyFormats numberSystem="latn">
 			<currencyFormatLength>
-				<currencyFormat>
+				<currencyFormat type="standard">
 					<pattern>¤#,##0.00</pattern>
+				</currencyFormat>
+			</currencyFormatLength>
+			<currencyFormatLength type="short">
+				<currencyFormat type="standard">
+					<pattern type="1000" count="one" draft="provisional">¤0K</pattern>
+					<pattern type="1000" count="two" draft="provisional">¤0K</pattern>
+					<pattern type="1000" count="other" draft="provisional">¤0K</pattern>
+					<pattern type="10000" count="one" draft="provisional">¤00K</pattern>
+					<pattern type="10000" count="two" draft="provisional">¤00K</pattern>
+					<pattern type="10000" count="other" draft="provisional">¤00K</pattern>
+					<pattern type="100000" count="one" draft="provisional">¤000K</pattern>
+					<pattern type="100000" count="two" draft="provisional">¤000K</pattern>
+					<pattern type="100000" count="other" draft="provisional">¤000K</pattern>
+					<pattern type="1000000" count="one" draft="provisional">¤0M</pattern>
+					<pattern type="1000000" count="two" draft="provisional">¤0M</pattern>
+					<pattern type="1000000" count="other" draft="provisional">¤0M</pattern>
+					<pattern type="10000000" count="one" draft="provisional">¤00M</pattern>
+					<pattern type="10000000" count="two" draft="provisional">¤00M</pattern>
+					<pattern type="10000000" count="other" draft="provisional">¤00M</pattern>
+					<pattern type="100000000" count="one" draft="provisional">¤000M</pattern>
+					<pattern type="100000000" count="two" draft="provisional">¤000M</pattern>
+					<pattern type="100000000" count="other" draft="provisional">¤000M</pattern>
+					<pattern type="1000000000" count="one" draft="provisional">¤0G</pattern>
+					<pattern type="1000000000" count="two" draft="provisional">¤0G</pattern>
+					<pattern type="1000000000" count="other" draft="provisional">¤0G</pattern>
+					<pattern type="10000000000" count="one" draft="provisional">¤00G</pattern>
+					<pattern type="10000000000" count="two" draft="provisional">¤00G</pattern>
+					<pattern type="10000000000" count="other" draft="provisional">¤00G</pattern>
+					<pattern type="100000000000" count="one" draft="provisional">¤000G</pattern>
+					<pattern type="100000000000" count="two" draft="provisional">¤000G</pattern>
+					<pattern type="100000000000" count="other" draft="provisional">¤000G</pattern>
+					<pattern type="1000000000000" count="one" draft="provisional">¤0T</pattern>
+					<pattern type="1000000000000" count="two" draft="provisional">¤0T</pattern>
+					<pattern type="1000000000000" count="other" draft="provisional">¤0T</pattern>
+					<pattern type="10000000000000" count="one" draft="provisional">¤00T</pattern>
+					<pattern type="10000000000000" count="two" draft="provisional">¤00T</pattern>
+					<pattern type="10000000000000" count="other" draft="provisional">¤00T</pattern>
+					<pattern type="100000000000000" count="one" draft="provisional">¤000T</pattern>
+					<pattern type="100000000000000" count="two" draft="provisional">¤000T</pattern>
+					<pattern type="100000000000000" count="other" draft="provisional">¤000T</pattern>
 				</currencyFormat>
 			</currencyFormatLength>
 		</currencyFormats>
@@ -622,6 +716,9 @@
 				<displayName>Malagasy Franc</displayName>
 			</currency>
 			<currency type="MRO">
+				<displayName>Mauritania Ouguiya (1973–2017)</displayName>
+			</currency>
+			<currency type="MRU">
 				<displayName>Mauritania Ouguiya</displayName>
 			</currency>
 			<currency type="MUR">
@@ -635,6 +732,7 @@
 			</currency>
 			<currency type="NAD">
 				<displayName>Namibia Dollari</displayName>
+				<symbol>$</symbol>
 			</currency>
 			<currency type="NGN">
 				<displayName>Nigerian Naira</displayName>
@@ -664,6 +762,9 @@
 				<displayName>Somali Shillings</displayName>
 			</currency>
 			<currency type="STD">
+				<displayName>Sao Tome and Principe Dobra (1977–2017)</displayName>
+			</currency>
+			<currency type="STN">
 				<displayName>Sao Tome and Principe Dobra</displayName>
 			</currency>
 			<currency type="SZL">
@@ -691,6 +792,9 @@
 				<displayName>South African Randi</displayName>
 			</currency>
 			<currency type="ZMK">
+				<displayName>Zambian Kwachab (1968–2012)</displayName>
+			</currency>
+			<currency type="ZMW">
 				<displayName>Zambian Kwachab</displayName>
 			</currency>
 			<currency type="ZWD">

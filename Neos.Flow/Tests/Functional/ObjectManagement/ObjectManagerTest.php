@@ -68,4 +68,18 @@ class ObjectManagerTest extends FunctionalTestCase
 
         self::assertTrue($entity->isDestructed());
     }
+
+    /**
+     * @test
+     */
+    public function virtualObjectsCanBeInstantiated()
+    {
+        /** @var Fixtures\Flow175\OuterPrototype $object1 */
+        $object1 = $this->objectManager->get('Neos.Flow:VirtualObject1');
+        /** @var Fixtures\Flow175\OuterPrototype $object2 */
+        $object2 = $this->objectManager->get('Neos.Flow:VirtualObject2');
+
+        self::assertSame('Hello Bastian!', $object1->getInner()->greet('Bastian'));
+        self::assertSame('Hello Bastian from a different greeter!', $object2->getInner()->greet('Bastian'));
+    }
 }

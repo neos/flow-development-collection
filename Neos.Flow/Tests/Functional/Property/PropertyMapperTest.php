@@ -19,6 +19,7 @@ use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestClassWithMissingCollectionElementType;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -470,5 +471,17 @@ class PropertyMapperTest extends FunctionalTestCase
     {
         $actualResult = $this->propertyMapper->convert(true, 'int');
         self::assertSame(42, $actualResult);
+    }
+
+    /**
+     * @test
+     * @expectedExceptionMessage missing an element type
+     */
+    public function collectionPropertyWithMissingElementTypeThrowsHelpfulException()
+    {
+        $source = [
+            'values' => []
+        ];
+        $this->propertyMapper->convert($source, TestClassWithMissingCollectionElementType::class);
     }
 }

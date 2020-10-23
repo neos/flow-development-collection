@@ -5,7 +5,7 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">Endast vanliga tecken (a till ö) och siffror är tillåtna.</target><alt-trans><target>Endast tecknen ifrån a till z och siffror tillåts</target></alt-trans></trans-unit>
+			<target state="translated">Endast vanliga tecken (a till ö) och siffror är tillåtna.</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
@@ -13,11 +13,11 @@
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target state="translated">Det angivna ämnet är inte en samling</target><alt-trans><target>Det givna ämnet är inte en samling</target></alt-trans></trans-unit>
+			<target state="translated">Det angivna ämnet är inte en samling</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-			<target state="translated">Det angivna ämnet är inte räkenbart</target><alt-trans><target>Det givna ämnet är inte räknebart</target></alt-trans></trans-unit>
+			<target state="translated">Det angivna ämnet är inte räkenbart</target></trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
 			<target state="translated">Antalet måste vara mellan {0,number} och {1,number}</target></trans-unit>
@@ -57,22 +57,22 @@
 			<target state="translated">Ett giltigt decimalt nummer förväntas</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target state="translated">"{0}" kan ej konverteras till ett decimalt värde</target><alt-trans><target>{0}"kan inte konverteras till ett decimalt värde</target></alt-trans></trans-unit>
+			<target state="translated">"{0}" kan ej konverteras till ett decimalt värde</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
-			<target state="translated">Objekt förväntas, {0} har angivits</target><alt-trans><target>Objekt förväntas, {0} har angetts</target></alt-trans></trans-unit>
+			<target state="translated">Objekt förväntas, {0} har angivits</target></trans-unit>
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
 				<source>A valid integer number is expected</source>
 			<target state="translated">Ett giltigt heltal förväntas</target></trans-unit>
       <trans-unit id="1332933658" xml:space="preserve">
 				<source>"{0}" is no integer.</source>
-			<target state="translated">"{0}" är inget heltal.</target><alt-trans><target>{0}"är inget heltal.</target></alt-trans></trans-unit>
+			<target state="translated">"{0}" är inget heltal.</target></trans-unit>
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
-			<target state="translated">Endast bokstäver, siffror, mellanslag och vissa skiljetecken förväntas</target><alt-trans><target>Endast bokstäver, siffror, blanksteg och vissa skiljetecken förväntas</target></alt-trans></trans-unit>
+			<target state="translated">Endast bokstäver, siffror, mellanslag och vissa skiljetecken förväntas</target></trans-unit>
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve">
 				<source>Value is no valid I18n locale identifier</source>
@@ -97,24 +97,24 @@
 			<target state="translated">Alternativet "locale" kan endast anges som sträng-ID eller ett Locale objekt</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
-			<target state="translated">Ett giltigt procenttal förväntas</target><alt-trans><target>Ett giltigt procent tal förväntas</target></alt-trans></trans-unit>
+			<target state="translated">Ett giltigt procenttal förväntas</target></trans-unit>
       <trans-unit id="1281452094" xml:space="preserve">
 				<source>A valid decimal number is expected</source>
 			<target state="translated">Ett giltigt decimaltal förväntas</target></trans-unit>
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve">
 				<source>The given subject did not match the pattern. Got: {0}</source>
-			<target state="translated">Angivet ämne matchar inte mönstret. Angivet: {0}</target><alt-trans><target>Givet ämnet matchar inte mönstret. Fick: {0}</target></alt-trans></trans-unit>
+			<target state="translated">Angivet ämne matchar inte mönstret. Angivet: {0}</target></trans-unit>
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve">
 				<source>The given object could not be converted to a string</source>
-			<target state="translated">Det angivna objektet kunde ej konverteras till en sträng</target><alt-trans><target>Det angivna objektet kunde inte konverteras till en sträng</target></alt-trans></trans-unit>
+			<target state="translated">Det angivna objektet kunde ej konverteras till en sträng</target></trans-unit>
       <trans-unit id="1269883975" xml:space="preserve">
 				<source>The given value is not a valid string</source>
-			<target state="translated">Det angivna värdet är ej en giltig sträng</target><alt-trans><target>Det angivna värdet är inte en giltig sträng</target></alt-trans></trans-unit>
+			<target state="translated">Det angivna värdet är ej en giltig sträng</target></trans-unit>
       <trans-unit id="1238108067" xml:space="preserve">
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
-			<target state="translated">Texten måste vara mellan {0,number} och {1,number} tecken lång</target><alt-trans><target>Längden på denna text måste vara mellan {0,number} och {1,number} tecken</target></alt-trans></trans-unit>
+			<target state="translated">Texten måste vara mellan {0,number} och {1,number} tecken lång</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} character</source>
@@ -142,62 +142,62 @@
       <!-- TextValidator -->
       <trans-unit id="1221565786" xml:space="preserve">
 				<source>Valid text without any XML tags is expected</source>
-			<target state="translated">En giltig text utan XML-taggar förväntas</target><alt-trans><target>Giltig text utan några XML-taggar förväntas</target></alt-trans></trans-unit>
+			<target state="translated">En giltig text utan XML-taggar förväntas</target></trans-unit>
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve">
 				<source>The given subject is not a valid UUID</source>
-			<target state="translated">Det angivna ämnet är ej en giltig UUID</target><alt-trans><target>Givet ämnet är inte en giltig UUID</target></alt-trans></trans-unit>
+			<target state="translated">Det angivna ämnet är ej en giltig UUID</target></trans-unit>
       <!-- ElectronicAddressValidator -->
       <trans-unit id="1268676030" xml:space="preserve">
 				<source>No validator found for electronic address of type "{0}"</source>
-			<target state="translated">Ingen validerare har hittats för elektronisk adress av typen "{0}"</target><alt-trans><target>Ingen validerare har hittats för elektronisk adress av typen {0}</target></alt-trans></trans-unit>
+			<target state="translated">Ingen validerare har hittats för elektronisk adress av typen "{0}"</target></trans-unit>
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve">
 				<source>The person name cannot be empty</source>
-			<target state="translated">Personens namn kan ej lämnas tomt</target><alt-trans><target>Personens namn kan inte vara tomt</target></alt-trans></trans-unit>
+			<target state="translated">Personens namn kan ej lämnas tomt</target></trans-unit>
       <!-- Package "Neos.Media" -->
       <!-- ImageTypeValidator -->
       <trans-unit id="1327947256" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target state="translated">Det angivna värdet är ingen bildinstans</target><alt-trans><target>Det angivna värdet är inte en Image instans</target></alt-trans></trans-unit>
+			<target state="translated">Det angivna värdet är ingen bildinstans</target></trans-unit>
       <trans-unit id="1327947647" xml:space="preserve">
 				<source>The image type "{0}" is not allowed</source>
-			<target state="translated">Bildtyp "{0}" är ej tillåtet</target><alt-trans><target>Image type {0}"är inte tillåtet</target></alt-trans></trans-unit>
+			<target state="translated">Bildtyp "{0}" är ej tillåtet</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
-			<target state="translated">Den uppladdade filen är ej en giltig bild</target><alt-trans><target>Den uppladdade filen är ingen giltig bild</target></alt-trans></trans-unit>
+			<target state="translated">Den uppladdade filen är ej en giltig bild</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target state="translated">Det angivna värdet är ingen bildinstans</target><alt-trans><target>Det angivna värdet är inte en Image instans</target></alt-trans></trans-unit>
+			<target state="translated">Det angivna värdet är ingen bildinstans</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target state="translated">Den faktiskta bildbredden {0,number} är mindre än den minsta tillåtna bredden på {1,number}</target><alt-trans><target>Den faktiskta bild bredden {0,number} är lägre än minsta tillåtna bredd av {1,number}</target></alt-trans></trans-unit>
+			<target state="translated">Den faktiskta bildbredden {0,number} är mindre än den minsta tillåtna bredden på {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target state="translated">Den faktiskta bildbredden {0,number} är större än högsta tillåtna bredden på {1,number}</target><alt-trans><target>Den faktiskta bild bredden {0,number} är lägre än minsta tillåtna bredd av {1,number}</target></alt-trans></trans-unit>
+			<target state="translated">Den faktiskta bildbredden {0,number} är större än högsta tillåtna bredden på {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target state="translated">Den faktiska bildhöjden på {0,number} är mindre än den minsta tillåtna höjden på {1,number}</target><alt-trans><target>Den faktiska höjden av {0,number} är lägre än den minst tillåtna höjden av {1,number}</target></alt-trans></trans-unit>
+			<target state="translated">Den faktiska bildhöjden på {0,number} är mindre än den minsta tillåtna höjden på {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target state="translated">Den faktiska bildhöjden på {0,number} är större än den största tillåtna höjden på {1,number}</target><alt-trans><target>Den faktiska höjden av {0,number} är lägre än den minst tillåtna höjden av {1,number}</target></alt-trans></trans-unit>
+			<target state="translated">Den faktiska bildhöjden på {0,number} är större än den största tillåtna höjden på {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
-			<target state="translated">Den angivna bildstorleken {0,number} x {1,number} är för låg för den nödvändiga minsta upplösningen på {2,number}</target><alt-trans><target>Den givna bildstorleken {0,number} x {1,number} är för låg för den nödvändiga minsta upplösningen på {2,number}</target></alt-trans></trans-unit>
+			<target state="translated">Den angivna bildstorleken {0,number} x {1,number} är för låg för den nödvändiga minsta upplösningen på {2,number}</target></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-			<target state="translated">Den angivna bildstorleken {0,number} x {1,number} är för stor för den nödvändiga högsta upplösningen på {2,number}</target><alt-trans><target>Den givna bildstorleken {0,number} x {1,number} är för låg för den nödvändiga minsta upplösningen på {2,number}</target></alt-trans></trans-unit>
+			<target state="translated">Den angivna bildstorleken {0,number} x {1,number} är för stor för den nödvändiga högsta upplösningen på {2,number}</target></trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
-			<target state="translated">Det angivna värdet är ingen bildinstans</target><alt-trans><target>Det angivna värdet är inte en Image instans</target></alt-trans></trans-unit>
+			<target state="translated">Det angivna värdet är ingen bildinstans</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve">
 				<source>The image orientation must be "{0}"</source>
-			<target state="translated">Bildriktning måste vara "{0}"</target><alt-trans><target>Bildriktning måste vara {0}</target></alt-trans></trans-unit>
+			<target state="translated">Bildriktning måste vara "{0}"</target></trans-unit>
       <trans-unit id="1328029362" xml:space="preserve">
 				<source>The image orientation "{0}" is not allowed</source>
-			<target state="translated">Bildriktning "{0}" är inte tillåtet</target><alt-trans><target>Bildriktning "{0}"är inte tillåtet</target></alt-trans></trans-unit>
+			<target state="translated">Bildriktning "{0}" är inte tillåtet</target></trans-unit>
     </body>
   </file>
 </xliff>
