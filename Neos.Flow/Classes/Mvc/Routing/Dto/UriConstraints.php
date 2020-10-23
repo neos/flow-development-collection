@@ -289,7 +289,7 @@ final class UriConstraints
      * Returns the URI path constraint, which consists of the path and query string parts, or NULL if none was set
      *
      * @return string|null
-     * @deprecated With Flow 7.0, use toUri()->getPath() instead. @see toUri()
+     * @deprecated With Flow 7.0, use toUri()->getPath() and/or toUri()->getQuery() instead. @see toUri()
      */
     public function getPathConstraint(): ?string
     {
