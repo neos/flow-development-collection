@@ -48,9 +48,12 @@ final class RoleIdentifiers implements \JsonSerializable, \IteratorAggregate, \C
     public static function fromArray(array $roleIdentifiers): self
     {
         $processedRoleIdentifiers = [];
-        array_walk($roleIdentifiers, static function ($roleIdentifier) use (&$processedRoleIdentifiers) {
-            $processedRoleIdentifiers[(string)$roleIdentifier] = $roleIdentifier;
-        });
+        foreach ($roleIdentifiers as $roleIdentifier) {
+            if (!is_string($roleIdentifier)) {
+                throw new \InvalidArgumentException(sprintf('Expected an array of strings, got: %s', gettype($roleIdentifier)), 1602174016);
+            }
+            $processedRoleIdentifiers[$roleIdentifier] = $roleIdentifier;
+        }
         return new static($processedRoleIdentifiers);
     }
 
@@ -88,21 +91,14 @@ final class RoleIdentifiers implements \JsonSerializable, \IteratorAggregate, \C
     }
 
     /**
-     * @param $offset
-     * @return mixed|Role|null
-     */
-    public function offsetGet($offset)
-    {
-        return $this->roles[$offset] ?? null;
-    }
-
-    /**
      * @param string $roleIdentifier
      * @return RoleIdentifiers
      */
     public function withRoleIdentifier(string $roleIdentifier): RoleIdentifiers
     {
-        return new self(array_merge($this->roleIdentifiers, [(string)$roleIdentifier => $roleIdentifier]));
+        $newRoleIdentifiers = $this->roleIdentifiers;
+        $newRoleIdentifiers[$roleIdentifier] = $roleIdentifier;
+        return new self($newRoleIdentifiers);
     }
 
     /**
@@ -111,6 +107,8 @@ final class RoleIdentifiers implements \JsonSerializable, \IteratorAggregate, \C
      */
     public function withoutRoleIdentifier(string $roleIdentifier): RoleIdentifiers
     {
-        return new self(array_diff($this->roleIdentifiers, [(string)$roleIdentifier => $roleIdentifier]));
+        $newRoleIdentifiers = $this->roleIdentifiers;
+        unset($newRoleIdentifiers[$roleIdentifier]);
+        return new self($newRoleIdentifiers);
     }
 }
