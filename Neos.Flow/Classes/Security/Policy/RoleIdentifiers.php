@@ -97,7 +97,7 @@ final class RoleIdentifiers implements \JsonSerializable, \IteratorAggregate, \C
     public function withRoleIdentifier(string $roleIdentifier): RoleIdentifiers
     {
         $newRoleIdentifiers = $this->roleIdentifiers;
-        $newRoleIdentifiers[$roleIdentifier] = $roleIdentifier;
+        $newRoleIdentifiers[$roleIdentifier] = $roleIdentifier;
         return new self($newRoleIdentifiers);
     }
 
