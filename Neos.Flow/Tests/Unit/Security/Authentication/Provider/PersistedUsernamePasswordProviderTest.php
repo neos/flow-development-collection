@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Provider;
  */
 
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security;
 use Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider;
 use Neos\Flow\Tests\UnitTestCase;
