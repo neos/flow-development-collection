@@ -35,9 +35,9 @@ class StaticResourceHelper implements ProtectedContextAwareInterface
     /**
      * Get the public uri of a package resource
      *
-     * @param string $packageKey
-     * @param string $pathAndFilename
-     * @param bool $localize
+     * @param string $packageKey Package key where the resource is from.
+     * @param string $pathAndFilename The path and filename of the resource. Has to start with "Public/..." as private resources do not have a uri.
+     * @param bool $localize If enabled localizing of the resource is attempted by adding locales from the current locale-chain between filename and extension.
      * @return string
      */
     public function uri(string $packageKey, string $pathAndFilename, bool $localize = false): string
@@ -49,9 +49,9 @@ class StaticResourceHelper implements ProtectedContextAwareInterface
     /**
      * Get the content of a package resource
      *
-     * @param string $packageKey
-     * @param string $pathAndFilename
-     * @param bool $localize
+     * @param string $packageKey Package key where the resource is from.
+     * @param string $pathAndFilename The path and filename of the resource. Starting with "Public/..." or "Private/..."
+     * @param bool $localize If enabled localizing of the resource is attempted by adding locales from the current locale-chain between filename and extension.
      * @return string
      */
     public function content(string $packageKey, string $pathAndFilename, bool $localize = false): string
@@ -82,7 +82,7 @@ class StaticResourceHelper implements ProtectedContextAwareInterface
      * @param string $methodName
      * @return bool
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod($methodName): bool
     {
         return true;
     }
