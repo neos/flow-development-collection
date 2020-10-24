@@ -24,25 +24,37 @@ class RoleTest extends UnitTestCase
      *
      * @return array
      */
-    public function roleIdentifiersAndPackageKeysAndNames()
+    public function roleIdentifiersAndPackageKeysAndNames(): array
     {
         return [
-            ['Neos.Flow:Everybody', 'Everybody', 'Neos.Flow'],
-            ['Acme.Demo:Test', 'Test', 'Acme.Demo'],
-            ['Acme.Demo.Sub:Test', 'Test', 'Acme.Demo.Sub']
+            ['Neos.Flow:Everybody', 'Everybody', 'Neos.Flow', 'A role for everybody', 'The role is automatically assigned to every session'],
+            ['Acme.Demo:Test', 'Test', 'Acme.Demo', 'just a label', ''],
+            ['Acme.Demo.Sub:Test', 'Test', 'Acme.Demo.Sub', '', 'A descriptive description']
         ];
     }
 
     /**
      * @dataProvider roleIdentifiersAndPackageKeysAndNames
      * @test
+     * @param string $roleIdentifier
+     * @param string $name
+     * @param string $packageKey
+     * @param string $label
+     * @param string $description
      */
-    public function setNameAndPackageKeyWorks($roleIdentifier, $name, $packageKey)
+    public function setNameTolePropertiesWork(string $roleIdentifier, string $name, string $packageKey, string $label, string $description): void
     {
-        $role = new Role($roleIdentifier);
+        $role = new Role($roleIdentifier, [], $label, $description);
 
         self::assertEquals($name, $role->getName());
         self::assertEquals($packageKey, $role->getPackageKey());
+        self::assertEquals($description, $role->getDescription());
+
+        if ($label === '') {
+            self::assertEquals($role->getName(), $role->getLabel());
+        } else {
+            self::assertEquals($label, $role->getLabel());
+        }
     }
 
     /**

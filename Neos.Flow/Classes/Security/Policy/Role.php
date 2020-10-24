@@ -79,9 +79,10 @@ class Role
     /**
      * @param string $identifier The fully qualified identifier of this role (Vendor.Package:Role)
      * @param Role[] $parentRoles
-     * @throws \InvalidArgumentException
+     * @param string $label A label for this role
+     * @param string $description A description on this role
      */
-    public function __construct(string $identifier, array $parentRoles = [])
+    public function __construct(string $identifier, array $parentRoles = [], string $label = '', string $description = '')
     {
         if (preg_match(self::ROLE_IDENTIFIER_PATTERN, $identifier, $matches) !== 1) {
             throw new \InvalidArgumentException('The role identifier must follow the pattern "Vendor.Package:RoleName", but "' . $identifier . '" was given. Please check the code or policy configuration creating or defining this role.', 1365446549);
@@ -89,7 +90,8 @@ class Role
         $this->identifier = $identifier;
         $this->packageKey = $matches[1];
         $this->name = $matches[2];
-        $this->label = $matches[2];
+        $this->label = $label ?: $matches[2];
+        $this->description = $description;
         $this->parentRoles = $parentRoles;
     }
 
@@ -291,26 +293,10 @@ class Role
     }
 
     /**
-     * @param string $label
-     */
-    public function setLabel(string $label): void
-    {
-        $this->label = $label;
-    }
-
-    /**
      * @return string
      */
     public function getDescription(): string
     {
         return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription(string $description): void
-    {
-        $this->description = $description;
     }
 }

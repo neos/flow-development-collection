@@ -114,12 +114,8 @@ class PolicyService
                 if ($roleIdentifier === 'Neos.Flow:Everybody') {
                     $role = $everybodyRole;
                 } else {
-                    $role = new Role($roleIdentifier);
+                    $role = new Role($roleIdentifier, [], (string)($roleConfiguration['label'] ?? ''), (string)($roleConfiguration['description'] ?? ''));
                     $role->setAbstract((bool)($roleConfiguration['abstract'] ?? false));
-                    if (isset($roleConfiguration['label'])) {
-                        $role->setLabel((string)$roleConfiguration['label']);
-                    }
-                    $role->setDescription((string)($roleConfiguration['description'] ?? ''));
                 }
 
                 if (isset($roleConfiguration['privileges'])) {
