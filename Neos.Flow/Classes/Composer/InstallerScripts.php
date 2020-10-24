@@ -71,7 +71,7 @@ class InstallerScripts
         if (!$operation instanceof InstallOperation && !$operation instanceof UpdateOperation) {
             throw new Exception\UnexpectedOperationException('Handling of operation with type "' . $operation->getJobType() . '" not supported', 1348750840);
         }
-        $package = ($operation->getJobType() === 'install') ? $operation->getPackage() : $operation->getTargetPackage();
+        $package = ($operation instanceof InstallOperation) ? $operation->getPackage() : $operation->getTargetPackage();
         $packageExtraConfig = $package->getExtra();
         $installPath = $event->getComposer()->getInstallationManager()->getInstallPath($package);
 
@@ -83,7 +83,7 @@ class InstallerScripts
             $evaluatedInstallerResources = true;
         }
 
-        if ($operation->getJobType() === 'install') {
+        if ($operation instanceof InstallOperation) {
             if (isset($packageExtraConfig['typo3/flow']['post-install'])) {
                 self::runPackageScripts($packageExtraConfig['typo3/flow']['post-install']);
             }
@@ -92,7 +92,7 @@ class InstallerScripts
             }
         }
 
-        if ($operation->getJobType() === 'update') {
+        if ($operation instanceof UpdateOperation) {
             if (isset($packageExtraConfig['typo3/flow']['post-update'])) {
                 self::runPackageScripts($packageExtraConfig['typo3/flow']['post-update']);
             }
