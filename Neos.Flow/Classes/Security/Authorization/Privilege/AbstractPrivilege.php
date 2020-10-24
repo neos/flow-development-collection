@@ -190,7 +190,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
      *
      * @return string
      */
-    public function getParsedMatcher()
+    public function getParsedMatcher(): string
     {
         $parsedMatcher = $this->matcher;
         // TODO: handle parameters that are not strings
