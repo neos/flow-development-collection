@@ -110,8 +110,9 @@ class Package extends BasePackage
             $dispatcher->connect(Monitor\FileMonitor::class, 'filesHaveChanged', Cache\CacheManager::class, 'flushSystemCachesByChangedFiles');
         }
 
-        $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Configuration\ConfigurationManager::class, 'shutdown');
+        // The ObjectManager has to be shutdown before the ConfigurationManager, see https://github.com/neos/flow-development-collection/issues/2183
         $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', ObjectManagement\ObjectManagerInterface::class, 'shutdown');
+        $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Configuration\ConfigurationManager::class, 'shutdown');
 
         $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Reflection\ReflectionService::class, 'saveToCache');
 
