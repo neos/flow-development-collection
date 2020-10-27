@@ -3143,6 +3143,9 @@
     <InvalidCast occurrences="1">
       <code>$valueElement</code>
     </InvalidCast>
+    <TypeDoesNotContainType occurrences="1">
+      <code>is_array($value)</code>
+    </TypeDoesNotContainType>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/FormViewHelper.php">
     <InvalidScalarArgument occurrences="1">
@@ -3151,6 +3154,11 @@
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
+  </file>
+  <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Format/BytesViewHelper.php">
+    <InvalidScalarArgument occurrences="1">
+      <code>$value</code>
+    </InvalidScalarArgument>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Format/CaseViewHelper.php">
     <InvalidScalarArgument occurrences="2">
