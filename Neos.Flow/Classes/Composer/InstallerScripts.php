@@ -71,7 +71,7 @@ class InstallerScripts
         if (!$operation instanceof InstallOperation && !$operation instanceof UpdateOperation) {
             throw new Exception\UnexpectedOperationException('Handling of operation with type "' . $operation->getJobType() . '" not supported', 1348750840);
         }
-        $package = ($operation->getJobType() === 'install') ? $operation->getPackage() : $operation->getTargetPackage();
+        $package = ($operation instanceof InstallOperation) ? $operation->getPackage() : $operation->getTargetPackage();
         $packageExtraConfig = $package->getExtra();
         $installPath = $event->getComposer()->getInstallationManager()->getInstallPath($package);
 
@@ -81,16 +81,12 @@ class InstallerScripts
             }
         }
 
-        if ($operation->getJobType() === 'install') {
-            if (isset($packageExtraConfig['neos/flow']['post-install'])) {
-                self::runPackageScripts($packageExtraConfig['neos/flow']['post-install']);
-            }
+        if ($operation instanceof InstallOperation && isset($packageExtraConfig['neos/flow']['post-install'])) {
+            self::runPackageScripts($packageExtraConfig['neos/flow']['post-install']);
         }
 
-        if ($operation->getJobType() === 'update') {
-            if (isset($packageExtraConfig['neos/flow']['post-update'])) {
-                self::runPackageScripts($packageExtraConfig['neos/flow']['post-update']);
-            }
+        if ($operation instanceof UpdateOperation && isset($packageExtraConfig['neos/flow']['post-update'])) {
+            self::runPackageScripts($packageExtraConfig['neos/flow']['post-update']);
         }
     }
 

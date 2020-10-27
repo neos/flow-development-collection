@@ -5,6 +5,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -64,15 +65,17 @@ class BaseUriProvider
     /**
      * Gives the best possible base URI with the following priority:
      * - configured base URI
-     * - generated base URI from request
+     * - generated base URI from currently active server request
+     * - generated base URI from specified $fallbackRequest
      *
      * To ensure a base URI can always be provided this will throw an
      * exception if none of the options yields a result.
      *
+     * @param ServerRequestInterface|null $fallbackRequest HTTP request to be used if no base Uri is configured and the currently active request can't be determined (e.g. in CLI context)
      * @return UriInterface
      * @throws Exception
      */
-    public function getConfiguredBaseUriOrFallbackToCurrentRequest(): UriInterface
+    public function getConfiguredBaseUriOrFallbackToCurrentRequest(ServerRequestInterface $fallbackRequest = null): UriInterface
     {
         $baseUri = $this->getConfiguredBaseUri();
         if ($baseUri instanceof UriInterface) {
@@ -84,6 +87,10 @@ class BaseUriProvider
             return $baseUri;
         }
 
-        throw new Exception('No base URI could be provided. This probably means a call was made outside of an HTTP request and a base URI was neither configured nor set during runtime.', 1567529953);
+        if ($fallbackRequest !== null) {
+            return RequestInformationHelper::generateBaseUri($fallbackRequest);
+        }
+
+        throw new Exception('No base URI could be provided. This probably means a call was made outside of an HTTP request and a base URI was neither configured nor specified as $fallbackRequest.', 1567529953);
     }
 }
