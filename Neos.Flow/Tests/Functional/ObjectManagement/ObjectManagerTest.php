@@ -70,7 +70,7 @@ class ObjectManagerTest extends FunctionalTestCase
          */
         \Neos\Flow\Core\Bootstrap::$staticObjectManager->shutdown();
 
-        $this->assertTrue($entity->isDestructed());
+        self::assertTrue($entity->isDestructed());
     }
 
     /**
@@ -78,7 +78,7 @@ class ObjectManagerTest extends FunctionalTestCase
      * @see https://github.com/neos/flow-development-collection/issues/2183
      * @test
      */
-    public function objectManagerShutdownSlotIsRegisteredBeforeConfigurationManager()
+    public function objectManagerShutdownSlotIsRegisteredBeforeConfigurationManager(): void
     {
         $dispatcher = $this->objectManager->get(Dispatcher::class);
         $slots = $dispatcher->getSlots(Bootstrap::class, 'bootstrapShuttingDown');
@@ -101,18 +101,7 @@ class ObjectManagerTest extends FunctionalTestCase
         self::assertSame(ObjectManagerInterface::class, $first);
         self::assertSame(ConfigurationManager::class, $last);
     }
-
-    /**
-     * XXX: Remove this with Flow 6.0
-     * @test
-     */
-    public function deprecatedDoctrineObjectManagerInjectsSameInstanceAsEntityManagerInterface()
-    {
-        $classWithInjections = $this->objectManager->get(Fixtures\ClassWithDoctrineInjections::class);
-
-        $this->assertSame($classWithInjections->entityManager, $classWithInjections->objectManager);
-    }
-
+    
     /**
      * @test
      */
