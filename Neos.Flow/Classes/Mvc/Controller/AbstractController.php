@@ -349,7 +349,9 @@ abstract class AbstractController implements ControllerInterface
         $this->response->setStatusCode($statusCode);
         if ($content === null) {
             $content = sprintf(
-                '%s %s', $statusCode, $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
+                '%s %s',
+                $statusCode,
+                $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
             );
         }
         $this->response->setContent($content);
