@@ -60,14 +60,14 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
         $this->validator->_set('options', ['elementValidator' => 'Integer', 'elementValidatorOptions' => []]);
         $this->mockValidatorResolver->expects($this->exactly(4))->method('createValidator')->with('Integer')->willReturn(new IntegerValidator());
 
-        $arrayOfEmailAddresses = [
+        $arrayOfIntegers = [
             1,
             'not a valid integer',
             10,
             'also not valid'
         ];
 
-        $result = $this->validator->validate($arrayOfEmailAddresses);
+        $result = $this->validator->validate($arrayOfIntegers);
 
         $this->assertTrue($result->hasErrors());
         $this->assertEquals(2, count($result->getFlattenedErrors()));
