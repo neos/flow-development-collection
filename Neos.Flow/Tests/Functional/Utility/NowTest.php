@@ -26,6 +26,6 @@ class NowTest extends FunctionalTestCase
     {
         $now = $this->objectManager->get(Utility\Now::class);
         $alsoNow = $this->objectManager->get(Utility\Now::class);
-        $this->assertSame($now->getTimeStamp(), $alsoNow->getTimeStamp());
+        self::assertSame($now->getTimeStamp(), $alsoNow->getTimeStamp());
     }
 }

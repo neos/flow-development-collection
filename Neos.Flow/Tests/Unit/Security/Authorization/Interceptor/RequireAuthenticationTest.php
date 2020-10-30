@@ -27,7 +27,7 @@ class RequireAuthenticationTest extends UnitTestCase
     {
         $authenticationManager = $this->createMock(AuthenticationManagerInterface::class);
 
-        $authenticationManager->expects($this->once())->method('authenticate');
+        $authenticationManager->expects(self::once())->method('authenticate');
 
         $interceptor = new RequireAuthentication($authenticationManager);
         $interceptor->invoke();

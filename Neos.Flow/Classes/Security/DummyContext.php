@@ -13,7 +13,6 @@ namespace Neos\Flow\Security;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Policy\Role;
 
@@ -46,7 +45,7 @@ class DummyContext extends Context
     protected $csrfProtectionToken;
 
     /**
-     * @var RequestInterface
+     * @var ActionRequest
      */
     protected $interceptedRequest;
 

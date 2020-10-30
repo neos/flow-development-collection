@@ -9,6 +9,10 @@ the persistence based on the *Doctrine* 2 ORM first. There is another mechanism 
 called *Generic* persistence, which can be used to add your own persistence backends to
 Flow. It is explained separately later in the chapter.
 
+.. note::
+
+  The *Generic* persistence is deprecated as of Flow 6.0 and will be dropped in Flow 7.0.
+
 .. tip::
 
 	If you have experience with Doctrine 2 already, your knowledge can
@@ -396,6 +400,8 @@ with their name, scope and meaning:
 | ``OneToOne``     |          | ``targetEntity`` parameter can be omitted, it is taken   |
 |                  |          | from the ``@var`` annotation.                            |
 |                  |          |                                                          |
+|                  |          | See below for unidirectional ``OneToMany`` relations!    |
+|                  |          |                                                          |
 |                  |          | The ``cascade`` attribute is set to cascade all          |
 |                  |          | operations on associations within aggregate boundaries.  |
 |                  |          | In that case orphanRemoval is turned on as well.         |
@@ -415,6 +421,35 @@ with their name, scope and meaning:
 
 Doctrine supports many more annotations, for a full reference please consult the Doctrine
 2 ORM documentation.
+
+On unidirectional ``OneToMany`` relations
+-----------------------------------------
+
+Inside a single aggregate `OneToMany` relations are normally best modeled unidirectionally.
+Bidirectional relations always are harder to manage correctly and can easily lead to
+unintentional traversal of entity hierarchies with all the drawbacks.
+
+Since Doctrines `OneToMany` annotation is always bidrectional and also dictates the owning
+side of the relation (at the unexpected side from a modeling PoV), it is not straightforward
+to model this correctly.
+
+In Flow specifically, we try to follow DDD best practices in modelling and this means, that
+the aggregate root is the entry point and the entity that is sent to a repository to persist
+it and all its sub-entities. This can not be achieved with the standard doctrine `OneToMany`
+annotation when the one side is supposed to be closer to the root.
+
+So Flow allows the you to annotate such a relation simply as:
+
+
+.. code-block:: php
+
+  /**
+   * @ORM\OneToMany
+   * @var Collection<Comment>
+   */
+
+This is done by remapping `OneToMany` annotations without a `mappedBy` as `ManyToMany` with
+an unique constraint.
 
 On Value Object handling with Doctrine
 --------------------------------------
@@ -1200,6 +1235,10 @@ What is now called *Generic* Persistence, used to be the only persistence layer 
 Back in those days there was no ORM available that fit our needs. That being said, with
 the advent of Doctrine 2, your best bet as a PHP developer is to use that instead of any
 home-brewn ORM.
+
+.. note::
+
+  The *Generic* persistence is deprecated as of Flow 6.0 and will be dropped in Flow 7.0.
 
 When your target is not a relational database, things look slightly different, which is
 why the "old" code is still available for use, primarily by alternative backends like the

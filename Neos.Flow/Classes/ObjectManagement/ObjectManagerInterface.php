@@ -44,6 +44,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * Dependency Injection.
      *
      * @param string $objectName The name of the object to return an instance of
+     * @param mixed[] ...$arguments Any number of arguments that should be passed to the constructor of the object
      * @return object The object instance
      * @api
      */
@@ -90,8 +91,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * rare cases.
      *
      * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
-     * @return mixed Either the mixed case object name or false if no object of that name was found.
-     * @api
+     * @return string|null Either the mixed case object name or false if no object of that name was found.
      */
     public function getCaseSensitiveObjectName($caseInsensitiveObjectName);
 

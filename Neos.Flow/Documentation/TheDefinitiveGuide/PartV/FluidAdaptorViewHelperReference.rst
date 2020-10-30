@@ -3,7 +3,7 @@
 FluidAdaptor ViewHelper Reference
 =================================
 
-This reference was automatically generated from code on 2020-04-01
+This reference was automatically generated from code on 2020-10-27
 
 
 .. _`FluidAdaptor ViewHelper Reference: f:debug`:
@@ -1243,6 +1243,8 @@ Formats an integer with a byte count into human-readable form.
 Arguments
 *********
 
+* ``forceLocale`` (mixed, *optional*): Whether if, and what, Locale should be used. May be boolean, string or \Neos\Flow\I18n\Locale
+
 * ``value`` (integer, *optional*): The incoming data to convert, or NULL if VH children should be used
 
 * ``decimals`` (integer, *optional*): The number of digits after the decimal point
@@ -1250,6 +1252,8 @@ Arguments
 * ``decimalSeparator`` (string, *optional*): The decimal point character
 
 * ``thousandsSeparator`` (string, *optional*): The character for grouping the thousand digits
+
+* ``localeFormatLength`` (string, *optional*): Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_*'s constants.
 
 
 
@@ -1268,7 +1272,7 @@ Expected result::
 	// depending on the value of {fileSize}
 
 
-**Defaults**::
+**With all parameters**::
 
 	{fileSize -> f:format.bytes(decimals: 2, decimalSeparator: ',', thousandsSeparator: ',')}
 
@@ -1276,6 +1280,28 @@ Expected result::
 Expected result::
 
 	1,023.00 B
+	// depending on the value of {fileSize}
+
+
+**Inline notation with current locale used**::
+
+	{fileSize -> f:format.bytes(forceLocale: true)}
+
+
+Expected result::
+
+	6.543,21 KB
+	// depending on the value of {fileSize} and the current locale
+
+
+**Inline notation with specific locale used**::
+
+	{fileSize -> f:format.bytes(forceLocale: 'de_CH')}
+
+
+Expected result::
+
+	1'337.42 MB
 	// depending on the value of {fileSize}
 
 
@@ -2127,7 +2153,7 @@ arguments.
 Arguments
 *********
 
-* ``arguments`` (array, *optional*)
+* ``arguments`` (array, *optional*): Arguments to pass to the rendering
 
 
 
@@ -2695,15 +2721,15 @@ Make sure to include jQuery and jQuery UI in the HTML, like that:
 Arguments
 *********
 
-* ``objects`` (Neos\Flow\Persistence\QueryResultInterface)
-
-* ``for`` (string)
-
-* ``searchProperty`` (string)
-
-* ``configuration`` (array, *optional*)
-
 * ``widgetId`` (string, *optional*): Unique identifier of the widget instance
+
+* ``objects`` (Neos\Flow\Persistence\QueryResultInterface): Objects
+
+* ``for`` (string): for
+
+* ``searchProperty`` (string): Property to search
+
+* ``configuration`` (array, *optional*): Widget configuration
 
 
 
@@ -2727,18 +2753,6 @@ Arguments
 * ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
-
-* ``action`` (string, *optional*): Target action
-
-* ``arguments`` (array, *optional*): Arguments
-
-* ``section`` (string, *optional*): The anchor to be added to the URI
-
-* ``format`` (string, *optional*): The requested format, e.g. ".html
-
-* ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise.
-
-* ``includeWidgetContext`` (boolean, *optional*): true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -2766,6 +2780,18 @@ Arguments
 
 * ``target`` (string, *optional*): Specifies where to open the linked document
 
+* ``action`` (string, *optional*): Target action
+
+* ``arguments`` (array, *optional*): Arguments
+
+* ``section`` (string, *optional*): The anchor to be added to the URI
+
+* ``format`` (string, *optional*): The requested format, e.g. ".html"
+
+* ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise
+
+* ``includeWidgetContext`` (boolean, *optional*): true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
+
 
 
 
@@ -2784,13 +2810,13 @@ This ViewHelper renders a Pagination of objects.
 Arguments
 *********
 
-* ``objects`` (Neos\Flow\Persistence\QueryResultInterface)
-
-* ``as`` (string)
-
-* ``configuration`` (array, *optional*)
-
 * ``widgetId`` (string, *optional*): Unique identifier of the widget instance
+
+* ``objects`` (Neos\Flow\Persistence\QueryResultInterface): Objects
+
+* ``as`` (string): as
+
+* ``configuration`` (array, *optional*): Widget configuration
 
 
 
@@ -2811,15 +2837,15 @@ This ViewHelper can be used inside widget templates in order to render URIs poin
 Arguments
 *********
 
-* ``action`` (string, *optional*): Target action
+* ``action`` (string): Target action
 
 * ``arguments`` (array, *optional*): Arguments
 
 * ``section`` (string, *optional*): The anchor to be added to the URI
 
-* ``format`` (string, *optional*): The requested format, e.g. ".html
+* ``format`` (string, *optional*): The requested format, e.g. ".html"
 
-* ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise.
+* ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise
 
 * ``includeWidgetContext`` (boolean, *optional*): true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
 

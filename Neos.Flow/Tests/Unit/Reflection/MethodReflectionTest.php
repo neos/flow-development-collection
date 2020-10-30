@@ -30,7 +30,7 @@ class MethodReflectionTest extends UnitTestCase
     public function getDeclaringClassReturnsFlowsClassReflection()
     {
         $method = new Reflection\MethodReflection(__CLASS__, __FUNCTION__);
-        $this->assertInstanceOf(Reflection\ClassReflection::class, $method->getDeclaringClass());
+        self::assertInstanceOf(Reflection\ClassReflection::class, $method->getDeclaringClass());
     }
 
     /**
@@ -40,8 +40,8 @@ class MethodReflectionTest extends UnitTestCase
     {
         $method = new Reflection\MethodReflection(__CLASS__, __FUNCTION__);
         foreach ($method->getParameters() as $parameter) {
-            $this->assertInstanceOf(Reflection\ParameterReflection::class, $parameter);
-            $this->assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
+            self::assertInstanceOf(Reflection\ParameterReflection::class, $parameter);
+            self::assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
         }
     }
 }

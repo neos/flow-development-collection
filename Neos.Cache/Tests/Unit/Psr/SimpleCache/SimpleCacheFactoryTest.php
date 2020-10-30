@@ -21,7 +21,7 @@ class SimpleCacheFactoryTest extends BaseTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         vfsStream::setup('Temporary/Directory/');
 

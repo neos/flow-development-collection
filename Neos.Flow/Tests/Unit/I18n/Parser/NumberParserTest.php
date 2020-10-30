@@ -67,7 +67,7 @@ class NumberParserTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->sampleLocale = new I18n\Locale('en_GB');
     }
@@ -120,7 +120,7 @@ class NumberParserTest extends UnitTestCase
     {
         $parser = $this->getAccessibleMock(I18n\Parser\NumberParser::class, ['dummy']);
         $result = $parser->_call('doParsingInStrictMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
-        $this->assertEquals($expectedParsedNumber, $result);
+        self::assertEquals($expectedParsedNumber, $result);
     }
 
     /**
@@ -131,7 +131,7 @@ class NumberParserTest extends UnitTestCase
     {
         $parser = $this->getAccessibleMock(I18n\Parser\NumberParser::class, ['dummy']);
         $result = $parser->_call('doParsingInStrictMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
-        $this->assertEquals(false, $result);
+        self::assertEquals(false, $result);
     }
 
     /**
@@ -142,7 +142,7 @@ class NumberParserTest extends UnitTestCase
     {
         $parser = $this->getAccessibleMock(I18n\Parser\NumberParser::class, ['dummy']);
         $result = $parser->_call('doParsingInLenientMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
-        $this->assertEquals($expectedParsedNumber, $result);
+        self::assertEquals($expectedParsedNumber, $result);
     }
 
     /**
@@ -153,7 +153,7 @@ class NumberParserTest extends UnitTestCase
     {
         $parser = $this->getAccessibleMock(I18n\Parser\NumberParser::class, ['dummy']);
         $result = $parser->_call('doParsingInLenientMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
-        $this->assertEquals($expectedParsedNumber, $result);
+        self::assertEquals($expectedParsedNumber, $result);
     }
 
     /**
@@ -163,14 +163,14 @@ class NumberParserTest extends UnitTestCase
     public function parsingUsingCustomPatternWorks($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat)
     {
         $mockNumbersReader = $this->createMock(I18n\Cldr\Reader\NumbersReader::class);
-        $mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($stringFormat)->will($this->returnValue($parsedFormat));
-        $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
+        $mockNumbersReader->expects(self::once())->method('parseCustomFormat')->with($stringFormat)->will(self::returnValue($parsedFormat));
+        $mockNumbersReader->expects(self::once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will(self::returnValue($this->sampleLocalizedSymbols));
 
         $parser = new I18n\Parser\NumberParser();
         $parser->injectNumbersReader($mockNumbersReader);
 
         $result = $parser->parseNumberWithCustomPattern($numberToParse, $stringFormat, $this->sampleLocale, true);
-        $this->assertEquals($expectedParsedNumber, $result);
+        self::assertEquals($expectedParsedNumber, $result);
     }
 
     /**
@@ -180,8 +180,8 @@ class NumberParserTest extends UnitTestCase
     public function specificFormattingMethodsWork($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat)
     {
         $mockNumbersReader = $this->createMock(I18n\Cldr\Reader\NumbersReader::class);
-        $mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue($parsedFormat));
-        $mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
+        $mockNumbersReader->expects(self::once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will(self::returnValue($parsedFormat));
+        $mockNumbersReader->expects(self::once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will(self::returnValue($this->sampleLocalizedSymbols));
 
         $formatter = new I18n\Parser\NumberParser();
         $formatter->injectNumbersReader($mockNumbersReader);
@@ -189,6 +189,6 @@ class NumberParserTest extends UnitTestCase
         $methodName = 'parse' . ucfirst($formatType) . 'Number';
         $result = $formatter->$methodName($numberToParse, $this->sampleLocale);
 
-        $this->assertEquals($expectedParsedNumber, $result);
+        self::assertEquals($expectedParsedNumber, $result);
     }
 }

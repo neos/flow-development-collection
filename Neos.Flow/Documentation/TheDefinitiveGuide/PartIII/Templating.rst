@@ -393,6 +393,51 @@ You can pass arbitrary objects to the view, using ``$this->view->assign($identif
 from within the controller. See the above paragraphs about Object Accessors for details
 how to use the passed data.
 
+Passing data to the view from outside a controller
+--------------------------------------------------
+
+You can also pass data to the view from outside a controller. This can be useful for
+general data, that you want to be available without having to assign it in each action.
+
+Once the view is resolved inside the ``ActionController``, the signal ``viewResolved``
+is being emitted and you can add data.
+
+This is possible with the Signal/Slot dispatcher from your ``Package.php`` file::
+
+    <?php
+    namespace Vendor\Namespace;
+
+    use Neos\Flow\Core\Bootstrap;
+    use Neos\Flow\Mvc\Controller\ActionController;
+    use Neos\Flow\Mvc\View\ViewInterface;
+    use Neos\Flow\Package\Package as BasePackage;
+
+
+    /**
+     * The Flow Package
+     */
+    class Package extends BasePackage
+    {
+
+        /**
+         * Invokes custom PHP code directly after the package manager has been initialized.
+         *
+         * @param Bootstrap $bootstrap The current bootstrap
+         * @return void
+         */
+        public function boot(Bootstrap $bootstrap)
+        {
+
+            $dispatcher = $bootstrap->getSignalSlotDispatcher();
+
+            $dispatcher->connect(ActionController::class, 'viewResolved', static function (ViewInterface $view) {
+                $view->assign('settingPassedFromSignal', 'sun is shining');
+            });
+
+        }
+    }
+
+
 Layouts
 =======
 

@@ -14,6 +14,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 use Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 
@@ -38,11 +39,11 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
      */
     protected $originalMbEncodingValue;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->renderingContext = $this->getMockBuilder(RenderingContext::class)->disableOriginalConstructor()->getMock();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class, ['registerRenderMethodArguments']);
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class, ['dummy']);
         $this->viewHelper->setRenderingContext($this->renderingContext);
         //$this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper::class)->setMethods(array('renderChildren'))->getMock();
         $this->originalMbEncodingValue = mb_internal_encoding();
@@ -50,7 +51,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
 
     /**
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         mb_internal_encoding($this->originalMbEncodingValue);
@@ -67,7 +68,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $result = $this->viewHelper->render();
-        $this->assertEquals(strtoupper($testString), $result);
+        self::assertEquals(strtoupper($testString), $result);
     }
 
     /**
@@ -90,15 +91,15 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $testString]);
         $result = $this->viewHelper->render();
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException
      */
     public function viewHelperThrowsExceptionIfIncorrectModeIsGiven()
     {
+        $this->expectException(InvalidVariableException::class);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'Foo', 'mode' => 'incorrectMode']);
         $this->viewHelper->render('Foo', 'incorrectMode');
     }
@@ -111,19 +112,19 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
         mb_internal_encoding('ASCII');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'dummy']);
         $this->viewHelper->render();
-        $this->assertEquals('ASCII', mb_internal_encoding());
+        self::assertEquals('ASCII', mb_internal_encoding());
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException
      */
     public function viewHelperRestoresMbInternalEncodingAfterExceptionOccurred()
     {
+        $this->expectException(InvalidVariableException::class);
         mb_internal_encoding('ASCII');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'dummy', 'mode' => 'incorrectModeResultingInException']);
         $this->viewHelper->render();
-        $this->assertEquals('ASCII', mb_internal_encoding());
+        self::assertEquals('ASCII', mb_internal_encoding());
     }
 
     /**
@@ -132,7 +133,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperConvertsUppercasePerDefault()
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'FooB4r']);
-        $this->assertSame('FOOB4R', $this->viewHelper->render());
+        self::assertSame('FOOB4R', $this->viewHelper->render());
     }
 
     /**
@@ -161,6 +162,6 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperConvertsCorrectly($input, $mode, $expected)
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $input, 'mode' => $mode]);
-        $this->assertSame($expected, $this->viewHelper->render(), sprintf('The conversion with mode "%s" did not perform as expected.', $mode));
+        self::assertSame($expected, $this->viewHelper->render(), sprintf('The conversion with mode "%s" did not perform as expected.', $mode));
     }
 }

@@ -1,9 +1,10 @@
 <?php
 namespace Neos\FluidAdaptor\Tests\Unit\View;
 
+use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Uri;
+use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 use org\bovigo\vfs\vfsStreamWrapper;
-use Neos\Flow\Http\Request;
-use Neos\Flow\Http\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Tests\UnitTestCase;
@@ -27,17 +28,17 @@ class TemplatePathsTest extends UnitTestCase
     {
         $controllerObjectName = 'Neos\\' . $packageKey . '\\' . ($subPackageKey != $subPackageKey . '\\' ?: '') . 'Controller\\' . $controllerName . 'Controller';
 
-        $httpRequest = Request::create(new Uri('http://robertlemke.com/blog'));
+        $httpRequest = new ServerRequest('GET', new Uri('http://robertlemke.com/blog'));
         $mockRequest = $this->createMock(ActionRequest::class, [], [$httpRequest]);
-        $mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($packageKey));
-        $mockRequest->expects($this->any())->method('getControllerSubPackageKey')->will($this->returnValue($subPackageKey));
-        $mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));
-        $mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
-        $mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue($format));
+        $mockRequest->expects(self::any())->method('getControllerPackageKey')->will(self::returnValue($packageKey));
+        $mockRequest->expects(self::any())->method('getControllerSubPackageKey')->will(self::returnValue($subPackageKey));
+        $mockRequest->expects(self::any())->method('getControllerName')->will(self::returnValue($controllerName));
+        $mockRequest->expects(self::any())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
+        $mockRequest->expects(self::any())->method('getFormat')->will(self::returnValue($format));
 
         /** @var $mockControllerContext ControllerContext */
         $mockControllerContext = $this->createMock(ControllerContext::class, ['getRequest'], [], '', false);
-        $mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
+        $mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($mockRequest));
 
         return $mockControllerContext;
     }
@@ -485,7 +486,7 @@ class TemplatePathsTest extends UnitTestCase
         ];
 
         $actualResult = $templatePaths->_call('expandGenericPathPattern', $pattern, $patternReplacementVariables, $bubbleControllerAndSubpackage, $formatIsOptional);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -506,7 +507,7 @@ class TemplatePathsTest extends UnitTestCase
             'controllerName' => 'My',
             'format' => 'html'
         ], false, false);
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
@@ -530,7 +531,7 @@ class TemplatePathsTest extends UnitTestCase
         $expected = [
             'Resources/Private/Templates/MySubPackage/My/@action.html'
         ];
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
@@ -555,7 +556,7 @@ class TemplatePathsTest extends UnitTestCase
             'Resources/Private/Templates/MySubPackage/My/@action.html',
             'Resources/Private/Templates/MySubPackage/My/@action'
         ];
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
@@ -584,7 +585,7 @@ class TemplatePathsTest extends UnitTestCase
             'Resources/Private/Templates/@action.html',
             'Resources/Private/Templates/@action'
         ];
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
@@ -605,9 +606,9 @@ class TemplatePathsTest extends UnitTestCase
         $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['expandGenericPathPattern'], [[
             'partialPathAndFilenamePattern' => '@partialRoot/@subpackage/@partial.@format'
         ]], '', true);
-        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', ['partial' => 'SomePartial', 'format' => 'html'], true, true)->will($this->returnValue($paths));
+        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', ['partial' => 'SomePartial', 'format' => 'html'], true, true)->will(self::returnValue($paths));
 
-        $this->assertSame('contentsOfSomePartial', $templatePaths->getPartialSource('SomePartial'));
+        self::assertSame('contentsOfSomePartial', $templatePaths->getPartialSource('SomePartial'));
     }
 
     /**
@@ -631,21 +632,21 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
+        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
             'controllerName' => '',
             'action' => 'MyCoolAction',
             'format' => 'html'
-        ], false, false)->will($this->returnValue($paths));
+        ], false, false)->will(self::returnValue($paths));
 
-        $this->assertSame('contentsOfMyCoolAction', $templatePaths->getTemplateSource('', 'myCoolAction'));
+        self::assertSame('contentsOfMyCoolAction', $templatePaths->getTemplateSource('', 'myCoolAction'));
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getTemplatePathAndFilenameThrowsExceptionIfNoPathCanBeResolved()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         $paths = [
             'vfs://NonExistentDir/UnknownFile.html',
@@ -658,21 +659,21 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
+        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
             'controllerName' => '',
             'action' => 'MyCoolAction',
             'format' => 'html'
-        ], false, false)->will($this->returnValue($paths));
+        ], false, false)->will(self::returnValue($paths));
 
         $templatePaths->getTemplateSource('', 'myCoolAction');
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getTemplatePathAndFilenameThrowsExceptionIfResolvedPathPointsToADirectory()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         mkdir('vfs://MyTemplates/NotAFile');
         $paths = [
@@ -686,11 +687,11 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
+        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
             'controllerName' => '',
             'action' => 'MyCoolAction',
             'format' => 'html'
-        ], false, false)->will($this->returnValue($paths));
+        ], false, false)->will(self::returnValue($paths));
 
         $templatePaths->getTemplateSource('', 'myCoolAction');
     }
@@ -706,15 +707,15 @@ class TemplatePathsTest extends UnitTestCase
 
         $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['dummy'], [['templatePathAndFilename' => 'vfs://MyTemplates/MyCoolAction.html']]);
 
-        $this->assertSame('contentsOfMyCoolAction', $templatePaths->_call('getTemplateSource'));
+        self::assertSame('contentsOfMyCoolAction', $templatePaths->_call('getTemplateSource'));
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getLayoutPathAndFilenameThrowsExceptionIfNoPathCanBeResolved()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         $paths = [
             'vfs://NonExistentDir/UnknownFile.html',
@@ -728,20 +729,20 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
+        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
             'layout' => 'Default',
             'format' => 'html'
-        ], true, true)->will($this->returnValue($paths));
+        ], true, true)->will(self::returnValue($paths));
 
         $templatePaths->getLayoutSource();
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getLayoutPathAndFilenameThrowsExceptionIfResolvedPathPointsToADirectory()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         mkdir('vfs://MyTemplates/NotAFile');
         $paths = [
@@ -756,20 +757,20 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
+        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
             'layout' => 'SomeLayout',
             'format' => 'html'
-        ], true, true)->will($this->returnValue($paths));
+        ], true, true)->will(self::returnValue($paths));
 
         $templatePaths->getLayoutSource('SomeLayout');
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getPartialPathAndFilenameThrowsExceptionIfNoPathCanBeResolved()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         $paths = [
             'vfs://NonExistentDir/UnknownFile.html',
@@ -783,20 +784,20 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
+        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
             'partial' => 'SomePartial',
             'format' => 'html'
-        ], true, true)->will($this->returnValue($paths));
+        ], true, true)->will(self::returnValue($paths));
 
         $templatePaths->getPartialSource('SomePartial');
     }
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function getPartialPathAndFilenameThrowsExceptionIfResolvedPathPointsToADirectory()
     {
+        $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         mkdir('vfs://MyTemplates/NotAFile');
         $paths = [
@@ -811,10 +812,10 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
+        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
             'partial' => 'SomePartial',
             'format' => 'html'
-        ], true, true)->will($this->returnValue($paths));
+        ], true, true)->will(self::returnValue($paths));
 
         $templatePaths->getPartialSource('SomePartial');
     }

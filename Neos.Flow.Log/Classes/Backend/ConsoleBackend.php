@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Log\Backend;
 
 /*
@@ -46,17 +48,17 @@ class ConsoleBackend extends AbstractBackend
      * @throws CouldNotOpenResourceException
      * @api
      */
-    public function open()
+    public function open(): void
     {
         $this->severityLabels = [
-            LOG_EMERG   => 'EMERGENCY',
-            LOG_ALERT   => 'ALERT    ',
-            LOG_CRIT    => 'CRITICAL ',
-            LOG_ERR     => 'ERROR    ',
+            LOG_EMERG => 'EMERGENCY',
+            LOG_ALERT => 'ALERT    ',
+            LOG_CRIT => 'CRITICAL ',
+            LOG_ERR => 'ERROR    ',
             LOG_WARNING => 'WARNING  ',
-            LOG_NOTICE  => 'NOTICE   ',
-            LOG_INFO    => 'INFO     ',
-            LOG_DEBUG   => 'DEBUG    ',
+            LOG_NOTICE => 'NOTICE   ',
+            LOG_INFO => 'INFO     ',
+            LOG_DEBUG => 'DEBUG    ',
         ];
 
         $this->streamHandle = fopen('php://' . $this->streamName, 'w');
@@ -69,7 +71,7 @@ class ConsoleBackend extends AbstractBackend
      * Appends the given message along with the additional information into the log.
      *
      * @param string $message The message to log
-     * @param integer $severity One of the LOG_* constants
+     * @param int $severity One of the LOG_* constants
      * @param mixed $additionalData A variable containing more information about the event to be logged
      * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
      * @param string $className Name of the class triggering the log (determined automatically if not specified)
@@ -77,7 +79,7 @@ class ConsoleBackend extends AbstractBackend
      * @return void
      * @api
      */
-    public function append($message, $severity = LOG_INFO, $additionalData = null, $packageKey = null, $className = null, $methodName = null)
+    public function append(string $message, int $severity = LOG_INFO, $additionalData = null, string $packageKey = null, string $className = null, string $methodName = null): void
     {
         if ($severity > $this->severityThreshold) {
             return;
@@ -104,7 +106,7 @@ class ConsoleBackend extends AbstractBackend
      * @api
      * @todo revise upon resolution of http://forge.typo3.org/issues/9861
      */
-    public function close()
+    public function close(): void
     {
     }
 }

@@ -26,7 +26,7 @@ trait BackendInstantiationTrait
      * @return BackendInterface
      * @throws InvalidBackendException
      */
-    protected function instantiateBackend(string $backendObjectName, array $backendOptions, EnvironmentConfiguration $environmentConfiguration) : BackendInterface
+    protected function instantiateBackend(string $backendObjectName, array $backendOptions, EnvironmentConfiguration $environmentConfiguration): BackendInterface
     {
         $backend = new $backendObjectName($environmentConfiguration, $backendOptions);
         if (!$backend instanceof BackendInterface) {

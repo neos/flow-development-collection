@@ -90,7 +90,7 @@ class EmailAddressValidatorTest extends AbstractValidatorTestcase
      * @test
      * @dataProvider validAddresses
      */
-    public function emailAddressValidatorReturnsNoErrorsForAValidEmailAddress($address)
+    public function emailAddressValidatorHasNoErrorsForAValidEmailAddress($address)
     {
         self::assertFalse($this->validator->validate($address)->hasErrors());
     }
@@ -145,7 +145,7 @@ class EmailAddressValidatorTest extends AbstractValidatorTestcase
      * @test
      * @dataProvider invalidAddresses
      */
-    public function emailAddressValidatorReturnsFalseForAnInvalidEmailAddress($address)
+    public function emailAddressValidatorHasErrorsForAnInvalidEmailAddress($address)
     {
         self::assertTrue($this->validator->validate($address)->hasErrors());
     }
@@ -154,7 +154,7 @@ class EmailAddressValidatorTest extends AbstractValidatorTestcase
      * @test
      * @dataProvider addressesWithWarnings
      */
-    public function emailAddressValidatorUsingStrictReturnsFalseForAnEmailAddressWithWarnings($address)
+    public function emailAddressValidatorUsingStrictHasErrorsForAnEmailAddressWithWarnings($address)
     {
         $this->validatorOptions(['strict' => true]);
         self::assertTrue($this->validator->validate($address)->hasErrors());

@@ -11,9 +11,9 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
-use Neos\Flow\Http\Cookie;
-use Neos\Flow\Http\Headers;
-use Neos\Flow\Http\Response;
+use GuzzleHttp\Psr7\Response;
+use function GuzzleHttp\Psr7\parse_response;
+use function GuzzleHttp\Psr7\stream_for;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -30,66 +30,9 @@ abstract class ResponseInformationHelper
      * @throws \InvalidArgumentException
      * @return ResponseInterface
      */
-    public static function createFromRaw(string $rawResponse, string $responseClassName = Response::class): ResponseInterface
+    public static function createFromRaw(string $rawResponse): ResponseInterface
     {
-        $response = new $responseClassName();
-
-        if (!$response instanceof ResponseInterface) {
-            throw new \InvalidArgumentException(sprintf('The given response class name "%s" does not implement the "%s" and cannot be created with this method.', $responseClassName, ResponseInterface::class));
-        }
-
-        // see https://tools.ietf.org/html/rfc7230#section-3.5
-        $lines = explode(chr(10), $rawResponse);
-        $statusLine = array_shift($lines);
-
-        if (substr($statusLine, 0, 5) !== 'HTTP/') {
-            throw new \InvalidArgumentException('The given raw HTTP message is not a valid response.', 1335175601);
-        }
-        list($httpAndVersion, $statusCode, $reasonPhrase) = explode(' ', $statusLine, 3);
-        $version = explode('/', $httpAndVersion)[1];
-        if (strlen($statusCode) !== 3) {
-            // See https://tools.ietf.org/html/rfc7230#section-3.1.2
-            throw new \InvalidArgumentException('The given raw HTTP message contains an invalid status code.', 1502981352);
-        }
-        $response = $response->withStatus((integer)$statusCode, trim($reasonPhrase));
-        $response = $response->withProtocolVersion($version);
-
-        $parsingHeader = true;
-        $contentLines = [];
-        $headers = new Headers();
-        foreach ($lines as $line) {
-            if ($parsingHeader) {
-                if (trim($line) === '') {
-                    $parsingHeader = false;
-                    continue;
-                }
-                $headerSeparatorIndex = strpos($line, ':');
-                if ($headerSeparatorIndex === false) {
-                    throw new \InvalidArgumentException('The given raw HTTP message contains an invalid header.', 1502984804);
-                }
-                $fieldName = trim(substr($line, 0, $headerSeparatorIndex));
-                $fieldValue = trim(substr($line, strlen($fieldName) + 1));
-                if (strtoupper(substr($fieldName, 0, 10)) === 'SET-COOKIE') {
-                    $cookie = Cookie::createFromRawSetCookieHeader($fieldValue);
-                    if ($cookie !== null) {
-                        $headers->setCookie($cookie);
-                    }
-                } else {
-                    $headers->set($fieldName, $fieldValue, false);
-                }
-            } else {
-                $contentLines[] = $line;
-            }
-        }
-        if ($parsingHeader === true) {
-            throw new \InvalidArgumentException('The given raw HTTP message contains no separating empty line between header and body.', 1502984823);
-        }
-        $content = implode(chr(10), $contentLines);
-
-        $response->setHeaders($headers);
-        $response = $response->withBody(ArgumentsHelper::createContentStreamFromString($content));
-
-        return $response;
+        return parse_response($rawResponse);
     }
 
     /**
@@ -197,12 +140,13 @@ abstract class ResponseInformationHelper
         $statusHeader = rtrim(self::generateStatusLine($response), "\r\n");
 
         $preparedHeaders[] = $statusHeader;
-        $headers = $response->getHeaders();
-        if ($headers instanceof Headers) {
-            $preparedHeaders = array_merge($preparedHeaders, $headers->getPreparedValues());
-        } else {
-            foreach (array_keys($headers) as $name) {
-                $preparedHeaders[] = $response->getHeaderLine($name);
+        foreach ($response->getHeaders() as $name => $values) {
+            if (strtolower($name) === 'set-cookie') {
+                foreach ($values as $value) {
+                    $preparedHeaders[] = $name . ': ' . $value;
+                }
+            } else {
+                $preparedHeaders[] = $name . ': ' . implode(', ', $values);
             }
         }
 
@@ -225,32 +169,39 @@ abstract class ResponseInformationHelper
     public static function makeStandardsCompliant(ResponseInterface $response, RequestInterface $request): ResponseInterface
     {
         $statusCode = $response->getStatusCode();
-        if ($request->hasHeader('If-Modified-Since') && $response->hasHeader('Last-Modified') && $statusCode === 200) {
-            $ifModifiedSince = $request->getHeader('If-Modified-Since');
-            $ifModifiedSinceDate = is_array($ifModifiedSince) ? reset($ifModifiedSince) : $ifModifiedSince;
-            $lastModified = $response->getHeader('Last-Modified');
-            $lastModifiedDate = is_array($lastModified) ? reset($lastModified) : $lastModified;
-            if ($lastModifiedDate <= $ifModifiedSinceDate) {
-                $response = $response->withStatus(304);
+        if ($request->hasHeader('If-None-Match') && in_array($request->getMethod(), ['HEAD', 'GET'])
+            && $response->hasHeader('ETag') && $statusCode === 200) {
+            $ifNoneMatchHeaders = $request->getHeader('If-None-Match');
+            $eTagHeader = $response->getHeader('ETag')[0];
+            foreach ($ifNoneMatchHeaders as $ifNoneMatchHeader) {
+                if (ltrim($ifNoneMatchHeader, 'W/') == ltrim($eTagHeader, 'W/')) {
+                    $response = $response
+                        ->withStatus(304)
+                        ->withBody(stream_for(''));
+                    break;
+                }
             }
-        } elseif ($request->hasHeader('If-Unmodified-Since') && $response->hasHeader('Last-Modified')
-            && (($statusCode >= 200 && $$statusCode <= 299) || $statusCode === 412)) {
-            $unmodifiedSince = $request->getHeader('If-Unmodified-Since');
-            $unmodifiedSinceDate = is_array($unmodifiedSince) ? reset($unmodifiedSince) : $unmodifiedSince;
-            $lastModified = $response->getHeader('Last-Modified');
-            $lastModifiedDate = is_array($lastModified) ? reset($lastModified) : $lastModified;
-            if ($lastModifiedDate > $unmodifiedSinceDate) {
-                $response = $response->withStatus(412);
+        } elseif ($request->hasHeader('If-Modified-Since') && in_array($request->getMethod(), ['HEAD', 'GET'])
+            && $response->hasHeader('Last-Modified') && $statusCode === 200) {
+            $ifModifiedSince = $request->getHeader('If-Modified-Since')[0];
+            $ifModifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifModifiedSince);
+            $lastModified = $response->getHeader('Last-Modified')[0];
+            $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
+            if ($lastModifiedDate <= $ifModifiedSinceDate) {
+                $response = $response
+                    ->withStatus(304)
+                    ->withBody(stream_for(''));
             }
         }
 
         if (in_array($response->getStatusCode(), [100, 101, 204, 304])) {
-            $response = $response->withBody(ArgumentsHelper::createContentStreamFromString(''));
+            $response = $response->withBody(stream_for(''));
         }
 
         $cacheControlHeaderLine = $response->getHeaderLine('Cache-Control');
 
-        if (!empty($cacheControlHeaderLine) && strpos('no-cache', $cacheControlHeaderLine) !== false || $response->hasHeader('Expires')) {
+        if ((!empty($cacheControlHeaderLine) && strpos('no-cache', $cacheControlHeaderLine) !== false)
+            || $response->hasHeader('Expires')) {
             $cacheControlHeaderValue = trim(substr($cacheControlHeaderLine, 14));
             $cacheControlHeaderValue = str_replace('max-age', '', $cacheControlHeaderValue);
             $cacheControlHeaderValue = trim($cacheControlHeaderValue, ' ,');
@@ -262,7 +213,7 @@ abstract class ResponseInformationHelper
         }
 
         if ($request->getMethod() === 'HEAD') {
-            $response = $response->withBody(ArgumentsHelper::createContentStreamFromString(''));
+            $response = $response->withBody(stream_for(''));
         }
 
         if ($response->hasHeader('Transfer-Encoding')) {

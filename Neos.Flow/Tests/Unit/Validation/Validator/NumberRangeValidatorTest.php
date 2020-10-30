@@ -27,7 +27,7 @@ class NumberRangeValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -35,7 +35,7 @@ class NumberRangeValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
-        $this->assertFalse($this->validator->validate('')->hasErrors());
+        self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -45,7 +45,7 @@ class NumberRangeValidatorTest extends AbstractValidatorTestcase
     {
         $this->validatorOptions(['minimum' => 0, 'maximum' => 1000]);
 
-        $this->assertFalse($this->validator->validate(10.5)->hasErrors());
+        self::assertFalse($this->validator->validate(10.5)->hasErrors());
     }
 
     /**
@@ -54,7 +54,7 @@ class NumberRangeValidatorTest extends AbstractValidatorTestcase
     public function numberRangeValidatorReturnsErrorForANumberOutOfRange()
     {
         $this->validatorOptions(['minimum' => 0, 'maximum' => 1000]);
-        $this->assertTrue($this->validator->validate(1000.1)->hasErrors());
+        self::assertTrue($this->validator->validate(1000.1)->hasErrors());
     }
 
     /**
@@ -63,7 +63,7 @@ class NumberRangeValidatorTest extends AbstractValidatorTestcase
     public function numberRangeValidatorReturnsNoErrorForANumberInReversedRange()
     {
         $this->validatorOptions(['minimum' => 1000, 'maximum' => 0]);
-        $this->assertFalse($this->validator->validate(100)->hasErrors());
+        self::assertFalse($this->validator->validate(100)->hasErrors());
     }
 
     /**
@@ -72,6 +72,6 @@ class NumberRangeValidatorTest extends AbstractValidatorTestcase
     public function numberRangeValidatorReturnsErrorForAString()
     {
         $this->validatorOptions(['minimum' => 0, 'maximum' => 1000]);
-        $this->assertTrue($this->validator->validate('not a number')->hasErrors());
+        self::assertTrue($this->validator->validate('not a number')->hasErrors());
     }
 }
