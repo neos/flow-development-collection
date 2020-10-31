@@ -67,7 +67,7 @@ before_install:
   - git checkout -b travis
   - cd ..
   - if [ "$INTEGRATION" != "true" ]; then git clone https://github.com/neos/flow-development-distribution.git -b ${NEOS_TARGET_VERSION} && cd flow-development-distribution; fi
-  - if [ "$INTEGRATION" = "true" ]; then git clone https://github.com/neos/neos-base-distribution.git -b ${NEOS_CMS_TARGET_VERSION} && cd neos-base-distribution; fi
+  - if [ "$INTEGRATION" = "true" ]; then git clone https://github.com/neos/neos-base-distribution.git -b ${NEOS_CMS_TARGET_VERSION} && cd neos-development-distribution; fi
 install:
   - composer self-update --2 -q
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
