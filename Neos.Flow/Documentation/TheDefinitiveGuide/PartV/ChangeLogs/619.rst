@@ -1,0 +1,118 @@
+`6.1.9 (2020-09-30) <https://github.com/neos/flow-development-collection/releases/tag/6.1.9>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Correctly recognize NULL method arguments in JoinPoint <https://github.com/neos/flow-development-collection/pull/2150>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#970 <https://github.com/neos/flow-development-collection/issues/970>`_
+* Packages: ``Flow``
+
+`BUGFIX: Throw helpful exception when collection property has missing element type <https://github.com/neos/flow-development-collection/pull/2139>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#978 <https://github.com/neos/flow-development-collection/issues/978>`_
+* Packages: ``Flow``
+
+`BUGFIX: ActionResponse contains negotiated media type as content-type <https://github.com/neos/flow-development-collection/pull/2005>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+This sets the negotiated media type from the Controller in the `ActionResponse`.
+
+* Packages: ``Flow``
+
+`BUGFIX: Trim enclosing double quotes from session cookie <https://github.com/neos/flow-development-collection/pull/2138>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+According to RFC 6265 https://tools.ietf.org/html/rfc6265#section-4.1.1 a cookie
+value may be enclosed in double quotes.
+This change takes this into account by removing the first and last double quote of a
+value (enclosing double quotes) when starting/resuming a session.
+
+* Fixes: `#2133 <https://github.com/neos/flow-development-collection/issues/2133>`_
+* Packages: ``Flow``
+
+`TASK: Add documentation to model unidirectional OneToMany and ManyToMany <https://github.com/neos/flow-development-collection/pull/2055>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+This adds basic documentation for how to properly model unidirectional OneToMany relations in Flow and slightly extends the "Getting Started" guide.
+
+Related to #2053
+
+* Packages: ``Flow``
+
+`TASK: Add missing HTTP status codes to ResponseInformationHelper <https://github.com/neos/flow-development-collection/pull/2104>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+This adds a number of HTTP status codes to the `ResponseInformationHelper`
+and tweaks the message for code 413 from 'Request Entity Too Large' to
+'Payload Too Large' (as in RFC7231 Section 6.5.11.)
+
+* Packages: ``Flow``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/2085>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/gOxN75>`_.
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/2091>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/aj4lgW>`_.
+
+* Packages: ``Flow``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/2086>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/kay4JJ>`_.
+
+`Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/2092>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/nNy16A>`_.
+
+* Packages: ``Cache`` ``Eel`` ``Flow`` ``FluidAdaptor`` ``Schema``
+
+`Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/2089>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/wjMnkw>`_.
+
+* Packages: ``Cache`` ``Eel`` ``Flow`` ``FluidAdaptor`` ``Schema``
+
+`Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/2088>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/bQjYaj>`_.
+
+* Packages: ``Cache`` ``Eel`` ``Flow`` ``FluidAdaptor`` ``Schema``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.1.8...6.1.9>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
