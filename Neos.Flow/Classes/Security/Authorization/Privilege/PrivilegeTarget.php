@@ -48,14 +48,21 @@ class PrivilegeTarget
     protected $objectManager;
 
     /**
+     * @var string
+     */
+    protected $label;
+
+    /**
      * @param string $identifier
      * @param string $privilegeClassName
      * @param string $matcher
      * @param Parameter\PrivilegeParameterDefinition[] $parameterDefinitions
+     * @param string $label
      */
-    public function __construct(string $identifier, string $privilegeClassName, string $matcher, array $parameterDefinitions = [])
+    public function __construct(string $identifier, string $privilegeClassName, string $matcher, array $parameterDefinitions = [], string $label = '')
     {
         $this->identifier = $identifier;
+        $this->label = empty($label) ? $identifier : $label;
         $this->privilegeClassName = $privilegeClassName;
         $this->matcher = $matcher;
         $this->parameterDefinitions = $parameterDefinitions;
@@ -71,7 +78,6 @@ class PrivilegeTarget
     {
         $this->objectManager = $objectManager;
     }
-
 
     /**
      * @return string
@@ -134,6 +140,14 @@ class PrivilegeTarget
         $privilege->injectObjectManager($this->objectManager);
 
         return $privilege;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabel(): string
+    {
+        return $this->label;
     }
 
     /**

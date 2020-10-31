@@ -38,6 +38,9 @@ class AdvicedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
 
         $declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];
         $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod($methodName);
+        if ($proxyMethod->isPrivate()) {
+            throw new Exception(sprintf('The %s cannot build interceptor code for private method %s::%s(). Please change the scope to at least protected or adjust the pointcut expression in the corresponding aspect.', __CLASS__, $targetClassName, $methodName), 1593070574);
+        }
         if ($declaringClassName !== $targetClassName) {
             $proxyMethod->setMethodParametersCode($proxyMethod->buildMethodParametersCode($declaringClassName, $methodName, true));
         }

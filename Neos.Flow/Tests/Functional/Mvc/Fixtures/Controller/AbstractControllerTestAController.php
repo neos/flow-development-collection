@@ -24,8 +24,6 @@ use Neos\Error\Messages\Message;
  */
 class AbstractControllerTestAController extends ActionController
 {
-    protected $supportedMediaTypes = ['text/plain'];
-
     /**
      * An action which forwards using the given parameters
      *
@@ -39,6 +37,7 @@ class AbstractControllerTestAController extends ActionController
     public function forwardAction($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $passSomeObjectArguments = false)
     {
         if ($passSomeObjectArguments) {
+            $arguments['__object1'] = new Message('Some test message', 12345);
             $arguments['__object1'] = new Message('Some test message', 67890);
         }
         $this->forward($actionName, $controllerName, $packageKey, $arguments);

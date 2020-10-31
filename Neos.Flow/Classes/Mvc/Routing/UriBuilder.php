@@ -364,7 +364,7 @@ class UriBuilder
         $uriPathPrefix = ltrim($uriPathPrefix, '/');
 
         $routeParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
-        $resolveContext = new ResolveContext($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest(), $arguments, $this->createAbsoluteUri, $uriPathPrefix, $routeParameters);
+        $resolveContext = new ResolveContext($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($httpRequest), $arguments, $this->createAbsoluteUri, $uriPathPrefix, $routeParameters);
         $resolvedUri = $this->router->resolve($resolveContext);
         if ($this->section !== '') {
             $resolvedUri = $resolvedUri->withFragment($this->section);
