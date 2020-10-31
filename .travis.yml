@@ -49,12 +49,17 @@ jobs:
       env: DB=mysql BEHAT=true
       addons:
         mariadb: '10.2'
+    - php: 7.1
+      env: DB=mysql INTEGRATION=true
+      addons:
+        mariadb: '10.2'
 cache:
   directories:
     - $HOME/.composer/cache
 before_install:
   - export NEOS_TARGET_REPOSITORY=neos/flow-development-collection
   - export NEOS_TARGET_VERSION=5.3
+  - export NEOS_CMS_TARGET_VERSION=4.3
   - if [ "$DB" = "pgsql" ]; then sudo mount -o remount,size=25% /var/ramfs ; fi
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
   - env
@@ -80,6 +85,7 @@ before_script:
   - echo 'report_memleaks = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml && exit 0' > unittest.sh
   - echo 'if [ $? -eq 139 ]; then exit 0 ; else exit $? ; fi' >> unittest.sh
+  - if [ "$INTEGRATION" = "true" ]; then cd .. && git clone https://github.com/neos/neos-base-distribution.git -b ${NEOS_CMS_TARGET_VERSION} && cd neos-base-distribution; fi
   - rm -f Configuration/Routes.yaml
   - cp Configuration/Settings.yaml.example Configuration/Settings.yaml
   - Build/BuildEssentials/TravisCi/SetupDatabase.sh
@@ -87,8 +93,9 @@ before_script:
   - if [ "$BEHAT" = "true" ]; then FLOW_CONTEXT=Testing/Behat ./flow behat:setup ; fi
   - if [ "$DB" = "mysql" ]; then echo "MariaDB version ${TRAVIS_MARIADB_VERSION}"; fi
 script:
-  - if [ "$BEHAT" != "true" ]; then sh ./unittest.sh ; fi
-  - if [ "$BEHAT" != "true" ]; then bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Framework tests"; fi
+  - if [ "$INTEGRATION" = "true" ]; then composer update --no-progress --no-interaction && ./flow flow:core:compile; fi
+  - if [ "$BEHAT" != "true" ] && [ "$INTEGRATION" != "true" ]; then sh ./unittest.sh ; fi
+  - if [ "$BEHAT" != "true" ] && [ "$INTEGRATION" != "true" ]; then bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Framework tests"; fi
   - if [ "$BEHAT" = "true" ]; then FLOW_CONTEXT=Testing/Behat ./flow doctrine:create; fi
   - if [ "$BEHAT" = "true" ]; then bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist; fi
 notifications:
