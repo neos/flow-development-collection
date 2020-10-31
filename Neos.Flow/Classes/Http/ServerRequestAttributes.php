@@ -18,12 +18,12 @@ final class ServerRequestAttributes
     public const TRUSTED_PROXY = 'fromTrustedProxy';
 
     /**
-     * PSR-7 Attribute containing routing parameters.
+     * PSR-7 Attribute containing routing parameters, so that they can be accessed when building URIs
      */
     public const ROUTING_PARAMETERS = 'routingParameters';
 
     /**
-     * PSR-7 Attribute containing routing results as array to be merged in any merged arguments.
+     * PSR-7 Attribute containing routing results as array to be merged in any merged arguments
      */
     public const ROUTING_RESULTS = 'routingResults';
 }
