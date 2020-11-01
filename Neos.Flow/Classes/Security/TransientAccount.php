@@ -14,9 +14,7 @@ namespace Neos\Flow\Security;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authentication\AuthenticationProviderName;
 use Neos\Flow\Security\Authentication\CredentialsSource;
-use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Security\Policy\RoleIdentifiers;
-use Neos\Flow\Security\Policy\Roles;
 
 /**
  * An account that is not persisted in the database
@@ -35,9 +33,9 @@ final class TransientAccount implements AccountInterface
     private $identifier;
 
     /**
-     * @var Roles
+     * @var RoleIdentifiers
      */
-    private $roles;
+    private $roleIdentifiers;
 
     /**
      * @var AuthenticationProviderName
@@ -48,13 +46,13 @@ final class TransientAccount implements AccountInterface
      * Private constructor to keep this extensible with dedicated named constructors
      *
      * @param AccountIdentifier $identifier
-     * @param Roles $roles
+     * @param RoleIdentifiers $roleIdentifiers
      * @param AuthenticationProviderName $authenticationProviderName
      */
-    private function __construct(AccountIdentifier $identifier, Roles $roles, AuthenticationProviderName $authenticationProviderName)
+    private function __construct(AccountIdentifier $identifier, RoleIdentifiers $roleIdentifiers, AuthenticationProviderName $authenticationProviderName)
     {
         $this->identifier = $identifier;
-        $this->roles = $roles;
+        $this->roleIdentifiers = $roleIdentifiers;
         $this->authenticationProviderName = $authenticationProviderName;
     }
 
@@ -62,15 +60,15 @@ final class TransientAccount implements AccountInterface
      * Creates an instance of this class
      *
      * @param AccountIdentifier $identifier
-     * @param Roles $roles
+     * @param RoleIdentifiers $roleIdentifiers
      * @param AuthenticationProviderName $authenticationProviderName
      * @return self
      */
-    public static function create(AccountIdentifier $identifier, Roles $roles, AuthenticationProviderName $authenticationProviderName): self
+    public static function create(AccountIdentifier $identifier, RoleIdentifiers $roleIdentifiers, AuthenticationProviderName $authenticationProviderName): self
     {
         return new static(
             $identifier,
-            $roles,
+            $roleIdentifiers,
             $authenticationProviderName
         );
     }
@@ -80,7 +78,7 @@ final class TransientAccount implements AccountInterface
      */
     public function getRoleIdentifiers(): RoleIdentifiers
     {
-        return RoleIdentifiers::fromArray(iterator_to_array($this->roles->getIterator()));
+        return $this->roleIdentifiers;
     }
 
     /**
@@ -89,22 +87,6 @@ final class TransientAccount implements AccountInterface
     public function getAccountIdentifier(): AccountIdentifier
     {
         return $this->identifier;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRoles(): Roles
-    {
-        return $this->roles;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function hasRole(Role $role): bool
-    {
-        return $this->roles->has($role);
     }
 
     /**

@@ -41,12 +41,6 @@ interface AccountInterface
     public function getRoleIdentifiers(): RoleIdentifiers;
 
     /**
-     * @param Role $role
-     * @return bool
-     */
-    public function hasRole(Role $role): bool;
-
-    /**
      * @return bool
      */
     public function isActive(): bool;
