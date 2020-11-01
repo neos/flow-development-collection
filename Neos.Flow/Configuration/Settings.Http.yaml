@@ -71,7 +71,7 @@ Neos:
         'postprocess':
           chain:
             'flashMessages':
-              position: 'before setSessionCookie'
+              position: 'start'
               component: 'Neos\Flow\Mvc\FlashMessage\FlashMessageComponent'
             'poweredByHeader':
               component: 'Neos\Flow\Http\Component\PoweredByComponent'
