@@ -203,7 +203,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
             ['SplObjectStorage', true],
             ['Doctrine\Common\Collections\Collection', true],
             ['Doctrine\Common\Collections\ArrayCollection', true],
-            ['\IteratorAggregate', true]
+            ['IteratorAggregate', true]
         ];
     }
 
