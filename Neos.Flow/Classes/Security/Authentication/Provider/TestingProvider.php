@@ -12,7 +12,7 @@ namespace Neos\Flow\Security\Authentication\Provider;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Account;
+use Neos\Flow\Security\AccountInterface;
 use Neos\Flow\Security\Authentication\Token\TestingToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
 
@@ -25,7 +25,7 @@ use Neos\Flow\Security\Authentication\TokenInterface;
 class TestingProvider extends AbstractProvider
 {
     /**
-     * @var Account
+     * @var AccountInterface
      */
     protected $account;
 
@@ -63,7 +63,7 @@ class TestingProvider extends AbstractProvider
     /**
      * Set the account that will be authenticated
      *
-     * @param Account $account
+     * @param AccountInterface $account
      * @return void
      */
     public function setAccount($account)
