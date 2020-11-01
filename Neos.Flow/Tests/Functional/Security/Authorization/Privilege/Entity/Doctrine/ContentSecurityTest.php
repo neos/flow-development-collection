@@ -81,7 +81,9 @@ class ContentSecurityTest extends FunctionalTestCase
      */
     public function administratorsAreAllowedToSeeHiddenRestrictableEntities()
     {
-        $this->authenticateRoles(['Neos.Flow:Administrator']);
+        $account = $this->authenticateRoles(['Neos.Flow:Administrator']);
+        $account->setAccountIdentifier('Administrator');
+        $account->setAuthenticationProviderName('SomeProvider');
 
         $defaultEntity = new Fixtures\RestrictableEntity('default');
         $hiddenEntity = new Fixtures\RestrictableEntity('hiddenEntity');
@@ -111,7 +113,9 @@ class ContentSecurityTest extends FunctionalTestCase
      */
     public function customersAreNotAllowedToSeeHiddenRestrictableEntities()
     {
-        $this->authenticateRoles(['Neos.Flow:Customer']);
+        $account = $this->authenticateRoles(['Neos.Flow:Customer']);
+        $account->setAccountIdentifier('Customer');
+        $account->setAuthenticationProviderName('SomeProvider');
 
         $defaultEntity = new Fixtures\RestrictableEntity('default');
         $hiddenEntity = new Fixtures\RestrictableEntity('hiddenEntity');
@@ -141,7 +145,9 @@ class ContentSecurityTest extends FunctionalTestCase
      */
     public function customersAreNotAllowedToSeeDeletedRestrictableEntities()
     {
-        $this->authenticateRoles(['Neos.Flow:Customer']);
+        $account = $this->authenticateRoles(['Neos.Flow:Customer']);
+        $account->setAccountIdentifier('Customer');
+        $account->setAuthenticationProviderName('SomeProvider');
 
         $defaultEntity = new Fixtures\RestrictableEntity('default');
         $deletedEntity = new Fixtures\RestrictableEntity('deletedEntry');
@@ -171,7 +177,9 @@ class ContentSecurityTest extends FunctionalTestCase
      */
     public function administratorsCanSeeDeletedRestrictableEntities()
     {
-        $this->authenticateRoles(['Neos.Flow:Administrator']);
+        $account = $this->authenticateRoles(['Neos.Flow:Administrator']);
+        $account->setAccountIdentifier('Administrator');
+        $account->setAuthenticationProviderName('SomeProvider');
 
         $defaultEntity = new Fixtures\RestrictableEntity('default');
         $deletedEntity = new Fixtures\RestrictableEntity('hiddenEntity');
@@ -235,7 +243,7 @@ class ContentSecurityTest extends FunctionalTestCase
         $otherAccount = new Security\Account();
         $otherAccount->setAccountIdentifier('othersAccount');
         $otherAccount->setAuthenticationProviderName('SomeProvider');
-        $this->persistenceManager->add($ownAccount);
+        $this->persistenceManager->update($ownAccount);
         $this->persistenceManager->add($otherAccount);
 
         $ownEntity = new Fixtures\RestrictableEntity('ownEntity');
@@ -273,7 +281,7 @@ class ContentSecurityTest extends FunctionalTestCase
         $otherAccount = new Security\Account();
         $otherAccount->setAccountIdentifier('othersAccount');
         $otherAccount->setAuthenticationProviderName('SomeProvider');
-        $this->persistenceManager->add($ownAccount);
+        $this->persistenceManager->update($ownAccount);
         $this->persistenceManager->add($otherAccount);
 
         $ownEntity = new Fixtures\RestrictableEntity('ownEntity');
@@ -311,7 +319,7 @@ class ContentSecurityTest extends FunctionalTestCase
         $andisAccount = new Security\Account();
         $andisAccount->setAccountIdentifier('Andi');
         $andisAccount->setAuthenticationProviderName('SomeProvider');
-        $this->persistenceManager->add($account);
+        $this->persistenceManager->update($account);
         $this->persistenceManager->add($andisAccount);
 
         $ownEntity = new Fixtures\RestrictableEntity('MyEntity');
@@ -349,7 +357,7 @@ class ContentSecurityTest extends FunctionalTestCase
         $andisAccount = new Security\Account();
         $andisAccount->setAccountIdentifier('Andi');
         $andisAccount->setAuthenticationProviderName('SomeProvider');
-        $this->persistenceManager->add($account);
+        $this->persistenceManager->update($account);
         $this->persistenceManager->add($andisAccount);
 
         $ownEntity = new Fixtures\RestrictableEntity('MyEntity');
@@ -381,7 +389,11 @@ class ContentSecurityTest extends FunctionalTestCase
      */
     public function customersCannotSeeTestEntityAAssociatedToATestEntityBWithValueAdmin()
     {
-        $this->authenticateRoles(['Neos.Flow:Customer']);
+        $account = $this->authenticateRoles(['Neos.Flow:Customer']);
+        $account->setAccountIdentifier('MyAccount');
+        $account->setAuthenticationProviderName('SomeProvider');
+        $this->persistenceManager->update($account);
+
 
         $testEntityB = new Fixtures\TestEntityB('Admin');
         $testEntityA = new Fixtures\TestEntityA($testEntityB);
@@ -413,7 +425,10 @@ class ContentSecurityTest extends FunctionalTestCase
      */
     public function administratorsCanSeeTestEntityAAssociatedToATestEntityBWithValueAdmin()
     {
-        $this->authenticateRoles(['Neos.Flow:Administrator']);
+        $account = $this->authenticateRoles(['Neos.Flow:Administrator']);
+        $account->setAccountIdentifier('MyAccount');
+        $account->setAuthenticationProviderName('SomeProvider');
+        $this->persistenceManager->update($account);
 
         $testEntityB = new Fixtures\TestEntityB('Admin');
         $testEntityA = new Fixtures\TestEntityA($testEntityB);
@@ -453,7 +468,7 @@ class ContentSecurityTest extends FunctionalTestCase
         $andisAccount = new Security\Account();
         $andisAccount->setAccountIdentifier('Andi');
         $andisAccount->setAuthenticationProviderName('SomeProvider');
-        $this->persistenceManager->add($myAccount);
+        $this->persistenceManager->update($myAccount);
         $this->persistenceManager->add($andisAccount);
 
         $testEntityB = new Fixtures\TestEntityB('testEntityB');
@@ -494,7 +509,7 @@ class ContentSecurityTest extends FunctionalTestCase
         $andisAccount = new Security\Account();
         $andisAccount->setAccountIdentifier('Andi');
         $andisAccount->setAuthenticationProviderName('SomeProvider');
-        $this->persistenceManager->add($myAccount);
+        $this->persistenceManager->update($myAccount);
         $this->persistenceManager->add($andisAccount);
 
         $testEntityB = new Fixtures\TestEntityB('testEntityB');
@@ -647,7 +662,11 @@ class ContentSecurityTest extends FunctionalTestCase
     {
         $testEntityCIdentifier = $this->setupContainsRelationForOneToMany();
 
-        $this->authenticateRoles(['Neos.Flow:Customer']);
+        $account = $this->authenticateRoles(['Neos.Flow:Customer']);
+        $account->setAccountIdentifier('MyAccount');
+        $account->setAuthenticationProviderName('SomeProvider');
+        $this->persistenceManager->update($account);
+
 
         $result = $this->testEntityCDoctrineRepository->findAllWithDql();
         self::assertTrue(count($result) === 1);
@@ -684,7 +703,10 @@ class ContentSecurityTest extends FunctionalTestCase
     {
         $testEntityCIdentifier = $this->setupContainsRelationForManyToMany();
 
-        $this->authenticateRoles(['Neos.Flow:Customer']);
+        $account = $this->authenticateRoles(['Neos.Flow:Customer']);
+        $account->setAccountIdentifier('MyAccount');
+        $account->setAuthenticationProviderName('SomeProvider');
+        $this->persistenceManager->update($account);
 
         $result = $this->testEntityCDoctrineRepository->findAllWithDql();
         self::assertTrue(count($result) === 1);
