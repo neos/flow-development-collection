@@ -40,10 +40,10 @@ class SessionMiddleware implements MiddlewareInterface
      */
     protected $sessionManager;
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
         if (!$this->sessionManager instanceof SessionManager) {
-            return $handler->handle($request);
+            return $next->handle($request);
         }
 
         $sessionCookieName = $this->sessionSettings['name'];
@@ -53,7 +53,7 @@ class SessionMiddleware implements MiddlewareInterface
         if (!isset($cookies[$sessionCookieName])) {
             $sessionCookie = $this->prepareCookie($sessionCookieName, Algorithms::generateRandomString(32));
             $this->sessionManager->createCurrentSessionFromCookie($sessionCookie);
-            return $handler->handle($request);
+            return $next->handle($request);
         }
 
         $sessionIdentifier = $cookies[$sessionCookieName];
@@ -61,15 +61,14 @@ class SessionMiddleware implements MiddlewareInterface
         $this->sessionManager->initializeCurrentSessionFromCookie($sessionCookie);
         $this->sessionManager->getCurrentSession()->resume();
 
-        $response = $handler->handle($request);
+        $response = $next->handle($request);
 
         $currentSession = $this->sessionManager->getCurrentSession();
         if (!$currentSession->isStarted()) {
             return $response;
         }
 
-        $response = $response->withAddedHeader('Set-Cookie', (string)$currentSession->getSessionCookie());
-        return $response;
+        return $response->withAddedHeader('Set-Cookie', (string)$currentSession->getSessionCookie());
     }
 
     /**
