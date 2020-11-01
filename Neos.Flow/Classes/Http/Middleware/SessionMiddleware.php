@@ -53,7 +53,7 @@ class SessionMiddleware implements MiddlewareInterface
         if (!isset($cookies[$sessionCookieName])) {
             $sessionCookie = $this->prepareCookie($sessionCookieName, Algorithms::generateRandomString(32));
             $this->sessionManager->createCurrentSessionFromCookie($sessionCookie);
-            return $next->handle($request);
+            return $this->handleSetCookie($next->handle($request));
         }
 
         $sessionIdentifier = $cookies[$sessionCookieName];
@@ -61,8 +61,15 @@ class SessionMiddleware implements MiddlewareInterface
         $this->sessionManager->initializeCurrentSessionFromCookie($sessionCookie);
         $this->sessionManager->getCurrentSession()->resume();
 
-        $response = $next->handle($request);
+        return $this->handleSetCookie($next->handle($request));
+    }
 
+    /**
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    protected function handleSetCookie(ResponseInterface $response): ResponseInterface
+    {
         $currentSession = $this->sessionManager->getCurrentSession();
         if (!$currentSession->isStarted()) {
             return $response;
