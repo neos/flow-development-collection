@@ -71,7 +71,7 @@ class SessionMiddleware implements MiddlewareInterface
     protected function handleSetCookie(ResponseInterface $response): ResponseInterface
     {
         $currentSession = $this->sessionManager->getCurrentSession();
-        if (!$currentSession->isStarted()) {
+        if (!$currentSession->isStarted() || !($currentSession instanceof CookieEnabledInterface)) {
             return $response;
         }
 
