@@ -15,12 +15,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Security\AccountIdentifier;
-use Neos\Flow\Security\AccountInterface;
 use Neos\Flow\Security\AccountRepository;
-use Neos\Flow\Security\Authentication\AuthenticationProviderName;
-use Neos\Flow\Security\Policy\RoleIdentifiers;
-use Neos\Flow\Security\TransientAccount;
 use Neos\Http\Factories\ResponseFactory;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
@@ -308,12 +303,18 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      * The created account is returned for further modification, for example for attaching a Party object to it.
      *
      * @param array $roleNames A list of roles the new account should have
-     * @return AccountInterface The created account
+     * @return \Neos\Flow\Security\Account The created account
      * @api
      */
     protected function authenticateRoles(array $roleNames)
     {
-        $account = TransientAccount::create(AccountIdentifier::fromString('accountIdentifier'), RoleIdentifiers::fromArray($roleNames), AuthenticationProviderName::fromString('FunctionalTestProvider'));
+        $account = new \Neos\Flow\Security\Account();
+        $roles = [];
+        foreach ($roleNames as $roleName) {
+            $roles[] = $this->policyService->getRole($roleName);
+        }
+        $account->setRoles($roles);
+        $this->accountRepository->add($account);
         $this->authenticateAccount($account);
 
         return $account;
@@ -322,11 +323,11 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     /**
      * Prepares the environment for and conducts an account authentication
      *
-     * @param AccountInterface $account
+     * @param \Neos\Flow\Security\Account $account
      * @return void
      * @api
      */
-    protected function authenticateAccount(AccountInterface $account)
+    protected function authenticateAccount(\Neos\Flow\Security\Account $account)
     {
         $this->testingProvider->setAuthenticationStatus(\Neos\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
         $this->testingProvider->setAccount($account);
