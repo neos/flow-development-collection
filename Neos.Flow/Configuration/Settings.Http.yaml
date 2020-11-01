@@ -44,7 +44,7 @@ Neos:
 
         'preprocess':
           position: 'before process'
-          chain:
+          chain: []
         'process':
           chain:
             'routing':
