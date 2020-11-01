@@ -22,6 +22,7 @@ use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\Policy\RoleIdentifiers;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\TypeHandling;
@@ -634,14 +635,15 @@ class Context
      */
     protected function collectRolesAndParentRolesFromAccount(AccountInterface $account): array
     {
-        $reducer = function (array $roles, $currentRole) {
-            $roles[$currentRole->getIdentifier()] = $currentRole;
-            $roles = array_merge($roles, $this->collectParentRoles($currentRole));
+
+        $reducer = function (array $roles, string $currentRoleIdentifier) {
+            $roles[$currentRoleIdentifier] = $this->policyService->getRole($currentRoleIdentifier);
+            $roles = array_merge($roles, $this->collectParentRoles($this->policyService->getRole($currentRoleIdentifier)));
 
             return $roles;
         };
 
-        return array_reduce(iterator_to_array($account->getRoles()->getIterator()), $reducer, []);
+        return array_reduce(iterator_to_array($account->getRoleIdentifiers()->getIterator()), $reducer, []);
     }
 
     /**

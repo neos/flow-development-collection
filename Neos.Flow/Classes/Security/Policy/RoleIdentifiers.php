@@ -75,7 +75,7 @@ final class RoleIdentifiers implements \JsonSerializable, \IteratorAggregate, \C
     }
 
     /**
-     * @return \Traversable<Role>
+     * @return \Traversable<string>
      */
     public function getIterator(): \Traversable
     {

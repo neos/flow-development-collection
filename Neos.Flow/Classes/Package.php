@@ -20,6 +20,7 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountRepository;
+use Neos\Flow\Security\AccountRepositoryInterface;
 use Neos\Flow\Security\Authentication\AuthenticationProviderInterface;
 use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider;
@@ -143,10 +144,10 @@ class Package extends BasePackage
             if ($username === null) {
                 return;
             }
-            /** @var AccountRepository $accountRepository */
-            $accountRepository = $bootstrap->getObjectManager()->get(AccountRepository::class);
+            /** @var AccountRepositoryInterface $accountRepository */
+            $accountRepository = $bootstrap->getObjectManager()->get(AccountRepositoryInterface::class);
             $account = $accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $provider->getName());
-            if ($account !== null) {
+            if ($account !== null && $account instanceof Account && $accountRepository instanceof AccountRepository) {
                 $account->authenticationAttempted(TokenInterface::WRONG_CREDENTIALS);
                 $accountRepository->update($account);
                 $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->whitelistObject($account);

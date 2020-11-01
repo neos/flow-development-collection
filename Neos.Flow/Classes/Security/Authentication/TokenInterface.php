@@ -138,7 +138,7 @@ interface TokenInterface
     /**
      * Returns the account if one is authenticated, NULL otherwise.
      *
-     * @return AccountInterface An account object
+     * @return AccountInterface|null An account object
      */
     public function getAccount();
 
