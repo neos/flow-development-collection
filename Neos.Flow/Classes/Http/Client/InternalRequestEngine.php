@@ -16,9 +16,9 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Exception as FlowException;
-use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
+use Neos\Flow\Http\Middleware\MiddlewaresChainFactory;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\Routing\RouterInterface;
@@ -119,12 +119,13 @@ class InternalRequestEngine implements RequestEngineInterface
         $requestHandler->setComponentContext($componentContext);
 
         $objectManager = $this->bootstrap->getObjectManager();
-        $baseComponentChain = $objectManager->get(ComponentChain::class);
+        $objectManager->setInstance(ComponentContext::class, $componentContext);
+        $middlewaresChain = $objectManager->get(Http\Middleware\MiddlewaresChain::class);
 
         try {
-            $baseComponentChain->handle($componentContext);
+            $response = $middlewaresChain->handle($httpRequest);
         } catch (\Throwable $throwable) {
-            $componentContext->replaceHttpResponse($this->prepareErrorResponse($throwable, $componentContext->getHttpResponse()));
+            $response = $this->prepareErrorResponse($throwable, $componentContext->getHttpResponse());
         }
         $session = $objectManager->get(SessionInterface::class);
         if ($session->isStarted()) {
@@ -133,8 +134,10 @@ class InternalRequestEngine implements RequestEngineInterface
         // FIXME: ObjectManager should forget all instances created during the request
         $objectManager->forgetInstance(SessionManager::class);
         $objectManager->forgetInstance(FlashMessageService::class);
+        // Necessary to forget the ComponentContext injection
+        $objectManager->forgetInstance(MiddlewaresChainFactory::class);
         $this->persistenceManager->clearState();
-        return $componentContext->getHttpResponse();
+        return $response;
     }
 
     /**
