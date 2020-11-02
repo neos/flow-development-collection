@@ -117,7 +117,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
 
         $authenticationProvider->authenticate($this->mockToken);
 
-        self::assertTrue($this->mockToken->getAccount()->hasRole($this->mockRole));
+        self::assertTrue($this->mockToken->getAccount()->getRoleIdentifiers()->has((string) $this->mockRole));
     }
 
     /**
