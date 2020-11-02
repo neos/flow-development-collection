@@ -1,17 +1,22 @@
 <?php
-namespace Neos\Flow\Http\Component;
+declare(strict_types=1);
+
+namespace Neos\Flow\Http\Middleware;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\MediaTypeConverterInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Parses the request body and adds the result to the ServerRequest instance.
  */
-class RequestBodyParsingComponent implements ComponentInterface
+class RequestBodyParsingMiddleware implements MiddlewareInterface
 {
     /**
      * @Flow\Inject
@@ -28,15 +33,13 @@ class RequestBodyParsingComponent implements ComponentInterface
     /**
      * @inheritDoc
      */
-    public function handle(ComponentContext $componentContext)
+    public function handle(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
-        $httpRequest = $componentContext->getHttpRequest();
-        if (!empty($httpRequest->getParsedBody())) {
-            return;
+        if (!empty($request->getParsedBody())) {
+            return $next->handle($request);
         }
-        $parsedBody = $this->parseRequestBody($httpRequest);
-        $httpRequest = $httpRequest->withParsedBody($parsedBody);
-        $componentContext->replaceHttpRequest($httpRequest);
+        $parsedBody = $this->parseRequestBody($request);
+        return $next->handle($request->withParsedBody($parsedBody));
     }
 
     /**
@@ -59,8 +62,6 @@ class RequestBodyParsingComponent implements ComponentInterface
         $requestedContentType = $httpRequest->getHeaderLine('Content-Type');
         $propertyMappingConfiguration->setTypeConverterOption(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $requestedContentType);
         // FIXME: The MediaTypeConverter returns an empty array for "error cases", which might be unintended
-        $arguments = $this->propertyMapper->convert($requestBody, 'array', $propertyMappingConfiguration);
-
-        return $arguments;
+        return $this->propertyMapper->convert($requestBody, 'array', $propertyMappingConfiguration);
     }
 }

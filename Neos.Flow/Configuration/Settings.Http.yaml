@@ -40,6 +40,9 @@ Neos:
         'flashMessages':
           position: 'after session'
           middleware: 'Neos\Flow\Mvc\FlashMessage\FlashMessageMiddleware'
+        'parseBody':
+          position: 'before dispatch'
+          middleware: 'Neos\Flow\Http\Middleware\RequestBodyParsingMiddleware'
         'dispatch':
           position: 'end'
           middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
@@ -58,9 +61,6 @@ Neos:
             'routing':
               position: 'start'
               component: 'Neos\Flow\Mvc\Routing\RoutingComponent'
-            'parseBody':
-              position: 'before dispatching'
-              component: 'Neos\Flow\Http\Component\RequestBodyParsingComponent'
             'prepareActionRequest':
               position: 'after parseBody'
               component: 'Neos\Flow\Mvc\PrepareMvcRequestComponent'
