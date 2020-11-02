@@ -29,6 +29,9 @@ Neos:
         'trustedProxies':
           position: 'start'
           middleware: 'Neos\Flow\Http\Middleware\TrustedProxiesMiddleware'
+        'session':
+          position: '10'
+          middleware: 'Neos\Flow\Http\Middleware\SessionMiddleware'
         'dispatch':
           position: 'end'
           middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
@@ -41,10 +44,7 @@ Neos:
 
         'preprocess':
           position: 'before process'
-          chain:
-            'getSessionCookieFromRequest':
-              position: 'after trustedProxies'
-              component: 'Neos\Flow\Session\Http\SessionRequestComponent'
+          chain: []
         'process':
           chain:
             'routing':
@@ -70,11 +70,8 @@ Neos:
 
         'postprocess':
           chain:
-            'setSessionCookie':
-              position: 'start'
-              component: 'Neos\Flow\Session\Http\SessionResponseComponent'
             'flashMessages':
-              position: 'before setSessionCookie'
+              position: 'start'
               component: 'Neos\Flow\Mvc\FlashMessage\FlashMessageComponent'
             'poweredByHeader':
               component: 'Neos\Flow\Http\Component\PoweredByComponent'
