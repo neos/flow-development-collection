@@ -57,14 +57,14 @@ final class TransientAccount implements AccountInterface
     /**
      * Creates an instance of this class
      *
-     * @param AccountIdentifier $identifier
+     * @param AccountIdentifier $accountIdentifier
      * @param AuthenticationProviderName $authenticationProviderName
      * @return self
      */
-    public static function create(AccountIdentifier $identifier, AuthenticationProviderName $authenticationProviderName): self
+    public static function create(AccountIdentifier $accountIdentifier, AuthenticationProviderName $authenticationProviderName): AccountInterface
     {
         return new static(
-            $identifier,
+            $accountIdentifier,
             $authenticationProviderName
         );
     }
