@@ -303,18 +303,21 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      * The created account is returned for further modification, for example for attaching a Party object to it.
      *
      * @param array $roleNames A list of roles the new account should have
+     * @param string $accountIdentifier
+     * @param string $authenticationProviderName
      * @return \Neos\Flow\Security\Account The created account
      * @api
      */
-    protected function authenticateRoles(array $roleNames)
+    protected function authenticateRoles(array $roleNames, string $accountIdentifier = 'FunctionalTestAccount', string $authenticationProviderName = 'FunctionalTestProvider')
     {
         $account = new \Neos\Flow\Security\Account();
+        $account->setAccountIdentifier($accountIdentifier);
+        $account->setAuthenticationProviderName($authenticationProviderName);
         $roles = [];
         foreach ($roleNames as $roleName) {
             $roles[] = $this->policyService->getRole($roleName);
         }
         $account->setRoles($roles);
-        $this->accountRepository->add($account);
         $this->authenticateAccount($account);
 
         return $account;

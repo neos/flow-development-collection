@@ -238,14 +238,17 @@ trait SecurityOperationsTrait
      * The created account is returned for further modification, for example for attaching a Party object to it.
      *
      * @param array $roleNames A list of roles the new account should have
+     * @param string $accountIdentifier
+     * @param string $authenticationProviderName
      * @return Security\Account The created account
      * @throws Security\Exception
      * @throws Security\Exception\AuthenticationRequiredException
      */
-    protected function authenticateRoles(array $roleNames)
+    protected function authenticateRoles(array $roleNames, string $accountIdentifier = 'FunctionlTestAccount', string $authenticationProviderName = 'FunctionalTestProvider')
     {
         $account = new Security\Account();
-        $account->setAccountIdentifier('TestAccount');
+        $account->setAccountIdentifier($accountIdentifier);
+        $account->setAuthenticationProviderName($authenticationProviderName);
         $roles = [];
         foreach ($roleNames as $roleName) {
             $roles[] = $this->policyService->getRole($roleName);

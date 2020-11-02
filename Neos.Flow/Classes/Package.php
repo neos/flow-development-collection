@@ -128,30 +128,6 @@ class Package extends BasePackage
             if ($session->isStarted() && !$token instanceof SessionlessTokenInterface) {
                 $session->renewId();
             }
-
-            if ($token->getAccount() instanceof Account) {
-                $token->getAccount()->authenticationAttempted(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-                $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->update($token->getAccount());
-                $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->whitelistObject($token->getAccount());
-            }
-        });
-
-        $dispatcher->connect(Security\Authentication\AuthenticationProviderManager::class, 'failedAuthenticatingToken', function (TokenInterface $token, AuthenticationProviderInterface $provider) use ($bootstrap) {
-            if (!$token instanceof UsernamePassword || !$provider instanceof PersistedUsernamePasswordProvider) {
-                return;
-            }
-            $username = $token->getCredentials()['username'] ?? null;
-            if ($username === null) {
-                return;
-            }
-            /** @var AccountRepositoryInterface $accountRepository */
-            $accountRepository = $bootstrap->getObjectManager()->get(AccountRepositoryInterface::class);
-            $account = $accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, $provider->getName());
-            if ($account !== null && $account instanceof Account && $accountRepository instanceof AccountRepository) {
-                $account->authenticationAttempted(TokenInterface::WRONG_CREDENTIALS);
-                $accountRepository->update($account);
-                $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->whitelistObject($account);
-            }
         });
 
         $dispatcher->connect(Tests\FunctionalTestCase::class, 'functionalTestTearDown', Mvc\Routing\RouterCachingService::class, 'flushCaches');
