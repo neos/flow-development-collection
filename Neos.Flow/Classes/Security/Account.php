@@ -28,7 +28,7 @@ use Neos\Flow\Utility\Now;
  * The default implementation of the AccountInterface that is used for database-persisted accounts
  *
  * @Flow\Entity
- * @api
+ * @deprecated Deprecated as of Neos Flow 7.0 - will be removed in next major
  */
 class Account implements AccountInterface
 {

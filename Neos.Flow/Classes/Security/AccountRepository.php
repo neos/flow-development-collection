@@ -21,6 +21,7 @@ use Neos\Flow\Security\Context as SecurityContext;
  * The repository for accounts
  *
  * @Flow\Scope("singleton")
+ * @deprecated Deprecated as of Neos Flow 7.0 - will be removed in next major
  */
 class AccountRepository extends Repository implements AccountRepositoryInterface
 {
