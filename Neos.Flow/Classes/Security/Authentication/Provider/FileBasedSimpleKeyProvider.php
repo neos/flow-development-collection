@@ -116,7 +116,7 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
         }
 
         $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-        $roles = $this->options['authenticateRoles'] ?? []
+        $roles = $this->options['authenticateRoles'] ?? [];
         $accountIdentifier = AccountIdentifier::fromString($this->options['keyName']);
         $account = TransientAccount::create($accountIdentifier, RoleIdentifiers::fromArray($roles), AuthenticationProviderName::fromString($this->name));
         $authenticationToken->setAccount($account);
