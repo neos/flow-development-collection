@@ -69,6 +69,13 @@ final class TransientAccount implements AccountInterface
         );
     }
 
+    public static function createWithRoleIdentifiers(AccountIdentifier $identifier, AuthenticationProviderName $authenticationProviderName, RoleIdentifiers $roleIdentifiers): self
+    {
+        $account = static::create($identifier, $authenticationProviderName);
+        $account->roleIdentifiers = $roleIdentifiers;
+        return $account;
+    }
+
     /**
      * @inheritDoc
      */
