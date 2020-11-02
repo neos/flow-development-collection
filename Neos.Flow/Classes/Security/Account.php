@@ -115,6 +115,15 @@ class Account implements AccountInterface
         $this->creationDate = new \DateTime();
     }
 
+    public static function create(AccountIdentifier $accountIdentifier, AuthenticationProviderName $authenticationProviderName): AccountInterface
+    {
+        $account = new static();
+        $account->accountIdentifier = (string) $accountIdentifier;
+        $account->authenticationProviderName = (string) $authenticationProviderName;
+        return $account;
+    }
+
+
     /**
      * Initializes the roles field by fetching the role objects referenced by the roleIdentifiers
      *

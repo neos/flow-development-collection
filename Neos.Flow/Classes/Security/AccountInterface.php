@@ -20,6 +20,14 @@ use Neos\Flow\Security\Policy\RoleIdentifiers;
 
 interface AccountInterface
 {
+
+    /**
+     * @param AccountIdentifier $accountIdentifier
+     * @param AuthenticationProviderName $authenticationProviderName
+     * @return AccountInterface
+     */
+    public static function create(AccountIdentifier $accountIdentifier, AuthenticationProviderName $authenticationProviderName): AccountInterface;
+
     /**
      * @return AccountIdentifier
      */

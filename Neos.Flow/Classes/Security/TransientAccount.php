@@ -46,13 +46,11 @@ final class TransientAccount implements AccountInterface
      * Private constructor to keep this extensible with dedicated named constructors
      *
      * @param AccountIdentifier $identifier
-     * @param RoleIdentifiers $roleIdentifiers
      * @param AuthenticationProviderName $authenticationProviderName
      */
-    private function __construct(AccountIdentifier $identifier, RoleIdentifiers $roleIdentifiers, AuthenticationProviderName $authenticationProviderName)
+    private function __construct(AccountIdentifier $identifier, AuthenticationProviderName $authenticationProviderName)
     {
         $this->identifier = $identifier;
-        $this->roleIdentifiers = $roleIdentifiers;
         $this->authenticationProviderName = $authenticationProviderName;
     }
 
@@ -60,15 +58,13 @@ final class TransientAccount implements AccountInterface
      * Creates an instance of this class
      *
      * @param AccountIdentifier $identifier
-     * @param RoleIdentifiers $roleIdentifiers
      * @param AuthenticationProviderName $authenticationProviderName
      * @return self
      */
-    public static function create(AccountIdentifier $identifier, RoleIdentifiers $roleIdentifiers, AuthenticationProviderName $authenticationProviderName): self
+    public static function create(AccountIdentifier $identifier, AuthenticationProviderName $authenticationProviderName): self
     {
         return new static(
             $identifier,
-            $roleIdentifiers,
             $authenticationProviderName
         );
     }
