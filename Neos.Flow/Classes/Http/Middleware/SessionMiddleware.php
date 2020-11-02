@@ -15,6 +15,7 @@ namespace Neos\Flow\Http\Middleware;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Cookie;
+use Neos\Flow\Session\CookieEnabledInterface;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Utility\Algorithms;
