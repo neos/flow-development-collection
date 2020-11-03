@@ -1,88 +1,124 @@
 <?php
 namespace Neos\Flow\Tests\Unit\Mvc;
 
-use Neos\Flow\Http\Component\ComponentContext;
+/*
+ * This file is part of the Neos.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionRequestFactory;
-use Neos\Flow\Mvc\DispatchComponent;
-use Neos\Flow\Mvc\PrepareMvcRequestComponent;
+use Neos\Flow\Mvc\DispatchMiddleware;
+use Neos\Flow\Mvc\Dispatcher;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
-use Neos\Flow\Security\Context;
+use Neos\Flow\Security;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- *
+ * Test case for the MVC Dispatcher middleware
  */
-class PrepareMvcRequestComponentTest extends UnitTestCase
+class DispatchMiddlewareTest extends UnitTestCase
 {
     /**
-     * @var PrepareMvcRequestComponent
+     * @var DispatchMiddleware
      */
-    protected $prepareMvcRequestComponent;
+    protected $dispatchMiddleware;
 
     /**
-     * @var ComponentContext
-     */
-    protected $mockComponentContext;
-
-    /**
-     * @var ServerRequestInterface
-     */
-    protected $mockHttpRequest;
-
-    /**
-     * @var PropertyMapper
-     */
-    protected $mockPropertyMapper;
-
-    /**
-     * @var ActionRequest
-     */
-    protected $mockActionRequest;
-
-    /**
-     * @var ActionRequestFactory
-     */
-    protected $mockActionRequestFactory;
-
-    /**
-     * @var Context
+     * @var Security\Context|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockSecurityContext;
 
     /**
+     * @var RequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $mockRequestHandler;
+
+    /**
+     * @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $mockHttpRequest;
+
+    /**
+     * @var Dispatcher|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $mockDispatcher;
+
+    /**
+     * @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $mockActionRequest;
+
+    /**
+     * @var ActionRequestFactory|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $mockActionRequestFactory;
+
+    /**
+     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $mockObjectManager;
+
+    /**
+     * @var PropertyMapper|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $mockPropertyMapper;
+
+    /**
+     * @var PropertyMappingConfiguration|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $mockPropertyMappingConfiguration;
+
+    /**
      * @return void
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->prepareMvcRequestComponent = new PrepareMvcRequestComponent();
+        $this->dispatchMiddleware = new DispatchMiddleware();
 
-        $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
+        $this->mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->getMock();
+        $this->mockSecurityContext = $this->getMockBuilder(Security\Context::class)->disableOriginalConstructor()->getMock();
+
+        $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->disableOriginalConstructor()->getMock();
+        $httpResponse = new Response();
+        $this->mockRequestHandler->method('handle')->willReturn($httpResponse);
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-
         $this->mockHttpRequest->method('withParsedBody')->willReturn($this->mockHttpRequest);
         $this->mockHttpRequest->method('getUploadedFiles')->willReturn([]);
-        $this->mockComponentContext->method('getHttpRequest')->willReturn($this->mockHttpRequest);
 
-        $httpResponse = $this->getMockBuilder(ResponseInterface::class)->getMock();
-        $this->mockComponentContext->method('getHttpResponse')->willReturn($httpResponse);
+        $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->getMock();
+        $this->inject($this->dispatchMiddleware, 'dispatcher', $this->mockDispatcher);
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->onlyMethods(['prepareActionRequest'])->getMock();
+        $this->mockActionRequestFactory->method('prepareActionRequest')->willReturn($this->mockActionRequest);
 
-        $this->mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->setMethods(['prepareActionRequest'])->getMock();
-        $this->mockActionRequestFactory->expects(self::any())->method('prepareActionRequest')->willReturn($this->mockActionRequest);
+        $this->inject($this->dispatchMiddleware, 'actionRequestFactory', $this->mockActionRequestFactory);
+    }
 
-        $this->inject($this->prepareMvcRequestComponent, 'actionRequestFactory', $this->mockActionRequestFactory);
+    /**
+     * @test
+     */
+    public function handleDispatchesTheRequest()
+    {
+        $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
+        $this->mockDispatcher->expects(self::once())->method('dispatch')->with($this->mockActionRequest);
 
-        $this->mockSecurityContext = $this->getMockBuilder(Context::class)->getMock();
-        $this->inject($this->prepareMvcRequestComponent, 'securityContext', $this->mockSecurityContext);
-
-        $this->mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->getMock();
+        $response = $this->dispatchMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
+        self::assertInstanceOf(ResponseInterface::class, $response);
     }
 
     /**
@@ -102,9 +138,6 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
         ]);
 
         $this->mockHttpRequest->method('getAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS)->willReturn(['__internalArgument3' => 'routing']);
-        $this->mockComponentContext->method('getParameter')->willReturnMap([
-            [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]
-        ]);
 
         $this->mockActionRequest->expects(self::once())->method('setArguments')->with([
             '__internalArgument1' => 'request',
@@ -112,24 +145,7 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
             '__internalArgument3' => 'routing'
         ]);
 
-        $this->prepareMvcRequestComponent->handle($this->mockComponentContext);
-    }
-
-    /**
-     * @test
-     */
-    public function handleStoresTheActionRequestInTheComponentContext()
-    {
-        $this->mockPropertyMapper->method('convert')->with('', 'array', new PropertyMappingConfiguration())->willReturn([]);
-        $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
-        $this->mockHttpRequest->method('getParsedBody')->willReturn([]);
-
-        $this->mockComponentContext->expects(self::atLeastOnce())->method('setParameter')->with(DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
-        $this->mockComponentContext->method('getParameter')->willReturnMap([
-            [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]
-        ]);
-
-        $this->prepareMvcRequestComponent->handle($this->mockComponentContext);
+        $this->dispatchMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
 
     /**
@@ -201,33 +217,12 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
     public function handleMergesArgumentsWithRoutingMatchResults(array $requestArguments, array $requestBodyArguments, array $routingMatchResults = null, array $expectedArguments)
     {
         $this->mockActionRequest->expects(self::once())->method('setArguments')->with($expectedArguments);
-        $this->mockSecurityContext->expects(self::once())->method('setRequest')->with($this->mockActionRequest);
         $this->mockHttpRequest->method('getQueryParams')->willReturn($requestArguments);
         $this->mockHttpRequest->method('getParsedBody')->willReturn($requestBodyArguments);
 
         $this->mockHttpRequest->method('getAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS)->willReturn($routingMatchResults);
-        $this->mockComponentContext->expects(self::atLeastOnce())->method('setParameter')->with(DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
-        $this->mockComponentContext->method('getParameter')->willReturnMap([
-            [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]
-        ]);
 
-        $this->prepareMvcRequestComponent->handle($this->mockComponentContext);
-    }
-
-    /**
-     * @test
-     */
-    public function handleSetsRequestInSecurityContext()
-    {
-        $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
-        $this->mockHttpRequest->method('getParsedBody')->willReturn([]);
-        $this->mockPropertyMapper->method('convert')->with('', 'array', new PropertyMappingConfiguration())->willReturn([]);
-        $this->mockComponentContext->method('getParameter')->willReturnMap([
-            [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]
-        ]);
-        $this->mockSecurityContext->expects(self::once())->method('setRequest')->with($this->mockActionRequest);
-
-        $this->prepareMvcRequestComponent->handle($this->mockComponentContext);
+        $this->dispatchMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
 
     /**
@@ -244,11 +239,7 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
         $this->mockActionRequest->expects(self::once())->method('setControllerName')->with('Standard');
         $this->mockActionRequest->expects(self::once())->method('setControllerActionName')->with('index');
 
-        $this->mockComponentContext->method('getParameter')->willReturnMap([
-            [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]
-        ]);
-
-        $this->prepareMvcRequestComponent->handle($this->mockComponentContext);
+        $this->dispatchMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
 
     /**
@@ -260,7 +251,6 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
 
         $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
         $this->mockHttpRequest->method('getParsedBody')->willReturn([]);
-        $this->mockHttpRequest->method('getUploadedFiles')->willReturn([]);
         $this->mockHttpRequest->method('withParsedBody')->willReturn($this->mockHttpRequest);
 
         $this->mockActionRequest->method('getControllerName')->willReturn('SomeController');
@@ -268,13 +258,8 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
         $this->mockActionRequest->expects(self::never())->method('setControllerName');
         $this->mockActionRequest->expects(self::never())->method('setControllerActionName');
 
-        $this->mockComponentContext->method('getParameter')->willReturnMap([
-            [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]
-        ]);
-
-        $this->prepareMvcRequestComponent->handle($this->mockComponentContext);
+        $this->dispatchMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
-
     /**
      * @test
      */
@@ -294,9 +279,9 @@ class PrepareMvcRequestComponentTest extends UnitTestCase
 
         $this->mockHttpRequest->method('getAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS)->willReturn($matchResults);
         $this->mockActionRequest->expects(self::once())->method('setArguments')->with($matchResults);
-        $this->mockComponentContext->method('getParameter')->willReturnMap([
-            [DispatchComponent::class, 'actionRequest', $this->mockActionRequest]
+        $this->mockHttpRequest->method('getAttribute')->willReturnMap([
+            [ServerRequestAttributes::ROUTING_RESULTS, $matchResults]
         ]);
-        $this->prepareMvcRequestComponent->handle($this->mockComponentContext);
+        $this->dispatchMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
 }

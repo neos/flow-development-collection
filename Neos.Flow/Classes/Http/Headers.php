@@ -16,7 +16,6 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Container for HTTP header fields
  *
- * @deprecated Headers will be only accessed via request in the future, if this class stays, then as internal implementation detail.
  * @Flow\Proxy(false)
  * TODO: case-insensitive header name matching
  */
@@ -55,33 +54,6 @@ class Headers implements \Iterator
         foreach ($fields as $name => $values) {
             $this->set($name, $values);
         }
-    }
-
-    /**
-     * Creates a new Headers instance from the given $_SERVER-superglobal-like array.
-     *
-     * @param array $server An array similar or equal to $_SERVER, containing headers in the form of "HTTP_FOO_BAR"
-     * @return Headers
-     */
-    public static function createFromServer(array $server)
-    {
-        $headerFields = [];
-        if (isset($server['PHP_AUTH_USER']) && isset($server['PHP_AUTH_PW'])) {
-            $headerFields['Authorization'] = 'Basic ' . base64_encode($server['PHP_AUTH_USER'] . ':' . $server['PHP_AUTH_PW']);
-        }
-
-        foreach ($server as $name => $value) {
-            if (strpos($name, 'HTTP_') === 0) {
-                $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
-                $headerFields[$name] = $value;
-            } elseif ($name == 'REDIRECT_REMOTE_AUTHORIZATION' && !isset($headerFields['Authorization'])) {
-                $headerFields['Authorization'] = $value;
-            } elseif (in_array($name, ['CONTENT_TYPE', 'CONTENT_LENGTH'])) {
-                $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $name))));
-                $headerFields[$name] = $value;
-            }
-        }
-        return new self($headerFields);
     }
 
     /**
@@ -171,7 +143,7 @@ class Headers implements \Iterator
      * Dates are returned as DateTime objects with the timezone set to GMT.
      *
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
-     * @return array|string An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
+     * @return array|string|\DateTime|null An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
      * @api
      */
     public function get($name)
@@ -260,7 +232,7 @@ class Headers implements \Iterator
      */
     public function setCookie(Cookie $cookie)
     {
-        $this->cookies[$cookie->getName()] = $cookie;
+        $this->cookies[$cookie->getName()] = clone $cookie;
     }
 
     /**
@@ -272,7 +244,7 @@ class Headers implements \Iterator
      */
     public function getCookie($name)
     {
-        return isset($this->cookies[$name]) ? $this->cookies[$name] : null;
+        return $this->cookies[$name] ?? null;
     }
 
     /**
@@ -303,8 +275,7 @@ class Headers implements \Iterator
      *
      * Note: This will remove the cookie object from this Headers container. If you
      *       intend to remove a cookie in the user agent (browser), you should call
-     *       the cookie's expire() method and _not_ remove the cookie from the Headers
-     *       container.
+     *       deleteCookie() instead.
      *
      * @param string $name Name of the cookie to remove
      * @return void
@@ -325,6 +296,24 @@ class Headers implements \Iterator
     public function eatCookie($name)
     {
         $this->removeCookie($name);
+    }
+
+    /**
+     * Delete the specified cookie in the user agent, by expiring it.
+     *
+     * @param string $name
+     * @return void
+     * @api
+     */
+    public function deleteCookie($name)
+    {
+        if (!$this->hasCookie($name)) {
+            $cookie = new Cookie($name);
+            $cookie->expire();
+            $this->setCookie($cookie);
+        } else {
+            $this->getCookie($name)->expire();
+        }
     }
 
     /**
@@ -409,7 +398,7 @@ class Headers implements \Iterator
                 if (!isset($matches[1])) {
                     $value = null;
                 } else {
-                    $value = (isset($matches[2]) ? $matches[2] : true);
+                    $value = ($matches[2] ?? true);
                 }
             break;
             case 'no-store':

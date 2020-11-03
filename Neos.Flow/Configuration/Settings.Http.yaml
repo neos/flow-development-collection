@@ -52,7 +52,7 @@ Neos:
           middleware: 'Neos\Flow\Http\Middleware\SecurityEntryPointMiddleware'
         'dispatch':
           position: 'end'
-          middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
+          middleware: 'Neos\Flow\Mvc\DispatchMiddleware'
 
       # Defines the workflow of one request from bootstrap to the HTTP response
       #
@@ -64,21 +64,7 @@ Neos:
           position: 'before process'
           chain: []
         'process':
-          chain:
-            'prepareActionRequest':
-              position: 'before dispatching'
-              component: 'Neos\Flow\Mvc\PrepareMvcRequestComponent'
-            'dispatching':
-              component: 'Neos\Flow\Mvc\DispatchComponent'
-            'replaceHttpResponse':
-              position: 'after dispatching'
-              component: 'Neos\Flow\Http\Component\ReplaceHttpResponseComponent'
-            'setHeader':
-              position: 'after dispatching'
-              component: 'Neos\Flow\Http\Component\SetHeaderComponent'
-            'securityEntryPoint':
-              position: 'after setHeaders'
-              component: 'Neos\Flow\Http\Component\SecurityEntryPointComponent'
+          chain: []
 
         'postprocess':
           chain: []
