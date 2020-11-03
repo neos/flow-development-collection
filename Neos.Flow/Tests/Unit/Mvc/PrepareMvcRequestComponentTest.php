@@ -7,7 +7,6 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionRequestFactory;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Mvc\PrepareMvcRequestComponent;
-use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Security\Context;
