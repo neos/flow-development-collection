@@ -148,6 +148,18 @@ class PositionalArraySorterTest extends \PHPUnit\Framework\TestCase
                 'positionPropertyPath' => 'position',
                 'expectedArrayKeys' => ['fir-st', 'sec.ond', 'thi:rd']
             ],
+            [
+                'message' => 'Position before non-existing key',
+                'subject' => ['third' => ['position' => 'end'], 'second' => ['position' => 'before nonexisting'], 'first' => ['position' => 'before second']],
+                'positionPropertyPath' => 'position',
+                'expectedArrayKeys' => ['first', 'second', 'third']
+            ],
+            [
+                'message' => 'Position after non-existing key',
+                'subject' => ['third' => ['position' => 'after second'], 'second' => ['position' => 'after nonexisting'], 'first' => ['position' => 'start']],
+                'positionPropertyPath' => 'position',
+                'expectedArrayKeys' => ['first', 'second', 'third']
+            ],
         ];
     }
 
