@@ -47,6 +47,9 @@ Neos:
         'parseBody':
           position: 'before dispatch'
           middleware: 'Neos\Flow\Http\Middleware\RequestBodyParsingMiddleware'
+        'securityEntryPoint':
+          position: 'before dispatch'
+          middleware: 'Neos\Flow\Http\Middleware\SecurityEntryPointMiddleware'
         'dispatch':
           position: 'end'
           middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'

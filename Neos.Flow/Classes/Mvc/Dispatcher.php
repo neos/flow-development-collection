@@ -13,7 +13,6 @@ namespace Neos\Flow\Mvc;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\NoSuchOptionException;
-use Neos\Flow\Http\Component\SecurityEntryPointComponent;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
@@ -97,20 +96,18 @@ class Dispatcher
      */
     public function dispatch(ActionRequest $request, ActionResponse $response)
     {
+        $this->securityContext->setRequest($request);
         try {
             if ($this->securityContext->areAuthorizationChecksDisabled() !== true) {
                 $this->firewall->blockIllegalRequests($request);
             }
             $this->initiateDispatchLoop($request, $response);
         } catch (AuthenticationRequiredException $exception) {
-            // This case does exist!
-            /** @var ActionResponse $response */
-            $response->setComponentParameter(
-                SecurityEntryPointComponent::class,
-                SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION,
-                $exception
-            );
-            return;
+            // TODO: Set intercepted request for security context here (?)
+            //       Alternatively attach the action request to the exception
+            $exception->interceptedRequest = $request;
+            // Rethrow as the SecurityEntryPoint middleware will take care of the rest
+            throw $exception;
         } catch (AccessDeniedException $exception) {
             /** @var PsrLoggerFactoryInterface $securityLogger */
             $securityLogger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('securityLogger');
@@ -147,15 +144,6 @@ class Dispatcher
                 } elseif (!$request->isMainRequest()) {
                     $request = $request->getParentRequest();
                 }
-            } catch (AuthenticationRequiredException $exception) {
-                $response->setStatusCode(403);
-                $response->setComponentParameter(
-                    SecurityEntryPointComponent::class,
-                    SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION,
-                    $exception
-                );
-
-                $request->setDispatched(true);
             }
             $parentResponse = $response->mergeIntoParentResponse($parentResponse);
         }
