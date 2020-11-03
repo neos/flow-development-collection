@@ -29,6 +29,9 @@ Neos:
         'trustedProxies':
           position: 'start'
           middleware: 'Neos\Flow\Http\Middleware\TrustedProxiesMiddleware'
+        'routing':
+          position: 'after trustedProxies'
+          middleware: 'Neos\Flow\Mvc\Routing\RoutingMiddleware'
         'standardsCompliance':
           position: 'after trustedProxies'
           middleware: 'Neos\Flow\Http\Middleware\StandardsComplianceMiddleware'
