@@ -62,7 +62,7 @@ Neos:
         'process':
           chain:
             'prepareActionRequest':
-              position: 'after parseBody'
+              position: 'before dispatching'
               component: 'Neos\Flow\Mvc\PrepareMvcRequestComponent'
             'dispatching':
               component: 'Neos\Flow\Mvc\DispatchComponent'
