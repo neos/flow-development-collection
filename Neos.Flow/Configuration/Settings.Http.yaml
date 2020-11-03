@@ -61,9 +61,6 @@ Neos:
           chain: []
         'process':
           chain:
-            'routing':
-              position: 'start'
-              component: 'Neos\Flow\Mvc\Routing\RoutingComponent'
             'prepareActionRequest':
               position: 'after parseBody'
               component: 'Neos\Flow\Mvc\PrepareMvcRequestComponent'

@@ -33,7 +33,7 @@ class RequestBodyParsingMiddleware implements MiddlewareInterface
     /**
      * @inheritDoc
      */
-    public function handle(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
         if (!empty($request->getParsedBody())) {
             return $next->handle($request);

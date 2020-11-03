@@ -155,10 +155,6 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
         $this->mockAjaxWidgetContextHolder->expects(self::atLeastOnce())->method('get')->with($mockWidgetId)->willReturn($mockWidgetContext);
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequestFactory->method('prepareActionRequest')->willReturn($mockActionRequest);
-        $this->mockComponentContext->method('getParameter')->willReturnMap([
-            [RoutingMiddleware::class, 'matchResults', []],
-            [DispatchMiddleware::class, 'actionRequest', $mockActionRequest]
-        ]);
 
         $mockActionRequest->expects(self::once())->method('setArguments')->with(['__widgetContext' =>  $mockWidgetContext, '__widgetId' => 'SomeWidgetId']);
         $mockActionRequest->expects(self::once())->method('setControllerObjectName')->with($mockControllerObjectName);
