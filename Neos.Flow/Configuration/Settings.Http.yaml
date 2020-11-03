@@ -29,9 +29,17 @@ Neos:
         'trustedProxies':
           position: 'start'
           middleware: 'Neos\Flow\Http\Middleware\TrustedProxiesMiddleware'
+        'standardsCompliance':
+          position: 'after trustedProxies'
+          middleware: 'Neos\Flow\Http\Middleware\StandardsComplianceMiddleware'
+        'poweredByHeader':
+          middleware: 'Neos\Flow\Http\Middleware\PoweredByMiddleware'
         'session':
           position: '10'
           middleware: 'Neos\Flow\Http\Middleware\SessionMiddleware'
+        'flashMessages':
+          position: 'after session'
+          middleware: 'Neos\Flow\Mvc\FlashMessage\FlashMessageMiddleware'
         'dispatch':
           position: 'end'
           middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
@@ -69,15 +77,7 @@ Neos:
               component: 'Neos\Flow\Http\Component\SecurityEntryPointComponent'
 
         'postprocess':
-          chain:
-            'flashMessages':
-              position: 'start'
-              component: 'Neos\Flow\Mvc\FlashMessage\FlashMessageComponent'
-            'poweredByHeader':
-              component: 'Neos\Flow\Http\Component\PoweredByComponent'
-            'standardsCompliance':
-              position: 'end'
-              component: 'Neos\Flow\Http\Component\StandardsComplianceComponent'
+          chain: []
 
       trustedProxies:
 

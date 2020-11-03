@@ -12,26 +12,26 @@ namespace Neos\Flow\Tests\Unit\Http\Component;
  */
 
 use GuzzleHttp\Psr7\Response;
-use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Component\StandardsComplianceComponent;
+use Neos\Flow\Http\Middleware\StandardsComplianceMiddleware;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Test case for the StandardsComplianceComponent
  */
-class StandardsComplianceComponentTest extends UnitTestCase
+class StandardsComplianceMiddlewareTest extends UnitTestCase
 {
     /**
-     * @var StandardsComplianceComponent
+     * @var StandardsComplianceMiddleware
      */
-    protected $standardsComplianceComponent;
+    protected $standardsComplianceMiddleware;
 
     /**
-     * @var ComponentContext|\PHPUnit\Framework\MockObject\MockObject
+     * @var RequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $mockComponentContext;
+    protected $mockRequestHandler;
 
     /**
      * @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -46,13 +46,12 @@ class StandardsComplianceComponentTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->response = new Response();
+        $this->mockHttpResponse = new Response();
 
-        $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockComponentContext->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
-        $this->mockComponentContext->expects(self::any())->method('getHttpResponse')->will(self::returnValue($this->response));
+        $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockRequestHandler->method('handle')->willReturn($this->mockHttpResponse);
 
-        $this->standardsComplianceComponent = new StandardsComplianceComponent([]);
+        $this->standardsComplianceMiddleware = new StandardsComplianceMiddleware([]);
     }
 
     /**
@@ -60,7 +59,7 @@ class StandardsComplianceComponentTest extends UnitTestCase
      */
     public function handleCallsMakeStandardsCompliantOnTheCurrentResponse()
     {
-        $this->mockComponentContext->expects(self::once())->method('replaceHttpResponse');
-        $this->standardsComplianceComponent->handle($this->mockComponentContext);
+        self::markTestSkipped('This test does not test anything at all');
+        self::assertNotSame($this->mockHttpResponse, $this->standardsComplianceMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler));
     }
 }
