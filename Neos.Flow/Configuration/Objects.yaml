@@ -285,7 +285,7 @@ Neos\Flow\Http\ContentStream:
           1:
             value: systemLogger
 
-Neos\Flow\Http\Component\SecurityEntryPointComponent:
+Neos\Flow\Http\Middleware\SecurityEntryPointMiddleware:
   properties:
     securityLogger:
       object:

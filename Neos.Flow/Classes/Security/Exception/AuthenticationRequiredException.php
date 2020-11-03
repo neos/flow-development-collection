@@ -11,6 +11,8 @@ namespace Neos\Flow\Security\Exception;
  * source code.
  */
 
+use Neos\Flow\Mvc\ActionRequest;
+
 /**
  * An "AccessDenied" Exception
  *
@@ -22,4 +24,9 @@ class AuthenticationRequiredException extends \Neos\Flow\Security\Exception
      * @var integer
      */
     protected $statusCode = 401;
+
+    /**
+     * @var ActionRequest
+     */
+    public $interceptedRequest;
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Unit\Http\Component;
+namespace Neos\Flow\Tests\Unit\Http\Middleware;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -11,10 +11,8 @@ namespace Neos\Flow\Tests\Unit\Http\Component;
  * source code.
  */
 
-use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Component\SecurityEntryPointComponent;
+use Neos\Flow\Http\Middleware\SecurityEntryPointMiddleware;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Security\Authentication\EntryPointInterface;
 use Neos\Flow\Security\Authentication\Token\TestingToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -24,27 +22,23 @@ use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Test case for the SecurityEntryPointComponent
+ * Test case for the SecurityEntryPointMiddleware
  */
-class SecurityEntryPointComponentTest extends UnitTestCase
+class SecurityEntryPointMiddlewareTest extends UnitTestCase
 {
     /**
-     * @var SecurityEntryPointComponent
+     * @var SecurityEntryPointMiddleware
      */
-    private $securityEntryPointComponent;
+    private $securityEntryPointMiddleware;
 
     /**
      * @var Context|MockObject
      */
     private $mockSecurityContext;
-
-    /**
-     * @var ComponentContext|MockObject
-     */
-    private $mockComponentContext;
 
     /**
      * @var ServerRequestInterface|MockObject
@@ -55,6 +49,11 @@ class SecurityEntryPointComponentTest extends UnitTestCase
      * @var ResponseInterface|MockObject
      */
     private $mockHttpResponse;
+
+    /**
+     * @var RequestHandlerInterface|MockObject
+     */
+    private $mockRequestHandler;
 
     /**
      * @var AuthenticationRequiredException
@@ -73,32 +72,24 @@ class SecurityEntryPointComponentTest extends UnitTestCase
 
     protected function setUp(): void
     {
-        $this->securityEntryPointComponent = new SecurityEntryPointComponent();
+        $this->securityEntryPointMiddleware = new SecurityEntryPointMiddleware();
 
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $this->inject($this->securityEntryPointComponent, 'securityContext', $this->mockSecurityContext);
+        $this->inject($this->securityEntryPointMiddleware, 'securityContext', $this->mockSecurityContext);
 
         $mockSecurityLogger = $this->getMockBuilder(LoggerInterface::class)->getMock();
-        $this->inject($this->securityEntryPointComponent, 'securityLogger', $mockSecurityLogger);
+        $this->inject($this->securityEntryPointMiddleware, 'securityLogger', $mockSecurityLogger);
 
-        $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
-        $this->mockComponentContext->method('getHttpRequest')->willReturn($this->mockHttpRequest);
         $this->mockHttpResponse = $this->getMockBuilder(ResponseInterface::class)->getMock();
-        $this->mockComponentContext->method('getHttpResponse')->willReturn($this->mockHttpResponse);
+        $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
+
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->method('getMainRequest')->willReturn($this->mockActionRequest);
-        $this->mockComponentContext->method('getParameter')->willReturnCallback(function ($componentClassName, $parameterName) {
-            if ($componentClassName === SecurityEntryPointComponent::class && $parameterName === SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION) {
-                return $this->mockAuthenticationRequiredException;
-            }
-            if ($componentClassName === DispatchComponent::class && $parameterName === 'actionRequest') {
-                return $this->mockActionRequest;
-            }
-            return null;
-        });
 
         $this->mockAuthenticationRequiredException = new AuthenticationRequiredException();
+        $this->mockAuthenticationRequiredException->interceptedRequest = $this->mockActionRequest;
+        $this->mockRequestHandler->method('handle')->willthrowException($this->mockAuthenticationRequiredException);
 
         $this->mockTokenWithEntryPoint = $this->getMockBuilder(TokenInterface::class)->getMock();
         $mockEntryPoint = $this->getMockBuilder(EntryPointInterface::class)->getMock();
@@ -110,9 +101,10 @@ class SecurityEntryPointComponentTest extends UnitTestCase
      */
     public function handleReturnsIfNoAuthenticationExceptionWasSet(): void
     {
-        $this->mockAuthenticationRequiredException = null;
+        $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
+        $this->mockRequestHandler->method('handle')->willReturn($this->mockHttpResponse);
         $this->mockSecurityContext->expects(self::never())->method('getAuthenticationTokens');
-        $this->securityEntryPointComponent->handle($this->mockComponentContext);
+        $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
 
     /**
@@ -123,7 +115,7 @@ class SecurityEntryPointComponentTest extends UnitTestCase
         $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([]);
 
         $this->expectExceptionObject($this->mockAuthenticationRequiredException);
-        $this->securityEntryPointComponent->handle($this->mockComponentContext);
+        $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
 
     /**
@@ -137,13 +129,13 @@ class SecurityEntryPointComponentTest extends UnitTestCase
 
         /** @var EntryPointInterface|MockObject $mockEntryPoint1 */
         $mockEntryPoint1 = $mockAuthenticationToken1->getAuthenticationEntryPoint();
-        $mockEntryPoint1->expects(self::once())->method('startAuthentication')->with($this->mockHttpRequest, $this->mockHttpResponse)->willReturn($this->mockHttpResponse);
+        $mockEntryPoint1->expects(self::once())->method('startAuthentication')->with($this->mockHttpRequest, self::isInstanceOf(ResponseInterface::class))->willReturn($this->mockHttpResponse);
 
         /** @var EntryPointInterface|MockObject $mockEntryPoint2 */
         $mockEntryPoint2 = $mockAuthenticationToken2->getAuthenticationEntryPoint();
-        $mockEntryPoint2->expects(self::once())->method('startAuthentication')->with($this->mockHttpRequest, $this->mockHttpResponse)->willReturn($this->mockHttpResponse);
+        $mockEntryPoint2->expects(self::once())->method('startAuthentication')->with($this->mockHttpRequest, self::isInstanceOf(ResponseInterface::class))->willReturn($this->mockHttpResponse);
 
-        $this->securityEntryPointComponent->handle($this->mockComponentContext);
+        $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
 
     /**
@@ -154,11 +146,6 @@ class SecurityEntryPointComponentTest extends UnitTestCase
         $mockAuthenticationToken1 = $this->createMockTokenWithEntryPoint();
         $mockAuthenticationToken2 = $this->createMockTokenWithEntryPoint();
         $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([$mockAuthenticationToken1, $mockAuthenticationToken2]);
-
-        $mockHttpResponse1 = $this->getMockBuilder(ResponseInterface::class)->getMock();
-        $this->mockHttpResponse->expects(self::once())->method('withAddedHeader')->with('X-Entry-Point', '1')->willReturn($mockHttpResponse1);
-        $mockHttpResponse2 = $this->getMockBuilder(ResponseInterface::class)->getMock();
-        $mockHttpResponse1->expects(self::once())->method('withAddedHeader')->with('X-Entry-Point', '2')->willReturn($mockHttpResponse2);
 
         /** @var EntryPointInterface|MockObject $mockEntryPoint1 */
         $mockEntryPoint1 = $mockAuthenticationToken1->getAuthenticationEntryPoint();
@@ -171,9 +158,8 @@ class SecurityEntryPointComponentTest extends UnitTestCase
             return $response->withAddedHeader('X-Entry-Point', '2');
         });
 
-        $this->mockComponentContext->expects(self::once())->method('replaceHttpResponse')->with($mockHttpResponse2);
-
-        $this->securityEntryPointComponent->handle($this->mockComponentContext);
+        $entryPointResponse = $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
+        self::assertEquals(['1', '2'], $entryPointResponse->getHeader('X-Entry-Point'));
     }
 
     /**
@@ -197,7 +183,7 @@ class SecurityEntryPointComponentTest extends UnitTestCase
 
         $this->mockHttpRequest->method('getMethod')->willReturn('GET');
 
-        $this->securityEntryPointComponent->handle($this->mockComponentContext);
+        $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
 
     /**
@@ -210,7 +196,7 @@ class SecurityEntryPointComponentTest extends UnitTestCase
 
         $this->mockHttpRequest->method('getMethod')->willReturn('POST');
 
-        $this->securityEntryPointComponent->handle($this->mockComponentContext);
+        $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
 
     /**
@@ -232,6 +218,6 @@ class SecurityEntryPointComponentTest extends UnitTestCase
 
         $this->mockSecurityContext->expects(self::never())->method('setInterceptedRequest');
 
-        $this->securityEntryPointComponent->handle($this->mockComponentContext);
+        $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
 }
