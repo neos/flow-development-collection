@@ -9,6 +9,7 @@ use Neos\Flow\Http\Component\ComponentContext;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use GuzzleHttp\Psr7\Stream;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * The minimal MVC response object.
