@@ -296,45 +296,6 @@ final class ActionResponse
      * created in a View (see ActionController::renderView()) because those would be overwritten otherwise. Note that any component parameters will
      * still run through the component chain and will not be propagated here.
      *
-     * WARNING: Should this ActionResponse contain body content it would replace any content in the given HttpReponse.
-     *
-     * @param ResponseInterface $httpResponse
-     * @return ResponseInterface
-     * @internal
-     */
-    public function applyToHttpResponse(ResponseInterface $httpResponse): ResponseInterface
-    {
-        $httpResponse = $this->httpResponse ?? $httpResponse;
-
-        if ($this->statusCode !== null) {
-            $httpResponse = $httpResponse->withStatus($this->statusCode);
-        }
-
-        if ($this->hasContent()) {
-            $httpResponse = $httpResponse->withBody($this->content);
-        }
-
-        if ($this->contentType !== null) {
-            $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);
-        }
-
-        if ($this->redirectUri !== null) {
-            $httpResponse = $httpResponse->withHeader('Location', (string)$this->redirectUri);
-        }
-
-        foreach ($this->cookies as $cookie) {
-            $httpResponse = $httpResponse->withAddedHeader('Set-Cookie', (string)$cookie);
-        }
-
-        return $httpResponse;
-    }
-
-    /**
-     * Note this is a special use case method that will apply the internal properties (Content-Type, StatusCode, Location, Set-Cookie and Content)
-     * to the given PSR-7 Response and return a modified response. This is used to merge the ActionResponse properties into a possible HttpResponse
-     * created in a View (see ActionController::renderView()) because those would be overwritten otherwise. Note that any component parameters will
-     * still run through the component chain and will not be propagated here.
-     *
      * @return ResponseInterface
      * @internal
      */
