@@ -55,6 +55,11 @@ final class ActionResponse
      */
     protected $cookies = [];
 
+    /**
+     * @var ResponseInterface
+     */
+    protected $httpResponse;
+
     public function __construct()
     {
         $this->content = stream_for();
@@ -200,6 +205,15 @@ final class ActionResponse
     }
 
     /**
+     * Use this if you want build your own HTTP Response inside your action
+     * @param ResponseInterface $response
+     */
+    public function replaceHttpResponse(ResponseInterface $response): void
+    {
+        $this->httpResponse = $response;
+    }
+
+    /**
      * @param ActionResponse $actionResponse
      * @return ActionResponse
      */
@@ -221,6 +235,10 @@ final class ActionResponse
             $actionResponse->setRedirectUri($this->redirectUri);
         }
 
+        if ($this->httpResponse !== null) {
+            $actionResponse->replaceHttpResponse($this->httpResponse);
+        }
+
         foreach ($this->componentParameters as $componentClass => $parameters) {
             foreach ($parameters as $parameterName => $parameterValue) {
                 $actionResponse->setComponentParameter($componentClass, $parameterName, $parameterValue);
@@ -239,7 +257,7 @@ final class ActionResponse
      */
     public function mergeIntoComponentContext(ComponentContext $componentContext): ComponentContext
     {
-        $httpResponse = $componentContext->getHttpResponse();
+        $httpResponse = $this->httpResponse ?? $componentContext->getHttpResponse();
         if ($this->statusCode !== null) {
             $httpResponse = $httpResponse->withStatus($this->statusCode);
         }
@@ -285,6 +303,44 @@ final class ActionResponse
      */
     public function applyToHttpResponse(ResponseInterface $httpResponse): ResponseInterface
     {
+        $httpResponse = $this->httpResponse ?? $httpResponse;
+
+        if ($this->statusCode !== null) {
+            $httpResponse = $httpResponse->withStatus($this->statusCode);
+        }
+
+        if ($this->hasContent()) {
+            $httpResponse = $httpResponse->withBody($this->content);
+        }
+
+        if ($this->contentType !== null) {
+            $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);
+        }
+
+        if ($this->redirectUri !== null) {
+            $httpResponse = $httpResponse->withHeader('Location', (string)$this->redirectUri);
+        }
+
+        foreach ($this->cookies as $cookie) {
+            $httpResponse = $httpResponse->withAddedHeader('Set-Cookie', (string)$cookie);
+        }
+
+        return $httpResponse;
+    }
+
+    /**
+     * Note this is a special use case method that will apply the internal properties (Content-Type, StatusCode, Location, Set-Cookie and Content)
+     * to the given PSR-7 Response and return a modified response. This is used to merge the ActionResponse properties into a possible HttpResponse
+     * created in a View (see ActionController::renderView()) because those would be overwritten otherwise. Note that any component parameters will
+     * still run through the component chain and will not be propagated here.
+     *
+     * @return ResponseInterface
+     * @internal
+     */
+    public function buildHttpResponse(): ResponseInterface
+    {
+        $httpResponse = $this->httpResponse ?? new Response();
+
         if ($this->statusCode !== null) {
             $httpResponse = $httpResponse->withStatus($this->statusCode);
         }
