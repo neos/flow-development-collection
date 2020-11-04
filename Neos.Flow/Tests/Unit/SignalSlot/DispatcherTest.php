@@ -16,6 +16,7 @@ namespace Neos\Flow\Tests\Unit\SignalSlot;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\SignalSlot\Exception\InvalidSlotException;
+use Neos\Flow\SignalSlot\SignalInformation;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -35,7 +36,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->connect(get_class($mockSignal), 'someSignal', get_class($mockSlot), 'someSlotMethod', false);
 
         $expectedSlots = [
-            ['class' => get_class($mockSlot), 'method' => 'someSlotMethod', 'object' => null, 'passSignalInformation' => false]
+            ['class' => get_class($mockSlot), 'method' => 'someSlotMethod', 'object' => null, 'passSignalInformation' => false, 'useSignalInformationObject' => false]
         ];
         self::assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
     }
@@ -52,7 +53,7 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->connect(get_class($mockSignal), 'someSignal', $mockSlot, 'someSlotMethod', false);
 
         $expectedSlots = [
-            ['class' => null, 'method' => 'someSlotMethod', 'object' => $mockSlot, 'passSignalInformation' => false]
+            ['class' => null, 'method' => 'someSlotMethod', 'object' => $mockSlot, 'passSignalInformation' => false, 'useSignalInformationObject' => false]
         ];
         self::assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
     }
@@ -70,7 +71,59 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->connect(get_class($mockSignal), 'someSignal', $mockSlot, 'foo', false);
 
         $expectedSlots = [
-            ['class' => null, 'method' => '__invoke', 'object' => $mockSlot, 'passSignalInformation' => false]
+            ['class' => null, 'method' => '__invoke', 'object' => $mockSlot, 'passSignalInformation' => false, 'useSignalInformationObject' => false]
+        ];
+        self::assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
+    }
+
+    /**
+     * @test
+     */
+    public function wireAllowsForConnectingASlotWithASignal(): void
+    {
+        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
+        $mockSlot = $this->getMockBuilder('stdClass')->setMethods(['someSlotMethod'])->getMock();
+
+        $dispatcher = new Dispatcher();
+        $dispatcher->wire(get_class($mockSignal), 'someSignal', get_class($mockSlot), 'someSlotMethod', false);
+
+        $expectedSlots = [
+            ['class' => get_class($mockSlot), 'method' => 'someSlotMethod', 'object' => null, 'passSignalInformation' => false, 'useSignalInformationObject' => true]
+        ];
+        self::assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
+    }
+
+    /**
+     * @test
+     */
+    public function wireAlsoAcceptsObjectsInPlaceOfTheClassName(): void
+    {
+        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
+        $mockSlot = $this->getMockBuilder('stdClass')->setMethods(['someSlotMethod'])->getMock();
+
+        $dispatcher = new Dispatcher();
+        $dispatcher->wire(get_class($mockSignal), 'someSignal', $mockSlot, 'someSlotMethod', false);
+
+        $expectedSlots = [
+            ['class' => null, 'method' => 'someSlotMethod', 'object' => $mockSlot, 'passSignalInformation' => false, 'useSignalInformationObject' => true]
+        ];
+        self::assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
+    }
+
+    /**
+     * @test
+     */
+    public function wireAlsoAcceptsClosuresActingAsASlot(): void
+    {
+        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
+        $mockSlot = function () {
+        };
+
+        $dispatcher = new Dispatcher();
+        $dispatcher->wire(get_class($mockSignal), 'someSignal', $mockSlot, 'foo', false);
+
+        $expectedSlots = [
+            ['class' => null, 'method' => '__invoke', 'object' => $mockSlot, 'passSignalInformation' => false, 'useSignalInformationObject' => true]
         ];
         self::assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'someSignal'));
     }
@@ -183,7 +236,7 @@ class DispatcherTest extends UnitTestCase
     {
         $this->expectException(InvalidSlotException::class);
         $slotClassName = 'Mock_' . md5(uniqid((string)mt_rand(), true));
-        eval('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
+        eval('class ' . $slotClassName . ' {  }');
         $mockSlot = new $slotClassName();
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
@@ -195,7 +248,6 @@ class DispatcherTest extends UnitTestCase
         $dispatcher->connect('Foo', 'bar', $slotClassName, 'unknownMethodName', true);
 
         $dispatcher->dispatch('Foo', 'bar', ['foo' => 'bar', 'baz' => 'quux']);
-        self::assertSame($mockSlot->arguments, ['bar', 'quux']);
     }
 
     /**
@@ -229,5 +281,26 @@ class DispatcherTest extends UnitTestCase
 
         $dispatcher = new Dispatcher();
         $dispatcher->connect(get_class($mockSignal), 'emitSomeSignal', get_class($mockSlot), 'someSlotMethod', false);
+    }
+
+    /**
+     * @test
+     */
+    public function dispatchPassesSignalInformationObjectIfWireWasUsed(): void
+    {
+        $receivedArguments = [];
+        $mockSlot = function (SignalInformation $s) use (&$receivedArguments) {
+            $receivedArguments = func_get_args();
+        };
+
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $dispatcher = new Dispatcher();
+        $dispatcher->wire('SignalClassName', 'methodName', $mockSlot);
+        $dispatcher->injectObjectManager($mockObjectManager);
+
+        $passedArguments = ['bar', 'quux'];
+        $dispatcher->dispatch('SignalClassName', 'methodName', $passedArguments);
+        self::assertEquals([new SignalInformation('SignalClassName', 'methodName', $passedArguments)], $receivedArguments);
     }
 }

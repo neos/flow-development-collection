@@ -50,7 +50,11 @@ class Dispatcher
 
     /**
      * Connects a signal with a slot.
+     *
      * One slot can be connected with multiple signals by calling this method multiple times.
+     *
+     * When $passSignalInformation is true, the slot will be passed a string (EmitterClassName::signalName) as the last
+     * parameter.
      *
      * @param string $signalClassName Name of the class containing the signal
      * @param string $signalName Name of the signal
@@ -60,8 +64,45 @@ class Dispatcher
      * @return void
      * @throws \InvalidArgumentException
      * @api
+     * @see wire()
      */
     public function connect(string $signalClassName, string $signalName, $slotClassNameOrObject, string $slotMethodName = '', bool $passSignalInformation = true): void
+    {
+        $this->connectSignalToSlot($signalClassName, $signalName, $slotClassNameOrObject, $slotMethodName, $passSignalInformation, false);
+    }
+
+    /**
+     * Connects a signal with a slot.
+     *
+     * One slot can be connected with multiple signals by calling this method multiple times.
+     *
+     * The slot will be passed a an instance of SignalInformation as the sole parameter.
+     *
+     * @param string $signalClassName Name of the class containing the signal
+     * @param string $signalName Name of the signal
+     * @param mixed $slotClassNameOrObject Name of the class containing the slot or the instantiated class or a Closure object
+     * @param string $slotMethodName Name of the method to be used as a slot. If $slotClassNameOrObject is a Closure object, this parameter is ignored
+     * @return void
+     * @throws \InvalidArgumentException
+     * @api
+     * @see connect()
+     * @see SignalInformation
+     */
+    public function wire(string $signalClassName, string $signalName, $slotClassNameOrObject, string $slotMethodName = ''): void
+    {
+        $this->connectSignalToSlot($signalClassName, $signalName, $slotClassNameOrObject, $slotMethodName, false, true);
+    }
+
+    /**
+     * @param string $signalClassName
+     * @param string $signalName
+     * @param mixed $slotClassNameOrObject
+     * @param string $slotMethodName
+     * @param bool $passSignalInformation
+     * @param bool $useSignalInformationObject
+     * @return void
+     */
+    private function connectSignalToSlot(string $signalClassName, string $signalName, $slotClassNameOrObject, string $slotMethodName, bool $passSignalInformation, bool $useSignalInformationObject): void
     {
         $class = null;
         $object = null;
@@ -86,7 +127,8 @@ class Dispatcher
             'class' => $class,
             'method' => $method,
             'object' => $object,
-            'passSignalInformation' => ($passSignalInformation === true)
+            'passSignalInformation' => $passSignalInformation,
+            'useSignalInformationObject' => $useSignalInformationObject
         ];
     }
 
@@ -107,7 +149,6 @@ class Dispatcher
         }
 
         foreach ($this->slots[$signalClassName][$signalName] as $slotInformation) {
-            $finalSignalArguments = $signalArguments;
             if (isset($slotInformation['object'])) {
                 $object = $slotInformation['object'];
             } elseif (strpos($slotInformation['method'], '::') === 0) {
@@ -130,14 +171,19 @@ class Dispatcher
                 }
                 $object = $this->objectManager->get($slotInformation['class']);
             }
-            if ($slotInformation['passSignalInformation'] === true) {
-                $finalSignalArguments[] = $signalClassName . '::' . $signalName;
-            }
             if (!method_exists($object, $slotInformation['method'])) {
                 throw new Exception\InvalidSlotException('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
             }
-            // Need to use call_user_func_array here, because $object may be the class name when the slot is a static method
-            call_user_func_array([$object, $slotInformation['method']], $finalSignalArguments);
+
+            if ($slotInformation['useSignalInformationObject'] === true) {
+                call_user_func([$object, $slotInformation['method']], new SignalInformation($signalClassName, $signalName, $signalArguments));
+            } else {
+                if ($slotInformation['passSignalInformation'] === true) {
+                    $signalArguments[] = $signalClassName . '::' . $signalName;
+                }
+                // Need to use call_user_func_array here, because $object may be the class name when the slot is a static method
+                call_user_func_array([$object, $slotInformation['method']], $signalArguments);
+            }
         }
     }
 
