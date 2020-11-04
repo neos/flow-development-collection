@@ -43,7 +43,7 @@ class Dispatcher
      * @param ObjectManagerInterface $objectManager
      * @return void
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
@@ -61,7 +61,7 @@ class Dispatcher
      * @throws \InvalidArgumentException
      * @api
      */
-    public function connect($signalClassName, $signalName, $slotClassNameOrObject, $slotMethodName = '', $passSignalInformation = true)
+    public function connect(string $signalClassName, string $signalName, $slotClassNameOrObject, string $slotMethodName = '', bool $passSignalInformation = true): void
     {
         $class = null;
         $object = null;
@@ -100,7 +100,7 @@ class Dispatcher
      * @throws Exception\InvalidSlotException if the slot is not valid
      * @api
      */
-    public function dispatch($signalClassName, $signalName, array $signalArguments = [])
+    public function dispatch(string $signalClassName, string $signalName, array $signalArguments = []): void
     {
         if (!isset($this->slots[$signalClassName][$signalName])) {
             return;
@@ -110,7 +110,7 @@ class Dispatcher
             $finalSignalArguments = $signalArguments;
             if (isset($slotInformation['object'])) {
                 $object = $slotInformation['object'];
-            } elseif (substr($slotInformation['method'], 0, 2) === '::') {
+            } elseif (strpos($slotInformation['method'], '::') === 0) {
                 if (!isset($this->objectManager)) {
                     if (is_callable($slotInformation['class'] . $slotInformation['method'])) {
                         $object = $slotInformation['class'];
@@ -149,9 +149,9 @@ class Dispatcher
      * @return array An array of arrays with slot information
      * @api
      */
-    public function getSlots($signalClassName, $signalName)
+    public function getSlots(string $signalClassName, string $signalName): array
     {
-        return (isset($this->slots[$signalClassName][$signalName])) ? $this->slots[$signalClassName][$signalName] : [];
+        return $this->slots[$signalClassName][$signalName] ?? [];
     }
 
     /**
@@ -160,7 +160,7 @@ class Dispatcher
      * @return array An array of arrays with slot information
      * @api
      */
-    public function getSignals()
+    public function getSignals(): array
     {
         return $this->slots;
     }

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\SignalSlot;
 
 /*
@@ -24,7 +26,7 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
-    public function connectAllowsForConnectingASlotWithASignal()
+    public function connectAllowsForConnectingASlotWithASignal(): void
     {
         $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
         $mockSlot = $this->getMockBuilder('stdClass')->setMethods(['someSlotMethod'])->getMock();
@@ -41,7 +43,7 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
-    public function connectAlsoAcceptsObjectsInPlaceOfTheClassName()
+    public function connectAlsoAcceptsObjectsInPlaceOfTheClassName(): void
     {
         $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
         $mockSlot = $this->getMockBuilder('stdClass')->setMethods(['someSlotMethod'])->getMock();
@@ -58,7 +60,7 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
-    public function connectAlsoAcceptsClosuresActingAsASlot()
+    public function connectAlsoAcceptsClosuresActingAsASlot(): void
     {
         $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
         $mockSlot = function () {
@@ -76,17 +78,17 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
-    public function dispatchPassesTheSignalArgumentsToTheSlotMethod()
+    public function dispatchPassesTheSignalArgumentsToTheSlotMethod(): void
     {
         $arguments = [];
         $mockSlot = function () use (&$arguments) {
-            $arguments =  func_get_args();
+            $arguments = func_get_args();
         };
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
 
         $dispatcher = new Dispatcher();
-        $dispatcher->connect('Foo', 'bar', $mockSlot, null, false);
+        $dispatcher->connect('Foo', 'bar', $mockSlot, '', false);
         $dispatcher->injectObjectManager($mockObjectManager);
 
         $dispatcher->dispatch('Foo', 'bar', ['foo' => 'bar', 'baz' => 'quux']);
@@ -96,10 +98,10 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
-    public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethod()
+    public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethod(): void
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with(DispatcherTest::class)->will(self::returnValue(DispatcherTest::class));
+        $mockObjectManager->method('getClassNameByObjectName')->with(DispatcherTest::class)->willReturn(DispatcherTest::class);
 
         $dispatcher = new Dispatcher();
         $dispatcher->connect('Foo', 'bar', get_class($this), '::staticSlot', false);
@@ -112,7 +114,7 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
-    public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethodIfNoObjectmanagerIsAvailable()
+    public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethodIfNoObjectmanagerIsAvailable(): void
     {
         $dispatcher = new Dispatcher();
         $dispatcher->connect('Foo', 'bar', get_class($this), '::staticSlot', false);
@@ -123,6 +125,7 @@ class DispatcherTest extends UnitTestCase
 
     /**
      * A variable used in the above two tests.
+     *
      * @var array
      */
     protected static $arguments = [];
@@ -132,7 +135,7 @@ class DispatcherTest extends UnitTestCase
      *
      * @return void
      */
-    public static function staticSlot()
+    public static function staticSlot(): void
     {
         self::$arguments = func_get_args();
     }
@@ -140,15 +143,15 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
-    public function dispatchRetrievesSlotInstanceFromTheObjectManagerIfOnlyAClassNameWasSpecified()
+    public function dispatchRetrievesSlotInstanceFromTheObjectManagerIfOnlyAClassNameWasSpecified(): void
     {
-        $slotClassName = 'Mock_' . md5(uniqid(mt_rand(), true));
+        $slotClassName = 'Mock_' . md5(uniqid((string)mt_rand(), true));
         eval('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
         $mockSlot = new $slotClassName();
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::once())->method('isRegistered')->with($slotClassName)->will(self::returnValue(true));
-        $mockObjectManager->expects(self::once())->method('get')->with($slotClassName)->will(self::returnValue($mockSlot));
+        $mockObjectManager->expects(self::once())->method('isRegistered')->with($slotClassName)->willReturn(true);
+        $mockObjectManager->expects(self::once())->method('get')->with($slotClassName)->willReturn($mockSlot);
 
         $dispatcher = new Dispatcher();
         $dispatcher->injectObjectManager($mockObjectManager);
@@ -161,11 +164,11 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
-    public function dispatchThrowsAnExceptionIfTheSpecifiedClassOfASlotIsUnknown()
+    public function dispatchThrowsAnExceptionIfTheSpecifiedClassOfASlotIsUnknown(): void
     {
         $this->expectException(InvalidSlotException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::once())->method('isRegistered')->with('NonExistingClassName')->will(self::returnValue(false));
+        $mockObjectManager->expects(self::once())->method('isRegistered')->with('NonExistingClassName')->willReturn(false);
 
         $dispatcher = new Dispatcher();
         $dispatcher->injectObjectManager($mockObjectManager);
@@ -176,16 +179,16 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
-    public function dispatchThrowsAnExceptionIfTheSpecifiedSlotMethodDoesNotExist()
+    public function dispatchThrowsAnExceptionIfTheSpecifiedSlotMethodDoesNotExist(): void
     {
         $this->expectException(InvalidSlotException::class);
-        $slotClassName = 'Mock_' . md5(uniqid(mt_rand(), true));
+        $slotClassName = 'Mock_' . md5(uniqid((string)mt_rand(), true));
         eval('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
         $mockSlot = new $slotClassName();
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::once())->method('isRegistered')->with($slotClassName)->will(self::returnValue(true));
-        $mockObjectManager->expects(self::once())->method('get')->with($slotClassName)->will(self::returnValue($mockSlot));
+        $mockObjectManager->expects(self::once())->method('isRegistered')->with($slotClassName)->willReturn(true);
+        $mockObjectManager->expects(self::once())->method('get')->with($slotClassName)->willReturn($mockSlot);
 
         $dispatcher = new Dispatcher();
         $dispatcher->injectObjectManager($mockObjectManager);
@@ -198,17 +201,17 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
-    public function dispatchPassesArgumentContainingSlotInformationLastIfTheConnectionStatesSo()
+    public function dispatchPassesArgumentContainingSlotInformationLastIfTheConnectionStatesSo(): void
     {
         $arguments = [];
         $mockSlot = function () use (&$arguments) {
-            $arguments =  func_get_args();
+            $arguments = func_get_args();
         };
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
 
         $dispatcher = new Dispatcher();
-        $dispatcher->connect('SignalClassName', 'methodName', $mockSlot, null, true);
+        $dispatcher->connect('SignalClassName', 'methodName', $mockSlot, '', true);
         $dispatcher->injectObjectManager($mockObjectManager);
 
         $dispatcher->dispatch('SignalClassName', 'methodName', ['foo' => 'bar', 'baz' => 'quux']);
@@ -218,11 +221,11 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
-    public function connectWithSignalNameStartingWithEmitShouldNotBeAllowed()
+    public function connectWithSignalNameStartingWithEmitShouldNotBeAllowed(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
-        $mockSlot = $this->getMockBuilder('stdClass')->setMethods(['someSlotMethod'])->getMock();
+        $mockSignal = $this->getMockBuilder('stdClass')->addMethods(['emitSomeSignal'])->getMock();
+        $mockSlot = $this->getMockBuilder('stdClass')->addMethods(['someSlotMethod'])->getMock();
 
         $dispatcher = new Dispatcher();
         $dispatcher->connect(get_class($mockSignal), 'emitSomeSignal', get_class($mockSlot), 'someSlotMethod', false);
