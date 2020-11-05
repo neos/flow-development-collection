@@ -42,6 +42,8 @@ class PositionalArraySorterTest extends \PHPUnit\Framework\TestCase
             ['subject' => ['foo' => ['position' => 'start123'], 'first' => []]],
             ['subject' => ['foo' => ['position' => 'start 12 34'], 'first' => []]],
             ['subject' => ['foo' => ['position' => 'after 12 34 56'], 'first' => []]],
+            ['subject' => ['third' => ['position' => 'before nonexisting'], 'first' => []]],
+            ['subject' => ['third' => ['position' => 'after nonexisting'], 'first' => []]],
         ];
     }
 
@@ -147,18 +149,6 @@ class PositionalArraySorterTest extends \PHPUnit\Framework\TestCase
                 'subject' => ['thi:rd' => ['position' => 'end'], 'sec.ond' => ['position' => 'before thi:rd'], 'fir-st' => ['position' => 'before sec.ond']],
                 'positionPropertyPath' => 'position',
                 'expectedArrayKeys' => ['fir-st', 'sec.ond', 'thi:rd']
-            ],
-            [
-                'message' => 'Position before non-existing key',
-                'subject' => ['third' => ['position' => 'end'], 'second' => ['position' => 'before nonexisting'], 'first' => ['position' => 'before second']],
-                'positionPropertyPath' => 'position',
-                'expectedArrayKeys' => ['first', 'second', 'third']
-            ],
-            [
-                'message' => 'Position after non-existing key',
-                'subject' => ['third' => ['position' => 'after second'], 'second' => ['position' => 'after nonexisting'], 'first' => ['position' => 'start']],
-                'positionPropertyPath' => 'position',
-                'expectedArrayKeys' => ['first', 'second', 'third']
             ],
         ];
     }
