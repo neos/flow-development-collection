@@ -1,12 +1,10 @@
 Neos:
   Flow:
     http:
-      chain:
-        'process':
-          chain:
-            'ajaxWidget':
-              position: 'before routing'
-              component: 'Neos\FluidAdaptor\Core\Widget\AjaxWidgetComponent'
+      middlewares:
+        'ajaxWidget':
+          position: 'before routing'
+          middleware: 'Neos\FluidAdaptor\Core\Widget\AjaxWidgetMiddleware'
     mvc:
       view:
         defaultImplementation: 'Neos\FluidAdaptor\View\TemplateView'

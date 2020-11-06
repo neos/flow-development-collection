@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Core\Widget;
 
 /*
@@ -12,11 +14,6 @@ namespace Neos\FluidAdaptor\Core\Widget;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\ComponentChain;
-use Neos\Flow\Http\Component\ComponentInterface;
-use Neos\Flow\Http\Component\Exception as ComponentException;
-use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
 use Neos\Flow\Mvc\ActionRequestFactory;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Dispatcher;
@@ -25,13 +22,15 @@ use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * A HTTP component specifically for Ajax widgets
+ * A HTTP middleware specifically for Ajax widgets
  * It's task is to interrupt the default dispatching as soon as possible if the current request is an AJAX request
  * triggered by a Fluid widget (e.g. contains the arguments "__widgetId" or "__widgetContext").
  */
-class AjaxWidgetComponent implements ComponentInterface
+class AjaxWidgetMiddleware implements MiddlewareInterface
 {
     /**
      * @Flow\Inject
@@ -67,38 +66,25 @@ class AjaxWidgetComponent implements ComponentInterface
      * Check if the current request contains a widget context.
      * If so dispatch it directly, otherwise continue with the next HTTP component.
      *
-     * @param ComponentContext $componentContext
-     * @return void
-     * @throws ComponentException
+     * @param ServerRequestInterface $httpRequest
+     * @param RequestHandlerInterface $next
+     * @return ResponseInterface
      */
-    public function handle(ComponentContext $componentContext)
+    public function process(ServerRequestInterface $httpRequest, RequestHandlerInterface $next): ResponseInterface
     {
-        $httpRequest = $componentContext->getHttpRequest();
         $widgetContext = $this->extractWidgetContext($httpRequest);
         if ($widgetContext === null) {
-            return;
+            return $next->handle($httpRequest);
         }
 
         $actionRequest = $this->actionRequestFactory->createActionRequest($httpRequest, ['__widgetContext' => $widgetContext]);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
-        $this->securityContext->setRequest($actionRequest);
 
         $actionResponse = new ActionResponse();
 
         $this->dispatcher->dispatch($actionRequest, $actionResponse);
 
-        $componentContext = $actionResponse->mergeIntoComponentContext($componentContext);
-
-        // stop processing the current component chain
-        $componentContext->setParameter(ComponentChain::class, 'cancel', true);
-
-        // replace response, if the dispatched request returns a PSR-7 response
-        $possibleResponse = $componentContext->getParameter(ReplaceHttpResponseComponent::class, ReplaceHttpResponseComponent::PARAMETER_RESPONSE);
-        if (!$possibleResponse instanceof ResponseInterface) {
-            return;
-        }
-
-        $componentContext->replaceHttpResponse($possibleResponse);
+        return $actionResponse->buildHttpResponse();
     }
 
     /**

@@ -14,7 +14,6 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
-use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -785,8 +784,7 @@ class ActionController extends AbstractController
         }
 
         if ($result instanceof ResponseInterface) {
-            $finalResponse = $this->response->applyToHttpResponse($result);
-            $this->response->setComponentParameter(ReplaceHttpResponseComponent::class, ReplaceHttpResponseComponent::PARAMETER_RESPONSE, $finalResponse);
+            $this->response->replaceHttpResponse($result);
         }
 
         if (is_object($result) && is_callable([$result, '__toString'])) {
