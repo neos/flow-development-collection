@@ -57,7 +57,7 @@ final class ActionResponse
     protected $cookies = [];
 
     /**
-     * @var ResponseInterface
+     * @var ResponseInterface|null
      */
     protected $httpResponse;
 
