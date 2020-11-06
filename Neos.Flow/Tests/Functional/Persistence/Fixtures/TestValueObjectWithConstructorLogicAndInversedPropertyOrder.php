@@ -17,7 +17,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A simple value object for persistence tests
  *
- * @Flow\ValueObject
+ * @Flow\ValueObject(embedded=false)
  * @ORM\Table(name="persistence_testvalueobjectwithconstructorlogic2")
  */
 class TestValueObjectWithConstructorLogicAndInversedPropertyOrder

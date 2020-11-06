@@ -76,7 +76,8 @@
             "package-key": "Neos.Flow"
         },
         "applied-flow-migrations": [
-            "Neos.Media-20161124233100"
+            "Neos.Media-20161124233100",
+            "Neos.Flow-20201003165200"
         ]
     }
 }
