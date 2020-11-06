@@ -6,7 +6,6 @@ namespace Neos\Flow\Http\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Mvc\DispatchMiddleware;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
@@ -56,7 +55,9 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
 
             $response = $this->buildHttpResponse();
             foreach ($tokensWithEntryPoint as $token) {
-                if ($token->isAuthenticated()) continue;
+                if ($token->isAuthenticated()) {
+                    continue;
+                }
                 $entryPoint = $token->getAuthenticationEntryPoint();
                 $this->securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', \get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
 
