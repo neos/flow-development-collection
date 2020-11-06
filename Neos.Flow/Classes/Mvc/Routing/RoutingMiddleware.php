@@ -44,8 +44,8 @@ class RoutingMiddleware implements MiddlewareInterface
     /**
      * Resolve a route for the request
      *
-     * Stores the resolved route values in the ComponentContext to pass them
-     * to other components. They can be accessed via ComponentContext::getParameter(outingComponent::class, 'matchResults');
+     * Stores the resolved route values in the HTTP request attributes to pass them
+     * to other components. They can be accessed via ServerRequestInterface::getAttribute(ServerRequestAttributes::ROUTING_RESULTS);
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
