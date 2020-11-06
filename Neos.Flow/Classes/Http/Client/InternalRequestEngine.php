@@ -18,7 +18,6 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http;
-use Neos\Flow\Http\Middleware\MiddlewaresChainFactory;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\Routing\RouterInterface;
