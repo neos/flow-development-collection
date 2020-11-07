@@ -960,9 +960,13 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/Headers.php">
-    <PossiblyNullReference occurrences="1">
-      <code>expire</code>
-    </PossiblyNullReference>
+    <InvalidNullableReturnType occurrences="1">
+      <code>string</code>
+    </InvalidNullableReturnType>
+    <NullableReturnStatement occurrences="2">
+      <code>null</code>
+      <code>$cacheControl === '' ? null : $cacheControl</code>
+    </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/Helper/ResponseInformationHelper.php">
     <InvalidScalarArgument occurrences="1">

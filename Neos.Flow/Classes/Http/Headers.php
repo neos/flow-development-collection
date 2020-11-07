@@ -16,6 +16,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Container for HTTP header fields
  *
+ * @deprecated Headers will be only accessed via request in the future, if this class stays, then as internal implementation detail.
  * @Flow\Proxy(false)
  * TODO: case-insensitive header name matching
  */
@@ -57,6 +58,33 @@ class Headers implements \Iterator
     }
 
     /**
+     * Creates a new Headers instance from the given $_SERVER-superglobal-like array.
+     *
+     * @param array $server An array similar or equal to $_SERVER, containing headers in the form of "HTTP_FOO_BAR"
+     * @return Headers
+     */
+    public static function createFromServer(array $server)
+    {
+        $headerFields = [];
+        if (isset($server['PHP_AUTH_USER']) && isset($server['PHP_AUTH_PW'])) {
+            $headerFields['Authorization'] = 'Basic ' . base64_encode($server['PHP_AUTH_USER'] . ':' . $server['PHP_AUTH_PW']);
+        }
+
+        foreach ($server as $name => $value) {
+            if (strpos($name, 'HTTP_') === 0) {
+                $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+                $headerFields[$name] = $value;
+            } elseif ($name == 'REDIRECT_REMOTE_AUTHORIZATION' && !isset($headerFields['Authorization'])) {
+                $headerFields['Authorization'] = $value;
+            } elseif (in_array($name, ['CONTENT_TYPE', 'CONTENT_LENGTH'])) {
+                $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $name))));
+                $headerFields[$name] = $value;
+            }
+        }
+        return new self($headerFields);
+    }
+
+    /**
      * Sets the specified HTTP header
      *
      * DateTime objects will be converted to a string representation internally but
@@ -73,7 +101,7 @@ class Headers implements \Iterator
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set(string $name, $values, bool $replaceExistingHeader = true): void
+    public function set($name, $values, $replaceExistingHeader = true)
     {
         if ($values instanceof \DateTimeInterface) {
             $date = clone $values;
@@ -143,10 +171,10 @@ class Headers implements \Iterator
      * Dates are returned as DateTime objects with the timezone set to GMT.
      *
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
-     * @return array|string|\DateTime|null An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
+     * @return array|string An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
      * @api
      */
-    public function get(string $name)
+    public function get($name)
     {
         if (strtolower($name) === 'cache-control') {
             return $this->getCacheControlHeader();
@@ -185,7 +213,7 @@ class Headers implements \Iterator
      * @return array
      * @api
      */
-    public function getAll(): array
+    public function getAll()
     {
         $fields = $this->fields;
         $cacheControlHeader = $this->getCacheControlHeader();
@@ -203,7 +231,7 @@ class Headers implements \Iterator
      * @return boolean
      * @api
      */
-    public function has(string $name): bool
+    public function has($name)
     {
         if ($name === 'Cache-Control') {
             return ($this->getCacheControlHeader() !== null);
@@ -218,7 +246,7 @@ class Headers implements \Iterator
      * @return void
      * @api
      */
-    public function remove(string $name): void
+    public function remove($name)
     {
         unset($this->fields[$name]);
     }
@@ -230,9 +258,9 @@ class Headers implements \Iterator
      * @return void
      * @api
      */
-    public function setCookie(Cookie $cookie): void
+    public function setCookie(Cookie $cookie)
     {
-        $this->cookies[$cookie->getName()] = clone $cookie;
+        $this->cookies[$cookie->getName()] = $cookie;
     }
 
     /**
@@ -242,9 +270,9 @@ class Headers implements \Iterator
      * @return Cookie The cookie or NULL if no such cookie exists
      * @api
      */
-    public function getCookie(string $name): ?Cookie
+    public function getCookie($name)
     {
-        return $this->cookies[$name] ?? null;
+        return isset($this->cookies[$name]) ? $this->cookies[$name] : null;
     }
 
     /**
@@ -253,7 +281,7 @@ class Headers implements \Iterator
      * @return Cookie[]
      * @api
      */
-    public function getCookies(): array
+    public function getCookies()
     {
         return $this->cookies;
     }
@@ -265,7 +293,7 @@ class Headers implements \Iterator
      * @return boolean
      * @api
      */
-    public function hasCookie(string $name): bool
+    public function hasCookie($name)
     {
         return isset($this->cookies[$name]);
     }
@@ -275,13 +303,14 @@ class Headers implements \Iterator
      *
      * Note: This will remove the cookie object from this Headers container. If you
      *       intend to remove a cookie in the user agent (browser), you should call
-     *       deleteCookie() instead.
+     *       the cookie's expire() method and _not_ remove the cookie from the Headers
+     *       container.
      *
      * @param string $name Name of the cookie to remove
      * @return void
      * @api
      */
-    public function removeCookie(string $name): void
+    public function removeCookie($name)
     {
         unset($this->cookies[$name]);
     }
@@ -293,27 +322,9 @@ class Headers implements \Iterator
      * @return void
      * @api
      */
-    public function eatCookie(string $name): void
+    public function eatCookie($name)
     {
         $this->removeCookie($name);
-    }
-
-    /**
-     * Delete the specified cookie in the user agent, by expiring it.
-     *
-     * @param string $name
-     * @return void
-     * @api
-     */
-    public function deleteCookie(string $name): void
-    {
-        if (!$this->hasCookie($name)) {
-            $cookie = new Cookie($name);
-            $cookie->expire();
-            $this->setCookie($cookie);
-        } else {
-            $this->getCookie($name)->expire();
-        }
     }
 
     /**
@@ -321,11 +332,11 @@ class Headers implements \Iterator
      * RFC 2616 / 14.9
      *
      * @param string $name Name of the directive, for example "max-age"
-     * @param string|null $value An optional value
+     * @param string $value An optional value
      * @return void
      * @api
      */
-    public function setCacheControlDirective(string $name, ?string $value = null): void
+    public function setCacheControlDirective($name, $value = null)
     {
         switch ($name) {
             case 'public':
@@ -354,7 +365,7 @@ class Headers implements \Iterator
      * @param string $name Name of the directive, for example "public"
      * @return void
      */
-    public function removeCacheControlDirective(string $name): void
+    public function removeCacheControlDirective($name)
     {
         switch ($name) {
             case 'public':
@@ -384,7 +395,7 @@ class Headers implements \Iterator
      * @return mixed
      * @api
      */
-    public function getCacheControlDirective(string $name)
+    public function getCacheControlDirective($name)
     {
         $value = null;
 
@@ -398,7 +409,7 @@ class Headers implements \Iterator
                 if (!isset($matches[1])) {
                     $value = null;
                 } else {
-                    $value = ($matches[2] ?? true);
+                    $value = (isset($matches[2]) ? $matches[2] : true);
                 }
             break;
             case 'no-store':
@@ -429,7 +440,7 @@ class Headers implements \Iterator
      * @return void
      * @see set()
      */
-    protected function setCacheControlDirectivesFromRawHeader(string $rawFieldValue): void
+    protected function setCacheControlDirectivesFromRawHeader($rawFieldValue)
     {
         foreach (array_keys($this->cacheDirectives) as $key) {
             $this->cacheDirectives[$key] = '';
@@ -462,7 +473,7 @@ class Headers implements \Iterator
      * @return string Either the value of the header or NULL if it shall be omitted
      * @see get()
      */
-    protected function getCacheControlHeader(): ?string
+    protected function getCacheControlHeader()
     {
         $cacheControl = '';
         foreach ($this->cacheDirectives as $cacheDirective) {
@@ -479,7 +490,7 @@ class Headers implements \Iterator
      * @return void
      * @see set()
      */
-    protected function setCookiesFromRawHeader(string $rawFieldValue): void
+    protected function setCookiesFromRawHeader($rawFieldValue)
     {
         $cookiePairs = explode(';', $rawFieldValue);
         foreach ($cookiePairs as $cookiePair) {
@@ -500,7 +511,7 @@ class Headers implements \Iterator
      *
      * @return array
      */
-    public function getPreparedValues(): array
+    public function getPreparedValues()
     {
         $preparedValues = [];
         foreach ($this->getAll() as $name => $values) {
@@ -515,7 +526,7 @@ class Headers implements \Iterator
      * @param array $values
      * @return array
      */
-    private function prepareValues(string $headerName, array $values): array
+    private function prepareValues($headerName, array $values)
     {
         $preparedValues = [];
         foreach ($values as $value) {
@@ -530,7 +541,7 @@ class Headers implements \Iterator
      * @param array $values
      * @return string
      */
-    private function renderValuesFor(string $headerName, array $values): string
+    private function renderValuesFor($headerName, array $values)
     {
         return implode("\r\n", $this->prepareValues($headerName, $values));
     }
