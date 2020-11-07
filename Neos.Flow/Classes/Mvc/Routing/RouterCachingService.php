@@ -52,6 +52,7 @@ class RouterCachingService
 
     /**
      * @var LoggerInterface
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      */
     protected $logger;
 
