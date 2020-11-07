@@ -30,7 +30,7 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
     protected $securityContext;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
      * @var LoggerInterface
      */
     protected $securityLogger;
