@@ -47,6 +47,7 @@ class ResourceManager
     protected $objectManager;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;

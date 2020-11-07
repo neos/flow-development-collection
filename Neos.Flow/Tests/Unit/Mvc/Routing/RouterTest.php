@@ -72,7 +72,7 @@ class RouterTest extends UnitTestCase
         $this->router = $this->getAccessibleMock(Router::class, ['dummy']);
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
-        $this->router->injectLogger($this->mockSystemLogger);
+        $this->inject($this->router, 'logger', $this->mockSystemLogger);
 
         $this->mockRouterCachingService = $this->getMockBuilder(RouterCachingService::class)->getMock();
         $this->mockRouterCachingService->method('getCachedResolvedUriConstraints')->willReturn(false);

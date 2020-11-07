@@ -33,6 +33,7 @@ use Psr\Log\LoggerInterface;
 class Router implements RouterInterface
 {
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
