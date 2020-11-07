@@ -16,8 +16,10 @@ use Neos\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\InvalidUriPatternException;
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\Fixtures\MockRoutePartHandler;
 use Neos\Flow\Mvc\Routing;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -803,7 +805,7 @@ class RouteTest extends UnitTestCase
         $this->routeValues = ['key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4'];
 
         self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('value1-value2/value3.value4.xml', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        self::assertSame('/value1-value2/value3.value4.xml', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
@@ -828,7 +830,7 @@ class RouteTest extends UnitTestCase
         $this->routeValues = ['key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '__someInternalArgument' => 'someValue'];
 
         self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('value1-value2/value3.value4.xml?__someInternalArgument=someValue', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        self::assertSame('/value1-value2/value3.value4.xml?__someInternalArgument=someValue', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
@@ -841,7 +843,7 @@ class RouteTest extends UnitTestCase
         $this->routeValues = ['key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '--subRequest' => ['__someInternalArgument' => 'someValue']];
 
         self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('value1-value2/value3.value4.xml?--subRequest%5B__someInternalArgument%5D=someValue', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        self::assertSame('/value1-value2/value3.value4.xml?--subRequest%5B__someInternalArgument%5D=someValue', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
@@ -867,7 +869,7 @@ class RouteTest extends UnitTestCase
         $this->route->setAppendExceedingArguments(true);
 
         self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('value1-value2/value3.value4.xml?__someInternalArgument=someValue&nonexistingkey=foo', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        self::assertSame('/value1-value2/value3.value4.xml?__someInternalArgument=someValue&nonexistingkey=foo', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
@@ -892,7 +894,7 @@ class RouteTest extends UnitTestCase
         $this->routeValues = ['key1' => ['key1a' => 'key1aValue', 'key1b' => 'key1bValue'], 'key2' => ['key2a' => 'key2aValue']];
 
         self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('key2bValue', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        self::assertSame('/key2bValue', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
@@ -905,9 +907,7 @@ class RouteTest extends UnitTestCase
         $this->routeValues = ['baz' => 'bazValue'];
 
         $this->route->resolves($this->routeValues);
-        $expectedResult = 'foo/barDefaultValue/bazvalue';
-        $actualResult = $this->route->getResolvedUriConstraints()->getPathConstraint();
-        self::assertSame($expectedResult, $actualResult);
+        self::assertSame('/foo/barDefaultValue/bazvalue', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
@@ -919,7 +919,7 @@ class RouteTest extends UnitTestCase
         $this->routeValues = ['someKey' => 'CamelCase'];
 
         self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('camelcase/camelcase', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        self::assertSame('/camelcase/camelcase', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
@@ -932,7 +932,7 @@ class RouteTest extends UnitTestCase
         $this->routeValues = ['someKey' => 'CamelCase'];
 
         self::assertTrue($this->route->resolves($this->routeValues));
-        self::assertEquals('CamelCase/CamelCase', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        self::assertSame('/CamelCase/CamelCase', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
@@ -950,7 +950,7 @@ class RouteTest extends UnitTestCase
     /**
      * @test
      */
-    public function resolvedUriPathConstraintIsNullAfterUnsuccessfulResolve()
+    public function resolvedUriConstraintsIsEmptyAfterUnsuccessfulResolve()
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $this->route = new Routing\Route($this->mockObjectManager, $mockObjectManager);
@@ -958,10 +958,11 @@ class RouteTest extends UnitTestCase
         $this->routeValues = ['key1' => 'value1'];
 
         self::assertTrue($this->route->resolves($this->routeValues));
+        self::assertSame('/value1', (string)$this->route->getResolvedUriConstraints()->toUri());
 
         $this->routeValues = ['differentKey' => 'value1'];
         self::assertFalse($this->route->resolves($this->routeValues));
-        self::assertNull($this->route->getResolvedUriConstraints()->getPathConstraint());
+        self::assertSame('/', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
@@ -982,7 +983,7 @@ class RouteTest extends UnitTestCase
         $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
         $this->route->resolves($this->routeValues);
 
-        self::assertEquals('_resolve_invoked_/value2', $this->route->getResolvedUriConstraints()->getPathConstraint());
+        self::assertEquals('/_resolve_invoked_/value2', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
@@ -999,18 +1000,88 @@ class RouteTest extends UnitTestCase
     /**
      * @test
      */
+    public function resolvesRespectsQueryStringConstraint()
+    {
+        $this->route->setUriPattern('{part1}');
+        $this->route->setRoutePartsConfiguration(
+            [
+                'part1' => [
+                    'handler' => MockRoutePartHandler::class,
+                ]
+            ]
+        );
+        $this->routeValues = ['part1' => 'some-value'];
+        $mockRoutePartHandler = new MockRoutePartHandler();
+        $mockRoutePartHandler->setResolveClosure(static function () {
+            return new ResolveResult('', UriConstraints::create()->withQueryString('some=query[string]'));
+        });
+        $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
+        $this->route->resolves($this->routeValues);
+
+        self::assertSame('/?some=query%5Bstring%5D', (string)$this->route->getResolvedUriConstraints()->toUri());
+    }
+
+    /**
+     * @test
+     */
     public function resolvesAppendsRemainingRouteValuesToResolvedUriPathConstraintIfAppendExceedingArgumentsIsTrue()
     {
         $this->route->setUriPattern('foo');
         $this->route->setAppendExceedingArguments(true);
-        $this->route->_set('isParsed', true);
         $routeValues = ['foo' => 'bar', 'baz' => ['foo2' => 'bar2']];
         $this->route->resolves($routeValues);
 
-        $actualResult = $this->route->getResolvedUriConstraints()->getPathConstraint();
-        $expectedResult = '?foo=bar&baz%5Bfoo2%5D=bar2';
+        self::assertSame('/foo?foo=bar&baz%5Bfoo2%5D=bar2', (string)$this->route->getResolvedUriConstraints()->toUri());
+    }
 
-        self::assertEquals($expectedResult, $actualResult);
+    /**
+     * @test
+     */
+    public function resolvesMergesRemainingRouteValuesWithQueryStringIfAppendExceedingArgumentsIsTrue()
+    {
+        $this->route->setUriPattern('{part1}');
+        $this->route->setAppendExceedingArguments(true);
+        $this->route->setRoutePartsConfiguration(
+            [
+                'part1' => [
+                    'handler' => MockRoutePartHandler::class,
+                ]
+            ]
+        );
+        $this->routeValues = ['part1' => 'some-value', 'exceeding' => 'argument'];
+        $mockRoutePartHandler = new MockRoutePartHandler();
+        $mockRoutePartHandler->setResolveClosure(static function () {
+            return new ResolveResult('', UriConstraints::create()->withQueryString('some=query[string]'));
+        });
+        $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
+        $this->route->resolves($this->routeValues);
+
+        self::assertSame('/?some=query%5Bstring%5D&exceeding=argument', (string)$this->route->getResolvedUriConstraints()->toUri());
+    }
+
+    /**
+     * @test
+     */
+    public function resolvesMergesRemainingRouteValuesWithQueryStringAndResolvedUriIfAppendExceedingArgumentsIsTrue()
+    {
+        $this->route->setUriPattern('{part1}');
+        $this->route->setAppendExceedingArguments(true);
+        $this->route->setRoutePartsConfiguration(
+            [
+                'part1' => [
+                    'handler' => MockRoutePartHandler::class,
+                ]
+            ]
+        );
+        $this->routeValues = ['part1' => 'some-value', 'exceeding' => 'argument'];
+        $mockRoutePartHandler = new MockRoutePartHandler();
+        $mockRoutePartHandler->setResolveClosure(static function () {
+            return new ResolveResult('', UriConstraints::fromUri(new Uri('https://neos.io:8080/some/path?some[query]=string#some-fragment')));
+        });
+        $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
+        $this->route->resolves($this->routeValues);
+
+        self::assertSame('https://neos.io:8080/some/path?some%5Bquery%5D=string&exceeding=argument#some-fragment', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
@@ -1034,10 +1105,7 @@ class RouteTest extends UnitTestCase
         $this->route->_set('isParsed', true);
         $this->route->resolves($originalArray);
 
-        $actualResult = $this->route->getResolvedUriConstraints()->getPathConstraint();
-        $expectedResult = '?foo=bar&someObject%5B__identity%5D=x&baz%5BsomeOtherObject%5D%5B__identity%5D=y';
-
-        self::assertEquals($expectedResult, $actualResult);
+        self::assertEquals('/?foo=bar&someObject%5B__identity%5D=x&baz%5BsomeOtherObject%5D%5B__identity%5D=y', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
