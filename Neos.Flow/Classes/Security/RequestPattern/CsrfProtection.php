@@ -67,6 +67,17 @@ class CsrfProtection implements RequestPatternInterface
     protected $logger;
 
     /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * Matches an ActionRequest against the configured CSRF pattern rules and
      * searches for invalid csrf tokens. If this returns true, the request is invalid!
      *

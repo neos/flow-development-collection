@@ -74,6 +74,14 @@ class DoctrineCommandController extends CommandController
     }
 
     /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * Compile the Doctrine proxy classes
      *
      * @return void

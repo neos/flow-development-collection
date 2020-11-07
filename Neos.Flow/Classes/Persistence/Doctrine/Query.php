@@ -142,6 +142,14 @@ class Query implements QueryInterface
     }
 
     /**
+     * @param LoggerInterface $logger
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * Returns the type this query cares for.
      *
      * @return string

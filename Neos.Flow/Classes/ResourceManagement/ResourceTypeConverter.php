@@ -124,6 +124,17 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected $convertedResources = [];
 
     /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * Converts the given string or array to a PersistentResource object.
      *
      * If the input format is an array, this method assumes the resource to be a

@@ -66,6 +66,17 @@ class PersistenceManager extends AbstractPersistenceManager
     protected $reflectionService;
 
     /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * Commits new objects and changes to objects in the current persistence
      * session into the backend
      *

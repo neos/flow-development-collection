@@ -202,7 +202,7 @@ class FileSystemTargetTest extends UnitTestCase
 
         $fileSystemTarget = new FileSystemTarget('test', ['path' => 'vfs://Test/Publish']);
         $fileSystemTarget->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
-        $fileSystemTarget->_set('logger', $mockSystemLogger);
+        $fileSystemTarget->injectLogger($mockSystemLogger);
         $fileSystemTarget->publishCollection($staticCollection, $_publicationCallback);
 
         self::assertTrue($oneResourcePublished);

@@ -119,6 +119,17 @@ class FileSystemTarget implements TargetInterface
     }
 
     /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * Initializes this resource publishing target
      *
      * @return void

@@ -31,6 +31,17 @@ class LoggingAspect
     protected $logger;
 
     /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * Logs calls of start()
      *
      * @Flow\After("within(Neos\Flow\Session\SessionInterface) && method(.*->start())")

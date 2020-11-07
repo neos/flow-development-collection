@@ -46,6 +46,17 @@ class MessageCollector
     protected $logger;
 
     /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * Message Collector Constructor
      */
     public function __construct()
