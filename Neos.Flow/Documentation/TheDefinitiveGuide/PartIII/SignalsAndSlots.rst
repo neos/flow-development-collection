@@ -134,3 +134,6 @@ There is one more parameter available: ``$passSignalInformation``. It controls
 whether or not the signal information (class name and method name of the signal
 emitter, separated by ``::``) should be passed to the slot as last parameter.
 ``$passSignalInformation`` is ``TRUE`` by default.
+
+.. note:: Slots with a variable number of arguments may use the signal information in
+   unexpected ways. If in doubt, set ``$passSignalInformation`` to ``false``.
