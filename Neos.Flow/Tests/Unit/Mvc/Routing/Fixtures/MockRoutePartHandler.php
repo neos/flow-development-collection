@@ -11,6 +11,8 @@ namespace Neos\Flow\Mvc\Routing\Fixtures;
  * source code.
  */
 
+use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 
 /**
@@ -37,11 +39,12 @@ class MockRoutePartHandler extends DynamicRoutePart
 
     protected function matchValue($value)
     {
+        $this->value = null;
         if ($this->matchValueClosure !== null) {
             $result = call_user_func($this->matchValueClosure, $value, $this->parameters);
-            if ($result !== null) {
-                $this->value = $result;
-                return true;
+            if ($result instanceof MatchResult) {
+                $this->value = $result->getMatchedValue();
+                return $result;
             }
         }
         return false;
@@ -49,11 +52,12 @@ class MockRoutePartHandler extends DynamicRoutePart
 
     protected function resolveValue($value)
     {
+        $this->value = null;
         if ($this->resolveValueClosure !== null) {
             $result = call_user_func($this->resolveValueClosure, $value, $this->parameters);
-            if ($result !== null) {
-                $this->value = $result;
-                return true;
+            if ($result instanceof ResolveResult) {
+                $this->value = $result->getResolvedValue();
+                return $result;
             }
         }
         return false;

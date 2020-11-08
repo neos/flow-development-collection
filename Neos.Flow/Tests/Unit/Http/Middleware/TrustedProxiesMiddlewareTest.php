@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Unit\Http\Component;
+namespace Neos\Flow\Tests\Unit\Http\Middleware;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -11,8 +11,9 @@ namespace Neos\Flow\Tests\Unit\Http\Component;
  * source code.
  */
 
-use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Component\TrustedProxiesComponent;
+use Neos\Flow\Tests\Unit\Http\Fixtures\SpyRequestHandler;
+use Psr\Http\Server\RequestHandlerInterface;
+use Neos\Flow\Http\Middleware\TrustedProxiesMiddleware;
 use Neos\Flow\Http\ServerRequestAttributes;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Tests\UnitTestCase;
@@ -23,14 +24,14 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Test case for the TrustedProxiesComponent
+ * Test case for the TrustedProxiesMiddleware
  */
-class TrustedProxiesComponentTest extends UnitTestCase
+class TrustedProxiesMiddlewareTest extends UnitTestCase
 {
     /**
-     * @var TrustedProxiesComponent
+     * @var TrustedProxiesMiddleware
      */
-    protected $trustedProxiesComponent;
+    protected $trustedProxiesMiddleware;
 
     /**
      * @var \ReflectionProperty
@@ -48,6 +49,11 @@ class TrustedProxiesComponentTest extends UnitTestCase
     protected $mockHttpResponse;
 
     /**
+     * @var RequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $mockHttpRequestHandler;
+
+    /**
      * @var ServerRequestFactoryInterface
      */
     protected $serverRequestFactory;
@@ -56,11 +62,12 @@ class TrustedProxiesComponentTest extends UnitTestCase
     {
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpResponse = $this->getMockBuilder(ResponseInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->serverRequestFactory = new ServerRequestFactory(new UriFactory());
-        $this->trustedProxiesComponent = new TrustedProxiesComponent();
-        $componentReflection = new \ReflectionClass($this->trustedProxiesComponent);
-        $this->trustedProxiesSettings = $componentReflection->getProperty('settings');
+        $this->trustedProxiesMiddleware = new TrustedProxiesMiddleware();
+        $middlewareReflection = new \ReflectionClass($this->trustedProxiesMiddleware);
+        $this->trustedProxiesSettings = $middlewareReflection->getProperty('settings');
         $this->trustedProxiesSettings->setAccessible(true);
         $this->withTrustedProxiesSettings([
             'proxies' => '*',
@@ -78,7 +85,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     protected function withTrustedProxiesSettings(array $settings)
     {
-        $this->trustedProxiesSettings->setValue($this->trustedProxiesComponent, $settings);
+        $this->trustedProxiesSettings->setValue($this->trustedProxiesMiddleware, $settings);
     }
 
     /**
@@ -87,9 +94,9 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     protected function callWithRequest($request)
     {
-        $componentContext = new ComponentContext($request, $this->mockHttpResponse);
-        $this->trustedProxiesComponent->handle($componentContext);
-        return $componentContext->getHttpRequest();
+        $spyRequestHandler = new SpyRequestHandler();
+        $this->trustedProxiesMiddleware->process($request, $spyRequestHandler);
+        return $spyRequestHandler->getHandledRequest();
     }
 
     /**
@@ -309,7 +316,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function trustedClientIpAddressIsRemoteAddressIfNoProxiesAreTrusted()
     {
-        $this->withTrustedProxiesSettings(['proxies' => [], 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
+        $this->withTrustedProxiesSettings(['proxies' => [], 'headers' => [TrustedProxiesMiddleware::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), [], null, '1.1', ['HTTP_X_FORWARDED_FOR' => '10.0.0.1']);
         $trustedRequest = $this->callWithRequest($request);
         self::assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
@@ -331,7 +338,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function trustedClientIpAddressIsForwardedForAddressIfProxyTrusted()
     {
-        $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1'], 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
+        $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1'], 'headers' => [TrustedProxiesMiddleware::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '13.0.0.1']);
         $trustedRequest = $this->callWithRequest($request);
         self::assertEquals('13.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
@@ -342,7 +349,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function trustedClientIpAddressIsFirstForwardedForAddressIfAllProxiesTrusted()
     {
-        $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
+        $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => [TrustedProxiesMiddleware::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '13.0.0.1, 13.0.0.2, 13.0.0.3']);
         $trustedRequest = $this->callWithRequest($request);
         self::assertEquals('13.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
@@ -353,7 +360,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function trustedClientIpAddressIsRightMostForwardedForAddressThatIsNotTrusted()
     {
-        $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1','10.0.0.1/24'], 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
+        $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1','10.0.0.1/24'], 'headers' => [TrustedProxiesMiddleware::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '198.155.23.17, 215.0.0.1, 10.0.0.1, 10.0.0.2']);
         $trustedRequest = $this->callWithRequest($request);
         self::assertEquals('215.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
@@ -364,7 +371,7 @@ class TrustedProxiesComponentTest extends UnitTestCase
      */
     public function trustedClientIpAddressIsRemoteAddressIfTheHeaderIsNotTrusted()
     {
-        $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => [TrustedProxiesComponent::HEADER_CLIENT_IP => 'X-Forwarded-Ip']]);
+        $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => [TrustedProxiesMiddleware::HEADER_CLIENT_IP => 'X-Forwarded-Ip']]);
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), ['HTTP_X_FORWARDED_FOR' => '10.0.0.1']);
         $trustedRequest = $this->callWithRequest($request);
         self::assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));

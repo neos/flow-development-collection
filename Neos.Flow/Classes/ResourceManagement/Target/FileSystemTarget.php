@@ -90,6 +90,7 @@ class FileSystemTarget implements TargetInterface
     protected $resourceRepository;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;

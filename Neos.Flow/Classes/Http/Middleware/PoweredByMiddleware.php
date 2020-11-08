@@ -1,15 +1,21 @@
 <?php
-namespace Neos\Flow\Http\Component;
+declare(strict_types=1);
+
+namespace Neos\Flow\Http\Middleware;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Adds the "X-Flow-Powered" to the response.
  */
-class PoweredByComponent implements ComponentInterface
+class PoweredByMiddleware implements MiddlewareInterface
 {
     /**
      * @Flow\Inject
@@ -20,16 +26,15 @@ class PoweredByComponent implements ComponentInterface
     /**
      * @inheritDoc
      */
-    public function handle(ComponentContext $componentContext)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
+        $response = $next->handle($request);
         $token = static::prepareApplicationToken($this->objectManager);
         if ($token === '') {
-            return;
+            return $response;
         }
 
-        $response = $componentContext->getHttpResponse();
-        $response = $response->withAddedHeader('X-Flow-Powered', $token);
-        $componentContext->replaceHttpResponse($response);
+        return $response->withAddedHeader('X-Flow-Powered', $token);
     }
 
     /**
@@ -42,7 +47,7 @@ class PoweredByComponent implements ComponentInterface
     {
         preg_match('/^(\d+)/', $version, $versionMatches);
 
-        return isset($versionMatches[1]) ? $versionMatches[1] : '';
+        return $versionMatches[1] ?? '';
     }
 
     /**
@@ -55,7 +60,7 @@ class PoweredByComponent implements ComponentInterface
     {
         preg_match('/^(\d+\.\d+)/', $version, $versionMatches);
 
-        return isset($versionMatches[1]) ? $versionMatches[1] : '';
+        return $versionMatches[1] ?? '';
     }
 
     /**

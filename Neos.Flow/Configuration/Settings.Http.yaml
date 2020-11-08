@@ -26,6 +26,27 @@ Neos:
 
       # Defines the PSR-15 middlewares that a request goes through in a flow
       middlewares:
+        'trustedProxies':
+          position: 'start'
+          middleware: 'Neos\Flow\Http\Middleware\TrustedProxiesMiddleware'
+        'routing':
+          # needs to be "after trustedProxies" because AjaxWidget comes "before routing" but still needs to be after trustedProxies
+          position: 'after trustedProxies'
+          middleware: 'Neos\Flow\Mvc\Routing\RoutingMiddleware'
+        'standardsCompliance':
+          position: 'after trustedProxies'
+          middleware: 'Neos\Flow\Http\Middleware\StandardsComplianceMiddleware'
+        'poweredByHeader':
+          middleware: 'Neos\Flow\Http\Middleware\PoweredByMiddleware'
+        'session':
+          position: '10'
+          middleware: 'Neos\Flow\Http\Middleware\SessionMiddleware'
+        'flashMessages':
+          position: 'after session'
+          middleware: 'Neos\Flow\Mvc\FlashMessage\FlashMessageMiddleware'
+        'parseBody':
+          position: 'before dispatch'
+          middleware: 'Neos\Flow\Http\Middleware\RequestBodyParsingMiddleware'
         'dispatch':
           position: 'end'
           middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
@@ -38,23 +59,11 @@ Neos:
 
         'preprocess':
           position: 'before process'
-          chain:
-            'trustedProxies':
-              position: 'start'
-              component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
-            'getSessionCookieFromRequest':
-              position: 'after trustedProxies'
-              component: 'Neos\Flow\Session\Http\SessionRequestComponent'
+          chain: []
         'process':
           chain:
-            'routing':
-              position: 'start'
-              component: 'Neos\Flow\Mvc\Routing\RoutingComponent'
-            'parseBody':
-              position: 'before dispatching'
-              component: 'Neos\Flow\Http\Component\RequestBodyParsingComponent'
             'prepareActionRequest':
-              position: 'after parseBody'
+              position: 'before dispatching'
               component: 'Neos\Flow\Mvc\PrepareMvcRequestComponent'
             'dispatching':
               component: 'Neos\Flow\Mvc\DispatchComponent'
@@ -69,18 +78,7 @@ Neos:
               component: 'Neos\Flow\Http\Component\SecurityEntryPointComponent'
 
         'postprocess':
-          chain:
-            'setSessionCookie':
-              position: 'start'
-              component: 'Neos\Flow\Session\Http\SessionResponseComponent'
-            'flashMessages':
-              position: 'before setSessionCookie'
-              component: 'Neos\Flow\Mvc\FlashMessage\FlashMessageComponent'
-            'poweredByHeader':
-              component: 'Neos\Flow\Http\Component\PoweredByComponent'
-            'standardsCompliance':
-              position: 'end'
-              component: 'Neos\Flow\Http\Component\StandardsComplianceComponent'
+          chain: []
 
       trustedProxies:
 

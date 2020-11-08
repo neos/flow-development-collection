@@ -57,6 +57,7 @@ class DoctrineCommandController extends CommandController
     protected $throwableStorage;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
