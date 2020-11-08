@@ -933,7 +933,7 @@ class RouteTest extends UnitTestCase
         $this->routeValues = ['someKey' => 'CamelCase'];
 
         self::assertTrue($this->resolveRouteValues($this->routeValues));
-        self::assertSame('camelcase/camelcase', (string)$this->route->getResolvedUriConstraints()->toUri());
+        self::assertSame('/camelcase/camelcase', (string)$this->route->getResolvedUriConstraints()->toUri());
     }
 
     /**
