@@ -11,6 +11,8 @@ namespace Neos\Flow\Mvc\Routing\Fixtures;
  * source code.
  */
 
+use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 
 /**
@@ -22,38 +24,42 @@ class MockRoutePartHandler extends DynamicRoutePart
     /**
      * @var \Closure|null
      */
-    private $matchClosure;
+    private $matchValueClosure;
 
     /**
      * @var \Closure|null
      */
-    private $resolveClosure;
+    private $resolveValueClosure;
+
+    public function __construct(\Closure $matchValueClosure = null, \Closure $resolveValueClosure = null)
+    {
+        $this->matchValueClosure = $matchValueClosure;
+        $this->resolveValueClosure = $resolveValueClosure;
+    }
 
     protected function matchValue($value)
     {
-        if ($this->matchClosure !== null) {
-            return call_user_func($this->matchClosure, $value);
+        $this->value = null;
+        if ($this->matchValueClosure !== null) {
+            $result = call_user_func($this->matchValueClosure, $value, $this->parameters);
+            if ($result instanceof MatchResult) {
+                $this->value = $result->getMatchedValue();
+                return $result;
+            }
         }
-        $this->value = '_match_invoked_';
-        return true;
+        return false;
     }
 
     protected function resolveValue($value)
     {
-        if ($this->resolveClosure !== null) {
-            return call_user_func($this->resolveClosure, $value);
+        $this->value = null;
+        if ($this->resolveValueClosure !== null) {
+            $result = call_user_func($this->resolveValueClosure, $value, $this->parameters);
+            if ($result instanceof ResolveResult) {
+                $this->value = $result->getResolvedValue();
+                return $result;
+            }
         }
-        $this->value = '_resolve_invoked_';
-        return true;
-    }
-
-    public function setMatchClosure(?\Closure $matchClosure): void
-    {
-        $this->matchClosure = $matchClosure;
-    }
-
-    public function setResolveClosure(?\Closure $resolveClosure): void
-    {
-        $this->resolveClosure = $resolveClosure;
+        return false;
     }
 }
