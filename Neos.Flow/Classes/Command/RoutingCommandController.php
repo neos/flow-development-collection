@@ -19,6 +19,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
+use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Route;
@@ -137,11 +138,14 @@ class RoutingCommandController extends CommandController
         $this->outputLine('  Action: ' . $routeValues['@action']);
         $this->outputLine('  Format: ' . $routeValues['@format']);
 
+        $baseUri = new Uri('http://localhost');
+        $resolveContext = new ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty());
+
         $controllerObjectName = null;
         /** @var $route Route */
         foreach ($this->router->getRoutes() as $route) {
             try {
-                $resolves = $route->resolves($routeValues);
+                $resolves = $route->resolves($resolveContext);
                 $controllerObjectName = $this->getControllerObjectName($package, $subpackage, $controller);
             } catch (InvalidRoutePartValueException $exception) {
                 $resolves = false;
