@@ -16,7 +16,6 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\UriInterface;
-use function GuzzleHttp\Psr7\parse_query;
 
 /**
  * This class allows constraints to be applied to a given URI, transforming it accordingly as a result.
@@ -221,7 +220,7 @@ final class UriConstraints
     {
         $newConstraints = $this->constraints;
         if (isset($this->constraints[self::CONSTRAINT_QUERY_STRING])) {
-            $existingValues = parse_query($this->constraints[self::CONSTRAINT_QUERY_STRING]);
+            parse_str($this->constraints[self::CONSTRAINT_QUERY_STRING], $existingValues);
             $values = Arrays::arrayMergeRecursiveOverrule($existingValues, $values);
         }
         $newConstraints[self::CONSTRAINT_QUERY_STRING] = http_build_query($values, '', '&');

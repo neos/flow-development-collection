@@ -208,6 +208,30 @@ class UriConstraintsTest extends UnitTestCase
     /**
      * @test
      */
+    public function withAddedQueryValuesReturnsANewInstanceWithQueryStringConstraintSet()
+    {
+        $uriConstraints = UriConstraints::create()->withAddedQueryValues(['some' => ['nested' => ['páram' => 'some vàlue', 'new' => 'some other válue']]]);
+        $expectedResult = [
+            UriConstraints::CONSTRAINT_QUERY_STRING => 'some%5Bnested%5D%5Bp%C3%A1ram%5D=some+v%C3%A0lue&some%5Bnested%5D%5Bnew%5D=some+other+v%C3%A1lue'
+        ];
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+    }
+
+    /**
+     * @test
+     */
+    public function withAddedQueryValuesReturnsANewInstanceWithMergedQueryStringConstraintSet()
+    {
+        $uriConstraints = UriConstraints::create()->withQueryString('some[nested][páram]=vâlue&some[other]=valúe')->withAddedQueryValues(['some' => ['nested' => ['páram' => 'overridden', 'new' => 'new válue']]]);
+        $expectedResult = [
+            UriConstraints::CONSTRAINT_QUERY_STRING => 'some%5Bnested%5D%5Bp%C3%A1ram%5D=overridden&some%5Bnested%5D%5Bnew%5D=new+v%C3%A1lue&some%5Bother%5D=val%C3%BAe'
+        ];
+        self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
+    }
+
+    /**
+     * @test
+     */
     public function withFragmentReturnsANewInstanceWithFragmentConstraintSet()
     {
         $uriConstraints = UriConstraints::create()->withFragment('some-fragment');
