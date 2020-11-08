@@ -17,8 +17,6 @@ use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\InvalidUriPatternException;
 use Neos\Flow\Mvc\Routing;
-use Neos\Flow\Mvc\Routing\Dto\RouteContext;
-use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
