@@ -103,7 +103,7 @@ class Dispatcher
             $this->initiateDispatchLoop($request, $response);
         } catch (AuthenticationRequiredException $exception) {
             // Rethrow as the SecurityEntryPoint middleware will take care of the rest
-            throw $exception->withInterceptedRequest($request);
+            throw $exception->attachInterceptedRequest($request);
         } catch (AccessDeniedException $exception) {
             /** @var PsrLoggerFactoryInterface $securityLogger */
             $securityLogger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('securityLogger');

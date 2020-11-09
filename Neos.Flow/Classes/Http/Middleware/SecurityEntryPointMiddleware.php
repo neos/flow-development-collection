@@ -48,11 +48,11 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
+        // FIXME: Currently the security context needs an ActionRequest, therefore we need to build it here
+        $routingMatchResults = $request->getAttribute(ServerRequestAttributes::ROUTING_RESULTS) ?? [];
+        $actionRequest = $this->actionRequestFactory->createActionRequest($request, $routingMatchResults);
+        $this->securityContext->setRequest($actionRequest);
         try {
-            // FIXME: Currently the security context needs an ActionRequest, therefore we need to build it here
-            $routingMatchResults = $request->getAttribute(ServerRequestAttributes::ROUTING_RESULTS) ?? [];
-            $actionRequest = $this->actionRequestFactory->createActionRequest($request, $routingMatchResults);
-            $this->securityContext->setRequest($actionRequest);
             return $next->handle($request->withAttribute(ServerRequestAttributes::ACTION_REQUEST, $actionRequest));
         } catch (AuthenticationRequiredException $authenticationException) {
             /** @var TokenInterface[] $tokensWithEntryPoint */
