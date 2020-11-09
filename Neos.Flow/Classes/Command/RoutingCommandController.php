@@ -168,7 +168,8 @@ class RoutingCommandController extends CommandController
      * @return void
      * @throws StopCommandException | InvalidRoutePartValueException
      */
-    public function resolveCommand(string $package, string $controller = null, string $action = null, string $format = null, string $subpackage = null, string $additionalArguments = null, string $parameters = null, string $baseUri = null, bool $forceAbsoluteUri = null): void {
+    public function resolveCommand(string $package, string $controller = null, string $action = null, string $format = null, string $subpackage = null, string $additionalArguments = null, string $parameters = null, string $baseUri = null, bool $forceAbsoluteUri = null): void
+    {
         $routeValues = [
             '@package' => $package,
             '@controller' => $controller ?? 'Standard',
