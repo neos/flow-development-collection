@@ -294,7 +294,7 @@ class RoutingTest extends FunctionalTestCase
     public function resolveTests(array $routeValues, $expectedResolvedRouteName, $expectedResolvedUriPath = null)
     {
         $baseUri = new Uri('http://localhost');
-        $resolvedUriPath = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
+        $resolvedUriPath = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty()));
         $resolvedRoute = $this->router->getLastResolvedRoute();
         if ($expectedResolvedRouteName === null) {
             if ($resolvedRoute !== null) {
@@ -360,7 +360,7 @@ class RoutingTest extends FunctionalTestCase
             '@format' => 'html'
         ];
         $baseUri = new Uri('http://localhost');
-        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty()));
 
         self::assertSame('/neos/flow/test/http/foo', (string)$actualResult);
     }
@@ -378,7 +378,7 @@ class RoutingTest extends FunctionalTestCase
             '@format' => 'html'
         ];
         $baseUri = new Uri('http://localhost');
-        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, 'index.php/'));
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, 'index.php/', RouteParameters::createEmpty()));
 
         self::assertSame('/index.php/neos/flow/test/http/foo', (string)$actualResult);
     }
@@ -409,7 +409,7 @@ class RoutingTest extends FunctionalTestCase
         ];
         $this->router->setRoutesConfiguration($routesConfiguration);
         $baseUri = new Uri('http://localhost');
-        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false));
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty()));
         self::assertSame('/custom/uri/pattern', (string)$actualResult);
 
         // reset router configuration for following tests
