@@ -14,7 +14,6 @@ namespace Neos\Flow\Http;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Psr\Http\Message\ResponseInterface;
@@ -33,9 +32,9 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected $bootstrap;
 
     /**
-     * @var Component\ComponentChain
+     * @var Middleware\MiddlewaresChain
      */
-    protected $baseComponentChain;
+    protected $middlewaresChain;
 
     /**
      * @var Component\ComponentContext
@@ -92,15 +91,17 @@ class RequestHandler implements HttpRequestHandlerInterface
     {
         // Create the request very early so the ResourceManagement has a chance to grab it:
         $request = ServerRequest::fromGlobals();
+        // TODO: Required for b/c - can be removed with Flow 7
         $response = new \GuzzleHttp\Psr7\Response();
         $this->componentContext = new ComponentContext($request, $response);
+        $this->bootstrap->setEarlyInstance(ComponentContext::class, $this->componentContext);
 
         $this->boot();
         $this->resolveDependencies();
 
-        $this->baseComponentChain->handle($this->componentContext);
+        $response = $this->middlewaresChain->handle($request);
 
-        $this->sendResponse();
+        $this->sendResponse($response);
         $this->bootstrap->shutdown(Bootstrap::RUNLEVEL_RUNTIME);
         $this->exit->__invoke();
     }
@@ -156,15 +157,15 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected function resolveDependencies()
     {
         $objectManager = $this->bootstrap->getObjectManager();
-        $this->baseComponentChain = $objectManager->get(ComponentChain::class);
+        $this->middlewaresChain = $objectManager->get(Middleware\MiddlewaresChain::class);
     }
 
     /**
      * Send the HttpResponse of the component context to the browser and flush all output buffers.
+     * @param ResponseInterface $response
      */
-    protected function sendResponse()
+    protected function sendResponse(ResponseInterface $response)
     {
-        $response = $this->componentContext->getHttpResponse();
         ob_implicit_flush(1);
         foreach (ResponseInformationHelper::prepareHeaders($response) as $prepareHeader) {
             header($prepareHeader, false);

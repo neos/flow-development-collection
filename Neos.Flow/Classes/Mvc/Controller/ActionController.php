@@ -14,7 +14,6 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
-use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -471,7 +470,7 @@ class ActionController extends AbstractController
         $validationResult = $this->arguments->getValidationResults();
 
         if (!$validationResult->hasErrors()) {
-            $actionResult = call_user_func_array([$this, $this->actionMethodName], $preparedArguments);
+            $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
         } else {
             $actionIgnoredArguments = static::getActionIgnoredValidationArguments($this->objectManager);
             if (isset($actionIgnoredArguments[$this->actionMethodName])) {
@@ -496,9 +495,9 @@ class ActionController extends AbstractController
             }
 
             if ($shouldCallActionMethod) {
-                $actionResult = call_user_func_array([$this, $this->actionMethodName], $preparedArguments);
+                $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
             } else {
-                $actionResult = call_user_func([$this, $this->errorMethodName]);
+                $actionResult = $this->{$this->errorMethodName}();
             }
         }
 
@@ -586,8 +585,12 @@ class ActionController extends AbstractController
         }
 
         if (!is_a($viewObjectName, ViewInterface::class, true)) {
-            throw new ViewNotFoundException(sprintf('View class has to implement ViewInterface but "%s" in action "%s" of controller "%s" does not.',
-                $viewObjectName, $this->request->getControllerActionName(), get_class($this)), 1355153188);
+            throw new ViewNotFoundException(sprintf(
+                'View class has to implement ViewInterface but "%s" in action "%s" of controller "%s" does not.',
+                $viewObjectName,
+                $this->request->getControllerActionName(),
+                get_class($this)
+            ), 1355153188);
         }
 
         $viewOptions = isset($viewsConfiguration['options']) ? $viewsConfiguration['options'] : [];
@@ -781,8 +784,7 @@ class ActionController extends AbstractController
         }
 
         if ($result instanceof ResponseInterface) {
-            $finalResponse = $this->response->applyToHttpResponse($result);
-            $this->response->setComponentParameter(ReplaceHttpResponseComponent::class, ReplaceHttpResponseComponent::PARAMETER_RESPONSE, $finalResponse);
+            $this->response->replaceHttpResponse($result);
         }
 
         if (is_object($result) && is_callable([$result, '__toString'])) {

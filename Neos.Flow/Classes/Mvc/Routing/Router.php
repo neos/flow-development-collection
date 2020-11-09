@@ -33,6 +33,7 @@ use Psr\Log\LoggerInterface;
 class Router implements RouterInterface
 {
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -195,7 +196,7 @@ class Router implements RouterInterface
 
         /** @var $route Route */
         foreach ($this->routes as $route) {
-            if ($route->resolves($resolveContext->getRouteValues()) === true) {
+            if ($route->resolves($resolveContext) === true) {
                 $uriConstraints = $route->getResolvedUriConstraints()->withPathPrefix($resolveContext->getUriPathPrefix());
                 $resolvedUri = $uriConstraints->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri());
                 $this->routerCachingService->storeResolvedUriConstraints($resolveContext, $uriConstraints, $route->getResolvedTags());

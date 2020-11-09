@@ -12,7 +12,7 @@ namespace Neos\Flow\Security\Authentication\Token;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\AccountInterface;
+use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\EntryPointInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
@@ -56,6 +56,22 @@ abstract class AbstractToken implements TokenInterface
      * @var EntryPointInterface
      */
     protected $entryPoint = null;
+
+    /**
+     * Token options
+     * @var array
+     */
+    protected $options;
+
+    /**
+     * Build an instance of this token, potentially passing it options that can be configured via `tokenOptions`
+     *
+     * @param array|null $options
+     */
+    public function __construct(array $options = null)
+    {
+        $this->options = $options ?? [];
+    }
 
     /**
      * Returns the name of the authentication provider responsible for this token
@@ -160,7 +176,7 @@ abstract class AbstractToken implements TokenInterface
     /**
      * Returns the account if one is authenticated, NULL otherwise.
      *
-     * @return AccountInterface An account object
+     * @return Account An account object
      */
     public function getAccount()
     {
@@ -170,10 +186,10 @@ abstract class AbstractToken implements TokenInterface
     /**
      * Set the (authenticated) account
      *
-     * @param AccountInterface $account An account object
+     * @param Account $account An account object
      * @return void
      */
-    public function setAccount(AccountInterface $account = null)
+    public function setAccount(Account $account = null)
     {
         $this->account = $account;
     }

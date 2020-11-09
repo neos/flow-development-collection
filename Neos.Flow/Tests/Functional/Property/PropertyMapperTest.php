@@ -18,6 +18,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestClassWithMissingCollectionElementType;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -421,9 +422,8 @@ class PropertyMapperTest extends FunctionalTestCase
         $account = $this->propertyMapper->convert($source, Account::class, $configuration);
 
         self::assertInstanceOf(Account::class, $account);
-        self::assertCount(2, $account->getRoles());
-        self::assertTrue($account->getRoles()->has(new Role($expectedRoleIdentifiers[0])));
-        self::assertTrue($account->getRoles()->has(new Role($expectedRoleIdentifiers[1])));
+        self::assertEquals(2, count($account->getRoles()));
+        self::assertEquals($expectedRoleIdentifiers, array_keys($account->getRoles()));
     }
 
     /**
@@ -469,5 +469,17 @@ class PropertyMapperTest extends FunctionalTestCase
     {
         $actualResult = $this->propertyMapper->convert(true, 'int');
         self::assertSame(42, $actualResult);
+    }
+
+    /**
+     * @test
+     * @expectedExceptionMessage missing an element type
+     */
+    public function collectionPropertyWithMissingElementTypeThrowsHelpfulException()
+    {
+        $source = [
+            'values' => []
+        ];
+        $this->propertyMapper->convert($source, TestClassWithMissingCollectionElementType::class);
     }
 }

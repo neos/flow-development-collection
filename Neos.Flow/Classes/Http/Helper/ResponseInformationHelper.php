@@ -11,6 +11,7 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use function GuzzleHttp\Psr7\parse_response;
 use function GuzzleHttp\Psr7\stream_for;
 use Psr\Http\Message\RequestInterface;
@@ -54,6 +55,8 @@ abstract class ResponseInformationHelper
             205 => 'Reset Content',
             206 => 'Partial Content',
             207 => 'Multi-Status',
+            208 => 'Already Reported',
+            226 => 'IM Used',
             300 => 'Multiple Choices',
             301 => 'Moved Permanently',
             302 => 'Found',
@@ -61,6 +64,7 @@ abstract class ResponseInformationHelper
             304 => 'Not Modified',
             305 => 'Use Proxy',
             307 => 'Temporary Redirect',
+            308 => 'Permanent Redirect',
             400 => 'Bad Request',
             401 => 'Unauthorized',
             402 => 'Payment Required',
@@ -74,20 +78,36 @@ abstract class ResponseInformationHelper
             410 => 'Gone',
             411 => 'Length Required',
             412 => 'Precondition Failed',
-            413 => 'Request Entity Too Large',
+            413 => 'Payload Too Large',
             414 => 'Request-URI Too Long',
             415 => 'Unsupported Media Type',
             416 => 'Requested Range Not Satisfiable',
             417 => 'Expectation Failed',
-            418 => 'Sono Vibiemme',
+            418 => 'Sono Vibiemme', // 'I'm a teapot'
+            421 => 'Misdirected Request',
+            422 => 'Unprocessable Entity',
+            423 => 'Locked',
+            424 => 'Failed Dependency',
+            426 => 'Upgrade Required',
+            428 => 'Precondition Required',
+            429 => 'Too Many Requests',
+            431 => 'Request Header Fields Too Large',
+            444 => 'Connection Closed Without Response',
+            451 => 'Unavailable For Legal Reasons',
+            499 => 'Client Closed Request',
             500 => 'Internal Server Error',
             501 => 'Not Implemented',
             502 => 'Bad Gateway',
             503 => 'Service Unavailable',
             504 => 'Gateway Timeout',
             505 => 'HTTP Version Not Supported',
+            506 => 'Variant Also Negotiates',
             507 => 'Insufficient Storage',
+            508 => 'Loop Detected',
             509 => 'Bandwidth Limit Exceeded',
+            510 => 'Not Extended',
+            511 => 'Network Authentication Required',
+            599 => 'Network Connect Timeout Error',
         ];
 
         return isset($statusMessages[$statusCode]) ? $statusMessages[$statusCode] : 'Unknown Status';
@@ -149,22 +169,28 @@ abstract class ResponseInformationHelper
     public static function makeStandardsCompliant(ResponseInterface $response, RequestInterface $request): ResponseInterface
     {
         $statusCode = $response->getStatusCode();
-        if ($request->hasHeader('If-Modified-Since') && $response->hasHeader('Last-Modified') && $statusCode === 200) {
+        if ($request->hasHeader('If-None-Match') && in_array($request->getMethod(), ['HEAD', 'GET'])
+            && $response->hasHeader('ETag') && $statusCode === 200) {
+            $ifNoneMatchHeaders = $request->getHeader('If-None-Match');
+            $eTagHeader = $response->getHeader('ETag')[0];
+            foreach ($ifNoneMatchHeaders as $ifNoneMatchHeader) {
+                if (ltrim($ifNoneMatchHeader, 'W/') == ltrim($eTagHeader, 'W/')) {
+                    $response = $response
+                        ->withStatus(304)
+                        ->withBody(stream_for(''));
+                    break;
+                }
+            }
+        } elseif ($request->hasHeader('If-Modified-Since') && in_array($request->getMethod(), ['HEAD', 'GET'])
+            && $response->hasHeader('Last-Modified') && $statusCode === 200) {
             $ifModifiedSince = $request->getHeader('If-Modified-Since')[0];
             $ifModifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifModifiedSince);
             $lastModified = $response->getHeader('Last-Modified')[0];
             $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
             if ($lastModifiedDate <= $ifModifiedSinceDate) {
-                $response = $response->withStatus(304);
-            }
-        } elseif ($request->hasHeader('If-Unmodified-Since') && $response->hasHeader('Last-Modified')
-            && (($statusCode >= 200 && $statusCode <= 299) || $statusCode === 412)) {
-            $unmodifiedSince = $request->getHeader('If-Unmodified-Since')[0];
-            $unmodifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $unmodifiedSince);
-            $lastModified = $response->getHeader('Last-Modified')[0];
-            $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
-            if ($lastModifiedDate > $unmodifiedSinceDate) {
-                $response = $response->withStatus(412);
+                $response = $response
+                    ->withStatus(304)
+                    ->withBody(stream_for(''));
             }
         }
 

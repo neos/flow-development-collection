@@ -31,12 +31,24 @@ final class Inject
     public $lazy = true;
 
     /**
+     * Optional object name
+     * This is useful if the object name does not match the class name of the object to be injected:
+     * (at)Inject(name="Some.Package:Some.Virtual.Object")
+     *
+     * @var string
+     */
+    public $name;
+
+    /**
      * @param array $values
      */
     public function __construct(array $values)
     {
         if (isset($values['lazy'])) {
             $this->lazy = (boolean)$values['lazy'];
+        }
+        if (isset($values['name'])) {
+            $this->name = $values['name'];
         }
     }
 }

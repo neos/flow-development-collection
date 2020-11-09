@@ -39,7 +39,7 @@ class ActionRequestFactory
     {
         $arguments = $httpRequest->getQueryParams();
         $parsedBody = $httpRequest->getParsedBody();
-        if (is_array($parsedBody)) {
+        if (is_array($parsedBody) && $parsedBody !== []) {
             $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
         }
 

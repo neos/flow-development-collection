@@ -14,7 +14,9 @@ namespace Neos\Flow\Tests\Functional\Mvc;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Http\ContentStream;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\Cookie;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
+use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\StandardController;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Psr\Http\Message\ServerRequestFactoryInterface;
@@ -37,6 +39,14 @@ class ActionControllerTest extends FunctionalTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->registerRoute('test', 'test/mvc/actioncontrollertest(/{@action})', [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
+            '@controller' => 'Standard',
+            '@action' => 'index',
+            '@format' =>'html'
+        ]);
 
         $this->registerRoute('testa', 'test/mvc/actioncontrollertesta(/{@action})', [
             '@package' => 'Neos.Flow',
@@ -519,5 +529,35 @@ class ActionControllerTest extends FunctionalTestCase
 
         $response = $this->browser->sendRequest($request);
         self::assertSame('Entity "Foo" updated', $response->getBody()->getContents());
+    }
+
+    /**
+     * @test
+     */
+    public function flashMessagesGetRenderedAfterRedirect()
+    {
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://localhost/test/mvc/actioncontrollertest/redirectWithFlashMessage'));
+        $response = $this->browser->sendRequest($request);
+
+        $sessionCookies = array_map(static function ($cookie) {
+            return Cookie::createFromRawSetCookieHeader($cookie);
+        }, $response->getHeader('Set-Cookie'));
+        self::assertNotEmpty($sessionCookies);
+
+        $redirect = $response->getHeaderLine('Location');
+        self::assertNotEmpty($redirect);
+
+        $this->objectManager->forgetInstance(StandardController::class);
+
+        $cookies = array_reduce($sessionCookies, static function ($out, $cookie) {
+            $out[$cookie->getName()] = $cookie->getValue();
+            return $out;
+        }, []);
+        $redirectRequest = $this->serverRequestFactory->createServerRequest('GET', new Uri($redirect))
+            ->withCookieParams($cookies);
+        $redirectResponse = $this->browser->sendRequest($redirectRequest);
+
+        $expected = json_encode(['Redirect FlashMessage']);
+        self::assertSame($expected, $redirectResponse->getBody()->getContents());
     }
 }

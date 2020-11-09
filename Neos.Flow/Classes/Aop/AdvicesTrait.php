@@ -52,8 +52,10 @@ trait AdvicesTrait
         if (__CLASS__ !== $joinPoint->getClassName()) {
             return parent::Flow_Aop_Proxy_invokeJoinPoint($joinPoint);
         }
-        if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[$joinPoint->getMethodName()])) {
-            return call_user_func_array(['self', $joinPoint->getMethodName()], $joinPoint->getMethodArguments());
+        $methodName = $joinPoint->getMethodName();
+        if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[$methodName])) {
+            $arguments = array_values($joinPoint->getMethodArguments());
+            return self::$methodName(...$arguments);
         }
     }
 }

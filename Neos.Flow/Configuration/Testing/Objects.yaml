@@ -85,3 +85,17 @@ Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\OuterPrototype:
     1:
       object:
         name: Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\Greeter
+
+'Neos.Flow:VirtualObject1':
+  className: Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\OuterPrototype
+  arguments:
+    1:
+      object:
+        name: Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\Greeter
+
+'Neos.Flow:VirtualObject2':
+  className: Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\OuterPrototype
+  arguments:
+    1:
+      object:
+        name: Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\DifferentGreeter

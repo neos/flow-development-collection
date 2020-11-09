@@ -9,7 +9,7 @@
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve" approved="yes">
 				<source>The given value is expected to be {0}.</source>
-			<target state="final">Заданное значение должно быть {0}.</target><alt-trans><target>Заданное значение будет {0}.</target></alt-trans></trans-unit>
+			<target state="final">Заданное значение должно быть {0}.</target></trans-unit>
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve" approved="yes">
 				<source>The given subject is not a collection</source>
@@ -27,13 +27,13 @@
 			<target state="final">Заданное значение не является годной датой</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
-			<target state="translated">Конкретная дата должна быть между  {0,datetime,datetime} и {1,datetime,datetime}</target></trans-unit>
+			<target state="translated">Данная дата должна быть между  {0,datetime,datetime} и {1,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0,datetime,datetime}</source>
-			<target state="translated">Конкретная дата должна быть после {0,datetime,datetime}</target></trans-unit>
+			<target state="translated">Дата должна быть позже чем {0,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0,datetime,datetime}</source>
-			<target state="translated">Данная дата должна быть раньше {formatLatestDate}</target></trans-unit>
+			<target state="translated">Дата должна быть раньше чем {formatLatestDate}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve" approved="yes">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
@@ -50,14 +50,14 @@
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address</source>
-			<target state="final">Укажите годный адрес электронной почты</target><alt-trans><target>Укажите адрес электронной почты</target></alt-trans></trans-unit>
+			<target state="final">Укажите годный адрес электронной почты</target></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve" approved="yes">
 				<source>A valid float number is expected</source>
-			<target state="final">Ожидается вещественное число</target><alt-trans><target>Ожидается десятичная дробь</target></alt-trans></trans-unit>
+			<target state="final">Ожидается вещественное число</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve" approved="yes">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target state="final">{0} не может быть преобразовано в вещественное число</target><alt-trans><target>{0} не может быть преобразовано в десятичную дробь</target></alt-trans></trans-unit>
+			<target state="final">{0} не может быть преобразовано в вещественное число</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve" approved="yes">
 				<source>Object expected, {0} given</source>
@@ -72,7 +72,7 @@
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve" approved="yes">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
-			<target state="final">Ожидаются только буквы, цифры, пробелы и определенные знаки пунктуации</target><alt-trans><target>Ожидаются только числа, пробелы и знаки припинания</target></alt-trans></trans-unit>
+			<target state="final">Ожидаются только буквы, цифры, пробелы и определенные знаки пунктуации</target></trans-unit>
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve" approved="yes">
 				<source>Value is no valid I18n locale identifier</source>
@@ -100,7 +100,7 @@
 			<target state="final">Ожидается процентное число</target></trans-unit>
       <trans-unit id="1281452094" xml:space="preserve" approved="yes">
 				<source>A valid decimal number is expected</source>
-			<target state="final">Ожидается вещественное число</target><alt-trans><target>Ожидается десятичная дробь</target></alt-trans></trans-unit>
+			<target state="final">Ожидается вещественное число</target></trans-unit>
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern. Got: {0}</source>
@@ -181,7 +181,7 @@
 			<target state="final">Формат изображения "{0}" не допускается</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve" approved="yes">
 				<source>The uploaded file is no valid image</source>
-			<target state="final">Загруженный файл не является годным изображением</target><alt-trans><target>Загружаемый файл не является годным изображением</target></alt-trans></trans-unit>
+			<target state="final">Загруженный файл не является годным изображением</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve" approved="yes">
 				<source>The given value is not a Image instance</source>
@@ -203,7 +203,7 @@
 			<target state="final">Размер {0,number} x {1,number} данного изображения слишком мал для требуемого минимального разрешения {2,number}</target></trans-unit>
       <trans-unit id="1319813355" xml:space="preserve" approved="yes">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-			<target state="final">Размер {0,number} x {1,number} данного изображения слишком велик для требуемого максимального разрешения {2,number}</target><alt-trans><target>Размер {0,number} x {1,number} данного изображения слишком велик для требуемого махимального разрешения {2,number}</target></alt-trans></trans-unit>
+			<target state="final">Размер {0,number} x {1,number} данного изображения слишком велик для требуемого максимального разрешения {2,number}</target></trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve" approved="yes">
 				<source>The given value is not a Image instance</source>

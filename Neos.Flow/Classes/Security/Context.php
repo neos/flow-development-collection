@@ -13,17 +13,18 @@ namespace Neos\Flow\Security;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use Neos\Flow\Log\PsrSecurityLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\TypeHandling;
+use Psr\Log\LoggerInterface;
 
 /**
  * This is the default implementation of a security context, which holds current
@@ -171,8 +172,8 @@ class Context
     protected $sessionManager;
 
     /**
-     * @Flow\Inject
-     * @var PsrSecurityLoggerInterface
+     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
+     * @var LoggerInterface
      */
     protected $securityLogger;
 
@@ -396,6 +397,7 @@ class Context
      * @return Role[]
      * @throws Exception
      * @throws Exception\NoSuchRoleException
+     * @throws InvalidConfigurationTypeException
      */
     public function getRoles()
     {
@@ -409,7 +411,7 @@ class Context
 
         $this->roles = ['Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody')];
 
-        $authenticatedTokens = array_filter($this->getAuthenticationTokens(), function (TokenInterface $token) {
+        $authenticatedTokens = array_filter($this->getAuthenticationTokens(), static function (TokenInterface $token) {
             return $token->isAuthenticated();
         });
 
@@ -460,7 +462,7 @@ class Context
      * from the tokens.
      * (@see getAuthenticationTokens())
      *
-     * @return AccountInterface The authenticated account
+     * @return Account The authenticated account
      */
     public function getAccount()
     {
@@ -483,7 +485,7 @@ class Context
      * authentication provider name.
      *
      * @param string $authenticationProviderName Authentication provider name of the account to find
-     * @return AccountInterface The authenticated account
+     * @return Account The authenticated account
      */
     public function getAccountByAuthenticationProviderName($authenticationProviderName)
     {
@@ -627,10 +629,10 @@ class Context
     }
 
     /**
-     * @param AccountInterface $account
+     * @param Account $account
      * @return array
      */
-    protected function collectRolesAndParentRolesFromAccount(AccountInterface $account): array
+    protected function collectRolesAndParentRolesFromAccount(Account $account): array
     {
         $reducer = function (array $roles, $currentRole) {
             $roles[$currentRole->getIdentifier()] = $currentRole;
@@ -639,7 +641,7 @@ class Context
             return $roles;
         };
 
-        return array_reduce(iterator_to_array($account->getRoles()->getIterator()), $reducer, []);
+        return array_reduce($account->getRoles(), $reducer, []);
     }
 
     /**
@@ -758,7 +760,8 @@ class Context
                 get_class($matchingSessionToken),
                 $matchingSessionToken->getAuthenticationProviderName(),
                 $this->tokenStatusLabels[$matchingSessionToken->getAuthenticationStatus()]
-            ), LogEnvironment::fromMethodName(__METHOD__)
+            ),
+            LogEnvironment::fromMethodName(__METHOD__)
         );
 
         return $matchingSessionToken;
@@ -875,22 +878,22 @@ class Context
     /**
      * returns the tag to use for sessions belonging to the given $account
      *
-     * @param AccountInterface $account
+     * @param Account $account
      * @return string
      */
-    public function getSessionTagForAccount(AccountInterface $account): string
+    public function getSessionTagForAccount(Account $account): string
     {
-        return 'Neos-Flow-Security-Account-' . md5((string) $account->getAccountIdentifier());
+        return 'Neos-Flow-Security-Account-' . md5($account->getAccountIdentifier());
     }
 
     /**
      * destroys all sessions belonging to the given $account
      *
-     * @param AccountInterface $account
+     * @param Account $account
      * @param string $reason
      * @return void
      */
-    public function destroySessionsForAccount(AccountInterface $account, string $reason = ''): void
+    public function destroySessionsForAccount(Account $account, string $reason = ''): void
     {
         $this->sessionManager->destroySessionsByTag($this->getSessionTagForAccount($account), $reason);
     }

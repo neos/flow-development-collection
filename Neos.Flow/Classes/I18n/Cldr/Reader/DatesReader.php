@@ -273,19 +273,7 @@ class DatesReader
         }
 
         $model = $this->cldrRepository->getModelForLocale($locale);
-
-        if ($formatLength === 'default') {
-            // the default thing only has an attribute. ugly fetch code. was a nice three-liner before 2011-11-21
-            $formats = $model->getRawArray('dates/calendars/calendar[@type="gregorian"]/' . $formatType . 'Formats');
-            foreach (array_keys($formats) as $k) {
-                $realFormatLength = CldrModel::getAttributeValue($k, 'choice');
-                if ($realFormatLength !== false) {
-                    break;
-                }
-            }
-        } else {
-            $realFormatLength = $formatLength;
-        }
+        $realFormatLength = $formatLength === '' || $formatLength === 'default' ? 'medium' : $formatLength;
 
         $format = $model->getElement('dates/calendars/calendar[@type="gregorian"]/' . $formatType . 'Formats/' . $formatType . 'FormatLength[@type="' . $realFormatLength . '"]/' . $formatType . 'Format/pattern');
 

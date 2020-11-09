@@ -16,7 +16,7 @@
 			<target state="translated">Нова лозинка</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target state="translated">Пријави се</target><alt-trans><target>Пријава</target></alt-trans></trans-unit>
+			<target state="translated">Пријави се</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
 			<target state="translated">Одјави се</target></trans-unit>
@@ -26,6 +26,9 @@
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
 			<target state="translated">Пошаљи</target></trans-unit>
+      <trans-unit id="configurationSchemaValidator.anErrorOccurredDuringValidationOfTheConfiguration.body" xml:space="preserve">
+				<source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
+			<target state="needs-translation">The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</target></trans-unit>
     </body>
   </file>
 </xliff>

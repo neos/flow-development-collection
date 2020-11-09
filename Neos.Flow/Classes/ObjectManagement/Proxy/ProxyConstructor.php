@@ -73,7 +73,7 @@ class ProxyConstructor extends ProxyMethod
             return '';
         }
         if (count($this->reflectionService->getMethodParameters($this->fullOriginalClassName, $this->methodName)) > 0) {
-            return "        call_user_func_array('parent::" . $methodName . "', \$arguments);\n";
+            return "        parent::" . $methodName . "(...\$arguments);\n";
         } else {
             return "        parent::" . $methodName . "();\n";
         }

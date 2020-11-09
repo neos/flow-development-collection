@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ResourceManagement\Target;
 
 /*
@@ -76,11 +77,11 @@ class FileSystemTarget implements TargetInterface
     protected $subdivideHashPathSegment = true;
 
     /**
-     * A list of extensions that are blacklisted and must not be published by this target.
+     * A list of extensions that are excluded and must not be published by this target.
      *
      * @var array
      */
-    protected $extensionBlacklist = [];
+    protected $excludedExtensions = [];
 
     /**
      * @Flow\Inject
@@ -89,6 +90,7 @@ class FileSystemTarget implements TargetInterface
     protected $resourceRepository;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -299,8 +301,8 @@ class FileSystemTarget implements TargetInterface
     protected function publishFile($sourceStream, $relativeTargetPathAndFilename)
     {
         $pathInfo = UnicodeFunctions::pathinfo($relativeTargetPathAndFilename);
-        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->extensionBlacklist) && $this->extensionBlacklist[strtolower($pathInfo['extension'])] === true) {
-            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is blacklisted.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447148472);
+        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->excludedExtensions) && $this->excludedExtensions[strtolower($pathInfo['extension'])] === true) {
+            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is excluded.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447148472);
         }
 
         $targetPathAndFilename = $this->path . $relativeTargetPathAndFilename;
@@ -404,19 +406,18 @@ class FileSystemTarget implements TargetInterface
      * @param ResourceMetaDataInterface $object PersistentResource or Storage Object
      * @return string The relative path and filename, for example "c/8/2/8/c828d0f88ce197be1aff7cc2e5e86b1244241ac6/MyPicture.jpg" (if subdivideHashPathSegment is on) or "c828d0f88ce197be1aff7cc2e5e86b1244241ac6/MyPicture.jpg" (if it's off)
      */
-    protected function getRelativePublicationPathAndFilename(ResourceMetaDataInterface $object)
+    protected function getRelativePublicationPathAndFilename(ResourceMetaDataInterface $object): string
     {
         if ($object->getRelativePublicationPath() !== '') {
-            $pathAndFilename = $object->getRelativePublicationPath() . $object->getFilename();
-        } else {
-            if ($this->subdivideHashPathSegment) {
-                $sha1Hash = $object->getSha1();
-                $pathAndFilename = $sha1Hash[0] . '/' . $sha1Hash[1] . '/' . $sha1Hash[2] . '/' . $sha1Hash[3] . '/' . $sha1Hash . '/' . $object->getFilename();
-            } else {
-                $pathAndFilename = $object->getSha1() . '/' . $object->getFilename();
-            }
+            return $object->getRelativePublicationPath() . $object->getFilename();
         }
-        return $pathAndFilename;
+
+        if ($this->subdivideHashPathSegment) {
+            $sha1Hash = $object->getSha1();
+            return $sha1Hash[0] . '/' . $sha1Hash[1] . '/' . $sha1Hash[2] . '/' . $sha1Hash[3] . '/' . $sha1Hash . '/' . $object->getFilename();
+        }
+
+        return $object->getSha1() . '/' . $object->getFilename();
     }
 
     /**
@@ -431,8 +432,12 @@ class FileSystemTarget implements TargetInterface
         switch ($key) {
             case 'baseUri':
             case 'path':
-            case 'extensionBlacklist':
+            case 'excludedExtensions':
                 $this->$key = $value;
+                break;
+            // Only for b/c - remove with next major
+            case 'extensionBlacklist':
+                $this->excludedExtensions = $value;
                 break;
             case 'subdivideHashPathSegment':
                 $this->subdivideHashPathSegment = (boolean)$value;

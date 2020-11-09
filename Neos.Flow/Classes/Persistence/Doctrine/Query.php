@@ -41,6 +41,7 @@ class Query implements QueryInterface
     protected $entityClassName;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -429,7 +430,7 @@ class Query implements QueryInterface
         } else {
             $constraints = func_get_args();
         }
-        return call_user_func_array([$this->queryBuilder->expr(), 'andX'], $constraints);
+        return $this->queryBuilder->expr()->andX(...$constraints);
     }
 
     /**
@@ -448,7 +449,7 @@ class Query implements QueryInterface
         } else {
             $constraints = func_get_args();
         }
-        return call_user_func_array([$this->queryBuilder->expr(), 'orX'], $constraints);
+        return $this->queryBuilder->expr()->orX(...$constraints);
     }
 
     /**

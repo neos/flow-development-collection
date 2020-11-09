@@ -98,12 +98,13 @@ class Utility
         $contextVariables = array_merge($defaultContextVariables, $contextVariables);
 
         $context = new ProtectedContext($contextVariables);
+        $context->allow('q');
 
-        // Whitelist functions on the uppermost context level to allow calling them without
+        // Allow functions on the uppermost context level to allow calling them without
         // implementing ProtectedContextAwareInterface which is impossible for functions
         foreach ($contextVariables as $key => $value) {
             if (is_callable($value)) {
-                $context->whitelist($key);
+                $context->allow($key);
             }
         }
 

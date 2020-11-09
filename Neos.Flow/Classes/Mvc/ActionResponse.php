@@ -9,6 +9,7 @@ use Neos\Flow\Http\Component\ComponentContext;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use GuzzleHttp\Psr7\Stream;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * The minimal MVC response object.
@@ -54,6 +55,11 @@ final class ActionResponse
      * @var Cookie[]
      */
     protected $cookies = [];
+
+    /**
+     * @var ResponseInterface|null
+     */
+    protected $httpResponse;
 
     public function __construct()
     {
@@ -200,6 +206,15 @@ final class ActionResponse
     }
 
     /**
+     * Use this if you want build your own HTTP Response inside your action
+     * @param ResponseInterface $response
+     */
+    public function replaceHttpResponse(ResponseInterface $response): void
+    {
+        $this->httpResponse = $response;
+    }
+
+    /**
      * @param ActionResponse $actionResponse
      * @return ActionResponse
      */
@@ -221,6 +236,10 @@ final class ActionResponse
             $actionResponse->setRedirectUri($this->redirectUri);
         }
 
+        if ($this->httpResponse !== null) {
+            $actionResponse->replaceHttpResponse($this->httpResponse);
+        }
+
         foreach ($this->componentParameters as $componentClass => $parameters) {
             foreach ($parameters as $parameterName => $parameterValue) {
                 $actionResponse->setComponentParameter($componentClass, $parameterName, $parameterValue);
@@ -239,7 +258,7 @@ final class ActionResponse
      */
     public function mergeIntoComponentContext(ComponentContext $componentContext): ComponentContext
     {
-        $httpResponse = $componentContext->getHttpResponse();
+        $httpResponse = $this->httpResponse ?? $componentContext->getHttpResponse();
         if ($this->statusCode !== null) {
             $httpResponse = $httpResponse->withStatus($this->statusCode);
         }
@@ -277,14 +296,13 @@ final class ActionResponse
      * created in a View (see ActionController::renderView()) because those would be overwritten otherwise. Note that any component parameters will
      * still run through the component chain and will not be propagated here.
      *
-     * WARNING: Should this ActionResponse contain body content it would replace any content in the given HttpReponse.
-     *
-     * @param ResponseInterface $httpResponse
      * @return ResponseInterface
      * @internal
      */
-    public function applyToHttpResponse(ResponseInterface $httpResponse): ResponseInterface
+    public function buildHttpResponse(): ResponseInterface
     {
+        $httpResponse = $this->httpResponse ?? new Response();
+
         if ($this->statusCode !== null) {
             $httpResponse = $httpResponse->withStatus($this->statusCode);
         }

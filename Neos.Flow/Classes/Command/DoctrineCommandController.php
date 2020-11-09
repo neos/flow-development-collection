@@ -11,7 +11,7 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\Debug;
 use Doctrine\Migrations\Exception\MigrationException;
 use Doctrine\ORM\Tools\ToolsException;
@@ -60,6 +60,7 @@ class DoctrineCommandController extends CommandController
     protected $throwableStorage;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;

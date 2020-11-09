@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * source code.
  */
 
+use Neos\Flow\Property\Exception\InvalidDataTypeException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\CollectionConverter;
 use Neos\Flow\Tests\UnitTestCase;
@@ -51,8 +52,9 @@ class CollectionConverterTest extends UnitTestCase
     /**
      * @test
      */
-    public function getTypeOfChildPropertyReturnsEmptyStringForElementTypeIfNotGivenInTargetType()
+    public function getTypeOfChildPropertyThrowsExceptionForMissingElementType()
     {
-        self::assertEquals('', $this->converter->getTypeOfChildProperty('array', '', $this->createMock(PropertyMappingConfigurationInterface::class)));
+        self::expectException(InvalidDataTypeException::class);
+        $this->converter->getTypeOfChildProperty('array', 'collection', $this->createMock(PropertyMappingConfigurationInterface::class));
     }
 }

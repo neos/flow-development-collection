@@ -22,10 +22,13 @@
 			<target state="translated">Keluar</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target state="translated">Pembaruan</target><alt-trans><target>Update</target></alt-trans></trans-unit>
+			<target state="translated">Pembaruan</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target state="translated">Kirim</target><alt-trans><target>Masukkan</target></alt-trans></trans-unit>
+			<target state="translated">Kirim</target></trans-unit>
+      <trans-unit id="configurationSchemaValidator.anErrorOccurredDuringValidationOfTheConfiguration.body" xml:space="preserve">
+				<source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
+			<target state="needs-translation">The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</target></trans-unit>
     </body>
   </file>
 </xliff>

@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
-			<target state="final">Autentificering kræves</target><alt-trans><target>Godkendelse kræves</target></alt-trans></trans-unit>
+			<target state="final">Autentificering kræves</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target state="final">Brugernavn</target></trans-unit>
@@ -26,6 +26,9 @@
       <trans-unit id="submit" xml:space="preserve" approved="yes">
 				<source>Submit</source>
 			<target state="final">Indsend</target></trans-unit>
+      <trans-unit id="configurationSchemaValidator.anErrorOccurredDuringValidationOfTheConfiguration.body" xml:space="preserve">
+				<source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
+			<target state="needs-translation">The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</target></trans-unit>
     </body>
   </file>
 </xliff>

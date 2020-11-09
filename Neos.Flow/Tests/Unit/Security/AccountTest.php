@@ -15,7 +15,6 @@ use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
-use Neos\Flow\Security\Policy\Roles;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -80,10 +79,7 @@ class AccountTest extends UnitTestCase
     {
         $this->account->setRoles([$this->administratorRole]);
         $this->account->addRole($this->customerRole);
-
         self::assertCount(2, $this->account->getRoles());
-        self::assertTrue($this->account->getRoles()->has($this->administratorRole));
-        self::assertTrue($this->account->getRoles()->has($this->customerRole));
     }
 
     /**
@@ -126,30 +122,9 @@ class AccountTest extends UnitTestCase
     {
         $this->account->setRoles([$this->administratorRole]);
 
-        self::assertTrue($this->account->getRoles()->has($this->administratorRole));
         self::assertTrue($this->account->hasRole($this->administratorRole));
-
-        self::assertFalse($this->account->getRoles()->has($this->customerRole));
         self::assertFalse($this->account->hasRole($this->customerRole));
     }
-
-    /**
-     * @test
-     */
-    public function getRolesReturnsRolesInstance() {
-        self::assertTrue($this->account->getRoles() instanceof Roles);
-    }
-
-    /**
-     * @test
-     */
-    public function usingGetRolesForRoleCheckReturnsSameResultAsHasRole() {
-        $this->account->setRoles([$this->administratorRole]);
-
-        self::assertTrue($this->account->getRoles()->has('Neos.Flow:Administrator'));
-        self::assertTrue($this->account->hasRole($this->administratorRole));
-    }
-
 
     /**
      * @test
@@ -160,7 +135,7 @@ class AccountTest extends UnitTestCase
 
         $roles = $this->account->getRoles();
         self::assertCount(1, $roles);
-        self::assertTrue($roles->has($this->administratorRole));
+        self::assertArrayHasKey($this->administratorRole->getIdentifier(), $roles);
     }
 
     /**
@@ -180,10 +155,10 @@ class AccountTest extends UnitTestCase
     public function setRolesWorks()
     {
         $roles = [$this->administratorRole, $this->customerRole];
+        $expectedRoles = [$this->administratorRole->getIdentifier() => $this->administratorRole, $this->customerRole->getIdentifier() => $this->customerRole];
         $this->account->setRoles($roles);
 
-        self::assertTrue($this->account->getRoles()->has($this->administratorRole));
-        self::assertTrue($this->account->getRoles()->has($this->customerRole));
+        self::assertSame($expectedRoles, $this->account->getRoles());
     }
 
     /**

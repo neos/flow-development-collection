@@ -15,10 +15,10 @@ namespace Neos\Flow\Security\Aspect;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Log\PsrSecurityLoggerInterface;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
+use Psr\Log\LoggerInterface;
 
 /**
  * An aspect which centralizes the logging of security relevant actions.
@@ -29,8 +29,8 @@ use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 class LoggingAspect
 {
     /**
-     * @var PsrSecurityLoggerInterface
-     * @Flow\Inject
+     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
+     * @var LoggerInterface
      */
     protected $securityLogger;
 
@@ -66,7 +66,7 @@ class LoggingAspect
         $authenticationManager = $joinPoint->getProxy();
         $logMessage = 'No account authenticated';
         if ($authenticationManager->getSecurityContext()->getAccount() !== null) {
-            $logMessage = sprintf('Successfully re-authenticated tokens for account "%s"', (string) $authenticationManager->getSecurityContext()->getAccount()->getAccountIdentifier());
+            $logMessage = sprintf('Successfully re-authenticated tokens for account "%s"', $authenticationManager->getSecurityContext()->getAccount()->getAccountIdentifier());
         }
 
         $this->securityLogger->info($logMessage, $this->getLogEnvironmentFromJoinPoint($joinPoint));
@@ -92,7 +92,7 @@ class LoggingAspect
         foreach ($securityContext->getAuthenticationTokens() as $token) {
             $account = $token->getAccount();
             if ($account !== null) {
-                $accountIdentifiers[] = (string) $account->getAccountIdentifier();
+                $accountIdentifiers[] = $account->getAccountIdentifier();
             }
         }
 
@@ -108,7 +108,7 @@ class LoggingAspect
     {
         $account = $token->getAccount();
         if ($account !== null) {
-            $collectedIdentifiers[] = (string) $account->getAccountIdentifier();
+            $collectedIdentifiers[] = $account->getAccountIdentifier();
         }
 
         return $collectedIdentifiers;

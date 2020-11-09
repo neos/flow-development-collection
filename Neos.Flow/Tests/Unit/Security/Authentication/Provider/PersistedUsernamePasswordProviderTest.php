@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Provider;
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security;
+use Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -85,17 +86,47 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     {
         $this->mockHashService->expects(self::once())->method('validatePassword')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will(self::returnValue(true));
 
-        $this->mockAccount->expects(self::once())->method('getCredentialsSource')->will(self::returnValue(Security\Authentication\CredentialsSource::fromString('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')));
+        $this->mockAccount->expects(self::once())->method('getCredentialsSource')->will(self::returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
         $this->mockAccountRepository->expects(self::once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will(self::returnValue($this->mockAccount));
 
-        $this->mockToken->expects(self::once())->method('getCredentials')->will(self::returnValue(['username' => 'admin', 'password' => 'password']));
-        $this->mockToken->expects(self::at(2))->method('setAuthenticationStatus')->with(\Neos\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
-        $this->mockToken->expects(self::at(3))->method('setAuthenticationStatus')->with(\Neos\Flow\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
-        $this->mockToken->expects(self::at(4))->method('setAuthenticationStatus')->with(\Neos\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+        $this->mockToken->expects(self::atLeastOnce())->method('getUsername')->will(self::returnValue('admin'));
+        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue('password'));
+
+        $lastAuthenticationStatus = null;
+        $this->mockToken->method('setAuthenticationStatus')->willReturnCallback(static function ($status) use (&$lastAuthenticationStatus) {
+            $lastAuthenticationStatus = $status;
+        });
+
         $this->mockToken->expects(self::once())->method('setAccount')->with($this->mockAccount);
 
         $this->persistedUsernamePasswordProvider->authenticate($this->mockToken);
+        self::assertSame(\Neos\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL, $lastAuthenticationStatus);
+    }
+
+    /**
+     * @test
+     */
+    public function authenticatingAndUsernamePasswordTokenRespectsTheConfiguredLookupProviderName()
+    {
+        $this->mockHashService->expects(self::once())->method('validatePassword')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will(self::returnValue(true));
+
+        $this->mockAccount->expects(self::once())->method('getCredentialsSource')->will(self::returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
+
+        $this->mockAccountRepository->expects(self::once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'customLookupName')->will(self::returnValue($this->mockAccount));
+
+        $this->mockToken->expects(self::atLeastOnce())->method('getUsername')->will(self::returnValue('admin'));
+        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue('password'));
+
+        $this->mockToken->expects(self::once())->method('setAccount')->with($this->mockAccount);
+
+        $persistedUsernamePasswordProvider = PersistedUsernamePasswordProvider::create('providerName', ['lookupProviderName' => 'customLookupName']);
+        $this->inject($persistedUsernamePasswordProvider, 'hashService', $this->mockHashService);
+        $this->inject($persistedUsernamePasswordProvider, 'accountRepository', $this->mockAccountRepository);
+        $this->inject($persistedUsernamePasswordProvider, 'persistenceManager', $this->mockPersistenceManager);
+        $this->inject($persistedUsernamePasswordProvider, 'securityContext', $this->mockSecurityContext);
+
+        $persistedUsernamePasswordProvider->authenticate($this->mockToken);
     }
 
     /**
@@ -103,7 +134,8 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
      */
     public function authenticatingAnUsernamePasswordTokenFetchesAccountWithDisabledAuthorization()
     {
-        $this->mockToken->expects(self::once())->method('getCredentials')->will(self::returnValue(['username' => 'admin', 'password' => 'password']));
+        $this->mockToken->expects(self::atLeastOnce())->method('getUsername')->will(self::returnValue('admin'));
+        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue('password'));
         $this->mockSecurityContext->expects(self::once())->method('withoutAuthorizationChecks');
         $this->persistedUsernamePasswordProvider->authenticate($this->mockToken);
     }
@@ -115,15 +147,20 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     {
         $this->mockHashService->expects(self::once())->method('validatePassword')->with('wrong password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will(self::returnValue(false));
 
-        $this->mockAccount->expects(self::once())->method('getCredentialsSource')->will(self::returnValue(Security\Authentication\CredentialsSource::fromString('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')));
+        $this->mockAccount->expects(self::once())->method('getCredentialsSource')->will(self::returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
         $this->mockAccountRepository->expects(self::once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will(self::returnValue($this->mockAccount));
 
-        $this->mockToken->expects(self::once())->method('getCredentials')->will(self::returnValue(['username' => 'admin', 'password' => 'wrong password']));
-        $this->mockToken->expects(self::at(2))->method('setAuthenticationStatus')->with(\Neos\Flow\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
-        $this->mockToken->expects(self::at(3))->method('setAuthenticationStatus')->with(\Neos\Flow\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+        $this->mockToken->expects(self::atLeastOnce())->method('getUsername')->will(self::returnValue('admin'));
+        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue('wrong password'));
+
+        $lastAuthenticationStatus = null;
+        $this->mockToken->method('setAuthenticationStatus')->willReturnCallback(static function ($status) use (&$lastAuthenticationStatus) {
+            $lastAuthenticationStatus = $status;
+        });
 
         $this->persistedUsernamePasswordProvider->authenticate($this->mockToken);
+        self::assertSame(\Neos\Flow\Security\Authentication\TokenInterface::WRONG_CREDENTIALS, $lastAuthenticationStatus);
     }
 
     /**

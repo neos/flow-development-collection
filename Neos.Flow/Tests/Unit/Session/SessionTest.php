@@ -82,7 +82,8 @@ class SessionTest extends UnitTestCase
                 'path' => '/',
                 'secure' => false,
                 'httponly' => true,
-                'domain' => null
+                'domain' => null,
+                'samesite' => null
             ]
         ]
     ];
@@ -1133,7 +1134,7 @@ class SessionTest extends UnitTestCase
             $this->inject($session, 'metaDataCache', $metaDataCache);
             $this->inject($session, 'storageCache', $storageCache);
             $session->injectSettings($settings);
-            $session->injectLogger($this->createMock(LoggerInterface::class));
+            $this->inject($session, 'logger', $this->createMock(LoggerInterface::class));
             $session->initializeObject();
 
             $session->start();
