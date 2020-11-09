@@ -548,7 +548,8 @@ class Service
                         }
 
                         return preg_match($filterExpression, $assetName);
-                    });
+                    }
+                );
             }
 
             $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
