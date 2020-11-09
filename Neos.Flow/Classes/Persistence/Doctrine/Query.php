@@ -35,6 +35,7 @@ class Query implements QueryInterface
     protected $entityClassName;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
