@@ -40,7 +40,6 @@ final class MigrationFinder extends Finder
     {
         $files = [];
 
-        /** @var PackageInterface $package */
         foreach ($this->packageManager->getAvailablePackages() as $package) {
             $path = Files::concatenatePaths([
                 $package->getPackagePath(),
@@ -48,7 +47,6 @@ final class MigrationFinder extends Finder
                 $this->databasePlatformName
             ]);
             if (is_dir($path)) {
-                echo $path . PHP_EOL;
                 $files += glob($path . '/Version*.php');
             }
         }

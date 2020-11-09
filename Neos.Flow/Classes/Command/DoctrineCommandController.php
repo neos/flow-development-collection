@@ -281,26 +281,22 @@ class DoctrineCommandController extends CommandController
      * available, executed and pending migrations.
      *
      * @param boolean $showMigrations Output a list of all migrations and their status
-     * @param boolean $showDescriptions Show descriptions for the migrations (enables versions display)
      * @return void
      * @throws StopCommandException
+     * @throws \Doctrine\DBAL\DBALException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrationStatusCommand(bool $showMigrations = false, bool $showDescriptions = false): void
+    public function migrationStatusCommand(bool $showMigrations = false): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration status not available, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
         }
 
-        if ($showDescriptions) {
-            $showMigrations = true;
-        }
-
-        $this->outputLine($this->doctrineService->getFormattedMigrationStatus($showMigrations, $showDescriptions));
+        $this->outputLine($this->doctrineService->getFormattedMigrationStatus($showMigrations));
     }
 
     /**
@@ -309,8 +305,8 @@ class DoctrineCommandController extends CommandController
      * Adjusts the database structure by applying the pending
      * migrations provided by currently active packages.
      *
-     * @param string $version The version to migrate to
-     * @param string $output A file to write SQL to, instead of executing it
+     * @param string|null $version The version to migrate to
+     * @param string|null $output A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
      * @param boolean $quiet If set, only the executed migration versions will be output, one per line
      * @return void
@@ -321,25 +317,21 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrateCommand(string $version = null, string $output = null, bool $dryRun = false, bool $quiet = false): void
+    public function migrateCommand(string $version = 'latest', string $output = null, bool $dryRun = false, bool $quiet = false): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
         }
 
+        if (is_string($output) && !is_writable(dirname($output))) {
+            $this->outputLine(sprintf('The path "%s" is not writeable!', dirname($output)));
+        }
+
         try {
             $result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
-            if ($result === '') {
-                if (!$quiet) {
-                    $this->outputLine('No migration was necessary.');
-                }
-            } elseif ($output === null) {
+            if ($result !== '' && $quiet === false) {
                 $this->outputLine($result);
-            } else {
-                if (!$quiet) {
-                    $this->outputLine('Wrote migration SQL to file "' . $output . '".');
-                }
             }
 
             $this->emitAfterDatabaseMigration();
@@ -378,6 +370,10 @@ class DoctrineCommandController extends CommandController
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
+        }
+
+        if (is_string($output) && !is_writable(dirname($output))) {
+            $this->outputLine(sprintf('The path "%s" is not writeable!', dirname($output)));
         }
 
         try {
@@ -455,17 +451,19 @@ class DoctrineCommandController extends CommandController
      */
     public function migrationGenerateCommand(bool $diffAgainstCurrent = true, string $filterExpression = null, bool $force = false): void
     {
-        // "driver" is used only for Doctrine, thus we (mis-)use it here
-        // additionally, when no host is set, skip this step, assuming no DB is needed
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
         }
 
         $migrationStatus = $this->doctrineService->getMigrationStatus();
-        if ($migrationStatus['New Migrations'] > 0 && $force === false) {
-            $this->outputLine('There are new migrations available. To avoid duplication those should be executed via `doctrine:migrate` before creating additional migrations.');
+        if ($force === false && $migrationStatus['new'] !== 0) {
+            $this->outputLine('There are %d new migrations available. To avoid duplication those should be executed via `doctrine:migrate` before creating additional migrations.', [$migrationStatus['new']]);
             $this->quit(1);
+        }
+
+        if ($migrationStatus['unavailable'] !== 0) {
+            $this->outputLine('You have %d previously executed migrations in the database that are not registered migrations.', [$migrationStatus['unavailable']]);
         }
 
         // use default filter expression from settings
