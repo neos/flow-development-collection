@@ -1069,7 +1069,7 @@ detected between the current schema and the current models in the system:
 
 	namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-	use Doctrine\DBAL\Migrations\AbstractMigration,
+	use Doctrine\Migrations\AbstractMigration,
 	  Doctrine\DBAL\Schema\Schema;
 
 	/**

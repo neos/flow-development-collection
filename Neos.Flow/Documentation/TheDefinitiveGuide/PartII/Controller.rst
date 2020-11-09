@@ -196,7 +196,7 @@ to apply. In this case the migration should look like this:
 	<?php
 	namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-	use Doctrine\DBAL\Migrations\AbstractMigration,
+	use Doctrine\Migrations\AbstractMigration,
 		Doctrine\DBAL\Schema\Schema;
 
 	/**
