@@ -5,7 +5,9 @@ namespace Neos\Flow\Http\Middleware;
 
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\ActionRequestFactory;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
@@ -24,7 +26,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class SecurityEntryPointMiddleware implements MiddlewareInterface
 {
     /**
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      * @var Context
      */
     protected $securityContext;
@@ -36,12 +38,22 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
     protected $securityLogger;
 
     /**
+     * @Flow\Inject(lazy=false)
+     * @var ActionRequestFactory
+     */
+    protected $actionRequestFactory;
+
+    /**
      * @inheritDoc
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
         try {
-            return $next->handle($request);
+            // FIXME: Currently the security context needs an ActionRequest, therefore we need to build it here
+            $routingMatchResults = $request->getAttribute(ServerRequestAttributes::ROUTING_RESULTS) ?? [];
+            $actionRequest = $this->actionRequestFactory->createActionRequest($request, $routingMatchResults);
+            $this->securityContext->setRequest($actionRequest);
+            return $next->handle($request->withAttribute(ServerRequestAttributes::ACTION_REQUEST, $actionRequest));
         } catch (AuthenticationRequiredException $authenticationException) {
             /** @var TokenInterface[] $tokensWithEntryPoint */
             $tokensWithEntryPoint = array_filter($this->securityContext->getAuthenticationTokens(), static function (TokenInterface $token) {
@@ -64,8 +76,10 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
                 // Only store the intercepted request if it is a GET request (otherwise it can't be resumed properly)
                 // We also don't store the request for "sessionless authentications" because that would implicitly start a session
                 // TODO: Adjust when a session-independent storing mechanism is possible (see https://github.com/neos/flow-development-collection/issues/1693)
-                if (!$token instanceof SessionlessTokenInterface && $request->getMethod() === 'GET') {
-                    $this->securityContext->setInterceptedRequest($authenticationException->interceptedRequest);
+                if (!$token instanceof SessionlessTokenInterface
+                    && $request->getMethod() === 'GET'
+                    && $authenticationException->hasInterceptedRequest()) {
+                    $this->securityContext->setInterceptedRequest($authenticationException->getInterceptedRequest());
                 }
                 $response = $entryPoint->startAuthentication($request, $response);
             }

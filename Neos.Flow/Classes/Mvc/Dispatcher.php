@@ -96,18 +96,14 @@ class Dispatcher
      */
     public function dispatch(ActionRequest $request, ActionResponse $response)
     {
-        $this->securityContext->setRequest($request);
         try {
             if ($this->securityContext->areAuthorizationChecksDisabled() !== true) {
                 $this->firewall->blockIllegalRequests($request);
             }
             $this->initiateDispatchLoop($request, $response);
         } catch (AuthenticationRequiredException $exception) {
-            // TODO: Set intercepted request for security context here (?)
-            //       Alternatively attach the action request to the exception
-            $exception->interceptedRequest = $request;
             // Rethrow as the SecurityEntryPoint middleware will take care of the rest
-            throw $exception;
+            throw $exception->withInterceptedRequest($request);
         } catch (AccessDeniedException $exception) {
             /** @var PsrLoggerFactoryInterface $securityLogger */
             $securityLogger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('securityLogger');

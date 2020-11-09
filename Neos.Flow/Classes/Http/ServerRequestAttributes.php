@@ -26,4 +26,10 @@ final class ServerRequestAttributes
      * PSR-7 Attribute containing routing parameters as array to be used in routing.
      */
     public const ROUTING_PARAMETERS = 'routingParameters';
+
+    /**
+     * PSR-7 Attribute containing the action request to be dispatched.
+     * @internal Don't use this. The ActionRequest is supposed to only exist inside the MVC dispatch context.
+     */
+    public const ACTION_REQUEST = 'actionRequest';
 }

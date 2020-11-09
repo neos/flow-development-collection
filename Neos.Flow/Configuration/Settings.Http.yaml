@@ -65,9 +65,6 @@ Neos:
           chain: []
         'process':
           chain:
-            'prepareActionRequest':
-              position: 'before dispatching'
-              component: 'Neos\Flow\Mvc\PrepareMvcRequestComponent'
             'dispatching':
               component: 'Neos\Flow\Mvc\DispatchComponent'
             'replaceHttpResponse':
