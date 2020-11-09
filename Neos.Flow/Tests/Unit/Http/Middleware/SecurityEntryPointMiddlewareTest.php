@@ -93,7 +93,7 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
         $mockActionRequestFactory->method('createActionRequest')->willReturn($this->mockActionRequest);
         $this->inject($this->securityEntryPointMiddleware, 'actionRequestFactory', $mockActionRequestFactory);
 
-        $this->mockAuthenticationRequiredException = (new AuthenticationRequiredException())->withInterceptedRequest($this->mockActionRequest);
+        $this->mockAuthenticationRequiredException = (new AuthenticationRequiredException())->attachInterceptedRequest($this->mockActionRequest);
         $this->mockRequestHandler->method('handle')->willthrowException($this->mockAuthenticationRequiredException);
 
         $this->mockTokenWithEntryPoint = $this->getMockBuilder(TokenInterface::class)->getMock();
