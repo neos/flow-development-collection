@@ -17,7 +17,6 @@ use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Mvc\Dispatcher;
-use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
