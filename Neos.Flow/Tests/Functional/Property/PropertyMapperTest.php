@@ -476,11 +476,13 @@ class PropertyMapperTest extends FunctionalTestCase
      */
     public function collectionPropertyWithMissingElementTypeThrowsHelpfulException()
     {
-        $this->expectException(Exception\InvalidDataTypeException::class);
-        $this->expectExceptionMessageMatches('/missing an element type/');
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessageMatches('/The annotated collection property "0" is missing an element type/');
         $source = [
-            'values' => []
+            'values' => ['foo']
         ];
-        $this->propertyMapper->convert($source, TestClassWithMissingCollectionElementType::class);
+        $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
+        $configuration->forProperty('values.*')->allowProperties();
+        $this->propertyMapper->convert($source, TestClassWithMissingCollectionElementType::class, $configuration);
     }
 }
