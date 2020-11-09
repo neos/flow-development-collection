@@ -5,7 +5,6 @@ namespace Neos\Flow\Persistence\Doctrine;
 
 use Doctrine\Migrations\Finder\Finder;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
 

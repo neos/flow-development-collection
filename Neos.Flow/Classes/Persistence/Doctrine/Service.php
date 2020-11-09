@@ -555,7 +555,6 @@ class Service
             'available' => count($availableMigrations),
             'new' => count($newMigrations)
         ];
-
     }
 
     /**
