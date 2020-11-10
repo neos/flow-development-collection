@@ -202,13 +202,22 @@ to apply. In this case the migration should look like this:
 	/**
 	 * Initial migration, creating tables for the "Blog" and "Post" domain models
 	 */
-	class Version20150714161019 extends AbstractMigration {
+	class Version20150714161019 extends AbstractMigration
+	{
+		/**
+		 * @return string
+		 */
+		public function getDescription(): string
+		{
+			return 'Initial migration, creating tables for the "Blog" and "Post" domain models';
+		}
 
 		/**
 		 * @param Schema $schema
 		 * @return void
 		 */
-		public function up(Schema $schema) {
+		public function up(Schema $schema): void
+		{
 			$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
 			$this->addSql("CREATE TABLE acme_blog_domain_model_blog (persistence_object_identifier VARCHAR(40) NOT NULL, title VARCHAR(80) NOT NULL, description VARCHAR(150) NOT NULL, PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
@@ -220,7 +229,8 @@ to apply. In this case the migration should look like this:
 		 * @param Schema $schema
 		 * @return void
 		 */
-		public function down(Schema $schema) {
+		public function down(Schema $schema): void
+		{
 			$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
 			$this->addSql("ALTER TABLE acme_blog_domain_model_post DROP FOREIGN KEY FK_EF2000AAC0155143");
