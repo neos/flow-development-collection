@@ -11,22 +11,23 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\ORM\Tools\ToolsException;
 use Doctrine\ORM\UnitOfWork;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\AbstractPersistenceManager;
-use Neos\Flow\Persistence\Exception\KnownObjectException;
 use Neos\Flow\Persistence\Exception as PersistenceException;
+use Neos\Flow\Persistence\Exception\KnownObjectException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
+use Neos\Utility\Exception\PropertyNotAccessibleException;
+use Neos\Utility\ObjectAccess;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -73,7 +74,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @param LoggerInterface $logger
      * @return void
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -91,7 +92,6 @@ class PersistenceManager extends AbstractPersistenceManager
     {
         if ($onlyAllowedObjects) {
             $unitOfWork = $this->entityManager->getUnitOfWork();
-            /** @var UnitOfWork $unitOfWork */
             $unitOfWork->computeChangeSets();
             $objectsToBePersisted = $unitOfWork->getScheduledEntityUpdates() + $unitOfWork->getScheduledEntityDeletions() + $unitOfWork->getScheduledEntityInsertions();
             foreach ($objectsToBePersisted as $object) {
@@ -104,7 +104,6 @@ class PersistenceManager extends AbstractPersistenceManager
             return;
         }
 
-        /** @var Connection $connection */
         $connection = $this->entityManager->getConnection();
         try {
             if ($connection->ping() === false) {
@@ -157,8 +156,9 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @param object $object
      * @return mixed The identifier for the object if it is known, or NULL
-     * @api
+     * @throws PropertyNotAccessibleException
      * @todo improve try/catch block
+     * @api
      */
     public function getIdentifierByObject($object)
     {
@@ -186,6 +186,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
      * @return object The object for the identifier if it is known, or NULL
      * @throws \RuntimeException
+     * @throws ORMException
      * @api
      */
     public function getObjectByIdentifier($identifier, $objectType = null, $useLazyLoading = false)
@@ -221,6 +222,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return void
      * @throws KnownObjectException if the given $object is not new
      * @throws PersistenceException if another error occurs
+     * @throws PropertyNotAccessibleException
      * @api
      */
     public function add($object)
@@ -255,6 +257,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return void
      * @throws UnknownObjectException if the given $object is new
      * @throws PersistenceException if another error occurs
+     * @throws PropertyNotAccessibleException
      * @api
      */
     public function update($object)
@@ -285,8 +288,9 @@ class PersistenceManager extends AbstractPersistenceManager
      * Called from functional tests, creates/updates database tables and compiles proxies.
      *
      * @return boolean
+     * @throws ToolsException
      */
-    public function compile()
+    public function compile(): bool
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no path is set, skip this step, assuming no DB is needed
@@ -314,7 +318,7 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no path is set, skip this step, assuming no DB is needed
@@ -335,7 +339,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @Flow\Signal
      * @return void
      */
-    protected function emitAllObjectsPersisted()
+    protected function emitAllObjectsPersisted(): void
     {
     }
 
@@ -352,15 +356,10 @@ class PersistenceManager extends AbstractPersistenceManager
         $unitOfWork = $this->entityManager->getUnitOfWork();
         $unitOfWork->computeChangeSets();
 
-        if ($unitOfWork->getScheduledEntityInsertions() !== []
+        return $unitOfWork->getScheduledEntityInsertions() !== []
             || $unitOfWork->getScheduledEntityUpdates() !== []
             || $unitOfWork->getScheduledEntityDeletions() !== []
             || $unitOfWork->getScheduledCollectionDeletions() !== []
-            || $unitOfWork->getScheduledCollectionUpdates() !== []
-        ) {
-            return true;
-        }
-
-        return false;
+            || $unitOfWork->getScheduledCollectionUpdates() !== [];
     }
 }
