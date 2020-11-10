@@ -203,6 +203,7 @@ class RoutingCommandController extends CommandController
         /** @var Route|null $resolvedRoute */
         $resolvedRoute = null;
         $resolvedRouteNumber = 0;
+        /** @var int $index */
         foreach ($this->router->getRoutes() as $index => $route) {
             /** @var Route $route */
             if ($route->resolves($resolveContext) === true) {
@@ -291,6 +292,7 @@ class RoutingCommandController extends CommandController
         /** @var Route|null $matchedRoute */
         $matchedRoute = null;
         $matchedRouteNumber = 0;
+        /** @var int $index */
         foreach ($this->router->getRoutes() as $index => $route) {
             /** @var Route $route */
             if ($route->matches($routeContext) === true) {
