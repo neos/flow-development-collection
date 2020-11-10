@@ -67,6 +67,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
     {
         $this->mockRole = $this->getMockBuilder(Role::class)->disableOriginalConstructor()->getMock();
         $this->mockRole->expects(self::any())->method('getIdentifier')->will(self::returnValue('Neos.Flow:TestRoleIdentifier'));
+        $this->mockRole->expects(self::any())->method('__toString')->will(self::returnValue('Neos.Flow:TestRoleIdentifier'));
 
         $this->mockPolicyService = $this->getMockBuilder(PolicyService::class)->disableOriginalConstructor()->getMock();
         $this->mockPolicyService->expects(self::any())->method('getRole')->with('Neos.Flow:TestRoleIdentifier')->will(self::returnValue($this->mockRole));
@@ -109,15 +110,14 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
         $this->mockToken = $this->getMockBuilder(PasswordToken::class)->disableOriginalConstructor()->setMethods(['getPassword'])->getMock();
         $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue($this->testKeyClearText));
 
-        $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', ['keyName' => 'testKey', 'authenticateRoles' => ['Neos.Flow:TestRoleIdentifier']]);
+        $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', ['keyName' => 'testKey', 'authenticateRoles' => [(string) $this->mockRole]]);
         $this->inject($authenticationProvider, 'policyService', $this->mockPolicyService);
         $this->inject($authenticationProvider, 'hashService', $this->mockHashService);
         $this->inject($authenticationProvider, 'fileBasedSimpleKeyService', $this->mockFileBasedSimpleKeyService);
 
         $authenticationProvider->authenticate($this->mockToken);
 
-        $authenticatedRoles = $this->mockToken->getAccount()->getRoles();
-        self::assertTrue(in_array('Neos.Flow:TestRoleIdentifier', array_keys($authenticatedRoles)));
+        self::assertTrue($this->mockToken->getAccount()->getRoleIdentifiers()->has((string) $this->mockRole));
     }
 
     /**

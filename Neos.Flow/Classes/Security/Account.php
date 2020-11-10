@@ -14,19 +14,23 @@ namespace Neos\Flow\Security;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Security\Authentication\AuthenticationProviderName;
+use Neos\Flow\Security\Authentication\CredentialsSource;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Security\Policy\RoleIdentifiers;
+use Neos\Flow\Security\Policy\Roles;
 use Neos\Flow\Utility\Now;
 
 /**
- * An account model
+ * The default implementation of the AccountInterface that is used for database-persisted accounts
  *
  * @Flow\Entity
- * @api
+ * @deprecated Deprecated as of Neos Flow 7.0 - will be removed in next major
  */
-class Account
+class Account implements AccountInterface
 {
     /**
      * @var string
@@ -80,6 +84,7 @@ class Account
 
     /**
      * @Flow\Transient
+     * @Flow\IgnoreValidation
      * @var array<Role>
      */
     protected $roles;
@@ -110,6 +115,15 @@ class Account
         $this->creationDate = new \DateTime();
     }
 
+    public static function create(AccountIdentifier $accountIdentifier, AuthenticationProviderName $authenticationProviderName): AccountInterface
+    {
+        $account = new static();
+        $account->accountIdentifier = (string) $accountIdentifier;
+        $account->authenticationProviderName = (string) $authenticationProviderName;
+        return $account;
+    }
+
+
     /**
      * Initializes the roles field by fetching the role objects referenced by the roleIdentifiers
      *
@@ -134,12 +148,12 @@ class Account
     /**
      * Returns the account identifier
      *
-     * @return string The account identifier
+     * @return AccountIdentifier The account identifier
      * @api
      */
-    public function getAccountIdentifier()
+    public function getAccountIdentifier(): AccountIdentifier
     {
-        return $this->accountIdentifier;
+        return AccountIdentifier::fromString($this->accountIdentifier);
     }
 
     /**
@@ -157,12 +171,12 @@ class Account
     /**
      * Returns the authentication provider name this account corresponds to
      *
-     * @return string The authentication provider name
+     * @return AuthenticationProviderName The authentication provider name
      * @api
      */
-    public function getAuthenticationProviderName()
+    public function getAuthenticationProviderName(): AuthenticationProviderName
     {
-        return $this->authenticationProviderName;
+        return AuthenticationProviderName::fromString($this->authenticationProviderName);
     }
 
     /**
@@ -180,12 +194,12 @@ class Account
     /**
      * Returns the credentials source
      *
-     * @return mixed The credentials source
+     * @return CredentialsSource The credentials source
      * @api
      */
-    public function getCredentialsSource()
+    public function getCredentialsSource(): CredentialsSource
     {
-        return $this->credentialsSource;
+        return CredentialsSource::fromString($this->credentialsSource);
     }
 
     /**
@@ -200,16 +214,22 @@ class Account
         $this->credentialsSource = $credentialsSource;
     }
 
+    public function getRoleIdentifiers(): RoleIdentifiers
+    {
+        return RoleIdentifiers::fromArray($this->roleIdentifiers);
+    }
+
+
     /**
      * Returns the roles this account has assigned
      *
-     * @return array<Role> The assigned roles, indexed by role identifier
+     * @return Roles The assigned roles, indexed by role identifier
      * @api
      */
-    public function getRoles()
+    public function getRoles(): Roles
     {
         $this->initializeRoles();
-        return $this->roles;
+        return Roles::fromArray($this->roles);
     }
 
     /**
@@ -239,10 +259,9 @@ class Account
      * @return boolean
      * @api
      */
-    public function hasRole(Role $role)
+    public function hasRole(Role $role): bool
     {
-        $this->initializeRoles();
-        return array_key_exists($role->getIdentifier(), $this->roles);
+        return $this->getRoles()->has($role);
     }
 
     /**
@@ -258,7 +277,6 @@ class Account
         if ($role->isAbstract()) {
             throw new \InvalidArgumentException(sprintf('Abstract roles can\'t be assigned to accounts directly, but the role "%s" is marked abstract', $role->getIdentifier()), 1399900657);
         }
-        $this->initializeRoles();
         if (!$this->hasRole($role)) {
             $roleIdentifier = $role->getIdentifier();
             $this->roleIdentifiers[] = $roleIdentifier;
@@ -343,6 +361,7 @@ class Account
      * @param integer $authenticationStatus One of WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL
      * @return void
      * @throws InvalidAuthenticationStatusException
+     * @deprecated with Flow 6.2. Probably will be removed with 7.0 in favor of a more flexible implementation
      */
     public function authenticationAttempted($authenticationStatus)
     {
@@ -363,7 +382,7 @@ class Account
      * @return boolean
      * @api
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return ($this->expirationDate === null || $this->expirationDate > $this->now);
     }

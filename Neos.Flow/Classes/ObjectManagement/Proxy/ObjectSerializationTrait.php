@@ -80,6 +80,9 @@ trait ObjectSerializationTrait
                     if (!$identifier && $this->$propertyName instanceof OrmProxy) {
                         $identifier = current(ObjectAccess::getProperty($this->$propertyName, '_identifier', true));
                     }
+                    if (interface_exists($className)) {
+                        $className = Bootstrap::$staticObjectManager->getClassNameByObjectName($className);
+                    }
                     $this->Flow_Persistence_RelatedEntities[$propertyName] = [
                         'propertyName' => $propertyName,
                         'entityType' => $className,
@@ -124,6 +127,9 @@ trait ObjectSerializationTrait
             $identifier = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->getIdentifierByObject($propertyValue);
             if (!$identifier && $propertyValue instanceof OrmProxy) {
                 $identifier = current(ObjectAccess::getProperty($propertyValue, '_identifier', true));
+            }
+            if (interface_exists($className)) {
+                $className = Bootstrap::$staticObjectManager->getClassNameByObjectName($className);
             }
             $this->Flow_Persistence_RelatedEntities[$originalPropertyName . '.' . $path] = [
                 'propertyName' => $originalPropertyName,

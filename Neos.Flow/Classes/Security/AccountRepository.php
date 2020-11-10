@@ -21,8 +21,9 @@ use Neos\Flow\Security\Context as SecurityContext;
  * The repository for accounts
  *
  * @Flow\Scope("singleton")
+ * @deprecated Deprecated as of Neos Flow 7.0 - will be removed in next major
  */
-class AccountRepository extends Repository
+class AccountRepository extends Repository implements AccountRepositoryInterface
 {
     /**
      * @var string
@@ -64,7 +65,7 @@ class AccountRepository extends Repository
      * @param string $authenticationProviderName The authentication provider name
      * @return Account
      */
-    public function findByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName)
+    public function findByAccountIdentifierAndAuthenticationProviderName(string $accountIdentifier, string $authenticationProviderName): ?AccountInterface
     {
         $query = $this->createQuery();
         return $query->matching(
@@ -82,7 +83,7 @@ class AccountRepository extends Repository
      * @param string $authenticationProviderName The authentication provider name
      * @return Account
      */
-    public function findActiveByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName)
+    public function findActiveByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName): ?AccountInterface
     {
         $query = $this->createQuery();
         return $query->matching(

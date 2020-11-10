@@ -451,6 +451,12 @@ Neos\Flow\Security\Authentication\Provider\TestingProvider:
     1:
       value: 'TestingProvider'
 
+Neos\Flow\Security\AccountRepositoryInterface:
+  className: Neos\Flow\Security\AccountRepository
+
+Neos\Flow\Security\AccountInterface:
+  className: Neos\Flow\Security\Account
+
 Neos\Flow\Security\Authentication\Token\UsernamePasswordTokenInterface:
   className: 'Neos\Flow\Security\Authentication\Token\UsernamePassword'
 

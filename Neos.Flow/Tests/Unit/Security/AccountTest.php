@@ -15,6 +15,8 @@ use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Security\Policy\RoleIdentifiers;
+use Neos\Flow\Security\Policy\Roles;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -79,7 +81,10 @@ class AccountTest extends UnitTestCase
     {
         $this->account->setRoles([$this->administratorRole]);
         $this->account->addRole($this->customerRole);
+
         self::assertCount(2, $this->account->getRoles());
+        self::assertTrue($this->account->getRoles()->has($this->administratorRole));
+        self::assertTrue($this->account->getRoles()->has($this->customerRole));
     }
 
     /**
@@ -129,13 +134,33 @@ class AccountTest extends UnitTestCase
     /**
      * @test
      */
+    public function getRolesReturnsRolesInstance()
+    {
+        self::assertTrue($this->account->getRoles() instanceof Roles);
+    }
+
+    /**
+     * @test
+     */
+    public function usingGetRolesForRoleCheckReturnsSameResultAsHasRole()
+    {
+        $this->account->setRoles([$this->administratorRole]);
+
+        self::assertTrue($this->account->getRoles()->has(new Role('Neos.Flow:Administrator')));
+        self::assertTrue($this->account->hasRole($this->administratorRole));
+    }
+
+
+    /**
+     * @test
+     */
     public function getRolesReturnsOnlyExistingRoles()
     {
         $this->inject($this->account, 'roleIdentifiers', ['Acme.Demo:NoLongerThere', $this->administratorRole->getIdentifier()]);
 
         $roles = $this->account->getRoles();
         self::assertCount(1, $roles);
-        self::assertArrayHasKey($this->administratorRole->getIdentifier(), $roles);
+        self::assertTrue($roles->has($this->administratorRole));
     }
 
     /**
@@ -155,10 +180,40 @@ class AccountTest extends UnitTestCase
     public function setRolesWorks()
     {
         $roles = [$this->administratorRole, $this->customerRole];
-        $expectedRoles = [$this->administratorRole->getIdentifier() => $this->administratorRole, $this->customerRole->getIdentifier() => $this->customerRole];
         $this->account->setRoles($roles);
 
-        self::assertSame($expectedRoles, $this->account->getRoles());
+        self::assertTrue($this->account->getRoles()->has($this->administratorRole));
+        self::assertTrue($this->account->getRoles()->has($this->customerRole));
+    }
+
+    /**
+     * @test
+     */
+    public function getRoleIdentifiersReturnsRoleIdentifiersInstance()
+    {
+        self::assertTrue($this->account->getRoleIdentifiers() instanceof RoleIdentifiers);
+    }
+
+    /**
+     * @test
+     */
+    public function getRoleIdentifiersReturnsRoleIdentifiersOfAssignedRoles()
+    {
+        $this->account->setRoles([$this->administratorRole]);
+
+        self::assertTrue($this->account->getRoleIdentifiers()->has('Neos.Flow:Administrator'));
+    }
+
+    /**
+     * @test
+     */
+    public function getRoleIdentifiersUpdatesIfRoleIsRemoved()
+    {
+        $this->account->setRoles([$this->administratorRole]);
+        self::assertTrue($this->account->getRoleIdentifiers()->has('Neos.Flow:Administrator'));
+
+        $this->account->removeRole($this->administratorRole);
+        self::assertFalse($this->account->getRoleIdentifiers()->has('Neos.Flow:Administrator'));
     }
 
     /**

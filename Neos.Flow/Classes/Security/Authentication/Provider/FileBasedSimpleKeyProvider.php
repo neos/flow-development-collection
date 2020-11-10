@@ -12,13 +12,17 @@ namespace Neos\Flow\Security\Authentication\Provider;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Account;
+use Neos\Flow\Security\AccountIdentifier;
+use Neos\Flow\Security\Authentication\AuthenticationProviderName;
 use Neos\Flow\Security\Authentication\Token\PasswordTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Cryptography\FileBasedSimpleKeyService;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Security\Policy\RoleIdentifiers;
+use Neos\Flow\Security\Policy\Roles;
+use Neos\Flow\Security\TransientAccount;
 
 /**
  * An authentication provider that authenticates
@@ -112,9 +116,9 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
         }
 
         $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-        $account = new Account();
-        $roles = array_map([$this->policyService, 'getRole'], $this->options['authenticateRoles']);
-        $account->setRoles($roles);
+        $roles = $this->options['authenticateRoles'] ?? [];
+        $accountIdentifier = AccountIdentifier::fromString($this->options['keyName']);
+        $account = TransientAccount::createWithRoleIdentifiers($accountIdentifier, AuthenticationProviderName::fromString($this->name), RoleIdentifiers::fromArray($roles));
         $authenticationToken->setAccount($account);
     }
 }
