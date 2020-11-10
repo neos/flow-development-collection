@@ -359,10 +359,9 @@ class RoutingCommandController extends CommandController
         if ($json === null) {
             return [];
         }
-        try {
-            $parsedValue = \json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $e) {
-            $this->outputLine('<error>Failed to parse <i>%s</i> as JSON: %s</error>', [$json, $e->getMessage()]);
+        $parsedValue = \json_decode($json, true);
+        if ($parsedValue === null && \json_last_error() !== JSON_ERROR_NONE) {
+            $this->outputLine('<error>Failed to parse <i>%s</i> as JSON: %s</error>', [$json, \json_last_error_msg()]);
             $this->quit(1);
             return [];
         }
