@@ -16,6 +16,7 @@ use Neos\Flow\Persistence\Exception\InvalidQueryException;
 use Neos\Flow\Persistence\Generic\Exception\InvalidNumberOfConstraintsException;
 use Neos\Flow\Persistence\Generic\Qom\QueryObjectModelFactory;
 use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
@@ -120,7 +121,7 @@ class Query implements QueryInterface
      * @return string
      * @api
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -129,10 +130,10 @@ class Query implements QueryInterface
      * Executes the query and returns the result
      *
      * @param bool $cacheResult If the result cache should be used
-     * @return \Neos\Flow\Persistence\QueryResultInterface The query result
+     * @return QueryResultInterface The query result
      * @api
      */
-    public function execute($cacheResult = false)
+    public function execute(bool $cacheResult = false): QueryResultInterface
     {
         return new QueryResult($this, $cacheResult);
     }
@@ -143,7 +144,7 @@ class Query implements QueryInterface
      * @return integer The query result count
      * @api
      */
-    public function count()
+    public function count(): int
     {
         $result = new QueryResult($this);
         return $result->count();
@@ -157,10 +158,10 @@ class Query implements QueryInterface
      * )
      *
      * @param array $orderings The property names to order by
-     * @return QueryInterface
+     * @return QueryResultInterface
      * @api
      */
-    public function setOrderings(array $orderings)
+    public function setOrderings(array $orderings): QueryResultInterface
     {
         $this->orderings = $orderings;
         return $this;
@@ -176,7 +177,7 @@ class Query implements QueryInterface
      * @return array
      * @api
      */
-    public function getOrderings()
+    public function getOrderings(): array
     {
         return $this->orderings;
     }
@@ -190,7 +191,7 @@ class Query implements QueryInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function setLimit($limit)
+    public function setLimit(int $limit): \Neos\Flow\Persistence\QueryInterface
     {
         if ($limit < 1 || !is_int($limit)) {
             throw new \InvalidArgumentException('setLimit() accepts only integers greater 0.', 1263387249);
@@ -206,7 +207,7 @@ class Query implements QueryInterface
      * @return integer
      * @api
      */
-    public function getLimit()
+    public function getLimit(): int
     {
         return $this->limit;
     }
@@ -218,7 +219,7 @@ class Query implements QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function setDistinct($distinct = true)
+    public function setDistinct(bool $distinct = true): \Neos\Flow\Persistence\QueryInterface
     {
         $this->distinct = $distinct;
         return $this;
@@ -230,7 +231,7 @@ class Query implements QueryInterface
      * @return boolean
      * @api
      */
-    public function isDistinct()
+    public function isDistinct(): bool
     {
         return $this->distinct;
     }
@@ -244,7 +245,7 @@ class Query implements QueryInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function setOffset($offset)
+    public function setOffset(int $offset): \Neos\Flow\Persistence\QueryInterface
     {
         if ($offset < 1 || !is_int($offset)) {
             throw new \InvalidArgumentException('setOffset() accepts only integers greater 0.', 1263387252);
@@ -260,7 +261,7 @@ class Query implements QueryInterface
      * @return integer
      * @api
      */
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
@@ -273,7 +274,7 @@ class Query implements QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function matching($constraint)
+    public function matching($constraint): \Neos\Flow\Persistence\QueryInterface
     {
         $this->constraint = $constraint;
         return $this;
@@ -376,7 +377,7 @@ class Query implements QueryInterface
      * @todo Decide what to do about equality on multi-valued properties
      * @api
      */
-    public function equals($propertyName, $operand, $caseSensitive = true)
+    public function equals(string $propertyName, $operand, bool $caseSensitive = true)
     {
         if ($operand === null) {
             $comparison = $this->qomFactory->comparison(
@@ -414,7 +415,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a non-string property
      * @api
      */
-    public function like($propertyName, $operand, $caseSensitive = true)
+    public function like(string $propertyName, string $operand, bool $caseSensitive = true)
     {
         if (!is_string($operand)) {
             throw new InvalidQueryException('Operand must be a string, was ' . gettype($operand), 1276781107);
@@ -450,7 +451,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a single-valued property
      * @api
      */
-    public function contains($propertyName, $operand)
+    public function contains(string $propertyName, $operand)
     {
         if (!$this->classSchema->isMultiValuedProperty($propertyName)) {
             throw new InvalidQueryException('Property "' . $propertyName . '" must be multi-valued', 1276781026);
@@ -471,7 +472,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a single-valued property
      * @api
      */
-    public function isEmpty($propertyName)
+    public function isEmpty(string $propertyName): bool
     {
         if (!$this->classSchema->isMultiValuedProperty($propertyName)) {
             throw new InvalidQueryException('Property "' . $propertyName . '" must be multi-valued', 1276853547);
@@ -492,7 +493,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a multi-valued property or with single-valued operand
      * @api
      */
-    public function in($propertyName, $operand)
+    public function in(string $propertyName, $operand)
     {
         if (!is_array($operand) && (!$operand instanceof \ArrayAccess) && (!$operand instanceof \Traversable)) {
             throw new InvalidQueryException('The "in" constraint must be given a multi-valued operand (array, ArrayAccess, Traversable).', 1264678095);
@@ -517,7 +518,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function lessThan($propertyName, $operand)
+    public function lessThan(string $propertyName, $operand)
     {
         if ($this->classSchema->isMultiValuedProperty($propertyName)) {
             throw new InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276784963);
@@ -542,7 +543,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function lessThanOrEqual($propertyName, $operand)
+    public function lessThanOrEqual(string $propertyName, $operand)
     {
         if ($this->classSchema->isMultiValuedProperty($propertyName)) {
             throw new InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276784943);
@@ -567,7 +568,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function greaterThan($propertyName, $operand)
+    public function greaterThan(string $propertyName, $operand)
     {
         if ($this->classSchema->isMultiValuedProperty($propertyName)) {
             throw new InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276774885);
@@ -592,7 +593,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function greaterThanOrEqual($propertyName, $operand)
+    public function greaterThanOrEqual(string $propertyName, $operand)
     {
         if ($this->classSchema->isMultiValuedProperty($propertyName)) {
             throw new InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276774883);

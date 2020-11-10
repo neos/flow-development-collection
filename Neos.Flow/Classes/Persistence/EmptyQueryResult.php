@@ -39,7 +39,7 @@ class EmptyQueryResult implements QueryResultInterface
      * @return QueryInterface
      * @api
      */
-    public function getQuery()
+    public function getQuery(): QueryInterface
     {
         return $this->query;
     }
@@ -61,7 +61,7 @@ class EmptyQueryResult implements QueryResultInterface
      * @return array
      * @api
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [];
     }

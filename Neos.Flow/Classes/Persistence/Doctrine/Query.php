@@ -155,7 +155,7 @@ class Query implements QueryInterface
      * @return string
      * @api
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->entityClassName;
     }
@@ -167,7 +167,7 @@ class Query implements QueryInterface
      * @return QueryResultInterface The query result
      * @api
      */
-    public function execute($cacheResult = false)
+    public function execute(bool $cacheResult = false): QueryResultInterface
     {
         $this->cacheResult = $cacheResult;
         return new QueryResult($this);
@@ -240,7 +240,7 @@ class Query implements QueryInterface
      * @throws Exception\DatabaseConnectionException
      * @api
      */
-    public function count()
+    public function count(): int
     {
         try {
             $originalQuery = $this->queryBuilder->getQuery();
@@ -277,10 +277,10 @@ class Query implements QueryInterface
      * )
      *
      * @param array $orderings The property names to order by
-     * @return QueryInterface
+     * @return QueryResultInterface
      * @api
      */
-    public function setOrderings(array $orderings)
+    public function setOrderings(array $orderings): QueryResultInterface
     {
         $this->orderings = $orderings;
         $this->queryBuilder->resetDQLPart('orderBy');
@@ -300,7 +300,7 @@ class Query implements QueryInterface
      * @return array
      * @api
      */
-    public function getOrderings()
+    public function getOrderings(): array
     {
         return $this->orderings;
     }
@@ -313,7 +313,7 @@ class Query implements QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function setLimit($limit)
+    public function setLimit(int $limit): QueryInterface
     {
         $this->limit = $limit;
         $this->queryBuilder->setMaxResults($limit);
@@ -326,7 +326,7 @@ class Query implements QueryInterface
      * @return integer
      * @api
      */
-    public function getLimit()
+    public function getLimit(): int
     {
         return $this->limit;
     }
@@ -338,7 +338,7 @@ class Query implements QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function setDistinct($distinct = true)
+    public function setDistinct(bool $distinct = true): QueryInterface
     {
         $this->distinct = $distinct;
         $this->queryBuilder->distinct($distinct);
@@ -351,7 +351,7 @@ class Query implements QueryInterface
      * @return boolean
      * @api
      */
-    public function isDistinct()
+    public function isDistinct(): bool
     {
         return $this->distinct;
     }
@@ -364,7 +364,7 @@ class Query implements QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function setOffset($offset)
+    public function setOffset(int $offset): QueryInterface
     {
         $this->offset = $offset;
         $this->queryBuilder->setFirstResult($offset);
@@ -377,7 +377,7 @@ class Query implements QueryInterface
      * @return integer
      * @api
      */
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
@@ -390,7 +390,7 @@ class Query implements QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function matching($constraint)
+    public function matching($constraint): QueryInterface
     {
         $this->constraint = $constraint;
         $this->queryBuilder->where($constraint);
@@ -476,7 +476,7 @@ class Query implements QueryInterface
      * @return object
      * @api
      */
-    public function equals($propertyName, $operand, $caseSensitive = true)
+    public function equals(string $propertyName, $operand, bool $caseSensitive = true)
     {
         $aliasedPropertyName = $this->getPropertyNameWithAlias($propertyName);
         if ($operand === null) {
@@ -502,7 +502,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a non-string property
      * @api
      */
-    public function like($propertyName, $operand, $caseSensitive = true)
+    public function like(string $propertyName, string $operand, bool $caseSensitive = true)
     {
         $aliasedPropertyName = $this->getPropertyNameWithAlias($propertyName);
         if ($caseSensitive === true) {
@@ -520,11 +520,10 @@ class Query implements QueryInterface
      *
      * @param string $propertyName The name of the multivalued property to compare against
      * @param mixed $operand The value to compare with
-     * @return object
-     * @throws InvalidQueryException if used on a single-valued property
+     * @return string
      * @api
      */
-    public function contains($propertyName, $operand)
+    public function contains(string $propertyName, $operand)
     {
         return '(' . $this->getParamNeedle($operand) . ' MEMBER OF ' . $this->getPropertyNameWithAlias($propertyName) . ')';
     }
@@ -538,7 +537,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a single-valued property
      * @api
      */
-    public function isEmpty($propertyName)
+    public function isEmpty(string $propertyName): bool
     {
         return '(' . $this->getPropertyNameWithAlias($propertyName) . ' IS EMPTY)';
     }
@@ -553,7 +552,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a multi-valued property
      * @api
      */
-    public function in($propertyName, $operand)
+    public function in(string $propertyName, $operand)
     {
         // Take care: In cannot be needled at the moment! DQL escapes it, but only as literals, making caching a bit harder.
         // This is a todo for Doctrine 2.1
@@ -569,7 +568,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function lessThan($propertyName, $operand)
+    public function lessThan(string $propertyName, $operand)
     {
         return $this->queryBuilder->expr()->lt($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
     }
@@ -583,7 +582,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function lessThanOrEqual($propertyName, $operand)
+    public function lessThanOrEqual(string $propertyName, $operand)
     {
         return $this->queryBuilder->expr()->lte($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
     }
@@ -597,7 +596,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function greaterThan($propertyName, $operand)
+    public function greaterThan(string $propertyName, $operand)
     {
         return $this->queryBuilder->expr()->gt($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
     }
@@ -611,7 +610,7 @@ class Query implements QueryInterface
      * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function greaterThanOrEqual($propertyName, $operand)
+    public function greaterThanOrEqual(string $propertyName, $operand)
     {
         return $this->queryBuilder->expr()->gte($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
     }
