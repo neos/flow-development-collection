@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
+use Neos\Flow\Http\ServerRequestAttributes;
 
 /**
  * A dispatch component
@@ -34,7 +35,7 @@ class DispatchComponent implements ComponentInterface
      */
     public function handle(ComponentContext $componentContext)
     {
-        $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
+        $actionRequest = $componentContext->getHttpRequest()->getAttribute(ServerRequestAttributes::ACTION_REQUEST);
         $actionResponse = new ActionResponse();
         $this->dispatcher->dispatch($actionRequest, $actionResponse);
         $actionResponse->mergeIntoComponentContext($componentContext);

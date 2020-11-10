@@ -47,6 +47,9 @@ Neos:
         'parseBody':
           position: 'before dispatch'
           middleware: 'Neos\Flow\Http\Middleware\RequestBodyParsingMiddleware'
+        'securityEntryPoint':
+          position: 'before dispatch'
+          middleware: 'Neos\Flow\Http\Middleware\SecurityEntryPointMiddleware'
         'dispatch':
           position: 'end'
           middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
@@ -62,9 +65,6 @@ Neos:
           chain: []
         'process':
           chain:
-            'prepareActionRequest':
-              position: 'before dispatching'
-              component: 'Neos\Flow\Mvc\PrepareMvcRequestComponent'
             'dispatching':
               component: 'Neos\Flow\Mvc\DispatchComponent'
             'replaceHttpResponse':
@@ -73,9 +73,6 @@ Neos:
             'setHeader':
               position: 'after dispatching'
               component: 'Neos\Flow\Http\Component\SetHeaderComponent'
-            'securityEntryPoint':
-              position: 'after setHeaders'
-              component: 'Neos\Flow\Http\Component\SecurityEntryPointComponent'
 
         'postprocess':
           chain: []
