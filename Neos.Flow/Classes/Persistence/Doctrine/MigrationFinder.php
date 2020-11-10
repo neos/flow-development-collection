@@ -46,9 +46,11 @@ final class MigrationFinder extends Finder
                 $this->databasePlatformName
             ]);
             if (is_dir($path)) {
-                $files += glob($path . '/Version*.php');
+                $files[] = glob($path . '/Version*.php');
             }
         }
+
+        $files = array_merge([], ...$files); // the empty array covers cases when no loops were made
 
         return $this->loadMigrations($files, $namespace);
     }
