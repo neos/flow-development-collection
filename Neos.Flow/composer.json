@@ -37,10 +37,10 @@
 
         "ramsey/uuid": "^3.0",
 
-        "doctrine/orm": "^2.6",
+        "doctrine/orm": "^2.7",
         "doctrine/migrations": "^3.0",
-        "doctrine/dbal": "^2.9",
-        "doctrine/common": "^2.4",
+        "doctrine/dbal": "^2.11",
+        "doctrine/common": "^2.13.1",
 
         "symfony/yaml": "^4.2",
         "symfony/dom-crawler": "^4.2",
