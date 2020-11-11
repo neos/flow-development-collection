@@ -39,7 +39,7 @@
 
         "doctrine/orm": "^2.7",
         "doctrine/migrations": "^3.0",
-        "doctrine/dbal": "^2.11",
+        "doctrine/dbal": "^2.12",
         "doctrine/common": "^2.13.1",
 
         "symfony/yaml": "^4.2",
