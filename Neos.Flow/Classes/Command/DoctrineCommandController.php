@@ -11,10 +11,10 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\Debug;
 use Doctrine\Migrations\Exception\MigrationException;
 use Doctrine\ORM\Tools\ToolsException;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
@@ -137,7 +137,7 @@ class DoctrineCommandController extends CommandController
      * It expects the database to be empty, if tables that are to be created already
      * exist, this will lead to errors.
      *
-     * @param string $output A file to write SQL to, instead of executing it
+     * @param string|null $output A file to write SQL to, instead of executing it
      * @return void
      * @throws ToolsException
      * @throws StopCommandException
@@ -167,7 +167,7 @@ class DoctrineCommandController extends CommandController
      * It will not drop foreign keys, sequences and tables, unless <u>--unsafe-mode</u> is set.
      *
      * @param boolean $unsafeMode If set, foreign keys, sequences and tables can potentially be dropped.
-     * @param string $output A file to write SQL to, instead of executing the update directly
+     * @param string|null $output A file to write SQL to, instead of executing the update directly
      * @return void
      * @throws StopCommandException
      * @see neos.flow:doctrine:create
@@ -197,7 +197,7 @@ class DoctrineCommandController extends CommandController
      * To run a full validation, use the validate command.
      *
      * @param boolean $dumpMappingData If set, the mapping data will be output
-     * @param string $entityClassName If given, the mapping data for just this class will be output
+     * @param string|null $entityClassName If given, the mapping data for just this class will be output
      * @return void
      * @throws \Doctrine\ORM\ORMException
      * @see neos.flow:doctrine:validate
@@ -250,8 +250,8 @@ class DoctrineCommandController extends CommandController
      *
      * @param integer $depth How many levels deep the result should be dumped
      * @param string $hydrationMode One of: object, array, scalar, single-scalar, simpleobject
-     * @param integer $offset Offset the result by this number
-     * @param integer $limit Limit the result to this number
+     * @param integer|null $offset Offset the result by this number
+     * @param integer|null $limit Limit the result to this number
      * @return void
      * @throws StopCommandException
      */
@@ -305,12 +305,11 @@ class DoctrineCommandController extends CommandController
      * Adjusts the database structure by applying the pending
      * migrations provided by currently active packages.
      *
-     * @param string|null $version The version to migrate to
+     * @param string $version The version to migrate to
      * @param string|null $output A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
      * @param boolean $quiet If set, only the executed migration versions will be output, one per line
      * @return void
-     * @throws MigrationException
      * @throws StopCommandException
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationexecute
@@ -355,10 +354,9 @@ class DoctrineCommandController extends CommandController
      *
      * @param string $version The migration to execute
      * @param string $direction Whether to execute the migration up (default) or down
-     * @param string $output A file to write SQL to, instead of executing it
+     * @param string|null $output A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
      * @return void
-     * @throws MigrationException
      * @throws StopCommandException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationstatus
@@ -394,6 +392,7 @@ class DoctrineCommandController extends CommandController
      * @param boolean $delete The migration to mark as not migrated
      * @return void
      * @throws StopCommandException
+     * @throws \Doctrine\DBAL\Exception
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationexecute
@@ -437,11 +436,10 @@ class DoctrineCommandController extends CommandController
      * Neos.Flow.persistence.doctrine.migrations.ignoredTables setting
      *
      * @param boolean $diffAgainstCurrent Whether to base the migration on the current schema structure
-     * @param string $filterExpression Only include tables/sequences matching the filter expression regexp
+     * @param string|null $filterExpression Only include tables/sequences matching the filter expression regexp
      * @param boolean $force Generate migrations even if there are migrations left to execute
      * @return void
      * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\ORM\ORMException
      * @throws StopCommandException
      * @throws FilesException
      * @see neos.flow:doctrine:migrate

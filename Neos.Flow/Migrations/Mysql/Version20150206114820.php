@@ -3,7 +3,7 @@ namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\Migrations\Exception\Migration;
+use Doctrine\Migrations\Exception\MigrationException;
 
 /**
  * Adjusts schema to Flow 3.0 "Party package decoupling"
@@ -14,6 +14,7 @@ class Version20150206114820 extends AbstractMigration
      * @param Schema $schema
      * @return void
      * @throws MigrationException
+     * @throws \Doctrine\DBAL\Exception
      */
     public function up(Schema $schema): void
     {
@@ -49,7 +50,7 @@ class Version20150206114820 extends AbstractMigration
     /**
      * @return boolean
      */
-    protected function isPartyPackageInstalled()
+    protected function isPartyPackageInstalled(): bool
     {
         return $this->sm->tablesExist(array('typo3_party_domain_model_abstractparty'));
     }

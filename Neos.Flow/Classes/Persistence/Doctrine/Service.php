@@ -90,7 +90,7 @@ class Service
      *
      * @return array
      */
-    public function validateMapping(): ?array
+    public function validateMapping(): array
     {
         try {
             $validator = new SchemaValidator($this->entityManager);
