@@ -1238,7 +1238,7 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/ActionResponse.php">
-    <UndefinedClass occurrences="2">
+    <UndefinedClass occurrences="4">
       <code>SetHeaderComponent</code>
       <code>ReplaceHttpResponseComponent</code>
     </UndefinedClass>
