@@ -13,10 +13,10 @@ namespace Neos\Flow\Tests\Unit\Mvc;
 
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\Component\ComponentContext;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\DispatchComponent;
 use Neos\Flow\Mvc\Dispatcher;
-use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
@@ -105,8 +105,7 @@ class DispatchComponentTest extends UnitTestCase
         $this->mockDispatcher->expects(self::once())->method('dispatch')->with($this->mockActionRequest);
 
         $componentContext = new ComponentContext($this->mockHttpRequest, new Response());
-        $componentContext->setParameter(RoutingComponent::class, 'matchResults', []);
-        $componentContext->setParameter(DispatchComponent::class, 'actionRequest', $this->mockActionRequest);
+        $this->mockHttpRequest->method('getAttribute')->with(ServerRequestAttributes::ACTION_REQUEST)->willReturn($this->mockActionRequest);
         $this->dispatchComponent->handle($componentContext);
         self::assertInstanceOf(ResponseInterface::class, $componentContext->getHttpResponse());
     }
