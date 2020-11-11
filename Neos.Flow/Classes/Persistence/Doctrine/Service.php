@@ -287,16 +287,24 @@ class Service
      *
      * If $outputPathAndFilename is given, the SQL statements will be written to the given file instead of executed.
      *
-     * @param null $version The version to migrate to
-     * @param null $outputPathAndFilename A file to write SQL to, instead of executing it - implicitly enables dry-run
+     * @param string $version The version to migrate to
+     * @param string|null $outputPathAndFilename A file to write SQL to, instead of executing it - implicitly enables dry-run
      * @param boolean $dryRun Whether to do a dry run or not
      * @param boolean $quiet Whether to do a quiet run or not
      * @return string
      * @throws DBALException
      */
-    public function executeMigrations($version = 'latest', $outputPathAndFilename = null, $dryRun = false, $quiet = false): ?string
+    public function executeMigrations(string $version = 'latest', string $outputPathAndFilename = null, $dryRun = false, $quiet = false): string
     {
         $this->getDependencyFactory()->getMetadataStorage()->ensureInitialized();
+
+        $migrationRepository = $this->getDependencyFactory()->getMigrationRepository();
+        if (count($migrationRepository->getMigrations()) === 0) {
+            return sprintf(
+                'The version "%s" can\'t be reached, there are no registered migrations.',
+                $version
+            );
+        }
 
         try {
             $resolvedVersion = $this->getDependencyFactory()->getVersionAliasResolver()->resolveVersionAlias($version);
@@ -313,14 +321,6 @@ class Service
         $plan = $planCalculator->getPlanUntilVersion($resolvedVersion);
         if (count($plan) === 0) {
             return ($quiet === false ? $this->exitMessageForAlias($version) : '');
-        }
-
-        $migrationRepository = $this->getDependencyFactory()->getMigrationRepository();
-        if (count($migrationRepository->getMigrations()) === 0) {
-            return sprintf(
-                'The version "%s" couldn\'t be reached, there are no registered migrations.',
-                $version
-            );
         }
 
         if ($quiet === false) {
@@ -384,12 +384,12 @@ class Service
      *
      * @param string $version The version to migrate to
      * @param string $direction
-     * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
+     * @param string|null $outputPathAndFilename A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
      * @return string
      * @throws DBALException
      */
-    public function executeMigration(string $version, $direction = 'up', $outputPathAndFilename = null, bool $dryRun = false): string
+    public function executeMigration(string $version, string $direction = 'up', string $outputPathAndFilename = null, bool $dryRun = false): string
     {
         $this->getDependencyFactory()->getMetadataStorage()->ensureInitialized();
 
@@ -569,11 +569,11 @@ class Service
      * Otherwise an empty migration skeleton is generated.
      *
      * @param boolean $diffAgainstCurrent
-     * @param string $filterExpression
+     * @param string|null $filterExpression
      * @return array Path to the new file
      * @throws DBALException
      */
-    public function generateMigration($diffAgainstCurrent = true, $filterExpression = null): array
+    public function generateMigration(bool $diffAgainstCurrent = true, string $filterExpression = null): array
     {
         $fqcn = $this->getDependencyFactory()->getClassNameGenerator()->generateClassName(self::DOCTRINE_MIGRATIONSNAMESPACE);
 
