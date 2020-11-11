@@ -43,6 +43,11 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
     protected $bootstrap;
 
     /**
+     * @var ServerRequestInterface
+     */
+    protected $httpRequest;
+
+    /**
      * Constructor
      *
      * @param \Neos\Flow\Core\Bootstrap $bootstrap
@@ -88,13 +93,24 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
     }
 
     /**
+     * @param ServerRequestInterface $request
+     */
+    public function setHttpRequest(ServerRequestInterface $request): void
+    {
+        $this->httpRequest = $request;
+    }
+
+    /**
      * Returns the currently processed HTTP request
      *
      * @return ServerRequestInterface
      */
     public function getHttpRequest(): ServerRequestInterface
     {
-        return ServerRequest::fromGlobals();
+        if ($this->httpRequest === null) {
+            $this->httpRequest = ServerRequest::fromGlobals();
+        }
+        return $this->httpRequest;
     }
 
     /**
