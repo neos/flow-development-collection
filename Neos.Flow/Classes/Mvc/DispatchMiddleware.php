@@ -42,8 +42,10 @@ class DispatchMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
-        $routingMatchResults = $request->getAttribute(ServerRequestAttributes::ROUTING_RESULTS) ?? [];
-        $actionRequest = $this->actionRequestFactory->createActionRequest($request, $routingMatchResults);
+        $actionRequest = $request->getAttribute(ServerRequestAttributes::ACTION_REQUEST);
+        if ($actionRequest === null) {
+            throw new Exception('No ActionRequest was created before the DispatchMiddleware. Make sure you have the SecurityEntryPointMiddleware configured before dispatch.', 1605091292);
+        }
 
         $actionResponse = new ActionResponse();
         $this->dispatcher->dispatch($actionRequest, $actionResponse);

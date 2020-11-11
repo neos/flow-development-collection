@@ -151,7 +151,7 @@ final class ActionResponse
      * @param string $parameterName
      * @param mixed $value
      * @return void
-     * @deprecated since Flow 7.0 use setHttpHeader or replaceHttpResponse instead. See also #linkToDocs
+     * @deprecated since Flow 7.0 use setHttpHeader or replaceHttpResponse instead. For now this will still work with $componentClassName of "SetHeaderComponent" or "ReplaceHttpResponseComponent" only.
      */
     public function setComponentParameter(string $componentClassName, string $parameterName, $value): void
     {
@@ -164,7 +164,7 @@ final class ActionResponse
             $this->replaceHttpResponse($value);
             return;
         }
-        throw new \InvalidArgumentException('todo');
+        throw new \InvalidArgumentException(sprintf('The method %s is deprecated. It will only allow a $componentClassName parameter of "%s" or "%s". If you want to send data to your middleware from the action, use response headers or introduce a global context. Both solutions are to be considered bad practice though.', __METHOD__, SetHeaderComponent::class, ReplaceHttpResponseComponent::class), 1605088079);
     }
 
     /**
@@ -176,6 +176,7 @@ final class ActionResponse
      */
     public function setHttpHeader(string $headerName, $headerValue): void
     {
+        // This is taken from the Headers class, which should eventually replace this implementation and add more response API methods.
         if ($headerValue instanceof \DateTimeInterface) {
             $date = clone $headerValue;
             $date->setTimezone(new \DateTimeZone('GMT'));
