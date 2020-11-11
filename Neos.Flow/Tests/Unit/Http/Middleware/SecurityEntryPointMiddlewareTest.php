@@ -12,8 +12,11 @@ namespace Neos\Flow\Tests\Unit\Http\Middleware;
  */
 
 use Neos\Flow\Http\Middleware\SecurityEntryPointMiddleware;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionRequestFactory;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Security\Authentication\EntryPointInterface;
 use Neos\Flow\Security\Authentication\Token\TestingToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -71,6 +74,11 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
      */
     private $mockTokenWithEntryPoint;
 
+    /**
+     * @var PropertyMapper|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $mockPropertyMapper;
+
     protected function setUp(): void
     {
         $this->securityEntryPointMiddleware = new SecurityEntryPointMiddleware();
@@ -81,16 +89,16 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
         $mockSecurityLogger = $this->getMockBuilder(LoggerInterface::class)->getMock();
         $this->inject($this->securityEntryPointMiddleware, 'securityLogger', $mockSecurityLogger);
 
-        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
-        $this->mockHttpRequest->method('withAttribute')->willReturn($this->mockHttpRequest);
+        $this->buildMockHttpRequest();
         $this->mockHttpResponse = $this->getMockBuilder(ResponseInterface::class)->getMock();
         $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->method('getMainRequest')->willReturn($this->mockActionRequest);
 
-        $mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->getMock();
-        $mockActionRequestFactory->method('createActionRequest')->willReturn($this->mockActionRequest);
+        $mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->onlyMethods(['prepareActionRequest'])->getMock();
+        $mockActionRequestFactory->method('prepareActionRequest')->willReturn($this->mockActionRequest);
+
         $this->inject($this->securityEntryPointMiddleware, 'actionRequestFactory', $mockActionRequestFactory);
 
         $this->mockAuthenticationRequiredException = (new AuthenticationRequiredException())->attachInterceptedRequest($this->mockActionRequest);
@@ -99,12 +107,23 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
         $this->mockTokenWithEntryPoint = $this->getMockBuilder(TokenInterface::class)->getMock();
         $mockEntryPoint = $this->getMockBuilder(EntryPointInterface::class)->getMock();
         $this->mockTokenWithEntryPoint->method('getAuthenticationEntryPoint')->willReturn($mockEntryPoint);
+
+        $this->mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->getMock();
+    }
+
+    protected function buildMockHttpRequest($queryParams = [], $parsedBody = [])
+    {
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
+        $this->mockHttpRequest->method('withAttribute')->willReturn($this->mockHttpRequest);
+        $this->mockHttpRequest->method('getQueryParams')->willReturn($queryParams);
+        $this->mockHttpRequest->method('getParsedBody')->willReturn($parsedBody);
+        $this->mockHttpRequest->method('getUploadedFiles')->willReturn([]);
     }
 
     /**
      * @test
      */
-    public function handleReturnsIfNoAuthenticationExceptionWasSet(): void
+    public function processReturnsIfNoAuthenticationExceptionWasSet(): void
     {
         $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
         $this->mockRequestHandler->method('handle')->willReturn($this->mockHttpResponse);
@@ -115,7 +134,7 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
     /**
      * @test
      */
-    public function handleRethrowsAuthenticationRequiredExceptionIfSecurityContextDoesNotContainAnyAuthenticationToken(): void
+    public function processRethrowsAuthenticationRequiredExceptionIfSecurityContextDoesNotContainAnyAuthenticationToken(): void
     {
         $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([]);
 
@@ -126,7 +145,7 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
     /**
      * @test
      */
-    public function handleCallsStartAuthenticationOnAllActiveEntryPoints(): void
+    public function processCallsStartAuthenticationOnAllActiveEntryPoints(): void
     {
         $mockAuthenticationToken1 = $this->createMockTokenWithEntryPoint();
         $mockAuthenticationToken2 = $this->createMockTokenWithEntryPoint();
@@ -146,7 +165,7 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
     /**
      * @test
      */
-    public function handleAllowsAllEntryPointsToModifyTheHttpResponse(): void
+    public function processAllowsAllEntryPointsToModifyTheHttpResponse(): void
     {
         $mockAuthenticationToken1 = $this->createMockTokenWithEntryPoint();
         $mockAuthenticationToken2 = $this->createMockTokenWithEntryPoint();
@@ -183,7 +202,7 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
      * Can be removed once the SecurityContext no longer depends on the ActionRequest
      * @test
      */
-    public function handleSetsSecurityContextRequest(): void
+    public function processSetsSecurityContextRequest(): void
     {
         $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([$this->mockTokenWithEntryPoint]);
         $this->mockSecurityContext->expects(self::once())->method('setRequest')->with($this->mockActionRequest);
@@ -194,7 +213,7 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
     /**
      * @test
      */
-    public function handleSetsInterceptedRequestIfSecurityContextContainsAuthenticationTokensWithEntryPoints(): void
+    public function processSetsInterceptedRequestIfSecurityContextContainsAuthenticationTokensWithEntryPoints(): void
     {
         $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([$this->mockTokenWithEntryPoint]);
         $this->mockSecurityContext->expects(self::atLeastOnce())->method('setInterceptedRequest')->with($this->mockActionRequest);
@@ -207,7 +226,7 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
     /**
      * @test
      */
-    public function handleDoesNotSetInterceptedRequestIfRequestMethodIsNotGET(): void
+    public function processDoesNotSetInterceptedRequestIfRequestMethodIsNotGET(): void
     {
         $this->mockSecurityContext->expects(self::atLeastOnce())->method('getAuthenticationTokens')->willReturn([$this->mockTokenWithEntryPoint]);
         $this->mockSecurityContext->expects(self::never())->method('setInterceptedRequest');
@@ -220,7 +239,7 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
     /**
      * @test
      */
-    public function handleDoesNotSetInterceptedRequestIfAllAuthenticatedTokensAreSessionless(): void
+    public function processDoesNotSetInterceptedRequestIfAllAuthenticatedTokensAreSessionless(): void
     {
         $mockAuthenticationToken1 = $this->getMockBuilder(TestingToken::class)->getMock();
         $mockEntryPoint1 = $this->getMockBuilder(EntryPointInterface::class)->getMock();
@@ -236,6 +255,175 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
 
         $this->mockSecurityContext->expects(self::never())->method('setInterceptedRequest');
 
+        $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
+    }
+
+
+    /**
+     * NOTE: The following tests were moved here from DispatchMiddlewareTest, because this middleware currently builds the ActionRequest.
+     * Make sure to move them again, once the ActionRequest is built in the DispatchMiddleware again, where it belongs.
+     */
+
+    /**
+     * @test
+     */
+    public function processMergesInternalArgumentsWithRoutingMatchResults()
+    {
+        $this->buildMockHttpRequest([
+            '__internalArgument1' => 'request',
+            '__internalArgument2' => 'request',
+            '__internalArgument3' => 'request'
+        ], [
+            '__internalArgument2' => 'requestBody',
+            '__internalArgument3' => 'requestBody'
+        ]);
+
+        $this->mockHttpRequest->method('getAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS)->willReturn(['__internalArgument3' => 'routing']);
+
+        $this->mockActionRequest->expects(self::once())->method('setArguments')->with([
+            '__internalArgument1' => 'request',
+            '__internalArgument2' => 'requestBody',
+            '__internalArgument3' => 'routing'
+        ]);
+
+        $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
+        $this->mockRequestHandler->method('handle')->willReturn($this->mockHttpResponse);
+        $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
+    }
+
+    /**
+     * @return array
+     */
+    public function processMergesArgumentsWithRoutingMatchResultsDataProvider()
+    {
+        return [
+            [
+                'requestArguments' => [],
+                'requestBodyArguments' => [],
+                'routingMatchResults' => null,
+                'expectedArguments' => []
+            ],
+            [
+                'requestArguments' => [],
+                'requestBodyArguments' => ['bodyArgument' => 'foo'],
+                'routingMatchResults' => null,
+                'expectedArguments' => ['bodyArgument' => 'foo']
+            ],
+            [
+                'requestArguments' => ['requestArgument' => 'bar'],
+                'requestBodyArguments' => ['bodyArgument' => 'foo'],
+                'routingMatchResults' => null,
+                'expectedArguments' => ['bodyArgument' => 'foo', 'requestArgument' => 'bar']
+            ],
+            [
+                'requestArguments' => ['someArgument' => 'foo'],
+                'requestBodyArguments' => ['someArgument' => 'overridden'],
+                'routingMatchResults' => [],
+                'expectedArguments' => ['someArgument' => 'overridden']
+            ],
+            [
+                'requestArguments' => [
+                    'product' => [
+                        'property1' => 'request',
+                        'property2' => 'request',
+                        'property3' => 'request'
+                    ]
+                ],
+                'requestBodyArguments' => ['product' => ['property2' => 'requestBody', 'property3' => 'requestBody']],
+                'routingMatchResults' => ['product' => ['property3' => 'routing']],
+                'expectedArguments' => [
+                    'product' => [
+                        'property1' => 'request',
+                        'property2' => 'requestBody',
+                        'property3' => 'routing'
+                    ]
+                ]
+            ],
+            [
+                'requestArguments' => [],
+                'requestBodyArguments' => ['someObject' => ['someProperty' => 'someValue']],
+                'routingMatchResults' => ['someObject' => ['__identity' => 'someIdentifier']],
+                'expectedArguments' => [
+                    'someObject' => [
+                        'someProperty' => 'someValue',
+                        '__identity' => 'someIdentifier'
+                    ]
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider processMergesArgumentsWithRoutingMatchResultsDataProvider()
+     */
+    public function processMergesArgumentsWithRoutingMatchResults(array $requestArguments, array $requestBodyArguments, array $routingMatchResults = null, array $expectedArguments)
+    {
+        $this->mockActionRequest->expects(self::once())->method('setArguments')->with($expectedArguments);
+        $this->buildMockHttpRequest($requestArguments, $requestBodyArguments);
+
+        $this->mockHttpRequest->method('getAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS)->willReturn($routingMatchResults);
+
+        $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
+        $this->mockRequestHandler->method('handle')->willReturn($this->mockHttpResponse);
+        $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
+    }
+
+    /**
+     * @test
+     */
+    public function processSetsDefaultControllerAndActionNameIfTheyAreNotSetYet()
+    {
+        $this->mockPropertyMapper->method('convert')->with('', 'array', new PropertyMappingConfiguration())->willReturn([]);
+
+        $this->mockActionRequest->expects(self::once())->method('getControllerName')->willReturn('');
+        $this->mockActionRequest->expects(self::once())->method('getControllerActionName')->willReturn('');
+        $this->mockActionRequest->expects(self::once())->method('setControllerName')->with('Standard');
+        $this->mockActionRequest->expects(self::once())->method('setControllerActionName')->with('index');
+
+        $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
+        $this->mockRequestHandler->method('handle')->willReturn($this->mockHttpResponse);
+        $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
+    }
+
+    /**
+     * @test
+     */
+    public function processDoesNotSetDefaultControllerAndActionNameIfTheyAreSetAlready()
+    {
+        $this->mockPropertyMapper->method('convert')->with('', 'array', new PropertyMappingConfiguration())->willReturn([]);
+
+        $this->mockHttpRequest->method('withParsedBody')->willReturn($this->mockHttpRequest);
+
+        $this->mockActionRequest->method('getControllerName')->willReturn('SomeController');
+        $this->mockActionRequest->method('getControllerActionName')->willReturn('someAction');
+        $this->mockActionRequest->expects(self::never())->method('setControllerName');
+        $this->mockActionRequest->expects(self::never())->method('setControllerActionName');
+
+        $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
+        $this->mockRequestHandler->method('handle')->willReturn($this->mockHttpResponse);
+        $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
+    }
+    /**
+     * @test
+     */
+    public function processSetsActionRequestArgumentsIfARouteMatches()
+    {
+        $this->mockPropertyMapper->method('convert')->with('', 'array', new PropertyMappingConfiguration())->willReturn([]);
+
+        $this->mockHttpRequest->method('withParsedBody')->willReturn($this->mockHttpRequest);
+
+        $matchResults = [
+            'product' => ['name' => 'Some product', 'price' => 123.45],
+            'toBeOverridden' => 'from route',
+            'newValue' => 'new value from route'
+        ];
+
+        $this->mockHttpRequest->method('getAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS)->willReturn($matchResults);
+        $this->mockActionRequest->expects(self::once())->method('setArguments')->with($matchResults);
+
+        $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
+        $this->mockRequestHandler->method('handle')->willReturn($this->mockHttpResponse);
         $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
 }
