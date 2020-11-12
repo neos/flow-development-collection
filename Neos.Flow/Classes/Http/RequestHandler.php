@@ -99,7 +99,7 @@ class RequestHandler implements HttpRequestHandlerInterface
         $this->boot();
         $this->resolveDependencies();
 
-        $this->middlewaresChain->onStep(function(ServerRequestInterface $request) {
+        $this->middlewaresChain->onStep(function (ServerRequestInterface $request) {
             $this->httpRequest = $request;
         });
         $this->httpResponse = $this->middlewaresChain->handle($this->httpRequest);

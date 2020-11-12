@@ -13,10 +13,7 @@ namespace Neos\Flow\Http\Middleware;
 * source code.
 */
 
-use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Response;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Http\RequestHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -45,7 +42,13 @@ final class MiddlewaresChain implements MiddlewareInterface, RequestHandlerInter
     }
 
     /**
-     * TODO document
+     * Register a callback that is invoked whenever a middleware component is about to be processed
+     *
+     * Usage:
+     *
+     * $middlewaresChain->onStep(function(ServerRequestInterface $request) {
+     *   // $request contains the latest instance of the server request
+     * });
      *
      * @param \Closure $callback
      */
