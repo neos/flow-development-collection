@@ -13,13 +13,16 @@ namespace Neos\Flow\SignalSlot;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * A SignalInformation instance carries information about the signal that arrives
  * at a slot during a signal/slot dispatch operation.
  *
  * @api
+ * @Flow\Proxy(false)
  */
-class SignalInformation
+final class SignalInformation
 {
     /**
      * @var string
