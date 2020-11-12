@@ -71,7 +71,7 @@ class Query implements QueryInterface
     protected $orderings = [];
 
     /**
-     * @var integer
+     * @var int|null
      */
     protected $limit;
 
@@ -81,7 +81,7 @@ class Query implements QueryInterface
     protected $distinct = false;
 
     /**
-     * @var integer
+     * @var int|null
      */
     protected $offset;
 
