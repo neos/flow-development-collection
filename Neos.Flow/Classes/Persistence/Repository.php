@@ -211,7 +211,7 @@ abstract class Repository implements RepositoryInterface
      * @return mixed The result of the repository method
      * @api
      */
-    public function __call(string $method, array $arguments)
+    public function __call($method, $arguments)
     {
         $query = $this->createQuery();
         $caseSensitive = isset($arguments[1]) ? (boolean)$arguments[1] : true;

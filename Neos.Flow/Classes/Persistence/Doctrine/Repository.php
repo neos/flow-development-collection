@@ -14,9 +14,13 @@ namespace Neos\Flow\Persistence\Doctrine;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\TransactionRequiredException;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
@@ -90,6 +94,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @param object $object The object to add
      * @return void
      * @throws IllegalObjectTypeException
+     * @throws ORMException
      * @api
      */
     public function add($object): void
@@ -107,6 +112,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @param object $object The object to remove
      * @return void
      * @throws IllegalObjectTypeException
+     * @throws ORMException
      * @api
      */
     public function remove($object): void
@@ -134,7 +140,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      *
      * @return IterableResult
      */
-    public function findAllIterator()
+    public function findAllIterator(): IterableResult
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
         return $queryBuilder
@@ -152,7 +158,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @param callable|null $callback
      * @return \Generator
      */
-    public function iterate(IterableResult $iterator, callable $callback = null)
+    public function iterate(IterableResult $iterator, callable $callback = null): ?\Generator
     {
         $iteration = 0;
         foreach ($iterator as $object) {
@@ -171,6 +177,9 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      *
      * @param mixed $identifier The identifier of the object to find
      * @return object The matching object if found, otherwise NULL
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws TransactionRequiredException
      * @api
      */
     public function findByIdentifier($identifier)
@@ -199,16 +208,17 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @param string $dqlString The query string
      * @return \Doctrine\ORM\Query The DQL query object
      */
-    public function createDqlQuery($dqlString)
+    public function createDqlQuery($dqlString): \Doctrine\ORM\Query
     {
-        $dqlQuery = $this->entityManager->createQuery($dqlString);
-        return $dqlQuery;
+        return $this->entityManager->createQuery($dqlString);
     }
 
     /**
      * Counts all objects of this repository
      *
      * @return integer
+     * @throws Exception\DatabaseConnectionException
+     * @throws Exception\DatabaseConnectionException
      * @api
      */
     public function countAll(): int
@@ -221,8 +231,10 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * all of them.
      *
      * @return void
-     * @api
+     * @throws IllegalObjectTypeException
+     * @throws ORMException
      * @todo maybe use DQL here, would be much more performant
+     * @api
      */
     public function removeAll(): void
     {
@@ -253,6 +265,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @param object $object The modified object
      * @return void
      * @throws IllegalObjectTypeException
+     * @throws UnknownObjectException
      * @api
      */
     public function update($object): void

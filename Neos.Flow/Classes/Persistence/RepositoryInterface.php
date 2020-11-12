@@ -50,7 +50,7 @@ interface RepositoryInterface
      * @return QueryResultInterface The query result
      * @api
      */
-    public function findAll(): \Neos\Flow\Persistence\QueryResultInterface;
+    public function findAll(): QueryResultInterface;
 
     /**
      * Finds an object matching the given identifier.
@@ -67,7 +67,7 @@ interface RepositoryInterface
      * @return QueryInterface
      * @api
      */
-    public function createQuery(): \Neos\Flow\Persistence\QueryInterface;
+    public function createQuery(): QueryInterface;
 
     /**
      * Counts all objects of this repository

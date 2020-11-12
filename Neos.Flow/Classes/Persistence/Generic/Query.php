@@ -158,10 +158,10 @@ class Query implements QueryInterface
      * )
      *
      * @param array $orderings The property names to order by
-     * @return QueryResultInterface
+     * @return QueryInterface
      * @api
      */
-    public function setOrderings(array $orderings): QueryResultInterface
+    public function setOrderings(array $orderings): QueryInterface
     {
         $this->orderings = $orderings;
         return $this;
@@ -186,14 +186,14 @@ class Query implements QueryInterface
      * Sets the maximum size of the result set to limit. Returns $this to allow
      * for chaining (fluid interface)
      *
-     * @param integer $limit
+     * @param integer|null $limit
      * @return QueryInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function setLimit(int $limit): \Neos\Flow\Persistence\QueryInterface
+    public function setLimit(?int $limit): QueryInterface
     {
-        if ($limit < 1 || !is_int($limit)) {
+        if ($limit !== null && $limit < 1) {
             throw new \InvalidArgumentException('setLimit() accepts only integers greater 0.', 1263387249);
         }
         $this->limit = $limit;
@@ -207,7 +207,7 @@ class Query implements QueryInterface
      * @return integer
      * @api
      */
-    public function getLimit(): int
+    public function getLimit(): ?int
     {
         return $this->limit;
     }
@@ -219,7 +219,7 @@ class Query implements QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function setDistinct(bool $distinct = true): \Neos\Flow\Persistence\QueryInterface
+    public function setDistinct(bool $distinct = true): QueryInterface
     {
         $this->distinct = $distinct;
         return $this;
@@ -240,14 +240,14 @@ class Query implements QueryInterface
      * Sets the start offset of the result set to $offset. Returns $this to
      * allow for chaining (fluid interface)
      *
-     * @param integer $offset
+     * @param integer|null $offset
      * @return QueryInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function setOffset(int $offset): \Neos\Flow\Persistence\QueryInterface
+    public function setOffset(?int $offset): QueryInterface
     {
-        if ($offset < 1 || !is_int($offset)) {
+        if ($offset !== null && $offset < 1) {
             throw new \InvalidArgumentException('setOffset() accepts only integers greater 0.', 1263387252);
         }
         $this->offset = $offset;
@@ -261,7 +261,7 @@ class Query implements QueryInterface
      * @return integer
      * @api
      */
-    public function getOffset(): int
+    public function getOffset(): ?int
     {
         return $this->offset;
     }
@@ -274,7 +274,7 @@ class Query implements QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function matching($constraint): \Neos\Flow\Persistence\QueryInterface
+    public function matching($constraint): QueryInterface
     {
         $this->constraint = $constraint;
         return $this;
@@ -412,14 +412,10 @@ class Query implements QueryInterface
      * @param string $operand The value to compare with
      * @param boolean $caseSensitive Whether the matching should be done case-sensitive
      * @return object
-     * @throws InvalidQueryException if used on a non-string property
      * @api
      */
     public function like(string $propertyName, string $operand, bool $caseSensitive = true)
     {
-        if (!is_string($operand)) {
-            throw new InvalidQueryException('Operand must be a string, was ' . gettype($operand), 1276781107);
-        }
         if ($caseSensitive) {
             $comparison = $this->qomFactory->comparison(
                 $this->qomFactory->propertyValue($propertyName, '_entity'),
@@ -468,11 +464,11 @@ class Query implements QueryInterface
      * It matches if the multivalued property contains no values or is NULL.
      *
      * @param string $propertyName The name of the multivalued property to check
-     * @return boolean
+     * @return Qom\Comparison
      * @throws InvalidQueryException if used on a single-valued property
      * @api
      */
-    public function isEmpty(string $propertyName): bool
+    public function isEmpty(string $propertyName)
     {
         if (!$this->classSchema->isMultiValuedProperty($propertyName)) {
             throw new InvalidQueryException('Property "' . $propertyName . '" must be multi-valued', 1276853547);

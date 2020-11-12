@@ -130,10 +130,10 @@ interface QueryInterface
      * )
      *
      * @param array $orderings The property names to order by
-     * @return QueryResultInterface
+     * @return QueryInterface
      * @api
      */
-    public function setOrderings(array $orderings): QueryResultInterface;
+    public function setOrderings(array $orderings): QueryInterface;
 
     /**
      * Gets the property names to order the result by, like this:
@@ -151,11 +151,11 @@ interface QueryInterface
      * Sets the maximum size of the result set to limit. Returns $this to allow
      * for chaining (fluid interface).
      *
-     * @param integer $limit
+     * @param integer|null $limit
      * @return QueryInterface
      * @api
      */
-    public function setLimit(int $limit): QueryInterface;
+    public function setLimit(?int $limit): QueryInterface;
 
     /**
      * Returns the maximum size of the result set to limit.
@@ -163,7 +163,7 @@ interface QueryInterface
      * @return integer
      * @api
      */
-    public function getLimit(): int;
+    public function getLimit(): ?int;
 
     /**
      * Sets the DISTINCT flag for this query.
@@ -186,11 +186,11 @@ interface QueryInterface
      * Sets the start offset of the result set to offset. Returns $this to
      * allow for chaining (fluid interface).
      *
-     * @param integer $offset
+     * @param integer|null $offset
      * @return QueryInterface
      * @api
      */
-    public function setOffset(int $offset): QueryInterface;
+    public function setOffset(?int $offset): QueryInterface;
 
     /**
      * Returns the start offset of the result set.
@@ -198,7 +198,7 @@ interface QueryInterface
      * @return integer
      * @api
      */
-    public function getOffset(): int;
+    public function getOffset(): ?int;
 
     /**
      * The constraint used to limit the result set. Returns $this to allow
@@ -223,7 +223,7 @@ interface QueryInterface
      * takes one or more constraints and concatenates them with a boolean AND.
      * It also accepts a single array of constraints to be concatenated.
      *
-     * @param mixed $constraint1 The first of multiple constraints or an array of constraints.
+     * @param mixed ...$constraint1 The first of multiple constraints or an array of constraints.
      * @return object
      * @api
      */
@@ -234,7 +234,7 @@ interface QueryInterface
      * takes one or more constraints and concatenates them with a boolean OR.
      * It also accepts a single array of constraints to be concatenated.
      *
-     * @param mixed $constraint1 The first of multiple constraints or an array of constraints.
+     * @param mixed ...$constraint1 The first of multiple constraints or an array of constraints.
      * @return object
      * @api
      */
@@ -298,11 +298,11 @@ interface QueryInterface
      * It matches if the multivalued property contains no values or is NULL.
      *
      * @param string $propertyName The name of the multivalued property to compare against
-     * @return boolean
+     * @return mixed
      * @throws Exception\InvalidQueryException if used on a single-valued property
      * @api
      */
-    public function isEmpty(string $propertyName): bool;
+    public function isEmpty(string $propertyName);
 
     /**
      * Returns an "in" criterion used for matching objects against a query. It

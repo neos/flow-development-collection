@@ -69,7 +69,7 @@ class Query implements QueryInterface
     /**
      * @var array
      */
-    protected $orderings;
+    protected $orderings = [];
 
     /**
      * @var integer
@@ -277,10 +277,10 @@ class Query implements QueryInterface
      * )
      *
      * @param array $orderings The property names to order by
-     * @return QueryResultInterface
+     * @return QueryInterface
      * @api
      */
-    public function setOrderings(array $orderings): QueryResultInterface
+    public function setOrderings(array $orderings): QueryInterface
     {
         $this->orderings = $orderings;
         $this->queryBuilder->resetDQLPart('orderBy');
@@ -309,11 +309,11 @@ class Query implements QueryInterface
      * Sets the maximum size of the result set to limit. Returns $this to allow
      * for chaining (fluid interface)
      *
-     * @param integer $limit
+     * @param integer|null $limit
      * @return QueryInterface
      * @api
      */
-    public function setLimit(int $limit): QueryInterface
+    public function setLimit(?int $limit): QueryInterface
     {
         $this->limit = $limit;
         $this->queryBuilder->setMaxResults($limit);
@@ -326,7 +326,7 @@ class Query implements QueryInterface
      * @return integer
      * @api
      */
-    public function getLimit(): int
+    public function getLimit(): ?int
     {
         return $this->limit;
     }
@@ -360,11 +360,11 @@ class Query implements QueryInterface
      * Sets the start offset of the result set to offset. Returns $this to
      * allow for chaining (fluid interface)
      *
-     * @param integer $offset
+     * @param integer|null $offset
      * @return QueryInterface
      * @api
      */
-    public function setOffset(int $offset): QueryInterface
+    public function setOffset(?int $offset): QueryInterface
     {
         $this->offset = $offset;
         $this->queryBuilder->setFirstResult($offset);
@@ -377,7 +377,7 @@ class Query implements QueryInterface
      * @return integer
      * @api
      */
-    public function getOffset(): int
+    public function getOffset(): ?int
     {
         return $this->offset;
     }
@@ -499,7 +499,6 @@ class Query implements QueryInterface
      * @param string $operand The value to compare with
      * @param boolean $caseSensitive Whether the matching should be done case-sensitive
      * @return object
-     * @throws InvalidQueryException if used on a non-string property
      * @api
      */
     public function like(string $propertyName, string $operand, bool $caseSensitive = true)
@@ -533,11 +532,10 @@ class Query implements QueryInterface
      * It matches if the multivalued property contains no values or is NULL.
      *
      * @param string $propertyName The name of the multivalued property to compare against
-     * @return boolean
-     * @throws InvalidQueryException if used on a single-valued property
+     * @return string
      * @api
      */
-    public function isEmpty(string $propertyName): bool
+    public function isEmpty(string $propertyName)
     {
         return '(' . $this->getPropertyNameWithAlias($propertyName) . ' IS EMPTY)';
     }
@@ -549,7 +547,6 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with, multivalued
      * @return object
-     * @throws InvalidQueryException if used on a multi-valued property
      * @api
      */
     public function in(string $propertyName, $operand)
@@ -565,7 +562,6 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
     public function lessThan(string $propertyName, $operand)
@@ -579,7 +575,6 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
     public function lessThanOrEqual(string $propertyName, $operand)
@@ -593,7 +588,6 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
     public function greaterThan(string $propertyName, $operand)
@@ -607,7 +601,6 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
     public function greaterThanOrEqual(string $propertyName, $operand)
