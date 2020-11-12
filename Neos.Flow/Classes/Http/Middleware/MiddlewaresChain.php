@@ -15,8 +15,6 @@ namespace Neos\Flow\Http\Middleware;
 
 use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Response;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Http\RequestHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
