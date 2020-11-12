@@ -31,6 +31,7 @@
         "neos/composer-plugin": "^2.0",
         "composer/composer": "^1.9",
         "egulias/email-validator": "^2.1",
+        "typo3fluid/fluid": "^2.5",
         "guzzlehttp/psr7": "^1.4 || ~2.0",
         "ext-mbstring": "*"
     },
