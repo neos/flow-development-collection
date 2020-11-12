@@ -123,8 +123,8 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * Returns the HTTP response corresponding to the currently handled request
      *
-     * @return ResponseInterface
-     * @api
+     * @return ResponseInterface|null
+     * @deprecated Don't depend on this method. The HTTP response only exists after the innermost middleware (dispatch) is done. For that stage use a middleware instead.
      */
     public function getHttpResponse()
     {
