@@ -263,7 +263,7 @@ class ResourceRepository extends Repository
      *
      * @return int
      */
-    public function countBySha1AndCollectionName($sha1Hash, $collectionName)
+    public function countBySha1AndCollectionName(string $sha1Hash, string $collectionName): int
     {
         $query = $this->createQuery();
         $query->matching(
