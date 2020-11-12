@@ -56,7 +56,10 @@ The signal will be dispatched to all slots listening to it.
 Defining Slots
 ==============
 
-You can use any method as a slot, or write one specifically for use s a slot.
+You can use any method as a slot, or write one specifically for use as a slot.
+
+Using arbitrary methods as slots
+--------------------------------
 
 Any method of any class can be used as a slot, even if never written specifically
 for being a slot. The only requirement is a matching signature between signal and
@@ -82,6 +85,10 @@ from any non-slot method.
 Such a method must be connected to a signal using the ``connect()`` method, and
 depending on the wiring there might be an extra parameter being given to the slot that
 contains signal information (see below.)
+
+
+Writing explicit slot methods
+-----------------------------
 
 The other way of writing a slot is to define a method that accepts a single argument
 of type ``Neos\Flow\SignalSlot\SignalInformation``.
@@ -168,6 +175,14 @@ An alternative way of specifying the slot is to pass an object instance instead 
 class name to ``connect()`` or ``wire()``. This can also be used to pass a ``Closure``
 instance to react to signals, in this case the slot method name can be omitted::
 
-  $dispatcher->connect(\Acme\Com\Service::class, 'thingsChanged', function ($changedThings) {
-      // do something here
-  });
+    $dispatcher->connect(\Acme\Com\Service::class, 'thingsChanged', function ($changedThings) {
+        // do something here
+    });
+
+    $dispatcher->wire(
+        \Acme\Com\Service::class,
+        'thingsChanged',
+        function (SignalInformation $signalInformation) {
+            // do something here
+        }
+    );
