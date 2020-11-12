@@ -1237,6 +1237,12 @@
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Mvc/ActionResponse.php">
+    <UndefinedClass occurrences="4">
+      <code>SetHeaderComponent</code>
+      <code>ReplaceHttpResponseComponent</code>
+    </UndefinedClass>
+  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/AbstractController.php">
     <PossiblyNullArgument occurrences="1">
       <code>$mediaType</code>
