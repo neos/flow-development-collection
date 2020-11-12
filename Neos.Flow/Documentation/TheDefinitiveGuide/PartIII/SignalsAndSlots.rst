@@ -100,13 +100,15 @@ of type ``Neos\Flow\SignalSlot\SignalInformation``.
      * @return void
      */
     public function dedicatedSendNewCommentNotificationSlot(SignalInformation $signal) {
-        $comment = $signal->getSignalArguments()['comment'];
-        $mail = new \Neos\SwiftMailer\Message();
-        $mail->setFrom(array('john@doe.org ' => 'John Doe'))
-            ->setTo(array('karsten@neos.io ' => 'Karsten Dambekalns'))
-            ->setSubject('New comment')
-            ->setBody($comment->getContent())
-            ->send();
+        $comment = $signal->getSignalArgument('comment');
+        if ($comment !== null) {
+            $mail = new \Neos\SwiftMailer\Message();
+            $mail->setFrom(array('john@doe.org ' => 'John Doe'))
+                ->setTo(array('karsten@neos.io ' => 'Karsten Dambekalns'))
+                ->setSubject('New comment')
+                ->setBody($comment->getContent())
+                ->send();
+        }
     }
 
 Such a method must be connected to a signal using the ``wire()`` method (see below.)

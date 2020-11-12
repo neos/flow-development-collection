@@ -57,4 +57,15 @@ class SignalInformation
     {
         return $this->signalArguments;
     }
+
+    /**
+     *
+     *
+     * @param string $argumentName
+     * @return mixed
+     */
+    public function getSignalArgument(string $argumentName)
+    {
+        return $this->signalArguments[$argumentName] ?? null;
+    }
 }
