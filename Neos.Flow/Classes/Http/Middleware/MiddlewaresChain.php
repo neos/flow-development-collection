@@ -15,52 +15,43 @@ namespace Neos\Flow\Http\Middleware;
 
 use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Response;
+use Neos\Flow\Http\HttpRequestHandlerInterface;
+use Neos\Flow\Http\RequestHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class MiddlewaresChain implements MiddlewareInterface, RequestHandlerInterface
+final class MiddlewaresChain implements MiddlewareInterface, RequestHandlerInterface
 {
     /**
      * @var MiddlewareInterface[]
      */
-    protected $chain;
+    private $chain;
 
     /**
-     * @var string
+     * @var \Closure[]
      */
-    protected $name;
+    private $stepCallbacks = [];
 
-    /**
-     * @param string $name
-     * @param MiddlewareInterface[] $middlewaresChain
-     */
-    public function __construct($name = 'default', array $middlewaresChain = [])
+    public function __construct(array $middlewaresChain)
     {
-        array_walk($middlewaresChain, static function ($middleware) use ($name) {
+        array_walk($middlewaresChain, static function ($middleware) {
             if (!$middleware instanceof MiddlewareInterface) {
                 throw new Exception(sprintf('Invalid element "%s" in middleware chain "%s".', is_object($middleware) ? get_class($middleware) : gettype($middleware), $name));
             }
         });
-        $this->name = $name;
         $this->chain = $middlewaresChain;
     }
 
     /**
-     * @param MiddlewareInterface $middleware
+     * TODO document
+     *
+     * @param \Closure $callback
      */
-    public function append(MiddlewareInterface $middleware)
+    public function onStep(\Closure $callback): void
     {
-        array_push($this->chain, $middleware);
-    }
-
-    /**
-     * @param MiddlewareInterface $middleware
-     */
-    public function prepend(MiddlewareInterface $middleware)
-    {
-        array_unshift($this->chain, $middleware);
+        $this->stepCallbacks[] = $callback;
     }
 
     /**
@@ -88,7 +79,9 @@ class MiddlewaresChain implements MiddlewareInterface, RequestHandlerInterface
         if (count($this->chain) === 0) {
             return new Response();
         }
-
+        foreach ($this->stepCallbacks as $callback) {
+            $callback($request);
+        }
         return $this->process($request, $this);
     }
 }

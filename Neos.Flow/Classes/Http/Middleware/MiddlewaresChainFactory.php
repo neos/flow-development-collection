@@ -33,15 +33,11 @@ class MiddlewaresChainFactory
 
     /**
      * @param array $chainConfiguration
-     * @param string $parentChain
      * @return MiddlewaresChain
      * @throws Exception
      */
-    public function create(array $chainConfiguration, $parentChain = 'default'): MiddlewaresChain
+    public function create(array $chainConfiguration): MiddlewaresChain
     {
-        if (empty($chainConfiguration)) {
-            return new MiddlewaresChain($parentChain);
-        }
         $arraySorter = new PositionalArraySorter($chainConfiguration);
         $sortedChainConfiguration = $arraySorter->toArray();
 
@@ -57,6 +53,6 @@ class MiddlewaresChainFactory
             $middlewaresChain[] = $middleware;
         }
 
-        return new MiddlewaresChain($parentChain, $middlewaresChain);
+        return new MiddlewaresChain($middlewaresChain);
     }
 }
