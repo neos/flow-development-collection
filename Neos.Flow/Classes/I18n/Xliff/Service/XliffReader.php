@@ -23,11 +23,10 @@ use Psr\Log\LoggerInterface;
 class XliffReader
 {
     /**
-     * @Flow\Inject
+     * @Flow\Inject(name="Neos.Flow:I18nLogger")
      * @var LoggerInterface
      */
     protected $i18nLogger;
-
 
     /**
      * @param string $sourcePath

@@ -1,5 +1,7 @@
 <?php
-namespace Neos\Flow\Http\Component;
+declare(strict_types=1);
+
+namespace Neos\Flow\Http\Middleware;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -12,15 +14,18 @@ namespace Neos\Flow\Http\Component;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Utility\Ip as IpUtility;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * HTTP component that checks request headers against a configured list of trusted proxy IP addresses.
+ * Middleware that checks request headers against a configured list of trusted proxy IP addresses.
  */
-class TrustedProxiesComponent implements ComponentInterface
+class TrustedProxiesMiddleware implements MiddlewareInterface
 {
     const HEADER_CLIENT_IP = 'clientIp';
     const HEADER_HOST = 'host';
@@ -69,15 +74,9 @@ class TrustedProxiesComponent implements ComponentInterface
         }
     }
 
-    /**
-     * @param ComponentContext $componentContext
-     * @return void
-     * @api
-     */
-    public function handle(ComponentContext $componentContext)
-    {
-        $request = $componentContext->getHttpRequest();
 
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
         $trustedRequest = $request->withAttribute(ServerRequestAttributes::TRUSTED_PROXY, $this->isFromTrustedProxy($request));
 
         $trustedRequest = $trustedRequest->withAttribute(ServerRequestAttributes::CLIENT_IP, $this->getTrustedClientIpAddress($trustedRequest));
@@ -96,7 +95,7 @@ class TrustedProxiesComponent implements ComponentInterface
                 $portSeparatorIndex = strrpos($hostHeader, ':');
             }
             if ($portSeparatorIndex !== false) {
-                $portFromHost = substr($hostHeader, $portSeparatorIndex + 1);
+                $portFromHost = (int)substr($hostHeader, $portSeparatorIndex + 1);
                 $trustedRequest = $trustedRequest->withUri($trustedRequest->getUri()->withPort($portFromHost), true);
                 $hostHeader = substr($hostHeader, 0, $portSeparatorIndex);
             }
@@ -110,7 +109,7 @@ class TrustedProxiesComponent implements ComponentInterface
             $trustedRequest = $trustedRequest->withUri($trustedRequest->getUri()->withPort(strtolower($protocolHeader) === 'https' ? 443 : 80), true);
         }
 
-        $componentContext->replaceHttpRequest($trustedRequest);
+        return $handler->handle($trustedRequest);
     }
 
     /**

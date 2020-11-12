@@ -11,6 +11,8 @@ namespace Neos\Flow\Mvc\Routing\Fixtures;
  * source code.
  */
 
+use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 
 /**
@@ -18,15 +20,46 @@ use Neos\Flow\Mvc\Routing\DynamicRoutePart;
  */
 class MockRoutePartHandler extends DynamicRoutePart
 {
+
+    /**
+     * @var \Closure|null
+     */
+    private $matchValueClosure;
+
+    /**
+     * @var \Closure|null
+     */
+    private $resolveValueClosure;
+
+    public function __construct(\Closure $matchValueClosure = null, \Closure $resolveValueClosure = null)
+    {
+        $this->matchValueClosure = $matchValueClosure;
+        $this->resolveValueClosure = $resolveValueClosure;
+    }
+
     protected function matchValue($value)
     {
-        $this->value = '_match_invoked_';
-        return true;
+        $this->value = null;
+        if ($this->matchValueClosure !== null) {
+            $result = call_user_func($this->matchValueClosure, $value, $this->parameters);
+            if ($result instanceof MatchResult) {
+                $this->value = $result->getMatchedValue();
+                return $result;
+            }
+        }
+        return false;
     }
 
     protected function resolveValue($value)
     {
-        $this->value = '_resolve_invoked_';
-        return true;
+        $this->value = null;
+        if ($this->resolveValueClosure !== null) {
+            $result = call_user_func($this->resolveValueClosure, $value, $this->parameters);
+            if ($result instanceof ResolveResult) {
+                $this->value = $result->getResolvedValue();
+                return $result;
+            }
+        }
+        return false;
     }
 }

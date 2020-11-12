@@ -684,6 +684,9 @@
     <PossiblyNullIterator occurrences="1">
       <code>$methodNames</code>
     </PossiblyNullIterator>
+    <PossiblyNullReference occurrences="1">
+      <code>createPrivilege</code>
+    </PossiblyNullReference>
     <PossiblyUndefinedMethod occurrences="1">
       <code>matchesMethod</code>
     </PossiblyUndefinedMethod>
@@ -713,10 +716,6 @@
     <PossiblyFalseOperand occurrences="1">
       <code>strpos($staticMethodReference, '::')</code>
     </PossiblyFalseOperand>
-    <PossiblyUndefinedMethod occurrences="2">
-      <code>getPackage</code>
-      <code>getTargetPackage</code>
-    </PossiblyUndefinedMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationManager.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -933,16 +932,6 @@
       <code>get</code>
     </TooManyArguments>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Http/Component/RequestBodyParsingComponent.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$parsedBody</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Http/Component/TrustedProxiesComponent.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$portFromHost</code>
-    </InvalidScalarArgument>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/ContentStream.php">
     <PossiblyNullArgument occurrences="1">
       <code>$resource</code>
@@ -991,6 +980,11 @@
     <InvalidReturnType occurrences="1">
       <code>array</code>
     </InvalidReturnType>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Http/Middleware/RequestBodyParsingMiddleware.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$parsedBody</code>
+    </PossiblyInvalidArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/RequestHandler.php">
     <PropertyTypeCoercion occurrences="1">
@@ -1056,8 +1050,7 @@
       <code>$positionOfSecondPlaceholder</code>
       <code>$positionOfSecondPlaceholder</code>
     </PossiblyFalseOperand>
-    <PossiblyUndefinedVariable occurrences="2">
-      <code>$realFormatLength</code>
+    <PossiblyUndefinedVariable occurrences="1">
       <code>$localizedLiterals</code>
     </PossiblyUndefinedVariable>
   </file>
@@ -1243,6 +1236,12 @@
       <code>null</code>
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Mvc/ActionResponse.php">
+    <UndefinedClass occurrences="4">
+      <code>SetHeaderComponent</code>
+      <code>ReplaceHttpResponseComponent</code>
+    </UndefinedClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/AbstractController.php">
     <PossiblyNullArgument occurrences="1">
@@ -1683,15 +1682,11 @@
     </MoreSpecificReturnType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Mapping/Driver/FlowAnnotationDriver.php">
-    <ArgumentTypeCoercion occurrences="9">
+    <ArgumentTypeCoercion occurrences="5">
       <code>$metadata</code>
       <code>$metadata</code>
       <code>$metadata</code>
       <code>$metadata</code>
-      <code>$joinTableAnnotation</code>
-      <code>$joinTableAnnotation</code>
-      <code>$columnAnnotation</code>
-      <code>$joinColumnAnnotation</code>
       <code>$className</code>
     </ArgumentTypeCoercion>
     <InvalidPropertyAssignmentValue occurrences="1">
@@ -2792,26 +2787,12 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Security/Policy/PolicyService.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>PrivilegeTarget</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="1">
-      <code>isset($this-&gt;privilegeTargets[$privilegeTargetIdentifier]) ? $this-&gt;privilegeTargets[$privilegeTargetIdentifier] : null</code>
-    </NullableReturnStatement>
     <PossiblyNullArgument occurrences="1">
       <code>$this-&gt;policyConfiguration</code>
     </PossiblyNullArgument>
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>$this-&gt;configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_POLICY)</code>
     </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Policy/Role.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>PrivilegeInterface</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="1">
-      <code>null</code>
-    </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Session/Aspect/LoggingAspect.php">
     <InvalidReturnType occurrences="3">
@@ -2828,11 +2809,6 @@
       <code>getId</code>
       <code>getId</code>
       <code>isStarted</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Session/Http/SessionResponseComponent.php">
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>getSessionCookie</code>
     </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Session/Session.php">
@@ -3143,6 +3119,9 @@
     <InvalidCast occurrences="1">
       <code>$valueElement</code>
     </InvalidCast>
+    <TypeDoesNotContainType occurrences="1">
+      <code>is_array($value)</code>
+    </TypeDoesNotContainType>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/FormViewHelper.php">
     <InvalidScalarArgument occurrences="1">
@@ -3151,6 +3130,11 @@
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
+  </file>
+  <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Format/BytesViewHelper.php">
+    <InvalidScalarArgument occurrences="1">
+      <code>$value</code>
+    </InvalidScalarArgument>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/ViewHelpers/Format/CaseViewHelper.php">
     <InvalidScalarArgument occurrences="2">

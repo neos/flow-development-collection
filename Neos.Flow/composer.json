@@ -6,7 +6,7 @@
     "license": ["MIT"],
 
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": "^7.3 || ^8.0",
 
         "ext-zlib": "*",
         "ext-SPL": "*",
@@ -48,7 +48,9 @@
         "neos/composer-plugin": "^2.0",
         "neos/utility-pdo": "*",
 
-        "composer/composer": "^1.9"
+        "composer/composer": "^1.9",
+
+        "egulias/email-validator": "^2.1"
     },
     "require-dev": {
         "vimeo/psalm": "~3.10.0"
@@ -76,7 +78,8 @@
             "package-key": "Neos.Flow"
         },
         "applied-flow-migrations": [
-            "Neos.Media-20161124233100"
+            "Neos.Media-20161124233100",
+            "Neos.Flow-20201003165200"
         ]
     }
 }

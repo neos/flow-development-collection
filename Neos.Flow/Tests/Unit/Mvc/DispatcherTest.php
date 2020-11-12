@@ -11,9 +11,6 @@ namespace Neos\Flow\Tests\Unit\Mvc;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Response;
-use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Component\SecurityEntryPointComponent;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -242,23 +239,16 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
-    public function dispatchSetsAuthenticationExceptions()
+    public function dispatchThrowsAuthenticationExceptions()
     {
+        $this->expectException(AuthenticationRequiredException::class);
         $this->mockActionRequest->method('isDispatched')->willReturn(true);
 
         $this->mockSecurityContext->expects(self::never())->method('setInterceptedRequest')->with($this->mockMainRequest);
 
         $this->mockFirewall->expects(self::once())->method('blockIllegalRequests')->will(self::throwException(new AuthenticationRequiredException()));
 
-        try {
-            $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
-        } catch (AuthenticationRequiredException $exception) {
-        }
-
-        $componentContext = new ComponentContext($this->mockHttpRequest, new Response());
-        $this->actionResponse->mergeIntoComponentContext($componentContext);
-        self::assertNotNull($componentContext->getAllParametersFor(SecurityEntryPointComponent::class));
-        self::assertNotEmpty($componentContext->getParameter(SecurityEntryPointComponent::class, SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION));
+        $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
     }
 
     /**

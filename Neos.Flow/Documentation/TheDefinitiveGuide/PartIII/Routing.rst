@@ -543,8 +543,8 @@ This will load the SubRoutes from a file ``Routes.Foo.yaml`` in the ``My.Demo`` 
 With that feature you can include multiple Routes with your package (for example providing different URI styles).
 Furthermore you can nest routes in order to minimize duplication in your configuration. You nest SubRoutes by including
 different SubRoutes from within a SubRoute, using the same syntax as before.
-Additionally you can specify a set of ``variables`` that will be replaced in ``name``, ``uriPattern`` and ``defaults``
-of merged routes:
+Additionally you can specify a set of ``variables`` that will be replaced in ``name``, ``uriPattern``, ``defaults`` and
+``handler options`` of merged routes:
 
 Imagine the following setup:
 
@@ -901,28 +901,31 @@ from the request URI path? For example the counter-part to the example above, ma
    corresponding cache entry exists.
 
 For route part handlers to safely access values that are not encoded in the URI path, those values have to be registered
-as `Routing Parameters`, usually via a HTTP Component (see respective chapter about :doc:`Http`).
+as `Routing Parameters`, usually via a HTTP middleware (see respective chapter about :doc:`Http`).
 
-A HTTP Component that registers the current request scheme as Routing Parameter could look like this:
+A HTTP middleware that registers the current request scheme as Routing Parameter could look like this:
 
-*Example: HttpsRoutePart.php* ::
+*Example: SchemeRoutingParameterMiddleware.php* ::
 
-	use Neos\Flow\Http\Component\ComponentContext;
-	use Neos\Flow\Http\Component\ComponentInterface;
 	use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
-	use Neos\Flow\Mvc\Routing\RoutingComponent;
+	use Neos\Flow\Http\ServerRequestAttributes;
+	use Psr\Http\Message\ResponseInterface;
+	use Psr\Http\Message\ServerRequestInterface;
+	use Psr\Http\Server\MiddlewareInterface;
+	use Psr\Http\Server\RequestHandlerInterface;
 
-	class SchemeRoutingParameterComponent implements ComponentInterface
+	class SchemeRoutingParameterMiddleware implements MiddlewareInterface
 	{
 
-	    public function handle(ComponentContext $componentContext)
+	    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
 	    {
-	        $existingParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
+	        $existingParameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS);
 	        if ($existingParameters === null) {
 	            $existingParameters = RouteParameters::createEmpty();
 	        }
-	        $parameters = $existingParameters->withParameter('scheme', $componentContext->getHttpRequest()->getUri()->getScheme());
-	        $componentContext->setParameter(RoutingComponent::class, 'parameters', $parameters);
+	        $parameters = $existingParameters->withParameter('scheme', $request->getUri()->getScheme());
+	        $request = $request->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, $parameters);
+	        return $next->handle($request);
 	    }
 	}
 

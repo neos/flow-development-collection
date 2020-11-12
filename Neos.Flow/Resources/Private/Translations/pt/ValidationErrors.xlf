@@ -5,7 +5,8 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target></trans-unit>
+			<target state="translated">
+Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
@@ -72,7 +73,7 @@
       <!-- LabelValidator -->
       <trans-unit id="1272298003" xml:space="preserve">
 				<source>Only letters, numbers, spaces and certain punctuation marks are expected</source>
-			<target state="needs-translation">Only letters, numbers, spaces and certain punctuation marks are expected</target></trans-unit>
+			<target state="translated">Apenas letras, números, espaços e certos sinais de pontuação são esperados</target></trans-unit>
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve">
 				<source>Value is no valid I18n locale identifier</source>
@@ -165,7 +166,8 @@
 			<target state="needs-translation">The image type "{0}" is not allowed</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
-			<target state="needs-translation">The uploaded file is no valid image</target></trans-unit>
+			<target state="translated">
+O arquivo enviado não é uma imagem válida..</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve">
 				<source>The given value is not a Image instance</source>

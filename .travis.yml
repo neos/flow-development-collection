@@ -10,7 +10,6 @@ branches:
 # on PHP nightly builds. See this for more information:
 # https://docs.travis-ci.com/user/build-matrix/#rows-that-are-allowed-to-fail
 php:
-  - 7.2
   - 7.3
   - 7.4
   - nightly
@@ -26,16 +25,8 @@ jobs:
     # this excludes jobs with "no env" by using the single DUMMY defined above
     - env: DUMMY=true
   include:
-    - php: 7.2
+    - php: 7.3
       env: STATIC_ANALYSIS=true
-    - php: 7.2
-      env: DB=mysql
-      addons:
-        mariadb: '10.2'
-    - php: 7.2
-      env: DB=mysql BEHAT=true
-      addons:
-        mariadb: '10.2'
     - php: 7.3
       env: DB=mysql
       addons:
@@ -85,7 +76,7 @@ before_install:
   - git clone https://github.com/neos/flow-development-distribution.git -b ${NEOS_TARGET_VERSION}
   - cd flow-development-distribution
 install:
-  - composer self-update -q
+  - composer self-update --2 -q
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
   - composer update --no-progress --no-interaction
   - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .

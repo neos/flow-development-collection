@@ -36,6 +36,7 @@ use Psr\Log\LoggerInterface;
 class PersistenceManager extends AbstractPersistenceManager
 {
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;

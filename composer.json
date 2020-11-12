@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": "^7.3 || ^8.0",
         "psr/simple-cache": "^1.0",
         "psr/cache": "~1.0",
         "psr/log": "^1.0",
@@ -30,6 +30,7 @@
         "symfony/console": "^4.2",
         "neos/composer-plugin": "^2.0",
         "composer/composer": "^1.9",
+        "egulias/email-validator": "^2.1",
         "guzzlehttp/psr7": "^1.4 || ~2.0",
         "ext-mbstring": "*"
     },

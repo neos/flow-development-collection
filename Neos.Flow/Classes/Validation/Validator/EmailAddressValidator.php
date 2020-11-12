@@ -11,6 +11,11 @@ namespace Neos\Flow\Validation\Validator;
  * source code.
  */
 
+use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\DNSCheckValidation;
+use Egulias\EmailValidator\Validation\MultipleValidationWithAnd;
+use Egulias\EmailValidator\Validation\NoRFCWarningsValidation;
+use Egulias\EmailValidator\Validation\RFCValidation;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -21,6 +26,24 @@ use Neos\Flow\Annotations as Flow;
  */
 class EmailAddressValidator extends AbstractValidator
 {
+    /**
+     * @var array
+     */
+    protected $supportedOptions = [
+        'strict' => [false, 'Whether to fail validation on RFC warnings', 'bool'],
+        'checkDns' => [false, 'Whether to use DNS checks', 'bool']
+    ];
+
+    /**
+     * @var EmailValidator
+     */
+    protected $emailValidator;
+
+    protected function initializeObject(): void
+    {
+        $this->emailValidator = new EmailValidator();
+    }
+
     /**
      * Checks if the given value is a valid email address.
      *
@@ -39,10 +62,17 @@ class EmailAddressValidator extends AbstractValidator
      * Checking syntax of input email address
      *
      * @param string $emailAddress Input string to evaluate
-     * @return boolean Returns true if the $email address (input string) is valid
+     * @return bool Returns true if the $email address (input string) is valid
      */
-    protected function validEmail($emailAddress)
+    protected function validEmail($emailAddress): bool
     {
-        return (filter_var($emailAddress, FILTER_VALIDATE_EMAIL) !== false);
+        $rfcValidation = $this->options['strict'] ? new NoRFCWarningsValidation() : new RFCValidation();
+        if ($this->options['checkDns']) {
+            $mailValidation = new MultipleValidationWithAnd([$rfcValidation, new DNSCheckValidation()]);
+        } else {
+            $mailValidation = $rfcValidation;
+        }
+
+        return $this->emailValidator->isValid($emailAddress, $mailValidation);
     }
 }
