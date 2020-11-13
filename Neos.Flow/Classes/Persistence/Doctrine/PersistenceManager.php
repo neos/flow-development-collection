@@ -25,7 +25,6 @@ use Neos\Flow\Persistence\Exception as PersistenceException;
 use Neos\Flow\Persistence\Exception\KnownObjectException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Persistence\QueryInterface;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
