@@ -60,7 +60,6 @@ class Debugger
         'Neos\\\\Flow\\\\Sec.*' => true,
         'Neos\\\\Flow\\\\Sig.*' => true,
         'Neos\\\\Flow\\\\.*ResourceManager' => true,
-        'Neos\\\\FluidAdaptor\\\\.*' => true,
         '.+Service$' => true,
         '.+Repository$' => true,
         'PHPUnit_Framework_MockObject_InvocationMocker' => true
