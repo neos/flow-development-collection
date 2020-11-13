@@ -17,6 +17,7 @@ use Doctrine\ORM\Internal\Hydration\IterableResult;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\TransactionRequiredException;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
@@ -142,6 +143,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      */
     public function findAllIterator(): IterableResult
     {
+        /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
         return $queryBuilder
             ->select('entity')
@@ -298,10 +300,14 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
         if (isset($method[10]) && strpos($method, 'findOneBy') === 0) {
             $propertyName = lcfirst(substr($method, 9));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult)->getFirst();
-        } elseif (isset($method[8]) && strpos($method, 'countBy') === 0) {
+        }
+
+        if (isset($method[8]) && strpos($method, 'countBy') === 0) {
             $propertyName = lcfirst(substr($method, 7));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->count();
-        } elseif (isset($method[7]) && strpos($method, 'findBy') === 0) {
+        }
+
+        if (isset($method[7]) && strpos($method, 'findBy') === 0) {
             $propertyName = lcfirst(substr($method, 6));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult);
         }

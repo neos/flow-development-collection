@@ -6,7 +6,7 @@
     "license": ["MIT"],
 
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": "^7.3 || ^8.0",
 
         "ext-zlib": "*",
         "ext-SPL": "*",
@@ -24,7 +24,6 @@
         "neos/utility-opcodecache": "*",
         "neos/utility-schema": "*",
         "neos/utility-unicode": "*",
-        "neos/fluid-adaptor": "*",
         "neos/flow-log": "*",
         "neos/http-factories": "*",
 
@@ -35,12 +34,12 @@
         "psr/http-server-middleware": "^1.0",
         "psr/http-server-handler": "^1.0",
 
-        "ramsey/uuid": "^3.0",
+        "ramsey/uuid": "^3.0 || ^4.0",
 
-        "doctrine/orm": "^2.6",
-        "doctrine/migrations": "^1.8",
-        "doctrine/dbal": "^2.9",
-        "doctrine/common": "^2.4",
+        "doctrine/orm": "^2.7",
+        "doctrine/migrations": "^3.0",
+        "doctrine/dbal": "^2.12",
+        "doctrine/common": "^2.13.1",
 
         "symfony/yaml": "^4.2",
         "symfony/dom-crawler": "^4.2",
@@ -60,7 +59,8 @@
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
         "neos/party": "To make use of basic user handling",
-        "php-uuid": "For fast generation of UUIDs used in the persistence."
+        "php-uuid": "For fast generation of UUIDs used in the persistence.",
+        "neos/fluid-adaptor": "For rendering templates with TYPO3.Fluid"
     },
     "autoload": {
         "psr-4": {
