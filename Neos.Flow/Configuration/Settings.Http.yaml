@@ -54,21 +54,6 @@ Neos:
           position: 'end'
           middleware: 'Neos\Flow\Mvc\DispatchMiddleware'
 
-      # Defines the workflow of one request from bootstrap to the HTTP response
-      #
-      # By default this workflow is divided in three sub-chains "preprocess", "process" and "postprocess" but the chain can be restructured as needed
-      #
-      chain:
-
-        'preprocess':
-          position: 'before process'
-          chain: []
-        'process':
-          chain: []
-
-        'postprocess':
-          chain: []
-
       trustedProxies:
 
         # Defines Proxy servers which are trusted for setting request headers
