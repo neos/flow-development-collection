@@ -11,11 +11,13 @@ namespace Neos\Flow\Persistence\Doctrine\Mapping\Exception;
  * source code.
  */
 
+use Neos\Flow\Persistence\Exception as PersistenceException;
+
 /**
  * A Class Schema Not Found Exception
  *
  * @api
  */
-class ClassSchemaNotFoundException extends \Neos\Flow\Persistence\Exception
+class ClassSchemaNotFoundException extends PersistenceException
 {
 }

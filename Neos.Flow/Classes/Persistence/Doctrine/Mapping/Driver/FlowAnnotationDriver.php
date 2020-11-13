@@ -16,6 +16,7 @@ use Doctrine\Common\Annotations\IndexedReader;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver as DoctrineMappingDriverInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\Builder\EntityListenerBuilder;
 use Doctrine\ORM\Mapping as ORM;
@@ -198,7 +199,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             if ($entityAnnotation->repositoryClass !== null) {
                 $metadata->setCustomRepositoryClass($entityAnnotation->repositoryClass);
             } elseif ($classSchema->getRepositoryClassName() !== null) {
-                if ($this->reflectionService->isClassImplementationOf($classSchema->getRepositoryClassName(), \Doctrine\ORM\EntityRepository::class)) {
+                if ($this->reflectionService->isClassImplementationOf($classSchema->getRepositoryClassName(), EntityRepository::class)) {
                     $metadata->setCustomRepositoryClass($classSchema->getRepositoryClassName());
                 }
             }
@@ -502,9 +503,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         // Truncate a second time if the property name was too long as well:
         if (strlen($prefix . $suffix) > $this->getMaxIdentifierLength()) {
             return $this->truncateIdentifier($prefix . $suffix, $this->getMaxIdentifierLength());
-        } else {
-            return $prefix . $suffix;
         }
+
+        return $prefix . $suffix;
     }
 
     /**
@@ -582,9 +583,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         $classSchema = $this->getClassSchema($className);
 
         foreach ($class->getProperties() as $property) {
-            if (!$classSchema->hasProperty($property->getName())
+            if (($metadata->isMappedSuperclass && !$property->isPrivate())
+                    || !$classSchema->hasProperty($property->getName())
                     || $classSchema->isPropertyTransient($property->getName())
-                    || $metadata->isMappedSuperclass && !$property->isPrivate()
                     || $metadata->isInheritedField($property->getName())
                     || $metadata->isInheritedAssociation($property->getName())
                     || $metadata->isInheritedEmbeddedClass($property->getName())) {

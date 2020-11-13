@@ -8,7 +8,11 @@ namespace Neos\Flow\Persistence\Doctrine;
  * with this package in the file License-BSD.txt.                         *
  *                                                                        */
 
+use Doctrine\ORM\Query\AST\AggregateExpression;
 use Doctrine\ORM\Query\AST\PathExpression;
+use Doctrine\ORM\Query\AST\SelectExpression;
+use Doctrine\ORM\Query\AST\SelectStatement;
+use Doctrine\ORM\Query\TreeWalkerAdapter;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -16,20 +20,20 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter
+class CountWalker extends TreeWalkerAdapter
 {
     /**
      * Walks down a SelectStatement AST node, modifying it to retrieve a COUNT
      *
-     * @param \Doctrine\ORM\Query\AST\SelectStatement $AST
+     * @param SelectStatement $AST
      * @return void
      */
-    public function walkSelectStatement(\Doctrine\ORM\Query\AST\SelectStatement $AST)
+    public function walkSelectStatement(SelectStatement $AST)
     {
         $parent = null;
         $parentName = null;
         foreach ($this->_getQueryComponents() as $dqlAlias => $qComp) {
-            if ($qComp['parent'] === null && $qComp['nestingLevel'] == 0) {
+            if ($qComp['parent'] === null && $qComp['nestingLevel'] === 0) {
                 $parent = $qComp;
                 $parentName = $dqlAlias;
                 break;
@@ -44,8 +48,8 @@ class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter
         $pathExpression->type = PathExpression::TYPE_STATE_FIELD;
 
         $AST->selectClause->selectExpressions = [
-            new \Doctrine\ORM\Query\AST\SelectExpression(
-                new \Doctrine\ORM\Query\AST\AggregateExpression('count', $pathExpression, true),
+            new SelectExpression(
+                new AggregateExpression('count', $pathExpression, true),
                 null
             )
         ];

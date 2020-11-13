@@ -11,7 +11,13 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\Expr\Comparison;
+use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -47,12 +53,12 @@ class Query implements QueryInterface
     protected $throwableStorage;
 
     /**
-     * @var \Doctrine\ORM\QueryBuilder
+     * @var QueryBuilder
      */
     protected $queryBuilder;
 
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     protected $entityManager;
 
@@ -192,11 +198,11 @@ class Query implements QueryInterface
                 $query->useResultCache(true);
             }
             return $query->getResult();
-        } catch (\Doctrine\ORM\ORMException $ormException) {
+        } catch (ORMException $ormException) {
             $message = $this->throwableStorage->logThrowable($ormException);
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return [];
-        } catch (\Doctrine\DBAL\DBALException $dbalException) {
+        } catch (DBALException $dbalException) {
             $message = $this->throwableStorage->logThrowable($dbalException);
             $this->logger->debug($message);
 
@@ -260,7 +266,7 @@ class Query implements QueryInterface
                 $numberOfResults = min($numberOfResults, $limit);
             }
             return $numberOfResults;
-        } catch (\Doctrine\ORM\ORMException $ormException) {
+        } catch (ORMException $ormException) {
             $message = $this->throwableStorage->logThrowable($ormException);
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return 0;
@@ -473,7 +479,7 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @param boolean $caseSensitive Whether the equality test should be done case-sensitive for strings
-     * @return object
+     * @return Comparison|string
      * @api
      */
     public function equals($propertyName, $operand, $caseSensitive = true)
@@ -520,7 +526,7 @@ class Query implements QueryInterface
      *
      * @param string $propertyName The name of the multivalued property to compare against
      * @param mixed $operand The value to compare with
-     * @return object
+     * @return string
      * @throws InvalidQueryException if used on a single-valued property
      * @api
      */
@@ -633,7 +639,7 @@ class Query implements QueryInterface
     /**
      * Gets all defined query parameters for the query being constructed.
      *
-     * @return array
+     * @return ArrayCollection
      */
     public function getParameters()
     {
@@ -746,7 +752,7 @@ class Query implements QueryInterface
     }
 
     /**
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return QueryBuilder
      */
     public function getQueryBuilder()
     {
