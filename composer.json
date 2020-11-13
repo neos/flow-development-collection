@@ -117,7 +117,8 @@
         "phpunit/phpunit": "~8.1",
         "vimeo/psalm": "~3.10.0",
         "doctrine/orm": "^2.7",
-        "doctrine/common": "^2.13.1"
+        "doctrine/common": "^2.13.1",
+        "vimeo/psalm": "~4.1.1"
     },
     "autoload-dev": {
         "psr-4": {

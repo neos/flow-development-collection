@@ -262,7 +262,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     public function get(string $entryIdentifier)
     {
         $value = $this->memcache->get($this->identifierPrefix . $entryIdentifier);
-        if (substr($value, 0, 13) === 'Flow*chunked:') {
+        if ($value !== false && substr($value, 0, 13) === 'Flow*chunked:') {
             list(, $chunkCount) = explode(':', $value);
             $value = '';
             for ($chunkNumber = 1; $chunkNumber < $chunkCount; $chunkNumber++) {
