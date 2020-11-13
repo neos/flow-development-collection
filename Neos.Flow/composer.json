@@ -50,7 +50,7 @@
         "composer/composer": "^1.9"
     },
     "require-dev": {
-        "vimeo/psalm": "~3.10.0"
+        "vimeo/psalm": "~4.1.1"
     },
     "replace": {
         "typo3/flow": "self.version"
