@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2020-10-27
+The following reference was automatically generated from code on 2020-11-13
 
 
 .. _`Flow Command Reference: NEOS.FLOW`:
@@ -1166,40 +1166,6 @@ Options
 
 
 
-.. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:getpath`:
-
-``neos.flow:routing:getpath``
-*****************************
-
-**Generate a route path**
-
-This command takes package, controller and action and displays the
-generated route path and the selected route:
-
-./flow routing:getPath --format json Acme.Demo\\Sub\\Package
-
-Arguments
-^^^^^^^^^
-
-``--package``
-  Package key and subpackage, subpackage parts are separated with backslashes
-
-
-
-Options
-^^^^^^^
-
-``--controller``
-  Controller name, default is 'Standard'
-``--action``
-  Action name, default is 'index'
-``--format``
-  Requested Format name default is 'html'
-
-
-
-
-
 .. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:list`:
 
 ``neos.flow:routing:list``
@@ -1215,21 +1181,23 @@ This command displays a list of all currently registered routes.
 
 
 
-.. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:routepath`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:match`:
 
-``neos.flow:routing:routepath``
-*******************************
+``neos.flow:routing:match``
+***************************
 
-**Route the given route path**
+**Match the given URI to a corresponding route**
 
-This command takes a given path and displays the detected route and
-the selected package, controller and action.
+This command takes an incoming URI and displays the
+matched Route and the mapped routing values (if any):
+
+./flow routing:match "/de" --parameters="{\"requestUriHost\": \"localhost\"}"
 
 Arguments
 ^^^^^^^^^
 
-``--path``
-  The route path to resolve
+``--uri``
+  The incoming route, absolute or relative
 
 
 
@@ -1237,7 +1205,53 @@ Options
 ^^^^^^^
 
 ``--method``
-  The request method (GET, POST, PUT, DELETE, ...) to simulate
+  The HTTP method to simulate (default is 'GET')
+``--parameters``
+  Route parameters as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
+
+
+
+
+
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:resolve`:
+
+``neos.flow:routing:resolve``
+*****************************
+
+**Build an URI for the given parameters**
+
+This command takes package, controller and action and displays the
+resolved URI and which route matched (if any):
+
+./flow routing:resolve Some.Package --controller SomeController --additional-arguments="{\"some-argument\": \"some-value\"}"
+
+Arguments
+^^^^^^^^^
+
+``--package``
+  Package key (according to "@package" route value)
+
+
+
+Options
+^^^^^^^
+
+``--controller``
+  Controller name (according to "@controller" route value), default is 'Standard'
+``--action``
+  Action name (according to "@action" route value), default is 'index'
+``--format``
+  Requested Format name (according to "@format" route value), default is 'html'
+``--subpackage``
+  SubPackage name (according to "@subpackage" route value)
+``--additional-arguments``
+  Additional route values as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
+``--parameters``
+  Route parameters as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
+``--base-uri``
+  Base URI of the simulated request, default ist 'http://localhost'
+``--force-absolute-uri``
+  Whether or not to force the creation of an absolute URI
 
 
 
