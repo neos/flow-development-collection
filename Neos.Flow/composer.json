@@ -24,7 +24,6 @@
         "neos/utility-opcodecache": "*",
         "neos/utility-schema": "*",
         "neos/utility-unicode": "*",
-        "neos/fluid-adaptor": "*",
         "neos/flow-log": "*",
         "neos/http-factories": "*",
 
@@ -60,7 +59,8 @@
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
         "neos/party": "To make use of basic user handling",
-        "php-uuid": "For fast generation of UUIDs used in the persistence."
+        "php-uuid": "For fast generation of UUIDs used in the persistence.",
+        "neos/fluid-adaptor": "For rendering templates with TYPO3.Fluid"
     },
     "autoload": {
         "psr-4": {
