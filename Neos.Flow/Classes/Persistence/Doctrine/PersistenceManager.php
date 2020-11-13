@@ -24,6 +24,7 @@ use Neos\Flow\Persistence\AbstractPersistenceManager;
 use Neos\Flow\Persistence\Exception as PersistenceException;
 use Neos\Flow\Persistence\Exception\KnownObjectException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
+use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
@@ -88,7 +89,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @throws PersistenceException
      * @api
      */
-    public function persistAll($onlyAllowedObjects = false)
+    public function persistAll(bool $onlyAllowedObjects = false): void
     {
         if ($onlyAllowedObjects) {
             $unitOfWork = $this->entityManager->getUnitOfWork();
@@ -128,7 +129,7 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @return void
      */
-    public function clearState()
+    public function clearState(): void
     {
         parent::clearState();
         $this->entityManager->clear();
@@ -141,7 +142,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return boolean true if the object is new, false if the object exists in the repository
      * @api
      */
-    public function isNewObject($object)
+    public function isNewObject($object): bool
     {
         return ($this->entityManager->getUnitOfWork()->getEntityState($object, UnitOfWork::STATE_NEW) === UnitOfWork::STATE_NEW);
     }
@@ -182,14 +183,14 @@ class PersistenceManager extends AbstractPersistenceManager
      * backend. Otherwise NULL is returned.
      *
      * @param mixed $identifier
-     * @param string $objectType
+     * @param string|null $objectType
      * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
      * @return object The object for the identifier if it is known, or NULL
      * @throws \RuntimeException
      * @throws ORMException
      * @api
      */
-    public function getObjectByIdentifier($identifier, $objectType = null, $useLazyLoading = false)
+    public function getObjectByIdentifier($identifier, string $objectType = null, bool $useLazyLoading = false)
     {
         if ($objectType === null) {
             throw new \RuntimeException('Using only the identifier is not supported by Doctrine 2. Give classname as well or use repository to query identifier.', 1296646103);
@@ -210,7 +211,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @param string $type
      * @return Query
      */
-    public function createQueryForType($type)
+    public function createQueryForType(string $type): QueryInterface
     {
         return new Query($type);
     }
@@ -225,7 +226,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @throws PropertyNotAccessibleException
      * @api
      */
-    public function add($object)
+    public function add($object): void
     {
         if (!$this->isNewObject($object)) {
             throw new KnownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
@@ -245,7 +246,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return void
      * @api
      */
-    public function remove($object)
+    public function remove($object): void
     {
         $this->entityManager->remove($object);
     }
@@ -260,7 +261,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @throws PropertyNotAccessibleException
      * @api
      */
-    public function update($object)
+    public function update($object): void
     {
         if ($this->isNewObject($object)) {
             throw new UnknownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->update() is not a previously persisted object. Check the code which updates this entity and make sure that only objects are updated which were persisted before. Alternatively use add() for persisting new objects."', 1313663277);
@@ -279,7 +280,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return boolean true, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
-    public function isConnected()
+    public function isConnected(): bool
     {
         return $this->entityManager->getConnection()->isConnected();
     }
@@ -351,7 +352,7 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @return boolean
      */
-    public function hasUnpersistedChanges()
+    public function hasUnpersistedChanges(): bool
     {
         $unitOfWork = $this->entityManager->getUnitOfWork();
         $unitOfWork->computeChangeSets();

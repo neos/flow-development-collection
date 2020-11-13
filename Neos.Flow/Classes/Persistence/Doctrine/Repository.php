@@ -11,14 +11,19 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\TransactionRequiredException;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\RepositoryInterface;
 
@@ -57,7 +62,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Initializes a new Repository.
      *
      * @param EntityManagerInterface $entityManager The EntityManager to use.
-     * @param ClassMetadata $classMetadata The class descriptor.
+     * @param ClassMetadata|null $classMetadata The class descriptor.
      */
     public function __construct(EntityManagerInterface $entityManager, ClassMetadata $classMetadata = null)
     {
@@ -79,7 +84,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @return string
      * @api
      */
-    public function getEntityClassName()
+    public function getEntityClassName(): string
     {
         return $this->objectType;
     }
@@ -90,9 +95,10 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @param object $object The object to add
      * @return void
      * @throws IllegalObjectTypeException
+     * @throws ORMException
      * @api
      */
-    public function add($object)
+    public function add($object): void
     {
         if (!is_object($object) || !($object instanceof $this->objectType)) {
             $type = (is_object($object) ? get_class($object) : gettype($object));
@@ -107,9 +113,10 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @param object $object The object to remove
      * @return void
      * @throws IllegalObjectTypeException
+     * @throws ORMException
      * @api
      */
-    public function remove($object)
+    public function remove($object): void
     {
         if (!is_object($object) || !($object instanceof $this->objectType)) {
             $type = (is_object($object) ? get_class($object) : gettype($object));
@@ -124,7 +131,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @return QueryResultInterface The query result
      * @api
      */
-    public function findAll()
+    public function findAll(): QueryResultInterface
     {
         return $this->createQuery()->execute();
     }
@@ -134,7 +141,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      *
      * @return IterableResult
      */
-    public function findAllIterator()
+    public function findAllIterator(): IterableResult
     {
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -150,17 +157,17 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * This method is useful for batch processing a huge result set.
      *
      * @param IterableResult $iterator
-     * @param callable $callback
+     * @param callable|null $callback
      * @return \Generator
      */
-    public function iterate(IterableResult $iterator, callable $callback = null)
+    public function iterate(IterableResult $iterator, callable $callback = null): ?\Generator
     {
         $iteration = 0;
         foreach ($iterator as $object) {
             $object = current($object);
             yield $object;
             if ($callback !== null) {
-                call_user_func($callback, $iteration, $object);
+                $callback($iteration, $object);
             }
 
             $iteration++;
@@ -172,6 +179,9 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      *
      * @param mixed $identifier The identifier of the object to find
      * @return object The matching object if found, otherwise NULL
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws TransactionRequiredException
      * @api
      */
     public function findByIdentifier($identifier)
@@ -185,7 +195,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @return Query
      * @api
      */
-    public function createQuery()
+    public function createQuery(): QueryInterface
     {
         $query = new Query($this->objectType);
         if ($this->defaultOrderings) {
@@ -200,7 +210,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @param string $dqlString The query string
      * @return \Doctrine\ORM\Query The DQL query object
      */
-    public function createDqlQuery($dqlString)
+    public function createDqlQuery($dqlString): \Doctrine\ORM\Query
     {
         return $this->entityManager->createQuery($dqlString);
     }
@@ -209,9 +219,11 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Counts all objects of this repository
      *
      * @return integer
+     * @throws Exception\DatabaseConnectionException
+     * @throws Exception\DatabaseConnectionException
      * @api
      */
-    public function countAll()
+    public function countAll(): int
     {
         return $this->createQuery()->count();
     }
@@ -221,10 +233,12 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * all of them.
      *
      * @return void
-     * @api
+     * @throws IllegalObjectTypeException
+     * @throws ORMException
      * @todo maybe use DQL here, would be much more performant
+     * @api
      */
-    public function removeAll()
+    public function removeAll(): void
     {
         foreach ($this->findAll() as $object) {
             $this->remove($object);
@@ -242,7 +256,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @return void
      * @api
      */
-    public function setDefaultOrderings(array $defaultOrderings)
+    public function setDefaultOrderings(array $defaultOrderings): void
     {
         $this->defaultOrderings = $defaultOrderings;
     }
@@ -253,9 +267,10 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @param object $object The modified object
      * @return void
      * @throws IllegalObjectTypeException
+     * @throws UnknownObjectException
      * @api
      */
-    public function update($object)
+    public function update($object): void
     {
         if (!($object instanceof $this->objectType)) {
             throw new IllegalObjectTypeException('The modified object given to update() was not of the type (' . $this->objectType . ') this repository manages.', 1249479625);

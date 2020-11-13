@@ -49,7 +49,7 @@ class AccountRepository extends Repository
      * @return void
      * @throws IllegalObjectTypeException
      */
-    public function remove($object)
+    public function remove($object): void
     {
         parent::remove($object);
 
