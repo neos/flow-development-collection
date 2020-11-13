@@ -52,7 +52,7 @@
         "composer/composer": "^1.9"
     },
     "require-dev": {
-        "vimeo/psalm": "~3.10.0"
+        "vimeo/psalm": "~4.1.1"
     },
     "suggest": {
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
