@@ -3,7 +3,7 @@ Neos:
     http:
       middlewares:
         'ajaxWidget':
-          position: 'before routing'
+          position: 'after securityEntryPoint'
           middleware: 'Neos\FluidAdaptor\Core\Widget\AjaxWidgetMiddleware'
     mvc:
       view:
