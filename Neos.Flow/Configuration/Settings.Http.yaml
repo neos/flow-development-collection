@@ -26,32 +26,34 @@ Neos:
 
       # Defines the PSR-15 middlewares that a request goes through in a flow
       middlewares:
+        # The following middleware components are executed first since they influence the incoming request or outgoing response
+        'standardsCompliance':
+          position: 'start 100'
+          middleware: 'Neos\Flow\Http\Middleware\StandardsComplianceMiddleware'
         'trustedProxies':
           position: 'start'
           middleware: 'Neos\Flow\Http\Middleware\TrustedProxiesMiddleware'
+        'session':
+          position: 'start'
+          middleware: 'Neos\Flow\Http\Middleware\SessionMiddleware'
+
+        # The execution order of the following middleware components is deliberately not specified.
+        # To run a middleware before or after an existing one, you can use "position: before <name>" or "position: after <name>"
         'routing':
-          # needs to be "after trustedProxies" because AjaxWidget comes "before routing" but still needs to be after trustedProxies
-          position: 'after trustedProxies'
           middleware: 'Neos\Flow\Mvc\Routing\RoutingMiddleware'
-        'standardsCompliance':
-          position: 'after trustedProxies'
-          middleware: 'Neos\Flow\Http\Middleware\StandardsComplianceMiddleware'
         'poweredByHeader':
           middleware: 'Neos\Flow\Http\Middleware\PoweredByMiddleware'
-        'session':
-          position: '10'
-          middleware: 'Neos\Flow\Http\Middleware\SessionMiddleware'
         'flashMessages':
-          position: 'after session'
           middleware: 'Neos\Flow\Mvc\FlashMessage\FlashMessageMiddleware'
         'parseBody':
-          position: 'before dispatch'
           middleware: 'Neos\Flow\Http\Middleware\RequestBodyParsingMiddleware'
         'securityEntryPoint':
-          position: 'before dispatch'
           middleware: 'Neos\Flow\Http\Middleware\SecurityEntryPointMiddleware'
+
+        # The dispatch middleware component is usually executed at the end of the chain since it creates the Response instance
+        # that is then passed back through the chain
         'dispatch':
-          position: 'end'
+          position: 'end 100'
           middleware: 'Neos\Flow\Mvc\DispatchMiddleware'
 
       trustedProxies:
