@@ -244,20 +244,6 @@ Psr\Http\Message\ServerRequestInterface:
   factoryObjectName: Neos\Flow\Http\ActiveHttpRequestProvider
   factoryMethodName: getActiveHttpRequest
 
-Neos\Flow\Http\Component\ComponentContext:
-  arguments:
-    1:
-      object:
-        factoryMethodName: GuzzleHttp\Psr7\ServerRequest::fromGlobals
-    2:
-      object: GuzzleHttp\Psr7\Response
-
-Neos\Flow\Http\Component\ComponentChain:
-  factoryObjectName: Neos\Flow\Http\Component\ComponentChainFactory
-  arguments:
-    1:
-      setting: Neos.Flow.http.chain
-
 Neos\Flow\Http\Middleware\MiddlewaresChain:
   factoryObjectName: Neos\Flow\Http\Middleware\MiddlewaresChainFactory
   arguments:
