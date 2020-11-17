@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Http\Factories\ResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -44,9 +43,9 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
     protected $bootstrap;
 
     /**
-     * @var ComponentContext
+     * @var ServerRequestInterface
      */
-    protected $componentContext;
+    protected $httpRequest;
 
     /**
      * Constructor
@@ -94,13 +93,24 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
     }
 
     /**
+     * @param ServerRequestInterface $request
+     */
+    public function setHttpRequest(ServerRequestInterface $request): void
+    {
+        $this->httpRequest = $request;
+    }
+
+    /**
      * Returns the currently processed HTTP request
      *
      * @return ServerRequestInterface
      */
     public function getHttpRequest(): ServerRequestInterface
     {
-        return $this->getComponentContext()->getHttpRequest();
+        if ($this->httpRequest === null) {
+            $this->httpRequest = ServerRequest::fromGlobals();
+        }
+        return $this->httpRequest;
     }
 
     /**
@@ -111,34 +121,7 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
      */
     public function getHttpResponse()
     {
-        return $this->getComponentContext()->getHttpResponse();
-    }
-
-    /**
-     * Allows to set the currently processed HTTP component chain context by the base functional
-     * test case.
-     *
-     * @param ComponentContext $context
-     * @return void
-     * @see InternalRequestEngine::sendRequest()
-     */
-    public function setComponentContext(ComponentContext $context)
-    {
-        $this->componentContext = $context;
-    }
-
-    /**
-     * Internal getter to ensure an existing ComponentContext.
-     *
-     * @return ComponentContext
-     */
-    public function getComponentContext(): ComponentContext
-    {
-        // FIXME: Use PSR-15 factories
-        if ($this->componentContext === null) {
-            $responseFactory = new ResponseFactory();
-            $this->componentContext = new ComponentContext(ServerRequest::fromGlobals(), $responseFactory->createResponse());
-        }
-        return $this->componentContext;
+        $responseFactory = new ResponseFactory();
+        return $responseFactory->createResponse();
     }
 }

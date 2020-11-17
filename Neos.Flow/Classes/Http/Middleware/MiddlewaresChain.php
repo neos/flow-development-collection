@@ -13,69 +13,48 @@ namespace Neos\Flow\Http\Middleware;
 * source code.
 */
 
-use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class MiddlewaresChain implements MiddlewareInterface, RequestHandlerInterface
+final class MiddlewaresChain implements RequestHandlerInterface
 {
     /**
      * @var MiddlewareInterface[]
      */
-    protected $chain;
+    private $chain;
 
     /**
-     * @var string
+     * @var \Closure[]
      */
-    protected $name;
+    private $stepCallbacks = [];
 
-    /**
-     * @param string $name
-     * @param MiddlewareInterface[] $middlewaresChain
-     */
-    public function __construct($name = 'default', array $middlewaresChain = [])
+    public function __construct(array $middlewaresChain)
     {
-        array_walk($middlewaresChain, static function ($middleware) use ($name) {
+        array_walk($middlewaresChain, static function ($middleware) {
             if (!$middleware instanceof MiddlewareInterface) {
-                throw new Exception(sprintf('Invalid element "%s" in middleware chain "%s".', is_object($middleware) ? get_class($middleware) : gettype($middleware), $name));
+                throw new Exception(sprintf('Invalid element "%s" in middleware chain. Must implement %s.', is_object($middleware) ? get_class($middleware) : gettype($middleware), MiddlewareInterface::class));
             }
         });
-        $this->name = $name;
         $this->chain = $middlewaresChain;
     }
 
     /**
-     * @param MiddlewareInterface $middleware
-     */
-    public function append(MiddlewareInterface $middleware)
-    {
-        array_push($this->chain, $middleware);
-    }
-
-    /**
-     * @param MiddlewareInterface $middleware
-     */
-    public function prepend(MiddlewareInterface $middleware)
-    {
-        array_unshift($this->chain, $middleware);
-    }
-
-    /**
-     * The PSR-15 middleware implementation method
+     * Register a callback that is invoked whenever a middleware component is about to be processed
      *
-     * @inheritDoc
+     * Usage:
+     *
+     * $middlewaresChain->onStep(function(ServerRequestInterface $request) {
+     *   // $request contains the latest instance of the server request
+     * });
+     *
+     * @param \Closure $callback
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function onStep(\Closure $callback): void
     {
-        if (count($this->chain) === 0) {
-            return $handler->handle($request);
-        }
-
-        $middleware = array_shift($this->chain);
-        return $middleware->process($request, $handler);
+        $this->stepCallbacks[] = $callback;
     }
 
     /**
@@ -88,7 +67,10 @@ class MiddlewaresChain implements MiddlewareInterface, RequestHandlerInterface
         if (count($this->chain) === 0) {
             return new Response();
         }
-
-        return $this->process($request, $this);
+        foreach ($this->stepCallbacks as $callback) {
+            $callback($request);
+        }
+        $middleware = array_shift($this->chain);
+        return $middleware->process($request, $this);
     }
 }
