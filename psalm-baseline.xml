@@ -1828,6 +1828,9 @@
     </PossiblyUndefinedArrayOffset>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/PersistenceManager.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$objectType</code>
+    </ArgumentTypeCoercion>
     <NullableReturnStatement occurrences="2">
       <code>$this-&gt;entityManager-&gt;find($objectType, $identifier)</code>
       <code>$this-&gt;entityManager-&gt;getReference($objectType, $identifier)</code>
@@ -1861,8 +1864,9 @@
     </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Repository.php">
-    <ArgumentTypeCoercion occurrences="1">
+    <ArgumentTypeCoercion occurrences="2">
       <code>$classMetadata</code>
+      <code>$this-&gt;objectType</code>
     </ArgumentTypeCoercion>
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>QueryResultInterface</code>
