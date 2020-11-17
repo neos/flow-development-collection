@@ -7,8 +7,6 @@ Neos:
         commandReferences:
           - 'Flow:FlowCommands'
         references:
-          - 'TYPO3Fluid:ViewHelpers'
-          - 'Flow:FluidAdaptorViewHelpers'
           - 'Flow:FlowValidators'
           - 'Flow:FlowSignals'
           - 'Flow:FlowTypeConverters'
@@ -20,34 +18,11 @@ Neos:
         packageKeys:
           - 'Neos.Flow'
           - 'Neos.Party'
-          - 'Neos.FluidAdaptor'
           - 'Neos.Kickstart'
           - 'Neos.Welcome'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/CommandReference.rst'
 
     references:
-      'TYPO3Fluid:ViewHelpers':
-        title: 'TYPO3 Fluid ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/TYPO3FluidViewHelperReference.rst'
-        affectedClasses:
-          parentClassName: TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
-          classNamePattern: '/^TYPO3Fluid\\Fluid\\ViewHelpers\\.*$/i'
-        parser:
-          implementationClassName: Neos\DocTools\Domain\Service\FluidViewHelperClassParser
-          options:
-            namespaces:
-              f: TYPO3Fluid\Fluid\ViewHelpers
-      'Flow:FluidAdaptorViewHelpers':
-        title: 'FluidAdaptor ViewHelper Reference'
-        savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/FluidAdaptorViewHelperReference.rst'
-        affectedClasses:
-          parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
-          classNamePattern: '/^Neos\\FluidAdaptor\\ViewHelpers\\.*$/i'
-        parser:
-          implementationClassName: 'Neos\DocTools\Domain\Service\FluidViewHelperClassParser'
-          options:
-            namespaces:
-              f: 'Neos\FluidAdaptor\ViewHelpers'
       'Flow:FlowValidators':
         title: 'Flow Validator Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/ValidatorReference.rst'

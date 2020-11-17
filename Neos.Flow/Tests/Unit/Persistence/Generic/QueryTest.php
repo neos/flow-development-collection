@@ -60,28 +60,10 @@ class QueryTest extends UnitTestCase
     /**
      * @test
      */
-    public function setLimitAcceptsOnlyIntegers()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->query->setLimit(1.5);
-    }
-
-    /**
-     * @test
-     */
     public function setLimitRejectsIntegersLessThanOne()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->query->setLimit(0);
-    }
-
-    /**
-     * @test
-     */
-    public function setOffsetAcceptsOnlyIntegers()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->query->setOffset(1.5);
     }
 
     /**

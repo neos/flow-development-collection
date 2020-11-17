@@ -3,7 +3,7 @@
 Flow Validator Reference
 ========================
 
-This reference was automatically generated from code on 2020-10-27
+This reference was automatically generated from code on 2020-11-13
 
 
 .. _`Flow Validator Reference: AggregateBoundaryValidator`:
@@ -217,6 +217,15 @@ Validator for email addresses
 Checks if the given value is a valid email address.
 
 .. note:: A value of NULL or an empty string ('') is considered valid
+
+
+
+Arguments
+*********
+
+* ``strict`` (bool, *optional*): Whether to fail validation on RFC warnings
+
+* ``checkDns`` (bool, *optional*): Whether to use DNS checks
 
 
 
