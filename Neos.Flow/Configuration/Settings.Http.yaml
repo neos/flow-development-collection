@@ -31,10 +31,10 @@ Neos:
           position: 'start 100'
           middleware: 'Neos\Flow\Http\Middleware\StandardsComplianceMiddleware'
         'trustedProxies':
-          position: 'start'
+          position: 'start 50'
           middleware: 'Neos\Flow\Http\Middleware\TrustedProxiesMiddleware'
         'session':
-          position: 'start'
+          position: 'start 10'
           middleware: 'Neos\Flow\Http\Middleware\SessionMiddleware'
 
         # The execution order of the following middleware components is deliberately not specified.
