@@ -103,7 +103,7 @@ class AbstractViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     * @expectedException \TYPO3Fluid\Fluid\Core\ViewHelper\Exception
      */
     public function registeringTheSameArgumentNameAgainThrowsException()
     {
@@ -143,7 +143,7 @@ class AbstractViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     * @expectedException \TYPO3Fluid\Fluid\Core\ViewHelper\Exception
      */
     public function overrideArgumentThrowsExceptionWhenTryingToOverwriteAnNonexistingArgument()
     {

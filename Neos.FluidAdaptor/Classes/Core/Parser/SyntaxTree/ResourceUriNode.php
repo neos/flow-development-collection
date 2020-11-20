@@ -49,6 +49,8 @@ class ResourceUriNode extends ViewHelperNode
         $this->uninitializedViewHelper = $this->viewHelperResolver->createViewHelperInstanceFromClassName($this->viewHelperClassName);
         $this->uninitializedViewHelper->setViewHelperNode($this);
         $this->argumentDefinitions = $this->viewHelperResolver->getArgumentDefinitionsForViewHelper($this->uninitializedViewHelper);
+        $this->rewriteBooleanNodesInArgumentsObjectTree($this->argumentDefinitions, $this->arguments);
+        $this->validateArguments($this->argumentDefinitions, $this->arguments);
     }
 
     /**
