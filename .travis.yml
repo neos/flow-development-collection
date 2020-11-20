@@ -7,6 +7,10 @@ branches:
 jobs:
   fast_finish: true
   include:
+    - php: 7.1.
+      env: DB=mysql COMPOSER_ARGS=--prefer-lowest
+      addons:
+        mariadb: '10.2'
     - php: 7.1
       env: DB=mysql
       addons:
@@ -68,9 +72,9 @@ before_install:
 install:
   - composer self-update --2 -q
   - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
-  - composer update --no-progress --no-interaction
+  - composer update --no-progress --no-interaction ${COMPOSER_ARGS}
   - php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
-  - composer update --no-progress --no-interaction
+  - composer update --no-progress --no-interaction ${COMPOSER_ARGS}
 before_script:
   - echo 'date.timezone = "Africa/Tunis"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - echo 'opcache.fast_shutdown = 0' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
