@@ -148,6 +148,52 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
     }
 
     /**
+     * Register a new argument. Call this method from your ViewHelper subclass
+     * inside the initializeArguments() method.
+     *
+     * @param string $name Name of the argument
+     * @param string $type Type of the argument
+     * @param string $description Description of the argument
+     * @param boolean $required If true, argument is required. Defaults to false.
+     * @param mixed $defaultValue Default value of argument
+     * @param boolean|null $escape Can be toggled to TRUE to force escaping of variables and inline syntax passed as argument value.
+     * @return FluidAbstractViewHelper $this, to allow chaining.
+     * @throws Exception
+     * @api
+     */
+    protected function registerArgument($name, $type, $description, $required = false, $defaultValue = null, $escape = null)
+    {
+        if (array_key_exists($name, $this->argumentDefinitions)) {
+            throw new Exception('Argument "' . $name . '" has already been defined, thus it should not be defined again.', 1253036401);
+        }
+        return parent::registerArgument($name, $type, $description, $required, $defaultValue, $escape);
+    }
+
+    /**
+     * Overrides a registered argument. Call this method from your ViewHelper subclass
+     * inside the initializeArguments() method if you want to override a previously registered argument.
+     *
+     * @see registerArgument()
+     *
+     * @param string $name Name of the argument
+     * @param string $type Type of the argument
+     * @param string $description Description of the argument
+     * @param boolean $required If true, argument is required. Defaults to false.
+     * @param mixed $defaultValue Default value of argument
+     * @param boolean|null $escape Can be toggled to TRUE to force escaping of variables and inline syntax passed as argument value.
+     * @return FluidAbstractViewHelper $this, to allow chaining.
+     * @throws Exception
+     * @api
+     */
+    protected function overrideArgument($name, $type, $description, $required = false, $defaultValue = null, $escape = null)
+    {
+        if (!array_key_exists($name, $this->argumentDefinitions)) {
+            throw new Exception('Argument "' . $name . '" has not been defined, thus it can\'t be overridden.', 1279212461);
+        }
+        return parent::overrideArgument($name, $type, $description, $required, $defaultValue, $escape);
+    }
+
+    /**
      * Registers render method arguments
      *
      * @return void
