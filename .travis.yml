@@ -7,10 +7,10 @@ branches:
 jobs:
   fast_finish: true
   include:
-    - php: 7.1.
+    - php: 7.1
       env: DB=mysql COMPOSER_ARGS=--prefer-lowest
       addons:
-        mariadb: '10.2'
+        mariadb: '10.2.2'
     - php: 7.1
       env: DB=mysql
       addons:
