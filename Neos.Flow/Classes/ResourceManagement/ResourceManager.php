@@ -328,9 +328,9 @@ class ResourceManager
 
         $collectionName = $resource->getCollectionName();
 
-        $result = $this->resourceRepository->findBySha1AndCollectionName($resource->getSha1(), $collectionName);
-        if (count($result) > 1) {
-            $this->logger->debug(sprintf('Not removing storage data of resource %s (%s) because it is still in use by %s other PersistentResource object(s).', $resource->getFilename(), $resource->getSha1(), count($result) - 1));
+        $result = $this->resourceRepository->countBySha1AndCollectionName($resource->getSha1(), $collectionName);
+        if ($result > 1) {
+            $this->logger->debug(sprintf('Not removing storage data of resource %s (%s) because it is still in use by %s other PersistentResource object(s).', $resource->getFilename(), $resource->getSha1(), $result - 1));
         } else {
             if (!isset($this->collections[$collectionName])) {
                 $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s) because it refers to the unknown collection "%s".', $resource->getFilename(), $resource->getSha1(), $collectionName), LogEnvironment::fromMethodName(__METHOD__));
