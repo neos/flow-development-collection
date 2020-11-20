@@ -156,17 +156,16 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
      * @param string $description Description of the argument
      * @param boolean $required If true, argument is required. Defaults to false.
      * @param mixed $defaultValue Default value of argument
-     * @param boolean|null $escape Can be toggled to TRUE to force escaping of variables and inline syntax passed as argument value.
      * @return FluidAbstractViewHelper $this, to allow chaining.
      * @throws Exception
      * @api
      */
-    protected function registerArgument($name, $type, $description, $required = false, $defaultValue = null, $escape = null)
+    protected function registerArgument($name, $type, $description, $required = false, $defaultValue = null)
     {
         if (array_key_exists($name, $this->argumentDefinitions)) {
             throw new Exception('Argument "' . $name . '" has already been defined, thus it should not be defined again.', 1253036401);
         }
-        return parent::registerArgument($name, $type, $description, $required, $defaultValue, $escape);
+        return parent::registerArgument($name, $type, $description, $required, $defaultValue);
     }
 
     /**
@@ -180,17 +179,16 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
      * @param string $description Description of the argument
      * @param boolean $required If true, argument is required. Defaults to false.
      * @param mixed $defaultValue Default value of argument
-     * @param boolean|null $escape Can be toggled to TRUE to force escaping of variables and inline syntax passed as argument value.
      * @return FluidAbstractViewHelper $this, to allow chaining.
      * @throws Exception
      * @api
      */
-    protected function overrideArgument($name, $type, $description, $required = false, $defaultValue = null, $escape = null)
+    protected function overrideArgument($name, $type, $description, $required = false, $defaultValue = null)
     {
         if (!array_key_exists($name, $this->argumentDefinitions)) {
             throw new Exception('Argument "' . $name . '" has not been defined, thus it can\'t be overridden.', 1279212461);
         }
-        return parent::overrideArgument($name, $type, $description, $required, $defaultValue, $escape);
+        return parent::overrideArgument($name, $type, $description, $required, $defaultValue);
     }
 
     /**
