@@ -713,7 +713,10 @@ class Context
                             get_class($sessionToken),
                             $sessionToken->getAuthenticationProviderName(),
                             $this->tokenStatusLabels[$sessionToken->getAuthenticationStatus()]
-                        ), LOG_INFO, null, 'Flow'
+                        ),
+                        LOG_INFO,
+                        null,
+                        'Flow'
                     );
 
                     $resultTokens[$sessionToken->getAuthenticationProviderName()] = $sessionToken;

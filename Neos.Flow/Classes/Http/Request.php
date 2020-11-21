@@ -692,7 +692,8 @@ class Request extends BaseRequest implements ServerRequestInterface
             function ($acceptType) {
                 $typeAndQuality = preg_split('/;\s*q=/', $acceptType);
                 return [$typeAndQuality[0], (isset($typeAndQuality[1]) ? (float)$typeAndQuality[1] : '')];
-            }, preg_split('/,\s*/', $rawValues)
+            },
+            preg_split('/,\s*/', $rawValues)
         );
 
         $flattenedAcceptedTypes = [];

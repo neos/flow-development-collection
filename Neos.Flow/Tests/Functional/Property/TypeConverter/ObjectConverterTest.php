@@ -45,7 +45,8 @@ class ObjectConverterTest extends FunctionalTestCase
             ->setTypeConverterOption(
                 ObjectConverter::class,
                 ObjectConverter::CONFIGURATION_TARGET_TYPE,
-                $expectedTargetType);
+                $expectedTargetType
+            );
 
         $actual = $this->converter->getTypeOfChildProperty('irrelevant', $propertyName, $configuration);
         $this->assertEquals($expectedTargetType, $actual);
