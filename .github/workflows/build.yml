@@ -17,7 +17,7 @@ jobs:
           MYSQL_USER: neos
           MYSQL_PASSWORD: neos
           MYSQL_DATABASE: flow_functional_testing
-          MYSQL_ROOT_PASSWORD: ""
+          MYSQL_ROOT_PASSWORD: neos
         ports:
           - 3306/tcp
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -27,6 +27,7 @@ jobs:
         working-directory: ../flow-development-distribution
 
     strategy:
+      fail-fast: false
       matrix:
         php-versions: ['7.3', '7.4']
 
