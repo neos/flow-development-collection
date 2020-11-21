@@ -45,9 +45,6 @@ jobs:
         coverage: xdebug #optional
         ini-values: opcache.fast_shutdown=0
 
-    - name: Start database service
-      run: sudo /etc/init.d/mysql start
-
     - name: Checkout development distribution
       run: |
         cd ..
