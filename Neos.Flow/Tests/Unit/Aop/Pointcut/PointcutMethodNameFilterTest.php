@@ -92,9 +92,9 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects($this->exactly(3))->method('getMethodParameters')->will($this->onConsecutiveCalls(
-                ['arg1' => []],
-                ['arg1' => [], 'arg2' => []],
-                ['arg1' => [], 'arg2' => [], 'arg3' => []]
+            ['arg1' => []],
+            ['arg1' => [], 'arg2' => []],
+            ['arg1' => [], 'arg2' => [], 'arg3' => []]
         ));
 
         $mockSystemLogger = $this->getMockBuilder(\Neos\Flow\Log\Logger::class)->setMethods(['log'])->getMock();

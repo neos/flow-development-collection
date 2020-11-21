@@ -75,8 +75,10 @@ class FileAdapter
     public function getTargetBySource($source, $pluralFormIndex = 0)
     {
         if (empty($this->fileData['translationUnits'])) {
-            $this->i18nLogger->log(sprintf('No trans-unit elements were found in "%s". This is allowed per specification, but no translation can be applied then.', $this->fileData['fileIdentifier']),
-                LOG_DEBUG);
+            $this->i18nLogger->log(
+                sprintf('No trans-unit elements were found in "%s". This is allowed per specification, but no translation can be applied then.', $this->fileData['fileIdentifier']),
+                LOG_DEBUG
+            );
 
             return false;
         }
@@ -87,8 +89,10 @@ class FileAdapter
             }
 
             if (count($translationUnit) <= $pluralFormIndex) {
-                $this->i18nLogger->log('The plural form index "' . $pluralFormIndex . '" for the source translation "' . $source . '"  in ' . $this->fileData['fileIdentifier'] . ' is not available.',
-                    LOG_DEBUG);
+                $this->i18nLogger->log(
+                    'The plural form index "' . $pluralFormIndex . '" for the source translation "' . $source . '"  in ' . $this->fileData['fileIdentifier'] . ' is not available.',
+                    LOG_DEBUG
+                );
 
                 return false;
             }
@@ -111,22 +115,28 @@ class FileAdapter
     public function getTargetByTransUnitId($transUnitId, $pluralFormIndex = 0)
     {
         if (!isset($this->fileData['translationUnits'][$transUnitId])) {
-            $this->i18nLogger->log('No trans-unit element with the id "' . $transUnitId . '" was found in ' . $this->fileData['fileIdentifier'] . '. Either this translation has been removed or the id in the code or template referring to the translation is wrong.',
-                LOG_DEBUG);
+            $this->i18nLogger->log(
+                'No trans-unit element with the id "' . $transUnitId . '" was found in ' . $this->fileData['fileIdentifier'] . '. Either this translation has been removed or the id in the code or template referring to the translation is wrong.',
+                LOG_DEBUG
+            );
 
             return false;
         }
 
         if (!isset($this->fileData['translationUnits'][$transUnitId][$pluralFormIndex])) {
-            $this->i18nLogger->log('The plural form index "' . $pluralFormIndex . '" for the trans-unit element with the id "' . $transUnitId . '" in ' . $this->fileData['fileIdentifier'] . ' is not available.',
-                LOG_DEBUG);
+            $this->i18nLogger->log(
+                'The plural form index "' . $pluralFormIndex . '" for the trans-unit element with the id "' . $transUnitId . '" in ' . $this->fileData['fileIdentifier'] . ' is not available.',
+                LOG_DEBUG
+            );
 
             return false;
         }
 
         if (!isset($this->fileData['translationUnits'][$transUnitId][$pluralFormIndex]['target'])) {
-            $this->i18nLogger->log('The target translation was empty for the trans-unit element with the id "' . $transUnitId . '" and the plural form index "' . $pluralFormIndex . '" in ' . $this->fileData['fileIdentifier'],
-                LOG_DEBUG);
+            $this->i18nLogger->log(
+                'The target translation was empty for the trans-unit element with the id "' . $transUnitId . '" and the plural form index "' . $pluralFormIndex . '" in ' . $this->fileData['fileIdentifier'],
+                LOG_DEBUG
+            );
 
             return false;
         }
