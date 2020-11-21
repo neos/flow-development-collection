@@ -47,9 +47,7 @@ jobs:
 
     - name: Checkout development distribution
       run: |
-        cd ..
-        git clone https://github.com/neos/flow-development-distribution.git -b ${NEOS_TARGET_VERSION}
-        cd flow-development-distribution
+        git clone https://github.com/neos/flow-development-distribution.git -b ${NEOS_TARGET_VERSION} ../flow-development-distribution
 
     - name: Validate composer.json and composer.lock
       run: composer validate
@@ -73,6 +71,7 @@ jobs:
 
     - name: Setup configuration
       run: |
+        cd ../flow-development-distribution
         rm -f Configuration/Routes.yaml
         cp Configuration/Settings.yaml.example Configuration/Settings.yaml
         cat <<EOF > Configuration/Settings.yaml
@@ -89,11 +88,16 @@ jobs:
         cp Configuration/Settings.yaml Configuration/Testing/
 
     - name: Run unit tests
-      run: composer test-unit
+      run: |
+        cd ../flow-development-distribution
+        composer test-unit
     - name: Run functional tests
-      run: composer test-func
+      run: |
+        cd ../flow-development-distribution
+        composer test-func
     - name: Run behat tests
       #if: env.BEHAT == true
       run: |
+        cd ../flow-development-distribution
         FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
         bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
