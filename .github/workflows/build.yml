@@ -1,0 +1,101 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.2
+        env:
+          MYSQL_USER: neos
+          MYSQL_PASSWORD: neos
+          MYSQL_DATABASE: flow_functional_testing
+          MYSQL_ROOT_PASSWORD: ""
+        ports:
+          - 3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    defaults:
+      run:
+        working-directory: ../flow-development-distribution
+
+    strategy:
+      matrix:
+        php-versions: ['7.3', '7.4']
+
+    name: PHP ${{ matrix.php-versions }} Test
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql
+        coverage: xdebug #optional
+        ini-values: opcache.fast_shutdown=0
+
+    - name: Start database service
+      run: sudo /etc/init.d/mysql start
+
+    - name: Checkout development distribution
+      run: |
+        cd ..
+        git clone https://github.com/neos/flow-development-distribution.git -b ${NEOS_TARGET_VERSION}
+        cd flow-development-distribution
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: ../flow-development-distribution
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      if: steps.composer-cache.outputs.cache-hit != 'true'
+      run: |
+        cd ../flow-development-distribution
+        composer update --prefer-dist --no-progress --no-suggest --no-interaction
+        php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
+        composer update --no-progress --no-interaction ${COMPOSER_ARGS}
+
+    - name: Setup configuration
+      run: |
+        rm -f Configuration/Routes.yaml
+        cp Configuration/Settings.yaml.example Configuration/Settings.yaml
+        cat <<EOF > Configuration/Settings.yaml
+        Neos:
+          Flow:
+            persistence:
+              backendOptions:
+                host: '127.0.0.1'
+                driver: pdo_mysql
+                user: 'neos'
+                password: 'neos'
+                dbname: 'flow_functional_testing'
+        EOF
+        cp Configuration/Settings.yaml Configuration/Testing/
+
+    - name: Run unit tests
+      run: composer test-unit
+    - name: Run functional tests
+      run: composer test-func
+    - name: Run behat tests
+      #if: env.BEHAT == true
+      run: |
+        FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
+        bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
