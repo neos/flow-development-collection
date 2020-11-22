@@ -25,6 +25,7 @@ jobs:
     env:
       NEOS_TARGET_VERSION: ${{ github.base_ref }}
       NEOS_TARGET_REPOSITORY: ${{ github.repository }}
+      FLOW_CONTEXT: Testing
       FLOW_FOLDER: ../flow-development-distribution
 
     strategy:
@@ -34,18 +35,20 @@ jobs:
         composer-arguments: [''] # to run --prefer-lowest in a single included strategy
         static-analysis: ['no']
         include:
-          - php-version: '7.3'
+          - php-versions: '7.3'
             composer-arguments: ''
             static-analysis: 'psalm'
           - php-versions: '7.3'
             composer-arguments: '--prefer-lowest'
             static-analysis: 'no'
 
-    name: "PHP ${{ matrix.php-versions }} Test (static: ${{ matrix.static-analysis }})"
+    name: "PHP ${{ matrix.php-versions }} Test (static: ${{ matrix.static-analysis }} ${{ matrix.composer-arguments }})"
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+      with:
+        path: '.'
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -55,15 +58,12 @@ jobs:
         coverage: xdebug #optional
         ini-values: opcache.fast_shutdown=0
 
-    - name: Base ref is ${{ github.base_ref }}
-      run: echo "Base ref is ${{ github.base_ref }}"
-
     - name: Checkout development distribution
       uses: actions/checkout@v2
       with:
         repository: neos/flow-development-distribution
-        ref: ${FLOW_TARGET_VERSION}
-        path: ${FLOW_FOLDER}
+        ref: ${{ env.FLOW_TARGET_VERSION }}
+        path: ${{ env.FLOW_FOLDER }}
 
     - name: Show folders
       run: |
@@ -84,7 +84,7 @@ jobs:
       id: composer-cache
       uses: actions/cache@v2
       with:
-        path: ${FLOW_FOLDER}
+        path: ${{ env.FLOW_FOLDER }}
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
         restore-keys: |
           ${{ runner.os }}-php-
