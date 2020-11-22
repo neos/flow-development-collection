@@ -22,6 +22,10 @@ jobs:
           - 3306/tcp
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
+    env:
+      FLOW_TARGET_VERSION: master
+      FLOW_FOLDER: ../flow-development-distribution
+
     strategy:
       fail-fast: false
       matrix:
@@ -41,9 +45,12 @@ jobs:
         coverage: xdebug #optional
         ini-values: opcache.fast_shutdown=0
 
+    - run: |
+        echo "Base ref is $GITHUB_BASE_REF"
+
     - name: Checkout development distribution
       run: |
-        git clone https://github.com/neos/flow-development-distribution.git -b ${NEOS_TARGET_VERSION} ../flow-development-distribution
+        git clone https://github.com/neos/flow-development-distribution.git -b ${FLOW_TARGET_VERSION} ${FLOW_FOLDER}
 
     - name: Validate composer.json and composer.lock
       run: composer validate
@@ -52,7 +59,7 @@ jobs:
       id: composer-cache
       uses: actions/cache@v2
       with:
-        path: ../flow-development-distribution
+        path: ${FLOW_FOLDER}
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
         restore-keys: |
           ${{ runner.os }}-php-
@@ -60,14 +67,14 @@ jobs:
     - name: Install dependencies
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: |
-        cd ../flow-development-distribution
+        cd ${FLOW_FOLDER}
         composer update --prefer-dist --no-progress --no-suggest --no-interaction
         php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
         composer update --no-progress --no-interaction ${COMPOSER_ARGS}
 
     - name: Setup configuration
       run: |
-        cd ../flow-development-distribution
+        cd ${FLOW_FOLDER}
         rm -f Configuration/Routes.yaml
         cp Configuration/Settings.yaml.example Configuration/Settings.yaml
         cat <<EOF > Configuration/Settings.yaml
@@ -85,15 +92,15 @@ jobs:
 
     - name: Run unit tests
       run: |
-        cd ../flow-development-distribution
+        cd ${FLOW_FOLDER}
         composer test-unit
     - name: Run functional tests
       run: |
-        cd ../flow-development-distribution
+        cd ${FLOW_FOLDER}
         composer test-func
     - name: Run behat tests
       #if: env.BEHAT == true
       run: |
-        cd ../flow-development-distribution
+        cd ${FLOW_FOLDER}
         FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
         bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
