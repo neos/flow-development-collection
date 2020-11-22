@@ -26,7 +26,12 @@ jobs:
       NEOS_TARGET_VERSION: ${{ github.base_ref }}
       NEOS_TARGET_REPOSITORY: ${{ github.repository }}
       FLOW_CONTEXT: Testing
-      FLOW_FOLDER: ../flow-development-distribution
+      FLOW_DIST_FOLDER: flow-development-distribution
+      FLOW_FOLDER: flow-development-collection
+
+    defaults:
+      run:
+        working-directory: ${FLOW_DIST_FOLDER}
 
     strategy:
       fail-fast: false
@@ -48,7 +53,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       with:
-        path: '.'
+        path: ${{ env.FLOW_FOLDER }}
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -63,28 +68,27 @@ jobs:
       with:
         repository: neos/flow-development-distribution
         ref: ${{ env.FLOW_TARGET_VERSION }}
-        path: ${{ env.FLOW_FOLDER }}
+        path: ${{ env.FLOW_DIST_FOLDER }}
 
     - name: Show folders
       run: |
         ls -la .
         ls -la ..
-        ls -la ${FLOW_FOLDER}
+        ls -la ../${FLOW_FOLDER}
 
     - name: Validate composer.json and composer.lock
       run: composer validate
 
     - name: Update composer.json
       run: |
-        cd ${FLOW_FOLDER}
-        composer config repositories.flow path ../flow-development-collection
+        composer config repositories.flow path ../${{ env.FLOW_FOLDER }}
         composer require ${{ github.repository }}:* --no-update
 
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v2
       with:
-        path: ${{ env.FLOW_FOLDER }}
+        path: ${{ env.FLOW_DIST_FOLDER }}
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
         restore-keys: |
           ${{ runner.os }}-php-
@@ -92,12 +96,10 @@ jobs:
     - name: Install dependencies
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: |
-        cd ${FLOW_FOLDER}
         composer update --no-progress --no-interaction ${{ matrix.composer-arguments }}
 
     - name: Setup Flow configuration
       run: |
-        cd ${FLOW_FOLDER}
         rm -f Configuration/Routes.yaml
         cp Configuration/Settings.yaml.example Configuration/Settings.yaml
         cat <<EOF > Configuration/Settings.yaml
@@ -115,23 +117,19 @@ jobs:
 
     - name: Static analysis
       if: matrix.static-analysis == 'psalm'
-      run: |
-        cd ${FLOW_FOLDER}
-        composer test-static
+      run: composer test-static
+
     - name: Run unit tests
       if: matrix.static-analysis == 'no'
-      run: |
-        cd ${FLOW_FOLDER}
-        composer test-unit
+      run: composer test-unit
+
     - name: Run functional tests
       if: matrix.static-analysis == 'no'
-      run: |
-        cd ${FLOW_FOLDER}
-        composer test-func
+      run: composer test-func
+
     - name: Run behat tests
       if: matrix.static-analysis == 'no'
       #if: env.BEHAT == true
       run: |
-        cd ${FLOW_FOLDER}
         FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
         bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
