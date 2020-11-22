@@ -23,15 +23,25 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     env:
-      FLOW_TARGET_VERSION: master
+      NEOS_TARGET_VERSION: ${{ github.base_ref }}
+      NEOS_TARGET_REPOSITORY: ${{ github.repository }}
       FLOW_FOLDER: ../flow-development-distribution
 
     strategy:
       fail-fast: false
       matrix:
         php-versions: ['7.3', '7.4']
+        composer-arguments: [''] # to run --prefer-lowest in a single included strategy
+        static-analysis: ['no']
+        include:
+          - php-version: '7.3'
+            composer-arguments: ''
+            static-analysis: 'psalm'
+          - php-versions: '7.3'
+            composer-arguments: '--prefer-lowest'
+            static-analysis: 'no'
 
-    name: PHP ${{ matrix.php-versions }} Test
+    name: "PHP ${{ matrix.php-versions }} Test (static: ${{ matrix.static-analysis }})"
 
     steps:
     - name: Checkout
@@ -45,15 +55,29 @@ jobs:
         coverage: xdebug #optional
         ini-values: opcache.fast_shutdown=0
 
-    - run: |
-        echo "Base ref is $GITHUB_BASE_REF"
+    - name: Base ref is ${{ github.base_ref }}
 
     - name: Checkout development distribution
+      uses: actions/checkout@v2
+      with:
+        repository: neos/flow-development-distribution
+        ref: ${FLOW_TARGET_VERSION}
+        path: ${FLOW_FOLDER}
+
+    - name: Show folders
       run: |
-        git clone https://github.com/neos/flow-development-distribution.git -b ${FLOW_TARGET_VERSION} ${FLOW_FOLDER}
+        ls -la .
+        ls -la ..
+        ls -la ${FLOW_FOLDER}
 
     - name: Validate composer.json and composer.lock
       run: composer validate
+
+    - name: Update composer.json
+      run: |
+        cd ${FLOW_FOLDER}
+        composer config repositories.flow path ../flow-development-collection
+        composer require ${{ github.repository }}:* --no-update
 
     - name: Cache Composer packages
       id: composer-cache
@@ -68,11 +92,9 @@ jobs:
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: |
         cd ${FLOW_FOLDER}
-        composer update --prefer-dist --no-progress --no-suggest --no-interaction
-        php Build/BuildEssentials/TravisCi/ComposerManifestUpdater.php .
-        composer update --no-progress --no-interaction ${COMPOSER_ARGS}
+        composer update --no-progress --no-interaction ${{ matrix.composer-arguments }}
 
-    - name: Setup configuration
+    - name: Setup Flow configuration
       run: |
         cd ${FLOW_FOLDER}
         rm -f Configuration/Routes.yaml
@@ -90,15 +112,23 @@ jobs:
         EOF
         cp Configuration/Settings.yaml Configuration/Testing/
 
+    - name: Static analysis
+      if: matrix.static-analysis == 'psalm'
+      run: |
+        cd ${FLOW_FOLDER}
+        composer test-static
     - name: Run unit tests
+      if: matrix.static-analysis == 'no'
       run: |
         cd ${FLOW_FOLDER}
         composer test-unit
     - name: Run functional tests
+      if: matrix.static-analysis == 'no'
       run: |
         cd ${FLOW_FOLDER}
         composer test-func
     - name: Run behat tests
+      if: matrix.static-analysis == 'no'
       #if: env.BEHAT == true
       run: |
         cd ${FLOW_FOLDER}
