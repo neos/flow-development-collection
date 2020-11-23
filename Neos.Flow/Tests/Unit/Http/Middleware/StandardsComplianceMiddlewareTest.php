@@ -19,7 +19,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Test case for the StandardsComplianceComponent
+ * Test case for the StandardsComplianceMiddleware
  */
 class StandardsComplianceMiddlewareTest extends UnitTestCase
 {

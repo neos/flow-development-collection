@@ -13,7 +13,6 @@ namespace Neos\Flow\Mvc;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\NoSuchOptionException;
-use Neos\Flow\Http\Component\SecurityEntryPointComponent;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
@@ -103,14 +102,8 @@ class Dispatcher
             }
             $this->initiateDispatchLoop($request, $response);
         } catch (AuthenticationRequiredException $exception) {
-            // This case does exist!
-            /** @var ActionResponse $response */
-            $response->setComponentParameter(
-                SecurityEntryPointComponent::class,
-                SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION,
-                $exception
-            );
-            return;
+            // Rethrow as the SecurityEntryPoint middleware will take care of the rest
+            throw $exception->attachInterceptedRequest($request);
         } catch (AccessDeniedException $exception) {
             /** @var PsrLoggerFactoryInterface $securityLogger */
             $securityLogger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('securityLogger');
@@ -147,15 +140,6 @@ class Dispatcher
                 } elseif (!$request->isMainRequest()) {
                     $request = $request->getParentRequest();
                 }
-            } catch (AuthenticationRequiredException $exception) {
-                $response->setStatusCode(403);
-                $response->setComponentParameter(
-                    SecurityEntryPointComponent::class,
-                    SecurityEntryPointComponent::AUTHENTICATION_EXCEPTION,
-                    $exception
-                );
-
-                $request->setDispatched(true);
             }
             $parentResponse = $response->mergeIntoParentResponse($parentResponse);
         }

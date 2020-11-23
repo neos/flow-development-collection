@@ -15,7 +15,6 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\RequestHandlerInterface;
 use Neos\Flow\Http\BaseUriProvider;
-use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Tests\UnitTestCase;
@@ -54,12 +53,10 @@ class BaseUriProviderTest extends UnitTestCase
     {
         $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
         $mockHttpRequestHandler = $this->getMockBuilder(HttpRequestHandlerInterface::class)->getMock();
-        $mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
         $mockServerRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
         $uri = new Uri('http://uri-from-current-request/some/path');
         $mockServerRequest->method('getUri')->willReturn($uri);
-        $mockComponentContext->method('getHttpRequest')->willReturn($mockServerRequest);
-        $mockHttpRequestHandler->method('getComponentContext')->willReturn($mockComponentContext);
+        $mockHttpRequestHandler->method('getHttpRequest')->willReturn($mockServerRequest);
         $mockBootstrap->method('getActiveRequestHandler')->willReturn($mockHttpRequestHandler);
 
         $this->inject($this->baseUriProvider, 'bootstrap', $mockBootstrap);

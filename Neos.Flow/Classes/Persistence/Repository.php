@@ -61,7 +61,7 @@ abstract class Repository implements RepositoryInterface
      * @return string
      * @api
      */
-    public function getEntityClassName()
+    public function getEntityClassName(): string
     {
         return $this->entityClassName;
     }
@@ -74,7 +74,7 @@ abstract class Repository implements RepositoryInterface
      * @throws IllegalObjectTypeException
      * @api
      */
-    public function add($object)
+    public function add($object): void
     {
         if (!is_object($object) || !($object instanceof $this->entityClassName)) {
             $type = (is_object($object) ? get_class($object) : gettype($object));
@@ -91,7 +91,7 @@ abstract class Repository implements RepositoryInterface
      * @throws IllegalObjectTypeException
      * @api
      */
-    public function remove($object)
+    public function remove($object): void
     {
         if (!is_object($object) || !($object instanceof $this->entityClassName)) {
             $type = (is_object($object) ? get_class($object) : gettype($object));
@@ -107,7 +107,7 @@ abstract class Repository implements RepositoryInterface
      * @api
      * @see QueryInterface::execute()
      */
-    public function findAll()
+    public function findAll(): QueryResultInterface
     {
         return $this->createQuery()->execute();
     }
@@ -130,7 +130,7 @@ abstract class Repository implements RepositoryInterface
      * @return QueryInterface
      * @api
      */
-    public function createQuery()
+    public function createQuery(): QueryInterface
     {
         $query = $this->persistenceManager->createQueryForType($this->entityClassName);
         if ($this->defaultOrderings !== []) {
@@ -145,7 +145,7 @@ abstract class Repository implements RepositoryInterface
      * @return integer
      * @api
      */
-    public function countAll()
+    public function countAll(): int
     {
         return $this->createQuery()->count();
     }
@@ -158,7 +158,7 @@ abstract class Repository implements RepositoryInterface
      * @api
      * @todo use DQL here, would be much more performant
      */
-    public function removeAll()
+    public function removeAll(): void
     {
         foreach ($this->findAll() as $object) {
             $this->remove($object);
@@ -176,7 +176,7 @@ abstract class Repository implements RepositoryInterface
      * @return void
      * @api
      */
-    public function setDefaultOrderings(array $defaultOrderings)
+    public function setDefaultOrderings(array $defaultOrderings): void
     {
         $this->defaultOrderings = $defaultOrderings;
     }
@@ -188,7 +188,7 @@ abstract class Repository implements RepositoryInterface
      * @throws IllegalObjectTypeException
      * @api
      */
-    public function update($object)
+    public function update($object): void
     {
         if (!is_object($object) || !($object instanceof $this->entityClassName)) {
             $type = (is_object($object) ? get_class($object) : gettype($object));

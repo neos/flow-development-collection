@@ -101,7 +101,7 @@ class QueryResult implements QueryResultInterface
      * @return QueryInterface
      * @api
      */
-    public function getQuery()
+    public function getQuery(): QueryInterface
     {
         return clone $this->query;
     }
@@ -148,7 +148,7 @@ class QueryResult implements QueryResultInterface
      * @return array
      * @api
      */
-    public function toArray()
+    public function toArray(): array
     {
         $this->initialize();
         return iterator_to_array($this);

@@ -6,12 +6,12 @@
     "MIT"
   ],
   "require": {
-    "php": "^7.2 || ^8.0",
+    "php": "^7.3 || ^8.0",
     "neos/flow": "*",
     "neos/cache": "*",
     "neos/utility-files": "*",
     "neos/utility-objecthandling": "*",
-    "typo3fluid/fluid": "^2.5",
+    "typo3fluid/fluid": "~2.5.11 || ^2.6.10",
     "psr/log": "^1.0"
   },
   "autoload": {

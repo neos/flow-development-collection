@@ -58,8 +58,8 @@ class BaseUriProvider
             return null;
         }
 
-        $componentContext = $activeRequestHandler->getComponentContext();
-        return RequestInformationHelper::generateBaseUri($componentContext->getHttpRequest());
+        $request = $activeRequestHandler->getHttpRequest();
+        return RequestInformationHelper::generateBaseUri($request);
     }
 
     /**

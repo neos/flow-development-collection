@@ -130,7 +130,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
 
     /**
-     * Prepares a Fluid view for rendering the custom error page.
+     * Prepares a view for rendering the custom error page.
      *
      * @param \Throwable $exception
      * @param array $renderingOptions Rendering options as defined in the settings

@@ -164,7 +164,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return void
      * @api
      */
-    public function persistAll($onlyAllowedObjects = false)
+    public function persistAll(bool $onlyAllowedObjects = false): void
     {
         if ($onlyAllowedObjects) {
             foreach ($this->changedObjects as $object) {
@@ -204,7 +204,7 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @return void
      */
-    public function clearState()
+    public function clearState(): void
     {
         parent::clearState();
         $this->addedObjects = new \SplObjectStorage();
@@ -221,7 +221,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return boolean true if the object is new, false if the object exists in the persistence session
      * @api
      */
-    public function isNewObject($object)
+    public function isNewObject($object): bool
     {
         return ($this->persistenceSession->hasObject($object) === false);
     }
@@ -248,12 +248,12 @@ class PersistenceManager extends AbstractPersistenceManager
      * backend. Otherwise NULL is returned.
      *
      * @param mixed $identifier
-     * @param string $objectType
+     * @param string|null $objectType
      * @param boolean $useLazyLoading This option is ignored in this persistence manager
      * @return object The object for the identifier if it is known, or NULL
      * @api
      */
-    public function getObjectByIdentifier($identifier, $objectType = null, $useLazyLoading = false)
+    public function getObjectByIdentifier($identifier, string $objectType = null, bool $useLazyLoading = false)
     {
         if (isset($this->newObjects[$identifier])) {
             return $this->newObjects[$identifier];
@@ -275,10 +275,10 @@ class PersistenceManager extends AbstractPersistenceManager
      * the backend. Otherwise false is returned.
      *
      * @param string $identifier
-     * @param string $objectType
+     * @param string|null $objectType
      * @return object The object data for the identifier if it is known, or false
      */
-    public function getObjectDataByIdentifier($identifier, $objectType = null)
+    public function getObjectDataByIdentifier(string $identifier, string $objectType = null)
     {
         return $this->backend->getObjectDataByIdentifier($identifier, $objectType);
     }
@@ -289,7 +289,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @param string $type
      * @return QueryInterface
      */
-    public function createQueryForType($type)
+    public function createQueryForType(string $type): QueryInterface
     {
         return $this->queryFactory->create($type);
     }
@@ -301,7 +301,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return void
      * @api
      */
-    public function add($object)
+    public function add($object): void
     {
         $this->hasUnpersistedChanges = true;
         $this->addedObjects->attach($object);
@@ -315,7 +315,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return void
      * @api
      */
-    public function remove($object)
+    public function remove($object): void
     {
         $this->hasUnpersistedChanges = true;
         if ($this->addedObjects->contains($object)) {
@@ -333,7 +333,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @throws UnknownObjectException
      * @api
      */
-    public function update($object)
+    public function update($object): void
     {
         if ($this->isNewObject($object)) {
             throw new UnknownObjectException('The object of type "' . get_class($object) . '" given to update must be persisted already, but is new.', 1249479819);
@@ -349,7 +349,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return boolean true, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
-    public function isConnected()
+    public function isConnected(): bool
     {
         return $this->backend->isConnected();
     }

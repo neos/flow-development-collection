@@ -18,6 +18,7 @@ use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\InvalidUriPatternException;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
@@ -448,11 +449,11 @@ class Route
      * returned and $this->resolvedUriConstraints contains an instance of UriConstraints that can be applied
      * to a template URI transforming it accordingly (@see Router::resolve())
      *
-     * @param array $routeValues An array containing key/value pairs to be resolved to uri segments
+     * @param ResolveContext $resolveContext context for this resolve invokation
      * @return boolean true if this Route corresponds to the given $routeValues, otherwise false
      * @throws InvalidRoutePartValueException
      */
-    public function resolves(array $routeValues)
+    public function resolves(ResolveContext $resolveContext)
     {
         $this->resolvedUriConstraints = UriConstraints::create();
         $this->resolvedTags = RouteTags::createEmpty();
@@ -467,9 +468,14 @@ class Route
         $remainingDefaults = $this->defaults;
         $requireOptionalRouteParts = false;
         $matchingOptionalUriPortion = '';
+        $routeValues = $resolveContext->getRouteValues();
         /** @var $routePart RoutePartInterface */
         foreach ($this->routeParts as $routePart) {
-            $resolveResult = $routePart->resolve($routeValues);
+            if ($routePart instanceof ParameterAwareRoutePartInterface) {
+                $resolveResult = $routePart->resolveWithParameters($routeValues, $resolveContext->getParameters());
+            } else {
+                $resolveResult = $routePart->resolve($routeValues);
+            }
             if (!$resolveResult) {
                 if (!$routePart->hasDefaultValue()) {
                     return false;
@@ -522,7 +528,6 @@ class Route
             unset($routeValues['@format']);
         }
 
-        $queryString = '';
         if (count($routeValues) > 0) {
             $routeValues = Arrays::removeEmptyElementsRecursively($routeValues);
             $routeValues = $this->persistenceManager->convertObjectsToIdentityArrays($routeValues);
@@ -533,11 +538,12 @@ class Route
                 }
                 $routeValues = $internalArguments;
             }
-            $queryString = http_build_query($routeValues, null, '&');
+            $this->resolvedUriConstraints = $this->resolvedUriConstraints->withAddedQueryValues($routeValues);
         }
 
-        $this->resolvedUriConstraints = $this->resolvedUriConstraints->withQueryString($queryString);
-        $this->resolvedUriConstraints = $this->resolvedUriConstraints->withPath($resolvedUriPath);
+        if (!empty($resolvedUriPath)) {
+            $this->resolvedUriConstraints = $this->resolvedUriConstraints->withPath($resolvedUriPath);
+        }
         return true;
     }
 

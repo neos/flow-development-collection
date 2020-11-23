@@ -14,8 +14,6 @@ namespace Neos\Flow\Tests;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Http\Factories\ResponseFactory;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use Psr\Http\Message\ServerRequestInterface as HttpRequest;
@@ -429,12 +427,11 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $this->router->setRoutesConfiguration(null);
 
         $serverRequestFactory = new ServerRequestFactory(new UriFactory());
-        $responseFactory = new ResponseFactory();
-
-        $requestHandler = self::$bootstrap->getActiveRequestHandler();
         $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost/neos/flow/test');
-        $componentContext = new ComponentContext($request, $responseFactory->createResponse());
-        $requestHandler->setComponentContext($componentContext);
+
+        /** @var FunctionalTestRequestHandler $activeRequestHandler */
+        $activeRequestHandler = self::$bootstrap->getActiveRequestHandler();
+        $activeRequestHandler->setHttpRequest($request);
     }
 
     /**

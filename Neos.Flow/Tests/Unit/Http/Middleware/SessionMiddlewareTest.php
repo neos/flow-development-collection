@@ -21,7 +21,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Test case for the SessionRequestComponent
+ * Test case for the SessionMiddleware
  */
 class SessionMiddlewareTest extends UnitTestCase
 {
