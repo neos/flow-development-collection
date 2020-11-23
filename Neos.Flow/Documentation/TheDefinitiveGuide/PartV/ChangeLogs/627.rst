@@ -1,4 +1,4 @@
-`6.2.7 (2020-11-20) <https://github.com/neos/flow-development-collection/releases/tag/6.2.7>`_
+`6.2.7 (2020-11-23) <https://github.com/neos/flow-development-collection/releases/tag/6.2.7>`_
 ==============================================================================================
 
 Overview of merged pull requests
