@@ -73,7 +73,7 @@ jobs:
     - name: Update composer.json
       run: |
         composer config repositories.flow path ../${{ env.FLOW_FOLDER }}
-        composer require ${{ github.repository }}:* --no-update
+        composer require --no-update ${{ github.repository }}:*
 
     - name: Cache Composer packages
       id: composer-cache
