@@ -17,6 +17,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\StandardController;
+use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Psr\Http\Message\ServerRequestFactoryInterface;
@@ -491,6 +492,41 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/mappedrequestbodywithoutannotation', 'POST', [], [], [], $body);
 
         $expectedResult = 'Foo-foo@bar.org';
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
+    }
+
+    /**
+     * @test
+     */
+    public function dynamicArgumentCanBeValidatedByInternalTypeProperty()
+    {
+        $arguments = [
+            'argument' => [
+                '__type' => TestObjectArgument::class,
+                'name' => 'Foo',
+                'emailAddress' => '-invalid-'
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/dynamictype', 'POST', $arguments);
+
+        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->dynamicTypeAction().' . PHP_EOL;
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
+    }
+
+    /**
+     * @test
+     */
+    public function dynamicArgumentCanBeValidatedByConfiguredType()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'emailAddress' => '-invalid-'
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/dynamicconfiguredtype', 'POST', $arguments);
+
+        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->dynamicConfiguredTypeAction().' . PHP_EOL;
         self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
