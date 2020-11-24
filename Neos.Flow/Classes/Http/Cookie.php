@@ -154,7 +154,7 @@ class Cookie
         $this->path = $path;
         $this->secure = ($secure == true) || $sameSite === self::SAMESITE_NONE;
         $this->httpOnly = ($httpOnly == true);
-        $this->sameSite = $sameSite;
+        $this->sameSite = is_null($sameSite) ? self::SAMESITE_LAX : $sameSite;
     }
 
     /**
