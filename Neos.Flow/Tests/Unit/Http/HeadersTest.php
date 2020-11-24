@@ -34,39 +34,6 @@ class HeadersTest extends UnitTestCase
     /**
      * @test
      */
-    public function createFromServerCreatesFieldsFromSpecifiedServerSuperglobal()
-    {
-        $server = [
-            'HTTP_FOO' => 'Robusta',
-            'HTTP_BAR_BAZ' => 'Arabica',
-        ];
-
-        $headers = Headers::createFromServer($server);
-
-        self::assertEquals('Robusta', $headers->get('Foo'));
-        self::assertEquals('Arabica', $headers->get('Bar-Baz'));
-    }
-
-    /**
-     * @test
-     */
-    public function createFromServerSimulatesAuthorizationHeaderIfPHPAuthVariablesArePresent()
-    {
-        $server = [
-            'PHP_AUTH_USER' => 'robert',
-            'PHP_AUTH_PW' => 'mysecretpassword, containing a : colon ;-)',
-        ];
-
-        $headers = Headers::createFromServer($server);
-
-        $expectedValue = 'Basic ' . base64_encode('robert:mysecretpassword, containing a : colon ;-)');
-        self::assertEquals($expectedValue, $headers->get('Authorization'));
-        self::assertFalse($headers->has('User'));
-    }
-
-    /**
-     * @test
-     */
     public function headerFieldsCanBeReplaced()
     {
         $headers = new Headers();
@@ -171,7 +138,7 @@ class HeadersTest extends UnitTestCase
         $headers = new Headers();
         $cookie = new Cookie('Dark-Chocolate-Chip');
         $headers->setCookie($cookie);
-        self::assertSame($cookie, $headers->getCookie('Dark-Chocolate-Chip'));
+        self::assertEquals($cookie, $headers->getCookie('Dark-Chocolate-Chip'));
     }
 
     /**
@@ -206,7 +173,7 @@ class HeadersTest extends UnitTestCase
         $headers->eatCookie('Coffee-Fudge-Mess');
         unset($cookies['Coffee-Fudge-Mess']);
 
-        self::assertEquals($cookies, $headers->getCookies());
+        self::assertEquals(array_keys($cookies), array_keys($headers->getCookies()));
     }
 
     /**

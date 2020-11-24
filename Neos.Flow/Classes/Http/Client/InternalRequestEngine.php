@@ -11,13 +11,12 @@ namespace Neos\Flow\Http\Client;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Exception as FlowException;
-use Neos\Flow\Http\Component\ComponentChain;
-use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
@@ -111,20 +110,17 @@ class InternalRequestEngine implements RequestEngineInterface
             throw new Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
         }
 
+        $requestHandler->setHttpRequest($httpRequest);
         $this->securityContext->clearContext();
         $this->validatorResolver->reset();
 
-        $response = $this->responseFactory->createResponse();
-        $componentContext = new ComponentContext($httpRequest, $response);
-        $requestHandler->setComponentContext($componentContext);
-
         $objectManager = $this->bootstrap->getObjectManager();
-        $baseComponentChain = $objectManager->get(ComponentChain::class);
+        $middlewaresChain = $objectManager->get(Http\Middleware\MiddlewaresChain::class);
 
         try {
-            $baseComponentChain->handle($componentContext);
+            $response = $middlewaresChain->handle($httpRequest);
         } catch (\Throwable $throwable) {
-            $componentContext->replaceHttpResponse($this->prepareErrorResponse($throwable, $componentContext->getHttpResponse()));
+            $response = $this->prepareErrorResponse($throwable, new Response());
         }
         $session = $objectManager->get(SessionInterface::class);
         if ($session->isStarted()) {
@@ -134,7 +130,7 @@ class InternalRequestEngine implements RequestEngineInterface
         $objectManager->forgetInstance(SessionManager::class);
         $objectManager->forgetInstance(FlashMessageService::class);
         $this->persistenceManager->clearState();
-        return $componentContext->getHttpResponse();
+        return $response;
     }
 
     /**

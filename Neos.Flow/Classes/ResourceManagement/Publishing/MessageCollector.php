@@ -40,6 +40,7 @@ class MessageCollector
     protected $messages;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;

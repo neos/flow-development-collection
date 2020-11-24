@@ -24,7 +24,7 @@ interface RepositoryInterface
      * @return string
      * @api
      */
-    public function getEntityClassName();
+    public function getEntityClassName(): string;
 
     /**
      * Adds an object to this repository.
@@ -33,7 +33,7 @@ interface RepositoryInterface
      * @return void
      * @api
      */
-    public function add($object);
+    public function add($object): void;
 
     /**
      * Removes an object from this repository.
@@ -42,7 +42,7 @@ interface RepositoryInterface
      * @return void
      * @api
      */
-    public function remove($object);
+    public function remove($object): void;
 
     /**
      * Returns all objects of this repository.
@@ -50,7 +50,7 @@ interface RepositoryInterface
      * @return QueryResultInterface The query result
      * @api
      */
-    public function findAll();
+    public function findAll(): QueryResultInterface;
 
     /**
      * Finds an object matching the given identifier.
@@ -67,7 +67,7 @@ interface RepositoryInterface
      * @return QueryInterface
      * @api
      */
-    public function createQuery();
+    public function createQuery(): QueryInterface;
 
     /**
      * Counts all objects of this repository
@@ -75,7 +75,7 @@ interface RepositoryInterface
      * @return integer
      * @api
      */
-    public function countAll();
+    public function countAll(): int;
 
     /**
      * Removes all objects of this repository as if remove() was called for
@@ -84,7 +84,7 @@ interface RepositoryInterface
      * @return void
      * @api
      */
-    public function removeAll();
+    public function removeAll(): void;
 
     /**
      * Sets the property names to order results by. Expected like this:
@@ -97,7 +97,7 @@ interface RepositoryInterface
      * @return void
      * @api
      */
-    public function setDefaultOrderings(array $defaultOrderings);
+    public function setDefaultOrderings(array $defaultOrderings): void;
 
     /**
      * Schedules a modified object for persistence.
@@ -106,7 +106,7 @@ interface RepositoryInterface
      * @return void
      * @api
      */
-    public function update($object);
+    public function update($object): void;
 
     /**
      * Magic call method for repository methods.

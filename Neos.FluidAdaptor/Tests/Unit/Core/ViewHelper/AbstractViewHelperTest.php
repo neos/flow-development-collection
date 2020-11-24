@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\ViewHelper;
  */
 
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
@@ -21,6 +20,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ArgumentDefinition;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
+use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 
 require_once(__DIR__ . '/../Fixtures/TestViewHelper.php');
 require_once(__DIR__ . '/../Fixtures/TestViewHelper2.php');

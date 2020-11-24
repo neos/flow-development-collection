@@ -28,7 +28,7 @@ class QueryFactory implements QueryFactoryInterface
      * @return QueryInterface
      * @api
      */
-    public function create($className)
+    public function create(string $className): QueryInterface
     {
         return new Query($className);
     }

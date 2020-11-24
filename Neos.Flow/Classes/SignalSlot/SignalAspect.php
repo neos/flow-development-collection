@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\SignalSlot;
 
 /*
@@ -34,8 +36,9 @@ class SignalAspect
      * @Flow\AfterReturning("methodAnnotatedWith(Neos\Flow\Annotations\Signal)")
      * @param JoinPointInterface $joinPoint The current join point
      * @return void
+     * @throws Exception\InvalidSlotException
      */
-    public function forwardSignalToDispatcher(JoinPointInterface $joinPoint)
+    public function forwardSignalToDispatcher(JoinPointInterface $joinPoint): void
     {
         $signalName = lcfirst(str_replace('emit', '', $joinPoint->getMethodName()));
         $this->dispatcher->dispatch($joinPoint->getClassName(), $signalName, $joinPoint->getMethodArguments());
