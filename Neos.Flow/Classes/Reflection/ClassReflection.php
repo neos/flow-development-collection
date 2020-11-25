@@ -27,17 +27,15 @@ class ClassReflection extends \ReflectionClass
     public function __construct($classNameOrObject)
     {
         $throwExceptionOnUnloadedClasses =
-            static function ($className) {
-                throw Exception\ClassLoadingForReflectionFailedException::forClassName($className);
+            static function ($className) use ($classNameOrObject) {
+                throw Exception\ClassLoadingForReflectionFailedException::forClassName($className, $classNameOrObject);
             };
         spl_autoload_register($throwExceptionOnUnloadedClasses);
         try {
             parent::__construct($classNameOrObject);
-        } catch (Exception\ClassLoadingForReflectionFailedException $exception) {
+        } finally {
             spl_autoload_unregister($throwExceptionOnUnloadedClasses);
-            throw $exception;
         }
-        spl_autoload_unregister($throwExceptionOnUnloadedClasses);
     }
 
     /**
@@ -93,7 +91,7 @@ class ClassReflection extends \ReflectionClass
      * that MethodReflection objects are returned instead of the
      * original ReflectionMethod instances.
      *
-     * @param integer $filter A filter mask
+     * @param integer|null $filter A filter mask
      * @return array<MethodReflection> Method reflection objects of the methods in this class
      */
     public function getMethods($filter = null)
@@ -112,7 +110,7 @@ class ClassReflection extends \ReflectionClass
      * that a ClassReflection object is returned instead of the
      * orginal ReflectionClass instance.
      *
-     * @return ClassReflection Reflection of the parent class - if any
+     * @return ClassReflection|bool Reflection of the parent class - if any
      */
     public function getParentClass()
     {

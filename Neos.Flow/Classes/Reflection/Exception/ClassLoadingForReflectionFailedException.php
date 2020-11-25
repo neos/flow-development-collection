@@ -18,17 +18,14 @@ namespace Neos\Flow\Reflection\Exception;
  */
 class ClassLoadingForReflectionFailedException extends \Neos\Flow\Reflection\Exception
 {
-    protected $className;
-
-    public static function forClassName(string $className): self
+    public static function forClassName(string $className, string $reflectedClass): self
     {
-        $exception = new self(sprintf('Required class "%s" could not be loaded properly for reflection.%2$s%2$sPossible reasons are:%2$s%2$s * Requiring non-existent classes%2$s * Using non-supported annotations%2$s * Class-/filename missmatch.%2$s%2$sThe "Neos.Flow.object.excludeClasses" setting can be used to skip classes from being reflected.', $className, chr(10)));
-        $exception->className = $className;
-        return $exception;
-    }
-
-    public function getClassName(): ?string
-    {
-        return $this->className;
+        // @deprecated This check was added with Flow 7.0 to improve the developer experience for upgrading components and can be removed later
+        if ($className === \Neos\Flow\Http\Component\ComponentInterface::class) {
+            $message = sprintf('The class "%s" still implements the ComponentInterface. The component chain was replaced with a middleware chain in Flow 7. Please make sure you have read the upgrade instructions and converted your components to middlewares.', $reflectedClass);
+        } else {
+            $message = sprintf('Required class "%s" could not be loaded properly for reflection.%2$s%2$sPossible reasons are:%2$s%2$s * Requiring non-existent classes%2$s * Using non-supported annotations%2$s * Class-/filename missmatch.%2$s%2$sThe "Neos.Flow.object.excludeClasses" setting can be used to skip classes from being reflected.', $className, chr(10));
+        }
+        return new self($message);
     }
 }
