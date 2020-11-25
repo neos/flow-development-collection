@@ -71,7 +71,7 @@ jobs:
         path: ${{ env.FLOW_DIST_FOLDER }}
 
     - name: Set alias branch name
-      run: if [ ${FLOW_TARGET_VERSION} == "master" ]; then echo "FLOW_BRANCH_ALIAS=dev-master"; else echo "FLOW_BRANCH_ALIAS=${FLOW_TARGET_VERSION}.x-dev"; fi >> $GITHUB_ENV
+      run: if [ "${FLOW_TARGET_VERSION}" == "master" ]; then echo "FLOW_BRANCH_ALIAS=dev-master"; else echo "FLOW_BRANCH_ALIAS=${FLOW_TARGET_VERSION}.x-dev"; fi >> $GITHUB_ENV
 
     - name: Update composer.json
       run: |
