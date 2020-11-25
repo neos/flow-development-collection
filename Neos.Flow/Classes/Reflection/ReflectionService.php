@@ -24,6 +24,7 @@ use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\RepositoryInterface;
+use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 use Neos\Flow\Reflection\Exception\ClassSchemaConstraintViolationException;
 use Neos\Flow\Reflection\Exception\InvalidPropertyTypeException;
 use Neos\Flow\Reflection\Exception\InvalidValueObjectException;
@@ -1224,12 +1225,12 @@ class ReflectionService
             throw new Exception\InvalidClassException('The class with name "' . $className . '" is a Doctrine proxy. It is not supported to reflect doctrine proxy classes.', 1314944681);
         }
 
-        // FIXME: This try catch was added with Flow 7.0 to improve the developer experience for upgrading components and can be removed later
+        // @deprecated This try catch was added with Flow 7.0 to improve the developer experience for upgrading components and can be removed later
         try {
             $class = new ClassReflection($className);
-        } catch (\Exception $e) {
-            if (stripos($e->getMessage(), '"Neos\Flow\Http\Component\ComponentInterface"') !== false) {
-                throw new \Exception("The class $className still implements the ComponentInterface. The component chain was replaced with a middleware chain in Flow 7. Please make sure you have read the upgrade instructions and converted your components to middlewares.");
+        } catch (ClassLoadingForReflectionFailedException $e) {
+            if ($e->getClassName() === \Neos\Flow\Http\Component\ComponentInterface::class) {
+                throw new \Exception("The class \"$className\" still implements the ComponentInterface. The component chain was replaced with a middleware chain in Flow 7. Please make sure you have read the upgrade instructions and converted your components to middlewares.");
             }
             throw $e;
         }
