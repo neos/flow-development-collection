@@ -33,7 +33,7 @@ PHP
 
 Flow was one of the first PHP projects taking advantage of namespaces and
 other features introduced in PHP version 5.3. By now we started using features of
-PHP 7.2, so make sure you have **PHP 7.2.0** or later available on your web server. Make
+PHP 7.3, so make sure you have **PHP 7.3.0** or later available on your web server. Make
 sure your PHP CLI binary is the **same version**!
 
 The default settings and extensions of the PHP distribution should work fine

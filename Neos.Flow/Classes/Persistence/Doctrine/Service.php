@@ -206,17 +206,21 @@ class Service
      * Return the configuration needed for Migrations.
      *
      * @return DependencyFactory
-     * @throws DBALException
+     * @throws DBALException|FilesException
      */
     protected function getDependencyFactory(): DependencyFactory
     {
+        $migrationsPath = Files::concatenatePaths([FLOW_PATH_DATA, 'DoctrineMigrations']);
+        if (!is_dir($migrationsPath)) {
+            Files::createDirectoryRecursively($migrationsPath);
+        }
         $configurationLoader = new ConfigurationArray([
             'table_storage' => [
                 'table_name' => self::DOCTRINE_MIGRATIONSTABLENAME,
                 'version_column_length' => 255,
             ],
             'migrations_paths' => [
-                self::DOCTRINE_MIGRATIONSNAMESPACE => Files::concatenatePaths([FLOW_PATH_DATA, 'DoctrineMigrations'])
+                self::DOCTRINE_MIGRATIONSNAMESPACE => $migrationsPath
             ],
         ]);
         $entityManagerLoader = new ExistingEntityManager($this->entityManager);
