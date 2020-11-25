@@ -2350,7 +2350,8 @@
       <code>contains</code>
       <code>detach</code>
     </PossiblyInvalidMethodCall>
-    <TooManyArguments occurrences="2">
+    <TooManyArguments occurrences="3">
+      <code>logicalAnd</code>
       <code>logicalAnd</code>
       <code>logicalAnd</code>
     </TooManyArguments>
