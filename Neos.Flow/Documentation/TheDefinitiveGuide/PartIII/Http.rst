@@ -161,6 +161,10 @@ the following middleware. A middleware chain basically works like a onion ring, 
 of the onion around the inner core of the application. Each request passes inside through the layer and a response passes
 outside through the layer.
 
+.. figure:: Images/Http_MiddlewaresChain.png
+	:alt: A middleware onion
+	:class: screenshot-fullsize
+
 ..note::
 
   By default, the ``dispatch`` middleware represents the inner most onion layer since it creates the :abbr:`Response (\\Psr\Http\\Message\\ResponseInterface)`
