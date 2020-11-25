@@ -29,9 +29,9 @@ jobs:
       FLOW_DIST_FOLDER: flow-development-distribution
       FLOW_FOLDER: flow-development-collection
 
-    #defaults:
-    #  run:
-    #    working-directory: ${FLOW_DIST_FOLDER}
+    defaults:
+      run:
+        working-directory: ${{ env.FLOW_DIST_FOLDER }}
 
     strategy:
       fail-fast: false
