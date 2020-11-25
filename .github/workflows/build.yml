@@ -70,11 +70,13 @@ jobs:
         ref: ${{ env.FLOW_TARGET_VERSION }}
         path: ${{ env.FLOW_DIST_FOLDER }}
 
+    - name: Set alias branch name
+      run: if [ ${FLOW_TARGET_VERSION} == "master" ]; then echo "FLOW_BRANCH_ALIAS=dev-master"; else echo "FLOW_BRANCH_ALIAS=${FLOW_TARGET_VERSION}.x-dev"; fi >> $GITHUB_ENV
+
     - name: Update composer.json
       run: |
-        ls -la
         composer config repositories.flow path ../${{ env.FLOW_FOLDER }}
-        composer require --no-update ${{ github.repository }}:*
+        composer require --no-update ${{ github.repository }}:"* as ${{ env.FLOW_BRANCH_ALIAS }}"
 
     - name: Cache Composer packages
       id: composer-cache
