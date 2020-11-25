@@ -1224,7 +1224,15 @@ class ReflectionService
             throw new Exception\InvalidClassException('The class with name "' . $className . '" is a Doctrine proxy. It is not supported to reflect doctrine proxy classes.', 1314944681);
         }
 
-        $class = new ClassReflection($className);
+        // FIXME: This try catch was added with Flow 7.0 to improve the developer experience for upgrading components and can be removed later
+        try {
+            $class = new ClassReflection($className);
+        } catch (\Exception $e) {
+            if (stripos($e->getMessage(), '"Neos\Flow\Http\Component\ComponentInterface"') !== false) {
+                throw new \Exception("The class $className still implements the ComponentInterface. The component chain was replaced with a middleware chain in Flow 7. Please make sure you have read the upgrade instructions and converted your components to middlewares.");
+            }
+            throw $e;
+        }
         if (!isset($this->classReflectionData[$className])) {
             $this->classReflectionData[$className] = [];
         }
