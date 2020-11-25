@@ -34,7 +34,7 @@ abstract class TypeHandling
     /**
      * @var array
      */
-    protected static $collectionTypes = ['array', \ArrayObject::class, \SplObjectStorage::class, Collection::class];
+    protected static $collectionTypes = ['array', \Traversable::class];
 
     /**
      * Returns an array with type information, including element type for
