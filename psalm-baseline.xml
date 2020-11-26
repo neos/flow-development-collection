@@ -954,17 +954,6 @@
       <code>FunctionalTestRequestHandler</code>
     </UndefinedClass>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Http/Component/ComponentChainFactory.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>ComponentChain</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="1">
-      <code>null</code>
-    </NullableReturnStatement>
-    <TooManyArguments occurrences="1">
-      <code>get</code>
-    </TooManyArguments>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/ContentStream.php">
     <PossiblyNullArgument occurrences="1">
       <code>$resource</code>
@@ -1676,7 +1665,8 @@
     </ArgumentTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Package.php">
-    <UndefinedClass occurrences="2">
+    <UndefinedClass occurrences="3">
+      <code>Persistence\Generic\PersistenceManager</code>
       <code>Tests\FunctionalTestCase</code>
       <code>Tests\FunctionalTestRequestHandler</code>
     </UndefinedClass>
@@ -1828,9 +1818,6 @@
     </PossiblyUndefinedArrayOffset>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/PersistenceManager.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$objectType</code>
-    </ArgumentTypeCoercion>
     <NullableReturnStatement occurrences="2">
       <code>$this-&gt;entityManager-&gt;find($objectType, $identifier)</code>
       <code>$this-&gt;entityManager-&gt;getReference($objectType, $identifier)</code>
@@ -1857,6 +1844,9 @@
     <PropertyTypeCoercion occurrences="1">
       <code>$entityManager</code>
     </PropertyTypeCoercion>
+    <UndefinedDocblockClass occurrences="1">
+      <code>Constraint</code>
+    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/QueryResult.php">
     <NullableReturnStatement occurrences="1">
@@ -1864,9 +1854,8 @@
     </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Repository.php">
-    <ArgumentTypeCoercion occurrences="2">
+    <ArgumentTypeCoercion occurrences="1">
       <code>$classMetadata</code>
-      <code>$this-&gt;objectType</code>
     </ArgumentTypeCoercion>
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>QueryResultInterface</code>
@@ -1900,134 +1889,6 @@
       <code>null</code>
       <code>null</code>
     </NullableReturnStatement>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/Aspect/LazyLoadingObjectAspect.php">
-    <NoInterfaceProperties occurrences="1">
-      <code>$proxy-&gt;Flow_Persistence_LazyLoadingObject_thawProperties</code>
-    </NoInterfaceProperties>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/Backend/AbstractBackend.php">
-    <ArgumentTypeCoercion occurrences="2">
-      <code>$object</code>
-      <code>$value</code>
-    </ArgumentTypeCoercion>
-    <InvalidArgument occurrences="1">
-      <code>$entity</code>
-    </InvalidArgument>
-    <InvalidNullableReturnType occurrences="3">
-      <code>array</code>
-      <code>array</code>
-      <code>integer</code>
-    </InvalidNullableReturnType>
-    <NullArgument occurrences="2">
-      <code>null</code>
-      <code>null</code>
-    </NullArgument>
-    <NullableReturnStatement occurrences="3">
-      <code>null</code>
-      <code>null</code>
-      <code>null</code>
-    </NullableReturnStatement>
-    <PossiblyNullArrayAccess occurrences="1">
-      <code>$array[$item['index']]</code>
-    </PossiblyNullArrayAccess>
-    <PossiblyUndefinedVariable occurrences="1">
-      <code>$errors</code>
-    </PossiblyUndefinedVariable>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/DataMapper.php">
-    <InvalidArgument occurrences="1">
-      <code>$this-&gt;mapToObject($arrayValue['value'])</code>
-    </InvalidArgument>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>getObjectDataByIdentifier</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/LazySplObjectStorage.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>null</code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/PersistenceManager.php">
-    <InvalidReturnStatement occurrences="1">
-      <code>$this-&gt;backend-&gt;getObjectDataByIdentifier($identifier, $objectType)</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>object</code>
-    </InvalidReturnType>
-    <NullableReturnStatement occurrences="1">
-      <code>null</code>
-    </NullableReturnStatement>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/Qom/QueryObjectModelFactory.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$operator</code>
-    </InvalidScalarArgument>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/Query.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$constraint</code>
-    </ArgumentTypeCoercion>
-    <InvalidScalarArgument occurrences="12">
-      <code>QueryInterface::OPERATOR_CONTAINS</code>
-      <code>QueryInterface::OPERATOR_EQUAL_TO</code>
-      <code>QueryInterface::OPERATOR_EQUAL_TO</code>
-      <code>QueryInterface::OPERATOR_GREATER_THAN</code>
-      <code>QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO</code>
-      <code>QueryInterface::OPERATOR_IN</code>
-      <code>QueryInterface::OPERATOR_IS_EMPTY</code>
-      <code>QueryInterface::OPERATOR_IS_NULL</code>
-      <code>QueryInterface::OPERATOR_LESS_THAN</code>
-      <code>QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO</code>
-      <code>QueryInterface::OPERATOR_LIKE</code>
-      <code>QueryInterface::OPERATOR_LIKE</code>
-    </InvalidScalarArgument>
-    <MoreSpecificImplementedParamType occurrences="2">
-      <code>$constraint</code>
-      <code>$constraint1</code>
-    </MoreSpecificImplementedParamType>
-    <TooManyArguments occurrences="1">
-      <code>new QueryResult($this, $cacheResult)</code>
-    </TooManyArguments>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/QueryFactory.php">
-    <TooFewArguments occurrences="1">
-      <code>new Query($className)</code>
-    </TooFewArguments>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/QueryResult.php">
-    <InvalidPropertyAssignmentValue occurrences="1">
-      <code>count($this-&gt;queryResult)</code>
-    </InvalidPropertyAssignmentValue>
-    <InvalidReturnStatement occurrences="1">
-      <code>$this-&gt;numberOfResults</code>
-    </InvalidReturnStatement>
-    <LessSpecificImplementedReturnType occurrences="1">
-      <code>mixed</code>
-    </LessSpecificImplementedReturnType>
-    <UndefinedInterfaceMethod occurrences="3">
-      <code>getObjectCountByQuery</code>
-      <code>getObjectDataByQuery</code>
-      <code>getObjectDataByQuery</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/Session.php">
-    <ArgumentTypeCoercion occurrences="2">
-      <code>$currentValue</code>
-      <code>$currentValue</code>
-    </ArgumentTypeCoercion>
-    <InvalidArgument occurrences="2">
-      <code>$object</code>
-      <code>$object</code>
-    </InvalidArgument>
-    <NullableReturnStatement occurrences="1">
-      <code>null</code>
-    </NullableReturnStatement>
-    <UndefinedInterfaceMethod occurrences="3">
-      <code>$currentValue</code>
-      <code>$currentValue</code>
-      <code>$currentValue</code>
-    </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Repository.php">
     <MoreSpecificImplementedParamType occurrences="1">
