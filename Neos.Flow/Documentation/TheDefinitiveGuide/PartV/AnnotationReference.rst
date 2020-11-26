@@ -3,7 +3,7 @@
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2020-11-17
+This reference was automatically generated from code on 2020-11-26
 
 
 .. _`Flow Annotation Reference: After`:
@@ -572,9 +572,10 @@ ValueObject
 
 Marks the annotate class as a value object.
 
-Regarding Doctrine the object is treated like an entity, but Flow
+The schema will be embedded into parent entities by default, unless "embedded=false" is specified.
+In that case, regarding Doctrine the object is treated like an entity, but Flow
 applies some optimizations internally, e.g. to store only one instance
-of a value object.
+of the value object.
 
 :Applicable to: Class
 

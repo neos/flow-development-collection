@@ -256,6 +256,33 @@ class ResourceRepository extends Repository
     }
 
     /**
+     * Counts all resources with the same SHA1 hash and collection
+     *
+     * @param string $sha1Hash
+     * @param string $collectionName
+     *
+     * @return int
+     */
+    public function countBySha1AndCollectionName(string $sha1Hash, string $collectionName): int
+    {
+        $query = $this->createQuery();
+        $query->matching(
+            $query->logicalAnd(
+                $query->equals('sha1', $sha1Hash),
+                $query->equals('collectionName', $collectionName)
+            )
+        );
+        $noOfResources = $query->count();
+        foreach ($this->addedResources as $importedResource) {
+            if ($importedResource->getSha1() === $sha1Hash && $importedResource->getCollectionName() === $collectionName) {
+                $noOfResources++;
+            }
+        }
+
+        return $noOfResources;
+    }
+
+    /**
      * Find one resource by SHA1
      *
      * @param string $sha1Hash
