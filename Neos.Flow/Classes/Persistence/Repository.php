@@ -46,12 +46,12 @@ abstract class Repository implements RepositoryInterface
      */
     public function __construct()
     {
+        /** @psalm-var class-string $entityClassName */
         if (defined('static::ENTITY_CLASSNAME') === false) {
             $entityClassName = preg_replace(['/\\\Repository\\\/', '/Repository$/'], ['\\Model\\', ''], get_class($this));
         } else {
             $entityClassName = static::ENTITY_CLASSNAME;
         }
-        assert(class_exists($entityClassName));
         $this->entityClassName = $entityClassName;
     }
 

@@ -162,7 +162,7 @@ class PersistentObjectConverter extends ObjectConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
-        assert(class_exists($targetType));
+        /** @psalm-var class-string $targetType */
         if (is_array($source)) {
             if ($this->reflectionService->isClassAnnotatedWith($targetType, ValueObject::class)) {
                 if (isset($source['__identity']) && (count($source) > 1)) {

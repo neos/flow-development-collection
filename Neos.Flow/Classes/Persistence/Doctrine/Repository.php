@@ -68,12 +68,12 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     public function __construct(EntityManagerInterface $entityManager, ClassMetadata $classMetadata = null)
     {
         if ($classMetadata === null) {
+            /** @psalm-var class-string $objectType */
             if (defined('static::ENTITY_CLASSNAME') === false) {
                 $objectType = preg_replace(['/\\\Repository\\\/', '/Repository$/'], ['\\Model\\', ''], get_class($this));
             } else {
                 $objectType = static::ENTITY_CLASSNAME;
             }
-            assert(class_exists($objectType));
             $this->objectType = $objectType;
             $classMetadata = $entityManager->getClassMetadata($this->objectType);
         }
