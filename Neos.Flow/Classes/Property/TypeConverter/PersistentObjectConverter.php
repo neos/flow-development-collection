@@ -222,8 +222,8 @@ class PersistentObjectConverter extends ObjectConverter
                 );
                 throw new InvalidTargetException($exceptionMessage, 1297935345);
             }
-            if ($isCollectionType && $originalValue !== ObjectAccess::getProperty($object, $propertyName)) {
-                throw new TypeConverterException(sprintf('You overwrote the collection property "%s" of type "%s". This will lead to data loss. Read more about it and how to prevent this here: ', $propertyName, $targetType), 1602324196);
+            if ($isCollectionType && $originalValue !== ObjectAccess::getProperty($object, $propertyName, true)) {
+                throw new TypeConverterException(sprintf('You overwrote the collection property "%s" of type "%s". This will lead to data loss. Read more about it and how to prevent this here: ADDLINKHERE', $propertyName, $targetType), 1602324196);
             }
         }
 
