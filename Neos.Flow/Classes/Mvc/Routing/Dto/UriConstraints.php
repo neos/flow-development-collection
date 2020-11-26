@@ -358,7 +358,7 @@ final class UriConstraints
                 $uri = $uri->withHost($host);
             }
         }
-        if (isset($this->constraints[self::CONSTRAINT_PORT]) && $this->constraints[self::CONSTRAINT_PORT] !== $baseUri->getPort()) {
+        if (isset($this->constraints[self::CONSTRAINT_PORT]) && ($forceAbsoluteUri || $this->constraints[self::CONSTRAINT_PORT] !== $baseUri->getPort()) && ($baseUri->getPort() !== null || $this->constraints[self::CONSTRAINT_PORT] !== UriHelper::getDefaultPortForScheme($baseUri->getScheme()))) {
             $forceAbsoluteUri = true;
             $uri = $uri->withPort($this->constraints[self::CONSTRAINT_PORT]);
         }
