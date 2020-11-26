@@ -20,6 +20,7 @@ env:
 jobs:
   allow_failures:
     - php: nightly
+    - env: STATIC_ANALYSIS=true
   fast_finish: true
   exclude:
     # this excludes jobs with "no env" by using the single DUMMY defined above
