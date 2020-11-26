@@ -208,9 +208,8 @@ class PersistentObjectConverter extends ObjectConverter
             }
             $propertyType = TypeHandling::getTypeForValue($propertyValue);
             $isCollectionType = TypeHandling::isCollectionType($propertyType);
-            //$isAggregateRelation = TODO: Check if element type is aggregate root
             if ($isCollectionType) {
-                $originalValue = ObjectAccess::getProperty($object, $propertyName);
+                $originalValue = ObjectAccess::getProperty($object, $propertyName, true);
             }
             $result = ObjectAccess::setProperty($object, $propertyName, $propertyValue);
             if ($result === false) {
