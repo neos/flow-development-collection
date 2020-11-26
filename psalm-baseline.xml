@@ -979,10 +979,9 @@
     <PossiblyNullArgument occurrences="1">
       <code>$pathAttribute</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyAssignmentValue occurrences="3">
+    <PossiblyNullPropertyAssignmentValue occurrences="2">
       <code>$domain</code>
       <code>$maximumAge</code>
-      <code>$sameSite</code>
     </PossiblyNullPropertyAssignmentValue>
     <UnsafeInstantiation occurrences="1"/>
   </file>
@@ -2025,12 +2024,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Reflection/ClassReflection.php">
-    <FalsableReturnStatement occurrences="1">
-      <code>($parentClass === false) ? false : new ClassReflection($parentClass-&gt;getName())</code>
-    </FalsableReturnStatement>
-    <InvalidFalsableReturnType occurrences="1">
-      <code>ClassReflection</code>
-    </InvalidFalsableReturnType>
     <InvalidNullableReturnType occurrences="1">
       <code>MethodReflection</code>
     </InvalidNullableReturnType>
@@ -2055,6 +2048,11 @@
     <PossiblyFalseArgument occurrences="1">
       <code>strpos($line, '@')</code>
     </PossiblyFalseArgument>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Reflection/Exception/ClassLoadingForReflectionFailedException.php">
+    <UndefinedClass occurrences="1">
+      <code>\Neos\Flow\Http\Component\ComponentInterface</code>
+    </UndefinedClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Reflection/MethodReflection.php">
     <InvalidNullableReturnType occurrences="1">
@@ -2274,12 +2272,6 @@
       <code>$source</code>
     </UndefinedInterfaceMethod>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/ResourceManagement/Storage/FileSystemStorage.php">
-    <LessSpecificImplementedReturnType occurrences="2">
-      <code>\Generator&lt;Object&gt;</code>
-      <code>\Generator&lt;Object&gt;</code>
-    </LessSpecificImplementedReturnType>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/ResourceManagement/Storage/PackageStorage.php">
     <PossiblyInvalidArrayOffset occurrences="1">
       <code>$pathInfo['basename']</code>
@@ -2433,26 +2425,6 @@
       <code>$account</code>
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/Token/PasswordToken.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>void</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/Token/TestingToken.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>void</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/Token/UsernamePassword.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>void</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/Token/UsernamePasswordHttpBasic.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>void</code>
-    </ImplementedReturnTypeMismatch>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/TokenAndProviderFactory.php">
     <ArgumentTypeCoercion occurrences="1">

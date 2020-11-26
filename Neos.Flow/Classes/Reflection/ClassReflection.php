@@ -110,7 +110,7 @@ class ClassReflection extends \ReflectionClass
      * that a ClassReflection object is returned instead of the
      * orginal ReflectionClass instance.
      *
-     * @return ClassReflection|bool Reflection of the parent class - if any
+     * @return ClassReflection|false Reflection of the parent class - if any
      */
     public function getParentClass()
     {
