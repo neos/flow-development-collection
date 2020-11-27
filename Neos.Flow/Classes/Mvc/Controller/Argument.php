@@ -227,6 +227,10 @@ class Argument
         }
         $this->value = $this->propertyMapper->convert($rawValue, $this->dataType, $this->getPropertyMappingConfiguration());
         $this->validationResults = $this->propertyMapper->getMessages();
+        if ($this->validator !== null) {
+            $validationMessages = $this->validator->validate($this->value);
+            $this->validationResults->merge($validationMessages);
+        }
 
         return $this;
     }
