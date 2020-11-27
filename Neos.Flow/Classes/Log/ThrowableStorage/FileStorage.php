@@ -75,16 +75,14 @@ class FileStorage implements ThrowableStorageInterface
             }
 
             $request = $requestHandler->getHttpRequest();
-            $response = $requestHandler->getHttpResponse();
             // TODO: Sensible error output
             $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestHeaders($request) : '[request was empty]') . PHP_EOL;
-            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response instanceof ResponseInterface ? $response->getStatusCode() : '[response was empty]') . PHP_EOL;
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;
         };
 
-        $this->backtraceRenderer = function ($backtrace) {
+        $this->backtraceRenderer = static function ($backtrace) {
             return Debugger::getBacktraceCode($backtrace, false, true);
         };
     }

@@ -112,16 +112,4 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
         }
         return $this->httpRequest;
     }
-
-    /**
-     * Returns the HTTP response corresponding to the currently handled request
-     *
-     * @return ResponseInterface
-     * @api
-     */
-    public function getHttpResponse()
-    {
-        $responseFactory = new ResponseFactory();
-        return $responseFactory->createResponse();
-    }
 }
