@@ -321,6 +321,6 @@ class PositionalArraySorter
         array_walk_recursive($endKeys, $flattenFunction, 4);
 
         ksort($sortedKeysMap);
-        return array_merge(...$sortedKeysMap);
+        return array_merge([], ...$sortedKeysMap);
     }
 }
