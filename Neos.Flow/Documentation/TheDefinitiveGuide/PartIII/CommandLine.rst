@@ -257,7 +257,7 @@ command:
 		 * @param integer $shots The number of shots
 		 * @param boolean $ristretto Make this coffee a ristretto
 		 */
-		public function brewCommand(string $type, int $shots=1, bool $ristretto=false): void
+		public function brewCommand(string $type, int $shots = 1, bool $ristretto = false): void
 		{
 			# implementation
 		}
