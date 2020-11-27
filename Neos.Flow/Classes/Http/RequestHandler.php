@@ -128,7 +128,7 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public function getHttpResponse()
     {
-        return $this->httpResponse;
+        throw new \BadMethodCallException(sprintf('The method %s was removed with Flow version 7.0 since its behavior is unreliable. To get hold of the response a middleware should be used instead.', __METHOD__), 1606467754);
     }
 
     /**
