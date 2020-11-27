@@ -150,18 +150,18 @@ PHP Code::
 
 	object(Ship)#1 (3) {
 
-		["name"] => NULL
+		["name"] => null
 
-		["coaches"] => NULL
+		["coaches"] => null
 
-		["engineStatus"] => NULL
+		["engineStatus"] => null
 
-		["speed"] => NULL
+		["speed"] => null
 
 	}
 
 We can clearly see that our object has 4 properties with a concrete value, at
-the moment still NULL, for we did not yet assign anything. We can instantiate
+the moment still null, for we did not yet assign anything. We can instantiate
 as many objects from a class as we like, and every single one will differ from
 the others – even if all of the properties have the same values.
 
@@ -427,13 +427,13 @@ PHP Code::
 
 	class Luxusliner extends Ship implements SatelliteTV {
 
-	   protected $tvEnabled = FALSE;
+	   protected $tvEnabled = false;
 
 	   public function enableTV() {
-		  $this->tvEnabled = TRUE;
+		  $this->tvEnabled = true;
 	   }
 	   public function disableTV() {
-		  $this->tvEnabled = FALSE;
+		  $this->tvEnabled = false;
 	   }
 	}
 
