@@ -29,7 +29,7 @@
         "symfony/dom-crawler": "^4.2",
         "symfony/console": "^4.2",
         "neos/composer-plugin": "^2.0",
-        "composer/composer": "^1.9",
+        "composer/composer": "^2.0",
         "egulias/email-validator": "^2.1",
         "typo3fluid/fluid": "~2.5.11 || ^2.6.10",
         "guzzlehttp/psr7": "^1.4 || ~2.0",
