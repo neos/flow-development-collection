@@ -151,6 +151,14 @@ class ActionController extends AbstractController
     protected $logger;
 
     /**
+     * Feature flag to enable the potentially breaking support of validation for dynamic types specified with `__type` argument or in the `PropertyMapperConfiguration`.
+     * Note: This will be enabled by default in a future version.
+     * See https://github.com/neos/flow-development-collection/pull/1906
+     * @var boolean
+     */
+    protected $enableDynamicTypeValidation = false;
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -191,6 +199,9 @@ class ActionController extends AbstractController
         $this->actionMethodName = $this->resolveActionMethodName();
 
         $this->initializeActionMethodArguments();
+        if ($this->enableDynamicTypeValidation !== true) {
+            $this->initializeActionMethodValidators();
+        }
 
         $this->initializeAction();
         $actionInitializationMethodName = 'initialize' . ucfirst($this->actionMethodName);
@@ -200,7 +211,9 @@ class ActionController extends AbstractController
         $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
 
         $this->mapRequestArgumentsToControllerArguments();
-        $this->initializeActionMethodValidators();
+        if ($this->enableDynamicTypeValidation === true) {
+            $this->initializeActionMethodValidators();
+        }
 
         if ($this->view === null) {
             $this->view = $this->resolveView();
