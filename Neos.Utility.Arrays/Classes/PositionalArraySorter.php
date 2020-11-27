@@ -125,14 +125,7 @@ class PositionalArraySorter
             throw new Exception\InvalidPositionException(sprintf('The positional string "%s" (defined for key "%s") is not supported.', $unresolvedPosition, $unresolvedKey), 1379429920);
         }
 
-        $sortedKeysMap = $this->generateSortedKeysMap();
-
-        $sortedKeys = [];
-        array_walk_recursive($sortedKeysMap, function ($value) use (&$sortedKeys) {
-            $sortedKeys[] = $value;
-        });
-
-        return $sortedKeys;
+        return $this->generateSortedKeysMap();
     }
 
     /**
@@ -328,6 +321,6 @@ class PositionalArraySorter
         array_walk_recursive($endKeys, $flattenFunction, 4);
 
         ksort($sortedKeysMap);
-        return $sortedKeysMap;
+        return array_merge(...$sortedKeysMap);
     }
 }
