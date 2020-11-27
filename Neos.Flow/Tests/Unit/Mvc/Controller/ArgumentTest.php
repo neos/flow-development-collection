@@ -164,6 +164,23 @@ class ArgumentTest extends UnitTestCase
     {
         self::assertSame($this->simpleValueArgument, $this->setupPropertyMapperAndSetValue());
     }
+    
+    /**
+     * @test
+     */
+    public function setValueShouldSetValidationErrorsIfValidatorIsSetAndValidationFailed()
+    {
+        $error = new FlowError\Error('Some Error', 1234);
+
+        $mockValidator = $this->createMock(ValidatorInterface::class);
+        $validationMessages = new FlowError\Result();
+        $validationMessages->addError($error);
+        $mockValidator->expects(self::once())->method('validate')->with('convertedValue')->willReturn($validationMessages);
+
+        $this->simpleValueArgument->setValidator($mockValidator);
+        $this->setupPropertyMapperAndSetValue();
+        self::assertEquals([$error], $this->simpleValueArgument->getValidationResults()->getErrors());
+    }
 
     /**
      * @test
