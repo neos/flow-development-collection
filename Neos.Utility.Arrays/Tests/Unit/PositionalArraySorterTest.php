@@ -103,12 +103,6 @@ class PositionalArraySorterTest extends \PHPUnit\Framework\TestCase
                 'expectedArrayKeys' => ['first', 'second']
             ],
             [
-                'message' => 'Position before adds after start if named element not present',
-                'subject' => ['third' => [], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before unknown']]],
-                'positionPropertyPath' => '__meta.position',
-                'expectedArrayKeys' => ['first', 'second', 'third']
-            ],
-            [
                 'message' => 'Position before uses priority when referencing the same element; The higher the priority the closer before the element gets added.',
                 'subject' => ['third' => [], 'second' => ['__meta' => ['position' => 'before third']], 'first' => ['__meta' => ['position' => 'before third 12']]],
                 'positionPropertyPath' => '__meta.position',
@@ -125,12 +119,6 @@ class PositionalArraySorterTest extends \PHPUnit\Framework\TestCase
                 'subject' => ['second' => ['__meta' => ['position' => 'after first']], 'first' => []],
                 'positionPropertyPath' => '__meta.position',
                 'expectedArrayKeys' => ['first', 'second']
-            ],
-            [
-                'message' => 'Position after adds before end if named element not present',
-                'subject' => ['second' => ['__meta' => ['position' => 'after unknown']], 'third' => ['__meta' => ['position' => 'end']], 'first' => []],
-                'positionPropertyPath' => '__meta.position',
-                'expectedArrayKeys' => ['first', 'second', 'third']
             ],
             [
                 'message' => 'Position after uses priority when referencing the same element; The higher the priority the closer after the element gets added.',
