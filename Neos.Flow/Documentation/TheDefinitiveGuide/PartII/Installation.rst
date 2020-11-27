@@ -52,17 +52,23 @@ Directory Structure
 
 Let's take a look at the directory structure of a Flow application:
 
-======================	===================================================================================
-Directory								Description
-======================	===================================================================================
-Configuration/					Application specific configuration, grouped by contexts
-Data/										Persistent and temporary data, including caches, logs, resources and the database
-Packages/								Contains sub directories which in turn contain package directories
-Packages/Framework/			Packages which are part of the official Flow distribution
-Packages/Application/		Application specific packages
-Packages/Libraries/			3rd party libraries
-Web/										Public web root
-======================	===================================================================================
++-------------------------+-----------------------------------------------------------------------------------+
+| Directory               | Description                                                                       |
++=========================+===================================================================================+
+| *Configuration/*        | Application specific configuration, grouped by contexts                           |
++-------------------------+-----------------------------------------------------------------------------------+
+| *Data/*                 | Persistent and temporary data, including caches, logs, resources and the database |
++-------------------------+-----------------------------------------------------------------------------------+
+| *Packages/*             | Contains sub directories which in turn contain package directories                |
++-------------------------+-----------------------------------------------------------------------------------+
+| *Packages/Framework/*   | Packages which are part of the official Flow distribution                         |
++-------------------------+-----------------------------------------------------------------------------------+
+| *Packages/Application/* | Application specific packages                                                     |
++-------------------------+-----------------------------------------------------------------------------------+
+| *Packages/Libraries/*   | 3rd party libraries                                                               |
++-------------------------+-----------------------------------------------------------------------------------+
+| *Web/*                  | Public web root                                                                   |
++-------------------------+-----------------------------------------------------------------------------------+
 
 A Flow application usually consists of the above directories. As you see, most
 of them contain data which is specific to your application, therefore upgrading

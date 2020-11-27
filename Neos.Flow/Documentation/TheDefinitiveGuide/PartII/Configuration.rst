@@ -54,13 +54,15 @@ The configuration for each context is located in directories of the same name:
 
 **Context Configurations**
 
-============================	==================================================
-Directory						Description
-============================	==================================================
-*Configuration/*							Global configuration, for all contexts
-*Configuration/Development/*	Configuration for the ``Development`` context
-*Configuration/Production/*		Configuration for the ``Production`` context
-============================	==================================================
++------------------------------+-----------------------------------------------+
+| Directory                    | Description                                   |
++==============================+===============================================+
+| *Configuration/*             | Global configuration, for all contexts        |
++------------------------------+-----------------------------------------------+
+| *Configuration/Development/* | Configuration for the ``Development`` context |
++------------------------------+-----------------------------------------------+
+| *Configuration/Production/*  | Configuration for the ``Production`` context  |
++------------------------------+-----------------------------------------------+
 
 .. note::
 	Setting Up Context with Virtual Host and change Context from «Development» to «Production» is explained in the previous chapter «Installation».
@@ -181,16 +183,20 @@ Environment Variables
 
 Some specific flow behaviour can also be configured with a couple of environment variables.
 
-============================	==================================================
-Variable						Description
-============================	==================================================
-FLOW_ROOTPATH									Can be used to override the path to the Flow root.
-FLOW_CONTEXT									Use to set the flow context (see above).
-FLOW_PATH_TEMPORARY_BASE			Can be used to set a path for temporary data.
-FLOW_LOCKHOLDINGPAGE					Use to specify the html page shown when the site is locked.
-															This is relative to the Packages directory.
-FLOW_ONLY_COMPOSER_LOADER			Set to true (1) to only use composer autoloader.
-============================	==================================================
++---------------------------+------------------------------------------------------------+
+| Variable                  | Description                                                |
++===========================+============================================================+
+| FLOW_ROOTPATH             | Can be used to override the path to the Flow root          |
++---------------------------+------------------------------------------------------------+
+| FLOW_CONTEXT              | Use to set the flow context (see above)                    |
++---------------------------+------------------------------------------------------------+
+| FLOW_PATH_TEMPORARY_BASE  | Can be used to set a path for temporary data               |
++---------------------------+------------------------------------------------------------+
+| FLOW_LOCKHOLDINGPAGE      | Use to specify the html page shown when the site is locked |
+|                           | This is relative to the Packages directory                 |
++---------------------------+------------------------------------------------------------+
+| FLOW_ONLY_COMPOSER_LOADER | Set to true (1) to only use composer autoloader            |
++---------------------------+------------------------------------------------------------+
 
 
 -----
