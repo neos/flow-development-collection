@@ -6,7 +6,7 @@
     "require": {
         "php": "^7.3 || ^8.0",
         "neos/flow": "~7.0.0",
-        "neos/fluid-adaptor": "*",
+        "neos/fluid-adaptor": "~7.0.0",
         "neos/utility-arrays": "*"
     },
     "autoload": {
