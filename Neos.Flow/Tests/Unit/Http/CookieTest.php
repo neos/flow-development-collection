@@ -296,7 +296,7 @@ class CookieTest extends UnitTestCase
      */
     public function SameSiteThrowsExceptionForInvalidValues()
     {
-        $this->expectExceptionCode(1584955500);
+        $this->expectExceptionCode(1606595726);
         new Cookie('foo', 'bar', 0, null, 'neos.io', '/', false, false, 'foo');
     }
 
