@@ -55,6 +55,8 @@ jobs:
       with:
         path: ${{ env.FLOW_FOLDER }}
 
+    - name: Alias checked out branch
+      run: git checkout -b build
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
@@ -76,7 +78,7 @@ jobs:
     - name: Update composer.json
       run: |
         composer config repositories.flow path ../${{ env.FLOW_FOLDER }}
-        composer require --no-update ${{ github.repository }}:"* as ${{ env.FLOW_BRANCH_ALIAS }}"
+        composer require --no-update ${{ github.repository }}:"dev-build as ${{ env.FLOW_BRANCH_ALIAS }}"
 
     - name: Cache Composer packages
       id: composer-cache
