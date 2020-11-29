@@ -540,11 +540,11 @@ class Bootstrap
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
 
-        // Not using this flag and loading classes via our class loader is deprecated
-        // and we will remove class loading from our loader in the next major of Flow (5.0).
-        $onlyUseComposerAutoLoaderForPackageClasses = false;
-        if (in_array(self::getEnvironmentConfigurationSetting('FLOW_ONLY_COMPOSER_LOADER'), [true, 'true', 1, '1'])) {
-            $onlyUseComposerAutoLoaderForPackageClasses = true;
+        // Using this flag and loading classes via our class loader is deprecated
+        // and we will remove class loading from our loader in the next major of Flow (8.0).
+        $onlyUseComposerAutoLoaderForPackageClasses = true;
+        if (in_array(self::getEnvironmentConfigurationSetting('FLOW_ONLY_COMPOSER_LOADER'), [false, 'false', 0, '0'])) {
+            $onlyUseComposerAutoLoaderForPackageClasses = false;
         }
 
         define('FLOW_ONLY_COMPOSER_LOADER', $onlyUseComposerAutoLoaderForPackageClasses);
