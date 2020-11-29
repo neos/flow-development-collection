@@ -71,11 +71,11 @@ You may also want to override ``onAuthenticationFailure()`` to react on login pr
 		/**
 		 * Will be triggered upon successful authentication
 		 *
-		 * @param ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
+		 * @param ActionRequest $originalRequest The request that was intercepted by the security framework, null if there was none
 		 * @return string
 		 */
-		protected function onAuthenticationSuccess(ActionRequest $originalRequest = NULL) {
-			if ($originalRequest !== NULL) {
+		protected function onAuthenticationSuccess(ActionRequest $originalRequest = null) {
+			if ($originalRequest !== null) {
 				$this->redirectToRequest($originalRequest);
 			}
 			$this->redirect('someDefaultActionAfterLogin');
@@ -1247,10 +1247,10 @@ The following example shows the matcher syntax used for entity privilege targets
       matcher: 'isType("Acme\MyPackage\RestrictableEntity")'
 
     'Acme.MyPackage.HiddenEntities':
-      matcher: 'isType("Acme\MyPackage\RestrictableEntity") && TRUE == property("hidden")'
+      matcher: 'isType("Acme\MyPackage\RestrictableEntity") && true == property("hidden")'
 
     'Acme.MyPackage.OthersEntities':
-      matcher: 'isType("Acme\MyPackage\RestrictableEntity") && !(property("ownerAccount").equals("context.securityContext.account")) && property("ownerAccount") != NULL'
+      matcher: 'isType("Acme\MyPackage\RestrictableEntity") && !(property("ownerAccount").equals("context.securityContext.account")) && property("ownerAccount") != null'
 
 EEL expressions are used to target the respective entities. You have to define the entity type, can match on property
 values and use global objects for comparison.
@@ -1269,7 +1269,7 @@ from the functional tests, show some more advanced matcher statements:
       matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.stringValue") == "Admin"'
 
     'Acme.MyPackage.RelatedPropertyComparedWithGlobalObject':
-     matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.ownerAccount") != "context.securityContext.account" && property("relatedEntityB.ownerAccount") != NULL'
+     matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.ownerAccount") != "context.securityContext.account" && property("relatedEntityB.ownerAccount") != null'
 
     'Acme.MyPackage.CompareStringPropertyWithCollection':
       matcher: 'isType("Acme\MyPackage\EntityC") && property("simpleStringProperty").in(["Andi", "Robert", "Karsten"])'
@@ -1595,7 +1595,7 @@ firewall configuration will look like:
     Flow:
       security:
         firewall:
-          rejectAll: FALSE
+          rejectAll: false
 
           filters:
             'Some.Package:AllowedUris':

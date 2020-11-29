@@ -57,6 +57,7 @@ General considerations
 * Almost every PHP file in Flow contains exactly one class and does not output anything
   if it is called directly. Therefore you start your file with a ``<?php`` tag and must not end it
   with the closing ``?>``.
+* We prefer strict typing, so files should contain a ``declare(strict_types=1);`` statement.
 * Every file must contain a header stating namespace and licensing information
 
   * Declare your namespace.
@@ -66,6 +67,7 @@ General considerations
 *The Flow standard file header*::
 
  <?php
+ declare(strict_types=1);
  namespace YourCompany\Package\Something\New;
 
  /*
@@ -100,7 +102,7 @@ Here's a code snippet which shows the correct usage of spaces.
   *
   * @return string Name of the current context
   */
- public function getContextName()
+ public function getContextName(): string
  {
      return $this->contextName;
  }
@@ -348,8 +350,8 @@ then you should want to avoid them.
 Constant names
 --------------
 
-All constant names are written in ``UPPERCASE``. This includes ``TRUE``, ``FALSE`` and
-``NULL``. Words can be separated by underscores - you can also use the underscore to group
+All constant names are written in ``UPPERCASE``. This includes ``true``, ``false`` and
+``null``. Words can be separated by underscores - you can also use the underscore to group
 constants thematically:
 
 * ``STUFF_LEVEL``
@@ -559,7 +561,8 @@ Classes have their own documentation block describing the classes purpose.
   *
   * Paragraphs are separated by an empty line.
   */
- class SomeClass {
+ class SomeClass
+ {
   ...
  }
 
@@ -594,7 +597,19 @@ add inline @var annotations to increase readability and to activate auto-complet
 Method documentation
 --------------------
 
-For a method, at least all parameters and the return value must be documented.
+For a method, parameters and the return value should only be documented if the documentation
+adds any value over the type hints.
+
+*method without documentation block*::
+
+ public function addStringToPost(Post $post, string $someString): void
+ {
+  ...
+ }
+
+
+However, it might be helpful to provide some additional description on the method itself or its
+parameter/return values:
 
 *Standard method documentation block*::
 
@@ -603,18 +618,18 @@ For a method, at least all parameters and the return value must be documented.
   *
   * Paragraphs are separated by an empty line.
   *
-  * @param \Neos\Blog\Domain\Model\Post $post A post
-  * @param string $someString This parameter should contain some string
-  * @return void
+  * @param Post $post Some description for the $post parameter
+  * @param string $someString Some description for the $someString parameter
   */
- public function addStringToPost(\Neos\Blog\Domain\Model\Post $post, $someString) {
+ public function addStringToPost(Post $post, string $someString): void
+ {
   ...
  }
 
 A special note about the ``@param`` tags: The parameter type and name are separated by one
-space, not aligned. Do not put a colon after the parameter name. Always document the
-return type, even if it is void - that way it is clearly visible it hasn't just been
-forgotten (only constructors never have a ``@return`` annotation!).
+space, not aligned. Do not put a colon after the parameter name.
+
+Specify type hints for parameters and return types where possible.
 
 Testcase documentation
 ----------------------
@@ -626,7 +641,8 @@ Testcases need to be marked as being a test and can have some more annotations.
  /**
   * @test
   */
- public function fooReturnsBarForQuux() {
+ public function fooReturnsBarForQuux(): void
+ {
   ...
  }
 
@@ -649,7 +665,8 @@ docblock.
   * @return void
   * @api
   */
- public function fooBar() {
+ public function fooBar(): void
+ {
   ...
  }
 
@@ -824,7 +841,7 @@ PHP in General
 
    if ($template)             // BAD
    if (isset($template))      // GOOD
-   if ($template !== NULL)    // GOOD
+   if ($template !== null)    // GOOD
    if ($template !== '')      // GOOD
 
    if (strlen($template) > 0) // BAD! strlen("-1") is greater than 0
@@ -853,8 +870,8 @@ PHP in General
   * destructor
 
 * Avoid double-negation. Instead of ``exportSystemView(..., $noRecurse)`` use
-  ``exportSystemView(..., $recurse)``. It is more logical to pass ``TRUE`` if you want
-  recursion instead of having to pass ``FALSE``. In general, parameters negating things
+  ``exportSystemView(..., $recurse)``. It is more logical to pass ``true`` if you want
+  recursion instead of having to pass ``false``. In general, parameters negating things
   are a bad idea.
 
 .. _`PHP namespaces`:  http://www.php.net/manual/language.namespaces.php
@@ -869,7 +886,7 @@ code. However, inline comments can often be a sign for a bad code structure or m
 naming. [#]_ As an example, consider the example for a coding smell::
 
   // We only allow valid persons
- if (is_object($p) && strlen($p->lastN) > 0 && $p->hidden === FALSE && $this->environment->moonPhase === MOON_LIB::CRESCENT) {
+ if (is_object($p) && strlen($p->lastN) > 0 && $p->hidden === false && $this->environment->moonPhase === MOON_LIB::CRESCENT) {
   $xmM = $thd;
  }
 
