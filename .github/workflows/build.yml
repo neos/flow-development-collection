@@ -23,8 +23,8 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     env:
-      NEOS_TARGET_VERSION: ${{ github.base_ref }}
-      NEOS_TARGET_REPOSITORY: ${{ github.repository }}
+      FLOW_TARGET_VERSION: ${{ github.base_ref }}
+      FLOW_TARGET_REPOSITORY: ${{ github.repository }}
       FLOW_CONTEXT: Testing
       FLOW_DIST_FOLDER: flow-development-distribution
       FLOW_FOLDER: flow-development-collection
