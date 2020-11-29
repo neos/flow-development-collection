@@ -126,14 +126,14 @@ the API of every validator is demonstrated in the following code example:
 
     // $result is of type Neos\Error\Messages\Result
     $result = $validator->validate('myExampleString');
-    $result->hasErrors(); // is FALSE, as the string is longer than 10 characters.
+    $result->hasErrors(); // is false, as the string is longer than 10 characters.
 
     $result = $validator->validate('short');
-    $result->hasErrors(); // is TRUE, as the string is too short.
+    $result->hasErrors(); // is true, as the string is too short.
     $result->getFirstError()->getMessage(); // contains the human-readable error message
 
 On the above example, it can be seen that validators can be *re-used* for different input.
-Furthermore, a validator does not only just return TRUE or FALSE, but instead returns
+Furthermore, a validator does not only just return true or false, but instead returns
 a ``Result`` object which you can ask whether any errors happened. Please see the API
 for a detailed description.
 
@@ -182,8 +182,8 @@ validators shipped:
   but will rarely be used directly.
 * ``ConjunctionValidator`` and ``DisjunctionValidator`` implement logical AND / OR conditions.
 
-Furthermore, almost all validators of simple types regard ``NULL`` and the empty string (``''``) as **valid**.
-The only exception is the ``NotEmpty`` validator, which disallows both ``NULL`` and empty string. This means
+Furthermore, almost all validators of simple types regard ``null`` and the empty string (``''``) as **valid**.
+The only exception is the ``NotEmpty`` validator, which disallows both ``null`` and empty string. This means
 if you want to validate that a property is e.g. an email address *and* does exist, you need to combine the two
 validators using a ``ConjunctionValidator``::
 
@@ -417,7 +417,7 @@ implement the ``isValid()`` method then:
          * @var array
          */
         protected $supportedOptions = array(
-            'foo' => array(NULL, 'The foo value to accept as valid', 'mixed', TRUE)
+            'foo' => array(null, 'The foo value to accept as valid', 'mixed', true)
         );
 
         /**
@@ -457,7 +457,7 @@ is an array with the following numerically indexed elements:
 # default value of the option
 # description of the option (used for documentation rendering)
 # type of the option (used for documentation rendering)
-# required option flag (optional, defaults to FALSE)
+# required option flag (optional, defaults to false)
 
 The default values are set in the constructor of the abstract validators provided with Flow. If the
 required flag is set, missing options will cause an ``InvalidValidationOptionsException`` to be thrown
@@ -466,10 +466,10 @@ when the validator is instantiated.
 In case you do further checks on the options and any of them is invalid, an
 ``InvalidValidationOptionsException`` should be thrown as well.
 
-.. tip:: Because you extended AbstractValidator in the above example, ``NULL`` and empty string
+.. tip:: Because you extended AbstractValidator in the above example, ``null`` and empty string
          are automatically regarded as valid values; as it is the case for all other validators.
          If you do not want to accept empty values, you need to set the class property
-         $acceptsEmptyValues to FALSE.
+         $acceptsEmptyValues to false.
 
 
 .. _Effective Aggregate Design: https://vaughnvernon.co/?p=838

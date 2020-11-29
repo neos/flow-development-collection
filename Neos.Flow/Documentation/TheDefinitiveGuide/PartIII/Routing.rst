@@ -255,7 +255,7 @@ configurable regular expressions:
 		 * Checks whether the current URI section matches the configured RegEx pattern.
 		 *
 		 * @param string $requestPath value to match, the string to be checked
-		 * @return boolean TRUE if value could be matched successfully, otherwise FALSE.
+		 * @return boolean true if value could be matched successfully, otherwise false.
 		 */
 		protected function matchValue($requestPath) {
 			if (!preg_match($this->options['pattern'], $requestPath, $matches)) {
@@ -269,7 +269,7 @@ configurable regular expressions:
 		 * Checks whether the route part matches the configured RegEx pattern.
 		 *
 		 * @param string $value The route part (must be a string)
-		 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
+		 * @return boolean true if value could be resolved successfully, otherwise false.
 		 */
 		protected function resolveValue($value) {
 			if (!is_string($value) || !preg_match($this->options['pattern'], $value, $matches)) {
@@ -679,7 +679,7 @@ Settings.yaml (``Configuration/Settings.yaml``):
 	  Flow:
 	    mvc:
 	      routes:
-	        'Some.Package': TRUE
+	        'Some.Package': true
 
 This will include all routes from the main ``Routes.yaml`` file of the ``Some.Package`` (and all its nested SubRoutes
 if it defines any).
@@ -793,13 +793,13 @@ Custom route part handlers can register additional tags to be associated with a 
 	class SomePartHandler extends DynamicRoutePart {
 
 		protected function matchValue($requestPath) {
-			// custom logic, returning FALSE if the $requestPath doesn't match
+			// custom logic, returning false if the $requestPath doesn't match
 			$this->value = $matchedValue;
 			return true;
 		}
 
 		protected function resolveValue($value) {
-			// custom logic, returning FALSE if the $value doesn't resolve
+			// custom logic, returning false if the $value doesn't resolve
 			$this->value = $resolvedPathSegment;
 			return true;
 		}
@@ -816,12 +816,12 @@ Custom route part handlers can register additional tags to be associated with a 
 	class SomePartHandler extends DynamicRoutePart {
 
 		protected function matchValue($requestPath) {
-			// custom logic, returning FALSE if the $requestPath doesn't match, as before
+			// custom logic, returning false if the $requestPath doesn't match, as before
 			return new MatchResult($matchedValue, RouteTags::createFromTag('some-tag'));
 		}
 
 		protected function resolveValue($value) {
-			// custom logic, returning FALSE if the $value doesn't resolve, as before
+			// custom logic, returning false if the $value doesn't resolve, as before
 			return new ResolveResult($resolvedPathSegment, null, RouteTags::createFromTag('some-tag'));
 		}
 

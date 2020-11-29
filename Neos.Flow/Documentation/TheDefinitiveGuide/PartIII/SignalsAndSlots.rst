@@ -41,11 +41,8 @@ like in this example:
 
 *Example: Emitting a Signal* ::
 
-    /**
-     * @param Comment $newComment
-     * @return void
-     */
-    public function createAction(Comment $newComment) {
+    public function createAction(Comment $newComment): void
+    {
         ...
         $this->emitCommentCreated($newComment);
         ...
@@ -69,11 +66,8 @@ from any non-slot method.
 
 *Example: A method that can be used as a slot* ::
 
-    /**
-     * @param Comment $comment
-     * @return void
-     */
-    public function sendNewCommentNotification(Comment $comment) {
+    public function sendNewCommentNotification(Comment $comment): void
+    {
         $mail = new \Neos\SwiftMailer\Message();
         $mail->setFrom(array('john@doe.org ' => 'John Doe'))
             ->setTo(array('karsten@neos.io ' => 'Karsten Dambekalns'))
@@ -95,11 +89,8 @@ of type ``Neos\Flow\SignalSlot\SignalInformation``.
 
 *Example: A dedicated slot method* ::
 
-    /**
-     * @param SignalInformation $signal
-     * @return void
-     */
-    public function dedicatedSendNewCommentNotificationSlot(SignalInformation $signal) {
+    public function dedicatedSendNewCommentNotificationSlot(SignalInformation $signal): void
+    {
         $comment = $signal->getSignalArgument('comment');
         if ($comment !== null) {
             $mail = new \Neos\SwiftMailer\Message();
@@ -169,11 +160,9 @@ by ``::``.) ``$passSignalInformation`` is ``true`` by default.
 
     /**
      * Boot the package. We wire some signals to slots here.
-     *
-     * @param \Neos\Flow\Core\Bootstrap $bootstrap The current bootstrap
-     * @return void
      */
-    public function boot(\Neos\Flow\Core\Bootstrap $bootstrap) {
+    public function boot(\Neos\Flow\Core\Bootstrap $bootstrap): void
+    {
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
         $dispatcher->connect(
