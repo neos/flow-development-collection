@@ -81,7 +81,8 @@ handling the request.
 
 ::
 
-	public function run() {
+	public function run()
+	{
 		Scripts::initializeClassLoader($this);
 		Scripts::initializeSignalSlot($this);
 		Scripts::initializePackageManagement($this);
@@ -146,9 +147,11 @@ Request handlers must first be registered in order to be considered during the
 resolving phase. Registration is done in the ``Package`` class of the package
 containing the request handler::
 
-	class Package extends BasePackage {
+	class Package extends BasePackage
+	{
 
-		public function boot(\Neos\Flow\Core\Bootstrap $bootstrap) {
+		public function boot(\Neos\Flow\Core\Bootstrap $bootstrap): void
+		{
 			$bootstrap->registerRequestHandler(new \Acme\Foo\BarRequestHandler($bootstrap));
 		}
 

@@ -136,13 +136,9 @@ that defines the ``process($request, $next)`` method::
   /**
    * A sample HTTP middleware that intercepts the default handling and returns "bar" if the request contains an argument "foo"
    */
-  class SomeMiddleware implements MiddlewareInterface {
+  class SomeMiddleware implements MiddlewareInterface
+  {
 
-    /**
-     * @param ServerRequestInterface $httpRequest
-     * @param RequestHandlerInterface $next
-     * @return ResponseInterface
-     */
     public function process(ServerRequestInterface $httpRequest, RequestHandlerInterface $next): ResponseInterface;
       if (!$httpRequest->hasArgument('foo')) {
         // You may also return a new HttpResponse here and thereby short-cut the further handling
@@ -252,7 +248,7 @@ For example if one wants to handle an AJAX request and prevent the default dispa
 	public function handle(ComponentContext $componentContext) {
 		// check if the request should be handled and return otherwise
 
-		$componentContext->setParameter(\Neos\Flow\Http\Component\ComponentChain::class, 'cancel', TRUE);
+		$componentContext->setParameter(\Neos\Flow\Http\Component\ComponentChain::class, 'cancel', true);
 	}
 
 Note that component chains can be nested. By default the three sub chains ``preprocess``, ``process`` and ``postprocess``
@@ -276,14 +272,16 @@ wrong protocol, host or client IP address.
 If you need access to the **current** HTTP ``Request``, either create a :ref:`Http Component<Component Chain>` or only access it inside the
 controller through the ``ActionRequest`` for inspecting::
 
-	public function myAction() {
+	public function myAction(): void
+	{
 		$requestBody = $this->request->getHttpRequest()->getParsedBody();
 		...
 	}
 
 Alternatively, starting with Flow version 7.0, you can just inject an instance of the PSR-7 ``ServerRequestInterface``::
 
-	public function __construct(\Psr\Http\Message\ServerRequestInterface $httpRequest) {
+	public function __construct(\Psr\Http\Message\ServerRequestInterface $httpRequest)
+	{
 		...
 	}
 
@@ -477,7 +475,8 @@ Like requests and responses, a cookie also is represented by a PHP class. Instea
 instances of the ``Cookie`` class are used.
 In order to set a cookie, just create a new ``Cookie`` object and add it to the HTTP response::
 
-	public function myAction() {
+	public function myAction(): void
+	{
 		$cookie = new Cookie('myCounter', 1);
 		$this->response->setCookie($cookie);
 	}
@@ -486,7 +485,8 @@ As soon as the response is sent to the browser, the cookie is sent as part of it
 will send the cookie through the ``Cookie`` header. These headers are parsed automatically and can be retrieved from the
 ``HttpRequest`` object::
 
-	public function myAction() {
+	public function myAction(): void
+	{
 		$httpRequest = $this->request->getHttpRequest();
 		$cookieParams = $httpRequest->getCookieParams();
 		if (isset($cookieParams['myCounter']) {
@@ -496,7 +496,8 @@ will send the cookie through the ``Cookie`` header. These headers are parsed aut
 
 The cookie value can be updated and re-assigned to the response::
 
-	public function myAction() {
+	public function myAction(): void
+	{
 		$httpRequest = $this->request->getHttpRequest();
 		$counter = $httpRequest->getCookieParams()['myCounter'] ?? 0;
 		$this->view->assign('counter', $counter);
@@ -507,7 +508,8 @@ The cookie value can be updated and re-assigned to the response::
 
 Finally, a cookie can be deleted by calling the ``deleteCookie()`` method::
 
-	public function myAction() {
+	public function myAction(): void
+	{
 		$this->response->deleteCookie('myCounter');
 	}
 
@@ -559,7 +561,8 @@ Sending a request and processing the response is a matter of a few lines::
 	/**
 	 * A sample controller
 	 */
-	class MyController extends ActionController {
+	class MyController extends ActionController
+	{
 
 		/**
 		 * @Flow\Inject
@@ -576,7 +579,8 @@ Sending a request and processing the response is a matter of a few lines::
 		/**
 		 * Some action
 		 */
-		public function testAction() {
+		public function testAction(): string
+		{
 			$this->browser->setRequestEngine($this->browserRequestEngine);
 			$response = $this->browser->request('https://www.flowframework.io');
 			return ($response->hasHeader('X-Flow-Powered') ? 'yes' : 'no');
@@ -610,12 +614,13 @@ other application parts which are accessible via HTTP. This browser has the ``In
 	/**
 	 * Some functional tests
 	 */
-	class SomeTest extends \Neos\Flow\Tests\FunctionalTestCase {
+	class SomeTest extends \Neos\Flow\Tests\FunctionalTestCase
+	{
 
 		/**
-		 * @var boolean
+		 * @var bool
 		 */
-		protected $testableHttpEnabled = TRUE;
+		protected $testableHttpEnabled = true;
 
 		/**
 		 * Send a request to a controller of my application.
@@ -623,7 +628,8 @@ other application parts which are accessible via HTTP. This browser has the ``In
 		 *
 		 * @test
 		 */
-		public function someTest() {
+		public function someTest(): void
+		{
 			$response = $this->browser->request('http://localhost/Acme.Demo/Foo/bar.html');
 			$this->assertContains('it works', $response->getContent());
 		}

@@ -325,7 +325,8 @@ The annotation provides three optional attributes related to configuration injec
 
     use Neos\Flow\Annotations as Flow;
 
-    class SomeClass {
+    class SomeClass
+    {
 
       /**
        * @Flow\InjectConfiguration(path="administrator.name")
@@ -347,21 +348,17 @@ The annotation provides three optional attributes related to configuration injec
 
       /**
        * Overrides the name
-       *
-       * @param string $name
-       * @return void
        */
-      public function setName($name) {
+      public function setName($name): void
+      {
         $this->name = $name;
       }
 
       /**
        * Overrides the email
-       *
-       * @param string $email
-       * @return void
        */
-      public function setEmail($email) {
+      public function setEmail($email): void
+      {
         $this->email = $email;
       }
     }
@@ -455,10 +452,10 @@ Here is an example of a schema, from *Neos.Flow.core.schema.yaml*:
 .. code-block:: yaml
 
  type: dictionary
- additionalProperties: FALSE
+ additionalProperties: false
  properties:
-   'context': { type: string, required: TRUE }
-   'phpBinaryPathAndFilename': { type: string, required: TRUE }
+   'context': { type: string, required: true }
+   'phpBinaryPathAndFilename': { type: string, required: true }
 
 It declares the constraints for the *Neos.Flow.core* setting:
 

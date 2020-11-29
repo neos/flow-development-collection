@@ -692,7 +692,7 @@ calling ``_activateDependency()`` will fail.
 		 * A dependency, injected eagerly
 		 *
 		 * @var \MyCompany\MyPackage\BarInterface
-		 * @Flow\Inject(lazy = FALSE)
+		 * @Flow\Inject(lazy = false)
 		 */
 		protected $bar;
 
@@ -1075,7 +1075,7 @@ definition of setter injection:
 
 		protected $bar;
 		protected $identifier = 'Untitled';
-		protected $enableCache = FALSE;
+		protected $enableCache = false;
 
 		public function injectBar(\MyCompany\MyPackage\BarInterface $bar) {
 			$this->bar = $bar;
