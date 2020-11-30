@@ -143,7 +143,7 @@ class Cookie
             throw new \InvalidArgumentException('The parameter "path" passed to the Cookie constructor must be a valid path as per RFC 6265, Section 4.1.1.', 1345123078);
         }
 
-        $sameSite = $sameSite === null ? self::SAMESITE_LAX : $sameSite;
+        $sameSite = $sameSite ?? self::SAMESITE_LAX;
         if (!\in_array($sameSite, [self::SAMESITE_LAX, self::SAMESITE_STRICT, self::SAMESITE_NONE], true)) {
             throw new \InvalidArgumentException('The parameter "sameSite" passed to the Cookie constructor must be a valid samesite value. Possible values are "none", "strict" and "lax"', 1584955500);
         }
