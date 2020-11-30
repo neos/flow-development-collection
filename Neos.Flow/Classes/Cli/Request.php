@@ -101,28 +101,6 @@ class Request
     }
 
     /**
-     * Returns the this request, as CLI request nesting is not supported.
-     *
-     * @return Request
-     * @deprecated
-     */
-    public function getMainRequest(): Request
-    {
-        return $this;
-    }
-
-    /**
-     * Returns true, as CLI request nesting is not supported.
-     *
-     * @return boolean
-     * @deprecated
-     */
-    public function isMainRequest(): bool
-    {
-        return true;
-    }
-
-    /**
      * Sets the name of the command contained in this request.
      *
      * Note that the command name must start with a lower case letter and is case sensitive.

@@ -14,8 +14,6 @@ namespace Neos\Flow\Tests;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Http\Factories\ResponseFactory;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -111,17 +109,5 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
             $this->httpRequest = ServerRequest::fromGlobals();
         }
         return $this->httpRequest;
-    }
-
-    /**
-     * Returns the HTTP response corresponding to the currently handled request
-     *
-     * @return ResponseInterface
-     * @api
-     */
-    public function getHttpResponse()
-    {
-        $responseFactory = new ResponseFactory();
-        return $responseFactory->createResponse();
     }
 }
