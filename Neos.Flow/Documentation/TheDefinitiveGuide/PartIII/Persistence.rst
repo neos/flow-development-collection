@@ -4,14 +4,7 @@ Persistence
 
 .. sectionauthor:: Karsten Dambekalns <karsten@dambekalns.de>
 
-This chapter explains how to use object persistence in Flow. To do this, it focuses on
-the persistence based on the *Doctrine* 2 ORM first. There is another mechanism available,
-called *Generic* persistence, which can be used to add your own persistence backends to
-Flow. It is explained separately later in the chapter.
-
-.. note::
-
-  The *Generic* persistence is deprecated as of Flow 6.0 and will be dropped in Flow 7.0.
+This chapter explains how to use object persistence in Flow.
 
 .. tip::
 
@@ -322,9 +315,8 @@ objects until the point when those properties are really needed.
 
 The drawback of this: If you access associated objects, each access will fire a request to
 the persistent storage now. So there might be situations when eager loading comes in
-handy to avoid excessive database roundtrips. Eager loading is the default when using the
-*Generic* persistence mechanism and can be achieved for the Doctrine 2 ORM by using join
-operations in DQL or specifying the fetch mode in the mapping configuration.
+handy to avoid excessive database roundtrips. Eager loading can be achieved for the Doctrine 2
+ORM by using join operations in DQL or specifying the fetch mode in the mapping configuration.
 
 Doctrine Persistence
 ====================
@@ -1240,187 +1232,6 @@ Known issues
   The Flow mapping type ``flow_json_array`` uses the ``jsonb`` type available as of PostgreSQL 9.4,
   circumventing this restriction.
 
-Generic Persistence
-===================
-
-What is now called *Generic* Persistence, used to be the only persistence layer in Flow.
-Back in those days there was no ORM available that fit our needs. That being said, with
-the advent of Doctrine 2, your best bet as a PHP developer is to use that instead of any
-home-brewn ORM.
-
-.. note::
-
-  The *Generic* persistence is deprecated as of Flow 6.0 and will be dropped in Flow 7.0.
-
-When your target is not a relational database, things look slightly different, which is
-why the "old" code is still available for use, primarily by alternative backends like the
-ones for CouchDB or Solr, that are available. Using the Generic persistence layer to
-target a RDBMS is still possible, but probably only useful for rare edge cases.
-
-Switching to Generic Persistence
---------------------------------
-
-To switch to Generic persistence you need to configure Flow like this.
-
-*Objects.yaml*:
-
-.. code-block:: yaml
-
-	Neos\Flow\Persistence\PersistenceManagerInterface:
-	  className: 'Neos\Flow\Persistence\Generic\PersistenceManager'
-
-	Neos\Flow\Persistence\QueryResultInterface:
-	  scope: prototype
-	  className: 'Neos\Flow\Persistence\Generic\QueryResult'
-
-*Settings.yaml*:
-
-.. code-block:: yaml
-
-	Flow:
-	  persistence:
-	    doctrine:
-	      enable: false
-
-When installing generic backend packages, like CouchDB, the needed object configuration
-should be contained in them, for the connection settings, consult the package's
-documentation.
-
-Metadata mapping
-----------------
-
-The persistence layer needs to know a lot about your code to be able to persist it. In
-Flow, the needed data is given in the source code through annotations, as this aligns
-with the philosophy behind the framework.
-
-Annotations for the Generic Persistence
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The following table lists all annotations used by the persistence framework with their name,
-scope and meaning:
-
-:title:`Persistence-related code annotations`
-
-+------------------+----------+----------------------------------------------------------+
-| Annotation       | Scope    | Meaning                                                  |
-+==================+==========+==========================================================+
-| ``Entity``       | Class    | Declares a class as an Entity.                           |
-+------------------+----------+----------------------------------------------------------+
-| ``ValueObject``  | Class    | Declares a class as a Value Object, allowing the         |
-|                  |          | persistence framework to reuse an existing object if one |
-|                  |          | exists.                                                  |
-+------------------+----------+----------------------------------------------------------+
-| ``@var``         | Variable | Is used to detect the type a variable has.               |
-+------------------+----------+----------------------------------------------------------+
-| ``Transient``    | Variable | Makes the persistence framework ignore the variable.     |
-|                  |          | Neither will it's value be persisted, nor will it be     |
-|                  |          | touched during reconstitution.                           |
-+------------------+----------+----------------------------------------------------------+
-| ``Identity``     | Variable | Marks the variable as being relevant for determining     |
-|                  |          | the identity of an object in the domain.                 |
-+------------------+----------+----------------------------------------------------------+
-| ``Lazy``         | Class,   | When reconstituting the value of this property will be   |
-|                  | Variable | loaded only when the property is used. Note: This is only|
-|                  |          | supported for properties of type ``\SplObjectStorage``   |
-|                  |          | and objects (marked with ``Lazy`` in their source code,  |
-|                  |          | see below).                                              |
-+------------------+----------+----------------------------------------------------------+
-
-Enabling Lazy Loading
----------------------
-
-If a class should be able to be lazy loaded by the PDO backend, you need to annotate it
-with ``@lazy`` in the class level docblock. This is done to avoid creating proxy classes
-for objects that should never be lazy loaded anyway. As soon as that annotation is found,
-AOP is used to weave lazy loading support into your code that intercepts all method calls
-and initializes the object before calling the expected method. Such a proxy class is a
-subclass of your class, as such it work fine with type hinting and checks and can be used
-the same way as the original class.
-
-To actually mark a property for lazy loading, you need to add the ``@lazy`` annotation to
-the property docblock in your code. Then the persistence layer will skip loading the data
-for that object and the object properties will be thawed when the object is actually used.
-
-:title:`How @lazy annotations interact`
-
-+-----------+-----------+----------------------------------------------------------------+
-| Class     | Property  | Effect                                                         |
-+===========+===========+================================================================+
-| ``Lazy``  | ``Lazy``  | The class' instances will be lazy loadable, and properties of  |
-|           |           | that type will be populated with a lazy loading proxy.         |
-+-----------+-----------+----------------------------------------------------------------+
-| ``Lazy``  | *none*    | The class' instances will be lazy loadable, but that           |
-|           |           | possibility will not be used.                                  |
-+-----------+-----------+----------------------------------------------------------------+
-| *none*    | ``Lazy``  | ``\SplObjectStorage`` will be reconstituted as a lazy loading  |
-|           |           | proxy, for other types nothing happens.                        |
-|           |           |                                                                |
-|           |           | Properties of type ``\SplObjectStorage`` can always be         |
-|           |           | lazy-loaded by adding the ``Lazy`` annotation on the property  |
-|           |           | only.                                                          |
-|           |           |                                                                |
-|           |           | How and if lazy-loading is handled by alternative backends is  |
-|           |           | up to the implementation.                                      |
-+-----------+-----------+----------------------------------------------------------------+
-
-Schema management
------------------
-
-Whether other backends implement automatic schema management is up to the developers,
-consult the documentation of the relevant backend for details.
-
-Inside the Generic Persistence
-------------------------------
-
-To the domain code the persistence handling transparent, aside from the need to add a few
-annotations. The custom repositories are a little closer to the inner workings of the
-framework, but still the inner workings are very invisible. This is how it is supposed to
-be, but a little understanding of how persistence works internally can help understand
-problems and develop more efficient client code.
-
-Persisting a Domain Object
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-After an object has been added to a repository it will be seen when Flow calls
-``persistAll()`` at the end of a script run. Internally all instances implementing the
-``\Neos\Flow\Persistence\RepositoryInterface`` will be fetched and asked for the objects
-they hold. Those will then be handed to the persistence backend in use and processed by
-it.
-
-Flow defines interfaces for persistence backends and queries, the details of how objects
-are persisted and queried are up to the persistence backend implementation. Have a look at
-the documentation of the respective package for more information. The following diagram
-shows (most of) the way an object takes from creation until it is persisted when using the
-suggested process:
-
-.. figure:: Images/Persistence_PersistenceProcess.png
-	:alt: Object persistence process
-	:class: screenshot-fullsize
-
-	Object persistence process
-
-Keep in mind that the diagram omits some details like dirty checking on objects and how
-exactly objects and their properties are stored.
-
-Querying the Storage Backend
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-As we saw in the introductory example there is a query mechanism available that provides
-easy fetching of objects through the persistence framework. You ask for instances of a
-specific class that match certain filters and get back an array of those reconstituted
-objects. Here is a diagram of the internal process when using the suggested process:
-
-.. figure:: Images/Persistence_QueryProcess.png
-	:alt: Object querying and reconstitution process
-	:class: screenshot-fullsize
-
-	Object querying and reconstitution process
-
-For the developer the complexity is hidden between the query's ``execute()`` method and
-the array of objects being returned.
-
-
------
 
 .. [#] An alternative would have been to do an implicit persist call before a query, but
 	that seemed to be confusing.
