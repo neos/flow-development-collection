@@ -122,7 +122,7 @@ class Cookie
      * @api
      * @throws \InvalidArgumentException
      */
-    public function __construct($name, $value = null, $expires = 0, $maximumAge = null, $domain = null, $path = '/', $secure = false, $httpOnly = true, $sameSite = 'lax')
+    public function __construct($name, $value = null, $expires = 0, $maximumAge = null, $domain = null, $path = '/', $secure = false, $httpOnly = true, $sameSite = null)
     {
         if (preg_match(self::PATTERN_TOKEN, $name) !== 1) {
             throw new \InvalidArgumentException('The parameter "name" passed to the Cookie constructor must be a valid token as per RFC 2616, Section 2.2.', 1345101977);
@@ -143,8 +143,9 @@ class Cookie
             throw new \InvalidArgumentException('The parameter "path" passed to the Cookie constructor must be a valid path as per RFC 6265, Section 4.1.1.', 1345123078);
         }
 
+        $sameSite = $sameSite === null ? self::SAMESITE_LAX : $sameSite;
         if (!\in_array($sameSite, [self::SAMESITE_LAX, self::SAMESITE_STRICT, self::SAMESITE_NONE], true)) {
-            throw new \InvalidArgumentException('The parameter "sameSite" passed to the Cookie constructor must be a valid samesite value. Possible values are "none", "strict" and "lax"', 1606595726);
+            throw new \InvalidArgumentException('The parameter "sameSite" passed to the Cookie constructor must be a valid samesite value. Possible values are "none", "strict" and "lax"', 1584955500);
         }
 
         $this->name = $name;
