@@ -54,7 +54,7 @@ class SessionMiddlewareTest extends UnitTestCase
         'secure' => false,
         'httponly' => true,
         'domain' => null,
-        'samesite' => null,
+        'samesite' => Cookie::SAMESITE_LAX,
     ];
 
     public function setUp(): void
