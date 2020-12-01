@@ -108,19 +108,14 @@ class BrowserTest extends UnitTestCase
 
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
-            ->expects(self::at(0))
             ->method('sendRequest')
-            ->with($this->callback(function (ServerRequestInterface $request) use ($initialUri) {
+            ->withConsecutive([
+                self::callback(function (ServerRequestInterface $request) use ($initialUri) {
                 return (string)$request->getUri() === (string)$initialUri;
-            }))
-            ->willReturn($firstResponse);
-        $requestEngine
-            ->expects(self::at(1))
-            ->method('sendRequest')
-            ->with($this->callback(function (ServerRequestInterface $request) use ($redirectUri) {
+            })], [
+                self::callback(function (ServerRequestInterface $request) use ($redirectUri) {
                 return (string)$request->getUri() === (string)$redirectUri;
-            }))
-            ->willReturn($secondResponse);
+            })])->willReturnOnConsecutiveCalls($firstResponse, $secondResponse);
 
         $this->browser->setRequestEngine($requestEngine);
         $actual = $this->browser->request($initialUri);
@@ -160,9 +155,10 @@ class BrowserTest extends UnitTestCase
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         for ($i=0; $i<=3; $i++) {
             $requestEngine
-                ->expects(self::at($i))
+                ->expects(self::exactly(count($wildResponses)))
                 ->method('sendRequest')
-                ->will(self::returnValue($wildResponses[$i]));
+                ->willReturnOnConsecutiveCalls(...$wildResponses);
+//                ->will(self::returnValue($wildResponses[$i]));
         }
 
         $this->browser->setRequestEngine($requestEngine);
@@ -176,13 +172,14 @@ class BrowserTest extends UnitTestCase
     {
         $this->expectException(Client\InfiniteRedirectionException::class);
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
+        $responses = [];
         for ($i=0; $i<=10; $i++) {
-            $response = new Response(301, ['Location' => 'http://localhost/this/willLead/you/knowhere/' . $i]);
-            $requestEngine
-                ->expects(self::at($i))
-                ->method('sendRequest')
-                ->will(self::returnValue($response));
+            $responses[] = new Response(301, ['Location' => 'http://localhost/this/willLead/you/knowhere/' . $i]);
         }
+        $requestEngine
+            ->expects(self::exactly(count($responses)))
+            ->method('sendRequest')
+            ->willReturnOnConsecutiveCalls(...$responses);
 
         $this->browser->setRequestEngine($requestEngine);
         $this->browser->request('http://localhost/some/initialRequest');

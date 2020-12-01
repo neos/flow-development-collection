@@ -89,8 +89,11 @@ class ActionControllerTest extends UnitTestCase
      */
     public function resolveViewObjectNameReturnsObjectNameOfCustomViewWithoutFormatSuffixIfItExists()
     {
-        $this->mockObjectManager->expects(self::at(0))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will(self::returnValue(null));
-        $this->mockObjectManager->expects(self::at(1))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theaction')->will(self::returnValue('ResolvedObjectName'));
+        $this->mockObjectManager->expects(self::exactly(2))->method('getCaseSensitiveObjectName')
+            ->withConsecutive(
+                ['some\package\subpackage\view\thecontroller\theactiontheformat'],
+                ['some\package\subpackage\view\thecontroller\theaction']
+            )->willReturnOnConsecutiveCalls(null, 'ResolvedObjectName');
 
         self::assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
     }
@@ -101,8 +104,11 @@ class ActionControllerTest extends UnitTestCase
     public function resolveViewObjectNameRespectsViewFormatToObjectNameMap()
     {
         $this->actionController->_set('viewFormatToObjectNameMap', ['html' => 'Foo', 'theFormat' => 'Some\Custom\View\Object\Name']);
-        $this->mockObjectManager->expects(self::at(0))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->will(self::returnValue(null));
-        $this->mockObjectManager->expects(self::at(1))->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theaction')->will(self::returnValue(null));
+        $this->mockObjectManager->expects(self::exactly(2))->method('getCaseSensitiveObjectName')
+            ->withConsecutive(
+                ['some\package\subpackage\view\thecontroller\theactiontheformat'],
+                ['some\package\subpackage\view\thecontroller\theaction']
+            )->willReturn(null);
 
         self::assertSame('Some\Custom\View\Object\Name', $this->actionController->_call('resolveViewObjectName'));
     }

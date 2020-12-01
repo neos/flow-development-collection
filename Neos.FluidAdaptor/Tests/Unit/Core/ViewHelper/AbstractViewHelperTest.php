@@ -19,8 +19,8 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ArgumentDefinition;
-use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
+use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 
 require_once(__DIR__ . '/../Fixtures/TestViewHelper.php');
 require_once(__DIR__ . '/../Fixtures/TestViewHelper2.php');
@@ -237,14 +237,16 @@ class AbstractViewHelperTest extends UnitTestCase
      */
     public function initializeArgumentsAndRenderCallsTheCorrectSequenceOfMethods(): void
     {
+        $calls = [];
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['validateArguments', 'initialize', 'callRenderMethod']);
-        $viewHelper->expects(self::at(0))->method('validateArguments');
-        $viewHelper->expects(self::at(1))->method('initialize');
-        $viewHelper->expects(self::at(2))->method('callRenderMethod')->willReturn('Output');
+        $viewHelper->expects(self::atLeastOnce())->method('validateArguments')->willReturnCallback(function () use (&$calls) { $calls[] = 'validateArguments'; });
+        $viewHelper->expects(self::atLeastOnce())->method('initialize')->willReturnCallback(function () use (&$calls) { $calls[] = 'initialize'; });
+        $viewHelper->expects(self::atLeastOnce())->method('callRenderMethod')->willReturnCallback(function () use (&$calls) { $calls[] = 'callRenderMethod'; return 'Output'; });
 
         $expectedOutput = 'Output';
         $actualOutput = $viewHelper->initializeArgumentsAndRender(['argument1' => 'value1']);
         self::assertEquals($expectedOutput, $actualOutput);
+        self::assertEquals(['validateArguments', 'initialize', 'callRenderMethod'], $calls);
     }
 
     /**

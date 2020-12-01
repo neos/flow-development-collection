@@ -40,8 +40,7 @@ class FormatResolverTest extends UnitTestCase
     public function placeholdersAreResolvedCorrectly()
     {
         $mockNumberFormatter = $this->createMock(I18n\Formatter\NumberFormatter::class);
-        $mockNumberFormatter->expects(self::at(0))->method('format')->with(1, $this->sampleLocale)->will(self::returnValue('1.0'));
-        $mockNumberFormatter->expects(self::at(1))->method('format')->with(2, $this->sampleLocale, ['percent'])->will(self::returnValue('200%'));
+        $mockNumberFormatter->method('format')->withConsecutive([1, $this->sampleLocale], [2, $this->sampleLocale, ['percent']])->willReturnOnConsecutiveCalls('1.0', '200%');
 
         $formatResolver = $this->getAccessibleMock(I18n\FormatResolver::class, ['getFormatter']);
         $formatResolver->expects(self::exactly(2))->method('getFormatter')->with('number')->will(self::returnValue($mockNumberFormatter));
@@ -91,15 +90,9 @@ class FormatResolverTest extends UnitTestCase
         $this->expectException(I18n\Exception\UnknownFormatterException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager
-            ->expects(self::at(0))
             ->method('isRegistered')
-            ->with('foo')
-            ->will(self::returnValue(false));
-        $mockObjectManager
-            ->expects(self::at(1))
-            ->method('isRegistered')
-            ->with('Neos\Flow\I18n\Formatter\FooFormatter')
-            ->will(self::returnValue(false));
+            ->withConsecutive(['foo'], ['Neos\Flow\I18n\Formatter\FooFormatter'])
+            ->willReturn(false);
 
         $formatResolver = new I18n\FormatResolver();
         $formatResolver->injectObjectManager($mockObjectManager);
