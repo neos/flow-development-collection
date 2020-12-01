@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Persistence;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Persistence;
-use PHPUnit\Framework\Error\Error;
 
 require_once('Fixture/Repository/NonstandardEntityRepository.php');
 
@@ -240,7 +239,7 @@ class RepositoryTest extends UnitTestCase
      */
     public function magicCallMethodTriggersAnErrorIfUnknownMethodsAreCalled()
     {
-        $this->expectException(Error::class);
+        $this->expectError();
         $repository = $this->getMockBuilder(Persistence\Repository::class)->setMethods(['createQuery'])->getMock();
         $repository->__call('foo', []);
     }

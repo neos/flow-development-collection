@@ -20,8 +20,6 @@ use Neos\Cache\Tests\BaseTestCase;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\PhpFrontend;
-use PHPUnit\Framework\Error\Notice;
-use PHPUnit\Framework\Error\Warning;
 
 /**
  * Test case for the SimpleFileBackend
@@ -403,7 +401,7 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function requireOnceDoesNotSwallowPhpWarningsOfTheIncludedFile()
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $entryIdentifier = 'SomePhpEntryWithPhpWarning';
 
         $simpleFileBackend = $this->getSimpleFileBackend();
@@ -416,7 +414,7 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile()
     {
-        $this->expectException(Notice::class);
+        $this->expectNotice();
         $entryIdentifier = 'SomePhpEntryWithPhpNotice';
 
         $simpleFileBackend = $this->getSimpleFileBackend();

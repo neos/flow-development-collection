@@ -21,8 +21,6 @@ use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Frontend\AbstractFrontend;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
-use PHPUnit\Framework\Error\Notice;
-use PHPUnit\Framework\Error\Warning;
 
 /**
  * Test case for the cache to file backend
@@ -566,7 +564,7 @@ class FileBackendTest extends BaseTestCase
      */
     public function requireOnceDoesNotSwallowPhpWarningsOfTheIncludedFile()
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects(self::atLeastOnce())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
 
@@ -583,7 +581,7 @@ class FileBackendTest extends BaseTestCase
      */
     public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile()
     {
-        $this->expectException(Notice::class);
+        $this->expectNotice();
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects(self::atLeastOnce())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
 
