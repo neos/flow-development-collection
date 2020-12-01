@@ -404,7 +404,7 @@ class FileBackendTest extends BaseTestCase
         self::assertFileExists($pathAndFilename);
 
         $backend->remove($entryIdentifier);
-        self::assertFileNotExists($pathAndFilename);
+        self::assertFileDoesNotExist($pathAndFilename);
     }
 
     /**
@@ -659,8 +659,8 @@ class FileBackendTest extends BaseTestCase
 
         $backend->flush();
 
-        self::assertFileNotExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
-        self::assertFileNotExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
+        self::assertFileDoesNotExist('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
+        self::assertFileDoesNotExist('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
     }
 
     /**
@@ -698,7 +698,7 @@ class FileBackendTest extends BaseTestCase
         self::assertFileExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
 
         $backend->collectGarbage();
-        self::assertFileNotExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
+        self::assertFileDoesNotExist('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
         self::assertFileExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
     }
 

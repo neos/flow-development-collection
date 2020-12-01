@@ -216,7 +216,7 @@ class CacheManagerTest extends UnitTestCase
     {
         file_put_contents('vfs://Foo/AvailableProxyClasses.php', '// dummy');
         $this->cacheManager->flushCaches();
-        self::assertFileNotExists('vfs://Foo/AvailableProxyClasses.php');
+        self::assertFileDoesNotExist('vfs://Foo/AvailableProxyClasses.php');
     }
 
     /**
