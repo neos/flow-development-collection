@@ -42,7 +42,7 @@ class DebuggerTest extends UnitTestCase
     {
         $object = new \stdClass();
         $object->__IS_PROXY__ = true;
-        self::assertRegExp('/\sclass=\"debug\-proxy\"/', Debugger::renderDump($object, 0, false));
+        self::assertMatchesRegularExpression('/\sclass=\"debug\-proxy\"/', Debugger::renderDump($object, 0, false));
     }
 
     /**
