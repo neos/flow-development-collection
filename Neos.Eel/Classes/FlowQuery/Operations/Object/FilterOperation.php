@@ -245,12 +245,14 @@ class FilterOperation extends AbstractOperation
                 } else {
                     return ($value instanceof $operand);
                 }
+                // no break
             case '!instanceof':
                 if ($this->operandIsSimpleType($operand)) {
                     return !$this->handleSimpleTypeOperand($operand, $value);
                 } else {
                     return !($value instanceof $operand);
                 }
+                // no break
             default:
                 return ($value !== null);
         }
