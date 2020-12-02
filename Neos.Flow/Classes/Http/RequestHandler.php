@@ -13,7 +13,9 @@ namespace Neos\Flow\Http;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -98,6 +100,7 @@ class RequestHandler implements HttpRequestHandlerInterface
 
         $this->boot();
         $this->resolveDependencies();
+        $this->validateConfiguration();
 
         $this->middlewaresChain->onStep(function (ServerRequestInterface $request) {
             $this->httpRequest = $request;
@@ -177,6 +180,25 @@ class RequestHandler implements HttpRequestHandlerInterface
             fclose($body);
         } else {
             echo $body;
+        }
+    }
+
+    /**
+     * The HTTP component chain support was dropped with Flow 7.0.
+     * This method will throw an exception if any installed package contains configuration for the chain still in order to prevent
+     * subtle bugs that are hard to discover
+     *
+     * @deprecated with 7.0 – this method was added to help developers to upgrade to 7.0. It should be removed with some future release
+     */
+    private function validateConfiguration(): void
+    {
+        $objectManager = $this->bootstrap->getObjectManager();
+        $deprecatedComponentChainConfiguration = $objectManager->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.http.chain');
+        if (!empty($deprecatedComponentChainConfiguration)) {
+            throw new FlowException('The settings still contain configuration for the no longer supported HTTP component chain.' . chr(10) .
+                'The component chain has been replaced in favor of PSR-15 middlewares with Flow version 7.0, please make sure to migrate any components accordingly.' . chr(10) .
+                'To see which components are still configured, run ./flow configuration:show --path Neos.Flow.http.chain', 1606912674);
+
         }
     }
 }
