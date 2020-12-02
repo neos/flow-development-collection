@@ -196,7 +196,9 @@ class ConsoleOutputTest extends UnitTestCase
             '| header 1 | header 2 |' . PHP_EOL .
             '+----------+----------+' . PHP_EOL .
             '| column1  | column2  |' . PHP_EOL .
-            '+----------+----------+' . PHP_EOL, $this->getActualConsoleOutput());
+            '+----------+----------+' . PHP_EOL,
+            $this->getActualConsoleOutput()
+        );
     }
 
 
@@ -213,7 +215,9 @@ class ConsoleOutputTest extends UnitTestCase
             '   0/100 [>---------------------------]   0%' . PHP_EOL .
             '   1/100 [>---------------------------]   1%' . PHP_EOL .
             '  50/100 [==============>-------------]  50%' . PHP_EOL .
-            ' 100/100 [============================] 100%', $this->getActualConsoleOutput());
+            ' 100/100 [============================] 100%',
+            $this->getActualConsoleOutput()
+        );
     }
 
     /**
