@@ -12,8 +12,8 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr\Reader;
  */
 
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
+use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -83,16 +83,16 @@ class DatesReaderTest extends UnitTestCase
     {
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getElement'], [[]]);
         $mockModel->expects(
-            self::exactly(3))->method('getElement')->withConsecutive(
-                ['dates/calendars/calendar[@type="gregorian"]/dateTimeFormats/dateTimeFormatLength[@type="full"]/dateTimeFormat/pattern'],
-                ['dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern'],
-                ['dates/calendars/calendar[@type="gregorian"]/timeFormats/timeFormatLength[@type="full"]/timeFormat/pattern']
-            )
-            ->willReturnOnConsecutiveCalls(
-                self::returnValue('foo {0} {1} bar'),
-                self::returnValue('dMy'),
-                self::returnValue('hms')
-            );
+            self::exactly(3)
+        )->method('getElement')->withConsecutive(
+            ['dates/calendars/calendar[@type="gregorian"]/dateTimeFormats/dateTimeFormatLength[@type="full"]/dateTimeFormat/pattern'],
+            ['dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern'],
+            ['dates/calendars/calendar[@type="gregorian"]/timeFormats/timeFormatLength[@type="full"]/timeFormat/pattern']
+        )->willReturnOnConsecutiveCalls(
+            self::returnValue('foo {0} {1} bar'),
+            self::returnValue('dMy'),
+            self::returnValue('hms')
+        );
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
         $mockRepository->expects(self::exactly(3))->method('getModelForLocale')->with($this->sampleLocale)->will(self::returnValue($mockModel));

@@ -239,9 +239,16 @@ class AbstractViewHelperTest extends UnitTestCase
     {
         $calls = [];
         $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['validateArguments', 'initialize', 'callRenderMethod']);
-        $viewHelper->expects(self::atLeastOnce())->method('validateArguments')->willReturnCallback(function () use (&$calls) { $calls[] = 'validateArguments'; });
-        $viewHelper->expects(self::atLeastOnce())->method('initialize')->willReturnCallback(function () use (&$calls) { $calls[] = 'initialize'; });
-        $viewHelper->expects(self::atLeastOnce())->method('callRenderMethod')->willReturnCallback(function () use (&$calls) { $calls[] = 'callRenderMethod'; return 'Output'; });
+        $viewHelper->expects(self::atLeastOnce())->method('validateArguments')->willReturnCallback(function () use (&$calls) {
+            $calls[] = 'validateArguments';
+        });
+        $viewHelper->expects(self::atLeastOnce())->method('initialize')->willReturnCallback(function () use (&$calls) {
+            $calls[] = 'initialize';
+        });
+        $viewHelper->expects(self::atLeastOnce())->method('callRenderMethod')->willReturnCallback(function () use (&$calls) {
+            $calls[] = 'callRenderMethod';
+            return 'Output';
+        });
 
         $expectedOutput = 'Output';
         $actualOutput = $viewHelper->initializeArgumentsAndRender(['argument1' => 'value1']);

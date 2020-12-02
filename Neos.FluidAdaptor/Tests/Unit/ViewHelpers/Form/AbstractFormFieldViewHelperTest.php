@@ -485,7 +485,7 @@ class AbstractFormFieldViewHelperTest extends FormFieldViewHelperBaseTestcase
     {
         $formViewHelper = $this->getAccessibleMock(AbstractFormFieldViewHelper::class, ['hasArgument', 'getMappingResultsForProperty'], [], '', false);
         $this->injectDependenciesIntoViewHelper($formViewHelper);
-        $formViewHelper->expects(self::exactly(2))->method('hasArgument')->withConsecutive(['class'],['errorClass'])->willReturn(false);
+        $formViewHelper->expects(self::exactly(2))->method('hasArgument')->withConsecutive(['class'], ['errorClass'])->willReturn(false);
 
         $mockResult = $this->createMock(Result::class);
         $mockResult->expects(self::atLeastOnce())->method('hasErrors')->willReturn(true);

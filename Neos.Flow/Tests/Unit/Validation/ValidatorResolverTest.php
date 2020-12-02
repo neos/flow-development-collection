@@ -317,7 +317,8 @@ class ValidatorResolverTest extends UnitTestCase
             ['Bar'],
             ['TYPO3\TestPackage\Quux']
         )
-        ->willReturnOnConsecutiveCalls(self::returnValue($conjunction1),
+        ->willReturnOnConsecutiveCalls(
+            self::returnValue($conjunction1),
             self::returnValue($mockStringValidator),
             self::returnValue($conjunction2),
             self::returnValue($mockArrayValidator),
