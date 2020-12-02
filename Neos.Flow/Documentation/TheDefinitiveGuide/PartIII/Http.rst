@@ -30,10 +30,8 @@ The basic walk through a Flow-based web application is as follows:
   request handler
 * by default, the :abbr:`HTTP Request Handler (\\Neos\\Flow\\Http\\RequestHandler)` takes over and runs a boot sequence
   which initializes all important parts of Flow
-* the HTTP Request Handler builds an PSR-7 HTTP Request and Response object. The
+* the HTTP Request Handler builds an PSR-7 HTTP Request object. The
   :abbr:`Request object (\\Psr\\Http\\Message\\ServerRequestInterface)` contains all important properties of the real HTTP request.
-  The :abbr:`Response object (\\Psr\Http\\Message\\ResponseInterface)` in turn is empty and will be filled with information by a
-  controller/middleware at a later point.
 * the HTTP Request Handler initializes the
   :abbr:`HTTP Middlewares chain (\\Neos\\Flow\\Http\\Middleware\\MiddlewaresChain)`, which is a PSR-15 RequestHandler
   implementation wrapping a configurable list of `PSR-15 Middlewares`_.
@@ -61,7 +59,7 @@ The basic walk through a Flow-based web application is as follows:
 * the controller, usually an :abbr:`Action Controller (\\Neos\\Flow\\Mvc\\Controller\\ActionController)`, processes the
   request and modifies the given HTTP Response object which will, in the end, contain the content to display (body) as
   well as any headers to be passed back to the client
-* Finally the RequestHandler sends the HTTP Response back to the browser
+* Finally the RequestHandler sends the HTTP Response back to the browser, after it passed back through all of the middlewares
 
 In practice, there are a few more intermediate steps being carried out, but in
 essence, this is the path a request is taking.
