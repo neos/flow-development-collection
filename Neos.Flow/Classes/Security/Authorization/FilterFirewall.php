@@ -63,8 +63,7 @@ class FilterFirewall implements FirewallInterface
         ObjectManagerInterface $objectManager,
         RequestPatternResolver $requestPatternResolver,
         InterceptorResolver $interceptorResolver
-    )
-    {
+    ) {
         $this->objectManager = $objectManager;
         $this->requestPatternResolver = $requestPatternResolver;
         $this->interceptorResolver = $interceptorResolver;
