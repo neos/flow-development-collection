@@ -198,7 +198,6 @@ class RequestHandler implements HttpRequestHandlerInterface
             throw new FlowException('The settings still contain configuration for the no longer supported HTTP component chain.' . chr(10) .
                 'The component chain has been replaced in favor of PSR-15 middlewares with Flow version 7.0, please make sure to migrate any components accordingly.' . chr(10) .
                 'To see which components are still configured, run ./flow configuration:show --path Neos.Flow.http.chain', 1606912674);
-
         }
     }
 }
