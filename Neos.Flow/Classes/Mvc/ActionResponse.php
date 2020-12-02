@@ -5,15 +5,16 @@ use Neos\Flow\Http\Cookie;
 use Psr\Http\Message\ResponseInterface;
 use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\ComponentContext;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use GuzzleHttp\Psr7\Stream;
+use GuzzleHttp\Psr7\Response;
+use Neos\Flow\Http\Component\SetHeaderComponent;
+use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
 
 /**
  * The minimal MVC response object.
- * It allows for simple interactions with the HTTP response from within MVC actions. More specific requirements can be implemented via HTTP Components.
- * @see setComponentParameter()
+ * It allows for simple interactions with the HTTP response from within MVC actions. More specific requirements can be implemented via HTTP middlewares.
  *
  * @Flow\Proxy(false)
  * @api
@@ -24,11 +25,6 @@ final class ActionResponse
      * @var Stream
      */
     protected $content;
-
-    /**
-     * @var array
-     */
-    protected $componentParameters = [];
 
     /**
      * @var UriInterface
@@ -54,6 +50,16 @@ final class ActionResponse
      * @var Cookie[]
      */
     protected $cookies = [];
+
+    /**
+     * @var array
+     */
+    protected $headers = [];
+
+    /**
+     * @var ResponseInterface|null
+     */
+    protected $httpResponse;
 
     public function __construct()
     {
@@ -147,14 +153,70 @@ final class ActionResponse
      * @param string $parameterName
      * @param mixed $value
      * @return void
-     * @api
+     * @deprecated since Flow 7.0 use setHttpHeader or replaceHttpResponse instead. For now this will still work with $componentClassName of "SetHeaderComponent" or "ReplaceHttpResponseComponent" only.
      */
     public function setComponentParameter(string $componentClassName, string $parameterName, $value): void
     {
-        if (!isset($this->componentParameters[$componentClassName])) {
-            $this->componentParameters[$componentClassName] = [];
+        if ($componentClassName === SetHeaderComponent::class) {
+            $this->setHttpHeader($parameterName, $value);
+            return;
         }
-        $this->componentParameters[$componentClassName][$parameterName] = $value;
+
+        if ($componentClassName === ReplaceHttpResponseComponent::class && $parameterName === 'response') {
+            $this->replaceHttpResponse($value);
+            return;
+        }
+        throw new \InvalidArgumentException(sprintf('The method %s is deprecated. It will only allow a $componentClassName parameter of "%s" or "%s". If you want to send data to your middleware from the action, use response headers or introduce a global context. Both solutions are to be considered bad practice though.', __METHOD__, SetHeaderComponent::class, ReplaceHttpResponseComponent::class), 1605088079);
+    }
+
+    /**
+     * Set the specified header in the response, overwriting any previous value set for this header.
+     *
+     * @param string $headerName The name of the header to set
+     * @param array|string|\DateTime $headerValue An array of values or a single value for the specified header field
+     * @return void
+     */
+    public function setHttpHeader(string $headerName, $headerValue): void
+    {
+        // This is taken from the Headers class, which should eventually replace this implementation and add more response API methods.
+        if ($headerValue instanceof \DateTimeInterface) {
+            $date = clone $headerValue;
+            $date->setTimezone(new \DateTimeZone('GMT'));
+            $headerValue = [$date->format(DATE_RFC2822)];
+        }
+        $this->headers[$headerName] = (array)$headerValue;
+    }
+
+    /**
+     * Add the specified header to the response, without overwriting any previous value set for this header.
+     *
+     * @param string $headerName The name of the header to set
+     * @param array|string|\DateTime $headerValue An array of values or a single value for the specified header field
+     * @return void
+     */
+    public function addHttpHeader(string $headerName, $headerValue): void
+    {
+        if ($headerValue instanceof \DateTimeInterface) {
+            $date = clone $headerValue;
+            $date->setTimezone(new \DateTimeZone('GMT'));
+            $headerValue = [$date->format(DATE_RFC2822)];
+        }
+        $this->headers[$headerName] = array_merge($this->headers[$headerName] ?? [], (array)$headerValue);
+    }
+
+    /**
+     * Return the specified HTTP header that was previously set.
+     *
+     * @param string $headerName The name of the header to get the value(s) for
+     * @return array|string|null An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
+     */
+    public function getHttpHeader(string $headerName)
+    {
+        if (!isset($this->headers[$headerName])) {
+            return null;
+        }
+
+        return count($this->headers[$headerName]) > 1 ? $this->headers[$headerName] : reset($this->headers[$headerName]);
     }
 
     /**
@@ -165,14 +227,6 @@ final class ActionResponse
         $content = $this->content->getContents();
         $this->content->rewind();
         return $content;
-    }
-
-    /**
-     * @return array
-     */
-    public function getComponentParameters(): array
-    {
-        return $this->componentParameters;
     }
 
     /**
@@ -194,9 +248,18 @@ final class ActionResponse
     /**
      * @return string
      */
-    public function getContentType(): string
+    public function getContentType(): ?string
     {
         return $this->contentType;
+    }
+
+    /**
+     * Use this if you want build your own HTTP Response inside your action
+     * @param ResponseInterface $response
+     */
+    public function replaceHttpResponse(ResponseInterface $response): void
+    {
+        $this->httpResponse = $response;
     }
 
     /**
@@ -221,54 +284,16 @@ final class ActionResponse
             $actionResponse->setRedirectUri($this->redirectUri);
         }
 
-        foreach ($this->componentParameters as $componentClass => $parameters) {
-            foreach ($parameters as $parameterName => $parameterValue) {
-                $actionResponse->setComponentParameter($componentClass, $parameterName, $parameterValue);
-            }
+        if ($this->httpResponse !== null) {
+            $actionResponse->replaceHttpResponse($this->httpResponse);
         }
         foreach ($this->cookies as $cookie) {
             $actionResponse->setCookie($cookie);
         }
-
+        foreach ($this->headers as $headerName => $headerValue) {
+            $actionResponse->setHttpHeader($headerName, $headerValue);
+        }
         return $actionResponse;
-    }
-
-    /**
-     * @param ComponentContext $componentContext
-     * @return ComponentContext
-     */
-    public function mergeIntoComponentContext(ComponentContext $componentContext): ComponentContext
-    {
-        $httpResponse = $componentContext->getHttpResponse();
-        if ($this->statusCode !== null) {
-            $httpResponse = $httpResponse->withStatus($this->statusCode);
-        }
-
-        if ($this->hasContent()) {
-            $httpResponse = $httpResponse->withBody($this->content);
-        }
-
-        if ($this->contentType) {
-            $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);
-        }
-
-        if ($this->redirectUri) {
-            $httpResponse = $httpResponse->withHeader('Location', (string)$this->redirectUri);
-        }
-
-        foreach ($this->componentParameters as $componentClassName => $componentParameterGroup) {
-            foreach ($componentParameterGroup as $parameterName => $parameterValue) {
-                $componentContext->setParameter($componentClassName, $parameterName, $parameterValue);
-            }
-        }
-
-        foreach ($this->cookies as $cookie) {
-            $httpResponse = $httpResponse->withAddedHeader('Set-Cookie', (string)$cookie);
-        }
-
-        $componentContext->replaceHttpResponse($httpResponse);
-
-        return $componentContext;
     }
 
     /**
@@ -277,14 +302,13 @@ final class ActionResponse
      * created in a View (see ActionController::renderView()) because those would be overwritten otherwise. Note that any component parameters will
      * still run through the component chain and will not be propagated here.
      *
-     * WARNING: Should this ActionResponse contain body content it would replace any content in the given HttpReponse.
-     *
-     * @param ResponseInterface $httpResponse
      * @return ResponseInterface
      * @internal
      */
-    public function applyToHttpResponse(ResponseInterface $httpResponse): ResponseInterface
+    public function buildHttpResponse(): ResponseInterface
     {
+        $httpResponse = $this->httpResponse ?? new Response();
+
         if ($this->statusCode !== null) {
             $httpResponse = $httpResponse->withStatus($this->statusCode);
         }
@@ -301,6 +325,9 @@ final class ActionResponse
             $httpResponse = $httpResponse->withHeader('Location', (string)$this->redirectUri);
         }
 
+        foreach ($this->headers as $headerName => $headerValue) {
+            $httpResponse = $httpResponse->withAddedHeader($headerName, implode(', ', $headerValue));
+        }
         foreach ($this->cookies as $cookie) {
             $httpResponse = $httpResponse->withAddedHeader('Set-Cookie', (string)$cookie);
         }

@@ -13,7 +13,7 @@ class Version20200908155621 extends AbstractMigration
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return 'Drop "md5" column of the "resource" table';
     }
@@ -21,9 +21,10 @@ class Version20200908155621 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
+     * @throws \Doctrine\Migrations\Exception\AbortMigration
+     * @throws \Doctrine\DBAL\Exception
      */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
 
@@ -33,9 +34,10 @@ class Version20200908155621 extends AbstractMigration
     /**
      * @param Schema $schema
      * @return void
-     * @throws \Doctrine\DBAL\Migrations\AbortMigrationException
+     * @throws \Doctrine\Migrations\Exception\AbortMigration
+     * @throws \Doctrine\DBAL\Exception
      */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
 
@@ -47,8 +49,9 @@ class Version20200908155621 extends AbstractMigration
      *
      * @param Schema $schema
      * @return void
+     * @throws \Doctrine\DBAL\Exception
      */
-    public function postDown(Schema $schema)
+    public function postDown(Schema $schema): void
     {
         $resourceRepository = Bootstrap::$staticObjectManager->get(ResourceRepository::class);
         $persistenceManager = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class);
@@ -60,7 +63,7 @@ class Version20200908155621 extends AbstractMigration
                 continue;
             }
 
-            $this->connection->executeUpdate(
+            $this->connection->executeStatement(
                 'UPDATE neos_flow_resourcemanagement_persistentresource SET md5 = ? WHERE persistence_object_identifier = ?',
                 [md5(stream_get_contents($resource->getStream())), $persistenceManager->getIdentifierByObject($resource)]
             );

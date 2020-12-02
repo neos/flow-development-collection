@@ -28,6 +28,7 @@ use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\Session;
 use Neos\Flow\Session\SessionManager;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Http\Cookie;
 use Neos\Flow\Security\Authentication\Token\UsernamePassword;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Account;
@@ -83,7 +84,7 @@ class SessionTest extends UnitTestCase
                 'secure' => false,
                 'httponly' => true,
                 'domain' => null,
-                'samesite' => null
+                'samesite' => Cookie::SAMESITE_LAX
             ]
         ]
     ];
@@ -1134,7 +1135,7 @@ class SessionTest extends UnitTestCase
             $this->inject($session, 'metaDataCache', $metaDataCache);
             $this->inject($session, 'storageCache', $storageCache);
             $session->injectSettings($settings);
-            $session->injectLogger($this->createMock(LoggerInterface::class));
+            $this->inject($session, 'logger', $this->createMock(LoggerInterface::class));
             $session->initializeObject();
 
             $session->start();

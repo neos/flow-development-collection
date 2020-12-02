@@ -1,7 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Neos\Utility\Files;
 use Neos\Utility\MediaTypes;
@@ -21,7 +21,7 @@ class Version20141015125841 extends AbstractMigration
      * @return void
      * @throws \Exception
      */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql');
 
@@ -38,7 +38,7 @@ class Version20141015125841 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function postUp(Schema $schema)
+    public function postUp(Schema $schema): void
     {
         if (!$this->sm->tablesExist(['typo3_flow_resource_resource'])) {
             return;
@@ -83,7 +83,7 @@ class Version20141015125841 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql');
         $this->addSql('CREATE TABLE typo3_flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY KEY(hash)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
@@ -100,7 +100,7 @@ class Version20141015125841 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function postDown(Schema $schema)
+    public function postDown(Schema $schema): void
     {
         if (!$this->sm->tablesExist(['typo3_flow_resource_resource'])) {
             return;

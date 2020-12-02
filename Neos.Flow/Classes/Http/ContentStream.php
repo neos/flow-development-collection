@@ -34,7 +34,7 @@ class ContentStream implements StreamInterface
     protected $stream;
 
     /**
-     * @Flow\Inject
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;

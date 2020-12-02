@@ -13,7 +13,6 @@ namespace Neos\Flow\Security;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use Neos\Flow\Log\PsrSecurityLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
@@ -25,6 +24,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\TypeHandling;
+use Psr\Log\LoggerInterface;
 
 /**
  * This is the default implementation of a security context, which holds current
@@ -172,8 +172,8 @@ class Context
     protected $sessionManager;
 
     /**
-     * @Flow\Inject
-     * @var PsrSecurityLoggerInterface
+     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
+     * @var LoggerInterface
      */
     protected $securityLogger;
 

@@ -123,7 +123,7 @@ interface TokenInterface
      * Note: You should not persist the credentials!
      *
      * @param ActionRequest $actionRequest The current request instance
-     * @return boolean true if this token needs to be (re-)authenticated
+     * @return void
      */
     public function updateCredentials(ActionRequest $actionRequest);
 
