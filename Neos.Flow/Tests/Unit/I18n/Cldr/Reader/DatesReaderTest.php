@@ -89,9 +89,9 @@ class DatesReaderTest extends UnitTestCase
             ['dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern'],
             ['dates/calendars/calendar[@type="gregorian"]/timeFormats/timeFormatLength[@type="full"]/timeFormat/pattern']
         )->willReturnOnConsecutiveCalls(
-            self::returnValue('foo {0} {1} bar'),
-            self::returnValue('dMy'),
-            self::returnValue('hms')
+            'foo {0} {1} bar',
+            'dMy',
+            'hms'
         );
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);

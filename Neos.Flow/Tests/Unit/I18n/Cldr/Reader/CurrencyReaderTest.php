@@ -46,7 +46,7 @@ class CurrencyReaderTest extends UnitTestCase
         $mockRepository->expects(self::once())->method('getModel')->with('supplemental/supplementalData')->will(self::returnValue($mockModel));
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects(self::atLeastOnce())->method('has')->with('fractions')->will(self::returnValue(false));
+        $mockCache->expects(self::atLeastOnce())->method('has')->with('fractions')->willReturn(false);
         $mockCache->expects(self::atLeastOnce())->method('set')->with('fractions');
 
         $this->reader = new CurrencyReader();

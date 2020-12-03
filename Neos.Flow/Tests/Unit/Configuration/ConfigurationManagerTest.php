@@ -1247,7 +1247,7 @@ EOD;
 
 
         $mockConfigurationSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
-        $mockConfigurationSource->expects(self::atLeast(2))->method('load')->withConsecutive(['Flow/Configuration/Testing/System1/Routes.Foo'], ['Flow/Configuration/Testing/Routes.Foo'], ['Flow/Configuration/Routes.Foo'])->willReturn([]);
+        $mockConfigurationSource->expects(self::atLeast(3))->method('load')->withConsecutive(['Flow/Configuration/Testing/System1/Routes.Foo'], ['Flow/Configuration/Testing/Routes.Foo'], ['Flow/Configuration/Routes.Foo'])->willReturn([]);
 
         $routeConfigurationProcessor = new RouteConfigurationProcessor([], ['Testing', 'Testing/System1'], $this->getMockPackages(), $mockConfigurationSource);
         $routeConfigurationProcessor->process($mockRoutesConfiguration);

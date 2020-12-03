@@ -397,8 +397,8 @@ class IdentityRoutePartTest extends UnitTestCase
                 ['stdClass', 'SomeUriPattern', 'The/Path/Segment-1', false],
                 ['stdClass', 'SomeUriPattern', 'The/Path/Segment-2', false]
             )->willReturnOnConsecutiveCalls(
-                self::returnValue($existingObjectPathMapping),
-                self::returnValue($existingObjectPathMapping),
+                $existingObjectPathMapping,
+                $existingObjectPathMapping,
                 null
             );
 
@@ -437,7 +437,7 @@ class IdentityRoutePartTest extends UnitTestCase
             ->withConsecutive(
                 ['stdClass', 'SomeUriPattern', 'The/Path/Segment', true],
                 ['stdClass', 'SomeUriPattern', 'The/Path/Segment-1', true]
-            )->willReturnOnConsecutiveCalls(self::returnValue($existingObjectPathMapping), null);
+            )->willReturnOnConsecutiveCalls($existingObjectPathMapping, null);
 
         $expectedObjectPathMapping = new ObjectPathMapping();
         $expectedObjectPathMapping->setObjectType('stdClass');

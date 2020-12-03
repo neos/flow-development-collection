@@ -160,7 +160,6 @@ class BrowserTest extends UnitTestCase
                 ->expects(self::exactly(count($wildResponses)))
                 ->method('sendRequest')
                 ->willReturnOnConsecutiveCalls(...$wildResponses);
-//                ->will(self::returnValue($wildResponses[$i]));
         }
 
         $this->browser->setRequestEngine($requestEngine);
