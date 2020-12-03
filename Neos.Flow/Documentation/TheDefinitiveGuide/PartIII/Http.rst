@@ -36,14 +36,14 @@ The basic walk through a Flow-based web application is as follows:
   :abbr:`HTTP Middlewares chain (\\Neos\\Flow\\Http\\Middleware\\MiddlewaresChain)`, which is a PSR-15 RequestHandler
   implementation wrapping a configurable list of `PSR-15 Middlewares`_.
   The `Middlewares Chain`_ is fully configurable, but by default it consists of the following steps:
-    * the ``standardsCompliance`` i tries to make the HTTP Response standards compliant by adding required HTTP
+    * the ``standardsCompliance`` middleware tries to make the HTTP Response standards compliant by adding required HTTP
       headers and setting the correct status code (if not already the case)
-    * the ``trustedProxies`` i verifies headers that override request information, like the host, port or client IP address to
+    * the ``trustedProxies`` middleware verifies headers that override request information, like the host, port or client IP address to
       come from a server (reverse proxy) who's IP address is safe-listed in the settings.
-    * the ``session`` i, which restores the session from a cookie and later sets the session cookie in the response.
-    * the ``ajaxWidget`` i, which reacts to AJAX requests from Fluid widget view helpers before the default
+    * the ``session`` middleware, which restores the session from a cookie and later sets the session cookie in the response.
+    * the ``ajaxWidget`` middleware, which reacts to AJAX requests from Fluid widget view helpers before the default
       routing is invoked (only if the ``neos/fluid-adaptor`` package is installed)
-    * the ``routing`` i invokes the :abbr:`Router (\\Neos\\Flow\\Mvc\\Routing\\Router)` to determine which
+    * the ``routing`` middleware invokes the :abbr:`Router (\\Neos\\Flow\\Mvc\\Routing\\Router)` to determine which
       controller and action is responsible for processing the request. This information (controller name, action name,
       arguments) is stored in the ``ServerRequest`` attribute named "routingResults"
     * the ``poweredByHeader`` middleware sets the ``X-Flow-Powered`` response header according to the ``Neos.Flow.http.applicationToken``
@@ -59,7 +59,7 @@ The basic walk through a Flow-based web application is as follows:
 * the controller, usually an :abbr:`Action Controller (\\Neos\\Flow\\Mvc\\Controller\\ActionController)`, processes the
   request and modifies the given HTTP Response object which will, in the end, contain the content to display (body) as
   well as any headers to be passed back to the client
-* Finally the RequestHandler sends the HTTP Response back to the browser, after it passed back through all of the middlewares
+* Finally the RequestHandler sends the HTTP Response back to the browser, after it was passed back through all of the middlewares
 
 In practice, there are a few more intermediate steps being carried out, but in
 essence, this is the path a request is taking.
