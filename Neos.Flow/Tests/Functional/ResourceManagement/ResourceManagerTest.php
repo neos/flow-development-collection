@@ -73,7 +73,7 @@ class ResourceManagerTest extends FunctionalTestCase
         $this->resourceManager->deleteResource($otherResource);
 
         self::assertStringEqualsFile(FLOW_PATH_DATA . 'Persistent/Test/Resources/5/1/c/f/51cff3c1f0bc59f6187e7040cc12a4e9b1eca7aa', 'fixture');
-        self::assertFileNotExists(FLOW_PATH_DATA . 'Persistent/Test/CustomResources/5/1/c/f/51cff3c1f0bc59f6187e7040cc12a4e9b1eca7aa');
+        self::assertFileDoesNotExist(FLOW_PATH_DATA . 'Persistent/Test/CustomResources/5/1/c/f/51cff3c1f0bc59f6187e7040cc12a4e9b1eca7aa');
     }
 
     /**
@@ -88,6 +88,6 @@ class ResourceManagerTest extends FunctionalTestCase
         $this->resourceManager->deleteResource($otherResource);
 
         self::assertStringEqualsFile(FLOW_PATH_DATA . 'Persistent/Test/Resources/5/1/c/f/51cff3c1f0bc59f6187e7040cc12a4e9b1eca7aa', 'fixture');
-        self::assertFileNotExists(FLOW_PATH_DATA . 'Persistent/Test/CustomResources/5/1/c/f/51cff3c1f0bc59f6187e7040cc12a4e9b1eca7aa');
+        self::assertFileDoesNotExist(FLOW_PATH_DATA . 'Persistent/Test/CustomResources/5/1/c/f/51cff3c1f0bc59f6187e7040cc12a4e9b1eca7aa');
     }
 }

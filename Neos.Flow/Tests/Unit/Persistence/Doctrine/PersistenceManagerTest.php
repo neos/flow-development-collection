@@ -165,8 +165,8 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockPing->willReturn(false);
         $this->mockEntityManager->expects(self::exactly(1))->method('flush')->willReturn(null);
 
-        $this->mockConnection->expects(self::at(0))->method('close');
-        $this->mockConnection->expects(self::at(1))->method('connect');
+        $this->mockConnection->expects(self::once())->method('close');
+        $this->mockConnection->expects(self::once())->method('connect');
 
         $this->persistenceManager->persistAll();
     }

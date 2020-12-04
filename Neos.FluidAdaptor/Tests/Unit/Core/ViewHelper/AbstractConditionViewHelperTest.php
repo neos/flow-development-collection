@@ -54,8 +54,8 @@ class AbstractConditionViewHelperTest extends ViewHelperBaseTestcase
     public function renderThenChildReturnsThenViewHelperChildIfConditionIsTrueAndThenViewHelperChildExists()
     {
         $mockThenViewHelperNode = $this->createMock(ViewHelperNode::class, ['getViewHelperClassName', 'evaluate'], [], '', false);
-        $mockThenViewHelperNode->expects(self::at(0))->method('getViewHelperClassName')->will(self::returnValue(ThenViewHelper::class));
-        $mockThenViewHelperNode->expects(self::at(1))->method('evaluate')->with($this->renderingContext)->will(self::returnValue('ThenViewHelperResults'));
+        $mockThenViewHelperNode->method('getViewHelperClassName')->willReturn(ThenViewHelper::class);
+        $mockThenViewHelperNode->method('evaluate')->with($this->renderingContext)->willReturn('ThenViewHelperResults');
 
         $this->viewHelper->setChildNodes([$mockThenViewHelperNode]);
         $actualResult = $this->viewHelper->_call('renderThenChild');

@@ -1110,9 +1110,9 @@ class ContextTest extends UnitTestCase
     {
         /** @var Context|\PHPUnit\Framework\MockObject\MockObject $securityContext */
         $securityContext = $this->getAccessibleMock(Context::class, ['initialize', 'canBeInitialized', 'getRoles']);
-        $securityContext->expects(self::at(0))->method('canBeInitialized')->will(self::returnValue(true));
-        $securityContext->expects(self::at(1))->method('initialize');
-        $securityContext->expects(self::any())->method('getRoles')->will(self::returnValue([]));
+        $securityContext->expects(self::atLeastOnce())->method('canBeInitialized')->willReturn(true);
+        $securityContext->expects(self::once())->method('initialize');
+        $securityContext->expects(self::any())->method('getRoles')->willReturn([]);
 
         $securityContext->getContextHash();
     }

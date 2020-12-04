@@ -71,8 +71,10 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
     public function renderCorrectlySetsTypeNameAndValueAttributes(): void
     {
         $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['setContent', 'render', 'addAttribute'])->getMock();
-        $mockTagBuilder->expects(self::at(0))->method('addAttribute')->with('type', 'file');
-        $mockTagBuilder->expects(self::at(1))->method('addAttribute')->with('name', 'someName');
+        $mockTagBuilder->expects(self::exactly(2))->method('addAttribute')->withConsecutive(
+            ['type', 'file'],
+            ['name', 'someName']
+        );
         $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('someName');
         $mockTagBuilder->expects(self::once())->method('render');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
@@ -149,8 +151,13 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
         /** @var Result|\PHPUnit\Framework\MockObject\MockObject $mockValidationResults */
         $mockValidationResults = $this->getMockBuilder(Result::class)->disableOriginalConstructor()->getMock();
         $mockValidationResults->expects(self::atLeastOnce())->method('hasErrors')->willReturn(true);
-        $this->request->expects(self::at(0))->method('getInternalArgument')->with('__submittedArgumentValidationResults')->willReturn($mockValidationResults);
-        $this->request->expects(self::at(1))->method('getInternalArgument')->with('__submittedArguments')->willReturn($submittedData);
+        $this->request->expects(self::exactly(2))->method('getInternalArgument')->withConsecutive(
+            ['__submittedArgumentValidationResults'],
+            ['__submittedArguments']
+        )->willReturnOnConsecutiveCalls(
+            $mockValidationResults,
+            $submittedData
+        );
 
         /** @var PersistentResource|\PHPUnit\Framework\MockObject\MockObject $mockResource */
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();

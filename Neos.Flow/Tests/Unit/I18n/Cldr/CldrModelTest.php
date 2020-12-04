@@ -39,9 +39,7 @@ class CldrModelTest extends UnitTestCase
         $mockCache->expects(self::once())->method('has')->with(md5('foo;bar;baz'))->will(self::returnValue(false));
 
         $mockCldrParser = $this->createMock(I18n\Cldr\CldrParser::class);
-        $mockCldrParser->expects(self::at(0))->method('getParsedData')->with('foo')->will(self::returnValue($sampleParsedFile1));
-        $mockCldrParser->expects(self::at(1))->method('getParsedData')->with('bar')->will(self::returnValue($sampleParsedFile2));
-        $mockCldrParser->expects(self::at(2))->method('getParsedData')->with('baz')->will(self::returnValue($sampleParsedFile3));
+        $mockCldrParser->expects(self::exactly(3))->method('getParsedData')->withConsecutive(['foo'], ['bar'], ['baz'])->willReturnOnConsecutiveCalls($sampleParsedFile1, $sampleParsedFile2, $sampleParsedFile3);
 
         $this->model = new I18n\Cldr\CldrModel($samplePaths);
         $this->model->injectCache($mockCache);
