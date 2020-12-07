@@ -39,18 +39,16 @@ if (isset($argv[1]) && ($argv[1] === 'neos.flow:core:setfilepermissions' || $arg
     array_shift($argv);
     require(__DIR__ . '/migrate.php');
 } else {
-    $autoloadFilePath = __DIR__ . '/../../../Libraries/autoload.php';
+    $autoloadFilePath = dirname(__DIR__, 3) . '/Libraries/autoload.php';
     if (!file_exists($autoloadFilePath)) {
-        echo("Composers 'autoload.php' file was not found. The file is expected to be located in the path:" . PHP_EOL . PHP_EOL);
-        echo(sprintf("%s", $autoloadFilePath) . PHP_EOL . PHP_EOL);
-        echo("This could be due to a missing 'config' => 'vendor-dir' section of your root 'composer.json' file.". PHP_EOL . PHP_EOL);
-        echo("The section key and value should look like the following" . PHP_EOL);
-        echo("\"vendor-dir\": \"Packages/Libraries\"" . PHP_EOL);
-        echo("Update your 'composer.json' file and run the 'composer update' command." . PHP_EOL);
+        echo 'Composers "autoload.php" file was not found. The file is expected to be located in the path:' . PHP_EOL . PHP_EOL;
+        echo $autoloadFilePath . PHP_EOL . PHP_EOL;
+        echo 'This could be due to a missing "config" => "vendor-dir" section of your root "composer.json" file.' . PHP_EOL . PHP_EOL;
+        echo 'The section key and value should look like the following:' . PHP_EOL;
+        echo '"vendor-dir": "Packages/Libraries"' . PHP_EOL;
+        echo 'Update your "composer.json" file accordingly and run the "composer update" command.' . PHP_EOL;
         exit(1);
     }
-
-    $composerAutoloader = require($autoloadFilePath);
 
     if (DIRECTORY_SEPARATOR !== '/' && trim(getenv('FLOW_ROOTPATH'), '"\' ') === '') {
         $absoluteRootpath = dirname(realpath(__DIR__ . '/../../../'));
