@@ -59,7 +59,7 @@ author = u'Neos Team and Contributors'
 # built documents.
 #
 # The short X.Y version.
-version = 'dev-7.0'
+version = '7.0'
 # The full version, including alpha/beta/rc tags.
 release = 'dev-7.0.x'
 
@@ -219,7 +219,7 @@ htmlhelp_basename = 'FlowFrameworkdoc'
 # Configure links to view/edit source to point to development collection
 github_user = 'neos'
 github_repo = 'flow-development-collection'
-github_version = 'master'
+github_version = '7.0'
 conf_py_path = '/Neos.Flow/Documentation/'
 
 # -- Options for LaTeX output ---------------------------------------------
