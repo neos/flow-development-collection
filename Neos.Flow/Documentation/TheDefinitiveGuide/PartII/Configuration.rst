@@ -195,7 +195,8 @@ Some specific flow behaviour can also be configured with a couple of environment
 | FLOW_LOCKHOLDINGPAGE      | Use to specify the html page shown when the site is locked |
 |                           | This is relative to the Packages directory                 |
 +---------------------------+------------------------------------------------------------+
-| FLOW_ONLY_COMPOSER_LOADER | Set to true (1) to only use composer autoloader            |
+| FLOW_ONLY_COMPOSER_LOADER | Set to false (0) to use the custom ClassLoader on top of   | 
+|                           | the regular mechanism provided by composer (deprecated)    |
 +---------------------------+------------------------------------------------------------+
 
 
