@@ -49,6 +49,7 @@ if (isset($argv[1]) && ($argv[1] === 'neos.flow:core:setfilepermissions' || $arg
         echo 'Update your "composer.json" file accordingly and run the "composer update" command.' . PHP_EOL;
         exit(1);
     }
+    require($composerAutoloader);
 
     if (DIRECTORY_SEPARATOR !== '/' && trim(getenv('FLOW_ROOTPATH'), '"\' ') === '') {
         $absoluteRootpath = dirname(realpath(__DIR__ . '/../../../'));
