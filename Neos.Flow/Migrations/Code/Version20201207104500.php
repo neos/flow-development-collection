@@ -33,7 +33,7 @@ class Version20201207104500 extends AbstractMigration
         $this->searchAndReplace('use Neos\Flow\Http\Component\SetHeaderComponent;', '', ['php']);
         $this->searchAndReplaceRegex('/->setComponentParameter\((\\\\Neos\\\\Flow\\\\Http\\\\Component\\\\)?SetHeaderComponent::class, /',\s*'->setHttpHeader(', ['php']);
         $this->searchAndReplace('use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;', '', ['php']);
-        $this->searchAndReplaceRegex('/->setComponentParameter\((\\\\Neos\\\\Flow\\\\Http\\\\Component\\\\)?ReplaceHttpResponseComponent::class, /', '->replaceHttpResponse(', ['php']);
+        $this->searchAndReplaceRegex('/->setComponentParameter\((\\\\Neos\\\\Flow\\\\Http\\\\Component\\\\)?ReplaceHttpResponseComponent::class,\s*/', '->replaceHttpResponse(', ['php']);
         $this->searchAndReplace('->getComponentContext()->getHttpRequest()', '->getHttpRequest()', ['php']);
         $this->searchAndReplace('->getComponentContext()->replaceHttpRequest(', '->setHttpRequest(', ['php']);
     }
