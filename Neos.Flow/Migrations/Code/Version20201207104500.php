@@ -22,23 +22,18 @@ namespace Neos\Flow\Core\Migrations;
  */
 class Version20201207104500 extends AbstractMigration
 {
-    /**
-     * @return string
-     */
-    public function getIdentifier()
+
+    public function getIdentifier(): string
     {
         return 'Neos.Flow-20201207104500';
     }
 
-    /**
-     * @return void
-     */
-    public function up()
+    public function up(): void
     {
         $this->searchAndReplace('use Neos\Flow\Http\Component\SetHeaderComponent;', '', ['php']);
-        $this->searchAndReplaceRegex('/->setComponentParameter\(\\?(:?[A-Za-z]\\)*SetHeaderComponent::class, (.*)\);/', '->setHttpHeader($1);', ['php']);
+        $this->searchAndReplaceRegex('/->setComponentParameter\((\\\\Neos\\\\Flow\\\\Http\\\\Component\\\\)?SetHeaderComponent::class, /', '->setHttpHeader(', ['php']);
         $this->searchAndReplace('use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;', '', ['php']);
-        $this->searchAndReplaceRegex('/->setComponentParameter\(\\?(:?[A-Za-z]\\)*ReplaceHttpResponseComponent::class, \\?(:?[A-Za-z]\\)*ReplaceHttpResponseComponent::PARAMETER_RESPONSE, (.*)\);/', '->replaceHttpResponse($1);', ['php']);
+        $this->searchAndReplaceRegex('/->setComponentParameter\((\\\\Neos\\\\Flow\\\\Http\\\\Component\\\\)?ReplaceHttpResponseComponent::class, /', '->replaceHttpResponse(', ['php']);
         $this->searchAndReplace('->getComponentContext()->getHttpRequest()', '->getHttpRequest()', ['php']);
         $this->searchAndReplace('->getComponentContext()->replaceHttpRequest(', '->setHttpRequest(', ['php']);
     }
