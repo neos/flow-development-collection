@@ -83,6 +83,20 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     protected $baseDirectory;
 
     /**
+     * Maximal amount of microseconds allowed to spent acquiring a read lock
+     *
+     * @var int
+     */
+    protected $maxAcceptedReadLatencyMicroSeconds = 10000;
+
+    /**
+     * Maximal amount of microseconds allowed to spent acquiring a read lock
+     *
+     * @var int
+     */
+    protected $maxAcceptedWriteLatencyMicroSeconds = 10000;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options = [])
@@ -127,6 +141,53 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     public function getCacheDirectory(): string
     {
         return $this->cacheDirectory;
+    }
+
+    /**
+     * Returns the maximal accepted read latency (time to acquire a shared lock)
+     *
+     * @return int microseconds to wait for a shared lock
+     * @api
+     */
+    public function getMaxAcceptedReadLatencyMicroSeconds(): int
+    {
+        return $this->maxAcceptedReadLatencyMicroSeconds;
+    }
+
+    /**
+     * Sets the maximal accepted read latency (time to acquire a shared lock)
+     *
+     * @param int $maxAcceptedReadLatencyMicroSeconds microseconds to wait for a shared lock
+     * @return void
+     * @api
+     */
+    public function setMaxAcceptedReadLatencyMicroSeconds(int $maxAcceptedReadLatencyMicroSeconds)
+    {
+        $this->maxAcceptedReadLatencyMicroSeconds = $maxAcceptedReadLatencyMicroSeconds;
+    }
+
+    /**
+     * Gets the maximal accepted write latency (time to acquire a exclusive lock)
+     *
+     * @return int microseconds to wait for a exclusive lock
+     * @api
+     */
+    public function getMaxAcceptedWriteLatencyMicroSeconds(): int
+    {
+        return $this->maxAcceptedWriteLatencyMicroSeconds;
+    }
+
+    /**
+     * Sets the maximal accepted write latency (time to acquire a exclusive lock)
+     *
+     * @param int $maxAcceptedWriteLatencyMicroSeconds microseconds to wait for a exclusive lock
+     *
+     * @return void
+     * @api
+     */
+    public function setMaxAcceptedWriteLatencyMicroSeconds(int $maxAcceptedWriteLatencyMicroSeconds)
+    {
+        $this->maxAcceptedWriteLatencyMicroSeconds = $maxAcceptedWriteLatencyMicroSeconds;
     }
 
     /**
@@ -253,7 +314,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
             throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1334756961);
         }
         $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-        for ($i = 0; $i < 3; $i++) {
+        $microtime = microtime(true);
+        $acceptedLatencyInSeconds = $this->maxAcceptedWriteLatencyMicroSeconds / 1000000;
+        while (microtime(true) - $microtime < $acceptedLatencyInSeconds) {
             try {
                 $result = $this->tryRemoveWithLock($cacheEntryPathAndFilename);
 
@@ -484,7 +547,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      */
     protected function readCacheFile(string $cacheEntryPathAndFilename, int $offset = null, int $maxlen = null)
     {
-        for ($i = 0; $i < 3; $i++) {
+        $tries = 10;
+        $waitTime = $this->maxAcceptedReadLatencyMicroSeconds / $tries;
+        for ($i = 0; $i < $tries; $i++) {
             $data = false;
             try {
                 $file = fopen($cacheEntryPathAndFilename, 'rb');
@@ -505,7 +570,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
             if ($data !== false) {
                 return $data;
             }
-            usleep(rand(10, 500));
+            usleep($waitTime);
         }
 
         return false;
@@ -520,7 +585,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      */
     protected function writeCacheFile(string $cacheEntryPathAndFilename, string $data)
     {
-        for ($i = 0; $i < 3; $i++) {
+        $microtime = microtime(true);
+        $acceptedLatencyInSeconds = $this->maxAcceptedWriteLatencyMicroSeconds / 1000000;
+        while (microtime(true) - $microtime < $acceptedLatencyInSeconds) {
             // This can be replaced by a simple file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX) once vfs
             // is fixed for file_put_contents with LOCK_EX, see https://github.com/mikey179/vfsStream/wiki/Known-Issues
             $result = false;
