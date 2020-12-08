@@ -418,8 +418,7 @@ class Service
         $this->getDependencyFactory()->getMetadataStorage()->ensureInitialized();
 
         $migrationRepository = $this->getDependencyFactory()->getMigrationRepository();
-        $qualifiedVersion = sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
-        if (!$migrationRepository->hasMigration($qualifiedVersion)) {
+        if (!$migrationRepository->hasMigration($version)) {
             return sprintf('Version %s is not available', $version);
         }
 
@@ -427,7 +426,7 @@ class Service
         $migratorConfiguration->setDryRun($dryRun || $outputPathAndFilename !== null);
 
         $planCalculator = $this->getDependencyFactory()->getMigrationPlanCalculator();
-        $plan = $planCalculator->getPlanForVersions([new Version($qualifiedVersion)], $direction);
+        $plan = $planCalculator->getPlanForVersions([new Version($version)], $direction);
 
         $output = sprintf(
             'Migrating%s %s to %s',
@@ -489,8 +488,7 @@ class Service
                 $this->mark($output, $availableMigration->getVersion(), true, $executedMigrations, !$markAsMigrated);
             }
         } elseif ($version !== null) {
-            $qualifiedVersion = sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
-            $this->mark($output, new Version($qualifiedVersion), false, $executedMigrations, !$markAsMigrated);
+            $this->mark($output, new Version($version), false, $executedMigrations, !$markAsMigrated);
         } else {
             throw InvalidOptionUsage::new('You must specify the version or use the --all argument.');
         }

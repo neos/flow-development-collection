@@ -327,8 +327,14 @@ class DoctrineCommandController extends CommandController
             $this->outputLine(sprintf('The path "%s" is not writeable!', dirname($output)));
         }
 
+        if (is_numeric($version)) {
+            $qualifiedVersion = sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
+        } else {
+            $qualifiedVersion = $version;
+        }
+
         try {
-            $result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
+            $result = $this->doctrineService->executeMigrations($qualifiedVersion, $output, $dryRun, $quiet);
             if ($result !== '' && $quiet === false) {
                 $this->outputLine($result);
             }
@@ -374,8 +380,14 @@ class DoctrineCommandController extends CommandController
             $this->outputLine(sprintf('The path "%s" is not writeable!', dirname($output)));
         }
 
+        if (is_numeric($version)) {
+            $qualifiedVersion = sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
+        } else {
+            $qualifiedVersion = $version;
+        }
+
         try {
-            $this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
+            $this->outputLine($this->doctrineService->executeMigration($qualifiedVersion, $direction, $output, $dryRun));
         } catch (\Exception $exception) {
             $this->handleException($exception);
         }
@@ -408,8 +420,15 @@ class DoctrineCommandController extends CommandController
         if ($add === false && $delete === false) {
             throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
         }
+
+        if (is_numeric($version)) {
+            $qualifiedVersion = sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
+        } else {
+            $qualifiedVersion = $version;
+        }
+
         try {
-            $this->doctrineService->markAsMigrated($version, $add ?: false);
+            $this->doctrineService->markAsMigrated($qualifiedVersion, $add ?: false);
         } catch (MigrationException $exception) {
             $this->outputLine($exception->getMessage());
             $this->quit(1);
