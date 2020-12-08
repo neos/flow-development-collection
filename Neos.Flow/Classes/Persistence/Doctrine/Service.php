@@ -89,7 +89,7 @@ class Service
     /**
      * @var BufferedOutput
      */
-    protected BufferedOutput $logMessages;
+    protected $logMessages;
 
     /**
      * Validates the metadata mapping for Doctrine, using the SchemaValidator
