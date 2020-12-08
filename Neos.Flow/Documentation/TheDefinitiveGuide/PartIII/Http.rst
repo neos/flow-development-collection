@@ -128,20 +128,14 @@ that defines the ``process($request, $next)`` method::
   use Psr\Http\Server\RequestHandlerInterface;
 
   /**
-   * A sample HTTP middleware that intercepts the default handling and returns "bar" if the request contains an argument "foo"
+   * A sample HTTP middleware that adds a custom header to the response
    */
-  class SomeMiddleware implements MiddlewareInterface
+  final class SomeMiddleware implements MiddlewareInterface
   {
-
-    public function process(ServerRequestInterface $httpRequest, RequestHandlerInterface $next): ResponseInterface;
-      if (!$httpRequest->hasArgument('foo')) {
-        // You may also return a new HttpResponse here and thereby short-cut the further handling
-        return $next->handle($httpRequest);
-      }
-      $httpResponse = $next->handle($httpRequest);
-      return $httpResponse->withContent('bar');
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
+      $response = $next->handle($httpRequest);
+      return $response->withAddedHeader('X-MyHeader', '123');
     }
-
   }
 
 To activate a middleware, it must be configured in the ``Settings.yaml``::
@@ -152,7 +146,7 @@ To activate a middleware, it must be configured in the ``Settings.yaml``::
         middlewares:
           'custom':
             position: 'before dispatch'
-            middleware: 'Some\Package\Http\SomeHttpMiddleware'
+            middleware: 'Some\Package\Http\SomeMiddleware'
 
 With the ``position`` directive the order of a middleware within the chain can be defined. In this case the new component
 will be handled before the ``dispatch`` middleware that is configured in the Neos.Flow package. Note though, that any middleware
@@ -177,14 +171,102 @@ Interrupting the chain
 
 Sometimes it is necessary to stop processing of a chain in order to prevent successive middlewares to be executed.
 For example if one wants to handle an AJAX request and prevent the default dispatching. This can be done by returning
-a response instead of invoking the next middleware:
+a response instead of invoking the next middleware::
 
-	public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
-		if ($this->shouldHandleThisRequest()) {
-			return new Response(200, [], 'some custom response');
+	final class SomeAjaxMiddleware implements MiddlewareInterface
+	{
+		public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
+			parse_str($request->getUri()->getQuery(), $queryArguments);
+			if (!isset($queryArguments['__ajax'])) {
+				return $next->handle($request);
+			}
+			return new Response(200, ['Content-Type' => 'application/json'], json_encode(['success' => true]));
 		}
-		return $next->handle($request);
 	}
+
+This would interrupt the request and return a JSON response of ``{"success": true}`` if the request URI contains a query of ``?__ajax``.
+For this to work as expected, the component should be registered relatively early for example before the routing component::
+
+  Neos:
+    Flow:
+      http:
+        middlewares:
+          'customAjaxResponse':
+            position: 'before routing'
+            middleware: 'Some\Package\Http\SomeAjaxMiddleware'
+
+Communicating between middlewares
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In order to share data between multiple middleware components, request attributes can be used::
+
+	final class SomeRoutingMiddleware implements MiddlewareInterface
+	{
+		public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
+			// access previously specified attributes via $request->getAttribute('attributeName');
+			return $next->handle($request->withAttribute('someAttribute', 'someAttributeValue');
+		}
+	}
+
+This can be used to specify Routing parameters for example, see :ref:`ch-routing`.
+
+Custom middleware options
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is no (PSR-15 compatible) way to specify middleware options via Settings. However, options can be realized with the use of :ref:`ch-object-management`.
+For example, in order to extend the AJAX middleware of the example above so that the argument name can be configured, we can add a constructor argument::
+
+	final class SomeAjaxMiddleware implements MiddlewareInterface
+	{
+		private string $queryArgumentName;
+
+		public function __construct(string $queryArgumentName)
+		{
+			$this->queryArgumentName = $queryArgumentName;
+		}
+
+		public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
+			// ...
+			if (!isset($queryArguments[$this->queryArgumentName])) {
+				return $next->handle($request);
+			}
+			// ...
+		}
+	}
+
+...and add a few lines of ``Objects.yaml`` configuration::
+
+  Some\Package\Http\SomeAjaxMiddleware:
+    arguments:
+      1:
+        value: '__ajax'
+
+Besides, :ref:`sect-virtual-objects` can be used in order to re-use the same middleware with different options::
+
+  'Some.Package:AjaxMiddleware1':
+    className: Some\Package\Http\SomeAjaxMiddleware
+    arguments:
+      1:
+        value: 'custom1'
+
+  'Some.Package:AjaxMiddleware2':
+    className: Some\Package\Http\SomeAjaxMiddleware
+    arguments:
+      1:
+        value: 'custom2'
+
+With that, the two pre-configured virtual objects can be referred to individually in the ``Settings.yaml``::
+
+  Neos:
+    Flow:
+      http:
+        middlewares:
+          'customAjax1':
+            position: 'before routing'
+            middleware: 'Some.Package:AjaxMiddleware1'
+          'customAjax2':
+            position: 'before routing'
+            middleware: 'Some.Package:AjaxMiddleware2'
 
 Request
 -------
@@ -561,5 +643,5 @@ other application parts which are accessible via HTTP. This browser has the ``In
 .. _Coordinated Universal Time: http://en.wikipedia.org/wiki/Coordinated_Universal_Time
 .. _Greenwich Mean Time: http://en.wikipedia.org/wiki/Greenwich_Mean_Time
 .. _Forwarded Header: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
-.. _Middlewares chain: https://github.com/neos/flow-development-collection/blob/6.3/Neos.Flow/Configuration/Settings.Http.yaml#L28-L31
+.. _Middlewares chain: https://github.com/neos/flow-development-collection/blob/7.0/Neos.Flow/Configuration/Settings.Http.yaml#L28-L57
 .. _PSR-15 Middlewares: https://www.php-fig.org/psr/psr-15/#22-psrhttpservermiddlewareinterface
