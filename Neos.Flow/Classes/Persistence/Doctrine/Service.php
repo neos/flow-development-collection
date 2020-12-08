@@ -439,6 +439,16 @@ class Service
         $migrator = $this->getDependencyFactory()->getMigrator();
         $sql = $migrator->migrate($plan, $migratorConfiguration);
 
+        $output .= PHP_EOL;
+        foreach ($sql as $item) {
+            $output .= PHP_EOL;
+            foreach ($item as $inner) {
+                $output .= '     -> ' . $inner->getStatement() . PHP_EOL;
+            }
+        }
+        $output .= PHP_EOL;
+        $output .= $this->logMessages->fetch();
+
         if ($outputPathAndFilename !== null) {
             $writer = $this->getDependencyFactory()->getQueryWriter();
             $writer->write($outputPathAndFilename, $direction, $sql);
