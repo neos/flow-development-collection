@@ -204,7 +204,7 @@ In order to share data between multiple middleware components, request attribute
 	{
 		public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
 			// access previously specified attributes via $request->getAttribute('attributeName');
-			return $next->handle($request->withAttribute('someAttribute', 'someAttributeValue');
+			return $next->handle($request->withAttribute('someAttribute', 'someAttributeValue'));
 		}
 	}
 
