@@ -32,6 +32,7 @@ use Doctrine\Migrations\Metadata\AvailableMigrationsList;
 use Doctrine\Migrations\Metadata\ExecutedMigration;
 use Doctrine\Migrations\Metadata\ExecutedMigrationsList;
 use Doctrine\Migrations\MigratorConfiguration;
+use Doctrine\Migrations\Tools\Console\ConsoleLogger;
 use Doctrine\Migrations\Tools\Console\Exception\InvalidOptionUsage;
 use Doctrine\Migrations\Tools\Console\Exception\VersionAlreadyExists;
 use Doctrine\Migrations\Tools\Console\Exception\VersionDoesNotExist;
@@ -51,6 +52,7 @@ use Neos\Flow\Utility\Exception;
 use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 use Neos\Utility\ObjectAccess;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -83,6 +85,11 @@ class Service
      * @var Environment
      */
     protected $environment;
+
+    /**
+     * @var BufferedOutput
+     */
+    protected BufferedOutput $logMessages;
 
     /**
      * Validates the metadata mapping for Doctrine, using the SchemaValidator
@@ -224,9 +231,12 @@ class Service
             ],
         ]);
         $entityManagerLoader = new ExistingEntityManager($this->entityManager);
+        $this->logMessages = new BufferedOutput(null, true);
+        $logger = new ConsoleLogger($this->logMessages);
 
         $dependencyFactory = DependencyFactory::fromEntityManager($configurationLoader, $entityManagerLoader);
         $dependencyFactory->setService(MigrationFinderInterface::class, new MigrationFinder($this->getDatabasePlatformName()));
+        $dependencyFactory->setService(LoggerInterface::class, $logger);
 
         return $dependencyFactory;
     }
@@ -240,12 +250,10 @@ class Service
      */
     public function getFormattedMigrationStatus($showMigrations = false): string
     {
-        $output = new BufferedOutput(null, true);
-
         $this->getDependencyFactory()->getMetadataStorage()->ensureInitialized();
 
         $infosHelper = $this->getDependencyFactory()->getMigrationStatusInfosHelper();
-        $infosHelper->showMigrationsInfo($output);
+        $infosHelper->showMigrationsInfo($this->logMessages);
 
         if ($showMigrations) {
             $versions = $this->getSortedVersions(
@@ -253,11 +261,11 @@ class Service
                 $this->getDependencyFactory()->getMetadataStorage()->getExecutedMigrations() // executed migrations
             );
 
-            $output->writeln('');
-            $this->getDependencyFactory()->getMigrationStatusInfosHelper()->listVersions($versions, $output);
+            $this->logMessages->writeln('');
+            $this->getDependencyFactory()->getMigrationStatusInfosHelper()->listVersions($versions, $this->logMessages);
         }
 
-        return $output->fetch();
+        return $this->logMessages->fetch();
     }
 
     /**
@@ -343,6 +351,18 @@ class Service
 
         $migrator = $this->getDependencyFactory()->getMigrator();
         $sql = $migrator->migrate($plan, $migratorConfiguration);
+
+        if ($quiet === false) {
+            $output .= PHP_EOL;
+            foreach ($sql as $item) {
+                $output .= PHP_EOL;
+                foreach ($item as $inner) {
+                    $output .= '     -> ' . $inner->getStatement() . PHP_EOL;
+                }
+            }
+            $output .= PHP_EOL;
+            $output .= $this->logMessages->fetch();
+        }
 
         if (is_string($outputPathAndFilename)) {
             $writer = $this->getDependencyFactory()->getQueryWriter();
@@ -548,7 +568,7 @@ class Service
      */
     public function getMigrationStatus(): array
     {
-        $executedMigrations  = $this->getDependencyFactory()->getMetadataStorage()->getExecutedMigrations();
+        $executedMigrations = $this->getDependencyFactory()->getMetadataStorage()->getExecutedMigrations();
         $availableMigrations = $this->getDependencyFactory()->getMigrationPlanCalculator()->getMigrations();
         $executedUnavailableMigrations = $this->getDependencyFactory()->getMigrationStatusCalculator()->getExecutedUnavailableMigrations();
         $newMigrations = $this->getDependencyFactory()->getMigrationStatusCalculator()->getNewMigrations();
