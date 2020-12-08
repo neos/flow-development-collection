@@ -84,9 +84,6 @@ class AspectContainer
      */
     public function __construct(string $className)
     {
-        if (!class_exists($className)) {
-            throw new InvalidTargetClassException(sprintf('The class "%s" is not loadable for AOP proxy building. This is most likely an inconsistency with the caches. Try running `./flow flow:cache:flush` and if that does not help, check the class exists and is correctly namespaced.', $className), 1607422151);
-        }
         $this->className = $className;
     }
 
