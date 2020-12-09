@@ -327,14 +327,8 @@ class DoctrineCommandController extends CommandController
             $this->outputLine(sprintf('The path "%s" is not writeable!', dirname($output)));
         }
 
-        if (is_numeric($version)) {
-            $qualifiedVersion = sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
-        } else {
-            $qualifiedVersion = $version;
-        }
-
         try {
-            $result = $this->doctrineService->executeMigrations($qualifiedVersion, $output, $dryRun, $quiet);
+            $result = $this->doctrineService->executeMigrations($this->normalizeVersion($version), $output, $dryRun, $quiet);
             if ($result !== '' && $quiet === false) {
                 $this->outputLine($result);
             }
@@ -380,14 +374,8 @@ class DoctrineCommandController extends CommandController
             $this->outputLine(sprintf('The path "%s" is not writeable!', dirname($output)));
         }
 
-        if (is_numeric($version)) {
-            $qualifiedVersion = sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
-        } else {
-            $qualifiedVersion = $version;
-        }
-
         try {
-            $this->outputLine($this->doctrineService->executeMigration($qualifiedVersion, $direction, $output, $dryRun));
+            $this->outputLine($this->doctrineService->executeMigration($this->normalizeVersion($version), $direction, $output, $dryRun));
         } catch (\Exception $exception) {
             $this->handleException($exception);
         }
@@ -421,14 +409,8 @@ class DoctrineCommandController extends CommandController
             throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
         }
 
-        if (is_numeric($version)) {
-            $qualifiedVersion = sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
-        } else {
-            $qualifiedVersion = $version;
-        }
-
         try {
-            $this->doctrineService->markAsMigrated($qualifiedVersion, $add ?: false);
+            $this->doctrineService->markAsMigrated($this->normalizeVersion($version), $add ?: false);
         } catch (MigrationException $exception) {
             $this->outputLine($exception->getMessage());
             $this->quit(1);
@@ -552,5 +534,19 @@ class DoctrineCommandController extends CommandController
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         return !($this->settings['backendOptions']['driver'] === null);
+    }
+
+    /**
+     * Migrates a numeric version like "12345678901234" to a fully qualified version "Neos\Flow\Persistence\Doctrine\Migrations\Version12345678901234"
+     *
+     * @param string $version
+     * @return string To fully qualified version including PHP namespace
+     */
+    private function normalizeVersion(string $version): string
+    {
+        if (!is_numeric($version)) {
+            return $version;
+        }
+        return sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
     }
 }
