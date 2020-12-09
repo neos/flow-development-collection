@@ -1,0 +1,798 @@
+`7.0.0 (2020-12-09) <https://github.com/neos/flow-development-collection/releases/tag/7.0.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Further adjustments to Doctrine Migrations integration <https://github.com/neos/flow-development-collection/pull/2328>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+See https://github.com/neos/flow-development-collection/issues/2244
+
+* Packages: ``Flow``
+
+`TASK: Extend HTTP documentation by additional middleware examples <https://github.com/neos/flow-development-collection/pull/2330>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Related: #2258
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix invalid regex in migration <https://github.com/neos/flow-development-collection/pull/2327>`_
+---------------------------------------------------------------------------------------------------------
+
+Fixes the migration added with #2320
+
+* Packages: ``Flow``
+
+`Revert "TASK: Fix composer dependencies" <https://github.com/neos/flow-development-collection/pull/2325>`_
+-----------------------------------------------------------------------------------------------------------
+
+Reverts neos/flow-development-collection#2324
+
+`TASK: Fix composer dependencies <https://github.com/neos/flow-development-collection/pull/2324>`_
+--------------------------------------------------------------------------------------------------
+
+typo3fluid was accidentially included in the collection require, vimeo/psalm was duplicated and doctrine dependencies were duplicated in require-dev.
+
+* Packages: ``FluidAdaptor``
+
+`TASK: Set dependency on neos/fluid-adaptor in neos/kickstarter <https://github.com/neos/flow-development-collection/pull/2323>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+This should have been done automagically, see https://github.com/neos/flow-development-distribution/pull/56
+
+* Packages: ``Kickstarter``
+
+`TASK: Add migration for ComponentContext deprecation <https://github.com/neos/flow-development-collection/pull/2320>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This adds some basic code migrations for the move away from HTTP Components.
+
+Related: #2019, #2258
+
+* Packages: ``Flow``
+
+`TASK: Adjust version numbers in tooling configuration <https://github.com/neos/flow-development-collection/pull/2322>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Updates for the 7.0 branch:
+
+* conf.py of neos/flow
+* .travis.yml
+* apigen.yml
+* Packages: ``Flow``
+
+`BUGFIX: Update MINIMUM_PHP_VERSION constant <https://github.com/neos/flow-development-collection/pull/2319>`_
+--------------------------------------------------------------------------------------------------------------
+
+Related: #2237
+
+* Packages: ``Flow``
+
+`TASK: Print a helpful message, if autoload.php can not be found in CLI <https://github.com/neos/flow-development-collection/pull/2283>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+This adds a helpful message to the CLI output like this, if the Composer autoload file is mssing:
+
+```
+> ./flow
+Composers autoload.php file was not found. The file is expected to be located in the path:
+
+/Users/soren/Projects/flow-development-distribution/Packages/Framework/Neos.Flow/Scripts/../../../Libraries/autoload.php
+
+This could be due to a missing 'config' => 'vendor-dir' section of your root 'composer.json' file.
+
+The section key and value should look like the following
+"vendor-dir": "Packages/Libraries"
+Update your 'composer.json' file and run the 'composer update' command.
+```
+
+Resolves #2282 
+
+* Packages: ``Flow``
+
+`Update MINIMUM_PHP_VERSION and FLOW_VERSION_BRANCH constants <https://github.com/neos/flow-development-collection/pull/2318>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Updates `MINIMUM_PHP_VERSION` and `FLOW_VERSION_BRANCH` PHP constants
+
+* Packages: ``Eel`` ``Flow`` ``FluidAdaptor`` ``Kickstarter``
+
+`BUGFIX: Correct printed path for created doctrine migrations <https://github.com/neos/flow-development-collection/pull/2297>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Tweaks the output of the `doctrine:migrationgenerate` command so that it renders the path of the new migration relative to the root directory.
+
+Before:
+
+    The migration was moved to: Application/<Package.Key>/Migrations/<DB-Type>/Version<Version>.php
+
+Now:
+
+    The migration was moved to: Packages/Application/<Package.Key>/Migrations/<DB-Type>/Version<Version>.php
+
+Fixes #2296 
+
+* Packages: ``Flow``
+
+`!!! TASK: Make composer autoloader the default <https://github.com/neos/flow-development-collection/pull/2288>`_
+-----------------------------------------------------------------------------------------------------------------
+
+The old behaviour can now still be achieved by setting `FLOW_ONLY_COMPOSER_LOADER=false`, but is (still) deprecated and will be gone at some point.
+
+This is a breaking change if you relied on the old behavior, specifically on the fact that Flow used to consider all packages underneath the `/Packages` folder.
+
+From now on, packages will only be loaded if they are properly installed via composer!
+
+Related to #2262 
+
+* Packages: ``Flow``
+
+`TASK: Some psalm corrections <https://github.com/neos/flow-development-collection/pull/2316>`_
+-----------------------------------------------------------------------------------------------
+
+This makes use of psalm specific docblock attributes for class-string types.
+That tells Psalm to make sure that the value is always given a ::class constant
+
+https://psalm.dev/docs/annotating_code/type_syntax/scalar_types/#class-string
+
+* Packages: ``Flow``
+
+`TASK: Add core migration that warns about component chain usage <https://github.com/neos/flow-development-collection/pull/2315>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Provides a minimal core migration that will show a warning
+when the migrated package contains PHP code that refers to
+the no longer existing `ComponentInterface`.
+
+Usage:
+
+    ./flow flow:core:migrate <Package-Key> --version 20201205172733
+
+Example output:
+
+```
+Warnings
+--------------------------------------------------------------------------------
+  * Following files refer to the ComponentInterface that has been removed
+    with Flow 7.0:
+
+    * Classes/Http/SomeComponent.php
+    * Classes/Http/SomeOtherComponent.php
+
+    The component chain was replaced with a middleware chain in Flow 7. Please make
+    sure you have read the upgrade instructions and converted your components to
+    middlewares.
+--------------------------------------------------------------------------------
+```
+
+Related: #2258
+
+* Packages: ``Flow``
+
+`TASK: Adjust HTTP documentation to removed component chain <https://github.com/neos/flow-development-collection/pull/2308>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Related: #2258
+
+* Packages: ``Flow``
+
+`TASK: Show a helpful message when a class still implements ComponentInterface <https://github.com/neos/flow-development-collection/pull/2311>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+Related to #2258
+
+* Packages: ``Flow``
+
+`TASK: Use PhpUnit 9 <https://github.com/neos/flow-development-collection/pull/2310>`_
+--------------------------------------------------------------------------------------
+
+Related: https://github.com/neos/flow-development-collection/issues/2293
+
+* Packages: ``Flow``
+
+`TASK: Revert "FEATURE: Easy injection of the active ServerRequest" <https://github.com/neos/flow-development-collection/pull/2309>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+This reverts #2144 which introduced a class `ActiveServerRequestProvider`
+that allowed for easy injection of the active `ServerRequest`.
+
+Background:
+
+With the immutable nature of PSR-7 classes, the injected request might
+not reflect the latest state and the behavior would depend on the
+order in which the injection was executed.
+With the HTTP middlewares chain ```Http\\RequestHandler::getHttpRequest()``
+will always contain the "current" request.
+
+Related: #658
+
+* Packages: ``Flow``
+
+`FEATURE: Middleware CLI command <https://github.com/neos/flow-development-collection/pull/2307>`_
+--------------------------------------------------------------------------------------------------
+
+Adds a CLI command `middleware:list` that can be used to list
+all configured middleware components in the order they will be
+executed.
+
+Related: #2258
+
+* Packages: ``Flow``
+
+`!!! BUGFIX: Relative position to non-existing key in PositionalArraySorter throws exception <https://github.com/neos/flow-development-collection/pull/2214>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Until now, an element positioned relative to a non-existing key would just be skipped silently. With this, it will throw an exception to bring awareness to the "inactive" array element.
+
+This is a breaking change because previously referring to a non existing position would be ignored.
+For example:
+```yaml
+Neos:
+  Flow:
+    mvc:
+      routes:
+        'Some.Package':
+          position: 'before Some.NonExistingPackage'
+```
+previously: The corresponding routes would be inserted according to the loading order (i.e. non-deterministic basically)
+now: An `InvalidPositionException` exception is thrown:
+```
+The positional string "before Some.NonExistingPackage" (defined for key "Some.Package") references a non-existing key.
+```
+
+Fixes #2213
+
+* Packages: ``Flow``
+
+`TASK: Restrict typo3fluid/fluid to versions before signature change <https://github.com/neos/flow-development-collection/pull/2298>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+See https://github.com/neos/flow-development-collection/issues/2260
+
+* Packages: ``FluidAdaptor``
+
+`TASK: Update symfony dependencies to 5.1+ <https://github.com/neos/flow-development-collection/pull/2278>`_
+------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`TASK: Fix return type annotation for TokenInterface::updateCredentials() <https://github.com/neos/flow-development-collection/pull/2292>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+The result of this call is not used (see https://github.com/neos/flow-development-collection/blob/`af7b3374688878b822528b4a761741f1102de1cf <https://github.com/neos/flow-development-collection/commit/af7b3374688878b822528b4a761741f1102de1cf>`_/Neos.Flow/Classes/Security/Context.php#L787)
+
+* Packages: ``Flow``
+
+`!!! BUGFIX: Define default SAMESITE attribute to LAX <https://github.com/neos/flow-development-collection/pull/2275>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The neos-ui complaining with warning in the modern browsers because our session cookie has no defined same site attribute and so the browser expect to have a same site with the lax value or none but with the secure attribute.
+
+As the browsers use LAX as default we now also define that.
+For mor information read https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie/SameSite
+
+Resolves: #2031
+
+![Screenshot 2020-11-24 at 10 31 02](https://user-images.githubusercontent.com/1014126/100076002-fbaaee00-2e40-11eb-9feb-40cc23cf7219.png)
+
+
+
+**What I did**
+Define `SameSite=Lax` when no sameSite is defined.
+
+**How to verify it**
+Just load the neos backend and check the dev console for warning. There should be no warning regarding session cookies.
+
+**Checklist**
+
+- [x] Code follows the PSR-2 coding style
+- [x] Tests have been created, run and adjusted as needed
+- [ ] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix UriConstraints::withPort() when port is equal to current port <https://github.com/neos/flow-development-collection/pull/2276>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+This fixes the behavior of `UriConstraints` when using `withPort()` with
+a (custom) port that is equal to the port of the applied URL:
+
+```
+UriConstraints::create()->withPort(8080)->applyTo(new Uri('http://localhost:8080'), true);
+```
+
+Now creates `http://localhost:8080` while it was `http://localhost` before.
+
+Fixes: #2263
+
+* Packages: ``Flow``
+
+`!!! TASK: Remove deprecated code <https://github.com/neos/flow-development-collection/pull/2262>`_
+---------------------------------------------------------------------------------------------------
+
+### Remove obsolete and deprecated PHP code:
+* `Cli/Request::getMainRequest()` & `Cli/Request::isMainRequest()`
+  * Those were deprecated with 6.0 (via #1552) and never really served a purpose since
+    CLI requests can't be nested
+* `Neos\\Flow\\Persistence\\Generic\\*`
+  * Before we had doctrine, we had a custom persistence layer that was kept as "generic" persistence when we introduced doctrine ten years ago (via `90cb65827c1550e9144e9f83b9231b430c106660 <https://github.com/neos/flow-development-collection/commit/90cb65827c1550e9144e9f83b9231b430c106660>`_). Since 6.0 this custom persistence was deprecated in favor of the corresponding `Neos\\Flow\\Persistence\\Doctrine\\*` classes.
+    generic persistence is dead, long live generic persistence! (and thanks to @kdambekalns for spending million of minutes and brain cells on this)
+* `Neos\\Flow\\Security\\Cryptography\\SaltedMd5HashingStrategy`
+  * md5 is unsafe and the hashing strategy was deprecated with 6.0.
+* `ObjectAccess::instantiateClass()`
+  * deprecated with 5.3.16 (via #1972). With PHP 5.6+ `new $className(...$arguments)` can be used instead
+* `HttpRequestHandlerInterface`/`HttpRequestHandler::getHttpResponse()`
+  * deprecated with 6.0 (via #1755) and now gone. If you need the current HTTP Response, use a middleware, as the Response does not exist earlier at all
+
+Related: #2172
+
+* Packages: ``Flow``
+
+`TASK: Update PHP CGL & documentation examples to current practice <https://github.com/neos/flow-development-collection/pull/2280>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Resolves: #2279
+
+* Packages: ``Flow``
+
+`Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/2286>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/ajpMV0).
+
+* Packages: ``Flow``
+
+`Update composer/composer requirement from ^1.9 to ^2.0 <https://github.com/neos/flow-development-collection/pull/2251>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Updates the requirements on [composer/composer](https://github.com/composer/composer) to permit the latest version.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a href="https://github.com/composer/composer/releases">composer/composer's releases</a>.</em></p>
+<blockquote>
+<h2>2.0.7</h2>
+<ul>
+<li>Fixed detection of TTY mode, made input non-interactive automatically if STDIN is not a TTY</li>
+<li>Fixed root aliases not being present in lock file if not required by anything else</li>
+<li>Fixed <code>remove</code> command requiring a lock file to be present</li>
+<li>Fixed <code>Composer\\InstalledVersions</code> to always contain up to date data during installation</li>
+<li>Fixed <code>status</code> command breaking on slow networks</li>
+<li>Fixed order of POST_PACKAGE_* events to occur together once all installations of a package batch are done</li>
+</ul>
+</blockquote>
+</details>
+<details>
+<summary>Changelog</summary>
+<p><em>Sourced from <a href="https://github.com/composer/composer/blob/master/CHANGELOG.md">composer/composer's changelog</a>.</em></p>
+<blockquote>
+<h3>[2.0.7] 2020-11-13</h3>
+<ul>
+<li>Fixed detection of TTY mode, made input non-interactive automatically if STDIN is not a TTY</li>
+<li>Fixed root aliases not being present in lock file if not required by anything else</li>
+<li>Fixed <code>remove</code> command requiring a lock file to be present</li>
+<li>Fixed <code>Composer\\InstalledVersions</code> to always contain up to date data during installation</li>
+<li>Fixed <code>status</code> command breaking on slow networks</li>
+<li>Fixed order of POST_PACKAGE_* events to occur together once all installations of a package batch are done</li>
+</ul>
+<h3>[2.0.6] 2020-11-07</h3>
+<ul>
+<li>Fixed regression in 2.0.5 dealing with custom installers which do not pass absolute paths</li>
+</ul>
+<h3>[2.0.5] 2020-11-06</h3>
+<ul>
+<li>Disabled platform-check verification of extensions by default (now defaulting <code>php-only</code>), set platform-check to <code>true</code> if you want a complete check</li>
+<li>Improved platform-check handling of issue reporting</li>
+<li>Fixed platform-check to only check non-dev requires even if require-dev dependencies are installed</li>
+<li>Fixed issues dealing with custom installers which return trailing slashes in getInstallPath (ideally avoid doing this as there might be other issues left)</li>
+<li>Fixed issues when curl functions are disabled</li>
+<li>Fixed gitlab-domains/github-domains to make sure if they are overridden the default value remains present</li>
+<li>Fixed issues removing/upgrading packages from path repositories on Windows</li>
+<li>Fixed regression in 2.0.4 when handling of <a href="mailto:git@bitbucket.org">git@bitbucket.org</a> URLs in vcs repositories</li>
+<li>Fixed issue running create-project in current directory on Windows</li>
+</ul>
+<h3>[2.0.4] 2020-10-30</h3>
+<ul>
+<li>Fixed <code>check-platform-req</code> command not being clear on what packages are checked, and added a --lock flag to explicitly check the locked packages</li>
+<li>Fixed <code>config</code> &amp; <code>create-project</code> adding of repositories to make sure they are prepended as order is much more important in Composer 2, also added a --append flag to <code>config</code> to restore the old behavior in the unlikely case this is needed</li>
+<li>Fixed curl downloader failing on old PHP releases or when using self-signed SSL certificates</li>
+<li>Fixed Bitbucket API authentication issue</li>
+</ul>
+<h3>[2.0.3] 2020-10-28</h3>
+<ul>
+<li>Fixed bug in <code>outdated</code> command where dev packages with branch-aliases where always shown as being outdated</li>
+<li>Fixed issue in lock file interoperability with composer 1.x when using <code>dev-master as xxx</code> aliases</li>
+<li>Fixed new <code>--locked</code> option being missing from <code>outdated</code> command, for checking outdated packages directly from the lock file</li>
+<li>Fixed a few debug/error reporting strings</li>
+</ul>
+<h3>[2.0.2] 2020-10-25</h3>
+<ul>
+<li>Fixed regression handling <code>composer show -s</code> in projects where no version can be guessed from VCS</li>
+<li>Fixed regression handling partial updates/<code>require</code> when a lock file was missing</li>
+<li>Fixed interop issue with plugins that need to update dist URLs of packages, <a href="https://getcomposer.org/doc/articles/plugins.md#plugin-modifies-downloads">see docs</a> if you need this</li>
+</ul>
+<h3>[2.0.1] 2020-10-24</h3>
+<ul>
+<li>Fixed crash on PHP8</li>
+</ul>
+<h3>[2.0.0] 2020-10-24</h3>
+<!-- raw HTML omitted -->
+</blockquote>
+</details>
+<details>
+<summary>Commits</summary>
+<ul>
+<li><a href="https://github.com/composer/composer/commit/`cbee637510037f293e641857b2a6223d0ea8008d <https://github.com/neos/flow-development-collection/commit/cbee637510037f293e641857b2a6223d0ea8008d>`_"><code>cbee637</code></a> Release 2.0.7</li>
+<li><a href="https://github.com/composer/composer/commit/`9aefbee53a251cf5bd326fb1318ac53b89a42207 <https://github.com/neos/flow-development-collection/commit/9aefbee53a251cf5bd326fb1318ac53b89a42207>`_"><code>9aefbee</code></a> Update changelog</li>
+<li><a href="https://github.com/composer/composer/commit/`89947c5e37656336a71b87374f100f5c4eda268b <https://github.com/neos/flow-development-collection/commit/89947c5e37656336a71b87374f100f5c4eda268b>`_"><code>89947c5</code></a> Bulk up platform config docs, refs <a href="https://github.com/composer/composer/issue">https://github.com/composer/composer/issue</a>...</li>
+<li><a href="https://github.com/composer/composer/commit/`3d5be62250b6156d72e1d1b4f63f20ebde969379 <https://github.com/neos/flow-development-collection/commit/3d5be62250b6156d72e1d1b4f63f20ebde969379>`_"><code>3d5be62</code></a> Add article on resolving merge conflicts (<a href="https://github-redirect.dependabot.com/composer/composer/issues/9386">#9386</a>)</li>
+<li><a href="https://github.com/composer/composer/commit/`d6794217d9b9d923fcc7e65da170785a96bb7efd <https://github.com/neos/flow-development-collection/commit/d6794217d9b9d923fcc7e65da170785a96bb7efd>`_"><code>d679421</code></a> Merge pull request <a href="https://github-redirect.dependabot.com/composer/composer/issues/9475">#9475</a> from naderman/fix-alias-alt</li>
+<li><a href="https://github.com/composer/composer/commit/`27f200caf17780c76d5e27f11cf8fa42e88a472a <https://github.com/neos/flow-development-collection/commit/27f200caf17780c76d5e27f11cf8fa42e88a472a>`_"><code>27f200c</code></a> Create ROOT_ALIAS rules inside package rule generation</li>
+<li><a href="https://github.com/composer/composer/commit/`4215344c9339d56cd89ac90e79ab50924769f702 <https://github.com/neos/flow-development-collection/commit/4215344c9339d56cd89ac90e79ab50924769f702>`_"><code>4215344</code></a> Rule generator cleanup: no need for 2 added package arrays, more specific roo...</li>
+<li><a href="https://github.com/composer/composer/commit/`59b724652385db3107b824a3d095e668e7087624 <https://github.com/neos/flow-development-collection/commit/59b724652385db3107b824a3d095e668e7087624>`_"><code>59b7246</code></a> Update semver to latest</li>
+<li><a href="https://github.com/composer/composer/commit/`595c4c6f7526cb7227e584b7219b30c0c0c41cba <https://github.com/neos/flow-development-collection/commit/595c4c6f7526cb7227e584b7219b30c0c0c41cba>`_"><code>595c4c6</code></a> Make sure we handle cases where STDIN/STDOUT may not be defined</li>
+<li><a href="https://github.com/composer/composer/commit/`6b48258432f1d166744cebc5bc23b18e69716de9 <https://github.com/neos/flow-development-collection/commit/6b48258432f1d166744cebc5bc23b18e69716de9>`_"><code>6b48258</code></a> Add test case for root alias on an unloadable package</li>
+<li>Additional commits viewable in <a href="https://github.com/composer/composer/compare/1.9.0...2.0.7">compare view</a></li>
+</ul>
+</details>
+<br />
+
+Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.
+
+[//]: # (dependabot-automerge-start)
+[//]: # (dependabot-automerge-end)
+
+---
+
+<details>
+<summary>Dependabot commands and options</summary>
+<br />
+
+You can trigger Dependabot actions by commenting on this PR:
+- `@dependabot rebase` will rebase this PR
+- `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it
+- `@dependabot merge` will merge this PR after your CI passes on it
+- `@dependabot squash and merge` will squash and merge this PR after your CI passes on it
+- `@dependabot cancel merge` will cancel a previously requested merge and block automerging
+- `@dependabot reopen` will reopen this PR if it is closed
+- `@dependabot close` will close this PR and stop Dependabot recreating it. You can achieve the same result by closing it manually
+- `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)
+- `@dependabot use these labels` will set the current labels as the default for future PRs for this repo and language
+- `@dependabot use these reviewers` will set the current reviewers as the default for future PRs for this repo and language
+- `@dependabot use these assignees` will set the current assignees as the default for future PRs for this repo and language
+- `@dependabot use this milestone` will set the current milestone as the default for future PRs for this repo and language
+- `@dependabot badge me` will comment on this PR with code to add a "Dependabot enabled" badge to your readme
+
+Additionally, you can set the following in your Dependabot [dashboard](https://app.dependabot.com):
+- Update frequency (including time of day and day of week)
+- Pull request limits (per update run and/or open at any time)
+- Automerge options (never/patch/minor, and dev/runtime dependencies)
+- Out-of-range updates (receive only lockfile updates, if desired)
+- Security updates (receive only security updates, if desired)
+
+</details>
+
+* Packages: ``Flow``
+
+`TASK: Reflect minimum required PHP version in documentation <https://github.com/neos/flow-development-collection/pull/2281>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Related: #2236
+
+* Packages: ``Flow``
+
+`BUGFIX: Auto-generate DoctrineMigrations folder if needed <https://github.com/neos/flow-development-collection/pull/2285>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Fixes: #2284
+
+* Packages: ``Flow``
+
+`BUGFIX: Reduce maximum line length to 80 chars <https://github.com/neos/flow-development-collection/pull/2197>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This reduces the maximum line length of output to 80 chars when running core migrations.
+
+See https://stackoverflow.com/questions/4651012/why-is-the-default-terminal-width-80-characters for more information
+
+* Packages: ``Flow``
+
+`Allow psalm checks to fail <https://github.com/neos/flow-development-collection/pull/2277>`_
+---------------------------------------------------------------------------------------------
+
+Adjusts the Travis CI configuration allowing static analysis (psalm) to fail
+since they are very fragile at the moment.
+
+* Packages: ``Flow``
+
+`FEATURE: Accept \\Traversable as a collection type in validation <https://github.com/neos/flow-development-collection/pull/2202>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This adds \\Traversable to the array of valid collectionTypes in the TypeHandling class.
+
+Fixes: #2201 
+
+* Packages: ``ObjectHandling``
+
+`FEATURE: Pass SignalInformation instance to slot if possible <https://github.com/neos/flow-development-collection/pull/2216>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+With the new `wire()` method signal/slot connections use an instance of
+`SignalInformation` as parameter for the called slot method.
+
+Slots connected using `connect()` continue to receive a string argument
+`EmitterClassName::signalName` like before, if requested.
+
+Resolves #1003
+
+`TASK: Update documentation for default embedded ValueObjects <https://github.com/neos/flow-development-collection/pull/2255>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Follow-up to #1718 with promised documentation
+
+* Packages: ``Flow``
+
+`BUGFIX: FileSystemStorage::getObjects correctly returns a generator of StorageObject <https://github.com/neos/flow-development-collection/pull/2167>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Somehow this went unnoticed and the `getObjects()` method returned a generator generator. Also the element type docblock was wrong.
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix use of deprecated method called in exception handling <https://github.com/neos/flow-development-collection/pull/2270>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+See https://github.com/neos/flow-development-collection/pull/2188#pullrequestreview-534660935
+
+* Packages: ``Flow``
+
+`BUGFIX: Make InstallerScripts compatible to composer version 2.0+ <https://github.com/neos/flow-development-collection/pull/2266>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Instead of querying the removed method ::getJobType we now check the class of the job instance like we do in the first lines of the method.
+
+Cherry-picked from: `f10e2570b04ad03efe27b1e2821e8d66f40cab3b <https://github.com/neos/flow-development-collection/commit/f10e2570b04ad03efe27b1e2821e8d66f40cab3b>`_
+
+Fixes: #2187
+
+* Packages: ``Flow``
+
+`!!! BUGFIX: Make FluidAdaptor compatible with TYPO3Fluid 2.5.11+ and 2.6.10+ <https://github.com/neos/flow-development-collection/pull/2265>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+This is breaking in case you created your own ViewHelper that overrides the `registerArgument()` or `overrideArgument()` method. In that case you need to add a new boolean optional argument `$escape = null` and forward that to the parent method.
+
+This is a backport of #2257
+Fixes #2260 
+
+* Packages: ``FluidAdaptor``
+
+`BUGFIX: Fix default order of middleware components <https://github.com/neos/flow-development-collection/pull/2261>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Adjusts the order of the Middleware components so that
+the `SessionMiddleware` is executed before the `RoutingMiddleware`.
+
+Otherwise session based authentication won't work until the
+routing middleware was executed.
+
+This also removes most of the explicit `position` configurations
+in order to avoid too much interdependency.
+
+If a 3rd party middleware needs to be executed before/after another
+one, it can still use `position: before/after <name>`  of course.
+Depending on the order of _multiple_ other components is considered
+bad practice. But if that's really required one could still add a
+`position` setting to the existing middleware configuration.
+
+Related: #2019
+
+* Packages: ``Flow``
+
+`TASK: Update doctrine/common requirement from ^2.13.1 to ^3.0.2 <https://github.com/neos/flow-development-collection/pull/2247>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Updates the requirements on [doctrine/common](https://github.com/doctrine/common) to permit the latest version.
+
+See #2122
+
+* Packages: ``Flow``
+
+`!!! TASK: Remove custom FluidAdaptor Exceptions on invalid ArgumentDefinition <https://github.com/neos/flow-development-collection/pull/2259>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+This removes the `Neos\\FluidAdaptor\\Core\\Exception`s when the ArgumentDefinition is invalid in favor of the native TYPO3 Fluid exceptions. With this we remove the boilerplate we have to keep in sync with upstream.
+
+See https://github.com/TYPO3/Fluid/issues/529 and https://github.com/neos/flow-development-collection/pull/2257#issuecomment-728825319
+
+* Packages: ``FluidAdaptor``
+
+`!!! TASK: Remove ComponentChain and ComponentContext <https://github.com/neos/flow-development-collection/pull/2221>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Removes the HTTP Component chain implementation.
+
+This is a breaking change because it removes the following classes:
+
+* `Neos\\Flow\\Http\\Component\\ComponentInterface` (was part of the public API!)
+* `Neos\\Flow\\Http\\Component\\Exception` (public API)
+* `Neos\\Flow\\Http\\Component\\ComponentChain` (already deprecated)
+* `Neos\\Flow\\Http\\Component\\ComponentChainFactory` (already deprecated)
+* `Neos\\Flow\\Http\\Component\\ComponentContext` (already deprecated)
+
+It also adjusts the `Neos\\Flow\\Http\\HttpRequestHandlerInterface` by removing the `getComponentContext()` method.
+To get hold of the current HTTP request, use `HttpRequestHandlerInterface::getHttpRequest()` which is no longer deprecated.
+`HttpRequestHandlerInterface::getHttpResponse()` is still deprecated. Use a middleware component to get hold
+of the current HTTP response. But usually that shouldn't be required anyways. Instead you can alter the final HTTP
+response via `$this->response` in ActionControllers.
+
+Related: #2019 
+Related: #2258
+
+`BUGFIX: AjaxWidgetsMiddleware initializes SecurityContext <https://github.com/neos/flow-development-collection/pull/2256>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Otherwise, the security context is not initialized and security would not work but throw an exception (e.g. Neos.Setup)
+
+* Packages: ``FluidAdaptor``
+
+`!!! BUGFIX: Adjust to TYPO3Fluid 2.5.11 and 2.6.10 signature changes <https://github.com/neos/flow-development-collection/pull/2257>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+With this you need to update to TYPO3 Fluid 2.5.11+ or 2.6.10+
+
+See https://github.com/TYPO3/Fluid/commit/`f20db4e74cf9803c6cffca2ed2f03e1b0b89d0dc <https://github.com/neos/flow-development-collection/commit/f20db4e74cf9803c6cffca2ed2f03e1b0b89d0dc>`_#r44244534
+
+* Packages: ``Flow``
+
+`TASK: Fix FLOW_VERSION_BRANCH variable <https://github.com/neos/flow-development-collection/pull/2254>`_
+---------------------------------------------------------------------------------------------------------
+
+This has been forgotten when branching off 6.3.
+
+* Packages: ``Flow``
+
+`TASK: Use count instead of find in repository deleting resource <https://github.com/neos/flow-development-collection/pull/2241>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This introduces a new function in the resourceRepository that allows to count the number of times a file is referenced in a PersistentResource. This function is used in deleteResource of the ResourceManager to improve speed when a file is used in a lot of Persistent Resources.
+Same change as with #2229 but should now be merged into Flow 5.3.
+
+Fixes #2228
+
+* Packages: ``Flow``
+
+`!!! TASK: Add type declarations to persistence interfaces <https://github.com/neos/flow-development-collection/pull/2231>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`!!! TASK: Update Doctrine Migrations to 3.0 <https://github.com/neos/flow-development-collection/pull/1880>`_
+--------------------------------------------------------------------------------------------------------------
+
+This updated the required version of `doctrine/migrations` from 1.8 to 3.0.
+
+While there are new features in Doctrine Migrations, the reason for us to do
+an upgrade is to move forward – the previously used version will not be
+maintained forever… This post also gives some background on that:
+https://www.doctrine-project.org/2020/04/10/doctrine-migrations-3.0.html
+
+For a Flow user the commands remain unchanged, so far no multi-namespace
+migrations are supported and the features to the "official" CLI do not matter,
+since we embed the functionality in our own commands.
+
+**Breaking changes**
+
+There are three things that make this upgrade a breaking change:
+
+- `Doctrine\\DBAL\\Migrations` moved to `Doctrine\\Migrations`
+- `AbstractMigration` changed method signatures (type delcarations added)
+
+To adjust your PHP code (the migration files), a core migration is provided that
+should fix the vast majority of existing migrations. (That core migration is in Flow
+and named `Version20201109224100`.)
+
+- The "version" is the FQCN of the migration class (existing entries in the migrations table will be automatically updated)
+
+The needed changes to the DB table where the migration status is stored are done
+the first time a command that accesses that table is used. Make sure to have a current
+backup and then run `./flow doctrine:migrationstatus --show-migrations`. If all
+went well, the migrations should all be listed as a fully-qualified class name, no
+longer just a date/time string. If any errors occurred during the command, restore the
+backup (the migrations table is sufficient), fix the errors and try again.
+
+See https://github.com/doctrine/migrations/blob/3.0.x/UPGRADE.md#code-bc-breaks
+and https://github.com/doctrine/migrations/blob/3.0.x/UPGRADE.md#upgrade-to-20
+for a full list of other changes. Most of those are wrapped in Flow code and need no
+adjustments in userland code.
+
+Resolves #2122
+
+* Packages: ``Flow``
+
+`TASK: Update to vimeo/psalm 4.1 <https://github.com/neos/flow-development-collection/pull/2246>`_
+--------------------------------------------------------------------------------------------------
+
+See #2243
+
+* Packages: ``Flow``
+
+`!!! FEATURE: Remove neos/fluid-adaptor as required package <https://github.com/neos/flow-development-collection/pull/2152>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Removes references to Fluid and the dependency to the `neos/fluid-adaptor` composer package.
+
+This is a breaking change if you relied on the fact the Flow installs all Fluid dependencies.
+In that case you'll need to require them explicitly in your distribution:
+```
+composer require neos/fluid-adaptor
+```
+
+Resolves #2151 
+
+* Packages: ``Flow``
+
+`Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/2242>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/ADl7mB).
+
+* Packages: ``Flow``
+
+`BUGFIX: Add missing imports for removed SetHeaderComponent and ReplaceHttpResponseComponent <https://github.com/neos/flow-development-collection/pull/2240>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This fixes the missing namespace imports for correct `SetHeaderComponent` and `ReplaceHttpResponseComponent` b/c class names.
+
+* Packages: ``Flow``
+
+`FEATURE: Move DispatchComponent to middleware <https://github.com/neos/flow-development-collection/pull/2219>`_
+----------------------------------------------------------------------------------------------------------------
+
+This moves the SetHeader, ReplaceHttpResponse and DispatchComponent to a single DispatchMiddleware.
+
+Related to #2019
+Depends on #2223
+
+`!!! TASK: Raise minimum PHP version to 7.3 <https://github.com/neos/flow-development-collection/pull/2237>`_
+-------------------------------------------------------------------------------------------------------------
+
+Require PHP 7.3 in composer.json, as PHP 7.2 is EOL by the end of November.
+
+* Packages: ``Arrays`` ``Cache`` ``Eel`` ``Files`` ``Flow`` ``FluidAdaptor`` ``Kickstarter`` ``Log`` ``MediaTypes`` ``Messages`` ``ObjectHandling`` ``OpcodeCache`` ``Pdo`` ``Schema`` ``Unicode``
+
+`TASK: Remove PHP 7.2 from build matrix <https://github.com/neos/flow-development-collection/pull/2235>`_
+---------------------------------------------------------------------------------------------------------
+
+This removes the PHP 7.2. builds from travis and raises the PHP version for static analysis to PHP 7.3
+
+`TASK: Adjust docblock to hint at variadic arguments <https://github.com/neos/flow-development-collection/pull/2232>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This helps psalm (and IDEs) understand the method takes multiple arguments and not just one.
+
+* Packages: ``Flow``
+
+`FEATURE: Move SecurityEntryPointComponent to middleware <https://github.com/neos/flow-development-collection/pull/2223>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This moves the SecurityEntryPointComponent to a PSR-15 middleware. As a side-effect, this also removes the PrepareMvcRequestComponent, as the functionality is now also done by the SecurityEntryPoint.
+If you want to build a middleware that depends on the security framework, place it `after securityEntryPoint`.
+
+Related to #2019
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/5.3.1...7.0.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
