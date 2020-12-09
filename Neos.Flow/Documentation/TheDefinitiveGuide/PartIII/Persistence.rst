@@ -8,10 +8,10 @@ This chapter explains how to use object persistence in Flow.
 
 .. tip::
 
-	If you have experience with Doctrine 2 already, your knowledge can
-	be applied fully in Flow. If you have not worked with Doctrine 2 in the
-	past, it might be helpful to learn more about it, as that might clear up
-	questions this documentation might leave open.
+    If you have experience with Doctrine 2 already, your knowledge can
+    be applied fully in Flow. If you have not worked with Doctrine 2 in the
+    past, it might be helpful to learn more about it, as that might clear up
+    questions this documentation might leave open.
 
 Introductory Example
 ====================
@@ -20,24 +20,24 @@ Let's look at the following example as an introduction to how Flow handles persi
 We have a domain model of a Blog, consisting of Blog, Post, Comment and Tag objects:
 
 .. figure:: Images/Persistence_BlogDomainModel.png
-	:alt: The objects of the Blog domain model
-	:class: screenshot-detail
+    :alt: The objects of the Blog domain model
+    :class: screenshot-detail
 
-	The objects of the Blog domain model
+    The objects of the Blog domain model
 
 Connections between those objects are built (mostly) by simple references in PHP, as a
 look at the ``addPost()`` method of the ``Blog`` class shows:
 
 *Example: The Blog's addPost() method* ::
 
-	/**
-	 * @param \Neos\Blog\Domain\Model\Post $post
-	 * @return void
-	 */
-	public function addPost(\Neos\Blog\Domain\Model\Post $post) {
-	    $post->setBlog($this);
-	    $this->posts->add($post);
-	}
+    /**
+     * @param \Neos\Blog\Domain\Model\Post $post
+     * @return void
+     */
+    public function addPost(\Neos\Blog\Domain\Model\Post $post) {
+        $post->setBlog($this);
+        $this->posts->add($post);
+    }
 
 The same principles are applied to the rest of the classes, resulting in an object tree of
 a blog object holding several posts, those in turn having references to their associated
@@ -65,33 +65,33 @@ need to write tons of XML, a few annotations in your code are enough:
 
 *Example: Persistence-related annotations in the Blog class* ::
 
-	namespace Neos\Blog\Domain\Model;
+    namespace Neos\Blog\Domain\Model;
 
-	/**
-	 * A Blog object
-	 *
-	 * @Flow\Entity
-	 */
-	class Blog {
+    /**
+     * A Blog object
+     *
+     * @Flow\Entity
+     */
+    class Blog {
 
-	    /**
-	     * @var string
-	     * @Flow\Validate(type="Text")
-	     * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=80 })
-	     * @ORM\Column(length=80)
-	     */
-	    protected $title;
+        /**
+         * @var string
+         * @Flow\Validate(type="Text")
+         * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=80 })
+         * @ORM\Column(length=80)
+         */
+        protected $title;
 
-	    /**
-	     * @var \Doctrine\Common\Collections\ArrayCollection<\Neos\Blog\Domain\Model\Post>
-	     * @ORM\OneToMany(mappedBy="blog")
-	     * @ORM\OrderBy({"date" = "DESC"})
-	     */
-	    protected $posts;
+        /**
+         * @var \Doctrine\Common\Collections\ArrayCollection<\Neos\Blog\Domain\Model\Post>
+         * @ORM\OneToMany(mappedBy="blog")
+         * @ORM\OrderBy({"date" = "DESC"})
+         */
+        protected $posts;
 
-	    ...
+        ...
 
-	}
+    }
 
 The first annotation to note is the ``Entity`` annotation, which tells the persistence
 framework it needs to persist ``Blog`` instances if they have been added to a Repository. In
@@ -108,15 +108,15 @@ Let's conclude by taking a look at the BlogRepository code:
 
 *Example: Code of a simple BlogRepository* ::
 
-  use Neos\Flow\Annotations as Flow;
+    use Neos\Flow\Annotations as Flow;
 
-	/**
-	 * A BlogRepository
-	 *
-	 * @Flow\Scope("singleton")
-	 */
-	class BlogRepository extends \Neos\Flow\Persistence\Repository {
-	}
+    /**
+     * A BlogRepository
+     *
+     * @Flow\Scope("singleton")
+     */
+    class BlogRepository extends \Neos\Flow\Persistence\Repository {
+    }
 
 As you can see we get away with very little code by simply extending the Flow-provided
 repository class, and still we already have methods like ``findAll()`` and even magic
@@ -125,33 +125,33 @@ methods in our repository, we can make use of the query building API:
 
 *Example: Using the query building API in a Repository* ::
 
-	/**
-	 * A PostRepository
-	 */
-	class PostRepository extends \Neos\Flow\Persistence\Repository {
+    /**
+     * A PostRepository
+     */
+    class PostRepository extends \Neos\Flow\Persistence\Repository {
 
-	    /**
-	     * Finds posts by the specified tag and blog
-	     *
-	     * @param \Neos\Blog\Domain\Model\Tag $tag
-	     * @param \Neos\Blog\Domain\Model\Blog $blog The blog the post must refer to
-	     * @return \Neos\Flow\Persistence\QueryResultInterface The posts
-	     */
-	    public function findByTagAndBlog(\Neos\Blog\Domain\Model\Tag $tag,
-	      \Neos\Blog\Domain\Model\Blog $blog) {
-	        $query = $this->createQuery();
-	        return $query->matching(
-	            $query->logicalAnd(
-	                $query->equals('blog', $blog),
-	                $query->contains('tags', $tag)
-	            )
-	        )
-	        ->setOrderings(array(
-	            'date' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING)
-	        )
-	        ->execute();
-	    }
-	}
+        /**
+         * Finds posts by the specified tag and blog
+         *
+         * @param \Neos\Blog\Domain\Model\Tag $tag
+         * @param \Neos\Blog\Domain\Model\Blog $blog The blog the post must refer to
+         * @return \Neos\Flow\Persistence\QueryResultInterface The posts
+         */
+        public function findByTagAndBlog(\Neos\Blog\Domain\Model\Tag $tag,
+          \Neos\Blog\Domain\Model\Blog $blog) {
+            $query = $this->createQuery();
+            return $query->matching(
+                $query->logicalAnd(
+                    $query->equals('blog', $blog),
+                    $query->contains('tags', $tag)
+                )
+            )
+            ->setOrderings(array(
+                'date' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING)
+            )
+            ->execute();
+        }
+    }
 
 If you like to do things the hard way you can get away with implementing
 ``\Neos\Flow\Persistence\RepositoryInterface`` yourself, though that is
@@ -159,14 +159,14 @@ something the normal developer never has to do.
 
 .. note::
 
-	With the query building API it is possible to query for properties of sub-entities easily via
-	a dot-notation path. When querying multiple properties of a collection property, it is ambiguous
-	if you want to select a single sub-entity with the given matching constraints, or multiple
-	sub-entities which each matching a part of the given constraints.
+    With the query building API it is possible to query for properties of sub-entities easily via
+    a dot-notation path. When querying multiple properties of a collection property, it is ambiguous
+    if you want to select a single sub-entity with the given matching constraints, or multiple
+    sub-entities which each matching a part of the given constraints.
 
-	Since 4.0 Flow will translate such a query to "find all entities where a single sub-entity matches all the constraints",
-	which is the more common case. If you intend a different querying logic, you should fall back to DQL or
-	native SQL queries instead.
+    Since 4.0 Flow will translate such a query to "find all entities where a single sub-entity matches all the constraints",
+    which is the more common case. If you intend a different querying logic, you should fall back to DQL or
+    native SQL queries instead.
 
 Basics of Persistence in Flow
 =============================
@@ -289,15 +289,15 @@ conventions need to be followed:
 
 .. code-block:: text
 
-	\Neos
-	  \Blog
-	    \Domain
-	      \Model
-	        Blog
-	        Post
-	      \Repository
-	        BlogRepository
-	        PostRepository
+    \Neos
+      \Blog
+        \Domain
+          \Model
+            Blog
+            Post
+          \Repository
+            BlogRepository
+            PostRepository
 
 Another way to bind a repository to a model is to define a class constant named
 ``ENTITY_CLASSNAME`` in your repository and give it the desired model name as value. This
@@ -491,10 +491,10 @@ The behaviour of embedded Value Objects is as follows:
 
   class SomeEntity {
 
-  	/**
-  	 * @var ValueObject
-  	 */
-  	protected $valueObject;
+    /**
+     * @var ValueObject
+     */
+    protected $valueObject;
 
 This will result in the `SomeEntity` schema having a table column `valueobject_value` by default.
 
@@ -524,13 +524,13 @@ The custom type can then be used:
 
   class SomeModel {
 
-  	/**
-  	 * Some custom type property
-  	 *
-  	 * @ORM\Column(type="mytype")
-  	 * @var string
-  	 */
-  	protected $mytypeProperty;
+    /**
+     * Some custom type property
+     *
+     * @ORM\Column(type="mytype")
+     * @var string
+     */
+    protected $mytypeProperty;
 
 .. [#doctrineMappingTypes] http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/cookbook/custom-mapping-types.html
 
@@ -551,16 +551,16 @@ See the documentation ([#]_) for more information on the Doctrine Event System.
 
 .. code-block:: yaml
 
-	Neos:
-	  Flow:
-	    persistence:
-	      doctrine:
-	        eventSubscribers:
-	          - 'Foo\Bar\Events\EventSubscriber'
-	        eventListeners:
-	          -
-	            events: ['onFlush', 'preFlush', 'postFlush']
-	            listener: 'Foo\Bar\Events\EventListener'
+    Neos:
+      Flow:
+        persistence:
+          doctrine:
+            eventSubscribers:
+              - 'Foo\Bar\Events\EventSubscriber'
+            eventListeners:
+              -
+                events: ['onFlush', 'preFlush', 'postFlush']
+                listener: 'Foo\Bar\Events\EventListener'
 
 On the Doctrine Filter System
 -----------------------------
@@ -576,12 +576,12 @@ configuration setting ``Neos.Flow.persistence.doctrine.filters``.
 
 .. code-block:: yaml
 
-	Neos:
-	  Flow:
-	    persistence:
-	      doctrine:
-	        filters:
-	          'my-filter-name': 'Acme\Demo\Filters\MyFilter'
+    Neos:
+      Flow:
+        persistence:
+          doctrine:
+            filters:
+              'my-filter-name': 'Acme\Demo\Filters\MyFilter'
 
 See the Doctrine documentation ([#]_) for more information on the Doctrine
 Filter System.
@@ -613,18 +613,18 @@ configure these for the use in Flow, use the following Settings:
 
 .. code-block:: yaml
 
-	Neos:
-	  Flow:
-	    persistence:
-	      doctrine:
-	        dql:
-	          customStringFunctions:
-	            'SOMEFUNCTION': 'Acme\Demo\Persistence\Ast\SomeFunction'
-	          customNumericFunctions:
-	            'FLOOR': 'Acme\Demo\Persistence\Ast\Floor'
-	            'CEIL': 'Acme\Demo\Persistence\Ast\Ceil'
-	          customDatetimeFunctions:
-	            'UTCDIFF': 'Acme\Demo\Persistence\Ast\UtcDiff'
+    Neos:
+      Flow:
+        persistence:
+          doctrine:
+            dql:
+              customStringFunctions:
+                'SOMEFUNCTION': 'Acme\Demo\Persistence\Ast\SomeFunction'
+              customNumericFunctions:
+                'FLOOR': 'Acme\Demo\Persistence\Ast\Floor'
+                'CEIL': 'Acme\Demo\Persistence\Ast\Ceil'
+              customDatetimeFunctions:
+                'UTCDIFF': 'Acme\Demo\Persistence\Ast\UtcDiff'
 
 See the Doctrine documentation ([#doctrineDqlFunctions]_) for more information on the Custom DQL
 functions.
@@ -733,9 +733,9 @@ we feel the gain when developing outweighs this easily.
 
 .. tip::
 
-	Anything you explicitly specify in annotations regarding Doctrine, has precedence over
-	the automatically generated metadata. This can be used to fully customize the mapping
-	of database tables to models.
+    Anything you explicitly specify in annotations regarding Doctrine, has precedence over
+    the automatically generated metadata. This can be used to fully customize the mapping
+    of database tables to models.
 
 Here is an example to illustrate the things you can omit, due to the automatisms in the
 Flow annotation driver.
@@ -852,7 +852,7 @@ To learn about the current schema and migration status, run the following comman
 
 .. code-block:: bash
 
-	$ ./flow flow:doctrine:migrationstatus
+    $ ./flow flow:doctrine:migrationstatus
 
 This will produce output similar to the following, obviously varying depending on the
 actual state of schema and active packages:
@@ -861,22 +861,28 @@ actual state of schema and active packages:
 
 .. code-block:: text
 
-	 == Configuration
-	    >> Name:                                               Doctrine Database Migrations
-	    >> Database Driver:                                    pdo_mysql
-	    >> Database Name:                                      flow
-	    >> Configuration Source:                               manually configured
-	    >> Version Table Name:                                 flow_doctrine_migrationstatus
-	    >> Migrations Namespace:                               Neos\Flow\Persistence\Doctrine\Migrations
-	    >> Migrations Target Directory:                        /path/to/Data/DoctrineMigrations
-	    >> Current Version:                                    0
-	    >> Latest Version:                                     2011-06-13 22:38:37 (20110613223837)
-	    >> Executed Migrations:                                0
-	    >> Available Migrations:                               1
-	    >> New Migrations:                                     1
-
-	 == Migration Versions
-	    >> 2011-06-13 22:38:37 (20110613223837)                not migrated
+    +----------------------+-------------------------------------------+------------------------------------------------------------------------+
+    | Configuration                                                                                                                             |
+    +----------------------+-------------------------------------------+------------------------------------------------------------------------+
+    | Storage              | Type                                      | Doctrine\Migrations\Metadata\Storage\TableMetadataStorageConfiguration |
+    |                      | Table Name                                | flow_doctrine_migrationstatus                                          |
+    |                      | Column Name                               | version                                                                |
+    |-------------------------------------------------------------------------------------------------------------------------------------------|
+    | Database             | Driver                                    | Doctrine\DBAL\Driver\PDO\MySQL\Driver                                  |
+    |                      | Name                                      | flowdev                                                                |
+    |-------------------------------------------------------------------------------------------------------------------------------------------|
+    | Versions             | Previous                                  | Neos\Flow\Persistence\Doctrine\Migrations\Version20180827132710        |
+    |                      | Current                                   | Neos\Flow\Persistence\Doctrine\Migrations\Version20200908155620        |
+    |                      | Next                                      | Already at latest version                                              |
+    |                      | Latest                                    | Neos\Flow\Persistence\Doctrine\Migrations\Version20200908155620        |
+    |-------------------------------------------------------------------------------------------------------------------------------------------|
+    | Migrations           | Executed                                  | 27                                                                     |
+    |                      | Executed Unavailable                      | 0                                                                      |
+    |                      | Available                                 | 27                                                                     |
+    |                      | New                                       | 0                                                                      |
+    |-------------------------------------------------------------------------------------------------------------------------------------------|
+    | Migration Namespaces | Neos\Flow\Persistence\Doctrine\Migrations | /Users/karsten/Sites/flowdev/Data/DoctrineMigrations                   |
+    +----------------------+-------------------------------------------+------------------------------------------------------------------------+
 
 Whenever a version number needs to be given to a command, use the short form as shown in
 parentheses in the output above. The migrations directory in the output is only used when
@@ -890,26 +896,17 @@ command:
 
 .. code-block:: bash
 
-	$ ./flow flow:doctrine:migrate
+    $ ./flow flow:doctrine:migrate
 
 This will result in output that looks similar to the following:
 
 .. code-block:: text
 
-	Migrating up to 20110613223837 from 0
+    Migrating up to Neos\Flow\Persistence\Doctrine\Migrations\Version20200908155620
 
-	  ++ migrating 20110613223837
+         -> ALTER TABLE neos_flow_resourcemanagement_persistentresource DROP md5
 
-	     -> CREATE TABLE flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY KEY(hash)) ENGINE = InnoDB
-	     -> ALTER TABLE flow_resource_resource ADD FOREIGN KEY (flow_resource_resourcepointer) REFERENCES flow_resource_resourcepointer(hash)
-
-	  ++ migrated (1.31s)
-
-	  ------------------------
-
-	  ++ finished in 1.31
-	  ++ 1 migrations executed
-	  ++ 6 sql queries
+    [notice] finished in 75.8ms, used 34M memory, 1 migrations executed, 1 sql queries
 
 This will deploy all migrations delivered with the currently active packages to the
 configured database. During that process it will display all the SQL statements executed
@@ -917,26 +914,29 @@ and a summary of the deployed migrations at the and. You can do a dry run using:
 
 .. code-block:: bash
 
-	$ ./flow flow:doctrine:migrate --dry-run
+    $ ./flow flow:doctrine:migrate --dry-run
 
 This will result in output that looks similar to the following:
 
 .. code-block:: text
 
-	Executing dry run of migration up to 20110613223837 from 0
+    Migrating (dry-run) up to Neos\Flow\Persistence\Doctrine\Migrations\Version20200908155620
 
-	  ++ migrating 20110613223837
+         -> UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'TYPO3.Flow:', 'Neos.Flow:')
+         -> UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'TYPO3.Neos:', 'Neos.Neos:')
+         -> UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'TYPO3.TYPO3CR:', 'Neos.ContentRepository:')
+         -> UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'TYPO3.Setup:', 'Neos.Setup:')
 
-	     -> CREATE TABLE flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY KEY(hash)) ENGINE = InnoDB
-	     -> ALTER TABLE flow_resource_resource ADD FOREIGN KEY (flow_resource_resourcepointer) REFERENCES flow_resource_resourcepointer(hash)
+         -> DROP INDEX flow_identity_typo3_flow_security_account ON neos_flow_security_account
+         -> CREATE UNIQUE INDEX flow_identity_neos_flow_security_account ON neos_flow_security_account (accountidentifier, authenticationprovidername)
 
-	  ++ migrated (0.09s)
+         -> CREATE INDEX IDX_35DC14F03332102A ON neos_flow_resourcemanagement_persistentresource (sha1)
 
-	  ------------------------
+         -> CREATE INDEX IDX_535A651E772E836ADCCB5599802C8F9D ON neos_flow_mvc_routing_objectpathmapping (identifier, uripattern, pathsegment)
 
-	  ++ finished in 0.09
-	  ++ 1 migrations executed
-	  ++ 6 sql queries
+         -> ALTER TABLE neos_flow_resourcemanagement_persistentresource DROP md5
+
+    [notice] finished in 59.6ms, used 36M memory, 5 migrations executed, 9 sql queries
 
 to see the same output but without any changes actually being done to the database. If you
 want to inspect and possibly adjust the statements that would be run and deploy manually,
@@ -944,21 +944,21 @@ you can write to a file:
 
 .. code-block:: bash
 
-	$ ./flow flow:doctrine:migrate --path <where/to/write/the.sql>
+    $ ./flow flow:doctrine:migrate --path <where/to/write/the.sql>
 
 This will result in output that looks similar to the following:
 
 .. code-block:: text
 
-	Writing migration file to "<where/to/write/the.sql>"
+    Writing migration file to "<where/to/write/the.sql>"
 
 .. important::
 
-	When actually making manual changes, you need to keep the ``flow_doctrine_migrationstatus``
-	table updated as well! This is done with the ``flow:doctrine:migrationversion`` command.
-	It takes a ``--version`` option together with either an ``--add`` or ``--delete`` flag to
-	add or remove the given version in the ``flow_doctrine_migrationstatus`` table. It does
-	not execute any migration code but simply marks the given version as migrated or not.
+    When actually making manual changes, you need to keep the ``flow_doctrine_migrationstatus``
+    table updated as well! This is done with the ``flow:doctrine:migrationversion`` command.
+    It takes a ``--version`` option together with either an ``--add`` or ``--delete`` flag to
+    add or remove the given version in the ``flow_doctrine_migrationstatus`` table. It does
+    not execute any migration code but simply marks the given version as migrated or not.
 
 Reverting migrations
 --------------------
@@ -969,30 +969,29 @@ completely:
 
 .. code-block:: bash
 
-	$ ./flow flow:doctrine:migrate --version <version> --dry-run
+    $ ./flow flow:doctrine:migrate --version <version> --dry-run
 
 This will result in output that looks similar to the following:
 
 .. code-block:: text
 
-	Executing dry run of migration down to 0 from 20110613223837
+    Migrating (dry-run) down to Neos\Flow\Persistence\Doctrine\Migrations\Version20161124185047
 
-	  -- reverting 20110613223837
+         -> ALTER TABLE neos_flow_resourcemanagement_persistentresource ADD md5 VARCHAR(32) NOT NULL
 
-	     -> ALTER TABLE flow_resource_resource DROP FOREIGN KEY
-	     -> DROP TABLE flow_resource_resourcepointer
-	     -> DROP TABLE flow_resource_resource
-	     -> DROP TABLE flow_security_account
-	     -> DROP TABLE flow_resource_securitypublishingconfiguration
-	     -> DROP TABLE flow_policy_role
+         -> DROP INDEX IDX_535A651E772E836ADCCB5599802C8F9D ON neos_flow_mvc_routing_objectpathmapping
 
-	  -- reverted (0.05s)
+         -> DROP INDEX IDX_35DC14F03332102A ON neos_flow_resourcemanagement_persistentresource
 
-	  ------------------------
+         -> DROP INDEX flow_identity_neos_flow_security_account ON neos_flow_security_account
+         -> CREATE UNIQUE INDEX flow_identity_typo3_flow_security_account ON neos_flow_security_account (accountidentifier, authenticationprovidername)
 
-	  ++ finished in 0.05
-	  ++ 1 migrations executed
-	  ++ 6 sql queries
+         -> UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'Neos.Flow:', 'TYPO3.Flow:')
+         -> UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'Neos.Neos:', 'TYPO3.Neos:')
+         -> UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'Neos.ContentRepository:', 'TYPO3.TYPO3CR:')
+         -> UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'Neos.Setup:', 'TYPO3.Setup:')
+
+    [notice] finished in 101.1ms, used 36M memory, 5 migrations executed, 9 sql queries
 
 Executing or reverting a specific migration
 -------------------------------------------
@@ -1001,22 +1000,20 @@ Sometimes you need to deploy or revert a specific migration, this is possible as
 
 .. code-block:: bash
 
-	$ ./flow flow:doctrine:migrationexecute --version <20110613223837> --direction <direction> --dry-run
+    $ ./flow flow:doctrine:migrationexecute --version <version> --direction <direction> --dry-run
 
 This will result in output that looks similar to the following:
 
 .. code-block:: text
 
-	  -- reverting 20110613223837
+    $ ./flow doctrine:migrationexecute --version 'Neos\Flow\Persistence\Doctrine\Migrations\Version20161124185047' --direction down
+    Migrating down to Neos\Flow\Persistence\Doctrine\Migrations\Version20161124185047
 
-	     -> ALTER TABLE flow_resource_resource DROP FOREIGN KEY
-	     -> DROP TABLE flow_resource_resourcepointer
-	     -> DROP TABLE flow_resource_resource
-	     -> DROP TABLE flow_security_account
-	     -> DROP TABLE flow_resource_securitypublishingconfiguration
-	     -> DROP TABLE flow_policy_role
+         -> RENAME TABLE neos_flow_mvc_routing_objectpathmapping TO typo3_flow_mvc_routing_objectpathmapping
+         -> RENAME TABLE neos_flow_resourcemanagement_persistentresource TO typo3_flow_resourcemanagement_persistentresource
+         -> RENAME TABLE neos_flow_security_account TO typo3_flow_security_account
 
-	  -- reverted (0.41s)
+    [notice] finished in 64.2ms, used 36M memory, 1 migrations executed, 3 sql queries
 
 As you can see you need to specify the migration ``--version`` you want to execute. If you
 want to revert a migration, you need to give the ``--direction`` as shown above, the
@@ -1032,18 +1029,18 @@ make sure you'll need to practice... The command to scaffold a migration is the 
 
 .. code-block:: bash
 
-	$ ./flow flow:doctrine:migrationgenerate
+    $ ./flow flow:doctrine:migrationgenerate
 
 This will result in output that looks similar to the following:
 
 .. code-block:: text
 
-  Generated new migration class!
+Generated new migration class!
 
-  Do you want to move the migration to one of these packages?
-    [0 ] Don't Move
-    [1 ] Neos.Diff
-    [2 ] …
+    Do you want to move the migration to one of these packages?
+      [0] Don't Move
+      [1] Neos.Http.Factories
+      [2] …
 
 You should pick the package that your new migration covers, it will then be moved as requested.
 The command will output the path to generated migration and suggest some next steps to take.
@@ -1061,48 +1058,41 @@ detected between the current schema and the current models in the system:
 
 *Example: Migration generated based on schema/model differences* ::
 
-	namespace Neos\Flow\Persistence\Doctrine\Migrations;
+    <?php
 
-	use Doctrine\Migrations\AbstractMigration,
-	  Doctrine\DBAL\Schema\Schema;
+    declare(strict_types=1);
 
-	/**
-	 * Auto-generated Migration: Please modify to your need!
-	 */
-	class Version20110624143847 extends AbstractMigration
-	{
-	  /**
-	   * @return string
-	   */
-	  public function getDescription(): string
-	  {
-	      return '';
-	  }
+    namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-	  /**
-	   * @param Schema $schema
-	   * @return void
-	   */
-	  public function up(Schema $schema): void
-	  {
-	    // this up() migration is autogenerated, please modify it to your needs
-	    $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+    use Doctrine\DBAL\Schema\Schema;
+    use Doctrine\Migrations\AbstractMigration;
 
-	    $this->addSql("CREATE TABLE party_abstractparty (…) ENGINE = InnoDB");
-	  }
+    /**
+     * Auto-generated Migration: Please modify to your needs!
+     */
+    final class Version20110624143847 extends AbstractMigration
+    {
+        public function getDescription() : string
+        {
+            return '';
+        }
 
-	  /**
-	   * @param Schema $schema
-	   * @return void
-	   */
-	  public function down(Schema $schema): void
-	   {
-	    // this down() migration is autogenerated, please modify it to your needs
-	    $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        public function up(Schema $schema) : void
+        {
+            // this up() migration is auto-generated, please modify it to your needs
+            $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-	    $this->addSql("DROP TABLE party_abstractparty");
-	  }
-	}
+            $this->addSql("CREATE TABLE party_abstractparty (…) ENGINE = InnoDB");
+        }
+
+        public function down(Schema $schema) : void
+        {
+            // this down() migration is auto-generated, please modify it to your needs
+            $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+
+            $this->addSql("DROP TABLE party_abstractparty");
+        }
+    }
 
 To create an empty migration skeleton, pass ``--diff-against-current 0`` to the command.
 
@@ -1125,7 +1115,7 @@ matching the given pattern:
 
 .. code-block:: bash
 
-	$ ./flow flow:doctrine:migrationgenerate --filter-expression '^your_package_.*'
+    $ ./flow flow:doctrine:migrationgenerate --filter-expression '^your_package_.*'
 
 Will only affect tables starting with "your_package\_".
 
@@ -1133,14 +1123,14 @@ To permanently skip certain tables the ``ignoredTables`` setting can be used:
 
 .. code-block:: yaml
 
-	Neos:
-	  Flow:
-	    persistence:
-	      doctrine:
-	        migrations:
-	          ignoredTables:
-	            'autogenerated_.*': true
-	            'wp_.*: true
+    Neos:
+      Flow:
+        persistence:
+          doctrine:
+            migrations:
+              ignoredTables:
+                'autogenerated_.*': true
+                'wp_.*: true
 
 Will ignore table starting with "autogenerated\_" or "wp\_" by default (the `--filter-expression` flag
 overrules this setting).
@@ -1164,18 +1154,18 @@ Doctrine tries to keep existing data as far as possible, avoiding lossy actions.
 
 .. warning::
 
-	Be careful, the update command might destroy data, as it could drop tables and fields
-	irreversibly.
-	It also doesn't respect the ``ignoredTables`` settings (see previous section).
+    Be careful, the update command might destroy data, as it could drop tables and fields
+    irreversibly.
+    It also doesn't respect the ``ignoredTables`` settings (see previous section).
 
-	Both commands also support ``--output <write/here/the.sql>`` to write the SQL
-	statements to the given file instead of executing it.
+    Both commands also support ``--output <write/here/the.sql>`` to write the SQL
+    statements to the given file instead of executing it.
 
 .. tip::
 
-	If you created or updated the schema this way, you should afterwards execute
-	``flow:doctrine:migrationversion --version all --add`` to avoid migration
-	errors later.
+    If you created or updated the schema this way, you should afterwards execute
+    ``flow:doctrine:migrationversion --version all --add`` to avoid migration
+    errors later.
 
 Doctrine Connection Wrappers - Master/Slave Connections
 -------------------------------------------------------
@@ -1212,9 +1202,9 @@ possibly inconsistent query results.
 
 .. tip::
 
-	You can also setup the master database as a slave, if you want to also use it for load-balancing
-	reading queries. However, this might lead to higher load on the master database and should be
-	well observed.
+    You can also setup the master database as a slave, if you want to also use it for load-balancing
+    reading queries. However, this might lead to higher load on the master database and should be
+    well observed.
 
 Known issues
 ------------
