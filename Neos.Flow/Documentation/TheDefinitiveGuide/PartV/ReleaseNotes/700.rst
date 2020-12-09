@@ -1,0 +1,339 @@
+========
+Flow 7.0
+========
+
+This major release of Flow brings a few bigger features and a lot of
+modernisation of the existing code base.
+
+********************
+Upgrade Instructions
+********************
+
+This section contains instructions for upgrading your Flow **6.3**
+based applications to Flow **7.0**.
+
+* We now require **PHP 7.3.x** or higher
+* If you are using a MySQL based database you must use at least **MySQL 5.7.7** or **MariaDB 10.2.2**
+
+In general just make sure to run the following commands:
+
+To clear all file caches::
+
+ ./flow flow:cache:flush --force
+
+If you have additional cache backends configured, make sure to flush them too.
+
+To apply core migrations::
+
+  ./flow flow:core:migrate <Package-Key>
+
+For every package you have control over (see `Upgrading existing code`_ below).
+
+To validate/fix the database encoding, apply pending migrations and to (re)publish file resources::
+
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+If you are upgrading from a lower version than 6.3, be sure to read the
+upgrade instructions from the previous Release Notes first.
+
+Upgrading your Packages
+=======================
+
+Upgrading existing code
+-----------------------
+
+There have been major API changes in Flow 7.0 which require your code to be adjusted. As with earlier changes to Flow
+that required code changes on the user side we provide a code migration tool.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate Acme.Demo
+
+This will adjust the package code automatically and/or output further information.
+Read the output carefully and manually adjust the code if needed.
+
+To see all the other helpful options this command provides, make sure to run::
+
+ ./flow help core:migrate
+
+Also make sure to read the changes below.
+
+Inside core:migrate
+^^^^^^^^^^^^^^^^^^^
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from the specified package
+* For each migration
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.
+
+****************
+What has changed
+****************
+
+Flow 7.0 comes with some breaking changes and removes several deprecated
+functionalities, be sure to read the following changes and adjust
+your code respectively. For a full list of changes please refer
+to the change log.
+
+
+Removed deprecated functionalities
+==================================
+
+`!!! TASK: Remove deprecated code <https://github.com/neos/flow-development-collection/pull/2262>`_
+---------------------------------------------------------------------------------------------------
+
+Remove obsolete and deprecated PHP code:
+
+* `Cli/Request::getMainRequest()` & `Cli/Request::isMainRequest()`
+   * Those were deprecated with 6.0 (via #1552) and never really served a purpose since CLI requests can't be nested
+* `Neos\\Flow\\Persistence\\Generic\\*`
+   * Before we had doctrine, we had a custom persistence layer that was kept as "generic" persistence when we introduced doctrine ten years ago (via `90cb65827c1550e9144e9f83b9231b430c106660 <https://github.com/neos/flow-development-collection/commit/90cb65827c1550e9144e9f83b9231b430c106660>`_). Since 6.0 this custom persistence was deprecated in favor of the corresponding `Neos\\Flow\\Persistence\\Doctrine\\*` classes.
+* `Neos\\Flow\\Security\\Cryptography\\SaltedMd5HashingStrategy`
+   * md5 is unsafe and the hashing strategy was deprecated with 6.0.
+* `ObjectAccess::instantiateClass()`
+   * deprecated with 5.3.16 (via #1972). With PHP 5.6+ `new $className(...$arguments)` can be used instead
+* `HttpRequestHandlerInterface`/`HttpRequestHandler::getHttpResponse()`
+   * deprecated with 6.0 (via #1755) and now gone. If you need the current HTTP Response, use a middleware, as the Response does not exist earlier at all
+
+* Related: `#2172 <https://github.com/neos/flow-development-collection/issues/2172>`_
+* Packages: ``Flow``
+
+`!!! TASK: Remove ComponentChain and ComponentContext <https://github.com/neos/flow-development-collection/pull/2221>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Removes the HTTP Component chain implementation.
+
+This is a breaking change because it removes the following classes:
+
+* `Neos\\Flow\\Http\\Component\\ComponentInterface` (was part of the public API!)
+* `Neos\\Flow\\Http\\Component\\Exception` (public API)
+* `Neos\\Flow\\Http\\Component\\ComponentChain` (already deprecated)
+* `Neos\\Flow\\Http\\Component\\ComponentChainFactory` (already deprecated)
+* `Neos\\Flow\\Http\\Component\\ComponentContext` (already deprecated)
+
+It also adjusts the `Neos\\Flow\\Http\\HttpRequestHandlerInterface` by removing the `getComponentContext()` method.
+To get hold of the current HTTP request, use `HttpRequestHandlerInterface::getHttpRequest()` which is no longer deprecated.
+`HttpRequestHandlerInterface::getHttpResponse()` is still deprecated. Use a middleware component to get hold
+of the current HTTP response. But usually that shouldn't be required anyways. Instead you can alter the final HTTP
+response via `$this->response` in ActionControllers.
+
+* Related: `#2019 <https://github.com/neos/flow-development-collection/issues/2019>`_, `#2258 <https://github.com/neos/flow-development-collection/issues/2258>`_
+
+`!!! FEATURE: Add virtual object configurations for framework loggers <https://github.com/neos/flow-development-collection/pull/2134>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+With this, it is possible to inject the Flow `systemLogger`, `securityLogger`, `sqlLogger` and `i18nLogger` via the virtual objects `Neos.Flow:SystemLogger`, `Neos.Flow:SecurityLogger`, `Neos.Flow:SqlLogger` and `Neos.Flow:I18nLogger` respectively.
+
+.. code-block:: php
+
+    /**
+     * @Flow\\Inject(name="Neos.Flow:SystemLogger")
+     * @var LoggerInterface
+     */
+    protected $systemLogger;
+
+**Note:** This also removes the deprecated `PsrSecurityLoggerInterface` and `PsrSystemLoggerInterface`, which should be replaced by injections like above.
+
+* Resolves: `#2125 <https://github.com/neos/flow-development-collection/issues/2125>`_
+* Packages: ``Flow``
+
+
+Behavioral changes
+==================
+
+`!!! BUGFIX: Relative position to non-existing key in PositionalArraySorter throws exception <https://github.com/neos/flow-development-collection/pull/2214>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Until now, an element positioned relative to a non-existing key would just be skipped silently. With this, it will throw an exception to bring awareness to the "inactive" array element.
+
+This is a breaking change because previously referring to a non existing position would be ignored.
+For example:
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      mvc:
+        routes:
+          'Some.Package':
+            position: 'before Some.NonExistingPackage'
+
+previously: The corresponding routes would be inserted according to the loading order (i.e. non-deterministic basically)
+now: An `InvalidPositionException` exception is thrown::
+
+  The positional string "before Some.NonExistingPackage" (defined for key "Some.Package") references a non-existing key.
+
+* Fixes: `#2213 <https://github.com/neos/flow-development-collection/issues/2213>`_
+* Packages: ``Flow``
+
+`!!! BUGFIX: Define default SAMESITE attribute to LAX <https://github.com/neos/flow-development-collection/pull/2275>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The neos-ui complaining with warning in the modern browsers because our session cookie has no defined same site attribute and so the browser expect to have a same site with the lax value or none but with the secure attribute.
+
+As the browsers use LAX as default we now also define that.
+For mor information read https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie/SameSite
+
+!`Screenshot 2020-11-24 at 10 31 02 <https://user-images.githubusercontent.com/1014126/100076002-fbaaee00-2e40-11eb-9feb-40cc23cf7219.png>`_
+
+**How to verify it**
+Just load the neos backend and check the dev console for warning. There should be no warning regarding session cookies.
+
+* Resolves: `#2031 <https://github.com/neos/flow-development-collection/issues/2031>`_
+* Packages: ``Flow``
+
+
+Changes related to Persistence
+==============================
+
+`!!! TASK: Update Doctrine Migrations to 3.0 <https://github.com/neos/flow-development-collection/pull/1880>`_
+--------------------------------------------------------------------------------------------------------------
+
+This updated the required version of `doctrine/migrations` from 1.8 to 3.0.
+
+While there are new features in Doctrine Migrations, the reason for us to do
+an upgrade is to move forward – the previously used version will not be
+maintained forever… This post also gives some background on that:
+https://www.doctrine-project.org/2020/04/10/doctrine-migrations-3.0.html
+
+For a Flow user the commands remain unchanged, so far no multi-namespace
+migrations are supported and the features to the "official" CLI do not matter,
+since we embed the functionality in our own commands.
+
+**Breaking changes**
+
+There are three things that make this upgrade a breaking change:
+
+- `Doctrine\\DBAL\\Migrations` moved to `Doctrine\\Migrations`
+- `AbstractMigration` changed method signatures (type delcarations added)
+
+To adjust your PHP code (the migration files), a core migration is provided that
+should fix the vast majority of existing migrations. (That core migration is in Flow
+and named `Version20201109224100`.)
+
+- The "version" is the FQCN of the migration class (existing entries in the migrations table will be automatically updated)
+
+The needed changes to the DB table where the migration status is stored are done
+the first time a command that accesses that table is used. Make sure to have a current
+backup and then run `./flow doctrine:migrationstatus --show-migrations`. If all
+went well, the migrations should all be listed as a fully-qualified class name, no
+longer just a date/time string. If any errors occurred during the command, restore the
+backup (the migrations table is sufficient), fix the errors and try again.
+
+See https://github.com/doctrine/migrations/blob/3.0.x/UPGRADE.md#code-bc-breaks
+and https://github.com/doctrine/migrations/blob/3.0.x/UPGRADE.md#upgrade-to-20
+for a full list of other changes. Most of those are wrapped in Flow code and need no
+adjustments in userland code.
+
+* Resolves: `#2122 <https://github.com/neos/flow-development-collection/issues/2122>`_
+* Packages: ``Flow``
+
+`!!! FEATURE: ValueObjects are embedded by default <https://github.com/neos/flow-development-collection/pull/1718>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This makes all ValueObjects embedded by default. Embedded value objects are the preferred storage method for all value objects, since it better reflects true value object semantics.
+This requires a schema update, so you need to generate a migration for your packages and apply it. Alternatively you can run the code migration provided with this change or manually change all your `@Flow\\ValueObject` annotations to `@Flow\\ValueObject(embedded=false)` in order to keep your current database schema.
+
+* Resolves: `#2123 <https://github.com/neos/flow-development-collection/issues/2123>`_
+* Packages: ``Flow``
+
+`!!! TASK: Add type declarations to persistence interfaces <https://github.com/neos/flow-development-collection/pull/2231>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+
+Changes related to Fluid
+========================
+
+`!!! FEATURE: Remove neos/fluid-adaptor as required package <https://github.com/neos/flow-development-collection/pull/2152>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Removes references to Fluid and the dependency to the `neos/fluid-adaptor` composer package.
+
+This is a breaking change if you relied on the fact the Flow installs all Fluid dependencies.
+In that case you'll need to require them explicitly in your distribution:
+
+``composer require neos/fluid-adaptor``
+
+* Resolves: `#2151 <https://github.com/neos/flow-development-collection/issues/2151>`_
+* Packages: ``Flow``
+
+`!!! TASK: Remove custom FluidAdaptor Exceptions on invalid ArgumentDefinition <https://github.com/neos/flow-development-collection/pull/2259>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+This removes the `Neos\\FluidAdaptor\\Core\\Exception` when the ArgumentDefinition is invalid in favor of the native TYPO3 Fluid exceptions. With this we remove the boilerplate we have to keep in sync with upstream.
+
+See https://github.com/TYPO3/Fluid/issues/529 and https://github.com/neos/flow-development-collection/pull/2257#issuecomment-728825319
+
+* Packages: ``FluidAdaptor``
+
+`!!! BUGFIX: Adjust to TYPO3Fluid 2.5.11 and 2.6.10 signature changes <https://github.com/neos/flow-development-collection/pull/2257>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+With this you need to update to TYPO3 Fluid 2.5.11+ or 2.6.10+
+
+See https://github.com/TYPO3/Fluid/commit/f20db4e74cf9803c6cffca2ed2f03e1b0b89d0dc
+
+* Packages: ``Flow``
+
+
+
+Further changes and features
+============================
+
+`!!! TASK: Raise minimum PHP version to 7.3 <https://github.com/neos/flow-development-collection/pull/2237>`_
+-------------------------------------------------------------------------------------------------------------
+
+Require PHP 7.3 in composer.json, as PHP 7.2 is EOL by the end of November.
+
+* Packages: ``Arrays`` ``Cache`` ``Eel`` ``Files`` ``Flow`` ``FluidAdaptor`` ``Kickstarter`` ``Log`` ``MediaTypes`` ``Messages`` ``ObjectHandling`` ``OpcodeCache`` ``Pdo`` ``Schema`` ``Unicode``
+
+
+`!!! FEATURE: Allow RoutePart handlers to access Route Parameters when resolving routes <https://github.com/neos/flow-development-collection/pull/2173>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This feature allows route part handlers to access any Route Parameters
+that has been set for the current request.
+This will make it possible to implement cross-domain linking for example
+with relative/absolute URLs depending on the current host.
+
+This is a potentially breaking change because it extends the `ParameterAwareRoutePartInterface`
+by a new method `resolveWithParameters`.
+This means that custom RoutePartHandlers that implement this interface directly have to be
+adjusted. The easiest way to adjust an existing handler is to implement this method as follows:
+
+.. code-block:: php
+
+    final public function resolveWithParameters(array &$routeValues, RouteParameters $_)
+    {
+        return $this->resolve($routeValues);
+    }
+
+...basically ignoring the parameters.
+
+Route Part handlers extending `DynamicRoutePart` don't need to be adjusted!
+
+This also changes the (non-api) `Route::resolves()` method that now expects an instance of
+`ResolveContext` instead of an array with the "routeValues".
+
+* Resolves: `#2141 <https://github.com/neos/flow-development-collection/issues/2141>`_
+* Packages: ``Flow``
