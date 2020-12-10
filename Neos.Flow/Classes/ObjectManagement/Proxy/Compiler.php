@@ -286,7 +286,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     {
         $annotationAsString = '@\\' . get_class($annotation);
 
-        $optionNames = get_class_vars(get_class($annotation));
+        $optionNames = get_object_vars($annotation);
         $optionsAsStrings = [];
         foreach ($optionNames as $optionName => $optionDefault) {
             $optionValue = $annotation->$optionName;
