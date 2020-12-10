@@ -86,7 +86,7 @@ class UriConstraintsTest extends UnitTestCase
             ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tld/suffix'],
             ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix', UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => '/some/pathsuffix'],
             ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix', UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.tld/some/pathsuffix'],
-            ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix', UriConstraints::CONSTRAINT_PATH_PREFIX => '/prefix/', UriConstraints::CONSTRAINT_PATH => '/some/path', UriConstraints::CONSTRAINT_HOST => 'localhost'], 'templateUri' => 'http://localhost/prefix/', 'forceAbsoluteUri' => false, 'expectedUri' => '/prefix/somepathsuffix'],
+            ['constraints' => [UriConstraints::CONSTRAINT_PATH_SUFFIX => 'suffix', UriConstraints::CONSTRAINT_PATH_PREFIX => '/prefix/', UriConstraints::CONSTRAINT_PATH => '/some/path', UriConstraints::CONSTRAINT_HOST => 'localhost'], 'templateUri' => 'http://localhost/prefix/', 'forceAbsoluteUri' => false, 'expectedUri' => '/prefix/some/pathsuffix'],
         ];
     }
 
