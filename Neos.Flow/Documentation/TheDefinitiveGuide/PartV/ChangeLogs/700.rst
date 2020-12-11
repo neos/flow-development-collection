@@ -136,13 +136,6 @@ now: An `InvalidPositionException` exception is thrown::
 * Fixes: `#2213 <https://github.com/neos/flow-development-collection/issues/2213>`_
 * Packages: ``Flow``
 
-`TASK: Restrict typo3fluid/fluid to versions before signature change <https://github.com/neos/flow-development-collection/pull/2298>`_
---------------------------------------------------------------------------------------------------------------------------------------
-
-See https://github.com/neos/flow-development-collection/issues/2260
-
-* Packages: ``FluidAdaptor``
-
 `TASK: Update symfony dependencies to 5.1+ <https://github.com/neos/flow-development-collection/pull/2278>`_
 ------------------------------------------------------------------------------------------------------------
 
