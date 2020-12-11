@@ -50,8 +50,7 @@
 
         "composer/composer": "^1.9 || ^2.0",
 
-        "egulias/email-validator": "^2.1",
-        "neos/fluid-adaptor": "~7.0.0"
+        "egulias/email-validator": "^2.1"
     },
     "require-dev": {
         "vimeo/psalm": "~4.1.1"
