@@ -30,10 +30,10 @@
 			<target state="translated">Das angegebene Datum muss zwischen {0,datetime,datetime} und {1,datetime,datetime} liegen</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0,datetime,datetime}</source>
-			<target state="translated">Das angegebene Datum muss nach dem {0,datetime,datetime} sein</target></trans-unit>
+			<target state="translated">Das angegebene Datum muss nach {0,datetime,datetime} sein</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0,datetime,datetime}</source>
-			<target state="translated">Das angegebene Datum muss vor dem {0,datetime,datetime} sein</target></trans-unit>
+			<target state="translated">Das angegebene Datum muss vor {0,datetime,datetime} sein</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve" approved="yes">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
