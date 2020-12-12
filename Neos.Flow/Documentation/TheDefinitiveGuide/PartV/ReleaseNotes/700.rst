@@ -86,7 +86,23 @@ tbd
 Human readable labels and descriptions for Roles & Privileges
 -------------------------------------------------------------
 
-tbd
+
+The user roles and privileges can quite easily become a wood of technical labels like ``'Neos.Flow:Everybody'`` and until now there was no good way to document them in a human readable way that can be used e.g. in the Neos backend. With this change, you can put a 'label' and 'description' onto a user role and a 'label' onto a privilege target like this:
+
+.. code-block:: yaml
+    roles:
+      'Neos.Neos:UserManager':
+        label: 'Neos User Manager'
+        description: 'A user with this role is able to create, edit and delete users which has the same or a subset of his own roles.'
+        privileges:
+          ...
+    
+    privilegeTargets:
+      'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
+        'Neos.Neos:ContentPreview':
+          label: 'The privilege to see the content preview in the backend.'
+          matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->previewAction())'
+      ...
 
 https://github.com/neos/flow-development-collection/pull/2166
 
