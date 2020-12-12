@@ -32,6 +32,11 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
     protected $validatedInstancesContainer;
 
     /**
+     * @var \Closure[]
+     */
+    protected static $validationCallbacks = [];
+
+    /**
      * Allows to set a container to keep track of validated instances.
      *
      * @param \SplObjectStorage $validatedInstancesContainer A container to keep track of validated instances
@@ -41,6 +46,14 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
     public function setValidatedInstancesContainer(\SplObjectStorage $validatedInstancesContainer)
     {
         $this->validatedInstancesContainer = $validatedInstancesContainer;
+    }
+
+    /**
+     * @param object $object The object instance to register a validation callback for
+     * @param \Closure $callback The callback to invoke once this object has been validated
+     */
+    public static function onValidated(object $object, \Closure $callback) {
+        self::$validationCallbacks[spl_object_hash($object)][] = $callback;
     }
 
     /**
@@ -63,6 +76,12 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
             $result = $this->checkProperty($propertyValue, $validators);
             if ($result !== null) {
                 $this->result->forProperty($propertyName)->merge($result);
+            }
+        }
+        $objectId = spl_object_hash($object);
+        if (isset(self::$validationCallbacks[$objectId])) {
+            foreach (self::$validationCallbacks[$objectId] as $callback) {
+                $callback($this->result);
             }
         }
     }
