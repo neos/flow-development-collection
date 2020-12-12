@@ -52,7 +52,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
      * @param object $object The object instance to register a validation callback for
      * @param \Closure $callback The callback to invoke once this object has been validated
      */
-    public static function onValidated(object $object, \Closure $callback)
+    public static function onValidated($object, \Closure $callback): void
     {
         self::$validationCallbacks[spl_object_hash($object)][] = $callback;
     }
