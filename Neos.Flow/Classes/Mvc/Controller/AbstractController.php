@@ -184,7 +184,6 @@ abstract class AbstractController implements ControllerInterface
      * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
      * @param string $packageKey Key of the package containing the controller to forward to. May also contain the sub package, concatenated with backslash (Vendor.Foo\Bar\Baz). If not specified, the current package is assumed.
      * @param array $arguments Arguments to pass to the target action
-     * @return void
      * @psalm-return never-returns
      * @throws ForwardException
      * @see redirect()
