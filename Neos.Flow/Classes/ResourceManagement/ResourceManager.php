@@ -136,9 +136,10 @@ class ResourceManager
         $this->initialized = true;
     }
 
-    protected function persistResource(PersistentResource $resource, CollectionInterface $collection, string $sourceHint = ''): void {
+    protected function persistResource(PersistentResource $resource, CollectionInterface $collection, string $sourceHint = ''): void
+    {
         $this->resourceRepository->add($resource);
-        GenericObjectValidator::onValidated($resource, function(Result $result) use ($resource) {
+        GenericObjectValidator::onValidated($resource, function (Result $result) use ($resource) {
             if ($result->hasErrors()) {
                 $this->resourceRepository->remove($resource);
             }
