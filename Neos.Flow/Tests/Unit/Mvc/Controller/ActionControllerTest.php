@@ -146,7 +146,6 @@ class ActionControllerTest extends UnitTestCase
         $mockRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($mockHttpRequest));
 
         $mockResponse = new Mvc\ActionResponse;
-        $this->inject($this->actionController, 'response', $mockResponse);
 
         $this->actionController->processRequest($mockRequest, $mockResponse);
     }
@@ -187,7 +186,6 @@ class ActionControllerTest extends UnitTestCase
         $mockRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($mockHttpRequest));
 
         $mockResponse = new Mvc\ActionResponse;
-        $this->inject($this->actionController, 'response', $mockResponse);
 
         $this->actionController->processRequest($mockRequest, $mockResponse);
     }
@@ -212,6 +210,7 @@ class ActionControllerTest extends UnitTestCase
         $this->mockRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($mockHttpRequest));
 
         $mockResponse = new Mvc\ActionResponse;
+        $mockResponse->setContentType('text/html');
         $this->inject($this->actionController, 'response', $mockResponse);
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
@@ -241,6 +240,7 @@ class ActionControllerTest extends UnitTestCase
         $this->mockRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($mockHttpRequest));
 
         $mockResponse = new Mvc\ActionResponse;
+        $mockResponse->setContentType('text/html');
         $this->inject($this->actionController, 'response', $mockResponse);
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
@@ -248,6 +248,33 @@ class ActionControllerTest extends UnitTestCase
         $this->actionController->expects(self::once())->method('resolveView')->will(self::returnValue($mockView));
 
         $this->actionController->processRequest($this->mockRequest, $mockResponse);
+    }
+
+    /**
+     * @test
+     */
+    public function processRequestSetsNegotiatedContentTypeOnResponse()
+    {
+        $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod', 'initializeController']);
+
+        $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
+        $this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
+        $this->inject($this->actionController, 'request', $this->mockRequest);
+
+        $this->inject($this->actionController, 'arguments', new Arguments([]));
+
+        $mockMvcPropertyMappingConfigurationService = $this->createMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class);
+        $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
+
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockRequest->expects(self::any())->method('getHttpRequest')->willReturn($mockHttpRequest);
+
+        $mockResponse = new Mvc\ActionResponse;
+        $this->inject($this->actionController, 'response', $mockResponse);
+        $this->inject($this->actionController, 'negotiatedMediaType', 'application/json');
+
+        $this->actionController->processRequest($this->mockRequest, $mockResponse);
+        self::assertSame('application/json', $mockResponse->getContentType());
     }
 
     /**
