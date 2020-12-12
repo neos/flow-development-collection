@@ -4,8 +4,6 @@
 Routing
 =======
 
-.. sectionauthor:: Bastian Waidelich <bastian@neos.io>
-
 As explained in the Model View Controller chapter, in Flow the dispatcher passes the
 request to a controller which then calls the respective action. But how to tell, what
 controller of what package is the right one for the current request? This is were the
@@ -893,7 +891,7 @@ same time.
 Routing Parameters
 ==================
 
-The last example only carse about URI *resolving*. What if a route should react to conditions that are not extractable
+The last example only care about URI *resolving*. What if a route should react to conditions that are not extractable
 from the request URI path? For example the counter-part to the example above, matching only `https://` URIs?
 
 .. warning:: One could be tempted to access the current request from within the route part handler using Dependency

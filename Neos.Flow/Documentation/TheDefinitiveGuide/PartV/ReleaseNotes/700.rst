@@ -5,6 +5,98 @@ Flow 7.0
 This major release of Flow brings a few bigger features and a lot of
 modernisation of the existing code base.
 
+************
+New Features
+************
+
+PSR-15 compatible middleware chain
+----------------------------------
+
+with::
+
+  composer require middlewares/response-time
+
+and a few lines of ``Settings.yaml``
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      http:
+        middlewares:
+          'ResponseTime':
+            middleware: 'Middlewares\ResponseTime'
+            position: start
+
+``X-Response-Time`` header to the response.
+
+See `HTTP ComponentChain and ComponentContext`_ for upgrade instructions and :ref:`ch-routing` for comprehensive documentation.
+
+Extended Routing
+----------------
+
+output::
+
+  Currently registered routes:
+  +----+---------------------------------------------------------------------------+----------------+------------------------------------------------------------------------------------------+
+  | #  | Uri Pattern                                                               | HTTP Method(s) | Name                                                                                     |
+  +----+---------------------------------------------------------------------------+----------------+------------------------------------------------------------------------------------------+
+  | 1  | neos/media/browser/images(/{@action}).{@format}                           | any            | Neos.Media.Browser :: Image Browser                                                      |
+  | 2  | neos/media/browser/assets(/{@action}).{@format}                           | any            | Neos.Media.Browser :: Asset Browser                                                      |
+  | 3  | neos/media/browser/asset-proxies(/{@action}).{@format}                    | any            | Neos.Media.Browser :: Asset Proxy Service                                                |
+  | 4  | neos/media/browser/image-variant(/{@action}).{@format}                    | any            | Neos.Media.Browser :: ImageVariant Service                                               |
+  | 5  | media/thumbnail/{thumbnail}                                               | GET            | Neos.Media :: Thumbnail                                                                  |
+  | .. | ...                                                                       | ...            | ...                                                                                      |
+  | 78 | {node}robots.txt                                                          | any            | Neos.Seo :: robots.txt                                                                   |
+  +----+---------------------------------------------------------------------------+----------------+------------------------------------------------------------------------------------------+
+
+  Run ./flow routing:show <index> to show details for a route
+
+See `Access Route Parameters when resolving routes`_ for upgrade instructions.
+
+DBAL connection factory
+-----------------------
+
+tbd
+
+.. code-block:: php
+
+    class SomeClass {
+
+        /**
+         * @Flow\Inject
+         * @var \Doctrine\DBAL\Connection
+         */
+        protected $connection;
+
+
+StaticResource EEL Helper
+-------------------------
+
+.. code-block:: html
+
+    <!-- create static resource uri -->
+    <link rel="stylesheet" href={StaticResource.uri('Neos.Demo', 'Public/Styles/Main.css')} media="all" />
+
+    <!-- get static resource content -->
+    <style>{StaticResource.content('Neos.Demo', 'Public/Styles/Main.css')}</style>
+
+tbd
+
+Human readable labels and descriptions for Roles & Privileges
+-------------------------------------------------------------
+
+tbd
+
+https://github.com/neos/flow-development-collection/pull/2166
+
+Unidirectional OneToMany relations
+----------------------------------
+
+tbd
+
+https://github.com/neos/flow-development-collection/pull/2056
+
 ********************
 Upgrade Instructions
 ********************
@@ -97,75 +189,161 @@ to the change log.
 Removed deprecated functionalities
 ==================================
 
-`!!! TASK: Remove deprecated code <https://github.com/neos/flow-development-collection/pull/2262>`_
----------------------------------------------------------------------------------------------------
+Removed PHP classes
+-------------------
 
-Remove obsolete and deprecated PHP code:
+The following, previously deprecated, classes have been removed:
 
-* `Cli/Request::getMainRequest()` & `Cli/Request::isMainRequest()`
-   * Those were deprecated with 6.0 (via #1552) and never really served a purpose since CLI requests can't be nested
-* `Neos\\Flow\\Persistence\\Generic\\*`
-   * Before we had doctrine, we had a custom persistence layer that was kept as "generic" persistence when we introduced doctrine ten years ago (via `90cb65827c1550e9144e9f83b9231b430c106660 <https://github.com/neos/flow-development-collection/commit/90cb65827c1550e9144e9f83b9231b430c106660>`_). Since 6.0 this custom persistence was deprecated in favor of the corresponding `Neos\\Flow\\Persistence\\Doctrine\\*` classes.
-* `Neos\\Flow\\Security\\Cryptography\\SaltedMd5HashingStrategy`
-   * md5 is unsafe and the hashing strategy was deprecated with 6.0.
-* `ObjectAccess::instantiateClass()`
-   * deprecated with 5.3.16 (via #1972). With PHP 5.6+ `new $className(...$arguments)` can be used instead
-* `HttpRequestHandlerInterface`/`HttpRequestHandler::getHttpResponse()`
-   * deprecated with 6.0 (via #1755) and now gone. If you need the current HTTP Response, use a middleware, as the Response does not exist earlier at all
+* ``Cli/Request::getMainRequest()`` & ``Cli/Request::isMainRequest()``
+   * Those were deprecated with 6.0 (via `#1552 <https://github.com/neos/flow-development-collection/pull/1552>`_) and never really served a purpose since CLI requests can't be nested
+* ``Neos\\Flow\\Persistence\\Generic\\*``
+   * Before we had doctrine, we had a custom persistence layer that was kept as "generic" persistence when we introduced doctrine ten years ago (via `90cb658 <https://github.com/neos/flow-development-collection/commit/90cb65827c1550e9144e9f83b9231b430c106660>`_)
+   * Since 6.0 this custom persistence was deprecated in favor of the corresponding ``Neos\\Flow\\Persistence\\Doctrine\\*`` classes
+   * You should be able to safely replace any remaining ``Neos\Flow\Persistence\Generic\PersistenceManager`` by ``Neos\Flow\Persistence\PersistenceManagerInterface`` in most cases
+* ``Neos\\Flow\\Security\\Cryptography\\SaltedMd5HashingStrategy``
+   * md5 is unsafe and the hashing strategy was deprecated with 6.0 (via `#1668 <https://github.com/neos/flow-development-collection/pull/1668>`_)
+* ``ObjectAccess::instantiateClass()``
+   * deprecated with 5.3.16 (via #1972). With PHP 5.6+ ``new $className(...$arguments)`` can be used instead
+* ``HttpRequestHandlerInterface``/``HttpRequestHandler::getHttpResponse()``
+   * deprecated with 6.0 (via `#1755 <https://github.com/neos/flow-development-collection/pull/1755>`_) and now gone
+   * If you need the current HTTP Response, use a middleware (see below)
+* ``PsrSecurityLoggerInterface`` & ``PsrSystemLoggerInterface``
+   * deprecated with 6.0 (via `#1574 <https://github.com/neos/flow-development-collection/pull/1574>`_) and now removed
+   * To get hold of the default (system) logger you can just refer to the PSR interface ``Psr\Log\LoggerInterface``
+   * In order to inject custom loggers, "virtual objects" can be used (see `#2134 <https://github.com/neos/flow-development-collection/pull/2134>`_)
+* ``Neos\\Flow\\Http\\Component\\*``
+   * The HTTP Component chain has been replaced by a PSR-15 compatible middleware implementation (see below)
+   * ``Neos\\Flow\\Http\\HttpRequestHandlerInterface::getComponentContext()`` was removed along the way – to get hold
+     of the active server request, the (no longer deprecated) ``HttpRequestHandlerInterface::getHttpRequest()`` can be used
+   * ``Neos\\Flow\\Http\\HttpRequestHandlerInterface::getHttpResponse()`` was also removed, the response can be altered via
+     middleware or ``$this->response`` in ActionControllers
 
-* Related: `#2172 <https://github.com/neos/flow-development-collection/issues/2172>`_
-* Packages: ``Flow``
+* Related issues: `#2172 <https://github.com/neos/flow-development-collection/issues/2172>`_, `#2125 <https://github.com/neos/flow-development-collection/issues/2125>`_
 
-`!!! TASK: Remove ComponentChain and ComponentContext <https://github.com/neos/flow-development-collection/pull/2221>`_
------------------------------------------------------------------------------------------------------------------------
+HTTP ComponentChain and ComponentContext
+----------------------------------------
 
-Removes the HTTP Component chain implementation.
+With 6.3 support for PSR-15 middlewares was added via `#1928 <https://github.com/neos/flow-development-collection/pull/1928>`_ with
+the plan to replace our custom HTTP Component chain implementation.
+This undertaking has been finalized with 7.0 and the following classes were removed from the core:
 
-This is a breaking change because it removes the following classes:
+* ``Neos\\Flow\\Http\\Component\\ComponentInterface`` (was part of the public API!)
+* ``Neos\\Flow\\Http\\Component\\Exception`` (public API)
+* ``Neos\\Flow\\Http\\Component\\ComponentChain`` (already deprecated)
+* ``Neos\\Flow\\Http\\Component\\ComponentChainFactory`` (already deprecated)
+* ``Neos\\Flow\\Http\\Component\\ComponentContext`` (already deprecated)
 
-* `Neos\\Flow\\Http\\Component\\ComponentInterface` (was part of the public API!)
-* `Neos\\Flow\\Http\\Component\\Exception` (public API)
-* `Neos\\Flow\\Http\\Component\\ComponentChain` (already deprecated)
-* `Neos\\Flow\\Http\\Component\\ComponentChainFactory` (already deprecated)
-* `Neos\\Flow\\Http\\Component\\ComponentContext` (already deprecated)
+Due to the different nature of the two approaches, existing components can't be migrated automatically.
+But replacing a classic HTTP component by a corresponding middleware is mostly very straight forward:
 
-It also adjusts the `Neos\\Flow\\Http\\HttpRequestHandlerInterface` by removing the `getComponentContext()` method.
-To get hold of the current HTTP request, use `HttpRequestHandlerInterface::getHttpRequest()` which is no longer deprecated.
-`HttpRequestHandlerInterface::getHttpResponse()` is still deprecated. Use a middleware component to get hold
-of the current HTTP response. But usually that shouldn't be required anyways. Instead you can alter the final HTTP
-response via `$this->response` in ActionControllers.
+Example 1: Tweak the response
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* Related: `#2019 <https://github.com/neos/flow-development-collection/issues/2019>`_, `#2258 <https://github.com/neos/flow-development-collection/issues/2258>`_
-
-`!!! FEATURE: Add virtual object configurations for framework loggers <https://github.com/neos/flow-development-collection/pull/2134>`_
----------------------------------------------------------------------------------------------------------------------------------------
-
-With this, it is possible to inject the Flow `systemLogger`, `securityLogger`, `sqlLogger` and `i18nLogger` via the virtual objects `Neos.Flow:SystemLogger`, `Neos.Flow:SecurityLogger`, `Neos.Flow:SqlLogger` and `Neos.Flow:I18nLogger` respectively.
+Before, in order to alter the response, you had to replace it in the ``ComponentContext``:
 
 .. code-block:: php
 
-    /**
-     * @Flow\\Inject(name="Neos.Flow:SystemLogger")
-     * @var LoggerInterface
-     */
-    protected $systemLogger;
+    class SomeHttpComponent implements ComponentInterface {
 
-**Note:** This also removes the deprecated `PsrSecurityLoggerInterface` and `PsrSystemLoggerInterface`, which should be replaced by injections like above.
+        public function handle(ComponentContext $componentContext) {
+            $httpResponse = $componentContext->getHttpResponse();
+            $modifiedResponse = $httpResponse->withAddedHeader('X-SomeHeader', '123');
+            $componentContext->replaceHttpResponse($modifiedResponse);
+        }
+    }
 
-* Resolves: `#2125 <https://github.com/neos/flow-development-collection/issues/2125>`_
-* Packages: ``Flow``
+Now you can just return the new instance that you retrieve by invoking the next handler in the chain:
 
+.. code-block:: php
+
+    class SomeHttpMiddleware implements MiddlewareInterface {
+
+        public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
+          $response = $next->handle($httpRequest);
+          return $response->withAddedHeader('X-SomeHeader', '123');
+        }
+    }
+
+Example 2: Interrupt the chain
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sometimes it can be useful to stop further processing of the chain, for example in order to respond to a custom AJAX request.
+Previously a special parameter "cancel" could be used to prevent later components from being invoked:
+
+.. code-block:: php
+
+    class SomeHttpComponent implements ComponentInterface {
+
+        public function handle(ComponentContext $componentContext) {
+            // ...
+            $componentContext->setParameter(\Neos\Flow\Http\Component\ComponentChain::class, 'cancel', true);
+        }
+    }
+
+Now, the chain can be interrupted simply by returning a new response instead of invoking the next handler:
+
+.. code-block:: php
+
+    class SomeHttpMiddleware implements MiddlewareInterface {
+
+        public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
+          // ...
+          return new Response(200, ['Content-Type' => 'application/json'], json_encode(['success' => true]));
+        }
+    }
+
+**Note:** The behavior of the two examples differ slightly because the HTTP component chain was split into three sub-chains and
+        the "cancel" parameter would only stop the current sub-chain.
+
+Example 3: Communicate between components
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Before, the ``ComponentContext`` could be used in order to pass data between HTTP components:
+
+.. code-block:: php
+
+    class SomeHttpComponent implements ComponentInterface {
+
+        public function handle(ComponentContext $componentContext) {
+            // read parameter
+            $parameterValue = $componentContext->getParameter(SomeComponent::class, 'someParameter');
+
+            // write parameter
+            $componentContext->setParameter(SomeComponent::class, 'someParameter', 'someValue');
+        }
+    }
+
+Now the ``ServerRequestInterface`` attributes can be used instead:
+
+.. code-block:: php
+
+    class SomeHttpMiddleware implements MiddlewareInterface {
+
+        public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
+            // read attribute
+            $attributeValue = $request->getAttribute('someAttribute');
+
+            // write attribute
+            return $next->handle($request->withAttribute('someAttribute', 'someValue'));
+        }
+    }
+
+This has the advantage that those attributes can be accessed outside of the middleware chain as well, for example in ActionControllers via ``$this->request->getHttpRequest()->getAttributes()``.
+
+**NOTE:** This mechanism is now also used to configure Routing Parameters (see :ref:`ch-routing`)
+
+* Related issues: `#1889 <https://github.com/neos/flow-development-collection/issues/1889>`_, `#2019 <https://github.com/neos/flow-development-collection/issues/2019>`_, `#2258 <https://github.com/neos/flow-development-collection/issues/2258>`_
 
 Behavioral changes
 ==================
 
-`!!! BUGFIX: Relative position to non-existing key in PositionalArraySorter throws exception <https://github.com/neos/flow-development-collection/pull/2214>`_
---------------------------------------------------------------------------------------------------------------------------------------------------------------
+Relative position to non-existing key in PositionalArraySorter throws exception
+-------------------------------------------------------------------------------
 
-Until now, an element positioned relative to a non-existing key would just be skipped silently. With this, it will throw an exception to bring awareness to the "inactive" array element.
-
-This is a breaking change because previously referring to a non existing position would be ignored.
-For example:
+The ``PositionalArraySorter`` is used in many places in Flow & Neos, mostly when specifying the order of certain
+configuration options.
+Until now, an element positioned relative to a non-existing key would just be skipped silently leading to a
+non-deterministic (or at least non-transparent) order:
 
 .. code-block:: yaml
 
@@ -176,38 +354,43 @@ For example:
           'Some.Package':
             position: 'before Some.NonExistingPackage'
 
-previously: The corresponding routes would be inserted according to the loading order (i.e. non-deterministic basically)
-now: An `InvalidPositionException` exception is thrown::
+Previously, the corresponding routes would be inserted according to the loading order now: An ``InvalidPositionException`` exception is thrown::
 
   The positional string "before Some.NonExistingPackage" (defined for key "Some.Package") references a non-existing key.
 
-* Fixes: `#2213 <https://github.com/neos/flow-development-collection/issues/2213>`_
-* Packages: ``Flow``
+To fix this case, the configuration has to be adjusted so that the position points to an absolute position
+(like ``start`` or ``end``) or by referring to a key that exists (like ``before someExistingKey``).
 
-`!!! BUGFIX: Define default SAMESITE attribute to LAX <https://github.com/neos/flow-development-collection/pull/2275>`_
------------------------------------------------------------------------------------------------------------------------
+* Related issue: `#2213 <https://github.com/neos/flow-development-collection/issues/2213>`_
 
-The neos-ui complaining with warning in the modern browsers because our session cookie has no defined same site attribute and so the browser expect to have a same site with the lax value or none but with the secure attribute.
+Cookie SameSite attribute
+-------------------------
 
-As the browsers use LAX as default we now also define that.
-For mor information read https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie/SameSite
+The ``SameSite`` attribute of ``Neos\Flow\Http\Cookie`` is now set to ``lax`` by default in order to reflect the default behavior of
+modern browsers, see https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie/SameSite
 
-!`Screenshot 2020-11-24 at 10 31 02 <https://user-images.githubusercontent.com/1014126/100076002-fbaaee00-2e40-11eb-9feb-40cc23cf7219.png>`_
+Accordingly, the session cookie now has been adjusted too.
 
-**How to verify it**
-Just load the neos backend and check the dev console for warning. There should be no warning regarding session cookies.
+You can change this behavior via the ```Neos.Flow.session.cookie.samesite`` setting, for example:
 
-* Resolves: `#2031 <https://github.com/neos/flow-development-collection/issues/2031>`_
-* Packages: ``Flow``
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      session:
+        cookie:
+          samesite: 'none'
+
+Related issue: `#2031 <https://github.com/neos/flow-development-collection/issues/2031>`_
 
 
 Changes related to Persistence
 ==============================
 
-`!!! TASK: Update Doctrine Migrations to 3.0 <https://github.com/neos/flow-development-collection/pull/1880>`_
---------------------------------------------------------------------------------------------------------------
+Doctrine Migrations
+-------------------
 
-This updated the required version of `doctrine/migrations` from 1.8 to 3.0.
+The ``doctrine/migrations`` package has been updated from **1.8** to **3.0**.
 
 While there are new features in Doctrine Migrations, the reason for us to do
 an upgrade is to move forward – the previously used version will not be
@@ -222,18 +405,18 @@ since we embed the functionality in our own commands.
 
 There are three things that make this upgrade a breaking change:
 
-- `Doctrine\\DBAL\\Migrations` moved to `Doctrine\\Migrations`
-- `AbstractMigration` changed method signatures (type delcarations added)
+- ``Doctrine\\DBAL\\Migrations`` moved to ``Doctrine\\Migrations``
+- ``AbstractMigration`` changed method signatures (type delcarations added)
 
 To adjust your PHP code (the migration files), a core migration is provided that
 should fix the vast majority of existing migrations. (That core migration is in Flow
-and named `Version20201109224100`.)
+and named ``Version20201109224100``.)
 
 - The "version" is the FQCN of the migration class (existing entries in the migrations table will be automatically updated)
 
 The needed changes to the DB table where the migration status is stored are done
 the first time a command that accesses that table is used. Make sure to have a current
-backup and then run `./flow doctrine:migrationstatus --show-migrations`. If all
+backup and then run ``./flow doctrine:migrationstatus --show-migrations``. If all
 went well, the migrations should all be listed as a fully-qualified class name, no
 longer just a date/time string. If any errors occurred during the command, restore the
 backup (the migrations table is sufficient), fix the errors and try again.
@@ -243,31 +426,41 @@ and https://github.com/doctrine/migrations/blob/3.0.x/UPGRADE.md#upgrade-to-20
 for a full list of other changes. Most of those are wrapped in Flow code and need no
 adjustments in userland code.
 
-* Resolves: `#2122 <https://github.com/neos/flow-development-collection/issues/2122>`_
-* Packages: ``Flow``
+* Related issue: `#2122 <https://github.com/neos/flow-development-collection/issues/2122>`_
 
-`!!! FEATURE: ValueObjects are embedded by default <https://github.com/neos/flow-development-collection/pull/1718>`_
---------------------------------------------------------------------------------------------------------------------
+ValueObjects are embedded by default
+------------------------------------
 
-This makes all ValueObjects embedded by default. Embedded value objects are the preferred storage method for all value objects, since it better reflects true value object semantics.
-This requires a schema update, so you need to generate a migration for your packages and apply it. Alternatively you can run the code migration provided with this change or manually change all your `@Flow\\ValueObject` annotations to `@Flow\\ValueObject(embedded=false)` in order to keep your current database schema.
+This makes all ValueObjects embedded by default. Embedded value objects are the preferred storage method for all
+value objects, since it better reflects true value object semantics.
+This requires a schema update, so you need to generate a migration for your packages and apply it.
+Alternatively you can run the provided code migration or manually change all your ``@Flow\\ValueObject`` annotations
+to ``@Flow\\ValueObject(embedded=false)`` in order to keep your current database schema.
 
-* Resolves: `#2123 <https://github.com/neos/flow-development-collection/issues/2123>`_
-* Packages: ``Flow``
+* Related issue: `#2123 <https://github.com/neos/flow-development-collection/issues/2123>`_
 
-`!!! TASK: Add type declarations to persistence interfaces <https://github.com/neos/flow-development-collection/pull/2231>`_
-----------------------------------------------------------------------------------------------------------------------------
+Type declarations in interfaces
+-------------------------------
 
-* Packages: ``Flow``
+Return and argument type hints have been added to the following interfaces:
 
+* ``Neos\Flow\Persistence\\PersistenceManagerInterface``
+* ``Neos\Flow\Persistence\\QueryInterface``
+* ``Neos\Flow\Persistence\\QueryResultInterface``
+* ``Neos\Flow\Persistence\\RepositoryInterface``
+
+You'll might have to adjust your code manually in case you implemented these or extended an implementation.
+See `#2231 <https://github.com/neos/flow-development-collection/pull/2231>`_
 
 Changes related to Fluid
 ========================
 
-`!!! FEATURE: Remove neos/fluid-adaptor as required package <https://github.com/neos/flow-development-collection/pull/2152>`_
------------------------------------------------------------------------------------------------------------------------------
+With Flow 7.0 TYPO3Fluid is no longer a dependency of ``neos/flow``.
 
-Removes references to Fluid and the dependency to the `neos/fluid-adaptor` composer package.
+Remove neos/fluid-adaptor as required package
+---------------------------------------------
+
+Removes references to Fluid and the dependency to the ``neos/fluid-adaptor`` composer package.
 
 This is a breaking change if you relied on the fact the Flow installs all Fluid dependencies.
 In that case you'll need to require them explicitly in your distribution:
@@ -280,7 +473,7 @@ In that case you'll need to require them explicitly in your distribution:
 `!!! TASK: Remove custom FluidAdaptor Exceptions on invalid ArgumentDefinition <https://github.com/neos/flow-development-collection/pull/2259>`_
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
-This removes the `Neos\\FluidAdaptor\\Core\\Exception` when the ArgumentDefinition is invalid in favor of the native TYPO3 Fluid exceptions. With this we remove the boilerplate we have to keep in sync with upstream.
+This removes the ``Neos\\FluidAdaptor\\Core\\Exception`` when the ArgumentDefinition is invalid in favor of the native TYPO3 Fluid exceptions. With this we remove the boilerplate we have to keep in sync with upstream.
 
 See https://github.com/TYPO3/Fluid/issues/529 and https://github.com/neos/flow-development-collection/pull/2257#issuecomment-728825319
 
@@ -308,16 +501,16 @@ Require PHP 7.3 in composer.json, as PHP 7.2 is EOL by the end of November.
 * Packages: ``Arrays`` ``Cache`` ``Eel`` ``Files`` ``Flow`` ``FluidAdaptor`` ``Kickstarter`` ``Log`` ``MediaTypes`` ``Messages`` ``ObjectHandling`` ``OpcodeCache`` ``Pdo`` ``Schema`` ``Unicode``
 
 
-`!!! FEATURE: Allow RoutePart handlers to access Route Parameters when resolving routes <https://github.com/neos/flow-development-collection/pull/2173>`_
----------------------------------------------------------------------------------------------------------------------------------------------------------
+Access Route Parameters when resolving routes
+---------------------------------------------
 
 This feature allows route part handlers to access any Route Parameters
 that has been set for the current request.
 This will make it possible to implement cross-domain linking for example
 with relative/absolute URLs depending on the current host.
 
-This is a potentially breaking change because it extends the `ParameterAwareRoutePartInterface`
-by a new method `resolveWithParameters`.
+This is a potentially breaking change because it extends the ``ParameterAwareRoutePartInterface``
+by a new method ``resolveWithParameters``.
 This means that custom RoutePartHandlers that implement this interface directly have to be
 adjusted. The easiest way to adjust an existing handler is to implement this method as follows:
 
@@ -330,10 +523,10 @@ adjusted. The easiest way to adjust an existing handler is to implement this met
 
 ...basically ignoring the parameters.
 
-Route Part handlers extending `DynamicRoutePart` don't need to be adjusted!
+Route Part handlers extending ``DynamicRoutePart`` don't need to be adjusted!
 
-This also changes the (non-api) `Route::resolves()` method that now expects an instance of
-`ResolveContext` instead of an array with the "routeValues".
+This also changes the (non-api) ``Route::resolves()`` method that now expects an instance of
+``ResolveContext`` instead of an array with the "routeValues".
 
 * Resolves: `#2141 <https://github.com/neos/flow-development-collection/issues/2141>`_
 * Packages: ``Flow``

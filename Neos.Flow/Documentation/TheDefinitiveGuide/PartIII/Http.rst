@@ -1,3 +1,5 @@
+.. _ch-http:
+
 HTTP Foundation
 ===============
 
@@ -165,6 +167,30 @@ outside through the layer.
   and won't invoke any further middlewares.
   For this reason no middleware must be configured to be executed _after_ the "dispatch" middleware
 
+CLI
+~~~
+
+The ``middleware:list`` command can be used to list active middlewares::
+
+  ./flow middleware:list
+
+this will return the all middlewares in the order they are configured, by default::
+
+  Currently configured middlewares:
+  +----+---------------------+---------------------------------------------------------+
+  | #  | Name                | Class name                                              |
+  +----+---------------------+---------------------------------------------------------+
+  | 1  | standardsCompliance | Neos\Flow\Http\Middleware\StandardsComplianceMiddleware |
+  | 2  | trustedProxies      | Neos\Flow\Http\Middleware\TrustedProxiesMiddleware      |
+  | 3  | session             | Neos\Flow\Http\Middleware\SessionMiddleware             |
+  | 4  | ajaxWidget          | Neos\FluidAdaptor\Core\Widget\AjaxWidgetMiddleware      |
+  | 5  | routing             | Neos\Flow\Mvc\Routing\RoutingMiddleware                 |
+  | 6  | poweredByHeader     | Neos\Flow\Http\Middleware\PoweredByMiddleware           |
+  | 7  | flashMessages       | Neos\Flow\Mvc\FlashMessage\FlashMessageMiddleware       |
+  | 8  | parseBody           | Neos\Flow\Http\Middleware\RequestBodyParsingMiddleware  |
+  | 9  | securityEntryPoint  | Neos\Flow\Http\Middleware\SecurityEntryPointMiddleware  |
+  | 10 | dispatch            | Neos\Flow\Mvc\DispatchMiddleware                        |
+  +----+---------------------+---------------------------------------------------------+
 
 Interrupting the chain
 ~~~~~~~~~~~~~~~~~~~~~~
