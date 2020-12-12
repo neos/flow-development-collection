@@ -93,7 +93,21 @@ https://github.com/neos/flow-development-collection/pull/2166
 Unidirectional OneToMany relations
 ----------------------------------
 
-tbd
+Inside a single aggregate `OneToMany` relations are normally best modelled unidirectionally. Bidirectional relations always are harder to manage correctly and can easily lead to unintentional traversal of entity hierarchies with all the drawbacks.
+Since Doctrines `OneToMany` annotation is always bidrectional and also dictates the owning side of the relation (at the unexpected side from a modelling PoV), it is not straightforward to model this correctly.
+
+In Flow specifically, we try to follow DDD best practices in modelling and this means, that the aggregate root is the entry point and the entity that is sent to a repository to persist it and all its subentities. This can not be achieved with the standard doctrine `OneToMany` annotation when the one side is supposed to be closer to the root.
+
+This change allows the user to annotate such a relation simply as:
+
+.. code-block:: php
+
+    /**
+     * @ORM\OneToMany
+     * @var Collection<Comment>
+     */
+
+This is done by remapping `OneToMany` annotations without a `mappedBy` as `ManyToMany` with a unique constraint.
 
 https://github.com/neos/flow-development-collection/pull/2056
 
