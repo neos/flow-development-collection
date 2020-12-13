@@ -144,10 +144,10 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * Note that $source['error'] will also be present if a file was successfully
      * uploaded. In that case its value will be \UPLOAD_ERR_OK.
      *
-     * @param array|string|UploadedFileInterface $source The upload info (expected keys: error, name, tmp_name)
+     * @param array|string|UploadedFileInterface $source The upload info (expected keys: error, name, tmp_name), the hash or an UploadedFile
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|null|FlowError if the input format is not supported or could not be converted for other reasons
      * @throws Exception
      * @throws Exception\InvalidResourceDataException
@@ -178,15 +178,14 @@ class ResourceTypeConverter extends AbstractTypeConverter
 
     /**
      * @param array $source
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|null|FlowError
-     * @throws \Exception
      */
     protected function handleFileUploads(array $source, PropertyMappingConfigurationInterface $configuration = null)
     {
         if (!isset($source['error']) || $source['error'] === \UPLOAD_ERR_NO_FILE) {
-            if (isset($source['originallySubmittedResource']['__identity'])) {
-                /* @var $resource PersistentResource */
+            if (isset($source['originallySubmittedResource']) && isset($source['originallySubmittedResource']['__identity'])) {
+                /** @var PersistentResource|null $resource */
                 $resource = $this->persistenceManager->getObjectByIdentifier($source['originallySubmittedResource']['__identity'], PersistentResource::class);
                 return $resource;
             }
@@ -228,7 +227,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
 
     /**
      * @param array $source
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|FlowError
      * @throws Exception
      * @throws Exception\InvalidResourceDataException
@@ -298,7 +297,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     {
         if ($source instanceof FlowUploadedFile && $source->getError() === UPLOAD_ERR_NO_FILE && $source->getOriginallySubmittedResource() !== null) {
             $identifier = is_array($source->getOriginallySubmittedResource()) ? $source->getOriginallySubmittedResource()['__identity'] : $source->getOriginallySubmittedResource();
-            /* @var $resource PersistentResource */
+            /* @var $resource PersistentResource|null */
             $resource = $this->persistenceManager->getObjectByIdentifier($identifier, PersistentResource::class);
             return $resource;
         }
@@ -343,7 +342,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * and __collectionName is in the $source this will finally be the value.
      *
      * @param array|UploadedFileInterface $source
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */

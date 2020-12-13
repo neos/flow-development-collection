@@ -130,7 +130,7 @@ class FileSystemStorage implements StorageInterface
     /**
      * Retrieve all Objects stored in this storage.
      *
-     * @param callable $callback Function called after each iteration
+     * @param callable|null $callback Function called after each iteration
      * @return \Generator<StorageObject>
      */
     public function getObjects(callable $callback = null)
@@ -143,8 +143,8 @@ class FileSystemStorage implements StorageInterface
     /**
      * Retrieve all Objects stored in this storage, filtered by the given collection name
      *
-     * @param callable $callback Function called after each iteration
      * @param CollectionInterface $collection
+     * @param callable|null $callback Function called after each iteration
      * @return \Generator<StorageObject>
      */
     public function getObjectsByCollection(CollectionInterface $collection, callable $callback = null)
@@ -162,7 +162,7 @@ class FileSystemStorage implements StorageInterface
                 return $this->getStreamByResource($resource);
             });
             yield $object;
-            if (is_callable($callback)) {
+            if ($callback !== null) {
                 call_user_func($callback, $iteration, $object);
             }
             $iteration++;
