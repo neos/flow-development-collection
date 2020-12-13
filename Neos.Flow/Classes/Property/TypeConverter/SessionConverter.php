@@ -72,10 +72,8 @@ class SessionConverter extends AbstractTypeConverter
      * @param string $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object the target type
-     * @throws InvalidTargetException
-     * @throws \InvalidArgumentException
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {

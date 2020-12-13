@@ -226,7 +226,7 @@ class PersistentObjectConverter extends ObjectConverter
      * @param array $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object|TargetNotFoundError
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -282,8 +282,7 @@ class PersistentObjectConverter extends ObjectConverter
      * @param mixed $identity
      * @param string $targetType
      * @return object
-     * @throws TargetNotFoundException
-     * @throws InvalidSourceException
+     * @throws InvalidSourceException|DuplicateObjectException
      */
     protected function fetchObjectFromPersistence($identity, $targetType)
     {
