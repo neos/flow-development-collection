@@ -49,7 +49,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
      * @param string $source the raw request body
      * @param string $targetType must be "array"
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return array|string|integer Note that this TypeConverter may return a non-array in case of JSON media type, even though he declares to only convert to array
      * @api
      */
