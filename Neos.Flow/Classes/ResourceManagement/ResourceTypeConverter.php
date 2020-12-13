@@ -237,7 +237,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 return $resource;
             }
 
-            if ($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) !== true) {
+            if ($configuration === null || $configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) !== true) {
                 throw new InvalidPropertyMappingConfigurationException('Creation of resource objects with identity not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_IDENTITY_CREATION_ALLOWED" to true');
             }
         }
