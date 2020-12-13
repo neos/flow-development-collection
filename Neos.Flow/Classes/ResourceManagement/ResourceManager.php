@@ -141,7 +141,7 @@ class ResourceManager
         $this->resourceRepository->add($resource);
         GenericObjectValidator::onValidated($resource, function (Result $result) use ($resource) {
             if ($result->hasErrors()) {
-                $this->resourceRepository->remove($resource);
+                $this->deleteResource($resource, false);
             }
         });
         if ($sourceHint === '') {
