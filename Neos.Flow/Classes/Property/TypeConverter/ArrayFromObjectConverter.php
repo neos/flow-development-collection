@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Utility\ObjectAccess;
 

@@ -12,7 +12,6 @@ namespace Neos\Flow\Property\TypeConverter;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Property\Exception\InvalidTargetException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Session\Session;
 use Neos\Flow\Session\SessionManagerInterface;
