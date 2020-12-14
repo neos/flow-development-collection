@@ -359,7 +359,7 @@ class SecurityCommandController extends CommandController
     public function listRolesCommand(bool $includeAbstract = false): void
     {
         $roles = $this->policyService->getRoles($includeAbstract);
-        $this->output->outputTable(array_map(static function(Role $role) {
+        $this->output->outputTable(array_map(static function (Role $role) {
             $id = $role->getIdentifier();
             if ($role->isAbstract()) {
                 $id .= ' (*)';
