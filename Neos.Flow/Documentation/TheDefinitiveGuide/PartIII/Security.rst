@@ -387,14 +387,6 @@ set the correct authentication status (see above) and ``Roles`` in its correspon
 The role implementation resides in the ``Neos\Flow\Security\Policy`` namespace. (see the
 Policy section for details).
 
-.. note::
-
-  Previously roles were entities, so they were stored in the database. This is no longer
-  the case since Flow 3.0. Instead the active roles will be determined from the configured
-  policies. Creating a new role is as easy as adding a line to your ``Policy.yaml``.
-  If you do need to add roles during runtime, you can use the ``rolesInitialized`` Signal of
-  the :abbr:`PolicyService (\\Neos\\Flow\\Security\\Policy\\PolicyService)`.
-
 .. _Account management:
 
 Account management
@@ -923,16 +915,6 @@ Authorization
 
 This section covers the authorization features of Flow and how those can be leveraged in
 order to configure fine grained access rights.
-
-.. note::
-
-  With version 3.0 of Flow the security framework was subject to a major refactoring.
-  In that process the format of the policy configuration was adjusted in order to gain
-  flexibility.
-  Amongst others the term ``resource`` has been renamed to ``privilege`` and ACLs are
-  now configured directly with the respective role.
-  All changes are covered by code migrations, so make sure to run the ``./flow core:migrate``
-  command when upgrading from a previous version.
 
 Privileges
 ----------
