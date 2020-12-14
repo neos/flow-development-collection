@@ -1,0 +1,46 @@
+`7.0.1 (2020-12-14) <https://github.com/neos/flow-development-collection/releases/tag/7.0.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Task/changelog <https://github.com/neos/flow-development-collection/pull/2334>`_
+---------------------------------------------------------------------------------
+
+* Packages: ``Flow``
+
+`BUGFIX: Finalize introduction of role and privilege metadata <https://github.com/neos/flow-development-collection/pull/2353>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This builds upon the work started with #2166 and
+
+* Fixes the Policy schema
+* Adds label & description to the "magic" base roles
+* Adds CLI commands in order to make use of the metadata
+  within Flow
+
+Usage:
+
+    ./flow security:listRoles --include-abstract
+    ./flow security:describeRole Neos.Flow:Everybody
+
+* Related: `#2162 <https://github.com/neos/flow-development-collection/issues/2162>`_
+* Packages: ``Flow``
+
+`TASK: Remove Flow dependency on neos/fluid-adaptor (again) <https://github.com/neos/flow-development-collection/pull/2344>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+See also https://github.com/neos/flow-development-collection/pull/2324#issuecomment-743219873
+
+* Packages: ``Flow``
+
+`TASK: Redact the 7.0 changelog <https://github.com/neos/flow-development-collection/pull/2342>`_
+-------------------------------------------------------------------------------------------------
+
+Order by !!!FEATURE, FEATURE, !!!BUG, BUG, !!!TASK, TASK and remove unhelpful "Apply fixes from StyleCI".
+Also removed the Easy injection of request feature and it's revert.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/7.0.0...7.0.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
