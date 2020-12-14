@@ -959,8 +959,8 @@ All policy definitions are configured in the ``Policy.yaml`` files.
 *Privilege Targets*
 
 In general a Privilege Target is the definition pointing to something you want to protect.
-It consists of a **Privilege Type**, a **unique name** and a **matcher expression** defining which
-things should be protected by this target.
+It consists of a **Privilege Type**, a **unique name**, an optional human readable **label** and a **matcher expression**
+defining which things should be protected by this target.
 
 The privilege type defines the nature of the element to protect. This could be the execution of a certain action in your
 system, the retrieval of objects from the database, or any other kind of action you want to supervise in your
@@ -977,6 +977,7 @@ methods.
     'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
       'Acme.MyPackage:RestrictedController.customerAction':
+        label: 'Optional label to describe this privilege target'
         matcher: 'method(Acme\MyPackage\Controller\RestrictedController->customerAction())'
 
       'Acme.MyPackage:RestrictedController.adminAction':
@@ -985,7 +986,10 @@ methods.
       'Acme.MyPackage:editOwnPost':
         matcher: 'method(Acme\MyPackage\Controller\PostController->editAction(post.owner == current.userService.currentUser))'
 
+.. note:
 
+  The label will be rendered by the ``./flow security:describeRole <role>`` CLI command for a corresponding role and it
+  can be used to render a more human readable description in UIs (such as the user management module in the Neos backend)
 
 Privilege targets are defined in the ``Policy.yaml`` file of your package and are grouped by their respective types,
 which are define by the fully qualified classname of the privilege type to be used (e.g.
@@ -1026,6 +1030,8 @@ privileges to them.
 
   roles:
     'Acme.MyPackage:Administrator':
+      label: 'Optional label for this role'
+      description: 'Optional description of this role'
       privileges: []
 
     'Acme.MyPackage:Customer':
@@ -1044,6 +1050,11 @@ configure yourself. This role will also be present, if no account is authenticat
 
 Likewise, the magic role ``Neos.Flow:Anonymous`` is added to the security context if no user
 is authenticated and ``Neos.Flow:AuthenticatedUser`` if there is an authenticated user.
+
+.. note:
+
+  The label and description will be rendered by the ``./flow security:describeRole <role>`` CLI command for a corresponding role
+  and it can be used to render more human readable descriptions in UIs (such as the user management module in the Neos backend)
 
 *Defining Privileges and Permissions*
 
