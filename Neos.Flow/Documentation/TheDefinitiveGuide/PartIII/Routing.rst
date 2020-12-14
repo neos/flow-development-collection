@@ -731,23 +731,7 @@ specify placeholders in the SubRoutes (see `Nested Subroutes`_).
 
 .. tip::
 
-	You can use the ``flow:routing:list`` command to list all routes which are currently active:
-
-	.. code-block:: bash
-
-		$ ./flow routing:list
-
-		Currently registered routes:
-		neos/login(/{@action}.{@format})         Neos :: Authentication
-		neos/logout                              Neos :: Logout
-		neos/setup(/{@action})                   Neos :: Setup
-		neos                                     Neos :: Backend Overview
-		neos/content/{@action}                   Neos :: Backend - Content Module
-		{node}.html/{type}                       Neos :: Frontend content with format and type
-		{node}.html                              Neos :: Frontend content with (HTML) format
-		({node})                                 Neos :: Frontend content without a specified format
-		                                         Neos :: Fallback rule – for when no site has been defined yet
-
+	You can use the ``flow:routing:list`` command to list all routes which are currently active, see `CLI`_
 
 Route Loading Order and the Flow Application Context
 ====================================================
@@ -886,7 +870,7 @@ All URIs pointing to the respective action will be forced to be `https://` URIs.
 
 As you can see, in this example the route part handler doesn't affect the URI path at all, so with the configured route
 this will always point to the homepage. But of course route parts can specify a path (segment) *and* UriConstraints at the
-same time.
+same time. They can also be used to resolve URIs across domains.
 
 Routing Parameters
 ==================
@@ -957,3 +941,165 @@ Now we can extend the ``HttpRoutePart`` to only match `https://` requests:
 	For route part handlers to be able to access the `Routing Parameters` they have to implement the ``ParameterAwareRoutePartInterface``
 	and its ``matchWithParameters()`` method. The ``DynamicRoutePart`` already implements the interface and makes parameters
 	available in the ``parameters`` field.
+
+CLI
+===
+
+Flow provides the following four commands that allow you to test and debug the routing setup.
+Run ``./flow help <command>`` to get more information about a command and its options.
+
+routing:list
+------------
+
+To list all active routes in the order they will be evaluated:
+
+.. code-block:: bash
+
+    $ ./flow routing:list
+
+    Currently registered routes:
+    +----+---------------------------------------------------------------------------+----------------+-----------------------------------+
+    | #  | Uri Pattern                                                               | HTTP Method(s) | Name                              |
+    +----+---------------------------------------------------------------------------+----------------+-----------------------------------+
+    | 1  | some/route(/{@action}).{@format}                                          | GET, POST      | Some.Package :: Some route        |
+    | 2  | some/other/{route}                                                        | POST           | Some.Package :: Other route       |
+    | 3  | fallback                                                                  | any            | Some.Package :: Fallback          |
+    +----+---------------------------------------------------------------------------+----------------+-----------------------------------+
+
+    Run ./flow routing:show <index> to show details for a route
+
+routing:show
+------------
+
+To display details for a specific route:
+
+.. code-block:: bash
+
+    $ ./flow routing:show 1
+
+    Information for route #1:
+
+    Name: Some.Package :: Some route
+    URI Pattern: some/route(/{@action}).{@format}
+    HTTP method(s): GET, Post
+    Defaults:
+      @package: Some.Package
+      @action: show
+      @controller: SomeController
+
+      Exceeding arguments will be appended as query string
+
+routing:resolve
+---------------
+
+To build URLs for the given route values:
+
+.. code-block:: bash
+
+    $ ./flow routing:resolve Neos.Welcome --controller Standard
+
+    Resolving:
+      Values:
+        @package: Neos.Welcome
+        @controller: Standard
+        @action: index
+        @format: html
+      Base URI: http://localhost
+      Force absolute URI: no
+
+      => Controller: Neos\Welcome\Controller\StandardController
+
+    Route resolved!
+    Name: Neos.Welcome :: Welcome screen
+    Pattern: flow/welcome
+
+    Resolved URI: /flow/welcome
+
+
+    Run ./flow routing:show 1 to show details about this route
+
+Apart from route values, this command allows you to specify route `parameters`, for example in order to
+test URLs for the Neos frontend:
+
+.. code-block:: bash
+
+    $ ./flow routing:resolve Neos.Neos --controller Frontend\\Node --action show --additional-arguments="{\"node\": \"/sites/neosdemo/the-book@live;language=en_US\"}" --parameters="{\"requestUriHost\": \"localhost\"}"
+
+    Resolving:
+      Values:
+        @package: Neos.Neos
+        @controller: Frontend\Node
+        @action: show
+        @format: html
+        node: /sites/neosdemo/the-book@live;language=en_US
+      Base URI: http://localhost
+      Force absolute URI: no
+      Parameters:
+        requestUriHost: localhost
+
+      => Controller: Neos\Neos\Controller\Frontend\NodeController
+
+    Route resolved!
+    Name: Neos.Neos :: Frontend :: Default Frontend
+    Pattern: {node}
+
+    Resolved URI: /en/the-book/i-down-the-rabbit-hole.html
+
+routing:match
+-------------
+
+To test the routing for incoming URLs:
+
+.. code-block:: bash
+
+    $ ./flow routing:match /flow/welcome
+
+    Matching:
+      URI: /flow/welcome
+      Path: flow/welcome
+      HTTP Method: GET
+
+    Route matched!
+    Name: Neos.Welcome :: Welcome screen
+    Pattern: flow/welcome
+
+    Results:
+      @package: Neos.Welcome
+      @controller: Standard
+      @action: index
+      @format: html
+
+    Matched Controller: Neos\Welcome\Controller\StandardController
+
+
+    Run ./flow routing:show 1 to show details about this route
+
+Like ``routing:resolve`` this command allows you to specify route `parameters` too, for example to test
+routing for the Neos frontend:
+
+.. code-block:: bash
+
+    $ ./flow routing:match /en/the-book/i-down-the-rabbit-hole.html --parameters="{\"requestUriHost\": \"localhost\"}"
+
+    Matching:
+      URI: /en/the-book/i-down-the-rabbit-hole.html
+      Path: en/the-book/i-down-the-rabbit-hole.html
+      HTTP Method: GET
+      Parameters:
+        requestUriHost: localhost
+
+    Route matched!
+    Name: Neos.Neos :: Frontend :: Default Frontend
+    Pattern: {node}
+
+    Results:
+      @package: Neos.Neos
+      @controller: Frontend\Node
+      @action: show
+      @format: html
+      node: /sites/neosdemo/the-book/i-down-the-rabbit-hole@live;language=en_US
+
+    Matched Controller: Neos\Neos\Controller\Frontend\NodeController
+
+
+    Run ./flow routing:show 75 to show details about this route

@@ -2,8 +2,10 @@
 Flow 7.0
 ========
 
-This major release of Flow brings a few bigger features and a lot of
-modernisation of the existing code base.
+This major release of Flow comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+Flow 7 also increases the minimal required PHP version to **7.3**.
 
 ************
 New Features
@@ -12,7 +14,10 @@ New Features
 PSR-15 compatible middleware chain
 ----------------------------------
 
-with::
+With version 7, Flow introduces a `PSR-15 <https://www.php-fig.org/psr/psr-15/>`_ compatible HTTP middleware chain that opens up the system to a
+comprehensive pool of existing middleware components.
+
+For example, in order to measure the performance of requests, a simple::
 
   composer require middlewares/response-time
 
@@ -28,36 +33,29 @@ and a few lines of ``Settings.yaml``
             middleware: 'Middlewares\ResponseTime'
             position: start
 
-``X-Response-Time`` header to the response.
+is enough to add a ``X-Response-Time`` header to all responses.
 
-See `HTTP ComponentChain and ComponentContext`_ for upgrade instructions and :ref:`ch-routing` for comprehensive documentation.
+**Note:** This is one of the few *potentially breaking changes*, so make sure to read the `HTTP ComponentChain and ComponentContext`_ upgrade instructions
+below and the :ref:`ch-http` chapter for comprehensive documentation.
+
+Related issue: `#1889 <https://github.com/neos/flow-development-collection/issues/1889>`_
 
 Extended Routing
 ----------------
 
-output::
+The routing framework is one of the oldest modules of Flow. With version 7 it has been extended allowing for **cross domain linking**.
+Furthermore the output of the CLI commands have been overhauled and two commands ``routing:resolve`` and ``routing:match`` have been
+added enabling a greater level of testing and debugging.
 
-  Currently registered routes:
-  +----+---------------------------------------------------------------------------+----------------+------------------------------------------------------------------------------------------+
-  | #  | Uri Pattern                                                               | HTTP Method(s) | Name                                                                                     |
-  +----+---------------------------------------------------------------------------+----------------+------------------------------------------------------------------------------------------+
-  | 1  | neos/media/browser/images(/{@action}).{@format}                           | any            | Neos.Media.Browser :: Image Browser                                                      |
-  | 2  | neos/media/browser/assets(/{@action}).{@format}                           | any            | Neos.Media.Browser :: Asset Browser                                                      |
-  | 3  | neos/media/browser/asset-proxies(/{@action}).{@format}                    | any            | Neos.Media.Browser :: Asset Proxy Service                                                |
-  | 4  | neos/media/browser/image-variant(/{@action}).{@format}                    | any            | Neos.Media.Browser :: ImageVariant Service                                               |
-  | 5  | media/thumbnail/{thumbnail}                                               | GET            | Neos.Media :: Thumbnail                                                                  |
-  | .. | ...                                                                       | ...            | ...                                                                                      |
-  | 78 | {node}robots.txt                                                          | any            | Neos.Seo :: robots.txt                                                                   |
-  +----+---------------------------------------------------------------------------+----------------+------------------------------------------------------------------------------------------+
+See :ref:`ch-routing` chapter for details and make sure to read the `Access Route Parameters when resolving routes`_ upgrade instructions below.
 
-  Run ./flow routing:show <index> to show details for a route
-
-See `Access Route Parameters when resolving routes`_ for upgrade instructions.
+Related issue: `#1126 <https://github.com/neos/flow-development-collection/pull/1126>`_
 
 DBAL connection factory
 -----------------------
 
-tbd
+Previously, in order to get hold of the current DBAL connection, one had to inject the doctrine ``EntityManager`` increasing complexity and coupling.
+With version 7 a ``ConnectionFactory`` has been added, allowing for easy injection of the current database connection:
 
 .. code-block:: php
 
@@ -69,50 +67,66 @@ tbd
          */
         protected $connection;
 
+Related issue: `#2170 <https://github.com/neos/flow-development-collection/issues/2170>`_
 
-StaticResource EEL Helper
+StaticResource Eel Helper
 -------------------------
+
+A new Eel helper has been added that allows for easy rendering of static resource URIs:
 
 .. code-block:: html
 
     <!-- create static resource uri -->
     <link rel="stylesheet" href={StaticResource.uri('Neos.Demo', 'Public/Styles/Main.css')} media="all" />
 
+And, since it sometimes make sense to inline the *contents* of a static resource, this is possible as well:
+
+.. code-block:: html
+
     <!-- get static resource content -->
     <style>{StaticResource.content('Neos.Demo', 'Public/Styles/Main.css')}</style>
 
-tbd
+Related issue: `#2175 <https://github.com/neos/flow-development-collection/issues/2175>`_
 
 Human readable labels and descriptions for Roles & Privileges
 -------------------------------------------------------------
 
-
-The user roles and privileges can quite easily become a wood of technical labels like ``'Neos.Flow:Everybody'`` and until now there was no good way to document them in a human readable way that can be used e.g. in the Neos backend. With this change, you can put a 'label' and 'description' onto a user role and a 'label' onto a privilege target like this:
+The user roles and privileges can quite easily become a wood of technical labels like ``'Neos.Flow:Everybody'`` and
+until now there was no good way to document them in a human readable way that can be used e.g. in the Neos backend.
+With Flow 7, metadata can be assigned to roles and privilege targets in order to add human readable labels and descriptions:
 
 .. code-block:: yaml
+
     roles:
       'Neos.Neos:UserManager':
         label: 'Neos User Manager'
         description: 'A user with this role is able to create, edit and delete users which has the same or a subset of his own roles.'
-        privileges:
-          ...
-    
+        # ...
+
     privilegeTargets:
       'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
         'Neos.Neos:ContentPreview':
           label: 'The privilege to see the content preview in the backend.'
-          matcher: 'method(Neos\Neos\Controller\Frontend\NodeController->previewAction())'
-      ...
+          # ...
 
-https://github.com/neos/flow-development-collection/pull/2166
+Two new commands have been added that will output this information to the CLI::
+
+ ./flow security:listRoles --include-abstract
+ ./flow security:describeRole <role>
+
+Related issue: `#2162 <https://github.com/neos/flow-development-collection/issues/2162>`_
 
 Unidirectional OneToMany relations
 ----------------------------------
 
-Inside a single aggregate `OneToMany` relations are normally best modelled unidirectionally. Bidirectional relations always are harder to manage correctly and can easily lead to unintentional traversal of entity hierarchies with all the drawbacks.
-Since Doctrines `OneToMany` annotation is always bidrectional and also dictates the owning side of the relation (at the unexpected side from a modelling PoV), it is not straightforward to model this correctly.
+Inside a single aggregate `OneToMany` relations are normally best modelled unidirectionally. Bidirectional relations always are harder to manage correctly and can easily
+lead to unintentional traversal of entity hierarchies with all the drawbacks.
+Since Doctrines `OneToMany` annotation is always bidrectional and also dictates the owning side of the relation (at the unexpected side from a modelling PoV),
+it is not straightforward to model this correctly.
 
-In Flow specifically, we try to follow DDD best practices in modelling and this means, that the aggregate root is the entry point and the entity that is sent to a repository to persist it and all its subentities. This can not be achieved with the standard doctrine `OneToMany` annotation when the one side is supposed to be closer to the root.
+In Flow specifically, we try to follow DDD best practices in modelling and this means, that the aggregate root is the entry point and the entity that is sent to a
+repository to persist it and all its sub-entities. This can not be achieved with the standard doctrine `OneToMany` annotation when the one side is supposed to be closer
+to the root.
 
 This change allows the user to annotate such a relation simply as:
 
@@ -125,7 +139,20 @@ This change allows the user to annotate such a relation simply as:
 
 This is done by remapping `OneToMany` annotations without a `mappedBy` as `ManyToMany` with a unique constraint.
 
-https://github.com/neos/flow-development-collection/pull/2056
+Related issue: `#2054 <https://github.com/neos/flow-development-collection/issues/2054>`_
+
+Removed Fluid as dependency
+---------------------------
+
+More of a "honorable mention" than a Feature:
+With version 7, `TYPO3Fluid <https://github.com/TYPO3/Fluid>`_ is no longer a requirement to run Flow.
+This is part of an ongoing process to make the base distribution lighter and allow developers to opt in to features selectively.
+
+**Note:** Fluid is still being used by default when creating packages with the Kickstarter and it is also still used heavily in the Neos core.
+
+If you make use of Fluid in your packages, make sure to declare a dependency to ``neos/fluid-adaptor``, see `Changes related to Fluid`_ upgrade instructions below.
+
+Related issue: `#2151 <https://github.com/neos/flow-development-collection/issues/2151>`_
 
 ********************
 Upgrade Instructions
@@ -181,7 +208,7 @@ To see all the other helpful options this command provides, make sure to run::
 
  ./flow help core:migrate
 
-Also make sure to read the changes below.
+Also make sure to read about the `Potentially breaking changes`_ below.
 
 Inside core:migrate
 ^^^^^^^^^^^^^^^^^^^
@@ -206,9 +233,9 @@ the generated commits is the migration data in ``composer.json``. It is
 used to detect if a migration has been applied already, so if you drop
 it, things might get out of hands in the future.
 
-****************
-What has changed
-****************
+****************************
+Potentially breaking changes
+****************************
 
 Flow 7.0 comes with some breaking changes and removes several deprecated
 functionalities, be sure to read the following changes and adjust
@@ -497,39 +524,31 @@ In that case you'll need to require them explicitly in your distribution:
 
 ``composer require neos/fluid-adaptor``
 
-* Resolves: `#2151 <https://github.com/neos/flow-development-collection/issues/2151>`_
-* Packages: ``Flow``
+* Related issue: `#2151 <https://github.com/neos/flow-development-collection/issues/2151>`_
 
-`!!! TASK: Remove custom FluidAdaptor Exceptions on invalid ArgumentDefinition <https://github.com/neos/flow-development-collection/pull/2259>`_
-------------------------------------------------------------------------------------------------------------------------------------------------
+Remove custom FluidAdaptor Exceptions on invalid ArgumentDefinition
+-------------------------------------------------------------------
 
-This removes the ``Neos\\FluidAdaptor\\Core\\Exception`` when the ArgumentDefinition is invalid in favor of the native TYPO3 Fluid exceptions. With this we remove the boilerplate we have to keep in sync with upstream.
+With https://github.com/TYPO3/Fluid/issues/529 TYPO3Fluid introduced a change to versions 2.5.11+ and 2.6.10+ that was broke compatibility
+with the custom implementation in the ``Neos.FluidAdaptor`` package.
+
+With version 7, the custom implementations of ``AbstractViewHelper::registerArgument()`` and ``AbstractViewHelper::overrideArgument()`` have
+been removed in order to remedy the regression and be less prone to such changes in the future.
+
+As a consequence, when the arguments of a ViewHelper are invalid the ``TYPO3Fluid\Fluid\Core\ViewHelper\Exception`` will be thrown instead
+of the custom ``Neos\FluidAdaptor\Core\ViewHelper\\Exception``.
 
 See https://github.com/TYPO3/Fluid/issues/529 and https://github.com/neos/flow-development-collection/pull/2257#issuecomment-728825319
-
-* Packages: ``FluidAdaptor``
-
-`!!! BUGFIX: Adjust to TYPO3Fluid 2.5.11 and 2.6.10 signature changes <https://github.com/neos/flow-development-collection/pull/2257>`_
----------------------------------------------------------------------------------------------------------------------------------------
-
-With this you need to update to TYPO3 Fluid 2.5.11+ or 2.6.10+
-
-See https://github.com/TYPO3/Fluid/commit/f20db4e74cf9803c6cffca2ed2f03e1b0b89d0dc
-
-* Packages: ``Flow``
-
-
 
 Further changes and features
 ============================
 
-`!!! TASK: Raise minimum PHP version to 7.3 <https://github.com/neos/flow-development-collection/pull/2237>`_
--------------------------------------------------------------------------------------------------------------
+Raise minimum PHP version to 7.3
+--------------------------------
 
-Require PHP 7.3 in composer.json, as PHP 7.2 is EOL by the end of November.
+PHP 7.2 has reached EOL in November 2020. With version 7 Flow requires PHP 7.3 or higher.
 
-* Packages: ``Arrays`` ``Cache`` ``Eel`` ``Files`` ``Flow`` ``FluidAdaptor`` ``Kickstarter`` ``Log`` ``MediaTypes`` ``Messages`` ``ObjectHandling`` ``OpcodeCache`` ``Pdo`` ``Schema`` ``Unicode``
-
+**Note:** Support for PHP 8.0 has been prepared and will be finalized as soon as Doctrine supports it (see `#2233 <https://github.com/neos/flow-development-collection/issues/2233>`_)
 
 Access Route Parameters when resolving routes
 ---------------------------------------------
@@ -558,5 +577,4 @@ Route Part handlers extending ``DynamicRoutePart`` don't need to be adjusted!
 This also changes the (non-api) ``Route::resolves()`` method that now expects an instance of
 ``ResolveContext`` instead of an array with the "routeValues".
 
-* Resolves: `#2141 <https://github.com/neos/flow-development-collection/issues/2141>`_
-* Packages: ``Flow``
+Related issue: `#2141 <https://github.com/neos/flow-development-collection/issues/2141>`_
