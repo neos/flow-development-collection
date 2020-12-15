@@ -12,6 +12,7 @@ namespace Neos\Flow\ResourceManagement;
  */
 
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Utility\ObjectAccess;
 use Psr\Http\Message\UploadedFileInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error as FlowError;
@@ -208,7 +209,14 @@ class ResourceTypeConverter extends AbstractTypeConverter
         }
 
         try {
-            $resource = $this->resourceManager->importUploadedResource($source, $this->getCollectionName($source, $configuration));
+            $resource = PersistentResource::createDeferred($source);
+            $resource->setCollectionName($this->getCollectionName($source, $configuration));
+            if (!empty($source['name'])) {
+                $resource->setFilename($source['name']);
+            }
+            if (!empty($source['size'])) {
+                $resource->setFileSize($source['size']);
+            }
             $this->convertedResources[$source['tmp_name']] = $resource;
             return $resource;
         } catch (\Exception $exception) {
@@ -253,13 +261,21 @@ class ResourceTypeConverter extends AbstractTypeConverter
         if ($resource === null) {
             $collectionName = $source['collectionName'] ?? $this->getCollectionName($source, $configuration);
             if (isset($source['data'])) {
-                $resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
+                $tempFile = tmpfile();
+                fwrite($tempFile, base64_decode($source['data']));
+                fseek($tempFile, 0);
+                $resource = PersistentResource::createDeferred($tempFile);
             } elseif ($hash !== null) {
-                $resource = $this->resourceManager->importResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
-                if (is_array($source) && isset($source['filename'])) {
-                    $resource->setFilename($source['filename']);
-                }
+                $resource = PersistentResource::createDeferred($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash);
             }
+            $resource->setCollectionName($collectionName);
+            if (is_array($source) && isset($source['filename'])) {
+                $resource->setFilename($source['filename']);
+            }
+            if ($givenResourceIdentity !== null) {
+                ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $givenResourceIdentity, true);
+            }
+
             if ($hash !== null && $resource->getSha1() !== $hash) {
                 throw new Exception\InvalidResourceDataException('The source SHA1 did not match the SHA1 of the imported resource.', 1482248149);
             }
@@ -306,7 +322,9 @@ class ResourceTypeConverter extends AbstractTypeConverter
         }
 
         try {
-            $resource = $this->resourceManager->importResource($source->getStream()->detach(), $this->getCollectionName($source, $configuration));
+            $resource = PersistentResource::createDeferred($source->getStream()->detach());
+            $resource->setCollectionName($this->getCollectionName($source, $configuration));
+            $resource->setFileSize($source->getSize());
             $resource->setFilename($source->getClientFilename());
             $this->convertedResources[spl_object_hash($source)] = $resource;
             return $resource;

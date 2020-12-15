@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement;
  */
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceTypeConverter;
@@ -118,7 +117,7 @@ class ResourceTypeConverterTest extends UnitTestCase
 
         $expectedResource = new PersistentResource();
         $this->inject($this->resourceTypeConverter, 'persistenceManager', $this->mockPersistenceManager);
-        $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('79ecda60-1a27-69ca-17bf-a5d9e80e6c39', PersistentResource::class)->will($this->returnValue($expectedResource));
+        $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('79ecda60-1a27-69ca-17bf-a5d9e80e6c39', PersistentResource::class)->willReturn($expectedResource);
 
         $actualResource = $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
 
@@ -139,7 +138,7 @@ class ResourceTypeConverterTest extends UnitTestCase
         ];
 
         $this->inject($this->resourceTypeConverter, 'persistenceManager', $this->mockPersistenceManager);
-        $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('79ecda60-1a27-69ca-17bf-a5d9e80e6c39', PersistentResource::class)->will($this->returnValue(null));
+        $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('79ecda60-1a27-69ca-17bf-a5d9e80e6c39', PersistentResource::class)->willReturn(null);
 
         $actualResource = $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
 
@@ -182,29 +181,14 @@ class ResourceTypeConverterTest extends UnitTestCase
     {
         $source = [
             'tmp_name' => 'SomeFilename',
+            'name' => 'UploadedFilename',
+            'size' => 100,
             'error' => \UPLOAD_ERR_OK
         ];
-        $mockResource = $this->getMockBuilder(PersistentResource::class)->getMock();
-        $this->mockResourceManager->expects($this->once())->method('importUploadedResource')->with($source)->will($this->returnValue($mockResource));
 
-        $actualResult = $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
-        $this->assertSame($mockResource, $actualResult);
-    }
-
-    /**
-     * @test
-     */
-    public function convertFromReturnsAnErrorIfTheUploadedFileCantBeImported()
-    {
-        $this->resourceTypeConverter->injectLogger($this->createMock(LoggerInterface::class));
-
-        $source = [
-            'tmp_name' => 'SomeFilename',
-            'error' => \UPLOAD_ERR_OK
-        ];
-        $this->mockResourceManager->expects($this->once())->method('importUploadedResource')->with($source)->will($this->throwException(new Exception()));
-
-        $actualResult = $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
-        $this->assertInstanceOf(FlowError\Error::class, $actualResult);
+        $result = $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
+        $this->assertInstanceOf(PersistentResource::class, $result);
+        $this->assertEquals($source['name'], $result->getFilename());
+        $this->assertEquals($source['size'], $result->getFileSize());
     }
 }

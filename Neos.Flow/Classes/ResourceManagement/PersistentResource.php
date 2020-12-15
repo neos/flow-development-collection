@@ -37,6 +37,14 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     protected $collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME;
 
     /**
+     * The source for the resource when being newly created for deferred persistence
+     *
+     * @var string|array|resource|null
+     * @Flow\Transient
+     */
+    protected $source;
+
+    /**
      * Filename which is used when the data of this resource is downloaded as a file or acting as a label
      *
      * @var string
@@ -126,6 +134,19 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     protected $temporaryLocalCopyPathAndFilename;
 
     /**
+     * Create a resource for deferred persistence (after validation) in the framework.
+     * This is only required internally in the framework and should not be manually used.
+     *
+     * @param string|array|resource $source
+     */
+    public static function createDeferred($source)
+    {
+        $resource = new self();
+        $resource->source = $source;
+        return $resource;
+    }
+
+    /**
      * Protects this PersistentResource if it has been persisted already.
      *
      * @param integer $initializationCause
@@ -149,6 +170,27 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     public function getStream()
     {
         return $this->resourceManager->getStreamByResource($this);
+    }
+
+    /**
+     * @return bool True if this resource is deferred and has a source attached that needs to be imported first.
+     */
+    public function isDeferred(): bool
+    {
+        return $this->source !== null;
+    }
+
+    /**
+     * Detach the source from this resource and return it.
+     * Used for deferred persistence.
+     *
+     * @return resource|array|string|null
+     */
+    public function detachSource()
+    {
+        $source = $this->source;
+        $this->source = null;
+        return $source;
     }
 
     /**
@@ -285,6 +327,16 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      */
     public function getFileSize()
     {
+        if (!$this->fileSize && $this->source !== null) {
+            if (is_string($this->source)) {
+                $this->fileSize = filesize($this->source) ?: 0;
+            } elseif (is_array($this->source)) {
+                $this->fileSize = $this->source['size'] ?? 0;
+            } elseif (is_resource($this->source)) {
+                $stat = fstat($this->source);
+                $this->fileSize = $stat['size'] ?? 0;
+            }
+        }
         return $this->fileSize;
     }
 
@@ -296,6 +348,18 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      */
     public function getSha1()
     {
+        if (!$this->sha1 && $this->source !== null) {
+            if (is_string($this->source)) {
+                $this->sha1 = sha1_file($this->source);
+            } elseif (is_array($this->source) && isset($this->source['tmp_name'])) {
+                $this->sha1 = sha1_file($this->source['tmp_name']);
+            } elseif (is_resource($this->source)) {
+                $pos = ftell($this->source);
+                rewind($this->source);
+                $this->sha1 = sha1(fread($this->source, $this->fileSize));
+                fseek($this->source, $pos);
+            }
+        }
         return $this->sha1;
     }
 
@@ -323,6 +387,18 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      */
     public function getMd5()
     {
+        if (!$this->md5 && $this->source !== null) {
+            if (is_string($this->source)) {
+                $this->md5 = md5_file($this->source);
+            } elseif (is_array($this->source) && isset($this->source['tmp_name'])) {
+                $this->md5 = md5_file($this->source['tmp_name']);
+            } elseif (is_resource($this->source)) {
+                $pos = ftell($this->source);
+                rewind($this->source);
+                $this->md5 = md5(fread($this->source, $this->fileSize));
+                fseek($this->source, $pos);
+            }
+        }
         return $this->md5;
     }
 
