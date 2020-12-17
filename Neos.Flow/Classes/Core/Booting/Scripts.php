@@ -240,7 +240,7 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
-        $throwableStorage = self::initializeExceptionStorage($bootstrap);
+        $throwableStorage = self::initializeExceptionStorage($bootstrap, $settings);
         $bootstrap->setEarlyInstance(ThrowableStorageInterface::class, $throwableStorage);
 
         /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
@@ -268,17 +268,16 @@ class Scripts
      * Initialize the exception storage
      *
      * @param Bootstrap $bootstrap
+     * @param array $settings The Neos.Flow settings
      * @return ThrowableStorageInterface
      * @throws FlowException
      * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
      */
-    protected static function initializeExceptionStorage(Bootstrap $bootstrap): ThrowableStorageInterface
+    protected static function initializeExceptionStorage(Bootstrap $bootstrap, array $settings): ThrowableStorageInterface
     {
-        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
-        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
-
         $storageClassName = $settings['log']['throwables']['storageClass'] ?? FileStorage::class;
         $storageOptions = $settings['log']['throwables']['optionsByImplementation'][$storageClassName] ?? [];
+        $renderRequest = $settings['log']['throwables']['renderRequestInformation'] ?? true;
 
 
         if (!in_array(ThrowableStorageInterface::class, class_implements($storageClassName, true))) {
@@ -295,7 +294,7 @@ class Scripts
             return Debugger::getBacktraceCode($backtrace, false, true);
         });
 
-        $throwableStorage->setRequestInformationRenderer(function () {
+        $throwableStorage->setRequestInformationRenderer(function () use ($renderRequest) {
             $output = '';
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
                 return $output;
@@ -310,7 +309,9 @@ class Scripts
 
             $request = $requestHandler->getHttpRequest();
             $response = $requestHandler->getHttpResponse();
-            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
+            if ($renderRequest) {
+                $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
+            }
             $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 

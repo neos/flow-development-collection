@@ -3,6 +3,7 @@ properties:
   throwables:
     type: dictionary
     properties:
+      renderRequestInformation: { type: boolean }
       fileStorage:
         type: dictionary
         properties:
