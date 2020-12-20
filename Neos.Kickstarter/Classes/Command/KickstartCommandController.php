@@ -86,8 +86,9 @@ class KickstartCommandController extends CommandController
      * repository can be created alongside, avoiding such an error.
      *
      * By specifying the --generate-templates flag, this command will also create
-     * matching Fluid templates for the actions created. This option can only be
-     * used in combination with --generate-actions.
+     * matching Fluid templates for the actions created.
+     * Alternatively, by specifying the --generate-fusion flag, this command will
+     * create matchin Fusion files for the actions.
      *
      * The default behavior is to not overwrite any existing code. This can be
      * overridden by specifying the --force flag.
@@ -96,12 +97,13 @@ class KickstartCommandController extends CommandController
      * @param string $controllerName The name for the new controller. This may also be a comma separated list of controller names.
      * @param boolean $generateActions Also generate index, show, new, create, edit, update and delete actions.
      * @param boolean $generateTemplates Also generate the templates for each action.
-     * @param boolean $generateRelated Also create the mentioned package, related model and repository if neccessary.
+     * @param boolean $generateFusion If Fusion templates should be generated instead of Fluid.
+     * @param boolean $generateRelated Also create the mentioned package, related model and repository if necessary.
      * @param boolean $force Overwrite any existing controller or template code. Regardless of this flag, the package, model and repository will never be overwritten.
      * @return string
      * @see neos.kickstarter:kickstart:commandcontroller
      */
-    public function actionControllerCommand($packageKey, $controllerName, $generateActions = false, $generateTemplates = true, $generateRelated = false, $force = false)
+    public function actionControllerCommand($packageKey, $controllerName, $generateActions = false, $generateTemplates = true, $generateFusion = false, $generateRelated = false, $force = false)
     {
         $subpackageName = '';
         if (strpos($packageKey, '/') !== false) {
@@ -153,7 +155,7 @@ class KickstartCommandController extends CommandController
             } else {
                 $generatedFiles += $this->generatorService->generateActionController($packageKey, $subpackageName, $currentControllerName, $force);
             }
-            if ($generateTemplates === true) {
+            if ($generateTemplates === true && $generateFusion === false) {
                 $generatedFiles += $this->generatorService->generateLayout($packageKey, 'Default', $force);
                 if ($generateActions === true) {
                     $generatedFiles += $this->generatorService->generateView($packageKey, $subpackageName, $currentControllerName, 'Index', 'Index', $force);
@@ -162,6 +164,17 @@ class KickstartCommandController extends CommandController
                     $generatedFiles += $this->generatorService->generateView($packageKey, $subpackageName, $currentControllerName, 'Show', 'Show', $force);
                 } else {
                     $generatedFiles += $this->generatorService->generateView($packageKey, $subpackageName, $currentControllerName, 'Index', 'SampleIndex', $force);
+                }
+            }
+            if ($generateFusion === true) {
+                $generatedFiles += $this->generatorService->generatePrototype($packageKey, 'Default', $force);
+                if ($generateActions === true) {
+                    $generatedFiles += $this->generatorService->generateFusion($packageKey, $subpackageName, $currentControllerName, 'Index', 'Index', $force);
+                    $generatedFiles += $this->generatorService->generateFusion($packageKey, $subpackageName, $currentControllerName, 'New', 'New', $force);
+                    $generatedFiles += $this->generatorService->generateFusion($packageKey, $subpackageName, $currentControllerName, 'Edit', 'Edit', $force);
+                    $generatedFiles += $this->generatorService->generateFusion($packageKey, $subpackageName, $currentControllerName, 'Show', 'Show', $force);
+                } else {
+                    $generatedFiles += $this->generatorService->generateFusion($packageKey, $subpackageName, $currentControllerName, 'Index', 'SampleIndex', $force);
                 }
             }
         }

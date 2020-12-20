@@ -1,0 +1,26 @@
+{namespace k=Neos\Kickstarter\ViewHelpers}
+{packageKey}{f:if(condition:isInSubpackage, then:".{subpackage}")}.{controllerName}Controller.{viewName -> k:inflect.humanizeCamelCase(lowercase: true)} = {packageKey}:Default {
+
+    head {
+        titleTag.content = <![CDATA[${]]>'Show {modelName -> k:inflect.humanizeCamelCase(lowercase: true)} "' + {modelName}.name + <![CDATA['"'}]]>
+    }
+
+    body {
+
+        renderer = afx`
+            <h1>Show {modelName -> k:inflect.humanizeCamelCase(lowercase: true)} "<![CDATA[{]]>{modelName}.name<![CDATA[}]]>"</h1>
+            <table><f:for each="{properties}" as="property" key="propertyName">
+                <tr>
+                    <th>{propertyName -> k:inflect.humanizeCamelCase()}</th>
+                    <td><f:if condition="{0: property.type} == {0: 'DateTime'}">
+                        <f:then><![CDATA[{Date.format(]]>{modelName}.{propertyName}<![CDATA[, 'Y-m-d H:i')}]]></f:then>
+                        <f:else><![CDATA[{]]>{modelName}.{propertyName}<![CDATA[}]]></f:else>
+                    </f:if></td>
+                </tr>
+            </f:for></table>
+            <![CDATA[<Neos.Fusion:Link.Action attributes.href.action="index">Back</Neos.Fusion:Link.Action>]]>
+        `
+
+    }
+
+}

@@ -1,0 +1,29 @@
+{namespace k=Neos\Kickstarter\ViewHelpers}
+{packageKey}{f:if(condition:isInSubpackage, then:".{subpackage}")}.{controllerName}Controller.{viewName -> k:inflect.humanizeCamelCase(lowercase: true)} = {packageKey}:Default {
+
+    head <![CDATA[{]]>
+        titleTag.content = 'A list of {modelName -> k:inflect.pluralize() -> k:inflect.humanizeCamelCase(lowercase: true)}'
+    <![CDATA[}
+
+    body {]]>
+
+        renderer = afx`
+            <h1>A list of {modelName -> k:inflect.pluralize() -> k:inflect.humanizeCamelCase(lowercase: true)}</h1>
+            <ul @if.condition=<![CDATA[{]]>{modelName -> k:inflect.pluralize()}<![CDATA[}>]]>
+                <Neos.Fusion:Loop items=<![CDATA[{]]>{modelName -> k:inflect.pluralize()}<![CDATA[}]]> itemName="{modelName}">
+                    <li>
+                        <![CDATA[<Neos.Fusion:Link.Action attributes.href.action="show" attributes.href.arguments={{]]>{modelName}: {modelName}<![CDATA[}}>{]]>{modelName}<![CDATA[.name}</Neos.Fusion:Link.Action>
+                        <Neos.Fusion:Link.Action attributes.href.action="edit" attributes.href.arguments={{]]>{modelName}: {modelName}<![CDATA[}}>Edit</Neos.Fusion:Link.Action>
+                        <Neos.Fusion.Form:Form form.target.action="delete" form.target.arguments={{]]>{modelName}: {modelName}<![CDATA[}}>
+                            <Neos.Fusion.Form:Submit attributes.value="Delete" />
+                        </Neos.Fusion.Form:Form>
+                    </li>
+                </Neos.Fusion:Loop>
+            </ul>
+            <p @if.condition={]]>!{modelName -> k:inflect.pluralize()}<![CDATA[}]]>>No {modelName -> k:inflect.pluralize() -> k:inflect.humanizeCamelCase(lowercase: true)} created yet.</p>
+            <p><Neos.Fusion:Link.Action attributes.href.action="new">Create a new {modelName -> k:inflect.humanizeCamelCase(lowercase: true)}<![CDATA[</Neos.Fusion:Link.Action></p>]]>
+        `
+
+    }
+
+}
