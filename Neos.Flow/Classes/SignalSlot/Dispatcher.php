@@ -149,6 +149,7 @@ class Dispatcher
         }
 
         foreach ($this->slots[$signalClassName][$signalName] as $slotInformation) {
+            $finalSignalArguments = $signalArguments;
             if (isset($slotInformation['object'])) {
                 $object = $slotInformation['object'];
             } elseif (strpos($slotInformation['method'], '::') === 0) {
@@ -176,13 +177,13 @@ class Dispatcher
             }
 
             if ($slotInformation['useSignalInformationObject'] === true) {
-                call_user_func([$object, $slotInformation['method']], new SignalInformation($signalClassName, $signalName, $signalArguments));
+                call_user_func([$object, $slotInformation['method']], new SignalInformation($signalClassName, $signalName, $finalSignalArguments));
             } else {
                 if ($slotInformation['passSignalInformation'] === true) {
-                    $signalArguments[] = $signalClassName . '::' . $signalName;
+                    $finalSignalArguments[] = $signalClassName . '::' . $signalName;
                 }
                 // Need to use call_user_func_array here, because $object may be the class name when the slot is a static method
-                call_user_func_array([$object, $slotInformation['method']], $signalArguments);
+                call_user_func_array([$object, $slotInformation['method']], $finalSignalArguments);
             }
         }
     }
