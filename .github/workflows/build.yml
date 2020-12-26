@@ -76,7 +76,7 @@ jobs:
     - name: Update composer.json
       run: |
         git -C ../${{ env.FLOW_FOLDER }} checkout -b build
-        composer config repositories.flow path ../${{ env.FLOW_FOLDER }}
+        composer config repositories.flow '{ "type": "path", "url": "../${{ env.FLOW_FOLDER }}", "options": { "symlink": false } }'
         composer require --no-update ${{ github.repository }}:"dev-build as ${{ env.FLOW_BRANCH_ALIAS }}"
 
     - name: Cache Composer packages
