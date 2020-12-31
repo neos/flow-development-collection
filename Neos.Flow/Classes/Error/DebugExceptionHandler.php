@@ -43,7 +43,10 @@ class DebugExceptionHandler extends AbstractExceptionHandler
     <body>
         %s
         <br />
-        %s
+        <details class="Flow-Debug-Exception-Backtrace-Code">
+            <summary>Backtrace code</summary>
+            %s
+        </details>
         <br />
         %s
     </body>
