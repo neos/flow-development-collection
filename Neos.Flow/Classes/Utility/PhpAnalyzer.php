@@ -85,6 +85,9 @@ class PhpAnalyzer
                 if (defined('T_NAME_QUALIFIED') && $type === T_NAME_QUALIFIED) {
                     return $value;
                 }
+                if (defined('T_NAME_FULLY_QUALIFIED') && $type === T_NAME_FULLY_QUALIFIED) {
+                    return ltrim($value, '\\');
+                }
                 if ($type === T_STRING) {
                     $namespaceParts[] = $value;
                     continue;
