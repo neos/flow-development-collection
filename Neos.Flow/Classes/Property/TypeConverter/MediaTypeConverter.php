@@ -92,12 +92,19 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
                 }
             break;
             case 'xml':
-                $entityLoaderValue = libxml_disable_entity_loader(true);
+                // TODO: Remove those lines once the minimum PHP version is 8.0
+                if (PHP_MAJOR_VERSION < 8) {
+                    $entityLoaderValue = libxml_disable_entity_loader(true);
+                }
                 try {
                     $xmlElement = new \SimpleXMLElement(urldecode($requestBody), LIBXML_NOERROR);
-                    libxml_disable_entity_loader($entityLoaderValue);
+                    if (PHP_MAJOR_VERSION < 8) {
+                        libxml_disable_entity_loader($entityLoaderValue);
+                    }
                 } catch (\Exception $exception) {
-                    libxml_disable_entity_loader($entityLoaderValue);
+                    if (PHP_MAJOR_VERSION < 8) {
+                        libxml_disable_entity_loader($entityLoaderValue);
+                    }
                     return [];
                 }
                 $result = Arrays::convertObjectToArray($xmlElement);
