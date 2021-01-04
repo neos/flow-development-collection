@@ -282,7 +282,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     {
         if ($source instanceof FlowUploadedFile && $source->getError() === UPLOAD_ERR_NO_FILE && $source->getOriginallySubmittedResource() !== null) {
             $identifier = is_array($source->getOriginallySubmittedResource()) ? $source->getOriginallySubmittedResource()['__identity'] : $source->getOriginallySubmittedResource();
-            /* @var $resource PersistentResource|null */
+            /** @var PersistentResource|null $resource */
             $resource = $this->persistenceManager->getObjectByIdentifier($identifier, PersistentResource::class);
             return $resource;
         }
