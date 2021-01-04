@@ -1166,6 +1166,9 @@ that connection wrapper by setting the following options in your packages ``Sett
                user: 'user'             # adjust to your database user
                password: 'pass'         # adjust to your database password
 
+.. note::
+	In doctrine/dbal versions lower then 2.11 the wrapper class was named `MasterSlaveConnection`, so you need to adjust to that if you are such a version.
+
 With this setup, Doctrine will use one of the replica connections picked once per request randomly
 for all queries until the first writing query (e.g. insert or update) is executed. From that point
 on the primary server will be used solely. This is to solve the problems of replication lag and
