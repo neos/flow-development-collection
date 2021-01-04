@@ -25,7 +25,7 @@ CGL on One Page
 .. figure:: Images/Flow_Coding_Guidelines_on_one_page.png
     :alt: The Coding Guidelines on One Page
     :class: screenshot-detail
-    :target: ../../../_downloads/Flow_Coding_Guidelines_on_one_page.pdf
+    :target: Pdf/Flow_Coding_Guidelines_on_one_page.pdf
 
     The Coding Guidelines on One Page
 
