@@ -678,7 +678,7 @@
       <code>$packages[$selectedPackage]</code>
     </PossiblyInvalidArrayOffset>
     <UndefinedConstant occurrences="1">
-      <code>FLOW_PATH_PACKAGES</code>
+      <code>FLOW_PATH_ROOT</code>
     </UndefinedConstant>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/PackageCommandController.php">
