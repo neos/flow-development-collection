@@ -126,7 +126,7 @@ class FloatConverter extends AbstractTypeConverter
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return float|Error
+     * @return float|Error|null
      * @throws InvalidPropertyMappingConfigurationException
      * @api
      */
