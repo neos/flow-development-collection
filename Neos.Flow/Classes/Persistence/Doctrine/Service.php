@@ -250,7 +250,7 @@ class Service
      */
     public function getFormattedMigrationStatus($showMigrations = false): string
     {
-        $this->getDependencyFactory()->getMetadataStorage()->ensureInitialized();
+        $this->initializeMetadataStorage();
 
         $infosHelper = $this->getDependencyFactory()->getMigrationStatusInfosHelper();
         $infosHelper->showMigrationsInfo($this->logMessages);
@@ -308,7 +308,7 @@ class Service
      */
     public function executeMigrations(string $version = 'latest', string $outputPathAndFilename = null, $dryRun = false, $quiet = false): string
     {
-        $this->getDependencyFactory()->getMetadataStorage()->ensureInitialized();
+        $this->initializeMetadataStorage();
 
         $migrationRepository = $this->getDependencyFactory()->getMigrationRepository();
         if (count($migrationRepository->getMigrations()) === 0) {
@@ -415,7 +415,7 @@ class Service
      */
     public function executeMigration(string $version, string $direction = 'up', string $outputPathAndFilename = null, bool $dryRun = false): string
     {
-        $this->getDependencyFactory()->getMetadataStorage()->ensureInitialized();
+        $this->initializeMetadataStorage();
 
         $migrationRepository = $this->getDependencyFactory()->getMigrationRepository();
         if (!$migrationRepository->hasMigration($version)) {
@@ -471,7 +471,7 @@ class Service
      */
     public function markAsMigrated(string $version, bool $markAsMigrated): void
     {
-        $this->getDependencyFactory()->getMetadataStorage()->ensureInitialized();
+        $this->initializeMetadataStorage();
 
         $output = new BufferedOutput();
 
@@ -724,5 +724,17 @@ class Service
         }
 
         return $foreignKeyHandlingSql;
+    }
+
+    /**
+     * Calls `ensureInitialized()` on the Metadata Storage and applies pending changes
+     * @see MetadataStorage::ensureInitialized()
+     *
+     * @throws DBALException | FilesException
+     */
+    private function initializeMetadataStorage(): void
+    {
+        $this->getDependencyFactory()->getMetadataStorage()->ensureInitialized();
+        $this->entityManager->flush();
     }
 }
