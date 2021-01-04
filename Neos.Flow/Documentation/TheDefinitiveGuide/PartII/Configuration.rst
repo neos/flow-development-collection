@@ -175,6 +175,15 @@ table structure needed by Flow:
 	++ 5 migrations executed
 	++ 28 sql queries
 
+.. note::
+  If you run into problems with the migrations, e.g. because the database does not allow dropping primary keys,
+  there is another method to setup the database newly:
+  
+    ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
+  
+  This should only be used for initial creation of the database, as it is a destructive operation though! Also note
+  that this will not solve the issue for future migrations.
+
 
 Environment Variables
 =====================
