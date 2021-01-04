@@ -1,0 +1,168 @@
+`7.0.2 (2021-01-04) <https://github.com/neos/flow-development-collection/releases/tag/7.0.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Persist doctrine MetadataStorage changes immediately <https://github.com/neos/flow-development-collection/pull/2333>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This basically adds a `EntityManager::flush()` call after `MetadataStorage::ensureInitialized()`
+invocations in order to apply any metadata migrations immediately.
+
+Without this a `./flow doctrine:migrate` call might leave the metadata storage in a half-migrated
+state if it leads to an exception.
+
+* Related: `#2244 <https://github.com/neos/flow-development-collection/issues/2244>`_
+* Related: `#2357 <https://github.com/neos/flow-development-collection/issues/2357>`_ 
+
+* Packages: ``Flow``
+
+`BUGFIX: Return correct type for EEL trunc math helper <https://github.com/neos/flow-development-collection/pull/2369>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The internally used `ceil` and `floor` methods of the `trunc` helper return a float which doesn’t
+match the signature anymore and leads to unexpected comparison issues when using this helper in Fusion.
+
+**What I did**
+
+Cast the return values to int.
+
+**How I did it**
+
+See above
+
+**How to verify it**
+
+Call `trunc` with a positive int as parameter and check the type of the returned value. Instead of an int you would get a float.
+
+* Packages: ``Eel``
+
+`TASK: Update documentation to remove deprecated Doctrine connection <https://github.com/neos/flow-development-collection/pull/2371>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Since doctrine/dbal 2.11 PrimaryReadReplicaConnection should be used.
+This change updates the documentation to reflect this change.
+See https://github.com/doctrine/dbal/issues/4052 for details.
+
+* Packages: ``Flow``
+
+`BUGFIX: Avoid passing signal information depending on other signals to same slot <https://github.com/neos/flow-development-collection/pull/2362>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+This fixes a regression introduced with #2216
+
+Fixes neos/content-repository-search#42
+
+* Packages: ``Flow``
+
+`BUGFIX: Reduce the migration message to one line <https://github.com/neos/flow-development-collection/pull/2356>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Currently only the first part of the line is displayed
+
+!`image <https://user-images.githubusercontent.com/642226/102323341-a5812480-3f80-11eb-8582-bc9cee431d2a.png>`_
+
+* Packages: ``Flow``
+
+`TASK: Allow to install with composer 2.0 <https://github.com/neos/flow-development-collection/pull/2352>`_
+-----------------------------------------------------------------------------------------------------------
+
+This is a backport of #2251
+
+* Resolves: `#2248 <https://github.com/neos/flow-development-collection/issues/2248>`_
+* Packages: ``Flow``
+
+`BUGFIX: Set Flow_Security_Cryptography_HashService defaultLifetime explicitly <https://github.com/neos/flow-development-collection/pull/2345>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+Otherwise changing the default configs defaultLifetime will also make this cache be emptied unexpectedly and unnecessarily.
+
+* Packages: ``Flow``
+
+`TASK: Fix some docblock typehints <https://github.com/neos/flow-development-collection/pull/2351>`_
+----------------------------------------------------------------------------------------------------
+
+This only fixes a couple of docblock typehints primarily in the ResourceManagement and TypeConverters.
+
+* Packages: ``Flow``
+
+`BUGFIX: Correctly handle missing configuration with identity creation <https://github.com/neos/flow-development-collection/pull/2349>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+The code did not handle a missing `$configuration` when converting an hash and data array containing an identifier.
+
+See https://github.com/neos/flow-development-collection/pull/1931/files#r503144893
+
+* Packages: ``Flow`` ``Kickstarter``
+
+`BUGFIX: Fix creation of translations with targetLanguageKeys defined <https://github.com/neos/flow-development-collection/pull/2343>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Previously, when trying to create translation files with targetLanguageKeys defined (`flow kickstart:translation --target-language-keys="de"` for example), an error was thrown. 
+The error said, that translationUnits is not defined in Neos\\Kickstarter\\Service\\GeneratorService. This is, because Neos\\Flow\\I18n\\Xliff\\V12\\XliffParser::getParsedData will return an array (for each <file>-Entry in the Xliff-File, typically only one entry). So we need to use the first item of that data to get the translationUnits from it. 
+
+**How I did it**
+
+I only made a little change and added `[0]` to `$parsedXliffArray` in `Neos\\Kickstarter\\Service\\GeneratorService::generateTranslation()`.
+
+**How to verify it**
+
+1. Try to kickstart a translation with `--target-language-keys` defined. An error will be thrown.
+2. Change `$parsedXliffArray['translationUnits']` to `$parsedXliffArray[0]['translationUnits']` in the foreach loop of `Neos\\Kickstarter\\Service\\GeneratorService::generateTranslation()`.
+3. Retry to kickstart the translations.
+
+  - Lowest maintained branch is 4.3, so the PR is created against that version.
+
+* Packages: ``Flow`` ``Kickstarter``
+
+`BUGFIX: Don't access static properties in annotation classes <https://github.com/neos/flow-development-collection/pull/2335>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+`get_class_vars()` will also return static properties. Hence we also try to access static properties for rendering the annotation and access them non-statically. This will lead to errors.
+
+See https://github.com/zircote/swagger-php/issues/359#issuecomment-303058035 / https://github.com/zircote/swagger-php/issues/359#issuecomment-303227013
+
+This solves that by using `get_object_vars()`, which will only return non-static properties with their current values.
+
+* Packages: ``Flow``
+
+`TASK: Improve exception when a class can not be loaded during AOP building <https://github.com/neos/flow-development-collection/pull/2326>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+This will now throw an exception that suggests to flush caches or check the existence and namespacing of the aspect class.
+
+Until now such a case would lead to an unhelpful exception of:
+```
+Warning: Invalid argument supplied for foreach() in /…/Packages/Framework/Neos.Flow/Classes/Aop/Builder/ProxyClassBuilder.php line 319
+```
+because the following `get_class_methods()` call would return `null` which is not checked for.
+
+* Packages: ``Flow``
+
+`TASK: Replace symfony polyfills due to min PHP version <https://github.com/neos/flow-development-collection/pull/2331>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+See https://github.com/symfony/polyfill#design
+
+This prevents installing the symfony polyfills for php <= 7.1 and mbstring, since those are requirements of this Flow version.
+
+`TASK: Fix link target of CGL on one page PDF <https://github.com/neos/flow-development-collection/pull/2317>`_
+---------------------------------------------------------------------------------------------------------------
+
+Clicking the preview image on https://flowframework.readthedocs.io/en/stable/TheDefinitiveGuide/PartV/CodingGuideLines/PHP.html#cgl-on-one-page leads to a 404 currently
+
+* Packages: ``Flow``
+
+`TASK: Document alternative initial database setup method <https://github.com/neos/flow-development-collection/pull/2314>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+`./flow doctrine:create && ./flow doctrine:migrationversion --add --version all` directly initializes the database schema and marks all migrations as done. This can be a helpful alternative initial setup in some cases.
+
+* Resolves: `#2264 <https://github.com/neos/flow-development-collection/issues/2264>`_
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/7.0.1...7.0.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
