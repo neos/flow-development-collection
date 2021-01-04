@@ -92,7 +92,7 @@ class DateTimeConverter extends AbstractTypeConverter
     /**
      * If conversion is possible.
      *
-     * @param string $source
+     * @param string|int|array $source
      * @param string $targetType
      * @return boolean
      */
@@ -116,8 +116,9 @@ class DateTimeConverter extends AbstractTypeConverter
      * @param string|integer|array $source the string to be converted to a \DateTime object
      * @param string $targetType must be "DateTime"
      * @param array $convertedChildProperties not used currently
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return \DateTimeInterface|Error
+     * @throws InvalidPropertyMappingConfigurationException
      * @throws TypeConverterException
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
@@ -127,12 +128,12 @@ class DateTimeConverter extends AbstractTypeConverter
         if (is_string($source)) {
             $dateAsString = $source;
         } elseif (is_integer($source)) {
-            $dateAsString = strval($source);
+            $dateAsString = (string)$source;
         } else {
             if (isset($source['date']) && is_string($source['date'])) {
                 $dateAsString = $source['date'];
             } elseif (isset($source['date']) && is_integer($source['date'])) {
-                $dateAsString = strval($source['date']);
+                $dateAsString = (string)$source['date'];
             } elseif ($this->isDatePartKeysProvided($source)) {
                 if ($source['day'] < 1 || $source['month'] < 1 || $source['year'] < 1) {
                     return new Error('Could not convert the given date parts into a DateTime object because one or more parts were 0.', 1333032779);
@@ -153,7 +154,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if (!$isFormatConfigured && !$isFormatSpecified && ctype_digit($dateAsString)) {
             $dateFormat = 'U';
         }
-        if (is_array($source) && isset($source['timezone']) && strlen($source['timezone']) !== 0) {
+        if (is_array($source) && isset($source['timezone']) && $source['timezone'] !== '') {
             try {
                 $timezone = new \DateTimeZone($source['timezone']);
             } catch (\Exception $exception) {
@@ -170,7 +171,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if ($date === false) {
             return new Error('The date "%s" was not recognized (for format "%s").', 1307719788, [$dateAsString, $dateFormat]);
         }
-        if (is_array($source) && isset($source['hour']) && isset($source['minute']) && isset($source['second'])) {
+        if (isset($source['hour'], $source['minute'], $source['second']) && is_array($source)) {
             $date = $this->overrideTime($date, $source);
         }
         return $date;
@@ -192,7 +193,7 @@ class DateTimeConverter extends AbstractTypeConverter
      * Determines the default date format to use for the conversion.
      * If no format is specified in the mapping configuration DEFAULT_DATE_FORMAT is used.
      *
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -204,7 +205,7 @@ class DateTimeConverter extends AbstractTypeConverter
         $dateFormat = $configuration->getConfigurationValue(DateTimeConverter::class, self::CONFIGURATION_DATE_FORMAT);
         if ($dateFormat === null) {
             return self::DEFAULT_DATE_FORMAT;
-        } elseif ($dateFormat !== null && !is_string($dateFormat)) {
+        } elseif (!is_string($dateFormat)) {
             throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_DATE_FORMAT must be of type string, "' . (is_object($dateFormat) ? get_class($dateFormat) : gettype($dateFormat)) . '" given', 1307719569);
         }
         return $dateFormat;
