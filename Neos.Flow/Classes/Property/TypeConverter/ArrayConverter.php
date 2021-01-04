@@ -113,7 +113,7 @@ class ArrayConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return array
      * @throws InvalidPropertyMappingConfigurationException
      * @throws InvalidSourceException
@@ -129,16 +129,16 @@ class ArrayConverter extends AbstractTypeConverter
         if (is_string($source)) {
             if ($source === '') {
                 return [];
-            } else {
-                $stringFormat = $this->getStringFormat($configuration);
-                switch ($stringFormat) {
-                    case self::STRING_FORMAT_CSV:
-                        return explode($this->getStringDelimiter($configuration), $source);
-                    case self::STRING_FORMAT_JSON:
-                        return json_decode($source, true);
-                    default:
-                        throw new InvalidPropertyMappingConfigurationException(sprintf('Conversion from string to array failed due to invalid string format setting "%s"', $stringFormat), 1404903208);
-                }
+            }
+
+            $stringFormat = $this->getStringFormat($configuration);
+            switch ($stringFormat) {
+                case self::STRING_FORMAT_CSV:
+                    return explode($this->getStringDelimiter($configuration), $source);
+                case self::STRING_FORMAT_JSON:
+                    return json_decode($source, true);
+                default:
+                    throw new InvalidPropertyMappingConfigurationException(sprintf('Conversion from string to array failed due to invalid string format setting "%s"', $stringFormat), 1404903208);
             }
         }
 
@@ -181,7 +181,7 @@ class ArrayConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -202,7 +202,7 @@ class ArrayConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -223,7 +223,7 @@ class ArrayConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */

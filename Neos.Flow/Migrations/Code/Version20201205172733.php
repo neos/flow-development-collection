@@ -14,8 +14,7 @@ namespace Neos\Flow\Core\Migrations;
 use Neos\Utility\Files;
 
 /**
- * This migration does not actually change any code. It just displays a warning if a PHP file still refers
- * to the no longer existing ComponentInterface
+ * This migration does not actually change any code. It just displays a warning if a PHP file still refers to the no longer existing ComponentInterface
  */
 class Version20201205172733 extends AbstractMigration
 {
