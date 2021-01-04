@@ -18,7 +18,6 @@ use Neos\Flow\Property\Exception\DuplicateObjectException;
 use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use Neos\Flow\Property\Exception\InvalidSourceException;
 use Neos\Flow\Property\Exception\InvalidTargetException;
-use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Utility\ObjectAccess;
@@ -228,7 +227,7 @@ class PersistentObjectConverter extends ObjectConverter
      * @param string $targetType
      * @psalm-param class-string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object|TargetNotFoundError
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -285,8 +284,7 @@ class PersistentObjectConverter extends ObjectConverter
      * @param string $targetType
      * @psalm-param class-string $targetType
      * @return object
-     * @throws TargetNotFoundException
-     * @throws InvalidSourceException
+     * @throws InvalidSourceException|DuplicateObjectException
      */
     protected function fetchObjectFromPersistence($identity, $targetType)
     {

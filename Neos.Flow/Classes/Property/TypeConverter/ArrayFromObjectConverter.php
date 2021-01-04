@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Utility\ObjectAccess;
 
@@ -91,9 +90,8 @@ class ArrayFromObjectConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return mixed|Error the target type, or an error object if a user-error occurred
-     * @throws TypeConverterException thrown in case a developer error occurred
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
