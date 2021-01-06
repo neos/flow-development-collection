@@ -5,7 +5,7 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">Sadece ingilizce harfler (a-z, ve noktalı harfler) kullanılabilir.</target></trans-unit>
+			<target state="translated">Yalnızca İngilizce normal karakterlere (a'dan z'ye, çift noktalı karakterler, ...) ve sayılara izin verilir.</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
@@ -37,7 +37,7 @@
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target state="translated">"Yerel ayar" seçeneği yalnızca dize tanımlayıcı veya yerel nesne için ayarlanabilir</target></trans-unit>
+			<target state="translated">"locale" seçeneği yalnızca string tanımlayıcıya veya Locale nesnesine ayarlanabilir</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
 			<target state="translated">Geçerli bir saat bekleniyor</target></trans-unit>
@@ -57,11 +57,11 @@
 			<target state="translated">Geçerli bir ondalıklı sayı bekleniyor</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target state="translated">"{0}" kesirli bir değere dönüştürülemiyor. Parantez içine değer giriniz</target></trans-unit>
+			<target state="translated">"{0}" kesirli bir değere dönüştürülemiyor</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
-			<target state="translated">Beklenen nesne, {0} verilmiş. Parantez içine değer giriniz</target></trans-unit>
+			<target state="translated">Beklenen nesne, {0} verildi</target></trans-unit>
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
 				<source>A valid integer number is expected</source>
@@ -76,7 +76,7 @@
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve">
 				<source>Value is no valid I18n locale identifier</source>
-			<target state="translated">Değer geçerli bir InternationalizatioN yerel ayıracı değil</target></trans-unit>
+			<target state="translated">Değer, geçerli bir I18n yerel tanımlayıcısı değil</target></trans-unit>
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve">
 				<source>This property is required</source>
@@ -90,11 +90,11 @@
 			<target state="translated">Geçerli bir sayı bekleniyor</target></trans-unit>
       <trans-unit id="1221561046" xml:space="preserve">
 				<source>Please enter a valid number between {0,number} and {1,number}</source>
-			<target state="translated">Lütfen {0, maksimum sayı} ile {1, maksimum sayı} arasında geçerli bir sayı girin</target></trans-unit>
+			<target state="translated">Lütfen {0,number} ve {1,number} arasında geçerli bir sayı girin</target></trans-unit>
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target state="translated">"Yerel ayar" seçeneği yalnızca dize tanımlayıcı veya yerel nesne için ayarlanabilir</target></trans-unit>
+			<target state="translated">"locale" seçeneği yalnızca string tanımlayıcıya veya Locale nesnesine ayarlanabilir</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
 			<target state="translated">Geçerli bir yüzde oranı bekleniyor</target></trans-unit>
@@ -114,25 +114,25 @@
 			<target state="translated">Verilen değer geçerli bir dizi değil</target></trans-unit>
       <trans-unit id="1238108067" xml:space="preserve">
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
-			<target state="translated">Bu metnin uzunluğu {minimum sayı} ile {maksimum sayı} karakter arasında olmalıdır</target></trans-unit>
+			<target state="translated">Bu metnin uzunluğu {0,number} ile {1,number} karakter arasında olmalıdır</target></trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} character</source>
-          <target state="translated">Bu bölüm en az {0,number} karakter içermeli.parantez içine içermesini istiyorsanız onu yazınız</target>
+          <target state="translated">Bu bölüm en az {0,number} karakter içermeli.</target>
         </trans-unit>
         <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} characters</source>
-          <target state="translated">Bu bölüm en az {0,number} karakter içermeli.parantez içine içermesini istiyorsanız onu yazınız</target>
+          <target state="translated">Bu bölüm en az {0,number} karakter içermeli.</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} character</source>
-          <target state="translated">Bu metin {0,number} karakter sınırını geçemez. Parantez içine geçemeyeceği değeri giriniz</target>
+          <target state="translated">Bu metin {0,number} karakter sınırını geçemez.</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} characters</source>
-          <target state="translated">Bu metin {0,number} karakter sınırını geçemez. Parantez içine geçemeyeceği değeri giriniz</target>
+          <target state="translated">Bu metin {0,number} karakter sınırını geçemez.</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->
@@ -162,26 +162,26 @@
 			<target state="translated">Verilen değer bir resim örneği değildir</target></trans-unit>
       <trans-unit id="1327947647" xml:space="preserve">
 				<source>The image type "{0}" is not allowed</source>
-			<target state="translated">"{0}" görüntü türüne izin verilmiyor</target></trans-unit>
+			<target state="translated">"{0}" resim türüne izin verilmiyor</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve">
 				<source>The uploaded file is no valid image</source>
-			<target state="translated">"{0}" Yüklediğiniz dosya geçerli bir resim dosyası değil</target></trans-unit>
+			<target state="translated">Yüklenen dosya geçerli bir resim değil</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve">
 				<source>The given value is not a Image instance</source>
 			<target state="translated">Verilen değer bir resim örneği değildir</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target state="translated">{0, sayı} 'in seçilen görüntü genişliği, izin verilen minimum {1, sayı} genişlikten daha düşük</target></trans-unit>
+			<target state="translated">{0,number} gerçek resim genişliği, izin verilen minimum genişlik olan {1,number} daha da düşük</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target state="translated">{0, sayı} 'in gerçek görüntü genişliği, izin verilen {1, sayı} maksimum genişliğinden daha yüksek</target></trans-unit>
+			<target state="translated">{0,number} gerçek görüntü genişliği, izin verilen maksimum genişlik olan {1,number} değerinden daha yüksek</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
-			<target state="translated">Gerçek görüntü yüksekliği {0, sayı}, izin verilen minimum {1, sayı} yüksekliğinden düşük</target></trans-unit>
+			<target state="translated">{0,number} gerçek resim yüksekliği, izin verilen minimum yükseklik olan {1,number} değerinden daha düşük</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target state="translated">Gerçek görüntü yüksekliği {0, sayı}, izin verilen maksimum yükseklik {1, sayı} 'dan yüksek</target></trans-unit>
+			<target state="translated">{0,number} gerçek resim yüksekliği, izin verilen maksimum yükseklik olan {1,number} değerinden daha yüksek</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
 			<target state="translated">Verilen {0, sayı} x {1, sayı} resim boyutu gerekli {2, sayı} minimum çözünürlüğü için çok düşüktür</target></trans-unit>
