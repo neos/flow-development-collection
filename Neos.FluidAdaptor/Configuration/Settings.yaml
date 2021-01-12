@@ -56,3 +56,9 @@ Neos:
           options:
             namespaces:
               f: 'Neos\FluidAdaptor\ViewHelpers'
+
+  # # Example default namespaces
+  # FluidAdaptor:
+  #   defaultNamespaces:
+  #     p: 'Company\Package\ViewHelpers
+  #     d: 'Acme\Demo\ViewHelpers'
