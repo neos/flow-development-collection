@@ -89,7 +89,7 @@ class PhpAnalyzer
                     return ltrim($value, '\\');
                 }
                 if ($type === T_STRING) {
-                    $namespaceParts[] = $value;
+                    $namespaceParts[] = ltrim($value, '\\');
                     continue;
                 }
                 if ($type !== T_NS_SEPARATOR && $type !== T_WHITESPACE) {

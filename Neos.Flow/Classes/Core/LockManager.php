@@ -135,7 +135,9 @@ class LockManager
             fclose($this->lockResource);
             unlink($this->lockPathAndFilename);
         }
-        @unlink($this->lockFlagPathAndFilename);
+        if (file_exists($this->lockFlagPathAndFilename)) {
+            @unlink($this->lockFlagPathAndFilename);
+        }
     }
 
     /**
