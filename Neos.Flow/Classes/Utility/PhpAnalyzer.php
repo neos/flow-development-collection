@@ -82,8 +82,8 @@ class PhpAnalyzer
                     break;
                 }
                 list($type, $value) = $token;
-                if ($type === T_STRING) {
-                    $namespaceParts[] = $value;
+                if ($type === T_STRING || $type === T_NAME_FULLY_QUALIFIED || $type === T_NAME_QUALIFIED) {
+                    $namespaceParts[] = ltrim($value, '\\');
                     continue;
                 }
                 if ($type !== T_NS_SEPARATOR && $type !== T_WHITESPACE) {
