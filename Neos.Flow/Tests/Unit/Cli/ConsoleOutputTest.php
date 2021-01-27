@@ -343,7 +343,7 @@ class ConsoleOutputTest extends UnitTestCase
     {
         $stream = fopen('php://memory', 'r+', false);
 
-        fwrite($stream, implode(PHP_EOL, $inputs));
+        fwrite($stream, implode(PHP_EOL, $inputs) . PHP_EOL);
         rewind($stream);
 
         return $stream;
