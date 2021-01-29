@@ -54,10 +54,10 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
     protected $namespaces = [];
 
     /**
-     * @Flow\InjectConfiguration(path="defaultNamespaces")
+     * @Flow\InjectConfiguration(path="namespaces")
      * @var array
      */
-    protected $defaultNamespacesFromConfiguration;
+    protected $namespacesFromConfiguration;
 
     /**
      * ViewHelperResolver constructor.
@@ -85,7 +85,7 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
             }
         }
 
-        foreach ($this->defaultNamespacesFromConfiguration as $identifier => $namespace) {
+        foreach ($this->namespacesFromConfiguration as $identifier => $namespace) {
             $this->addNamespace($identifier, $namespace);
         }
     }
