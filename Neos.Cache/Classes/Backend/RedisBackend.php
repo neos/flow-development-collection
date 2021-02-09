@@ -180,11 +180,12 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 
             $transactionResult = $this->redis->exec();
             if ($transactionResult === false) {
+                $this->redis->discard();
+
                 if ($retryAttempt >= $maxRetryAttempts) {
                     throw new CacheException(sprintf('Cannot add or modify cache entry because the affected keys are being modified by another process ("%s")', $this->cacheIdentifier), 1594725688);
                 }
 
-                $this->redis->discard();
                 usleep((int)($retryWaitInterval * 1E6));
                 $retryAttempt++;
                 $retryWaitInterval *= 2;

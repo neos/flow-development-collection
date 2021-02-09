@@ -83,6 +83,11 @@ class RedisBackendTest extends BaseTestCase
             ->with('Foo_Cache:tag:some_tag')
             ->will($this->returnValue(['entry_1', 'entry_2']));
 
+        $this->redis->expects(self::exactly(2))
+            ->method('exists')
+            ->withConsecutive(['Foo_Cache:entry:entry_1'], ['Foo_Cache:entry:entry_2'])
+            ->willReturn(true);
+
         $this->assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
     }
 
