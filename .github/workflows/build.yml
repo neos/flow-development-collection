@@ -59,7 +59,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
-        extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql
+        extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, redis, memcached
         coverage: xdebug #optional
         ini-values: opcache.fast_shutdown=0
 
@@ -97,7 +97,6 @@ jobs:
       run: |
         rm -f Configuration/Routes.yaml
         cp Configuration/Settings.yaml.example Configuration/Settings.yaml
-        mysql --host 127.0.0.1 -uroot -pneos -e 'CREATE DATABASE IF NOT EXISTS flow_functional_testing;'
         cat <<EOF >> Configuration/Settings.yaml
         Neos:
           Flow:
@@ -109,7 +108,6 @@ jobs:
                 password: 'neos'
                 dbname: 'flow_functional_testing'
         EOF
-        cat Configuration/Settings.yaml
         cp Configuration/Settings.yaml Configuration/Testing/
 
     - name: Static analysis
