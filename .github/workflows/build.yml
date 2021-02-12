@@ -9,29 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
-    services:
-      mariadb:
-        image: mariadb:10.2
-        env:
-          MYSQL_USER: neos
-          MYSQL_PASSWORD: neos
-          MYSQL_DATABASE: flow_functional_testing
-          MYSQL_ROOT_PASSWORD: neos
-        ports:
-          - "3306:3306"
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
-    env:
-      FLOW_TARGET_VERSION: ${{ github.base_ref }}
-      FLOW_TARGET_REPOSITORY: ${{ github.repository }}
-      FLOW_CONTEXT: Testing
-      FLOW_DIST_FOLDER: flow-development-distribution
-      FLOW_FOLDER: flow-development-collection
-
-    defaults:
-      run:
-        working-directory: ${{ env.FLOW_DIST_FOLDER }}
+    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis == 'psalm' && 'psalm' || '' }} (deps: ${{ matrix.dependencies }})"
 
     continue-on-error: ${{ matrix.experimental }}
 
@@ -57,7 +35,29 @@ jobs:
           #  composer-arguments: '--prefer-lowest'
           #  static-analysis: 'no'
 
-    name: "PHP ${{ matrix.php-versions }} Test (deps: ${{ matrix.dependencies }} static: ${{ matrix.static-analysis }} ${{ matrix.composer-arguments }})"
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.2
+        env:
+          MYSQL_USER: neos
+          MYSQL_PASSWORD: neos
+          MYSQL_DATABASE: flow_functional_testing
+          MYSQL_ROOT_PASSWORD: neos
+        ports:
+          - "3306:3306"
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    env:
+      FLOW_TARGET_VERSION: ${{ github.base_ref }}
+      FLOW_TARGET_REPOSITORY: ${{ github.repository }}
+      FLOW_CONTEXT: Testing
+      FLOW_DIST_FOLDER: flow-development-distribution
+      FLOW_FOLDER: flow-development-collection
+
+    defaults:
+      run:
+        working-directory: ${{ env.FLOW_DIST_FOLDER }}
 
     steps:
     - name: Checkout
