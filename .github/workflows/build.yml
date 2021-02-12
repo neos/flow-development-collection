@@ -33,22 +33,30 @@ jobs:
       run:
         working-directory: ${{ env.FLOW_DIST_FOLDER }}
 
+    continue-on-error: ${{ matrix.experimental }}
+
     strategy:
       fail-fast: false
       matrix:
         php-versions: ['7.3', '7.4']
+        dependencies: ['highest']
         composer-arguments: [''] # to run --prefer-lowest in a single included strategy
         static-analysis: ['no']
+        experimental: [false]
         include:
           - php-versions: '7.3'
             composer-arguments: ''
             static-analysis: 'psalm'
+
+          - php-versions: '8.0'
+            composer-arguments: '--ignore-platform-reqs'
+            experimental: true
           # Build for minimum dependencies. Fails right now, hence deactivated.
           #- php-versions: '7.3'
           #  composer-arguments: '--prefer-lowest'
           #  static-analysis: 'no'
 
-    name: "PHP ${{ matrix.php-versions }} Test (static: ${{ matrix.static-analysis }} ${{ matrix.composer-arguments }})"
+    name: "PHP ${{ matrix.php-versions }} Test (deps: ${{ matrix.dependencies }} static: ${{ matrix.static-analysis }} ${{ matrix.composer-arguments }})"
 
     steps:
     - name: Checkout
@@ -85,14 +93,13 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ${{ env.FLOW_DIST_FOLDER }}
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+        key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
+        restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
 
     - name: Install dependencies
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: |
-        composer update --no-progress --no-interaction ${{ matrix.composer-arguments }}
+        composer ${{ matrix.dependencies == 'locked' && 'install' || 'update' }} --no-progress --no-interaction ${{ matrix.dependencies == 'lowest' && '--prefer-lowest' }} ${{ matrix.composer-arguments }}
 
     - name: Setup Flow configuration
       run: |
