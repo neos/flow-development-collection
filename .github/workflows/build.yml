@@ -97,7 +97,7 @@ jobs:
       run: |
         rm -f Configuration/Routes.yaml
         cp Configuration/Settings.yaml.example Configuration/Settings.yaml
-        cat <<EOF > Configuration/Settings.yaml
+        cat <<EOF >> Configuration/Settings.yaml
         Neos:
           Flow:
             persistence:
@@ -108,6 +108,7 @@ jobs:
                 password: 'neos'
                 dbname: 'flow_functional_testing'
         EOF
+        cat Configuration/Settings.yaml
         cp Configuration/Settings.yaml Configuration/Testing/
 
     - name: Static analysis
