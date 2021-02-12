@@ -97,6 +97,7 @@ jobs:
       run: |
         rm -f Configuration/Routes.yaml
         cp Configuration/Settings.yaml.example Configuration/Settings.yaml
+        mysql -e 'CREATE DATABASE IF NOT EXISTS flow_functional_testing;'
         cat <<EOF >> Configuration/Settings.yaml
         Neos:
           Flow:
