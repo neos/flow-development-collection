@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis == 'psalm' && 'psalm' || '' }} (deps: ${{ matrix.dependencies }})"
+    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} (deps: ${{ matrix.dependencies }})"
 
     continue-on-error: ${{ matrix.experimental }}
 
@@ -17,23 +17,28 @@ jobs:
       fail-fast: false
       matrix:
         php-versions: ['7.3', '7.4']
-        dependencies: ['highest']
-        composer-arguments: [''] # to run --prefer-lowest in a single included strategy
+        dependencies: ['latest']
+        composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
         experimental: [false]
         include:
           - php-versions: '7.3'
             static-analysis: 'psalm'
             experimental: false
+            dependencies: 'latest'
 
-          - php-versions: '8.0'
-            composer-arguments: '--ignore-platform-reqs'
-            static-analysis: 'no'
-            experimental: true
+          # Experimental build for PHP 8
+          #- php-versions: '8.0'
+          #  composer-arguments: '--ignore-platform-reqs'
+          #  static-analysis: 'no'
+          #  experimental: true
+          #  dependencies: 'latest'
+
           # Build for minimum dependencies. Fails right now, hence deactivated.
           #- php-versions: '7.3'
-          #  composer-arguments: '--prefer-lowest'
           #  static-analysis: 'no'
+          #  experimental: false
+          #  dependencies: 'lowest'
 
     runs-on: ubuntu-latest
     services:
