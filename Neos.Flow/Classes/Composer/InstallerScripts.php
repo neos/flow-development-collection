@@ -69,7 +69,7 @@ class InstallerScripts
     {
         $operation = $event->getOperation();
         if (!$operation instanceof InstallOperation && !$operation instanceof UpdateOperation) {
-            throw new Exception\UnexpectedOperationException('Handling of operation with type "' . $operation->getJobType() . '" not supported', 1348750840);
+            throw new Exception\UnexpectedOperationException('Handling of operation of type "' . get_class($operation) . '" not supported', 1348750840);
         }
         $package = ($operation instanceof InstallOperation) ? $operation->getPackage() : $operation->getTargetPackage();
         $packageExtraConfig = $package->getExtra();

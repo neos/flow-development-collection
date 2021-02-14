@@ -18,7 +18,6 @@ use Neos\Flow\Property\Exception\DuplicateObjectException;
 use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use Neos\Flow\Property\Exception\InvalidSourceException;
 use Neos\Flow\Property\Exception\InvalidTargetException;
-use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Utility\ObjectAccess;
@@ -162,6 +161,7 @@ class PersistentObjectConverter extends ObjectConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
+        /** @psalm-var class-string $targetType */
         if (is_array($source)) {
             if ($this->reflectionService->isClassAnnotatedWith($targetType, ValueObject::class)) {
                 if (isset($source['__identity']) && (count($source) > 1)) {
@@ -225,8 +225,9 @@ class PersistentObjectConverter extends ObjectConverter
      *
      * @param array $source
      * @param string $targetType
+     * @psalm-param class-string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object|TargetNotFoundError
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -281,9 +282,9 @@ class PersistentObjectConverter extends ObjectConverter
      *
      * @param mixed $identity
      * @param string $targetType
+     * @psalm-param class-string $targetType
      * @return object
-     * @throws TargetNotFoundException
-     * @throws InvalidSourceException
+     * @throws InvalidSourceException|DuplicateObjectException
      */
     protected function fetchObjectFromPersistence($identity, $targetType)
     {

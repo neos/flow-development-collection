@@ -60,9 +60,9 @@ class DatetimeFormatterTest extends UnitTestCase
     public function formatMethodsAreChoosenCorrectly()
     {
         $formatter = $this->getAccessibleMock(I18n\Formatter\DatetimeFormatter::class, ['formatDate', 'formatTime', 'formatDateTime']);
-        $formatter->expects(self::at(0))->method('formatDateTime')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->will(self::returnValue('bar1'));
-        $formatter->expects(self::at(1))->method('formatDate')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->will(self::returnValue('bar2'));
-        $formatter->expects(self::at(2))->method('formatTime')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL)->will(self::returnValue('bar3'));
+        $formatter->expects(self::once())->method('formatDateTime')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->willReturn('bar1');
+        $formatter->expects(self::once())->method('formatDate')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->willReturn('bar2');
+        $formatter->expects(self::once())->method('formatTime')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL)->willReturn('bar3');
 
         $result = $formatter->format($this->sampleDateTime, $this->sampleLocale);
         self::assertEquals('bar1', $result);

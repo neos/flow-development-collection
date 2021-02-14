@@ -95,7 +95,7 @@ class StringConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      * @api
@@ -127,7 +127,7 @@ class StringConverter extends AbstractTypeConverter
      *
      * If no format is specified in the mapping configuration DEFAULT_DATE_FORMAT is used.
      *
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -140,7 +140,7 @@ class StringConverter extends AbstractTypeConverter
         $dateFormat = $configuration->getConfigurationValue(StringConverter::class, self::CONFIGURATION_DATE_FORMAT);
         if ($dateFormat === null) {
             return self::DEFAULT_DATE_FORMAT;
-        } elseif ($dateFormat !== null && !is_string($dateFormat)) {
+        } elseif (!is_string($dateFormat)) {
             throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_DATE_FORMAT must be of type string, "' . (is_object($dateFormat) ? get_class($dateFormat) : gettype($dateFormat)) . '" given', 1404229004);
         }
 
@@ -152,7 +152,7 @@ class StringConverter extends AbstractTypeConverter
      *
      * If no delimiter is specified in the mapping configuration DEFAULT_CSV_DELIMITER is used.
      *
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -177,7 +177,7 @@ class StringConverter extends AbstractTypeConverter
      *
      * If no format is specified in the mapping configuration DEFAULT_ARRAY_FORMAT is used.
      *
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */

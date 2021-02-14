@@ -74,8 +74,8 @@ class LockManagerTest extends UnitTestCase
 
         $this->lockManager->__construct();
 
-        self::assertFileNotExists($this->mockLockFile->url());
-        self::assertFileNotExists($this->mockLockFlagFile->url());
+        self::assertFileDoesNotExist($this->mockLockFile->url());
+        self::assertFileDoesNotExist($this->mockLockFlagFile->url());
     }
 
     /**
@@ -177,6 +177,6 @@ class LockManagerTest extends UnitTestCase
     public function unlockSiteRemovesLockFlagFile()
     {
         $this->lockManager->unlockSite();
-        self::assertFileNotExists($this->mockLockFlagFile->url());
+        self::assertFileDoesNotExist($this->mockLockFlagFile->url());
     }
 }

@@ -249,13 +249,9 @@ class file in *Packages/Application/Acme.Demo/Classes/Acme/Demo/Controller/* you
 method *indexAction()* which is responsible for the output you've just seen in your web
 browser::
 
-    /**
-     * @return void
-     */
-    public function indexAction() {
-        $this->view->assign('foos', array(
-            'bar', 'baz'
-        ));
+    public function indexAction(): void
+    {
+        $this->view->assign('foos', ['bar', 'baz']);
     }
 
 Accepting some kind of user input is essential for most applications and Flow does a
@@ -265,10 +261,10 @@ action method like this one::
     /**
      * This action outputs a custom greeting
      *
-     * @param string $name your name
      * @return string custom greeting
      */
-    public function helloAction($name) {
+    public function helloAction(string $name): string
+    {
         return 'Hello ' . $name . '!';
     }
 
@@ -426,7 +422,8 @@ can you imagine what they do? ::
     use Acme\Demo\Domain\Model\CoffeeBean;
     use Acme\Demo\Domain\Repository\CoffeeBeanRepository;
 
-    class CoffeeBeanController extends ActionController {
+    class CoffeeBeanController extends ActionController
+    {
 
         /**
          * @Flow\Inject
@@ -434,42 +431,29 @@ can you imagine what they do? ::
          */
         protected $coffeeBeanRepository;
 
-        /**
-         * @return void
-         */
-        public function indexAction() {
+        public function indexAction(): void
+        {
             $this->view->assign('coffeeBeans', $this->coffeeBeanRepository->findAll());
         }
 
-        /**
-         * @param CoffeeBean $coffeeBean
-         * @return void
-         */
-        public function showAction(CoffeeBean $coffeeBean) {
+        public function showAction(CoffeeBean $coffeeBean): void
+        {
             $this->view->assign('coffeeBean', $coffeeBean);
         }
 
-        /**
-         * @return void
-         */
-        public function newAction() {
+        public function newAction(): void
+        {
         }
 
-        /**
-         * @param CoffeeBean $newCoffeeBean
-         * @return void
-         */
-        public function createAction(CoffeeBean $newCoffeeBean) {
+        public function createAction(CoffeeBean $newCoffeeBean): void
+        {
             $this->coffeeBeanRepository->add($newCoffeeBean);
             $this->addFlashMessage('Created a new coffee bean.');
             $this->redirect('index');
         }
 
-        /**
-         * @param CoffeeBean $coffeeBean
-         * @return void
-         */
-        public function editAction(CoffeeBean $coffeeBean) {
+        public function editAction(CoffeeBean $coffeeBean): void
+        {
             $this->view->assign('coffeeBean', $coffeeBean);
         }
 
@@ -483,11 +467,8 @@ can you imagine what they do? ::
             $this->redirect('index');
         }
 
-        /**
-         * @param CoffeeBean $coffeeBean
-         * @return void
-         */
-        public function deleteAction(CoffeeBean $coffeeBean) {
+        public function deleteAction(CoffeeBean $coffeeBean): void
+        {
             $this->coffeeBeanRepository->remove($coffeeBean);
             $this->addFlashMessage('Deleted a coffee bean.');
             $this->redirect('index');
@@ -523,7 +504,8 @@ stating that only a single instance may exist at a time::
     /**
      * @Flow\Scope("singleton")
      */
-    class CoffeeBeanRepository extends Repository {
+    class CoffeeBeanRepository extends Repository
+    {
 
 Because PHP doesn't support the concept of annotations natively, we are using doc
 comments which are parsed by an annotation parser in Flow.
@@ -581,11 +563,8 @@ showAction
 
 The ``showAction`` displays a single coffee bean::
 
-    /**
-     * @param CoffeeBean $coffeeBean The coffee bean to show
-     * @return void
-     */
-    public function showAction(CoffeeBean $coffeeBean) {
+    public function showAction(CoffeeBean $coffeeBean): void
+    {
         $this->view->assign('coffeeBean', $coffeeBean);
     }
 
@@ -637,7 +616,7 @@ parameters of the incoming HTTP request and convert identifiers into real object
 again. By its UUID the coffee bean is retrieved from the ``CoffeeBeanRepository`` and
 eventually passed to the action method::
 
-    public function showAction(CoffeeBean $coffeeBean) {
+    public function showAction(CoffeeBean $coffeeBean): void
 
 newAction
 ~~~~~~~~~
@@ -651,11 +630,8 @@ createAction
 The ``createAction`` is called when a form displayed by the ``newAction`` is submitted.
 Like the ``showAction`` it expects a ``CoffeeBean`` as its argument::
 
-    /**
-     * @param \Acme\Demo\Domain\Model\CoffeeBean $newCoffeeBean
-     * @return void
-     */
-    public function createAction(CoffeeBean $newCoffeeBean) {
+    public function createAction(CoffeeBean $newCoffeeBean): void
+    {
         $this->coffeeBeanRepository->add($newCoffeeBean);
         $this->addFlashMessage('Created a new coffee bean.');
         $this->redirect('index');
@@ -698,11 +674,8 @@ updateAction
 The ``updateAction`` receives the modified coffee bean through its ``$coffeeBean``
 argument::
 
-    /**
-     * @param \Acme\Demo\Domain\Model\CoffeeBean $coffeeBean
-     * @return void
-     */
-    public function updateAction(CoffeeBean $coffeeBean) {
+    public function updateAction(CoffeeBean $coffeeBean): void
+    {
         $this->coffeeBeanRepository->update($coffeeBean);
         $this->addFlashMessage('Updated the coffee bean.');
         $this->redirect('index');

@@ -10,6 +10,7 @@ properties:
         type: dictionary
         additionalProperties: false
         properties:
+          'label': {type: string}
           'matcher':
             type: string
             required: true
@@ -29,6 +30,8 @@ properties:
       additionalProperties: false
       properties:
         'abstract': {type: boolean}
+        'label': {type: string}
+        'description': {type: string}
         'parentRoles':
           type: array
           items: {type: string}

@@ -136,7 +136,7 @@ class RoutingCommandController extends CommandController
      * @param string $format Requested Format name default is 'html'
      * @return void
      * @throws StopCommandException | InvalidRoutePartValueException
-     * @deprecated @see resolveCommand()
+     * @deprecated since 7.0 @see resolveCommand(). Will probably be removed with 8.0
      * @internal
      */
     public function getPathCommand(string $package, string $controller = 'Standard', string $action = 'index', string $format = 'html'): void
@@ -245,7 +245,7 @@ class RoutingCommandController extends CommandController
      * @param string $path The route path to resolve
      * @param string $method The request method (GET, POST, PUT, DELETE, ...) to simulate
      * @throws InvalidRoutePartValueException | StopCommandException
-     * @deprecated @see matchCommand()
+     * @deprecated since 7.0 @see matchCommand(). Will probably be removed with 8.0
      * @internal
      */
     public function routePathCommand(string $path, string $method = 'GET'): void

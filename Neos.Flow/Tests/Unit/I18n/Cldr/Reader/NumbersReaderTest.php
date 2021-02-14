@@ -72,15 +72,9 @@ class NumbersReaderTest extends UnitTestCase
         $mockRepository->expects(self::once())->method('getModelForLocale')->with($this->sampleLocale)->willReturn($mockModel);
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects(self::at(0))->method('has')->with('parsedFormats')->willReturn(true);
-        $mockCache->expects(self::at(1))->method('has')->with('parsedFormatsIndices')->willReturn(true);
-        $mockCache->expects(self::at(2))->method('has')->with('localizedSymbols')->willReturn(true);
-        $mockCache->expects(self::at(3))->method('get')->with('parsedFormats')->willReturn([]);
-        $mockCache->expects(self::at(4))->method('get')->with('parsedFormatsIndices')->willReturn([]);
-        $mockCache->expects(self::at(5))->method('get')->with('localizedSymbols')->willReturn([]);
-        $mockCache->expects(self::at(6))->method('set')->with('parsedFormats');
-        $mockCache->expects(self::at(7))->method('set')->with('parsedFormatsIndices');
-        $mockCache->expects(self::at(8))->method('set')->with('localizedSymbols');
+        $mockCache->expects(self::atLeast(3))->method('has')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedSymbols'])->willReturn(true);
+        $mockCache->expects(self::atLeast(3))->method('get')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedSymbols'])->willReturn([]);
+        $mockCache->expects(self::atLeast(3))->method('set')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedSymbols']);
 
         $reader = $this->getAccessibleMock(I18n\Cldr\Reader\NumbersReader::class, ['parseFormat']);
         $reader->expects(self::once())->method('parseFormat')->with('mockFormatString')->willReturn(['mockParsedFormat']);
