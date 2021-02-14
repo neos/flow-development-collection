@@ -94,11 +94,19 @@ jobs:
         composer config repositories.flow '{ "type": "path", "url": "../${{ env.FLOW_FOLDER }}", "options": { "symlink": false } }'
         composer require --no-update ${{ github.repository }}:"dev-build as ${{ env.FLOW_BRANCH_ALIAS }}"
 
-    - name: Install dependencies
-      uses: ramsey/composer-install@v1
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
       with:
-        dependency-versions: ${{ matrix.dependencies }}
-        composer-options: ${{ matrix.composer-arguments }}
+        path: |
+          ~/.cache/composer
+          ${{ env.FLOW_DIST_FOLDER }}
+        key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
+        restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
+
+    - name: Install dependencies
+      run: |
+        composer ${{ matrix.dependencies == 'locked' && 'install' || 'update' }} --no-progress --no-interaction ${{ matrix.dependencies == 'lowest' && '--prefer-lowest' || '' }} ${{ matrix.composer-arguments }}
 
     - name: Setup Flow configuration
       run: |
