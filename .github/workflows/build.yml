@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         php-versions: ['7.3', '7.4']
-        dependencies: ['latest']
+        dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
         experimental: [false]
@@ -25,14 +25,14 @@ jobs:
           - php-versions: '7.3'
             static-analysis: 'psalm'
             experimental: false
-            dependencies: 'latest'
+            dependencies: 'highest'
 
           # Experimental build for PHP 8
           #- php-versions: '8.0'
           #  composer-arguments: '--ignore-platform-reqs'
           #  static-analysis: 'no'
           #  experimental: true
-          #  dependencies: 'latest'
+          #  dependencies: 'highest'
 
           # Build for minimum dependencies. Fails right now, hence deactivated.
           #- php-versions: '7.3'
@@ -94,18 +94,11 @@ jobs:
         composer config repositories.flow '{ "type": "path", "url": "../${{ env.FLOW_FOLDER }}", "options": { "symlink": false } }'
         composer require --no-update ${{ github.repository }}:"dev-build as ${{ env.FLOW_BRANCH_ALIAS }}"
 
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v2
-      with:
-        path: ${{ env.FLOW_DIST_FOLDER }}
-        key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
-        restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
-
     - name: Install dependencies
-      if: steps.composer-cache.outputs.cache-hit != 'true'
-      run: |
-        composer ${{ matrix.dependencies == 'locked' && 'install' || 'update' }} --no-progress --no-interaction ${{ matrix.dependencies == 'lowest' && '--prefer-lowest' || '' }} ${{ matrix.composer-arguments }}
+      uses: ramsey/composer-install@v1
+      with:
+        dependency-versions: ${{ matrix.dependencies }}
+        composer-options: ${{ matrix.composer-arguments }}
 
     - name: Setup Flow configuration
       run: |
