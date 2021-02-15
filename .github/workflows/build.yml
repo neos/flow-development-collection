@@ -61,6 +61,16 @@ jobs:
         ports:
           - "5432:5432"
         options:  --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
+      redis:
+        image: redis:latest
+        ports:
+          - "6379:6379"
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+      memcached:
+        image: memcached:latest
+        ports:
+          - "11211:11211/udp"
+        options: --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'" --health-interval 10s --health-timeout 5s --health-retries 5
 
     env:
       FLOW_TARGET_VERSION: ${{ github.base_ref }}
@@ -83,9 +93,9 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
-        extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached
+        extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, apcu
         coverage: xdebug #optional
-        ini-values: opcache.fast_shutdown=0
+        ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
 
     - name: Checkout development distribution
       uses: actions/checkout@v2
