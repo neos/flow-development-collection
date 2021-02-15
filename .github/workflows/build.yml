@@ -167,6 +167,9 @@ jobs:
                 user: 'neos'
                 password: 'neos'
                 dbname: 'flow_functional_testing'
+                charset: 'utf8'
+                defaultTableOptions:
+                  charset: 'utf8'
         EOF
         cp Configuration/Settings.yaml Configuration/Testing/
 
