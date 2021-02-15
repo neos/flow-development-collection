@@ -150,11 +150,11 @@ jobs:
 
     - name: Run unit tests
       if: matrix.static-analysis == 'no'
-      run: composer test-unit
+      run: composer test-unit -- --verbose
 
     - name: Run functional tests
       if: matrix.static-analysis == 'no'
-      run: composer test-func
+      run: composer test-func -- --verbose
 
     - name: Run behat tests
       if: matrix.static-analysis == 'no'
@@ -185,11 +185,11 @@ jobs:
 
     - name: Run unit tests (PGSQL)
       if: matrix.static-analysis == 'no'
-      run: composer test-unit
+      run: composer test-unit -- --verbose
 
     - name: Run functional tests (PGSQL)
       if: matrix.static-analysis == 'no'
-      run: composer test-func
+      run: composer test-func -- --verbose
 
     - name: Run behat tests (PGSQL)
       if: matrix.static-analysis == 'no'
