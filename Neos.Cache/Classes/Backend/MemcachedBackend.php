@@ -121,10 +121,10 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
             if (strpos($server, 'tcp://') === 0) {
                 $port = $defaultPort;
                 $server = substr($server, 6);
+            }
 
-                if (strpos($server, ':') !== false) {
-                    list($host, $port) = explode(':', $server, 2);
-                }
+            if (strpos($server, ':') !== false) {
+                [$host, $port] = explode(':', $server, 2);
             }
 
             $this->memcache->addServer($host, $port);
