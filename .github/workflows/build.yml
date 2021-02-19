@@ -35,10 +35,10 @@ jobs:
           #  dependencies: 'highest'
 
           # Build for minimum dependencies. Fails right now, hence deactivated.
-          #- php-versions: '7.3'
+          - php-versions: '7.1'
           #  static-analysis: 'no'
-          #  experimental: false
-          #  dependencies: 'lowest'
+            experimental: false
+            dependencies: 'lowest'
 
     runs-on: ubuntu-latest
     services:
