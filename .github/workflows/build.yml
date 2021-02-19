@@ -145,6 +145,9 @@ jobs:
         ./flow configuration:show
         ./flow routing:list
 
+    - name: Set Flow Context
+      run: echo "FLOW_CONTEXT=${{ env.FLOW_CONTEXT }}" >> $GITHUB_ENV
+
     - name: Static analysis
       if: matrix.static-analysis == 'psalm'
       run: composer test-static
