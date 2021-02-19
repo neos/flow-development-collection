@@ -119,7 +119,7 @@ jobs:
       with:
         path: |
           ~/.cache/composer
-          ${{ env.FLOW_DIST_FOLDER }}
+          ${{ env.FLOW_DIST_FOLDER }}/Packages
         key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
         restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
 
