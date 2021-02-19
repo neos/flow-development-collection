@@ -19,7 +19,7 @@ jobs:
         php-versions: ['7.1', '7.2', '7.3', '7.4']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
-        #static-analysis: ['no']
+        static-analysis: ['no']
         experimental: [false]
         include:
           #- php-versions: '7.3'
@@ -36,7 +36,7 @@ jobs:
 
           # Build for minimum dependencies. Fails right now, hence deactivated.
           - php-versions: '7.1'
-          #  static-analysis: 'no'
+            static-analysis: 'no'
             experimental: false
             dependencies: 'lowest'
 
@@ -147,9 +147,6 @@ jobs:
               routes:
                 'Neos.Flow': TRUE
         EOF
-        echo "Running in context '$FLOW_CONTEXT'"
-        ./flow configuration:show
-        ./flow routing:list
 
     #- name: Static analysis
     #  if: matrix.static-analysis == 'psalm'
