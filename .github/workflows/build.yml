@@ -133,7 +133,6 @@ jobs:
     - name: Setup Flow configuration
       run: |
         rm -f Configuration/Routes.yaml
-        cp Configuration/Settings.yaml.example Configuration/Testing/Settings.yaml
         cat <<EOF >> Configuration/Testing/Settings.yaml
         Neos:
           Flow:
@@ -144,6 +143,9 @@ jobs:
                 user: 'neos'
                 password: 'neos'
                 dbname: 'flow_functional_testing'
+            mvc:
+              routes:
+                'Neos.Flow': TRUE
         EOF
         echo "Running in context '$FLOW_CONTEXT'"
         ./flow configuration:show
