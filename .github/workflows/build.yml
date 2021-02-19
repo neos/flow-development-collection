@@ -172,8 +172,8 @@ jobs:
 
     - name: Setup Flow configuration (PGSQL)
       run: |
-        cp Configuration/Settings.yaml.example Configuration/Settings.yaml
-        cat <<EOF >> Configuration/Settings.yaml
+        rm -f Configuration/Testing/Settings.yaml
+        cat <<EOF >> Configuration/Testing/Settings.yaml
         Neos:
           Flow:
             persistence:
@@ -187,8 +187,10 @@ jobs:
                 charset: 'utf8'
                 defaultTableOptions:
                   charset: 'utf8'
+            mvc:
+              routes:
+                'Neos.Flow': TRUE
         EOF
-        cp Configuration/Settings.yaml Configuration/Testing/
 
     - name: Run unit tests (PGSQL)
       if: matrix.static-analysis == 'no'
