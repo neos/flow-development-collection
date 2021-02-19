@@ -93,6 +93,9 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
             throw new Exception('The PHP extension "memcache" or "memcached" must be installed and loaded in order to use the Memcache backend.', 1213987706);
         }
         parent::__construct($environmentConfiguration, $options);
+        if (!count($this->servers)) {
+            throw new Exception('No servers were given to Memcache', 1213115903);
+        }
     }
 
     /**
