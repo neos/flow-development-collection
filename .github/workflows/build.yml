@@ -145,6 +145,7 @@ jobs:
                 password: 'neos'
                 dbname: 'flow_functional_testing'
         EOF
+        echo "Running in context '$FLOW_CONTEXT'"
         ./flow configuration:show
         ./flow routing:list
 
