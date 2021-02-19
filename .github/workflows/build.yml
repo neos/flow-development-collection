@@ -53,7 +53,7 @@ jobs:
           - "3306:3306"
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       postgres:
-        image: postgres:9.5
+        image: postgres:9.5-alpine
         env:
           POSTGRES_USER: neos
           POSTGRES_PASSWORD: neos
@@ -62,12 +62,12 @@ jobs:
           - "5432:5432"
         options:  --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
       redis:
-        image: redis:latest
+        image: redis:alpine
         ports:
           - "6379:6379"
         options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
       memcached:
-        image: memcached:latest
+        image: memcached:alpine
         ports:
           - "11211:11211"
         options: --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'" --health-interval 10s --health-timeout 5s --health-retries 5
