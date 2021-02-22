@@ -73,7 +73,6 @@ jobs:
         # options: --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'" --health-interval 10s --health-timeout 5s --health-retries 5
 
     env:
-      FLOW_TARGET_VERSION: ${GITHUB_REF#refs/heads/}
       FLOW_TARGET_REPOSITORY: ${{ github.repository }}
       FLOW_CONTEXT: Testing
       FLOW_DIST_FOLDER: flow-development-distribution
@@ -84,6 +83,9 @@ jobs:
         working-directory: ${{ env.FLOW_DIST_FOLDER }}
 
     steps:
+    - name: Set Flow target branch name
+      run: echo "FLOW_TARGET_VERSION=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
     - name: Checkout
       uses: actions/checkout@v2
       with:
