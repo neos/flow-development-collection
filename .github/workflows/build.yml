@@ -85,6 +85,7 @@ jobs:
     steps:
     - name: Set Flow target branch name
       run: echo "FLOW_TARGET_VERSION=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+      working-directory: .
 
     - name: Checkout
       uses: actions/checkout@v2
