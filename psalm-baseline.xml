@@ -22,24 +22,11 @@
     </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/MemcachedBackend.php">
-    <UndefinedClass occurrences="2">
-      <code>\Memcached</code>
-      <code>\Memcached</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="12">
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>\Memcache|\Memcached</code>
-    </UndefinedDocblockClass>
+    <PossiblyInvalidArgument occurrences="3">
+      <code>$port</code>
+      <code>$value</code>
+      <code>$value</code>
+    </PossiblyInvalidArgument>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/PdoBackend.php">
     <PossiblyNullPropertyAssignmentValue occurrences="1">
@@ -47,45 +34,9 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/RedisBackend.php">
-    <UndefinedClass occurrences="3">
-      <code>\Redis</code>
-      <code>\Redis</code>
-      <code>\Redis</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="32">
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>\Redis</code>
-    </UndefinedDocblockClass>
+    <PossiblyUndefinedVariable occurrences="1">
+      <code>$connected</code>
+    </PossiblyUndefinedVariable>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Frontend/PhpFrontend.php">
     <ImplementedReturnTypeMismatch occurrences="1">

@@ -45,7 +45,7 @@ class ConsoleOutputTest extends UnitTestCase
         $this->input = new ArrayInput([]);
         $this->answerNothing();
 
-        $this->output = new StreamOutput(fopen('php://memory', 'w', false));
+        $this->output = new StreamOutput(fopen('php://memory', 'r+'));
 
         $this->consoleOutput = new ConsoleOutput();
         $this->consoleOutput->setOutput($this->output);
@@ -230,15 +230,7 @@ class ConsoleOutputTest extends UnitTestCase
             'n' => 'No',
             'y' => 'Yes'
         ];
-        $userAnswer = $this->consoleOutput->select('Is this a good test?', $choices, 'yes', true);
-
-        self::assertEquals(
-            'Is this a good test?' . PHP_EOL .
-            '  [n] No' . PHP_EOL .
-            '  [y] Yes' . PHP_EOL .
-            ' > y',
-            $this->getActualConsoleOutput()
-        );
+        $userAnswer = $this->consoleOutput->select('Is this a good test?', $choices, 'y', true);
 
         self::assertSame(['y'], $userAnswer, 'The answer is the key, NOT the value from the choices');
     }
@@ -248,21 +240,12 @@ class ConsoleOutputTest extends UnitTestCase
      */
     public function selectWithIntegerTypeChoiceKeys()
     {
-        $givenAnswer = 2;
-        $this->answerCustom($givenAnswer);
+        $this->answerCustom(2);
         $choices = [
             1 => 'No',
             2 => 'Yes'
         ];
         $userAnswer = $this->consoleOutput->select('Is this a good test?', $choices, 1, true);
-
-        self::assertEquals(
-            'Is this a good test?' . PHP_EOL .
-            '  [1] No' . PHP_EOL .
-            '  [2] Yes' . PHP_EOL .
-            ' > ' . $givenAnswer,
-            $this->getActualConsoleOutput()
-        );
 
         self::assertSame(['Yes'], $userAnswer, 'The answer is the value, NOT the key from the choices');
     }
@@ -323,8 +306,10 @@ class ConsoleOutputTest extends UnitTestCase
      */
     private function getActualConsoleOutput(bool $removeControlCharacters = true)
     {
-        rewind($this->output->getStream());
-        $streamContent = stream_get_contents($this->output->getStream());
+        $outputStream = $this->consoleOutput->getOutput()->getStream();
+        rewind($outputStream);
+        $streamContent = stream_get_contents($outputStream);
+
 
         // remove control characters for cursor manipulation
         if ($removeControlCharacters === true) {
@@ -341,9 +326,12 @@ class ConsoleOutputTest extends UnitTestCase
      */
     private static function createStream(array $inputs)
     {
-        $stream = fopen('php://memory', 'r+', false);
+        $stream = fopen('php://memory', 'r+');
 
-        fwrite($stream, implode(PHP_EOL, $inputs));
+        foreach ($inputs as $input) {
+            fwrite($stream, $input . PHP_EOL);
+        }
+
         rewind($stream);
 
         return $stream;
