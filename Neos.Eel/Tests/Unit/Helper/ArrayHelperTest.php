@@ -149,6 +149,30 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertEquals($expected, $result);
     }
 
+    public function valuesExamples(): array
+    {
+        return [
+            'empty array' => [[], []],
+            'numeric indices' => [[0 => 'a', 2 => 'b', 3 => 'c'], ['a', 'b', 'c']],
+            'string keys' => [['foo' => 'bar', 'bar' => 'baz'], ['bar', 'baz']],
+            'traversable' => [TestArrayIterator::fromArray(['foo' => 'bar', 'bar' => 'baz']), ['bar', 'baz']],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider valuesExamples
+     * @param array $array
+     * @param array $expected
+     */
+    public function valuesWorks($array, array $expected): void
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->values($array);
+
+        self::assertEquals($expected, $result);
+    }
+
     public function lengthExamples()
     {
         return [
