@@ -280,7 +280,7 @@ class PersistentObjectConverter extends ObjectConverter
      *
      * @param mixed $identity
      * @param string $targetType
-     * @return object
+     * @return object|null
      * @throws InvalidSourceException|DuplicateObjectException
      */
     protected function fetchObjectFromPersistence($identity, $targetType)
@@ -301,7 +301,7 @@ class PersistentObjectConverter extends ObjectConverter
      *
      * @param array $identityProperties Property names and values to search for
      * @param string $type The object type to look for
-     * @return object Either the object matching the identity or NULL if no object was found
+     * @return object|null Either the object matching the identity or NULL if no object was found
      * @throws DuplicateObjectException if more than one object was found
      */
     protected function findObjectByIdentityProperties(array $identityProperties, $type)

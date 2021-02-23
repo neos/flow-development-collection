@@ -28,7 +28,7 @@ class RequestHandlerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController()
+    public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController(): void
     {
         $foundRoute = false;
         foreach ($this->router->getRoutes() as $route) {
@@ -37,8 +37,7 @@ class RequestHandlerTest extends FunctionalTestCase
             }
         }
         if (!$foundRoute) {
-            $this->markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
-            return;
+            self::markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
         }
 
         $_SERVER = [
@@ -53,9 +52,21 @@ class RequestHandlerTest extends FunctionalTestCase
         ];
 
         /** @var MockObject|RequestHandler $requestHandler */
-        $requestHandler = $this->getAccessibleMock(RequestHandler::class, ['boot'], [self::$bootstrap]);
+        $requestHandler = $this->getAccessibleMock(RequestHandler::class, ['boot', 'sendResponse'], [self::$bootstrap]);
         $requestHandler->exit = static function () {
         };
+        // Custom sendResponse to avoid sending headers in test
+        $requestHandler->method('sendResponse')->willReturnCallback(function () use ($requestHandler) {
+            $response = $requestHandler->_get('componentContext')->getHttpResponse();
+
+            $body = $response->getBody()->detach() ?: $response->getBody()->getContents();
+            if (is_resource($body)) {
+                fpassthru($body);
+                fclose($body);
+            } else {
+                echo $body;
+            }
+        });
         $requestHandler->handleRequest();
 
         $this->expectOutputString('FooController responded');

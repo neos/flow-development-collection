@@ -250,7 +250,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @param mixed $identifier
      * @param string $objectType
      * @param boolean $useLazyLoading This option is ignored in this persistence manager
-     * @return object The object for the identifier if it is known, or NULL
+     * @return object|null The object for the identifier if it is known, or NULL
      * @api
      */
     public function getObjectByIdentifier($identifier, $objectType = null, $useLazyLoading = false)
