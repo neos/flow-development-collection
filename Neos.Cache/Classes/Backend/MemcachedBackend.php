@@ -115,7 +115,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
         }
 
         $this->memcache = extension_loaded('memcached') ? new \MemCached() : new \Memcache();
-        $defaultPort = ini_get('memcache.default_port') ?: 11211;
+        $defaultPort = (int)ini_get('memcache.default_port') ?: 11211;
 
         foreach ($this->servers as $server) {
             $host = $server;
@@ -266,8 +266,8 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     public function get(string $entryIdentifier)
     {
         $value = $this->memcache->get($this->identifierPrefix . $entryIdentifier);
-        if ($value !== false && substr($value, 0, 13) === 'Flow*chunked:') {
-            list(, $chunkCount) = explode(':', $value);
+        if (is_string($value) && strpos($value, 'Flow*chunked:') === 0) {
+            [, $chunkCount] = explode(':', $value);
             $value = '';
             for ($chunkNumber = 1; $chunkNumber < $chunkCount; $chunkNumber++) {
                 $value .= $this->memcache->get($this->identifierPrefix . $entryIdentifier . '_chunk_' . $chunkNumber);
