@@ -175,7 +175,7 @@ class Translator
      * @param Locale $locale Locale to use (NULL for default one)
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
-     * @return string Translated message or NULL on failure
+     * @return string|null Translated message or NULL on failure
      * @throws Exception\IndexOutOfBoundsException
      * @throws Exception\InvalidFormatPlaceholderException
      * @api
@@ -221,7 +221,7 @@ class Translator
      *
      * @param mixed $quantity
      * @param Locale $locale
-     * @return string
+     * @return string|null
      */
     protected function getPluralForm($quantity, Locale $locale)
     {
