@@ -29,7 +29,7 @@ class RequestHandlerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController()
+    public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController(): void
     {
         $foundRoute = false;
         foreach ($this->router->getRoutes() as $route) {
@@ -38,8 +38,7 @@ class RequestHandlerTest extends FunctionalTestCase
             }
         }
         if (!$foundRoute) {
-            $this->markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
-            return;
+            self::markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
         }
 
         $_SERVER = [
