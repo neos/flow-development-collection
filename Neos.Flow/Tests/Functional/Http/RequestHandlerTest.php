@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Functional\Http;
 use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Tests\FunctionalTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Functional tests for the HTTP Request Handler
@@ -56,9 +57,7 @@ class RequestHandlerTest extends FunctionalTestCase
         $requestHandler->exit = static function () {
         };
         // Custom sendResponse to avoid sending headers in test
-        $requestHandler->method('sendResponse')->willReturnCallback(function () use ($requestHandler) {
-            $response = $requestHandler->_get('componentContext')->getHttpResponse();
-
+        $requestHandler->method('sendResponse')->willReturnCallback(static function (ResponseInterface $response) {
             $body = $response->getBody()->detach() ?: $response->getBody()->getContents();
             if (is_resource($body)) {
                 fpassthru($body);
