@@ -2,9 +2,9 @@ name: build
 
 on:
   push:
-    branches: [ master, '[0-9]+.[0-9]' ]
+    branches: [ master, '[1-9][0-9].[0-9]' ]
   pull_request:
-    branches: [ master, '[0-9]+.[0-9]' ]
+    branches: [ master, '[1-9][0-9].[0-9]' ]
 
 jobs:
   build:
@@ -73,7 +73,6 @@ jobs:
         # options: --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'" --health-interval 10s --health-timeout 5s --health-retries 5
 
     env:
-      FLOW_TARGET_VERSION: ${{ github.base_ref }}
       FLOW_TARGET_REPOSITORY: ${{ github.repository }}
       FLOW_CONTEXT: Testing
       FLOW_DIST_FOLDER: flow-development-distribution
@@ -84,122 +83,129 @@ jobs:
         working-directory: ${{ env.FLOW_DIST_FOLDER }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        path: ${{ env.FLOW_FOLDER }}
+      - name: Set Flow target branch name
+        run: echo "FLOW_TARGET_VERSION=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        working-directory: .
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php-versions }}
-        extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, apcu
-        coverage: xdebug #optional
-        ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.FLOW_FOLDER }}
 
-    - name: Checkout development distribution
-      uses: actions/checkout@v2
-      with:
-        repository: neos/flow-development-distribution
-        ref: ${{ env.FLOW_TARGET_VERSION }}
-        path: ${{ env.FLOW_DIST_FOLDER }}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, apcu
+          coverage: xdebug #optional
+          ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
 
-    - name: Set alias branch name
-      run: if [ "${FLOW_TARGET_VERSION}" == "master" ]; then echo "FLOW_BRANCH_ALIAS=dev-master"; else echo "FLOW_BRANCH_ALIAS=${FLOW_TARGET_VERSION}.x-dev"; fi >> $GITHUB_ENV
+      - name: Checkout development distribution
+        uses: actions/checkout@v2
+        with:
+          repository: neos/flow-development-distribution
+          ref: ${{ env.FLOW_TARGET_VERSION }}
+          path: ${{ env.FLOW_DIST_FOLDER }}
 
-    - name: Update composer.json
-      run: |
-        git -C ../${{ env.FLOW_FOLDER }} checkout -b build
-        composer config repositories.flow '{ "type": "path", "url": "../${{ env.FLOW_FOLDER }}", "options": { "symlink": false } }'
-        composer require --no-update ${{ github.repository }}:"dev-build as ${{ env.FLOW_BRANCH_ALIAS }}"
+      - name: Set alias branch name
+        run: if [ "${FLOW_TARGET_VERSION}" == "master" ]; then echo "FLOW_BRANCH_ALIAS=dev-master"; else echo "FLOW_BRANCH_ALIAS=${FLOW_TARGET_VERSION}.x-dev"; fi >> $GITHUB_ENV
 
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.cache/composer
-          ${{ env.FLOW_DIST_FOLDER }}/Packages
-        key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
-        restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
+      - name: Update composer.json
+        run: |
+          git -C ../${{ env.FLOW_FOLDER }} checkout -b build
+          composer config repositories.flow '{ "type": "path", "url": "../${{ env.FLOW_FOLDER }}", "options": { "symlink": false } }'
+          composer require --no-update ${{ github.repository }}:"dev-build as ${{ env.FLOW_BRANCH_ALIAS }}"
 
-    - name: Install dependencies
-      run: |
-        composer ${{ matrix.dependencies == 'locked' && 'install' || 'update' }} --no-progress --no-interaction ${{ matrix.dependencies == 'lowest' && '--prefer-lowest' || '' }} ${{ matrix.composer-arguments }}
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/composer
+            ${{ env.FLOW_DIST_FOLDER }}
+          key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
+          restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
 
-    - name: Set Flow Context
-      run: echo "FLOW_CONTEXT=${{ env.FLOW_CONTEXT }}" >> $GITHUB_ENV
+      - name: Install dependencies
+        run: |
+          composer ${{ matrix.dependencies == 'locked' && 'install' || 'update' }} --no-progress --no-interaction ${{ matrix.dependencies == 'lowest' && '--prefer-lowest' || '' }} ${{ matrix.composer-arguments }}
 
-    - name: Setup Flow configuration
-      run: |
-        rm -f Configuration/Routes.yaml
-        cat <<EOF >> Configuration/Testing/Settings.yaml
-        Neos:
-          Flow:
-            persistence:
-              backendOptions:
-                host: '127.0.0.1'
-                driver: pdo_mysql
-                user: 'neos'
-                password: 'neos'
-                dbname: 'flow_functional_testing'
-            mvc:
-              routes:
-                'Neos.Flow': TRUE
-        EOF
+      - name: Set Flow Context
+        run: echo "FLOW_CONTEXT=${{ env.FLOW_CONTEXT }}" >> $GITHUB_ENV
 
-    #- name: Static analysis
-    #  if: matrix.static-analysis == 'psalm'
-    #  run: composer test-static
+      - name: Setup Flow configuration
+        run: |
+          rm -f Configuration/Routes.yaml
+          cat <<EOF >> Configuration/Testing/Settings.yaml
+          Neos:
+            Flow:
+              persistence:
+                backendOptions:
+                  host: '127.0.0.1'
+                  driver: pdo_mysql
+                  user: 'neos'
+                  password: 'neos'
+                  dbname: 'flow_functional_testing'
+              mvc:
+                routes:
+                  'Neos.Flow': TRUE
+          EOF
+          echo "Running in context '$FLOW_CONTEXT'"
+          ./flow configuration:show
+          ./flow routing:list
 
-    - name: Run unit tests
-      if: matrix.static-analysis == 'no'
-      run: composer test-unit -- --verbose
+      #- name: Static analysis
+      #  if: matrix.static-analysis == 'psalm'
+      #  run: composer test-static
 
-    - name: Run functional tests
-      if: matrix.static-analysis == 'no'
-      run: composer test-func -- --verbose
+      - name: Run unit tests
+        if: matrix.static-analysis == 'no'
+        run: composer test-unit -- --verbose
 
-    - name: Run behat tests
-      if: matrix.static-analysis == 'no'
-      #if: env.BEHAT == true
-      run: |
-        FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
-        bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
+      - name: Run functional tests
+        if: matrix.static-analysis == 'no'
+        run: composer test-func -- --verbose
 
-    - name: Setup Flow configuration (PGSQL)
-      run: |
-        rm -f Configuration/Testing/Settings.yaml
-        cat <<EOF >> Configuration/Testing/Settings.yaml
-        Neos:
-          Flow:
-            persistence:
-              backendOptions:
-                host: '127.0.0.1'
-                port: 5432
-                driver: pdo_pgsql
-                user: 'neos'
-                password: 'neos'
-                dbname: 'flow_functional_testing'
-                charset: 'utf8'
-                defaultTableOptions:
+      - name: Run behat tests
+        if: matrix.static-analysis == 'no'
+        #if: env.BEHAT == true
+        run: |
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
+          bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
+
+      - name: Setup Flow configuration (PGSQL)
+        run: |
+          rm -f Configuration/Testing/Settings.yaml
+          cat <<EOF >> Configuration/Testing/Settings.yaml
+          Neos:
+            Flow:
+              persistence:
+                backendOptions:
+                  host: '127.0.0.1'
+                  port: 5432
+                  driver: pdo_pgsql
+                  user: 'neos'
+                  password: 'neos'
+                  dbname: 'flow_functional_testing'
                   charset: 'utf8'
-            mvc:
-              routes:
-                'Neos.Flow': TRUE
-        EOF
+                  defaultTableOptions:
+                    charset: 'utf8'
+              mvc:
+                routes:
+                  'Neos.Flow': TRUE
+          EOF
 
-    - name: Run unit tests (PGSQL)
-      if: matrix.static-analysis == 'no'
-      run: composer test-unit -- --verbose
+      - name: Run unit tests (PGSQL)
+        if: matrix.static-analysis == 'no'
+        run: composer test-unit -- --verbose
 
-    - name: Run functional tests (PGSQL)
-      if: matrix.static-analysis == 'no'
-      run: composer test-func -- --verbose
+      - name: Run functional tests (PGSQL)
+        if: matrix.static-analysis == 'no'
+        run: composer test-func -- --verbose
 
-    - name: Run behat tests (PGSQL)
-      if: matrix.static-analysis == 'no'
-      #if: env.BEHAT == true
-      run: |
-        FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
-        bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
+      - name: Run behat tests (PGSQL)
+        if: matrix.static-analysis == 'no'
+        #if: env.BEHAT == true
+        run: |
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
+          bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
