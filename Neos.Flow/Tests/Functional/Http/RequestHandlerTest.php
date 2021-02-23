@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests\Functional\Http;
 use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Tests\FunctionalTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * Functional tests for the HTTP Request Handler
@@ -29,7 +28,7 @@ class RequestHandlerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController()
+    public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController(): void
     {
         $foundRoute = false;
         foreach ($this->router->getRoutes() as $route) {
@@ -38,8 +37,7 @@ class RequestHandlerTest extends FunctionalTestCase
             }
         }
         if (!$foundRoute) {
-            $this->markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
-            return;
+            self::markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
         }
 
         $_SERVER = [
@@ -58,7 +56,9 @@ class RequestHandlerTest extends FunctionalTestCase
         $requestHandler->exit = static function () {
         };
         // Custom sendResponse to avoid sending headers in test
-        $requestHandler->method('sendResponse')->willReturnCallback(static function (ResponseInterface $response) {
+        $requestHandler->method('sendResponse')->willReturnCallback(function () use ($requestHandler) {
+            $response = $requestHandler->_get('componentContext')->getHttpResponse();
+
             $body = $response->getBody()->detach() ?: $response->getBody()->getContents();
             if (is_resource($body)) {
                 fpassthru($body);
