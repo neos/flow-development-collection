@@ -8,7 +8,7 @@
     "php": "^7.2"
   },
   "require-dev": {
-    "mikey179/vfsstream": "~1.6",
+    "mikey179/vfsstream": "^1.6.1",
     "phpunit/phpunit": "~8.1"
   },
   "autoload": {

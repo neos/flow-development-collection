@@ -93,6 +93,9 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
             throw new Exception('The PHP extension "memcache" or "memcached" must be installed and loaded in order to use the Memcache backend.', 1213987706);
         }
         parent::__construct($environmentConfiguration, $options);
+        if (!count($this->servers)) {
+            throw new Exception('No servers were given to Memcache', 1213115903);
+        }
     }
 
     /**
@@ -121,10 +124,11 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
             if (strpos($server, 'tcp://') === 0) {
                 $port = $defaultPort;
                 $server = substr($server, 6);
+            }
 
-                if (strpos($server, ':') !== false) {
-                    list($host, $port) = explode(':', $server, 2);
-                }
+            if (strpos($server, ':') !== false) {
+                [$host, $portValue] = explode(':', $server, 2);
+                $port = (int)$portValue;
             }
 
             $this->memcache->addServer($host, $port);
