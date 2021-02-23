@@ -93,6 +93,9 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
             throw new Exception('The PHP extension "memcache" or "memcached" must be installed and loaded in order to use the Memcache backend.', 1213987706);
         }
         parent::__construct($environmentConfiguration, $options);
+        if (!count($this->servers)) {
+            throw new Exception('No servers were given to Memcache', 1213115903);
+        }
     }
 
     /**
@@ -112,7 +115,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
         }
 
         $this->memcache = extension_loaded('memcached') ? new \MemCached() : new \Memcache();
-        $defaultPort = ini_get('memcache.default_port') ?: 11211;
+        $defaultPort = (int)ini_get('memcache.default_port') ?: 11211;
 
         foreach ($this->servers as $server) {
             $host = $server;
@@ -121,10 +124,11 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
             if (strpos($server, 'tcp://') === 0) {
                 $port = $defaultPort;
                 $server = substr($server, 6);
+            }
 
-                if (strpos($server, ':') !== false) {
-                    list($host, $port) = explode(':', $server, 2);
-                }
+            if (strpos($server, ':') !== false) {
+                [$host, $portValue] = explode(':', $server, 2);
+                $port = (int)$portValue;
             }
 
             $this->memcache->addServer($host, $port);
@@ -262,8 +266,8 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     public function get(string $entryIdentifier)
     {
         $value = $this->memcache->get($this->identifierPrefix . $entryIdentifier);
-        if ($value !== false && substr($value, 0, 13) === 'Flow*chunked:') {
-            list(, $chunkCount) = explode(':', $value);
+        if (is_string($value) && strpos($value, 'Flow*chunked:') === 0) {
+            [, $chunkCount] = explode(':', $value);
             $value = '';
             for ($chunkNumber = 1; $chunkNumber < $chunkCount; $chunkNumber++) {
                 $value .= $this->memcache->get($this->identifierPrefix . $entryIdentifier . '_chunk_' . $chunkNumber);
