@@ -210,7 +210,7 @@ jobs:
           bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
 
   buildall:
-    if: ${{ always() }}
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
     runs-on: ubuntu-latest
     name: CI build (matrix)
     needs: build
