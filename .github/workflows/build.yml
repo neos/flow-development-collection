@@ -73,7 +73,6 @@ jobs:
         # options: --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'" --health-interval 10s --health-timeout 5s --health-retries 5
 
     env:
-      FLOW_TARGET_REPOSITORY: ${{ github.repository }}
       FLOW_CONTEXT: Testing
       FLOW_DIST_FOLDER: flow-development-distribution
       FLOW_FOLDER: flow-development-collection
@@ -84,7 +83,7 @@ jobs:
 
     steps:
       - name: Set Flow target branch name
-        run: echo "FLOW_TARGET_VERSION=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        run: echo "FLOW_TARGET_VERSION=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
         working-directory: .
 
       - name: Checkout
@@ -114,7 +113,7 @@ jobs:
         run: |
           git -C ../${{ env.FLOW_FOLDER }} checkout -b build
           composer config repositories.flow '{ "type": "path", "url": "../${{ env.FLOW_FOLDER }}", "options": { "symlink": false } }'
-          composer require --no-update ${{ github.repository }}:"dev-build as ${{ env.FLOW_BRANCH_ALIAS }}"
+          composer require --no-update neos/flow-development-collection:"dev-build as ${{ env.FLOW_BRANCH_ALIAS }}"
 
       - name: Cache Composer packages
         id: composer-cache
@@ -209,3 +208,13 @@ jobs:
         run: |
           FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
           bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
+
+  buildall:
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
+    runs-on: ubuntu-latest
+    name: CI build (matrix)
+    needs: build
+    steps:
+      - name: Check build matrix status
+        if: ${{ needs.build.result != 'success' }}
+        run: exit 1
