@@ -28,11 +28,11 @@ jobs:
             dependencies: 'highest'
 
           # Experimental build for PHP 8
-          #- php-versions: '8.0'
-          #  composer-arguments: '--ignore-platform-reqs'
-          #  static-analysis: 'no'
-          #  experimental: true
-          #  dependencies: 'highest'
+          - php-versions: '8.0'
+            #composer-arguments: '--ignore-platform-reqs'
+            static-analysis: 'no'
+            experimental: true
+            dependencies: 'highest'
 
           # Build for minimum dependencies. Fails right now, hence deactivated.
           #- php-versions: '7.3'
