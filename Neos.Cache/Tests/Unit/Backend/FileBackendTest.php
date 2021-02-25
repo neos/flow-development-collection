@@ -589,7 +589,7 @@ class FileBackendTest extends BaseTestCase
         $backend->setCache($mockCache);
 
         $entryIdentifier = 'SomePhpEntryWithPhpNotice';
-        $backend->set($entryIdentifier, '<?php $undefined ++; ?>');
+        $backend->set($entryIdentifier, '<?php trigger_error("Notice!", E_USER_NOTICE); ?>');
         $backend->requireOnce($entryIdentifier);
     }
 

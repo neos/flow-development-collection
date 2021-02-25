@@ -414,15 +414,11 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile()
     {
-        if (PHP_MAJOR_VERSION >= 8) {
-            $this->expectWarning();
-        } else {
-            $this->expectNotice();
-        }
+        $this->expectNotice();
         $entryIdentifier = 'SomePhpEntryWithPhpNotice';
 
         $simpleFileBackend = $this->getSimpleFileBackend();
-        $simpleFileBackend->set($entryIdentifier, '<?php $undefined ++; ?>');
+        $simpleFileBackend->set($entryIdentifier, '<?php trigger_error("Notice!", E_USER_NOTICE); ?>');
         $simpleFileBackend->requireOnce($entryIdentifier);
     }
 
