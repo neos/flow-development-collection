@@ -190,7 +190,9 @@ abstract class Files
                 break;
             }
             if (file_exists($path . '/.DS_Store')) {
-                @unlink($path . '/.DS_Store');
+                try {
+                    @unlink($path . '/.DS_Store');
+                } catch (\Throwable $e) {}
             }
             if (@rmdir($path) === false) {
                 break;

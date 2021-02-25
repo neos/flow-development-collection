@@ -281,7 +281,9 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     {
         Files::emptyDirectoryRecursively($this->cacheDirectory);
         if ($this->frozen === true) {
-            @unlink($this->cacheDirectory . 'FrozenCache.data');
+            try {
+                @unlink($this->cacheDirectory . 'FrozenCache.data');
+            } catch (\Throwable $e) {}
             $this->frozen = false;
         }
     }
