@@ -183,7 +183,7 @@ class Dispatcher
                     $finalSignalArguments[] = $signalClassName . '::' . $signalName;
                 }
                 // Need to use call_user_func_array here, because $object may be the class name when the slot is a static method
-                call_user_func_array([$object, $slotInformation['method']], array_values($finalSignalArguments));
+                call_user_func_array([$object, $slotInformation['method']], $finalSignalArguments);
             }
         }
     }
