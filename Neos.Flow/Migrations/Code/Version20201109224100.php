@@ -33,7 +33,7 @@ class Version20201109224100 extends AbstractMigration
     public function up()
     {
         $this->searchAndReplace('Doctrine\DBAL\Migrations\AbstractMigration', 'Doctrine\Migrations\AbstractMigration', ['php']);
-        $this->searchAndReplaceRegex('/public function getDescription\(\)(\s*\{)?$/m', 'public function getDescription(): string $1', ['php']);
+        $this->searchAndReplaceRegex('/(Neos\\\Flow\\\Persistence\\\Doctrine\\\Migrations.+)public function getDescription\(\)(\s*\{)?$/sm', '$1public function getDescription(): string $2', ['php']);
         $this->searchAndReplaceRegex('/public function (up|down|preUp|postUp|preDown|postDown)\(Schema \$schema\)(\s*\{)?$/m', 'public function $1(Schema \$schema): void $2', ['php']);
     }
 }
