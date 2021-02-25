@@ -764,7 +764,9 @@ class PackageManager
         // Clean legacy file TODO: Remove at some point
         $legacyPackageStatesPath = FLOW_PATH_CONFIGURATION . 'PackageStates.php';
         if (is_file($legacyPackageStatesPath)) {
-            @unlink($legacyPackageStatesPath);
+            try {
+                @unlink($legacyPackageStatesPath);
+            } catch (\Throwable $e) {}
         }
         OpcodeCacheHelper::clearAllActive($this->packageInformationCacheFilePath);
 

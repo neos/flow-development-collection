@@ -79,8 +79,10 @@ class LockManager
         if (filemtime($this->lockFlagPathAndFilename) >= (time() - self::LOCKFILE_MAXIMUM_AGE)) {
             return;
         }
-        @unlink($this->lockFlagPathAndFilename);
-        @unlink($this->lockPathAndFilename);
+        try {
+            @unlink($this->lockFlagPathAndFilename);
+            @unlink($this->lockPathAndFilename);
+        } catch (\Throwable $e) {}
     }
 
     /**
@@ -135,8 +137,10 @@ class LockManager
             fclose($this->lockResource);
             unlink($this->lockPathAndFilename);
         }
-        if (file_exists($this->lockFlagPathAndFilename)) {
-            @unlink($this->lockFlagPathAndFilename);
+        if ($this->isSiteLocked()) {
+            try {
+                @unlink($this->lockFlagPathAndFilename);
+            } catch (\Throwable $e) {}
         }
     }
 
