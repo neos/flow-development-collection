@@ -766,7 +766,8 @@ class PackageManager
         if (is_file($legacyPackageStatesPath)) {
             try {
                 @unlink($legacyPackageStatesPath);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
         }
         OpcodeCacheHelper::clearAllActive($this->packageInformationCacheFilePath);
 

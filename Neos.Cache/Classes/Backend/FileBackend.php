@@ -283,7 +283,8 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         if ($this->frozen === true) {
             try {
                 @unlink($this->cacheDirectory . 'FrozenCache.data');
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
             $this->frozen = false;
         }
     }
