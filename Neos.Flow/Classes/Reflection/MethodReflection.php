@@ -103,7 +103,7 @@ class MethodReflection extends \ReflectionMethod
             return null;
         }
         $type = $this->getReturnType();
-        return $type !== null ? (string)$type : null;
+        return $type !== null ? ltrim((string)$type, '?') : null;
     }
 
     /**
