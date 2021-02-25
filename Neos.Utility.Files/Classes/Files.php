@@ -192,7 +192,9 @@ abstract class Files
             if (file_exists($path . '/.DS_Store')) {
                 try {
                     @unlink($path . '/.DS_Store');
-                } catch (\Throwable $e) {}
+                } catch (\Throwable $e) {
+                    // Double-shrug catching
+                }
             }
             if (@rmdir($path) === false) {
                 break;

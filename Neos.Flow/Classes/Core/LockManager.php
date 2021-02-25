@@ -82,7 +82,9 @@ class LockManager
         try {
             @unlink($this->lockFlagPathAndFilename);
             @unlink($this->lockPathAndFilename);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+            // Double-shrug catching
+        }
     }
 
     /**
@@ -140,7 +142,9 @@ class LockManager
         if ($this->isSiteLocked()) {
             try {
                 @unlink($this->lockFlagPathAndFilename);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+                // Double-shrug catching
+            }
         }
     }
 
