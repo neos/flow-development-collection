@@ -1380,7 +1380,7 @@ class ReflectionService
             $this->classesByMethodAnnotations[$annotationClassName][$className][] = $methodName;
         }
 
-        $returnType = $method->getDeclaredReturnType();
+        $returnType = ltrim($method->getDeclaredReturnType(), '?\\');
         if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void']) && !TypeHandling::isSimpleType($returnType)) {
             $returnType = '\\' . $returnType;
         }
