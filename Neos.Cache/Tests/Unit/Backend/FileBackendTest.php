@@ -572,7 +572,7 @@ class FileBackendTest extends BaseTestCase
         $backend->setCache($mockCache);
 
         $entryIdentifier = 'SomePhpEntryWithPhpWarning';
-        $backend->set($entryIdentifier, '<?php trigger_error("Warning!", E_WARNING); ?>');
+        $backend->set($entryIdentifier, '<?php trigger_error("Warning!", E_USER_WARNING); ?>');
         $backend->requireOnce($entryIdentifier);
     }
 

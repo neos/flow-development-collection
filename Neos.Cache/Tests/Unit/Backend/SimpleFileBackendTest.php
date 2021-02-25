@@ -405,7 +405,7 @@ class SimpleFileBackendTest extends BaseTestCase
         $entryIdentifier = 'SomePhpEntryWithPhpWarning';
 
         $simpleFileBackend = $this->getSimpleFileBackend();
-        $simpleFileBackend->set($entryIdentifier, '<?php trigger_error("Warning!", E_WARNING); ?>');
+        $simpleFileBackend->set($entryIdentifier, '<?php trigger_error("Warning!", E_USER_WARNING); ?>');
         $simpleFileBackend->requireOnce($entryIdentifier);
     }
 
