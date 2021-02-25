@@ -52,7 +52,7 @@ class ParameterReflection extends \ReflectionParameter
     }
 
     /**
-     * @return string The name of a builtin type (e.g. string, int) if it was declared for the parameter (scalar type declaration), null otherwise
+     * @return string|null The name of a builtin type (e.g. string, int) if it was declared for the parameter (scalar type declaration), null otherwise
      */
     public function getBuiltinType()
     {
