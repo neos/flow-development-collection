@@ -422,14 +422,14 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function sign($x)
     {
-        if ($x < 0) {
+        if (!is_numeric($x)) {
+            return NAN;
+        } elseif ($x < 0) {
             return -1;
         } elseif ($x > 0) {
             return 1;
-        } elseif ($x === 0 || $x === 0.0) {
-            return 0;
         } else {
-            return NAN;
+            return 0;
         }
     }
 
