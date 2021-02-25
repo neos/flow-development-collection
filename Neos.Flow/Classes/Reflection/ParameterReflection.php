@@ -57,9 +57,9 @@ class ParameterReflection extends \ReflectionParameter
     public function getBuiltinType()
     {
         $type = $this->getType();
-        if ($type === null || !$type->isBuiltin()) {
+        if (!$type instanceof \ReflectionNamedType) {
             return null;
         }
-        return $type instanceof \ReflectionNamedType ? $type->getName() : (string)$type;
+        return $type->isBuiltin() ? $type->getName() : null;
     }
 }
