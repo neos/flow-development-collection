@@ -270,5 +270,4 @@ class ClassSchemaTest extends UnitTestCase
         self::assertTrue($classSchema->getProperty('c')['nullable']);
         self::assertFalse($classSchema->getProperty('d')['nullable']);
     }
-
 }
