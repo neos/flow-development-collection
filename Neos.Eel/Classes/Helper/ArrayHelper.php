@@ -445,7 +445,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
      */
     public function filter(array $array, callable $callback = null): array
     {
-        return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
+        if (is_null($callback)) {
+            return array_filter($array);
+        } else {
+            return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
+        }
     }
 
     /**
