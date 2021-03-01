@@ -140,7 +140,14 @@ class ClassSchemaTest extends UnitTestCase
             ['\Some\Object'],
             ['SomeObject'],
             ['array<string>'],
-            ['array<Neos\Flow\Baz>']
+            ['array<Neos\Flow\Baz>'],
+            ['?string'],
+            ['null|string'],
+            ['string|null'],
+            ['?\Some\Object'],
+            ['\Some\Object|null'],
+            ['?array<Neos\Flow\Baz>'],
+            ['null|array<Neos\Flow\Baz>']
         ];
     }
 
@@ -245,5 +252,22 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema = new ClassSchema('SomeClass');
         $classSchema->addProperty('testProperty', $type);
         self::assertTrue($classSchema->isMultiValuedProperty('testProperty'));
+    }
+
+    /**
+     * @test
+     */
+    public function correctlyReturnsNullabilityForProperties()
+    {
+        $classSchema = new ClassSchema('SomeClass');
+        $classSchema->addProperty('a', '?string');
+        $classSchema->addProperty('b', 'integer|null');
+        $classSchema->addProperty('c', 'null|array');
+        $classSchema->addProperty('d', 'array|string');
+
+        self::assertTrue($classSchema->getProperty('a')['nullable']);
+        self::assertTrue($classSchema->getProperty('b')['nullable']);
+        self::assertTrue($classSchema->getProperty('c')['nullable']);
+        self::assertFalse($classSchema->getProperty('d')['nullable']);
     }
 }
