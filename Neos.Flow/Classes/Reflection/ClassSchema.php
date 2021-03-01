@@ -126,6 +126,7 @@ class ClassSchema
         $this->properties[$name] = [
             'type' => $type['type'],
             'elementType' => $type['elementType'],
+            'nullable' => $type['nullable'],
             'lazy' => $lazy,
             'transient' => $transient
         ];
