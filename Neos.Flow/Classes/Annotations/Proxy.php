@@ -11,6 +11,8 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Used to disable proxy building for an object.
  *
@@ -18,8 +20,10 @@ namespace Neos\Flow\Annotations;
  * on the object.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target("CLASS")
  */
+#[\Attribute(\Attribute::TARGET_CLASS)]
 final class Proxy
 {
     /**
@@ -28,15 +32,8 @@ final class Proxy
      */
     public $enabled = true;
 
-    /**
-     * @param array $values
-     */
-    public function __construct(array $values)
+    public function __construct(bool $enabled = true)
     {
-        if (isset($values['enabled'])) {
-            $this->enabled = (boolean)$values['enabled'];
-        } elseif (isset($values['value'])) {
-            $this->enabled = (boolean)$values['value'];
-        }
+        $this->enabled = $enabled;
     }
 }

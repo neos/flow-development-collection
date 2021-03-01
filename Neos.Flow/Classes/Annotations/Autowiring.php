@@ -11,13 +11,17 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Used to disable autowiring for Dependency Injection on the
  * whole class or on the annotated property only.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"METHOD", "CLASS"})
  */
+#[\Attribute(\Attribute::TARGET_METHOD|\Attribute::TARGET_CLASS)]
 final class Autowiring
 {
     /**
@@ -26,15 +30,8 @@ final class Autowiring
      */
     public $enabled = true;
 
-    /**
-     * @param array $values
-     */
-    public function __construct(array $values)
+    public function __construct(bool $enabled = true)
     {
-        if (isset($values['enabled'])) {
-            $this->enabled = (boolean)$values['enabled'];
-        } elseif (isset($values['value'])) {
-            $this->enabled = (boolean)$values['value'];
-        }
+        $this->enabled = $enabled;
     }
 }
