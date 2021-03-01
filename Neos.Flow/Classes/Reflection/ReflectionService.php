@@ -1251,6 +1251,13 @@ class ReflectionService
             $this->annotatedClasses[$annotationClassName][$className] = true;
             $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $annotation;
         }
+        if (PHP_MAJOR_VERSION >= 8) {
+            foreach ($class->getAttributes() as $attribute) {
+                $annotationClassName = $attribute->getName();
+                $this->annotatedClasses[$annotationClassName][$className] = true;
+                $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $attribute->newInstance();
+            }
+        }
 
         /** @var $property PropertyReflection */
         foreach ($class->getProperties() as $property) {
@@ -1291,6 +1298,11 @@ class ReflectionService
 
         foreach ($this->annotationReader->getPropertyAnnotations($property, $propertyName) as $annotation) {
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
+        }
+        if (PHP_MAJOR_VERSION >= 8) {
+            foreach ($property->getAttributes() as $attribute) {
+                $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attribute->newInstance();
+            }
         }
 
         return $visibility;
@@ -1378,6 +1390,15 @@ class ReflectionService
                 $this->classesByMethodAnnotations[$annotationClassName][$className] = [];
             }
             $this->classesByMethodAnnotations[$annotationClassName][$className][] = $methodName;
+        }
+        if (PHP_MAJOR_VERSION >= 8) {
+            foreach ($method->getAttributes() as $attribute) {
+                $annotationClassName = $attribute->getName();
+                if (!isset($this->classesByMethodAnnotations[$annotationClassName][$className])) {
+                    $this->classesByMethodAnnotations[$annotationClassName][$className] = [];
+                }
+                $this->classesByMethodAnnotations[$annotationClassName][$className][] = $methodName;
+            }
         }
 
         $returnType = $method->getDeclaredReturnType();
