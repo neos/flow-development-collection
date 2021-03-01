@@ -24,7 +24,7 @@ abstract class TypeHandling
     /**
      * A property type parse pattern.
      */
-    const PARSE_TYPE_PATTERN = '/^(?:null\|)?\\\\?(?P<type>[a-zA-Z0-9\\\\_]+)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\_]+)>)?(?:\|null)?(?:\s|$)/';
+    const PARSE_TYPE_PATTERN = '/^\??(?:null\|)?\\\\?(?P<type>[a-zA-Z0-9\\\\_]+)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\_]+)>)?(?:\|null)?(?:\s|$)/';
 
     /**
      * A type pattern to detect literal types.
@@ -62,7 +62,8 @@ abstract class TypeHandling
 
         return [
             'type' => $type,
-            'elementType' => $elementType
+            'elementType' => $elementType,
+            'nullable' => $isNullable
         ];
     }
 
@@ -160,7 +161,7 @@ abstract class TypeHandling
         if (stripos($type, 'null') === false) {
             return $type;
         }
-        return preg_replace('/(\\|null|null\\|)/i', '', $type);
+        return preg_replace('/($\?|\\|null|null\\|)/i', '', $type);
     }
 
     /**
