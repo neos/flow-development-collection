@@ -248,18 +248,9 @@ class ProxyClass
      */
     protected function buildClassDocumentation()
     {
-        $classDocumentation = "/**\n";
-
         $classReflection = new ClassReflection($this->fullOriginalClassName);
-        $classDescription = $classReflection->getDescription();
-        $classDocumentation .= ' * ' . str_replace("\n", "\n * ", $classDescription) . "\n";
 
-        foreach ($this->reflectionService->getClassAnnotations($this->fullOriginalClassName) as $annotation) {
-            $classDocumentation .= ' * ' . Compiler::renderAnnotation($annotation) . "\n";
-        }
-
-        $classDocumentation .= " * @codeCoverageIgnore\n";
-        $classDocumentation .= " */\n";
+        $classDocumentation = str_replace("*/", "* @codeCoverageIgnore\n */", $classReflection->getDocComment()) . "\n";
         if (PHP_MAJOR_VERSION >= 8) {
             foreach ($classReflection->getAttributes() as $attribute) {
                 $classDocumentation .= Compiler::renderAttribute($attribute) . "\n";
