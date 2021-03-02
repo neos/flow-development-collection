@@ -227,6 +227,13 @@ class ReflectionService
     protected $initialized = false;
 
     /**
+     * A runtime cache for reflected method annotations to speed up repeating checks.
+     *
+     * @var array
+     */
+    protected $methodAnnotationsRuntimeCache = [];
+
+    /**
      * Sets the status cache
      *
      * The cache must be set before initializing the Reflection Service
@@ -789,14 +796,25 @@ class ReflectionService
      */
     public function getMethodAnnotations($className, $methodName, $annotationClassName = null)
     {
-        if (!$this->initialized) {
-            $this->initialize();
-        }
         $className = $this->cleanClassName($className);
         $annotationClassName = $annotationClassName === null ? null : $this->cleanClassName($annotationClassName);
 
+        $methodAnnotations = $this->methodAnnotationsRuntimeCache[$className][$methodName] ?? null;
         $annotations = [];
-        $methodAnnotations = $this->annotationReader->getMethodAnnotations(new MethodReflection($className, $methodName));
+        if ($methodAnnotations === null) {
+            if (!$this->initialized) {
+                $this->initialize();
+            }
+
+            $method = new MethodReflection($className, $methodName);
+            $methodAnnotations = $this->annotationReader->getMethodAnnotations($method);
+            if (PHP_MAJOR_VERSION >= 8) {
+                foreach ($method->getAttributes() as $attribute) {
+                    $methodAnnotations[] = $attribute->newInstance();
+                }
+            }
+            $this->methodAnnotationsRuntimeCache[$className][$methodName] = $methodAnnotations;
+        }
         if ($annotationClassName === null) {
             return $methodAnnotations;
         }
@@ -1390,15 +1408,6 @@ class ReflectionService
                 $this->classesByMethodAnnotations[$annotationClassName][$className] = [];
             }
             $this->classesByMethodAnnotations[$annotationClassName][$className][] = $methodName;
-        }
-        if (PHP_MAJOR_VERSION >= 8) {
-            foreach ($method->getAttributes() as $attribute) {
-                $annotationClassName = $attribute->getName();
-                if (!isset($this->classesByMethodAnnotations[$annotationClassName][$className])) {
-                    $this->classesByMethodAnnotations[$annotationClassName][$className] = [];
-                }
-                $this->classesByMethodAnnotations[$annotationClassName][$className][] = $methodName;
-            }
         }
 
         $returnType = $method->getDeclaredReturnType();
