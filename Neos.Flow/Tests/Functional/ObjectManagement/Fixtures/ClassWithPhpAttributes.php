@@ -17,8 +17,8 @@ use Neos\Flow\Annotations as Flow;
  * A class with PHP 8 attributes
  * @Flow\Scope("prototype")
  */
-#[SampleAttribute(ClassWithPhpAttributes::class)]
-#[SampleAttribute(ClassWithPhpAttributes::class)]
+#[SampleAttribute(ClassWithPhpAttributes::class, options: ['baz', 'quux'])]
+#[SampleAttribute(ClassWithPhpAttributes::class, ['foo' => 'bar'])]
 class ClassWithPhpAttributes
 {
 }
