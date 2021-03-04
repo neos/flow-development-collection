@@ -161,7 +161,7 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
      * Translate according to currently collected parameters
      *
      * @param array $overrides An associative array to override the collected parameters
-     * @return string
+     * @return string|null
      * @throws IndexOutOfBoundsException
      * @throws InvalidFormatPlaceholderException
      */
@@ -191,10 +191,12 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
 
     /**
      * Runs translate to avoid the need of calling translate as a finishing method
+     *
+     * @return string
      */
     public function __toString()
     {
-        return $this->translate();
+        return (string)$this->translate();
     }
 
     /**
