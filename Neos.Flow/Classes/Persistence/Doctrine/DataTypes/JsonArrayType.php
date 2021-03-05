@@ -1,8 +1,10 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\DataTypes;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\JsonArrayType as DoctrineJsonArrayType;
+use Doctrine\ORM\Mapping\Entity as ORMEntity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
@@ -59,7 +61,7 @@ class JsonArrayType extends DoctrineJsonArrayType
      * Use jsonb for PostgreSQL, this means we require PostgreSQL 9.4
      *
      * @param array $fieldDeclaration The field declaration
-     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform The currently used database platform
+     * @param AbstractPlatform $platform The currently used database platform
      * @return string
      */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
@@ -114,7 +116,7 @@ class JsonArrayType extends DoctrineJsonArrayType
      * Converts a value from its PHP representation to its database representation
      * of this type.
      *
-     * @param array $array The value to convert.
+     * @param mixed $array The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
      * @return mixed The database representation of the value.
      */
@@ -122,6 +124,10 @@ class JsonArrayType extends DoctrineJsonArrayType
     {
         if ($array === null) {
             return null;
+        }
+
+        if (!is_array($array)) {
+            throw new \InvalidArgumentException(sprintf('The JsonArrayType only converts arrays, %s given', gettype($array)), 1569944963);
         }
 
         $this->initializeDependencies();
@@ -195,7 +201,7 @@ class JsonArrayType extends DoctrineJsonArrayType
                 ];
             } elseif ($value instanceof \SplObjectStorage) {
                 throw new \RuntimeException('SplObjectStorage in array properties is not supported', 1375196580);
-            } elseif ($value instanceof \Doctrine\Common\Collections\Collection) {
+            } elseif ($value instanceof Collection) {
                 throw new \RuntimeException('Collection in array properties is not supported', 1375196581);
             } elseif ($value instanceof \ArrayObject) {
                 throw new \RuntimeException('ArrayObject in array properties is not supported', 1375196582);
@@ -203,7 +209,7 @@ class JsonArrayType extends DoctrineJsonArrayType
                 && (
                     $this->reflectionService->isClassAnnotatedWith($propertyClassName, Flow\Entity::class)
                     || $this->reflectionService->isClassAnnotatedWith($propertyClassName, Flow\ValueObject::class)
-                    || $this->reflectionService->isClassAnnotatedWith($propertyClassName, \Doctrine\ORM\Mapping\Entity::class)
+                    || $this->reflectionService->isClassAnnotatedWith($propertyClassName, ORMEntity::class)
                 )
             ) {
                 $value = [

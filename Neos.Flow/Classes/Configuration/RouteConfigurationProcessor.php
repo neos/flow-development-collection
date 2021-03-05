@@ -176,12 +176,12 @@ class RouteConfigurationProcessor
      */
     protected function buildSubRouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, $subRouteKey, array $subRouteOptions)
     {
-        $variables = isset($subRouteOptions['variables']) ? $subRouteOptions['variables'] : [];
+        $variables = $subRouteOptions['variables'] ?? [];
         $mergedSubRoutesConfigurations = [];
         foreach ($subRoutesConfiguration as $subRouteConfiguration) {
             foreach ($routesConfiguration as $routeConfiguration) {
                 $mergedSubRouteConfiguration = $subRouteConfiguration;
-                $mergedSubRouteConfiguration['name'] = sprintf('%s :: %s', isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'Unnamed Route', isset($subRouteConfiguration['name']) ? $subRouteConfiguration['name'] : 'Unnamed Subroute');
+                $mergedSubRouteConfiguration['name'] = sprintf('%s :: %s', $routeConfiguration['name'] ?? 'Unnamed Route', $subRouteConfiguration['name'] ?? 'Unnamed Subroute');
                 $mergedSubRouteConfiguration['name'] = $this->replacePlaceholders($mergedSubRouteConfiguration['name'], $variables);
                 if (!isset($mergedSubRouteConfiguration['uriPattern'])) {
                     throw new Exception\ParseErrorException('No uriPattern defined in route configuration "' . $mergedSubRouteConfiguration['name'] . '".', 1274197615);
@@ -193,9 +193,10 @@ class RouteConfigurationProcessor
                     $mergedSubRouteConfiguration['uriPattern'] = rtrim($this->replacePlaceholders($routeConfiguration['uriPattern'], [$subRouteKey => '']), '/');
                 }
                 if (isset($mergedSubRouteConfiguration['defaults'])) {
-                    foreach ($mergedSubRouteConfiguration['defaults'] as $key => $defaultValue) {
-                        $mergedSubRouteConfiguration['defaults'][$key] = $this->replacePlaceholders($defaultValue, $variables);
-                    }
+                    $mergedSubRouteConfiguration['defaults'] = $this->replacePlaceholders($mergedSubRouteConfiguration['defaults'], $variables);
+                }
+                if (isset($mergedSubRouteConfiguration['routeParts'])) {
+                    $mergedSubRouteConfiguration['routeParts'] = $this->replacePlaceholders($mergedSubRouteConfiguration['routeParts'], $variables);
                 }
                 $mergedSubRouteConfiguration = Arrays::arrayMergeRecursiveOverrule($routeConfiguration, $mergedSubRouteConfiguration);
                 unset($mergedSubRouteConfiguration['subRoutes']);
@@ -209,16 +210,21 @@ class RouteConfigurationProcessor
     /**
      * Replaces placeholders in the format <variableName> with the corresponding variable of the specified $variables collection.
      *
-     * @param string $string
+     * @param string|array $value
      * @param array $variables
-     * @return string
+     * @return mixed
      */
-    protected function replacePlaceholders($string, array $variables)
+    protected function replacePlaceholders($value, array $variables)
     {
-        foreach ($variables as $variableName => $variableValue) {
-            $string = str_replace('<' . $variableName . '>', $variableValue, $string);
+        if (is_array($value)) {
+            foreach ($value as $arrayKey => $arrayValue) {
+                $value[$arrayKey] = $this->replacePlaceholders($arrayValue, $variables);
+            }
+        } elseif (is_string($value)) {
+            foreach ($variables as $variableName => $variableValue) {
+                $value = str_replace('<' . $variableName . '>', $variableValue, $value);
+            }
         }
-
-        return $string;
+        return $value;
     }
 }

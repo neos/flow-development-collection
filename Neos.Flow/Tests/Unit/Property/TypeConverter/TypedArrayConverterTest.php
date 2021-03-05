@@ -25,7 +25,7 @@ class TypedArrayConverterTest extends UnitTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converter = new TypedArrayConverter();
     }
@@ -35,9 +35,9 @@ class TypedArrayConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['array'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        $this->assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
-        $this->assertEquals(2, $this->converter->getPriority(), 'Priority does not match');
+        self::assertEquals(['array'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        self::assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
+        self::assertEquals(2, $this->converter->getPriority(), 'Priority does not match');
     }
 
     /**
@@ -63,9 +63,9 @@ class TypedArrayConverterTest extends UnitTestCase
     {
         $actualResult = $this->converter->canConvertFrom([], $targetType);
         if ($expectedResult === true) {
-            $this->assertTrue($actualResult);
+            self::assertTrue($actualResult);
         } else {
-            $this->assertFalse($actualResult);
+            self::assertFalse($actualResult);
         }
     }
 
@@ -74,6 +74,6 @@ class TypedArrayConverterTest extends UnitTestCase
      */
     public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray()
     {
-        $this->assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted(''));
+        self::assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted(''));
     }
 }

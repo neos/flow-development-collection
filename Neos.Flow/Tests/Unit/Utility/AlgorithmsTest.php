@@ -25,7 +25,7 @@ class AlgorithmsTest extends UnitTestCase
      */
     public function generateUUIDGeneratesUuidLikeString()
     {
-        $this->assertRegExp('/^[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$/', Algorithms::generateUUID());
+        self::assertMatchesRegularExpression('/^[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$/', Algorithms::generateUUID());
     }
 
     /**
@@ -34,7 +34,7 @@ class AlgorithmsTest extends UnitTestCase
     public function generateUUIDGeneratesLowercaseString()
     {
         $uuid = Algorithms::generateUUID();
-        $this->assertSame(strtolower($uuid), $uuid);
+        self::assertSame(strtolower($uuid), $uuid);
     }
 
     /**
@@ -42,7 +42,7 @@ class AlgorithmsTest extends UnitTestCase
      */
     public function generateUUIDGeneratesAtLeastNotTheSameUuidOnSubsequentCalls()
     {
-        $this->assertNotEquals(Algorithms::generateUUID(), Algorithms::generateUUID());
+        self::assertNotEquals(Algorithms::generateUUID(), Algorithms::generateUUID());
     }
 
     /**
@@ -50,7 +50,7 @@ class AlgorithmsTest extends UnitTestCase
      */
     public function generateRandomBytesGeneratesRandomBytes()
     {
-        $this->assertEquals(20, strlen(Algorithms::generateRandomBytes(20)));
+        self::assertEquals(20, strlen(Algorithms::generateRandomBytes(20)));
     }
 
     /**
@@ -58,7 +58,7 @@ class AlgorithmsTest extends UnitTestCase
      */
     public function generateRandomTokenGeneratesRandomToken()
     {
-        $this->assertRegExp('/^[[:xdigit:]]{64}$/', Algorithms::generateRandomToken(32));
+        self::assertMatchesRegularExpression('/^[[:xdigit:]]{64}$/', Algorithms::generateRandomToken(32));
     }
 
     /**
@@ -66,7 +66,7 @@ class AlgorithmsTest extends UnitTestCase
      */
     public function generateRandomStringGeneratesAlnumCharactersPerDefault()
     {
-        $this->assertRegExp('/^[a-z0-9]{64}$/i', Algorithms::generateRandomString(64));
+        self::assertMatchesRegularExpression('/^[a-z0-9]{64}$/i', Algorithms::generateRandomString(64));
     }
 
     /**
@@ -86,6 +86,6 @@ class AlgorithmsTest extends UnitTestCase
      */
     public function generateRandomStringGeneratesOnlyDefinedCharactersRange($regularExpression, $charactersClass)
     {
-        $this->assertRegExp($regularExpression, Algorithms::generateRandomString(64, $charactersClass));
+        self::assertMatchesRegularExpression($regularExpression, Algorithms::generateRandomString(64, $charactersClass));
     }
 }

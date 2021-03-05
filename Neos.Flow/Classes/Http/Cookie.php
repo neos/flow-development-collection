@@ -130,10 +130,10 @@ class Cookie
         if ($expires instanceof \Datetime) {
             $expires = $expires->getTimestamp();
         }
-        if (!is_integer($expires)) {
+        if (!is_int($expires)) {
             throw new \InvalidArgumentException('The parameter "expires" passed to the Cookie constructor must be a unix timestamp or a DateTime object.', 1345108785);
         }
-        if ($maximumAge !== null && !is_integer($maximumAge)) {
+        if ($maximumAge !== null && !is_int($maximumAge)) {
             throw new \InvalidArgumentException('The parameter "maximumAge" passed to the Cookie constructor must be an integer value.', 1345108786);
         }
         if ($domain !== null && preg_match(self::PATTERN_DOMAIN, $domain) !== 1) {
@@ -142,8 +142,10 @@ class Cookie
         if ($path !== null && preg_match(self::PATTERN_PATH, $path) !== 1) {
             throw new \InvalidArgumentException('The parameter "path" passed to the Cookie constructor must be a valid path as per RFC 6265, Section 4.1.1.', 1345123078);
         }
-        if (!\in_array($sameSite, [self::SAMESITE_LAX, self::SAMESITE_STRICT, self::SAMESITE_NONE, null], true)) {
-            throw new \InvalidArgumentException('The parameter "sameSite" passed to the Cookie constructor must be a valid samesite value. Possible values are "none", "strict", "lax" and null', 1584955500);
+
+        $sameSite = $sameSite ?? self::SAMESITE_LAX;
+        if (!\in_array($sameSite, [self::SAMESITE_LAX, self::SAMESITE_STRICT, self::SAMESITE_NONE], true)) {
+            throw new \InvalidArgumentException('The parameter "sameSite" passed to the Cookie constructor must be a valid samesite value. Possible values are "none", "strict" and "lax"', 1584955500);
         }
 
         $this->name = $name;
@@ -191,7 +193,7 @@ class Cookie
         $pathAttribute = null;
         $secureAttribute = false;
         $httpOnlyAttribute = true;
-        $sameSite = null;
+        $sameSite = self::SAMESITE_LAX;
 
         if ($unparsedAttributes !== '') {
             foreach (explode(';', $unparsedAttributes) as $cookieAttributeValueString) {

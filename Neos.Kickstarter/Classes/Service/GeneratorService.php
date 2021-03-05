@@ -413,7 +413,7 @@ class GeneratorService
             $parsedXliffArray = $xliffParser->getParsedData($sourceLanguageFile);
             foreach ($targetLanguageKeys as $targetLanguageKey) {
                 $contextVariables['targetLanguageKey'] = $targetLanguageKey;
-                $contextVariables['translationUnits'] = $parsedXliffArray['translationUnits'];
+                $contextVariables['translationUnits'] = $parsedXliffArray[0]['translationUnits'];
 
                 $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Translations/TargetLanguageTemplate.xlf.tmpl';
                 $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
@@ -507,7 +507,7 @@ class GeneratorService
         $autoloadConfigurations = $package->getComposerManifest('autoload');
 
         $firstAutoloadType = null;
-        $firstAutoloadConfiguration = null;
+        $firstAutoloadConfiguration = [];
         foreach ($autoloadConfigurations as $autoloadType => $autoloadConfiguration) {
             if (ClassLoader::isAutoloadTypeWithPredictableClassPath($autoloadType)) {
                 $firstAutoloadType = $autoloadType;

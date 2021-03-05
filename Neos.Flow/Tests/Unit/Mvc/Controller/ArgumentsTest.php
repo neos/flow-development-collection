@@ -31,7 +31,7 @@ class ArgumentsTest extends UnitTestCase
         $newArgument = new Argument('argumentName1234', 'Text');
 
         $arguments->addArgument($newArgument);
-        $this->assertSame($newArgument, $arguments->getArgument('argumentName1234'), 'The added and retrieved argument is not the same.');
+        self::assertSame($newArgument, $arguments->getArgument('argumentName1234'), 'The added and retrieved argument is not the same.');
     }
 
     /**
@@ -47,7 +47,7 @@ class ArgumentsTest extends UnitTestCase
         $secondArgument = new Argument('argumentName1234', 'Text');
         $arguments->addArgument($secondArgument);
 
-        $this->assertSame($secondArgument, $arguments->getArgument('argumentName1234'), 'The added and retrieved argument is not the same.');
+        self::assertSame($secondArgument, $arguments->getArgument('argumentName1234'), 'The added and retrieved argument is not the same.');
     }
 
     /**
@@ -58,8 +58,8 @@ class ArgumentsTest extends UnitTestCase
         $arguments = new Arguments();
         $argument = new Argument('argumentName1234', 'Text');
         $arguments[] = $argument;
-        $this->assertTrue($arguments->hasArgument('argumentName1234'), 'Added argument does not exist.');
-        $this->assertSame($argument, $arguments->getArgument('argumentName1234'), 'Added and retrieved arguments are not the same.');
+        self::assertTrue($arguments->hasArgument('argumentName1234'), 'Added argument does not exist.');
+        self::assertSame($argument, $arguments->getArgument('argumentName1234'), 'Added and retrieved arguments are not the same.');
     }
 
     /**
@@ -69,7 +69,7 @@ class ArgumentsTest extends UnitTestCase
     {
         $arguments = new Arguments();
         $newArgument = $arguments->addNewArgument('someArgument');
-        $this->assertSame($newArgument, $arguments['someArgument'], 'Argument retrieved by array access is not the one we added.');
+        self::assertSame($newArgument, $arguments['someArgument'], 'Argument retrieved by array access is not the one we added.');
     }
 
     /**
@@ -82,7 +82,7 @@ class ArgumentsTest extends UnitTestCase
             $arguments->getArgument('someArgument');
             $this->fail('getArgument() did not throw an exception although the specified argument does not exist.');
         } catch (NoSuchArgumentException $exception) {
-            $this->assertTrue(true);
+            self::assertTrue(true);
         }
     }
 
@@ -92,9 +92,9 @@ class ArgumentsTest extends UnitTestCase
     public function issetReturnsCorrectResult()
     {
         $arguments = new Arguments();
-        $this->assertFalse(isset($arguments['someArgument']), 'isset() did not return false.');
+        self::assertFalse(isset($arguments['someArgument']), 'isset() did not return false.');
         $arguments->addNewArgument('someArgument');
-        $this->assertTrue(isset($arguments['someArgument']), 'isset() did not return true.');
+        self::assertTrue(isset($arguments['someArgument']), 'isset() did not return true.');
     }
 
     /**
@@ -108,7 +108,7 @@ class ArgumentsTest extends UnitTestCase
         $arguments->addNewArgument('third');
 
         $expectedArgumentNames = ['first', 'second', 'third'];
-        $this->assertEquals($expectedArgumentNames, $arguments->getArgumentNames(), 'Returned argument names were not as expected.');
+        self::assertEquals($expectedArgumentNames, $arguments->getArgumentNames(), 'Returned argument names were not as expected.');
     }
 
     /**
@@ -118,12 +118,12 @@ class ArgumentsTest extends UnitTestCase
     {
         $arguments = new Arguments();
         $addedArgument = $arguments->addNewArgument('dummyName');
-        $this->assertInstanceOf(Argument::class, $addedArgument, 'addNewArgument() either did not add a new argument or did not return it.');
+        self::assertInstanceOf(Argument::class, $addedArgument, 'addNewArgument() either did not add a new argument or did not return it.');
 
         $retrievedArgument = $arguments['dummyName'];
-        $this->assertSame($addedArgument, $retrievedArgument, 'The added and the retrieved argument are not the same.');
+        self::assertSame($addedArgument, $retrievedArgument, 'The added and the retrieved argument are not the same.');
 
-        $this->assertEquals('dummyName', $addedArgument->getName(), 'The name of the added argument is not as expected.');
+        self::assertEquals('dummyName', $addedArgument->getName(), 'The name of the added argument is not as expected.');
     }
 
     /**
@@ -133,7 +133,7 @@ class ArgumentsTest extends UnitTestCase
     {
         $arguments = new Arguments();
         $addedArgument = $arguments->addNewArgument('dummyName', 'Text', true);
-        $this->assertTrue($addedArgument->isRequired(), 'addNewArgument() did not create an argument that is marked as required.');
+        self::assertTrue($addedArgument->isRequired(), 'addNewArgument() did not create an argument that is marked as required.');
     }
 
     /**
@@ -144,15 +144,15 @@ class ArgumentsTest extends UnitTestCase
         $arguments = new Arguments();
         $defaultValue = 'Default Value 42';
         $addedArgument = $arguments->addNewArgument('dummyName', 'Text', false, $defaultValue);
-        $this->assertEquals($defaultValue, $addedArgument->getValue(), 'addNewArgument() did not store the default value in the argument.');
+        self::assertEquals($defaultValue, $addedArgument->getValue(), 'addNewArgument() did not store the default value in the argument.');
     }
 
     /**
      * @test
-     * @expectedException \LogicException
      */
     public function callingInvalidMethodThrowsException()
     {
+        $this->expectException(\LogicException::class);
         $arguments = new Arguments();
         $arguments->nonExistingMethod();
     }
@@ -167,7 +167,7 @@ class ArgumentsTest extends UnitTestCase
 
         $arguments->removeAll();
 
-        $this->assertFalse($arguments->hasArgument('foo'));
+        self::assertFalse($arguments->hasArgument('foo'));
     }
 
     /**
@@ -185,15 +185,15 @@ class ArgumentsTest extends UnitTestCase
         $results2->addError($error2);
 
         $argument1 = $this->getMockBuilder(Argument::class)->setMethods(['getValidationResults'])->setConstructorArgs(['name1', 'string'])->getMock();
-        $argument1->expects($this->once())->method('getValidationResults')->will($this->returnValue($results1));
+        $argument1->expects(self::once())->method('getValidationResults')->will(self::returnValue($results1));
 
         $argument2 = $this->getMockBuilder(Argument::class)->setMethods(['getValidationResults'])->setConstructorArgs(['name2', 'string'])->getMock();
-        $argument2->expects($this->once())->method('getValidationResults')->will($this->returnValue($results2));
+        $argument2->expects(self::once())->method('getValidationResults')->will(self::returnValue($results2));
 
         $arguments = new Arguments();
         $arguments->addArgument($argument1);
         $arguments->addArgument($argument2);
-        $this->assertSame(['name1' => [$error1], 'name2' => [$error2]], $arguments->getValidationResults()->getFlattenedErrors());
+        self::assertSame(['name1' => [$error1], 'name2' => [$error2]], $arguments->getValidationResults()->getFlattenedErrors());
     }
 
     /**
@@ -204,6 +204,6 @@ class ArgumentsTest extends UnitTestCase
         $arguments = new Arguments();
         $argument = $arguments->addNewArgument('someArgumentName');
 
-        $this->assertEquals('string', $argument->getDataType());
+        self::assertEquals('string', $argument->getDataType());
     }
 }

@@ -28,7 +28,7 @@ class CldrModelTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $samplePaths = ['foo', 'bar', 'baz'];
         $sampleParsedFile1 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile1.php');
@@ -36,12 +36,10 @@ class CldrModelTest extends UnitTestCase
         $sampleParsedFile3 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile3.php');
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects($this->once())->method('has')->with(md5('foo;bar;baz'))->will($this->returnValue(false));
+        $mockCache->expects(self::once())->method('has')->with(md5('foo;bar;baz'))->will(self::returnValue(false));
 
         $mockCldrParser = $this->createMock(I18n\Cldr\CldrParser::class);
-        $mockCldrParser->expects($this->at(0))->method('getParsedData')->with('foo')->will($this->returnValue($sampleParsedFile1));
-        $mockCldrParser->expects($this->at(1))->method('getParsedData')->with('bar')->will($this->returnValue($sampleParsedFile2));
-        $mockCldrParser->expects($this->at(2))->method('getParsedData')->with('baz')->will($this->returnValue($sampleParsedFile3));
+        $mockCldrParser->expects(self::exactly(3))->method('getParsedData')->withConsecutive(['foo'], ['bar'], ['baz'])->willReturnOnConsecutiveCalls($sampleParsedFile1, $sampleParsedFile2, $sampleParsedFile3);
 
         $this->model = new I18n\Cldr\CldrModel($samplePaths);
         $this->model->injectCache($mockCache);
@@ -56,7 +54,7 @@ class CldrModelTest extends UnitTestCase
     {
         $sampleParsedFilesMerged = require(__DIR__ . '/../Fixtures/MockParsedCldrFilesMerged.php');
 
-        $this->assertEquals($sampleParsedFilesMerged, $this->model->getRawData('/'));
+        self::assertEquals($sampleParsedFilesMerged, $this->model->getRawData('/'));
     }
 
     /**
@@ -65,8 +63,8 @@ class CldrModelTest extends UnitTestCase
     public function returnsRawArrayCorrectly()
     {
         $result = $this->model->getRawArray('dates/calendars/calendar[@type="gregorian"]/months/monthContext[@type="format"]/monthWidth[@type="abbreviated"]');
-        $this->assertEquals(2, count($result));
-        $this->assertEquals('jan', $result['month[@type="1"]']);
+        self::assertEquals(2, count($result));
+        self::assertEquals('jan', $result['month[@type="1"]']);
     }
 
     /**
@@ -75,10 +73,10 @@ class CldrModelTest extends UnitTestCase
     public function returnsElementCorrectly()
     {
         $result = $this->model->getElement('localeDisplayNames/localeDisplayPattern/localePattern');
-        $this->assertEquals('{0} ({1})', $result);
+        self::assertEquals('{0} ({1})', $result);
 
         $result = $this->model->getElement('localeDisplayNames/variants');
-        $this->assertEquals(false, $result);
+        self::assertEquals(false, $result);
     }
 
     /**
@@ -89,7 +87,7 @@ class CldrModelTest extends UnitTestCase
     public function getRawArrayAlwaysReturnsArrayOrFalse()
     {
         $result = $this->model->getRawArray('localeDisplayNames/localeDisplayPattern/localePattern');
-        $this->assertEquals(false, $result);
+        self::assertEquals(false, $result);
     }
 
     /**
@@ -100,8 +98,8 @@ class CldrModelTest extends UnitTestCase
         $sampleNodeString1 = 'calendar';
         $sampleNodeString2 = 'calendar[@type="gregorian"]';
 
-        $this->assertEquals('calendar', $this->model->getNodeName($sampleNodeString1));
-        $this->assertEquals('calendar', $this->model->getNodeName($sampleNodeString2));
+        self::assertEquals('calendar', $this->model->getNodeName($sampleNodeString1));
+        self::assertEquals('calendar', $this->model->getNodeName($sampleNodeString2));
     }
 
     /**
@@ -111,8 +109,8 @@ class CldrModelTest extends UnitTestCase
     {
         $sampleNodeString = 'dateFormatLength[@type="medium"][@alt="proposed"]';
 
-        $this->assertEquals('medium', $this->model->getAttributeValue($sampleNodeString, 'type'));
-        $this->assertEquals('proposed', $this->model->getAttributeValue($sampleNodeString, 'alt'));
-        $this->assertEquals(false, $this->model->getAttributeValue($sampleNodeString, 'dateFormatLength'));
+        self::assertEquals('medium', $this->model->getAttributeValue($sampleNodeString, 'type'));
+        self::assertEquals('proposed', $this->model->getAttributeValue($sampleNodeString, 'alt'));
+        self::assertEquals(false, $this->model->getAttributeValue($sampleNodeString, 'dateFormatLength'));
     }
 }

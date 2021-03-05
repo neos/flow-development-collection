@@ -25,6 +25,7 @@ use Psr\Log\LoggerInterface;
 class LoggingAspect
 {
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;

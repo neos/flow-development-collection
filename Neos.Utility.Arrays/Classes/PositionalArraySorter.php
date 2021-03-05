@@ -113,25 +113,19 @@ class PositionalArraySorter
     public function getSortedKeys(): array
     {
         $arrayKeysWithPosition = $this->collectArrayKeysAndPositions();
+        $existingKeys = $arrayKeysWithPosition;
 
         $this->extractMiddleKeys($arrayKeysWithPosition);
         $this->extractStartKeys($arrayKeysWithPosition);
         $this->extractEndKeys($arrayKeysWithPosition);
-        $this->extractBeforeKeys($arrayKeysWithPosition);
-        $this->extractAfterKeys($arrayKeysWithPosition);
+        $this->extractBeforeKeys($arrayKeysWithPosition, $existingKeys);
+        $this->extractAfterKeys($arrayKeysWithPosition, $existingKeys);
 
         foreach ($arrayKeysWithPosition as $unresolvedKey => $unresolvedPosition) {
             throw new Exception\InvalidPositionException(sprintf('The positional string "%s" (defined for key "%s") is not supported.', $unresolvedPosition, $unresolvedKey), 1379429920);
         }
 
-        $sortedKeysMap = $this->generateSortedKeysMap();
-
-        $sortedKeys = [];
-        array_walk_recursive($sortedKeysMap, function ($value) use (&$sortedKeys) {
-            $sortedKeys[] = $value;
-        });
-
-        return $sortedKeys;
+        return $this->generateSortedKeysMap();
     }
 
     /**
@@ -211,14 +205,18 @@ class PositionalArraySorter
      * This also removes matching keys from the given $arrayKeysWithPosition
      *
      * @param array $arrayKeysWithPosition
+     * @param array $existingKeys
      * @return void
      */
-    protected function extractBeforeKeys(array &$arrayKeysWithPosition)
+    protected function extractBeforeKeys(array &$arrayKeysWithPosition, array $existingKeys)
     {
         $this->beforeKeys = [];
         foreach ($arrayKeysWithPosition as $key => $position) {
             if (preg_match('/^before (\S+)(?: ([0-9]+))?$/', $position, $matches) < 1) {
                 continue;
+            }
+            if (!isset($existingKeys[$matches[1]])) {
+                throw new Exception\InvalidPositionException(sprintf('The positional string "%s" (defined for key "%s") references a non-existing key.', $position, $key), 1606468589);
             }
             if (isset($matches[2])) {
                 $this->beforeKeys[$matches[1]][$matches[2]][] = $key;
@@ -238,14 +236,18 @@ class PositionalArraySorter
      * This also removes matching keys from the given $arrayKeysWithPosition
      *
      * @param array $arrayKeysWithPosition
+     * @param array $existingKeys
      * @return void
      */
-    protected function extractAfterKeys(array &$arrayKeysWithPosition)
+    protected function extractAfterKeys(array &$arrayKeysWithPosition, array $existingKeys)
     {
         $this->afterKeys = [];
         foreach ($arrayKeysWithPosition as $key => $position) {
             if (preg_match('/^after (\S+)(?: ([0-9]+))?$/', $position, $matches) < 1) {
                 continue;
+            }
+            if (!isset($existingKeys[$matches[1]])) {
+                throw new Exception\InvalidPositionException(sprintf('The positional string "%s" (defined for key "%s") references a non-existing key.', $position, $key), 1606468590);
             }
             if (isset($matches[2])) {
                 $this->afterKeys[$matches[1]][$matches[2]][] = $key;
@@ -318,11 +320,7 @@ class PositionalArraySorter
         array_walk_recursive($middleKeys, $flattenFunction, 2);
         array_walk_recursive($endKeys, $flattenFunction, 4);
 
-        // 2nd step: process before / after leftovers for unmatched keys
-        array_walk_recursive($beforeKeys, $flattenFunction, 1);
-        array_walk_recursive($afterKeys, $flattenFunction, 3);
-
         ksort($sortedKeysMap);
-        return $sortedKeysMap;
+        return array_merge([], ...$sortedKeysMap);
     }
 }

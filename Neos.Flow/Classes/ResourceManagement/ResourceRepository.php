@@ -72,7 +72,7 @@ class ResourceRepository extends Repository
      * @param object $object
      * @throws IllegalObjectTypeException
      */
-    public function add($object)
+    public function add($object): void
     {
         $this->persistenceManager->allowObject($object);
         if ($this->removedResources->contains($object)) {
@@ -90,7 +90,7 @@ class ResourceRepository extends Repository
      * @param object $object
      * @return void
      */
-    public function remove($object)
+    public function remove($object): void
     {
         // Intercept a second call for the same PersistentResource object because it might cause an endless loop caused by
         // the ResourceManager's deleteResource() method which also calls this remove() function:
@@ -115,7 +115,7 @@ class ResourceRepository extends Repository
      * Finds an object matching the given identifier.
      *
      * @param mixed $identifier The identifier of the object to find
-     * @return object The matching object if found, otherwise NULL
+     * @return object|null The matching object if found, otherwise NULL
      * @api
      */
     public function findByIdentifier($identifier)
@@ -253,6 +253,33 @@ class ResourceRepository extends Repository
         }
 
         return $resources;
+    }
+
+    /**
+     * Counts all resources with the same SHA1 hash and collection
+     *
+     * @param string $sha1Hash
+     * @param string $collectionName
+     *
+     * @return int
+     */
+    public function countBySha1AndCollectionName(string $sha1Hash, string $collectionName): int
+    {
+        $query = $this->createQuery();
+        $query->matching(
+            $query->logicalAnd(
+                $query->equals('sha1', $sha1Hash),
+                $query->equals('collectionName', $collectionName)
+            )
+        );
+        $noOfResources = $query->count();
+        foreach ($this->addedResources as $importedResource) {
+            if ($importedResource->getSha1() === $sha1Hash && $importedResource->getCollectionName() === $collectionName) {
+                $noOfResources++;
+            }
+        }
+
+        return $noOfResources;
     }
 
     /**

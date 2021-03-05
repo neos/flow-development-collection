@@ -58,6 +58,22 @@ abstract class AbstractToken implements TokenInterface
     protected $entryPoint = null;
 
     /**
+     * Token options
+     * @var array
+     */
+    protected $options;
+
+    /**
+     * Build an instance of this token, potentially passing it options that can be configured via `tokenOptions`
+     *
+     * @param array|null $options
+     */
+    public function __construct(array $options = null)
+    {
+        $this->options = $options ?? [];
+    }
+
+    /**
      * Returns the name of the authentication provider responsible for this token
      *
      * @return string The authentication provider name

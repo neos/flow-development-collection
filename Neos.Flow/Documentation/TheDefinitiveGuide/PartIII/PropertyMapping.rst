@@ -222,7 +222,7 @@ the path syntax supports an asterisk as a placeholder::
 		->setTypeConverterOption(
 			\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class,
 			\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
-			TRUE
+			true
 		);
 
 This also allows to easily configure TypeConverter options, like for the DateTimeConverter, for subproperties
@@ -236,52 +236,92 @@ on large collections::
 			'Y-m-d'
 		);
 
-.. admonition:: Property Mapping Configuration in the MVC stack
+Property Mapping Configuration in the MVC stack
+===============================================
 
-	The most common use-case where you will want to adjust the Property Mapping Configuration
-	is inside the MVC stack, where incoming arguments are converted to objects.
+The most common use-case where you will want to adjust the Property Mapping Configuration
+is inside the MVC stack, where incoming arguments are converted to objects.
 
-	If you use Fluid forms, normally no adjustments are needed. However, when programming
-	a web service or an ajax endpoint, you might need to set the ``PropertyMappingConfiguration``
-	manually. You can access them using the ``\Neos\Flow\Mvc\Controller\Argument``
-	object -- and this configuration takes place inside the corresponding ``initialize*Action``
-	of the controller, as in the following example:
+If you use Fluid forms, normally no adjustments are needed. However, when programming
+a web service or an ajax endpoint, you might need to set the ``PropertyMappingConfiguration``
+manually. You can access them using the ``\Neos\Flow\Mvc\Controller\Argument``
+object -- and this configuration takes place inside the corresponding ``initialize*Action``
+of the controller, as in the following example:
 
-	.. code-block:: php
+.. code-block:: php
 
-		protected function initializeUpdateAction() {
-			$commentConfiguration = $this->arguments['comment']->getPropertyMappingConfiguration();
-			$commentConfiguration->allowAllProperties();
-			$commentConfiguration
-				->setTypeConverterOption(
-				\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class,
-				\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
-				TRUE
-			);
-		}
+  protected function initializeUpdateAction() {
+    $commentConfiguration = $this->arguments['comment']->getPropertyMappingConfiguration();
+    $commentConfiguration->allowAllProperties();
+    $commentConfiguration
+      ->setTypeConverterOption(
+      \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class,
+      \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+      true
+    );
+  }
 
-		/**
-		 * @param \My\Package\Domain\Model\Comment $comment
-		 */
-		public function updateAction(\My\Package\Domain\Model\Comment $comment) {
-			// use $comment object here
-		}
+  /**
+   * @param \My\Package\Domain\Model\Comment $comment
+   */
+  public function updateAction(\My\Package\Domain\Model\Comment $comment) {
+    // use $comment object here
+  }
 
-	.. tip:: Maintain IDE's awareness of the ``Argument`` variable type
+.. tip:: Maintain IDE's awareness of the ``Argument`` variable type
 
-		Most IDEs will lose information about the variable's type when it comes to array accessing
-		like in the above example ``$this->arguments['comment']->…``. In order to keep track of
-		the variables' types, you can synonymously use
+  Most IDEs will lose information about the variable's type when it comes to array accessing
+  like in the above example ``$this->arguments['comment']->…``. In order to keep track of
+  the variables' types, you can synonymously use
 
-		.. code-block:: php
+  .. code-block:: php
 
-			protected function initializeUpdateAction() {
-				$commentConfiguration = $this->arguments->getArgument('comment')->getPropertyMappingConfiguration();
-				…
+    protected function initializeUpdateAction() {
+      $commentConfiguration = $this->arguments->getArgument('comment')->getPropertyMappingConfiguration();
+      …
 
-		Since the ``getArgument()`` method is explicitly annotated, common IDEs will recognize the type
-		and there is no break in the type hinting chain.
+  Since the ``getArgument()`` method is explicitly annotated, common IDEs will recognize the type
+  and there is no break in the type hinting chain.
 
+Mapping whole request body
+--------------------------
+
+Sometimes when building an API, you might also want to map the whole request body into a single object,
+instead of having to only map a single named sub-object. This is often necessary when you don't control the
+sending side, because you can't expect it to wrap the important request information like this in case of a JSON API:
+
+.. code-block:: json
+
+  {
+    "comment": {
+      "author": "john doe",
+      "text": "Hello World!"
+    }
+  }
+
+Instead you probably receive only the inner object consisting of "author" and "text". For those cases, you can tell
+Flow that it should map the whole request body into a single action argument with the ``@Flow\MapRequestBody("$comment")``
+annotation on the controller's action method.
+
+.. code-block:: php
+
+  /**
+   * @param \My\Package\Domain\Model\Comment $comment
+   * @Flow\MapRequestBody("$comment")
+   */
+  public function createAction(\My\Package\Domain\Model\Comment $comment) {
+    // use $comment object here
+  }
+
+Note though, that this will also have the consequence that the comment can no longer be submitted via GET parameters in
+this action, because the mapping process will directly access the parsed request body and would throw an exception if the
+body is empty.
+
+.. note::
+
+  Internally, the annotation will only set an attribute on the argument object for the given property name. Hence you can
+  achieve the same without an annotation, by calling ``$this->arguments['comment']->setMapRequestBody(true)`` inside the
+  ``initializeCreateAction()`` method.
 
 Security Considerations
 -----------------------
@@ -309,7 +349,7 @@ following::
 	);
 
 As the property mapper works recursively, it would create a new ``Role`` object with the
-admin flag set to ``TRUE``, which might compromise the security in the system.
+admin flag set to ``true``, which might compromise the security in the system.
 
 That's why two parts need to be configured for enabling the recursive behavior: First, you need
 to specify the allowed properties using one of the ``allowProperties(), allowAllProperties()``
@@ -327,7 +367,7 @@ but does not create new ones or modifies existing ones.
 	as this makes sense as of their nature. If you have a use case where the user may not
 	create new Value Objects, for example because he may only choose from a fixed list, you can
 	however explicitly disallow creation by setting the appropriate property's
-	``CONFIGURATION_CREATION_ALLOWED`` option to ``FALSE``.
+	``CONFIGURATION_CREATION_ALLOWED`` option to ``false``.
 
 
 Default Configuration
@@ -443,7 +483,7 @@ When a type converter has to be found, the following algorithm is applied:
 
 If a type converter is found according to the above algorithm, ``canConvertFrom`` is
 called on the type converter, so he can perform additional runtime checks. In case
-the ``TypeConverter`` returns ``FALSE``, the search is continued at the position
+the ``TypeConverter`` returns ``false``, the search is continued at the position
 where it left off in the above algorithm.
 
 For simple target types, the steps 2 and 3 are omitted.
@@ -471,13 +511,13 @@ possibilities what can be returned in ``convertFrom()``:
   detected security breaches, exceptions should be thrown.
 
 * If at run-time the type converter does not wish to participate in the results,
-  ``NULL`` should be returned. For example, if a file upload is expected, but there
-  was no file uploaded, returning ``NULL`` would be the appropriate way to handling
+  ``null`` should be returned. For example, if a file upload is expected, but there
+  was no file uploaded, returning ``null`` would be the appropriate way to handling
   this.
 
 * If the error is recoverable, and the user should re-submit his data, return a
   ``Neos\Error\Messages\Error`` object (or a subclass thereof), containing information
-  about the error. In this case, the property is not mapped at all (``NULL`` is
+  about the error. In this case, the property is not mapped at all (``null`` is
   returned, like above).
 
   If the Property Mapping occurs in the context of the MVC stack (as it will be the

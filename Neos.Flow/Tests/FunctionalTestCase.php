@@ -14,8 +14,9 @@ namespace Neos\Flow\Tests;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Request;
+use Neos\Http\Factories\ServerRequestFactory;
+use Neos\Http\Factories\UriFactory;
+use Psr\Http\Message\ServerRequestInterface as HttpRequest;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
@@ -119,7 +120,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      *
      * @return void
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$bootstrap = \Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Core\Bootstrap::class);
         self::setupSuperGlobals();
@@ -133,7 +134,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = self::$bootstrap->getObjectManager();
 
@@ -190,7 +191,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $this->testingProvider = $this->objectManager->get(\Neos\Flow\Security\Authentication\Provider\TestingProvider::class);
             $this->testingProvider->setName('TestingProvider');
 
-            $this->registerRoute('functionaltestroute', 'typo3/flow/test', [
+            $this->registerRoute('functionaltestroute', 'neos/flow/test', [
                 '@package' => 'Neos.Flow',
                 '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
                 '@controller' => 'Standard',
@@ -209,12 +210,12 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     }
 
     /**
-     * @param Request $httpRequest
+     * @param HttpRequest $httpRequest
      * @return ActionRequest
      */
-    protected function route(Request $httpRequest)
+    protected function route(HttpRequest $httpRequest)
     {
-        $actionRequest = new ActionRequest($httpRequest);
+        $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $matchResults = $this->router->route(new RouteContext($httpRequest, RouteParameters::createEmpty()));
         if ($matchResults !== null) {
             $requestArguments = $actionRequest->getArguments();
@@ -234,7 +235,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      *
      * @return void
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->tearDownSecurity();
 
@@ -407,7 +408,8 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             'REQUEST_URI' => '',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
-            'REQUEST_TIME' => 1326472534,
+            'REQUEST_TIME' => $_SERVER['REQUEST_TIME'] ?? null,
+            'REQUEST_TIME_FLOAT' => $_SERVER['REQUEST_TIME_FLOAT'] ?? null,
         ];
     }
 
@@ -424,10 +426,12 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $this->router = $this->browser->getRequestEngine()->getRouter();
         $this->router->setRoutesConfiguration(null);
 
-        $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $request = Request::create(new \Neos\Flow\Http\Uri('http://localhost/typo3/flow/test'));
-        $componentContext = new ComponentContext($request, new \Neos\Flow\Http\Response());
-        $requestHandler->setComponentContext($componentContext);
+        $serverRequestFactory = new ServerRequestFactory(new UriFactory());
+        $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost/neos/flow/test');
+
+        /** @var FunctionalTestRequestHandler $activeRequestHandler */
+        $activeRequestHandler = self::$bootstrap->getActiveRequestHandler();
+        $activeRequestHandler->setHttpRequest($request);
     }
 
     /**

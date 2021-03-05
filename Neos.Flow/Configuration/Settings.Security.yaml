@@ -105,7 +105,6 @@ Neos:
 
           pbkdf2: Neos\Flow\Security\Cryptography\Pbkdf2HashingStrategy
           bcrypt: Neos\Flow\Security\Cryptography\BCryptHashingStrategy
-          saltedmd5: Neos\Flow\Security\Cryptography\SaltedMd5HashingStrategy
 
         Pbkdf2HashingStrategy:
 

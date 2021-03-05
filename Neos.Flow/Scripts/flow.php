@@ -32,14 +32,24 @@ if (isset($argv[1]) && ($argv[1] === 'neos.flow:core:setfilepermissions' || $arg
     array_shift($argv);
     array_shift($argv);
     $returnValue = 0;
-    exec(__DIR__ . '/setfilepermissions.sh ' . implode($argv, ' '), $output, $returnValue);
+    exec(__DIR__ . '/setfilepermissions.sh ' . implode(' ', $argv), $output, $returnValue);
     exit($returnValue);
 } elseif (isset($argv[1]) && ($argv[1] === 'neos.flow:core:migrate' || $argv[1] === 'flow:core:migrate' || $argv[1] === 'core:migrate')) {
     array_shift($argv);
     array_shift($argv);
     require(__DIR__ . '/migrate.php');
 } else {
-    $composerAutoloader = require(__DIR__ . '/../../../Libraries/autoload.php');
+    $autoloaderPath = dirname(__DIR__, 3) . '/Libraries/autoload.php';
+    if (!file_exists($autoloaderPath)) {
+        echo 'Composers "autoload.php" file was not found. The file is expected to be located in the path:' . PHP_EOL . PHP_EOL;
+        echo $autoloaderPath . PHP_EOL . PHP_EOL;
+        echo 'This could be due to a missing "config" => "vendor-dir" section of your root "composer.json" file.' . PHP_EOL . PHP_EOL;
+        echo 'The section key and value should look like the following:' . PHP_EOL;
+        echo '"vendor-dir": "Packages/Libraries"' . PHP_EOL;
+        echo 'Update your "composer.json" file accordingly and run the "composer update" command.' . PHP_EOL;
+        exit(1);
+    }
+    $composerAutoloader = require($autoloaderPath);
 
     if (DIRECTORY_SEPARATOR !== '/' && trim(getenv('FLOW_ROOTPATH'), '"\' ') === '') {
         $absoluteRootpath = dirname(realpath(__DIR__ . '/../../../'));

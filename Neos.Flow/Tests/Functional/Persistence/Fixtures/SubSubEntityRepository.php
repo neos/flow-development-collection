@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\QueryResultInterface;
 
 /**
  * A repository for SubSubEntity
@@ -25,7 +26,7 @@ class SubSubEntityRepository extends Repository
      */
     const ENTITY_CLASSNAME = SubSubEntity::class;
 
-    public function findAll()
+    public function findAll(): QueryResultInterface
     {
         $result = parent::findAll();
         foreach ($result as $instance) {

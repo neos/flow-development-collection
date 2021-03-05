@@ -23,7 +23,7 @@ use Neos\Flow\Tests\UnitTestCase;
 class LockManagerTest extends UnitTestCase
 {
     /**
-     * @var LockManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var LockManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $lockManager;
 
@@ -43,14 +43,14 @@ class LockManagerTest extends UnitTestCase
     protected $mockLockFlagFile;
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockLockDirectory = vfsStream::setup('LockPath');
         $this->mockLockFile = vfsStream::newFile(md5(FLOW_PATH_ROOT) . '_Flow.lock')->at($this->mockLockDirectory);
         $this->mockLockFlagFile = vfsStream::newFile(md5(FLOW_PATH_ROOT) . '_FlowIsLocked')->at($this->mockLockDirectory);
 
         $this->lockManager = $this->getMockBuilder(LockManager::class)->setMethods(['getLockPath', 'doExit'])->disableOriginalConstructor()->getMock();
-        $this->lockManager->expects($this->atLeastOnce())->method('getLockPath')->will($this->returnValue($this->mockLockDirectory->url() . '/'));
+        $this->lockManager->expects(self::atLeastOnce())->method('getLockPath')->will(self::returnValue($this->mockLockDirectory->url() . '/'));
         $this->lockManager->__construct();
     }
 
@@ -59,8 +59,8 @@ class LockManagerTest extends UnitTestCase
      */
     public function constructorDoesNotRemoveLockFilesIfTheyAreNotExpired()
     {
-        $this->assertFileExists($this->mockLockFile->url());
-        $this->assertFileExists($this->mockLockFlagFile->url());
+        self::assertFileExists($this->mockLockFile->url());
+        self::assertFileExists($this->mockLockFlagFile->url());
     }
 
     /**
@@ -69,13 +69,13 @@ class LockManagerTest extends UnitTestCase
     public function constructorRemovesExpiredLockFiles()
     {
         $this->mockLockFlagFile->lastModified(time() - (LockManager::LOCKFILE_MAXIMUM_AGE + 1));
-        $this->assertFileExists($this->mockLockFile->url());
-        $this->assertFileExists($this->mockLockFlagFile->url());
+        self::assertFileExists($this->mockLockFile->url());
+        self::assertFileExists($this->mockLockFlagFile->url());
 
         $this->lockManager->__construct();
 
-        $this->assertFileNotExists($this->mockLockFile->url());
-        $this->assertFileNotExists($this->mockLockFlagFile->url());
+        self::assertFileDoesNotExist($this->mockLockFile->url());
+        self::assertFileDoesNotExist($this->mockLockFlagFile->url());
     }
 
     /**
@@ -83,7 +83,7 @@ class LockManagerTest extends UnitTestCase
      */
     public function isSiteLockedReturnsTrueIfTheFlagFileExists()
     {
-        $this->assertTrue($this->lockManager->isSiteLocked());
+        self::assertTrue($this->lockManager->isSiteLocked());
     }
 
     /**
@@ -92,7 +92,7 @@ class LockManagerTest extends UnitTestCase
     public function isSiteLockedReturnsFalseIfTheFlagFileDoesNotExist()
     {
         unlink($this->mockLockFlagFile->url());
-        $this->assertFalse($this->lockManager->isSiteLocked());
+        self::assertFalse($this->lockManager->isSiteLocked());
     }
 
     /**
@@ -100,7 +100,7 @@ class LockManagerTest extends UnitTestCase
      */
     public function exitIfSiteLockedExitsIfSiteIsLocked()
     {
-        $this->lockManager->expects($this->once())->method('doExit');
+        $this->lockManager->expects(self::once())->method('doExit');
         $this->lockManager->exitIfSiteLocked();
     }
 
@@ -110,7 +110,7 @@ class LockManagerTest extends UnitTestCase
     public function exitIfSiteLockedDoesNotExitIfSiteIsNotLocked()
     {
         $this->lockManager->unlockSite();
-        $this->lockManager->expects($this->never())->method('doExit');
+        $this->lockManager->expects(self::never())->method('doExit');
         $this->lockManager->exitIfSiteLocked();
     }
 
@@ -122,7 +122,7 @@ class LockManagerTest extends UnitTestCase
         $mockLockFlagFilePathAndName = $this->mockLockFlagFile->url();
         unlink($mockLockFlagFilePathAndName);
         $this->lockManager->lockSiteOrExit();
-        $this->assertFileExists($mockLockFlagFilePathAndName);
+        self::assertFileExists($mockLockFlagFilePathAndName);
     }
 
     /**
@@ -135,7 +135,7 @@ class LockManagerTest extends UnitTestCase
 
         $this->lockManager->lockSiteOrExit();
 
-        $this->assertNotEquals($oldLastModifiedTimestamp, $this->mockLockFlagFile->filemtime());
+        self::assertNotEquals($oldLastModifiedTimestamp, $this->mockLockFlagFile->filemtime());
     }
 
     /**
@@ -145,7 +145,7 @@ class LockManagerTest extends UnitTestCase
     {
         $mockLockResource = fopen($this->mockLockFile->url(), 'w+');
         $this->mockLockFile->lock($mockLockResource, LOCK_EX | LOCK_NB);
-        $this->lockManager->expects($this->once())->method('doExit');
+        $this->lockManager->expects(self::once())->method('doExit');
         $this->lockManager->lockSiteOrExit();
     }
 
@@ -154,7 +154,7 @@ class LockManagerTest extends UnitTestCase
      */
     public function lockSiteOrExitDoesNotExitIfSiteIsNotLocked()
     {
-        $this->lockManager->expects($this->never())->method('doExit');
+        $this->lockManager->expects(self::never())->method('doExit');
         $this->lockManager->lockSiteOrExit();
     }
 
@@ -168,7 +168,7 @@ class LockManagerTest extends UnitTestCase
         $this->inject($this->lockManager, 'lockResource', $mockLockResource);
 
         $this->lockManager->unlockSite();
-        $this->assertFalse(is_resource($mockLockResource));
+        self::assertFalse(is_resource($mockLockResource));
     }
 
     /**
@@ -177,6 +177,6 @@ class LockManagerTest extends UnitTestCase
     public function unlockSiteRemovesLockFlagFile()
     {
         $this->lockManager->unlockSite();
-        $this->assertFileNotExists($this->mockLockFlagFile->url());
+        self::assertFileDoesNotExist($this->mockLockFlagFile->url());
     }
 }

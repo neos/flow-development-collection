@@ -104,7 +104,7 @@ class Collection implements CollectionInterface
      *
      * Note that this collection must have a writable storage in order to import resources.
      *
-     * @param string | resource $source The URI (or local path and filename) or the PHP resource stream to import the resource from
+     * @param string|resource $source The URI (or local path and filename) or the PHP resource stream to import the resource from
      * @return PersistentResource A resource object representing the imported resource
      * @throws ResourceException
      */
@@ -157,22 +157,18 @@ class Collection implements CollectionInterface
      */
     public function getObjects(callable $callback = null)
     {
-        $objects = [];
         if ($this->storage instanceof PackageStorage && $this->pathPatterns !== []) {
-            $objects = new \AppendIterator();
             foreach ($this->pathPatterns as $pathPattern) {
-                $objects->append($this->storage->getObjectsByPathPattern($pathPattern, $callback));
+                foreach ($this->storage->getObjectsByPathPattern($pathPattern, $callback) as $storageObject) {
+                    yield $storageObject;
+                }
             }
         } else {
-            $objects = $this->storage->getObjectsByCollection($this, $callback);
+            yield from $this->storage->getObjectsByCollection($this, $callback);
         }
 
-        // TODO: Implement filter manipulation here:
-        // foreach ($objects as $object) {
-        // 	$object->setStream(function() { return fopen('/tmp/test.txt', 'rb');});
-        // }
-
-        return $objects;
+        // NOTE: NEVER mix "return" and "yield" in the same function; this
+        // leads to totally unpredictable effects.
     }
 
     /**
@@ -180,7 +176,7 @@ class Collection implements CollectionInterface
      * data. Note that this stream handle may only be used read-only.
      *
      * @param PersistentResource $resource The resource to retrieve the stream for
-     * @return resource | boolean The resource stream or false if the stream could not be obtained
+     * @return resource|boolean The resource stream or false if the stream could not be obtained
      */
     public function getStreamByResource(PersistentResource $resource)
     {

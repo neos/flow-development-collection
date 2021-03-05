@@ -11,12 +11,11 @@ namespace Neos\Flow\Error;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cli\Response as CliResponse;
+use Neos\Flow\Cli\Response;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
-use Neos\Flow\Http\Request;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -33,13 +32,6 @@ use Psr\Log\LoggerInterface;
  */
 abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 {
-    /**
-     * @var SystemLoggerInterface
-     * @deprecated Use the PSR logger
-     * @see logger
-     */
-    protected $systemLogger;
-
     /**
      * @var LoggerInterface
      */
@@ -59,17 +51,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      * @var array
      */
     protected $renderingOptions;
-
-    /**
-     * Injects the system logger
-     *
-     * @param SystemLoggerInterface $systemLogger
-     * @return void
-     */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
-    {
-        $this->systemLogger = $systemLogger;
-    }
 
     /**
      * @param LoggerInterface $logger
@@ -149,7 +130,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
 
     /**
-     * Prepares a Fluid view for rendering the custom error page.
+     * Prepares a view for rendering the custom error page.
      *
      * @param \Throwable $exception
      * @param array $renderingOptions Rendering options as defined in the settings
@@ -166,8 +147,8 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $view = $viewClassName::createWithOptions($renderingOptions['viewOptions']);
         $view = $this->applyLegacyViewOptions($view, $renderingOptions);
 
-        $httpRequest = Request::createFromEnvironment();
-        $request = new ActionRequest($httpRequest);
+        $httpRequest = ServerRequest::fromGlobals();
+        $request = ActionRequest::fromHttpRequest($httpRequest);
         $request->setControllerPackageKey('Neos.Flow');
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
@@ -272,7 +253,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      */
     protected function echoExceptionCli(\Throwable $exception)
     {
-        $response = new CliResponse();
+        $response = new Response();
 
         $exceptionMessage = $this->renderSingleExceptionCli($exception);
         $exceptionMessage = $this->renderNestedExceptonsCli($exception, $exceptionMessage);

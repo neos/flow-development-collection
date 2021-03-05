@@ -16,6 +16,7 @@ use Neos\Flow\Aop\Pointcut\PointcutFilterInterface;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Reflection\ClassReflection;
 
 /**
  * Pointcut filter matching proxyable methods in objects of scope session
@@ -62,7 +63,12 @@ class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
             return false;
         }
 
-        if (preg_match('/^__wakeup|__construct|__destruct|__sleep|__serialize|__unserialize|__clone|shutdownObject|initializeObject|inject.*$/', $methodName) !== 0) {
+        if (preg_match('/^(?:__wakeup|__construct|__destruct|__sleep|__serialize|__unserialize|__clone|shutdownObject|initializeObject|inject.*)$/', $methodName) !== 0) {
+            return false;
+        }
+
+        $classReflection = new ClassReflection($className);
+        if ($classReflection->hasMethod($methodName) && $classReflection->getMethod($methodName)->isPrivate()) {
             return false;
         }
 

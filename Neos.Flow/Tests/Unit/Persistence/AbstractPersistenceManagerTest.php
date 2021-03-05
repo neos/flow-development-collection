@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Persistence;
  */
 
 use Neos\Flow\Persistence\AbstractPersistenceManager;
+use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -24,7 +25,7 @@ class AbstractPersistenceManagerTest extends UnitTestCase
      */
     protected $abstractPersistenceManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->abstractPersistenceManager = $this->getMockBuilder(AbstractPersistenceManager::class)->setMethods(['initialize', 'persistAll', 'isNewObject', 'getObjectByIdentifier', 'createQueryForType', 'add', 'remove', 'update', 'getIdentifierByObject', 'clearState', 'isConnected'])->getMock();
     }
@@ -35,21 +36,21 @@ class AbstractPersistenceManagerTest extends UnitTestCase
     public function convertObjectToIdentityArrayConvertsAnObject()
     {
         $someObject = new \stdClass();
-        $this->abstractPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($someObject)->will($this->returnValue(123));
+        $this->abstractPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($someObject)->will(self::returnValue(123));
 
         $expectedResult = ['__identity' => 123];
         $actualResult = $this->abstractPersistenceManager->convertObjectToIdentityArray($someObject);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Persistence\Exception\UnknownObjectException
      */
     public function convertObjectToIdentityArrayThrowsExceptionIfIdentityForTheGivenObjectCantBeDetermined()
     {
+        $this->expectException(UnknownObjectException::class);
         $someObject = new \stdClass();
-        $this->abstractPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($someObject)->will($this->returnValue(null));
+        $this->abstractPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($someObject)->will(self::returnValue(null));
 
         $this->abstractPersistenceManager->convertObjectToIdentityArray($someObject);
     }
@@ -61,14 +62,14 @@ class AbstractPersistenceManagerTest extends UnitTestCase
     {
         $object1 = new \stdClass();
         $object2 = new \stdClass();
-        $this->abstractPersistenceManager->expects($this->at(0))->method('getIdentifierByObject')->with($object1)->will($this->returnValue('identifier1'));
-        $this->abstractPersistenceManager->expects($this->at(1))->method('getIdentifierByObject')->with($object2)->will($this->returnValue('identifier2'));
+        $this->abstractPersistenceManager->expects(self::exactly(2))->method('getIdentifierByObject')
+            ->withConsecutive([$object1], [$object2])->willReturnOnConsecutiveCalls('identifier1', 'identifier2');
 
         $originalArray = ['foo' => 'bar', 'object1' => $object1, 'baz' => ['object2' => $object2]];
         $expectedResult = ['foo' => 'bar', 'object1' => ['__identity' => 'identifier1'], 'baz' => ['object2' => ['__identity' => 'identifier2']]];
 
         $actualResult = $this->abstractPersistenceManager->convertObjectsToIdentityArrays($originalArray);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -78,13 +79,13 @@ class AbstractPersistenceManagerTest extends UnitTestCase
     {
         $object1 = new \stdClass();
         $object2 = new \stdClass();
-        $this->abstractPersistenceManager->expects($this->at(0))->method('getIdentifierByObject')->with($object1)->will($this->returnValue('identifier1'));
-        $this->abstractPersistenceManager->expects($this->at(1))->method('getIdentifierByObject')->with($object2)->will($this->returnValue('identifier2'));
+        $this->abstractPersistenceManager->expects(self::exactly(2))->method('getIdentifierByObject')
+            ->withConsecutive([$object1], [$object2])->willReturnOnConsecutiveCalls('identifier1', 'identifier2');
 
         $originalArray = ['foo' => 'bar', 'object1' => $object1, 'baz' => new \ArrayObject(['object2' => $object2])];
         $expectedResult = ['foo' => 'bar', 'object1' => ['__identity' => 'identifier1'], 'baz' => ['object2' => ['__identity' => 'identifier2']]];
 
         $actualResult = $this->abstractPersistenceManager->convertObjectsToIdentityArrays($originalArray);
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 }

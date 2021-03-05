@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  */
 
 use Doctrine\Common\Annotations\Reader;
+use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -27,11 +28,11 @@ class ReflectionServiceTest extends UnitTestCase
     protected $reflectionService;
 
     /**
-     * @var Reader|\PHPUnit_Framework_MockObject_MockObject
+     * @var Reader|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockAnnotationReader;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->reflectionService = $this->getAccessibleMock(ReflectionService::class, null);
 
@@ -44,28 +45,28 @@ class ReflectionServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException
      */
     public function reflectClassThrowsExceptionForNonExistingClasses()
     {
+        $this->expectException(ClassLoadingForReflectionFailedException::class);
         $this->reflectionService->_call('reflectClass', 'Non\Existing\Class');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException
      */
     public function reflectClassThrowsExceptionForFilesWithNoClass()
     {
+        $this->expectException(ClassLoadingForReflectionFailedException::class);
         $this->reflectionService->_call('reflectClass', Fixture\FileWithNoClass::class);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException
      */
     public function reflectClassThrowsExceptionForClassesWithNoMatchingFilename()
     {
+        $this->expectException(ClassLoadingForReflectionFailedException::class);
         $this->reflectionService->_call('reflectClass', Fixture\ClassWithDifferentNameDifferent::class);
     }
 
@@ -87,7 +88,7 @@ class ReflectionServiceTest extends UnitTestCase
         $settings = ['reflection' => ['ignoredTags' => ['ignored' => true]]];
         $this->reflectionService->injectSettings($settings);
 
-        $this->assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));
+        self::assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));
     }
 
     /**
@@ -98,7 +99,7 @@ class ReflectionServiceTest extends UnitTestCase
         $settings = ['reflection' => ['ignoredTags' => ['notignored' => false]]];
         $this->reflectionService->injectSettings($settings);
 
-        $this->assertFalse($this->reflectionService->_call('isTagIgnored', 'notignored'));
+        self::assertFalse($this->reflectionService->_call('isTagIgnored', 'notignored'));
     }
 
     /**
@@ -109,7 +110,7 @@ class ReflectionServiceTest extends UnitTestCase
         $settings = ['reflection' => ['ignoredTags' => ['ignored' => true, 'notignored' => false]]];
         $this->reflectionService->injectSettings($settings);
 
-        $this->assertFalse($this->reflectionService->_call('isTagIgnored', 'notconfigured'));
+        self::assertFalse($this->reflectionService->_call('isTagIgnored', 'notconfigured'));
     }
 
     /**
@@ -120,7 +121,7 @@ class ReflectionServiceTest extends UnitTestCase
         $settings = ['reflection' => ['ignoredTags' => ['ignored']]];
         $this->reflectionService->injectSettings($settings);
 
-        $this->assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));
-        $this->assertFalse($this->reflectionService->_call('isTagIgnored', 'notignored'));
+        self::assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));
+        self::assertFalse($this->reflectionService->_call('isTagIgnored', 'notignored'));
     }
 }

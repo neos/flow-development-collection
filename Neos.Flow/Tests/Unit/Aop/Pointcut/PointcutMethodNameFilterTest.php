@@ -32,12 +32,12 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 				final public function someFinalMethod() {}
 			}'
         );
-        /** @var ReflectionService|\PHPUnit_Framework_MockObject_MockObject $mockReflectionService */
+        /** @var ReflectionService|\PHPUnit\Framework\MockObject\MockObject $mockReflectionService */
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->any())->method('isMethodFinal')->with($className, 'someFinalMethod')->will($this->returnValue(true));
+        $mockReflectionService->expects(self::any())->method('isMethodFinal')->with($className, 'someFinalMethod')->will(self::returnValue(true));
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('someFinalMethod');
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        $this->assertTrue($methodNameFilter->matches($className, 'someFinalMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches($className, 'someFinalMethod', $className, 1));
     }
 
     /**
@@ -55,23 +55,23 @@ class PointcutMethodNameFilterTest extends UnitTestCase
         );
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->atLeastOnce())->method('isMethodPublic')->will($this->onConsecutiveCalls(true, false, false, true));
-        $mockReflectionService->expects($this->atLeastOnce())->method('isMethodProtected')->will($this->onConsecutiveCalls(false, true, false, false));
-        $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue([]));
+        $mockReflectionService->expects(self::atLeastOnce())->method('isMethodPublic')->will($this->onConsecutiveCalls(true, false, false, true));
+        $mockReflectionService->expects(self::atLeastOnce())->method('isMethodProtected')->will($this->onConsecutiveCalls(false, true, false, false));
+        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue([]));
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', 'public');
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        $this->assertTrue($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', null, 1));
+        self::assertTrue($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', null, 1));
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', 'protected');
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
-        $this->assertTrue($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
-        $this->assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', null, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', null, 1));
     }
 
     /**
@@ -89,14 +89,14 @@ class PointcutMethodNameFilterTest extends UnitTestCase
         );
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects($this->exactly(3))->method('getMethodParameters')->will($this->onConsecutiveCalls(
+        $mockReflectionService->expects(self::exactly(3))->method('getMethodParameters')->will($this->onConsecutiveCalls(
             ['arg1' => []],
             ['arg1' => [], 'arg2' => []],
             ['arg1' => [], 'arg2' => [], 'arg3' => []]
         ));
 
         $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->setMethods([])->getMock();
-        $mockSystemLogger->expects($this->once())->method('notice')->with($this->equalTo(
+        $mockSystemLogger->expects(self::once())->method('notice')->with(self::equalTo(
             'The argument "arg2" declared in pointcut does not exist in method ' . $className . '->somePublicMethod'
         ));
 
@@ -117,8 +117,8 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1);
 
-        $this->assertTrue($methodNameFilter->matches(__CLASS__, 'someOtherPublicMethod', $className, 1));
-        $this->assertTrue($methodNameFilter->matches(__CLASS__, 'someThirdMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches(__CLASS__, 'someOtherPublicMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches(__CLASS__, 'someThirdMethod', $className, 1));
     }
 
     /**
@@ -139,6 +139,6 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
 
-        $this->assertEquals($expectedRuntimeEvaluations, $methodNameFilter->getRuntimeEvaluationsDefinition(), 'The argument constraint definitions have not been returned as expected.');
+        self::assertEquals($expectedRuntimeEvaluations, $methodNameFilter->getRuntimeEvaluationsDefinition(), 'The argument constraint definitions have not been returned as expected.');
     }
 }

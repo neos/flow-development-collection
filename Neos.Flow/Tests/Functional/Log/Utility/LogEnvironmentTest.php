@@ -58,6 +58,6 @@ class LogEnvironmentTest extends FunctionalTestCase
     public function fromMethodName($method, $expected)
     {
         $actual = LogEnvironment::fromMethodName($method);
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 }

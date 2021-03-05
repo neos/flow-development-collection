@@ -205,7 +205,7 @@ itself! So complying with the walkthrough, the following approach is possible::
 		'Magrathea\Erp\Annotations\Reportable'
 	);
 	$propertyAnnotation instanceof \Magrathea\Erp\Annotations\Reportable;
-	$propertyAnnotation->reportName === NULL;
+	$propertyAnnotation->reportName === null;
 
 
 It's even possible to collect all annotation classes of a particular class, done via

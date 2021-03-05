@@ -27,17 +27,15 @@ class ClassReflection extends \ReflectionClass
     public function __construct($classNameOrObject)
     {
         $throwExceptionOnUnloadedClasses =
-            function ($className) {
-                throw new Exception\ClassLoadingForReflectionFailedException(sprintf('Required class "%s" could not be loaded properly for reflection.%2$s%2$sPossible reasons are:%2$s%2$s * Requiring non-existent classes%2$s * Using non-supported annotations%2$s * Class-/filename missmatch.%2$s%2$sThe "Neos.Flow.object.excludeClasses" setting can be used to skip classes from being reflected.', $className, chr(10)));
+            static function ($className) use ($classNameOrObject) {
+                throw Exception\ClassLoadingForReflectionFailedException::forClassName($className, $classNameOrObject);
             };
         spl_autoload_register($throwExceptionOnUnloadedClasses);
         try {
             parent::__construct($classNameOrObject);
-        } catch (Exception\ClassLoadingForReflectionFailedException $exception) {
+        } finally {
             spl_autoload_unregister($throwExceptionOnUnloadedClasses);
-            throw $exception;
         }
-        spl_autoload_unregister($throwExceptionOnUnloadedClasses);
     }
 
     /**
@@ -93,7 +91,7 @@ class ClassReflection extends \ReflectionClass
      * that MethodReflection objects are returned instead of the
      * original ReflectionMethod instances.
      *
-     * @param integer $filter A filter mask
+     * @param integer|null $filter A filter mask
      * @return array<MethodReflection> Method reflection objects of the methods in this class
      */
     public function getMethods($filter = null)
@@ -112,7 +110,7 @@ class ClassReflection extends \ReflectionClass
      * that a ClassReflection object is returned instead of the
      * orginal ReflectionClass instance.
      *
-     * @return ClassReflection Reflection of the parent class - if any
+     * @return ClassReflection|false Reflection of the parent class - if any
      */
     public function getParentClass()
     {

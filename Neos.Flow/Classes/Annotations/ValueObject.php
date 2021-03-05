@@ -14,9 +14,10 @@ namespace Neos\Flow\Annotations;
 /**
  * Marks the annotate class as a value object.
  *
- * Regarding Doctrine the object is treated like an entity, but Flow
+ * The schema will be embedded into parent entities by default, unless "embedded=false" is specified.
+ * In that case, regarding Doctrine the object is treated like an entity, but Flow
  * applies some optimizations internally, e.g. to store only one instance
- * of a value object.
+ * of the value object.
  *
  * @Annotation
  * @Target("CLASS")
@@ -27,5 +28,5 @@ final class ValueObject
      * Whether the value object should be embedded.
      * @var boolean
      */
-    public $embedded = false;
+    public $embedded = true;
 }

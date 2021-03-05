@@ -21,7 +21,7 @@ use Neos\Flow\Package\PackageKeyAwareInterface;
 use Neos\Flow\Package\PackageManager;
 
 /**
- * Package command controller to handle packages from CLI (create/activate/deactivate packages)
+ * Package command controller to handle packages from CLI
  *
  * @Flow\Scope("singleton")
  */
@@ -108,8 +108,6 @@ class PackageCommandController extends CommandController
      *
      * @param boolean $loadingOrder The returned packages are ordered by their loading order.
      * @return void The list of packages
-     * @see neos.flow:package:activate
-     * @see neos.flow:package:deactivate
      */
     public function listCommand(bool $loadingOrder = false)
     {

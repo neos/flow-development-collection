@@ -7,7 +7,7 @@ array(
 	'properties' => array(
 		'<name>' => array(
 			'type' => '<type>',
-			'multivalue' => FALSE,
+			'multivalue' => false,
 			'value' => <value>
 		), ...
 	),
@@ -20,9 +20,9 @@ array(
 	'classname' => '<classname>',
 	'properties' => array(
 		'<name>' => array(
-			'type' => '<type>', // for multi values only (array|SplObjectStorage) or 'NULL' for NULL
-			'multivalue' => TRUE,
-			'value' => array(	// NULL for NULL/empty!
+			'type' => '<type>', // for multi values only (array|SplObjectStorage) or 'null' for null
+			'multivalue' => true,
+			'value' => array(	// null for null/empty!
 				array(
 					'type' => '<type>',
 					'index' => <index>,

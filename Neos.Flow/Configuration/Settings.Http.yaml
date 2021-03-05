@@ -24,37 +24,37 @@ Neos:
       # request (default).
       baseUri: NULL
 
-      # Defines the workflow of one request from bootstrap to the HTTP response
-      #
-      # By default this workflow is devided in three sub-chains "preprocess", "process" and "postprocess" but the chain can be restructured as needed
-      #
-      chain:
+      # Defines the PSR-15 middlewares that a request goes through in a flow
+      middlewares:
+        # The following middleware components are executed first since they influence the incoming request or outgoing response
+        'standardsCompliance':
+          position: 'start 100'
+          middleware: 'Neos\Flow\Http\Middleware\StandardsComplianceMiddleware'
+        'trustedProxies':
+          position: 'start 50'
+          middleware: 'Neos\Flow\Http\Middleware\TrustedProxiesMiddleware'
+        'session':
+          position: 'start 10'
+          middleware: 'Neos\Flow\Http\Middleware\SessionMiddleware'
 
-        'preprocess':
-          position: 'before process'
-          chain:
-            'trustedProxies':
-              position: 'start'
-              component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
-            'getSessionCookieFromRequest':
-              position: 'after trustedProxies'
-              component: 'Neos\Flow\Session\Http\SessionRequestComponent'
-        'process':
-          chain:
-            'routing':
-              position: 'start'
-              component: 'Neos\Flow\Mvc\Routing\RoutingComponent'
-            'dispatching':
-              component: 'Neos\Flow\Mvc\DispatchComponent'
+        # The execution order of the following middleware components is deliberately not specified.
+        # To run a middleware before or after an existing one, you can use "position: before <name>" or "position: after <name>"
+        'routing':
+          middleware: 'Neos\Flow\Mvc\Routing\RoutingMiddleware'
+        'poweredByHeader':
+          middleware: 'Neos\Flow\Http\Middleware\PoweredByMiddleware'
+        'flashMessages':
+          middleware: 'Neos\Flow\Mvc\FlashMessage\FlashMessageMiddleware'
+        'parseBody':
+          middleware: 'Neos\Flow\Http\Middleware\RequestBodyParsingMiddleware'
+        'securityEntryPoint':
+          middleware: 'Neos\Flow\Http\Middleware\SecurityEntryPointMiddleware'
 
-        'postprocess':
-          chain:
-            'setSessionCookie':
-              position: 'start'
-              component: 'Neos\Flow\Session\Http\SessionResponseComponent'
-            'standardsCompliance':
-              position: 'end'
-              component: 'Neos\Flow\Http\Component\StandardsComplianceComponent'
+        # The dispatch middleware component is usually executed at the end of the chain since it creates the Response instance
+        # that is then passed back through the chain
+        'dispatch':
+          position: 'end 100'
+          middleware: 'Neos\Flow\Mvc\DispatchMiddleware'
 
       trustedProxies:
 
@@ -75,8 +75,12 @@ Neos:
         # Defines request headers which are trusted from proxies to override important request information
         # Each value can be a single header or a comma separated list of headers
         headers:
-          # This is a list mainly for backwards-compatibility. You should only set a single header, e.g. 'X-Forwarded-For'
-          clientIp: 'Client-Ip,X-Forwarded-For,X-Forwarded,X-Cluster-Client-Ip,Forwarded-For,Forwarded'
+          clientIp: 'X-Forwarded-For'
           host: 'X-Forwarded-Host'
           port: 'X-Forwarded-Port'
           proto: 'X-Forwarded-Proto'
+
+      serverRequestDefaults:
+        userAgent: 'Flow/%FLOW_VERSION_BRANCH%.x'
+        scriptPath: '%FLOW_PATH_WEB%index.php'
+        protocolVersion: '1.1'

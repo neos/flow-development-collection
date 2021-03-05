@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -30,7 +32,7 @@ interface FreezableBackendInterface extends BackendInterface
      *
      * @return void
      */
-    public function freeze();
+    public function freeze(): void;
 
     /**
      * Tells if this backend is frozen.

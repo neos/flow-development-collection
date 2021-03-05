@@ -36,10 +36,10 @@ class LocaleTest extends UnitTestCase
     /**
      * @test
      * @dataProvider invalidLocaleIdentifiers
-     * @expectedException \Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException
      */
     public function theConstructorThrowsAnExceptionOnPassingAInvalidLocaleIdentifiers($invalidIdentifier)
     {
+        $this->expectException(I18n\Exception\InvalidLocaleIdentifierException::class);
         new I18n\Locale($invalidIdentifier);
     }
 
@@ -49,28 +49,28 @@ class LocaleTest extends UnitTestCase
     public function theConstructorRecognizesTheMostImportantValidLocaleIdentifiers()
     {
         $locale = new I18n\Locale('de');
-        $this->assertEquals('de', $locale->getLanguage());
-        $this->assertNull($locale->getScript());
-        $this->assertNull($locale->getRegion());
-        $this->assertNull($locale->getVariant());
+        self::assertEquals('de', $locale->getLanguage());
+        self::assertNull($locale->getScript());
+        self::assertNull($locale->getRegion());
+        self::assertNull($locale->getVariant());
 
         $locale = new I18n\Locale('de_DE');
-        $this->assertEquals('de', $locale->getLanguage());
-        $this->assertEquals('DE', $locale->getRegion());
-        $this->assertNull($locale->getScript());
-        $this->assertNull($locale->getVariant());
+        self::assertEquals('de', $locale->getLanguage());
+        self::assertEquals('DE', $locale->getRegion());
+        self::assertNull($locale->getScript());
+        self::assertNull($locale->getVariant());
 
         $locale = new I18n\Locale('en_Latn_US');
-        $this->assertEquals('en', $locale->getLanguage());
-        $this->assertEquals('Latn', $locale->getScript());
-        $this->assertEquals('US', $locale->getRegion());
-        $this->assertNull($locale->getVariant());
+        self::assertEquals('en', $locale->getLanguage());
+        self::assertEquals('Latn', $locale->getScript());
+        self::assertEquals('US', $locale->getRegion());
+        self::assertNull($locale->getVariant());
 
         $locale = new I18n\Locale('AR-arab_ae');
-        $this->assertEquals('ar', $locale->getLanguage());
-        $this->assertEquals('Arab', $locale->getScript());
-        $this->assertEquals('AE', $locale->getRegion());
-        $this->assertNull($locale->getVariant());
+        self::assertEquals('ar', $locale->getLanguage());
+        self::assertEquals('Arab', $locale->getScript());
+        self::assertEquals('AE', $locale->getRegion());
+        self::assertNull($locale->getVariant());
     }
 
     /**
@@ -79,12 +79,12 @@ class LocaleTest extends UnitTestCase
     public function producesCorrectLocaleIdentifierWhenStringCasted()
     {
         $locale = new I18n\Locale('de_DE');
-        $this->assertEquals('de_DE', (string)$locale);
+        self::assertEquals('de_DE', (string)$locale);
 
         $locale = new I18n\Locale('en_Latn_US');
-        $this->assertEquals('en_Latn_US', (string)$locale);
+        self::assertEquals('en_Latn_US', (string)$locale);
 
         $locale = new I18n\Locale('AR-arab_ae');
-        $this->assertEquals('ar_Arab_AE', (string)$locale);
+        self::assertEquals('ar_Arab_AE', (string)$locale);
     }
 }

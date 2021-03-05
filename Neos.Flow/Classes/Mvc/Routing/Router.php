@@ -13,6 +13,8 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
+use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
@@ -31,6 +33,7 @@ use Psr\Log\LoggerInterface;
 class Router implements RouterInterface
 {
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -132,7 +135,8 @@ class Router implements RouterInterface
                 return $matchResults;
             }
         }
-        $this->logger->debug(sprintf('Router route(): No route matched the route path "%s".', $httpRequest->getRelativePath()));
+        $routePath = UriHelper::getRelativePath(RequestInformationHelper::generateBaseUri($httpRequest), $httpRequest->getUri());
+        $this->logger->debug(sprintf('Router route(): No route matched the route path "%s".', $routePath));
         throw new NoMatchingRouteException('Could not match a route for the HTTP request.', 1510846308);
     }
 
@@ -192,7 +196,7 @@ class Router implements RouterInterface
 
         /** @var $route Route */
         foreach ($this->routes as $route) {
-            if ($route->resolves($resolveContext->getRouteValues()) === true) {
+            if ($route->resolves($resolveContext) === true) {
                 $uriConstraints = $route->getResolvedUriConstraints()->withPathPrefix($resolveContext->getUriPathPrefix());
                 $resolvedUri = $uriConstraints->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri());
                 $this->routerCachingService->storeResolvedUriConstraints($resolveContext, $uriConstraints, $route->getResolvedTags());
