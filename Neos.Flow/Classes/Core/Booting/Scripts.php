@@ -277,7 +277,7 @@ class Scripts
     {
         $storageClassName = $settings['log']['throwables']['storageClass'] ?? FileStorage::class;
         $storageOptions = $settings['log']['throwables']['optionsByImplementation'][$storageClassName] ?? [];
-        $renderRequest = $settings['log']['throwables']['renderRequestInformation'] ?? true;
+        $renderRequestInformation = $settings['log']['throwables']['renderRequestInformation'] ?? true;
 
 
         if (!in_array(ThrowableStorageInterface::class, class_implements($storageClassName, true))) {
@@ -294,7 +294,7 @@ class Scripts
             return Debugger::getBacktraceCode($backtrace, false, true);
         });
 
-        $throwableStorage->setRequestInformationRenderer(function () use ($renderRequest) {
+        $throwableStorage->setRequestInformationRenderer(function () use ($renderRequestInformation) {
             $output = '';
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
                 return $output;
@@ -309,7 +309,7 @@ class Scripts
 
             $request = $requestHandler->getHttpRequest();
             $response = $requestHandler->getHttpResponse();
-            if ($renderRequest) {
+            if ($renderRequestInformation) {
                 $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
             }
             $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
