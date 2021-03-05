@@ -530,7 +530,7 @@ class Headers implements \Iterator
     {
         $preparedValues = [];
         foreach ($values as $value) {
-            $preparedValues[] = sprintf("%s: %s", $headerName, $headerName === 'Authorization' ? '****' : $value);
+            $preparedValues[] = sprintf("%s: %s", $headerName, $value);
         }
 
         return $preparedValues;
