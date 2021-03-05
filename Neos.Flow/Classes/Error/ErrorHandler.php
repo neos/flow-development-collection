@@ -60,7 +60,7 @@ class ErrorHandler
      * @throws FlowError\Exception with the data passed to this method
      * @throws \Exception
      */
-    public function handleError($errorLevel, $errorMessage, $errorFile, $errorLine)
+    public function handleError(int $errorLevel, string $errorMessage, string $errorFile, int $errorLine)
     {
         if (error_reporting() === 0) {
             return;

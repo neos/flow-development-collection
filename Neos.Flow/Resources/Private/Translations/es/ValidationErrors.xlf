@@ -27,10 +27,10 @@
 			<target state="translated">El valor dado no es una fecha válida</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target state="translated">La fecha debe estar entre {0} y {1}</target></trans-unit>
+			<target state="translated">La fecha dada debe estar entre {0,datetime,datetime} y {1,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target state="translated">La fecha debe ser posterior a {0}</target></trans-unit>
+			<target state="translated">La fecha dada debe estar después {0,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
 			<target state="translated">La fecha debe ser anterior a {0}</target></trans-unit>

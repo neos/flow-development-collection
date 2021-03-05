@@ -36,7 +36,7 @@ abstract class AbstractMethodInterceptorBuilder
      * @param ReflectionService $reflectionService The reflection service
      * @return void
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
@@ -45,7 +45,7 @@ abstract class AbstractMethodInterceptorBuilder
      * @param Compiler $compiler
      * @return void
      */
-    public function injectCompiler(Compiler $compiler)
+    public function injectCompiler(Compiler $compiler): void
     {
         $this->compiler = $compiler;
     }
@@ -56,9 +56,9 @@ abstract class AbstractMethodInterceptorBuilder
      * @param string $methodName Name of the method to build an interceptor for
      * @param array $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
      * @param string $targetClassName Name of the target class to build the interceptor for
-     * @return string PHP code of the interceptor
+     * @return void
      */
-    abstract public function build($methodName, array $methodMetaInformation, $targetClassName);
+    abstract public function build(string $methodName, array $methodMetaInformation, string $targetClassName): void;
 
     /**
      * Builds a string containing PHP code to build the array given as input.
@@ -66,7 +66,7 @@ abstract class AbstractMethodInterceptorBuilder
      * @param array $array
      * @return string e.g. 'array()' or 'array(1 => 'bar')
      */
-    protected function buildArraySetupCode(array $array)
+    protected function buildArraySetupCode(array $array): string
     {
         $code = 'array(';
         foreach ($array as $key => $value) {
@@ -75,7 +75,7 @@ abstract class AbstractMethodInterceptorBuilder
             if ($value === null) {
                 $code .= 'NULL';
             } elseif (is_bool($value)) {
-                $code .= ($value ? 'TRUE' : 'FALSE');
+                $code .= ($value ? 'true' : 'false');
             } elseif (is_numeric($value)) {
                 $code .= $value;
             } elseif (is_string($value)) {
@@ -96,7 +96,7 @@ abstract class AbstractMethodInterceptorBuilder
      * @param boolean $useArgumentsArray If set, the $methodArguments array will be built from $arguments instead of using the actual parameter variables.
      * @return string The generated code to be used in an "array()" definition
      */
-    protected function buildMethodArgumentsArrayCode($className, $methodName, $useArgumentsArray = false)
+    protected function buildMethodArgumentsArrayCode(string $className = null, string $methodName = null, bool $useArgumentsArray = false): string
     {
         if ($className === null || $methodName === null) {
             return '';
@@ -129,7 +129,7 @@ abstract class AbstractMethodInterceptorBuilder
      * @param string $className Name of the class the method is declared in
      * @return string The generated parameters code
      */
-    protected function buildSavedConstructorParametersCode($className)
+    protected function buildSavedConstructorParametersCode(string $className = null): string
     {
         if ($className === null) {
             return '';
@@ -156,12 +156,12 @@ abstract class AbstractMethodInterceptorBuilder
      * @param string $declaringClassName Name of the declaring class. This is usually the same as the $targetClassName. However, it is the introduction interface for introduced methods.
      * @return string PHP code to be used in the method interceptor
      */
-    protected function buildAdvicesCode(array $groupedAdvices, $methodName, $targetClassName, $declaringClassName)
+    protected function buildAdvicesCode(array $groupedAdvices, string $methodName = null, string $targetClassName = null, string $declaringClassName = null): string
     {
         $advicesCode = $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName, ($methodName === '__construct'));
 
         if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\AfterThrowingAdvice::class]) || isset($groupedAdvices[\Neos\Flow\Aop\Advice\AfterAdvice::class])) {
-            $advicesCode .= "\n        \$result = NULL;\n        \$afterAdviceInvoked = FALSE;\n        try {\n";
+            $advicesCode .= "\n        \$result = NULL;\n        \$afterAdviceInvoked = false;\n        try {\n";
         }
 
         if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\BeforeAdvice::class])) {
@@ -214,7 +214,7 @@ abstract class AbstractMethodInterceptorBuilder
                 if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'Neos\Flow\Aop\Advice\AfterAdvice\'])) {
                     $advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'Neos\Flow\Aop\Advice\AfterAdvice\'];
                     $joinPoint = new \Neos\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, NULL, $result);
-                    $afterAdviceInvoked = TRUE;
+                    $afterAdviceInvoked = true;
                     foreach ($advices as $advice) {
                         $advice->invoke($joinPoint);
                     }

@@ -39,7 +39,7 @@ class CommandArgumentDefinition
      * @param boolean $required defines whether this argument is required or optional
      * @param string $description description of the argument
      */
-    public function __construct($name, $required, $description)
+    public function __construct(string $name, bool $required, string $description)
     {
         $this->name = $name;
         $this->required = $required;
@@ -49,7 +49,7 @@ class CommandArgumentDefinition
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -59,7 +59,7 @@ class CommandArgumentDefinition
      *
      * @return string
      */
-    public function getDashedName()
+    public function getDashedName(): string
     {
         $dashedName = ucfirst($this->name);
         $dashedName = preg_replace('/([A-Z][a-z0-9]+)/', '$1-', $dashedName);
@@ -69,15 +69,15 @@ class CommandArgumentDefinition
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
     /**
-     * @return string
+     * @return bool
      */
-    public function isRequired()
+    public function isRequired(): bool
     {
         return $this->required;
     }

@@ -5,12 +5,12 @@ Flow 4.2
 Allow for dynamic label overrides
 =================================
 This replaces the previous physical file model with the file model defined by the XLIFF standard.
-Files IDs are no longer defined by their location in the file system but by their _product-name_ and _orginal_ XLIFF attributes. The location serves as a fallback to prevent this from being a breaking change.
+Files IDs are no longer defined by their location in the file system but by their _product-name\_ and _orginal\_ XLIFF attributes. The location serves as a fallback to prevent this from being a breaking change.
 The XLIFF file provider therefore parses all registered packages and in addition the Data/Translations folder in search of file entries in .xlf files.
 
 The translation file monitor is now also registered for said Data/Translations folder to enable automatic cache clearing.
 In preparation for support of XLIFF version 2, the XLIFF parser has been created in a v12 namespace and the class for holding the file data is modeled as an adapter that should be able to handle both formats.
-Overriding labels is now be as easy as putting a valid XLIFF file with defined _product-name_ (Package) and _orginal_ (Source) in any translation folder.
+Overriding labels is now be as easy as putting a valid XLIFF file with defined _product-name\_ (Package) and _orginal\_ (Source) in any translation folder.
 
 Add PSR-7 compatibility to HTTP stack
 =====================================
@@ -37,7 +37,7 @@ This pull request add the Eel String helper `String.pregMatchAll`
 
 Allow Nullable action params to be annotated
 ============================================
-This change allows action arguments to be annotated "|null" or "null|" when they are optional with default value `null`. Before the type conversion would fail because no matching type converter would be found.
+This change allows action arguments to be annotated "\|null" or "null\|" when they are optional with default value `null`. Before the type conversion would fail because no matching type converter would be found.
 
 Add ``range`` method to Eel Array-helper
 ========================================

@@ -5,7 +5,7 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve" approved="yes">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="final">Kun almindelige bogstaver (a-z, æøå) og tal er tilladt.</target><alt-trans><target>Kun tegnene a-z og tal er tilladt</target></alt-trans></trans-unit>
+			<target state="final">Kun almindelige bogstaver (a-z, æøå) og tal er tilladt.</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve" approved="yes">
 				<source>The given value is expected to be {0}.</source>
@@ -50,11 +50,11 @@
       <!-- EmailAddressValidator -->
       <trans-unit id="1221559976" xml:space="preserve" approved="yes">
 				<source>Please specify a valid email address</source>
-			<target state="final">Angiv en gyldig e-mailadresse</target><alt-trans><target>Angiv en gyldig e-mail-adresse</target></alt-trans></trans-unit>
+			<target state="final">Angiv en gyldig e-mailadresse</target></trans-unit>
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve" approved="yes">
 				<source>A valid float number is expected</source>
-			<target state="final">Et gyldigt heltal forventes</target><alt-trans><target>Et gyldig heltal forventes</target></alt-trans><alt-trans><target>En gyldig heltal forventes</target></alt-trans></trans-unit>
+			<target state="final">Et gyldigt heltal forventes</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve" approved="yes">
 				<source>"{0}" cannot be converted to a float value</source>
 			<target state="final">"{0}" kan ikke konverteres til en heltals-værdi</target></trans-unit>
@@ -76,14 +76,14 @@
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve" approved="yes">
 				<source>Value is no valid I18n locale identifier</source>
-			<target state="final">Værdien er ikke et gyldigt I18n Locale-id</target><alt-trans><target>Værdien er ikke et gyldigt I18n landestandard-id</target></alt-trans></trans-unit>
+			<target state="final">Værdien er ikke et gyldigt I18n Locale-id</target></trans-unit>
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve" approved="yes">
 				<source>This property is required</source>
-			<target state="final">Dette felt er påkrævet</target><alt-trans><target>Denne egenskab er påkrævet</target></alt-trans></trans-unit>
+			<target state="final">Dette felt er påkrævet</target></trans-unit>
       <trans-unit id="1221560718" xml:space="preserve" approved="yes">
 				<source>This property is required</source>
-			<target state="final">Dette felt er påkrævet</target><alt-trans><target>Denne egenskab er påkrævet</target></alt-trans></trans-unit>
+			<target state="final">Dette felt er påkrævet</target></trans-unit>
       <!-- NumberRangeValidator -->
       <trans-unit id="1221563685" xml:space="preserve" approved="yes">
 				<source>A valid number is expected</source>
@@ -97,7 +97,7 @@
 			<target state="final">Indstillingen "locale" kan kun indstilles til streng-id, eller Locale objekt</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve" approved="yes">
 				<source>A valid percent number is expected</source>
-			<target state="final">En gyldig procentnummer forventes</target><alt-trans><target>En gyldig procent antallet forventes</target></alt-trans></trans-unit>
+			<target state="final">En gyldig procentnummer forventes</target></trans-unit>
       <trans-unit id="1281452094" xml:space="preserve" approved="yes">
 				<source>A valid decimal number is expected</source>
 			<target state="final">Et gyldigt decimaltal forventes</target></trans-unit>
@@ -146,11 +146,11 @@
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve" approved="yes">
 				<source>The given subject is not a valid UUID</source>
-			<target state="final">Givet emne er ikke et gyldig UUID</target><alt-trans><target>Givet emne er ikke en gyldig UUID</target></alt-trans></trans-unit>
+			<target state="final">Givet emne er ikke et gyldig UUID</target></trans-unit>
       <!-- ElectronicAddressValidator -->
       <trans-unit id="1268676030" xml:space="preserve" approved="yes">
 				<source>No validator found for electronic address of type "{0}"</source>
-			<target state="final">Ingen validator fundet for elektroniskadresse af typen "{0}"</target><alt-trans><target>Ingen validator fundet for en elektroniskadresse af typen "{0}"</target></alt-trans><alt-trans><target>Ingen validator fundet for en elektronisk adresse af typen "{0}"</target></alt-trans></trans-unit>
+			<target state="final">Ingen validator fundet for elektroniskadresse af typen "{0}"</target></trans-unit>
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve" approved="yes">
 				<source>The person name cannot be empty</source>
@@ -165,23 +165,23 @@
 			<target state="final">Billedtypen "{0}" er ikke tilladt</target></trans-unit>
       <trans-unit id="1328030664" xml:space="preserve" approved="yes">
 				<source>The uploaded file is no valid image</source>
-			<target state="final">Den uploadede fil er ikke et gyldigt billede</target><alt-trans><target>Den uploadede fil er ikke gyldigt billede</target></alt-trans></trans-unit>
+			<target state="final">Den uploadede fil er ikke et gyldigt billede</target></trans-unit>
       <!-- ImageSizeValidator -->
       <trans-unit id="1327943859" xml:space="preserve" approved="yes">
 				<source>The given value is not a Image instance</source>
 			<target state="final">Den angivne værdi er ikke en forekomst af et Image objekt</target></trans-unit>
       <trans-unit id="1319801362" xml:space="preserve" approved="yes">
 				<source>The actual image width of {0,number} is lower than the allowed minimum width of {1,number}</source>
-			<target state="final">Den faktiske billedbredde {0,number} er mindre end den tilladte minimumsbredde {1,number}</target><alt-trans><target>Den faktiske billedbredde {0,number} er mindre end den tilladte minimums bredde {1,number}</target></alt-trans></trans-unit>
+			<target state="final">Den faktiske billedbredde {0,number} er mindre end den tilladte minimumsbredde {1,number}</target></trans-unit>
       <trans-unit id="1319801859" xml:space="preserve" approved="yes">
 				<source>The actual image width of {0,number} is higher than the allowed maximum width of {1,number}</source>
-			<target state="final">Den faktiske billedbredde {0,number} er højere end den tilladte maksimalbredde af {1,number}</target><alt-trans><target>Den faktiske billedbredde {0,number} er højere end den tilladte maksimale bredde af {1,number}</target></alt-trans></trans-unit>
+			<target state="final">Den faktiske billedbredde {0,number} er højere end den tilladte maksimalbredde af {1,number}</target></trans-unit>
       <trans-unit id="1319801925" xml:space="preserve" approved="yes">
 				<source>The actual image height of {0,number} is lower than the allowed minimum height of {1,number}</source>
 			<target state="final">Den faktiske billedhøjde {0,number} er mindre end den tilladte minimumshøjde {1,number}</target></trans-unit>
       <trans-unit id="1319801929" xml:space="preserve" approved="yes">
 				<source>The actual image height of {0,number} is higher than the allowed maximum height of {1,number}</source>
-			<target state="final">Den faktiske billedhøjde {0,number} er højere end den tilladte maksimalhøjde {1,number}</target><alt-trans><target>Den faktiske billedhøjde {0,number} er højere end den tilladte maksimale højde {1,number}</target></alt-trans></trans-unit>
+			<target state="final">Den faktiske billedhøjde {0,number} er højere end den tilladte maksimalhøjde {1,number}</target></trans-unit>
       <trans-unit id="1319813336" xml:space="preserve" approved="yes">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
 			<target state="final">Billedets størrelse på {0,number} x {1,number} er mindre end den mindst tilladte opløsning på {2,number}</target></trans-unit>

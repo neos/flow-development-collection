@@ -44,7 +44,7 @@ class PointcutClassNameFilter implements PointcutFilterInterface
      *
      * @param string $classFilterExpression A regular expression which defines which class names should match
      */
-    public function __construct($classFilterExpression)
+    public function __construct(string $classFilterExpression)
     {
         $this->classFilterExpression = '/^' . str_replace('\\', '\\\\', $classFilterExpression) . '$/';
         $this->originalExpressionString = $classFilterExpression;
@@ -56,7 +56,7 @@ class PointcutClassNameFilter implements PointcutFilterInterface
      * @param ReflectionService $reflectionService The reflection service
      * @return void
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
@@ -68,10 +68,10 @@ class PointcutClassNameFilter implements PointcutFilterInterface
      * @param string $methodName Name of the method - not used here
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean TRUE if the class matches, otherwise FALSE
+     * @return boolean true if the class matches, otherwise false
      * @throws Exception
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         try {
             $matchResult = preg_match($this->classFilterExpression, $className);
@@ -85,11 +85,11 @@ class PointcutClassNameFilter implements PointcutFilterInterface
     }
 
     /**
-     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     * Returns true if this filter holds runtime evaluations for a previously matched pointcut
      *
-     * @return boolean TRUE if this filter has runtime evaluations
+     * @return boolean true if this filter has runtime evaluations
      */
-    public function hasRuntimeEvaluationsDefinition()
+    public function hasRuntimeEvaluationsDefinition(): bool
     {
         return false;
     }
@@ -99,7 +99,7 @@ class PointcutClassNameFilter implements PointcutFilterInterface
      *
      * @return array Runtime evaluations
      */
-    public function getRuntimeEvaluationsDefinition()
+    public function getRuntimeEvaluationsDefinition(): array
     {
         return [];
     }
@@ -110,7 +110,7 @@ class PointcutClassNameFilter implements PointcutFilterInterface
      * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         if (!preg_match('/^([^\.\(\)\{\}\[\]\?\+\$\!\|]+)/', $this->originalExpressionString, $matches)) {
             return $classNameIndex;

@@ -72,6 +72,12 @@ class ExtendedTypesEntity
     protected $time;
 
     /**
+     * @var \DateTimeImmutable
+     * @ORM\Column(nullable=true)
+     */
+    protected $dateTimeImmutable;
+
+    /**
      * @param \DateTime $time
      * @return $this
      */
@@ -141,6 +147,24 @@ class ExtendedTypesEntity
     public function getDateTime()
     {
         return $this->dateTime;
+    }
+
+    /**
+     * @param \DateTimeImmutable $dateTime
+     * @return $this
+     */
+    public function setDateTimeImmutable(\DateTimeImmutable $dateTime = null)
+    {
+        $this->dateTimeImmutable = $dateTime;
+        return $this;
+    }
+
+    /**
+     * @return \DateTimeImmutable
+     */
+    public function getDateTimeImmutable()
+    {
+        return $this->dateTimeImmutable;
     }
 
     /**

@@ -13,19 +13,19 @@ namespace Neos\Flow\Session;
 
 use Neos\Cache\Backend\IterableBackendInterface;
 use Neos\Cache\Exception\InvalidBackendException;
+use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Utility\Algorithms;
-use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Http;
+use Neos\Flow\Http\Cookie;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Cache\Frontend\FrontendInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * A modular session implementation based on the caching framework.
@@ -44,7 +44,7 @@ use Neos\Cache\Frontend\FrontendInterface;
  *
  * @see SessionManager
  */
-class Session implements SessionInterface
+class Session implements CookieEnabledInterface
 {
     const TAG_PREFIX = 'customtag-';
 
@@ -55,10 +55,9 @@ class Session implements SessionInterface
     protected $objectManager;
 
     /**
-     * @var SystemLoggerInterface
-     * @Flow\Inject
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * Meta data cache for this session
@@ -75,14 +74,6 @@ class Session implements SessionInterface
      * @var VariableFrontend
      */
     protected $storageCache;
-
-    /**
-     * Bootstrap for retrieving the current HTTP request
-     *
-     * @Flow\Inject
-     * @var Bootstrap
-     */
-    protected $bootstrap;
 
     /**
      * @var string
@@ -115,7 +106,12 @@ class Session implements SessionInterface
     protected $sessionCookieHttpOnly = true;
 
     /**
-     * @var Http\Cookie
+     * @var string
+     */
+    protected $sessionCookieSameSite;
+
+    /**
+     * @var Cookie
      */
     protected $sessionCookie;
 
@@ -178,16 +174,6 @@ class Session implements SessionInterface
     protected $remote = false;
 
     /**
-     * @var Http\Request
-     */
-    protected $request;
-
-    /**
-     * @var Http\Response
-     */
-    protected $response;
-
-    /**
      * Constructs this session
      *
      * If $sessionIdentifier is specified, this constructor will create a session
@@ -220,6 +206,24 @@ class Session implements SessionInterface
     }
 
     /**
+     * @param Cookie $sessionCookie
+     * @param string $storageIdentifier
+     * @param int $lastActivityTimestamp
+     * @param array $tags
+     * @return Session
+     */
+    public static function createFromCookieAndSessionInformation(Cookie $sessionCookie, string $storageIdentifier, int $lastActivityTimestamp, array $tags = [])
+    {
+        $session = new static();
+        $session->sessionIdentifier = $sessionCookie->getValue();
+        $session->storageIdentifier = $storageIdentifier;
+        $session->lastActivityTimestamp = $lastActivityTimestamp;
+        $session->tags = $tags;
+        $session->sessionCookie = $sessionCookie;
+        return $session;
+    }
+
+    /**
      * Injects the Flow settings
      *
      * @param array $settings Settings of the Flow package
@@ -233,9 +237,21 @@ class Session implements SessionInterface
         $this->sessionCookiePath = $settings['session']['cookie']['path'];
         $this->sessionCookieSecure = (boolean)$settings['session']['cookie']['secure'];
         $this->sessionCookieHttpOnly = (boolean)$settings['session']['cookie']['httponly'];
+        $this->sessionCookieSameSite = $settings['session']['cookie']['samesite'];
         $this->garbageCollectionProbability = $settings['session']['garbageCollection']['probability'];
         $this->garbageCollectionMaximumPerRun = $settings['session']['garbageCollection']['maximumPerRun'];
         $this->inactivityTimeout = (integer)$settings['session']['inactivityTimeout'];
+    }
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -253,6 +269,14 @@ class Session implements SessionInterface
     }
 
     /**
+     * @return Cookie
+     */
+    public function getSessionCookie(): Cookie
+    {
+        return $this->sessionCookie;
+    }
+
+    /**
      * Tells if the session has been started already.
      *
      * @return boolean
@@ -267,7 +291,7 @@ class Session implements SessionInterface
      * Tells if the session is local (the current session bound to the current HTTP
      * request) or remote (retrieved through the Session Manager).
      *
-     * @return boolean TRUE if the session is remote, FALSE if this is the current session
+     * @return boolean true if the session is remote, false if this is the current session
      * @api
      */
     public function isRemote()
@@ -280,22 +304,15 @@ class Session implements SessionInterface
      *
      * @return void
      * @api
-     * @throws Exception\InvalidRequestHandlerException
+     * @deprecated This method is not deprecated, but be aware that from next major a cookie will no longer be auto generated.
+     * @see CookieEnabledInterface
      */
     public function start()
     {
-        if ($this->request === null) {
-            $requestHandler = $this->bootstrap->getActiveRequestHandler();
-            if (!$requestHandler instanceof HttpRequestHandlerInterface) {
-                throw new Exception\InvalidRequestHandlerException('Could not start a session because the currently active request handler (%s) is not an HTTP Request Handler.', 1364367520);
-            }
-            $this->initializeHttpAndCookie($requestHandler);
-        }
         if ($this->started === false) {
             $this->sessionIdentifier = Algorithms::generateRandomString(32);
             $this->storageIdentifier = Algorithms::generateUUID();
-            $this->sessionCookie = new Http\Cookie($this->sessionCookieName, $this->sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
-            $this->response->setCookie($this->sessionCookie);
+            $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly, $this->sessionCookieSameSite);
             $this->lastActivityTimestamp = $this->now;
             $this->started = true;
 
@@ -304,7 +321,7 @@ class Session implements SessionInterface
     }
 
     /**
-     * Returns TRUE if there is a session that can be resumed.
+     * Returns true if there is a session that can be resumed.
      *
      * If a to-be-resumed session was inactive for too long, this function will
      * trigger the expiration of that session. An expired session cannot be resumed.
@@ -318,10 +335,7 @@ class Session implements SessionInterface
      */
     public function canBeResumed()
     {
-        if ($this->request === null) {
-            $this->initializeHttpAndCookie($this->bootstrap->getActiveRequestHandler());
-        }
-        if ($this->sessionCookie === null || $this->request === null || $this->started === true) {
+        if ($this->sessionCookie === null || $this->started === true) {
             return false;
         }
         $sessionMetaData = $this->metaDataCache->get($this->sessionCookie->getValue());
@@ -337,14 +351,12 @@ class Session implements SessionInterface
     /**
      * Resumes an existing session, if any.
      *
-     * @return integer If a session was resumed, the inactivity of since the last request is returned
+     * @return integer If a session was resumed, the inactivity of this session since the last request is returned
      * @api
      */
     public function resume()
     {
         if ($this->started === false && $this->canBeResumed()) {
-            $this->sessionIdentifier = $this->sessionCookie->getValue();
-            $this->response->setCookie($this->sessionCookie);
             $this->started = true;
 
             $sessionObjects = $this->storageCache->get($this->storageIdentifier . md5('Neos_Flow_Object_ObjectManager'));
@@ -427,7 +439,7 @@ class Session implements SessionInterface
     }
 
     /**
-     * Returns TRUE if a session data entry $key is available.
+     * Returns true if a session data entry $key is available.
      *
      * @param string $key Entry identifier of the session data
      * @return boolean
@@ -585,10 +597,8 @@ class Session implements SessionInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to destroy a session which has not been started yet.', 1351162668);
         }
+
         if ($this->remote !== true) {
-            if (!$this->response->hasCookie($this->sessionCookieName)) {
-                $this->response->setCookie($this->sessionCookie);
-            }
             $this->sessionCookie->expire();
         }
 
@@ -606,6 +616,8 @@ class Session implements SessionInterface
      * timeout was reached.
      *
      * @return integer The number of outdated entries removed
+     * @throws \Neos\Cache\Exception
+     * @throws NotSupportedByBackendException
      * @api
      */
     public function collectGarbage()
@@ -624,11 +636,17 @@ class Session implements SessionInterface
             if ($sessionIdentifier === '_garbage-collection-running') {
                 continue;
             }
+            if (!is_array($sessionInfo)) {
+                $sessionInfo = [
+                    'sessionMetaData' => $sessionInfo,
+                    'lastActivityTimestamp' => 0,
+                    'storageIdentifier' => null
+                ];
+                $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo + LogEnvironment::fromMethodName(__METHOD__));
+            }
             $lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
-                if ($sessionInfo['storageIdentifier'] === null) {
-                    $this->systemLogger->log('SESSION INFO INVALID: ' . $sessionIdentifier, LOG_WARNING, $sessionInfo);
-                } else {
+                if ($sessionInfo['storageIdentifier'] !== null) {
                     $this->storageCache->flushByTag($sessionInfo['storageIdentifier']);
                     $sessionRemovalCount++;
                 }
@@ -650,6 +668,10 @@ class Session implements SessionInterface
      * management.
      *
      * @return void
+     * @throws Exception\DataNotSerializableException
+     * @throws Exception\SessionNotStartedException
+     * @throws NotSupportedByBackendException
+     * @throws \Neos\Cache\Exception
      */
     public function shutdownObject()
     {
@@ -673,13 +695,12 @@ class Session implements SessionInterface
                 $this->collectGarbage();
             }
         }
-        $this->request = null;
     }
 
     /**
      * Automatically expires the session if the user has been inactive for too long.
      *
-     * @return boolean TRUE if the session expired, FALSE if not
+     * @return boolean true if the session expired, false if not
      */
     protected function autoExpire()
     {
@@ -692,31 +713,6 @@ class Session implements SessionInterface
             $expired = true;
         }
         return $expired;
-    }
-
-    /**
-     * Initialize request, response and session cookie
-     *
-     * @param HttpRequestHandlerInterface $requestHandler
-     * @return void
-     * @throws Exception\InvalidRequestResponseException
-     */
-    protected function initializeHttpAndCookie(HttpRequestHandlerInterface $requestHandler)
-    {
-        $this->request = $requestHandler->getHttpRequest();
-        $this->response = $requestHandler->getHttpResponse();
-
-        if (!$this->request instanceof Http\Request || !$this->response instanceof Http\Response) {
-            $className = get_class($requestHandler);
-            $requestMessage = 'the request was ' . (is_object($this->request) ? 'of type ' . get_class($this->request) : gettype($this->request));
-            $responseMessage = 'and the response was ' . (is_object($this->response) ? 'of type ' . get_class($this->response) : gettype($this->response));
-            throw new Exception\InvalidRequestResponseException(sprintf('The active request handler "%s" did not provide a valid HTTP request / HTTP response pair: %s %s.', $className, $requestMessage, $responseMessage), 1354633950);
-        }
-
-        if ($this->request->hasCookie($this->sessionCookieName)) {
-            $sessionIdentifier = $this->request->getCookie($this->sessionCookieName)->getValue();
-            $this->sessionCookie = new Http\Cookie($this->sessionCookieName, $sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly);
-        }
     }
 
     /**

@@ -10,3 +10,13 @@ Neos\FluidAdaptor\Core\Cache\CacheAdaptor:
 
 TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder:
   scope: prototype
+
+Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper:
+  properties:
+    logger:
+      object:
+        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
+        factoryMethodName: get
+        arguments:
+          1:
+            value: systemLogger

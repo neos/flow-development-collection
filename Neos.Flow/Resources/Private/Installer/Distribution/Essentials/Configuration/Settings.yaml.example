@@ -21,6 +21,8 @@ Neos:
       # For a reference of the possible options, take a look at
       # https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html
       backendOptions:
+        driver: 'pdo_mysql'  # use pdo_pgsql for PostgreSQL
+        charset: 'utf8mb4'   # change to utf8 when using PostgreSQL
         host: '127.0.0.1'    # adjust to your database host
 
     # The following lines register the Flow default routes

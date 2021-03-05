@@ -21,12 +21,12 @@ class RootDirectoryIgnoringYamlSource extends \Neos\Flow\Configuration\Source\Ya
      * array is returned
      *
      * @param string $pathAndFilename Full path and filename of the file to load, excluding the file extension (ie. ".yaml")
-     * @param boolean $allowSplitSource If TRUE, the type will be used as a prefix when looking for configuration files
+     * @param boolean $allowSplitSource If true, the type will be used as a prefix when looking for configuration files
      * @return array
      * @throws \Neos\Flow\Configuration\Exception\ParseErrorException
      */
 
-    public function load($pathAndFilename, $allowSplitSource = false)
+    public function load(string $pathAndFilename, bool $allowSplitSource = false): array
     {
         if (strpos($pathAndFilename, FLOW_PATH_CONFIGURATION) === 0) {
             return [];

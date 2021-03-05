@@ -65,7 +65,7 @@ interface TypeConverterInterface
      *
      * @param mixed $source the source data
      * @param string $targetType the type to convert to.
-     * @return boolean TRUE if this TypeConverter can convert from $source to $targetType, FALSE otherwise.
+     * @return boolean true if this TypeConverter can convert from $source to $targetType, false otherwise.
      * @api
      */
     public function canConvertFrom($source, $targetType);
@@ -105,8 +105,8 @@ interface TypeConverterInterface
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
-     * @return mixed|Error the target type, or an error object if a user-error occurred
+     * @param PropertyMappingConfigurationInterface|null $configuration
+     * @return mixed|null|Error the target type, or an error object if a user-error occurred
      * @throws Exception\TypeConverterException thrown in case a developer error occurred
      * @api
      */

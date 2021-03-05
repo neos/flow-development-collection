@@ -28,15 +28,18 @@ class UsernamePasswordHttpBasic extends UsernamePassword implements SessionlessT
      */
     public function updateCredentials(ActionRequest $actionRequest)
     {
+        $this->credentials = ['username' => null, 'password' => null];
+        $this->authenticationStatus = self::NO_CREDENTIALS_GIVEN;
+
         $authorizationHeader = $actionRequest->getHttpRequest()->getHeaders()->get('Authorization');
-        if (substr($authorizationHeader, 0, 5) === 'Basic') {
-            $credentials = base64_decode(substr($authorizationHeader, 6));
-            $this->credentials['username'] = substr($credentials, 0, strpos($credentials, ':'));
-            $this->credentials['password'] = substr($credentials, strpos($credentials, ':') + 1);
-            $this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
-        } else {
-            $this->credentials = ['username' => null, 'password' => null];
-            $this->authenticationStatus = self::NO_CREDENTIALS_GIVEN;
+        if (strpos($authorizationHeader, 'Basic ') !== 0) {
+            return;
         }
+
+        $credentials = base64_decode(substr($authorizationHeader, 6));
+        list($username, $password) = explode(':', $credentials, 2);
+        $this->credentials['username'] = $username;
+        $this->credentials['password'] = $password;
+        $this->authenticationStatus = self::AUTHENTICATION_NEEDED;
     }
 }

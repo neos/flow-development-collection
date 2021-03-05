@@ -1,0 +1,64 @@
+========
+Flow 5.3
+========
+
+Add methods ``csrfToken``, ``isAuthenticated`` and ``hasAccess`` to ``Security`` EelHelper
+==========================================================================================
+- ``csrfToken`` returns CSRF token which is required for "unsafe" requests (e.g. POST, PUT, DELETE, ...)
+- ``isAuthenticated`` returns true, if an account is currently authenticated
+- ``hasAccess`` returns true, if access to the given privilege-target is granted
+
+The methods add features that previously were available as view helpers to Eel so they can be used in Fusion directly.
+
+Add ``format`` method to String EEL Helper
+==========================================
+This method pretty much just redirects its arguments to the PHP-native
+``vsprintf`` and allows to format strings without ``'' + ''`` interpolation.
+
+Make recursion limit for the debugger configurable via settings
+===============================================================
+With the default recursion Limit of 50 in PHP often runs into memory-limits when debugging larger data structures.
+This change allows defining the ``recursionLimit`` via settings. In addition, the default ``recursionLimit`` is set to 5.
+
+
+Potentially breaking changes (unplanned extensibility)
+======================================================
+
+Introduce ActionResponse in preparation for clean PSR-7
+=======================================================
+This is the continuation of a clear separation between MVC and HTTP stacks.
+The introduced ActionResponse offers a very limited interface to work with
+on the MVC level, with the following methods:
+
+- ``setContent()``
+- ``setContentType()``
+- ``setRedirectUri()``
+- ``setStatusCode()``
+- ``setComponentParameter()``
+
+Everything in the currently used ``HTTP\Response`` is still available but deprecated and will be removed in the next major,
+so make sure to adapt to the above API.
+
+This change is marked breaking due to the deprecations, it should not break any existing code.
+``setContent()`` accepts also PSR-7 StreamInterface implementations and will likely only accept those in the next major.
+A detailed blog post with the next steps will follow and go into more detail about the final separation and usage.
+Special note regarding the ``setComponentParameter``, for now this is your extensible portal towards HTTP.
+You can use it to set component parameters for your own HTTP components to set additional headers.
+
+We are likely to extend the interface slightly for the major release as we are aware that this implementation is very
+limiting, but we need a clean separation between MVC and HTTP to start with.
+
+Related discuss post:
+https://discuss.neos.io/t/rfc-psr-7-continuation/3597/10
+
+Deprecate PackageManagerInterface
+=================================
+As the package manager cannot be overwritten the interface is purely cosmetic and IF you actually use the package
+manager in your codebase (which you probably should not in the first place) you can just inject the
+``PackageManager`` directly instead of the interface.
+
+
+Upgraded our internal testing suite to latest neos/behat version
+================================================================
+In case you have Behat tests in place but did not set your own Behat version in the dev dependencies in your own,
+there might be some changes that could break your tests within the Behat version that is now acquired by Flow / Neos.

@@ -139,7 +139,7 @@ class Session
 
     /**
      * Checks whether the given property was changed in the object since it was
-     * reconstituted. Returns TRUE for unknown objects in all cases!
+     * reconstituted. Returns true for unknown objects in all cases!
      *
      * @param object $object
      * @param string $propertyName

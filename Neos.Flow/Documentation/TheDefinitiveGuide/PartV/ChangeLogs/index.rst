@@ -6,6 +6,7 @@ the corresponding branch.
 
 .. toctree::
     :maxdepth: 1
+    :reversed:
     :glob:
 
     *

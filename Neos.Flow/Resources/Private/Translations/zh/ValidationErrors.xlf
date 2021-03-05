@@ -5,7 +5,7 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">只允许字母和数字</target><alt-trans><target>只有常规字符 (到 z，元音变音，...) 和允许数字。</target></alt-trans></trans-unit>
+			<target state="translated">只允许字母和数字</target></trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
 				<source>The given value is expected to be {0}.</source>
@@ -13,7 +13,7 @@
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-			<target state="translated">给定对象, 不是一个集合</target><alt-trans><target>给定的对象不是一个集合</target></alt-trans></trans-unit>
+			<target state="translated">给定对象, 不是一个集合</target></trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
@@ -27,13 +27,13 @@
 			<target state="translated">不是有效日期</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target state="translated">日期必须在 {0} 到 {1}之间</target></trans-unit>
+			<target state="translated">日期必须在 {0,datetime,datetime} 和 {1,datetime,datetime} 之间</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target state="translated">给定的日期必须在 {0} 之后</target></trans-unit>
+			<target state="translated">日期必须在{0,datetime,datetime}之后</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
-			<target state="translated">给定的日期必须在 {0} 之前</target></trans-unit>
+			<target state="translated">日期必须在{0,datetime,datetime}之前</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
@@ -43,7 +43,7 @@
 			<target state="translated">只允许有效时间</target></trans-unit>
       <trans-unit id="1281454831" xml:space="preserve">
 				<source>A valid date and time is expected</source>
-			<target state="translated">只允许有效的日期和时间</target><alt-trans><target>只允许有效果日期和时间</target></alt-trans></trans-unit>
+			<target state="translated">只允许有效的日期和时间</target></trans-unit>
       <trans-unit id="1281454832" xml:space="preserve">
 				<source>A valid date is expected</source>
 			<target state="translated">只允许有效日期</target></trans-unit>
@@ -186,7 +186,7 @@
 			<target state="translated">给定的值不是一个图像实例</target></trans-unit>
       <trans-unit id="1328029406" xml:space="preserve">
 				<source>The image orientation must be "{0}"</source>
-			<target state="translated">图片定位必须是"{0}"</target><alt-trans><target>形象定位必须是"{0}"</target></alt-trans></trans-unit>
+			<target state="translated">图片定位必须是"{0}"</target></trans-unit>
       <trans-unit id="1328029362" xml:space="preserve">
 				<source>The image orientation "{0}" is not allowed</source>
 			<target state="translated">图片定位"{0}"不是允许的</target></trans-unit>

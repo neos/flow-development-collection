@@ -15,10 +15,10 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Error as FlowError;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the doctrine persistence manager
@@ -46,7 +46,7 @@ class PersistenceManagerTest extends UnitTestCase
     protected $mockConnection;
 
     /**
-     * @var SystemLoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockSystemLogger;
 
@@ -71,8 +71,10 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockPing->willReturn(true);
         $this->mockEntityManager->expects($this->any())->method('getConnection')->willReturn($this->mockConnection);
 
-        $this->mockSystemLogger = $this->createMock(\Neos\Flow\Log\SystemLoggerInterface::class);
-        $this->inject($this->persistenceManager, 'systemLogger', $this->mockSystemLogger);
+        $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
+        $this->persistenceManager->injectLogger($this->mockSystemLogger);
+
+        $this->inject($this->persistenceManager, 'throwableStorage', $this->getMockBuilder(ThrowableStorageInterface::class)->getMock());
     }
 
     /**
@@ -95,7 +97,7 @@ class PersistenceManagerTest extends UnitTestCase
      * @expectedException \Neos\Flow\Persistence\Exception
      * @expectedExceptionMessageRegExp /^Detected modified or new objects/
      */
-    public function persistAllThrowsExceptionIfTryingToPersistNonWhitelistedObjectsAndOnlyWhitelistedObjectsFlagIsTrue()
+    public function persistAllThrowsExceptionIfTryingToPersistNonAllowedObjectsAndOnlyAllowedObjectsFlagIsTrue()
     {
         $mockObject = new \stdClass();
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
@@ -113,7 +115,7 @@ class PersistenceManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function persistAllRespectsObjectWhitelistIfOnlyWhitelistedObjectsFlagIsTrue()
+    public function persistAllRespectsObjectAllowedIfOnlyAllowedObjectsFlagIsTrue()
     {
         $mockObject = new \stdClass();
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
@@ -125,7 +127,7 @@ class PersistenceManagerTest extends UnitTestCase
 
         $this->mockEntityManager->expects($this->once())->method('flush');
 
-        $this->persistenceManager->whitelistObject($mockObject);
+        $this->persistenceManager->allowObject($mockObject);
         $this->persistenceManager->persistAll(true);
     }
 

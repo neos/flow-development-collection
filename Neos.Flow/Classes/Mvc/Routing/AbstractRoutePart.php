@@ -81,7 +81,7 @@ abstract class AbstractRoutePart implements RoutePartInterface
     }
 
     /**
-     * Returns TRUE if a value is set for this Route Part, otherwise FALSE.
+     * Returns true if a value is set for this Route Part, otherwise false.
      *
      * @return boolean
      */
@@ -101,7 +101,7 @@ abstract class AbstractRoutePart implements RoutePartInterface
     }
 
     /**
-     * Returns TRUE if a default value is set for this Route Part, otherwise FALSE.
+     * Returns true if a default value is set for this Route Part, otherwise false.
      *
      * @return boolean
      */
@@ -135,7 +135,7 @@ abstract class AbstractRoutePart implements RoutePartInterface
     /**
      * Specifies whether this Route part is optional.
      *
-     * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
+     * @param boolean $isOptional true: this Route part is optional. false: this Route part is required.
      * @return void
      */
     public function setOptional($isOptional)
@@ -146,7 +146,7 @@ abstract class AbstractRoutePart implements RoutePartInterface
     /**
      * Getter for $this->isOptional.
      *
-     * @return boolean TRUE if this Route part is optional, otherwise FALSE.
+     * @return boolean true if this Route part is optional, otherwise false.
      * @see setOptional()
      */
     public function isOptional()
@@ -157,7 +157,7 @@ abstract class AbstractRoutePart implements RoutePartInterface
     /**
      * Specifies whether this Route part should be converted to lower case when resolved.
      *
-     * @param boolean $lowerCase TRUE: this Route part is converted to lower case. FALSE: this Route part is not altered.
+     * @param boolean $lowerCase true: this Route part is converted to lower case. false: this Route part is not altered.
      * @return void
      */
     public function setLowerCase($lowerCase)
@@ -168,7 +168,7 @@ abstract class AbstractRoutePart implements RoutePartInterface
     /**
      * Getter for $this->lowerCase.
      *
-     * @return boolean TRUE if this Route part will be converted to lower case, otherwise FALSE.
+     * @return boolean true if this Route part will be converted to lower case, otherwise false.
      * @see setLowerCase()
      */
     public function isLowerCase()

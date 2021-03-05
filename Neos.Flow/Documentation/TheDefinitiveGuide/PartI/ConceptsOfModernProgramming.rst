@@ -242,10 +242,8 @@ So why not just use entities all the time?
 The design/architectural answer is: because a value object might just
 be more fitting your problem at hand.
 The technical answer is: because value objects are immutable and
-therefore avoid aliasing ([#aliasing]) problems, which are common cause
+therefore avoid aliasing [#]_ problems, which are common cause
 of all kinds of bugs.
-
-.. [#aliasing] https://en.wikipedia.org/wiki/Aliasing_(computing)
 
 Associations
 ~~~~~~~~~~~~
@@ -498,3 +496,7 @@ support, dependency injection, a signal-slots system and a
 custom-built template engine, but all these should only aid the
 developer in focusing on the problem domain and writing decoupled and
 extensible code.
+
+-----
+
+.. [#] https://en.wikipedia.org/wiki/Aliasing_(computing)

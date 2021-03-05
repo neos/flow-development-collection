@@ -11,8 +11,6 @@ namespace Neos\Flow\Tests\Unit\Utility;
  * source code.
  */
 
-use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Utility\SchemaValidator;
 use Neos\Error\Messages as Error;
 
@@ -672,7 +670,7 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateHandlesStringTypePropertyWithFormatClassNameConstraintDataProvider()
     {
         return [
-            [PackageManager::class, true],
+            [SchemaValidator::class, true],
             ['Neos\Flow\UnknownClass', false],
             ['foobar', false],
             ['foo bar', false],
@@ -701,7 +699,7 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
     public function validateHandlesStringTypePropertyWithFormatInterfaceNameConstraintDataProvider()
     {
         return [
-            [PackageManagerInterface::class, true],
+            [\Iterator::class, true],
             ['\Neos\Flow\UnknownClass', false],
             ['foobar', false],
             ['foo bar', false],
@@ -1203,13 +1201,13 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function validateCustomTypeResultDataProvider()
     {
-        return array(
-            array( ['property' => ['integer_property' => 1, 'string_property' => 'string' ] ], true ),
-            array( ['property' => ['integer_property' => 'no_integer', 'string_property' => 123 ] ], false ),
-            array( ['property' => 'some_value' ], false ),
-            array( ['other_property' => ['integer_property' => 1, 'string_property' => 'string' ] ], false ),
-            array( ['other_property' => 'some_value' ], false )
-        );
+        return [
+            [ ['property' => ['integer_property' => 1, 'string_property' => 'string' ] ], true ],
+            [ ['property' => ['integer_property' => 'no_integer', 'string_property' => 123 ] ], false ],
+            [ ['property' => 'some_value' ], false ],
+            [ ['other_property' => ['integer_property' => 1, 'string_property' => 'string' ] ], false ],
+            [ ['other_property' => 'some_value' ], false ]
+        ];
     }
 
     /**
@@ -1240,13 +1238,13 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function validateCustomTypeWithSuperTypesDataProvider()
     {
-        return array(
-            array( ['property' => ['supertype_property' => 1, 'type_property' => 'string' ] ], true ),
-            array( ['property' => ['supertype_property' => 'no_integer', 'type_property' => 123 ] ], false ),
-            array( ['property' => 'some_value' ], false ),
-            array( ['other_property' => ['supertype_property' => 1, 'type_property' => 'string' ] ], false ),
-            array( ['other_property' => 'some_value' ], false )
-        );
+        return [
+            [ ['property' => ['supertype_property' => 1, 'type_property' => 'string' ] ], true ],
+            [ ['property' => ['supertype_property' => 'no_integer', 'type_property' => 123 ] ], false ],
+            [ ['property' => 'some_value' ], false ],
+            [ ['other_property' => ['supertype_property' => 1, 'type_property' => 'string' ] ], false ],
+            [ ['other_property' => 'some_value' ], false ]
+        ];
     }
 
     /**
@@ -1283,14 +1281,14 @@ class SchemaValidatorTest extends \PHPUnit\Framework\TestCase
      */
     public function validateCustomTypeArrayDataProvider()
     {
-        return array(
-            array( ['property' => ['custom_type_a_property' => 1]], true ),
-            array( ['property' => ['custom_type_b_property' => 'string' ] ], true ),
-            array( ['property' => ['custom_type_a_property' => 1, 'custom_type_b_property' => 'string' ] ], false ),
+        return [
+            [ ['property' => ['custom_type_a_property' => 1]], true ],
+            [ ['property' => ['custom_type_b_property' => 'string' ] ], true ],
+            [ ['property' => ['custom_type_a_property' => 1, 'custom_type_b_property' => 'string' ] ], false ],
 
-            array( ['property' => ['custom_type_a_property' => 'no_integer' ] ], false ),
-            array( ['property' => ['custom_type_b_property' => 12324 ] ], false ),
-        );
+            [ ['property' => ['custom_type_a_property' => 'no_integer' ] ], false ],
+            [ ['property' => ['custom_type_b_property' => 12324 ] ], false ],
+        ];
     }
 
     /**

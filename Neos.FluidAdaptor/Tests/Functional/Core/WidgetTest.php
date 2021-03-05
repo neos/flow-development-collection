@@ -28,12 +28,12 @@ class WidgetTest extends \Neos\Flow\Tests\FunctionalTestCase
         $route = new Route();
         $route->setName('WidgetTest');
         $route->setUriPattern('test/widget/{@controller}(/{@action})');
-        $route->setDefaults(array(
+        $route->setDefaults([
             '@package' => 'Neos.FluidAdaptor',
             '@subpackage' => 'Tests\Functional\Core\Fixtures',
             '@action' => 'index',
             '@format' => 'html'
-        ));
+        ]);
         $route->setAppendExceedingArguments(true);
         $this->router->addRoute($route);
     }

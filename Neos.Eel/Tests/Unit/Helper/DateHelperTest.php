@@ -138,6 +138,18 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
     /**
      * @test
      */
+    public function createWorks()
+    {
+        $helper = new DateHelper();
+        $result = $helper->create('yesterday noon');
+        $expected = new \DateTime('yesterday noon');
+        $this->assertInstanceOf(\DateTime::class, $result);
+        $this->assertEquals($expected->getTimestamp(), $result->getTimestamp(), 'Created DateTime object should match expected', 1);
+    }
+
+    /**
+     * @test
+     */
     public function todayWorks()
     {
         $helper = new DateHelper();

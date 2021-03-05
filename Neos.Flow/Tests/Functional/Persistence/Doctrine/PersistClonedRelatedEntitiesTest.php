@@ -76,7 +76,6 @@ class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
      */
     public function embeddablesInsideClonedProxiedEntitiesAreCorrectlyLoaded()
     {
-        $this->markTestSkipped('This is possibly a bug of Doctrine');
         $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');
         $relatedEntity = new Fixtures\TestEntity();

@@ -13,6 +13,8 @@ namespace Neos\Flow\Session;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Http\Cookie;
+use Neos\Flow\Utility\Algorithms;
 
 /**
  * Session Manager
@@ -52,6 +54,42 @@ class SessionManager implements SessionManagerInterface
             $this->currentSession = new Session();
         }
         return $this->currentSession;
+    }
+
+    /**
+     * @param Cookie $cookie
+     * @return bool
+     */
+    public function initializeCurrentSessionFromCookie(Cookie $cookie)
+    {
+        if ($this->currentSession !== null && $this->currentSession->isStarted()) {
+            return false;
+        }
+
+        $sessionIdentifier = $cookie->getValue();
+        $sessionInfo = $this->metaDataCache->get($sessionIdentifier);
+
+        if (!$sessionInfo) {
+            return false;
+        }
+
+        $this->currentSession = Session::createFromCookieAndSessionInformation($cookie, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
+        return true;
+    }
+
+    /**
+     * @param Cookie $cookie
+     * @return bool
+     */
+    public function createCurrentSessionFromCookie(Cookie $cookie)
+    {
+        if ($this->currentSession !== null && $this->currentSession->isStarted()) {
+            return false;
+        }
+
+        $this->currentSession = Session::createFromCookieAndSessionInformation($cookie, Algorithms::generateUUID(), time());
+
+        return true;
     }
 
     /**

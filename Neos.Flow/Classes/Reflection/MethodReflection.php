@@ -56,7 +56,7 @@ class MethodReflection extends \ReflectionMethod
      * the specified tag
      *
      * @param string $tag Tag name to check for
-     * @return boolean TRUE if such a tag has been defined, otherwise FALSE
+     * @return boolean true if such a tag has been defined, otherwise false
      */
     public function isTaggedWith($tag)
     {
@@ -99,7 +99,7 @@ class MethodReflection extends \ReflectionMethod
      */
     public function getDeclaredReturnType()
     {
-        if (!is_callable(array($this, 'getReturnType'))) {
+        if (!is_callable([$this, 'getReturnType'])) {
             return null;
         }
         $type = $this->getReturnType();
@@ -111,7 +111,7 @@ class MethodReflection extends \ReflectionMethod
      */
     public function isDeclaredReturnTypeNullable()
     {
-        if (!is_callable(array($this, 'getReturnType'))) {
+        if (!is_callable([$this, 'getReturnType'])) {
             return false;
         }
         $type = $this->getReturnType();

@@ -20,8 +20,8 @@ if ($rootPath === false) {
     $rootPath .= '/';
 }
 
-require($rootPath . 'Packages/Framework/Neos.Flow/Classes/Core/Bootstrap.php');
+$composerAutoloader = require($rootPath . 'Packages/Libraries/autoload.php');
 
 $context = \Neos\Flow\Core\Bootstrap::getEnvironmentConfigurationSetting('FLOW_CONTEXT') ?: 'Development';
-$bootstrap = new \Neos\Flow\Core\Bootstrap($context);
+$bootstrap = new \Neos\Flow\Core\Bootstrap($context, $composerAutoloader);
 $bootstrap->run();

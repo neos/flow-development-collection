@@ -34,7 +34,7 @@ class TranslationHelper implements ProtectedContextAwareInterface
      *
      * @param string $id Id to use for finding translation (trans-unit id in XLIFF)
      * @param string $originalLabel The original translation value (the untranslated source string).
-     * @param array $arguments Numerically indexed array of values to be inserted into placeholders
+     * @param array $arguments Array of numerically indexed or named values to be inserted into placeholders. Have a look at the internationalization documentation in the definitive guide for details.
      * @param string $source Name of file with translations
      * @param string $package Target package key. If not set, the current package key will be used
      * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms

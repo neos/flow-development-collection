@@ -22,7 +22,7 @@ interface PolyTypeObjectValidatorInterface extends ObjectValidatorInterface
      * Checks the given target can be validated by the validator implementation.
      *
      * @param mixed $target The object or class name to be checked
-     * @return boolean TRUE if the target can be validated
+     * @return boolean true if the target can be validated
      * @api
      */
     public function canValidate($target);

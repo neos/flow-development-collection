@@ -1,0 +1,155 @@
+type: '@schema'
+
+#
+# A schema can be defined in many different ways
+#
+'@schema':
+  type:
+    - '@simpleSchema'
+    - '@arrayOfSchemas'
+    - '@localSchema'
+    - '@numberSchema'
+    - '@stringSchema'
+    - '@booleanSchema'
+    - '@arraySchema'
+    - '@dictionarySchema'
+    - '@nullSchema'
+    - '@anySchema'
+    - '@typeSchema'
+
+#
+# A simple schema is simply the type as string
+#
+'@simpleSchema':
+  type: 'string'
+  enum: ['string', 'number', 'integer', 'boolean', 'array', 'dictionary', 'null', 'any']
+  required: true
+
+#
+# An array schema is an array of schemas of which at least one must match
+#
+'@arrayOfSchemas':
+  type: 'array'
+  items: '@schema'
+  minItems: 1
+  uniqueItems: true
+
+#
+# A local schema is a reference to a locally defined schema
+#
+'@localSchema':
+  type: 'string'
+  pattern: '/@[a-zA-Z0-9-_]+/'
+  required: true
+
+#
+# The base for all complex schema definitions with type property
+#
+'@baseSchema':
+  type: 'dictionary'
+  properties:
+    type: { type: 'any', required: true }
+    enum: 'array'
+    disallow: 'array'
+    description: 'string'
+    required: 'boolean'
+  additionalProperties: false
+  patternProperties:
+    '/@.*/':  { type: 'any' }
+
+#
+# Boolean property schema
+#
+'@booleanSchema':
+  superTypes:
+    - '@baseSchema'
+  properties:
+      type: { enum: ['boolean'] }
+
+#
+# Number property schema
+#
+'@numberSchema':
+  superTypes:
+    - '@baseSchema'
+  properties:
+    type: { enum: ['number','integer'] }
+    maximum: 'number'
+    minimum: 'number'
+    exclusiveMinimum: 'number'
+    exclusiveMaximum: 'number'
+    divisibleBy: 'number'
+
+#
+# String property schema
+#
+'@stringSchema':
+  superTypes:
+    - '@baseSchema'
+  properties:
+    type: { enum: ['string'] }
+    pattern: 'string'
+    minLength: 'integer'
+    maxLength: 'integer'
+    format:
+      type: 'string'
+      enum: ['date-time', 'date', 'time', 'uri', 'email', 'ipv4', 'ipv6', 'ip-address', 'host-name', 'class-name', 'interface-name']
+
+#
+# Array property schema
+#
+'@arraySchema':
+  superTypes:
+    - '@baseSchema'
+  properties:
+    type: { enum: ['array'] }
+    items: '@schema'
+    minItems: 'integer'
+    maxItems: 'integer'
+    uniqueItems: 'boolean'
+
+#
+# Dictionary property schema
+#
+'@dictionarySchema':
+  superTypes:
+    - '@baseSchema'
+  properties:
+    type: { enum: ['dictionary'] }
+    properties:
+      type: 'dictionary'
+      additionalProperties: '@schema'
+    patternProperties:
+      type: 'dictionary'
+      additionalProperties: '@schema'
+    formatProperties:
+      type: 'dictionary'
+      additionalProperties: '@schema'
+    additionalProperties: ['boolean', '@schema']
+
+#
+# Null property schema
+#
+'@nullSchema':
+  superTypes:
+    - '@baseSchema'
+  properties:
+    type: { enum: ['null'] }
+
+#
+# Any property schema
+#
+'@anySchema':
+  superTypes:
+    - '@baseSchema'
+  properties:
+    type: { enum: ['any'] }
+
+#
+# Schema for schemas that use a subschema as type
+#
+'@typeSchema':
+  superTypes:
+    - '@baseSchema'
+  properties:
+    type: '@schema'

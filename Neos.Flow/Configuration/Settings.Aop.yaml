@@ -1,0 +1,10 @@
+#
+# AOP configuration for the Flow Framework
+#
+
+Neos:
+  Flow:
+    aop:
+      # Registers global objects to be evaluated for dynamic pointcut expressions
+      globalObjects:
+        securityContext: Neos\Flow\Security\Context

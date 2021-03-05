@@ -17,8 +17,8 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestClassWithMissingCollectionElementType;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Property\Fixtures;
 
 /**
  * Test case for Property Mapper
@@ -115,10 +115,10 @@ class PropertyMapperTest extends FunctionalTestCase
      */
     public function embeddedValueobjectCanBeMapped()
     {
-        $source = array(
+        $source = [
             'name' => 'Christopher',
             'age' => '28'
-        );
+        ];
 
         $result = $this->propertyMapper->convert($source, \Neos\Flow\Tests\Functional\Property\Fixtures\TestEmbeddedValueobject::class);
         $this->assertSame('Christopher', $result->getName());
@@ -468,5 +468,17 @@ class PropertyMapperTest extends FunctionalTestCase
     {
         $actualResult = $this->propertyMapper->convert(true, 'int');
         $this->assertSame(42, $actualResult);
+    }
+
+    /**
+     * @test
+     * @expectedExceptionMessage missing an element type
+     */
+    public function collectionPropertyWithMissingElementTypeThrowsHelpfulException()
+    {
+        $source = [
+            'values' => []
+        ];
+        $this->propertyMapper->convert($source, TestClassWithMissingCollectionElementType::class);
     }
 }

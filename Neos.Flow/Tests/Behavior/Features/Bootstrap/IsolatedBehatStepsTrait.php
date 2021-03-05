@@ -4,12 +4,15 @@ namespace Neos\Flow\Tests\Behavior\Features\Bootstrap;
 require_once(__DIR__ . '/SubProcess/SubProcess.php');
 
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Features\Bootstrap\SubProcess\SubProcess;
 use Neos\Flow\Cache\CacheManager;
 use PHPUnit\Framework\Assert;
 
 /**
  * Class IsolatedBehatStepsTrait
+ *
+ * @property ObjectManagerInterface objectManager
  */
 trait IsolatedBehatStepsTrait
 {
@@ -49,6 +52,7 @@ trait IsolatedBehatStepsTrait
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
             $cacheManager->getCache('Flow_Object_Classes')->flush();
 
+            /** @var ConfigurationManager $configurationManager */
             $configurationManager = $this->objectManager->get(ConfigurationManager::class);
             $configurationManager->flushConfigurationCache();
 

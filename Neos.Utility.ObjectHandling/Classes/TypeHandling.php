@@ -24,7 +24,7 @@ abstract class TypeHandling
     /**
      * A property type parse pattern.
      */
-    const PARSE_TYPE_PATTERN = '/^\\\\?(?P<type>integer|int|float|double|boolean|bool|string|DateTime|[a-zA-Z0-9\\\\_]+|object|array|ArrayObject|SplObjectStorage|Doctrine\\\\Common\\\\Collections\\\\Collection|Doctrine\\\\Common\\\\Collections\\\\ArrayCollection)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\_]+)>)?/';
+    const PARSE_TYPE_PATTERN = '/^\\\\?(?P<type>integer|int|float|double|boolean|bool|string|DateTime(?:Immutable)?|[a-zA-Z0-9\\\\_]+|object|array|ArrayObject|SplObjectStorage|Doctrine\\\\Common\\\\Collections\\\\Collection|Doctrine\\\\Common\\\\Collections\\\\ArrayCollection)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\_]+)>)?/';
 
     /**
      * A type pattern to detect literal types.
@@ -90,7 +90,7 @@ abstract class TypeHandling
     }
 
     /**
-     * Returns TRUE if the $type is a literal.
+     * Returns true if the $type is a literal.
      *
      * @param string $type
      * @return boolean
@@ -101,7 +101,7 @@ abstract class TypeHandling
     }
 
     /**
-     * Returns TRUE if the $type is a simple type.
+     * Returns true if the $type is a simple type.
      *
      * @param string $type
      * @return boolean
@@ -112,7 +112,7 @@ abstract class TypeHandling
     }
 
     /**
-     * Returns TRUE if the $type is a collection type.
+     * Returns true if the $type is a collection type.
      *
      * @param string $type
      * @return boolean

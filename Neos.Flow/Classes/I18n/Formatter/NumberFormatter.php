@@ -12,6 +12,7 @@ namespace Neos\Flow\I18n\Formatter;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Cldr\Reader\CurrencyReader;
 use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
 use Neos\Flow\I18n\Locale;
 
@@ -29,12 +30,27 @@ class NumberFormatter implements FormatterInterface
     protected $numbersReader;
 
     /**
+     * @var CurrencyReader
+     */
+    protected $currencyReader;
+
+    /**
      * @param NumbersReader $numbersReader
      * @return void
      */
     public function injectNumbersReader(NumbersReader $numbersReader)
     {
         $this->numbersReader = $numbersReader;
+    }
+
+
+    /**
+     * @param CurrencyReader $currencyReader
+     * @return void
+     */
+    public function injectCurrencyReader(CurrencyReader $currencyReader)
+    {
+        $this->currencyReader = $currencyReader;
     }
 
     /**
@@ -134,13 +150,24 @@ class NumberFormatter implements FormatterInterface
      * @param Locale $locale
      * @param string $currency Currency symbol (or name)
      * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
+     * @param string $currencyCode The ISO 4217 currency code of the currency to format. Used to set decimal places and rounding.
      * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
      * @api
      */
-    public function formatCurrencyNumber($number, Locale $locale, $currency, $formatLength = NumbersReader::FORMAT_LENGTH_DEFAULT)
+    public function formatCurrencyNumber($number, Locale $locale, $currency, $formatLength = NumbersReader::FORMAT_LENGTH_DEFAULT, $currencyCode = null)
     {
         NumbersReader::validateFormatLength($formatLength);
-        return $this->doFormattingWithParsedFormat($number, $this->numbersReader->parseFormatFromCldr($locale, NumbersReader::FORMAT_TYPE_CURRENCY, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $currency);
+        $parsedFormat = $this->numbersReader->parseFormatFromCldr($locale, NumbersReader::FORMAT_TYPE_CURRENCY, $formatLength);
+
+        if ($currencyCode !== null) {
+            // When currencyCode is set, maxDecimalDigits and rounding is overridden with CLDR data
+            $currencyFraction = $this->currencyReader->getFraction($currencyCode);
+            $parsedFormat['rounding'] = $currencyFraction['rounding'];
+            $parsedFormat['maxDecimalDigits'] = $currencyFraction['digits'];
+            $parsedFormat['minDecimalDigits'] = min($parsedFormat['minDecimalDigits'], $parsedFormat['maxDecimalDigits']);
+        }
+
+        return $this->doFormattingWithParsedFormat($number, $parsedFormat, $this->numbersReader->getLocalizedSymbolsForLocale($locale), $currency);
     }
 
     /**
@@ -157,7 +184,7 @@ class NumberFormatter implements FormatterInterface
      * @param array $parsedFormat An array describing format (as in $parsedFormats property)
      * @param array $symbols An array with symbols to use (as in $localeSymbols property)
      * @param string $currency Currency symbol to be inserted into formatted number (if applicable)
-     * @return string Formatted number. Will return string-casted version of $number if pattern is FALSE
+     * @return string Formatted number. Will return string-casted version of $number if pattern is false
      */
     protected function doFormattingWithParsedFormat($number, array $parsedFormat, array $symbols, $currency = null)
     {
@@ -229,7 +256,6 @@ class NumberFormatter implements FormatterInterface
 
         $number = str_replace(['%', '‰', '-'], [$symbols['percentSign'], $symbols['perMille'], $symbols['minusSign']], $number);
         if ($currency !== null) {
-            // @todo When currency is set, min / max DecimalDigits and rounding is overridden with CLDR data
             $number = str_replace('¤', $currency, $number);
         }
 

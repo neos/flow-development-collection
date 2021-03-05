@@ -357,8 +357,8 @@ class Account
     }
 
     /**
-     * Returns TRUE if it is currently allowed to use this account for authentication.
-     * Returns FALSE if the account has expired.
+     * Returns true if it is currently allowed to use this account for authentication.
+     * Returns false if the account has expired.
      *
      * @return boolean
      * @api

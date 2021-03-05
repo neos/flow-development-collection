@@ -71,7 +71,7 @@ class Pointcut implements PointcutFilterInterface
      * @param string $aspectClassName The name of the aspect class where the pointcut was declared (either explicitly or from an advice's pointcut expression)
      * @param string $pointcutMethodName (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
      */
-    public function __construct($pointcutExpression, PointcutFilterComposite $pointcutFilterComposite, $aspectClassName, $pointcutMethodName = null)
+    public function __construct(string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite, string $aspectClassName, string $pointcutMethodName = null)
     {
         $this->pointcutExpression = $pointcutExpression;
         $this->pointcutFilterComposite = $pointcutFilterComposite;
@@ -87,10 +87,10 @@ class Pointcut implements PointcutFilterInterface
      * @param string $methodName Method to check against
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean TRUE if class and method match this point cut, otherwise FALSE
+     * @return boolean true if class and method match this point cut, otherwise false
      * @throws CircularPointcutReferenceException if a circular pointcut reference was detected
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         if ($this->pointcutQueryIdentifier === $pointcutQueryIdentifier) {
             $this->recursionLevel ++;
@@ -111,7 +111,7 @@ class Pointcut implements PointcutFilterInterface
      *
      * @return string The pointcut expression
      */
-    public function getPointcutExpression()
+    public function getPointcutExpression(): string
     {
         return $this->pointcutExpression;
     }
@@ -121,7 +121,7 @@ class Pointcut implements PointcutFilterInterface
      *
      * @return string The aspect class name where the pointcut was declared
      */
-    public function getAspectClassName()
+    public function getAspectClassName(): string
     {
         return $this->aspectClassName;
     }
@@ -131,17 +131,17 @@ class Pointcut implements PointcutFilterInterface
      *
      * @return string The pointcut method name
      */
-    public function getPointcutMethodName()
+    public function getPointcutMethodName(): string
     {
         return $this->pointcutMethodName;
     }
 
     /**
-     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     * Returns true if this filter holds runtime evaluations for a previously matched pointcut
      *
-     * @return boolean TRUE if this filter has runtime evaluations
+     * @return boolean true if this filter has runtime evaluations
      */
-    public function hasRuntimeEvaluationsDefinition()
+    public function hasRuntimeEvaluationsDefinition(): bool
     {
         return $this->pointcutFilterComposite->hasRuntimeEvaluationsDefinition();
     }
@@ -151,7 +151,7 @@ class Pointcut implements PointcutFilterInterface
      *
      * @return array Runtime evaluations
      */
-    public function getRuntimeEvaluationsDefinition()
+    public function getRuntimeEvaluationsDefinition(): array
     {
         return $this->pointcutFilterComposite->getRuntimeEvaluationsDefinition();
     }
@@ -161,7 +161,7 @@ class Pointcut implements PointcutFilterInterface
      *
      * @return string The closure code
      */
-    public function getRuntimeEvaluationsClosureCode()
+    public function getRuntimeEvaluationsClosureCode(): string
     {
         return $this->pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
     }
@@ -172,7 +172,7 @@ class Pointcut implements PointcutFilterInterface
      * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         return $this->pointcutFilterComposite->reduceTargetClassNames($classNameIndex);
     }

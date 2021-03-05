@@ -29,7 +29,7 @@ interface RequestHandlerInterface
     /**
      * Checks if the request handler can handle the current request.
      *
-     * @return mixed TRUE or an integer > 0 if it can handle the request, otherwise FALSE or an integer < 0
+     * @return mixed true or an integer > 0 if it can handle the request, otherwise false or an integer < 0
      * @api
      */
     public function canHandleRequest();

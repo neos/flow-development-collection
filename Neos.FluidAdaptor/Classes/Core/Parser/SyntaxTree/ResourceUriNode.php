@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Core\Parser\SyntaxTree;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
 use Neos\FluidAdaptor\Core\ViewHelper\ViewHelperResolver;
 use Neos\FluidAdaptor\ViewHelpers\Uri\ResourceViewHelper;
@@ -50,8 +49,6 @@ class ResourceUriNode extends ViewHelperNode
         $this->uninitializedViewHelper = $this->viewHelperResolver->createViewHelperInstanceFromClassName($this->viewHelperClassName);
         $this->uninitializedViewHelper->setViewHelperNode($this);
         $this->argumentDefinitions = $this->viewHelperResolver->getArgumentDefinitionsForViewHelper($this->uninitializedViewHelper);
-        $this->rewriteBooleanNodesInArgumentsObjectTree($this->argumentDefinitions, $this->arguments);
-        $this->validateArguments($this->argumentDefinitions, $this->arguments);
     }
 
     /**

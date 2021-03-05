@@ -50,22 +50,10 @@ class Ip implements RequestPatternInterface
     }
 
     /**
-     * Sets an IP pattern (CIDR syntax)
-     *
-     * @param string $ipPattern The CIDR styled IP pattern
-     * @return void
-     * @deprecated since 3.3 this is not used - use options instead (@see __construct())
-     */
-    public function setPattern($ipPattern)
-    {
-        $this->options['cidrPattern'] = $ipPattern;
-    }
-
-    /**
      * Matches a \Neos\Flow\Mvc\RequestInterface against the set IP pattern rules
      *
      * @param RequestInterface $request The request that should be matched
-     * @return boolean TRUE if the pattern matched, FALSE otherwise
+     * @return boolean true if the pattern matched, false otherwise
      * @throws InvalidRequestPatternException
      */
     public function matchRequest(RequestInterface $request)

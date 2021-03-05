@@ -77,7 +77,7 @@ class FileBackend extends AbstractBackend
      *
      * The default is to not create parent directories automatically.
      *
-     * @param boolean $flag TRUE if parent directories should be created
+     * @param boolean $flag true if parent directories should be created
      * @return void
      * @api
      */

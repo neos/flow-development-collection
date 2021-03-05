@@ -16,14 +16,14 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Component\ComponentChain;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Package\Package;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Package\PackageManager;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * A request handler which can handle HTTP requests.
  *
  * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
 class RequestHandler implements HttpRequestHandlerInterface
 {
@@ -41,13 +41,6 @@ class RequestHandler implements HttpRequestHandlerInterface
      * @var Component\ComponentContext
      */
     protected $componentContext;
-
-    /**
-     * The "http" settings
-     *
-     * @var array
-     */
-    protected $settings;
 
     /**
      * Make exit() a closure so it can be manipulated during tests
@@ -70,7 +63,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * This request handler can handle any web request.
      *
-     * @return boolean If the request is a web request, TRUE otherwise FALSE
+     * @return boolean If the request is a web request, true otherwise false
      * @api
      */
     public function canHandleRequest()
@@ -104,9 +97,13 @@ class RequestHandler implements HttpRequestHandlerInterface
 
         $this->boot();
         $this->resolveDependencies();
-        $this->addPoweredByHeader($response);
-        if (isset($this->settings['http']['baseUri'])) {
-            $request->setBaseUri(new Uri($this->settings['http']['baseUri']));
+        $response = $this->addPoweredByHeader($response);
+        $this->componentContext->replaceHttpResponse($response);
+        $baseUriSetting = $this->bootstrap->getObjectManager()->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.http.baseUri');
+        if (!empty($baseUriSetting)) {
+            $baseUri = new Uri($baseUriSetting);
+            $request = $request->withAttribute(Request::ATTRIBUTE_BASE_URI, $baseUri);
+            $this->componentContext->replaceHttpRequest($request);
         }
 
         $this->baseComponentChain->handle($this->componentContext);
@@ -162,51 +159,23 @@ class RequestHandler implements HttpRequestHandlerInterface
     {
         $objectManager = $this->bootstrap->getObjectManager();
         $this->baseComponentChain = $objectManager->get(ComponentChain::class);
-
-        $configurationManager = $objectManager->get(ConfigurationManager::class);
-        $this->settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
     }
 
     /**
      * Adds an HTTP header to the Response which indicates that the application is powered by Flow.
      *
-     * @param Response $response
-     * @return void
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     * @throws \Neos\Flow\Exception
      */
-    protected function addPoweredByHeader(Response $response)
+    protected function addPoweredByHeader(ResponseInterface $response): ResponseInterface
     {
-        if ($this->settings['http']['applicationToken'] === 'Off') {
-            return;
+        $token = static::prepareApplicationToken($this->bootstrap->getObjectManager());
+        if ($token === '') {
+            return $response;
         }
 
-        $applicationIsFlow = ($this->settings['core']['applicationPackageKey'] === 'Neos.Flow');
-        if ($this->settings['http']['applicationToken'] === 'ApplicationName') {
-            if ($applicationIsFlow) {
-                $response->getHeaders()->set('X-Flow-Powered', 'Flow');
-            } else {
-                $response->getHeaders()->set('X-Flow-Powered', 'Flow ' . $this->settings['core']['applicationName']);
-            }
-            return;
-        }
-
-        /** @var Package $applicationPackage */
-        /** @var Package $flowPackage */
-        $flowPackage = $this->bootstrap->getEarlyInstance(PackageManagerInterface::class)->getPackage('Neos.Flow');
-        $applicationPackage = $this->bootstrap->getEarlyInstance(PackageManagerInterface::class)->getPackage($this->settings['core']['applicationPackageKey']);
-
-        if ($this->settings['http']['applicationToken'] === 'MajorVersion') {
-            $flowVersion = $this->renderMajorVersion($flowPackage->getInstalledVersion());
-            $applicationVersion = $this->renderMajorVersion($applicationPackage->getInstalledVersion());
-        } else {
-            $flowVersion = $this->renderMinorVersion($flowPackage->getInstalledVersion());
-            $applicationVersion = $this->renderMinorVersion($applicationPackage->getInstalledVersion());
-        }
-
-        if ($applicationIsFlow) {
-            $response->getHeaders()->set('X-Flow-Powered', 'Flow/' . ($flowVersion ?: 'dev'));
-        } else {
-            $response->getHeaders()->set('X-Flow-Powered', 'Flow/' . ($flowVersion ?: 'dev') . ' ' . $this->settings['core']['applicationName'] . '/' . ($applicationVersion ?: 'dev'));
-        }
+        return $response->withAddedHeader('X-Flow-Powered', $token);
     }
 
     /**
@@ -215,7 +184,7 @@ class RequestHandler implements HttpRequestHandlerInterface
      * @param string $version For example "2.3.7"
      * @return string For example "2"
      */
-    protected function renderMajorVersion($version)
+    protected static function renderMajorVersion($version)
     {
         preg_match('/^(\d+)/', $version, $versionMatches);
         return isset($versionMatches[1]) ? $versionMatches[1] : '';
@@ -227,9 +196,48 @@ class RequestHandler implements HttpRequestHandlerInterface
      * @param string $version For example "2.3.7"
      * @return string For example "2.3"
      */
-    protected function renderMinorVersion($version)
+    protected static function renderMinorVersion($version)
     {
         preg_match('/^(\d+\.\d+)/', $version, $versionMatches);
         return isset($versionMatches[1]) ? $versionMatches[1] : '';
+    }
+
+    /**
+     * Generate an application information header for the response based on settings and package versions.
+     * Will statically compile in production for performance benefits.
+     *
+     * @param ObjectManagerInterface $objectManager
+     * @return string
+     * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
+     * @Flow\CompileStatic
+     */
+    public static function prepareApplicationToken(ObjectManagerInterface $objectManager): string
+    {
+        $configurationManager = $objectManager->get(ConfigurationManager::class);
+        $tokenSetting = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.http.applicationToken');
+
+        if (!in_array($tokenSetting, ['ApplicationName', 'MinorVersion', 'MajorVersion'])) {
+            return '';
+        }
+
+        $applicationPackageKey = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.core.applicationPackageKey');
+        $applicationName = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.core.applicationName');
+        $applicationIsNotFlow = ($applicationPackageKey !== 'Neos.Flow');
+
+        if ($tokenSetting === 'ApplicationName') {
+            return 'Flow' . ($applicationIsNotFlow ? ' ' . $applicationName : '');
+        }
+
+        $packageManager = $objectManager->get(PackageManager::class);
+        $flowPackage = $packageManager->getPackage('Neos.Flow');
+        $applicationPackage = $applicationIsNotFlow ? $packageManager->getPackage($applicationPackageKey) : null;
+
+        // At this point the $tokenSetting must be either "MinorVersion" or "MajorVersion" so lets use it.
+
+        $versionRenderer = 'render' . $tokenSetting;
+        $flowVersion = static::$versionRenderer($flowPackage->getInstalledVersion());
+        $applicationVersion = $applicationIsNotFlow ? static::$versionRenderer($applicationPackage->getInstalledVersion()) : null;
+
+        return 'Flow/' . ($flowVersion ?: 'dev') . ($applicationIsNotFlow ? ' ' . $applicationName . '/' . ($applicationVersion ?: 'dev') : '');
     }
 }

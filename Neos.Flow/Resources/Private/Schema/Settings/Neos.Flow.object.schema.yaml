@@ -1,7 +1,7 @@
 type: dictionary
-additionalProperties: FALSE
+additionalProperties: false
 properties:
-  'registerFunctionalTestClasses': { type: boolean, required: TRUE }
+  'registerFunctionalTestClasses': { type: boolean, required: true }
   'includeClasses':
     type: dictionary
     additionalProperties:

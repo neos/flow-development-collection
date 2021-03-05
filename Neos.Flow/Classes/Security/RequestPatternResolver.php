@@ -45,14 +45,14 @@ class RequestPatternResolver
      */
     public function resolveRequestPatternClass($name)
     {
-        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($name);
-        if ($resolvedObjectName !== false) {
-            return $resolvedObjectName;
+        $resolvedClassName = $this->objectManager->getClassNameByObjectName($name);
+        if ($resolvedClassName !== false) {
+            return $resolvedClassName;
         }
 
-        $resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('Neos\Flow\Security\RequestPattern\\' . $name);
-        if ($resolvedObjectName !== false) {
-            return $resolvedObjectName;
+        $resolvedClassName = $this->objectManager->getClassNameByObjectName('Neos\Flow\Security\RequestPattern\\' . $name);
+        if ($resolvedClassName !== false) {
+            return $resolvedClassName;
         }
 
         throw new Exception\NoRequestPatternFoundException('A request pattern with the name: "' . $name . '" could not be resolved.', 1217154134);

@@ -29,7 +29,7 @@ final class Validate
      * Options for the validator, validator-specific.
      * @var array
      */
-    public $options = array();
+    public $options = [];
 
     /**
      * The name of the argument this annotation is attached to, if used on a method. (Can be given as anonymous argument.)
@@ -41,7 +41,7 @@ final class Validate
      * The validation groups for which this validator should be executed.
      * @var array
      */
-    public $validationGroups = array('Default');
+    public $validationGroups = ['Default'];
 
     /**
      * @param array $values

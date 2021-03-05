@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2019-09-24
+The following reference was automatically generated from code on 2021-03-05
 
 
 .. _`Flow Command Reference: NEOS.FLOW`:
@@ -36,7 +36,8 @@ Package *NEOS.FLOW*
 **Flush all caches**
 
 The flush command flushes all caches (including code caches) which have been
-registered with Flow's Cache Manager. It also removes any session data.
+registered with Flow's Cache Manager. It will NOT remove any session data, unless
+you specifically configure the session caches to not be persistent.
 
 If fatal errors caused by a package prevent the compile time bootstrap
 from running, the removal of any temporary data can be forced by specifying
@@ -99,6 +100,122 @@ Related commands
   Flush all caches
 ``neos.flow:configuration:show``
   Show the active configuration settings
+
+
+
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:cache:list`:
+
+``neos.flow:cache:list``
+************************
+
+**List all configured caches and their status if available**
+
+This command will exit with a code 1 if at least one cache status contains errors or warnings
+This allows the command to be easily integrated in CI setups (the --quiet flag can be used to reduce verbosity)
+
+
+
+Options
+^^^^^^^
+
+``--quiet``
+  If set, this command only outputs errors & warnings
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``neos.flow:cache:show``
+  Display details of a cache including a detailed status if available
+
+
+
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:cache:setup`:
+
+``neos.flow:cache:setup``
+*************************
+
+**Setup the given Cache if possible**
+
+Invokes the setup() method on the configured CacheBackend (if it implements the WithSetupInterface)
+which should setup and validate the backend (i.e. create required database tables, directories, ...)
+
+Arguments
+^^^^^^^^^
+
+``--cache-identifier``
+  
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``neos.flow:cache:list``
+  List all configured caches and their status if available
+``neos.flow:cache:setupall``
+  Setup all Caches
+
+
+
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:cache:setupall`:
+
+``neos.flow:cache:setupall``
+****************************
+
+**Setup all Caches**
+
+Invokes the setup() method on all configured CacheBackend that implement the WithSetupInterface interface
+which should setup and validate the backend (i.e. create required database tables, directories, ...)
+
+This command will exit with a code 1 if at least one cache setup failed
+This allows the command to be easily integrated in CI setups (the --quiet flag can be used to reduce verbosity)
+
+
+
+Options
+^^^^^^^
+
+``--quiet``
+  If set, this command only outputs errors & warnings
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``neos.flow:cache:setup``
+  Setup the given Cache if possible
+
+
+
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:cache:show`:
+
+``neos.flow:cache:show``
+************************
+
+**Display details of a cache including a detailed status if available**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--cache-identifier``
+  identifier of the cache (for example "Flow_Core")
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``neos.flow:cache:list``
+  List all configured caches and their status if available
 
 
 
@@ -183,7 +300,7 @@ Display all settings:
 ./flow configuration:show
 
 Display Flow persistence settings:
-./flow configuration:show --path TYPO3.Flow.persistence
+./flow configuration:show --path Neos.Flow.persistence
 
 Display Flow Object Cache configuration
 ./flow configuration:show --type Caches --path Flow_Object_Classes
@@ -228,7 +345,7 @@ Options
 ``--path``
   path to the subconfiguration separated by "." like "Neos.Flow
 ``--verbose``
-  if TRUE, output more verbose information on the schema files which were used
+  if true, output more verbose information on the schema files which were used
 
 
 
@@ -332,10 +449,10 @@ additionally supports autocompletion and a user-based command history.
 ``neos.flow:database:setcharset``
 *********************************
 
-**Convert the database schema to use the given character set and collation (defaults to utf8 and utf8_unicode_ci).**
+**Convert the database schema to use the given character set and collation (defaults to utf8mb4 and utf8mb4_unicode_ci).**
 
-This command can be used to convert the database configured in the Flow settings to the utf8 character
-set and the utf8_unicode_ci collation (by default, a custom collation can be given). It will only
+This command can be used to convert the database configured in the Flow settings to the utf8mb4 character
+set and the utf8mb4_unicode_ci collation (by default, a custom collation can be given). It will only
 work when using the pdo_mysql driver.
 
 **Make a backup** before using it, to be on the safe side. If you want to inspect the statements used
@@ -346,17 +463,16 @@ For background information on this, see:
 
 - http://stackoverflow.com/questions/766809/
 - http://dev.mysql.com/doc/refman/5.5/en/alter-table.html
-
-The main purpose of this is to fix setups that were created with Flow 2.3.x or earlier and whose
-database server did not have a default collation of utf8_unicode_ci. In those cases, the tables will
-have a collation that does not match the default collation of later Flow versions, potentially leading
-to problems when creating foreign key constraints (among others, potentially).
-
-If you have special needs regarding the charset and collation, you *can* override the defaults with
-different ones. One thing this might be useful for is when switching to the utf8mb4 character set, see:
-
+- https://medium.com/@adamhooper/in-mysql-never-use-utf8-use-utf8mb4-11761243e434
 - https://mathiasbynens.be/notes/mysql-utf8mb4
 - https://florian.ec/articles/mysql-doctrine-utf8/
+
+The main purpose of this is to fix setups that were created with Flow before version 5.0. In those cases,
+the tables will have a collation that does not match the default collation of later Flow versions, potentially
+leading to problems when creating foreign key constraints (among others, potentially).
+
+If you have special needs regarding the charset and collation, you *can* override the defaults with
+different ones.
 
 Note: This command **is not a general purpose conversion tool**. It will specifically not fix cases
 of actual utf8 stored in latin1 columns. For this a conversion to BLOB followed by a conversion to the
@@ -368,9 +484,9 @@ Options
 ^^^^^^^
 
 ``--character-set``
-  Character set, defaults to utf8
+  Character set, defaults to utf8mb4
 ``--collation``
-  Collation to use, defaults to utf8_unicode_ci
+  Collation to use, defaults to utf8mb4_unicode_ci
 ``--output``
   A file to write SQL to, instead of executing it
 ``--verbose``
@@ -563,7 +679,7 @@ Related commands
 
 **Generate a new migration**
 
-If $diffAgainstCurrent is TRUE (the default), it generates a migration file
+If $diffAgainstCurrent is true (the default), it generates a migration file
 with the diff between current DB structure and the found mapping metadata.
 
 Otherwise an empty migration skeleton is generated.
@@ -766,33 +882,6 @@ Options
 
 
 
-.. _`Flow Command Reference: NEOS.FLOW neos.flow:package:activate`:
-
-``neos.flow:package:activate``
-******************************
-
-**Activate an available package**
-
-This command activates an existing, but currently inactive package.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package to create
-
-
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.flow:package:deactivate``
-  Deactivate a package
-
-
-
 .. _`Flow Command Reference: NEOS.FLOW neos.flow:package:create`:
 
 ``neos.flow:package:create``
@@ -824,54 +913,6 @@ Related commands
 
 ``neos.kickstarter:kickstart:package``
   Kickstart a new package
-
-
-
-.. _`Flow Command Reference: NEOS.FLOW neos.flow:package:deactivate`:
-
-``neos.flow:package:deactivate``
-********************************
-
-**Deactivate a package**
-
-This command deactivates a currently active package.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package to create
-
-
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.flow:package:activate``
-  Activate an available package
-
-
-
-.. _`Flow Command Reference: NEOS.FLOW neos.flow:package:delete`:
-
-``neos.flow:package:delete``
-****************************
-
-**Delete an existing package**
-
-This command deletes an existing package identified by the package key.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package to create
-
-
-
-
 
 
 
@@ -923,7 +964,7 @@ Related commands
 **List available packages**
 
 Lists all locally available packages. Displays the package key, version and
-package title and its state – active or inactive.
+package title.
 
 
 
@@ -939,9 +980,9 @@ Related commands
 ^^^^^^^^^^^^^^^^
 
 ``neos.flow:package:activate``
-  Activate an available package
+  *Command not available*
 ``neos.flow:package:deactivate``
-  Deactivate a package
+  *Command not available*
 
 
 
@@ -1225,7 +1266,7 @@ Options
 ``--schema-file``
   path to the schema file
 ``--verbose``
-  if TRUE, output more verbose information on the schema files which were used
+  if true, output more verbose information on the schema files which were used
 
 
 
@@ -1254,7 +1295,7 @@ Options
 ``--schema-file``
   path to the schema file
 ``--verbose``
-  if TRUE, output more verbose information on the schema files which were used
+  if true, output more verbose information on the schema files which were used
 
 
 
@@ -1446,6 +1487,25 @@ Options
 
 
 
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:session:destroyall`:
+
+``neos.flow:session:destroyall``
+********************************
+
+**Destroys all sessions.**
+
+This special command is needed, because sessions are kept in persistent storage and are not flushed
+with other caches by default.
+
+This is functionally equivalent to
+`./flow flow:cache:flushOne Flow_Session_Storage && ./flow flow:cache:flushOne Flow_Session_MetaData`
+
+
+
+
+
+
+
 .. _`Flow Command Reference: NEOS.FLOW neos.flow:typeconverter:list`:
 
 ``neos.flow:typeconverter:list``
@@ -1487,7 +1547,7 @@ Generates Schema documentation (XSD) for your ViewHelpers, preparing the
 file to be placed online and used by any XSD-aware editor.
 After creating the XSD file, reference it in your IDE and import the namespace
 in your Fluid template by adding the xmlns:* attribute(s):
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers" ...>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="https://neos.io/ns/Neos/Neos/ViewHelpers" ...>
 
 Arguments
 ^^^^^^^^^
@@ -1501,9 +1561,11 @@ Options
 ^^^^^^^
 
 ``--xsd-namespace``
-  Unique target namespace used in the XSD schema (for example "http://yourdomain.org/ns/viewhelpers"). Defaults to "http://typo3.org/ns/<php namespace>".
+  Unique target namespace used in the XSD schema (for example "http://yourdomain.org/ns/viewhelpers"). Defaults to "https://neos.io/ns/<php namespace>".
 ``--target-file``
   File path and name of the generated XSD schema. If not specified the schema will be output to standard output.
+``--xsd-domain``
+  Domain used in the XSD schema (for example "http://yourdomain.org"). Defaults to "https://neos.io".
 
 
 

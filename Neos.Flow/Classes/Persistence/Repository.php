@@ -116,7 +116,7 @@ abstract class Repository implements RepositoryInterface
      * Finds an object matching the given identifier.
      *
      * @param string $identifier The identifier of the object to find
-     * @return object The matching object if found, otherwise NULL
+     * @return object|null The matching object if found, otherwise NULL
      * @api
      */
     public function findByIdentifier($identifier)
@@ -202,9 +202,9 @@ abstract class Repository implements RepositoryInterface
      * Magic call method for repository methods.
      *
      * Provides three methods
-     *  - findBy<PropertyName>($value, $caseSensitive = TRUE, $cacheResult = FALSE)
-     *  - findOneBy<PropertyName>($value, $caseSensitive = TRUE, $cacheResult = FALSE)
-     *  - countBy<PropertyName>($value, $caseSensitive = TRUE)
+     *  - findBy<PropertyName>($value, $caseSensitive = true, $cacheResult = false)
+     *  - findOneBy<PropertyName>($value, $caseSensitive = true, $cacheResult = false)
+     *  - countBy<PropertyName>($value, $caseSensitive = true)
      *
      * @param string $method Name of the method
      * @param array $arguments The arguments

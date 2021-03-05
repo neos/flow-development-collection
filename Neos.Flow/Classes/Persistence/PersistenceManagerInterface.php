@@ -31,15 +31,15 @@ interface PersistenceManagerInterface
     /**
      * Commits new objects and changes to objects in the current persistence session into the backend.
      *
-     * If $onlyWhitelisteObjects is set to TRUE, only those objects which have been registered with
-     * whitelistObject() will be persisted. If other objects are in the queue, an exception will be
+     * If $onlyAllowedObjects is set to true, only those objects which have been registered with
+     * allowObject() will be persisted. If other objects are in the queue, an exception will be
      * raised.
      *
-     * @param boolean $onlyWhitelistedObjects
+     * @param boolean $onlyAllowedObjects
      * @return void
      * @api
      */
-    public function persistAll($onlyWhitelistedObjects = false);
+    public function persistAll($onlyAllowedObjects = false);
 
     /**
      * Clears the in-memory state of the persistence.
@@ -55,7 +55,7 @@ interface PersistenceManagerInterface
      * Checks if the given object has ever been persisted.
      *
      * @param object $object The object to check
-     * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
+     * @return boolean true if the object is new, false if the object exists in the repository
      * @api
      */
     public function isNewObject($object);
@@ -95,8 +95,8 @@ interface PersistenceManagerInterface
      *
      * @param mixed $identifier
      * @param string $objectType
-     * @param boolean $useLazyLoading Set to TRUE if you want to use lazy loading for this object
-     * @return object The object for the identifier if it is known, or NULL
+     * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
+     * @return object|null The object for the identifier if it is known, or NULL
      * @api
      */
     public function getObjectByIdentifier($identifier, $objectType = null, $useLazyLoading = false);
@@ -161,20 +161,31 @@ interface PersistenceManagerInterface
     public function update($object);
 
     /**
-     * Adds the given object to a whitelist of objects which may be persisted when persistAll() is called with the
-     * $onlyWhitelistedObjects flag. This is the case if "safe" HTTP request methods are used.
+     * Adds the given object to a list of allowed objects which may be persisted when persistAll() is called with the
+     * $onlyAllowedObjects flag. This is the case if "safe" HTTP request methods are used.
+     *
+     * @param object $object The object
+     * @return void
+     * @api
+     * @deprecated Use allowObject() instead. See https://github.com/neos/flow-development-collection/pull/2024
+     */
+    public function whitelistObject($object);
+
+    /**
+     * Adds the given object to a list of allowed objects which may be persisted when persistAll() is called with the
+     * $onlyAllowedObjects flag. This is the case if "safe" HTTP request methods are used.
      *
      * @param object $object The object
      * @return void
      * @api
      */
-    public function whitelistObject($object);
+    //public function allowObject($object);
 
     /**
-     * Returns TRUE, if an active connection to the persistence
+     * Returns true, if an active connection to the persistence
      * backend has been established, e.g. entities can be persisted.
      *
-     * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
+     * @return boolean true, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
     public function isConnected();
