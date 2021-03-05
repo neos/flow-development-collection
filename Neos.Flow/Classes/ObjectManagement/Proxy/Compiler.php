@@ -290,7 +290,9 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
         $optionValues = get_object_vars($annotation);
         $optionsAsStrings = [];
         foreach ($optionValues as $optionName => $optionValue) {
-            if ($optionName[0] === '_') continue;
+            if ($optionName[0] === '_') {
+                continue;
+            }
             $optionValueAsString = '';
             if (is_object($optionValue)) {
                 $optionValueAsString = self::renderAnnotation($optionValue);
