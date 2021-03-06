@@ -666,6 +666,15 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
                     2 => 'c',
                 ],
             ],
+            'test with empty filter function' => [
+                [1,null,2,null,3],
+                null,
+                [
+                    0 => 1,
+                    2 => 2,
+                    4 => 3,
+                ],
+            ],
         ];
     }
 
