@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Fixture;
+namespace Neos\Flow\Tests\Functional\Security\Fixtures\Controller;
 
 /*
  * This file is part of the Neos.Flow package.

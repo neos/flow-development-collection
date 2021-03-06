@@ -317,7 +317,7 @@ class PolicyService
         $this->roles = [];
     }
 
-    protected function configurePolicyAnnotatedMethods(array &$policyConfiguration) {
+    public function configurePolicyAnnotatedMethods(array &$policyConfiguration) {
         $annotatedMethods = static::resolvePolicyAnnotatedMethods($this->objectManager);
         foreach ($annotatedMethods as $identifier=>$configuration) {
             $policyConfiguration['privilegeTargets'][MethodPrivilege::class][$identifier]['matcher'] = $configuration['matcher'];

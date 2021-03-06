@@ -345,29 +345,4 @@ class PolicyServiceTest extends UnitTestCase
         $everybodyRole = $this->policyService->getRole('Neos.Flow:Everybody');
         self::assertTrue($everybodyRole->getPrivilegeForTarget('Some.PrivilegeTarget:Identifier')->isDenied());
     }
-
-    /**
-     * @test
-     */
-    public function hasRoleReturnsTrueEvenIfNotConfigured()
-    {
-        $this->mockPolicyConfiguration = [
-            'roles' => [
-            ]
-        ];
-        self::assertTrue($this->policyService->hasRole('Neos.Flow:AnnotatedRole'));
-    }
-
-    /**
-     * @test
-     */
-    public function annotatedRoleWithGrantPermissionIsGrantedPermission()
-    {
-        $this->mockPolicyConfiguration = [
-            'roles' => [
-            ]
-        ];
-        $everybodyRole = $this->policyService->getRole('Neos.Flow:AnnotatedRole');
-        self::assertTrue($everybodyRole->getPrivilegeForTarget('Some.PrivilegeTarget:Identifier')->isGranted());
-    }
 }
