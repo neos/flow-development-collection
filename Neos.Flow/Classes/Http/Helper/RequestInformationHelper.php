@@ -100,7 +100,7 @@ abstract class RequestInformationHelper
         $renderedHeaders = '';
         $headers = $request->getHeaders();
         if ($headers instanceof Headers) {
-            $renderedHeaders .= $headers->__toString();
+            $renderedHeaders .= preg_replace('/Authorization:[^\r\n]+/', 'Authorization: ****', $headers->__toString());
         } else {
             foreach (array_keys($headers) as $name) {
                 if ($name === 'Authorization') {
