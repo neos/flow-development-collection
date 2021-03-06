@@ -1,7 +1,6 @@
 <?php
 namespace Neos\Flow\Tests\Unit\Http\Helper;
 
-use Neos\Flow\Http\Helper\ArgumentsHelper;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Request;
 use Neos\Flow\Tests\UnitTestCase;
