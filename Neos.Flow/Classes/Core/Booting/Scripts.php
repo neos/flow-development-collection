@@ -894,6 +894,6 @@ class Scripts
      */
     protected static function useClassLoader(Bootstrap $bootstrap)
     {
-        return (!FLOW_ONLY_COMPOSER_LOADER || $bootstrap->getContext()->isTesting());
+        return (defined('FLOW_ONLY_COMPOSER_LOADER') && FLOW_ONLY_COMPOSER_LOADER === false);
     }
 }
