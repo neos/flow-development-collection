@@ -13,7 +13,6 @@ namespace Neos\Flow\Security\Policy;
  * source code.
  */
 
-use Meteko\PolicyAnnotation\Annotations\Policy;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
@@ -25,6 +24,7 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
+use Neos\Flow\Annotations\Policy;
 
 /**
  * The policy service reads the policy configuration. The security advice asks

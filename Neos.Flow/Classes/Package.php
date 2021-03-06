@@ -11,7 +11,6 @@ namespace Neos\Flow;
  * source code.
  */
 
-use Meteko\PolicyAnnotation\Configuration\PolicyConfiguration;
 use Neos\Flow\Core\Booting\Step;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
