@@ -1112,7 +1112,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             $this->reflectionService->getClassNamesByAnnotation(ORM\MappedSuperclass::class),
             $this->reflectionService->getClassNamesByAnnotation(ORM\Embeddable::class)
         );
-        $this->classNames = array_filter($this->classNames,
+        $this->classNames = array_filter(
+            $this->classNames,
             function ($className) {
                 return !interface_exists($className, false)
                         && strpos($className, Compiler::ORIGINAL_CLASSNAME_SUFFIX) === false;

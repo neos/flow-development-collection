@@ -1186,9 +1186,9 @@ the object configuration:
 .. code-block:: yaml
 
 	MyCompany\MyPackage\MyObject:
-	  autowiring: off
+	  autowiring: false
 
-Autowiring can also be switched off through the ``@autowiring off`` annotation - either
+Autowiring can also be switched off through the ``@Flow\Autowiring(false)`` annotation - either
 in the documentation block of a whole class or of a single method. For the latter the
 annotation only has an effect when used in comment blocks of a constructor or of a method
 whose name starts with ``inject``.

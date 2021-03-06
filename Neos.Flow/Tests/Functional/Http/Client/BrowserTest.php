@@ -40,6 +40,26 @@ class BrowserTest extends FunctionalTestCase
                 '@format' => 'html'
             ]
         );
+        $this->registerRoute(
+            'Functional Test - Http::Client::BrowserTest',
+            'test/http/request(/{@action})',
+            [
+                '@package' => 'Neos.Flow',
+                '@subpackage' => 'Tests\Functional\Http\Fixtures',
+                '@controller' => 'Request',
+                '@action' => 'index',
+                '@format' => 'html'
+            ]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function argumentsAreSentAsRequestBodyEvenInGetRequest()
+    {
+        $response = $this->browser->request('http://localhost/test/http/request/body', 'GET', ['foo' => 'bar']);
+        self::assertEquals(json_encode(['foo' => 'bar']), $response->getBody()->getContents());
     }
 
     /**

@@ -160,7 +160,7 @@ class Browser
         }
 
         if (!empty($arguments)) {
-            $request = $request->withQueryParams($arguments);
+            $request = $request->withParsedBody($arguments);
         }
         if (!empty($files)) {
             $files = UploadedFilesHelper::upcastUploadedFiles($files, $arguments);

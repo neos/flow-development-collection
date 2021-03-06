@@ -183,7 +183,7 @@ trait SecurityOperationsTrait
             $instance = $this->objectManager->get($className);
 
             try {
-                $result = call_user_func_array([$instance, $methodName], Arrays::trimExplode(',', $arguments));
+                $result = $instance->$methodName(...Arrays::trimExplode(',', $arguments));
                 if ($not === 'not') {
                     Assert::fail('Method should not be callable');
                 }

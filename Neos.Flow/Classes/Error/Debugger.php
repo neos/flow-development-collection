@@ -84,7 +84,7 @@ class Debugger
     /**
      * @var string
      */
-    protected static $blacklistedPropertyNames = '/
+    protected static $excludedPropertyNames = '/
 		(Flow_Aop_.*)
 		/xs';
 
@@ -285,7 +285,7 @@ class Debugger
                 $objectReflection = new \ReflectionObject($object);
                 $properties = $objectReflection->getProperties();
                 foreach ($properties as $property) {
-                    if (preg_match(self::$blacklistedPropertyNames, $property->getName())) {
+                    if (preg_match(self::$excludedPropertyNames, $property->getName())) {
                         continue;
                     }
                     $dump .= chr(10);

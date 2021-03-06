@@ -103,26 +103,37 @@ is the place to wire signals to slots as needed for your package:
 	public function boot(\Neos\Flow\Core\Bootstrap $bootstrap) {
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
 		$dispatcher->connect(
-			'Some\Package\Controller\CommentController', 'commentCreated',
-			'Some\Package\Service\Notification', 'sendNewCommentNotification'
+			\Some\Package\Controller\CommentController::class, 'commentCreated',
+			\Some\Package\Service\Notification::class, 'sendNewCommentNotification'
 		);
 	}
 
 The first pair of parameters given to ``connect()`` identifies the signal you want to
 wire, the second pair the slot.
 
-The signal is identified by the class name and the signal name, which is the method name without
-``emit``. In the above example, the method which triggers the ``commentCreated`` signal is called
-``emitCommentCreated()``.
+The signal is identified by the class name and the signal name, which is the method name
+without ``emit``. In the above example, the method which triggers the ``commentCreated``
+signal is called ``emitCommentCreated()``.
 
 The slot is identified by the class name and method name which should be called. If the
 method name starts with ``::`` the slot will be called statically.
 
-An alternative way of specifying the slot is to give an object instead of a class name to
-the ``connect`` method. This can also be used to pass a ``Closure`` instance to react to
-signals, in this case the slot method name can be omitted.
+.. note::
+   - Use the ``::class`` constant to sepcify the class name
+   - The signal name is the method name **without** ``emit``
+
+An alternative way of specifying the slot is to pass an object instance instead of a
+class name to the ``connect`` method. One can also pass a ``Closure`` instance to react
+to signals, in this case the slot method name can be omitted::
+
+  $dispatcher->connect(\Acme\Com\Service::class, 'thingsChanged', function ($changedThings) {
+      // do something here
+  });
 
 There is one more parameter available: ``$passSignalInformation``. It controls
 whether or not the signal information (class name and method name of the signal
 emitter, separated by ``::``) should be passed to the slot as last parameter.
 ``$passSignalInformation`` is ``TRUE`` by default.
+
+.. note:: Slots with a variable number of arguments may use the signal information in
+   unexpected ways. If in doubt, set ``$passSignalInformation`` to ``false``.
