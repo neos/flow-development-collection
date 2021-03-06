@@ -492,9 +492,9 @@ class MathHelper implements ProtectedContextAwareInterface
         $sign = $this->sign($x);
         switch ($sign) {
             case -1:
-                return ceil($x);
+                return (int)ceil($x);
             case 1:
-                return floor($x);
+                return (int)floor($x);
             default:
                 return $sign;
         }

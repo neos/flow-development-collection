@@ -11,7 +11,7 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  * source code.
  */
 
-use Doctrine\ORM\Mapping\ClassMetaData;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
@@ -40,7 +40,7 @@ class SqlFilter extends DoctrineSqlFilter
     /**
      * Gets the SQL query part to add to a query.
      *
-     * @param ClassMetaData $targetEntity Metadata object for the target entity to be filtered
+     * @param ClassMetadata $targetEntity Metadata object for the target entity to be filtered
      * @param string $targetTableAlias The target table alias used in the current query
      * @return string The constraint SQL if there is available, empty string otherwise
      */

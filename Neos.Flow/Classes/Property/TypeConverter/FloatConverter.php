@@ -125,8 +125,9 @@ class FloatConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
-     * @return float|\Neos\Error\Messages\Error
+     * @param PropertyMappingConfigurationInterface|null $configuration
+     * @return float|Error|null
+     * @throws InvalidPropertyMappingConfigurationException
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
