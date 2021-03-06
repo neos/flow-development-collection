@@ -18,7 +18,6 @@ use Neos\Flow\Property\Exception\DuplicateObjectException;
 use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use Neos\Flow\Property\Exception\InvalidSourceException;
 use Neos\Flow\Property\Exception\InvalidTargetException;
-use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Utility\ObjectAccess;
@@ -228,7 +227,7 @@ class PersistentObjectConverter extends ObjectConverter
      * @param string $targetType
      * @psalm-param class-string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object|TargetNotFoundError
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -284,9 +283,8 @@ class PersistentObjectConverter extends ObjectConverter
      * @param mixed $identity
      * @param string $targetType
      * @psalm-param class-string $targetType
-     * @return object
-     * @throws TargetNotFoundException
-     * @throws InvalidSourceException
+     * @return object|null
+     * @throws InvalidSourceException|DuplicateObjectException
      */
     protected function fetchObjectFromPersistence($identity, $targetType)
     {
@@ -306,7 +304,7 @@ class PersistentObjectConverter extends ObjectConverter
      *
      * @param array $identityProperties Property names and values to search for
      * @param string $type The object type to look for
-     * @return object Either the object matching the identity or NULL if no object was found
+     * @return object|null Either the object matching the identity or NULL if no object was found
      * @throws DuplicateObjectException if more than one object was found
      */
     protected function findObjectByIdentityProperties(array $identityProperties, $type)
