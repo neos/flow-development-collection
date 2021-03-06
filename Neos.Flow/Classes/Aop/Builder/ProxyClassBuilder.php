@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\AdvicesTrait;
 use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\PropertyIntroduction;
+use Neos\Flow\Aop\Exception\InvalidTargetClassException;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
@@ -315,6 +316,9 @@ class ProxyClassBuilder
     {
         $aspectContainer = new AspectContainer($aspectClassName);
         $methodNames = get_class_methods($aspectClassName);
+        if ($methodNames === null) {
+            throw new InvalidTargetClassException(sprintf('The class "%s" is not loadable for AOP proxy building. This is most likely an inconsistency with the caches. Try running `./flow flow:cache:flush` and if that does not help, check the class exists and is correctly namespaced.', $aspectClassName), 1607422151);
+        }
 
         foreach ($methodNames as $methodName) {
             foreach ($this->reflectionService->getMethodAnnotations($aspectClassName, $methodName) as $annotation) {

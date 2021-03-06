@@ -128,11 +128,11 @@
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} character</source>
-          <target state="needs-translation">This text may not exceed {0,number} character</target>
+          <target state="translated">Teksten kan ikke inneholde mer enn {0,number} tegn</target>
         </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} characters</source>
-          <target state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target state="translated">Teksten kan ikke inneholde mer enn {0,number} tegn</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->

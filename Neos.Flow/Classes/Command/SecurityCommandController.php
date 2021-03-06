@@ -15,10 +15,12 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Mvc\Controller\AbstractController;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Security\Cryptography\RsaWalletServicePhp;
+use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
@@ -345,6 +347,79 @@ class SecurityCommandController extends CommandController
                 $this->outputLine('  ' . $methodName);
             }
             $this->outputLine();
+        }
+    }
+
+    /**
+     * List all configured roles
+     *
+     * @param bool $includeAbstract Set this flag to include abstract roles
+     * @throws InvalidConfigurationTypeException | SecurityException
+     */
+    public function listRolesCommand(bool $includeAbstract = false): void
+    {
+        $roles = $this->policyService->getRoles($includeAbstract);
+        $this->output->outputTable(array_map(static function (Role $role) {
+            $id = $role->getIdentifier();
+            if ($role->isAbstract()) {
+                $id .= ' (*)';
+            }
+            return [$id, $role->getLabel()];
+        }, $roles), ['Id', 'Label']);
+        if ($includeAbstract) {
+            $this->outputLine(' (*) = abstract role');
+        }
+        $this->outputLine();
+        $this->outputLine('Run <i>./flow security:describeRole <id></i> to show details for a role');
+    }
+
+    /**
+     * Show details of a specified role
+     *
+     * @param string $role identifier of the role to describe (for example "Neos.Flow:Everybody")
+     * @throws InvalidConfigurationTypeException | SecurityException
+     */
+    public function describeRoleCommand(string $role): void
+    {
+        $roleInstance = $this->policyService->getRole($role);
+        $this->outputLine('Details of the <b>%s</b> role:', [$roleInstance->getIdentifier()]);
+        $this->outputLine();
+        if ($roleInstance->isAbstract()) {
+            $this->outputLine('<b>Note:</b> This is an <i>abstract</i> role so it\'t can\'t be assigned to accounts directly');
+            $this->outputLine();
+        }
+        $this->outputLine('<b>Name:</b> %s', [$roleInstance->getName()]);
+        $this->outputLine('<b>Package:</b> %s', [$roleInstance->getPackageKey()]);
+        if ($roleInstance->getLabel() !== $roleInstance->getName()) {
+            $this->outputLine('<b>Label:</b> %s', [$roleInstance->getLabel()]);
+        }
+        if (!empty($roleInstance->getDescription())) {
+            $this->outputLine('<b>Description:</b>');
+            $this->outputFormatted($roleInstance->getDescription(), [], 1);
+        }
+        $this->outputLine();
+        $this->outputLine('<b>Parent role(s):</b>');
+        $parentRoles = $roleInstance->getAllParentRoles();
+        if ($parentRoles === []) {
+            $this->outputLine('-');
+        } else {
+            foreach ($parentRoles as $parentRole) {
+                $this->outputLine(' * %s', [$parentRole->getIdentifier()]);
+            }
+        }
+        $privileges = $roleInstance->getPrivileges();
+        $this->outputLine();
+        $this->outputLine('<b>Privileges:</b>');
+        if ($privileges === []) {
+            $this->outputLine('-');
+        } else {
+            foreach ($privileges as $privilege) {
+                $target = $privilege->getPrivilegeTarget();
+                $this->outputLine(' * %s: <i>%s</i>', [$privilege->getPrivilegeTargetIdentifier(), strtoupper($privilege->getPermission())]);
+                if ($target->getLabel() !== $privilege->getPrivilegeTargetIdentifier()) {
+                    $this->outputFormatted($target->getLabel(), [], 5);
+                }
+            }
         }
     }
 }

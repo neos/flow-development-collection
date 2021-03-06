@@ -116,7 +116,7 @@ class ConfigurationManagerTest extends UnitTestCase
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, ['loadConfiguration'], [], '', false);
         $configurationManager->_set('configurations', $initialConfigurations);
 
-        $configurationManager->expects(self::at(0))->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_CACHES);
+        $configurationManager->expects(self::atLeastOnce())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_CACHES);
 
         $configurationTypes = [
             ConfigurationManager::CONFIGURATION_TYPE_ROUTES,
@@ -1247,9 +1247,7 @@ EOD;
 
 
         $mockConfigurationSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
-        $mockConfigurationSource->expects(self::at(0))->method('load')->with('Flow/Configuration/Testing/System1/Routes.Foo')->will(self::returnValue([]));
-        $mockConfigurationSource->expects(self::at(1))->method('load')->with('Flow/Configuration/Testing/Routes.Foo')->will(self::returnValue([]));
-        $mockConfigurationSource->expects(self::at(2))->method('load')->with('Flow/Configuration/Routes.Foo')->will(self::returnValue([]));
+        $mockConfigurationSource->expects(self::atLeast(3))->method('load')->withConsecutive(['Flow/Configuration/Testing/System1/Routes.Foo'], ['Flow/Configuration/Testing/Routes.Foo'], ['Flow/Configuration/Routes.Foo'])->willReturn([]);
 
         $routeConfigurationProcessor = new RouteConfigurationProcessor([], ['Testing', 'Testing/System1'], $this->getMockPackages(), $mockConfigurationSource);
         $routeConfigurationProcessor->process($mockRoutesConfiguration);

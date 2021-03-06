@@ -28,6 +28,7 @@ use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\Session;
 use Neos\Flow\Session\SessionManager;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Http\Cookie;
 use Neos\Flow\Security\Authentication\Token\UsernamePassword;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Account;
@@ -83,7 +84,7 @@ class SessionTest extends UnitTestCase
                 'secure' => false,
                 'httponly' => true,
                 'domain' => null,
-                'samesite' => null
+                'samesite' => Cookie::SAMESITE_LAX
             ]
         ]
     ];

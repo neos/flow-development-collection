@@ -328,7 +328,7 @@ class DoctrineCommandController extends CommandController
         }
 
         try {
-            $result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
+            $result = $this->doctrineService->executeMigrations($this->normalizeVersion($version), $output, $dryRun, $quiet);
             if ($result !== '' && $quiet === false) {
                 $this->outputLine($result);
             }
@@ -375,7 +375,7 @@ class DoctrineCommandController extends CommandController
         }
 
         try {
-            $this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
+            $this->outputLine($this->doctrineService->executeMigration($this->normalizeVersion($version), $direction, $output, $dryRun));
         } catch (\Exception $exception) {
             $this->handleException($exception);
         }
@@ -408,8 +408,9 @@ class DoctrineCommandController extends CommandController
         if ($add === false && $delete === false) {
             throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
         }
+
         try {
-            $this->doctrineService->markAsMigrated($version, $add ?: false);
+            $this->doctrineService->markAsMigrated($this->normalizeVersion($version), $add ?: false);
         } catch (MigrationException $exception) {
             $this->outputLine($exception->getMessage());
             $this->quit(1);
@@ -499,7 +500,7 @@ class DoctrineCommandController extends CommandController
                 $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)]);
                 Files::createDirectoryRecursively(dirname($targetPathAndFilename));
                 rename($migrationClassPathAndFilename, $targetPathAndFilename);
-                $this->outputLine('The migration was moved to: <comment>%s</comment>', [substr($targetPathAndFilename, strlen(FLOW_PATH_PACKAGES))]);
+                $this->outputLine('The migration was moved to: <comment>%s</comment>', [substr($targetPathAndFilename, strlen(FLOW_PATH_ROOT))]);
                 $this->outputLine();
                 $this->outputLine('Next Steps:');
             } else {
@@ -533,5 +534,19 @@ class DoctrineCommandController extends CommandController
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         return !($this->settings['backendOptions']['driver'] === null);
+    }
+
+    /**
+     * Migrates a numeric version like "12345678901234" to a fully qualified version "Neos\Flow\Persistence\Doctrine\Migrations\Version12345678901234"
+     *
+     * @param string $version
+     * @return string To fully qualified version including PHP namespace
+     */
+    private function normalizeVersion(string $version): string
+    {
+        if (!is_numeric($version)) {
+            return $version;
+        }
+        return sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
     }
 }

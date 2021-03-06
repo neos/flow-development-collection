@@ -99,8 +99,9 @@ class ConfigurationSchemaValidator
     {
         $availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
         if (in_array($configurationType, $availableConfigurationTypes) === false) {
+            $message = (string)$this->translator->translateById('configuration.anErrorOccurredDuringValidationOfTheConfiguration.body', [$configurationType,implode('", "', $availableConfigurationTypes)], null, null, 'Main', 'Neos.Flow');
             throw new Exception\SchemaValidationException(
-                $this->translator->translateById('configuration.anErrorOccurredDuringValidationOfTheConfiguration.body', [$configurationType,implode('", "', $availableConfigurationTypes)], null, null, 'Main', 'Neos.Flow'),
+                $message,
                 1364984886
             );
         }

@@ -20,8 +20,6 @@ use Neos\Cache\Tests\BaseTestCase;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\PhpFrontend;
-use PHPUnit\Framework\Error\Notice;
-use PHPUnit\Framework\Error\Warning;
 
 /**
  * Test case for the SimpleFileBackend
@@ -284,7 +282,7 @@ class SimpleFileBackendTest extends BaseTestCase
 
         $simpleFileBackend->remove($entryIdentifier);
 
-        self::assertFileNotExists($pathAndFilename);
+        self::assertFileDoesNotExist($pathAndFilename);
         self::assertFalse($simpleFileBackend->has($entryIdentifier));
     }
 
@@ -403,7 +401,7 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function requireOnceDoesNotSwallowPhpWarningsOfTheIncludedFile()
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $entryIdentifier = 'SomePhpEntryWithPhpWarning';
 
         $simpleFileBackend = $this->getSimpleFileBackend();
@@ -416,7 +414,7 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile()
     {
-        $this->expectException(Notice::class);
+        $this->expectNotice();
         $entryIdentifier = 'SomePhpEntryWithPhpNotice';
 
         $simpleFileBackend = $this->getSimpleFileBackend();
@@ -447,9 +445,9 @@ class SimpleFileBackendTest extends BaseTestCase
 
         $simpleFileBackend->flush();
 
-        self::assertFileNotExists($pathAndFilename1);
+        self::assertFileDoesNotExist($pathAndFilename1);
         self::assertFalse($simpleFileBackend->has($entryIdentifier1));
-        self::assertFileNotExists($pathAndFilename2);
+        self::assertFileDoesNotExist($pathAndFilename2);
         self::assertFalse($simpleFileBackend->has($entryIdentifier2));
     }
 

@@ -596,7 +596,7 @@ We have now seen that we can add arguments just by adding them as method argumen
 to the ``render()`` method. There is, however, a second method to register arguments.
 
 You can also register arguments inside a method called ``initializeArguments()``.
-Call ``$this->registerArgument($name, $dataType, $description, $isRequired, $defaultValue=NULL)`` inside.
+Call ``$this->registerArgument($name, $dataType, $description, $isRequired, $defaultValue=null)`` inside.
 
 It depends how many arguments a view helper has. Sometimes, registering them as
 ``render()`` arguments is more beneficial, and sometimes it makes more sense to
@@ -664,14 +664,14 @@ With the above methods, the ``Link\ActionViewHelper`` from above can be condense
          *
          * @param string $action Target action
          * @param array $arguments Arguments
-         * @param string $controller Target controller. If NULL current controllerName is used
-         * @param string $package Target package. if NULL current package is used
-         * @param string $subpackage Target subpackage. if NULL current subpackage is used
+         * @param string $controller Target controller. If null current controllerName is used
+         * @param string $package Target package. if null current package is used
+         * @param string $subpackage Target subpackage. if null current subpackage is used
          * @param string $section The anchor to be added to the URI
          * @return string The rendered link
          */
-        public function render($action = NULL, array $arguments = array(),
-                               $controller = NULL, $package = NULL, $subpackage = NULL,
+        public function render($action = null, array $arguments = array(),
+                               $controller = null, $package = null, $subpackage = null,
                                $section = '') {
             $uriBuilder = $this->controllerContext->getURIBuilder();
             $uri = $uriBuilder->uriFor($action, $arguments, $controller, $package, $subpackage, $section);
@@ -849,14 +849,14 @@ to be done to create an AJAX compatible widget, and then explain it with an exam
 
 To make a widget AJAX-aware, you need to do the following:
 
-* Set ``$ajaxWidget`` to TRUE inside the ViewHelper. This will generate an unique
+* Set ``$ajaxWidget`` to true inside the ViewHelper. This will generate an unique
   AJAX Identifier for the Widget, and store the WidgetConfiguration in the user's
   session on the server.
 * Inside the index-action of the Widget Controller, generate the JavaScript which
   triggers the AJAX functionality. There, you will need a URI which returns the
   AJAX response. For that, use the following ViewHelper inside the template::
 
-    <f:uri.widget ajax="TRUE" action="..." arguments="..." />
+    <f:uri.widget ajax="true" action="..." arguments="..." />
 
 * Inside the template of the AJAX request, ``<f:renderChildren>`` is not available,
   because the child nodes of the Widget ViewHelper are not accessible there.

@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Persistence;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Persistence;
-use PHPUnit\Framework\Error\Error;
 
 require_once('Fixture/Repository/NonstandardEntityRepository.php');
 
@@ -76,7 +75,7 @@ class RepositoryTest extends UnitTestCase
      */
     public function createQueryCallsPersistenceManagerWithExpectedClassName()
     {
-        $mockPersistenceManager = $this->createMock(Persistence\Generic\PersistenceManager::class);
+        $mockPersistenceManager = $this->createMock(Persistence\Doctrine\PersistenceManager::class);
         $mockPersistenceManager->expects(self::once())->method('createQueryForType')->with('ExpectedType');
 
         $repository = $this->getAccessibleMock(Persistence\Repository::class, ['dummy']);
@@ -94,7 +93,7 @@ class RepositoryTest extends UnitTestCase
         $orderings = ['foo' => Persistence\QueryInterface::ORDER_ASCENDING];
         $mockQuery = $this->createMock(Persistence\QueryInterface::class);
         $mockQuery->expects(self::once())->method('setOrderings')->with($orderings);
-        $mockPersistenceManager = $this->createMock(Persistence\Generic\PersistenceManager::class);
+        $mockPersistenceManager = $this->createMock(Persistence\Doctrine\PersistenceManager::class);
         $mockPersistenceManager->expects(self::exactly(2))->method('createQueryForType')->with('ExpectedType')->will(self::returnValue($mockQuery));
 
         $repository = $this->getAccessibleMock(Persistence\Repository::class, ['dummy']);
@@ -240,7 +239,7 @@ class RepositoryTest extends UnitTestCase
      */
     public function magicCallMethodTriggersAnErrorIfUnknownMethodsAreCalled()
     {
-        $this->expectException(Error::class);
+        $this->expectError();
         $repository = $this->getMockBuilder(Persistence\Repository::class)->setMethods(['createQuery'])->getMock();
         $repository->__call('foo', []);
     }

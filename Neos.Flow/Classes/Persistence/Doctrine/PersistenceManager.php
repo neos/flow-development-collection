@@ -184,8 +184,9 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @param mixed $identifier
      * @param string|null $objectType
+     * @psalm-param class-string|null $objectType
      * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
-     * @return object The object for the identifier if it is known, or NULL
+     * @return object|null The object for the identifier if it is known, or NULL
      * @throws \RuntimeException
      * @throws ORMException
      * @api

@@ -32,7 +32,7 @@ class ScriptsMock extends Scripts
     {
     }
 
-    public static function buildSubprocessCommand($commandIdentifier, array $settings, array $commandArguments = []): string
+    public static function buildSubprocessCommand(string $commandIdentifier, array $settings, array $commandArguments = []): string
     {
         return parent::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
     }

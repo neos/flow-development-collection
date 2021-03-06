@@ -54,7 +54,7 @@ class SessionMiddlewareTest extends UnitTestCase
         'secure' => false,
         'httponly' => true,
         'domain' => null,
-        'samesite' => null,
+        'samesite' => Cookie::SAMESITE_LAX,
     ];
 
     public function setUp(): void
@@ -141,12 +141,12 @@ class SessionMiddlewareTest extends UnitTestCase
     public function sessionCookieSettingsProvider(): array
     {
         return [
-            ['sessionCookieSettings' => [], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Path=/; HttpOnly'],
-            ['sessionCookieSettings' => ['lifetime' => 123], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Max-Age=123; Path=/; HttpOnly'],
-            ['sessionCookieSettings' => ['path' => '/some/path'], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Path=/some/path; HttpOnly'],
-            ['sessionCookieSettings' => ['secure' => true], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Path=/; Secure; HttpOnly'],
-            ['sessionCookieSettings' => ['httponly' => false], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Path=/'],
-            ['sessionCookieSettings' => ['domain' => 'neos.io'], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Domain=neos.io; Path=/; HttpOnly'],
+            ['sessionCookieSettings' => [], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Path=/; HttpOnly; SameSite=lax'],
+            ['sessionCookieSettings' => ['lifetime' => 123], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Max-Age=123; Path=/; HttpOnly; SameSite=lax'],
+            ['sessionCookieSettings' => ['path' => '/some/path'], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Path=/some/path; HttpOnly; SameSite=lax'],
+            ['sessionCookieSettings' => ['secure' => true], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Path=/; Secure; HttpOnly; SameSite=lax'],
+            ['sessionCookieSettings' => ['httponly' => false], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Path=/; SameSite=lax'],
+            ['sessionCookieSettings' => ['domain' => 'neos.io'], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Domain=neos.io; Path=/; HttpOnly; SameSite=lax'],
             ['sessionCookieSettings' => ['samesite' => 'none'], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Path=/; Secure; HttpOnly; SameSite=none'],
             ['sessionCookieSettings' => ['samesite' => 'strict'], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Path=/; HttpOnly; SameSite=strict'],
             ['sessionCookieSettings' => ['samesite' => 'lax'], 'expectedNewCookieValue' => 'session_cookie_name=session-id; Path=/; HttpOnly; SameSite=lax'],

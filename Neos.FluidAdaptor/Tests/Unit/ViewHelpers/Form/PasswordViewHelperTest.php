@@ -54,11 +54,14 @@ class PasswordViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
     public function renderCorrectlySetsTypeNameAndValueAttributes()
     {
         $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['setContent', 'render', 'addAttribute'])->getMock();
-        $mockTagBuilder->expects(self::at(0))->method('addAttribute')->with('type', 'password');
-        $mockTagBuilder->expects(self::at(1))->method('addAttribute')->with('name', 'NameOfTextbox');
-        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextbox');
-        $mockTagBuilder->expects(self::at(2))->method('addAttribute')->with('value', 'Current value');
+        $mockTagBuilder->expects(self::exactly(3))->method('addAttribute')
+            ->withConsecutive(
+                ['type', 'password'],
+                ['name', 'NameOfTextbox'],
+                ['value', 'Current value']
+            );
         $mockTagBuilder->expects(self::once())->method('render');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextbox');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
         $arguments = [
@@ -78,11 +81,14 @@ class PasswordViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
     public function renderCorrectlySetsRequiredAttribute()
     {
         $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['addAttribute', 'setContent', 'render'])->disableOriginalConstructor()->getMock();
-        $mockTagBuilder->expects(self::at(0))->method('addAttribute')->with('type', 'password');
-        $mockTagBuilder->expects(self::at(1))->method('addAttribute')->with('name', 'NameOfTextbox');
-        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextbox');
-        $mockTagBuilder->expects(self::at(2))->method('addAttribute')->with('value', 'Current value');
+        $mockTagBuilder->expects(self::exactly(3))->method('addAttribute')
+            ->withConsecutive(
+                ['type', 'password'],
+                ['name', 'NameOfTextbox'],
+                ['value', 'Current value']
+            );
         $mockTagBuilder->expects(self::once())->method('render');
+        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('NameOfTextbox');
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 
         $arguments = [

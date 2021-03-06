@@ -103,8 +103,7 @@ class PersistentObjectConverterTest extends UnitTestCase
         if ($isEntity) {
             $this->mockReflectionService->expects(self::once())->method('isClassAnnotatedWith')->with('TheTargetType', Flow\Entity::class)->will(self::returnValue($isEntity));
         } else {
-            $this->mockReflectionService->expects(self::at(0))->method('isClassAnnotatedWith')->with('TheTargetType', Flow\Entity::class)->will(self::returnValue($isEntity));
-            $this->mockReflectionService->expects(self::at(1))->method('isClassAnnotatedWith')->with('TheTargetType', Flow\ValueObject::class)->will(self::returnValue($isValueObject));
+            $this->mockReflectionService->expects(self::atLeast(2))->method('isClassAnnotatedWith')->withConsecutive(['TheTargetType', Flow\Entity::class], ['TheTargetType', Flow\ValueObject::class])->willReturnOnConsecutiveCalls($isEntity, $isValueObject);
         }
 
         self::assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));

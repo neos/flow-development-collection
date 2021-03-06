@@ -634,7 +634,7 @@ Options
 |             |     Connect to memcached server using    |           |         |         |
 |             |     unix sockets                         |           |         |         |
 +-------------+------------------------------------------+-----------+---------+---------+
-| compression | Enable memcached internal data           | No        | boolean | FALSE   |
+| compression | Enable memcached internal data           | No        | boolean | false   |
 |             | compression. Can be used to reduce       |           |         |         |
 |             | memcached memory consumption but adds    |           |         |         |
 |             | additional compression / decompression   |           |         |         |
@@ -700,7 +700,7 @@ Neos\\Cache\\Backend\\NullBackend
 ---------------------------------
 
 The null backend is a dummy backend which doesn't store any data and always returns
-``FALSE`` on ``get()``.
+``false`` on ``get()``.
 
 Options
 ~~~~~~~
@@ -812,9 +812,9 @@ This configures what will be injected into the following setter::
 	 * Sets the foo cache
 	 *
 	 * @param \Neos\Cache\Frontend\StringFrontend $cache Cache for foo data
-	 * @return void
 	 */
-	public function setFooCache(\Neos\Cache\Frontend\StringFrontend $cache) {
+	public function setFooCache(\Neos\Cache\Frontend\StringFrontend $cache): void
+	{
 		$this->fooCache = $cache;
 	}
 

@@ -68,8 +68,12 @@ class UriConstraintsTest extends UnitTestCase
             ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '', 'replaceSuffixes' => ['.tld']]], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain/'],
             ['constraints' => [UriConstraints::CONSTRAINT_HOST_SUFFIX => ['suffix' => '.com', 'replaceSuffixes' => ['.tld']]], 'templateUri' => 'http://some-domain.net', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://some-domain.net/'],
 
-            ['constraints' => [UriConstraints::CONSTRAINT_PORT => 80], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain.tld/'],
+            ['constraints' => [UriConstraints::CONSTRAINT_PORT => 80], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => '/'],
+            ['constraints' => [UriConstraints::CONSTRAINT_PORT => 80], 'templateUri' => 'http://some-domain.tld:80', 'forceAbsoluteUri' => false, 'expectedUri' => '/'],
+            ['constraints' => [UriConstraints::CONSTRAINT_PORT => 80], 'templateUri' => 'http://some-domain.tld:8080', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain.tld/'],
             ['constraints' => [UriConstraints::CONSTRAINT_PORT => 8080], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-domain.tld:8080/'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST => 'some-other-domain.tld', UriConstraints::CONSTRAINT_PORT => 8080], 'templateUri' => 'http://some-domain.tld:8080', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-other-domain.tld:8080/'],
+            ['constraints' => [UriConstraints::CONSTRAINT_PORT => 8080], 'templateUri' => 'http://some-domain.tld:8080', 'forceAbsoluteUri' => false, 'expectedUri' => '/'],
             ['constraints' => [UriConstraints::CONSTRAINT_SCHEME => 'https', UriConstraints::CONSTRAINT_PORT => 443], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'https://some-domain.tld/'],
 
             ['constraints' => [UriConstraints::CONSTRAINT_PATH => '/some/path'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => '/some/path'],
