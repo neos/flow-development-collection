@@ -157,6 +157,14 @@ jobs:
         if: matrix.static-analysis == 'psalm'
         run: composer test-static
 
+      - name: Update psalm baseline
+        if: ${{ failure() && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+        run: |
+          composer psalm-baseline-update
+          git add Packages/Framework/psalm-baseline.xml
+          git -c user.name='gh-action' -c user.email='gh-action@noreply.github.com' commit -m "TASK: Update psalm-baseline"
+          git push -f origin HEAD:psalm-${FLOW_TARGET_VERSION}
+
       - name: Run unit tests
         if: matrix.static-analysis == 'no'
         run: composer test-unit -- --verbose
