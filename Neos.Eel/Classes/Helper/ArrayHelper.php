@@ -43,7 +43,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
                 $argument = [$argument];
             }
         }
-        return call_user_func_array('array_merge', $arguments);
+        return array_merge(...$arguments);
     }
 
     /**
@@ -158,6 +158,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
             $array = array_slice($array, $fromIndex, null, true);
         }
         $result = array_search($searchElement, $array, true);
+        if (is_string($result)) {
+            return array_search($result, array_keys($array), true) + (int)$fromIndex;
+        }
         if ($result === false) {
             return -1;
         }
@@ -442,7 +445,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
      */
     public function filter(array $array, callable $callback = null): array
     {
-        return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
+        if (is_null($callback)) {
+            return array_filter($array);
+        } else {
+            return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
+        }
     }
 
     /**

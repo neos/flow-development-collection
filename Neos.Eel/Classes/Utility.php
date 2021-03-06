@@ -71,7 +71,7 @@ class Utility
         };
 
         $context = new ProtectedContext($contextVariables);
-        $context->whitelist('q');
+        $context->allow('q');
 
         return $eelEvaluator->evaluate($matches['exp'], $context);
     }

@@ -130,19 +130,19 @@ class ObjectConverter extends AbstractTypeConverter
         }
 
         $methodParameters = $this->reflectionService->getMethodParameters($targetType, '__construct');
-        if (isset($methodParameters[$propertyName]) && isset($methodParameters[$propertyName]['type'])) {
+        if (isset($methodParameters[$propertyName]['type'])) {
             return $methodParameters[$propertyName]['type'];
         } elseif ($this->reflectionService->hasMethod($targetType, ObjectAccess::buildSetterMethodName($propertyName))) {
             $methodParameters = $this->reflectionService->getMethodParameters($targetType, ObjectAccess::buildSetterMethodName($propertyName));
             $methodParameter = current($methodParameters);
             if (!isset($methodParameter['type'])) {
                 throw new InvalidTargetException('Setter for property "' . $propertyName . '" had no type hint or documentation in target object of type "' . $targetType . '".', 1303379158);
-            } else {
-                return $methodParameter['type'];
             }
+
+            return $methodParameter['type'];
         } else {
             $targetPropertyNames = $this->reflectionService->getClassPropertyNames($targetType);
-            if (in_array($propertyName, $targetPropertyNames)) {
+            if (in_array($propertyName, $targetPropertyNames, true)) {
                 $varTagValues = $this->reflectionService->getPropertyTagValues($targetType, $propertyName, 'var');
                 if (count($varTagValues) > 0) {
                     // This ensures that FQCNs are returned without leading backslashes. Otherwise, something like @var \DateTime
@@ -155,9 +155,9 @@ class ObjectConverter extends AbstractTypeConverter
                         throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $targetType . '" for property "' . $propertyName . '"'), 1467699674);
                     }
                     return $parsedType['type'] . ($parsedType['elementType'] !== null ? '<' . $parsedType['elementType'] . '>' : '');
-                } else {
-                    throw new InvalidTargetException(sprintf('Public property "%s" had no proper type annotation (i.e. "@var") in target object of type "%s".', $propertyName, $targetType), 1406821818);
                 }
+
+                throw new InvalidTargetException(sprintf('Public property "%s" had no proper type annotation (i.e. "@var") in target object of type "%s".', $propertyName, $targetType), 1406821818);
             }
         }
 
@@ -174,7 +174,7 @@ class ObjectConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object the target type
      * @throws InvalidTargetException
      * @throws InvalidDataTypeException
@@ -204,7 +204,7 @@ class ObjectConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $originalTargetType
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidDataTypeException
      * @throws InvalidPropertyMappingConfigurationException
@@ -264,9 +264,9 @@ class ObjectConverter extends AbstractTypeConverter
             }
             $classReflection = new \ReflectionClass($className);
             return $classReflection->newInstanceArgs($constructorArguments);
-        } else {
-            return new $className();
         }
+
+        return new $className();
     }
 
     /**

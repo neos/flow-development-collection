@@ -327,9 +327,9 @@ class ResourceManager
 
         $collectionName = $resource->getCollectionName();
 
-        $result = $this->resourceRepository->findBySha1AndCollectionName($resource->getSha1(), $collectionName);
-        if (count($result) > 1) {
-            $this->logger->debug(sprintf('Not removing storage data of resource %s (%s) because it is still in use by %s other PersistentResource object(s).', $resource->getFilename(), $resource->getSha1(), count($result) - 1));
+        $result = $this->resourceRepository->countBySha1AndCollectionName($resource->getSha1(), $collectionName);
+        if ($result > 1) {
+            $this->logger->debug(sprintf('Not removing storage data of resource %s (%s) because it is still in use by %s other PersistentResource object(s).', $resource->getFilename(), $resource->getSha1(), $result - 1));
         } else {
             if (!isset($this->collections[$collectionName])) {
                 $this->logger->warning(sprintf('Could not remove storage data of resource %s (%s) because it refers to the unknown collection "%s".', $resource->getFilename(), $resource->getSha1(), $collectionName), LogEnvironment::fromMethodName(__METHOD__));
@@ -626,7 +626,7 @@ class ResourceManager
         }
 
         if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->settings['uploadExtensionBlacklist']) && $this->settings['uploadExtensionBlacklist'][strtolower($pathInfo['extension'])] === true) {
-            throw new Exception('The extension of the given upload file "' . strip_tags($pathInfo['basename']) . '" is blacklisted. As it could pose a security risk it cannot be imported.', 1447148472);
+            throw new Exception('The extension of the given upload file "' . strip_tags($pathInfo['basename']) . '" is excluded. As it could pose a security risk it cannot be imported.', 1447148472);
         }
 
         if ($openBasedirEnabled === true) {

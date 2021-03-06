@@ -44,7 +44,7 @@ class RuntimeExpressionEvaluator
     protected $runtimeExpressions = [];
 
     /**
-     * This object is created very early and is part of the blacklisted "Neos\Flow\Aop" namespace so we can't rely on AOP for the property injection.
+     * This object is created very early and is part of the excluded "Neos\Flow\Aop" namespace so we can't rely on AOP for the property injection.
      *
      * @param ObjectManagerInterface $objectManager
      * @return void

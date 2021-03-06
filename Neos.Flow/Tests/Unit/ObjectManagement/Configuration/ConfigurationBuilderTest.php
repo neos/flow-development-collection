@@ -16,6 +16,7 @@ use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationBuilder;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationProperty;
+use Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Annotations as Flow;
@@ -204,5 +205,46 @@ class ConfigurationBuilderTest extends UnitTestCase
 
         $expectedConfigurationArgument = new ConfigurationArgument(1, 'Neos.Foo.Bar', ConfigurationArgument::ARGUMENT_TYPES_SETTING);
         $this->assertEquals($expectedConfigurationArgument, $builtObjectConfiguration->getArguments()[1]);
+    }
+
+    /**
+     * @test
+     */
+    public function objectsCreatedByFactoryShouldNotFailOnMissingConstructorArguments()
+    {
+        $configurationArray = [
+            'scope' => 'singleton',
+            'factoryObjectName' => 'TestFactory',
+        ];
+
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
+        $dummyObjectConfiguration = [$configurationBuilder->_call('parseConfigurationArray', __CLASS__, $configurationArray)];
+
+        $reflectionServiceMock = $this->createMock(ReflectionService::class);
+
+        $reflectionServiceMock
+            ->method('hasMethod')
+            ->with(__CLASS__, '__construct')
+            ->will($this->returnValue(true));
+
+        $reflectionServiceMock
+            ->method('getMethodParameters')
+            ->with(__CLASS__, '__construct')
+            ->will($this->returnValue([
+                'testArray' => [
+                    'position' => 0,
+                    'optional' => false,
+                    'class' => null,
+                    'allowsNull' => false
+                ]
+            ]));
+
+        $configurationBuilder->injectReflectionService($reflectionServiceMock);
+        try {
+            $configurationBuilder->_callRef('autowireArguments', $dummyObjectConfiguration);
+        } catch (UnresolvedDependenciesException $e) {
+            self::fail('Factory created objects should not throw UnresolvedDependenciesException by autowiring constructor arguments');
+        }
+        self::assertEquals([], $dummyObjectConfiguration[0]->getArguments());
     }
 }

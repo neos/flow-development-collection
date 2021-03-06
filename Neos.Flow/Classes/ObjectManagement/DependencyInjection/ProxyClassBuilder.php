@@ -230,6 +230,7 @@ class ProxyClassBuilder
                 $propertyVarTags[$propertyName] = isset($varTagValues[0]) ? $varTagValues[0] : null;
             }
             $code = "        \$this->Flow_Object_PropertiesToSerialize = array();
+        unset(\$this->Flow_Persistence_RelatedEntities);
 
         \$transientProperties = " . var_export($transientProperties, true) . ";
         \$propertyVarTags = " . var_export($propertyVarTags, true) . ";

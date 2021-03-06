@@ -180,6 +180,26 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function objectsWithPersistedEntitiesCanBeSerializedMultipleTimes()
+    {
+        $persistedEntity = new Fixtures\TestEntity();
+        $persistedEntity->setName('Flow');
+        $this->testEntityRepository->add($persistedEntity);
+        $this->persistenceManager->persistAll();
+
+        $objectHoldingTheEntity = new Fixtures\ObjectHoldingAnEntity();
+        $objectHoldingTheEntity->testEntity = $persistedEntity;
+
+        for ($i = 0; $i < 2; $i++) {
+            $serializedData = serialize($objectHoldingTheEntity);
+            $unserializedObjectHoldingTheEntity = unserialize($serializedData);
+            $this->assertInstanceOf(Fixtures\TestEntity::class, $unserializedObjectHoldingTheEntity->testEntity);
+        }
+    }
+
+    /**
+     * @test
+     */
     public function newEntitiesWhichAreNotAddedToARepositoryYetAreAlreadyKnownToGetObjectByIdentifier()
     {
         $expectedEntity = new Fixtures\TestEntity();
@@ -376,7 +396,7 @@ class PersistenceTest extends FunctionalTestCase
      * @expectedException \Neos\Flow\Persistence\Exception
      * @test
      */
-    public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreDirtyAndFlagIsSet()
+    public function persistAllThrowsExceptionIfNonAllowedObjectsAreDirtyAndFlagIsSet()
     {
         $testEntity = new Fixtures\TestEntity();
         $testEntity->setName('Surfer girl');
@@ -388,7 +408,7 @@ class PersistenceTest extends FunctionalTestCase
      * @expectedException \Neos\Flow\Persistence\Exception
      * @test
      */
-    public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreUpdatedAndFlagIsSet()
+    public function persistAllThrowsExceptionIfNonAllowedObjectsAreUpdatedAndFlagIsSet()
     {
         $this->removeExampleEntities();
         $this->insertExampleEntity();
@@ -404,13 +424,13 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function persistAllThrowsNoExceptionIfWhitelistedObjectsAreDirtyAndFlagIsSet()
+    public function persistAllThrowsNoExceptionIfAllowedObjectsAreDirtyAndFlagIsSet()
     {
         $testEntity = new Fixtures\TestEntity();
         $testEntity->setName('Surfer girl');
         $this->testEntityRepository->add($testEntity);
 
-        $this->persistenceManager->whitelistObject($testEntity);
+        $this->persistenceManager->allowObject($testEntity);
         $this->persistenceManager->persistAll(true);
         $this->assertTrue(true);
     }

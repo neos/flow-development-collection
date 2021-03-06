@@ -36,8 +36,7 @@ class RequestHandlerTest extends FunctionalTestCase
             }
         }
         if (!$foundRoute) {
-            $this->markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
-            return;
+            self::markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
         }
 
         $_SERVER = [

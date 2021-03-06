@@ -114,18 +114,19 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
         $renderMethodParameters = [];
         foreach ($this->argumentDefinitions as $argumentName => $argumentDefinition) {
             if ($argumentDefinition instanceof ArgumentDefinition && $argumentDefinition->isMethodParameter()) {
-                $renderMethodParameters[$argumentName] = $this->arguments[$argumentName];
+                $renderMethodParameters[] = $this->arguments[$argumentName];
             }
         }
 
         try {
-            return call_user_func_array([$this, 'render'], $renderMethodParameters);
+            return $this->render(...$renderMethodParameters);
         } catch (Exception $exception) {
             if (!$this->objectManager->getContext()->isProduction()) {
                 throw $exception;
             }
 
-            $this->logger->error('A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')',
+            $this->logger->error(
+                'A Fluid ViewHelper Exception was captured: ' . $exception->getMessage() . ' (' . $exception->getCode() . ')',
                 ['exception' => $exception]
             );
 
@@ -155,16 +156,17 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
      * @param string $description Description of the argument
      * @param boolean $required If true, argument is required. Defaults to false.
      * @param mixed $defaultValue Default value of argument
+     * @param boolean|null $escape Can be toggled to TRUE to force escaping of variables and inline syntax passed as argument value.
      * @return FluidAbstractViewHelper $this, to allow chaining.
      * @throws Exception
      * @api
      */
-    protected function registerArgument($name, $type, $description, $required = false, $defaultValue = null)
+    protected function registerArgument($name, $type, $description, $required = false, $defaultValue = null, $escape = null)
     {
         if (array_key_exists($name, $this->argumentDefinitions)) {
             throw new Exception('Argument "' . $name . '" has already been defined, thus it should not be defined again.', 1253036401);
         }
-        return parent::registerArgument($name, $type, $description, $required, $defaultValue);
+        return parent::registerArgument($name, $type, $description, $required, $defaultValue, $escape);
     }
 
     /**
@@ -178,16 +180,17 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
      * @param string $description Description of the argument
      * @param boolean $required If true, argument is required. Defaults to false.
      * @param mixed $defaultValue Default value of argument
+     * @param boolean|null $escape Can be toggled to TRUE to force escaping of variables and inline syntax passed as argument value.
      * @return FluidAbstractViewHelper $this, to allow chaining.
      * @throws Exception
      * @api
      */
-    protected function overrideArgument($name, $type, $description, $required = false, $defaultValue = null)
+    protected function overrideArgument($name, $type, $description, $required = false, $defaultValue = null, $escape = null)
     {
         if (!array_key_exists($name, $this->argumentDefinitions)) {
             throw new Exception('Argument "' . $name . '" has not been defined, thus it can\'t be overridden.', 1279212461);
         }
-        return parent::overrideArgument($name, $type, $description, $required, $defaultValue);
+        return parent::overrideArgument($name, $type, $description, $required, $defaultValue, $escape);
     }
 
     /**

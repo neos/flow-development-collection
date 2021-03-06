@@ -43,7 +43,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function concatWorks($arguments, $expected)
     {
         $helper = new ArrayHelper();
-        $result = call_user_func_array([$helper, 'concat'], $arguments);
+        $result = $helper->concat(...$arguments);
         $this->assertEquals($expected, $result);
     }
 
@@ -165,7 +165,9 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         return [
             'empty array' => [[], 42, null, -1],
             'array with values' => [['a', 'b', 'c', 'b'], 'b', null, 1],
-            'with offset' => [['a', 'b', 'c', 'b'], 'b', 2, 3]
+            'with offset' => [['a', 'b', 'c', 'b'], 'b', 2, 3],
+            'associative' => [['a' => 'el1', 'b' => 'el2'], 'el2', null, 1],
+            'associative with offset' => [['a' => 'el1', 'b' => 'el2'], 'el2', 1, 1]
         ];
     }
 
@@ -470,7 +472,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function rangeWorks($arguments, $expected)
     {
         $helper = new ArrayHelper();
-        $result = call_user_func_array([$helper, 'range'], $arguments);
+        $result = $helper->range(...$arguments);
         $this->assertEquals($expected, $result);
     }
 
@@ -500,7 +502,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function setWorks($arguments, $expected)
     {
         $helper = new ArrayHelper();
-        $result = call_user_func_array([$helper, 'set'], $arguments);
+        $result = $helper->set(...$arguments);
         $this->assertEquals($expected, $result);
     }
 
@@ -613,6 +615,15 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
                 [
                     0 => 'a',
                     2 => 'c',
+                ],
+            ],
+            'test with empty filter function' => [
+                [1,null,2,null,3],
+                null,
+                [
+                    0 => 1,
+                    2 => 2,
+                    4 => 3,
                 ],
             ],
         ];
