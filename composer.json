@@ -26,8 +26,8 @@
         "symfony/dom-crawler": "^4.2",
         "symfony/console": "^4.2",
         "neos/composer-plugin": "^2.0",
-        "composer/composer": "^1.9",
-        "typo3fluid/fluid": "^2.5",
+        "composer/composer": "^1.9 || ^2.0",
+        "typo3fluid/fluid": "~2.5.11 || ^2.6.10",
         "ext-mbstring": "*"
     },
     "replace": {
@@ -49,7 +49,13 @@
         "neos/utility-opcodecache": "self.version",
         "neos/utility-pdo": "self.version",
         "neos/utility-schema": "self.version",
-        "neos/utility-unicode": "self.version"
+        "neos/utility-unicode": "self.version",
+        "symfony/polyfill-php54": "*",
+        "symfony/polyfill-php55": "*",
+        "symfony/polyfill-php56": "*",
+        "symfony/polyfill-php70": "*",
+        "symfony/polyfill-php71": "*",
+        "symfony/polyfill-mbstring": "*"
     },
     "suggest": {
         "ext-memcache": "If you have a memcache server and want to use it for caching.",
@@ -110,10 +116,10 @@
         }
     },
     "require-dev": {
-        "mikey179/vfsstream": "~1.6",
+        "mikey179/vfsstream": "^1.6.1",
         "phpunit/phpunit": "~7.1",
-        "doctrine/orm": "~2.6.0",
-        "doctrine/common": ">=2.4,<2.8-dev"
+        "doctrine/orm": "^2.6",
+        "doctrine/common": "^2.4"
     },
     "autoload-dev": {
         "psr-4": {

@@ -105,6 +105,16 @@ class ProxyMethod
     }
 
     /**
+     * Returns TRUE if this proxy belongs to a private method, otherwise FALSE
+     *
+     * @return bool
+     */
+    public function isPrivate(): bool
+    {
+        return $this->getMethodVisibilityString() === 'private';
+    }
+
+    /**
      * Adds PHP code to the body of this method which will be executed before a possible parent call.
      *
      * @param string $code
@@ -151,8 +161,6 @@ class ProxyMethod
         $finalKeyword = $this->reflectionService->isMethodFinal($this->fullOriginalClassName, $this->methodName) ? 'final ' : '';
         $staticKeyword = $this->reflectionService->isMethodStatic($this->fullOriginalClassName, $this->methodName) ? 'static ' : '';
 
-        $visibility = ($this->visibility === null ? $this->getMethodVisibilityString() : $this->visibility);
-
         $returnType = $this->reflectionService->getMethodDeclaredReturnType($this->fullOriginalClassName, $this->methodName);
         $returnTypeIsVoid = $returnType === 'void';
         $returnTypeDeclaration = ($returnType !== null ? ' : ' . $returnType : '');
@@ -162,7 +170,7 @@ class ProxyMethod
         if ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '' || $this->methodBody !== '') {
             $code = "\n" .
                 $methodDocumentation .
-                '    ' . $finalKeyword . $staticKeyword . $visibility . ' function ' . $this->methodName . '(' . $methodParametersCode . ")$returnTypeDeclaration\n    {\n";
+                '    ' . $finalKeyword . $staticKeyword . $this->getMethodVisibilityString() . ' function ' . $this->methodName . '(' . $methodParametersCode . ")$returnTypeDeclaration\n    {\n";
             if ($this->methodBody !== '') {
                 $code .= "\n" . $this->methodBody . "\n";
             } else {
@@ -355,6 +363,9 @@ class ProxyMethod
      */
     protected function getMethodVisibilityString()
     {
+        if ($this->visibility !== null) {
+            return $this->visibility;
+        }
         if ($this->reflectionService->isMethodProtected($this->fullOriginalClassName, $this->methodName)) {
             return 'protected';
         } elseif ($this->reflectionService->isMethodPrivate($this->fullOriginalClassName, $this->methodName)) {
