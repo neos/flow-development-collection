@@ -62,7 +62,8 @@ class AccountRepository extends Repository
      *
      * @param string $accountIdentifier The account identifier
      * @param string $authenticationProviderName The authentication provider name
-     * @return Account
+     * @return Account|null
+     * @psalm-suppress MoreSpecificReturnType
      */
     public function findByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName)
     {
@@ -80,7 +81,8 @@ class AccountRepository extends Repository
      *
      * @param string $accountIdentifier The account identifier
      * @param string $authenticationProviderName The authentication provider name
-     * @return Account
+     * @return Account|null
+     * @psalm-suppress MoreSpecificReturnType
      */
     public function findActiveByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName)
     {

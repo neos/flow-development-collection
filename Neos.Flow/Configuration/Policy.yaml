@@ -9,11 +9,17 @@
 roles:
   'Neos.Flow:Everybody':
     abstract: true
+    label: 'Magic "everybody" role'
+    description: 'This magic role is always active, even if no account is authenticated'
 
   'Neos.Flow:Anonymous':
     abstract: true
+    label: 'Magic "anonymous" role'
+    description: 'This magic role is active if no account is authenticated'
 
   'Neos.Flow:AuthenticatedUser':
     abstract: true
+    label: 'Magic "authenticated user" role'
+    description: 'This magic role is active if an account is authenticated'
 
 privilegeTargets: []

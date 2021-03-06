@@ -73,7 +73,7 @@ class QueryResult implements QueryResultInterface
     /**
      * Returns the first object in the result set
      *
-     * @return object
+     * @return object|null
      * @api
      */
     public function getFirst()

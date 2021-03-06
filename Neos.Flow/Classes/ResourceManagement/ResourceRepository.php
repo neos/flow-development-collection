@@ -115,7 +115,7 @@ class ResourceRepository extends Repository
      * Finds an object matching the given identifier.
      *
      * @param mixed $identifier The identifier of the object to find
-     * @return object The matching object if found, otherwise NULL
+     * @return object|null The matching object if found, otherwise NULL
      * @api
      */
     public function findByIdentifier($identifier)

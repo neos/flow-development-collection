@@ -47,7 +47,7 @@ class UriTypeConverter extends AbstractTypeConverter
      * @param string $source The URI to be converted
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return Uri|Error if the input format is not supported or could not be converted for other reasons
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
