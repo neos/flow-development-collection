@@ -13,10 +13,13 @@ namespace Neos\Flow\Security\Policy;
  * source code.
  */
 
+use Meteko\PolicyAnnotation\Annotations\Policy;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterDefinition;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
@@ -312,6 +315,52 @@ class PolicyService
     {
         $this->initialized = false;
         $this->roles = [];
+    }
+
+    protected function configurePolicyAnnotatedMethods(array &$policyConfiguration) {
+        $annotatedMethods = static::resolvePolicyAnnotatedMethods($this->objectManager);
+        foreach ($annotatedMethods as $identifier=>$configuration) {
+            $policyConfiguration['privilegeTargets'][MethodPrivilege::class][$identifier]['matcher'] = $configuration['matcher'];
+
+            foreach ($configuration['roles'] as $role) {
+                $policyConfiguration['roles'][$role['identifier']]['privileges'][] = [
+                    'privilegeTarget' => $identifier,
+                    'permission' => $role['permission']
+                ];
+            }
+        }
+    }
+
+    /**
+     * @param ObjectManagerInterface $objectManager
+     * @Flow\CompileStatic
+     * @return array
+     */
+    protected static function resolvePolicyAnnotatedMethods(ObjectManagerInterface $objectManager)
+    {
+        $privileges = [];
+        $reflectionService = $objectManager->get(ReflectionService::class);
+        $classesWithMethodsAnnotated = $reflectionService->getClassesContainingMethodsAnnotatedWith(Policy::class);
+        foreach ($classesWithMethodsAnnotated as $className) {
+            $methodsAnnotated = $reflectionService->getMethodsAnnotatedWith($className, Policy::class);
+            foreach ($methodsAnnotated as $methodName) {
+                $annotations = $reflectionService->getMethodAnnotations($className, $methodName, Policy::class);
+                $matcher = sprintf('method(%s->%s())', $className, $methodName);
+                $matcherIdentifier = sha1($matcher);
+                $roles = array_map(function ($annotation) {
+                    return [
+                        'identifier' => $annotation->role,
+                        'permission' => $annotation->permission,
+                    ];
+                }, $annotations);
+                $privileges[$matcherIdentifier] = [
+                    'matcher' => $matcher,
+                    'roles' => $roles
+                ];
+            }
+        }
+
+        return $privileges;
     }
 
     /**

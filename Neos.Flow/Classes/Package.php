@@ -11,6 +11,7 @@ namespace Neos\Flow;
  * source code.
  */
 
+use Meteko\PolicyAnnotation\Configuration\PolicyConfiguration;
 use Neos\Flow\Core\Booting\Step;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
@@ -22,6 +23,7 @@ use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Policy\PolicyService;
 
 /**
  * The Flow Package
@@ -117,6 +119,7 @@ class Package extends BasePackage
         $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Reflection\ReflectionService::class, 'saveToCache');
 
         $dispatcher->connect(Command\CoreCommandController::class, 'finishedCompilationRun', Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter::class, 'savePolicyCache');
+        $dispatcher->connect(PolicyService::class, 'configurationLoaded', PolicyService::class, 'configurePolicyAnnotatedMethods');
 
         $dispatcher->connect(Security\Authentication\AuthenticationProviderManager::class, 'authenticatedToken', function (TokenInterface $token) use ($bootstrap) {
             $session = $bootstrap->getObjectManager()->get(Session\SessionInterface::class);
