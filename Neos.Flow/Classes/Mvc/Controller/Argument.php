@@ -182,7 +182,7 @@ class Argument
     {
         $this->validator = $validator;
         if ($validator !== null && $this->value !== null) {
-            $this->validationResults = $this->propertyMapper->getMessages();
+            $this->validationResults = $this->propertyMapper->getMessages() ?? new Result();
             $validationMessages = $validator->validate($this->value);
             $this->validationResults->merge($validationMessages);
         }
@@ -226,7 +226,7 @@ class Argument
             $this->dataType = $rawValue['__type'];
         }
         $this->value = $this->propertyMapper->convert($rawValue, $this->dataType, $this->getPropertyMappingConfiguration());
-        $this->validationResults = $this->propertyMapper->getMessages();
+        $this->validationResults = $this->propertyMapper->getMessages() ?? new Result();
         if ($this->validator !== null) {
             $validationMessages = $this->validator->validate($this->value);
             $this->validationResults->merge($validationMessages);

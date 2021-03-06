@@ -138,7 +138,7 @@ class PropertyMapper
      */
     public function getMessages()
     {
-        return $this->messages ?? new Result();
+        return $this->messages;
     }
 
     /**
