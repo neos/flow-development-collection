@@ -340,6 +340,7 @@ class Session implements CookieEnabledInterface
         }
         $sessionIdentifier = $this->sessionCookie->getValue();
         if ($this->metaDataCache->isValidEntryIdentifier($sessionIdentifier) === false) {
+            $this->logger->warning('SESSION IDENTIFIER INVALID: ' . $sessionIdentifier, LogEnvironment::fromMethodName(__METHOD__));
             return false;
         }
         $sessionMetaData = $this->metaDataCache->get($sessionIdentifier);
