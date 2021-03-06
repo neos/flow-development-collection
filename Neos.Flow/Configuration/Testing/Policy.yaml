@@ -22,9 +22,6 @@ privilegeTargets:
     'Neos.Flow:Tests.RestrictedController.adminAction':
       matcher: 'method(Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController->adminAction())'
 
-    'Neos.Flow:Tests.RestrictedController.adminAction':
-      matcher: 'method(Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController->adminAction())'
-
   'Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
 
     'Neos.Flow:Tests.Functional.Security.Fixtures.RestrictableEntity.AllEntities':
