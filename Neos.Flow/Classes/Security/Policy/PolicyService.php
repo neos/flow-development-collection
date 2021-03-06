@@ -319,12 +319,12 @@ class PolicyService
 
     public function configurePolicyAnnotatedMethods(array &$policyConfiguration) {
         $annotatedMethods = static::resolvePolicyAnnotatedMethods($this->objectManager);
-        foreach ($annotatedMethods as $identifier=>$configuration) {
-            $policyConfiguration['privilegeTargets'][MethodPrivilege::class][$identifier]['matcher'] = $configuration['matcher'];
+        foreach ($annotatedMethods as $privilegeIdentifier=>$configuration) {
+            $policyConfiguration['privilegeTargets'][MethodPrivilege::class][$privilegeIdentifier]['matcher'] = $configuration['matcher'];
 
             foreach ($configuration['roles'] as $role) {
                 $policyConfiguration['roles'][$role['identifier']]['privileges'][] = [
-                    'privilegeTarget' => $identifier,
+                    'privilegeTarget' => $privilegeIdentifier,
                     'permission' => $role['permission']
                 ];
             }
@@ -346,14 +346,14 @@ class PolicyService
             foreach ($methodsAnnotated as $methodName) {
                 $annotations = $reflectionService->getMethodAnnotations($className, $methodName, Policy::class);
                 $matcher = sprintf('method(%s->%s())', $className, $methodName);
-                $matcherIdentifier = sha1($matcher);
+                $privilegeIdentifier = 'Neos.Flow:FromAnnotation.' . sha1($matcher);
                 $roles = array_map(function ($annotation) {
                     return [
                         'identifier' => $annotation->role,
                         'permission' => $annotation->permission,
                     ];
                 }, $annotations);
-                $privileges[$matcherIdentifier] = [
+                $privileges[$privilegeIdentifier] = [
                     'matcher' => $matcher,
                     'roles' => $roles
                 ];
