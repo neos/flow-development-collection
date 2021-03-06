@@ -105,6 +105,9 @@
                 "Neos.Utility.Pdo/Classes",
                 "Neos.Utility.Schema/Classes"
             ],
+            "Neos\\Utility\\Lock\\": [
+                "Neos.Utility.Lock/Classes"
+            ],
             "Neos\\Utility\\Unicode\\": [
                 "Neos.Utility.Unicode/Classes"
             ]
@@ -117,7 +120,7 @@
         }
     },
     "require-dev": {
-        "mikey179/vfsstream": "~1.6",
+        "mikey179/vfsstream": "^1.6.1",
         "phpunit/phpunit": "~8.1",
         "doctrine/orm": "^2.6",
         "doctrine/common": "^2.4",

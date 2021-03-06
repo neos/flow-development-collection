@@ -545,7 +545,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
         if ($array instanceof \Traversable) {
             $array = iterator_to_array($array);
         }
-        return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
+        if (is_null($callback)) {
+            return array_filter($array);
+        } else {
+            return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
+        }
     }
 
     /**
