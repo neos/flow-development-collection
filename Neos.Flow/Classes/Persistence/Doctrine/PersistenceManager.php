@@ -111,7 +111,8 @@ class PersistenceManager extends AbstractPersistenceManager
      * @param OnFlushEventArgs $args
      * @throws PersistenceException
      */
-    public function onFlush(OnFlushEventArgs $args) {
+    public function onFlush(OnFlushEventArgs $args)
+    {
         $unitOfWork = $args->getEntityManager()->getUnitOfWork();
         if ($unitOfWork->getScheduledEntityInsertions() === []
             && $unitOfWork->getScheduledEntityUpdates() === []
