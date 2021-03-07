@@ -64,6 +64,20 @@ class AbstractMessageTest extends UnitTestCase
     /**
      * @test
      */
+    public function withAddedHeaderActuallyAddsHeader()
+    {
+        $message = $this->getAbstractMessageMock();
+        $message = $message
+            ->withAddedHeader('MyHeader', 'MyValue')
+            ->withAddedHeader('MyHeader', 'OtherValue');
+
+        $expectedHeaders = ['MyHeader' => ['MyValue', 'OtherValue']];
+        $this->assertEquals($expectedHeaders, $message->getHeaders()->getAll());
+    }
+
+    /**
+     * @test
+     */
     public function getHeaderReturnsAStringOrAnArray()
     {
         $message = $this->getAbstractMessageMock();
