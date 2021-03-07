@@ -434,7 +434,7 @@ abstract class AbstractMessage implements MessageInterface
     public function withAddedHeader($name, $value)
     {
         $newMessage = clone $this;
-        $newMessage->setHeader($name, $value);
+        $newMessage->setHeader($name, $value, false);
 
         return $newMessage;
     }
