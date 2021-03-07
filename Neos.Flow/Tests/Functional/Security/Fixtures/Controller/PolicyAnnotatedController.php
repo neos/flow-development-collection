@@ -38,5 +38,4 @@ class PolicyAnnotatedController extends ActionController
     public function multipleAnnotationsWithDifferentPermissionsAction()
     {
     }
-
 }
