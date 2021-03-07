@@ -39,7 +39,7 @@ Neos:
         eventSubscribers: []
         eventListeners:
           'Neos\Flow\Persistence\Doctrine\PersistenceManager':
-            events: ['onFLush']
+            events: ['onFlush']
             listener: 'Neos\Flow\Persistence\Doctrine\PersistenceManager'
           'Neos\Flow\Persistence\Doctrine\ObjectValidationAndDeDuplicationListener':
             events: ['onFlush']
