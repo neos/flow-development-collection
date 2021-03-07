@@ -267,7 +267,68 @@ class Router implements RouterInterface
             }
             $this->routes[] = $route;
         }
+
         $this->routesCreated = true;
+    }
+
+    /**
+     * Emits a signal when the router configuration has been loaded
+     *
+     * This signal can be used to add routes during runtime. In the slot make sure to receive the
+     * $routerConfiguration array by reference so you can alter it.
+     *
+     * @param array $routerConfiguration The router configuration
+     * @return void
+     * @Flow\Signal
+     */
+    protected function emitConfigurationLoaded(array &$routerConfiguration): void
+    {
+    }
+
+    public function configureRouteAnnotatedMethods(array &$routerConfiguration): void
+    {
+        $annotatedRoutes = static::resolveRouteAnnotatedMethods($this->objectManager);
+        foreach ($annotatedRoutes as $annotatedRoute) {
+            /**
+             * Split controller class to values for the '@{package|subpackage|controller|action}' values
+             * Add to routes configuration
+             * createRoutesFromConfiguration will take care of validating the configuration (mismatch, httpmethods and uri used before, etc)
+             */
+        }
+    }
+
+
+    /**
+     * @param ObjectManagerInterface $objectManager
+     * @Flow\CompileStatic
+     * @return array
+     */
+    protected static function resolveRouteAnnotatedMethods(ObjectManagerInterface $objectManager): array
+    {
+        $annotatedRoutes = [];
+        $reflectionService = $objectManager->get(ReflectionService::class);
+        $controllerClassNames = $reflectionService->getAllSubClassNamesForClass(AbstractController::class);
+        foreach ($controllerClassNames as $controllerClassName) {
+            if ($reflectionService->isClassAbstract($controllerClassName)) {
+                continue;
+            }
+
+            $methodNames = get_class_methods($controllerClassName);
+            $reflectionService->getMethodsAnnotatedWith($controllerClassName, Flow\Route::class);
+            foreach ($methodNames as $methodName) {
+                if (preg_match('/.*Action$/', $methodName) === 0 || $reflectionService->isMethodPublic($controllerClassName, $methodName) === false) {
+                    continue;
+                }
+
+                $annotatedRoutes[] = [
+                    'controller' => $controllerClassName,
+                    'action' => substr($methodName, 0, -6)
+                ];
+
+            }
+        }
+
+        return $annotatedRoutes;
     }
 
     /**
@@ -278,7 +339,10 @@ class Router implements RouterInterface
     protected function initializeRoutesConfiguration()
     {
         if ($this->routesConfiguration === null) {
-            $this->routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
+            $routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
+            $this->emitConfigurationLoaded(&$routesConfiguration);
+            $this->routesConfiguration = $routesConfiguration;
         }
+
     }
 }
