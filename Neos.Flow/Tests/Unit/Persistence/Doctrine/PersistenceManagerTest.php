@@ -62,7 +62,7 @@ class PersistenceManagerTest extends UnitTestCase
 
         $this->mockEntityManager = $this->getMockBuilder(\Doctrine\ORM\EntityManager::class)->disableOriginalConstructor()->getMock();
         $this->mockEntityManager->expects($this->any())->method('isOpen')->willReturn(true);
-        $this->mockEntityManager->method('flush')->willReturnCallback(function() {
+        $this->mockEntityManager->method('flush')->willReturnCallback(function () {
             $this->persistenceManager->onFlush(new OnFlushEventArgs($this->mockEntityManager));
         });
         $this->inject($this->persistenceManager, 'entityManager', $this->mockEntityManager);
