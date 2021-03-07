@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Functional\Security\Policy;
  * source code.
  */
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Tests\Functional\Security\Fixtures\Controller\PolicyAnnotatedController;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -63,5 +64,37 @@ class PolicyTest extends FunctionalTestCase
     public function hasRoleReturnsTrueEvenIfNotConfigured()
     {
         self::assertTrue($this->policyService->hasRole('Neos.Flow:AnnotatedRole'));
+    }
+
+    /**
+     * @test
+     */
+    public function annotatedRoleWithGrantPermissionIsGrantedPermission()
+    {
+        $annotatedRole = $this->policyService->getRole('Neos.Flow:AnnotatedRole');
+
+        $className = PolicyAnnotatedController::class;
+        $methodName = 'singleRoleWithGrantPermissionAction';
+        $privilegeTarget = sprintf('Neos.Flow:PolicyAnnotated.%s.%s', str_replace('\\', '.', $className), $methodName);
+
+        self::assertTrue($annotatedRole->getPrivilegeForTarget($privilegeTarget)->isGranted());
+    }
+
+    /**
+     * @test
+     */
+    public function annotatedWithMultiplePoliciesGrantsPermissionAccordingly()
+    {
+        $deniedRole = $this->policyService->getRole('Neos.Flow:DeniedRole');
+        $grantedRole = $this->policyService->getRole('Neos.Flow:GrantedRole');
+        $abstainedRole = $this->policyService->getRole('Neos.Flow:AbstainedRole');
+
+        $className = PolicyAnnotatedController::class;
+        $methodName = 'multipleAnnotationsWithDifferentPermissionsAction';
+        $privilegeTarget = sprintf('Neos.Flow:PolicyAnnotated.%s.%s', str_replace('\\', '.', $className), $methodName);
+
+        self::assertTrue($deniedRole->getPrivilegeForTarget($privilegeTarget)->isDenied());
+        self::assertTrue($grantedRole->getPrivilegeForTarget($privilegeTarget)->isGranted());
+        self::assertTrue($abstainedRole->getPrivilegeForTarget($privilegeTarget)->isAbstained());
     }
 }

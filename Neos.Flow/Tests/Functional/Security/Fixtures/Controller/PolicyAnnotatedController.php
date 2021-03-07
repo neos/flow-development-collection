@@ -20,10 +20,19 @@ use Neos\Flow\Mvc\Controller\ActionController;
 class PolicyAnnotatedController extends ActionController
 {
     /**
-     * This action is not restricted in a policy, everybody can access it
+     * This method gives GRANT permission to the role "Neos.Flow.AnnotatedRole"
      *
      * @Flow\Policy(role="Neos.Flow:AnnotatedRole", permission="grant")
      */
     public function singleRoleWithGrantPermissionAction() {}
+
+    /**
+     * This method gives GRANT permission to the role "Neos.Flow.AnnotatedRole"
+     *
+     * @Flow\Policy(role="Neos.Flow:DeniedRole", permission="deny")
+     * @Flow\Policy(role="Neos.Flow:GrantedRole", permission="grant")
+     * @Flow\Policy(role="Neos.Flow:AbstainedRole", permission="abstain")
+     */
+    public function multipleAnnotationsWithDifferentPermissionsAction() {}
 
 }
