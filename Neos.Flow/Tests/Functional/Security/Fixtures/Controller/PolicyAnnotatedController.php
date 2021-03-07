@@ -24,7 +24,8 @@ class PolicyAnnotatedController extends ActionController
      *
      * @Flow\Policy(role="Neos.Flow:AnnotatedRole", permission="grant")
      */
-    public function singleRoleWithGrantPermissionAction() {}
+    public function singleRoleWithGrantPermissionAction() {
+    }
 
     /**
      * This method gives GRANT permission to the role "Neos.Flow.AnnotatedRole"
@@ -33,6 +34,7 @@ class PolicyAnnotatedController extends ActionController
      * @Flow\Policy(role="Neos.Flow:GrantedRole", permission="grant")
      * @Flow\Policy(role="Neos.Flow:AbstainedRole", permission="abstain")
      */
-    public function multipleAnnotationsWithDifferentPermissionsAction() {}
+    public function multipleAnnotationsWithDifferentPermissionsAction() {
+    }
 
 }
