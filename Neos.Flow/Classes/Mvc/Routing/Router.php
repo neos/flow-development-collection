@@ -394,6 +394,5 @@ class Router implements RouterInterface
             $this->emitConfigurationLoaded($routesConfiguration);
             $this->routesConfiguration = $routesConfiguration;
         }
-
     }
 }
