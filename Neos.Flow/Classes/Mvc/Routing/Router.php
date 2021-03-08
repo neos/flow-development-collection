@@ -390,7 +390,7 @@ class Router implements RouterInterface
     protected function initializeRoutesConfiguration()
     {
         if ($this->routesConfiguration === null) {
-            $routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
+            $routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES) ?? [];
             $this->emitConfigurationLoaded($routesConfiguration);
             $this->routesConfiguration = $routesConfiguration;
         }
