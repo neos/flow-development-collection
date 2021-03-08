@@ -415,4 +415,22 @@ class RoutingTest extends FunctionalTestCase
         // reset router configuration for following tests
         $this->router->setRoutesConfiguration(null);
     }
+
+    /**
+     * @test
+     */
+    public function resolveUriPatternFromRouteAnnotation()
+    {
+        $routeValues = [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'RouteAnnotated',
+            '@action' => 'annotatedWithUriPattern',
+            '@format' => 'html'
+        ];
+        $baseUri = new Uri('http://localhost');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, 'index.php/', RouteParameters::createEmpty()));
+
+        self::assertSame('/index.php/annotated/uri/pattern', (string)$actualResult);
+    }
 }
