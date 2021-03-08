@@ -20,11 +20,18 @@ namespace Neos\Flow\Annotations;
 final class Route
 {
     /**
+     * Name
+     *
+     * @var string|null
+     */
+    public $name;
+
+    /**
      * HTTP Methods
      *
-     * @var array
+     * @var array|null
      */
-    public $httpMethods = [];
+    public $httpMethods;
 
     /**
      * URI Pattern
@@ -36,6 +43,22 @@ final class Route
     public $uriPattern;
 
     /**
+     * Format
+     *
+     * Example: html
+     *
+     * @var string|null
+     */
+    public $format;
+
+    /**
+     * Append Exceeding Arguments
+     *
+     * @var bool|null
+     */
+    public $appendExceedingArguments;
+
+    /**
      * @param array $values
      */
     public function __construct(array $values)
@@ -45,6 +68,9 @@ final class Route
         }
 
         $this->uriPattern = $values['uriPattern'];
-        $this->httpMethods = $values['httpMethods'] ?? [];
+        $this->name = $values['name'] ?? null;
+        $this->httpMethods = $values['httpMethods'] ?? null;
+        $this->format = $values['format'] ?? null;
+        $this->appendExceedingArguments = $values['appendExceedingArguments'] ?? null;
     }
 }

@@ -16,11 +16,14 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\Controller\AbstractController;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ReflectionService;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -49,6 +52,12 @@ class Router implements RouterInterface
      * @var RouterCachingService
      */
     protected $routerCachingService;
+
+    /**
+     * @Flow\Inject
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
 
     /**
      * Array containing the configuration for all routes
@@ -288,13 +297,7 @@ class Router implements RouterInterface
     public function configureRouteAnnotatedMethods(array &$routerConfiguration): void
     {
         $annotatedRoutes = static::resolveRouteAnnotatedMethods($this->objectManager);
-        foreach ($annotatedRoutes as $annotatedRoute) {
-            /**
-             * Split controller class to values for the '@{package|subpackage|controller|action}' values
-             * Add to routes configuration
-             * createRoutesFromConfiguration will take care of validating the configuration (mismatch, httpmethods and uri used before, etc)
-             */
-        }
+        $routerConfiguration = array_merge($routerConfiguration, array_values($annotatedRoutes));
     }
 
 
@@ -313,18 +316,66 @@ class Router implements RouterInterface
                 continue;
             }
 
-            $methodNames = get_class_methods($controllerClassName);
-            $reflectionService->getMethodsAnnotatedWith($controllerClassName, Flow\Route::class);
+            $methodNames = $reflectionService->getMethodsAnnotatedWith($controllerClassName, Flow\Route::class);
             foreach ($methodNames as $methodName) {
                 if (preg_match('/.*Action$/', $methodName) === 0 || $reflectionService->isMethodPublic($controllerClassName, $methodName) === false) {
                     continue;
                 }
+                $controllerObjectName = $objectManager->getCaseSensitiveObjectName($controllerClassName);
 
-                $annotatedRoutes[] = [
-                    'controller' => $controllerClassName,
-                    'action' => substr($methodName, 0, -6)
+                if ($controllerObjectName === null) {
+                    continue;
+                }
+                $controllerPackageKey = $objectManager->getPackageKeyByObjectName($controllerObjectName);
+
+                $matches = [];
+                $subject = substr($controllerObjectName, strlen($controllerPackageKey) + 1);
+                preg_match(
+                    '/
+			^(
+				Controller
+			|
+				(?P<subpackageKey>.+)\\\\Controller
+			)
+			\\\\(?P<controllerName>[a-z\\\\]+)Controller
+			$/ix',
+                    $subject,
+                    $matches
+                );
+
+                $controllerSubpackageKey = $matches['subpackageKey'] ?? null;
+                $controllerName = $matches['controllerName'];
+
+                $annotation = $reflectionService->getMethodAnnotation($controllerClassName, $methodName, Flow\Route::class);
+
+                $defaults = [];
+                $defaults['@package'] = $controllerPackageKey;
+                if (empty($controllerSubpackageKey) === false) {
+                    $defaults['@subpackage'] = $controllerSubpackageKey;
+                }
+                $defaults['@controller'] = $controllerName;
+                $defaults['@action'] = substr($methodName, 0, -6);
+                if ($annotation->format !== null) {
+                    $defaults['@format'] = $annotation->format;
+                }
+
+                $routeConfiguration = [
+                    'name' => $annotation->name ?? 'Annotated Route',
+                    'uriPattern' => $annotation->uriPattern,
+                    'defaults' => $defaults,
                 ];
 
+                $httpMethods = $annotation->httpMethods ?? null;
+                if ($httpMethods !== null && is_array($httpMethods)) {
+                    $routeConfiguration['httpMethods'] = $httpMethods;
+                }
+
+                $appendExceedingArguments = $annotation->appendExceedingArguments ?? null;
+                if ($appendExceedingArguments !== null && is_bool($appendExceedingArguments)) {
+                    $routeConfiguration['appendExceedingArguments'] = $appendExceedingArguments;
+                }
+
+                $annotatedRoutes[] = $routeConfiguration;
             }
         }
 
@@ -340,7 +391,7 @@ class Router implements RouterInterface
     {
         if ($this->routesConfiguration === null) {
             $routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
-            $this->emitConfigurationLoaded(&$routesConfiguration);
+            $this->emitConfigurationLoaded($routesConfiguration);
             $this->routesConfiguration = $routesConfiguration;
         }
 
