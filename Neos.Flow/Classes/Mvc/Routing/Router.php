@@ -297,7 +297,7 @@ class Router implements RouterInterface
     public function configureRouteAnnotatedMethods(array &$routerConfiguration): void
     {
         $annotatedRoutes = static::resolveRouteAnnotatedMethods($this->objectManager);
-        $routerConfiguration = array_merge($routerConfiguration, array_values($annotatedRoutes));
+        $routerConfiguration = array_merge(array_values($annotatedRoutes), $routerConfiguration);
     }
 
 
