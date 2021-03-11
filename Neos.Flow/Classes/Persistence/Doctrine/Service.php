@@ -217,7 +217,7 @@ class Service
      */
     protected function getDependencyFactory(): DependencyFactory
     {
-        $migrationsPath = Files::concatenatePaths([FLOW_PATH_DATA, 'Temporary', 'DoctrineMigrations']);
+        $migrationsPath = Files::concatenatePaths([FLOW_PATH_TEMPORARY, 'DoctrineMigrations']);
         if (!is_dir($migrationsPath)) {
             Files::createDirectoryRecursively($migrationsPath);
         }
