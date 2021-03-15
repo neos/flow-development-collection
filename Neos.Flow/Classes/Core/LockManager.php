@@ -83,7 +83,7 @@ class LockManager
             @unlink($this->lockFlagPathAndFilename);
             @unlink($this->lockPathAndFilename);
         } catch (\Throwable $e) {
-            // Double-shrug catching
+            // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
         }
     }
 
@@ -143,7 +143,7 @@ class LockManager
             try {
                 @unlink($this->lockFlagPathAndFilename);
             } catch (\Throwable $e) {
-                // Double-shrug catching
+                // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
             }
         }
     }
