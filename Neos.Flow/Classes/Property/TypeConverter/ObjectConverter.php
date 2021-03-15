@@ -40,14 +40,14 @@ use Neos\Utility\TypeHandling;
 class ObjectConverter extends AbstractTypeConverter
 {
     /**
-     * @var string
+     * @var integer
      */
-    const CONFIGURATION_TARGET_TYPE = 'targetType';
+    const CONFIGURATION_TARGET_TYPE = 3;
 
     /**
-     * @var string
+     * @var integer
      */
-    const CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED = 'allowTypeOverride';
+    const CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED = 4;
 
     /**
      * @var array
