@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} (deps: ${{ matrix.dependencies }})"
+    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} ${{ matrix.integration && 'integration' || '' }} (deps: ${{ matrix.dependencies }})"
 
     continue-on-error: ${{ matrix.experimental }}
 
@@ -28,7 +28,7 @@ jobs:
             experimental: false
             dependencies: 'highest'
 
-          - php-version: '7.3'
+          - php-versions: '7.3'
             static-analysis: 'no'
             experimental: false
             integration: true
