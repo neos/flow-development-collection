@@ -21,10 +21,17 @@ jobs:
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
         experimental: [false]
+        integration: [false] # to install in a full neos-distribution and check things still work
         include:
           - php-versions: '7.3'
             static-analysis: 'psalm'
             experimental: false
+            dependencies: 'highest'
+
+          - php-version: '7.3'
+            static-analysis: 'no'
+            experimental: false
+            integration: true
             dependencies: 'highest'
 
           # Experimental build for PHP 8
@@ -102,7 +109,7 @@ jobs:
       - name: Checkout development distribution
         uses: actions/checkout@v2
         with:
-          repository: neos/flow-development-distribution
+          repository: ${{ matrix.integration == true && 'neos/neos-development-distribution' || 'neos/flow-development-distribution' }}
           ref: ${{ env.FLOW_TARGET_VERSION }}
           path: ${{ env.FLOW_DIST_FOLDER }}
 
