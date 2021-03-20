@@ -49,6 +49,23 @@ class TemplateVariableContainer extends StandardVariableProvider implements Vari
     }
 
     /**
+     * @param string $propertyPath
+     * @return string
+     */
+    protected function resolveSubVariableReferences($propertyPath)
+    {
+        if (strpos($propertyPath, '{') !== false) {
+            // NOTE: This is an inclusion of https://github.com/TYPO3/Fluid/pull/472 to allow multiple nested variables
+            preg_match_all('/(\{.*?\})/', $propertyPath, $matches);
+            foreach ($matches[1] as $match) {
+                $subPropertyPath = substr($match, 1, -1);
+                $propertyPath = str_replace($match, $this->getByPath($subPropertyPath), $propertyPath);
+            }
+        }
+        return $propertyPath;
+    }
+
+    /**
      * @param mixed $subject
      * @param string $propertyName
      * @return NULL|string
