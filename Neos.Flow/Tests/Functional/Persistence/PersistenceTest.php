@@ -16,7 +16,6 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\QueryResult;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -181,6 +180,26 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function objectsWithPersistedEntitiesCanBeSerializedMultipleTimes()
+    {
+        $persistedEntity = new Fixtures\TestEntity();
+        $persistedEntity->setName('Flow');
+        $this->testEntityRepository->add($persistedEntity);
+        $this->persistenceManager->persistAll();
+
+        $objectHoldingTheEntity = new Fixtures\ObjectHoldingAnEntity();
+        $objectHoldingTheEntity->testEntity = $persistedEntity;
+
+        for ($i = 0; $i < 2; $i++) {
+            $serializedData = serialize($objectHoldingTheEntity);
+            $unserializedObjectHoldingTheEntity = unserialize($serializedData);
+            $this->assertInstanceOf(Fixtures\TestEntity::class, $unserializedObjectHoldingTheEntity->testEntity);
+        }
+    }
+
+    /**
+     * @test
+     */
     public function newEntitiesWhichAreNotAddedToARepositoryYetAreAlreadyKnownToGetObjectByIdentifier()
     {
         $expectedEntity = new Fixtures\TestEntity();
@@ -257,7 +276,7 @@ class PersistenceTest extends FunctionalTestCase
         $schemaTool = new SchemaTool($entityManager);
         $classMetaData = $entityManager->getClassMetadata(Fixtures\TestEntity::class);
         $this->assertTrue($classMetaData->hasField('embeddedValueObject.value'), 'ClassMetadata is not correctly embedded');
-        $schema = $schemaTool->getSchemaFromMetadata(array($classMetaData));
+        $schema = $schemaTool->getSchemaFromMetadata([$classMetaData]);
         $this->assertTrue($schema->getTable('persistence_testentity')->hasColumn('embeddedvalueobjectvalue'), 'Database schema is missing embedded field');
 
         $valueObject = new Fixtures\TestEmbeddedValueObject('someValue');
@@ -377,7 +396,7 @@ class PersistenceTest extends FunctionalTestCase
      * @expectedException \Neos\Flow\Persistence\Exception
      * @test
      */
-    public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreDirtyAndFlagIsSet()
+    public function persistAllThrowsExceptionIfNonAllowedObjectsAreDirtyAndFlagIsSet()
     {
         $testEntity = new Fixtures\TestEntity();
         $testEntity->setName('Surfer girl');
@@ -389,7 +408,7 @@ class PersistenceTest extends FunctionalTestCase
      * @expectedException \Neos\Flow\Persistence\Exception
      * @test
      */
-    public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreUpdatedAndFlagIsSet()
+    public function persistAllThrowsExceptionIfNonAllowedObjectsAreUpdatedAndFlagIsSet()
     {
         $this->removeExampleEntities();
         $this->insertExampleEntity();
@@ -405,13 +424,13 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function persistAllThrowsNoExceptionIfWhitelistedObjectsAreDirtyAndFlagIsSet()
+    public function persistAllThrowsNoExceptionIfAllowedObjectsAreDirtyAndFlagIsSet()
     {
         $testEntity = new Fixtures\TestEntity();
         $testEntity->setName('Surfer girl');
         $this->testEntityRepository->add($testEntity);
 
-        $this->persistenceManager->whitelistObject($testEntity);
+        $this->persistenceManager->allowObject($testEntity);
         $this->persistenceManager->persistAll(true);
         $this->assertTrue(true);
     }
@@ -696,7 +715,7 @@ class PersistenceTest extends FunctionalTestCase
         $schemaTool = new SchemaTool($entityManager);
         $metaData = $entityManager->getClassMetadata(Fixtures\TestEntity::class);
         $this->assertTrue($metaData->hasField('embedded.value'), 'ClassMetadata does not contain embedded value');
-        $schema = $schemaTool->getSchemaFromMetadata(array($metaData));
+        $schema = $schemaTool->getSchemaFromMetadata([$metaData]);
         $this->assertTrue($schema->getTable('persistence_testentity')->hasColumn('embedded_value'), 'Database schema does not contain embedded value field');
 
         $embeddable = new Fixtures\TestEmbeddable('someValue');

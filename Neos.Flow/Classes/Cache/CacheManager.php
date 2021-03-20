@@ -18,6 +18,7 @@ use Neos\Cache\Exception\NoSuchCacheException;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
 use Neos\Flow\Utility\PhpAnalyzer;
@@ -335,16 +336,16 @@ class CacheManager
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
         }
         if (count($modifiedAspectClassNamesWithUnderscores) > 0) {
-            $this->logger->info('Aspect classes have been modified, flushing the whole proxy classes cache.');
+            $this->logger->info('Aspect classes have been modified, flushing the whole proxy classes cache.', LogEnvironment::fromMethodName(__METHOD__));
             $objectClassesCache->flush();
         }
         if ($flushDoctrineProxyCache === true) {
-            $this->logger->info('Domain model changes have been detected, triggering Doctrine 2 proxy rebuilding.');
+            $this->logger->info('Domain model changes have been detected, triggering Doctrine 2 proxy rebuilding.', LogEnvironment::fromMethodName(__METHOD__));
             $this->getCache('Flow_Persistence_Doctrine')->flush();
             $objectConfigurationCache->remove('doctrineProxyCodeUpToDate');
         }
         if ($flushPolicyCache === true) {
-            $this->logger->info('Controller changes have been detected, trigger AOP rebuild.');
+            $this->logger->info('Controller changes have been detected, trigger AOP rebuild.', LogEnvironment::fromMethodName(__METHOD__));
             $this->getCache('Flow_Security_Authorization_Privilege_Method')->flush();
             $objectConfigurationCache->remove('allAspectClassesUpToDate');
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
@@ -386,15 +387,15 @@ class CacheManager
         }
 
         foreach ($cachesToFlush as $cacheName => $cacheFilePattern) {
-            $this->logger->info(sprintf('A configuration file matching the pattern "%s" has been changed, flushing related cache "%s"', $cacheFilePattern, $cacheName));
+            $this->logger->info(sprintf('A configuration file matching the pattern "%s" has been changed, flushing related cache "%s"', $cacheFilePattern, $cacheName), LogEnvironment::fromMethodName(__METHOD__));
             $this->getCache($cacheName)->flush();
         }
 
-        $this->logger->info('A configuration file has been changed, refreshing compiled configuration cache');
+        $this->logger->info('A configuration file has been changed, refreshing compiled configuration cache', LogEnvironment::fromMethodName(__METHOD__));
         $this->configurationManager->refreshConfiguration();
 
         if ($aopProxyClassRebuildIsNeeded) {
-            $this->logger->info('The configuration has changed, triggering an AOP proxy class rebuild.');
+            $this->logger->info('The configuration has changed, triggering an AOP proxy class rebuild.', LogEnvironment::fromMethodName(__METHOD__));
             $objectConfigurationCache->remove('allAspectClassesUpToDate');
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
             $objectClassesCache->flush();
@@ -412,7 +413,7 @@ class CacheManager
     {
         foreach ($changedFiles as $pathAndFilename => $status) {
             if (preg_match('/\/Translations\/.+\.xlf/', $pathAndFilename) === 1) {
-                $this->logger->info('The localization files have changed, thus flushing the I18n XML model cache.');
+                $this->logger->info('The localization files have changed, thus flushing the I18n XML model cache.', LogEnvironment::fromMethodName(__METHOD__));
                 $this->getCache('Flow_I18n_XmlModelCache')->flush();
                 break;
             }

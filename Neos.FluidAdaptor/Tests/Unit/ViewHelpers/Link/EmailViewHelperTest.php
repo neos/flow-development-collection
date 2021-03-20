@@ -25,7 +25,7 @@ class EmailViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\View
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\EmailViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Link\EmailViewHelper::class, ['renderChildren', 'registerRenderMethodArguments']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 

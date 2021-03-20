@@ -106,6 +106,20 @@ class StandaloneViewTest extends FunctionalTestCase
 
     /**
      * @test
+     * @expectedException \Neos\FluidAdaptor\Core\ViewHelper\Exception\WrongEnctypeException
+     */
+    public function renderThrowsExceptionIfWrongEnctypeIsSetForFormUpload()
+    {
+        $httpRequest = Request::create(new Uri('http://localhost'));
+        $actionRequest = new ActionRequest($httpRequest);
+
+        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithFormUpload.txt');
+        $standaloneView->render();
+    }
+
+    /**
+     * @test
      * @expectedException \Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException
      */
     public function renderThrowsExceptionIfSpecifiedTemplatePathAndFilenamePointsToADirectory()
@@ -324,5 +338,23 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
 
         $this->assertSame($templatePathAndFilename, $standaloneView->getTemplatePathAndFilename());
+    }
+
+    /**
+     * @test
+     */
+    public function formViewHelpersOutsideOfFormWork()
+    {
+        $httpRequest = Request::create(new Uri('http://localhost'));
+        $actionRequest = new ActionRequest($httpRequest);
+
+        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView->assign('name', 'Karsten');
+        $standaloneView->assign('name', 'Robert');
+        $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithFormField.txt');
+
+        $expected = 'This is a test template.<input type="checkbox" name="checkbox-outside" value="1" />';
+        $actual = $standaloneView->render();
+        $this->assertSame($expected, $actual);
     }
 }

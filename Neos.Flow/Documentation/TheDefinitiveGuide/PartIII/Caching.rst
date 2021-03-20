@@ -169,8 +169,8 @@ Persistent Cache
 Caches can be marked as being "persistent" which lets the Cache Manager skip the cache while flushing all other
 caches or flushing caches by tag. Persistent caches make for a versatile and easy to use low-level key-value-store.
 Simple data like tokens, preferences or the like which usually would be stored in the file system, can be stored in
-such a cache. Flow uses a persistent cache for storing an encryption key for the Hash Service. The configuration for
-this cache looks like this:
+such a cache. Flow uses a persistent cache for storing an encryption key for the Hash Service and Sessions. The
+configuration for this cache looks like this:
 
 *Example: Persistent cache settings* ::
 
@@ -336,19 +336,19 @@ impact.
 
 .. note::
 
-	The ``SimpleFileBackend`` is called like that, because it does not support lifetime for
+  The ``SimpleFileBackend`` is called like that, because it does not support lifetime for
   cache entries! Nor does it support tagging cache entries!
 
 .. note::
 
-	Under heavy load the maximum ``set()`` performance depends on the maximum write and
-	seek performance of the hard disk. If for example the server system shows lots of I/O
-	wait in top, the file backend has reached this bound. A different storage strategy
-	like RAM disks, battery backed up RAID systems or SSD hard disks might help then.
+  Under heavy load the maximum ``set()`` performance depends on the maximum write and
+  seek performance of the hard disk. If for example the server system shows lots of I/O
+  wait in top, the file backend has reached this bound. A different storage strategy
+  like RAM disks, battery backed up RAID systems or SSD hard disks might help then.
 
 .. note::
-	The SimpleFileBackend and FileBackend are the only cache backends that are capable of
-	storing the ``Flow_Object_Classes`` Cache.
+  The SimpleFileBackend and FileBackend are the only cache backends that are capable of
+  storing the ``Flow_Object_Classes`` Cache.
 
 Options
 ~~~~~~~
@@ -426,27 +426,17 @@ to clean up hard disk space or memory.
 
 .. note::
 
-  There is currently very little production experience with this  backend, especially
-  not with a capable database like Oracle. We appreciate any feedback for real life use
-  cases of this cache.
+  The definition for the cache tables can be found in the directory
+  ``Neos.Cache/Resources/Private/``.
 
-.. note::
-
-  When *not using SQLite*, you have to create the needed caching tables manually.
-  The table definition (as used automatically for SQLite) can be found in the
-  file ``Neos.Flow/Resources/Private/Cache/SQL/DDL.sql``. It works unchanged for
-  MySQL, for other RDBMS you might need to adjust the DDL manually.
-
-.. note::
-
-  When *not using SQLite* the maximum length of each cache entry is restricted.
-  The default in ``Neos.Flow/Resources/Private/Cache/SQL/DDL.sql``
-  is ``MEDIUMTEXT`` (16mb on MySQL), which should be sufficient in most cases.
+  The maximum size of each cache entry is limited to what a ``MEDIUMTEXT`` type
+  can hold. When using MySQL/MariaDB that is 16MiB, other databases may have
+  a different limit.
 
 .. warning::
 
 	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
-	from the ``FLOW_Object_Classes`` Cache. It can be used for other code-caches like
+	from the ``Flow_Object_Classes`` Cache. It can be used for other code-caches like
 	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
 	This can be usefull in certain situations to avoid file operations on production
 	environments. If you want to use this backend for code-caching make sure that
@@ -457,24 +447,21 @@ Options
 
 :title:`Pdo cache backend options`
 
-+----------------+----------------------------------------+-----------+--------+---------+
-| Option         | Description                            | Mandatory | Type   | Default |
-+================+========================================+===========+========+=========+
-| dataSourceName | Data source name for connecting to the | Yes       | string |         |
-|                | database.                              |           |        |         |
-|                |                                        |           |        |         |
-|                | :title:`Examples:`                     |           |        |         |
-|                |                                        |           |        |         |
-|                | * mysql:host=localhost;dbname=test     |           |        |         |
-|                | * sqlite:/path/to/sqlite.db            |           |        |         |
-|                | * sqlite::memory:                      |           |        |         |
-+----------------+----------------------------------------+-----------+--------+---------+
-| username       | Username to use for the database       | No        |        |         |
-|                | connection                             |           |        |         |
-+----------------+----------------------------------------+-----------+--------+---------+
-| password       | Password to use for the database       | No        |        |         |
-|                | connection                             |           |        |         |
-+----------------+----------------------------------------+-----------+--------+---------+
++----------------+----------------------------------------------------+-----------+--------+---------+
+| Option         | Description                                        | Mandatory | Type   | Default |
++================+====================================================+===========+========+=========+
+| dataSourceName | Data source name for connecting to the database.   | Yes       | string |         |
+|                |                                                    |           |        |         |
+|                | :title:`Examples:`                                 |           |        |         |
+|                |                                                    |           |        |         |
+|                | * mysql:host=localhost;dbname=test;charset=utf8mb4 |           |        |         |
+|                | * sqlite:/path/to/sqlite.db                        |           |        |         |
+|                | * sqlite::memory:                                  |           |        |         |
++----------------+----------------------------------------------------+-----------+--------+---------+
+| username       | Username to use for the database connection        | No        |        |         |
++----------------+----------------------------------------------------+-----------+--------+---------+
+| password       | Password to use for the database connection.       | No        |        |         |
++----------------+----------------------------------------------------+-----------+--------+---------+
 
 Neos\\Cache\\Backend\\RedisBackend
 ----------------------------------
@@ -719,6 +706,62 @@ Options
 ~~~~~~~
 
 The null backend has no options.
+
+Neos\\Cache\\Backend\\MultiBackend
+----------------------------------
+
+This backend accepts several backend configurations
+to be used in order of appareance as a fallback mechanismn
+shoudl one of them not be available.
+If `backendConfigurations` is an empty array this will act
+just like the NullBackend.
+
+.. warning::
+
+   Due to the nature of this backend as fallback it will swallow all
+   errors on creating and using the sub backends. So configuration
+   errors won't show up. See `debug` option.
+
+Options
+~~~~~~~
+
+:title:`Multi cache backend options`
+
++-----------------------+------------------------------------------+-----------+---------+---------+
+| Option                | Description                              | Mandatory | Type    | Default |
++=======================+==========================================+===========+=========+=========+
+| setInAllBackends      | Should values given to the backend be    | No        | bool    | true    |
+|                       | replicated into all configured and       |           |         |         |
+|                       | available backends?                      |           |         |         |
+|                       | Generally that is desirable for          |           |         |         |
+|                       | fallback purposes, but to avoid too much |           |         |         |
+|                       | duplication at the cost of performance on|           |         |         |
+|                       | fallbacks this can be disabled.          |           |         |         |
+|                       |                                          |           |         |         |
++-----------------------+------------------------------------------+-----------+---------+---------+
+| backendConfigurations | A list of backends to be used in order   | Yes       | array   | []      |
+|                       | of appearance. Each entry in that list   |           |         |         |
+|                       | should have the keys "backend" and       |           |         |         |
+|                       | "backendOptions" just as a top level     |           |         |         |
+|                       | backend configuration.                   |           |         |         |
+|                       |                                          |           |         |         |
++-----------------------+------------------------------------------+-----------+---------+---------+
+| debug                 | Switch on debug mode which will throw    | No        | bool    | false   |
+|                       | any errors happening in sub backends.    |           |         |         |
+|                       | Use this in development to make sure     |           |         |         |
+|                       | everything works as expected.            |           |         |         |
+|                       |                                          |           |         |         |
++-----------------------+------------------------------------------+-----------+---------+---------+
+
+
+Neos\\Cache\\Backend\\TaggableMultiBackend
+------------------------------------------
+
+Technically all the same as the MultiBackend above but implements the TaggableBackendInterface and
+so supports tagging.
+
+Options are the same as for the MultiBackend.
+
 
 How to Use the Caching Framework
 ================================

@@ -18,6 +18,7 @@ use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
+use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
 
 /**
@@ -79,11 +80,12 @@ class Bootstrap
      * Constructor
      *
      * @param string $context The application context, for example "Production" or "Development"
+     * @param \Composer\Autoload\ClassLoader $composerAutoloader Composer autoloader
      */
-    public function __construct(string $context)
+    public function __construct(string $context, \Composer\Autoload\ClassLoader $composerAutoloader = null)
     {
-        // Load the composer autoloader first
-        $composerAutoloader = require(__DIR__ . '/../../../../Libraries/autoload.php');
+        // Load the composer autoloader first if not provided
+        $composerAutoloader = $composerAutoloader ?? require(__DIR__ . '/../../../../Libraries/autoload.php');
 
         $this->context = new ApplicationContext($context);
         $this->earlyInstances[__CLASS__] = $this;
@@ -301,7 +303,8 @@ class Bootstrap
         $sequence->addStep(new Step('neos.flow:cachemanagement:forceflush', [Scripts::class, 'forceFlushCachesIfNecessary']), 'neos.flow:systemlogger');
         $sequence->addStep(new Step('neos.flow:objectmanagement:compiletime:create', [Scripts::class, 'initializeObjectManagerCompileTimeCreate']), 'neos.flow:systemlogger');
         $sequence->addStep(new Step('neos.flow:systemfilemonitor', [Scripts::class, 'initializeSystemFileMonitor']), 'neos.flow:objectmanagement:compiletime:create');
-        $sequence->addStep(new Step('neos.flow:reflectionservice', [Scripts::class, 'initializeReflectionService']), 'neos.flow:systemfilemonitor');
+        $sequence->addStep(new Step('neos.flow:reflectionservice:factory', [Scripts::class, 'initializeReflectionServiceFactory']), 'neos.flow:systemfilemonitor');
+        $sequence->addStep(new Step('neos.flow:reflectionservice', [Scripts::class, 'initializeReflectionService']), 'neos.flow:reflectionservice:factory');
         $sequence->addStep(new Step('neos.flow:objectmanagement:compiletime:finalize', [Scripts::class, 'initializeObjectManagerCompileTimeFinalize']), 'neos.flow:reflectionservice');
         return $sequence;
     }
@@ -325,9 +328,8 @@ class Bootstrap
             $sequence->addStep(new Step('neos.flow:objectmanagement:recompile', [Scripts::class, 'recompileClasses']), 'neos.flow:systemfilemonitor');
         }
 
-        $sequence->addStep(new Step('neos.flow:reflectionservice', [Scripts::class, 'initializeReflectionService']), 'neos.flow:objectmanagement:runtime');
-        $sequence->addStep(new Step('neos.flow:resources', [Scripts::class, 'initializeResources']), 'neos.flow:reflectionservice');
-        $sequence->addStep(new Step('neos.flow:session', [Scripts::class, 'initializeSession']), 'neos.flow:resources');
+        $sequence->addStep(new Step('neos.flow:reflectionservice:factory', [Scripts::class, 'initializeReflectionServiceFactory']), 'neos.flow:objectmanagement:runtime');
+        $sequence->addStep(new Step('neos.flow:resources', [Scripts::class, 'initializeResources']), 'neos.flow:reflectionservice:factory');
         return $sequence;
     }
 
@@ -534,7 +536,7 @@ class Bootstrap
 
         if (!defined('FLOW_PATH_TEMPORARY_BASE')) {
             define('FLOW_PATH_TEMPORARY_BASE', self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY_BASE') ?: FLOW_PATH_DATA . '/Temporary');
-            $temporaryDirectoryPath = Files::concatenatePaths([FLOW_PATH_TEMPORARY_BASE, str_replace('/', '/SubContext', (string)$this->context)]) . '/';
+            $temporaryDirectoryPath = Environment::composeTemporaryDirectoryName(FLOW_PATH_TEMPORARY_BASE, $this->context);
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
 
@@ -546,7 +548,7 @@ class Bootstrap
         }
 
         define('FLOW_ONLY_COMPOSER_LOADER', $onlyUseComposerAutoLoaderForPackageClasses);
-        define('FLOW_VERSION_BRANCH', '5.0');
+        define('FLOW_VERSION_BRANCH', '5.3');
         define('FLOW_APPLICATION_CONTEXT', (string)$this->context);
     }
 

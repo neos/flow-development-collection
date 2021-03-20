@@ -23,7 +23,7 @@ class TestEntityD
 {
     /**
      * @var TestEntityC
-     * @ORM\OneToMany(mappedBy="relatedEntityD")
+     * @ORM\OneToOne(mappedBy="relatedEntityD")
      */
     protected $relatedEntityC;
 
@@ -36,17 +36,17 @@ class TestEntityD
     /**
      * @param TestEntityC $oneToManyToRelatedEntityC
      */
-    public function setOneToManyToRelatedEntityC($oneToManyToRelatedEntityC)
+    public function setManyToOneToRelatedEntityC($oneToManyToRelatedEntityC)
     {
-        $this->oneToManyToRelatedEntityC = $oneToManyToRelatedEntityC;
+        $this->manyToOneToRelatedEntityC = $oneToManyToRelatedEntityC;
     }
 
     /**
      * @return TestEntityC
      */
-    public function getOneToManyToRelatedEntityC()
+    public function getManyToOneToRelatedEntityC()
     {
-        return $this->oneToManyToRelatedEntityC;
+        return $this->manyToOneToRelatedEntityC;
     }
 
     /**

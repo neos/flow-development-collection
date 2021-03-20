@@ -14,7 +14,7 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\Package;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 
 /**
  * Class ViewHelperResolver
@@ -40,7 +40,7 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 

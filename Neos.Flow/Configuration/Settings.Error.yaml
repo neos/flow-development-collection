@@ -69,3 +69,7 @@ Neos:
           '.+Service$': true
           '.+Repository$': true
           'PHPUnit_Framework_MockObject_InvocationMocker': true
+
+        # Maximal recursion for the debugger
+        recursionLimit: 5
+

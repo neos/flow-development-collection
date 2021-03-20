@@ -14,7 +14,6 @@ namespace Neos\Flow\Aop\Pointcut;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Cache\CacheManager;
-use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Flow\Exception;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
@@ -45,7 +44,7 @@ class RuntimeExpressionEvaluator
     protected $runtimeExpressions = [];
 
     /**
-     * This object is created very early and is part of the blacklisted "Neos\Flow\Aop" namespace so we can't rely on AOP for the property injection.
+     * This object is created very early and is part of the excluded "Neos\Flow\Aop" namespace so we can't rely on AOP for the property injection.
      *
      * @param ObjectManagerInterface $objectManager
      * @return void

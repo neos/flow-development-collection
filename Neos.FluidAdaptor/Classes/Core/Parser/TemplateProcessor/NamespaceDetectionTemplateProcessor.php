@@ -132,18 +132,24 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
                     throw new UnknownNamespaceException('Unkown Namespace: ' . htmlspecialchars($matchedVariables[0]));
                 }
                 continue;
-            } elseif (preg_match(Patterns::$SCAN_PATTERN_TEMPLATE_CLOSINGVIEWHELPERTAG, $templateElement, $matchedVariables) > 0) {
+            }
+
+            if (preg_match(Patterns::$SCAN_PATTERN_TEMPLATE_CLOSINGVIEWHELPERTAG, $templateElement, $matchedVariables) > 0) {
                 continue;
             }
 
             $sections = preg_split(Patterns::$SPLIT_PATTERN_SHORTHANDSYNTAX, $templateElement, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+            if ($sections === false) {
+                return;
+            }
+
             foreach ($sections as $section) {
                 if (preg_match(Patterns::$SCAN_PATTERN_SHORTHANDSYNTAX_OBJECTACCESSORS, $section, $matchedVariables) > 0) {
                     preg_match_all(Patterns::$SPLIT_PATTERN_SHORTHANDSYNTAX_VIEWHELPER, $section, $shorthandViewHelpers, PREG_SET_ORDER);
                     if (is_array($shorthandViewHelpers) === true) {
                         foreach ($shorthandViewHelpers as $shorthandViewHelper) {
                             if (!$viewHelperResolver->isNamespaceValidOrIgnored($shorthandViewHelper['NamespaceIdentifier'])) {
-                                throw new UnknownNamespaceException('Unkown Namespace: ' . $shorthandViewHelper['NamespaceIdentifier']);
+                                throw new UnknownNamespaceException('Unknown Namespace: ' . $shorthandViewHelper['NamespaceIdentifier']);
                             }
                         }
                     }

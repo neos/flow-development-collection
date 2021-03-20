@@ -28,7 +28,7 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CropViewHelper::class)->setMethods(array('renderChildren', 'registerRenderMethodArguments'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\CropViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 

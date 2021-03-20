@@ -1,7 +1,18 @@
 <?php
 namespace Neos\Flow\Http;
 
+/*
+ * This file is part of the Neos.Flow package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
 
@@ -29,13 +40,27 @@ class ContentStream implements StreamInterface
     protected $logger;
 
     /**
-     * @param string|resource $stream
+     * @param string|resource $stream a valid PHP resource or a filename supported by fopen (see http://php.net/manual/en/function.fopen.php)
      * @param string $mode Mode with which to open stream
      * @throws \InvalidArgumentException
      */
     public function __construct($stream, $mode = 'r')
     {
         $this->replace($stream, $mode);
+    }
+
+    /**
+     * Creates an instance representing the given $contents string
+     *
+     * @param string $contents
+     * @return self
+     */
+    public static function fromContents(string $contents): self
+    {
+        $handle = fopen('php://memory', 'r+');
+        fwrite($handle, $contents);
+        rewind($handle);
+        return new static($handle);
     }
 
     /**
@@ -78,7 +103,7 @@ class ContentStream implements StreamInterface
     {
         $this->close();
         if (!is_resource($stream)) {
-            $stream = $this->openStream($stream, $mode);
+            $stream = @fopen($stream, $mode);
         }
 
         if (!$this->isValidResource($stream)) {
@@ -328,19 +353,6 @@ class ContentStream implements StreamInterface
     }
 
     /**
-     * Set the internal stream resource.
-     *
-     * @param string $stream String stream target or stream resource.
-     * @param string $mode Resource mode for stream target.
-     * @return resource
-     */
-    protected function openStream($stream, $mode = 'r')
-    {
-        $resource = fopen($stream, $mode);
-        return $resource;
-    }
-
-    /**
      * Throw an exception if the current resource is not readable.
      */
     protected function ensureResourceReadable()
@@ -394,7 +406,7 @@ class ContentStream implements StreamInterface
             return $this->getContents();
         } catch (\Exception $e) {
             if ($this->logger instanceof LoggerInterface) {
-                $this->logger->error(sprintf('Tried to convert a http content stream to a string but an exception occured: [%s] - %s', $e->getCode(), $e->getMessage()), ['exception' => $e]);
+                $this->logger->error(sprintf('Tried to convert a http content stream to a string but an exception occured: [%s] - %s', $e->getCode(), $e->getMessage()), ['exception' => $e] + LogEnvironment::fromMethodName(__METHOD__));
             }
             return '';
         }

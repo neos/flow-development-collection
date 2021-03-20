@@ -36,7 +36,7 @@ class PackageTest extends UnitTestCase
         ComposerUtility::flushCaches();
         vfsStream::setup('Packages');
         $this->mockPackageManager = $this->getMockBuilder(\Neos\Flow\Package\PackageManager::class)->disableOriginalConstructor()->getMock();
-        ObjectAccess::setProperty($this->mockPackageManager, 'composerManifestData', array(), true);
+        ObjectAccess::setProperty($this->mockPackageManager, 'composerManifestData', [], true);
     }
 
     /**
@@ -57,11 +57,11 @@ class PackageTest extends UnitTestCase
         file_put_contents($packagePath . 'Classes/Acme/MyPackage/Domain/Model/Foo.php', '');
         file_put_contents($packagePath . 'Classes/Acme/MyPackage/Domain/Model/Bar.php', '');
 
-        $expectedClassFilesArray = array(
+        $expectedClassFilesArray = [
             'Acme\MyPackage\Controller\FooController' => $packagePath .'Classes/Acme/MyPackage/Controller/FooController.php',
             'Acme\MyPackage\Domain\Model\Foo' => $packagePath .'Classes/Acme/MyPackage/Domain/Model/Foo.php',
             'Acme\MyPackage\Domain\Model\Bar' => $packagePath . 'Classes/Acme/MyPackage/Domain/Model/Bar.php',
-        );
+        ];
 
         $package = new Package('Acme.MyPackage', 'acme/mypackage', $packagePath, $composerManifest['autoload']);
         foreach ($package->getClassFiles() as $className => $classPath) {

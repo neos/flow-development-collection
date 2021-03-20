@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Request as HttpRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\SignalSlot\Dispatcher as SignalSlotDispatcher;
 use Neos\Utility\Arrays;
@@ -41,7 +41,7 @@ class ActionRequest implements RequestInterface
 
     /**
      * @Flow\Inject
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -300,14 +300,17 @@ class ActionRequest implements RequestInterface
 
         $matches = [];
         $subject = substr($controllerObjectName, strlen($this->controllerPackageKey) + 1);
-        preg_match('/
+        preg_match(
+            '/
 			^(
 				Controller
 			|
 				(?P<subpackageKey>.+)\\\\Controller
 			)
 			\\\\(?P<controllerName>[a-z\\\\]+)Controller
-			$/ix', $subject, $matches
+			$/ix',
+            $subject,
+            $matches
         );
 
         $this->controllerSubpackageKey = (isset($matches['subpackageKey'])) ? $matches['subpackageKey'] : null;
@@ -470,7 +473,7 @@ class ActionRequest implements RequestInterface
     public function setArgument($argumentName, $value)
     {
         $argumentName = (string)$argumentName;
-        if (empty($argumentName)) {
+        if ($argumentName === '') {
             throw new Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
         }
 

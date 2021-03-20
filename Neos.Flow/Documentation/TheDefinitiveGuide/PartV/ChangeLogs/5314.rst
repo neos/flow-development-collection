@@ -1,0 +1,43 @@
+`5.3.14 (2020-03-29) <https://github.com/neos/flow-development-collection/releases/tag/5.3.14>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Persist doctrine entities unknown to the reflection service <https://github.com/neos/flow-development-collection/pull/1955>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+This fix is needed since commit `2f860a586753551b64785c91a87798ad124bb171 <https://github.com/neos/flow-development-collection/commit/2f860a586753551b64785c91a87798ad124bb171>`_ of version 5.3.13
+
+Doctrine entities from third party packages that are not included by the Flow setting Neos.Flow.object.includeClasses are not known to the reflection service anymore when running in Production context. This resulted in an exception when calling the deduplicateValueObjectInsertions() function when having such entities scheuduled for insertion. The added not null check fixes this exception but also skips the duplication validation for those entities.
+
+The related reflection and caching issue which brought up this problem is addressed in https://github.com/neos/flow-development-collection/issues/1950
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow numeric array body in request <https://github.com/neos/flow-development-collection/pull/1942>`_
+--------------------------------------------------------------------------------------------------------------
+
+When sending e.g. a JSON request with an array as body (["foo","bar"]), Flow would throw an exception "Invalid argument name (must be a non-empty string)." when visiting the array key "0" due to the `empty()` check.
+This change fixes that by backporting a fix that is already in place in Flow 6.0+ which only checks for empty string.
+
+Such an array can not be mapped to a controller argument, but you can still technically access the argument from the controller via `$this->arguments->getArgument("0")` or the whole body via
+`$this->request->getHttpRequest()->getParsedBody()`.
+
+Replaces #1913
+
+* Packages: ``Flow``
+
+`Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/1941>`_
+-------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by [StyleCI](https://github.styleci.io).
+
+---
+
+For more information, click [here](https://github.styleci.io/analyses/EAG10G).
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/5.3.13...5.3.14>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

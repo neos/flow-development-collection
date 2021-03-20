@@ -64,6 +64,20 @@ class AbstractMessageTest extends UnitTestCase
     /**
      * @test
      */
+    public function withAddedHeaderActuallyAddsHeader()
+    {
+        $message = $this->getAbstractMessageMock();
+        $message = $message
+            ->withAddedHeader('MyHeader', 'MyValue')
+            ->withAddedHeader('MyHeader', 'OtherValue');
+
+        $expectedHeaders = ['MyHeader' => ['MyValue', 'OtherValue']];
+        $this->assertEquals($expectedHeaders, $message->getHeaders()->getAll());
+    }
+
+    /**
+     * @test
+     */
     public function getHeaderReturnsAStringOrAnArray()
     {
         $message = $this->getAbstractMessageMock();
@@ -177,7 +191,8 @@ class AbstractMessageTest extends UnitTestCase
     public function setterMethodsAreChainable()
     {
         $message = $this->getAbstractMessageMock();
-        $this->assertSame($message,
+        $this->assertSame(
+            $message,
             $message->setContent('Foo')->setCharset('UTF-8')->setHeader('X-Foo', 'Bar')
         );
     }

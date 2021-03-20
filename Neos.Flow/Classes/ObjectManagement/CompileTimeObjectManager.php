@@ -23,7 +23,6 @@ use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * A specialized Object Manager which is able to do some basic dependency injection for
@@ -326,7 +325,7 @@ class CompileTimeObjectManager extends ObjectManager
                 ];
 
                 $objects[$objectName]['fa'] = [];
-                $factoryMethodArguments = $objectConfiguration->getArguments();
+                $factoryMethodArguments = $objectConfiguration->getFactoryArguments();
                 if (count($factoryMethodArguments) > 0) {
                     foreach ($factoryMethodArguments as $index => $argument) {
                         $objects[$objectName]['fa'][$index] = [

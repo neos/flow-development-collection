@@ -24,10 +24,7 @@ Part III: Manual
 	Security
 	Internationalization
 	ErrorAndExceptionHandling
-	LoggingAndDebugging
 	SignalsAndSlots
 	Reflection
 	Eel
-	FileMonitoring
-	Testing
 	UtilityFunctions

@@ -20,9 +20,15 @@ abstract class PdoHelper
     /**
      * Pumps the SQL into the database. Use for DDL only.
      *
+     * The given $pathAndFilename is expanded to check for a driver-specific SQL
+     * file to import, so "/some/path/to/mysql.statements.sql" is checked and used
+     * if "/some/path/to/statements.sql" is passed and $pdoDriver is "mysql".
+     * Otherwise the given file is used.
+     *
      * Important: key definitions with length specifiers (needed for MySQL) must
      * be given as "field"(xyz) - no space between double quote and parenthesis -
-     * so they can be removed automatically.
+     * so they can be removed automatically. This is not done for driver-specific
+     * SQL, though.
      *
      * @param \PDO $databaseHandle
      * @param string $pdoDriver
@@ -31,10 +37,17 @@ abstract class PdoHelper
      */
     public static function importSql(\PDO $databaseHandle, string $pdoDriver, string $pathAndFilename)
     {
-        $sql = file($pathAndFilename, FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
-        // Remove MySQL style key length delimiters (yuck!) if we are not setting up a MySQL db
-        if ($pdoDriver !== 'mysql') {
-            $sql = preg_replace('/"\([0-9]+\)/', '"', $sql);
+        $path = dirname($pathAndFilename);
+        $filename = basename($pathAndFilename);
+        $dbSpecificPathAndFilename = sprintf('%s/%s.%s', $path, $pdoDriver, $filename);
+        if (file_exists($dbSpecificPathAndFilename)) {
+            $sql = file($dbSpecificPathAndFilename, FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
+        } else {
+            $sql = file($pathAndFilename, FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
+            // Remove MySQL style key length delimiters (yuck!) if we are not setting up a MySQL db
+            if ($pdoDriver !== 'mysql') {
+                $sql = preg_replace('/"\([0-9]+\)/', '"', $sql);
+            }
         }
 
         $statement = '';

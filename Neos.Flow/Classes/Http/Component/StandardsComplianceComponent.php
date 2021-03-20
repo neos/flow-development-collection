@@ -12,6 +12,7 @@ namespace Neos\Flow\Http\Component;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 
 /**
  * HTTP component that makes sure that the current response is standards-compliant. It is usually the last component in the chain.
@@ -40,6 +41,7 @@ class StandardsComplianceComponent implements ComponentInterface
     public function handle(ComponentContext $componentContext)
     {
         $response = $componentContext->getHttpResponse();
-        $response->makeStandardsCompliant($componentContext->getHttpRequest());
+        $response = ResponseInformationHelper::makeStandardsCompliant($response, $componentContext->getHttpRequest());
+        $componentContext->replaceHttpResponse($response);
     }
 }

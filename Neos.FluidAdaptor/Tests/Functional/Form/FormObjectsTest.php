@@ -37,13 +37,13 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
 
         $route = new \Neos\Flow\Mvc\Routing\Route();
         $route->setUriPattern('test/fluid/formobjects(/{@action})');
-        $route->setDefaults(array(
+        $route->setDefaults([
             '@package' => 'Neos.FluidAdaptor',
             '@subpackage' => 'Tests\Functional\Form\Fixtures',
             '@controller' => 'Form',
             '@action' => 'index',
             '@format' => 'html'
-        ));
+        ]);
         $route->setAppendExceedingArguments(true);
         $this->router->addRoute($route);
     }

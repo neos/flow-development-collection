@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Security;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;

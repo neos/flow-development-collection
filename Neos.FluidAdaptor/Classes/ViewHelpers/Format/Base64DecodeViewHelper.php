@@ -14,7 +14,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Applies base64_decode to the input

@@ -11,7 +11,6 @@ namespace Neos\Flow\Security\Authorization;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 
 /**

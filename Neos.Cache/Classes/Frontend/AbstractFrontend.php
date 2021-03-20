@@ -135,7 +135,7 @@ abstract class AbstractFrontend implements FrontendInterface
      * Removes all cache entries of this cache which are tagged by the specified tag.
      *
      * @param string $tag The tag the entries must have
-     * @return integer The number of entries which have been affected by this flush or NULL if the number is unknown
+     * @return integer The number of entries which have been affected by this flush
      * @throws \InvalidArgumentException
      * @api
      */
@@ -147,6 +147,7 @@ abstract class AbstractFrontend implements FrontendInterface
         if ($this->backend instanceof TaggableBackendInterface) {
             return $this->backend->flushByTag($tag);
         }
+        return 0;
     }
 
     /**

@@ -28,7 +28,7 @@ class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vi
     {
         parent::setUp();
         $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Validation\ResultsViewHelper::class)
-            ->setMethods(array('renderChildren', 'registerRenderMethodArguments'))
+            ->setMethods(['renderChildren', 'registerRenderMethodArguments'])
             ->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }

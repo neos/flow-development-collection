@@ -53,9 +53,9 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
         $this->accountFactory = new Security\AccountFactory();
         $this->accountRepository = new Security\AccountRepository();
 
-        $this->authenticationToken = $this->getAccessibleMock(Security\Authentication\Token\UsernamePassword::class, array('dummy'));
+        $this->authenticationToken = $this->getAccessibleMock(Security\Authentication\Token\UsernamePassword::class, ['dummy']);
 
-        $account = $this->accountFactory->createAccountWithPassword('username', 'password', array(), 'myTestProvider');
+        $account = $this->accountFactory->createAccountWithPassword('username', 'password', [], 'myTestProvider');
         $this->accountRepository->add($account);
         $this->persistenceManager->persistAll();
     }
@@ -72,7 +72,7 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
         $this->assertTrue($this->authenticationToken->isAuthenticated());
 
         $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName('username', 'myTestProvider');
-        $this->assertEquals((new \DateTime())->format(\DateTime::W3C), $account->getLastSuccessfulAuthenticationDate()->format(\DateTime::W3C));
+        $this->assertNotNull($account->getLastSuccessfulAuthenticationDate());
         $this->assertEquals(0, $account->getFailedAuthenticationCount());
     }
 
@@ -120,7 +120,7 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
         $this->persistedUsernamePasswordProvider->authenticate($this->authenticationToken);
 
         $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName('username', 'myTestProvider');
-        $this->assertEquals((new \DateTime())->format(\DateTime::W3C), $account->getLastSuccessfulAuthenticationDate()->format(\DateTime::W3C));
+        $this->assertNotNull($account->getLastSuccessfulAuthenticationDate());
         $this->assertEquals(0, $account->getFailedAuthenticationCount());
     }
 }

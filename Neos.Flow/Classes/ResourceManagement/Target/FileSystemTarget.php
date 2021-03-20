@@ -20,6 +20,8 @@ use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceMetaDataInterface;
 use Neos\Flow\ResourceManagement\ResourceRepository;
+use Neos\Flow\ResourceManagement\Storage\PackageStorage;
+use Neos\Flow\ResourceManagement\Storage\StorageInterface;
 use Neos\Flow\ResourceManagement\Storage\StorageObject;
 use Neos\Utility\Files;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
@@ -84,11 +86,11 @@ class FileSystemTarget implements TargetInterface
     protected $subdivideHashPathSegment = true;
 
     /**
-     * A list of extensions that are blacklisted and must not be published by this target.
+     * A list of extensions that are excluded and must not be published by this target.
      *
      * @var array
      */
-    protected $extensionBlacklist = [];
+    protected $excludedExtensions = [];
 
     /**
      * @Flow\Inject
@@ -173,6 +175,26 @@ class FileSystemTarget implements TargetInterface
     }
 
     /**
+     * Checks if the PackageStorage has been previously initialized with symlinks
+     * and clears them. Otherwise the original sources would be overwritten.
+     *
+     * @param StorageInterface $storage
+     * @return void
+     */
+    protected function checkAndRemovePackageSymlinks(StorageInterface $storage)
+    {
+        if (!$storage instanceof PackageStorage) {
+            return;
+        }
+        foreach ($storage->getPublicResourcePaths() as $packageKey => $path) {
+            $targetPathAndFilename = $this->path . $packageKey;
+            if (Files::is_link($targetPathAndFilename)) {
+                Files::unlink($targetPathAndFilename);
+            }
+        }
+    }
+
+    /**
      * Publishes the whole collection to this target
      *
      * @param CollectionInterface $collection The collection to publish
@@ -181,6 +203,8 @@ class FileSystemTarget implements TargetInterface
      */
     public function publishCollection(CollectionInterface $collection, callable $callback = null)
     {
+        $storage = $collection->getStorage();
+        $this->checkAndRemovePackageSymlinks($storage);
         foreach ($collection->getObjects($callback) as $object) {
             /** @var StorageObject $object */
             $sourceStream = $object->getStream();
@@ -285,14 +309,22 @@ class FileSystemTarget implements TargetInterface
     protected function publishFile($sourceStream, $relativeTargetPathAndFilename)
     {
         $pathInfo = UnicodeFunctions::pathinfo($relativeTargetPathAndFilename);
-        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->extensionBlacklist) && $this->extensionBlacklist[strtolower($pathInfo['extension'])] === true) {
-            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is blacklisted.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447148472);
+        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->excludedExtensions) && $this->excludedExtensions[strtolower($pathInfo['extension'])] === true) {
+            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is excluded.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447148472);
         }
 
         $targetPathAndFilename = $this->path . $relativeTargetPathAndFilename;
+        $streamMetaData = stream_get_meta_data($sourceStream);
+        $sourcePathAndFilename = $streamMetaData['uri'] ?? null;
 
         if (@fstat($sourceStream) === false) {
             throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file is not accessible (file stat failed).', $sourceStream, $this->name), 1375258499);
+        }
+
+        // If you switch from FileSystemSymlinkTarget than we need to remove the symlink before trying to write the file
+        $targetPathAndFilenameInfo = new \SplFileInfo($targetPathAndFilename);
+        if ($targetPathAndFilenameInfo->isLink() && $targetPathAndFilenameInfo->getRealPath() === $sourcePathAndFilename) {
+            Files::unlink($targetPathAndFilename);
         }
 
         if (!file_exists(dirname($targetPathAndFilename))) {
@@ -416,8 +448,12 @@ class FileSystemTarget implements TargetInterface
         switch ($key) {
             case 'baseUri':
             case 'path':
-            case 'extensionBlacklist':
+            case 'excludedExtensions':
                 $this->$key = $value;
+                break;
+            // Only for b/c - remove with next major
+            case 'extensionBlacklist':
+                $this->excludedExtensions = $value;
                 break;
             case 'subdivideHashPathSegment':
                 $this->subdivideHashPathSegment = (boolean)$value;

@@ -43,7 +43,7 @@ class PackageFactory
         $packageClassName = Package::class;
         if (!empty($packageClassInformation)) {
             $packageClassName = $packageClassInformation['className'];
-            $packageClassPath = !empty($packageClassInformation['pathAndFilename']) ? Files::concatenatePaths(array($absolutePackagePath, $packageClassInformation['pathAndFilename'])) : null;
+            $packageClassPath = !empty($packageClassInformation['pathAndFilename']) ? Files::concatenatePaths([$absolutePackagePath, $packageClassInformation['pathAndFilename']]) : null;
         }
 
         if (!empty($packageClassPath)) {

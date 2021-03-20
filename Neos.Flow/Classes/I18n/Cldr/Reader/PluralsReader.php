@@ -150,7 +150,7 @@ class PluralsReader
             return self::RULE_OTHER;
         }
 
-        $ruleset = $this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]];
+        $ruleset = $this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]] ?? null;
 
         if ($ruleset === null) {
             return self::RULE_OTHER;
@@ -226,7 +226,13 @@ class PluralsReader
             return [self::RULE_OTHER];
         }
 
-        return array_merge(array_keys($this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]]), [self::RULE_OTHER]);
+        $ruleset = $this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]] ?? null;
+
+        if ($ruleset === null) {
+            return [self::RULE_OTHER];
+        }
+
+        return array_merge(array_keys($ruleset), [self::RULE_OTHER]);
     }
 
     /**

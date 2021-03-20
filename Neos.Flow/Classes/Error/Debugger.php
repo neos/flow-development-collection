@@ -72,9 +72,19 @@ class Debugger
     protected static $ignoredClassesRegex = '';
 
     /**
+     * @var integer
+     */
+    protected static $recursionLimit;
+
+    /**
+     * @var integer
+     */
+    protected static $recursionLimitFallback = 5;
+
+    /**
      * @var string
      */
-    protected static $blacklistedPropertyNames = '/
+    protected static $excludedPropertyNames = '/
 		(Flow_Aop_.*)
 		/xs';
 
@@ -118,7 +128,7 @@ class Debugger
      */
     public static function renderDump($variable, int $level, bool $plaintext = false, bool $ansiColors = false): string
     {
-        if ($level > 50) {
+        if ($level > self::getRecursionLimit()) {
             return 'RECURSION ... ' . chr(10);
         }
         if (is_string($variable)) {
@@ -275,7 +285,7 @@ class Debugger
                 $objectReflection = new \ReflectionObject($object);
                 $properties = $objectReflection->getProperties();
                 foreach ($properties as $property) {
-                    if (preg_match(self::$blacklistedPropertyNames, $property->getName())) {
+                    if (preg_match(self::$excludedPropertyNames, $property->getName())) {
                         continue;
                     }
                     $dump .= chr(10);
@@ -483,7 +493,7 @@ class Debugger
         $flowRoot = defined('FLOW_PATH_ROOT') ? FLOW_PATH_ROOT : '';
         $originalPath = $file;
         $proxyClassPathPosition = strpos($file, 'Flow_Object_Classes/');
-        if ($proxyClassPathPosition) {
+        if ($proxyClassPathPosition && is_file($file)) {
             $fileContent = @file($file);
             $originalPath = trim(substr($fileContent[count($fileContent) - 2], 19));
         }
@@ -549,6 +559,34 @@ class Debugger
         self::$ignoredClassesRegex = sprintf('/^%s$/xs', implode('$|^', $ignoredClasses));
 
         return self::$ignoredClassesRegex;
+    }
+
+    /**
+     * Tries to load the 'Neos.Flow.error.debugger.recursionLimit' setting
+     * to determine the maximal recursions-level fgor the debugger.
+     * If settings can't be loaded it uses self::$ignoredClassesFallback.
+     *
+     * @return integer
+     */
+    public static function getRecursionLimit(): int
+    {
+        if (self::$recursionLimit) {
+            return self::$recursionLimit;
+        }
+
+        self::$recursionLimit = self::$recursionLimitFallback;
+
+        if (self::$objectManager instanceof ObjectManagerInterface) {
+            $configurationManager = self::$objectManager->get(ConfigurationManager::class);
+            if ($configurationManager instanceof ConfigurationManager) {
+                $recursionLimitFromSettings = $configurationManager->getConfiguration('Settings', 'Neos.Flow.error.debugger.recursionLimit');
+                if (is_int($recursionLimitFromSettings)) {
+                    self::$recursionLimit = $recursionLimitFromSettings;
+                }
+            }
+        }
+
+        return self::$recursionLimit;
     }
 }
 

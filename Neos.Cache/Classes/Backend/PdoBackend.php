@@ -14,6 +14,10 @@ namespace Neos\Cache\Backend;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\Exception;
 use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Notice;
+use Neos\Error\Messages\Result;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 use Neos\Utility\PdoHelper;
 
@@ -22,7 +26,7 @@ use Neos\Utility\PdoHelper;
  *
  * @api
  */
-class PdoBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, PhpCapableBackendInterface
+class PdoBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, PhpCapableBackendInterface, WithSetupInterface, WithStatusInterface
 {
     use RequireOnceFromValueTrait;
 
@@ -57,6 +61,16 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected $context;
 
     /**
+     * @var string
+     */
+    protected $cacheTableName = 'cache';
+
+    /**
+     * @var string
+     */
+    protected $tagsTableName = 'tags';
+
+    /**
      * @var \ArrayIterator
      */
     protected $cacheEntriesIterator = null;
@@ -68,7 +82,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function setDataSourceName(string $DSN)
+    protected function setDataSourceName(string $DSN)
     {
         $this->dataSourceName = $DSN;
     }
@@ -80,7 +94,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function setUsername(string $username)
+    protected function setUsername(string $username)
     {
         $this->username = $username;
     }
@@ -92,18 +106,33 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function setPassword(string $password)
+    protected function setPassword(string $password)
     {
         $this->password = $password;
     }
 
     /**
-     * Initialize the cache backend.
+     * Sets the name of the "cache" table
      *
+     * @param string $cacheTableName
      * @return void
+     * @api
      */
-    public function initializeObject()
+    protected function setCacheTableName(string $cacheTableName)
     {
+        $this->cacheTableName = $cacheTableName;
+    }
+
+    /**
+     * Sets the name of the "tags" table
+     *
+     * @param string $tagsTableName
+     * @return void
+     * @api
+     */
+    protected function setTagsTableName(string $tagsTableName)
+    {
+        $this->tagsTableName = $tagsTableName;
     }
 
     /**
@@ -116,7 +145,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
-     * @throws \Neos\Utility\Exception\FilesException
+     * @throws FilesException
      * @api
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
@@ -127,8 +156,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             throw new Exception('No cache frontend has been set yet via setCache().', 1259515600);
         }
 
-        $this->remove($entryIdentifier);
-
         $lifetime = ($lifetime === null) ? $this->defaultLifetime : $lifetime;
 
         // Convert binary data into hexadecimal representation,
@@ -137,18 +164,29 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $data = bin2hex($data);
         }
 
-        $statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
-        $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, time(), $lifetime, $data]);
-        if ($result === false) {
-            throw new Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
-        }
+        $this->databaseHandle->beginTransaction();
+        try {
+            $this->removeWithoutTransaction($entryIdentifier);
 
-        $statementHandle = $this->databaseHandle->prepare('INSERT INTO "tags" ("identifier", "context", "cache", "tag") VALUES (?, ?, ?, ?)');
-        foreach ($tags as $tag) {
-            $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
+            $statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
+            $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, time(), $lifetime, $data]);
             if ($result === false) {
-                throw new Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
+                throw new Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
             }
+
+            $statementHandle = $this->databaseHandle->prepare('INSERT INTO "tags" ("identifier", "context", "cache", "tag") VALUES (?, ?, ?, ?)');
+            foreach ($tags as $tag) {
+                $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
+                if ($result === false) {
+                    throw new Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
+                }
+            }
+
+            $this->databaseHandle->commit();
+        } catch (\Exception $exception) {
+            $this->databaseHandle->rollBack();
+
+            throw $exception;
         }
     }
 
@@ -158,14 +196,13 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param string $entryIdentifier An identifier which describes the cache entry to load
      * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
      * @throws Exception
-     * @throws \Neos\Utility\Exception\FilesException
      * @api
      */
     public function get(string $entryIdentifier)
     {
         $this->connect();
 
-        $statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
+        $statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
         $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
         $fetchedColumn = $statementHandle->fetchColumn();
 
@@ -184,14 +221,13 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param string $entryIdentifier An identifier specifying the cache entry
      * @return boolean true if such an entry exists, false if not
      * @throws Exception
-     * @throws \Neos\Utility\Exception\FilesException
      * @api
      */
     public function has(string $entryIdentifier): bool
     {
         $this->connect();
 
-        $statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
+        $statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
         $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
         return ($statementHandle->fetchColumn() > 0);
     }
@@ -202,15 +238,40 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * old entries for the identifier still exist, they are removed as well.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @return boolean true if (at least) an entry could be removed or false if no entry was found
+     * @return boolean true if (at least) one entry could be removed or false if no entry was found
      * @throws Exception
-     * @throws \Neos\Utility\Exception\FilesException
      * @api
      */
     public function remove(string $entryIdentifier): bool
     {
         $this->connect();
 
+        $this->databaseHandle->beginTransaction();
+        try {
+            $rowsWereDeleted = $this->removeWithoutTransaction($entryIdentifier);
+            $this->databaseHandle->commit();
+
+            return $rowsWereDeleted;
+        } catch (\Exception $exception) {
+            $this->databaseHandle->rollBack();
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * Removes all cache entries matching the specified identifier.
+     * Usually this only affects one entry but if - for what reason ever -
+     * old entries for the identifier still exist, they are removed as well.
+     *
+     * Note: this does not wrap the removal statements into a transaction, as
+     * such the method must only be used when a transaction is active!
+     *
+     * @param string $entryIdentifier Specifies the cache entry to remove
+     * @return boolean true if (at least) an entry could be removed or false if no entry was found
+     */
+    private function removeWithoutTransaction(string $entryIdentifier)
+    {
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "identifier"=? AND "context"=? AND "cache"=?');
         $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
 
@@ -225,18 +286,26 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @return void
      * @throws Exception
-     * @throws \Neos\Utility\Exception\FilesException
      * @api
      */
     public function flush()
     {
         $this->connect();
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=?');
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+        $this->databaseHandle->beginTransaction();
+        try {
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=?');
+            $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=?');
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=?');
+            $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+
+            $this->databaseHandle->commit();
+        } catch (\Exception $exception) {
+            $this->databaseHandle->rollBack();
+
+            throw $exception;
+        }
     }
 
     /**
@@ -245,20 +314,28 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param string $tag The tag the entries must have
      * @return integer
      * @throws Exception
-     * @throws \Neos\Utility\Exception\FilesException
      * @api
      */
     public function flushByTag(string $tag): int
     {
         $this->connect();
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?)');
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
+        $this->databaseHandle->beginTransaction();
+        try {
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?)');
+            $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
 
-        $flushed = $statementHandle->rowCount();
+            $flushed = $statementHandle->rowCount();
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?');
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier, $tag]);
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?');
+            $statementHandle->execute([$this->context(), $this->cacheIdentifier, $tag]);
+
+            $this->databaseHandle->commit();
+        } catch (\Exception $exception) {
+            $this->databaseHandle->rollBack();
+
+            throw $exception;
+        }
 
         return $flushed;
     }
@@ -270,14 +347,13 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param string $tag The tag to search for
      * @return array An array with identifiers of all matching entries. An empty array if no entries matched
      * @throws Exception
-     * @throws \Neos\Utility\Exception\FilesException
      * @api
      */
     public function findIdentifiersByTag(string $tag): array
     {
         $this->connect();
 
-        $statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "tags" WHERE "context"=?  AND "cache"=? AND "tag"=?');
+        $statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "' . $this->tagsTableName . '" WHERE "context"=?  AND "cache"=? AND "tag"=?');
         $statementHandle->execute([$this->context(), $this->cacheIdentifier, $tag]);
         return $statementHandle->fetchAll(\PDO::FETCH_COLUMN);
     }
@@ -287,18 +363,26 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @return void
      * @throws Exception
-     * @throws \Neos\Utility\Exception\FilesException
      * @api
      */
     public function collectGarbage()
     {
         $this->connect();
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time() . ')');
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier]);
+        $this->databaseHandle->beginTransaction();
+        try {
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time() . ')');
+            $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier]);
 
-        $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time());
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+            $statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time());
+            $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+
+            $this->databaseHandle->commit();
+        } catch (\Exception $exception) {
+            $this->databaseHandle->rollBack();
+
+            throw $exception;
+        }
     }
 
     /**
@@ -316,7 +400,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @return void
      * @throws Exception if the connection cannot be established
-     * @throws \Neos\Utility\Exception\FilesException
      */
     protected function connect()
     {
@@ -329,7 +412,11 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
             if ($this->pdoDriver === 'sqlite' && !file_exists($splitdsn[1])) {
                 if (!file_exists(dirname($splitdsn[1]))) {
-                    Files::createDirectoryRecursively(dirname($splitdsn[1]));
+                    try {
+                        Files::createDirectoryRecursively(dirname($splitdsn[1]));
+                    } catch (FilesException $exception) {
+                        throw new Exception(sprintf('Could not create directory for sqlite file "%s"', $splitdsn[1]), 1565359792, $exception);
+                    }
                 }
                 $this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
                 $this->createCacheTables();
@@ -342,7 +429,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
                 $this->databaseHandle->exec('SET SESSION sql_mode=\'ANSI\';');
             }
         } catch (\PDOException $exception) {
-            throw new Exception('Could not connect to cache table with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1334736164);
+            throw new Exception(sprintf('Could not connect to cache table with DSN "%s". PDO error: %s', $this->dataSourceName, $exception->getMessage()), 1334736164, $exception);
         }
     }
 
@@ -351,7 +438,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @return void
      * @throws Exception if something goes wrong
-     * @throws \Neos\Utility\Exception\FilesException
      */
     protected function createCacheTables()
     {
@@ -437,8 +523,8 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $cacheEntries = [];
 
-        $statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "content" FROM "cache" WHERE "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
-        $statementHandle->execute(array($this->context(), $this->cacheIdentifier));
+        $statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "content" FROM "' . $this->cacheTableName . '" WHERE "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
+        $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
         $fetchedColumns = $statementHandle->fetchAll();
 
         foreach ($fetchedColumns as $fetchedColumn) {
@@ -463,5 +549,78 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $this->context = md5($this->environmentConfiguration->getApplicationIdentifier());
         }
         return $this->context;
+    }
+
+    /**
+     * Connects to the configured PDO database and adds/updates table schema if required
+     *
+     * @return Result
+     * @api
+     */
+    public function setup(): Result
+    {
+        $result = new Result();
+        try {
+            $this->connect();
+        } catch (Exception $exception) {
+            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Failed'));
+        }
+        if ($this->pdoDriver === 'sqlite') {
+            $result->addNotice(new Notice('SQLite database tables are created automatically and don\'t need to be set up'));
+            return $result;
+        }
+        if ($this->tableExists($this->cacheTableName) && $this->tableExists($this->tagsTableName)) {
+            $result->addNotice(new Notice('The database tables already exist and don\'t need to be set up'));
+            return $result;
+        }
+        $result->addNotice(new Notice('Creating database tables "%s" & "%s"...', null, [$this->cacheTableName, $this->tagsTableName]));
+        try {
+            $this->createCacheTables();
+        } catch (Exception $exception) {
+            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Failed'));
+        }
+        return $result;
+    }
+
+    /**
+     * Validates that configured database is accessible and schema up to date
+     *
+     * @return Result
+     * @api
+     */
+    public function getStatus(): Result
+    {
+        $result = new Result();
+        try {
+            $this->connect();
+        } catch (Exception $exception) {
+            $result->addError(new Error($exception->getMessage(), $exception->getCode(), [], 'Connection failed'));
+            return $result;
+        }
+        $result->addNotice(new Notice($this->pdoDriver, null, [], 'Driver'));
+        if (!$this->tableExists($this->cacheTableName)) {
+            $result->addError(new Error('%s (missing)', null, [$this->cacheTableName], 'Table'));
+        }
+        if (!$this->tableExists($this->tagsTableName)) {
+            $result->addError(new Error('%s (missing)', null, [$this->tagsTableName], 'Table'));
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns true if the given $tableName exists, otherwise false
+     *
+     * @param string $tableName
+     * @return bool
+     */
+    private function tableExists(string $tableName): bool
+    {
+        try {
+            $this->databaseHandle->prepare('SELECT 1 FROM "' . $tableName . '" LIMIT 1')->execute();
+        } catch (\PDOException $exception) {
+            return false;
+        }
+        return true;
     }
 }

@@ -90,4 +90,9 @@ class TestObject implements ProtectedContextAwareInterface
     {
         $this->dynamicMethodName = $dynamicMethodName;
     }
+
+    public function __toString()
+    {
+        return 'Test Object';
+    }
 }

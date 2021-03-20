@@ -15,6 +15,7 @@ use Neos\Flow\Cache\CacheManager;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\StrategyWithMarkDeletedInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
@@ -275,7 +276,7 @@ class FileMonitor
             $this->emitDirectoriesHaveChanged($this->identifier, $this->changedPaths);
         }
         if ($changedFileCount > 0 || $changedPathCount) {
-            $this->logger->info(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, $changedFileCount, $changedPathCount));
+            $this->logger->info(sprintf('File Monitor "%s" detected %s changed files and %s changed directories.', $this->identifier, $changedFileCount, $changedPathCount), LogEnvironment::fromMethodName(__METHOD__));
         }
     }
 

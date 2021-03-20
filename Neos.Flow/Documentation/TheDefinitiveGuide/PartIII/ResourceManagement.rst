@@ -342,9 +342,9 @@ There are multiple ways of accessing your resource`s data depending on what you 
 Either you need a web accessible URI to a resource to display or link to it or you need the raw data
 to process it further (like image manipulation for example).
 
-To provide URIs your resources have to be published. For newly created ``PersistentResource``s this happens
-automatically. Package resources have to be published at least once by running the ``resource:publish``
-command:
+To provide URIs your resources have to be published. For newly created ``PersistentResource`` objects
+this happens automatically. Package resources have to be published at least once by running the
+``resource:publish`` command:
 
 .. code-block:: none
 

@@ -21,7 +21,6 @@ use Neos\Flow\ObjectManagement\Exception\UnknownClassException;
 use Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException;
 use Neos\Flow\Reflection\ReflectionService;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * Object Configuration Builder which can build object configuration objects
@@ -226,7 +225,11 @@ class ConfigurationBuilder
                             } else {
                                 throw new InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
                             }
-                            $objectConfiguration->setArgument($argument);
+                            if (isset($rawConfigurationOptions['factoryObjectName'])) {
+                                $objectConfiguration->setFactoryArgument($argument);
+                            } else {
+                                $objectConfiguration->setArgument($argument);
+                            }
                         }
                     }
                 break;
@@ -374,6 +377,9 @@ class ConfigurationBuilder
                 continue;
             }
 
+            if ($objectConfiguration->isCreatedByFactory()) {
+                continue;
+            }
 
             $className = $objectConfiguration->getClassName();
             if (!$this->reflectionService->hasMethod($className, '__construct')) {
@@ -477,7 +483,7 @@ class ConfigurationBuilder
 
             foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, Inject::class) as $propertyName) {
                 if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
-                    throw new ObjectException(sprintf('The property "%%s" in class "%s" must not be private when annotated for injection.', $propertyName, $className), 1328109641);
+                    throw new ObjectException(sprintf('The property "%s" in class "%s" must not be private when annotated for injection.', $propertyName, $className), 1328109641);
                 }
                 if (!array_key_exists($propertyName, $properties)) {
                     /** @var Inject $injectAnnotation */

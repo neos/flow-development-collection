@@ -8,6 +8,7 @@ This chapter will explain:
 
 * ... how to store specific data in a session
 * ... how to store objects in the session
+* ... how to delete sessions
 
 Scope Session
 =============
@@ -118,3 +119,22 @@ The built-in session implementation provides a few more configuration options, r
 the session cookie and the automatic garbage collection. Please refer to the
 Settings.yaml file of the Flow package for a list of all possible options and
 their respective documentation.
+
+Session Storage
+===============
+
+.. note::
+
+	Since Flow 5.2 Sessions are no longer destroyed by default when caches are flushed. This is
+	due to the session caches being marked as "persistent". This previously lead to all sessions
+	being destroyed on each deployment, which was undesireable.
+
+If you deploy changes that change the structure of data that is stored in the session or the class
+of an `@Flow\scope("session")` object, you need to manually destroy sessions to avoid deserialization
+errors. You can do this by running `./flow flow:session:destroyAll` or manually deleting the folder
+where the sessions are stored.
+
+Also, sessions are shared among the application contexts, e.g. `Development` and `Production`, so if
+your use case requires to have sessions separated for different contexts, you need to configure the
+`cacheDirectory` backend option for the `Flow_Session_Storage` and `Flow_Session_MetaData` caches for
+each individual context. Please refer to the :doc:`Caching` section of this guide for further information.

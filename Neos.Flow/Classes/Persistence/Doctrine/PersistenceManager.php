@@ -17,6 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\AbstractPersistenceManager;
 use Neos\Flow\Persistence\Exception\KnownObjectException;
 use Neos\Flow\Persistence\Exception as PersistenceException;
@@ -78,24 +79,25 @@ class PersistenceManager extends AbstractPersistenceManager
      * Commits new objects and changes to objects in the current persistence
      * session into the backend
      *
-     * @param boolean $onlyWhitelistedObjects If true an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "whitelisted" (see AbstractPersistenceManager::whitelistObject())
+     * @param boolean $onlyAllowedObjects If true an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "allowed" (see AbstractPersistenceManager::allowObject())
      * @return void
+     * @throws PersistenceException
      * @api
      */
-    public function persistAll($onlyWhitelistedObjects = false)
+    public function persistAll($onlyAllowedObjects = false)
     {
-        if ($onlyWhitelistedObjects) {
+        if ($onlyAllowedObjects) {
             $unitOfWork = $this->entityManager->getUnitOfWork();
             /** @var \Doctrine\ORM\UnitOfWork $unitOfWork */
             $unitOfWork->computeChangeSets();
             $objectsToBePersisted = $unitOfWork->getScheduledEntityUpdates() + $unitOfWork->getScheduledEntityDeletions() + $unitOfWork->getScheduledEntityInsertions();
             foreach ($objectsToBePersisted as $object) {
-                $this->throwExceptionIfObjectIsNotWhitelisted($object);
+                $this->throwExceptionIfObjectIsNotAllowed($object);
             }
         }
 
         if (!$this->entityManager->isOpen()) {
-            $this->logger->error('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.');
+            $this->logger->error('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.', LogEnvironment::fromMethodName(__METHOD__));
             return;
         }
 
@@ -103,13 +105,13 @@ class PersistenceManager extends AbstractPersistenceManager
         $connection = $this->entityManager->getConnection();
         try {
             if ($connection->ping() === false) {
-                $this->logger->info('Reconnecting the Doctrine EntityManager to the persistence backend.');
+                $this->logger->info('Reconnecting the Doctrine EntityManager to the persistence backend.', LogEnvironment::fromMethodName(__METHOD__));
                 $connection->close();
                 $connection->connect();
             }
         } catch (ConnectionException $exception) {
             $message = $this->throwableStorage->logThrowable($exception);
-            $this->logger->error($message);
+            $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
         }
 
         $this->entityManager->flush();
@@ -179,7 +181,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @param mixed $identifier
      * @param string $objectType
      * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
-     * @return object The object for the identifier if it is known, or NULL
+     * @return object|null The object for the identifier if it is known, or NULL
      * @throws \RuntimeException
      * @api
      */
@@ -296,7 +298,7 @@ class PersistenceManager extends AbstractPersistenceManager
             $proxyFactory = $this->entityManager->getProxyFactory();
             $proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
 
-            $this->logger->info('Doctrine 2 setup finished');
+            $this->logger->info('Doctrine 2 setup finished', LogEnvironment::fromMethodName(__METHOD__));
             return true;
         } else {
             $this->logger->notice('Doctrine 2 setup skipped, driver and path backend options not set!');

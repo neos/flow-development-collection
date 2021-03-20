@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Session;
  * source code.
  */
 
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Session;
@@ -101,9 +100,11 @@ class SessionManagementTest extends FunctionalTestCase
     public function aSessionUsedInAFunctionalTestVirtualBrowserSendsCookiesOnEachRequest()
     {
         $response = $this->browser->request('http://localhost/test/session');
-        $this->assertTrue($response->hasCookie('Flow_Testing_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
+        $this->assertTrue($response->hasHeader('Set-Cookie'), 'Available Cookies are: ' . implode(', ', array_keys($response->getHeader('Set-Cookie'))));
+        $this->assertContains('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
 
         $response = $this->browser->request('http://localhost/test/session');
-        $this->assertTrue($response->hasCookie('Flow_Testing_Session'), 'Available Cookies are: ' . implode(', ', array_keys($response->getCookies())));
+        $this->assertTrue($response->hasHeader('Set-Cookie'), 'Available Cookies are: ' . implode(', ', array_keys($response->getHeader('Set-Cookie'))));
+        $this->assertContains('Flow_Testing_Session', implode(',', $response->getHeader('Set-Cookie')));
     }
 }

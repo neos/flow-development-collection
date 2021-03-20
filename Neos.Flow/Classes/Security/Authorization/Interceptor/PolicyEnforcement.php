@@ -108,6 +108,8 @@ class PolicyEnforcement implements InterceptorInterface
         if ($this->privilegeManager->isGranted(MethodPrivilegeInterface::class, $privilegeSubject, $reason) === false) {
             throw new AccessDeniedException($this->renderDecisionReasonMessage($reason), 1222268609);
         }
+
+        return true;
     }
 
     /**

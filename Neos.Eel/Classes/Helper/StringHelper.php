@@ -125,6 +125,42 @@ class StringHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Generate a single-byte string from a number
+     *
+     * Example::
+     *
+     *     String.chr(65) == "A"
+     *
+     * This is a wrapper for the chr() PHP function.
+     * @see ord()
+     *
+     * @param int $value An integer between 0 and 255
+     * @return string A single-character string containing the specified byte
+     */
+    public function chr($value)
+    {
+        return chr((int)$value);
+    }
+
+    /**
+     * Convert the first byte of a string to a value between 0 and 255
+     *
+     * Example::
+     *
+     *     String.ord('A') == 65
+     *
+     * This is a wrapper for the ord() PHP function.
+     * @see chr()
+     *
+     * @param string $string A character
+     * @return int An integer between 0 and 255
+     */
+    public function ord($string)
+    {
+        return ord((string)$string);
+    }
+
+    /**
      * Find the first position of a substring in the given string
      *
      * Example::
@@ -416,6 +452,23 @@ class StringHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Insert HTML line breaks before all newlines in a string
+     *
+     * Example::
+     *
+     *     String.nl2br(someStingWithLinebreaks) == 'line1<br />line2'
+     *
+     * This is a wrapper for the nl2br() PHP function.
+     *
+     * @param string $string The input string
+     * @return string The string with new lines replaced
+     */
+    public function nl2br($string)
+    {
+        return nl2br((string)$string);
+    }
+
+    /**
      * Test if the given string is blank (empty or consists of whitespace only)
      *
      * Examples::
@@ -596,12 +649,31 @@ class StringHelper implements ProtectedContextAwareInterface
     /**
      * Calculate the MD5 checksum of the given string
      *
+     * Example::
+     *
+     *     String.md5("joh316") == "bacb98acf97e0b6112b1d1b650b84971"
+     *
      * @param string $string The string to hash
      * @return string The MD5 hash of ``string``
      */
     public function md5($string)
     {
         return md5((string)$string);
+    }
+
+    /**
+     * Calculate the SHA1 checksum of the given string
+     *
+     * Example::
+     *
+     *     String.sha1("joh316") == "063b3d108bed9f88fa618c6046de0dccadcf3158"
+     *
+     * @param string $string The string to hash
+     * @return string The SHA1 hash of ``string``
+     */
+    public function sha1($string)
+    {
+        return sha1((string)$string);
     }
 
     /**
@@ -630,6 +702,44 @@ class StringHelper implements ProtectedContextAwareInterface
         $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString);
 
         return count(preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY));
+    }
+
+    /**
+     * Implementation of the PHP base64_encode function
+     * @see https://php.net/manual/en/function.base64-encode.php
+     *
+     * @param string $string The data to encode.
+     * @return string The encoded data
+     */
+    public function base64encode($string)
+    {
+        return base64_encode((string)$string);
+    }
+
+    /**
+     * Implementation of the PHP base64_decode function
+     * @see https://php.net/manual/en/function.base64-decode.php
+     *
+     * @param string $string The encoded data.
+     * @param bool $strict If TRUE this function will return FALSE if the input contains character from outside the base64 alphabet.
+     * @return string|bool The decoded data or FALSE on failure. The returned data may be binary.
+     */
+    public function base64decode($string, bool $strict = false)
+    {
+        return base64_decode((string)$string, $strict);
+    }
+
+    /**
+     * Implementation of the PHP vsprintf function
+     * @see https://php.net/manual/en/function.vsprintf.php
+     *
+     * @param string $format A formatting string containing directives
+     * @param array $args An array of values to be inserted according to the formatting string $format
+     * @return string A string produced according to the formatting string $format
+     */
+    public function format($format, array $args)
+    {
+        return vsprintf($format, $args);
     }
 
     /**

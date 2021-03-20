@@ -232,7 +232,8 @@ class SchemaValidator
                     $possibleTypes[] = $type['type'];
                 }
             }
-            $error = $this->createError(sprintf('None of the given schemas %s matched %s',
+            $error = $this->createError(sprintf(
+                'None of the given schemas %s matched %s',
                 implode(',', $possibleTypes),
                 is_scalar($value) ? (string)$value : gettype($value)
             ));
@@ -352,8 +353,12 @@ class SchemaValidator
     protected function validateArrayType($value, array $schema, array $types = []): ErrorResult
     {
         $result = new ErrorResult();
-        if (is_array($value) === false || $this->isNumericallyIndexedArray($value) === false) {
+        if (is_array($value) === false) {
             $result->addError($this->createError('type=array', 'type=' . gettype($value)));
+            return $result;
+        }
+        if ($this->isNumericallyIndexedArray($value) === false) {
+            $result->addError($this->createError('type=array', 'type=dictionary'));
             return $result;
         }
 
@@ -644,8 +649,12 @@ class SchemaValidator
     protected function createError(string $expectation, $value = null): Error
     {
         if ($value !== null) {
-            $error = new Error('expected: %s found: %s', 1328557141, [$expectation, $this->renderValue($value)],
-                'Validation Error');
+            $error = new Error(
+                'expected: %s found: %s',
+                1328557141,
+                [$expectation, $this->renderValue($value)],
+                'Validation Error'
+            );
         } else {
             $error = new Error($expectation, 1328557141, [], 'Validation Error');
         }

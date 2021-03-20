@@ -34,24 +34,24 @@ class CompileTimeObjectManagerTest extends UnitTestCase
     {
         vfsStream::setup('Packages');
         $this->mockPackageManager = $this->getMockBuilder(PackageManager::class)->disableOriginalConstructor()->getMock();
-        $this->compileTimeObjectManager = $this->getAccessibleMock(CompileTimeObjectManager::class, array('dummy'), array(), '', false);
+        $this->compileTimeObjectManager = $this->getAccessibleMock(CompileTimeObjectManager::class, ['dummy'], [], '', false);
         $this->compileTimeObjectManager->injectLogger($this->createMock(LoggerInterface::class));
-        $configurations = array(
-            'Neos' => array(
-                'Flow' => array(
-                    'object' => array(
-                        'includeClasses' => array(
-                            'NonFlow.IncludeAllClasses' => array('.*'),
-                            'NonFlow.IncludeAndExclude' => array('.*'),
-                            'Vendor.AnotherPackage' => array('SomeNonExistingClass')
-                        ),
-                        'excludeClasses' => array(
-                            'NonFlow.IncludeAndExclude' => array('.*')
-                        )
-                    )
-                )
-            )
-        );
+        $configurations = [
+            'Neos' => [
+                'Flow' => [
+                    'object' => [
+                        'includeClasses' => [
+                            'NonFlow.IncludeAllClasses' => ['.*'],
+                            'NonFlow.IncludeAndExclude' => ['.*'],
+                            'Vendor.AnotherPackage' => ['SomeNonExistingClass']
+                        ],
+                        'excludeClasses' => [
+                            'NonFlow.IncludeAndExclude' => ['.*']
+                        ]
+                    ]
+                ]
+            ]
+        ];
         $this->compileTimeObjectManager->injectAllSettings($configurations);
     }
 

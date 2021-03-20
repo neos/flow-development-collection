@@ -15,7 +15,6 @@ use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Exception;
 use Neos\Cache\Psr\InvalidArgumentException;
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\DateInterval;
 
 /**
  * A simple cache frontend

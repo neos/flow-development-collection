@@ -17,7 +17,7 @@ use Neos\Flow\Mvc\Exception\CommandException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentMixingException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\PackageManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Utility\Environment;
 
 /**
@@ -56,7 +56,7 @@ class RequestBuilder
     protected $objectManager;
 
     /**
-     * @var PackageManagerInterface
+     * @var PackageManager
      */
     protected $packageManager;
 
@@ -84,10 +84,10 @@ class RequestBuilder
     }
 
     /**
-     * @param PackageManagerInterface $packageManager
+     * @param PackageManager $packageManager
      * @return void
      */
-    public function injectPackageManager(PackageManagerInterface $packageManager)
+    public function injectPackageManager(PackageManager $packageManager)
     {
         $this->packageManager = $packageManager;
     }

@@ -15,9 +15,10 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\AdvicesTrait;
 use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\PropertyIntroduction;
+use Neos\Flow\Aop\Exception\InvalidTargetClassException;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
-use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Aop\TraitIntroduction;
 use Neos\Flow\Aop;
@@ -38,12 +39,6 @@ class ProxyClassBuilder
      * @var Proxy\Compiler
      */
     protected $compiler;
-
-    /**
-     * The Flow settings
-     * @var array
-     */
-    protected $settings;
 
     /**
      * @var ReflectionService
@@ -80,7 +75,7 @@ class ProxyClassBuilder
      * Hardcoded list of Flow sub packages (first 15 characters) which must be immune to AOP proxying for security, technical or conceptual reasons.
      * @var array
      */
-    protected $blacklistedSubPackages = ['Neos\Flow\Aop\\', 'Neos\Flow\Cach', 'Neos\Flow\Erro', 'Neos\Flow\Log\\', 'Neos\Flow\Moni', 'Neos\Flow\Obje', 'Neos\Flow\Pack', 'Neos\Flow\Prop', 'Neos\Flow\Refl', 'Neos\Flow\Util', 'Neos\Flow\Vali'];
+    protected $excludedSubPackages = ['Neos\Flow\Aop\\', 'Neos\Flow\Cach', 'Neos\Flow\Erro', 'Neos\Flow\Log\\', 'Neos\Flow\Moni', 'Neos\Flow\Obje', 'Neos\Flow\Pack', 'Neos\Flow\Prop', 'Neos\Flow\Refl', 'Neos\Flow\Util', 'Neos\Flow\Vali'];
 
     /**
      * A registry of all known aspects
@@ -180,17 +175,6 @@ class ProxyClassBuilder
     }
 
     /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The settings
-     * @return void
-     */
-    public function injectSettings(array $settings): void
-    {
-        $this->settings = $settings;
-    }
-
-    /**
      * Builds proxy class code which weaves advices into the respective target classes.
      *
      * The object configurations provided by the Compiler are searched for possible aspect
@@ -220,7 +204,7 @@ class ProxyClassBuilder
         $rebuildEverything = false;
         if ($this->objectConfigurationCache->has('allAspectClassesUpToDate') === false) {
             $rebuildEverything = true;
-            $this->logger->info('Aspects have been modified, therefore rebuilding all target classes.');
+            $this->logger->info('Aspects have been modified, therefore rebuilding all target classes.', LogEnvironment::fromMethodName(__METHOD__));
             $this->objectConfigurationCache->set('allAspectClassesUpToDate', true);
         }
 
@@ -291,7 +275,7 @@ class ProxyClassBuilder
         $proxyableClasses = [];
         foreach ($classNamesByPackage as $classNames) {
             foreach ($classNames as $className) {
-                if (in_array(substr($className, 0, 15), $this->blacklistedSubPackages)) {
+                if (in_array(substr($className, 0, 15), $this->excludedSubPackages)) {
                     continue;
                 }
                 if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Aspect::class)) {
@@ -332,6 +316,9 @@ class ProxyClassBuilder
     {
         $aspectContainer = new AspectContainer($aspectClassName);
         $methodNames = get_class_methods($aspectClassName);
+        if ($methodNames === null) {
+            throw new InvalidTargetClassException(sprintf('The class "%s" is not loadable for AOP proxy building. This is most likely an inconsistency with the caches. Try running `./flow flow:cache:flush` and if that does not help, check the class exists and is correctly namespaced.', $aspectClassName), 1607422151);
+        }
 
         foreach ($methodNames as $methodName) {
             foreach ($this->reflectionService->getMethodAnnotations($aspectClassName, $methodName) as $annotation) {

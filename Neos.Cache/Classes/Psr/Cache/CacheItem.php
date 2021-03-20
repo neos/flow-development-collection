@@ -11,7 +11,6 @@ namespace Neos\Cache\Psr\Cache;
  * source code.
  */
 
-use Neos\Cache\Frontend\PsrFrontend;
 use Psr\Cache\CacheItemInterface;
 
 /**

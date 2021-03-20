@@ -26,9 +26,9 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\RadioViewHelper::class, array('setErrorClassAttribute', 'getName', 'getValueAttribute', 'isObjectAccessorMode', 'getPropertyValue', 'registerFieldNameForFormTokenGeneration', 'registerRenderMethodArguments'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\RadioViewHelper::class, ['setErrorClassAttribute', 'getName', 'getValueAttribute', 'isObjectAccessorMode', 'getPropertyValue', 'registerFieldNameForFormTokenGeneration', 'registerRenderMethodArguments']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->mockTagBuilder = $this->getMockBuilder(\TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder::class)->setMethods(array('setTagName', 'addAttribute'))->getMock();
+        $this->mockTagBuilder = $this->getMockBuilder(\TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder::class)->setMethods(['setTagName', 'addAttribute'])->getMock();
     }
 
     /**
@@ -125,7 +125,7 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
         $this->viewHelper->expects($this->any())->method('getName')->will($this->returnValue('foo'));
         $this->viewHelper->expects($this->any())->method('getValueAttribute')->will($this->returnValue('bar'));
         $this->viewHelper->expects($this->any())->method('isObjectAccessorMode')->will($this->returnValue(true));
-        $this->viewHelper->expects($this->any())->method('getPropertyValue')->will($this->returnValue(array()));
+        $this->viewHelper->expects($this->any())->method('getPropertyValue')->will($this->returnValue([]));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
 

@@ -4,28 +4,28 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target xml:lang="pt-BR" state="translated">Autenticação necessária</target></trans-unit>
+			<target state="translated">Autenticação necessária</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target xml:lang="pt-BR" state="translated">Nome de Usuário</target></trans-unit>
+			<target state="translated">Nome de Usuário</target></trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target xml:lang="pt-BR" state="translated">Senha</target></trans-unit>
+			<target state="translated">Senha</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target xml:lang="pt-BR" state="translated">Nova senha</target></trans-unit>
+			<target state="translated">Nova senha</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target xml:lang="pt-BR" state="translated">Conectar</target></trans-unit>
+			<target state="translated">Conectar</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target xml:lang="pt-BR" state="translated">Sair</target></trans-unit>
+			<target state="translated">Sair</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target xml:lang="pt-BR" state="translated">Atualizar</target></trans-unit>
+			<target state="translated">Atualizar</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target xml:lang="pt-BR" state="translated">Enviar</target></trans-unit>
+			<target state="translated">Enviar</target></trans-unit>
     </body>
   </file>
 </xliff>

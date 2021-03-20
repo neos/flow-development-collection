@@ -55,7 +55,7 @@ class CommandManagerTest extends UnitTestCase
     public function getAvailableCommandsReturnsAllAvailableCommands()
     {
         $commandManager = new CommandManager();
-        $mockCommandControllerClassNames = array(Fixtures\Command\MockACommandController::class, Fixtures\Command\MockBCommandController::class);
+        $mockCommandControllerClassNames = [Fixtures\Command\MockACommandController::class, Fixtures\Command\MockBCommandController::class];
         $this->mockReflectionService->expects($this->once())->method('getAllSubClassNamesForClass')->with(Cli\CommandController::class)->will($this->returnValue($mockCommandControllerClassNames));
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects($this->any())->method('get')->with(ReflectionService::class)->willReturn($this->mockReflectionService);

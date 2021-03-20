@@ -27,7 +27,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Uri\ExternalViewHelper::class, array('renderChildren', 'registerRenderMethodArguments'));
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Uri\ExternalViewHelper::class, ['renderChildren', 'registerRenderMethodArguments']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 

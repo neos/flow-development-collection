@@ -11,10 +11,16 @@ namespace Neos\Flow;
  * source code.
  */
 
+use Neos\Flow\Core\Booting\Step;
+use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
+use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
+use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
+use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Context;
 
 /**
  * The Flow Package
@@ -53,10 +59,10 @@ class Package extends BasePackage
 
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
         $dispatcher->connect(Mvc\Dispatcher::class, 'afterControllerInvocation', function ($request) use ($bootstrap) {
-            if ($bootstrap->getObjectManager()->hasInstance(Persistence\PersistenceManagerInterface::class)) {
-                if (!$request instanceof Mvc\ActionRequest || $request->getHttpRequest()->isMethodSafe() !== true) {
+            if ($bootstrap->getObjectManager()->has(Persistence\PersistenceManagerInterface::class)) {
+                if (!$request instanceof Mvc\ActionRequest || SecurityHelper::hasSafeMethod($request->getHttpRequest()) !== true) {
                     $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();
-                } elseif ($request->getHttpRequest()->isMethodSafe()) {
+                } elseif (SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
                     $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll(true);
                 }
             }
@@ -64,11 +70,11 @@ class Package extends BasePackage
         $dispatcher->connect(Cli\SlaveRequestHandler::class, 'dispatchedCommandLineSlaveRequest', Persistence\PersistenceManagerInterface::class, 'persistAll');
 
         if (!$context->isProduction()) {
-            $dispatcher->connect(Core\Booting\Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
+            $dispatcher->connect(Core\Booting\Sequence::class, 'afterInvokeStep', function (Step $step) use ($bootstrap, $dispatcher) {
                 if ($step->getIdentifier() === 'neos.flow:resources') {
                     $publicResourcesFileMonitor = Monitor\FileMonitor::createFileMonitorAtBoot('Flow_PublicResourcesFiles', $bootstrap);
                     /** @var PackageManager $packageManager */
-                    $packageManager = $bootstrap->getEarlyInstance(Package\PackageManagerInterface::class);
+                    $packageManager = $bootstrap->getEarlyInstance(Package\PackageManager::class);
                     foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
                         if ($packageManager->isPackageFrozen($packageKey)) {
                             continue;
@@ -84,7 +90,7 @@ class Package extends BasePackage
                 }
             });
 
-            $publishResources = function ($identifier, $changedFiles) use ($bootstrap) {
+            $publishResources = function ($identifier) use ($bootstrap) {
                 if ($identifier !== 'Flow_PublicResourcesFiles') {
                     return;
                 }
@@ -98,16 +104,17 @@ class Package extends BasePackage
             $dispatcher->connect(Monitor\FileMonitor::class, 'filesHaveChanged', Cache\CacheManager::class, 'flushSystemCachesByChangedFiles');
         }
 
-        $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Configuration\ConfigurationManager::class, 'shutdown');
+        // The ObjectManager has to be shutdown before the ConfigurationManager, see https://github.com/neos/flow-development-collection/issues/2183
         $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', ObjectManagement\ObjectManagerInterface::class, 'shutdown');
+        $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Configuration\ConfigurationManager::class, 'shutdown');
 
         $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Reflection\ReflectionService::class, 'saveToCache');
 
         $dispatcher->connect(Command\CoreCommandController::class, 'finishedCompilationRun', Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter::class, 'savePolicyCache');
 
-        $dispatcher->connect(Security\Authentication\AuthenticationProviderManager::class, 'authenticatedToken', function () use ($bootstrap) {
+        $dispatcher->connect(Security\Authentication\AuthenticationProviderManager::class, 'authenticatedToken', function (TokenInterface $token) use ($bootstrap) {
             $session = $bootstrap->getObjectManager()->get(Session\SessionInterface::class);
-            if ($session->isStarted()) {
+            if ($session->isStarted() && !$token instanceof SessionlessTokenInterface) {
                 $session->renewId();
             }
         });
@@ -127,8 +134,11 @@ class Package extends BasePackage
 
         $dispatcher->connect(Persistence\Doctrine\EntityManagerFactory::class, 'beforeDoctrineEntityManagerCreation', Persistence\Doctrine\EntityManagerConfiguration::class, 'configureEntityManager');
         $dispatcher->connect(Persistence\Doctrine\EntityManagerFactory::class, 'afterDoctrineEntityManagerCreation', Persistence\Doctrine\EntityManagerConfiguration::class, 'enhanceEntityManager');
- 
+
         $dispatcher->connect(Persistence\Doctrine\PersistenceManager::class, 'allObjectsPersisted', ResourceRepository::class, 'resetAfterPersistingChanges');
         $dispatcher->connect(Persistence\Generic\PersistenceManager::class, 'allObjectsPersisted', ResourceRepository::class, 'resetAfterPersistingChanges');
+
+        $dispatcher->connect(AuthenticationProviderManager::class, 'successfullyAuthenticated', Context::class, 'refreshRoles');
+        $dispatcher->connect(AuthenticationProviderManager::class, 'loggedOut', Context::class, 'refreshTokens');
     }
 }

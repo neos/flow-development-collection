@@ -188,7 +188,7 @@ class AuthenticationTest extends FunctionalTestCase
         $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'a_very_secure_long_password';
 
         $response = $this->browser->request('http://localhost/test/security/authentication/usernamepassword', 'POST', $arguments);
-        $this->assertNotEmpty($response->getCookies());
+        $this->assertNotEmpty($response->getHeader('Set-Cookie'));
     }
 
     /**

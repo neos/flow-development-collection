@@ -529,7 +529,6 @@ class PropertyMapperTest extends UnitTestCase
 
     /**
      * @test
-     * @doesNotPerformAssertions
      * @dataProvider convertCallsCanConvertFromWithNullableTargetTypeDataProvider
      */
     public function convertCallsCanConvertFromWithNullableTargetType($source, $fullTargetType)

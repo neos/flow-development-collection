@@ -105,8 +105,8 @@ abstract class Files
             throw new FilesException('"' . $path . '" is no directory.', 1207253462);
         }
 
-        $directories = array(self::getNormalizedPath($path));
-        while ($directories !== array()) {
+        $directories = [self::getNormalizedPath($path)];
+        while ($directories !== []) {
             $currentDirectory = array_pop($directories);
             if ($handle = opendir($currentDirectory)) {
                 while (false !== ($filename = readdir($handle))) {
@@ -118,7 +118,7 @@ abstract class Files
                         continue;
                     }
 
-                    $pathAndFilename = self::concatenatePaths(array($currentDirectory, $filename));
+                    $pathAndFilename = self::concatenatePaths([$currentDirectory, $filename]);
                     if (is_dir($pathAndFilename)) {
                         array_push($directories, self::getNormalizedPath($pathAndFilename));
                     } elseif ($suffix === null || strpos(strrev($filename), strrev($suffix)) === 0) {
@@ -510,7 +510,7 @@ abstract class Files
         if (DIRECTORY_SEPARATOR !== '/') {
             $relativeTargetPath = str_replace('/', '\\', $relativeTargetPath);
             $flag = (is_dir($target) ? '/d' : '');
-            $output = array();
+            $output = [];
             $return = 0;
             // See https://bugs.php.net/bug.php?id=69473 and http://www.howtogeek.com/howto/16226/complete-guide-to-symbolic-links-symlinks-on-windows-or-linux/
             exec(sprintf('mklink %s %s %s', $flag, escapeshellarg($link), escapeshellarg($relativeTargetPath)), $output, $return);

@@ -63,10 +63,6 @@ abstract class AbstractProvider implements AuthenticationProviderInterface
      */
     public function canAuthenticate(TokenInterface $authenticationToken)
     {
-        if ($authenticationToken->getAuthenticationProviderName() === $this->name) {
-            return true;
-        } else {
-            return false;
-        }
+        return ($authenticationToken->getAuthenticationProviderName() === $this->name);
     }
 }

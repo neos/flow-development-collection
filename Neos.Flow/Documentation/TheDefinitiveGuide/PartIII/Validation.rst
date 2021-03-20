@@ -1,4 +1,4 @@
-==========
+﻿==========
 Validation
 ==========
 
@@ -83,7 +83,9 @@ itself possibly fail the validation and try to redirect to previous action, endi
 	validation, or else you might end up with an infinite loop on failing validation.
 
 Furthermore, it is also possible to execute *additional validators* only for specific action
-arguments using ``@Flow\Validate`` inside a controller action::
+arguments using ``@Flow\Validate`` inside a controller action:
+
+.. code-block:: php
 
     class CommentController extends \Neos\Flow\Mvc\Controller\ActionController {
 
@@ -111,7 +113,9 @@ A validator is a PHP class being responsible for checking validity of a certain 
 simple type.
 
 All validators implement ``\Neos\Flow\Validation\Validator\ValidatorInterface``, and
-the API of every validator is demonstrated in the following code example::
+the API of every validator is demonstrated in the following code example:
+
+.. code-block:: php
 
     // NOTE: you should always use the ValidatorResolver to create new
     // validators, as it is demonstrated in the next section.
@@ -203,19 +207,19 @@ The returned validator checks the following things:
 
   .. code-block:: php
 
-  	namespace YourPackage\Domain\Model;
-  	use Neos\Flow\Annotations as Flow;
+    namespace YourPackage\Domain\Model;
+    use Neos\Flow\Annotations as Flow;
 
-  	class Comment
+    class Comment
     {
 
-  	    /**
-  	     * @Flow\Validate(type="NotEmpty")
-  	     */
-  	    protected $text;
+        /**
+         * @Flow\Validate(type="NotEmpty")
+         */
+        protected $text;
 
-  	    // Add getters and setters here
-  	}
+        // Add getters and setters here
+    }
 
   It also correctly builds up validators for ``Collections`` or ``arrays``, if they are properly
   typed (``Doctrine\Common\Collection<YourPackage\Domain\Model\Author>``).
@@ -224,6 +228,44 @@ The returned validator checks the following things:
   Validator* exists; i.e. for the Domain Model ``YourPackage\Domain\Model\Comment`` it is checked
   whether ``YourPackage\Domain\Validator\CommentValidator`` exists. If it exists, it is automatically
   called on validation.
+
+  These *Domain Model Validators* can also mark some specific properties as failed and add specific error messages:
+
+  .. code-block:: php
+
+    class CommentValidator extends AbstractValidator
+    {
+        public function isValid($value)
+        {
+            if ($value instanceof \YourPackage\Domain\Model\Comment) {
+                $this->pushResult()->forProperty('text')->addError(
+                                new Error('text can´t be empty.', 1221560910)
+                            );
+            }
+        }
+    }
+
+Normally, you would need to annotate Collection and Model type properties, so that the collection elements and
+the model would be validated like this:
+
+.. code-block:: php
+
+        /**
+         * @var SomeDomainModel
+         * @Flow\Validate(type="GenericObject")
+         */
+        protected $someRelatedModel;
+
+        /**
+         * @var Collection<SomeOtherDomainModel>
+         * @Flow\Validate(type="Collection")
+         */
+        protected $someOtherRelatedModels;
+
+For convenience, those validators will be added automatically if they are left out, because Flow will always validate
+Model hierarchies. In some cases, it might be necessary to override validation behaviour of those properties,
+e.g. when you want to limit validation with Validation Groups (see below). In that case, you can just explicitly annotate
+the property with additional options and this will then override the automatically generated validator.
 
 When specifying a Domain Model as an argument of a controller action, all the above validations will be
 automatically executed. This is explained in detail in the following section.
@@ -271,7 +313,9 @@ validate uniqueness of a property like an e-mail adress only in your createActio
 
 A validator is only executed if at least one validation group overlap.
 
-The following example demonstrates this::
+The following example demonstrates this:
+
+.. code-block:: php
 
     class Comment
     {
@@ -324,6 +368,10 @@ The following example demonstrates this::
 If interacting with the ``ValidatorResolver`` directly, the to-be-used validation groups
 can be specified as the last argument of ``getBaseValidatorConjunction()``.
 
+.. note::
+  When trying to set the validation groups of a collection or a whole model, which are normally not annotated for
+  you can explicitly specify a "Collection" or "GenericObject" type validator on the property and set the according validationGroup.
+
 Avoiding Duplicate Validation and Recursion
 ===========================================
 
@@ -347,7 +395,9 @@ Writing Validators
 
 Usually, when writing your own validator, you will not directly implement ``ValidatorInterface``, but
 rather subclass ``AbstractValidator``. You only need to specify any options your validator might use and
-implement the ``isValid()`` method then::
+implement the ``isValid()`` method then:
+
+.. code-block:: php
 
     /**
      * A validator for checking items against foos.
@@ -363,14 +413,12 @@ implement the ``isValid()`` method then::
         );
 
         /**
-         * Check if the given value is a valid foo item. What constitutes a valid foo
-         is determined through the 'foo' option.
+         * Check if the given value is a valid foo item. What constitutes a valid foo is determined through the 'foo' option.
          *
          * @param mixed $value
          * @return void
          */
-        protected function isValid($value)
-        {
+        protected function isValid($value) {
             if (!isset($this->options['foo'])) {
                 throw new \Neos\Flow\Validation\Exception\InvalidValidationOptionsException(
                     'The option "foo" for this validator needs to be specified', 12346788
@@ -403,7 +451,7 @@ is an array with the following numerically indexed elements:
 # type of the option (used for documentation rendering)
 # required option flag (optional, defaults to FALSE)
 
-The default values are set in the constructor of the abstract validators provided with FLOW3. If the
+The default values are set in the constructor of the abstract validators provided with Flow. If the
 required flag is set, missing options will cause an ``InvalidValidationOptionsException`` to be thrown
 when the validator is instantiated.
 

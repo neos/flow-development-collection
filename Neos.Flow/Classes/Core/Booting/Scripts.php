@@ -39,12 +39,11 @@ use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\FlowPackageInterface;
-use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Package\PackageManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Reflection\ReflectionServiceFactory;
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
-use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
@@ -52,7 +51,6 @@ use Neos\Utility\Lock\Lock;
 use Neos\Utility\Lock\LockManager;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Exception as FlowException;
-use Psr\Log\LogLevel;
 
 /**
  * Initialization scripts for modules of the Flow package
@@ -392,23 +390,24 @@ class Scripts
     public static function initializeProxyClasses(Bootstrap $bootstrap)
     {
         $objectConfigurationCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Configuration');
+        if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === true) {
+            return;
+        }
 
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
         // The compile sub command will only be run if the code cache is completely empty:
-        if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
-            OpcodeCacheHelper::clearAllActive(FLOW_PATH_CONFIGURATION);
-            OpcodeCacheHelper::clearAllActive(FLOW_PATH_DATA);
-            self::executeCommand('neos.flow:core:compile', $settings);
-            if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === true) {
-                self::compileDoctrineProxies($bootstrap);
-            }
-
-            // As the available proxy classes were already loaded earlier we need to refresh them if the proxies where recompiled.
-            $proxyClassLoader = $bootstrap->getEarlyInstance(ProxyClassLoader::class);
-            $proxyClassLoader->initializeAvailableProxyClasses($bootstrap->getContext());
+        OpcodeCacheHelper::clearAllActive(FLOW_PATH_CONFIGURATION);
+        OpcodeCacheHelper::clearAllActive(FLOW_PATH_DATA);
+        self::executeCommand('neos.flow:core:compile', $settings);
+        if (isset($settings['persistence']['doctrine']['enable']) && $settings['persistence']['doctrine']['enable'] === true) {
+            self::compileDoctrineProxies($bootstrap);
         }
+
+        // As the available proxy classes were already loaded earlier we need to refresh them if the proxies where recompiled.
+        $proxyClassLoader = $bootstrap->getEarlyInstance(ProxyClassLoader::class);
+        $proxyClassLoader->initializeAvailableProxyClasses($bootstrap->getContext());
 
         // Check if code was updated, if not something went wrong
         if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
@@ -521,28 +520,27 @@ class Scripts
     }
 
     /**
-     * Initializes the Reflection Service
+     * Initializes the Reflection Service Factory
      *
      * @param Bootstrap $bootstrap
      * @return void
      */
+    public static function initializeReflectionServiceFactory(Bootstrap $bootstrap)
+    {
+        $reflectionServiceFactory = new ReflectionServiceFactory($bootstrap);
+        $bootstrap->setEarlyInstance(ReflectionServiceFactory::class, $reflectionServiceFactory);
+        $bootstrap->getObjectManager()->setInstance(ReflectionServiceFactory::class, $reflectionServiceFactory);
+    }
+
+    /**
+     * Initializes the Reflection Service
+     *
+     * @param Bootstrap $bootstrap
+     * @throws FlowException
+     */
     public static function initializeReflectionService(Bootstrap $bootstrap)
     {
-        $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
-        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
-        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
-
-        $reflectionService = new ReflectionService();
-
-        $reflectionService->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
-        $reflectionService->injectSettings($settings);
-        $reflectionService->injectPackageManager($bootstrap->getEarlyInstance(PackageManager::class));
-        $reflectionService->setStatusCache($cacheManager->getCache('Flow_Reflection_Status'));
-        $reflectionService->setReflectionDataCompiletimeCache($cacheManager->getCache('Flow_Reflection_CompiletimeData'));
-        $reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeData'));
-        $reflectionService->setClassSchemataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeClassSchemata'));
-        $reflectionService->injectEnvironment($bootstrap->getEarlyInstance(Environment::class));
-
+        $reflectionService = $bootstrap->getEarlyInstance(ReflectionServiceFactory::class)->create();
         $bootstrap->setEarlyInstance(ReflectionService::class, $reflectionService);
         $bootstrap->getObjectManager()->setInstance(ReflectionService::class, $reflectionService);
     }
@@ -666,19 +664,6 @@ class Scripts
     }
 
     /**
-     * Initializes the session framework
-     *
-     * @param Bootstrap $bootstrap
-     * @return void
-     */
-    public static function initializeSession(Bootstrap $bootstrap)
-    {
-        if (FLOW_SAPITYPE === 'Web') {
-            $bootstrap->getObjectManager()->get(SessionInterface::class)->resume();
-        }
-    }
-
-    /**
      * Initialize the stream wrappers.
      *
      * @param Bootstrap $bootstrap
@@ -749,7 +734,7 @@ class Scripts
      * @return void
      * @api
      */
-    public static function executeCommandAsync(string $commandIdentifier, array $settings, array $commandArguments = array())
+    public static function executeCommandAsync(string $commandIdentifier, array $settings, array $commandArguments = [])
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
         if (DIRECTORY_SEPARATOR === '/') {
@@ -792,6 +777,7 @@ class Scripts
     /**
      * @param array $settings The Neos.Flow settings
      * @return string A command line command for PHP, which can be extended and then exec()uted
+     * @throws FlowException
      */
     public static function buildPhpCommand(array $settings): string
     {
@@ -803,6 +789,8 @@ class Scripts
         if (isset($settings['core']['subRequestEnvironmentVariables'])) {
             $subRequestEnvironmentVariables = array_merge($subRequestEnvironmentVariables, $settings['core']['subRequestEnvironmentVariables']);
         }
+
+        static::ensureCLISubrequestsUseCurrentlyRunningPhpBinary($settings['core']['phpBinaryPathAndFilename']);
 
         $command = '';
         foreach ($subRequestEnvironmentVariables as $argumentKey => $argumentValue) {
@@ -828,7 +816,92 @@ class Scripts
             $command .= ' -c ' . escapeshellarg($useIniFile);
         }
 
+        static::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
+
         return $command;
+    }
+
+    /**
+     * Compares the realpath of the configured PHP binary (if any) with the one flow was called with in a CLI request.
+     * This avoids config errors where users forget to set Neos.Flow.core.phpBinaryPathAndFilename in CLI.
+     *
+     * @param string phpBinaryPathAndFilename
+     * @throws FlowException
+     */
+    protected static function ensureCLISubrequestsUseCurrentlyRunningPhpBinary($phpBinaryPathAndFilename)
+    {
+        // Do nothing for non-CLI requests
+        if (PHP_SAPI !== 'cli') {
+            return;
+        }
+
+        // Ensure the actual PHP binary is known before checking if it is correct. If empty, we ignore it because it is checked later in the script.
+        if (strlen($phpBinaryPathAndFilename) === 0) {
+            return;
+        }
+
+        // Try to resolve which binary file PHP is pointing to
+        exec($phpBinaryPathAndFilename . ' -r "echo realpath(PHP_BINARY);"', $output, $result);
+        if ($result === 0 && sizeof($output) === 1) {
+            // Resolve any wrapper
+            $configuredPhpBinaryPathAndFilename = $output[0];
+        } else {
+            // Resolve any symlinks that the configured php might be pointing to
+            $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
+        }
+
+        // if the configured PHP binary is empty here, the file does not exist. We ignore that here because it is checked later in the script.
+        if ($configuredPhpBinaryPathAndFilename === false || strlen($configuredPhpBinaryPathAndFilename) === 0) {
+            return;
+        }
+
+        $realPhpBinary = realpath(PHP_BINARY);
+        if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
+            throw new FlowException(sprintf(
+                'You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
+                'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
+                'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
+                'caches by removing the folder Data/Temporary before running ./flow again.',
+                $realPhpBinary,
+                $configuredPhpBinaryPathAndFilename,
+                $realPhpBinary
+            ), 1536303119);
+        }
+    }
+
+    /**
+     * Compares the actual version of the configured PHP binary (if any) with the one flow was called with in a non-CLI request.
+     * This avoids config errors where users forget to set Neos.Flow.core.phpBinaryPathAndFilename in connection with a web
+     * server.
+     *
+     * @param string $phpCommand the completely build php string that is used to execute subrequests
+     * @throws FlowException
+     */
+    protected static function ensureWebSubrequestsUseCurrentlyRunningPhpVersion($phpCommand)
+    {
+        // Do nothing for CLI requests
+        if (PHP_SAPI === 'cli') {
+            return;
+        }
+
+        exec($phpCommand . ' -r "echo PHP_VERSION;"', $output, $result);
+
+        if ($result !== 0) {
+            return;
+        }
+
+        $configuredPHPVersion = $output[0];
+        if (array_slice(explode('.', $configuredPHPVersion), 0, 2) !== array_slice(explode('.', PHP_VERSION), 0, 2)) {
+            throw new FlowException(sprintf(
+                'You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
+                'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
+                'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
+                '%s. Flush the caches by removing the folder Data/Temporary before executing Flow/Neos again.',
+                PHP_VERSION,
+                $configuredPHPVersion,
+                PHP_VERSION
+            ), 1536563428);
+        }
     }
 
     /**

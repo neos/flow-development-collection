@@ -75,7 +75,7 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
      * @throws ViewHelper\Exception if $action argument is not specified and $ajax is false
      * @api
      */
-    public function render($action = null, $arguments = array(), $section = '', $format = '', $ajax = false, $includeWidgetContext = false)
+    public function render($action = null, $arguments = [], $section = '', $format = '', $ajax = false, $includeWidgetContext = false)
     {
         if ($ajax === true) {
             $uri = $this->getAjaxUri();
@@ -135,11 +135,11 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
     {
         $uriBuilder = $this->controllerContext->getUriBuilder();
 
-        $argumentsToBeExcludedFromQueryString = array(
+        $argumentsToBeExcludedFromQueryString = [
             '@package',
             '@subpackage',
             '@controller'
-        );
+        ];
 
         $uriBuilder
             ->reset()

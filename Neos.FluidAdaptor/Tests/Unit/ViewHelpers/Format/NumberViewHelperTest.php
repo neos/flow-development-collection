@@ -26,7 +26,7 @@ class NumberViewHelperTest extends ViewHelperBaseTestcase
 
     public function setUp()
     {
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper::class)->setMethods(array('renderChildren', 'registerRenderMethodArguments'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
     }
 
     /**
@@ -56,11 +56,11 @@ class NumberViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperUsesNumberFormatterOnGivenLocale()
     {
-        $mockNumberFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\NumberFormatter::class)->setMethods(array('formatDecimalNumber'))->getMock();
+        $mockNumberFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\NumberFormatter::class)->setMethods(['formatDecimalNumber'])->getMock();
         $mockNumberFormatter->expects($this->once())->method('formatDecimalNumber');
 
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
-        $this->viewHelper->setArguments(array());
+        $this->viewHelper->setArguments([]);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['decimals' => 2, 'decimalSeparator' => '#', 'thousandsSeparator' => '*', 'forceLocale' => 'de_DE']);
         $this->viewHelper->render();
     }
@@ -72,11 +72,11 @@ class NumberViewHelperTest extends ViewHelperBaseTestcase
     {
         $localizationConfiguration = new \Neos\Flow\I18n\Configuration('de_DE');
 
-        $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(array('getConfiguration'))->getMock();
+        $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(['getConfiguration'])->getMock();
         $mockLocalizationService->expects($this->once())->method('getConfiguration')->will($this->returnValue($localizationConfiguration));
         $this->inject($this->viewHelper, 'localizationService', $mockLocalizationService);
 
-        $mockNumberFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\NumberFormatter::class)->setMethods(array('formatDecimalNumber'))->getMock();
+        $mockNumberFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\NumberFormatter::class)->setMethods(['formatDecimalNumber'])->getMock();
         $mockNumberFormatter->expects($this->once())->method('formatDecimalNumber');
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
 
@@ -93,11 +93,11 @@ class NumberViewHelperTest extends ViewHelperBaseTestcase
     {
         $localizationConfiguration = new \Neos\Flow\I18n\Configuration('de_DE');
 
-        $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(array('getConfiguration'))->getMock();
+        $mockLocalizationService = $this->getMockBuilder(\Neos\Flow\I18n\Service::class)->setMethods(['getConfiguration'])->getMock();
         $mockLocalizationService->expects($this->once())->method('getConfiguration')->will($this->returnValue($localizationConfiguration));
         $this->inject($this->viewHelper, 'localizationService', $mockLocalizationService);
 
-        $mockNumberFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\NumberFormatter::class)->setMethods(array('formatDecimalNumber'))->getMock();
+        $mockNumberFormatter = $this->getMockBuilder(\Neos\Flow\I18n\Formatter\NumberFormatter::class)->setMethods(['formatDecimalNumber'])->getMock();
         $mockNumberFormatter->expects($this->once())->method('formatDecimalNumber')->will($this->throwException(new \Neos\Flow\I18n\Exception()));
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
 

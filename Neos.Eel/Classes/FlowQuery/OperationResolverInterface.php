@@ -11,7 +11,6 @@ namespace Neos\Eel\FlowQuery;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * FlowQuery Operation Resolver Interface

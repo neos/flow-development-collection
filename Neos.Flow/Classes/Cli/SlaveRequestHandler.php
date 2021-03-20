@@ -16,9 +16,9 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\RequestHandlerInterface;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Dispatcher;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * A special request handler which handles "slave" command requests as used by
@@ -70,6 +70,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
      * them in runtime mode.
      *
      * @return void
+     * @throws FlowException
      */
     public function handleRequest()
     {
@@ -87,7 +88,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
             while (true) {
                 $commandLine = trim(fgets(STDIN));
                 $trimmedCommandLine = trim($commandLine);
-                $logger->info(sprintf('Received command "%s".', $trimmedCommandLine));
+                $logger->info(sprintf('Received command "%s".', $trimmedCommandLine), LogEnvironment::fromMethodName(__METHOD__));
                 if ($commandLine === "QUIT\n") {
                     break;
                 }

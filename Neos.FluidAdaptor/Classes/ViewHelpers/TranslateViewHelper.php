@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\ViewHelpers;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;
@@ -87,7 +86,7 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
     {
         $this->registerArgument('id', 'string', 'Id to use for finding translation (trans-unit id in XLIFF)', false, null);
         $this->registerArgument('value', 'string', 'If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default', false, null);
-        $this->registerArgument('arguments', 'array', 'Numerically indexed array of values to be inserted into placeholders', false, array());
+        $this->registerArgument('arguments', 'array', 'Numerically indexed array of values to be inserted into placeholders', false, []);
         $this->registerArgument('source', 'string', 'Name of file with translations (use / as a directory separator)', false, 'Main');
         $this->registerArgument('package', 'string', 'Target package key. If not set, the current package key will be used', false, null);
         $this->registerArgument('quantity', 'mixed', 'A number to find plural form for (float or int), NULL to not use plural forms', false, null);
@@ -127,8 +126,10 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
                 $package = $request->getControllerPackageKey();
             }
             if ($package === null) {
-                throw new ViewHelperException('The current package key can\'t be resolved. Make sure to initialize the Fluid view with a proper ActionRequest and/or specify the "package" argument when using the f:translate ViewHelper',
-                    1416832309);
+                throw new ViewHelperException(
+                    'The current package key can\'t be resolved. Make sure to initialize the Fluid view with a proper ActionRequest and/or specify the "package" argument when using the f:translate ViewHelper',
+                    1416832309
+                );
             }
         }
         $originalLabel = $value === null ? $this->renderChildren() : $value;

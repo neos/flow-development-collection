@@ -17,11 +17,9 @@ require_once(FLOW_PATH_PACKAGES . '/Framework/Neos.Flow/Tests/Behavior/Features/
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\Provider\TestingProvider;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;

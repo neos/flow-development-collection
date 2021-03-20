@@ -122,6 +122,19 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
     /**
      * @test
      */
+    public function collectionValidatorIsValidEarlyReturnsOnUnitializedDoctrineAbstractLazyCollections()
+    {
+        $doctrineArrayCollection = $this->getMockBuilder(\Doctrine\Common\Collections\AbstractLazyCollection::class)->disableOriginalConstructor()->getMock();
+        $doctrineArrayCollection->method('isInitialized')->willReturn(false);
+
+        $this->mockValidatorResolver->expects(self::never())->method('createValidator');
+
+        $this->validator->validate($doctrineArrayCollection);
+    }
+
+    /**
+     * @test
+     */
     public function collectionValidatorTransfersElementValidatorOptionsToTheElementValidator()
     {
         $elementValidatorOptions = ['minimum' => 5];

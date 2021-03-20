@@ -28,7 +28,7 @@ class PaddingViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\PaddingViewHelper::class)->setMethods(array('renderChildren', 'registerRenderMethodArguments'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\PaddingViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 

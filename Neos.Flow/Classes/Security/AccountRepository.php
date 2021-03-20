@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
-use Neos\Flow\Session\SessionManagerInterface;
+use Neos\Flow\Security\Context as SecurityContext;
 
 /**
  * The repository for accounts
@@ -35,10 +35,12 @@ class AccountRepository extends Repository
     protected $defaultOrderings = ['creationDate' => QueryInterface::ORDER_DESCENDING];
 
     /**
+     * Note: This is not required to be "the" SecurityContext of the current session, but any SecurityContext actually.
+     *
      * @Flow\Inject
-     * @var SessionManagerInterface
+     * @var SecurityContext
      */
-    protected $sessionManager;
+    protected $securityContext;
 
     /**
      * Removes an account
@@ -50,9 +52,9 @@ class AccountRepository extends Repository
     public function remove($object)
     {
         parent::remove($object);
-        /** @var Account $object */
-        $tag = 'Neos-Flow-Security-Account-' . md5($object->getAccountIdentifier());
-        $this->sessionManager->destroySessionsByTag($tag, sprintf('The account %s (%s) was deleted', $object->getAccountIdentifier(), $object->getAuthenticationProviderName()));
+
+        // destroy the sessions for the account to be removed
+        $this->securityContext->destroySessionsForAccount($object);
     }
 
     /**

@@ -218,10 +218,10 @@ class DateTimeConverterTest extends UnitTestCase
      */
     public function convertFromIntegerOrDigitStringsWithConfigurationWithoutFormatDataProvider()
     {
-        return array(
-            array('1308174051'),
-            array(1308174051),
-        );
+        return [
+            ['1308174051'],
+            [1308174051],
+        ];
     }
 
     /**
@@ -238,7 +238,7 @@ class DateTimeConverterTest extends UnitTestCase
             ->with(DateTimeConverter::class, DateTimeConverter::CONFIGURATION_DATE_FORMAT)
             ->will($this->returnValue(null));
 
-        $date = $this->converter->convertFrom($source, 'DateTime', array(), $mockMappingConfiguration);
+        $date = $this->converter->convertFrom($source, 'DateTime', [], $mockMappingConfiguration);
         $this->assertInstanceOf(\DateTime::class, $date);
         $this->assertSame(strval($source), $date->format('U'));
     }

@@ -17,10 +17,11 @@ use Neos\Flow\Composer\ComposerUtility as ComposerUtility;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\SignalSlot\Dispatcher;
-use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Package\Exception as PackageException;
+use Composer\Console\Application as ComposerApplication;
+use Symfony\Component\Console\Input\ArrayInput;
 
 /**
  * The default Flow Package Manager
@@ -111,7 +112,7 @@ class PackageManager implements PackageManagerInterface
      */
     public function injectSettings(array $settings)
     {
-        $this->settings = $settings;
+        $this->settings = $settings['package'];
     }
 
     /**
@@ -341,10 +342,27 @@ class PackageManager implements PackageManagerInterface
             $manifest['type'] = PackageInterface::DEFAULT_COMPOSER_TYPE;
         }
 
+        $runComposerRequireForTheCreatedPackage = false;
+        if ($packagesPath === null) {
+            $composerManifestRepositories = ComposerUtility::getComposerManifest(FLOW_PATH_ROOT, 'repositories');
+            if (is_array($composerManifestRepositories)) {
+                foreach ($composerManifestRepositories as $repository) {
+                    if (is_array($repository) &&
+                        isset($repository['type']) && $repository['type'] === 'path' &&
+                        isset($repository['url']) &&  substr($repository['url'], 0, 2) === './' && substr($repository['url'], -2) === '/*'
+                    ) {
+                        $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([FLOW_PATH_ROOT, substr($repository['url'], 0, -2)]));
+                        $runComposerRequireForTheCreatedPackage = true;
+                        break;
+                    }
+                }
+            }
+        }
+
         if ($packagesPath === null) {
             $packagesPath = 'Application';
-            if (is_array($this->settings['package']['packagesPathByType']) && isset($this->settings['package']['packagesPathByType'][$manifest['type']])) {
-                $packagesPath = $this->settings['package']['packagesPathByType'][$manifest['type']];
+            if (is_array($this->settings['packagesPathByType']) && isset($this->settings['packagesPathByType'][$manifest['type']])) {
+                $packagesPath = $this->settings['packagesPathByType'][$manifest['type']];
             }
 
             $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([$this->packagesBasePath, $packagesPath]));
@@ -365,6 +383,22 @@ class PackageManager implements PackageManagerInterface
         }
 
         $manifest = ComposerUtility::writeComposerManifest($packagePath, $packageKey, $manifest);
+
+        if ($runComposerRequireForTheCreatedPackage) {
+            $composerRequireArguments = new ArrayInput([
+                'command' => 'require',
+                'packages' => [$manifest['name'] . ' @dev'],
+                '--working-dir' => FLOW_PATH_ROOT
+            ]);
+
+            $composerApplication = new ComposerApplication();
+            $composerApplication->setAutoExit(false);
+            $composerErrorCode = $composerApplication->run($composerRequireArguments);
+
+            if ($composerErrorCode !== 0) {
+                throw new Exception("The installation was not successful. Composer returned the error code: $composerErrorCode", 1572187932);
+            }
+        }
 
         $refreshedPackageStatesConfiguration = $this->rescanPackages();
         $this->packageStatesConfiguration = $refreshedPackageStatesConfiguration;
@@ -554,10 +588,12 @@ class PackageManager implements PackageManagerInterface
             $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest);
             if (isset($newPackageStatesConfiguration['packages'][$composerManifest['name']])) {
                 throw new PackageException(
-                    sprintf('The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
+                    sprintf(
+                        'The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
                         $composerManifest['name'],
                         $packageConfiguration['packagePath'],
-                        $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']),
+                        $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']
+                    ),
                     1493030262
                 );
             }

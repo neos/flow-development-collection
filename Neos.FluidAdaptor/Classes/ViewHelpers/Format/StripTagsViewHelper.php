@@ -13,7 +13,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
 
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**

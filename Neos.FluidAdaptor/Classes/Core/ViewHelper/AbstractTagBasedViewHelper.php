@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 /**
@@ -35,7 +34,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
      *
      * @var array
      */
-    private static $tagAttributes = array();
+    private static $tagAttributes = [];
 
     /**
      * Tag builder instance
@@ -162,7 +161,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
      */
     public function handleAdditionalArguments(array $arguments)
     {
-        $unassigned = array();
+        $unassigned = [];
         foreach ($arguments as $argumentName => $argumentValue) {
             if (strpos($argumentName, 'data-') === 0) {
                 $this->tag->addAttribute($argumentName, $argumentValue);

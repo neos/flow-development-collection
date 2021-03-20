@@ -28,6 +28,7 @@ class ActionControllerTestBController extends ActionController
         $propertyMappingConfiguration->allowAllProperties();
         $propertyMappingConfiguration->forProperty('collection')->allowAllProperties();
         $propertyMappingConfiguration->forProperty('collection.*')->allowAllProperties();
+        $propertyMappingConfiguration->forProperty('related')->allowAllProperties();
     }
 
     /**
@@ -95,10 +96,20 @@ class ActionControllerTestBController extends ActionController
 
     /**
      * @param TestObjectArgument $argument
+     * @Flow\ValidationGroups({"notValidatedGroup"})
+     * @return string
+     */
+    public function notValidatedGroupCollectionAction(TestObjectArgument $argument)
+    {
+        return $argument->getCollection()->get(0)->getEmailAddress();
+    }
+
+    /**
+     * @param TestObjectArgument $argument
      * @Flow\ValidationGroups({"validatedGroup"})
      * @return string
      */
-    public function validatedCollectionObjectAction(TestObjectArgument $argument)
+    public function validatedGroupCollectionAction(TestObjectArgument $argument)
     {
         return $argument->getCollection()->get(0)->getEmailAddress();
     }

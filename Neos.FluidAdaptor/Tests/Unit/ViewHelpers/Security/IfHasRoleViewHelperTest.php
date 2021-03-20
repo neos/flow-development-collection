@@ -90,10 +90,10 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
     protected function getMockControllerContext()
     {
         $httpRequest = Request::create(new Uri('http://robertlemke.com/blog'));
-        $mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->setConstructorArgs(array($httpRequest))->getMock();
+        $mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->setConstructorArgs([$httpRequest])->getMock();
         $mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('Acme.Demo'));
 
-        $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->setMethods(array('getRequest'))->disableOriginalConstructor()->getMock();
+        $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->setMethods(['getRequest'])->disableOriginalConstructor()->getMock();
         $mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
         return $mockControllerContext;

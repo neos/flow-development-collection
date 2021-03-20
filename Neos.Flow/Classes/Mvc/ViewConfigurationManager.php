@@ -16,7 +16,6 @@ use Neos\Eel\Context;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Utility\Arrays;
 
 /**
  * A View Configuration Manager

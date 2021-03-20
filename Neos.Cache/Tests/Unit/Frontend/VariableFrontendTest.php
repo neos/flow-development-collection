@@ -14,7 +14,6 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  */
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\Backend\NullBackend;
-use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Backend\TaggableBackendInterface;
 use Neos\Cache\Frontend\StringFrontend;

@@ -32,7 +32,7 @@ class HtmlentitiesDecodeViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\HtmlentitiesDecodeViewHelper::class)->setMethods(array('renderChildren', 'registerRenderMethodArguments'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\HtmlentitiesDecodeViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 

@@ -12,7 +12,6 @@ namespace Neos\Eel\Tests\Unit\FlowQuery\Operations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Eel\FlowQuery\Operations\AddOperation;
 use Neos\Eel\FlowQuery\Operations\RemoveOperation;
 
 /**

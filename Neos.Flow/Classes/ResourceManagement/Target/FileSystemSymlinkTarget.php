@@ -18,7 +18,6 @@ use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\Files;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Flow\ResourceManagement\Target\Exception as TargetException;
-use Psr\Log\LogLevel;
 
 /**
  * A target which publishes resources by creating symlinks.
@@ -60,8 +59,8 @@ class FileSystemSymlinkTarget extends FileSystemTarget
     protected function publishFile($sourceStream, $relativeTargetPathAndFilename)
     {
         $pathInfo = UnicodeFunctions::pathinfo($relativeTargetPathAndFilename);
-        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->extensionBlacklist) && $this->extensionBlacklist[strtolower($pathInfo['extension'])] === true) {
-            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is blacklisted.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447152230);
+        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->excludedExtensions) && $this->excludedExtensions[strtolower($pathInfo['extension'])] === true) {
+            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is excluded.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447152230);
         }
 
         $streamMetaData = stream_get_meta_data($sourceStream);

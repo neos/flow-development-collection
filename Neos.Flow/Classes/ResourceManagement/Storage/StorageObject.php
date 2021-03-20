@@ -11,7 +11,6 @@ namespace Neos\Flow\ResourceManagement\Storage;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\ResourceMetaDataInterface;
 use Neos\Utility\MediaTypes;

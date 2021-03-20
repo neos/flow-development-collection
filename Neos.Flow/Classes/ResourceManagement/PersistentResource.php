@@ -24,7 +24,7 @@ use Neos\Flow\ResourceManagement\Exception as ResourceException;
  * Model representing a persistable resource
  *
  * @Flow\Entity
- * @ORM\Table(indexes={@ORM\Index(columns={"sha1"})})
+ * @ORM\Table(indexes={@ORM\Index(name="IDX_35DC14F03332102A",columns={"sha1"})})
  */
 class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterface
 {
@@ -143,7 +143,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      *
      * Note: The caller is responsible to close the returned resource by calling fclose($stream)
      *
-     * @return resource | boolean A stream which points to the data of this resource for read-access or false if the stream could not be obtained
+     * @return resource|boolean A stream which points to the data of this resource for read-access or false if the stream could not be obtained
      * @api
      */
     public function getStream()

@@ -12,6 +12,7 @@ namespace Neos\Flow\Security\RequestPattern;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -86,7 +87,7 @@ class CsrfProtection implements RequestPatternInterface
      */
     public function matchRequest(RequestInterface $request)
     {
-        if (!$request instanceof ActionRequest || $request->getHttpRequest()->isMethodSafe()) {
+        if (!$request instanceof ActionRequest || SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
             $this->logger->debug('CSRF: No token required, safe request');
             return false;
         }

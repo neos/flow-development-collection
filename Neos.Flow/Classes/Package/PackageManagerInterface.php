@@ -16,6 +16,8 @@ use Neos\Flow\Core\Bootstrap;
  * Interface for the Flow Package Manager
  *
  * @api
+ * @deprecated Directly use the PackageManager
+ * @see PackageManager
  */
 interface PackageManagerInterface
 {
