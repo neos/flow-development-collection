@@ -116,7 +116,7 @@ You might already have stumbled across such an exception (though hopefully not!)
 
 .. note::
 
-  As of Flow 7.1 you can configure if the HTTP Request should be logged in the default exception handler via the setting ``Neos.Flow.log.throwables.renderRequestInformation``.
+  As of Flow 7.1 you can configure if the HTTP Request should be logged in the default ThrowableStorage via the boolean setting ``Neos.Flow.log.throwables.renderRequestInformation``.
   This could be a requirement in order to prevent storing personally identifiable information that is submitted in the request headers or the URL.
 
 .. _throwable-storage:
