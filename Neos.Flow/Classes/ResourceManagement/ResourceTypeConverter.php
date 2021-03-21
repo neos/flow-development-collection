@@ -229,7 +229,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected function handleHashAndData(array $source, PropertyMappingConfigurationInterface $configuration = null)
     {
         $hash = null;
-        $resource = false;
+        $resource = null;
         $givenResourceIdentity = null;
         if (isset($source['__identity'])) {
             $givenResourceIdentity = $source['__identity'];
@@ -253,7 +253,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
         }
         if ($resource === null) {
             $collectionName = $source['collectionName'] ?? $this->getCollectionName($source, $configuration);
-            if (isset($source['data'])) {
+            if (isset($source['data']) && isset($source['filename'])) {
                 $resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
             } elseif ($hash !== null) {
                 $resource = $this->resourceManager->importResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);

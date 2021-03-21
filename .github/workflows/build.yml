@@ -170,7 +170,7 @@ jobs:
         if: matrix.static-analysis == 'no'
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
           bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
 
       - name: Setup Flow configuration (PGSQL)
@@ -207,7 +207,7 @@ jobs:
         if: matrix.static-analysis == 'no'
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
           bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
 
   buildall:
