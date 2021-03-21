@@ -94,6 +94,21 @@ class ResourceTypeConverterTest extends UnitTestCase
         $source = ['error' => \UPLOAD_ERR_NO_FILE];
         self::assertNull($this->resourceTypeConverter->convertFrom($source, PersistentResource::class));
     }
+    
+    /**
+     * @test
+     */
+    public function convertFromReturnsTrueIfSourceIsAnArrayWithDataAndFilename()
+    {
+        $source = [
+            'data' => 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
+            'filename' => 'test.png'
+        ];
+
+        $this->mockResourceManager->expects(self::once())->method('importResourceFromContent')->will(self::returnValue(new PersistentResource()));
+
+        $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
+    }
 
     /**
      * @test

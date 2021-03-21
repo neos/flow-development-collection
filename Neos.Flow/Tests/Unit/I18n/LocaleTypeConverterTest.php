@@ -19,7 +19,7 @@ use Neos\Flow\Tests\UnitTestCase;
 /**
  * Testcase for the Locale type converter
  *
- * @covers \TYPO3\Flow\I18n\LocaleTypeConverter<extended>
+ * @covers \Neos\Flow\I18n\LocaleTypeConverter<extended>
  */
 class LocaleTypeConverterTest extends UnitTestCase
 {
