@@ -51,9 +51,9 @@ abstract class TypeHandling
             throw new InvalidTypeException('Found an invalid element type declaration. A type "' . var_export($type, true) . '" does not exist.', 1264093630);
         }
 
-        $typeWithoutNull = self::stripNullableType($matches['type']);
-        $isNullable = $typeWithoutNull !== $matches['type'];
-        $type = self::normalizeType($typeWithoutNull);
+        $typeWithoutNull = self::stripNullableType($type);
+        $isNullable = $typeWithoutNull !== $type || $type === 'null';
+        $type = self::normalizeType($matches['type']);
         $elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : null;
 
         if ($elementType !== null && !self::isCollectionType($type)) {
