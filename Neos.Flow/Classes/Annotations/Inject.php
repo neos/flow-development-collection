@@ -39,7 +39,7 @@ final class Inject
      * This is useful if the object name does not match the class name of the object to be injected:
      * (at)Inject(name="Some.Package:Some.Virtual.Object")
      *
-     * @var string
+     * @var string|null
      */
     public $name;
 

@@ -25,7 +25,7 @@ final class Validate
 {
     /**
      * The validator type, either a FQCN or a Flow validator class name.
-     * @var string
+     * @var string|null
      */
     public $type;
 

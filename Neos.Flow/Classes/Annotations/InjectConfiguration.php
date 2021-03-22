@@ -35,7 +35,7 @@ final class InjectConfiguration
      *
      * Example: session.name
      *
-     * @var string
+     * @var string|null
      */
     public $path;
 
@@ -47,7 +47,7 @@ final class InjectConfiguration
      *
      * Example: Neos.Flow
      *
-     * @var string
+     * @var string|null
      */
     public $package;
 
