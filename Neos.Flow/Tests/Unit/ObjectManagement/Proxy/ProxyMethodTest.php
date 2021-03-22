@@ -22,8 +22,8 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function buildMethodDocumentationAddsAllExpectedAnnotations()
     {
-        $validateFoo1 = new Flow\Validate(['value' => 'foo1', 'type' => 'bar1']);
-        $validateFoo2 = new Flow\Validate(['value' => 'foo2', 'type' => 'bar2']);
+        $validateFoo1 = new Flow\Validate('foo1', 'bar1');
+        $validateFoo2 = new Flow\Validate('foo2', 'bar2');
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects(self::any())->method('hasMethod')->will(self::returnValue(true));
