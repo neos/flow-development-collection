@@ -262,6 +262,17 @@ class ClassSchema
     }
 
     /**
+     * If a certain class schema property is nullable
+     *
+     * @param string $propertyName
+     * @return boolean
+     */
+    public function isPropertyNullable($propertyName)
+    {
+        return $this->properties[$propertyName]['nullable'];
+    }
+
+    /**
      * Marks the given property as one of properties forming the identity
      * of an object. The property must already be registered in the class
      * schema.
