@@ -28,7 +28,7 @@ final class Entity
 {
     /**
      * Name of the repository class to use for managing the entity.
-     * @var string
+     * @var string|null
      */
     public $repositoryClass;
 

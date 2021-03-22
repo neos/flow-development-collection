@@ -33,14 +33,14 @@ final class Introduce
 
     /**
      * The interface name to introduce.
-     * @var string
+     * @var string|null
      */
     public $interfaceName;
 
     /**
      * The trait name to introduce
      *
-     * @var string
+     * @var string|null
      */
     public $traitName;
 
