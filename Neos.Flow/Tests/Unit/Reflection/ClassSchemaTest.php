@@ -263,7 +263,7 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('a', '?string');
         $classSchema->addProperty('b', 'integer|null');
         $classSchema->addProperty('c', 'null|array');
-        $classSchema->addProperty('d', 'array|string');
+        $classSchema->addProperty('d', 'string');
 
         self::assertTrue($classSchema->getProperty('a')['nullable']);
         self::assertTrue($classSchema->getProperty('b')['nullable']);
