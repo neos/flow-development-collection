@@ -23,7 +23,6 @@ class ClassWithConstructorProperties
         public ?string $propertyA = 'Foo',
         public int|null $propertyB = 25,
         public \DateTime|null $propertyC = null
-    )
-    {
+    ) {
     }
 }
