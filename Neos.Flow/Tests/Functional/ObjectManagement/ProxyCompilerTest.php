@@ -155,7 +155,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         if (PHP_MAJOR_VERSION < 8) {
             $this->markTestSkipped('Only for PHP 8 with UnionTypes');
         }
-        $reflectionClass = new ClassReflection(Fixtures\ClassWithUnionTypes::class);
+        $reflectionClass = new ClassReflection(Fixtures\PHP8\ClassWithUnionTypes::class);
         /** @var PropertyReflection $property */
         foreach ($reflectionClass->getProperties() as $property) {
             if ($property->getName() !== 'propertyA' && $property->getName() !== 'propertyB') {
@@ -177,7 +177,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         if (PHP_MAJOR_VERSION < 8) {
             $this->markTestSkipped('Only for PHP 8 with UnionTypes');
         }
-        $reflectionClass = new ClassReflection(Fixtures\ClassWithUnionTypes::class);
+        $reflectionClass = new ClassReflection(Fixtures\PHP8\ClassWithUnionTypes::class);
         /** @var MethodReflection $method */
         foreach ($reflectionClass->getMethods() as $method) {
             if (str_starts_with($method->getName(), 'get') &&
@@ -201,7 +201,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         if (PHP_MAJOR_VERSION < 8) {
             $this->markTestSkipped('Only for PHP 8 with Constructor properties');
         }
-        $reflectionClass = new ClassReflection(Fixtures\ClassWithConstructorProperties::class);
+        $reflectionClass = new ClassReflection(Fixtures\PHP8\ClassWithConstructorProperties::class);
         /** @var PropertyReflection $property */
         self::assertTrue($reflectionClass->hasProperty('propertyA'));
         self::assertTrue($reflectionClass->hasProperty('propertyB'));
