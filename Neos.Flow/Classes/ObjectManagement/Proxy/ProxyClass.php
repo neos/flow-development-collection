@@ -250,15 +250,13 @@ class ProxyClass
     {
         $classReflection = new ClassReflection($this->fullOriginalClassName);
 
-        $classDocumentation = $classReflection->getDocComment() . "\n";
+        $classDocumentation = str_replace("*/", "* @codeCoverageIgnore\n */", $classReflection->getDocComment()) . "\n";
         if (PHP_MAJOR_VERSION >= 8) {
             foreach ($classReflection->getAttributes() as $attribute) {
                 $classDocumentation .= Compiler::renderAttribute($attribute) . "\n";
             }
         }
 
-        $classDocumentation .= " * @codeCoverageIgnore\n";
-        $classDocumentation .= " */\n";
         return $classDocumentation;
     }
 
