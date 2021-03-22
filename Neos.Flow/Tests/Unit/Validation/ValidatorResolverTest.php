@@ -276,19 +276,19 @@ class ValidatorResolverTest extends UnitTestCase
 
         ];
         $validateAnnotations = [
-            new Annotations\Validate([
-                'type' => 'Foo',
-                'options' => ['bar' => 'baz'],
-                'argumentName' => '$arg1'
-            ]),
-            new Annotations\Validate([
-                'type' => 'Bar',
-                'argumentName' => '$arg1'
-            ]),
-            new Annotations\Validate([
-                'type' => 'TYPO3\TestPackage\Quux',
-                'argumentName' => '$arg2'
-            ]),
+            new Annotations\Validate(
+                '$arg1',
+                'Foo',
+                ['bar' => 'baz']
+            ),
+            new Annotations\Validate(
+                '$arg1',
+                'Bar'
+            ),
+            new Annotations\Validate(
+                '$arg2',
+                'Neos\TestPackage\Quux'
+            ),
         ];
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
@@ -315,7 +315,7 @@ class ValidatorResolverTest extends UnitTestCase
             ['array'],
             ['Foo', ['bar' => 'baz']],
             ['Bar'],
-            ['TYPO3\TestPackage\Quux']
+            ['Neos\TestPackage\Quux']
         )
         ->willReturnOnConsecutiveCalls(
             $conjunction1,
@@ -324,7 +324,7 @@ class ValidatorResolverTest extends UnitTestCase
             $mockArrayValidator,
             $mockFooValidator,
             $mockBarValidator,
-            $mockQuuxValidator,
+            $mockQuuxValidator
         );
 
         $validatorResolver->_set('reflectionService', $mockReflectionService);
@@ -375,10 +375,10 @@ class ValidatorResolverTest extends UnitTestCase
             ]
         ];
         $validateAnnotations = [
-            new Annotations\Validate([
-                'type' => 'Neos\TestPackage\Quux',
-                'argumentName' => '$arg2'
-            ]),
+            new Annotations\Validate(
+                '$arg2',
+                'Neos\TestPackage\Quux'
+            ),
         ];
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
@@ -584,21 +584,25 @@ class ValidatorResolverTest extends UnitTestCase
         ];
         $validateAnnotations = [
             'foo' => [
-                new Annotations\Validate([
-                    'type' => 'Foo',
-                    'options' => ['bar' => 'baz'],
-                ]),
-                new Annotations\Validate([
-                    'type' => 'Bar',
-                ]),
-                new Annotations\Validate([
-                    'type' => 'Baz',
-                ]),
+                new Annotations\Validate(
+                    null,
+                    'Foo',
+                    ['bar' => 'baz']
+                ),
+                new Annotations\Validate(
+                    null,
+                    'Bar'
+                ),
+                new Annotations\Validate(
+                    null,
+                    'Baz'
+                ),
             ],
             'bar' => [
-                new Annotations\Validate([
-                    'type' => 'Neos\TestPackage\Quux',
-                ]),
+                new Annotations\Validate(
+                    null,
+                    'Neos\TestPackage\Quux'
+                ),
             ],
         ];
 
@@ -621,11 +625,11 @@ class ValidatorResolverTest extends UnitTestCase
             ->withConsecutive(
                 [get_class($mockObject), 'foo', Annotations\Validate::class],
                 [get_class($mockObject), 'bar', Annotations\Validate::class],
-                [get_class($mockObject), 'baz', Annotations\Validate::class],
+                [get_class($mockObject), 'baz', Annotations\Validate::class]
             )->willReturnOnConsecutiveCalls(
                 $validateAnnotations['foo'],
                 $validateAnnotations['bar'],
-                [],
+                []
             );
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->method('get')->with(ReflectionService::class)->willReturn($mockReflectionService);
