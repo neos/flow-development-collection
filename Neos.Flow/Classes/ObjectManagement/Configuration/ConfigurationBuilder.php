@@ -510,7 +510,7 @@ class ConfigurationBuilder
             try {
                 $classMethodNames = get_class_methods($className);
             } catch (\TypeError $error) {
-                throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371371);
+                throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371372);
             }
             if (!is_array($classMethodNames)) {
                 if (!class_exists($className)) {
