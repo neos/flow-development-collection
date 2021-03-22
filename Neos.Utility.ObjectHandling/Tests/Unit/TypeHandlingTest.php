@@ -237,14 +237,14 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
             ['?ArrayObject<int>', 'ArrayObject<int>'],
             ['SplObjectStorage<\object>|null', 'SplObjectStorage<\object>'],
             ['Doctrine\Common\Collections\Collection<ElementType>|null', 'Doctrine\Common\Collections\Collection<ElementType>'],
-            ['Doctrine\Common\Collections\ArrayCollection<>|null', 'Doctrine\Common\Collections\ArrayCollection<>'],
+            ['Doctrine\Common\Collections\ArrayCollection<string>|null', 'Doctrine\Common\Collections\ArrayCollection<string>'],
 
             // This is not even a use case for Flow and is bad API design, but we still should handle it correctly.
             ['integer|null|bool', 'integer|bool'],
             ['?int|null', 'int'],
 
             // Types might also contain underscores at various points.
-            ['null|Doctrine\Common\Collections\Array_Collection<>', 'Doctrine\Common\Collections\Array_Collection<>'],
+            ['null|Doctrine\Common\Collections\Array_Collection', 'Doctrine\Common\Collections\Array_Collection'],
 
             // This is madness. This... is... NULL!
             ['null', 'null']
@@ -262,5 +262,22 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
             TypeHandling::stripNullableType($type),
             'Failed for ' . $type
         );
+    }
+
+    /**
+     * @test
+     * @dataProvider nullableTypes
+     */
+    public function parseTypeReturnsNullableHint($type, $expectedResult)
+    {
+        try {
+            $parsedType = TypeHandling::parseType($type);
+            self::assertTrue(
+                $parsedType['nullable'],
+                'Failed for ' . $type
+            );
+        } catch (InvalidTypeException $e) {
+            self::assertTrue(true);
+        }
     }
 }
