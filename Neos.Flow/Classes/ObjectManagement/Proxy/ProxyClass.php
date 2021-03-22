@@ -40,6 +40,7 @@ class ProxyClass
      * Fully qualified class name of the original class
      *
      * @var string
+     * @psalm-var class-string
      */
     protected $fullOriginalClassName;
 
@@ -84,6 +85,7 @@ class ProxyClass
      * Creates a new ProxyClass instance.
      *
      * @param string $fullOriginalClassName The fully qualified class name of the original class
+     * @psalm-param class-string $fullOriginalClassName
      */
     public function __construct($fullOriginalClassName)
     {
