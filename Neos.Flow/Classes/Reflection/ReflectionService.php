@@ -1805,7 +1805,6 @@ class ReflectionService
             $parameterInformation[self::DATA_PARAMETER_CLASS] = $parameterType;
         } elseif ($parameterType === 'array') {
             $parameterInformation[self::DATA_PARAMETER_ARRAY] = true;
-            $parameterInformation[self::DATA_PARAMETER_TYPE] = $parameterType;
         } else {
             $builtinType = $parameter->getBuiltinType();
             if ($builtinType !== null) {
