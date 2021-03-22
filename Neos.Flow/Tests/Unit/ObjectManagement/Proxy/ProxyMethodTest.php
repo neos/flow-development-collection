@@ -22,23 +22,23 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function buildMethodDocumentationAddsAllExpectedAnnotations()
     {
-        $validateFoo1 = new Flow\Validate('foo1', 'bar1');
-        $validateFoo2 = new Flow\Validate('foo2', 'bar2');
+        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        eval('class ' . $className . ' {
+    /**
+     * @param string $name
+     * @\Neos\Flow\Annotations\Validate(type="bar1", argumentName="foo1")
+     * @\Neos\Flow\Annotations\Validate(type="bar2", argumentName="foo2")
+     * @\Neos\Flow\Annotations\SkipCsrfProtection
+     */
+    public function myMethod(string $name) {}
+}');
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects(self::any())->method('hasMethod')->will(self::returnValue(true));
-        $mockReflectionService->expects(self::any())->method('getMethodTagsValues')->with('My\Class\Name', 'myMethod')->will(self::returnValue([
-            'param' => ['string $name']
-        ]));
-        $mockReflectionService->expects(self::any())->method('getMethodAnnotations')->with('My\Class\Name', 'myMethod')->will(self::returnValue([
-            $validateFoo1,
-            $validateFoo2,
-            new Flow\SkipCsrfProtection([])
-        ]));
 
         $mockProxyMethod = $this->getAccessibleMock(ProxyMethod::class, ['dummy'], [], '', false);
         $mockProxyMethod->injectReflectionService($mockReflectionService);
-        $methodDocumentation = $mockProxyMethod->_call('buildMethodDocumentation', 'My\Class\Name', 'myMethod');
+        $methodDocumentation = $mockProxyMethod->_call('buildMethodDocumentation', $className, 'myMethod');
 
         $expected =
             '    /**' . chr(10) .

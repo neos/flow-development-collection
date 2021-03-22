@@ -228,7 +228,7 @@ class ProxyMethod
             $method = new MethodReflection($className, $methodName);
             $docComment = $method->getDocComment();
             if ($docComment !== false) {
-                $methodDocumentation .= preg_replace('/\/\*\*[^\n]*\n/', "     *\n", $docComment) . "\n";
+                $methodDocumentation .= preg_replace('/\/\*\*[^\n]*\n/', '', $docComment) . "\n";
             } else {
                 $methodDocumentation .= "     */\n";
             }
