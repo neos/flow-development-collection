@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
+namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP8;
 
 /*
  * This file is part of the Neos.Flow package.

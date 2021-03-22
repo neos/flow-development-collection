@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
+namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP8;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE)]
 class SampleAttribute
