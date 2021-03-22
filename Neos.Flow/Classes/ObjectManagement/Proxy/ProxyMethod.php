@@ -245,6 +245,7 @@ class ProxyMethod
             $methodDocumentation .= "     */\n";
 
             if (PHP_MAJOR_VERSION >= 8) {
+                $method = new MethodReflection($className, $methodName);
                 foreach ($method->getAttributes() as $attribute) {
                     $methodDocumentation .= '    ' . Compiler::renderAttribute($attribute) . "\n";
                 }

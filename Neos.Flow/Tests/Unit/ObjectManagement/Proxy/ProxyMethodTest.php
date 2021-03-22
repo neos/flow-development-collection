@@ -27,14 +27,14 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects(self::any())->method('hasMethod')->will(self::returnValue(true));
-        $mockReflectionService->expects(self::any())->method('getMethodTagsValues')->with('My\ClassName', 'myMethod')->will(self::returnValue([
+        $mockReflectionService->method('getMethodTagsValues')->with('My\ClassName', 'myMethod')->willReturn([
             'param' => ['string $name']
-        ]));
-        $mockReflectionService->expects(self::any())->method('getMethodAnnotations')->with('My\ClassName', 'myMethod')->will(self::returnValue([
+        ]);
+        $mockReflectionService->method('getMethodAnnotations')->with('My\ClassName', 'myMethod')->willReturn([
             $validateFoo1,
             $validateFoo2,
-            new Flow\SkipCsrfProtection([])
-        ]));
+            new Flow\SkipCsrfProtection()
+        ]);
 
         $mockProxyMethod = $this->getAccessibleMock(ProxyMethod::class, ['dummy'], [], '', false);
         $mockProxyMethod->injectReflectionService($mockReflectionService);
