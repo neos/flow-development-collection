@@ -13,6 +13,7 @@ namespace Neos\Flow\Security\Authentication\Token;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
