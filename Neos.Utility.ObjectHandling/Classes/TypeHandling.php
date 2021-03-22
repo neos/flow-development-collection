@@ -158,10 +158,13 @@ abstract class TypeHandling
      */
     public static function stripNullableType($type)
     {
+        if ($type[0] === '?') {
+            $type = substr($type, 1);
+        }
         if (stripos($type, 'null') === false) {
             return $type;
         }
-        return preg_replace('/($\?|\\|null|null\\|)/i', '', $type);
+        return preg_replace('/(\\|null|null\\|)/i', '', $type);
     }
 
     /**

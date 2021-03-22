@@ -225,19 +225,23 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
         return [
             ['integer|null', 'integer'],
             ['null|int', 'int'],
+            ['?int', 'int'],
             ['array|null', 'array'],
+            ['?array', 'array'],
             ['ArrayObject|null', 'ArrayObject'],
             ['null|SplObjectStorage', 'SplObjectStorage'],
             ['Doctrine\Common\Collections\Collection|null', 'Doctrine\Common\Collections\Collection'],
             ['Doctrine\Common\Collections\ArrayCollection|null', 'Doctrine\Common\Collections\ArrayCollection'],
             ['array<\Some\Other\Class>|null', 'array<\Some\Other\Class>'],
             ['ArrayObject<int>|null', 'ArrayObject<int>'],
+            ['?ArrayObject<int>', 'ArrayObject<int>'],
             ['SplObjectStorage<\object>|null', 'SplObjectStorage<\object>'],
             ['Doctrine\Common\Collections\Collection<ElementType>|null', 'Doctrine\Common\Collections\Collection<ElementType>'],
             ['Doctrine\Common\Collections\ArrayCollection<>|null', 'Doctrine\Common\Collections\ArrayCollection<>'],
 
             // This is not even a use case for Flow and is bad API design, but we still should handle it correctly.
             ['integer|null|bool', 'integer|bool'],
+            ['?int|null', 'int'],
 
             // Types might also contain underscores at various points.
             ['null|Doctrine\Common\Collections\Array_Collection<>', 'Doctrine\Common\Collections\Array_Collection<>'],
