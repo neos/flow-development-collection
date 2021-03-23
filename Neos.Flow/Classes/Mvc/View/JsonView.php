@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\View;
 
 /*
@@ -292,6 +293,8 @@ class JsonView extends AbstractView
                     $propertiesToRender[$propertyName] = $propertyValue;
                 } elseif (isset($configuration['_descend']) && array_key_exists($propertyName, $configuration['_descend'])) {
                     $propertiesToRender[$propertyName] = $this->transformValue($propertyValue, $configuration['_descend'][$propertyName]);
+                } elseif ($propertyValue instanceof \DateTimeInterface) {
+                    $propertiesToRender[$propertyName] = $propertyValue->format(\DateTime::ATOM);
                 }
             }
             if (isset($configuration['_exposeObjectIdentifier']) && $configuration['_exposeObjectIdentifier'] === true) {
