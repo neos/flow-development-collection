@@ -33,7 +33,7 @@
         "psr/container": "^1.0",
         "psr/log": "^1.0",
 
-        "ramsey/uuid": "^3.0",
+        "ramsey/uuid": "^3.0 || ^4.0",
 
         "doctrine/orm": "^2.6",
         "doctrine/migrations": "^1.8",
@@ -50,10 +50,19 @@
         "composer/composer": "^1.9 || ^2.0"
     },
     "require-dev": {
-        "vimeo/psalm": "~4.1.1"
+        "vimeo/psalm": "~4.1.1",
+        "mikey179/vfsstream": "^1.6.1",
+        "phpunit/phpunit": "~7.1"
     },
     "replace": {
-        "typo3/flow": "self.version"
+        "typo3/flow": "self.version",
+        "symfony/polyfill-php54": "*",
+        "symfony/polyfill-php55": "*",
+        "symfony/polyfill-php56": "*",
+        "symfony/polyfill-php70": "*",
+        "symfony/polyfill-php71": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-mbstring": "*"
     },
     "suggest": {
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
