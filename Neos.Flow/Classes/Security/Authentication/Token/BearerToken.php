@@ -52,7 +52,7 @@ class BearerToken extends AbstractToken implements SessionlessTokenInterface
 
         $authorizationHeader = $httpRequest->getHeader('Authorization')[0];
 
-        if (substr($authorizationHeader, 0,  7) !== 'Bearer ') {
+        if (substr($authorizationHeader, 0, 7) !== 'Bearer ') {
             $this->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
             throw new AuthenticationRequiredException('Could not extract access token from Authorization header: "Bearer" keyword is missing', 1616222749);
         }
