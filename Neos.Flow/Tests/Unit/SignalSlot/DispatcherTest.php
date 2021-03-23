@@ -151,6 +151,26 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
+    public function dispatchPassesUnnamedSignalArgumentsToTheSlotMethod(): void
+    {
+        $arguments = [];
+        $mockSlot = function () use (&$arguments) {
+            $arguments = func_get_args();
+        };
+
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $dispatcher = new Dispatcher();
+        $dispatcher->connect('Foo', 'bar', $mockSlot, '', false);
+        $dispatcher->injectObjectManager($mockObjectManager);
+
+        $dispatcher->dispatch('Foo', 'bar', ['bar', 'quux']);
+        self::assertSame(['bar', 'quux'], $arguments);
+    }
+
+    /**
+     * @test
+     */
     public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethod(): void
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
