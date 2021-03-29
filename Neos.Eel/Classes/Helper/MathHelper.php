@@ -407,7 +407,7 @@ class MathHelper implements ProtectedContextAwareInterface
         if (!is_numeric($subject)) {
             return NAN;
         }
-        $subject = floatval($subject);
+        $subject = (float)$subject;
         if ($precision != null && !is_int($precision)) {
             return NAN;
         }
@@ -422,14 +422,14 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function sign($x)
     {
-        if ($x < 0) {
+        if (!is_numeric($x)) {
+            return NAN;
+        } elseif ($x < 0) {
             return -1;
         } elseif ($x > 0) {
             return 1;
-        } elseif ($x === 0 || $x === 0.0) {
-            return 0;
         } else {
-            return NAN;
+            return 0;
         }
     }
 
@@ -492,9 +492,9 @@ class MathHelper implements ProtectedContextAwareInterface
         $sign = $this->sign($x);
         switch ($sign) {
             case -1:
-                return (int)ceil($x);
+                return (int)ceil((float)$x);
             case 1:
-                return (int)floor($x);
+                return (int)floor((float)$x);
             default:
                 return $sign;
         }

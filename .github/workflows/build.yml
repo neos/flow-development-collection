@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['7.3', '7.4']
+        php-versions: ['7.3', '7.4', '8.0']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
@@ -34,8 +34,8 @@ jobs:
             integration: true
             dependencies: 'highest'
 
-          # Experimental build for PHP 8
-          #- php-versions: '8.0'
+          # Experimental build for PHP nightly
+          #- php-versions: 'nightly'
           #  composer-arguments: '--ignore-platform-reqs'
           #  static-analysis: 'no'
           #  experimental: true
@@ -177,7 +177,7 @@ jobs:
         if: matrix.static-analysis == 'no'
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
           bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
 
       - name: Setup Flow configuration (PGSQL)
@@ -214,7 +214,7 @@ jobs:
         if: matrix.static-analysis == 'no'
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
           bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
 
   buildall:

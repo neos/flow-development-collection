@@ -257,6 +257,7 @@ class ProxyClass
             $classDocumentation .= ' * ' . Compiler::renderAnnotation($annotation) . "\n";
         }
 
+        $classDocumentation .= " * @codeCoverageIgnore\n";
         $classDocumentation .= " */\n";
         return $classDocumentation;
     }
