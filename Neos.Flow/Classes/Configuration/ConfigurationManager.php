@@ -112,6 +112,13 @@ class ConfigurationManager
     const CONFIGURATION_PROCESSING_TYPE_APPEND = 'AppendProcessing';
 
     /**
+     * Uses a callback to load the configuration
+     *
+     * @var string
+     */
+    const CONFIGURATION_PROCESSING_TYPE_CALLBACK = 'CallbackProcessing';
+
+    /**
      * Defines which Configuration Type is processed by which logic
      *
      * @var array
@@ -282,7 +289,7 @@ class ConfigurationManager
      * @throws \InvalidArgumentException on invalid configuration processing type
      * @return void
      */
-    public function registerConfigurationType(string $configurationType, string $configurationProcessingType = self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, bool $allowSplitSource = true)
+    public function registerConfigurationType(string $configurationType, string $configurationProcessingType = self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, bool $allowSplitSource = true, \Closure $callback=null)
     {
         $configurationProcessingTypes = [
             self::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
@@ -290,12 +297,16 @@ class ConfigurationManager
             self::CONFIGURATION_PROCESSING_TYPE_POLICY,
             self::CONFIGURATION_PROCESSING_TYPE_ROUTES,
             self::CONFIGURATION_PROCESSING_TYPE_SETTINGS,
-            self::CONFIGURATION_PROCESSING_TYPE_APPEND
+            self::CONFIGURATION_PROCESSING_TYPE_APPEND,
+            self::CONFIGURATION_PROCESSING_TYPE_CALLBACK
         ];
         if (!in_array($configurationProcessingType, $configurationProcessingTypes)) {
             throw new \InvalidArgumentException(sprintf('Specified invalid configuration processing type "%s" while registering custom configuration type "%s"', $configurationProcessingType, $configurationType), 1365496111);
         }
-        $this->configurationTypes[$configurationType] = ['processingType' => $configurationProcessingType, 'allowSplitSource' => $allowSplitSource];
+        if ($configurationProcessingType == self::CONFIGURATION_PROCESSING_TYPE_CALLBACK && $callback === null) {
+            throw new \InvalidArgumentException(sprintf('No callback given for callback processing type'), 1617358429395);
+        }
+        $this->configurationTypes[$configurationType] = ['processingType' => $configurationProcessingType, 'allowSplitSource' => $allowSplitSource, 'callback' => $callback];
     }
 
     /**
@@ -490,6 +501,10 @@ class ConfigurationManager
                     }
                     $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
                 }
+            break;
+            case self::CONFIGURATION_PROCESSING_TYPE_CALLBACK:
+                $callback = $this->configurationTypes[$configurationType]['callback'];
+                $this->configurations[$configurationType] = $callback->__invoke($this->configurationSource, $packages, $this->orderedListOfContextNames, $configurationType, $allowSplitSource);
             break;
             default:
                 throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" cannot be loaded with loadConfiguration().', 1251450613);
