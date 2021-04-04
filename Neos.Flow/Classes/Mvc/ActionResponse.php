@@ -276,16 +276,15 @@ final class ActionResponse
             $actionResponse->setContentType($this->contentType);
         }
 
-        if ($this->statusCode !== null) {
-            $actionResponse->setStatusCode($this->statusCode);
-        }
-
         if ($this->redirectUri !== null) {
             $actionResponse->setRedirectUri($this->redirectUri);
         }
 
         if ($this->httpResponse !== null) {
             $actionResponse->replaceHttpResponse($this->httpResponse);
+        }
+        if ($this->statusCode !== null) {
+            $actionResponse->setStatusCode($this->statusCode);
         }
         foreach ($this->cookies as $cookie) {
             $actionResponse->setCookie($cookie);
