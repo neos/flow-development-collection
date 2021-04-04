@@ -112,7 +112,11 @@ abstract class RequestInformationHelper
         $renderedHeaders = '';
         $headers = $request->getHeaders();
         foreach (array_keys($headers) as $name) {
-            $renderedHeaders .= $request->getHeaderLine($name);
+            if ($name === 'Authorization') {
+                $renderedHeaders .= 'Authorization: ****';
+            } else {
+                $renderedHeaders .= $request->getHeaderLine($name);
+            }
         }
 
         return $renderedHeaders;

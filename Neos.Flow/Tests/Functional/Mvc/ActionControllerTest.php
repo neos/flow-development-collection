@@ -578,4 +578,15 @@ class ActionControllerTest extends FunctionalTestCase
         $expected = json_encode(['Redirect FlashMessage']);
         self::assertSame($expected, $redirectResponse->getBody()->getContents());
     }
+
+    /**
+     * @test
+     */
+    public function nonstandardStatusCodeIsReturnedWithRedirect()
+    {
+        $this->browser->setFollowRedirects(false);
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/redirect');
+        self::assertSame(302, $response->getStatusCode());
+        self::assertSame('http://some.uri', $response->getHeaderLine('Location'));
+    }
 }
