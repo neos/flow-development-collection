@@ -99,4 +99,12 @@ class ActionControllerTestAController extends ActionController
     public function b()
     {
     }
+
+    /**
+     * @return void
+     */
+    public function redirectAction()
+    {
+        $this->redirectToUri('http://some.uri', 0, 302);
+    }
 }

@@ -213,12 +213,12 @@ final class ActionResponse
             $actionResponse->setContentType($this->contentType);
         }
 
-        if ($this->statusCode !== null) {
-            $actionResponse->setStatusCode($this->statusCode);
-        }
-
         if ($this->redirectUri !== null) {
             $actionResponse->setRedirectUri($this->redirectUri);
+        }
+
+        if ($this->statusCode !== null) {
+            $actionResponse->setStatusCode($this->statusCode);
         }
 
         foreach ($this->componentParameters as $componentClass => $parameters) {

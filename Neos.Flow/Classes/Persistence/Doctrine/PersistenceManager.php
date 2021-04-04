@@ -14,6 +14,7 @@ namespace Neos\Flow\Persistence\Doctrine;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -65,6 +66,12 @@ class PersistenceManager extends AbstractPersistenceManager
     protected $reflectionService;
 
     /**
+     * A runtime flag to pass the argument of the persistAll() call to the onFlush() event listener
+     * @var boolean
+     */
+    protected $onlyAllowedObjects;
+
+    /**
      * Injects the (system) logger based on PSR-3.
      *
      * @param LoggerInterface $logger
@@ -86,23 +93,44 @@ class PersistenceManager extends AbstractPersistenceManager
      */
     public function persistAll($onlyAllowedObjects = false)
     {
-        if ($onlyAllowedObjects) {
-            $unitOfWork = $this->entityManager->getUnitOfWork();
-            /** @var \Doctrine\ORM\UnitOfWork $unitOfWork */
-            $unitOfWork->computeChangeSets();
+        if (!$this->entityManager->isOpen()) {
+            $this->logger->error('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.', LogEnvironment::fromMethodName(__METHOD__));
+            return;
+        }
+
+        $this->onlyAllowedObjects = $onlyAllowedObjects;
+        $this->entityManager->flush();
+        $this->onlyAllowedObjects = false;
+        $this->emitAllObjectsPersisted();
+    }
+
+    /**
+     * Doctrine onFlush listener that checks for only allowed objects and reconnects
+     * if the database connection was closed.
+     *
+     * @param OnFlushEventArgs $args
+     * @throws PersistenceException
+     */
+    public function onFlush(OnFlushEventArgs $args)
+    {
+        $unitOfWork = $args->getEntityManager()->getUnitOfWork();
+        if ($unitOfWork->getScheduledEntityInsertions() === []
+            && $unitOfWork->getScheduledEntityUpdates() === []
+            && $unitOfWork->getScheduledEntityDeletions() === []
+            && $unitOfWork->getScheduledCollectionDeletions() === []
+            && $unitOfWork->getScheduledCollectionUpdates() === []
+        ) {
+            return;
+        }
+
+        if ($this->onlyAllowedObjects) {
             $objectsToBePersisted = $unitOfWork->getScheduledEntityUpdates() + $unitOfWork->getScheduledEntityDeletions() + $unitOfWork->getScheduledEntityInsertions();
             foreach ($objectsToBePersisted as $object) {
                 $this->throwExceptionIfObjectIsNotAllowed($object);
             }
         }
 
-        if (!$this->entityManager->isOpen()) {
-            $this->logger->error('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.', LogEnvironment::fromMethodName(__METHOD__));
-            return;
-        }
-
-        /** @var Connection $connection */
-        $connection = $this->entityManager->getConnection();
+        $connection = $args->getEntityManager()->getConnection();
         try {
             if ($connection->ping() === false) {
                 $this->logger->info('Reconnecting the Doctrine EntityManager to the persistence backend.', LogEnvironment::fromMethodName(__METHOD__));
@@ -113,9 +141,6 @@ class PersistenceManager extends AbstractPersistenceManager
             $message = $this->throwableStorage->logThrowable($exception);
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
         }
-
-        $this->entityManager->flush();
-        $this->emitAllObjectsPersisted();
     }
 
     /**
