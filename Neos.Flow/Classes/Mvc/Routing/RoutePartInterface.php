@@ -39,7 +39,7 @@ interface RoutePartInterface
     public function getName();
 
     /**
-     * Returns TRUE if a value is set for this Route Part, otherwise FALSE.
+     * Returns true if a value is set for this Route Part, otherwise false.
      *
      * @return boolean
      */
@@ -53,7 +53,7 @@ interface RoutePartInterface
     public function getValue();
 
     /**
-     * Returns TRUE if a default value is set for this Route Part, otherwise FALSE.
+     * Returns true if a default value is set for this Route Part, otherwise false.
      *
      * @return boolean
      */
@@ -77,13 +77,13 @@ interface RoutePartInterface
     /**
      * Specifies whether this Route part is optional.
      *
-     * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
+     * @param boolean $isOptional true: this Route part is optional. false: this Route part is required.
      * @return void
      */
     public function setOptional($isOptional);
 
     /**
-     * @return boolean TRUE if this Route part is optional, otherwise FALSE.
+     * @return boolean true if this Route part is optional, otherwise false.
      * @see setOptional()
      */
     public function isOptional();
@@ -91,7 +91,7 @@ interface RoutePartInterface
     /**
      * Specifies whether this Route part should be converted to lower case when resolved.
      *
-     * @param boolean $lowerCase TRUE: this Route part is converted to lower case. FALSE: this Route part is not altered.
+     * @param boolean $lowerCase true: this Route part is converted to lower case. false: this Route part is not altered.
      * @return void
      */
     public function setLowerCase($lowerCase);
@@ -99,7 +99,7 @@ interface RoutePartInterface
     /**
      * Getter for $this->lowerCase.
      *
-     * @return boolean TRUE if this Route part will be converted to lower case, otherwise FALSE.
+     * @return boolean true if this Route part will be converted to lower case, otherwise false.
      * @see setLowerCase()
      */
     public function isLowerCase();
@@ -125,7 +125,7 @@ interface RoutePartInterface
      * This is why $routePath has to be passed by reference.
      *
      * @param string &$routePath The request path to be matched - without query parameters, host and fragment.
-     * @return bool|MatchResult TRUE or an instance of MatchResult if Route Part matched $routePath, otherwise FALSE.
+     * @return bool|MatchResult true or an instance of MatchResult if Route Part matched $routePath, otherwise false.
      */
     public function match(&$routePath);
 
@@ -136,7 +136,7 @@ interface RoutePartInterface
      * This is why $routeValues has to be passed by reference.
      *
      * @param array &$routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
-     * @return bool|ResolveResult TRUE or an instance of ResolveResult if Route Part can resolve one or more $routeValues elements, otherwise FALSE.
+     * @return bool|ResolveResult true or an instance of ResolveResult if Route Part can resolve one or more $routeValues elements, otherwise false.
      */
     public function resolve(array &$routeValues);
 }

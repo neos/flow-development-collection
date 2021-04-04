@@ -26,7 +26,7 @@ define('FLOW_PATH_ROOT', str_replace('//', '/', str_replace('\\', '/', (realpath
 define('FLOW_PATH_WEB', FLOW_PATH_ROOT . 'Web/');
 define('FLOW_PATH_CONFIGURATION', FLOW_PATH_ROOT . 'Configuration/');
 define('FLOW_PATH_DATA', FLOW_PATH_ROOT . 'Data/');
-define('MAXIMUM_LINE_LENGTH', 84);
+define('MAXIMUM_LINE_LENGTH', 80);
 define('STYLE_DEFAULT', 0);
 define('STYLE_ERROR', 31);
 define('STYLE_WARNING', 33);
@@ -248,7 +248,7 @@ function outputLine($text = '', array $arguments = [], $indention = 0, $style = 
 }
 
 /**
- * @return boolean TRUE if the terminal support ANSI colors, otherwise FALSE
+ * @return boolean true if the terminal support ANSI colors, otherwise false
  */
 function hasColorSupport()
 {

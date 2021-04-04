@@ -69,6 +69,8 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
      * @param TokenInterface $authenticationToken The token to be authenticated
      * @return void
      * @throws UnsupportedAuthenticationTokenException
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws \Neos\Flow\Security\Exception\InvalidAuthenticationStatusException
      */
     public function authenticate(TokenInterface $authenticationToken)
     {

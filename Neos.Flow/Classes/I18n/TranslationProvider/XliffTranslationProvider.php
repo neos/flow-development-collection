@@ -60,7 +60,7 @@ class XliffTranslationProvider implements TranslationProviderInterface
      * @param string $pluralForm One of RULE constants of PluralsReader
      * @param string $sourceName A relative path to the filename with translations (labels' catalog)
      * @param string $packageKey Key of the package containing the source file
-     * @return mixed Translated label or FALSE on failure
+     * @return mixed Translated label or false on failure
      * @throws Exception\InvalidPluralFormException
      */
     public function getTranslationByOriginalLabel($originalLabel, I18n\Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'Neos.Flow')
@@ -92,7 +92,7 @@ class XliffTranslationProvider implements TranslationProviderInterface
      * @param string $pluralForm One of RULE constants of PluralsReader
      * @param string $sourceName A relative path to the filename with translations (labels' catalog)
      * @param string $packageKey Key of the package containing the source file
-     * @return mixed Translated label or FALSE on failure
+     * @return mixed Translated label or false on failure
      * @throws Exception\InvalidPluralFormException
      */
     public function getTranslationById($labelId, I18n\Locale $locale, $pluralForm = null, $sourceName = 'Main', $packageKey = 'Neos.Flow')

@@ -266,7 +266,7 @@ class Result
     }
 
     /**
-     * Sets the error cache to TRUE and propagates the information
+     * Sets the error cache to true and propagates the information
      * upwards the Result-Object Tree
      *
      * @return void
@@ -291,7 +291,7 @@ class Result
     }
 
     /**
-     * Sets the warning cache to TRUE and propagates the information
+     * Sets the warning cache to true and propagates the information
      * upwards the Result-Object Tree
      *
      * @return void
@@ -316,7 +316,7 @@ class Result
     }
 
     /**
-     * Sets the notices cache to TRUE and propagates the information
+     * Sets the notices cache to true and propagates the information
      * upwards the Result-Object Tree
      *
      * @return void

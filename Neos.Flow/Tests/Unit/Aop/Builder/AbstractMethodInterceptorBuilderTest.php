@@ -30,7 +30,7 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
         eval('
 			class ' . $className . ' {
-				public function foo($arg1, array $arg2, \ArrayObject $arg3, &$arg4, $arg5= "foo", $arg6 = TRUE) {}
+				public function foo($arg1, array $arg2, \ArrayObject $arg3, &$arg4, $arg5= "foo", $arg6 = true) {}
 			}
 		');
         $methodParameters = [
@@ -118,7 +118,7 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
         eval('
 			class ' . $className . ' {
-				public function __construct($arg1, array $arg2, \ArrayObject $arg3, $arg4= "__construct", $arg5 = TRUE) {}
+				public function __construct($arg1, array $arg2, \ArrayObject $arg3, $arg4= "__construct", $arg5 = true) {}
 			}
 		');
         $methodParameters = [

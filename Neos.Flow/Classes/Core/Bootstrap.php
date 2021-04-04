@@ -17,8 +17,8 @@ use Neos\Flow\Core\Booting\Sequence;
 use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
+use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
 
 /**
@@ -27,13 +27,14 @@ use Neos\Utility\Files;
  * @api
  * @Flow\Proxy(false)
  * @Flow\Scope("singleton")
+ * @Flow\Autowiring(false)
  */
 class Bootstrap
 {
     /**
      * Required PHP version
      */
-    const MINIMUM_PHP_VERSION = '7.0.0';
+    const MINIMUM_PHP_VERSION = '7.1.0';
 
     const RUNLEVEL_COMPILETIME = 'Compiletime';
     const RUNLEVEL_RUNTIME = 'Runtime';
@@ -79,11 +80,12 @@ class Bootstrap
      * Constructor
      *
      * @param string $context The application context, for example "Production" or "Development"
+     * @param \Composer\Autoload\ClassLoader $composerAutoloader Composer autoloader
      */
-    public function __construct($context)
+    public function __construct(string $context, \Composer\Autoload\ClassLoader $composerAutoloader = null)
     {
-        // Load the composer autoloader first
-        $composerAutoloader = require(__DIR__ . '/../../../../Libraries/autoload.php');
+        // Load the composer autoloader first if not provided
+        $composerAutoloader = $composerAutoloader ?? require(__DIR__ . '/../../../../Libraries/autoload.php');
 
         $this->context = new ApplicationContext($context);
         $this->earlyInstances[__CLASS__] = $this;
@@ -122,7 +124,7 @@ class Bootstrap
      * @return void
      * @api
      */
-    public function shutdown($runlevel)
+    public function shutdown(string $runlevel)
     {
         switch ($runlevel) {
             case self::RUNLEVEL_COMPILETIME:
@@ -141,7 +143,7 @@ class Bootstrap
      * @return ApplicationContext The context encapsulated in an object, for example "Development" or "Development/MyDeployment"
      * @api
      */
-    public function getContext()
+    public function getContext(): ApplicationContext
     {
         return $this->context;
     }
@@ -167,7 +169,7 @@ class Bootstrap
      *
      * @param string $className
      */
-    public function setPreselectedRequestHandlerClassName($className)
+    public function setPreselectedRequestHandlerClassName(string $className)
     {
         $this->preselectedRequestHandlerClassName = $className;
     }
@@ -177,7 +179,7 @@ class Bootstrap
      *
      * @return RequestHandlerInterface
      */
-    public function getActiveRequestHandler()
+    public function getActiveRequestHandler(): RequestHandlerInterface
     {
         return $this->activeRequestHandler;
     }
@@ -208,7 +210,7 @@ class Bootstrap
      * @return void
      * @api
      */
-    public function registerCompiletimeCommand($commandIdentifier)
+    public function registerCompiletimeCommand(string $commandIdentifier)
     {
         $this->compiletimeCommands[$commandIdentifier] = true;
     }
@@ -220,7 +222,7 @@ class Bootstrap
      * @return boolean
      * @api
      */
-    public function isCompiletimeCommand($commandIdentifier)
+    public function isCompiletimeCommand(string $commandIdentifier): bool
     {
         $commandIdentifierParts = explode(':', $commandIdentifier);
         if (count($commandIdentifierParts) !== 3) {
@@ -263,7 +265,7 @@ class Bootstrap
      * @return Sequence
      * @api
      */
-    public function buildEssentialsSequence($identifier)
+    public function buildEssentialsSequence(string $identifier): Sequence
     {
         $sequence = new Sequence($identifier);
 
@@ -294,14 +296,15 @@ class Bootstrap
      * @return Sequence
      * @api
      */
-    public function buildCompiletimeSequence()
+    public function buildCompiletimeSequence(): Sequence
     {
         $sequence = $this->buildEssentialsSequence('compiletime');
 
         $sequence->addStep(new Step('neos.flow:cachemanagement:forceflush', [Scripts::class, 'forceFlushCachesIfNecessary']), 'neos.flow:systemlogger');
         $sequence->addStep(new Step('neos.flow:objectmanagement:compiletime:create', [Scripts::class, 'initializeObjectManagerCompileTimeCreate']), 'neos.flow:systemlogger');
         $sequence->addStep(new Step('neos.flow:systemfilemonitor', [Scripts::class, 'initializeSystemFileMonitor']), 'neos.flow:objectmanagement:compiletime:create');
-        $sequence->addStep(new Step('neos.flow:reflectionservice', [Scripts::class, 'initializeReflectionService']), 'neos.flow:systemfilemonitor');
+        $sequence->addStep(new Step('neos.flow:reflectionservice:factory', [Scripts::class, 'initializeReflectionServiceFactory']), 'neos.flow:systemfilemonitor');
+        $sequence->addStep(new Step('neos.flow:reflectionservice', [Scripts::class, 'initializeReflectionService']), 'neos.flow:reflectionservice:factory');
         $sequence->addStep(new Step('neos.flow:objectmanagement:compiletime:finalize', [Scripts::class, 'initializeObjectManagerCompileTimeFinalize']), 'neos.flow:reflectionservice');
         return $sequence;
     }
@@ -313,7 +316,7 @@ class Bootstrap
      * @return Sequence
      * @api
      */
-    public function buildRuntimeSequence()
+    public function buildRuntimeSequence(): Sequence
     {
         $sequence = $this->buildEssentialsSequence('runtime');
         $sequence->addStep(new Step('neos.flow:objectmanagement:proxyclasses', [Scripts::class, 'initializeProxyClasses']), 'neos.flow:systemlogger');
@@ -325,9 +328,8 @@ class Bootstrap
             $sequence->addStep(new Step('neos.flow:objectmanagement:recompile', [Scripts::class, 'recompileClasses']), 'neos.flow:systemfilemonitor');
         }
 
-        $sequence->addStep(new Step('neos.flow:reflectionservice', [Scripts::class, 'initializeReflectionService']), 'neos.flow:objectmanagement:runtime');
-        $sequence->addStep(new Step('neos.flow:resources', [Scripts::class, 'initializeResources']), 'neos.flow:reflectionservice');
-        $sequence->addStep(new Step('neos.flow:session', [Scripts::class, 'initializeSession']), 'neos.flow:resources');
+        $sequence->addStep(new Step('neos.flow:reflectionservice:factory', [Scripts::class, 'initializeReflectionServiceFactory']), 'neos.flow:objectmanagement:runtime');
+        $sequence->addStep(new Step('neos.flow:resources', [Scripts::class, 'initializeResources']), 'neos.flow:reflectionservice:factory');
         return $sequence;
     }
 
@@ -341,7 +343,7 @@ class Bootstrap
      * @return void
      * @api
      */
-    public function setEarlyInstance($objectName, $instance)
+    public function setEarlyInstance(string $objectName, $instance)
     {
         $this->earlyInstances[$objectName] = $instance;
     }
@@ -352,7 +354,7 @@ class Bootstrap
      * @return Dispatcher
      * @api
      */
-    public function getSignalSlotDispatcher()
+    public function getSignalSlotDispatcher(): Dispatcher
     {
         return $this->earlyInstances[Dispatcher::class];
     }
@@ -365,7 +367,7 @@ class Bootstrap
      * @throws FlowException
      * @api
      */
-    public function getEarlyInstance($objectName)
+    public function getEarlyInstance(string $objectName)
     {
         if (!isset($this->earlyInstances[$objectName])) {
             throw new FlowException('Unknown early instance "' . $objectName . '"', 1322581449);
@@ -378,7 +380,7 @@ class Bootstrap
      *
      * @return array
      */
-    public function getEarlyInstances()
+    public function getEarlyInstances(): array
     {
         return $this->earlyInstances;
     }
@@ -389,7 +391,7 @@ class Bootstrap
      * @return ObjectManagerInterface
      * @throws FlowException
      */
-    public function getObjectManager()
+    public function getObjectManager(): ObjectManagerInterface
     {
         if (!isset($this->earlyInstances[ObjectManagerInterface::class])) {
             debug_print_backtrace();
@@ -404,7 +406,7 @@ class Bootstrap
      * @return RequestHandlerInterface A request handler
      * @throws FlowException
      */
-    protected function resolveRequestHandler()
+    protected function resolveRequestHandler(): RequestHandlerInterface
     {
         if ($this->preselectedRequestHandlerClassName !== null && isset($this->requestHandlers[$this->preselectedRequestHandlerClassName])) {
             /** @var RequestHandlerInterface $requestHandler */
@@ -460,7 +462,7 @@ class Bootstrap
      * @return void
      * @Flow\Signal
      */
-    protected function emitBootstrapShuttingDown($runLevel)
+    protected function emitBootstrapShuttingDown(string $runLevel)
     {
         $this->earlyInstances[Dispatcher::class]->dispatch(__CLASS__, 'bootstrapShuttingDown', [$runLevel]);
     }
@@ -534,7 +536,7 @@ class Bootstrap
 
         if (!defined('FLOW_PATH_TEMPORARY_BASE')) {
             define('FLOW_PATH_TEMPORARY_BASE', self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY_BASE') ?: FLOW_PATH_DATA . '/Temporary');
-            $temporaryDirectoryPath = Files::concatenatePaths([FLOW_PATH_TEMPORARY_BASE, str_replace('/', '/SubContext', (string)$this->context)]) . '/';
+            $temporaryDirectoryPath = Environment::composeTemporaryDirectoryName(FLOW_PATH_TEMPORARY_BASE, $this->context);
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
 
@@ -546,8 +548,7 @@ class Bootstrap
         }
 
         define('FLOW_ONLY_COMPOSER_LOADER', $onlyUseComposerAutoLoaderForPackageClasses);
-        define('FLOW_VERSION_BRANCH', '4.3');
-
+        define('FLOW_VERSION_BRANCH', '5.3');
         define('FLOW_APPLICATION_CONTEXT', (string)$this->context);
     }
 
@@ -621,7 +622,7 @@ class Bootstrap
      * @param string $variableName
      * @return string or NULL if this variable was not set at all.
      */
-    public static function getEnvironmentConfigurationSetting($variableName)
+    public static function getEnvironmentConfigurationSetting(string $variableName)
     {
         $variableValue = getenv($variableName);
         if ($variableValue !== false) {

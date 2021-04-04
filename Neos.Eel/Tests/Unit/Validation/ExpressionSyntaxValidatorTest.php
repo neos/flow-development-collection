@@ -2,7 +2,6 @@
 namespace Neos\Eel\Tests\Unit\Validation;
 
 use Neos\Eel\Validation\ExpressionSyntaxValidator;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase;
 
 /**
@@ -21,7 +20,8 @@ class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase
     public function validExpressionPasses()
     {
         $this->assertFalse(
-            $this->validator->validate('foo.bar() * (18 + 2)')->hasErrors());
+            $this->validator->validate('foo.bar() * (18 + 2)')->hasErrors()
+        );
     }
 
     /**
@@ -30,7 +30,8 @@ class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase
     public function invalidExpressionIsConsideredErroneous()
     {
         $this->assertTrue(
-            $this->validator->validate('foo.bar( + (18 + 2)')->hasErrors());
+            $this->validator->validate('foo.bar( + (18 + 2)')->hasErrors()
+        );
     }
 
     /**

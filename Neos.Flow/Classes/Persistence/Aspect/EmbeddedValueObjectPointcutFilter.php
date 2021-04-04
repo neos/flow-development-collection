@@ -73,7 +73,7 @@ class EmbeddedValueObjectPointcutFilter implements \Neos\Flow\Aop\Pointcut\Point
      */
     public function getRuntimeEvaluationsDefinition()
     {
-        return array();
+        return [];
     }
 
     /**

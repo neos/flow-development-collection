@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement;
  * source code.
  */
 
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -20,6 +19,7 @@ use Neos\Flow\ResourceManagement\ResourceTypeConverter;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Error\Messages as FlowError;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Test case for the ResourceTypeConverter class
@@ -93,6 +93,21 @@ class ResourceTypeConverterTest extends UnitTestCase
     {
         $source = ['error' => \UPLOAD_ERR_NO_FILE];
         $this->assertNull($this->resourceTypeConverter->convertFrom($source, PersistentResource::class));
+    }
+    
+    /**
+     * @test
+     */
+    public function convertFromReturnsTrueIfSourceIsAnArrayWithDataAndFilename()
+    {
+        $source = [
+            'data' => 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
+            'filename' => 'test.png'
+        ];
+
+        $this->mockResourceManager->expects(self::once())->method('importResourceFromContent')->will(self::returnValue(new PersistentResource()));
+
+        $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
     }
 
     /**
@@ -168,9 +183,9 @@ class ResourceTypeConverterTest extends UnitTestCase
             'error' => \UPLOAD_ERR_CANT_WRITE
         ];
 
-        $mockSystemLogger = $this->getMockBuilder(SystemLoggerInterface::class)->getMock();
-        $mockSystemLogger->expects($this->once())->method('log');
-        $this->resourceTypeConverter->_set('systemLogger', $mockSystemLogger);
+        $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->getMock();
+        $mockSystemLogger->expects($this->once())->method('error');
+        $this->resourceTypeConverter->injectLogger($mockSystemLogger);
 
         $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
     }
@@ -196,7 +211,7 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     public function convertFromReturnsAnErrorIfTheUploadedFileCantBeImported()
     {
-        $this->inject($this->resourceTypeConverter, 'systemLogger', $this->createMock(SystemLoggerInterface::class));
+        $this->resourceTypeConverter->injectLogger($this->createMock(LoggerInterface::class));
 
         $source = [
             'tmp_name' => 'SomeFilename',

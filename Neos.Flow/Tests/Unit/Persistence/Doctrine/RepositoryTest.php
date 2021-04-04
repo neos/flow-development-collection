@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Flow\Tests\UnitTestCase;
@@ -22,7 +22,7 @@ use Neos\Flow\Tests\UnitTestCase;
 class RepositoryTest extends UnitTestCase
 {
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockEntityManager;
 
@@ -36,7 +36,7 @@ class RepositoryTest extends UnitTestCase
      */
     public function setUp()
     {
-        $this->mockEntityManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $this->mockEntityManager = $this->getMockBuilder(EntityManagerInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->mockClassMetadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
         $this->mockEntityManager->expects($this->any())->method('getClassMetadata')->will($this->returnValue($this->mockClassMetadata));

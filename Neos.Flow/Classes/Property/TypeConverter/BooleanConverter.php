@@ -19,7 +19,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
  *
  * For boolean this is a no-op, integer and float are simply typecast to boolean.
  *
- * Strings are converted to TRUE unless they are empry or match one of 'off', 'n', 'no', 'false' (case-insensitive).
+ * Strings are converted to true unless they are empry or match one of 'off', 'n', 'no', 'false' (case-insensitive).
  *
  * @api
  * @Flow\Scope("singleton")
@@ -47,7 +47,7 @@ class BooleanConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return boolean
      * @api
      */

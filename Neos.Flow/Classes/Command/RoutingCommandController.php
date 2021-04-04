@@ -15,9 +15,10 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Request;
+use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
-use Neos\Flow\Mvc\Routing\Exception\InvalidControllerException;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -72,7 +73,7 @@ class RoutingCommandController extends CommandController
      * @param integer $index The index of the route as given by routing:list
      * @return void
      */
-    public function showCommand($index)
+    public function showCommand(int $index)
     {
         $routes = $this->router->getRoutes();
         if (isset($routes[$index - 1])) {
@@ -86,7 +87,7 @@ class RoutingCommandController extends CommandController
             foreach ($route->getDefaults() as $defaultKey => $defaultValue) {
                 $this->outputLine('    - ' . $defaultKey . ' => ' . $defaultValue);
             }
-            $this->outputLine('  Append: ' . ($route->getAppendExceedingArguments() ? 'TRUE' : 'FALSE'));
+            $this->outputLine('  Append: ' . ($route->getAppendExceedingArguments() ? 'true' : 'false'));
         } else {
             $this->outputLine('Route ' . $index . ' was not found!');
         }
@@ -106,7 +107,7 @@ class RoutingCommandController extends CommandController
      * @param string $format Requested Format name default is 'html'
      * @return void
      */
-    public function getPathCommand($package, $controller = 'Standard', $action = 'index', $format = 'html')
+    public function getPathCommand(string $package, string $controller = 'Standard', string $action = 'index', string $format = 'html')
     {
         $packageParts = explode('\\', $package, 2);
         $package = $packageParts[0];
@@ -133,7 +134,7 @@ class RoutingCommandController extends CommandController
             try {
                 $resolves = $route->resolves($routeValues);
                 $controllerObjectName = $this->getControllerObjectName($package, $subpackage, $controller);
-            } catch (InvalidControllerException $exception) {
+            } catch (InvalidRoutePartValueException $exception) {
                 $resolves = false;
             }
 
@@ -143,7 +144,7 @@ class RoutingCommandController extends CommandController
                 $this->outputLine('  Pattern: ' . $route->getUriPattern());
 
                 $this->outputLine('<b>Generated Path:</b>');
-                $this->outputLine('  ' . $route->getResolvedUriPath());
+                $this->outputLine('  ' . $route->getResolvedUriConstraints()->getPathConstraint());
 
                 if ($controllerObjectName !== null) {
                     $this->outputLine('<b>Controller:</b>');
@@ -167,8 +168,10 @@ class RoutingCommandController extends CommandController
      * @param string $path The route path to resolve
      * @param string $method The request method (GET, POST, PUT, DELETE, ...) to simulate
      * @return void
+     * @throws InvalidRoutePartValueException
+     * @throws StopActionException
      */
-    public function routePathCommand($path, $method = 'GET')
+    public function routePathCommand(string $path, string $method = 'GET')
     {
         $server = [
             'REQUEST_URI' => $path,
@@ -213,14 +216,14 @@ class RoutingCommandController extends CommandController
 
     /**
      * Returns the object name of the controller defined by the package, subpackage key and
-     * controller name
+     * controller name or NULL if the controller does not exist
      *
      * @param string $packageKey the package key of the controller
-     * @param string $subPackageKey the subpackage key of the controller
+     * @param string|null $subPackageKey the subpackage key of the controller
      * @param string $controllerName the controller name excluding the "Controller" suffix
-     * @return string The controller's Object Name or NULL if the controller does not exist
+     * @return string|null The controller's Object Name or NULL if the controller does not exist
      */
-    protected function getControllerObjectName($packageKey, $subPackageKey, $controllerName)
+    protected function getControllerObjectName(string $packageKey, ?string $subPackageKey, string $controllerName): ?string
     {
         $possibleObjectName = '@package\@subpackage\Controller\@controllerController';
         $possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);

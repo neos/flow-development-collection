@@ -14,6 +14,7 @@ namespace Neos\Flow\ResourceManagement;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
 use Neos\Flow\ResourceManagement\Storage\StorageInterface;
+use Neos\Flow\ResourceManagement\Storage\StorageObject;
 use Neos\Flow\ResourceManagement\Storage\WritableStorageInterface;
 use Neos\Flow\ResourceManagement\Target\TargetInterface;
 use Neos\Flow\ResourceManagement\Exception as ResourceException;
@@ -103,7 +104,7 @@ class Collection implements CollectionInterface
      *
      * Note that this collection must have a writable storage in order to import resources.
      *
-     * @param string | resource $source The URI (or local path and filename) or the PHP resource stream to import the resource from
+     * @param string|resource $source The URI (or local path and filename) or the PHP resource stream to import the resource from
      * @return PersistentResource A resource object representing the imported resource
      * @throws ResourceException
      */
@@ -152,7 +153,7 @@ class Collection implements CollectionInterface
      * Returns all internal data objects of the storage attached to this collection.
      *
      * @param callable $callback Function called after each object
-     * @return \Generator<Storage\Object>
+     * @return \Generator<StorageObject>
      */
     public function getObjects(callable $callback = null)
     {
@@ -179,7 +180,7 @@ class Collection implements CollectionInterface
      * data. Note that this stream handle may only be used read-only.
      *
      * @param PersistentResource $resource The resource to retrieve the stream for
-     * @return resource | boolean The resource stream or FALSE if the stream could not be obtained
+     * @return resource|boolean The resource stream or false if the stream could not be obtained
      */
     public function getStreamByResource(PersistentResource $resource)
     {

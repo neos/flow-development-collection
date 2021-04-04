@@ -95,7 +95,7 @@ class ClassLoader
     /**
      * @param array $defaultPackageEntries Adds default entries for packages that should be available for very early loading
      */
-    public function __construct($defaultPackageEntries = [])
+    public function __construct(array $defaultPackageEntries = [])
     {
         foreach ($defaultPackageEntries as $entry) {
             $this->createNamespaceMapEntry($entry['namespace'], $entry['classPath'], $entry['mappingType']);
@@ -109,7 +109,7 @@ class ClassLoader
      * @param string $className Name of the class/interface to load
      * @return boolean
      */
-    public function loadClass($className)
+    public function loadClass(string $className): bool
     {
         $className = ltrim($className, '\\');
         $namespaceParts = explode('\\', $className);
@@ -166,7 +166,7 @@ class ClassLoader
      * @param integer $packageNamespacePartCount
      * @return boolean
      */
-    protected function loadClassFromPossiblePaths(array $possiblePaths, array $namespaceParts, $packageNamespacePartCount)
+    protected function loadClassFromPossiblePaths(array $possiblePaths, array $namespaceParts, int $packageNamespacePartCount): bool
     {
         foreach ($possiblePaths as $possiblePathData) {
             $possibleFilePath = '';
@@ -218,7 +218,7 @@ class ClassLoader
      * @param string $mappingType The mapping type for this mapping entry. Currently one of self::MAPPING_TYPE_PSR0 or self::MAPPING_TYPE_PSR4 will work. Defaults to self::MAPPING_TYPE_PSR0
      * @return void
      */
-    protected function createNamespaceMapEntry($namespace, $classPath, $mappingType = self::MAPPING_TYPE_PSR0)
+    protected function createNamespaceMapEntry(string $namespace, string $classPath, string $mappingType = self::MAPPING_TYPE_PSR0)
     {
         $unifiedClassPath = Files::getNormalizedPath($classPath);
         $entryIdentifier = md5($unifiedClassPath . '-' . $mappingType);
@@ -246,7 +246,7 @@ class ClassLoader
      * @param string $path The fallback path to search in.
      * @return void
      */
-    public function createFallbackPathEntry($path)
+    public function createFallbackPathEntry(string $path)
     {
         $entryIdentifier = md5($path);
         if (!isset($this->fallbackClassPaths[$entryIdentifier])) {
@@ -265,7 +265,7 @@ class ClassLoader
      * @param string $mappingType The mapping type for this mapping entry. Currently one of self::MAPPING_TYPE_PSR0 or self::MAPPING_TYPE_PSR4 will work. Defaults to self::MAPPING_TYPE_PSR0
      * @return void
      */
-    protected function removeNamespaceMapEntry($namespace, $classPath, $mappingType = self::MAPPING_TYPE_PSR0)
+    protected function removeNamespaceMapEntry(string $namespace, string $classPath, string $mappingType = self::MAPPING_TYPE_PSR0)
     {
         $unifiedClassPath = Files::getNormalizedPath($classPath);
         $entryIdentifier = md5($unifiedClassPath . '-' . $mappingType);
@@ -296,7 +296,7 @@ class ClassLoader
      * @param string $classPath Already detected class path to a possible package.
      * @return string
      */
-    protected function buildClassPathWithPsr0($classNameParts, $classPath)
+    protected function buildClassPathWithPsr0(array $classNameParts, string $classPath): string
     {
         $fileName = implode('/', $classNameParts) . '.php';
 
@@ -311,7 +311,7 @@ class ClassLoader
      * @param integer $packageNamespacePartCount Amount of parts of the className that is also part of the package namespace.
      * @return string
      */
-    protected function buildClassPathWithPsr4($classNameParts, $classPath, $packageNamespacePartCount)
+    protected function buildClassPathWithPsr4(array $classNameParts, string $classPath, int $packageNamespacePartCount): string
     {
         $fileName = implode('/', array_slice($classNameParts, $packageNamespacePartCount)) . '.php';
 
@@ -325,7 +325,7 @@ class ClassLoader
      * @param boolean $flag
      * @return void
      */
-    public function setConsiderTestsNamespace($flag)
+    public function setConsiderTestsNamespace(bool $flag)
     {
         $this->considerTestsNamespace = $flag;
     }
@@ -336,7 +336,7 @@ class ClassLoader
      * @param string $mappingType
      * @return boolean
      */
-    public static function isAutoloadTypeWithPredictableClassPath($mappingType)
+    public static function isAutoloadTypeWithPredictableClassPath(string $mappingType): bool
     {
         return ($mappingType === static::MAPPING_TYPE_PSR0 || $mappingType === static::MAPPING_TYPE_PSR4);
     }

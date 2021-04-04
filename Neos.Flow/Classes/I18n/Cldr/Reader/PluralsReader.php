@@ -68,9 +68,9 @@ class PluralsReader
      * also be NULL ruleset, used by languages which don't have plurals.
      *
      * A rule is an array with following elements:
-     * 'modulo' => $x | FALSE,
+     * 'modulo' => $x | false,
      * 'condition' => array(0 => 'conditionName', 1 => $x, 2 => $y),
-     * 'logicalOperator' => 'and' | 'or' | FALSE
+     * 'logicalOperator' => 'and' | 'or' | false
      *
      * Legend:
      * - if 'modulo' key has an integer value, tested variable (call it $n) has
@@ -82,7 +82,7 @@ class PluralsReader
      *   is used only for tests where range is needed (last 4 from the list above)
      * - 'logicalOperator' represents a logical operation to be done with next
      *   subrule in chain. If current subrule is a last one (or only one), this
-     *   element is set to FALSE.
+     *   element is set to false.
      *
      * @var array
      */
@@ -150,7 +150,7 @@ class PluralsReader
             return self::RULE_OTHER;
         }
 
-        $ruleset = $this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]];
+        $ruleset = $this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]] ?? null;
 
         if ($ruleset === null) {
             return self::RULE_OTHER;
@@ -226,7 +226,13 @@ class PluralsReader
             return [self::RULE_OTHER];
         }
 
-        return array_merge(array_keys($this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]]), [self::RULE_OTHER]);
+        $ruleset = $this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]] ?? null;
+
+        if ($ruleset === null) {
+            return [self::RULE_OTHER];
+        }
+
+        return array_merge(array_keys($ruleset), [self::RULE_OTHER]);
     }
 
     /**

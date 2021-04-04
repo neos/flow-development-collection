@@ -18,7 +18,6 @@ use Neos\Flow\Property\Exception\DuplicateObjectException;
 use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use Neos\Flow\Property\Exception\InvalidSourceException;
 use Neos\Flow\Property\Exception\InvalidTargetException;
-use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Utility\ObjectAccess;
@@ -31,12 +30,12 @@ use Neos\Utility\TypeHandling;
  * - If the input is array, we check if it has an identity property.
  *
  * - If the input has NO identity property, but additional properties, we create a new object and return it.
- *   However, we only do this if the configuration option "CONFIGURATION_CREATION_ALLOWED" is TRUE.
+ *   However, we only do this if the configuration option "CONFIGURATION_CREATION_ALLOWED" is true.
  * - If the input has an identity property AND the configuration option "CONFIGURATION_IDENTITY_CREATION_ALLOWED" is set,
  *   we fetch the object from persistent or create a new object if none was found and then set the sub-properties.
  * - If the input has an identity property and NO additional properties, we fetch the object from persistence.
  * - If the input has an identity property AND additional properties, we fetch the object from persistence,
- *   and set the sub-properties. We only do this if the configuration option "CONFIGURATION_MODIFICATION_ALLOWED" is TRUE.
+ *   and set the sub-properties. We only do this if the configuration option "CONFIGURATION_MODIFICATION_ALLOWED" is true.
  *
  * @api
  * @Flow\Scope("singleton")
@@ -226,7 +225,7 @@ class PersistentObjectConverter extends ObjectConverter
      * @param array $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object|TargetNotFoundError
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -236,10 +235,10 @@ class PersistentObjectConverter extends ObjectConverter
             if ($this->reflectionService->isClassAnnotatedWith($targetType, ValueObject::class) === true) {
                 // Allow creation for ValueObjects by default, but prevent if explicitly disallowed
                 if ($configuration !== null && $configuration->getConfigurationValue(PersistentObjectConverter::class, self::CONFIGURATION_CREATION_ALLOWED) === false) {
-                    throw new InvalidPropertyMappingConfigurationException('Creation of value objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to TRUE');
+                    throw new InvalidPropertyMappingConfigurationException('Creation of value objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to true');
                 }
             } elseif ($configuration === null || $configuration->getConfigurationValue(PersistentObjectConverter::class, self::CONFIGURATION_CREATION_ALLOWED) !== true) {
-                throw new InvalidPropertyMappingConfigurationException('Creation of objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to TRUE');
+                throw new InvalidPropertyMappingConfigurationException('Creation of objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to true');
             }
             $object = $this->buildObject($convertedChildProperties, $targetType);
         } elseif ($configuration !== null && $configuration->getConfigurationValue(PersistentObjectConverter::class, self::CONFIGURATION_IDENTITY_CREATION_ALLOWED) === true) {
@@ -256,7 +255,7 @@ class PersistentObjectConverter extends ObjectConverter
             }
 
             if (count($convertedChildProperties) > 0 && ($configuration === null || $configuration->getConfigurationValue(PersistentObjectConverter::class, self::CONFIGURATION_MODIFICATION_ALLOWED) !== true)) {
-                throw new InvalidPropertyMappingConfigurationException('Modification of persistent objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_MODIFICATION_ALLOWED" to TRUE.', 1297932028);
+                throw new InvalidPropertyMappingConfigurationException('Modification of persistent objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_MODIFICATION_ALLOWED" to true.', 1297932028);
             }
         }
 
@@ -282,8 +281,7 @@ class PersistentObjectConverter extends ObjectConverter
      * @param mixed $identity
      * @param string $targetType
      * @return object
-     * @throws TargetNotFoundException
-     * @throws InvalidSourceException
+     * @throws InvalidSourceException|DuplicateObjectException
      */
     protected function fetchObjectFromPersistence($identity, $targetType)
     {

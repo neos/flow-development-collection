@@ -11,10 +11,8 @@ namespace Neos\Flow\ObjectManagement\DependencyInjection;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument;
@@ -27,6 +25,7 @@ use Neos\Flow\ObjectManagement\Proxy\ProxyClass;
 use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\Arrays;
+use Psr\Log\LoggerInterface;
 
 /**
  * A Proxy Class Builder which integrates Dependency Injection.
@@ -47,9 +46,9 @@ class ProxyClassBuilder
     protected $compiler;
 
     /**
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
 
     /**
      * @var ConfigurationManager
@@ -94,12 +93,15 @@ class ProxyClassBuilder
     }
 
     /**
-     * @param SystemLoggerInterface $systemLogger
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
      * @return void
+     * @Flow\Autowiring(false)
      */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
+    public function injectLogger(LoggerInterface $logger)
     {
-        $this->systemLogger = $systemLogger;
+        $this->logger = $logger;
     }
 
     /**
@@ -134,7 +136,7 @@ class ProxyClassBuilder
             if ($proxyClass === false) {
                 continue;
             }
-            $this->systemLogger->log('Building DI proxy for "' . $className . '".', LOG_DEBUG);
+            $this->logger->debug('Building DI proxy for "' . $className . '".');
 
             $constructorPreCode = '';
             $constructorPostCode = '';
@@ -228,6 +230,7 @@ class ProxyClassBuilder
                 $propertyVarTags[$propertyName] = isset($varTagValues[0]) ? $varTagValues[0] : null;
             }
             $code = "        \$this->Flow_Object_PropertiesToSerialize = array();
+        unset(\$this->Flow_Persistence_RelatedEntities);
 
         \$transientProperties = " . var_export($transientProperties, true) . ";
         \$propertyVarTags = " . var_export($propertyVarTags, true) . ";
@@ -276,7 +279,7 @@ class ProxyClassBuilder
                             $argumentValueObjectName = $argumentValue->getObjectName();
                             $argumentValueClassName = $argumentValue->getClassName();
                             if ($argumentValueClassName === null) {
-                                $preparedArgument = $this->buildCustomFactoryCall($argumentValue->getFactoryObjectName(), $argumentValue->getFactoryMethodName(), $argumentValue->getArguments());
+                                $preparedArgument = $this->buildCustomFactoryCall($argumentValue->getFactoryObjectName(), $argumentValue->getFactoryMethodName(), $argumentValue->getFactoryArguments());
                                 $assignments[$argumentPosition] = $assignmentPrologue . $preparedArgument;
                             } else {
                                 if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
@@ -364,11 +367,11 @@ class ProxyClassBuilder
                     } elseif (is_array($propertyValue)) {
                         $preparedSetterArgument = var_export($propertyValue, true);
                     } elseif (is_bool($propertyValue)) {
-                        $preparedSetterArgument = $propertyValue ? 'TRUE' : 'FALSE';
+                        $preparedSetterArgument = $propertyValue ? 'true' : 'false';
                     } else {
                         $preparedSetterArgument = $propertyValue;
                     }
-                    $commands[] = 'if (\Neos\Utility\ObjectAccess::setProperty($this, \'' . $propertyName . '\', ' . $preparedSetterArgument . ') === FALSE) { $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';}';
+                    $commands[] = 'if (\Neos\Utility\ObjectAccess::setProperty($this, \'' . $propertyName . '\', ' . $preparedSetterArgument . ') === false) { $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';}';
                     break;
                 case ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION:
                     $configurationType = $propertyValue['type'];
@@ -406,7 +409,7 @@ class ProxyClassBuilder
         $propertyObjectName = $propertyConfiguration->getObjectName();
         $propertyClassName = $propertyConfiguration->getClassName();
         if ($propertyClassName === null) {
-            $preparedSetterArgument = $this->buildCustomFactoryCall($propertyConfiguration->getFactoryObjectName(), $propertyConfiguration->getFactoryMethodName(), $propertyConfiguration->getArguments());
+            $preparedSetterArgument = $this->buildCustomFactoryCall($propertyConfiguration->getFactoryObjectName(), $propertyConfiguration->getFactoryMethodName(), $propertyConfiguration->getFactoryArguments());
         } else {
             if (!is_string($propertyClassName) || !isset($this->objectConfigurations[$propertyClassName])) {
                 $configurationSource = $objectConfiguration->getConfigurationSourceHint();
@@ -565,7 +568,7 @@ class ProxyClassBuilder
         if ($cause === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
             $code .= "\n" . '        $classParents = class_parents($this);';
             $code .= "\n" . '        $classImplements = class_implements($this);';
-            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== FALSE && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== FALSE;' . "\n";
+            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== false && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== false;' . "\n";
             $code .= "\n" . '        if ($isSameClass || $isClassProxy) {' . "\n";
         } else {
             $code .= "\n" . '        if ($isSameClass) {' . "\n";
@@ -593,7 +596,7 @@ class ProxyClassBuilder
         if ($cause === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
             $code .= "\n" . '        $classParents = class_parents($this);';
             $code .= "\n" . '        $classImplements = class_implements($this);';
-            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== FALSE && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== FALSE;' . "\n";
+            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== false && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== false;' . "\n";
             $code .= "\n" . '        if ($isSameClass || $isClassProxy) {' . "\n";
         } else {
             $code .= "\n" . '        if ($isSameClass) {' . "\n";

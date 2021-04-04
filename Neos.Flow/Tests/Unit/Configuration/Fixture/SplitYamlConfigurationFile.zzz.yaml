@@ -1,6 +1,6 @@
-configurationFileHasBeenLoaded: TRUE
+configurationFileHasBeenLoaded: true
 Neos:
   Flow:
     something: 'zzz'
-    aboolean: TRUE
+    aboolean: true
     toBeOverwritten: 2

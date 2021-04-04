@@ -11,12 +11,15 @@ namespace Neos\Flow;
  * source code.
  */
 
+use Neos\Flow\Error\WithHttpStatusInterface;
+use Neos\Flow\Error\WithReferenceCodeInterface;
+
 /**
  * A generic Flow Exception
  *
  * @api
  */
-class Exception extends \Exception
+class Exception extends \Exception implements WithReferenceCodeInterface, WithHttpStatusInterface
 {
     /**
      * @var string

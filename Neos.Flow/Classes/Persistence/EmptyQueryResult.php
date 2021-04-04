@@ -90,7 +90,7 @@ class EmptyQueryResult implements QueryResultInterface
     }
 
     /**
-     * @return boolean Returns FALSE in this case
+     * @return boolean Returns false in this case
      */
     public function valid()
     {
@@ -106,7 +106,7 @@ class EmptyQueryResult implements QueryResultInterface
 
     /**
      * @param mixed $offset
-     * @return boolean Returns FALSE in this case
+     * @return boolean Returns false in this case
      */
     public function offsetExists($offset)
     {

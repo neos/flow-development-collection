@@ -11,10 +11,8 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Utility\TypeHandling;
 
 /**
  * Representation of a method within a proxy class
@@ -107,6 +105,16 @@ class ProxyMethod
     }
 
     /**
+     * Returns TRUE if this proxy belongs to a private method, otherwise FALSE
+     *
+     * @return bool
+     */
+    public function isPrivate(): bool
+    {
+        return $this->getMethodVisibilityString() === 'private';
+    }
+
+    /**
      * Adds PHP code to the body of this method which will be executed before a possible parent call.
      *
      * @param string $code
@@ -150,9 +158,8 @@ class ProxyMethod
         $methodParametersCode = ($this->methodParametersCode !== '' ? $this->methodParametersCode : $this->buildMethodParametersCode($this->fullOriginalClassName, $this->methodName));
         $callParentMethodCode = $this->buildCallParentMethodCode($this->fullOriginalClassName, $this->methodName);
 
+        $finalKeyword = $this->reflectionService->isMethodFinal($this->fullOriginalClassName, $this->methodName) ? 'final ' : '';
         $staticKeyword = $this->reflectionService->isMethodStatic($this->fullOriginalClassName, $this->methodName) ? 'static ' : '';
-
-        $visibility = ($this->visibility === null ? $this->getMethodVisibilityString() : $this->visibility);
 
         $returnType = $this->reflectionService->getMethodDeclaredReturnType($this->fullOriginalClassName, $this->methodName);
         $returnTypeIsVoid = $returnType === 'void';
@@ -163,7 +170,7 @@ class ProxyMethod
         if ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '' || $this->methodBody !== '') {
             $code = "\n" .
                 $methodDocumentation .
-                '    ' . $staticKeyword . $visibility . ' function ' . $this->methodName . '(' . $methodParametersCode . ")$returnTypeDeclaration\n    {\n";
+                '    ' . $finalKeyword . $staticKeyword . $this->getMethodVisibilityString() . ' function ' . $this->methodName . '(' . $methodParametersCode . ")$returnTypeDeclaration\n    {\n";
             if ($this->methodBody !== '') {
                 $code .= "\n" . $this->methodBody . "\n";
             } else {
@@ -195,7 +202,7 @@ class ProxyMethod
      * Tells if enough code was provided (yet) so that this method would actually be rendered
      * if render() is called.
      *
-     * @return boolean TRUE if there is any code to render, otherwise FALSE
+     * @return boolean true if there is any code to render, otherwise false
      */
     public function willBeRendered()
     {
@@ -280,7 +287,7 @@ class ProxyMethod
                         if ($rawDefaultValue === null) {
                             $defaultValue = ' = NULL';
                         } elseif (is_bool($rawDefaultValue)) {
-                            $defaultValue = ($rawDefaultValue ? ' = TRUE' : ' = FALSE');
+                            $defaultValue = ($rawDefaultValue ? ' = true' : ' = false');
                         } elseif (is_numeric($rawDefaultValue)) {
                             $defaultValue = ' = ' . $rawDefaultValue;
                         } elseif (is_string($rawDefaultValue)) {
@@ -336,7 +343,7 @@ class ProxyMethod
             if ($value === null) {
                 $code .= 'NULL';
             } elseif (is_bool($value)) {
-                $code .= ($value ? 'TRUE' : 'FALSE');
+                $code .= ($value ? 'true' : 'false');
             } elseif (is_numeric($value)) {
                 $code .= $value;
             } elseif (is_string($value)) {
@@ -356,6 +363,9 @@ class ProxyMethod
      */
     protected function getMethodVisibilityString()
     {
+        if ($this->visibility !== null) {
+            return $this->visibility;
+        }
         if ($this->reflectionService->isMethodProtected($this->fullOriginalClassName, $this->methodName)) {
             return 'protected';
         } elseif ($this->reflectionService->isMethodPrivate($this->fullOriginalClassName, $this->methodName)) {

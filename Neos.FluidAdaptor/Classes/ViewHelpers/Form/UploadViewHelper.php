@@ -82,7 +82,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
+        $this->registerTagAttribute('disabled', 'boolean', 'Specifies that the input element should be disabled when the page loads', false, false);
         $this->registerArgument('errorClass', 'string', 'CSS class to set if there are errors for this view helper', false, 'f3-form-error');
         $this->registerArgument('collection', 'string', 'Name of the resource collection this file should be uploaded to', false, '');
         $this->registerUniversalTagAttributes();
@@ -116,6 +116,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
         $this->tag->addAttribute('type', 'file');
         $this->tag->addAttribute('name', $nameAttribute);
 
+        $this->viewHelperVariableContainer->addOrUpdate(FormViewHelper::class, 'required-enctype', 'multipart/form-data');
         $this->addAdditionalIdentityPropertiesIfNeeded();
         $this->setErrorClassAttribute();
 

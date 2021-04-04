@@ -11,7 +11,6 @@ namespace Neos\Eel\FlowQuery;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Contract for a *FlowQuery operation* which is applied onto a set of objects.
@@ -33,7 +32,7 @@ interface OperationInterface
     public static function getPriority();
 
     /**
-     * @return boolean TRUE if the operation is final, FALSE otherwise
+     * @return boolean true if the operation is final, false otherwise
      * @api
      */
     public static function isFinal();
@@ -44,7 +43,7 @@ interface OperationInterface
      * to implement runtime conditions.
      *
      * @param array (or array-like object) $context onto which this operation should be applied
-     * @return boolean TRUE if the operation can be applied onto the $context, FALSE otherwise
+     * @return boolean true if the operation can be applied onto the $context, false otherwise
      * @api
      */
     public function canEvaluate($context);

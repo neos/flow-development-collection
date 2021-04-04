@@ -45,7 +45,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
      *
      * On a successful import this method returns a PersistentResource object representing the newly imported persistent resource.
      *
-     * @param string | resource $source The URI (or local path and filename) or the PHP resource stream to import the resource from
+     * @param string|resource $source The URI (or local path and filename) or the PHP resource stream to import the resource from
      * @param string $collectionName Name of the collection the new PersistentResource belongs to
      * @throws StorageException
      * @return PersistentResource A resource object representing the imported resource
@@ -63,9 +63,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
                 throw new StorageException(sprintf('Could import the content stream to temporary file "%s".', $temporaryTargetPathAndFilename), 1380880079);
             }
         } else {
-            try {
-                copy($source, $temporaryTargetPathAndFilename);
-            } catch (\Exception $exception) {
+            if (copy($source, $temporaryTargetPathAndFilename) === false) {
                 throw new StorageException(sprintf('Could not copy the file from "%s" to temporary file "%s".', $source, $temporaryTargetPathAndFilename), 1375198876);
             }
         }
@@ -103,7 +101,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
      * Deletes the storage data related to the given PersistentResource object
      *
      * @param PersistentResource $resource The PersistentResource to delete the storage data of
-     * @return boolean TRUE if removal was successful
+     * @return boolean true if removal was successful
      */
     public function deleteResource(PersistentResource $resource)
     {

@@ -97,38 +97,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     }
 
     /**
-     * Get the value of this form element.
-     * Either returns arguments['value'], or the correct value for Object Access.
-     *
-     * @param boolean $convertObjects whether or not to convert objects to identifiers
-     * @return mixed Value
-     * @deprecated since Flow 3.0. Use getValueAttribute() and (if applicable) addAdditionalIdentityPropertiesIfNeeded()
-     */
-    protected function getValue($convertObjects = true)
-    {
-        $value = null;
-
-        if ($this->hasArgument('value')) {
-            $value = $this->arguments['value'];
-        } elseif ($this->isObjectAccessorMode()) {
-            if ($this->hasMappingErrorOccurred()) {
-                $value = $this->getLastSubmittedFormData();
-            } else {
-                $value = $this->getPropertyValue();
-            }
-            $this->addAdditionalIdentityPropertiesIfNeeded();
-        }
-
-        if ($convertObjects && is_object($value)) {
-            $identifier = $this->persistenceManager->getIdentifierByObject($value);
-            if ($identifier !== null) {
-                $value = $identifier;
-            }
-        }
-        return $value;
-    }
-
-    /**
      * Returns the current value of this Form ViewHelper and converts it to an identifier string in case it's an object
      * The value is determined as follows:
      * * If property mapping errors occurred and the form is re-displayed, the *last submitted* value is returned
@@ -164,7 +132,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     /**
      * Checks if a property mapping error has occurred in the last request.
      *
-     * @return boolean TRUE if a mapping error occurred, FALSE otherwise
+     * @return boolean true if a mapping error occurred, false otherwise
      */
     protected function hasMappingErrorOccurred()
     {
@@ -261,7 +229,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     /**
      * Internal method which checks if we should evaluate a domain object or just output arguments['name'] and arguments['value']
      *
-     * @return boolean TRUE if we should evaluate the domain object, FALSE otherwise.
+     * @return boolean true if we should evaluate the domain object, false otherwise.
      */
     protected function isObjectAccessorMode()
     {
@@ -315,7 +283,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      */
     protected function renderHiddenFieldForEmptyValue()
     {
-        $emptyHiddenFieldNames = array();
+        $emptyHiddenFieldNames = [];
         if ($this->viewHelperVariableContainer->exists(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames')) {
             $emptyHiddenFieldNames = $this->viewHelperVariableContainer->get(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'emptyHiddenFieldNames');
         }

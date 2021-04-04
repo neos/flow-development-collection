@@ -27,7 +27,7 @@ class RequestMatcher
     /**
      * Request that will be used for the matcher.
      * If the Request is NULL this class will always
-     * return FALSE. This case is primarily needed
+     * return false. This case is primarily needed
      * if no parentRequest exists.
      *
      * @var ActionRequest
@@ -129,7 +129,7 @@ class RequestMatcher
 
     /**
      * Compare a request propertyValue against an expected
-     * value and add the weight if it's TRUE
+     * value and add the weight if it's true
      *
      * @param string $propertyName
      * @param string $expectedValue

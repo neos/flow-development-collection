@@ -47,7 +47,7 @@ class CurlEngine implements RequestEngineInterface
      * Sends the given HTTP request
      *
      * @param Http\Request $request
-     * @return Http\Response The response or FALSE
+     * @return Http\Response The response or false
      * @api
      * @throws Http\Exception
      * @throws CurlEngineException
@@ -70,7 +70,8 @@ class CurlEngine implements RequestEngineInterface
         // If the content is a stream resource, use cURL's INFILE feature to stream it
         $content = $request->getContent();
         if (is_resource($content)) {
-            curl_setopt_array($curlHandle,
+            curl_setopt_array(
+                $curlHandle,
                 [
                     CURLOPT_INFILE => $content,
                     CURLOPT_INFILESIZE => $request->getHeader('Content-Length'),
@@ -138,7 +139,7 @@ class CurlEngine implements RequestEngineInterface
         }
 
         if (count($request->getCookies()) > 0) {
-            $cookies = array();
+            $cookies = [];
             foreach ($request->getCookies() as $cookie) {
                 $cookies[] = $cookie->getName() . '=' . $cookie->getValue();
             }
@@ -153,7 +154,7 @@ class CurlEngine implements RequestEngineInterface
         }
         curl_close($curlHandle);
 
-        $response = Http\Response::createFromRaw($curlResult);
+        $response = Http\Helper\ResponseInformationHelper::createFromRaw($curlResult);
         try {
             while (substr($response->getContent(), 0, 5) === 'HTTP/' || $response->getStatusCode() === 100) {
                 $response = Http\Response::createFromRaw($response->getContent(), $response);

@@ -13,7 +13,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
 
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -47,14 +46,26 @@ class Nl2brViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'string', 'string to format', false, null);
+    }
+
+    /**
      * Replaces newline characters by HTML line breaks.
      *
-     * @param string $value string to format
      * @return string the altered string.
      * @api
      */
-    public function render($value = null)
+    public function render()
     {
+        $value = $this->arguments['value'];
+
         if ($value === null) {
             $value = $this->renderChildren();
         }

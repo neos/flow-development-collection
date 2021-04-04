@@ -35,7 +35,7 @@ class Step
      * @param string $identifier
      * @param mixed $callback
      */
-    public function __construct($identifier, $callback)
+    public function __construct(string $identifier, $callback)
     {
         $this->identifier = $identifier;
         $this->callback = $callback;
@@ -55,7 +55,7 @@ class Step
     /**
      * @return string
      */
-    public function getIdentifier()
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }

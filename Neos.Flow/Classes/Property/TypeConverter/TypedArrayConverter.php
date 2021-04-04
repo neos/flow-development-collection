@@ -59,7 +59,7 @@ class TypedArrayConverter extends AbstractTypeConverter
      * @param array $source An array of objects/simple types
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return array
      * @api
      */

@@ -24,12 +24,18 @@ class JsonHelper implements ProtectedContextAwareInterface
     /**
      * JSON encode the given value
      *
+     * Usage example for options:
+     *
+     * Json.stringify(value, ['JSON_UNESCAPED_UNICODE', 'JSON_FORCE_OBJECT'])
+     *
      * @param mixed $value
+     * @param array $options Array of option constant names as strings
      * @return string
      */
-    public function stringify($value)
+    public function stringify($value, array $options = []): string
     {
-        return json_encode($value);
+        $optionSum = array_sum(array_map('constant', $options));
+        return json_encode($value, $optionSum);
     }
 
     /**

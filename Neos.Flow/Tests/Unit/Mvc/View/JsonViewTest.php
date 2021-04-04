@@ -180,7 +180,7 @@ class JsonViewTest extends UnitTestCase
         ];
 
         $expected = ['value1' => ['__identity' => $dummyIdentifier]];
-        $output[] = [$object, $configuration, $expected, $dummyIdentifier, 'boolean TRUE should result in __identity key'];
+        $output[] = [$object, $configuration, $expected, $dummyIdentifier, 'boolean true should result in __identity key'];
 
         $configuration['_descend']['value1']['_exposedObjectIdentifierKey'] = 'guid';
         $expected = ['value1' => ['guid' => $dummyIdentifier]];

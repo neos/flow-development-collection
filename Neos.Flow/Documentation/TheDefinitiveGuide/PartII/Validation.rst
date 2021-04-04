@@ -121,7 +121,7 @@ meaningful. We'd like to display a list of error messages for exactly this case 
 the form has been submitted but contained errors.
 
 Fluid comes with a specialized view helper which allows for iterating over
-validation errors, the ``<f:form.validationResults>`` view helper.
+validation errors, the ``<f:validation.results>`` view helper.
 We'll need validation results for the *create* and the *update* case, so let's put the
 View Helper in a new partial ``FormErrors``::
 
@@ -129,7 +129,7 @@ View Helper in a new partial ``FormErrors``::
 
 .. code-block:: html
 
-    <f:form.validationResults for="{for}">
+    <f:validation.results for="{for}">
         <f:if condition="{validationResults.flattenedErrors}">
             <dl class="errors">
                 <f:for each="{validationResults.flattenedErrors}" key="propertyName" as="errors">
@@ -142,7 +142,7 @@ View Helper in a new partial ``FormErrors``::
                 </f:for>
             </dl>
         </f:if>
-    </f:form.validationResults>
+    </f:validation.results>
 
 And include that partial to both, the ``New.html`` and the ``Edit.html`` templates just above the
 form::
@@ -165,7 +165,7 @@ and::
     <f:form action="update" object="{post}" objectName="post">
     ...
 
-Similar to the ``<f:for>`` view helper ``<f:form.validationResults>`` defines a loop
+Similar to the ``<f:for>`` view helper ``<f:validation.results>`` defines a loop
 iterating over validation errors. The attribute ``as`` is optional and if it's
 not specified (like in the above example) ``as="error"`` is assumed.
 

@@ -71,9 +71,9 @@ class UserDomainClass
      */
     public function getInterests()
     {
-        return new \ArrayObject(array(
+        return new \ArrayObject([
             'value1',
             'value3',
-        ));
+        ]);
     }
 }

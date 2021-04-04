@@ -17,7 +17,7 @@ use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Configuration\ConfigurationManager;
 
 /**
- * A settings filter which fires on configuration setting set to TRUE or equal to the given condition.
+ * A settings filter which fires on configuration setting set to true or equal to the given condition.
  *
  * Example: setting(FooPackage.configuration.option = 'AOP is cool')
  *
@@ -61,7 +61,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      *
      * @param string $settingComparisonExpression Path (and optional condition) leading to the setting
      */
-    public function __construct($settingComparisonExpression)
+    public function __construct(string $settingComparisonExpression)
     {
         $this->settingComparisonExpression = $settingComparisonExpression;
     }
@@ -72,23 +72,23 @@ class PointcutSettingFilter implements PointcutFilterInterface
      * @param ConfigurationManager $configurationManager
      * @return void
      */
-    public function injectConfigurationManager(ConfigurationManager $configurationManager)
+    public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
         $this->parseConfigurationOptionPath($this->settingComparisonExpression);
     }
 
     /**
-     * Checks if the specified configuration option is set to TRUE or FALSE, or if it matches the specified
+     * Checks if the specified configuration option is set to true or false, or if it matches the specified
      * condition
      *
      * @param string $className Name of the class to check against
      * @param string $methodName Name of the method - not used here
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean TRUE if the class matches, otherwise FALSE
+     * @return boolean true if the class matches, otherwise false
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         if ($this->cachedResult === null) {
             $this->cachedResult = (is_bool($this->actualSettingValue)) ? $this->actualSettingValue : ($this->condition === $this->actualSettingValue);
@@ -97,11 +97,11 @@ class PointcutSettingFilter implements PointcutFilterInterface
     }
 
     /**
-     * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+     * Returns true if this filter holds runtime evaluations for a previously matched pointcut
      *
-     * @return boolean TRUE if this filter has runtime evaluations
+     * @return boolean true if this filter has runtime evaluations
      */
-    public function hasRuntimeEvaluationsDefinition()
+    public function hasRuntimeEvaluationsDefinition(): bool
     {
         return false;
     }
@@ -111,7 +111,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      *
      * @return array Runtime evaluations
      */
-    public function getRuntimeEvaluationsDefinition()
+    public function getRuntimeEvaluationsDefinition(): array
     {
         return [];
     }
@@ -124,7 +124,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      * @return void
      * @throws InvalidPointcutExpressionException
      */
-    protected function parseConfigurationOptionPath($settingComparisonExpression)
+    protected function parseConfigurationOptionPath(string $settingComparisonExpression): void
     {
         $settingComparisonExpression = preg_split(self::PATTERN_SPLITBYEQUALSIGN, $settingComparisonExpression);
         if (isset($settingComparisonExpression[1])) {
@@ -139,7 +139,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
             }
         }
 
-        $configurationKeys = preg_split('/\./', $settingComparisonExpression[0]);
+        $configurationKeys = explode('.', $settingComparisonExpression[0]);
 
         if (count($configurationKeys) > 0) {
             $settingPackageKey = array_shift($configurationKeys);
@@ -160,7 +160,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         return $classNameIndex;
     }

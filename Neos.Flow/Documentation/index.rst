@@ -7,7 +7,7 @@ This version of the documentation covering Flow |release| has been rendered at: 
 
 .. note::
 
-	We'd love to get your feedback on this documentation! Please share 
+	We'd love to get your feedback on this documentation! Please share
 	your thoughts in our `forum <https://discuss.neos.io>`_, or the #flow-general channel
 	in the `Neos Project's Slack <https://slack.neos.io>`_.
 
@@ -33,7 +33,6 @@ This version of the documentation covering Flow |release| has been rendered at: 
 	  - :doc:`TheDefinitiveGuide/PartI/index`
 	  - :doc:`TheDefinitiveGuide/PartII/index`
 	  - :doc:`TheDefinitiveGuide/PartIII/index`
-	  - :doc:`TheDefinitiveGuide/PartIV/index`
 	  - :doc:`TheDefinitiveGuide/PartV/index`
 	  - :doc:`TheDefinitiveGuide/Contributors`
 

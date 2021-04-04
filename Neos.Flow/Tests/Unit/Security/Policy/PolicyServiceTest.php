@@ -178,7 +178,8 @@ class PolicyServiceTest extends UnitTestCase
             ],
         ];
         $this->assertCount(1, $this->policyService->getAllPrivilegesByType($mockPrivilegeClassName));
-        $this->assertInstanceOf($mockPrivilegeClassName, $this->mockPrivilege, $this->policyService->getAllPrivilegesByType($mockPrivilegeClassName));
+        $returnedPrivilege = current($this->policyService->getAllPrivilegesByType($mockPrivilegeClassName));
+        $this->assertInstanceOf($mockPrivilegeClassName, $this->mockPrivilege, get_class($returnedPrivilege));
     }
 
     /**

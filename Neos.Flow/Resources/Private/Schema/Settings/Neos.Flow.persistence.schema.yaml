@@ -1,9 +1,9 @@
 type: dictionary
-additionalProperties: FALSE
+additionalProperties: false
 properties:
   'backendOptions':
     type: dictionary
-    required: TRUE
+    required: true
     properties:
       'driver':
         type: string
@@ -41,7 +41,7 @@ properties:
         type: dictionary
         additionalProperties:
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
             'host':
               -
@@ -57,11 +57,11 @@ properties:
 
   'doctrine':
     type: dictionary
-    required: TRUE
-    additionalProperties: FALSE
+    required: true
+    additionalProperties: false
     properties:
-      'enable': { type: boolean, required: TRUE }
-      'sqlLogger': { type: [string, 'null'], required: TRUE }
+      'enable': { type: boolean, required: true }
+      'sqlLogger': { type: [string, 'null'], required: true }
       'eventSubscribers':
         type: dictionary
         additionalProperties: { type: string, format: class-name }
@@ -69,7 +69,7 @@ properties:
         type: dictionary
         additionalProperties:
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
             'events': [{ type: array, items: { type: string } }, { type: string }]
             'listener': { type: string, format: class-name }
@@ -79,53 +79,53 @@ properties:
           type: string
       'dql':
         type: dictionary
-        required: FALSE
-        additionalProperties: FALSE
+        required: false
+        additionalProperties: false
         properties:
           'customStringFunctions':
             type: dictionary
             patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
-            additionalProperties: FALSE
+            additionalProperties: false
           'customNumericFunctions':
             type: dictionary
             patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
-            additionalProperties: FALSE
+            additionalProperties: false
           'customDatetimeFunctions':
             type: dictionary
             patternProperties: { '/^[A-Za-z0-9_]+$/': { type: string, format: class-name } }
-            additionalProperties: FALSE
+            additionalProperties: false
       'secondLevelCache':
         type: dictionary
-        required: FALSE
-        additionalProperties: FALSE
+        required: false
+        additionalProperties: false
         properties:
           'enabled': { type: boolean }
           'defaultLifetime': { type: number }
           'defaultLockLifetime': { type: number }
           'regions':
             type: dictionary
-            required: FALSE
+            required: false
             patternProperties: { '/.*/': { type: number } }
       'dbal':
         type: dictionary
-        required: FALSE
-        additionalProperties: FALSE
+        required: false
+        additionalProperties: false
         properties:
           'mappingTypes':
             type: dictionary
             additionalProperties:
               type: dictionary
-              additionalProperties: FALSE
+              additionalProperties: false
               properties:
-                'dbType': { type: string, required: TRUE }
-                'className': { type: string, format: class-name, required: TRUE }
+                'dbType': { type: string, required: true }
+                'className': { type: string, format: class-name, required: true }
       'migrations':
         type: dictionary
-        additionalProperties: FALSE
+        additionalProperties: false
         properties:
           'ignoredTables':
             type: dictionary
-            required: TRUE
+            required: true
             patternProperties: { '/.*/': { type: boolean } }
           'generate':
             type: dictionary
@@ -141,4 +141,4 @@ properties:
 
   'cacheAllQueryResults':
     type: boolean
-    required: TRUE
+    required: true

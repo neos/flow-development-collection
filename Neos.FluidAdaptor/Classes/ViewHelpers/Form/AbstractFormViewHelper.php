@@ -98,7 +98,7 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper
         if ($this->viewHelperVariableContainer->exists(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formFieldNames')) {
             $formFieldNames = $this->viewHelperVariableContainer->get(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formFieldNames');
         } else {
-            $formFieldNames = array();
+            $formFieldNames = [];
         }
         $formFieldNames[] = $fieldName;
         $this->viewHelperVariableContainer->addOrUpdate(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, 'formFieldNames', $formFieldNames);

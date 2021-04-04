@@ -23,7 +23,7 @@ final class ValidationGroups
      * The validation groups for which validation on this method should be executed. (Can be given as anonymous argument.)
      * @var array
      */
-    public $validationGroups = array('Default', 'Controller');
+    public $validationGroups = ['Default', 'Controller'];
 
     /**
      * @param array $values

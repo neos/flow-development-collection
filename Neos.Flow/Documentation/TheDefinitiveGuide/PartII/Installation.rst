@@ -74,6 +74,40 @@ other resources are bundled in packages. Each package has its own directory
 with a defined sub structure. Your own PHP code and resources will usually end
 up in a package residing below *Packages/Application/*.
 
+Basic Settings
+==============
+
+In order to be able to run and serve out pages, Flow requires very few configurations.
+Flow uses so called ``YAML`` files for all it's configuration. If you don't know that yet,
+just take a look at the example, it is really easy to understand!
+For starters, you should begin by renaming the file ``Configuration/Settings.yaml.example``
+to ``Configuration/Settings.yaml``. This will be referenced elsewhere as the global
+settings file, because it lives in the installation directory, instead of a single
+package. It only contains the most basic configuration for a mysql database running
+on the same machine and a setting to enable the default Flow [routes](https://en.wikipedia.org/wiki/Web_framework#URL_mapping), which you need
+to see the "Welcome" page later.
+
+.. code-block:: yaml
+
+	Neos:
+	  Flow:
+	    persistence:
+	      backendOptions:
+	        driver: 'pdo_mysql'  # use pdo_pgsql for PostgreSQL
+	        charset: 'utf8mb4'   # change to utf8 when using PostgreSQL
+	        host: '127.0.0.1'    # adjust to your database host
+	
+	    mvc:
+	      routes:
+	        'Neos.Flow': TRUE
+
+Also, if you are trying this on Windows by chance, you need to uncomment the lines
+about the ``phpBinaryPathAndFilename`` and adjust the path to the ``php.exe``.
+If you installed e.g. XAMPP, this should be ``C:\path\to\xampp\php\php.exe``.
+
+Other, more specific options should mostly only go directly into package specific
+``Settings.yaml`` files. You will learn about those later.
+
 File Permissions
 ================
 
@@ -98,7 +132,10 @@ and calling the following command (this command must be called as super user):
 
 	Setting file permissions is not necessary and not possible on Windows machines.
 	For Apache to be able to create symlinks, you need to use Windows Vista (or
-	newer) and Apache needs to be started with Administrator privileges.
+	newer) and Apache needs to be started with Administrator privileges. Alternatively
+  you can run the command ``flow flow:cache:warmup`` once from an Administrator
+  elevated command line inside your installation folder. You then also need to
+  repeat this step, whenever you install new packages.
 
 Now that the file permissions are set, all users who plan using Flow from the
 command line need to join the web server's group. On a Linux machine this can

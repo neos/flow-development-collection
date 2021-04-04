@@ -1,10 +1,10 @@
 type: array
 items:
   type: dictionary
-  additionalProperties: FALSE
+  additionalProperties: false
   properties:
-    'name': {type: string, required: TRUE}
-    'uriPattern': {type: string, required: TRUE}
+    'name': {type: string, required: true}
+    'uriPattern': {type: string, required: true}
     'defaults':
       type: dictionary
       properties:
@@ -18,16 +18,16 @@ items:
       additionalProperties:
         -
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
-            'handler': {type: string, required: TRUE, format: class-name}
+            'handler': {type: string, required: true, format: class-name}
             'options': {type: dictionary }
             'toLowerCase':  {type: boolean }
         -
           type: dictionary
-          additionalProperties: FALSE
+          additionalProperties: false
           properties:
-            'objectType': {type: string, required: TRUE, format: class-name}
+            'objectType': {type: string, required: true, format: class-name}
             'uriPattern': {type: string}
             'options': {type: dictionary }
             'toLowerCase':  {type: boolean }

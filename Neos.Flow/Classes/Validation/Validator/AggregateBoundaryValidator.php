@@ -10,7 +10,6 @@ namespace Neos\Flow\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Error\Messages\Result;
 
 /**
  * A validator which will not validate Aggregates that are lazy loaded and uninitialized.

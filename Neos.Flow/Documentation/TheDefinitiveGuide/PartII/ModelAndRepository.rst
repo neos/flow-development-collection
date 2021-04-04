@@ -288,6 +288,9 @@ retrieving the blog's properties. This again, is no requirement by Flow - if you
 want to expose your properties it's fine to not define any setters or getters at all. The
 persistence framework can use other ways to access the properties' values.
 
+Post Model
+==========
+
 We need a model for the posts as well, so kickstart it like this:
 
 .. code-block:: none
@@ -627,12 +630,166 @@ The resulting code should look like:
 
 	}
 
+
+Tags and Comments
+=================
+
+Until now, we have all the basics for our blog to function. A blog consists of multiple posts that each consists of a
+subject, content and some meta-data about the author and time of publishing.
+If you recall though, we also modelled the post to be labelled with one or multiple tags and users to comment on posts.
+
+Without thinking, we might be starting to just copy & paste the code from the blog -> post relation, since that is also
+a 1:n relation. However, there are a few problems waiting for us, if we would go this route.
+Remember how we found that the comments and tags are parts of the ``Post Aggregate``:
+
+.. figure:: Images/DomainModel-5.png
+	:alt: The Post Aggregate
+	:class: screenshot-detail
+
+	The Post Aggregate
+
+This means, that we should not have any means to directly access tags or comments outside of a post. Therefore they
+should not have a repository. Also, since we never directly access either one, there is no reason we need to reach the
+post they belong to. The access path is always in one direction starting from the post.
+In the terms of data modelling, we have a unidirectional one-to-many relation. To encode those in our domain model properly,
+unfortunately we have to go a non-obvious route.
+As we learned earlier, Doctrine provides a ``OneToMany`` annotation. This would seem like the right choice, but it isn't.
+``OneToMany`` relations in Doctrine are always bidirectional and, even worse, the many side is the so called "owning side" [#]_ of
+the relation. This means, that to update the relation in any way, the owning side entity needs to be persisted. This is not
+matching our domain model, where the post is the ``Aggregate Root`` and hence the entity we persist from. To make Doctrine work
+as we intend our domain model, we need to annotate the relation as a ``ManyToMany`` and add a unique constraint on the "one" side [#]_.
+In ``ManyToMany`` relations we can define the "owning side" freely and the additional constraint will prevent us from accidentally
+having more than one post referring to a specific comment.
+
+First, let's add models for the comment and tag:
+
+.. code-block:: none
+
+	./flow kickstart:model Acme.Blog Tag name:string
+	./flow kickstart:model Acme.Blog Comment \
+		date:\DateTime \
+		author:string \
+		emailAddress:string \
+		content:string
+
+Then adjust the post model code as follows:
+
+*Classes/Acme/Blog/Domain/Model/Post.php*:
+
+.. code-block:: php
+
+	<?php
+	namespace Acme\Blog\Domain\Model;
+
+	/*                                                                        *
+	 * This script belongs to the Flow package "Acme.Blog".                   *
+	 *                                                                        *
+	 *                                                                        */
+
+	use Neos\Flow\Annotations as Flow;
+	use Doctrine\ORM\Mapping as ORM;
+  use Doctrine\Common\Collections;
+
+	/**
+	 * @Flow\Entity
+	 */
+	class Post {
+
+		/**
+		 * @Flow\Validate(type="NotEmpty")
+		 * @ORM\ManyToOne(inversedBy="posts")
+		 * @var Blog
+		 */
+		protected $blog;
+
+		...
+
+		/**
+		 * @Flow\Validate(type="NotEmpty")
+		 * @ORM\Column(type="text")
+		 * @var string
+		 */
+		protected $content;
+
+		/**
+		 * @ORM\ManyToMany(orphanRemoval=true)
+		 * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(unique=true)})
+		 * @var Collection<Comment>
+		 */
+		protected $comments;
+
+		/**
+		 * @ORM\ManyToMany
+		 * @var Collection<Tag>
+		 */
+		protected $tags;
+
+		/**
+		 * Constructs this post
+		 */
+		public function __construct() {
+			$this->date = new \DateTime();
+			$this->comments = new ArrayCollection();
+		}
+
+		...
+
+		/**
+		 * @return Collection<Comment>
+		 */
+		public function getComments() {
+			return $this->comments;
+		}
+
+		/**
+		 * @param Comment $comment
+		 */
+		public function addComment(Comment $comment) {
+			$this->comments->add($comment);
+		}
+
+		/**
+		 * @param Comment $comment
+		 */
+		public function deleteComment(Comment $comment) {
+			$this->comments->remove($comment);
+		}
+
+		/**
+		 * @return Collection<Tag>
+		 */
+		public function getTags() {
+			return $this->tags;
+		}
+
+		/**
+		 * @param Tag $tag
+		 */
+		public function addTag(Tag $tag) {
+			$this->tags->add($tag);
+		}
+
+		/**
+		 * @param Tag $comment
+		 */
+		public function removeTag(Tag $tag) {
+			$this->tags->remove($tag);
+		}
+
+The ``@ORM\JoinTable`` annotation tells doctrine to enforce that each comment can only be referenced by one post. You might
+wonder why we have the ``orphanRemoval=true`` only on the comments, but not on the tags. ``Orphan removal`` tells doctrine
+to delete an entity, when the relation to it is unset, i.e. when the collections ``remove()`` method is invoked. Of course
+we do not want to delete a tag from the database completely, when we just untag a single post, since another post might still
+have this tag.
+
 -----
 
 .. [#]	We love to call them POPOs, similar to POJOs
 		http://en.wikipedia.org/wiki/Plain_Old_Java_Object
-.. [#]	http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/association-mapping.html#collections
+.. [#]	https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/association-mapping.html#collections
 .. [#]	``findBy*`` and ``findOneBy*`` are magic methods provided by the base
 		repository which allow you to find objects by properties. The
 		``BlogRepository`` for example would allow you to call magic methods
 		like ``findByDescription('foo')`` or ``findOneByTitle('bar')``.
+.. [#]	https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/unitofwork-associations.html#bidirectional-associations
+.. [#]	https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/association-mapping.html#one-to-many-unidirectional-with-join-table

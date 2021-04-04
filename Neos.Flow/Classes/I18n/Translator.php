@@ -126,19 +126,32 @@ class Translator
         if ($locale === null) {
             $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
         }
-        $pluralForm = $this->getPluralForm($quantity, $locale);
 
-        $translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($originalLabel, $locale, $pluralForm, $sourceName, $packageKey);
+        foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
+            $translatedMessage = $this->translationProvider->getTranslationByOriginalLabel(
+                $originalLabel,
+                $localeInChain,
+                $this->getPluralForm($quantity, $localeInChain),
+                $sourceName,
+                $packageKey
+            );
 
-        if ($translatedMessage === false) {
-            $translatedMessage = $originalLabel;
+            if ($translatedMessage !== false) {
+                return $arguments === []
+                    ? $translatedMessage
+                    : $this->formatResolver->resolvePlaceholders(
+                        $translatedMessage,
+                        $arguments,
+                        $localeInChain
+                    )
+                ;
+            }
         }
 
-        if (!empty($arguments)) {
-            $translatedMessage = $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
-        }
-
-        return $translatedMessage;
+        return $arguments === []
+            ? $originalLabel
+            : $this->formatResolver->resolvePlaceholders($originalLabel, $arguments, $locale)
+        ;
     }
 
     /**
@@ -160,7 +173,7 @@ class Translator
      * @param Locale $locale Locale to use (NULL for default one)
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
-     * @return string Translated message or NULL on failure
+     * @return string|null Translated message or NULL on failure
      * @api
      * @see Translator::translateByOriginalLabel()
      */
@@ -169,17 +182,29 @@ class Translator
         if ($locale === null) {
             $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
         }
-        $pluralForm = $this->getPluralForm($quantity, $locale);
 
-        $translatedMessage = $this->translationProvider->getTranslationById($labelId, $locale, $pluralForm, $sourceName, $packageKey);
-        if ($translatedMessage === false) {
-            return null;
+        foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
+            $translatedMessage = $this->translationProvider->getTranslationById(
+                $labelId,
+                $localeInChain,
+                $this->getPluralForm($quantity, $localeInChain),
+                $sourceName,
+                $packageKey
+            );
+
+            if ($translatedMessage !== false) {
+                return $arguments === []
+                    ? $translatedMessage
+                    : $this->formatResolver->resolvePlaceholders(
+                        $translatedMessage,
+                        $arguments,
+                        $localeInChain
+                    )
+                ;
+            }
         }
 
-        if (!empty($arguments)) {
-            return $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
-        }
-        return $translatedMessage;
+        return null;
     }
 
     /**
@@ -192,7 +217,7 @@ class Translator
      *
      * @param mixed $quantity
      * @param Locale $locale
-     * @return string
+     * @return string|null
      */
     protected function getPluralForm($quantity, Locale $locale)
     {

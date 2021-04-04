@@ -58,7 +58,7 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
     /**
      * This request handler can handle requests in Testing Context.
      *
-     * @return boolean If the context is Testing, TRUE otherwise FALSE
+     * @return boolean If the context is Testing, true otherwise false
      */
     public function canHandleRequest()
     {

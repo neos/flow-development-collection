@@ -55,7 +55,8 @@ abstract class AbstractXmlParser
             throw new Exception\InvalidXmlFileException('The path "' . $sourcePath . '" does not point to an existing and accessible XML file.', 1328879703);
         }
         libxml_use_internal_errors(true);
-        $rootXmlNode = simplexml_load_file($sourcePath, 'SimpleXmlElement', \LIBXML_NOWARNING);
+        // Use of simplexml_load_string/file_get_contents ia a workaround for https://bugs.php.net/bug.php?id=62577
+        $rootXmlNode = simplexml_load_string(file_get_contents($sourcePath), 'SimpleXmlElement', \LIBXML_NOWARNING);
         if ($rootXmlNode === false) {
             $errors = [];
             foreach (libxml_get_errors() as $error) {

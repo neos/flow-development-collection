@@ -42,8 +42,9 @@ class RsaWalletServicePhpTest extends UnitTestCase
     {
         vfsStream::setup('Foo');
         $settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'] = 'vfs://Foo/EncryptionKey';
+        $settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm'] = OPENSSL_PKCS1_OAEP_PADDING;
         $settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration']['digest_alg'] = 'sha1';
-        $settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration']['private_key_bits'] = 384;
+        $settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration']['private_key_bits'] = 1024;
         $settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration']['private_key_type'] = OPENSSL_KEYTYPE_RSA;
 
         $this->rsaWalletService = $this->getAccessibleMock(RsaWalletServicePhp::class, ['dummy']);

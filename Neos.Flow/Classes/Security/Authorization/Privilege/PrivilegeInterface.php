@@ -96,7 +96,7 @@ interface PrivilegeInterface extends CacheAwareInterface
     public function hasParameters();
 
     /**
-     * Returns TRUE, if this privilege covers the given subject
+     * Returns true, if this privilege covers the given subject
      *
      * @param PrivilegeSubjectInterface $subject
      * @return boolean

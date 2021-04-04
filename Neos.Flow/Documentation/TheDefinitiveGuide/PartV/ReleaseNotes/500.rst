@@ -1,0 +1,305 @@
+========
+Flow 5.0
+========
+
+This major release of Flow brings a few bigger features and a lot of
+modernisation of the existing code base.
+
+====================
+Upgrade Instructions
+====================
+
+This section contains instructions for upgrading your Flow 4.3
+based applications to Flow 5.0.
+
+* We now require PHP 7.1.x or higher
+* If you are using a MySQL based database you must use at least 
+  MySQL 5.7.7 or MariaDB 10.2.2
+
+In general just make sure to run the following commands::
+
+ ./flow flow:cache:flush --force
+ ./flow flow:core:migrate
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+If you are upgrading from a lower version than 4.2, be sure to read the
+upgrade instructions from the previous Release Notes first.
+
+Upgrading your Packages
+-----------------------
+
+Upgrading existing code
+^^^^^^^^^^^^^^^^^^^^^^^
+
+There have been major API changes in Flow 4.0 which require your code to be adjusted. As with earlier changes to Flow
+that required code changes on the user side we provide a code migration tool.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate --package-key Acme.Demo
+
+The package key is optional, if left out it will work on all packages it finds (except for library packages and packages
+prefixed with "TYPO3.*" or "Neos.*") - for the first run you might want to limit things a little to keep the overview,
+though.
+
+Make sure to run::
+
+ ./flow help core:migrate
+
+to see all the other helpful options this command provides.
+
+Also make sure to read the changes below.
+
+Inside core:migrate
+"""""""""""""""""""
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from all packages (except *Framework* and
+  *Libraries*) or the package given with ``--package-key``
+* For each migration and package
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit
+    messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.
+
+================
+What has changed
+================
+
+Flow 5.0 comes with some breaking changes and removes several deprecated
+functionalities, be sure to read the following changes and adjust
+your code respectively. For a full list of changes please refer
+to the changelog.
+
+In general type hints were added to a lot of Flow core methods,
+if you get type errors check how you use those methods and report
+a bug in case the type hint seems wrong or the call happens in the
+core and seems unrelated to your code.
+
+Also the YAML parser component we use is stricter now, so any
+parsing errors you get are actually broken YAML that was just ignored
+beforehand with unclear outcome.
+
+Additionally render method arguments in ViewHelpers are deprecated and should be
+replaced with `registerArgument` calls as was done with all integrated VieHelpers for this release.
+
+
+`!!!TASK: Change default charset and collation to utf8mb4 <https://github.com/neos/flow-development-collection/pull/1267>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This changes the charset and collation to create table statements in the
+existing migrations. This make sure the tables are set up correctly
+independent of the database default configuration.
+
+This is breaking if you have existing tables that do not use ut8mb4 as
+charset and utf8mb4_unicode_ci as collation. To solve this you need to
+convert the existing tables. This can be done using the command::
+
+  ./flow database:setcharset
+
+
+`!!! TASK: Remove deprecated cache parts in Flow <https://github.com/neos/flow-development-collection/pull/1251>`_
+------------------------------------------------------------------------------------------------------------------
+
+After splitting caches some deprecated classes were left over for
+backwards compatibility with existing configurations and backends.
+All of those are now removed just leaving some wrapper code to make
+cache creation in Flow easier.
+
+This is breaking if your cache configuration still used one of the
+deprecated ``Neos\\Flow\\Cache\\Backend\\...`` backend classes instead
+of the ``Neos\\Cache\\Backend\\...`` classes. Just adjust your
+configuration in this case. If you have a custom cache backend it
+also should implement the interface (and abstract class) from
+``Neos.Cache`` instead the now removed ones from ``Neos.Flow``.
+This should also be a rather easy code adjustment.
+
+
+`!!!TASK: Safe trusted proxies default value <https://github.com/neos/flow-development-collection/pull/1273>`_
+--------------------------------------------------------------------------------------------------------------
+
+By default, all proxies were trusted beforehand, but this is an usafe setting in most setups.
+This change switches the `trustedProxies.proxies` setting to `%env:FLOW_HTTP_TRUSTED_PROXIES`, which means no proxies are trusted by default unless something is specified via the environment variable and hence the client IP address, port and host values for the request can not be overridden by any of the `Forwarded-*` headers.
+
+This is breaking if you use a CDN or reverse proxy on your server and relied on the previous unsafe
+default setting. In that case you should instead provide a list of the IP ranges of your proxy/CDN
+servers, either directly or through the `FLOW_HTTP_TRUSTED_PROXIES` environment variable or explicitly switch back to trust all proxy servers by setting the value to `'*'`.
+
+
+`TASK: Update to Doctrine DBAL 2.7 and ORM 2.6 <https://github.com/neos/flow-development-collection/pull/1272>`_
+----------------------------------------------------------------------------------------------------------------
+
+When injecting `Doctrine\\Common\\Persistence\\ObjectManager` be aware that this is
+now deprecated, use `Doctrine\\ORM\\EntityManagerInterface` instead.
+
+
+`FEATURE: AOP for final methods <https://github.com/neos/flow-development-collection/pull/661>`_
+------------------------------------------------------------------------------------------------
+
+This adds support proxied `final` methods.
+Previously those were always skipped from proxy building disallowing to advice them via AOP aspects.
+
+
+`FEATURE: Add Forwarded Header support <https://github.com/neos/flow-development-collection/pull/1269>`_
+--------------------------------------------------------------------------------------------------------
+
+This adds support for setting the standardized `Forwarded` Header as described in RFC 7239 Section 4 (https://tools.ietf.org/html/rfc7239#section-4), as the `headers` trusted proxy setting.
+Also, this change allows to set a single header value for the `headers`, so that working with the single `Forwarded` header is more convenient:
+
+
+`!!! TASK: Remove deprecated \`\`ValidationResultsViewHelper\`\` <https://github.com/neos/flow-development-collection/pull/1255>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This removes the old ``ValidationResultsViewHelper`` that was moved
+to be ``Validation\\\ResultsViewHelper``.
+
+So if you were still using ``<f:form.validationresults>`` you would
+now use ``<f:validation.results>``.
+
+
+`!!! TASK: Remove deprecated MediaType handling methods in Request <https://github.com/neos/flow-development-collection/pull/1253>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+Those methods are available int he MediaTypes utility class.
+
+
+`!!! TASK: Remove deprecated unversioned \`\`XliffParser\`\` <https://github.com/neos/flow-development-collection/pull/1259>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+The ``Neos\\Flow\\I18n\\Xliff\\XliffParser`` is fully replaced by the
+``Neos\\Flow\\I18n\\Xliff\\V12\\XliffParser`` so if you were still using
+the old unversioned class, you can simply switch to the new one.
+
+
+`TASK: Remove deprecated \`\`RawViewHelper\`\` <https://github.com/neos/flow-development-collection/pull/1257>`_
+----------------------------------------------------------------------------------------------------------------
+
+This viewhelper is available in the standalone Fluid package
+we are using since last major and and it is not a problem if
+you are just using the viewhelper as it is automatically available
+just as this one. But if you extended this viewhelper for some
+you need to adapt to the original viewhelper.
+
+
+`!!! TASK: Remove \`\`getTemplateVariableContainer\`\` method <https://github.com/neos/flow-development-collection/pull/1261>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This method was deprecated with the switch to standalone Fluid in
+Flow 4.0 to get closer to the ``RenderingContext`` in the base
+package. It is therefore now removed.
+
+Any calls to ``getTemplateVariableContainer`` can be replaced with calls to
+``getVariableProvider``.
+
+`!!!TASK: Only scan Private/Translations for available locales <https://github.com/neos/flow-development-collection/pull/1234>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Before the full `Resources/Private` folder was scanned for available locales, which also included
+for example the CLDR, which ended up filling the available locales with much more locales than
+are actually considered "available" in a normal Flow application.
+This will therefore allow applications to define available locales easily from the Translations
+provided.
+
+This is breaking, because it will end up with less available locales by default, since only the
+locales of Flow Translations are considered available, instead of all of CLDR locales.
+
+
+
+`FEATURE: Add PSR-6 and PSR-16 support to cache framework <https://github.com/neos/flow-development-collection/pull/1168>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This implements a PSR-6 compatible cache pool ``http://www.php-fig.org/psr/psr-6`` and
+a factory for those caches.
+
+Additionally a separate PSR-16 compatible SimpleCache is implemented
+with it's own factory as the interfaces are incompatible with our interfaces.
+
+Important: Both new cache variants are not integrated into Flows cache management at all,
+you need to take care of getting and flushing those caches, they are not flushed on
+`./flow flow:cache:flush`.
+
+
+`!!! FEATURE: PSR-3 Logging <https://github.com/neos/flow-development-collection/pull/1171>`_
+---------------------------------------------------------------------------------------------
+
+This change accomplishes two things. On the one hand it
+provides PSR-3 compatibility for the logger package.
+On the other hand it lays the ground work to allow  any
+PSR-3 compatible logger to be used in Flow and applications.
+
+This is breaking in case you implemented the ``Neos\\Flow\\Log\\LoggerInterface``
+yourself, you should switch to the PSR-3 logger interface (should be easy).
+
+
+`!!! TASK: Cleanup in package management <https://github.com/neos/flow-development-collection/pull/1280>`_
+----------------------------------------------------------------------------------------------------------
+
+This is the next step towards a leaner package management,
+the essential part is that packages are now separated into
+third party packages and Flow (enabled) packages.
+All packages are available for object management but Resources
+and Configuration as well as booting are only expected and
+managed in Flow (enabled) packages.
+
+The ``Package`` class is still a fully Flow enabled package and
+no adaption should be necessary to packages.
+``GenericPackage`` is the low level class for describing any
+other package in the system.
+According to that change a couple of interfaces where added:
+
+* ``BootableInterface`` describes a bootable package
+* ``FlowPackageInterface`` extension of the ``PackageInterface``
+  Flow specifics are now moved over to the ``FlowPackageInterface``
+* ``PackageKeyAwareInterface`` defines that the package has a
+  package key. Currently that is implemented by all packages but
+  we might change that at a later point in time.
+
+The notion of ``protected`` and ``objectManagementEnabled`` is gone from
+package classes and the interfaces as both are no longer needed.
+
+The ``PackageManager`` and interface no longer support deleting of
+packages, this should happen through composer now.
+In order the ``package:delete`` command is removed as well.
+
+``PackageManager::getPackageVersion`` was moved over to
+``ComposerUtility::getPackageVersion`` where it should have been in the
+first place. It was not part of the interface nor marked api.
+
+This change is breaking if you use the ``PackageManager`` to get
+all packages and expect them to be Flow packages. You must now
+check for instanceof ``FlowPackageInterface`` if you expect Flow
+specific functionality from a package object.
+
+This is also a preparation to drop the ``PackageManagerInterface`` as
+overriding the implementation is neither possible nor sensible.
+You can directly use the ``PackageManager`` object from now.
+
+
+`FEATURE: Allow specifying a list of available Locales via settings <https://github.com/neos/flow-development-collection/pull/1282>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+With this, it is possible to specify a list of available Locales via the
+`Neos.Flow.i18n.availableLocales` setting, which will then avoid triggering
+the scanning process.
+
+
+`TASK: Update standalone Fluid to recent version <https://github.com/neos/flow-development-collection/pull/1291>`_
+------------------------------------------------------------------------------------------------------------------
+
+This means Fluid templates might behave differently now but also additional features became available.

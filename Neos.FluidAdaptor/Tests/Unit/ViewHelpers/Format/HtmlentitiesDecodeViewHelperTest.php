@@ -32,9 +32,8 @@ class HtmlentitiesDecodeViewHelperTest extends ViewHelperBaseTestcase
     public function setUp()
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\HtmlentitiesDecodeViewHelper::class)->setMethods(array('renderChildren'))->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\HtmlentitiesDecodeViewHelper::class)->setMethods(['renderChildren', 'registerRenderMethodArguments'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->viewHelper->initializeArguments();
     }
 
     /**
@@ -51,7 +50,8 @@ class HtmlentitiesDecodeViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesValueAsSourceIfSpecified()
     {
         $this->viewHelper->expects($this->never())->method('renderChildren');
-        $actualResult = $this->viewHelper->render('Some string');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => 'Some string']);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals('Some string', $actualResult);
     }
 
@@ -61,6 +61,7 @@ class HtmlentitiesDecodeViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesChildnodesAsSourceIfSpecified()
     {
         $this->viewHelper->expects($this->atLeastOnce())->method('renderChildren')->will($this->returnValue('Some string'));
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
         $this->assertEquals('Some string', $actualResult);
     }
@@ -71,7 +72,8 @@ class HtmlentitiesDecodeViewHelperTest extends ViewHelperBaseTestcase
     public function renderDoesNotModifyValueIfItDoesNotContainSpecialCharacters()
     {
         $source = 'This is a sample text without special characters. <> &©"\'';
-        $actualResult = $this->viewHelper->render($source);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
+        $actualResult = $this->viewHelper->render();
         $this->assertSame($source, $actualResult);
     }
 
@@ -82,7 +84,8 @@ class HtmlentitiesDecodeViewHelperTest extends ViewHelperBaseTestcase
     {
         $source = 'Some special characters: &amp; &quot; \' &lt; &gt; *';
         $expectedResult = 'Some special characters: & " \' < > *';
-        $actualResult = $this->viewHelper->render($source);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -93,7 +96,8 @@ class HtmlentitiesDecodeViewHelperTest extends ViewHelperBaseTestcase
     {
         $source = 'Some special characters: &amp; &quot; \' &lt; &gt; *';
         $expectedResult = 'Some special characters: & &quot; \' < > *';
-        $actualResult = $this->viewHelper->render($source, true);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source, 'keepQuotes' => true]);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -104,7 +108,8 @@ class HtmlentitiesDecodeViewHelperTest extends ViewHelperBaseTestcase
     {
         $source = utf8_decode('Some special characters: &amp; &quot; \' &lt; &gt; *');
         $expectedResult = 'Some special characters: & " \' < > *';
-        $actualResult = $this->viewHelper->render($source, false, 'ISO-8859-1');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source, 'keepQuotes' => false, 'encoding' => 'ISO-8859-1']);
+        $actualResult = $this->viewHelper->render();
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -114,7 +119,8 @@ class HtmlentitiesDecodeViewHelperTest extends ViewHelperBaseTestcase
     public function renderReturnsUnmodifiedSourceIfItIsANumber()
     {
         $source = 123.45;
-        $actualResult = $this->viewHelper->render($source);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
+        $actualResult = $this->viewHelper->render();
         $this->assertSame($source, $actualResult);
     }
 
@@ -125,17 +131,19 @@ class HtmlentitiesDecodeViewHelperTest extends ViewHelperBaseTestcase
     {
         $user = new UserWithToString('Xaver &lt;b&gt;Cross-Site&lt;/b&gt;');
         $expectedResult = 'Xaver <b>Cross-Site</b>';
-        $actualResult = $this->viewHelper->render($user);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $user]);
+        $actualResult = $this->viewHelper->render();
         $this->assertSame($expectedResult, $actualResult);
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
     public function renderDoesNotModifySourceIfItIsAnObjectThatCantBeConvertedToAString()
     {
         $user = new UserWithoutToString('Xaver <b>Cross-Site</b>');
-        $actualResult = $this->viewHelper->render($user);
-        $this->assertSame($user, $actualResult);
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $user]);
+        $this->viewHelper->render();
     }
 }

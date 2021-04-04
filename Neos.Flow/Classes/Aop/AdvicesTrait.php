@@ -23,18 +23,18 @@ trait AdvicesTrait
      * @param string $methodName
      * @return array
      */
-    private function Flow_Aop_Proxy_getAdviceChains($methodName)
+    private function Flow_Aop_Proxy_getAdviceChains(string $methodName): array
     {
-        $adviceChains = [];
         if (isset($this->Flow_Aop_Proxy_groupedAdviceChains[$methodName])) {
-            $adviceChains = $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName];
-        } else {
-            if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[$methodName])) {
-                $groupedAdvices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[$methodName];
-                if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\AroundAdvice::class])) {
-                    $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName][\Neos\Flow\Aop\Advice\AroundAdvice::class] = new \Neos\Flow\Aop\Advice\AdviceChain($groupedAdvices[\Neos\Flow\Aop\Advice\AroundAdvice::class]);
-                    $adviceChains = $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName];
-                }
+            return $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName];
+        }
+
+        $adviceChains = [];
+        if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[$methodName])) {
+            $groupedAdvices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[$methodName];
+            if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\AroundAdvice::class])) {
+                $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName][\Neos\Flow\Aop\Advice\AroundAdvice::class] = new \Neos\Flow\Aop\Advice\AdviceChain($groupedAdvices[\Neos\Flow\Aop\Advice\AroundAdvice::class]);
+                $adviceChains = $this->Flow_Aop_Proxy_groupedAdviceChains[$methodName];
             }
         }
 
@@ -52,8 +52,10 @@ trait AdvicesTrait
         if (__CLASS__ !== $joinPoint->getClassName()) {
             return parent::Flow_Aop_Proxy_invokeJoinPoint($joinPoint);
         }
-        if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[$joinPoint->getMethodName()])) {
-            return call_user_func_array(['self', $joinPoint->getMethodName()], $joinPoint->getMethodArguments());
+        $methodName = $joinPoint->getMethodName();
+        if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[$methodName])) {
+            $arguments = array_values($joinPoint->getMethodArguments());
+            return self::$methodName(...$arguments);
         }
     }
 }

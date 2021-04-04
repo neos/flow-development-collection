@@ -1,0 +1,16 @@
+#
+# Cache configuration for the Flow Framework
+#
+
+Neos:
+  Flow:
+    cache:
+      # The application identifier can be used by cache backends to differentiate cache entries
+      # with the same cache identifier in the same storage from each other. For example memcache is global,
+      # so if you use it for multiple installations or possibly just for different Flow contexts you need to
+      # find a way to separate entries from each other. This setting will do that.
+      # The default is just for backwards compatibility and might change for the next major. It is not well suited
+      # for installations in which the FLOW_PATH_ROOT changes after each deployment, so in such cases you might
+      # want to exchange it for some hardcoded value identifying this specific installation.
+      # Note that changing it will make cache entries generated with the old identifier useless.
+      applicationIdentifier: '%FLOW_PATH_ROOT%~%FLOW_APPLICATION_CONTEXT%'

@@ -78,9 +78,9 @@ class Request implements RequestInterface
      * The dispatcher will try to dispatch the request again if it has not been
      * addressed yet.
      *
-     * @return boolean TRUE if this request has been dispatched successfully
+     * @return boolean true if this request has been dispatched successfully
      */
-    public function isDispatched()
+    public function isDispatched(): bool
     {
         return $this->dispatched;
     }
@@ -91,7 +91,7 @@ class Request implements RequestInterface
      * @param string $controllerObjectName Object name of the controller which processes this request
      * @return void
      */
-    public function setControllerObjectName($controllerObjectName)
+    public function setControllerObjectName(string $controllerObjectName)
     {
         $this->controllerObjectName = $controllerObjectName;
         $this->command = null;
@@ -102,7 +102,7 @@ class Request implements RequestInterface
      *
      * @return string The controller's object name
      */
-    public function getControllerObjectName()
+    public function getControllerObjectName(): string
     {
         return $this->controllerObjectName;
     }
@@ -113,7 +113,7 @@ class Request implements RequestInterface
      * @return Request
      * @api
      */
-    public function getMainRequest()
+    public function getMainRequest(): Request
     {
         return $this;
     }
@@ -124,7 +124,7 @@ class Request implements RequestInterface
      * @return boolean
      * @api
      */
-    public function isMainRequest()
+    public function isMainRequest(): bool
     {
         return true;
     }
@@ -137,7 +137,7 @@ class Request implements RequestInterface
      * @param string $commandName Name of the command to execute by the controller
      * @return void
      */
-    public function setControllerCommandName($commandName)
+    public function setControllerCommandName(string $commandName)
     {
         $this->controllerCommandName = $commandName;
         $this->command = null;
@@ -148,7 +148,7 @@ class Request implements RequestInterface
      *
      * @return string Command name
      */
-    public function getControllerCommandName()
+    public function getControllerCommandName(): string
     {
         return $this->controllerCommandName;
     }
@@ -158,7 +158,7 @@ class Request implements RequestInterface
      *
      * @return Command
      */
-    public function getCommand()
+    public function getCommand(): Command
     {
         if ($this->command === null) {
             $this->command = new Command($this->controllerObjectName, $this->controllerCommandName);
@@ -174,9 +174,9 @@ class Request implements RequestInterface
      * @return void
      * @throws InvalidArgumentNameException
      */
-    public function setArgument($argumentName, $value)
+    public function setArgument(string $argumentName, $value)
     {
-        if (!is_string($argumentName) || $argumentName === '') {
+        if ($argumentName === '') {
             throw new InvalidArgumentNameException('Invalid argument name.', 1300893885);
         }
         $this->arguments[$argumentName] = $value;
@@ -197,10 +197,10 @@ class Request implements RequestInterface
      * Returns the value of the specified argument
      *
      * @param string $argumentName Name of the argument
-     * @return string Value of the argument
+     * @return mixed Value of the argument
      * @throws NoSuchArgumentException if such an argument does not exist
      */
-    public function getArgument($argumentName)
+    public function getArgument(string $argumentName)
     {
         if (!isset($this->arguments[$argumentName])) {
             throw new NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1300893886);
@@ -212,9 +212,9 @@ class Request implements RequestInterface
      * Checks if an argument of the given name exists (is set)
      *
      * @param string $argumentName Name of the argument to check
-     * @return boolean TRUE if the argument is set, otherwise FALSE
+     * @return boolean true if the argument is set, otherwise false
      */
-    public function hasArgument($argumentName)
+    public function hasArgument(string $argumentName): bool
     {
         return isset($this->arguments[$argumentName]);
     }
@@ -224,7 +224,7 @@ class Request implements RequestInterface
      *
      * @return array Array of arguments and their values (which may be arguments and values as well)
      */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->arguments;
     }
@@ -250,7 +250,7 @@ class Request implements RequestInterface
      *
      * @return array Numeric array of exceeding argument values
      */
-    public function getExceedingArguments()
+    public function getExceedingArguments(): array
     {
         return $this->exceedingArguments;
     }

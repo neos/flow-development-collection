@@ -1,0 +1,58 @@
+`5.3.15 (2020-05-04) <https://github.com/neos/flow-development-collection/releases/tag/5.3.15>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Trigger GitHub rebase action only on /rebase <https://github.com/neos/flow-development-collection/pull/1992>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Idea is that a `/rebase` comment rebases the current PR on top of the destination branch, so that we are sure that latest state is included. Current implementation tries the rebase on every comment (see results in https://github.com/neos/flow-development-collection/actions).
+
+In 6.1/6.2 the action was already converted to "v2" style (see https://github.com/neos/flow-development-collection/pull/1765).
+
+So in 5.3 first cherry-picked the conversion from 
+After that changed the workflow definition so it looks exactly like the documented:
+https://github.com/cirrus-actions/rebase
+
+* Packages: ``github``
+
+`BUGFIX: Make sure to use only a consistent NumbersReaderCache <https://github.com/neos/flow-development-collection/pull/1991>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+It might happen that there is a discrepancy between parsedFormatsIndices and parsedFormats cache. We need to make sure we are accessing the consistent information instead of relying that both are there, to avoid a PHP exception.
+
+Same fix was already applied to DatesReader, see https://github.com/neos/flow-development-collection/pull/1899.
+
+Resolves #564
+
+**Checklist**
+
+- [ ] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [ ] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+
+* Packages: ``Flow``
+
+`BUGFIX: Objects configured with factory don't receive factory arguments <https://github.com/neos/flow-development-collection/pull/1967>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Until now a class configured to be constructed by a factory with arguments would end up giving those arguments to both the factory and the class constructor. This can lead to errors when the class constructor expects different arguments.
+This change fixes that by separating the arguments for the factory from the class constructor arguments. The `arguments` setting in `Objects.yaml` will refer to the factory method arguments when `factoryObjectName` is given, otherwise to the class constructor arguments.
+
+Fixes #1933
+
+* Packages: ``Flow``
+
+`BUGFIX: Add samesite cookie configuration <https://github.com/neos/flow-development-collection/pull/1948>`_
+------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Adds new cookie setting allow to configure SameSite to 'strict', 'lax' and 'none'.
+Be careful with SameSite=none as there is a webkit bug (https://bugs.webkit.org/show_bug.cgi?id=198181) inadvertently treated this as SameSite=strict
+This change does not effect the current behavior. When you don't set the configuration `samesite` in `settings.yaml` the cookie attribute is ignored.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/5.3.14...5.3.15>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

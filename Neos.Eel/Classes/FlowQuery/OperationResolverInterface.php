@@ -11,7 +11,6 @@ namespace Neos\Eel\FlowQuery;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 /**
  * FlowQuery Operation Resolver Interface
@@ -20,7 +19,7 @@ interface OperationResolverInterface
 {
     /**
      * @param string $operationName
-     * @return boolean TRUE if $operationName is final
+     * @return boolean true if $operationName is final
      */
     public function isFinalOperation($operationName);
 

@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Component\ComponentInterface;
+use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Http\Request as HttpRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -77,7 +78,10 @@ class DispatchComponent implements ComponentInterface
         $componentContext = $this->prepareActionRequest($componentContext);
         $actionRequest = $componentContext->getParameter(DispatchComponent::class, 'actionRequest');
         $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
-        $this->dispatcher->dispatch($actionRequest, $componentContext->getHttpResponse());
+        $actionResponse = $this->prepareActionResponse($componentContext->getHttpResponse());
+        $this->dispatcher->dispatch($actionRequest, $actionResponse);
+        // TODO: This should change in next major when the action response is no longer a HTTP response for backward compatibility.
+        $componentContext->replaceHttpResponse($actionResponse);
     }
 
     /**
@@ -94,11 +98,12 @@ class DispatchComponent implements ComponentInterface
         $arguments = $httpRequest->getArguments();
 
         $parsedBody = $this->parseRequestBody($httpRequest);
-        if ($parsedBody !== []) {
-            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
+        if ($parsedBody !== null) {
             $httpRequest = $httpRequest->withParsedBody($parsedBody);
         }
-
+        if (is_array($parsedBody) && $parsedBody !== []) {
+            $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $parsedBody);
+        }
 
         $routingMatchResults = $componentContext->getParameter(Routing\RoutingComponent::class, 'matchResults');
         if ($routingMatchResults !== null) {
@@ -121,19 +126,20 @@ class DispatchComponent implements ComponentInterface
      * Parses the request body according to the media type.
      *
      * @param HttpRequest $httpRequest
-     * @return array
+     * @return null|array|string|integer
      */
     protected function parseRequestBody(HttpRequest $httpRequest)
     {
         $requestBody = $httpRequest->getContent();
         if ($requestBody === null || $requestBody === '') {
-            return [];
+            return $requestBody;
         }
 
         $mediaTypeConverter = $this->objectManager->get(MediaTypeConverterInterface::class);
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         $propertyMappingConfiguration->setTypeConverter($mediaTypeConverter);
         $propertyMappingConfiguration->setTypeConverterOption(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $httpRequest->getHeader('Content-Type'));
+        // FIXME: The MediaTypeConverter returns an empty array for "error cases", which might be unintended
         $arguments = $this->propertyMapper->convert($requestBody, 'array', $propertyMappingConfiguration);
 
         return $arguments;
@@ -153,5 +159,22 @@ class DispatchComponent implements ComponentInterface
         if ($actionRequest->getControllerActionName() === null) {
             $actionRequest->setControllerActionName('index');
         }
+    }
+
+    /**
+     * Prepares the ActionResponse to be dispatched
+     *
+     * TODO: Needs to be adapted for next major when we only deliver an action response inside the dispatch.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $httpResponse
+     * @return ActionResponse|\Psr\Http\Message\ResponseInterface
+     */
+    protected function prepareActionResponse(\Psr\Http\Message\ResponseInterface $httpResponse): ActionResponse
+    {
+        $rawResponse = implode("\r\n", ResponseInformationHelper::prepareHeaders($httpResponse));
+        $rawResponse .= "\r\n\r\n";
+        $rawResponse .= $httpResponse->getBody()->getContents();
+
+        return ActionResponse::createFromRaw($rawResponse);
     }
 }

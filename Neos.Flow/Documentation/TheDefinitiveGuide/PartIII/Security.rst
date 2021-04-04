@@ -897,7 +897,7 @@ when writing your policies:
 
 This leads to the following best practice when writing policies: Use the implicit deny feature as much as possible!
 By defining privilege targets, all matched subjects (methods, entities, etc.) will be denied implicitly. Use GRANT
-permissions to whitelist access to them for certain roles. The use of a DENY permission should be the ultimate last
+permissions to allow access to them for certain roles. The use of a DENY permission should be the ultimate last
 resort for edge cases. Be careful, there is no way to override a DENY permission, if you use it anyways!
 
 Using privilege parameters

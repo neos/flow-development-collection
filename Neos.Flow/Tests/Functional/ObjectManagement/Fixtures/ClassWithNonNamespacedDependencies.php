@@ -19,13 +19,13 @@ use Neos\Flow\Annotations as Flow;
 class ClassWithNonNamespacedDependencies
 {
     /**
-     * @Flow\Inject(lazy=FALSE)
+     * @Flow\Inject(lazy=false)
      * @var SingletonClassB
      */
     protected $singletonClassB;
 
     /**
-     * @Flow\Inject(lazy=FALSE)
+     * @Flow\Inject(lazy=false)
      * @var SubNamespace\AnotherClass
      */
     protected $classFromSubNamespace;

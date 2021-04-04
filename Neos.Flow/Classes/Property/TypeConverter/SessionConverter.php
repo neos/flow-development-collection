@@ -12,7 +12,6 @@ namespace Neos\Flow\Property\TypeConverter;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Property\Exception\InvalidTargetException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Session\Session;
 use Neos\Flow\Session\SessionManagerInterface;
@@ -54,11 +53,11 @@ class SessionConverter extends AbstractTypeConverter
     protected $sessionManager;
 
     /**
-     * This implementation always returns TRUE for this method.
+     * This implementation always returns true for this method.
      *
      * @param mixed $source the source data
      * @param string $targetType the type to convert to.
-     * @return boolean TRUE if this TypeConverter can convert from $source to $targetType, FALSE otherwise.
+     * @return boolean true if this TypeConverter can convert from $source to $targetType, false otherwise.
      * @api
      */
     public function canConvertFrom($source, $targetType)
@@ -72,10 +71,8 @@ class SessionConverter extends AbstractTypeConverter
      * @param string $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object the target type
-     * @throws InvalidTargetException
-     * @throws \InvalidArgumentException
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {

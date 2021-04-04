@@ -131,10 +131,10 @@ or published to the web. Static resources may either be public or private:
 
 Whether a static package resource is public or private is determined by its parent
 directory. For a package *Acme.Demo* the public resources reside in a folder called
-*Acme.Demo/Resources/Public/* while the private resources are stored in
-*Acme.Demo/Resources/Private/*. The directory structure below *Public* and *Private* is up
+``Acme.Demo/Resources/Public/`` while the private resources are stored in
+``Acme.Demo/Resources/Private/``. The directory structure below *Public* and *Private* is up
 to you but there are some suggestions in the :doc:`chapter about package management <PackageManagement>`.
-Both private and public package resources are not represented by ``PersistentResource``s in the database.
+Both private and public package resources are not represented by ``PersistentResource`` instances in the database.
 
 
 Persistent Resources
