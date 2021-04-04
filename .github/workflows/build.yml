@@ -24,7 +24,7 @@ jobs:
         include:
           - php-versions: '7.3'
             static-analysis: 'psalm'
-            experimental: false
+            experimental: true
             dependencies: 'highest'
 
           # Experimental build for PHP 8
