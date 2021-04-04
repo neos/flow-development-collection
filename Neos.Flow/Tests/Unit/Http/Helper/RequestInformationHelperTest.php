@@ -1,8 +1,8 @@
 <?php
 namespace Neos\Flow\Tests\Unit\Http\Helper;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -15,7 +15,7 @@ class RequestInformationHelperTest extends UnitTestCase
      */
     public function renderRequestHeadersWillNotDiscloseAuthorizationCredentials()
     {
-        $request = Request::createFromEnvironment()
+        $request = ServerRequest::fromGlobals()
             ->withAddedHeader('Authorization', 'Basic SomeUser:SomePassword')
             ->withAddedHeader('Authorization', 'Bearer SomeToken');
 
