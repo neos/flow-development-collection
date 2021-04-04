@@ -210,8 +210,6 @@ class ActionControllerTest extends UnitTestCase
         $this->mockRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($mockHttpRequest));
 
         $mockResponse = new Mvc\ActionResponse;
-        $mockResponse->setContentType('text/html');
-        $this->inject($this->actionController, 'response', $mockResponse);
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
         $mockView->expects(self::once())->method('setControllerContext')->with($this->mockControllerContext);
@@ -240,8 +238,6 @@ class ActionControllerTest extends UnitTestCase
         $this->mockRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($mockHttpRequest));
 
         $mockResponse = new Mvc\ActionResponse;
-        $mockResponse->setContentType('text/html');
-        $this->inject($this->actionController, 'response', $mockResponse);
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
         $mockView->expects(self::once())->method('assign')->with('settings', $mockSettings);
