@@ -186,7 +186,7 @@ class ObjectManager implements ObjectManagerInterface
     public function get($objectName)
     {
         // XXX: This is a b/c fix for the deprecation of doctrine ObjectManager. Remove this with Flow 6.0
-        if ($objectName === \Doctrine\Common\Persistence\ObjectManager::class) {
+        if ($objectName === \Doctrine\Common\Persistence\ObjectManager::class || $objectName === \Doctrine\Persistence\ObjectManager::class) {
             $objectName = \Doctrine\ORM\EntityManagerInterface::class;
         }
 
