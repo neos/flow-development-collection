@@ -152,7 +152,7 @@ class JsonViewTest extends UnitTestCase
      */
     public function testTransformValue($object, $configuration, $expected, $description)
     {
-        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '', false);
+        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '');
 
         $actual = $jsonView->_call('transformValue', $object, $configuration);
 
