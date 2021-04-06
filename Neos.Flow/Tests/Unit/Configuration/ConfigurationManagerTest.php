@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Configuration;
  */
 
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\ConfigurationType\SettingsConfigurationType;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Exception\ParseErrorException;
 use Neos\Flow\Configuration\Exception\RecursionException;
@@ -171,7 +172,7 @@ class ConfigurationManagerTest extends UnitTestCase
         $configurationManager->expects(self::never())->method('loadConfiguration');
 
         foreach ($expectedConfigurations as $configurationType => $expectedConfiguration) {
-            $configurationManager->registerConfigurationType($configurationType, ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_SETTINGS);
+            $configurationManager->registerConfigurationType($configurationType, new SettingsConfigurationType());
             $actualConfiguration = $configurationManager->getConfiguration($configurationType);
             self::assertSame($expectedConfiguration, $actualConfiguration);
         }

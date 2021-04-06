@@ -97,7 +97,7 @@ trait SecurityOperationsTrait
 
         $configurationManager = $this->objectManager->get(ConfigurationManager::class);
         $configurations = ObjectAccess::getProperty($configurationManager, 'configurations', true);
-        unset($configurations[ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_POLICY]);
+        unset($configurations[ConfigurationManager::CONFIGURATION_TYPE_POLICY]);
         ObjectAccess::setProperty($configurationManager, 'configurations', $configurations, true);
 
         $policyService = $this->objectManager->get(PolicyService::class);
