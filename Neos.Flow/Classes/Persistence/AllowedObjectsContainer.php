@@ -11,6 +11,7 @@ namespace Neos\Flow\Persistence;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A container for the list of allowed objects to be persisted during this request.
