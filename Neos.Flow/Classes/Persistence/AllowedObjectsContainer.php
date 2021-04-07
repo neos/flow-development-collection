@@ -11,8 +11,6 @@ namespace Neos\Flow\Persistence;
  * source code.
  */
 
-use Neos\Utility\ObjectAccess;
-use Neos\Flow\Persistence\Exception as PersistenceException;
 
 /**
  * A container for the list of allowed objects to be persisted during this request.

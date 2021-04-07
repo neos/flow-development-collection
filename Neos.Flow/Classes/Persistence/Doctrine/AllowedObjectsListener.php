@@ -113,5 +113,4 @@ class AllowedObjectsListener
             throw new PersistenceException($message, 1377788621);
         }
     }
-
 }
