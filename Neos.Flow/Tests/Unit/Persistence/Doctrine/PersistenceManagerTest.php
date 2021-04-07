@@ -17,6 +17,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Persistence\AllowedObjectsContainer;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Log\LoggerInterface;
@@ -77,6 +78,7 @@ class PersistenceManagerTest extends UnitTestCase
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
         $this->persistenceManager->injectLogger($this->mockSystemLogger);
+        $this->inject($this->persistenceManager, 'allowedObjects', new AllowedObjectsContainer());
 
         $this->inject($this->persistenceManager, 'throwableStorage', $this->getMockBuilder(ThrowableStorageInterface::class)->getMock());
     }
