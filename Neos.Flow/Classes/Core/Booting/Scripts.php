@@ -17,11 +17,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheFactory;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Configuration\ConfigurationType\DefaultConfigurationType;
-use Neos\Flow\Configuration\ConfigurationType\ObjectsConfigurationType;
-use Neos\Flow\Configuration\ConfigurationType\PolicyConfigurationType;
-use Neos\Flow\Configuration\ConfigurationType\RoutesConfigurationType;
-use Neos\Flow\Configuration\ConfigurationType\SettingsConfigurationType;
+use Neos\Flow\Configuration\ConfigurationSource\DefaultConfigurationSource;
+use Neos\Flow\Configuration\ConfigurationSource\ObjectsConfigurationSource;
+use Neos\Flow\Configuration\ConfigurationSource\PolicyConfigurationSource;
+use Neos\Flow\Configuration\ConfigurationSource\RoutesConfigurationSource;
+use Neos\Flow\Configuration\ConfigurationSource\SettingsConfigurationSource;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Bootstrap;
@@ -209,15 +209,13 @@ class Scripts
 
         $configurationManager = new ConfigurationManager($context);
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
-        $configurationManager->injectConfigurationSource(new YamlSource());
+        $yamlSource = new YamlSource();
 
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, new DefaultConfigurationType());
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, new ObjectsConfigurationType());
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, new RoutesConfigurationType());
-        $policyConfigurationType = new PolicyConfigurationType();
-        $policyConfigurationType->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $policyConfigurationType);
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, new SettingsConfigurationType());
+        $configurationManager->registerConfigurationSource(new DefaultConfigurationSource($yamlSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES));
+        $configurationManager->registerConfigurationSource(new ObjectsConfigurationSource($yamlSource));
+        $configurationManager->registerConfigurationSource(new RoutesConfigurationSource($yamlSource, $configurationManager));
+        $configurationManager->registerConfigurationSource(new PolicyConfigurationSource($yamlSource, $environment->getPathToTemporaryDirectory()));
+        $configurationManager->registerConfigurationSource(new SettingsConfigurationSource($yamlSource));
 
         $configurationManager->setPackages($packageManager->getFlowPackages());
         if ($configurationManager->loadConfigurationCache() === false) {

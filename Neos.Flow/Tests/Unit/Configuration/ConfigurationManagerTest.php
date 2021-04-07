@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Configuration;
  */
 
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Configuration\ConfigurationType\SettingsConfigurationType;
+use Neos\Flow\Configuration\ConfigurationType\SettingsConfigurationSource;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Exception\ParseErrorException;
 use Neos\Flow\Configuration\Exception\RecursionException;
@@ -172,7 +172,7 @@ class ConfigurationManagerTest extends UnitTestCase
         $configurationManager->expects(self::never())->method('loadConfiguration');
 
         foreach ($expectedConfigurations as $configurationType => $expectedConfiguration) {
-            $configurationManager->registerConfigurationType($configurationType, new SettingsConfigurationType());
+            $configurationManager->registerConfigurationType($configurationType, new SettingsConfigurationSource());
             $actualConfiguration = $configurationManager->getConfiguration($configurationType);
             self::assertSame($expectedConfiguration, $actualConfiguration);
         }
@@ -1502,7 +1502,7 @@ EOD;
     public function loadConfigurationForViewsLoadsAppendsAllConfigurations()
     {
         $configurationManager = $this->getConfigurationManagerWithFlowPackage('packageViewConfigurationsCallback', 'Testing/System1');
-        $configurationManager->registerConfigurationType('Views', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_APPEND);
+        $configurationManager->registerConfigurationSource('Views', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_APPEND);
         $configurationManager->setPackages($this->getMockPackages());
 
         $configurationManager->_call('loadConfiguration', 'Views', $this->getMockPackages());
@@ -1597,7 +1597,7 @@ EOD;
     {
         $configurationManager = $this->getConfigurationManagerWithFlowPackage('loadingConfigurationOfCustomConfigurationTypeCallback', 'Testing');
 
-        $configurationManager->registerConfigurationType('MyCustomConfiguration', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_SETTINGS);
+        $configurationManager->registerConfigurationSource('MyCustomConfiguration', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_SETTINGS);
         $configurationManager->_call('loadConfiguration', 'MyCustomConfiguration', $this->getMockPackages());
         $configuration = $configurationManager->getConfiguration('MyCustomConfiguration');
         self::assertArrayHasKey('SomeKey', $configuration);

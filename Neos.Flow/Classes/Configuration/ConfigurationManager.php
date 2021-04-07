@@ -12,10 +12,16 @@ namespace Neos\Flow\Configuration;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\ConfigurationType\ConfigurationTypeInterface;
+use Neos\Flow\Configuration\ConfigurationSource\AppendConfigurationSource;
+use Neos\Flow\Configuration\ConfigurationSource\ConfigurationSourceInterface;
+use Neos\Flow\Configuration\ConfigurationSource\DefaultConfigurationSource;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
+use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\Arrays;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
 
@@ -35,7 +41,7 @@ class ConfigurationManager
      *
      * @var string
      */
-    const CONFIGURATION_TYPE_CACHES = 'Caches';
+    public const CONFIGURATION_TYPE_CACHES = 'Caches';
 
     /**
      * Contains object configuration, i.e. options which configure objects and the combination of those on a lower
@@ -43,7 +49,7 @@ class ConfigurationManager
      *
      * @var string
      */
-    const CONFIGURATION_TYPE_OBJECTS = 'Objects';
+    public const CONFIGURATION_TYPE_OBJECTS = 'Objects';
 
     /**
      * Contains routes configuration. This routing information is parsed and used by the MVC Web Routing mechanism.
@@ -51,14 +57,14 @@ class ConfigurationManager
      *
      * @var string
      */
-    const CONFIGURATION_TYPE_ROUTES = 'Routes';
+    public const CONFIGURATION_TYPE_ROUTES = 'Routes';
 
     /**
      * Contains the configuration of the security policies of the system. See the Security chapter for details.
      *
      * @var string
      */
-    const CONFIGURATION_TYPE_POLICY = 'Policy';
+    public const CONFIGURATION_TYPE_POLICY = 'Policy';
 
     /**
      * Contains user-level settings, i.e. configuration options the users or administrators are meant to change.
@@ -66,14 +72,52 @@ class ConfigurationManager
      *
      * @var string
      */
-    const CONFIGURATION_TYPE_SETTINGS = 'Settings';
+    public const CONFIGURATION_TYPE_SETTINGS = 'Settings';
+
+
+    /**
+     * @var string
+     * @deprecated since 7.1 – Use the existing or custom ConfigurationType implementations instead
+     */
+    public const CONFIGURATION_PROCESSING_TYPE_DEFAULT = 'DefaultProcessing';
+
+    /**
+     * @var string
+     * @deprecated since 7.1 – Use the existing or custom ConfigurationType implementations instead
+     */
+    public const CONFIGURATION_PROCESSING_TYPE_OBJECTS = 'ObjectsProcessing';
+
+    /**
+     * @var string
+     * @deprecated since 7.1 – Use the existing or custom ConfigurationType implementations instead
+     */
+    public const CONFIGURATION_PROCESSING_TYPE_POLICY = 'PolicyProcessing';
+
+    /**
+     * @var string
+     * @deprecated since 7.1 – Use the existing or custom ConfigurationType implementations instead
+     */
+    public const CONFIGURATION_PROCESSING_TYPE_ROUTES = 'RoutesProcessing';
+
+    /**
+     * @var string
+     * @deprecated since 7.1 – Use the existing or custom ConfigurationType implementations instead
+     */
+    public const CONFIGURATION_PROCESSING_TYPE_SETTINGS = 'SettingsProcessing';
+
+    /**
+     * @var string
+     * @deprecated since 7.1 – Use the existing or custom ConfigurationType implementations instead
+     */
+    public const CONFIGURATION_PROCESSING_TYPE_APPEND = 'AppendProcessing';
+
 
     /**
      * Defines which Configuration Type is processed by which logic
      *
-     * @var array
+     * @var ConfigurationSourceInterface[]
      */
-    protected $configurationTypes = [];
+    protected $configurationSources = [];
 
     /**
      * The application context of the configuration to manage
@@ -134,7 +178,7 @@ class ConfigurationManager
      * @param Source\YamlSource $configurationSource
      * @return void
      */
-    public function injectConfigurationSource(Source\YamlSource $configurationSource)
+    public function injectConfigurationSource(Source\YamlSource $configurationSource): void
     {
         $this->configurationSource = $configurationSource;
     }
@@ -144,7 +188,7 @@ class ConfigurationManager
      *
      * @param string $temporaryDirectoryPath
      */
-    public function setTemporaryDirectoryPath(string $temporaryDirectoryPath)
+    public function setTemporaryDirectoryPath(string $temporaryDirectoryPath): void
     {
         $this->temporaryDirectoryPath = $temporaryDirectoryPath;
     }
@@ -155,7 +199,7 @@ class ConfigurationManager
      * @param FlowPackageInterface[] $packages
      * @return void
      */
-    public function setPackages(array $packages)
+    public function setPackages(array $packages): void
     {
         $this->packages = $packages;
     }
@@ -167,56 +211,40 @@ class ConfigurationManager
      */
     public function getAvailableConfigurationTypes(): array
     {
-        return array_keys($this->configurationTypes);
+        return array_keys($this->configurationSources);
     }
 
     /**
-     * Resolve the processing type for the configuration type.
+     * Registers a new configuration type with the given configuration processing type.
      *
-     * This returns the ConfigurationTypeInterface to use for the given $configurationType.
-     *
-     * @param string $configurationType
-     * @return ConfigurationTypeInterface
-     * @throws Exception\InvalidConfigurationTypeException on non-existing configurationType
-     */
-    public function resolveConfigurationType(string $configurationType): ConfigurationTypeInterface
-    {
-        if (!isset($this->configurationTypes[$configurationType])) {
-            throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1339166495);
-        }
-
-        return $this->configurationTypes[$configurationType];
-    }
-
-    /**
-     * Check the allowSplitSource setting for the configuration type.
-     *
-     * @param string $configurationType
-     * @return boolean
-     * @throws Exception\InvalidConfigurationTypeException on non-existing configurationType
-     */
-    public function isSplitSourceAllowedForConfigurationType(string $configurationType): bool
-    {
-        if (!isset($this->configurationTypes[$configurationType])) {
-            throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1359998400);
-        }
-
-        return $this->configurationTypes[$configurationType]->isSplitSourceAllowed($configurationType);
-    }
-
-    /**
-     * Registers a new configuration type with the given $configurationtype.
+     * The processing type must be supported by the ConfigurationManager, see
+     * CONFIGURATION_PROCESSING_TYPE_* for what is available.
      *
      * @param string $configurationType The type to register, may be anything
-     * @param ConfigurationType\ConfigurationTypeInterface $configurationTypeProcesor Implementation to load the configuration
+     * @param string $configurationProcessingType One of CONFIGURATION_PROCESSING_TYPE_*, defaults to CONFIGURATION_PROCESSING_TYPE_DEFAULT
+     * @throws \InvalidArgumentException on invalid configuration processing type
+     * @return void
+     * @deprecated with 7.1 – Use the existing or custom ConfigurationSource implementations instead, @see registerConfigurationSource()
+     */
+    public function registerConfigurationType(string $configurationType, string $configurationProcessingType = self::CONFIGURATION_PROCESSING_TYPE_DEFAULT): void
+    {
+        if ($configurationProcessingType === self::CONFIGURATION_PROCESSING_TYPE_DEFAULT) {
+            $this->configurationSources[$configurationType] = new DefaultConfigurationSource(new YamlSource(), $configurationType);
+        } elseif ($configurationProcessingType === self::CONFIGURATION_PROCESSING_TYPE_APPEND) {
+            $this->configurationSources[$configurationType] = new AppendConfigurationSource(new YamlSource(), $configurationType);
+        }
+        throw new \InvalidArgumentException(sprintf('Specified invalid configuration processing type "%s" while registering custom configuration type "%s". Use registerConfigurationSource() instead.', $configurationProcessingType, $configurationType), 1365496111);
+    }
+
+    /**
+     * Registers a new configuration type
+     *
+     * @param ConfigurationSourceInterface $configurationSource Implementation to load the configuration
      * @return void
      */
-    public function registerConfigurationType(string $configurationType, ConfigurationType\ConfigurationTypeInterface $configurationTypeProcesor)
+    public function registerConfigurationSource(ConfigurationSourceInterface $configurationSource): void
     {
-        $configurationTypeProcesor->setApplicationContext($this->context);
-        $configurationTypeProcesor->setConfigurationManager($this);
-
-        $this->configurationTypes[$configurationType] = $configurationTypeProcesor;
+        $this->configurationSources[$configurationSource->getName()] = $configurationSource;
     }
 
     /**
@@ -226,7 +254,7 @@ class ConfigurationManager
      * @return void
      * @Flow\Signal
      */
-    protected function emitConfigurationManagerReady(ConfigurationManager $configurationManager)
+    protected function emitConfigurationManagerReady(ConfigurationManager $configurationManager): void
     {
     }
 
@@ -238,9 +266,10 @@ class ConfigurationManager
      * If possible just use settings and have them injected.
      *
      * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
-     * @param string $configurationPath The path inside the configuration to fetch
-     * @return array|null The configuration or NULL if the configuration doesn't exist
+     * @param string|null $configurationPath The path inside the configuration to fetch
+     * @return mixed|null The configuration or NULL if the configuration doesn't exist
      * @throws Exception\InvalidConfigurationTypeException on invalid configuration types
+     * @throws Exception\InvalidConfigurationException
      */
     public function getConfiguration(string $configurationType, string $configurationPath = null)
     {
@@ -249,11 +278,11 @@ class ConfigurationManager
         }
 
         $configuration = $this->configurations[$configurationType] ?? [];
-        if ($configurationPath === null || $configuration === null) {
+        if ($configurationPath === null || $configuration === []) {
             return $configuration;
         }
 
-        return (Arrays::getValueByPath($configuration, $configurationPath));
+        return Arrays::getValueByPath($configuration, $configurationPath);
     }
 
     /**
@@ -261,8 +290,11 @@ class ConfigurationManager
      * This method writes the current configuration into a cache file if Flow was configured to do so.
      *
      * @return void
+     * @throws Exception\InvalidConfigurationException
+     * @throws Exception\InvalidConfigurationTypeException
+     * @throws FilesException
      */
-    public function shutdown()
+    public function shutdown(): void
     {
         if ($this->cacheNeedsUpdate === true) {
             $this->saveConfigurationCache();
@@ -273,10 +305,11 @@ class ConfigurationManager
      * Warms up the complete configuration cache, i.e. fetching every configured configuration type
      * in order to be able to store it into the cache, if configured to do so.
      *
-     * @see \Neos\Flow\Configuration\ConfigurationManager::shutdown
      * @return void
+     * @throws InvalidConfigurationException | InvalidConfigurationTypeException
+     * @see \Neos\Flow\Configuration\ConfigurationManager::shutdown
      */
-    public function warmup()
+    public function warmup(): void
     {
         foreach ($this->getAvailableConfigurationTypes() as $configurationType) {
             $this->getConfiguration($configurationType);
@@ -291,8 +324,7 @@ class ConfigurationManager
      *
      * @param string $configurationType The kind of configuration to load - must be one of the CONFIGURATION_TYPE_* constants
      * @param FlowPackageInterface[] $packages An array of Package objects (indexed by package key) to consider
-     * @throws Exception\InvalidConfigurationTypeException
-     * @throws Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationTypeException
      * @return void
      */
     protected function loadConfiguration(string $configurationType, array $packages)
@@ -303,9 +335,10 @@ class ConfigurationManager
 
         $this->cacheNeedsUpdate = true;
 
-        $configurationProcessingType = $this->resolveConfigurationType($configurationType);
-
-        $this->configurations[$configurationType] = $configurationProcessingType->process($this->configurationSource, $configurationType, $packages, $this->configurations[$configurationType]);
+        if (!isset($this->configurationSources[$configurationType])) {
+            throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1339166495);
+        }
+        $this->configurations[$configurationType] = $this->configurationSources[$configurationType]->process($packages, $this->context);
         $this->unprocessedConfiguration[$configurationType] = $this->configurations[$configurationType];
     }
 
@@ -335,7 +368,7 @@ class ConfigurationManager
      * @throws Exception
      * @see refreshConfiguration
      */
-    public function flushConfigurationCache()
+    public function flushConfigurationCache(): void
     {
         $this->configurations = [self::CONFIGURATION_TYPE_SETTINGS => []];
         if ($this->temporaryDirectoryPath === null) {
@@ -356,12 +389,12 @@ class ConfigurationManager
      * in the context's Configuration directory.
      *
      * @return void
-     * @throws Exception
+     * @throws InvalidConfigurationTypeException | FilesException
      */
-    protected function saveConfigurationCache()
+    protected function saveConfigurationCache(): void
     {
         // Make sure that all configuration types are loaded before writing configuration caches.
-        foreach (array_keys($this->configurationTypes) as $configurationType) {
+        foreach (array_keys($this->configurationSources) as $configurationType) {
             if (!isset($this->unprocessedConfiguration[$configurationType]) || !is_array($this->unprocessedConfiguration[$configurationType])) {
                 $this->loadConfiguration($configurationType, $this->packages);
             }
@@ -383,8 +416,9 @@ class ConfigurationManager
 
     /**
      * @return void
+     * @throws InvalidConfigurationTypeException | FilesException | Exception
      */
-    public function refreshConfiguration()
+    public function refreshConfiguration(): void
     {
         $this->flushConfigurationCache();
         $this->saveConfigurationCache();
@@ -395,12 +429,12 @@ class ConfigurationManager
      * Replaces variables (in the format %CONSTANT% or %env:ENVIRONMENT_VARIABLE%)
      * in the given php exported configuration string.
      *
-     * This is applied before caching to alllow runtime evaluation of constants and environment variables.
+     * This is applied before caching to allow runtime evaluation of constants and environment variables.
      *
      * @param string $phpString
-     * @return mixed
+     * @return string
      */
-    protected function replaceVariablesInPhpString(string $phpString)
+    protected function replaceVariablesInPhpString(string $phpString): string
     {
         $phpString = preg_replace_callback('/
             (?<startString>=>\s\'.*?)?         # optionally assignment operator and starting a string
