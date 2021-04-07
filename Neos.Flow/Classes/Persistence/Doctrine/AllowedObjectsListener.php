@@ -12,7 +12,6 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\DBAL\Exception\ConnectionException;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -34,6 +33,7 @@ use Psr\Log\LoggerInterface;
 class AllowedObjectsListener
 {
     /**
+     * @Flow\Inject
      * @var LoggerInterface
      */
     protected $logger;
@@ -43,11 +43,6 @@ class AllowedObjectsListener
      * @var ThrowableStorageInterface
      */
     protected $throwableStorage;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
 
     /**
      * @Flow\Inject

@@ -11,6 +11,7 @@ namespace Neos\Flow\Persistence;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Utility\ObjectAccess;
 
 /**
