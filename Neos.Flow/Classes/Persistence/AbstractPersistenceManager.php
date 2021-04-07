@@ -12,7 +12,6 @@ namespace Neos\Flow\Persistence;
  */
 
 use Neos\Utility\ObjectAccess;
-use Neos\Flow\Persistence\Exception as PersistenceException;
 
 /**
  * The Flow Persistence Manager base class
