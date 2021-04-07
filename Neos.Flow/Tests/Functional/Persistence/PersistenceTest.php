@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Functional\Persistence;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -40,16 +41,31 @@ class PersistenceTest extends FunctionalTestCase
     protected $extendedTypesEntityRepository;
 
     /**
+     * @var EntityManagerInterface
+     */
+    protected $earlyEntityManager;
+
+    /**
      * @return void
      */
     public function setUp()
     {
+        $this->earlyEntityManager = self::$bootstrap->getObjectManager()->get(EntityManagerInterface::class);
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
         $this->testEntityRepository = new Fixtures\TestEntityRepository();
         $this->extendedTypesEntityRepository = new Fixtures\ExtendedTypesEntityRepository();
+    }
+
+    /**
+     * @test
+     */
+    public function entityManagerIsSingletonInstanceInPersistenceManager()
+    {
+        $this->earlyEntityManager->persist(new Fixtures\TestEntity());
+        self::assertTrue($this->persistenceManager->hasUnpersistedChanges());
     }
 
     /**
