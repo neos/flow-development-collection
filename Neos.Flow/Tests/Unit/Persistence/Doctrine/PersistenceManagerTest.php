@@ -76,16 +76,20 @@ class PersistenceManagerTest extends UnitTestCase
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
         $this->persistenceManager->injectLogger($this->mockSystemLogger);
+
+        $mockThrowableStorage = $this->getMockBuilder(ThrowableStorageInterface::class)->getMock();
+        $this->inject($this->persistenceManager, 'throwableStorage', $mockThrowableStorage);
+
         $allowedObjectsContainer = new AllowedObjectsContainer();
         $this->inject($this->persistenceManager, 'allowedObjects', $allowedObjectsContainer);
-        $allowedObjectsListener = $this->getMockBuilder(AllowedObjectsListener::class)->getMock();
+        $allowedObjectsListener = new AllowedObjectsListener();
         $this->inject($allowedObjectsListener, 'allowedObjects', $allowedObjectsContainer);
         $this->inject($allowedObjectsListener, 'logger', $this->mockSystemLogger);
+        $this->inject($allowedObjectsListener, 'throwableStorage', $mockThrowableStorage);
+        $this->inject($allowedObjectsListener, 'persistenceManager', $this->persistenceManager);
         $this->mockEntityManager->method('flush')->willReturnCallback(function () use ($allowedObjectsListener) {
             $allowedObjectsListener->onFlush(new OnFlushEventArgs($this->mockEntityManager));
         });
-
-        $this->inject($this->persistenceManager, 'throwableStorage', $this->getMockBuilder(ThrowableStorageInterface::class)->getMock());
     }
 
     /**

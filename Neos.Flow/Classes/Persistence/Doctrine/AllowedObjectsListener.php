@@ -18,6 +18,7 @@ use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\AllowedObjectsContainer;
 use Neos\Flow\Persistence\Exception as PersistenceException;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -49,6 +50,12 @@ class AllowedObjectsListener
      * @var AllowedObjectsContainer
      */
     protected $allowedObjects;
+
+    /**
+     * @Flow\Inject(lazy=true)
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * Doctrine onFlush listener that checks for only allowed objects and reconnects
@@ -99,7 +106,7 @@ class AllowedObjectsListener
     protected function throwExceptionIfObjectIsNotAllowed($object)
     {
         if (!$this->allowedObjects->contains($object)) {
-            $message = 'Detected modified or new objects (' . get_class($object) . ', uuid:' . $this->getIdentifierByObject($object) . ') to be persisted which is not allowed for "safe requests"' . chr(10) .
+            $message = 'Detected modified or new objects (' . get_class($object) . ', uuid:' . $this->persistenceManager->getIdentifierByObject($object) . ') to be persisted which is not allowed for "safe requests"' . chr(10) .
                 'According to the HTTP 1.1 specification, so called "safe request" (usually GET or HEAD requests)' . chr(10) .
                 'should not change your data on the server side and should be considered read-only. If you need to add,' . chr(10) .
                 'modify or remove data, you should use the respective request methods (POST, PUT, DELETE and PATCH).' . chr(10) . chr(10) .
