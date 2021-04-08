@@ -61,10 +61,11 @@ class GeneratorService
      * @param string $packageKey The package key of the controller's package
      * @param string $subpackage An optional subpackage name
      * @param string $controllerName The name of the new controller
+     * @param boolean $fusionView If the controller should default to a FusionView
      * @param boolean $overwrite Overwrite any existing files?
      * @return array An array of generated filenames
      */
-    public function generateActionController($packageKey, $subpackage, $controllerName, $overwrite = false)
+    public function generateActionController($packageKey, $subpackage, $controllerName, $fusionView = false, $overwrite = false)
     {
         list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $controllerName = ucfirst($controllerName);
@@ -79,6 +80,7 @@ class GeneratorService
         $contextVariables['isInSubpackage'] = ($subpackage != '');
         $contextVariables['controllerClassName'] = $controllerClassName;
         $contextVariables['controllerName'] = $controllerName;
+        $contextVariables['defaultView'] = $fusionView ? '\Neos\Fusion\View\FusionView' : '';
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
@@ -98,10 +100,11 @@ class GeneratorService
      * @param string $packageKey The package key of the controller's package
      * @param string $subpackage An optional subpackage name
      * @param string $controllerName The name of the new controller
+     * @param boolean $fusionView If the controller should default to a FusionView
      * @param boolean $overwrite Overwrite any existing files?
      * @return array An array of generated filenames
      */
-    public function generateCrudController($packageKey, $subpackage, $controllerName, $overwrite = false)
+    public function generateCrudController($packageKey, $subpackage, $controllerName, $fusionView = false, $overwrite = false)
     {
         list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $controllerName = ucfirst($controllerName);
@@ -120,6 +123,7 @@ class GeneratorService
         $contextVariables['repositoryClassName'] = '\\' . trim($baseNamespace, '\\') . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Repository\\' . $controllerName . 'Repository';
         $contextVariables['modelFullClassName'] = '\\' . trim($baseNamespace, '\\') . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Model\\' . $controllerName;
         $contextVariables['modelClassName'] = ucfirst($contextVariables['modelName']);
+        $contextVariables['defaultView'] = $fusionView ? '\Neos\Fusion\View\FusionView' : '';
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 

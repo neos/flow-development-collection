@@ -151,9 +151,9 @@ class KickstartCommandController extends CommandController
 
         foreach ($controllerNames as $currentControllerName) {
             if ($generateActions === true) {
-                $generatedFiles += $this->generatorService->generateCrudController($packageKey, $subpackageName, $currentControllerName, $force);
+                $generatedFiles += $this->generatorService->generateCrudController($packageKey, $subpackageName, $currentControllerName, $generateFusion, $force);
             } else {
-                $generatedFiles += $this->generatorService->generateActionController($packageKey, $subpackageName, $currentControllerName, $force);
+                $generatedFiles += $this->generatorService->generateActionController($packageKey, $subpackageName, $currentControllerName, $generateFusion, $force);
             }
             if ($generateTemplates === true && $generateFusion === false) {
                 $generatedFiles += $this->generatorService->generateLayout($packageKey, 'Default', $force);
