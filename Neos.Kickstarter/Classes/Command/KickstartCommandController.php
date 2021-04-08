@@ -88,7 +88,7 @@ class KickstartCommandController extends CommandController
      * By specifying the --generate-templates flag, this command will also create
      * matching Fluid templates for the actions created.
      * Alternatively, by specifying the --generate-fusion flag, this command will
-     * create matchin Fusion files for the actions.
+     * create matching Fusion files for the actions.
      *
      * The default behavior is to not overwrite any existing code. This can be
      * overridden by specifying the --force flag.
