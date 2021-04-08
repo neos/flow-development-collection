@@ -85,9 +85,6 @@ class RoutesConfigurationSource implements ConfigurationSourceInterface
      */
     protected function includeSubRoutesFromSettings(array $routeDefinitions, array $routeSettings): array
     {
-        if ($routeSettings === []) {
-            return [];
-        }
         $sortedRouteSettings = (new PositionalArraySorter($routeSettings))->toArray();
         foreach ($sortedRouteSettings as $packageKey => $routeFromSettings) {
             if ($routeFromSettings === false) {
@@ -175,7 +172,7 @@ class RoutesConfigurationSource implements ConfigurationSourceInterface
      * @return array the merged route configuration
      * @throws ParseErrorException
      */
-    private function buildSubRouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, string $subRouteKey, array $subRouteOptions): array
+    protected function buildSubRouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, string $subRouteKey, array $subRouteOptions): array
     {
         $variables = $subRouteOptions['variables'] ?? [];
         $mergedSubRoutesConfigurations = [];
