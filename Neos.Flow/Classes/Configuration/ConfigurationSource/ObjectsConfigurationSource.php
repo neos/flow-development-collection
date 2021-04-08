@@ -29,13 +29,7 @@ class ObjectsConfigurationSource implements ConfigurationSourceInterface
         $this->yamlSource = $yamlSource;
     }
 
-
-    public function getName(): string
-    {
-        return ConfigurationManager::CONFIGURATION_TYPE_OBJECTS;
-    }
-
-    public function process(array $packages, ApplicationContext $context): array
+    public function __invoke(array $packages, ApplicationContext $context): array
     {
         $configuration = [];
         foreach ($packages as $packageKey => $package) {

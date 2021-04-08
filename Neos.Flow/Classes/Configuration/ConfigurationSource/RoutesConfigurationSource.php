@@ -48,18 +48,13 @@ class RoutesConfigurationSource implements ConfigurationSourceInterface
         $this->configurationManager = $configurationManager;
     }
 
-    public function getName(): string
-    {
-        return ConfigurationManager::CONFIGURATION_TYPE_ROUTES;
-    }
-
     /**
      * @param array $packages
      * @param ApplicationContext $context
      * @return array
      * @throws ConfigurationException | InvalidConfigurationException | InvalidConfigurationTypeException | ParseErrorException | RecursionException
      */
-    public function process(array $packages, ApplicationContext $context): array
+    public function __invoke(array $packages, ApplicationContext $context): array
     {
         // load main routes
         $routesConfiguration = [];

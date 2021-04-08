@@ -18,12 +18,6 @@ use Neos\Flow\Core\ApplicationContext;
  */
 interface ConfigurationSourceInterface
 {
-    /**
-     * The name of this configuration type (one of the ConfigurationManager::CONFIGURATION_TYPE_* constants or a custom configuration type name like "NodeTypes")
-     *
-     * @return string
-     */
-    public function getName(): string;
 
     /**
      * Read configuration resources and return the final configuration array for the given configurationType
@@ -32,5 +26,5 @@ interface ConfigurationSourceInterface
      * @param ApplicationContext $context
      * @return array The Configuration array for the current configurationType
      */
-    public function process(array $packages, ApplicationContext $context) : array;
+    public function __invoke(array $packages, ApplicationContext $context) : array;
 }

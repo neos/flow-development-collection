@@ -199,36 +199,35 @@ class ConfigurationManager
     }
 
     /**
-     * Registers a new configuration type with the given configuration processing type.
-     *
-     * The processing type must be supported by the ConfigurationManager, see
-     * CONFIGURATION_PROCESSING_TYPE_* for what is available.
+     * Registers a new configuration type with the given source.
      *
      * @param string $configurationType The type to register, may be anything
-     * @param string $configurationProcessingType One of CONFIGURATION_PROCESSING_TYPE_*, defaults to CONFIGURATION_PROCESSING_TYPE_DEFAULT
+     * @param ConfigurationSourceInterface|callable|string $configurationSource
      * @throws \InvalidArgumentException on invalid configuration processing type
      * @return void
-     * @deprecated with 7.1 – Use the existing or custom ConfigurationSource implementations instead, @see registerConfigurationSource()
      */
-    public function registerConfigurationType(string $configurationType, string $configurationProcessingType = self::CONFIGURATION_PROCESSING_TYPE_DEFAULT): void
+    public function registerConfigurationType(string $configurationType, $configurationSource): void
     {
-        if ($configurationProcessingType === self::CONFIGURATION_PROCESSING_TYPE_DEFAULT) {
-            $this->configurationSources[$configurationType] = new DefaultConfigurationSource(new YamlSource(), $configurationType);
-        } elseif ($configurationProcessingType === self::CONFIGURATION_PROCESSING_TYPE_APPEND) {
-            $this->configurationSources[$configurationType] = new AppendConfigurationSource(new YamlSource(), $configurationType);
+        // B/C layer
+        if (is_string($configurationSource)) {
+            $configurationSource = $this->convertLegacyProcessingType($configurationType, $configurationSource);
         }
-        throw new \InvalidArgumentException(sprintf('Specified invalid configuration processing type "%s" while registering custom configuration type "%s". Use registerConfigurationSource() instead.', $configurationProcessingType, $configurationType), 1365496111);
+        if (!is_callable($configurationSource)) {
+            throw new \InvalidArgumentException(sprintf('Specified invalid configuration source of type "%s" while registering custom configuration type "%s".', is_object($configurationSource) ? get_class($configurationSource) : gettype($configurationSource), $configurationType), 1617895964);
+        }
+        $this->configurationSources[$configurationType] = $configurationSource;
+        unset($this->configurations[$configurationType]);
     }
 
-    /**
-     * Registers a new configuration type
-     *
-     * @param ConfigurationSourceInterface $configurationSource Implementation to load the configuration
-     * @return void
-     */
-    public function registerConfigurationSource(ConfigurationSourceInterface $configurationSource): void
+    private function convertLegacyProcessingType(string $configurationType, string $configurationProcessingType): ConfigurationSourceInterface
     {
-        $this->configurationSources[$configurationSource->getName()] = $configurationSource;
+        if ($configurationProcessingType === self::CONFIGURATION_PROCESSING_TYPE_DEFAULT) {
+            return new DefaultConfigurationSource(new YamlSource(), $configurationType);
+        }
+        if ($configurationProcessingType === self::CONFIGURATION_PROCESSING_TYPE_APPEND) {
+            return new AppendConfigurationSource(new YamlSource(), $configurationType);
+        }
+        throw new \InvalidArgumentException(sprintf('Specified invalid configuration processing type "%s" while registering custom configuration type "%s".', $configurationProcessingType, $configurationType), 1365496111);
     }
 
     /**
@@ -322,7 +321,7 @@ class ConfigurationManager
         if (!isset($this->configurationSources[$configurationType])) {
             throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1339166495);
         }
-        $this->configurations[$configurationType] = $this->configurationSources[$configurationType]->process($packages, $this->context);
+        $this->configurations[$configurationType] = $this->configurationSources[$configurationType]($packages, $this->context);
         $this->unprocessedConfiguration[$configurationType] = $this->configurations[$configurationType];
     }
 

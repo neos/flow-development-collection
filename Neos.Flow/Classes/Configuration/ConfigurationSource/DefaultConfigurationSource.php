@@ -25,32 +25,27 @@ class DefaultConfigurationSource implements ConfigurationSourceInterface
     /**
      * @var string
      */
-    private $name;
+    private $filePrefix;
 
-    public function __construct(YamlSource $yamlSource, string $name)
+    public function __construct(YamlSource $yamlSource, string $filePrefix)
     {
         $this->yamlSource = $yamlSource;
-        $this->name = $name;
+        $this->filePrefix = $filePrefix;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function process(array $packages, ApplicationContext $context): array
+    public function __invoke(array $packages, ApplicationContext $context): array
     {
         $configuration = [];
         foreach ($packages as $package) {
-            $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load($package->getConfigurationPath() . $this->name, true));
+            $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load($package->getConfigurationPath() . $this->filePrefix, true));
         }
-        $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load(FLOW_PATH_CONFIGURATION . $this->name, true));
+        $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load(FLOW_PATH_CONFIGURATION . $this->filePrefix, true));
 
         foreach ($context->getHierarchy() as $contextName) {
             foreach ($packages as $package) {
-                $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load($package->getConfigurationPath() . $contextName . '/' . $this->name, true));
+                $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load($package->getConfigurationPath() . $contextName . '/' . $this->filePrefix, true));
             }
-            $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $this->name, true));
+            $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $this->filePrefix, true));
         }
 
         return $configuration;

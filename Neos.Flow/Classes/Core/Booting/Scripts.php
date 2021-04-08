@@ -211,11 +211,11 @@ class Scripts
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
         $yamlSource = new YamlSource();
 
-        $configurationManager->registerConfigurationSource(new DefaultConfigurationSource($yamlSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES));
-        $configurationManager->registerConfigurationSource(new ObjectsConfigurationSource($yamlSource));
-        $configurationManager->registerConfigurationSource(new RoutesConfigurationSource($yamlSource, $configurationManager));
-        $configurationManager->registerConfigurationSource(new PolicyConfigurationSource($yamlSource, $environment->getPathToTemporaryDirectory()));
-        $configurationManager->registerConfigurationSource(new SettingsConfigurationSource($yamlSource));
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, new DefaultConfigurationSource($yamlSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES));
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, new ObjectsConfigurationSource($yamlSource));
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, new RoutesConfigurationSource($yamlSource, $configurationManager));
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_POLICY, new PolicyConfigurationSource($yamlSource));
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, new SettingsConfigurationSource($yamlSource));
 
         $configurationManager->setPackages($packageManager->getFlowPackages());
         if ($configurationManager->loadConfigurationCache() === false) {

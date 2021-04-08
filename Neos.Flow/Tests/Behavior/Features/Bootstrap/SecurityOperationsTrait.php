@@ -19,6 +19,7 @@ use Neos\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationContro
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * A trait with shared step definitions for testing compile time security privilege types
@@ -92,13 +93,10 @@ trait SecurityOperationsTrait
             throw new \Exception('Step "I have the following policies:" must run as FIRST step in a scenario, because otherwise the proxy-classes are already built in the wrong manner!');
         }
 
-        self::$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy.yaml';
-        file_put_contents(self::$testingPolicyPathAndFilename, $string->getRaw());
-
         $configurationManager = $this->objectManager->get(ConfigurationManager::class);
-        $configurations = ObjectAccess::getProperty($configurationManager, 'configurations', true);
-        unset($configurations[ConfigurationManager::CONFIGURATION_TYPE_POLICY]);
-        ObjectAccess::setProperty($configurationManager, 'configurations', $configurations, true);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_POLICY, static function() use ($string) {
+            return Yaml::parse($string);
+        });
 
         $policyService = $this->objectManager->get(PolicyService::class);
         ObjectAccess::setProperty($policyService, 'initialized', false, true);

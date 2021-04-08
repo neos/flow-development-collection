@@ -29,12 +29,7 @@ class SettingsConfigurationSource implements ConfigurationSourceInterface
         $this->yamlSource = $yamlSource;
     }
 
-    public function getName(): string
-    {
-        return ConfigurationManager::CONFIGURATION_TYPE_SETTINGS;
-    }
-
-    public function process(array $packages, ApplicationContext $context): array
+    public function __invoke(array $packages, ApplicationContext $context): array
     {
         // Make sure that the Flow package is the first item of the packages array:
         if (isset($packages['Neos.Flow'])) {

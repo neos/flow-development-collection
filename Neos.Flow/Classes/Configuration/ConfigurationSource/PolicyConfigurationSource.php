@@ -24,32 +24,13 @@ class PolicyConfigurationSource implements ConfigurationSourceInterface
      */
     private $yamlSource;
 
-    /**
-     * @var string
-     */
-    private $temporaryDirectoryPath;
-
-    public function __construct(YamlSource $yamlSource, string $temporaryDirectoryPath)
+    public function __construct(YamlSource $yamlSource)
     {
         $this->yamlSource = $yamlSource;
-        $this->temporaryDirectoryPath = $temporaryDirectoryPath;
     }
 
-
-    public function getName(): string
+    public function __invoke(array $packages, ApplicationContext $context): array
     {
-        return ConfigurationManager::CONFIGURATION_TYPE_POLICY;
-    }
-
-    public function process(array $packages, ApplicationContext $context): array
-    {
-        if ($context->isTesting()) {
-            $testingPolicyPathAndFilename = $this->temporaryDirectoryPath . ConfigurationManager::CONFIGURATION_TYPE_POLICY;
-            if ($this->yamlSource->has($testingPolicyPathAndFilename)) {
-                return $this->yamlSource->load($testingPolicyPathAndFilename);
-            }
-        }
-
         $configuration = [];
         foreach ($packages as $package) {
             $packagePolicyConfiguration = $this->yamlSource->load($package->getConfigurationPath() . ConfigurationManager::CONFIGURATION_TYPE_POLICY, true);

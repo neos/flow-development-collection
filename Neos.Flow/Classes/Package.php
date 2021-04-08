@@ -132,7 +132,7 @@ class Package extends BasePackage
         $dispatcher->connect(Tests\FunctionalTestCase::class, 'functionalTestTearDown', Mvc\Routing\RouterCachingService::class, 'flushCaches');
 
         $dispatcher->connect(Configuration\ConfigurationManager::class, 'configurationManagerReady', function (Configuration\ConfigurationManager $configurationManager) {
-            $configurationManager->registerConfigurationSource(new AppendConfigurationSource(new YamlSource(), 'Views'));
+            $configurationManager->registerConfigurationType('Views', new AppendConfigurationSource(new YamlSource(), 'Views'));
         });
         $dispatcher->connect(Command\CacheCommandController::class, 'warmupCaches', Configuration\ConfigurationManager::class, 'warmup');
 

@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Configuration;
 
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSource\AppendConfigurationSource;
-use Neos\Flow\Configuration\ConfigurationSource\ClosureConfigurationSource;
 use Neos\Flow\Configuration\ConfigurationSource\DefaultConfigurationSource;
 use Neos\Flow\Configuration\ConfigurationSource\ObjectsConfigurationSource;
 use Neos\Flow\Configuration\ConfigurationSource\RoutesConfigurationSource;
@@ -166,34 +165,6 @@ class ConfigurationManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function getConfigurationForCustomConfigurationUsingSettingsProcessingReturnsRespectiveConfigurationArray()
-    {
-        $expectedConfigurations = [
-            'Custom' => ['custom'],
-        ];
-
-        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration']);
-        $configurationManager->_set('configurations', $expectedConfigurations);
-        $configurationManager->expects(self::never())->method('loadConfiguration');
-
-        $mockYamlSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
-        $mockYamlSource->expects(self::any())->method('load')->will(self::returnCallBack([$this, 'packageSettingsCallback']));
-
-        $settingsConfigurationSource = new SettingsConfigurationSource($mockYamlSource);
-        $configurationManager->registerConfigurationSource($settingsConfigurationSource);
-
-        foreach ($expectedConfigurations as $configurationType => $expectedConfiguration) {
-            $actualConfiguration = $configurationManager->getConfiguration($configurationType);
-            self::assertSame($expectedConfiguration, $actualConfiguration);
-        }
-
-        $expectedConfigurationTypes = ['Settings'];
-        self::assertEquals($expectedConfigurationTypes, $configurationManager->getAvailableConfigurationTypes());
-    }
-
-    /**
-     * @test
-     */
     public function registerConfigurationTypeThrowsExceptionOnInvalidConfigurationProcessingType()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -221,7 +192,7 @@ class ConfigurationManagerTest extends UnitTestCase
         $configurationManager->_set('configurationSource', $mockYamlSource);
 
         $settingsConfigurationSource = new SettingsConfigurationSource($mockYamlSource);
-        $configurationManager->registerConfigurationSource($settingsConfigurationSource);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingsConfigurationSource);
 
         $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $mockPackages);
 
@@ -244,7 +215,7 @@ class ConfigurationManagerTest extends UnitTestCase
 
         $configurationSource = $configurationManager->_get('configurationSource');
         $settingsConfigurationSource = new SettingsConfigurationSource($configurationSource);
-        $configurationManager->registerConfigurationSource($settingsConfigurationSource);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingsConfigurationSource);
 
         $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $mockPackages);
 
@@ -384,7 +355,7 @@ class ConfigurationManagerTest extends UnitTestCase
 
         $configurationSource = $configurationManager->_get('configurationSource');
         $objectsConfigurationSource = new ObjectsConfigurationSource($configurationSource);
-        $configurationManager->registerConfigurationSource($objectsConfigurationSource);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, $objectsConfigurationSource);
 
         $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, $mockPackages);
 
@@ -502,7 +473,7 @@ class ConfigurationManagerTest extends UnitTestCase
 
         $configurationSource = $configurationManager->_get('configurationSource');
         $defaultConfigurationSource = new DefaultConfigurationSource($configurationSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES);
-        $configurationManager->registerConfigurationSource($defaultConfigurationSource);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, $defaultConfigurationSource);
 
         $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_CACHES, $mockPackages);
 
@@ -641,7 +612,7 @@ EOD;
         $configurationManager->_set('configurationSource', $mockYamlSource);
 
         $settingsConfigurationSource = new SettingsConfigurationSource($mockYamlSource);
-        $configurationManager->registerConfigurationSource($settingsConfigurationSource);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingsConfigurationSource);
 
         $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, []);
 
@@ -823,7 +794,7 @@ EOD;
 
         $configurationSource = $configurationManager->_get('configurationSource');
         $routesConfigurationSource = new RoutesConfigurationSource($configurationSource, $configurationManager);
-        $configurationManager->registerConfigurationSource($routesConfigurationSource);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $routesConfigurationSource);
 
         $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $mockPackages);
 
@@ -987,10 +958,10 @@ EOD;
         $configurationSource = $configurationManager->_get('configurationSource');
 
         $settingsConfigurationSource = new SettingsConfigurationSource($configurationSource);
-        $configurationManager->registerConfigurationSource($settingsConfigurationSource);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingsConfigurationSource);
 
         $routesConfigurationSource = new RoutesConfigurationSource($configurationSource, $configurationManager);
-        $configurationManager->registerConfigurationSource($routesConfigurationSource);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $routesConfigurationSource);
 
         $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $mockPackages);
 
@@ -1132,10 +1103,10 @@ EOD;
         $configurationManager->setPackages($mockPackages);
 
         $settingsConfigurationSource = new SettingsConfigurationSource($mockYamlSource);
-        $configurationManager->registerConfigurationSource($settingsConfigurationSource);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingsConfigurationSource);
 
         $routesConfigurationSource = new RoutesConfigurationSource($mockYamlSource, $configurationManager);
-        $configurationManager->registerConfigurationSource($routesConfigurationSource);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $routesConfigurationSource);
 
         $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $mockPackages);
 
@@ -1249,10 +1220,10 @@ EOD;
         $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfiguration']);
 
         $settingsConfigurationSource = new SettingsConfigurationSource($mockYamlSource);
-        $configurationManager->registerConfigurationSource($settingsConfigurationSource);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingsConfigurationSource);
 
         $routesConfigurationSource = new RoutesConfigurationSource($mockYamlSource, $configurationManager);
-        $configurationManager->registerConfigurationSource($routesConfigurationSource);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $routesConfigurationSource);
 
         $mockPackages = $this->getMockPackages();
         $configurationManager->setPackages($mockPackages);
@@ -1313,10 +1284,9 @@ EOD;
 
         $configurationManager = $this->getAccessibleConfigurationManager([]);
 
-        $emptySettingsConfigurationSource = new ClosureConfigurationSource('Settings', function (array $packages, ApplicationContext $context) {
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, function (array $packages, ApplicationContext $context) {
             return [];
         });
-        $configurationManager->registerConfigurationSource($emptySettingsConfigurationSource);
 
         $mockRoutesConfigurationSource = $this->getAccessibleMock(RoutesConfigurationSource::class, [], [$mockYamlSource, $configurationManager], '', true, true, true, false, true);
 
@@ -1593,7 +1563,7 @@ EOD;
         $configurationManager = $this->getConfigurationManagerWithFlowPackage('packageViewConfigurationsCallback', 'Testing/System1');
 
         $configurationSource = $configurationManager->_get('configurationSource');
-        $configurationManager->registerConfigurationSource(new AppendConfigurationSource($configurationSource, 'Views'));
+        $configurationManager->registerConfigurationType('Views', new AppendConfigurationSource($configurationSource, 'Views'));
 
         $configurationManager->setPackages($this->getMockPackages());
 
@@ -1690,11 +1660,10 @@ EOD;
         $configurationManager = $this->getConfigurationManagerWithFlowPackage('loadingConfigurationOfCustomConfigurationTypeCallback', 'Testing');
 
         $configurationSource = $configurationManager->_get('configurationSource');
-        $closureConfigurationSource = new ClosureConfigurationSource('MyCustomConfiguration', function (array $packages, ApplicationContext $context) use ($configurationSource) {
+        $configurationManager->registerConfigurationType('MyCustomConfiguration', function (array $packages, ApplicationContext $context) use ($configurationSource) {
             $settingsConfigurationSource = new SettingsConfigurationSource($configurationSource);
-            return $settingsConfigurationSource->process($packages, $context);
+            return $settingsConfigurationSource($packages, $context);
         });
-        $configurationManager->registerConfigurationSource($closureConfigurationSource);
 
         $configurationManager->_call('loadConfiguration', 'MyCustomConfiguration', $this->getMockPackages());
         $configuration = $configurationManager->getConfiguration('MyCustomConfiguration');
