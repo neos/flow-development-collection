@@ -127,11 +127,6 @@ class ConfigurationManager
     protected $context;
 
     /**
-     * @var Source\YamlSource
-     */
-    protected $configurationSource;
-
-    /**
      * Storage of the raw special configurations
      *
      * @var array
@@ -170,17 +165,6 @@ class ConfigurationManager
     public function __construct(ApplicationContext $context)
     {
         $this->context = $context;
-    }
-
-    /**
-     * Injects the configuration source
-     *
-     * @param Source\YamlSource $configurationSource
-     * @return void
-     */
-    public function injectConfigurationSource(Source\YamlSource $configurationSource): void
-    {
-        $this->configurationSource = $configurationSource;
     }
 
     /**
