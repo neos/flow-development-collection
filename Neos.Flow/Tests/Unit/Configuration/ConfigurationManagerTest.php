@@ -1315,7 +1315,7 @@ EOD;
         $configurationManager = $this->getAccessibleMock(ConfigurationManager::class, [], [new ApplicationContext('Testing/System1')]);
         $configurationManager->injectConfigurationSource($mockConfigurationSource);
 
-        $emptySettingsConfiugurationSource = new ClosureConfigurationSource('Settings', function(array $packages, ApplicationContext $context) {
+        $emptySettingsConfiugurationSource = new ClosureConfigurationSource('Settings', function (array $packages, ApplicationContext $context) {
             return [];
         });
         $configurationManager->registerConfigurationSource($emptySettingsConfiugurationSource);
@@ -1695,7 +1695,7 @@ EOD;
         $configurationManager = $this->getConfigurationManagerWithFlowPackage('loadingConfigurationOfCustomConfigurationTypeCallback', 'Testing');
 
         $configurationSource = $configurationManager->_get('configurationSource');
-        $closureConfigurationSource = new ClosureConfigurationSource('MyCustomConfiguration', function(array $packages, ApplicationContext $context) use($configurationSource){
+        $closureConfigurationSource = new ClosureConfigurationSource('MyCustomConfiguration', function (array $packages, ApplicationContext $context) use ($configurationSource) {
             $settingsConfigurationSource = new SettingsConfigurationSource($configurationSource);
             return $settingsConfigurationSource->process($packages, $context);
         });
