@@ -11,9 +11,10 @@ namespace Neos\Flow\Tests\Functional\Configuration;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
+use Neos\Flow\Configuration\ConfigurationSource\RoutesConfigurationSource;
+use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Error\Messages\Error;
@@ -93,11 +94,10 @@ class ConfigurationValidationTest extends FunctionalTestCase
         //
         $this->originalConfigurationManager = $this->objectManager->get(ConfigurationManager::class);
 
-        $yamlConfigurationSource = $this->objectManager->get(\Neos\Flow\Tests\Functional\Configuration\Fixtures\RootDirectoryIgnoringYamlSource::class);
-
         $this->mockConfigurationManager = clone ($this->originalConfigurationManager);
         $this->mockConfigurationManager->setPackages($configurationPackages);
-        $this->inject($this->mockConfigurationManager, 'configurationSource', $yamlConfigurationSource);
+        $routesConfigurationSource = new RoutesConfigurationSource(new YamlSource(), $this->mockConfigurationManager);
+        $this->mockConfigurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, $routesConfigurationSource);
 
         $this->objectManager->setInstance(ConfigurationManager::class, $this->mockConfigurationManager);
 
@@ -134,14 +134,8 @@ class ConfigurationValidationTest extends FunctionalTestCase
         ObjectAccess::setProperty($this->mockConfigurationManager, 'context', $context, true);
         ObjectAccess::setProperty(
             $this->mockConfigurationManager,
-            'orderedListOfContextNames',
-            [(string)$context],
-            true
-        );
-        ObjectAccess::setProperty(
-            $this->mockConfigurationManager,
             'includeCachedConfigurationsPathAndFilename',
-            FLOW_PATH_CONFIGURATION . (string)$context . '/IncludeCachedConfigurations.php',
+            FLOW_PATH_CONFIGURATION . $context . '/IncludeCachedConfigurations.php',
             true
         );
     }
