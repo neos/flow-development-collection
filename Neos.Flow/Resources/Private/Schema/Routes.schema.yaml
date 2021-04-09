@@ -31,6 +31,11 @@ items:
             'uriPattern': {type: string}
             'options': {type: dictionary }
             'toLowerCase':  {type: boolean }
+        -
+          type: dictionary
+          additionalProperties: false
+          properties:
+            'toLowerCase':  {type: boolean }
     'appendExceedingArguments': {type: boolean}
     'toLowerCase': {type: boolean}
     'httpMethods':
