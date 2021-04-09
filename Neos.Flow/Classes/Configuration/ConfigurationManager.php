@@ -216,7 +216,7 @@ class ConfigurationManager
             throw new \InvalidArgumentException(sprintf('Specified invalid configuration source of type "%s" while registering custom configuration type "%s".', is_object($configurationSource) ? get_class($configurationSource) : gettype($configurationSource), $configurationType), 1617895964);
         }
         $this->configurationSources[$configurationType] = $configurationSource;
-        unset($this->configurations[$configurationType], $this->unprocessedConfiguration[$configurationType]);
+        unset($this->configurations[$configurationType]);
     }
 
     private function convertLegacyProcessingType(string $configurationType, string $configurationProcessingType): ConfigurationSourceInterface
