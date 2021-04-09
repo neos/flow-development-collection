@@ -9,6 +9,7 @@
 
         renderer = afx`
             <h1>Edit {modelName -> k:inflect.humanizeCamelCase(lowercase: true)} "<![CDATA[{]]>{modelName}.name<![CDATA[}]]>"</h1>
+            <Neos.Fusion:Link.Action href.action="index">Back to Index</Neos.Fusion:Link.Action>
             <![CDATA[<Neos.Fusion.Form:Form form.target.action="update"]]> form.data.{modelName}=<![CDATA[{]]>{modelName}<![CDATA[}]]> attributes.name="{modelName}">
                 <ol><f:for each="{properties}" as="property" key="propertyName">
                     <li>

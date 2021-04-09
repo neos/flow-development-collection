@@ -63,7 +63,7 @@ prototype({packageKey}:{prototypeName}) < prototype(Neos.Fusion:Join)<![CDATA[ {
     body = Neos.Fusion:Join {
         @position = 'after bodyTag'
 
-        flashMessages = Neos.Fusion:Fragment {
+        flashMessages = Neos.Fusion:Component {
             @cache {
                 mode = 'uncached'
                 context {
