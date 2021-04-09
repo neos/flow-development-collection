@@ -19,7 +19,7 @@
                     </f:if></td>
                 </tr>
             </f:for></table>
-            <![CDATA[<Neos.Fusion:Link.Action attributes.href.action="index">Back</Neos.Fusion:Link.Action>]]>
+            <![CDATA[<Neos.Fusion:Link.Action href.action="index">Back</Neos.Fusion:Link.Action>]]>
         `
 
     }
