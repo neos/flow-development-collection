@@ -9,7 +9,7 @@
 
         renderer = afx`
             <h1>Show {modelName -> k:inflect.humanizeCamelCase(lowercase: true)} "<![CDATA[{]]>{modelName}.name<![CDATA[}]]>"</h1>
-            <Neos.Fusion:Link.Action href.action="index">Back to Index</Neos.Fusion:Link.Action>
+            <![CDATA[<Neos.Fusion:Link.Action href.action="index">]]>Back to Index<![CDATA[</Neos.Fusion:Link.Action>]]>
             <table><f:for each="{properties}" as="property" key="propertyName">
                 <tr>
                     <th>{propertyName -> k:inflect.humanizeCamelCase()}</th>
