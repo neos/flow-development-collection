@@ -26,6 +26,7 @@ use Neos\Flow\Persistence\Exception as PersistenceException;
 use Neos\Flow\Persistence\Exception\KnownObjectException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
@@ -53,7 +54,7 @@ class PersistenceManager extends AbstractPersistenceManager
     protected $throwableStorage;
 
     /**
-     * @Flow\Inject(lazy=false)
+     * @Flow\Inject
      * @var EntityManagerInterface
      */
     protected $entityManager;
@@ -324,6 +325,9 @@ class PersistenceManager extends AbstractPersistenceManager
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no path is set, skip this step, assuming no DB is needed
         if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['path'] !== null) {
+            if ($this->entityManager instanceof DependencyProxy) {
+                $this->entityManager->_activateDependency();
+            }
             $schemaTool = new SchemaTool($this->entityManager);
             if ($this->settings['backendOptions']['driver'] === 'pdo_sqlite') {
                 $schemaTool->createSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
