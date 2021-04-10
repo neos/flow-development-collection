@@ -21,7 +21,7 @@ jobs:
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
         experimental: [false]
-        #include:
+        include:
           #- php-versions: '7.3'
           #  static-analysis: 'psalm'
           #  experimental: false
@@ -34,11 +34,11 @@ jobs:
           #  experimental: true
           #  dependencies: 'highest'
 
-          # Build for minimum dependencies. Fails right now, hence deactivated.
-          #- php-versions: '7.1'
-          #  static-analysis: 'no'
-          #  experimental: false
-          #  dependencies: 'lowest'
+          # Build for minimum dependencies.
+          - php-versions: '7.1'
+            static-analysis: 'no'
+            experimental: false
+            dependencies: 'lowest'
 
     runs-on: ubuntu-latest
     services:
