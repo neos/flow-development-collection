@@ -1,9 +1,9 @@
 <?php
 namespace Neos\Flow\Mvc;
 
+use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Http\Cookie;
 use Psr\Http\Message\ResponseInterface;
-use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -63,7 +63,7 @@ final class ActionResponse
 
     public function __construct()
     {
-        $this->content = stream_for();
+        $this->content = Utils::streamFor();
     }
 
     /**
@@ -74,7 +74,7 @@ final class ActionResponse
     public function setContent($content): void
     {
         if (!$content instanceof StreamInterface) {
-            $content = stream_for($content);
+            $content = Utils::streamFor($content);
         }
 
         $this->content = $content;
