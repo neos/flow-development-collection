@@ -152,7 +152,7 @@ class ActionController extends AbstractController
     /**
      * Feature flag to enable the potentially breaking support of validation for dynamic types specified with `__type` argument or in the `PropertyMapperConfiguration`.
      * Note: This will be enabled by default in a future version.
-     * See https://github.com/neos/flow-development-collection/pull/1906
+     * See https://github.com/neos/flow-development-collection/pull/1905
      * @var boolean
      */
     protected $enableDynamicTypeValidation = false;
