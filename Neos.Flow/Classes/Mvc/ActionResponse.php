@@ -7,7 +7,6 @@ use Psr\Http\Message\ResponseInterface;
 use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
-use GuzzleHttp\Psr7\Stream;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
