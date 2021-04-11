@@ -22,7 +22,7 @@ use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
 final class ActionResponse
 {
     /**
-     * @var Stream
+     * @var StreamInterface
      */
     protected $content;
 
