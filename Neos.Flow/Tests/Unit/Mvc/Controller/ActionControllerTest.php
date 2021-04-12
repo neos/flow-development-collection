@@ -210,6 +210,7 @@ class ActionControllerTest extends UnitTestCase
         $this->mockRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($mockHttpRequest));
 
         $mockResponse = new Mvc\ActionResponse;
+        $mockResponse->setContentType('text/plain');
         $this->inject($this->actionController, 'response', $mockResponse);
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
