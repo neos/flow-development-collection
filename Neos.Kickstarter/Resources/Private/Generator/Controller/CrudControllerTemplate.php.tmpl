@@ -12,6 +12,10 @@ use {modelFullClassName -> k:format.ltrim(charlist: '\')};
 class {controllerClassName} extends ActionController
 {
 
+<f:if condition="{defaultView}">
+    protected $defaultViewObjectName = {defaultView}::class;
+
+</f:if>
     /**
      * @Flow\Inject
      * @var {repositoryClassName}
