@@ -251,23 +251,18 @@ class ActionControllerTest extends UnitTestCase
      */
     public function processRequestSetsNegotiatedContentTypeOnResponse()
     {
-        $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod', 'initializeController']);
+        $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod']);
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
-        $this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
-        $this->inject($this->actionController, 'request', $this->mockRequest);
-
-        $this->inject($this->actionController, 'arguments', new Arguments([]));
 
         $mockMvcPropertyMappingConfigurationService = $this->createMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class);
         $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
 
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockRequest->expects(self::any())->method('getHttpRequest')->willReturn($mockHttpRequest);
+        $this->mockRequest->method('getHttpRequest')->willReturn($mockHttpRequest);
 
         $mockResponse = new Mvc\ActionResponse;
-        $this->inject($this->actionController, 'response', $mockResponse);
-        $this->inject($this->actionController, 'negotiatedMediaType', 'application/json');
+        $this->inject($this->actionController, 'supportedMediaTypes', ['application/json']);
 
         $this->actionController->processRequest($this->mockRequest, $mockResponse);
         self::assertSame('application/json', $mockResponse->getContentType());
