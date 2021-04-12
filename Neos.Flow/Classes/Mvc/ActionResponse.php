@@ -196,7 +196,7 @@ final class ActionResponse
      */
     public function getContentType(): string
     {
-        return $this->contentType;
+        return $this->contentType ?? '';
     }
 
     /**
