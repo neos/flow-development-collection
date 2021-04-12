@@ -132,23 +132,65 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $lifetime = $this->defaultLifetime;
         }
 
+        $key = $this->buildKey('entry:' . $entryIdentifier);
         $setOptions = [];
         if ($lifetime > 0) {
             $setOptions['ex'] = $lifetime;
         }
 
-        $this->redis->multi();
-        $result = $this->redis->set($this->buildKey('entry:' . $entryIdentifier), $this->compress($data), $setOptions);
-        if ($result === false) {
-            $this->verifyRedisVersionIsSupported();
-        }
-        $this->redis->lRem($this->buildKey('entries'), $entryIdentifier, 0);
-        $this->redis->rPush($this->buildKey('entries'), $entryIdentifier);
-        foreach ($tags as $tag) {
-            $this->redis->sAdd($this->buildKey('tag:' . $tag), $entryIdentifier);
-            $this->redis->sAdd($this->buildKey('tags:' . $entryIdentifier), $tag);
-        }
-        $this->redis->exec();
+        $redisTags = array_reduce($tags, function (array $map, string $tag) use ($entryIdentifier) {
+            $map[] = ['key' => $this->buildKey('tag:' . $tag), 'value' => $entryIdentifier];
+            $map[] = ['key' => $this->buildKey('tags:' . $entryIdentifier), 'value' => $tag];
+
+            return $map;
+        }, []);
+        $keysToWatch = array_merge(array_column($redisTags, 'key'), [$key]);
+
+        // @see http://backoffcalculator.com/?attempts=4&rate=2&interval=0.005
+        $retryWaitInterval = 0.005;
+        $maxRetryAttempts = 4;
+        $retryAttempt = 0;
+
+        do {
+            // Watch the given keys for changes so if the TTL is changed during the transaction it can be retried
+            $this->redis->watch($keysToWatch);
+
+            foreach ($redisTags as $i => $tag) {
+                $expire = $this->calculateRemainingLifetimeForKey($tag['key'], $lifetime);
+                $redisTags[$i]['ttl'] = $expire;
+            }
+
+            $this->redis->multi();
+            $result = $this->redis->set($key, $this->compress($data), $setOptions);
+            if ($result === false) {
+                $this->verifyRedisVersionIsSupported();
+            }
+            $this->redis->lRem($this->buildKey('entries'), $entryIdentifier, 0);
+            $this->redis->rPush($this->buildKey('entries'), $entryIdentifier);
+
+            foreach ($redisTags as $tag) {
+                $this->redis->sAdd($tag['key'], $tag['value']);
+
+                if ($tag['ttl'] > self::UNLIMITED_LIFETIME) {
+                    $this->redis->expire($tag['key'], $tag['ttl']);
+                } else {
+                    $this->redis->persist($tag['key']);
+                }
+            }
+
+            $transactionResult = $this->redis->exec();
+            if ($transactionResult === false) {
+                $this->redis->discard();
+
+                if ($retryAttempt >= $maxRetryAttempts) {
+                    throw new CacheException(sprintf('Cannot add or modify cache entry because the affected keys are being modified by another process ("%s")', $this->cacheIdentifier), 1594725688);
+                }
+
+                usleep((int)($retryWaitInterval * 1E6));
+                $retryAttempt++;
+                $retryWaitInterval *= 2;
+            }
+        } while ($transactionResult === false);
     }
 
     /**
@@ -299,7 +341,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function findIdentifiersByTag(string $tag): array
     {
-        return $this->redis->sMembers($this->buildKey('tag:' . $tag));
+        $identifiers = $this->redis->sMembers($this->buildKey('tag:' . $tag));
+
+        return array_values(array_filter($identifiers, function (string $entryIdentifier) {
+            return $this->has($entryIdentifier);
+        }));
     }
 
     /**
@@ -565,5 +611,26 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $result->addNotice(new Notice((string)$serverInfo['uptime_in_seconds'], null, [], 'Uptime (seconds)'));
         }
         return $result;
+    }
+
+    /**
+     * Calculate the max lifetime for a key
+     *
+     * @see https://redis.io/commands/ttl
+     *
+     * @param string $key The key of the key
+     * @param int $lifetime The lifetime that should be used if no ttl is found
+     * @return int
+     */
+    private function calculateRemainingLifetimeForKey(string $key, int $lifetime)
+    {
+        $ttl = $this->redis->ttl($key);
+        if ($ttl === -2) {
+            // key does not exist
+            return $lifetime;
+        } elseif ($ttl < 0 || $lifetime === self::UNLIMITED_LIFETIME) {
+            return self::UNLIMITED_LIFETIME;
+        }
+        return max($ttl, $lifetime);
     }
 }
