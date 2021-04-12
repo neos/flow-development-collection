@@ -272,7 +272,7 @@ class ActionControllerTest extends UnitTestCase
         $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
 
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $mockHttpRequest->method('getHeaderLine')->with(['Accept'])->willReturn($acceptHeader);
+        $mockHttpRequest->method('getHeaderLine')->with('Accept')->willReturn($acceptHeader);
         $this->mockRequest->method('getHttpRequest')->willReturn($mockHttpRequest);
 
         $mockResponse = new Mvc\ActionResponse;
