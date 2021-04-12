@@ -223,7 +223,7 @@ class ActionControllerTest extends UnitTestCase
      */
     public function processRequestInjectsSettingsToView()
     {
-        $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod']);
+        $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod', 'initializeController']);
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
         $this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
