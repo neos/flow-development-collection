@@ -24,7 +24,7 @@ jobs:
         include:
           - php-versions: '7.3'
             static-analysis: 'psalm'
-            experimental: false
+            experimental: true
             dependencies: 'highest'
 
           # Experimental build for PHP 8
@@ -158,6 +158,15 @@ jobs:
         if: matrix.static-analysis == 'psalm'
         run: composer test-static
 
+      - name: Update psalm baseline
+        if: ${{ failure() && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+        run: |
+          composer psalm-baseline-update
+          cd ./Packages/Framework
+          git add psalm-baseline.xml
+          git -c user.name='gh-action' -c user.email='gh-action@noreply.github.com' commit -m "TASK: Update psalm-baseline"
+          git push -f origin HEAD:${FLOW_TARGET_VERSION}
+
       - name: Run unit tests
         if: matrix.static-analysis == 'no'
         run: composer test-unit -- --verbose
@@ -170,7 +179,7 @@ jobs:
         if: matrix.static-analysis == 'no'
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
           bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
 
       - name: Setup Flow configuration (PGSQL)
@@ -207,7 +216,7 @@ jobs:
         if: matrix.static-analysis == 'no'
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
           bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
 
   buildall:
