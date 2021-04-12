@@ -247,10 +247,22 @@ class ActionControllerTest extends UnitTestCase
         $this->actionController->processRequest($this->mockRequest, $mockResponse);
     }
 
+    public function supportedAndRequestedMediaTypes()
+    {
+        return [
+            // supported, Accept header, expected
+            [['application/json'], '*/*', 'application/json'],
+            [['text/html', 'application/json'], 'application/json', 'application/json'],
+            [['text/html'], 'text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8', 'text/html'],
+            [['application/json', 'application/xml'], 'text/html, application/json;q=0.7, application/xml;q=0.9', 'application/xml'],
+        ];
+    }
+
     /**
      * @test
+     * @dataProvider supportedAndRequestedMediaTypes
      */
-    public function processRequestSetsNegotiatedContentTypeOnResponse()
+    public function processRequestSetsNegotiatedContentTypeOnResponse($supportedMediaTypes, $acceptHeader, $expected)
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod']);
 
@@ -260,13 +272,14 @@ class ActionControllerTest extends UnitTestCase
         $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
 
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $mockHttpRequest->method('getHeaderLine')->with(['Accept'])->willReturn($acceptHeader);
         $this->mockRequest->method('getHttpRequest')->willReturn($mockHttpRequest);
 
         $mockResponse = new Mvc\ActionResponse;
-        $this->inject($this->actionController, 'supportedMediaTypes', ['application/json']);
+        $this->inject($this->actionController, 'supportedMediaTypes', $supportedMediaTypes);
 
         $this->actionController->processRequest($this->mockRequest, $mockResponse);
-        self::assertSame('application/json', $mockResponse->getContentType());
+        self::assertSame($expected, $mockResponse->getContentType());
     }
 
     /**
