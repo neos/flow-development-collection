@@ -195,7 +195,7 @@ class ActionControllerTest extends UnitTestCase
      */
     public function processRequestInjectsControllerContextToView()
     {
-        $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod']);
+        $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod', 'initializeController']);
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
         $this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
@@ -210,6 +210,7 @@ class ActionControllerTest extends UnitTestCase
         $this->mockRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($mockHttpRequest));
 
         $mockResponse = new Mvc\ActionResponse;
+        $this->inject($this->actionController, 'response', $mockResponse);
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
         $mockView->expects(self::once())->method('setControllerContext')->with($this->mockControllerContext);
