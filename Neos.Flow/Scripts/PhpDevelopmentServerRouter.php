@@ -28,9 +28,6 @@ if (DIRECTORY_SEPARATOR !== '/' && trim(getenv('FLOW_ROOTPATH'), '"\' ') === '')
 $_SERVER['SCRIPT_FILENAME'] = $_SERVER['FLOW_ROOTPATH'] . 'Web/index.php';
 $_SERVER['SCRIPT_NAME'] = '/index.php';
 
-// we want to have nice URLs
-putenv('FLOW_REWRITEURLS=1');
-
 $context = \Neos\Flow\Core\Bootstrap::getEnvironmentConfigurationSetting('FLOW_CONTEXT') ?: 'Development';
 $bootstrap = new \Neos\Flow\Core\Bootstrap($context);
 $bootstrap->run();
