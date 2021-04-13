@@ -285,6 +285,31 @@ class ActionControllerTest extends UnitTestCase
 
     /**
      * @test
+     * @dataProvider supportedAndRequestedMediaTypes
+     */
+    public function processRequestUsesContentTypeFromActionResponse($supportedMediaTypes, $acceptHeader, $expected)
+    {
+        $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod']);
+
+        $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
+
+        $mockMvcPropertyMappingConfigurationService = $this->createMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class);
+        $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
+
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $mockHttpRequest->method('getHeaderLine')->with('Accept')->willReturn('application/xml');
+        $this->mockRequest->method('getHttpRequest')->willReturn($mockHttpRequest);
+
+        $mockResponse = new Mvc\ActionResponse;
+        $mockResponse->setContentType('application/json');
+        $this->inject($this->actionController, 'supportedMediaTypes', ['application/xml']);
+
+        $this->actionController->processRequest($this->mockRequest, $mockResponse);
+        self::assertSame('application/json', $mockResponse->getContentType());
+    }
+
+    /**
+     * @test
      */
     public function resolveViewThrowsExceptionIfResolvedViewDoesNotImplementViewInterface()
     {
