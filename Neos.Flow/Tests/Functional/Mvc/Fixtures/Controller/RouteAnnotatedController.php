@@ -22,11 +22,21 @@ use Neos\Flow\Mvc\Controller\ActionController;
 class RouteAnnotatedController extends ActionController
 {
     /**
-     * @Flow\Route(uriPattern="annotated/uri/pattern")
+     * @Flow\Route("annotated/uri/pattern")
      * @return string
      */
     public function annotatedWithUriPatternAction()
     {
         return 'Hello';
     }
+
+	/**
+	 * @Flow\Route("hello/{name}")
+	 * @param string $name
+	 * @return string
+	 */
+	public function annotatedUriWithArgumentAction(string $name)
+	{
+		return 'Hello ' . $name;
+	}
 }

@@ -27,16 +27,16 @@ final class Route
     public $name;
 
     /**
-     * HTTP Methods
+     * HTTP Methods. Default to GET
      *
-     * @var array|null
+     * @var array
      */
-    public $httpMethods;
+    public $httpMethods = ['GET'];
 
     /**
-     * URI Pattern
+	 * URI Pattern. (Can be given as anonymous argument.)
      *
-     * Example: GRANT
+     * Example: 'path/to/action/{actionArgument}'
      *
      * @var string
      */
@@ -49,28 +49,35 @@ final class Route
      *
      * @var string|null
      */
-    public $format;
+    public $format = 'html';
 
     /**
      * Append Exceeding Arguments
      *
-     * @var bool|null
+     * @var bool
      */
-    public $appendExceedingArguments;
+    public $appendExceedingArguments = false;
 
     /**
      * @param array $values
      */
     public function __construct(array $values)
     {
-        if (!isset($values['uriPattern'])) {
+        if (!isset($values['value']) && !isset($values['uriPattern'])) {
             throw new \InvalidArgumentException('uriPattern is not provided.', 1615113040);
         }
 
-        $this->uriPattern = $values['uriPattern'];
+        $this->uriPattern = $values['uriPattern'] ?? $values['value'];
         $this->name = $values['name'] ?? null;
-        $this->httpMethods = $values['httpMethods'] ?? null;
-        $this->format = $values['format'] ?? null;
-        $this->appendExceedingArguments = $values['appendExceedingArguments'] ?? null;
+
+        if (isset($values['httpMethods'])) {
+			$this->httpMethods = $values['httpMethods'];
+		}
+        if (isset($values['format'])) {
+			$this->format = $values['format'];
+		}
+        if (isset($values['appendExceedingArguments'])) {
+			$this->appendExceedingArguments = $values['appendExceedingArguments'];
+		}
     }
 }

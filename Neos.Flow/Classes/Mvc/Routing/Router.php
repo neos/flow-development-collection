@@ -22,6 +22,8 @@ use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Exception\InvalidAnnotatedMethodException;
+use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Psr\Http\Message\UriInterface;
@@ -280,24 +282,9 @@ class Router implements RouterInterface
         $this->routesCreated = true;
     }
 
-    /**
-     * Emits a signal when the router configuration has been loaded
-     *
-     * This signal can be used to add routes during runtime. In the slot make sure to receive the
-     * $routerConfiguration array by reference so you can alter it.
-     *
-     * @param array $routerConfiguration The router configuration
-     * @return void
-     * @Flow\Signal
-     */
-    protected function emitConfigurationLoaded(array &$routerConfiguration): void
+    public function initializeAnnotatedRoutes(): array
     {
-    }
-
-    public function configureRouteAnnotatedMethods(array &$routerConfiguration): void
-    {
-        $annotatedRoutes = static::resolveRouteAnnotatedMethods($this->objectManager);
-        $routerConfiguration = array_merge(array_values($annotatedRoutes), $routerConfiguration);
+        return static::resolveRouteAnnotatedMethods($this->objectManager);
     }
 
 
@@ -305,6 +292,7 @@ class Router implements RouterInterface
      * @param ObjectManagerInterface $objectManager
      * @Flow\CompileStatic
      * @return array
+	 * @throws InvalidAnnotatedMethodException if a none-Action method is annotated
      */
     protected static function resolveRouteAnnotatedMethods(ObjectManagerInterface $objectManager): array
     {
@@ -319,12 +307,12 @@ class Router implements RouterInterface
             $methodNames = $reflectionService->getMethodsAnnotatedWith($controllerClassName, Flow\Route::class);
             foreach ($methodNames as $methodName) {
                 if (preg_match('/.*Action$/', $methodName) === 0 || $reflectionService->isMethodPublic($controllerClassName, $methodName) === false) {
-                    continue;
+                    throw new InvalidAnnotatedMethodException(sprintf('The method %s->%s is annotated with @Flow\Route. The Route annotation is only meant for *Action methods in your controller', $controllerClassName, $methodName));
                 }
                 $controllerObjectName = $objectManager->getCaseSensitiveObjectName($controllerClassName);
 
                 if ($controllerObjectName === null) {
-                    continue;
+                    throw new UnknownObjectException(sprintf('The object "%s" is not registered.', $controllerClassName), 1618384920);
                 }
                 $controllerPackageKey = $objectManager->getPackageKeyByObjectName($controllerObjectName);
 
@@ -343,42 +331,29 @@ class Router implements RouterInterface
                     $matches
                 );
 
-                $controllerSubpackageKey = $matches['subpackageKey'] ?? null;
+                $controllerSubpackageKey = ($matches['subpackageKey'] !== '') ? $matches['subpackageKey'] : null;
                 $controllerName = $matches['controllerName'];
 
                 $annotation = $reflectionService->getMethodAnnotation($controllerClassName, $methodName, Flow\Route::class);
 
-                $defaults = [];
-                $defaults['@package'] = $controllerPackageKey;
-                if (empty($controllerSubpackageKey) === false) {
-                    $defaults['@subpackage'] = $controllerSubpackageKey;
-                }
-                $defaults['@controller'] = $controllerName;
-                $defaults['@action'] = substr($methodName, 0, -6);
-                if ($annotation->format !== null) {
-                    $defaults['@format'] = $annotation->format;
-                }
+                $defaults = [
+                	'@package' => $controllerPackageKey,
+					'@subpackage' => $controllerSubpackageKey,
+					'@controller' => $controllerName,
+					'@action' => substr($methodName, 0, -6),
+					'@format' => $annotation->format
+				];
 
                 $routeConfiguration = [
-                    'name' => $annotation->name ?? 'Annotated Route',
+                    'name' => $annotation->name ?? sprintf('Annotated Route (%s->%s)', $controllerClassName, $methodName),
                     'uriPattern' => $annotation->uriPattern,
                     'defaults' => $defaults,
+					'httpMethods' => $annotation->httpMethods,
+					'appendExceedingArguments' => $annotation->appendExceedingArguments
                 ];
-
-                $httpMethods = $annotation->httpMethods ?? null;
-                if ($httpMethods !== null && is_array($httpMethods)) {
-                    $routeConfiguration['httpMethods'] = $httpMethods;
-                }
-
-                $appendExceedingArguments = $annotation->appendExceedingArguments ?? null;
-                if ($appendExceedingArguments !== null && is_bool($appendExceedingArguments)) {
-                    $routeConfiguration['appendExceedingArguments'] = $appendExceedingArguments;
-                }
-
                 $annotatedRoutes[] = $routeConfiguration;
             }
         }
-
         return $annotatedRoutes;
     }
 
@@ -390,9 +365,9 @@ class Router implements RouterInterface
     protected function initializeRoutesConfiguration()
     {
         if ($this->routesConfiguration === null) {
-            $routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES) ?? [];
-            $this->emitConfigurationLoaded($routesConfiguration);
-            $this->routesConfiguration = $routesConfiguration;
+			$annotatedRoutes = $this->initializeAnnotatedRoutes();
+            $configuredRoutes = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
+			$this->routesConfiguration = array_merge(array_values($annotatedRoutes), $configuredRoutes);
         }
     }
 }
