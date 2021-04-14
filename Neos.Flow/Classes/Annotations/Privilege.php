@@ -11,8 +11,6 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
-use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
-
 /**
  * Used to create a Privilege configuration from a method
  *

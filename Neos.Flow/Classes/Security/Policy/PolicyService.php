@@ -361,7 +361,7 @@ class PolicyService
                     if (isset($privilegesWithGrantedRoles[$privilegeId])) {
                         throw new \RuntimeException(sprintf('You can not reuse a privilege id for granting roles access on a different method. Privilege id used: "%s". Method annotation: "%s->%s"', $privilegeId, $className, $methodName));
                     }
-                   $privilegesWithGrantedRoles[$privilegeId] = [
+                    $privilegesWithGrantedRoles[$privilegeId] = [
                        'roles' => $grantedRoles,
                        'matcher' => $matcher
                    ];
