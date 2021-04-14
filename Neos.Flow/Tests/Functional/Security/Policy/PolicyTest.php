@@ -11,7 +11,8 @@ namespace Neos\Flow\Tests\Functional\Security\Policy;
  * source code.
  */
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Tests\Functional\Security\Fixtures\Controller\PolicyAnnotatedController;
+use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
+use Neos\Flow\Tests\Functional\Security\Fixtures\Controller\PrivilegeAnnotatedController;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -57,44 +58,39 @@ class PolicyTest extends FunctionalTestCase
         self::assertTrue($hasAnonymousRole, 'Anonymous - getRoles()');
     }
 
-
     /**
      * @test
      */
-    public function hasRoleReturnsTrueEvenIfNotConfigured()
+    public function annotatedPrivilegeWithGrantedRolesGrantsPermission()
     {
-        self::assertTrue($this->policyService->hasRole('Neos.Flow:AnnotatedRole'));
+        $annotatedRole = $this->policyService->getRole('Neos.Flow:PrivilegeAnnotation.Role1');
+
+        $className = PrivilegeAnnotatedController::class;
+        $methodName = 'actionWithGrantedRolesAction';
+        $privilegeId = sprintf('%s:Privilege.%s', 'Neos.Flow', md5($className.'->'.$methodName));
+
+        self::assertTrue($annotatedRole->getPrivilegeForTarget($privilegeId)->isGranted());
     }
 
     /**
      * @test
      */
-    public function annotatedRoleWithGrantPermissionIsGrantedPermission()
+    public function annotatedPrivilegeWithGrantedRolesAndIdGrantsPermissionToPrivilegeId()
     {
-        $annotatedRole = $this->policyService->getRole('Neos.Flow:AnnotatedRole');
-
-        $className = PolicyAnnotatedController::class;
-        $methodName = 'singleRoleWithGrantPermissionAction';
-        $privilegeTarget = sprintf('Neos.Flow:PolicyAnnotated.%s.%s', str_replace('\\', '.', $className), $methodName);
-
-        self::assertTrue($annotatedRole->getPrivilegeForTarget($privilegeTarget)->isGranted());
+        $annotatedRole = $this->policyService->getRole('Neos.Flow:PrivilegeAnnotation.Role3');
+        self::assertTrue($annotatedRole->getPrivilegeForTarget('Neos.Flow:Granted.Roles.Privilege')->isGranted());
     }
 
     /**
      * @test
      */
-    public function annotatedWithMultiplePoliciesGrantsPermissionAccordingly()
+    public function annotatedPrivilegeWithIdConfiguresPrivilege()
     {
-        $deniedRole = $this->policyService->getRole('Neos.Flow:DeniedRole');
-        $grantedRole = $this->policyService->getRole('Neos.Flow:GrantedRole');
-        $abstainedRole = $this->policyService->getRole('Neos.Flow:AbstainedRole');
-
-        $className = PolicyAnnotatedController::class;
-        $methodName = 'multipleAnnotationsWithDifferentPermissionsAction';
-        $privilegeTarget = sprintf('Neos.Flow:PolicyAnnotated.%s.%s', str_replace('\\', '.', $className), $methodName);
-
-        self::assertTrue($deniedRole->getPrivilegeForTarget($privilegeTarget)->isDenied());
-        self::assertTrue($grantedRole->getPrivilegeForTarget($privilegeTarget)->isGranted());
-        self::assertTrue($abstainedRole->getPrivilegeForTarget($privilegeTarget)->isAbstained());
+        $privilegeTarget = $this->policyService->getPrivilegeTargetByIdentifier('Neos.Flow:Privilege.From.Annotation');
+        self::assertInstanceOf(PrivilegeTarget::class, get_class($privilegeTarget));
+        self::assertEquals(
+            $privilegeTarget->getMatcher(),
+            sprintf('method(%s->%s())', PrivilegeAnnotatedController::class, 'actionWithPrivilegeIdAndNoGrantedRoles')
+        );
     }
 }

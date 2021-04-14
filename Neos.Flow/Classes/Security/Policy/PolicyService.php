@@ -24,7 +24,7 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
-use Neos\Flow\Annotations\Policy;
+use Neos\Flow\Annotations\Privilege;
 
 /**
  * The policy service reads the policy configuration. The security advice asks
@@ -317,16 +317,16 @@ class PolicyService
         $this->roles = [];
     }
 
-    public function configurePolicyAnnotatedMethods(array &$policyConfiguration): void
+    public function configurePrivilegeAnnotatedMethods(array &$policyConfiguration): void
     {
-        $annotatedMethods = static::resolvePolicyAnnotatedMethods($this->objectManager);
-        foreach ($annotatedMethods as $privilegeIdentifier=>$configuration) {
-            $policyConfiguration['privilegeTargets'][MethodPrivilege::class][$privilegeIdentifier]['matcher'] = $configuration['matcher'];
+        $annotatedMethods = static::resolvePrivilegeAnnotatedMethods($this->objectManager);
+        foreach ($annotatedMethods as $privilegeId => $configuration) {
+            $policyConfiguration['privilegeTargets'][MethodPrivilege::class][$privilegeId]['matcher'] = $configuration['matcher'];
 
             foreach ($configuration['roles'] as $role) {
                 $policyConfiguration['roles'][$role['identifier']]['privileges'][] = [
-                    'privilegeTarget' => $privilegeIdentifier,
-                    'permission' => $role['permission']
+                    'privilegeTarget' => $privilegeId,
+                    'permission' => 'GRANT'
                 ];
             }
         }
@@ -337,33 +337,39 @@ class PolicyService
      * @Flow\CompileStatic
      * @return array
      */
-    protected static function resolvePolicyAnnotatedMethods(ObjectManagerInterface $objectManager): array
+    protected static function resolvePrivilegeAnnotatedMethods(ObjectManagerInterface $objectManager): array
     {
-        $privileges = [];
+        $privilegesWithGrantedRoles = [];
+
         $reflectionService = $objectManager->get(ReflectionService::class);
-        $classesWithMethodsAnnotated = $reflectionService->getClassesContainingMethodsAnnotatedWith(Policy::class);
+        $classesWithMethodsAnnotated = $reflectionService->getClassesContainingMethodsAnnotatedWith(Privilege::class);
         foreach ($classesWithMethodsAnnotated as $className) {
-            $methodsAnnotated = $reflectionService->getMethodsAnnotatedWith($className, Policy::class);
+            $methodsAnnotated = $reflectionService->getMethodsAnnotatedWith($className, Privilege::class);
             foreach ($methodsAnnotated as $methodName) {
-                $annotations = $reflectionService->getMethodAnnotations($className, $methodName, Policy::class);
+                $annotation = $reflectionService->getMethodAnnotation($className, $methodName, Privilege::class);
+
+                $grantedRoles = $annotation->grantedRoles;
+                $privilegeId = $annotation->id;
+
+                if ($privilegeId === null) {
+                    $packageKey = $objectManager->getPackageKeyByObjectName($className);
+                    $privilegeId = sprintf('%s:Privilege.%s', $packageKey, md5($className.'->'.$methodName));
+                }
                 $matcher = sprintf('method(%s->%s())', $className, $methodName);
-                $privilegeIdentifier = sprintf('Neos.Flow:PolicyAnnotated.%s.%s', str_replace('\\', '.', $className), $methodName);
-                $roles = array_map(function ($annotation) {
-                    return [
-                        'identifier' => $annotation->role,
-                        'permission' => $annotation->permission,
-                    ];
-                }, $annotations);
-                $privileges[$privilegeIdentifier] = [
-                    'matcher' => $matcher,
-                    'class' => $className,
-                    'method' => $methodName,
-                    'roles' => $roles
-                ];
+
+                if ($grantedRoles !== []) {
+                    if (isset($privilegesWithGrantedRoles[$privilegeId])) {
+                        throw new \RuntimeException(sprintf('You can not reuse a privilege id for granting roles access on a different method. Privilege id used: "%s". Method annotation: "%s->%s"', $privilegeId, $className, $methodName));
+                    }
+                   $privilegesWithGrantedRoles[$privilegeId] = [
+                       'roles' => $grantedRoles,
+                       'matcher' => $matcher
+                   ];
+                }
             }
         }
 
-        return $privileges;
+        return $privilegesWithGrantedRoles;
     }
 
     /**

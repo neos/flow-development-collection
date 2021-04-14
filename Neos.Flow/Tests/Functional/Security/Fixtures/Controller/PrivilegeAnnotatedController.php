@@ -17,25 +17,29 @@ use Neos\Flow\Mvc\Controller\ActionController;
 /**
  * A controller for functional testing
  */
-class PolicyAnnotatedController extends ActionController
+class PrivilegeAnnotatedController extends ActionController
 {
     /**
      * This method gives GRANT permission to the role "Neos.Flow.AnnotatedRole"
      *
-     * @Flow\Policy(role="Neos.Flow:AnnotatedRole", permission="grant")
+     * @Flow\Privilege(grantedRoles="Neos.Flow:PrivilegeAnnotation.Role1")
      */
-    public function singleRoleWithGrantPermissionAction()
+    public function actionWithGrantedRolesAction()
     {
     }
 
     /**
-     * This method gives GRANT permission to the role "Neos.Flow.AnnotatedRole"
-     *
-     * @Flow\Policy(role="Neos.Flow:DeniedRole", permission="deny")
-     * @Flow\Policy(role="Neos.Flow:GrantedRole", permission="grant")
-     * @Flow\Policy(role="Neos.Flow:AbstainedRole", permission="abstain")
+     * @Flow\Privilege(id="Neos.Flow:Privilege.From.Annotation")
      */
-    public function multipleAnnotationsWithDifferentPermissionsAction()
+    public function actionWithPrivilegeIdAndNoGrantedRoles()
+    {
+    }
+
+
+    /**
+     * @Flow\Privilege(id="Neos.Flow:Granted.Roles.Privilege", grantedRoles="Neos.Flow:PrivilegeAnnotation.Role3")
+     */
+    public function actionWithPrivilegeIdAndGrantedRoles()
     {
     }
 }

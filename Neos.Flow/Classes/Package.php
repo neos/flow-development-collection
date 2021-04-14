@@ -118,7 +118,7 @@ class Package extends BasePackage
         $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Reflection\ReflectionService::class, 'saveToCache');
 
         $dispatcher->connect(Command\CoreCommandController::class, 'finishedCompilationRun', Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter::class, 'savePolicyCache');
-        $dispatcher->connect(PolicyService::class, 'configurationLoaded', PolicyService::class, 'configurePolicyAnnotatedMethods');
+        $dispatcher->connect(PolicyService::class, 'configurationLoaded', PolicyService::class, 'configurePrivilegeAnnotatedMethods');
 
         $dispatcher->connect(Security\Authentication\AuthenticationProviderManager::class, 'authenticatedToken', function (TokenInterface $token) use ($bootstrap) {
             $session = $bootstrap->getObjectManager()->get(Session\SessionInterface::class);
