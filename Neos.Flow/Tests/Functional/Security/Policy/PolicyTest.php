@@ -63,7 +63,7 @@ class PolicyTest extends FunctionalTestCase
      */
     public function annotatedPrivilegeWithGrantedRolesGrantsPermission()
     {
-        $annotatedRole = $this->policyService->getRole('Neos.Flow:PrivilegeAnnotation.Role1');
+        $annotatedRole = $this->policyService->getRole('Neos.Flow:PrivilegeAnnotationRole1');
 
         $className = PrivilegeAnnotatedController::class;
         $methodName = 'actionWithGrantedRolesAction';
@@ -77,7 +77,7 @@ class PolicyTest extends FunctionalTestCase
      */
     public function annotatedPrivilegeWithGrantedRolesAndIdGrantsPermissionToPrivilegeId()
     {
-        $annotatedRole = $this->policyService->getRole('Neos.Flow:PrivilegeAnnotation.Role3');
+        $annotatedRole = $this->policyService->getRole('Neos.Flow:PrivilegeAnnotationRole3');
         self::assertTrue($annotatedRole->getPrivilegeForTarget('Neos.Flow:Granted.Roles.Privilege')->isGranted());
     }
 

@@ -22,7 +22,7 @@ class PrivilegeAnnotatedController extends ActionController
     /**
      * This method gives GRANT permission to the role "Neos.Flow.AnnotatedRole"
      *
-     * @Flow\Privilege(grantedRoles={"Neos.Flow:PrivilegeAnnotation.Role1"})
+     * @Flow\Privilege(grantedRoles={"Neos.Flow:PrivilegeAnnotationRole1"})
      */
     public function actionWithGrantedRolesAction()
     {
@@ -37,7 +37,7 @@ class PrivilegeAnnotatedController extends ActionController
 
 
     /**
-     * @Flow\Privilege(id="Neos.Flow:Granted.Roles.Privilege", grantedRoles={"Neos.Flow:PrivilegeAnnotation.Role3"})
+     * @Flow\Privilege(id="Neos.Flow:Granted.Roles.Privilege", grantedRoles={"Neos.Flow:PrivilegeAnnotationRole3"})
      */
     public function actionWithPrivilegeIdAndGrantedRoles()
     {
