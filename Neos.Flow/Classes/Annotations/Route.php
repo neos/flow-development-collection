@@ -34,7 +34,7 @@ final class Route
     public $httpMethods = ['GET'];
 
     /**
-	 * URI Pattern. (Can be given as anonymous argument.)
+     * URI Pattern. (Can be given as anonymous argument.)
      *
      * Example: 'path/to/action/{actionArgument}'
      *
@@ -71,13 +71,13 @@ final class Route
         $this->name = $values['name'] ?? null;
 
         if (isset($values['httpMethods'])) {
-			$this->httpMethods = $values['httpMethods'];
-		}
+            $this->httpMethods = $values['httpMethods'];
+        }
         if (isset($values['format'])) {
-			$this->format = $values['format'];
-		}
+            $this->format = $values['format'];
+        }
         if (isset($values['appendExceedingArguments'])) {
-			$this->appendExceedingArguments = $values['appendExceedingArguments'];
-		}
+            $this->appendExceedingArguments = $values['appendExceedingArguments'];
+        }
     }
 }

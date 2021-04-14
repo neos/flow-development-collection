@@ -435,22 +435,22 @@ class RoutingTest extends FunctionalTestCase
     }
 
 
-	/**
-	 * @test
-	 */
-	public function resolveUriPatternFromRouteAnnotationWithArgument()
-	{
-		$routeValues = [
-			'@package' => 'Neos.Flow',
-			'@subpackage' => 'Tests\Functional\Http\Fixtures',
-			'@controller' => 'RouteAnnotated',
-			'@action' => 'annotatedUriWithArgument',
-			'@format' => 'html',
-			'name' => 'soren'
-		];
-		$baseUri = new Uri('http://localhost');
-		$actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, 'index.php/', RouteParameters::createEmpty()));
+    /**
+     * @test
+     */
+    public function resolveUriPatternFromRouteAnnotationWithArgument()
+    {
+        $routeValues = [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'RouteAnnotated',
+            '@action' => 'annotatedUriWithArgument',
+            '@format' => 'html',
+            'name' => 'soren'
+        ];
+        $baseUri = new Uri('http://localhost');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, 'index.php/', RouteParameters::createEmpty()));
 
-		self::assertSame('/index.php/hello/soren', (string)$actualResult);
-	}
+        self::assertSame('/index.php/hello/soren', (string)$actualResult);
+    }
 }

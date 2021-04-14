@@ -292,7 +292,7 @@ class Router implements RouterInterface
      * @param ObjectManagerInterface $objectManager
      * @Flow\CompileStatic
      * @return array
-	 * @throws InvalidAnnotatedMethodException if a none-Action method is annotated
+     * @throws InvalidAnnotatedMethodException if a none-Action method is annotated
      */
     protected static function resolveRouteAnnotatedMethods(ObjectManagerInterface $objectManager): array
     {
@@ -320,13 +320,14 @@ class Router implements RouterInterface
                 $subject = substr($controllerObjectName, strlen($controllerPackageKey) + 1);
                 preg_match(
                     '/
-			^(
-				Controller
-			|
-				(?P<subpackageKey>.+)\\\\Controller
-			)
-			\\\\(?P<controllerName>[a-z\\\\]+)Controller
-			$/ix',
+                        ^(
+                            Controller
+                        |
+                            (?P<subpackageKey>.+)\\\\Controller
+                        )
+                        \\\\(?P<controllerName>[a-z\\\\]+)Controller
+                        $
+                    /ix',
                     $subject,
                     $matches
                 );
@@ -337,19 +338,19 @@ class Router implements RouterInterface
                 $annotation = $reflectionService->getMethodAnnotation($controllerClassName, $methodName, Flow\Route::class);
 
                 $defaults = [
-                	'@package' => $controllerPackageKey,
-					'@subpackage' => $controllerSubpackageKey,
-					'@controller' => $controllerName,
-					'@action' => substr($methodName, 0, -6),
-					'@format' => $annotation->format
-				];
+                    '@package' => $controllerPackageKey,
+                    '@subpackage' => $controllerSubpackageKey,
+                    '@controller' => $controllerName,
+                    '@action' => substr($methodName, 0, -6),
+                    '@format' => $annotation->format
+                ];
 
                 $routeConfiguration = [
                     'name' => $annotation->name ?? sprintf('Annotated Route (%s->%s)', $controllerClassName, $methodName),
                     'uriPattern' => $annotation->uriPattern,
                     'defaults' => $defaults,
-					'httpMethods' => $annotation->httpMethods,
-					'appendExceedingArguments' => $annotation->appendExceedingArguments
+                    'httpMethods' => $annotation->httpMethods,
+                    'appendExceedingArguments' => $annotation->appendExceedingArguments
                 ];
                 $annotatedRoutes[] = $routeConfiguration;
             }
@@ -365,9 +366,9 @@ class Router implements RouterInterface
     protected function initializeRoutesConfiguration()
     {
         if ($this->routesConfiguration === null) {
-			$annotatedRoutes = $this->initializeAnnotatedRoutes();
+            $annotatedRoutes = $this->initializeAnnotatedRoutes();
             $configuredRoutes = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
-			$this->routesConfiguration = array_merge(array_values($annotatedRoutes), $configuredRoutes);
+            $this->routesConfiguration = array_merge(array_values($annotatedRoutes), $configuredRoutes);
         }
     }
 }

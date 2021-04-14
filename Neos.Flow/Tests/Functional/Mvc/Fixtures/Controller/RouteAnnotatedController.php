@@ -30,13 +30,13 @@ class RouteAnnotatedController extends ActionController
         return 'Hello';
     }
 
-	/**
-	 * @Flow\Route("hello/{name}")
-	 * @param string $name
-	 * @return string
-	 */
-	public function annotatedUriWithArgumentAction(string $name)
-	{
-		return 'Hello ' . $name;
-	}
+    /**
+     * @Flow\Route("hello/{name}")
+     * @param string $name
+     * @return string
+     */
+    public function annotatedUriWithArgumentAction(string $name)
+    {
+        return 'Hello ' . $name;
+    }
 }
