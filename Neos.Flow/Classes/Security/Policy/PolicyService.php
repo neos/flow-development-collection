@@ -324,7 +324,7 @@ class PolicyService
             $policyConfiguration['privilegeTargets'][MethodPrivilege::class][$privilegeId]['matcher'] = $configuration['matcher'];
 
             foreach ($configuration['roles'] as $role) {
-                $policyConfiguration['roles'][$role['identifier']]['privileges'][] = [
+                $policyConfiguration['roles'][$role]['privileges'][] = [
                     'privilegeTarget' => $privilegeId,
                     'permission' => 'GRANT'
                 ];

@@ -22,7 +22,7 @@ final class Privilege
     /**
      * Granted roles
      *
-     * Example: ["Neos.Flow:AuthenticatedUser", "Vendor.Package:UserWithSuperRights"]
+     * Example: @Flow\Privilege(grantedRoles={"Neos.Flow:AuthenticatedUser", "Vendor.Package:UserWithSuperRights"})
      *
      * @var array
      */
@@ -37,7 +37,7 @@ final class Privilege
      * You can create and reuse a id for several methods,
      * and afterwards configure granted roles from Policy.yaml
      *
-     * Example: Vendor.Package:User.UpdateUser
+     * Example: @Flow\Privilege(id="Vendor.Package:User.UpdateUser")
      *
      * @var string
      */
