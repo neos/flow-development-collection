@@ -17,8 +17,8 @@
 	# Enable URL rewriting
 	RewriteEngine On
 
-	# Set flag so we know URL rewriting is available
-	SetEnv FLOW_REWRITEURLS 1
+	# Set flag to "0" to disable URL rewriting
+	# SetEnv FLOW_REWRITEURLS 0
 
 	# You will have to change the path in the following option if you
 	# experience problems while your installation is located in a subdirectory
