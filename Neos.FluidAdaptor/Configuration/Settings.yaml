@@ -56,3 +56,9 @@ Neos:
           options:
             namespaces:
               f: 'Neos\FluidAdaptor\ViewHelpers'
+
+  FluidAdaptor:
+    namespaces:
+      f:
+        - 'TYPO3Fluid\Fluid\ViewHelpers'
+        - 'Neos\FluidAdaptor\ViewHelpers'

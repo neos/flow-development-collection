@@ -107,7 +107,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
      * @param RenderingContextInterface $renderingContext
      * @return boolean
      */
-    protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
+    protected static function evaluateCondition($arguments, RenderingContextInterface $renderingContext)
     {
         $objectManager = $renderingContext->getObjectManager();
         /** @var PolicyService $policyService */

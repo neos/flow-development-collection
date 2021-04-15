@@ -378,10 +378,8 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $_FILES = [];
         $_SERVER = [
             'REDIRECT_FLOW_CONTEXT' => 'Development',
-            'REDIRECT_FLOW_REWRITEURLS' => '1',
             'REDIRECT_STATUS' => '200',
             'FLOW_CONTEXT' => 'Testing',
-            'FLOW_REWRITEURLS' => '1',
             'HTTP_HOST' => 'localhost',
             'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/534.52.7 (KHTML, like Gecko) Version/5.1.2 Safari/534.52.7',
             'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',

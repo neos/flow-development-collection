@@ -281,7 +281,11 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     {
         Files::emptyDirectoryRecursively($this->cacheDirectory);
         if ($this->frozen === true) {
-            @unlink($this->cacheDirectory . 'FrozenCache.data');
+            try {
+                @unlink($this->cacheDirectory . 'FrozenCache.data');
+            } catch (\Throwable $e) {
+                // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
+            }
             $this->frozen = false;
         }
     }

@@ -149,7 +149,7 @@ class Dispatcher
         }
 
         foreach ($this->slots[$signalClassName][$signalName] as $slotInformation) {
-            $finalSignalArguments = $signalArguments;
+            $finalSignalArguments = array_values($signalArguments);
             if (isset($slotInformation['object'])) {
                 $object = $slotInformation['object'];
             } elseif (strpos($slotInformation['method'], '::') === 0) {

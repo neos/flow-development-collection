@@ -30,12 +30,20 @@
         "symfony/console": "^5.1",
         "neos/composer-plugin": "^2.0",
         "composer/composer": "^1.9 || ^2.0",
-        "egulias/email-validator": "^2.1",
+        "egulias/email-validator": "^2.1 || ^3.0",
         "typo3fluid/fluid": "~2.5.11 || ^2.6.10",
-        "guzzlehttp/psr7": "^1.4 || ~2.0",
+        "guzzlehttp/psr7": "^1.4, !=1.8.0 || ~2.0",
         "ext-mbstring": "*"
     },
     "replace": {
+        "symfony/polyfill-php54": "*",
+        "symfony/polyfill-php55": "*",
+        "symfony/polyfill-php56": "*",
+        "symfony/polyfill-php70": "*",
+        "symfony/polyfill-php71": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-mbstring": "*",
         "neos/cache": "self.version",
         "neos/eel": "self.version",
         "neos/error-messages": "self.version",
@@ -51,13 +59,7 @@
         "neos/utility-opcodecache": "self.version",
         "neos/utility-pdo": "self.version",
         "neos/utility-schema": "self.version",
-        "neos/utility-unicode": "self.version",
-        "symfony/polyfill-php54": "*",
-        "symfony/polyfill-php55": "*",
-        "symfony/polyfill-php56": "*",
-        "symfony/polyfill-php70": "*",
-        "symfony/polyfill-php71": "*",
-        "symfony/polyfill-mbstring": "*"
+        "neos/utility-unicode": "self.version"
     },
     "suggest": {
         "ext-memcache": "If you have a memcache server and want to use it for caching.",
@@ -107,9 +109,6 @@
                 "Neos.Utility.Pdo/Classes",
                 "Neos.Utility.Schema/Classes"
             ],
-            "Neos\\Utility\\Lock\\": [
-                "Neos.Utility.Lock/Classes"
-            ],
             "Neos\\Utility\\Unicode\\": [
                 "Neos.Utility.Unicode/Classes"
             ]
@@ -124,9 +123,7 @@
     "require-dev": {
         "mikey179/vfsstream": "^1.6.1",
         "phpunit/phpunit": "~9.0",
-        "vimeo/psalm": "~4.1.1",
-        "doctrine/orm": "^2.6",
-        "doctrine/common": "^2.13.1 || ^3.0"
+        "vimeo/psalm": "~4.1.1"
     },
     "autoload-dev": {
         "psr-4": {

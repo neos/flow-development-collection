@@ -290,9 +290,6 @@
     <PossiblyFalseOperand occurrences="1">
       <code>array_search($result, array_keys($array), true)</code>
     </PossiblyFalseOperand>
-    <PossiblyNullArgument occurrences="1">
-      <code>$callback</code>
-    </PossiblyNullArgument>
   </file>
   <file src="Packages/Framework/Neos.Eel/Classes/Helper/FileHelper.php">
     <InvalidReturnStatement occurrences="1">
@@ -1394,10 +1391,6 @@
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Routing/ObjectPathMappingRepository.php">
     <LessSpecificReturnStatement occurrences="2"/>
-    <MoreSpecificReturnType occurrences="2">
-      <code>ObjectPathMapping</code>
-      <code>ObjectPathMapping</code>
-    </MoreSpecificReturnType>
     <TooManyArguments occurrences="3">
       <code>flush</code>
       <code>logicalAnd</code>
@@ -1754,6 +1747,7 @@
       <code>$uniqueConstraint-&gt;name</code>
       <code>$uniqueConstraint-&gt;options</code>
     </InvalidPropertyFetch>
+    <InvalidScalarArgument occurrences="1"/>
     <LessSpecificImplementedReturnType occurrences="1">
       <code>array</code>
     </LessSpecificImplementedReturnType>
@@ -1766,6 +1760,14 @@
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$primaryTable['name']</code>
     </PossiblyUndefinedArrayOffset>
+    <ReferenceConstraintViolation occurrences="1">
+      <code>$mapping</code>
+    </ReferenceConstraintViolation>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/PersistenceManager.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$this-&gt;entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
+    </ArgumentTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/PersistenceManager.php">
     <NullableReturnStatement occurrences="2">
@@ -1810,12 +1812,6 @@
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>QueryResultInterface</code>
     </ImplementedReturnTypeMismatch>
-    <InvalidNullableReturnType occurrences="1">
-      <code>object</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="1">
-      <code>$this-&gt;entityManager-&gt;find($this-&gt;objectType, $identifier)</code>
-    </NullableReturnStatement>
     <PossiblyInvalidArgument occurrences="3">
       <code>$query-&gt;equals($propertyName, $arguments[0], $caseSensitive)</code>
       <code>$query-&gt;equals($propertyName, $arguments[0], $caseSensitive)</code>
@@ -1823,6 +1819,10 @@
     </PossiblyInvalidArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Service.php">
+    <ArgumentTypeCoercion occurrences="2">
+      <code>$allMetaData</code>
+      <code>$allMetaData</code>
+    </ArgumentTypeCoercion>
     <PossiblyNullReference occurrences="1">
       <code>getAllClassNames</code>
     </PossiblyNullReference>
@@ -1912,6 +1912,10 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$source</code>
     </MoreSpecificImplementedParamType>
+    <PossiblyUndefinedVariable occurrences="2">
+      <code>$entityLoaderValue</code>
+      <code>$entityLoaderValue</code>
+    </PossiblyUndefinedVariable>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Property/TypeConverter/ObjectConverter.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -1926,9 +1930,6 @@
     </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Property/TypeConverter/PersistentObjectConverter.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>object</code>
-    </InvalidNullableReturnType>
     <InvalidScalarArgument occurrences="5">
       <code>self::CONFIGURATION_CREATION_ALLOWED</code>
       <code>self::CONFIGURATION_CREATION_ALLOWED</code>
@@ -1936,8 +1937,7 @@
       <code>self::CONFIGURATION_MODIFICATION_ALLOWED</code>
       <code>self::CONFIGURATION_TARGET_TYPE</code>
     </InvalidScalarArgument>
-    <NullableReturnStatement occurrences="2">
-      <code>null</code>
+    <NullableReturnStatement occurrences="1">
       <code>null</code>
     </NullableReturnStatement>
     <TooManyArguments occurrences="2">
@@ -2003,9 +2003,6 @@
     </UndefinedClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Reflection/MethodReflection.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>string</code>
-    </InvalidNullableReturnType>
     <LessSpecificImplementedReturnType occurrences="1">
       <code>array&lt;ParameterReflection&gt;</code>
     </LessSpecificImplementedReturnType>
@@ -2015,19 +2012,13 @@
     <MoreSpecificReturnType occurrences="1">
       <code>DocCommentParser</code>
     </MoreSpecificReturnType>
-    <NullableReturnStatement occurrences="2">
-      <code>$type !== null ? (string)$type : null</code>
-      <code>null</code>
-    </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Reflection/ParameterReflection.php">
-    <InvalidNullableReturnType occurrences="2">
+    <InvalidNullableReturnType occurrences="1">
       <code>ClassReflection</code>
-      <code>string</code>
     </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="3">
+    <NullableReturnStatement occurrences="2">
       <code>is_object($class) ? new ClassReflection($class-&gt;getName()) : null</code>
-      <code>null</code>
       <code>null</code>
     </NullableReturnStatement>
     <PossiblyNullReference occurrences="1">
@@ -2269,10 +2260,6 @@
       <code>$object</code>
     </ArgumentTypeCoercion>
     <LessSpecificReturnStatement occurrences="2"/>
-    <MoreSpecificReturnType occurrences="2">
-      <code>Account</code>
-      <code>Account</code>
-    </MoreSpecificReturnType>
     <TooManyArguments occurrences="3">
       <code>logicalAnd</code>
       <code>logicalAnd</code>

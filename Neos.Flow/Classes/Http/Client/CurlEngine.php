@@ -11,11 +11,11 @@ namespace Neos\Flow\Http\Client;
  * source code.
  */
 
-use function GuzzleHttp\Psr7\parse_response;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use GuzzleHttp\Psr7\Message;
 
 /**
  * A Request Engine which uses cURL in order to send requests to external
@@ -135,12 +135,12 @@ class CurlEngine implements RequestEngineInterface
 
         curl_close($curlHandle);
 
-        $response = parse_response($curlResult);
+        $response = Message::parseResponse($curlResult);
 
         try {
             $responseBody = $response->getBody()->getContents();
             while (strpos($responseBody, 'HTTP/') === 0 || $response->getStatusCode() === 100) {
-                $response = parse_response($responseBody);
+                $response = Message::parseResponse($responseBody);
                 $responseBody = $response->getBody()->getContents();
             }
         } catch (\InvalidArgumentException $e) {

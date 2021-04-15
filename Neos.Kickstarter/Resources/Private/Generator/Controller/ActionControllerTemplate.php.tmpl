@@ -11,6 +11,10 @@ use Neos\Flow\Mvc\Controller\ActionController;
 class {controllerClassName} extends ActionController
 {
 
+<f:if condition="{defaultView}">
+    protected $defaultViewObjectName = {defaultView}::class;
+
+</f:if>
     /**
      * @return void
      */

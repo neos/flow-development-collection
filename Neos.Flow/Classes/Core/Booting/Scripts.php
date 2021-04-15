@@ -210,6 +210,12 @@ class Scripts
             $configurationManager->refreshConfiguration();
         }
 
+        // Manually inject settings into the PackageManager as the package manager is excluded from the proxy class building
+        $flowSettings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
+        if (is_array($flowSettings)) {
+            $packageManager->injectSettings($flowSettings);
+        }
+
         $bootstrap->getSignalSlotDispatcher()->dispatch(ConfigurationManager::class, 'configurationManagerReady', [$configurationManager]);
         $bootstrap->setEarlyInstance(ConfigurationManager::class, $configurationManager);
     }

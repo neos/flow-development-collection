@@ -109,12 +109,15 @@ class PackageManager
     protected $flowPackages = [];
 
     /**
+     * Inject settings into the package manager. Has to be called explicitly on object initialization as
+     * the package manager subpackage is excluded from proxy class building.
+     *
      * @param array $settings
      * @return void
      */
     public function injectSettings(array $settings): void
     {
-        $this->settings = $settings['package'];
+        $this->settings = $settings['package'] ?? [];
     }
 
     /**
@@ -764,7 +767,11 @@ class PackageManager
         // Clean legacy file TODO: Remove at some point
         $legacyPackageStatesPath = FLOW_PATH_CONFIGURATION . 'PackageStates.php';
         if (is_file($legacyPackageStatesPath)) {
-            @unlink($legacyPackageStatesPath);
+            try {
+                @unlink($legacyPackageStatesPath);
+            } catch (\Throwable $e) {
+                // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
+            }
         }
         OpcodeCacheHelper::clearAllActive($this->packageInformationCacheFilePath);
 

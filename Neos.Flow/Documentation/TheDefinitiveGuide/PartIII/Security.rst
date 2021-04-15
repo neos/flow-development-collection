@@ -210,6 +210,8 @@ Flow ships with the following authentication tokens:
    Options: ``usernamePostField`` and ``passwordPostField``
 #. ``UsernamePasswordHttpBasic``: Extracts username & password from the the ``Authorization``
    header (Basic auth). This token is sessionless (see below)
+#. ``BearerToken``: Extracts a rfc6750 bearer token (See: `https://tools.ietf.org/html/rfc6750`_) from a given
+   ``Authorization`` header. This token is sessionless (see below) and has no configuration options.
 #. ``PasswordToken``: Extracts password from a POST parameter.
    Options: ``passwordPostField``
 

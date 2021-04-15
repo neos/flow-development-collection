@@ -11,9 +11,8 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Response;
-use function GuzzleHttp\Psr7\parse_response;
-use function GuzzleHttp\Psr7\stream_for;
+use GuzzleHttp\Psr7\Message;
+use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -32,7 +31,7 @@ abstract class ResponseInformationHelper
      */
     public static function createFromRaw(string $rawResponse): ResponseInterface
     {
-        return parse_response($rawResponse);
+        return Message::parseResponse($rawResponse);
     }
 
     /**
@@ -177,7 +176,7 @@ abstract class ResponseInformationHelper
                 if (ltrim($ifNoneMatchHeader, 'W/') == ltrim($eTagHeader, 'W/')) {
                     $response = $response
                         ->withStatus(304)
-                        ->withBody(stream_for(''));
+                        ->withBody(Utils::streamFor(''));
                     break;
                 }
             }
@@ -190,12 +189,12 @@ abstract class ResponseInformationHelper
             if ($lastModifiedDate <= $ifModifiedSinceDate) {
                 $response = $response
                     ->withStatus(304)
-                    ->withBody(stream_for(''));
+                    ->withBody(Utils::streamFor(''));
             }
         }
 
         if (in_array($response->getStatusCode(), [100, 101, 204, 304])) {
-            $response = $response->withBody(stream_for(''));
+            $response = $response->withBody(Utils::streamFor(''));
         }
 
         $cacheControlHeaderLine = $response->getHeaderLine('Cache-Control');
@@ -213,7 +212,7 @@ abstract class ResponseInformationHelper
         }
 
         if ($request->getMethod() === 'HEAD') {
-            $response = $response->withBody(stream_for(''));
+            $response = $response->withBody(Utils::streamFor(''));
         }
 
         if ($response->hasHeader('Transfer-Encoding')) {
