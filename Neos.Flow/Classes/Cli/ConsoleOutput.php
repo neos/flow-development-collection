@@ -389,7 +389,7 @@ class ConsoleOutput
      *
      * @return ProgressBar
      */
-    protected function getProgressBar(): ProgressBar
+    public function getProgressBar(): ProgressBar
     {
         if ($this->progressBar === null) {
             $this->progressBar = new ProgressBar($this->output);
