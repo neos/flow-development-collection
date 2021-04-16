@@ -87,7 +87,7 @@ class PolicyTest extends FunctionalTestCase
     public function annotatedPrivilegeWithIdConfiguresPrivilege()
     {
         $privilegeTarget = $this->policyService->getPrivilegeTargetByIdentifier('Neos.Flow:Privilege.From.Annotation');
-        self::assertInstanceOf(PrivilegeTarget::class, get_class($privilegeTarget));
+        self::assertInstanceOf(PrivilegeTarget::class, $privilegeTarget);
         self::assertEquals(
             $privilegeTarget->getMatcher(),
             sprintf('method(%s->%s())', PrivilegeAnnotatedController::class, 'actionWithPrivilegeIdAndNoGrantedRoles')
