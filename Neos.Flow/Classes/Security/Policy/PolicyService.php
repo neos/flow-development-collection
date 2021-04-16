@@ -357,10 +357,11 @@ class PolicyService
                 }
                 $matcher = sprintf('method(%s->%s())', $className, $methodName);
 
-                if ($grantedRoles === []) {
-                    $grantedRoles = ['Neos.Flow:Everybody'];
-                } elseif (isset($privilegesWithGrantedRoles[$privilegeId])) {
-                    throw new \RuntimeException(sprintf('You can not reuse a privilege id for granting roles access on a different method. Privilege id used: "%s". Method annotation: "%s->%s"', $privilegeId, $className, $methodName));
+                if (isset($privilegesWithGrantedRoles[$privilegeId])) {
+                    if ($grantedRoles !== [] || $privilegesWithGrantedRoles[$privilegeId]['roles'] !== []) {
+                        throw new \RuntimeException(sprintf('You can not reuse a privilege id for granting roles access on a different method. Privilege id used: "%s". Method annotation: "%s->%s"', $privilegeId, $className, $methodName));
+                    }
+                    $matcher = $privilegesWithGrantedRoles[$privilegeId]['matcher'] . ' || ' . $matcher;
                 }
                 $privilegesWithGrantedRoles[$privilegeId] = [
                     'roles' => $grantedRoles,
