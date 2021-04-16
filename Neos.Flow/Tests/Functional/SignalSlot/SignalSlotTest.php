@@ -52,4 +52,19 @@ class SignalSlotTest extends FunctionalTestCase
         self::assertArrayHasKey('foo', $subClass->referencedArray);
         self::assertEquals('bar', $subClass->referencedArray['foo']);
     }
+
+    /**
+     * @test
+     */
+    public function slotsReceiveArgumentsAsReferenceInSignalInformation()
+    {
+        $subClass = new Fixtures\SubClass();
+
+        $dispatcher = $this->objectManager->get(Dispatcher::class);
+        $dispatcher->wire(Fixtures\SubClass::class, 'signalWithReferenceArgument', $subClass, 'referencedArraySlotWithSignalInformation');
+
+        $subClass->triggerSignalWithByReferenceArgument();
+        self::assertArrayHasKey('foo', $subClass->referencedArray);
+        self::assertEquals('bar', $subClass->referencedArray['foo']);
+    }
 }

@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Functional\SignalSlot\Fixtures;
 
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\SignalSlot\SignalInformation;
 
 /**
  * A concrete class for testing signals in abstract classes
@@ -46,6 +47,9 @@ class SubClass extends AbstractClass
     {
     }
 
+    /**
+     * @Flow\Signal
+     */
     public function emitSignalWithReferenceArgument(array &$array): void
     {
     }
@@ -61,5 +65,10 @@ class SubClass extends AbstractClass
     public function referencedArraySlot(array &$array): void
     {
         $array['foo'] = 'bar';
+    }
+
+    public function referencedArraySlotWithSignalInformation(SignalInformation $si): void
+    {
+        $si->getSignalArguments()['array']['foo'] = 'bar';
     }
 }
