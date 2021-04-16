@@ -22,12 +22,20 @@ class SubClass extends AbstractClass
 {
     public $slotWasCalled = false;
 
+    public $referencedArray = [];
+
     /**
      * @return void
      */
     public function triggerSomethingSignalFromSubClass()
     {
         $this->emitSomething();
+    }
+
+    public function triggerSignalWithByReferenceArgument()
+    {
+        $this->referencedArray = [];
+        $this->emitSignalWithReferenceArgument($this->referencedArray);
     }
 
     /**
@@ -38,11 +46,20 @@ class SubClass extends AbstractClass
     {
     }
 
+    public function emitSignalWithReferenceArgument(array &$array): void
+    {
+    }
+
     /**
      * @return void
      */
     public function somethingSlot()
     {
         $this->slotWasCalled = true;
+    }
+
+    public function referencedArraySlot(array &$array): void
+    {
+        $array['foo'] = 'bar';
     }
 }

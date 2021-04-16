@@ -37,4 +37,19 @@ class SignalSlotTest extends FunctionalTestCase
         $subClass->triggerSomethingSignalFromAbstractClass();
         self::assertTrue($subClass->slotWasCalled, 'from abstract class');
     }
+
+    /**
+     * @test
+     */
+    public function slotsReceiveArgumentsAsReference()
+    {
+        $subClass = new Fixtures\SubClass();
+
+        $dispatcher = $this->objectManager->get(Dispatcher::class);
+        $dispatcher->connect(Fixtures\SubClass::class, 'signalWithReferenceArgument', $subClass, 'referencedArraySlot');
+
+        $subClass->triggerSignalWithByReferenceArgument();
+        self::assertArrayHasKey('foo', $subClass->referencedArray);
+        self::assertEquals('bar', $subClass->referencedArray['foo']);
+    }
 }
