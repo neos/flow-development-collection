@@ -469,8 +469,6 @@ class Scripts
         $objectManager->injectLogger($logger);
         $objectManager->initialize($packageManager->getAvailablePackages());
 
-        $cacheManager->injectReflectionService($reflectionService);
-
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
             $objectManager->setInstance($objectName, $instance);
         }

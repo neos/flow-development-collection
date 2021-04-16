@@ -112,11 +112,6 @@ class CacheManager
         $this->environment = $environment;
     }
 
-    public function injectReflectionService(ReflectionService $reflectionService): void
-    {
-        $this->reflectionService = $reflectionService;
-    }
-
     /**
      * Sets configurations for caches. The key of each entry specifies the
      * cache identifier and the value is an array of configuration options.
