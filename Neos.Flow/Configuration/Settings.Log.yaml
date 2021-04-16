@@ -54,6 +54,7 @@ Neos:
 
       throwables:
         storageClass: Neos\Flow\Log\ThrowableStorage\FileStorage
+        renderRequestInformation: true
         optionsByImplementation:
           'Neos\Flow\Log\ThrowableStorage\FileStorage':
             storagePath: '%FLOW_PATH_DATA%Logs/Exceptions'

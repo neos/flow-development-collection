@@ -233,7 +233,7 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
-        $throwableStorage = self::initializeExceptionStorage($bootstrap);
+        $throwableStorage = self::initializeExceptionStorage($bootstrap, $settings);
         $bootstrap->setEarlyInstance(ThrowableStorageInterface::class, $throwableStorage);
 
         /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
@@ -249,17 +249,16 @@ class Scripts
      * Initialize the exception storage
      *
      * @param Bootstrap $bootstrap
+     * @param array $settings The Neos.Flow settings
      * @return ThrowableStorageInterface
      * @throws FlowException
      * @throws InvalidConfigurationTypeException
      */
-    protected static function initializeExceptionStorage(Bootstrap $bootstrap): ThrowableStorageInterface
+    protected static function initializeExceptionStorage(Bootstrap $bootstrap, array $settings): ThrowableStorageInterface
     {
-        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
-        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
-
         $storageClassName = $settings['log']['throwables']['storageClass'] ?? FileStorage::class;
         $storageOptions = $settings['log']['throwables']['optionsByImplementation'][$storageClassName] ?? [];
+        $renderRequestInformation = $settings['log']['throwables']['renderRequestInformation'] ?? true;
 
 
         if (!in_array(ThrowableStorageInterface::class, class_implements($storageClassName, true))) {
@@ -276,7 +275,7 @@ class Scripts
             return Debugger::getBacktraceCode($backtrace, false, true);
         });
 
-        $throwableStorage->setRequestInformationRenderer(static function () {
+        $throwableStorage->setRequestInformationRenderer(function () use ($renderRequestInformation) {
             // The following lines duplicate FileStorage::__construct(), which is intended to provide a renderer
             // to alternative implementations of ThrowableStorageInterface
 
@@ -293,8 +292,9 @@ class Scripts
             }
 
             $request = $requestHandler->getHttpRequest();
-            // TODO: Sensible error output
-            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestHeaders($request) : '[request was empty]') . PHP_EOL;
+            if ($renderRequestInformation) {
+                $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestHeaders($request) : '[request was empty]') . PHP_EOL;
+            }
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;
