@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\View;
  */
 
 use Neos\Flow\Mvc;
-use Neos\Flow\Persistence\Generic\PersistenceManager;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -194,7 +194,7 @@ class JsonViewTest extends UnitTestCase
      */
     public function testTransformValueWithObjectIdentifierExposure($object, $configuration, $expected, $dummyIdentifier, $description)
     {
-        $persistenceManagerMock = $this->getMockBuilder(PersistenceManager::class)->setMethods(['getIdentifierByObject'])->getMock();
+        $persistenceManagerMock = $this->getMockBuilder(PersistenceManagerInterface::class)->setMethods(['getIdentifierByObject'])->getMock();
         $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '', false);
         $jsonView->_set('persistenceManager', $persistenceManagerMock);
 
