@@ -71,5 +71,4 @@ final class AnnotationsCacheFlusher
             $this->configurationManager->refreshConfiguration();
         }
     }
-
 }
