@@ -11,9 +11,11 @@ namespace Neos\Flow;
  * source code.
  */
 
+use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Core\Booting\Step;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
+use Neos\Flow\ObjectManagement\Proxy;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -146,5 +148,7 @@ class Package extends BasePackage
 
         $dispatcher->connect(AuthenticationProviderManager::class, 'successfullyAuthenticated', Context::class, 'refreshRoles');
         $dispatcher->connect(AuthenticationProviderManager::class, 'loggedOut', Context::class, 'refreshTokens');
+
+        $dispatcher->connect(Proxy\Compiler::class, 'compiledClasses', CacheManager::class, 'flushCachesByCompiledClass');
     }
 }
