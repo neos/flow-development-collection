@@ -11,6 +11,7 @@ namespace Neos\Flow;
  * source code.
  */
 
+use Neos\Flow\Annotations\Route;
 use Neos\Flow\Cache\AnnotationsCacheFlusher;
 use Neos\Flow\Core\Booting\Step;
 use Neos\Flow\Http\Helper\SecurityHelper;
@@ -149,6 +150,10 @@ class Package extends BasePackage
         $dispatcher->connect(AuthenticationProviderManager::class, 'successfullyAuthenticated', Context::class, 'refreshRoles');
         $dispatcher->connect(AuthenticationProviderManager::class, 'loggedOut', Context::class, 'refreshTokens');
 
-        $dispatcher->connect(Proxy\Compiler::class, 'compiledClasses', AnnotationsCacheFlusher::class, 'flushCachesByCompiledClass');
+        $dispatcher->connect(Proxy\Compiler::class, 'compiledClasses', function (array $classNames) use ($bootstrap) {
+            $annotationsCacheFlusher = $bootstrap->getObjectManager()->get(AnnotationsCacheFlusher::class);
+            $annotationsCacheFlusher->registerAnnotation(Route::class, ['Flow_Mvc_Routing_Route', 'Flow_Mvc_Routing_Resolve']);
+            $annotationsCacheFlusher->flushConfigurationCachesByCompiledClass($classNames);
+        });
     }
 }

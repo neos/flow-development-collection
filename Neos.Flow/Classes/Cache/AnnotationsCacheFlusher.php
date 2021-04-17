@@ -13,12 +13,16 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Cache;
 
+use Neos\Cache\Exception\NoSuchCacheException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @Flow\Scope("singleton")
+ */
 final class AnnotationsCacheFlusher
 {
     /**
@@ -48,25 +52,40 @@ final class AnnotationsCacheFlusher
     protected $reflectionService;
 
     /**
-     * A slot that flushes caches as needed if classes with specific annotations have changed
+     * Caches to flush for a given annotation
+     *
+     * @var array in the format [<AnnotationClassName> => [<CacheName_1>, <CacheName_2>]]
+     */
+    private $annotationToCachesMap = [];
+
+    /**
+     * Register an annotation that should trigger a cache flush
+     *
+     * @param string $annotationClassName fully qualified class name of the annotation
+     * @param string[] $cacheNames Cache names to flush if a class containing the given annotation is compiled (e.g. ["Flow_Mvc_Routing_Route", Flow_Mvc_Routing_Resolve"])
+     */
+    public function registerAnnotation(string $annotationClassName, array $cacheNames): void
+    {
+        $this->annotationToCachesMap[$annotationClassName] = $cacheNames;
+    }
+
+    /**
+     * A slot that flushes caches as needed if classes with specific annotations have changed @see registerAnnotation()
      *
      * @param array<string> $classNames The full class names of the classes that got compiled
      * @return void
+     * @throws NoSuchCacheException
      */
     public function flushConfigurationCachesByCompiledClass(array $classNames): void
     {
-        $caches = [
-            Neos\Flow\Annotations\Route::class => ['Flow_Mvc_Routing_Route', 'Flow_Mvc_Routing_Resolve']
-        ];
         $cachesToFlush = [];
-
         foreach ($classNames as $className) {
-            foreach ($caches as $annotationClass => $cacheNames) {
+            foreach ($this->annotationToCachesMap as $annotationClass => $cacheNames) {
                 if (!$this->reflectionService->isClassAnnotatedWith($className, $annotationClass)
                     && count($this->reflectionService->getMethodsAnnotatedWith($className, $annotationClass)) === 0) {
                     continue;
                 }
-                foreach ($caches[$annotationClass] as $cacheName) {
+                foreach ($cacheNames as $cacheName) {
                     $cachesToFlush[$cacheName] = $annotationClass;
                 }
             }
