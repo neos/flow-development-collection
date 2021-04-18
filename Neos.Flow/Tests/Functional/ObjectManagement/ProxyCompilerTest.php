@@ -13,8 +13,6 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
 
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Reflection\ClassReflection;
-use Neos\Flow\Reflection\MethodReflection;
-use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
