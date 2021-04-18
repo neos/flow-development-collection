@@ -180,7 +180,7 @@ class Compiler
      */
     public function compile()
     {
-        $classCount = 0;
+        $compiledClasses = [];
         foreach ($this->objectManager->getRegisteredClassNames() as $fullOriginalClassNames) {
             foreach ($fullOriginalClassNames as $fullOriginalClassName) {
                 if (isset($this->proxyClasses[$fullOriginalClassName])) {
@@ -190,7 +190,7 @@ class Compiler
                         $classPathAndFilename = $class->getFileName();
                         $this->cacheOriginalClassFileAndProxyCode($fullOriginalClassName, $classPathAndFilename, $proxyClassCode);
                         $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
-                        $classCount++;
+                        $compiledClasses[] = $fullOriginalClassName;
                     }
                 } else {
                     if ($this->classesCache->has(str_replace('\\', '_', $fullOriginalClassName))) {
@@ -199,7 +199,16 @@ class Compiler
                 }
             }
         }
-        return $classCount;
+        $this->emitCompiledClasses($compiledClasses);
+        return count($compiledClasses);
+    }
+
+    /**
+     * @param array<string> $classNames
+     * @Flow\Signal
+     */
+    public function emitCompiledClasses(array $classNames)
+    {
     }
 
     /**
