@@ -353,7 +353,8 @@ class PolicyService
 
                 if ($privilegeId === null) {
                     $packageKey = $objectManager->getPackageKeyByObjectName($className);
-                    $privilegeId = sprintf('%s:Privilege.%s', $packageKey, md5($className.'->'.$methodName));
+                    $shortClassName = preg_replace('/.*\\\\/', '', $className);
+                    $privilegeId = sprintf('%s:%s->%s.%s', $packageKey, $shortClassName, $methodName, substr(md5("$className->$methodName"), 0, 8));
                 }
                 $matcher = sprintf('method(%s->%s())', $className, $methodName);
 
