@@ -78,6 +78,9 @@ final class AnnotationsCacheFlusher
      */
     public function flushConfigurationCachesByCompiledClass(array $classNames): void
     {
+        if ($this->annotationToCachesMap === []) {
+            return;
+        }
         $cachesToFlush = [];
         foreach ($classNames as $className) {
             foreach ($this->annotationToCachesMap as $annotationClass => $cacheNames) {
