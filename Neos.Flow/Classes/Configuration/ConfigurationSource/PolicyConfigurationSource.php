@@ -20,6 +20,13 @@ class PolicyConfigurationSource implements ConfigurationSourceInterface
 {
 
     /**
+     * An absolute file path to store configuration caches in. Used only for Testing context
+     *
+     * @var string
+     */
+    protected $temporaryDirectoryPath;
+
+    /**
      * @var YamlSource
      */
     private $yamlSource;
@@ -29,8 +36,25 @@ class PolicyConfigurationSource implements ConfigurationSourceInterface
         $this->yamlSource = $yamlSource;
     }
 
+    /**
+     * Set an absolute file path to store configuration caches in. If null no cache will be active.
+     *
+     * @param string $temporaryDirectoryPath
+     */
+    public function setTemporaryDirectoryPath(string $temporaryDirectoryPath): void
+    {
+        $this->temporaryDirectoryPath = $temporaryDirectoryPath;
+    }
+
     public function __invoke(array $packages, ApplicationContext $context): array
     {
+        if ($context->isTesting()) {
+            $testingPolicyPathAndFilename = $this->temporaryDirectoryPath . 'Policy';
+            if ($this->yamlSource->has($testingPolicyPathAndFilename)) {
+                return $this->yamlSource->load($testingPolicyPathAndFilename);
+            }
+        }
+
         $configuration = [];
         foreach ($packages as $package) {
             $packagePolicyConfiguration = $this->yamlSource->load($package->getConfigurationPath() . ConfigurationManager::CONFIGURATION_TYPE_POLICY, true);

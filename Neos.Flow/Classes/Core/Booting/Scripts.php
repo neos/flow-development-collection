@@ -214,7 +214,11 @@ class Scripts
         $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, new DefaultConfigurationSource($yamlSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES));
         $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, new ObjectsConfigurationSource($yamlSource));
         $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, new RoutesConfigurationSource($yamlSource, $configurationManager));
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_POLICY, new PolicyConfigurationSource($yamlSource));
+
+        $policyConfigurationSource = new PolicyConfigurationSource($yamlSource);
+        $policyConfigurationSource->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $policyConfigurationSource);
+
         $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, new SettingsConfigurationSource($yamlSource));
 
         $configurationManager->setPackages($packageManager->getFlowPackages());
