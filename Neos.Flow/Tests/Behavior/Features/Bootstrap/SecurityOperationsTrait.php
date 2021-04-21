@@ -1,7 +1,6 @@
 <?php
 namespace Neos\Flow\Tests\Behavior\Features\Bootstrap;
 
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
