@@ -15,7 +15,6 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
 use Neos\Flow\Configuration\ConfigurationSource\RoutesConfigurationSource;
 use Neos\Flow\Configuration\ConfigurationSource\SettingsConfigurationSource;
-use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Error\Messages\Error;
