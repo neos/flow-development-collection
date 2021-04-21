@@ -93,10 +93,8 @@ trait SecurityOperationsTrait
             throw new \Exception('Step "I have the following policies:" must run as FIRST step in a scenario, because otherwise the proxy-classes are already built in the wrong manner!');
         }
 
-        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_POLICY, static function() use ($string) {
-            return Yaml::parse($string);
-        });
+        self::$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy.yaml';
+        file_put_contents(self::$testingPolicyPathAndFilename, $string->getRaw());
 
         $policyService = $this->objectManager->get(PolicyService::class);
         ObjectAccess::setProperty($policyService, 'initialized', false, true);
