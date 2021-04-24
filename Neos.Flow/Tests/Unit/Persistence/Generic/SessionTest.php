@@ -151,8 +151,18 @@ class SessionTest extends UnitTestCase
         eval('class ' . $className . ' { public $foo; }');
         $object = new $className();
 
+        $cleanData = [
+            'identifier' => 'fakeUuid',
+            'properties' => [
+                'foo' => [
+                    'type' => 'string',
+                    'multivalue' => false,
+                    'value' => null
+                ]
+            ]
+        ];
         $session = $this->getMockBuilder(Persistence\Generic\Session::class)->setMethods(['getIdentifierByObject'])->getMock();
-        $session->registerReconstitutedEntity($object, ['identifier' => 'fakeUuid']);
+        $session->registerReconstitutedEntity($object, $cleanData);
         $session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
 
         $this->assertFalse($session->isDirty($object, 'foo'));

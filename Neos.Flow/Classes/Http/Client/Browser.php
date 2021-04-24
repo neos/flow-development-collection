@@ -146,6 +146,11 @@ class Browser
 
         $location = $response->getHeader('Location');
         if ($this->followRedirects && $location !== null && $response->getStatusCode() >= 300 && $response->getStatusCode() <= 399) {
+            if (substr($location, 0, 1) === '/') {
+                // Location header is a host-absolute URL; so we need to prepend the hostname to create a full URL.
+                $location = $request->getBaseUri() . ltrim($location, '/');
+            }
+
             if (in_array($location, $this->redirectionStack) || count($this->redirectionStack) >= $this->maximumRedirections) {
                 throw new InfiniteRedirectionException('The Location "' . $location . '" to follow for a redirect will probably result into an infinite loop.', 1350391699);
             }

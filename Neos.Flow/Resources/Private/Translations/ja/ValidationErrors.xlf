@@ -37,7 +37,7 @@
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target state="translated">"ロケール"オプションは、文字列識別子またはLocaleオブジェクトにのみ設定できます</target><alt-trans><target>"locale"オプションは、文字列識別子またはLocaleオブジェクトにのみ設定できます</target></alt-trans></trans-unit>
+			<target state="translated">"ロケール"オプションは、文字列識別子またはLocaleオブジェクトにのみ設定できます</target></trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
 			<target state="translated">有効な時間が必要です</target></trans-unit>
@@ -94,7 +94,7 @@
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-			<target state="translated">"ロケール"オプションは、文字列識別子またはLocaleオブジェクトにのみ設定できます</target><alt-trans><target>"locale"オプションは、文字列識別子またはLocaleオブジェクトにのみ設定できます</target></alt-trans></trans-unit>
+			<target state="translated">"ロケール"オプションは、文字列識別子またはLocaleオブジェクトにのみ設定できます</target></trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
 			<target state="translated">有効なパーセント値が必要です</target></trans-unit>

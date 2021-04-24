@@ -58,7 +58,7 @@ abstract class AbstractGenerator
      */
     protected function getClassNamesInNamespace($namespace)
     {
-        $affectedViewHelperClassNames = array();
+        $affectedViewHelperClassNames = [];
 
         $allViewHelperClassNames = $this->reflectionService->getAllSubClassNamesForClass(AbstractViewHelper::class);
         foreach ($allViewHelperClassNames as $viewHelperClassName) {

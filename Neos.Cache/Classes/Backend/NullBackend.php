@@ -32,7 +32,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return void
      * @api
      */
-    public function set($entryIdentifier, $data, array $tags = [], $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
     {
     }
 
@@ -40,10 +40,10 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Returns False
      *
      * @param string $entryIdentifier ignored
-     * @return boolean FALSE
+     * @return boolean false
      * @api
      */
-    public function get($entryIdentifier)
+    public function get(string $entryIdentifier)
     {
         return false;
     }
@@ -52,10 +52,10 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Returns False
      *
      * @param string $entryIdentifier ignored
-     * @return boolean FALSE
+     * @return boolean false
      * @api
      */
-    public function has($entryIdentifier): bool
+    public function has(string $entryIdentifier): bool
     {
         return false;
     }
@@ -64,10 +64,10 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Does nothing
      *
      * @param string $entryIdentifier ignored
-     * @return boolean FALSE
+     * @return boolean false
      * @api
      */
-    public function remove($entryIdentifier): bool
+    public function remove(string $entryIdentifier): bool
     {
         return false;
     }
@@ -79,7 +79,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return array An empty array
      * @api
      */
-    public function findIdentifiersByTag($tag): array
+    public function findIdentifiersByTag(string $tag): array
     {
         return [];
     }
@@ -101,7 +101,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return integer
      * @api
      */
-    public function flushByTag($tag): int
+    public function flushByTag(string $tag): int
     {
         return 0;
     }
@@ -123,7 +123,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return void
      * @api
      */
-    public function requireOnce($identifier)
+    public function requireOnce(string $identifier)
     {
     }
 }

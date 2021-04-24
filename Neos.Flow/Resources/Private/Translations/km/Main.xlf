@@ -22,7 +22,7 @@
 			<target state="final">ចាកចេញ</target></trans-unit>
       <trans-unit id="update" xml:space="preserve" approved="yes">
 				<source>Update</source>
-			<target state="final">ទំនើបកម្ម</target><alt-trans><target>ធ្វើឲ្យទាន់សម័យ</target></alt-trans></trans-unit>
+			<target state="final">ទំនើបកម្ម</target></trans-unit>
       <trans-unit id="submit" xml:space="preserve" approved="yes">
 				<source>Submit</source>
 			<target state="final">ដាក់ស្នើ</target></trans-unit>

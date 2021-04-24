@@ -146,13 +146,12 @@ class ClassSchemaTest extends UnitTestCase
     /**
      * @dataProvider validPropertyTypes()
      * @test
+     * @doesNotPerformAssertions
      */
     public function addPropertyAcceptsValidPropertyTypes($propertyType)
     {
         $classSchema = new ClassSchema('SomeClass');
         $classSchema->addProperty('a', $propertyType);
-        // dummy assertion to avoid incomplete  test detection
-        $this->assertNull(null);
     }
 
     /**

@@ -258,6 +258,60 @@ class CookieTest extends UnitTestCase
     /**
      * @test
      */
+    public function SameSiteReturnsNull()
+    {
+        $cookie = new Cookie('foo', 'bar');
+        $this->assertNull($cookie->getSameSite());
+    }
+
+    /**
+     * @test
+     */
+    public function SameSiteReturnsNone()
+    {
+        $cookie = new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true, false, Cookie::SAMESITE_NONE);
+        $this->assertSame(Cookie::SAMESITE_NONE, $cookie->getSameSite());
+    }
+
+    /**
+     * @test
+     */
+    public function SameSiteNoneEnablesSecure()
+    {
+        $cookie = new Cookie('foo', 'bar', 0, null, 'neos.io', '/', false, false, Cookie::SAMESITE_NONE);
+        $this->assertTrue($cookie->isSecure());
+    }
+
+    /**
+     * @test
+     */
+    public function SameSiteReturnsLax()
+    {
+        $cookie = new Cookie('foo', 'bar', 0, null, 'neos.io', '/', false, false, Cookie::SAMESITE_LAX);
+        $this->assertSame(Cookie::SAMESITE_LAX, $cookie->getSameSite());
+    }
+
+    /**
+     * @test
+     */
+    public function SameSiteReturnsStrict()
+    {
+        $cookie = new Cookie('foo', 'bar', 0, null, 'neos.io', '/', false, false, Cookie::SAMESITE_STRICT);
+        $this->assertSame(Cookie::SAMESITE_STRICT, $cookie->getSameSite());
+    }
+
+    /**
+     * @test
+     */
+    public function SameSiteThrowsExceptionForInvalidValues()
+    {
+        $this->expectExceptionCode(1584955500);
+        new Cookie('foo', 'bar', 0, null, 'neos.io', '/', false, false, 'foo');
+    }
+
+    /**
+     * @test
+     */
     public function isExpiredTellsIfTheCookieIsExpired()
     {
         $cookie = new Cookie('foo', 'bar');
@@ -295,6 +349,9 @@ class CookieTest extends UnitTestCase
             [new Cookie('foo', 'bar', 0, null, 'flow.neos.io', '/about'), 'foo=bar; Domain=flow.neos.io; Path=/about; HttpOnly'],
             [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true), 'foo=bar; Domain=neos.io; Path=/; Secure; HttpOnly'],
             [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true, false), 'foo=bar; Domain=neos.io; Path=/; Secure'],
+            [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true, true, Cookie::SAMESITE_NONE), 'foo=bar; Domain=neos.io; Path=/; Secure; HttpOnly; SameSite=none'],
+            [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true, true, Cookie::SAMESITE_STRICT), 'foo=bar; Domain=neos.io; Path=/; Secure; HttpOnly; SameSite=strict'],
+            [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true, true, Cookie::SAMESITE_LAX), 'foo=bar; Domain=neos.io; Path=/; Secure; HttpOnly; SameSite=lax'],
             [new Cookie('foo', 'bar', 0, 3600), 'foo=bar; Max-Age=3600; Path=/; HttpOnly'],
             [$expiredCookie, 'foo=bar; Expires=Thu, 27-May-1976 12:00:00 GMT; Path=/; HttpOnly']
         ];
@@ -431,5 +488,23 @@ class CookieTest extends UnitTestCase
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; HttpOnly; more=nothing');
         $this->assertTrue($cookie->isHttpOnly());
+    }
+
+    /**
+     * @test
+     */
+    public function createCookieFromRawIgnoresSameSiteAttributeIfValueIsEmpty()
+    {
+        $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; SameSite=; more=nothing');
+        $this->assertNull($cookie->getSameSite());
+    }
+
+    /**
+     * @test
+     */
+    public function createCookieFromRawLowerCasesSameSite()
+    {
+        $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; SameSite=Lax');
+        $this->assertEquals(Cookie::SAMESITE_LAX, $cookie->getSameSite());
     }
 }

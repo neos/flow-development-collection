@@ -24,6 +24,7 @@ namespace Neos\Flow\Log;
  *   LOG_INFO    # Informational: informational messages
  *   LOG_DEBUG   # Debug: debug-level messages
  *
+ * @deprecated Use a \Neos\Flow\Log\ThrowableStorageInterface instead.
  */
 interface ThrowableLoggerInterface extends LoggerInterface
 {

@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Format;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
@@ -52,19 +51,29 @@ class HtmlentitiesViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
+     * Initialize the arguments.
+     *
+     * @return void
+     * @api
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('value', 'string', 'string to format', false, null);
+        $this->registerArgument('keepQuotes', 'boolean', 'if true, single and double quotes won\'t be replaced (sets ENT_NOQUOTES flag)', false, false);
+        $this->registerArgument('encoding', 'string', 'the encoding format', false, 'UTF-8');
+        $this->registerArgument('doubleEncode', 'string', 'If false existing html entities won\'t be encoded, the default is to convert everything.', false, true);
+    }
+
+    /**
      * Escapes special characters with their escaped counterparts as needed using PHPs htmlentities() function.
      *
-     * @param string $value string to format
-     * @param boolean $keepQuotes if TRUE, single and double quotes won't be replaced (sets ENT_NOQUOTES flag)
-     * @param string $encoding
-     * @param boolean $doubleEncode If FALSE existing html entities won't be encoded, the default is to convert everything.
      * @return string the altered string
      * @see http://www.php.net/manual/function.htmlentities.php
      * @api
      */
-    public function render($value = null, $keepQuotes = false, $encoding = 'UTF-8', $doubleEncode = true)
+    public function render()
     {
-        return self::renderStatic(array('value' => $value, 'keepQuotes' => $keepQuotes, 'encoding' => $encoding, 'doubleEncode' => $doubleEncode), $this->buildRenderChildrenClosure(), $this->renderingContext);
+        return self::renderStatic(['value' => $this->arguments['value'], 'keepQuotes' => $this->arguments['keepQuotes'], 'encoding' => $this->arguments['encoding'], 'doubleEncode' => $this->arguments['doubleEncode']], $this->buildRenderChildrenClosure(), $this->renderingContext);
     }
 
     /**

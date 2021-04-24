@@ -28,7 +28,7 @@ class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vi
     {
         parent::setUp();
         $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Validation\ResultsViewHelper::class)
-            ->setMethods(array('renderChildren'))
+            ->setMethods(['renderChildren', 'registerRenderMethodArguments'])
             ->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
@@ -41,6 +41,7 @@ class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vi
         $this->request->expects($this->atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will($this->returnValue(null));
         $this->viewHelper->expects($this->once())->method('renderChildren')->will($this->returnValue('child nodes'));
 
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->assertSame('child nodes', $this->viewHelper->render());
     }
 
@@ -55,6 +56,7 @@ class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vi
         $this->viewHelper->expects($this->once())->method('renderChildren');
         $this->templateVariableContainer->expects($this->at(1))->method('remove')->with('validationResults');
 
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
     }
 
@@ -69,7 +71,8 @@ class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vi
         $this->viewHelper->expects($this->once())->method('renderChildren');
         $this->templateVariableContainer->expects($this->at(1))->method('remove')->with('customName');
 
-        $this->viewHelper->render('', 'customName');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['for' => '', 'as' => 'customName']);
+        $this->viewHelper->render();
     }
 
     /**
@@ -85,6 +88,7 @@ class ResultsViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vi
         $this->viewHelper->expects($this->once())->method('renderChildren');
         $this->templateVariableContainer->expects($this->at(1))->method('remove')->with('validationResults');
 
-        $this->viewHelper->render('somePropertyName');
+        $this->viewHelper = $this->prepareArguments($this->viewHelper, ['for' => 'somePropertyName']);
+        $this->viewHelper->render();
     }
 }

@@ -41,12 +41,14 @@ class TextfieldViewHelper extends AbstractFormFieldViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
+        $this->registerTagAttribute('disabled', 'boolean', 'Specifies that the input element should be disabled when the page loads', false, false);
+        $this->registerTagAttribute('required', 'boolean', 'If the field should be marked as required or not', false, false);
         $this->registerTagAttribute('maxlength', 'int', 'The maxlength attribute of the input field (will not be validated)');
         $this->registerTagAttribute('readonly', 'string', 'The readonly attribute of the input field');
         $this->registerTagAttribute('size', 'int', 'The size of the input field');
         $this->registerTagAttribute('placeholder', 'string', 'The placeholder of the input field');
         $this->registerTagAttribute('autofocus', 'string', 'Specifies that a input field should automatically get focus when the page loads');
+        $this->registerTagAttribute('type', 'string', 'The field type, e.g. "text", "email", "url" etc.', false, 'text');
         $this->registerArgument('errorClass', 'string', 'CSS class to set if there are errors for this view helper', false, 'f3-form-error');
         $this->registerUniversalTagAttributes();
     }
@@ -54,27 +56,20 @@ class TextfieldViewHelper extends AbstractFormFieldViewHelper
     /**
      * Renders the textfield.
      *
-     * @param boolean $required If the field is required or not
-     * @param string $type The field type, e.g. "text", "email", "url" etc.
      * @return string
      * @api
      */
-    public function render($required = false, $type = 'text')
+    public function render()
     {
         $name = $this->getName();
         $this->registerFieldNameForFormTokenGeneration($name);
 
-        $this->tag->addAttribute('type', $type);
         $this->tag->addAttribute('name', $name);
 
         $value = $this->getValueAttribute();
 
         if ($value !== null) {
             $this->tag->addAttribute('value', $value);
-        }
-
-        if ($required === true) {
-            $this->tag->addAttribute('required', 'required');
         }
 
         $this->addAdditionalIdentityPropertiesIfNeeded();

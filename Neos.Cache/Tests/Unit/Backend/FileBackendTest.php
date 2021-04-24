@@ -115,18 +115,6 @@ class FileBackendTest extends BaseTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Cache\Exception\InvalidDataException
-     */
-    public function setThrowsExceptionIfDataIsNotAString()
-    {
-        $mockCache = $this->createMock(AbstractFrontend::class);
-        $backend = $this->prepareDefaultBackend();
-        $backend->setCache($mockCache);
-        $backend->set('SomeIdentifier', ['not a string']);
-    }
-
-    /**
-     * @test
      */
     public function setReallySavesToTheSpecifiedDirectory()
     {
@@ -354,8 +342,8 @@ class FileBackendTest extends BaseTestCase
         $data = 'some data' . microtime();
         $backend->set($entryIdentifier, $data);
 
-        $this->assertTrue($backend->has($entryIdentifier), 'has() did not return TRUE.');
-        $this->assertFalse($backend->has($entryIdentifier . 'Not'), 'has() did not return FALSE.');
+        $this->assertTrue($backend->has($entryIdentifier), 'has() did not return true.');
+        $this->assertFalse($backend->has($entryIdentifier . 'Not'), 'has() did not return false.');
     }
 
     /**

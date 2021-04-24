@@ -233,7 +233,7 @@ class PolicyService
     /**
      * Returns an array of all configured roles
      *
-     * @param boolean $includeAbstract If TRUE the result includes abstract roles, otherwise those will be skipped
+     * @param boolean $includeAbstract If true the result includes abstract roles, otherwise those will be skipped
      * @return Role[] Array of all configured roles, indexed by role identifier
      */
     public function getRoles($includeAbstract = false)

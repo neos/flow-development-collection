@@ -100,6 +100,22 @@ class DateHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Get a date object by given date or time format
+     *
+     * Examples::
+     *
+     *     Date.create('2018-12-04')
+     *     Date.create('first day of next year')
+     *
+     * @param String $time A date/time string. For valid formats see http://php.net/manual/en/datetime.formats.php
+     * @return \DateTime
+     */
+    public function create(string $time): \DateTime
+    {
+        return new \DateTime($time);
+    }
+
+    /**
      * Get the current date and time
      *
      * Examples::

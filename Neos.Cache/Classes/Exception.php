@@ -1,6 +1,9 @@
 <?php
 namespace Neos\Cache;
 
+use Psr\Cache\CacheException as Psr6CacheException;
+use Psr\SimpleCache\CacheException as Psr16CacheException;
+
 /*
  * This file is part of the Neos.Cache package.
  *
@@ -16,6 +19,6 @@ namespace Neos\Cache;
  *
  * @api
  */
-class Exception extends \Exception
+class Exception extends \Exception implements Psr6CacheException, Psr16CacheException
 {
 }

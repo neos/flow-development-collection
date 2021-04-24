@@ -1,0 +1,140 @@
+#
+# Security configuration for the Flow Framework
+#
+
+Neos:
+  Flow:
+    security:
+      firewall:
+        # If set to true, the firewall will reject any request that is not
+        # explicitly allowed by a configured request filter.
+        rejectAll: false
+
+        # The filter configuration for the firewall. Here is an example configuration array:
+        #
+        # filters:
+        #   'Some.Package:SomeFilter':
+        #     pattern: 'Uri'
+        #     patternOptions:
+        #       'uriPattern': '\/some\/url\/.*'
+        #     interceptor:  AccessGrant
+        #   'Some.Package:AnotherFilter':
+        #     pattern: 'Some\Request\Pattern\ClassName'
+        #     patternOptions:
+        #       'foo': 'bar'
+        #     interceptor:  AccessDeny
+        #
+        # If the objects are in the namespace "\Neos\Flow\Security" it is enough to specify
+        # the last name of the class name, e.g. AccessGrant
+        filters:
+          'Neos.Flow:CsrfProtection':
+            pattern: 'CsrfProtection'
+            interceptor: CsrfTokenMissing
+
+      authentication:
+
+        # Array of authentication providers that should be used for authentication.
+        # If you define a request pattern, the provider will only be called if the pattern
+        # matches the current request. If the objects are in the namespace
+        # "\Neos\Flow\Security" it is sufficient to specify the last part of the class name,
+        # e.g. PersistedUsernamePasswordProvider
+        # Note: Authentication will be performed in the given order of the providers.
+        # So make sure, that the primary authentication method is the first array entry.
+        #
+        # You'll need to configure your own authentication provider depending on your use case.
+        # Below you find an example which uses simple username/password authentication. In
+        # case the user is not logged in, the web redirect entry point, which redirects her
+        # to the login action that displays the authentication form.
+        #
+        #  'AdminInterfaceProvider':
+        #    provider: 'PersistedUsernamePasswordProvider'
+        #    providerOptions:
+        #      fooBar: 'baz'
+        #    requestPatterns:
+        #      'AdminControllers':
+        #        pattern: 'ControllerObjectName'
+        #        patternOptions:
+        #          'controllerObjectNamePattern': 'Neos\Admin\Controller\.*'
+        #    entryPoint: 'WebRedirect'
+        #    entryPointOptions:
+        #      routeValues:
+        #        '@package': 'Your.Package'
+        #        '@controller': 'Authenticate'
+        #        '@action': 'login'
+        #        '@format': 'html'
+        providers: []
+
+        # One of the available authentication strategies:
+        #
+        #   "anyToken":
+        #     Authenticate as many tokens as possible but do not require
+        #     an authenticated token (e.g. for guests with role Everybody).
+        #
+        #   "allTokens":
+        #     Authenticate all active tokens and throw an exception if
+        #     an active token could not be authenticated.
+        #
+        #   "oneToken":
+        #     Stop authentication of tokens after first successful
+        #     authentication of a token. Requires an authenticated token.
+        #
+        #   "atLeastOneToken" (default):
+        #     Authenticate as many tokens as possible but do not fail if
+        #     a token could not be authenticated as long as at least one
+        #     token could be authenticated.
+        authenticationStrategy: atLeastOneToken
+
+      authorization:
+        # If this is set to true access will be granted even if all voters abstain
+        allowAccessIfAllVotersAbstain: false
+
+      # "Cross-site request forgery" is an attack method to have authorized users trigger
+      # actions without them knowing it. This section is configuring the built-in CSRF
+      # protection in Flow.
+      csrf:
+        # The strategy to use for generating and using the CSRF protection token. Available are
+        # onePerSession, onePerUri and onePerRequest.
+        csrfStrategy: onePerSession
+
+      cryptography:
+
+        hashingStrategies:
+
+          # The default strategy will be used to hash or validate passwords if no specific strategy is given
+          default: bcrypt
+
+          pbkdf2: Neos\Flow\Security\Cryptography\Pbkdf2HashingStrategy
+          bcrypt: Neos\Flow\Security\Cryptography\BCryptHashingStrategy
+          saltedmd5: Neos\Flow\Security\Cryptography\SaltedMd5HashingStrategy
+
+        Pbkdf2HashingStrategy:
+
+          # Length of the random, dynamic salt that will be stored with the hashed password
+          dynamicSaltLength: 8
+          # Iteration count, high enough to make brute-force attacks unfeasible, use a custom value!
+          iterationCount: 10000
+          # Length of the derived key (hashed password) in bytes
+          derivedKeyLength: 64
+          # Hash function to use for PBKDF2
+          algorithm: sha256
+
+        BCryptHashingStrategy:
+
+          # Cost of a BCrypt operation, can be between 4 and 31
+          # The faster your machine is, the higher this number should be
+          cost: 14
+
+        RSAWalletServicePHP:
+
+          # Path to the file where RSA keys shall be stored
+          # Note: This file must not be accessible by the public!
+          keystorePath: '%FLOW_PATH_DATA%Persistent/RsaWalletData'
+
+          # The padding to use when encrypting/decrypting data.
+          # PHP's default OPENSSL_PKCS1_PADDING is insecure, thus we change it to
+          # OPENSSL_PKCS1_OAEP_PADDING
+          paddingAlgorithm: '%OPENSSL_PKCS1_OAEP_PADDING%'
+
+          # Defines the openSSL configuration used for key handling.
+          # See the PHP openSSL documentation for possible settings.
+          openSSLConfiguration: []

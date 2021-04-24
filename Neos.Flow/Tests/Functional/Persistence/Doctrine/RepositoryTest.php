@@ -230,6 +230,33 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function findAllIteratorReturnsSubTypesOfTheManagedType()
+    {
+        $this->superEntityRepository = $this->objectManager->get(Fixtures\SuperEntityRepository::class);
+
+        $superEntity = new Fixtures\SuperEntity();
+        $superEntity->setContent('this is the super entity');
+        $this->superEntityRepository->add($superEntity);
+
+        $subEntity = new Fixtures\SubEntity();
+        $subEntity->setContent('this is the sub entity');
+        $this->superEntityRepository->add($subEntity);
+
+        $this->persistenceManager->persistAll();
+
+        $iterator = $this->superEntityRepository->findAllIterator();
+        $expectedCount = 0;
+
+        foreach ($this->superEntityRepository->iterate($iterator) as $entity) {
+            $expectedCount++;
+        }
+
+        $this->assertEquals(2, $expectedCount);
+    }
+
+    /**
+     * @test
+     */
     public function findByIdentifierReturnsSubTypesOfTheManagedType()
     {
         $this->superEntityRepository = $this->objectManager->get(Fixtures\SuperEntityRepository::class);

@@ -9,6 +9,7 @@
 
 
 Neos\Eel\CompilingEvaluator:
+  scope: singleton
   properties:
     expressionCache:
       object:
@@ -17,7 +18,6 @@ Neos\Eel\CompilingEvaluator:
         arguments:
           1:
             value: Eel_Expression_Code
-
 
 Neos\Eel\EelEvaluatorInterface:
   className: Neos\Eel\CompilingEvaluator

@@ -24,7 +24,7 @@ class AutocompleteController extends AbstractWidgetController
     /**
      * @var array
      */
-    protected $configuration = array('limit' => 10);
+    protected $configuration = ['limit' => 10];
 
     /**
      * @return void
@@ -70,19 +70,19 @@ class AutocompleteController extends AbstractWidgetController
 
         $results = $query->execute();
 
-        $output = array();
-        $values = array();
+        $output = [];
+        $values = [];
         foreach ($results as $singleResult) {
             $val = ObjectAccess::getPropertyPath($singleResult, $searchProperty);
             if (isset($values[$val])) {
                 continue;
             }
             $values[$val] = true;
-            $output[] = array(
+            $output[] = [
                 'id' => $val,
                 'label' => $val,
                 'value' => $val
-            );
+            ];
         }
         return json_encode($output);
     }

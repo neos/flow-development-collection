@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Mvc;
 use Neos\Flow\Cli\Request;
 use Neos\Flow\Http\Response as HttpResponse;
 use Neos\Flow\Http\Request as HttpRequest;
-use Neos\Flow\Log\SecurityLoggerInterface;
+use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Dispatcher;
@@ -28,6 +28,7 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the MVC Dispatcher
@@ -85,7 +86,7 @@ class DispatcherTest extends UnitTestCase
     protected $mockFirewall;
 
     /**
-     * @var SecurityLoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mockSecurityLogger;
 
@@ -117,16 +118,18 @@ class DispatcherTest extends UnitTestCase
 
         $this->mockFirewall = $this->getMockBuilder(FirewallInterface::class)->getMock();
 
-        $this->mockSecurityLogger = $this->getMockBuilder(SecurityLoggerInterface::class)->getMock();
+        $this->mockSecurityLogger = $this->getMockBuilder(LoggerInterface::class)->getMock();
+        $mockLoggerFactory = $this->getMockBuilder(PsrLoggerFactoryInterface::class)->getMock();
+        $mockLoggerFactory->expects(self::any())->method('get')->with('securityLogger')->willReturn($this->mockSecurityLogger);
 
         $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
-        $this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(function ($className) {
+        $this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(function ($className) use ($mockLoggerFactory) {
             if ($className === Context::class) {
                 return $this->mockSecurityContext;
             } elseif ($className === FirewallInterface::class) {
                 return $this->mockFirewall;
-            } elseif ($className === SecurityLoggerInterface::class) {
-                return $this->mockSecurityLogger;
+            } elseif ($className === PsrLoggerFactoryInterface::class) {
+                return $mockLoggerFactory;
             }
             return null;
         }));

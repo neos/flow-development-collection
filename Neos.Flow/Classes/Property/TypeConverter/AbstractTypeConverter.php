@@ -82,7 +82,7 @@ abstract class AbstractTypeConverter implements TypeConverterInterface
      *
      * @param mixed $source the source data
      * @param string $originalTargetType the type we originally want to convert to
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @api
      */
@@ -103,11 +103,11 @@ abstract class AbstractTypeConverter implements TypeConverterInterface
     }
 
     /**
-     * This implementation always returns TRUE for this method.
+     * This implementation always returns true for this method.
      *
      * @param mixed $source the source data
      * @param string $targetType the type to convert to.
-     * @return boolean TRUE if this TypeConverter can convert from $source to $targetType, FALSE otherwise.
+     * @return boolean true if this TypeConverter can convert from $source to $targetType, false otherwise.
      * @api
      */
     public function canConvertFrom($source, $targetType)

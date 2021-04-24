@@ -31,7 +31,7 @@ class AnotherClassWithLazyDependencies
     public $lazyB;
 
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject(lazy = false)
      * @var SingletonClassC
      */
     public $eagerC;

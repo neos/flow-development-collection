@@ -1,6 +1,6 @@
-configurationFileHasBeenLoaded: TRUE
+configurationFileHasBeenLoaded: true
 Neos:
   Flow:
     something: 'zzz'
-    aboolean: TRUE
-    shouldNotBeHere: TRUE
+    aboolean: true
+    shouldNotBeHere: true

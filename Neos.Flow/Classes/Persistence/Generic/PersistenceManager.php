@@ -159,21 +159,21 @@ class PersistenceManager extends AbstractPersistenceManager
      * Commits new objects and changes to objects in the current persistence
      * session into the backend
      *
-     * @param boolean $onlyWhitelistedObjects
+     * @param boolean $onlyAllowedObjects
      * @return void
      * @api
      */
-    public function persistAll($onlyWhitelistedObjects = false)
+    public function persistAll($onlyAllowedObjects = false)
     {
-        if ($onlyWhitelistedObjects) {
+        if ($onlyAllowedObjects) {
             foreach ($this->changedObjects as $object) {
-                $this->throwExceptionIfObjectIsNotWhitelisted($object);
+                $this->throwExceptionIfObjectIsNotAllowed($object);
             }
             foreach ($this->removedObjects as $object) {
-                $this->throwExceptionIfObjectIsNotWhitelisted($object);
+                $this->throwExceptionIfObjectIsNotAllowed($object);
             }
             foreach ($this->addedObjects as $object) {
-                $this->throwExceptionIfObjectIsNotWhitelisted($object);
+                $this->throwExceptionIfObjectIsNotAllowed($object);
             }
         }
 
@@ -217,7 +217,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * Checks if the given object has ever been persisted.
      *
      * @param object $object The object to check
-     * @return boolean TRUE if the object is new, FALSE if the object exists in the persistence session
+     * @return boolean true if the object is new, false if the object exists in the persistence session
      * @api
      */
     public function isNewObject($object)
@@ -249,7 +249,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @param mixed $identifier
      * @param string $objectType
      * @param boolean $useLazyLoading This option is ignored in this persistence manager
-     * @return object The object for the identifier if it is known, or NULL
+     * @return object|null The object for the identifier if it is known, or NULL
      * @api
      */
     public function getObjectByIdentifier($identifier, $objectType = null, $useLazyLoading = false)
@@ -271,11 +271,11 @@ class PersistenceManager extends AbstractPersistenceManager
 
     /**
      * Returns the object data for the (internal) identifier, if it is known to
-     * the backend. Otherwise FALSE is returned.
+     * the backend. Otherwise false is returned.
      *
      * @param string $identifier
      * @param string $objectType
-     * @return object The object data for the identifier if it is known, or FALSE
+     * @return object The object data for the identifier if it is known, or false
      */
     public function getObjectDataByIdentifier($identifier, $objectType = null)
     {
@@ -342,10 +342,10 @@ class PersistenceManager extends AbstractPersistenceManager
     }
 
     /**
-     * Returns TRUE, if an active connection to the persistence
+     * Returns true, if an active connection to the persistence
      * backend has been established, e.g. entities can be persisted.
      *
-     * @return boolean TRUE, if an connection has been established, FALSE if add object will not be persisted by the backend
+     * @return boolean true, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
     public function isConnected()

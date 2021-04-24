@@ -55,7 +55,7 @@ class RenderChildrenViewHelper extends AbstractViewHelper
      * @param array $arguments
      * @return string
      */
-    public function render(array $arguments = array())
+    public function render(array $arguments = [])
     {
         $renderingContext = $this->getWidgetRenderingContext();
         $widgetChildNodes = $this->getWidgetChildNodes();

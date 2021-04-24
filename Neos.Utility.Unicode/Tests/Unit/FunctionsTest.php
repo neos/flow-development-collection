@@ -242,10 +242,10 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function parse_urlWorksWithIPv6()
     {
         $url = 'http://[3b00:f59:1008::212:183:20]';
-        $expected = array(
+        $expected = [
             'scheme' => 'http',
             'host' => '[3b00:f59:1008::212:183:20]'
-        );
+        ];
         $this->assertEquals($expected, Functions::parse_url($url), 'parse_url() did not return the correct result for a unicode URL.');
     }
 
@@ -255,12 +255,12 @@ class FunctionsTest extends \PHPUnit\Framework\TestCase
     public function parse_urlWorksWithIPv6AndUTF8Chars()
     {
         $url = 'http://[3b00:f59:1008::212:183:20]:443/he/פרויקטים/ByYear.html';
-        $expected = array(
+        $expected = [
             'scheme' => 'http',
             'host' => '[3b00:f59:1008::212:183:20]',
             'port' => 443,
             'path' => '/he/פרויקטים/ByYear.html'
-        );
+        ];
         $this->assertEquals($expected, Functions::parse_url($url), 'parse_url() did not return the correct result for a unicode URL.');
     }
 

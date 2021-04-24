@@ -21,7 +21,7 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 interface MethodPrivilegeInterface extends PrivilegeInterface
 {
     /**
-     * Returns TRUE, if this privilege covers the given method
+     * Returns true, if this privilege covers the given method
      *
      * @param string $className
      * @param string $methodName

@@ -162,12 +162,12 @@ class ValidationTest extends FunctionalTestCase
 
         $entityIdentifier = $this->persistenceManager->getIdentifierByObject($entity);
 
-        $invalidArguments = array(
-            'entity' => array(
+        $invalidArguments = [
+            'entity' => [
                 '__identity' => $entityIdentifier,
                 'name' => 'Some other Name'
-            )
-        );
+            ]
+        ];
         $response = $this->browser->request('http://localhost/test/validation/entity/update', 'POST', $invalidArguments);
         $this->assertNotSame('An error occurred while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\EntityController->updateAction().' . PHP_EOL . 'Error for entity.relatedEntity.name:  This field must contain at least 3 characters.' . PHP_EOL, $response->getContent());
         $this->assertSame(200, $response->getStatusCode());

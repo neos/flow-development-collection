@@ -28,10 +28,10 @@ class AdvicedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuil
      * @param string $methodName Name of the method to build an interceptor for
      * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
      * @param string $targetClassName Name of the target class to build the interceptor for
-     * @return string PHP code of the interceptor
+     * @return void
      * @throws Exception
      */
-    public function build($methodName, array $interceptedMethods, $targetClassName)
+    public function build(string $methodName, array $interceptedMethods, string $targetClassName): void
     {
         if ($methodName !== '__construct') {
             throw new Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
@@ -52,7 +52,7 @@ class AdvicedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuil
 ');
             $proxyMethod->addPostParentCallCode('
         } else {
-            $this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
+            $this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = true;
             try {
             ' . $advicesCode . '
             } catch (\Exception $exception) {

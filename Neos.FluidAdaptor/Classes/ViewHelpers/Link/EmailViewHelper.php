@@ -54,15 +54,17 @@ class EmailViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
         $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
+        $this->registerArgument('email', 'string', 'The email address to be turned into a link.', true);
     }
 
     /**
-     * @param string $email The email address to be turned into a link.
      * @return string Rendered email link
      * @api
      */
-    public function render($email)
+    public function render()
     {
+        $email = $this->arguments['email'];
+
         $linkHref = 'mailto:' . $email;
         $linkText = $email;
         $tagContent = $this->renderChildren();

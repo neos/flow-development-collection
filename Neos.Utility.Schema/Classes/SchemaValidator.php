@@ -232,7 +232,8 @@ class SchemaValidator
                     $possibleTypes[] = $type['type'];
                 }
             }
-            $error = $this->createError(sprintf('None of the given schemas %s matched %s',
+            $error = $this->createError(sprintf(
+                'None of the given schemas %s matched %s',
                 implode(',', $possibleTypes),
                 is_scalar($value) ? (string)$value : gettype($value)
             ));
@@ -400,7 +401,7 @@ class SchemaValidator
      * - properties : array of keys and schemas that have to validate
      * - formatProperties : dictionary of schemas, the schemas are used to validate all keys that match the string-format
      * - patternProperties : dictionary of schemas, the schemas are used to validate all keys that match the string-pattern
-     * - additionalProperties : if FALSE is given all additionalProperties are forbidden, if a schema is given all additional properties have to match the schema
+     * - additionalProperties : if false is given all additionalProperties are forbidden, if a schema is given all additional properties have to match the schema
      *
      * @param mixed $value
      * @param array $schema
@@ -648,8 +649,12 @@ class SchemaValidator
     protected function createError(string $expectation, $value = null): Error
     {
         if ($value !== null) {
-            $error = new Error('expected: %s found: %s', 1328557141, [$expectation, $this->renderValue($value)],
-                'Validation Error');
+            $error = new Error(
+                'expected: %s found: %s',
+                1328557141,
+                [$expectation, $this->renderValue($value)],
+                'Validation Error'
+            );
         } else {
             $error = new Error($expectation, 1328557141, [], 'Validation Error');
         }

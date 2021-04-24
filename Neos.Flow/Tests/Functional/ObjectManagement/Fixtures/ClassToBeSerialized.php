@@ -39,7 +39,7 @@ class ClassToBeSerialized
     protected static $staticProperty = 'I am static';
 
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject(lazy = false)
      * @var PrototypeClassAishInterface
      */
     public $interfaceDeclaredSingletonButImplementationIsPrototype;
@@ -51,13 +51,13 @@ class ClassToBeSerialized
     public $lazyB;
 
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject(lazy = false)
      * @var SingletonClassC
      */
     public $eagerC;
 
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject(lazy = false)
      * @var PrototypeClassB
      */
     public $prototypeB;

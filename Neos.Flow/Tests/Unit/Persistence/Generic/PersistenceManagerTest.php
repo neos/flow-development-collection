@@ -219,8 +219,8 @@ class PersistenceManagerTest extends UnitTestCase
      */
     public function updateSchedulesAnObjectForPersistence()
     {
-        $object = new \ArrayObject(array('val' => '1'));
-        $persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Generic\PersistenceManager::class)->setMethods(array('isNewObject'))->getMock();
+        $object = new \ArrayObject(['val' => '1']);
+        $persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Generic\PersistenceManager::class)->setMethods(['isNewObject'])->getMock();
         $persistenceManager->expects($this->any())->method('isNewObject')->willReturn(false);
 
         $this->assertAttributeNotContains($object, 'changedObjects', $persistenceManager);

@@ -24,7 +24,7 @@ use Neos\Flow\Security\Exception\MissingConfigurationException;
 class WebRedirect extends AbstractEntryPoint
 {
     /**
-     * @Flow\Inject(lazy = FALSE)
+     * @Flow\Inject(lazy = false)
      * @Flow\Transient
      * @var UriBuilder
      */

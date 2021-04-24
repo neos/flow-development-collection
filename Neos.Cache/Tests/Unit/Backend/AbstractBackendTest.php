@@ -37,13 +37,13 @@ class AbstractBackendTest extends BaseTestCase
         $className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
         eval('
             class ' . $className . ' extends \Neos\Cache\Backend\AbstractBackend {
-                public function set($entryIdentifier, $data, array $tags = [], $lifetime = NULL) {}
-                public function get($entryIdentifier) {}
-                public function has($entryIdentifier) {}
-                public function remove($entryIdentifier) {}
+                public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = NULL) {}
+                public function get(string $entryIdentifier): string {}
+                public function has(string $entryIdentifier): bool {}
+                public function remove(string $entryIdentifier): bool {}
                 public function flush() {}
-                public function flushByTag($tag) {}
-                public function findIdentifiersByTag($tag) {}
+                public function flushByTag(string $tag): int {}
+                public function findIdentifiersByTag(string $tag): array {}
                 public function collectGarbage() {}
                 public function setSomeOption($value) {
                     $this->someOption = $value;

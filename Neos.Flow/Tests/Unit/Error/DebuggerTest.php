@@ -27,13 +27,12 @@ class DebuggerTest extends UnitTestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function renderingClosuresWorksWithoutThrowingException()
     {
         Debugger::renderDump(function () {
         }, 0);
-        // dummy assertion to avoid PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**

@@ -39,7 +39,7 @@ class EmailAddressValidator extends AbstractValidator
      * Checking syntax of input email address
      *
      * @param string $emailAddress Input string to evaluate
-     * @return boolean Returns TRUE if the $email address (input string) is valid
+     * @return boolean Returns true if the $email address (input string) is valid
      */
     protected function validEmail($emailAddress)
     {

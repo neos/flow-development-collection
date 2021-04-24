@@ -49,7 +49,7 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
         $renderingContext = $this->getMockBuilder(RenderingContext::class)->disableOriginalConstructor()->getMock();
         $renderingContext->expects($this->any())->method('getObjectManager')->willReturn($objectManager);
 
-        $this->ifAccessViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper::class, array('renderThenChild', 'renderElseChild'));
+        $this->ifAccessViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper::class, ['renderThenChild', 'renderElseChild']);
         $this->inject($this->ifAccessViewHelper, 'renderingContext', $renderingContext);
     }
 

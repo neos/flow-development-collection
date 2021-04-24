@@ -117,10 +117,10 @@ class Tools
      * Does a search and replace operation on the given file.
      *
      * A simple str_replace is used, unless $regularExpression is set
-     * to TRUE. In that case preg_replace is used. The given patterns
+     * to true. In that case preg_replace is used. The given patterns
      * are used as given, no quoting is applied!
      *
-     * In case $regularExpression is TRUE, a closure can be given for
+     * In case $regularExpression is true, a closure can be given for
      * the $replace variable. It should return a string and is given an
      * array of matches as parameter.
      *
@@ -128,7 +128,7 @@ class Tools
      * @param string|\Closure $replace
      * @param string $pathAndFilename
      * @param boolean $regularExpression
-     * @return boolean|NULL FALSE on errors, NULL on skip, TRUE on success
+     * @return boolean|NULL false on errors, NULL on skip, true on success
      */
     public static function searchAndReplace($search, $replace, $pathAndFilename, $regularExpression = false)
     {

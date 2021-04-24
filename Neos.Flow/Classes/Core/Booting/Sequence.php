@@ -35,7 +35,7 @@ class Sequence
     /**
      * @param string $identifier
      */
-    public function __construct($identifier)
+    public function __construct(string $identifier)
     {
         $this->identifier = $identifier;
     }
@@ -49,7 +49,7 @@ class Sequence
      * @param string $previousStepIdentifier The preceding step
      * @return void
      */
-    public function addStep(Step $step, $previousStepIdentifier = 'start')
+    public function addStep(Step $step, string $previousStepIdentifier = 'start')
     {
         $this->steps[$previousStepIdentifier][] = $step;
     }
@@ -61,7 +61,7 @@ class Sequence
      * @return void
      * @throws FlowException
      */
-    public function removeStep($stepIdentifier)
+    public function removeStep(string $stepIdentifier)
     {
         $removedOccurrences = 0;
         foreach ($this->steps as $previousStepIdentifier => $steps) {

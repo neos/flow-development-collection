@@ -47,10 +47,7 @@ class DocCommentParser
 
         $lines = explode(chr(10), $docComment);
         foreach ($lines as $line) {
-            $line = trim($line);
-            if ($line === '*/') {
-                break;
-            }
+            $line = trim(preg_replace('/\*\/$/', '', $line));
             if ($line !== '' && strpos($line, '* @') !== false) {
                 $this->parseTag(substr($line, strpos($line, '@')));
             } elseif (count($this->tags) === 0) {
@@ -91,7 +88,7 @@ class DocCommentParser
      * Checks if a tag with the given name exists
      *
      * @param string $tagName The tag name to check for
-     * @return boolean TRUE the tag exists, otherwise FALSE
+     * @return boolean true the tag exists, otherwise false
      */
     public function isTaggedWith($tagName)
     {

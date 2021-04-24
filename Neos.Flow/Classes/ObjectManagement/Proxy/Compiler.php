@@ -11,7 +11,6 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
@@ -31,11 +30,6 @@ class Compiler
      * @var string
      */
     const ORIGINAL_CLASSNAME_SUFFIX = '_Original';
-
-    /**
-     * @var array
-     */
-    protected $settings = [];
 
     /**
      * @var CompileTimeObjectManager
@@ -61,7 +55,7 @@ class Compiler
      * Hardcoded list of Flow sub packages which must be immune proxying for security, technical or conceptual reasons.
      * @var array
      */
-    protected $blacklistedSubPackages = ['Neos\Flow\Aop', 'Neos\Flow\Cor', 'Neos\Flow\Obj', 'Neos\Flow\Pac', 'Neos\Flow\Ref', 'Neos\Flow\Uti'];
+    protected $excludedSubPackages = ['Neos\Flow\Aop', 'Neos\Flow\Cor', 'Neos\Flow\Obj', 'Neos\Flow\Pac', 'Neos\Flow\Ref', 'Neos\Flow\Uti'];
 
     /**
      * Length of the prefix that will be checked for exclusion of proxy building.
@@ -69,7 +63,7 @@ class Compiler
      *
      * @var integer
      */
-    protected $blacklistedSubPackagesLength;
+    protected $excludedSubPackagesLength;
 
     /**
      * The final map of proxy classes that end up in the cache.
@@ -83,18 +77,7 @@ class Compiler
      */
     public function __construct()
     {
-        $this->blacklistedSubPackagesLength = strlen('Neos\Flow') + 4;
-    }
-
-    /**
-     * Injects the Flow settings
-     *
-     * @param array $settings The settings
-     * @return void
-     */
-    public function injectSettings(array $settings)
-    {
-        $this->settings = $settings;
+        $this->excludedSubPackagesLength = strlen('Neos\Flow') + 4;
     }
 
     /**
@@ -133,7 +116,7 @@ class Compiler
      * If no such proxy class has been created yet by this renderer,
      * this function will create one and register it for later use.
      *
-     * If the class is not proxable, FALSE will be returned
+     * If the class is not proxable, false will be returned
      *
      * @param string $fullClassName Name of the original class
      * @return ProxyClass|boolean
@@ -158,7 +141,7 @@ class Compiler
             return false;
         }
 
-        if (in_array(substr($fullClassName, 0, $this->blacklistedSubPackagesLength), $this->blacklistedSubPackages)) {
+        if (in_array(substr($fullClassName, 0, $this->excludedSubPackagesLength), $this->excludedSubPackages)) {
             return false;
         }
         // Annotation classes (like \Neos\Flow\Annotations\Entity) must never be proxied because that would break the Doctrine AnnotationParser
@@ -179,7 +162,7 @@ class Compiler
      * monitor or some other mechanism.
      *
      * @param string $fullClassName Name of the original class
-     * @return boolean TRUE if a cache entry exists
+     * @return boolean true if a cache entry exists
      */
     public function hasCacheEntryForClass($fullClassName)
     {
@@ -259,6 +242,16 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
             return $matches[1] . $matches[3] . ' ' . $matches[4] . $classNameSuffix;
         }, $classCode);
 
+        // comment out "final" keyword, if the method is final and if it is advised (= part of the $proxyClassCode)
+        // Note: Method name regex according to http://php.net/manual/en/language.oop5.basic.php
+        $classCode = preg_replace_callback('/^(\s*)((public|protected)\s+)?final(\s+(public|protected))?(\s+function\s+)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]+\s*\()/m', function ($matches) use ($pathAndFilename, $classNameSuffix, $proxyClassCode) {
+            // the method is not advised => don't remove the final keyword
+            if (strpos($proxyClassCode, $matches[0]) === false) {
+                return $matches[0];
+            }
+            return $matches[1] . $matches[2] . '/*final*/' . $matches[4] . $matches[6] . $matches[7];
+        }, $classCode);
+
         $classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
 
         $proxyClassCode .= "\n" . '# PathAndFilename: ' . $pathAndFilename;
@@ -293,10 +286,10 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     {
         $annotationAsString = '@\\' . get_class($annotation);
 
-        $optionNames = get_class_vars(get_class($annotation));
+        $optionDefaults = get_class_vars(get_class($annotation));
+        $optionValues = get_object_vars($annotation);
         $optionsAsStrings = [];
-        foreach ($optionNames as $optionName => $optionDefault) {
-            $optionValue = $annotation->$optionName;
+        foreach ($optionValues as $optionName => $optionValue) {
             $optionValueAsString = '';
             if (is_object($optionValue)) {
                 $optionValueAsString = self::renderAnnotation($optionValue);
@@ -314,7 +307,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
                     $optionsAsStrings[] = $optionValueAsString;
                     break;
                 default:
-                    if ($optionValue === $optionDefault) {
+                    if ($optionValue === $optionDefaults[$optionName]) {
                         break;
                     }
                     $optionsAsStrings[] = $optionName . '=' . $optionValueAsString;

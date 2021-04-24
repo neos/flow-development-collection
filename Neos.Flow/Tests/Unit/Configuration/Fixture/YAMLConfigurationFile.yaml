@@ -1,7 +1,7 @@
-configurationFileHasBeenLoaded: TRUE
+configurationFileHasBeenLoaded: true
 Neos:
   Flow:
     something: 'foo'
     '@bar': 1
-    aboolean: TRUE
+    aboolean: true
     'Foo.Bar:Baz': 'a quoted key'

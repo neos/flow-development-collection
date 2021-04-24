@@ -83,16 +83,16 @@ abstract class AbstractAuthenticationController extends ActionController
             $authenticationException = $exception;
         }
 
-        if ($this->authenticationManager->isAuthenticated()) {
-            $storedRequest = $this->securityContext->getInterceptedRequest();
-            if ($storedRequest !== null) {
-                $this->securityContext->setInterceptedRequest(null);
-            }
-            return $this->onAuthenticationSuccess($storedRequest);
-        } else {
+        if (!$this->authenticationManager->isAuthenticated()) {
             $this->onAuthenticationFailure($authenticationException);
             return call_user_func([$this, $this->errorMethodName]);
         }
+
+        $storedRequest = $this->securityContext->getInterceptedRequest();
+        if ($storedRequest !== null) {
+            $this->securityContext->setInterceptedRequest(null);
+        }
+        return $this->onAuthenticationSuccess($storedRequest);
     }
 
     /**

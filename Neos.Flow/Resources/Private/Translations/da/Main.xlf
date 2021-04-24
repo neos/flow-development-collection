@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
-			<target state="final">Autentificering kræves</target><alt-trans><target>Godkendelse kræves</target></alt-trans></trans-unit>
+			<target state="final">Autentificering kræves</target></trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
 			<target state="final">Brugernavn</target></trans-unit>

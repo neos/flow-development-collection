@@ -81,7 +81,7 @@ into the right directories, everything will just work.
 
 The directory layout inside a Flow package is as follows:
 
-Classes/*VendorName*/*PackageName*
+Classes
   This directory contains the actual source code for the package. Package authors
   are free to add (only!) class or interface files directly to this directory or add
   subdirectories to organize the content as necessary. All classes or interfaces
@@ -313,7 +313,7 @@ as dependencies, like needed PHP extensions, version constraints and other packa
 For details on the format and possibilities of that file, have a look at the `Composer`_
 documentation.
 
-Classes/*VendorName*/*PackageName*/Package.php
+Classes/Package.php
 ----------------------------------------------
 
 This file contains bootstrap code for the package. If no bootstrap code is needed,
@@ -351,13 +351,13 @@ The bootstrap code can be used to wire some signal to a slot or to register
 request handlers (as shown above), or anything else that can must be done
 early the bootstrap stage.
 
-After creating a new `Package.php`_ in your package you need to execute:
+After creating a new ``Package.php`` in your package you need to execute:
 
 .. code-block:: bash
 
 	$ ./flow flow:package:rescan
 
-Otherwise the `Package.php`_ will not be found.
+Otherwise the ``Package.php`` will not be found.
 
 Using Third Party Packages
 ==========================
@@ -366,3 +366,8 @@ When using 3rd party packages via `Composer`_ everything should work as expected
 Flow uses the `Composer`_ autoloader to load code.
 Third party packages will not have any Flow "magic" enabled by default. That means
 no AOP will work on classes from third party packages. If you need this see :ref:`sect-enabling-non-flow-packages`
+
+-----
+
+.. _Composer: https://getcomposer.org/
+.. _Packagist: https://packagist.org/

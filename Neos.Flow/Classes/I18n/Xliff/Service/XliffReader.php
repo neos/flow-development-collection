@@ -12,6 +12,8 @@ namespace Neos\Flow\I18n\Xliff\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Psr\Log\LoggerInterface;
 
 /**
  * An Xliff reader
@@ -22,7 +24,7 @@ class XliffReader
 {
     /**
      * @Flow\Inject
-     * @var \Neos\Flow\Log\LoggerInterface
+     * @var LoggerInterface
      */
     protected $i18nLogger;
 
@@ -53,7 +55,7 @@ class XliffReader
                 $offset++;
             }
         } else {
-            $this->i18nLogger->log('Given source "' . $sourcePath . '" is not a valid XLIFF file');
+            $this->i18nLogger->info('Given source "' . $sourcePath . '" is not a valid XLIFF file', LogEnvironment::fromMethodName(__METHOD__));
         }
 
         $reader->close();

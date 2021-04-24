@@ -16,9 +16,9 @@ use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Utility\ObjectAccess;
 use Neos\FluidAdaptor;
 use Neos\FluidAdaptor\Core\ViewHelper;
+use Neos\Utility\ObjectAccess;
 
 /**
  * This ViewHelper generates a <select> dropdown list for the use with a form.
@@ -146,7 +146,8 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         $this->registerUniversalTagAttributes();
         $this->registerTagAttribute('multiple', 'string', 'if set, multiple select field');
         $this->registerTagAttribute('size', 'string', 'Size of input field');
-        $this->registerTagAttribute('disabled', 'string', 'Specifies that the input element should be disabled when the page loads');
+        $this->registerTagAttribute('disabled', 'boolean', 'Specifies that the input element should be disabled when the page loads', false, false);
+        $this->registerTagAttribute('required', 'boolean', 'Specifies that the select element requires at least one selected option', false, false);
         $this->registerArgument('options', 'array', 'Associative array with internal IDs as key, and the values are displayed in the select box', true);
         $this->registerArgument('optionValueField', 'string', 'If specified, will call the appropriate getter on each object to determine the value.');
         $this->registerArgument('optionLabelField', 'string', 'If specified, will call the appropriate getter on each object to determine the label.');
@@ -213,7 +214,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
 
             $output .= $this->renderOptionTag($value, $label) . chr(10);
         } elseif (empty($options)) {
-            $options = array('' => '');
+            $options = ['' => ''];
         }
         foreach ($options as $value => $label) {
             $output .= $this->renderOptionTag($value, $label) . chr(10);
@@ -230,20 +231,32 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
     protected function getOptions()
     {
         if (!is_array($this->arguments['options']) && !($this->arguments['options'] instanceof \Traversable)) {
-            return array();
+            return [];
         }
-        $options = array();
+        $options = [];
         foreach ($this->arguments['options'] as $key => $value) {
-            if (is_object($value)) {
+            if (is_object($value) || is_array($value)) {
                 if ($this->hasArgument('optionValueField')) {
                     $key = ObjectAccess::getPropertyPath($value, $this->arguments['optionValueField']);
                     if (is_object($key)) {
                         if (method_exists($key, '__toString')) {
                             $key = (string)$key;
                         } else {
-                            throw new ViewHelper\Exception('Identifying value for object of class "' . get_class($value) . '" was an object.', 1247827428);
+                            throw new ViewHelper\Exception(
+                                sprintf(
+                                    'Identifying value at path "%s" for %s was an object.',
+                                    $this->arguments['optionValueField'],
+                                    is_object($value) ? 'object of class "' . get_class($value) . '"' : 'array'
+                                ),
+                                1247827428
+                            );
                         }
                     }
+                } elseif (is_array($value)) {
+                    throw new ViewHelper\Exception(
+                        '$optionValueField must be provided for array $options',
+                        1602432325183
+                    );
                 } elseif ($this->persistenceManager->getIdentifierByObject($value) !== null) {
                     $key = $this->persistenceManager->getIdentifierByObject($value);
                 } elseif (method_exists($value, '__toString')) {
@@ -261,6 +274,11 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
                             throw new ViewHelper\Exception('Label value for object of class "' . get_class($value) . '" was an object without a __toString() method.', 1247827553);
                         }
                     }
+                } elseif (is_array($value)) {
+                    throw new ViewHelper\Exception(
+                        '$optionLabelField must be provided for array $options',
+                        1602432476053
+                    );
                 } elseif (method_exists($value, '__toString')) {
                     $value = (string)$value;
                 } elseif ($this->persistenceManager->getIdentifierByObject($value) !== null) {
@@ -284,7 +302,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
      * Render the option tags.
      *
      * @param mixed $value Value to check for
-     * @return boolean TRUE if the value should be marked a s selected; FALSE otherwise
+     * @return boolean true if the value should be marked a s selected; false otherwise
      */
     protected function isSelected($value)
     {
@@ -313,7 +331,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         if (!is_array($value) && !($value instanceof \Traversable)) {
             return $this->getOptionValueScalar($value);
         }
-        $selectedValues = array();
+        $selectedValues = [];
         foreach ($value as $selectedValueElement) {
             $selectedValues[] = $this->getOptionValueScalar($selectedValueElement);
         }
@@ -397,10 +415,10 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         switch ($translateBy) {
             case 'label':
                 $label =  isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'value' ? $value : $label;
-                return $this->translator->translateByOriginalLabel($label, array(), null, $localeObject, $sourceName, $packageKey);
+                return $this->translator->translateByOriginalLabel($label, [], null, $localeObject, $sourceName, $packageKey);
             case 'id':
                 $id =  $prefix . (isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'label' ? $label : $value);
-                $translation = $this->translator->translateById($id, array(), null, $localeObject, $sourceName, $packageKey);
+                $translation = $this->translator->translateById($id, [], null, $localeObject, $sourceName, $packageKey);
                 return ($translation !== null) ? $translation : $label;
             default:
                 throw new ViewHelper\Exception('You can only request to translate by "label" or by "id", but asked for "' . $translateBy . '" in your SelectViewHelper tag.', 1340050647);

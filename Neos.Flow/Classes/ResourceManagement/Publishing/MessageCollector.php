@@ -17,7 +17,8 @@ use Neos\Error\Messages\Message;
 use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Warning;
 use Neos\Flow\Exception;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Message Collector
@@ -26,16 +27,33 @@ use Neos\Flow\Log\SystemLoggerInterface;
  */
 class MessageCollector
 {
+    const LOGLEVEL_MAPPING = [
+        Error::SEVERITY_ERROR => LogLevel::ERROR,
+        Error::SEVERITY_NOTICE => LogLevel::NOTICE,
+        Error::SEVERITY_OK => LogLevel::INFO,
+        Error::SEVERITY_WARNING => LogLevel::WARNING
+    ];
+
     /**
      * @var \SplObjectStorage
      */
     protected $messages;
 
     /**
-     * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
-    protected $systemLogger;
+    protected $logger;
+
+    /**
+     * Injects the (system) logger based on PSR-3.
+     *
+     * @param LoggerInterface $logger
+     * @return void
+     */
+    public function injectLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Message Collector Constructor
@@ -93,7 +111,8 @@ class MessageCollector
         foreach ($this->messages as $message) {
             /** @var Message $message */
             $this->messages->detach($message);
-            $this->systemLogger->log('ResourcePublishingMessage: ' . $message->getMessage(), $message->getSeverity());
+            $severity = self::LOGLEVEL_MAPPING[$message->getSeverity()];
+            $this->logger->log($severity, 'ResourcePublishingMessage: ' . $message->getMessage());
             if ($callback !== null) {
                 $callback($message);
             }

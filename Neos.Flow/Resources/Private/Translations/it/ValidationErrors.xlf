@@ -27,13 +27,13 @@
 			<target state="translated">Il valore specificato non è una data valida</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0} and {1}</source>
-			<target state="translated">La data specificata deve essere compresa tra {0} e {1}</target></trans-unit>
+			<target state="translated">La data data deve essere tra {0,datetime,datetime} e {1,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0}</source>
-			<target state="translated">La data specificata deve essere successiva a {0}</target></trans-unit>
+			<target state="translated">La data data deve essere successiva a {0,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0}</source>
-			<target state="translated">La data specificata deve essere precedente a {0}</target></trans-unit>
+			<target state="translated">La data data deve essere prima di {0,datetime,datetime}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
@@ -54,10 +54,10 @@
       <!-- FloatValidator -->
       <trans-unit id="1221560288" xml:space="preserve">
 				<source>A valid float number is expected</source>
-			<target state="translated">È previsto un numero virtuale valido</target><alt-trans><target>È previsto un numero float valido</target></alt-trans></trans-unit>
+			<target state="translated">È previsto un numero virtuale valido</target></trans-unit>
       <trans-unit id="1332934124" xml:space="preserve">
 				<source>"{0}" cannot be converted to a float value</source>
-			<target state="translated">"{0}" non può essere convertito in un valore virtuale</target><alt-trans><target>"{0}" non può essere convertito in un valore float</target></alt-trans></trans-unit>
+			<target state="translated">"{0}" non può essere convertito in un valore virtuale</target></trans-unit>
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>

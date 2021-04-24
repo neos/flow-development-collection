@@ -47,13 +47,11 @@ class ReflectionServiceTest extends FunctionalTestCase
      * Test for https://jira.neos.io/browse/FLOW-316
      *
      * @test
+     * @doesNotPerformAssertions
      */
     public function classSchemaCanBeBuiltForAggregateRootsWithPlainOldPhpBaseClasses()
     {
         $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\EntityExtendingPlainObject::class);
-
-        // dummy assertion to suppress PHPUnit warning
-        $this->assertTrue(true);
     }
 
     /**
@@ -274,5 +272,34 @@ class ReflectionServiceTest extends FunctionalTestCase
         $this->assertEquals(Reflection\Fixtures\AnnotatedClass::class . '|null', $annotatedNullableMethodParameters['nullable']['type']);
         $this->assertEquals(Reflection\Fixtures\AnnotatedClass::class . '|null', $reverseAnnotatedNullableMethodParameters['nullable']['type']);
         $this->assertEquals(Reflection\Fixtures\AnnotatedClass::class . '|null', $annotatedAndNativeNullableMethodParameters['nullable']['type']);
+    }
+
+    /**
+     * @test
+     */
+    public function scalarTypeHintsWorkCorrectly()
+    {
+        $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithScalarTypeHints');
+
+        $this->assertEquals('int', $methodWithTypeHintsParameters['integer']['type']);
+        $this->assertEquals('string', $methodWithTypeHintsParameters['string']['type']);
+    }
+
+    /**
+     * @test
+     */
+    public function arrayTypeHintsWorkCorrectly()
+    {
+        $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithArrayTypeHint');
+        $this->assertEquals('array', $methodWithTypeHintsParameters['array']['type']);
+    }
+
+    /**
+     * @test
+     */
+    public function annotatedArrayTypeHintsWorkCorrectly()
+    {
+        $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithArrayTypeHintAndAnnotation');
+        $this->assertEquals('array<string>', $methodWithTypeHintsParameters['array']['type']);
     }
 }
