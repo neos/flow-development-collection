@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\View;
  */
 
 use Neos\Flow\Mvc;
-use Neos\Flow\Persistence\Generic\PersistenceManager;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
