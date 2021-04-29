@@ -247,9 +247,9 @@ final class ActionResponse
     /**
      * @return string
      */
-    public function getContentType(): ?string
+    public function getContentType(): string
     {
-        return $this->contentType;
+        return $this->contentType ?? '';
     }
 
     /**
