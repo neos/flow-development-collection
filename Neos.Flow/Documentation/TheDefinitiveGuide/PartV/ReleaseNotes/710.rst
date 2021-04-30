@@ -3,9 +3,8 @@ Flow 7.1
 ========
 
 This release of Flow comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
-As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+As usual, we worked hard to keep this release as backwards compatible as possible but some of the changes might require manual
 adjustments. So please make sure to carefully read the upgrade instructions below.
-Flow 7 also increases the minimal required PHP version to **7.3**.
 
 ************
 New Features
@@ -28,6 +27,7 @@ This could be a breaking change in case you relied on the previous behavior.
 For example: Using the ``UriBuilder`` in CLI previously created URLs in the format ``/index.php/some/path``. Now it will lead to ``/some/path`` by default.
 To re-establish the former behavior, the ``FLOW_REWRITEURLS`` can be set to 0 explicitly, for example via ``putenv('FLOW_REWRITEURLS=1');``.
 
+
 FEATURE: Allow flushing caches by compiled classes
 --------------------------------------------------
 
@@ -37,11 +37,11 @@ This is required when annotations are used to change configuration, like the ``@
 Related to https://github.com/neos/flow-development-collection/pull/2421
 Related to https://github.com/neos/flow-development-collection/pull/2412
 
+
 FEATURE: Make rendering of request in exception log configurable
 ----------------------------------------------------------------
 
 With this it is possible to configure if the request data should be rendered into exception stack traces with the newly added configuration setting ``Neos.Flow.log.throwables.renderRequestInformation``.
-
 
 
 FEATURE: Cli ProgressBar is public accessible
@@ -63,11 +63,13 @@ With this it is possible to specify the option ``--generate-fusion`` for the ``k
 
 Depends on https://github.com/neos/neos-development-collection/pull/3255
 
+
 FEATURE: Add rfc6750 bearer token
 ---------------------------------
 
 Adds the bearer token class to extract a rfc6750 bearer token
 from the HTTP header.
+
 
 FEATURE: Introduce ability to add Fluid namespaces via configuration
 --------------------------------------------------------------------
@@ -84,14 +86,14 @@ This configuration is used, to add namespaces inside the ViewHelperResolver.
 
 Add a default namespace in Settings.yaml and try to use its view helpers in any template, without including the namespace there.
 
-
-
 Related issue: `#2375 <https://github.com/neos/flow-development-collection/issues/2375>`_
+
 
 FEATURE: Expose array_values() in Array eelHelper
 -------------------------------------------------
 
 related to: https://github.com/neos/neos-development-collection/issues/3287
+
 
 ********************
 Upgrade Instructions
@@ -129,8 +131,8 @@ Upgrading your Packages
 Upgrading existing code
 -----------------------
 
-There have been major API changes in Flow 7.0 which require your code to be adjusted. As with earlier changes to Flow
-that required code changes on the user side we provide a code migration tool.
+There have been only two changes in Flow 7.1 which might require your attention. Still, if you are unsure, it's never
+wrong to run migrations when updating.
 
 Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
 anything by hand::
@@ -195,3 +197,11 @@ activate URL rewriting.
 This could be a breaking change in case you relied on the previous behavior.
 For example: Using the ``UriBuilder`` in CLI previously created URLs in the format ``/index.php/some/path``. Now it will lead to ``/some/path`` by default.
 To re-establish the former behavior, the ``FLOW_REWRITEURLS`` can be set to 0 explicitly, for example via ``putenv('FLOW_REWRITEURLS=1');``.
+
+
+TASK: Make ActionResponse::getContentType non-nullable
+------------------------------------------------------
+
+This removes the nullability of the getContentType() getter on the ActionResponse, which was only added to technically fit the possibility that the value is null without thinking about the API.
+A content type of empty string is already enough to denote a "not set/unspecified" case and an additional null only makes the API more complex than needed.
+This change is not technically breaking, even though it changes a return type, since the new return type is more strict. It could be breaking if you check for a null return value only without handling an empty string case. You should use the hasContentType() method before calling the getter.
