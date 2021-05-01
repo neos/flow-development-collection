@@ -181,6 +181,22 @@ class StandaloneViewTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function variablesCanBeNested()
+    {
+        $standaloneView = new StandaloneView(null, $this->standaloneViewNonce);
+        $standaloneView->assign('type', 'thing');
+        $standaloneView->assign('flavor', 'yellow');
+        $standaloneView->assign('config', ['thing' => ['value' => ['yellow' => 'Okayish']]]);
+        $standaloneView->setTemplateSource('{config.{type}.value.{flavor}}');
+
+        $expected = 'Okayish';
+        $actual = $standaloneView->render();
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * @test
+     */
     public function partialWithDefaultLocationIsUsedIfNoPartialPathIsSetExplicitly()
     {
         $httpRequest = Request::create(new Uri('http://localhost'));
