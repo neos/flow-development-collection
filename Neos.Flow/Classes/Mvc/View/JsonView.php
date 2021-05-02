@@ -209,7 +209,7 @@ class JsonView extends AbstractView
      * Loads the configuration and transforms the value to a serializable
      * array.
      *
-     * @return array An array containing the values, ready to be JSON encoded
+     * @return array|string|int|float|null An array containing the values, ready to be JSON encoded
      * @api
      */
     protected function renderArray()
@@ -234,7 +234,7 @@ class JsonView extends AbstractView
      *
      * @param mixed $value The value to transform
      * @param array $configuration Configuration for transforming the value
-     * @return array The transformed value
+     * @return array|string|int|float|null The transformed value
      */
     protected function transformValue($value, array $configuration)
     {
@@ -269,7 +269,7 @@ class JsonView extends AbstractView
      *
      * @param object $object Object to traverse
      * @param array $configuration Configuration for transforming the given object or NULL
-     * @return array Object structure as an array
+     * @return array|string Object structure as an array
      */
     protected function transformObject($object, array $configuration)
     {
