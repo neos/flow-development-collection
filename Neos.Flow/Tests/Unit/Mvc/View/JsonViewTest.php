@@ -151,7 +151,7 @@ class JsonViewTest extends UnitTestCase
      */
     public function testTransformValue($object, $configuration, $expected, $description)
     {
-        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '', false);
+        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '');
 
         $actual = $jsonView->_call('transformValue', $object, $configuration);
 
@@ -467,5 +467,22 @@ class JsonViewTest extends UnitTestCase
 
         $unexpectedResult = json_encode($array);
         self::assertNotEquals($unexpectedResult, $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function viewObeysDateTimeFormatOption()
+    {
+        $array = ['foo' => new \DateTime('2021-05-02T13:00:00+0000')];
+
+        $this->view->setOption('datetimeFormat', 'Y-m-d H:i:s T');
+        $this->view->assign('array', $array);
+        $this->view->setVariablesToRender(['array']);
+
+        $expectedResult = json_encode(['foo' => '2021-05-02 13:00:00 GMT+0000']);
+
+        $actualResult = $this->view->render();
+        $this->assertEquals($expectedResult, $actualResult);
     }
 }

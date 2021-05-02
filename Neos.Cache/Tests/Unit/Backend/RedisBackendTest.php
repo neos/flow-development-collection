@@ -83,6 +83,11 @@ class RedisBackendTest extends BaseTestCase
             ->with('Foo_Cache:tag:some_tag')
             ->will(self::returnValue(['entry_1', 'entry_2']));
 
+        $this->redis->expects(self::exactly(2))
+            ->method('exists')
+            ->withConsecutive(['Foo_Cache:entry:entry_1'], ['Foo_Cache:entry:entry_2'])
+            ->willReturn(true);
+
         self::assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
     }
 
@@ -189,6 +194,151 @@ class RedisBackendTest extends BaseTestCase
             ->will(self::returnValue(true));
 
         self::assertEquals(true, $this->backend->has('foo'));
+    }
+
+    /**
+     * @test
+     */
+    public function transactionWillBeRetriedIfItFails()
+    {
+        $this->redis->expects($this->exactly(3))
+            ->method('multi')
+            ->willReturn($this->redis);
+
+        $this->redis->expects($this->exactly(3))
+            ->method('set')
+            ->with('Foo_Cache:entry:entry_1', 'foo')
+            ->willReturn($this->redis);
+
+        $this->redis->expects($this->exactly(3))
+            ->method('exec')
+            ->willReturnOnConsecutiveCalls(false, false, $this->redis);
+
+        $this->redis->expects($this->exactly(2))
+            ->method('discard');
+
+        $this->backend->set('entry_1', 'foo');
+    }
+
+    /**
+     * @test
+     */
+    public function exceptionIsThrownIfTransactionCannotBeCompletedAfter4Retries()
+    {
+        $this->expectExceptionCode(1594725688);
+
+        // 4 retries = 5 tries in total
+        $this->redis->expects($this->exactly(5))
+            ->method('exec')
+            ->willReturn(false);
+        $this->redis->expects($this->exactly(5))
+            ->method('discard');
+
+        $this->backend->set('entry_1', 'foo');
+    }
+
+    /**
+     * @test
+     */
+    public function setWatchesKeysDuringTransaction()
+    {
+        $this->redis->expects($this->once())
+            ->method('watch')
+            ->with(
+                [
+                    'Foo_Cache:tag:baz',
+                    'Foo_Cache:tags:foo',
+                    'Foo_Cache:entry:foo'
+                ]
+            );
+
+        $this->backend->set('foo', 'bar', ['baz']);
+    }
+
+    /**
+     * @test
+     */
+    public function tagsTtlIsCaclulatedUsingExistingKeys()
+    {
+        $this->backend->set('foo', 'bar', ['baz'], 1000);
+
+        $this->redis->expects($this->any())
+            ->method('ttl')
+            ->willReturn(2500);
+
+        $this->redis->expects($this->exactly(2))
+            ->method('expire')
+            ->withConsecutive(
+                ['Foo_Cache:tag:baz', 2500],
+                ['Foo_Cache:tags:foo', 2500]
+            )
+            ->willReturn(true);
+
+        $this->backend->set('foo', 'bar', ['baz'], 10);
+    }
+
+    /**
+     * @test
+     */
+    public function tagsWithTtlArePersistedIfNewTtlIsUnlimited()
+    {
+        $this->backend->set('foo', 'bar', ['baz'], 10);
+
+        $this->redis->expects($this->any())
+            ->method('ttl')
+            ->willReturn(10);
+
+        $this->redis->expects($this->exactly(2))
+            ->method('persist')
+            ->withConsecutive(
+                ['Foo_Cache:tag:baz'],
+                ['Foo_Cache:tags:foo']
+            )
+            ->willReturn(true);
+
+        $this->backend->set('foo', 'bar', ['baz'], 0);
+    }
+
+    /**
+     * @test
+     */
+    public function tagsKeepTheirTtlIfNewTtlIsLower()
+    {
+        $this->backend->set('foo', 'bar', ['baz'], 1000);
+
+        $this->redis->expects($this->any())
+            ->method('ttl')
+            ->willReturn(1000);
+
+        $this->redis->expects($this->exactly(2))
+            ->method('expire')
+            ->withConsecutive(
+                ['Foo_Cache:tag:baz', 1000],
+                ['Foo_Cache:tags:foo', 1000]
+            )
+            ->willReturn(true);
+
+        $this->backend->set('foo', 'bar', ['baz'], 150);
+    }
+
+    /**
+     * @test
+     */
+    public function givenLifetimeIsUsedForTagsThatDoNotExist()
+    {
+        $this->redis->expects($this->any())
+            ->method('ttl')
+            ->willReturn(-2);
+
+        $this->redis->expects($this->exactly(2))
+            ->method('expire')
+            ->withConsecutive(
+                ['Foo_Cache:tag:baz', 1000],
+                ['Foo_Cache:tags:foo', 1000]
+            )
+            ->willReturn(true);
+
+        $this->backend->set('foo', 'bar', ['baz'], 1000);
     }
 
     /**
