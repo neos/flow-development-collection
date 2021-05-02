@@ -1,0 +1,270 @@
+`7.1.0 (2021-05-02) <https://github.com/neos/flow-development-collection/releases/tag/7.1.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`!!! FEATURE: Enable URL Rewriting by default <https://github.com/neos/flow-development-collection/pull/2459>`_
+---------------------------------------------------------------------------------------------------------------
+
+This flips the default behavior for the ``FLOW_REWRITEURLS`` environment
+variable: If it is _not_ specified (or contains a value other than ``0``)
+URL rewriting will be enabled.
+
+Previously URL rewriting was enabled with a corresponding ``SetEnv`` configuration
+for Apache.
+For other servers and CLI a corresponding configuration (or a
+``putenv('FLOW_REWRITEURLS=1')`` call at runtime) was required in order to
+activate URL rewriting.
+
+This could be a breaking change in case you relied on the previous behavior.
+For example: Using the ``UriBuilder`` in CLI previously created URLs in the format ``/index.php/some/path``. Now it will lead to ``/some/path`` by default.
+To re-establish the former behavior, the ``FLOW_REWRITEURLS`` can be set to 0 explicitly, for example via ``putenv('FLOW_REWRITEURLS=1');``.
+
+* Packages: ``Flow``
+
+`FEATURE: Allow flushing caches by compiled classes <https://github.com/neos/flow-development-collection/pull/2461>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This adds a signal to the proxy compiler when classes have been compiled and a slot to the a new ``AnnotationsCacheFlusher`` class that checks the compiled classes for existing annotations and flushes matching configured caches.
+This is required when annotations are used to change configuration, like the ``@Flow\\Route`` or ``@Flow\\Privilege`` annotations.
+
+Related to https://github.com/neos/flow-development-collection/pull/2421
+Related to https://github.com/neos/flow-development-collection/pull/2412
+
+* Packages: ``Flow``
+
+`FEATURE: Make rendering of request in exception log configurable <https://github.com/neos/flow-development-collection/pull/2359>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+With this it is possible to configure if the request data should be rendered into exception stack traces with the newly added configuration setting ``Neos.Flow.log.throwables.renderRequestInformation``.
+
+* Related: `#2360 <https://github.com/neos/flow-development-collection/issues/2360>`_ 
+
+* Packages: ``Flow``
+
+`FEATURE: Cli ProgressBar is public accessible <https://github.com/neos/flow-development-collection/pull/2460>`_
+----------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+The access modifier for ``getProgressBar()`` in ``ConsoleOutput.php`` is now public.
+
+I'm using reflection to access the progressbar in a project to use symfonie's time estimation for a long running command. I think there shouldn't be much harm in just making ``getProgressBar()`` public.
+
+Maybe this could go into the 7.1 release?
+
+`Symfony Progressbar Docs <https://symfony.com/doc/current/components/console/helpers/progressbar.html>`_
+
+
+* Packages: ``Flow``
+
+`FEATURE: Add fusion template support <https://github.com/neos/flow-development-collection/pull/2365>`_
+-------------------------------------------------------------------------------------------------------
+
+With this it is possible to specify the option ``--generate-fusion`` for the ``kickstart:actioncontroller`` command, which will generate ``.fusion`` files instead of Fluid templates and a ``Root.fusion`` in the according folders.
+
+Depends on https://github.com/neos/neos-development-collection/pull/3255
+
+* Packages: ``Flow`` ``Kickstarter``
+
+`FEATURE: Add rfc6750 bearer token <https://github.com/neos/flow-development-collection/pull/2434>`_
+----------------------------------------------------------------------------------------------------
+
+Adds the bearer token class to extract a rfc6750 bearer token
+from the HTTP header.
+
+* Packages: ``Flow``
+
+`FEATURE: Introduce ability to add Fluid namespaces via configuration <https://github.com/neos/flow-development-collection/pull/2378>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+Added the ability to add Fluid namespaces via configuration.
+
+**How I did it**
+By adding a new configuration option:
+```
+Neos:
+  FluidAdaptor:
+    namespaces:
+```
+This configuration is used, to add namespaces inside the ViewHelperResolver.
+
+**How to verify it**
+Add a default namespace in Settings.yaml and try to use its view helpers in any template, without including the namespace there.
+
+* Resolves: `#2375 <https://github.com/neos/flow-development-collection/issues/2375>`_ 
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`FEATURE: Expose array_values() in Array eelHelper <https://github.com/neos/flow-development-collection/pull/2392>`_
+--------------------------------------------------------------------------------------------------------------------
+
+related to: https://github.com/neos/neos-development-collection/issues/3287
+
+* Packages: ``Flow`` ``Eel``
+
+`BUGFIX: Ignore annotation properties that start with underscore when rendering <https://github.com/neos/flow-development-collection/pull/2406>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+This fixes an error when using annotations that use internal public properties starting with an underscore, like zircote/swagger-php. This is only a workaround for the more generic problem of rendering annotations that contain publicly accessible internal state. Optimally rendering annotations for proxies would only be based on the information provided by the original annotation, like PHP 8 Attributes do. Alternatively docblocks would not be altered in proxies at all and just copied, but this would potentially be a breaking change.
+
+* Resolves: `#2387 <https://github.com/neos/flow-development-collection/issues/2387>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Support nested fluid variables by using the original fluid method <https://github.com/neos/flow-development-collection/pull/2444>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+With this patch it's possible to use the fluid variable nesting feature as well as a specific accessor per element on the path.
+
+**How to use it**
+
+Create a fluid template with nested variables that access an array value:
+```html
+{config.{type}.value.{flavor}}
+```
+Assign an array and the two keys:
+```php
+$this->view->assign('type', 'thing');
+$this->view->assign('flavor', 'yellow');
+$this->view->assign('config', ['thing' => ['value' => ['yellow' => 'Okayish']]]);
+```
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Null coalesce content type in ActionResponse getter <https://github.com/neos/flow-development-collection/pull/2458>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+The current PHP typehint of ``: string`` will cause this method to throw an error when ``setContentType()`` was not called before with a valid string. In Flow 7 we lifted the typehint to ``?string``, but IMO that does only complicate the API unnecessarily, because ``''`` is not a valid content type any way and hence indistinguishable from "did not set content type" for any useful means and purposes.
+Hence I suggest using null coalescing instead (and changing the 7+ typehint back to ``string``, though that would be breaking).
+
+See also discussion in https://github.com/neos/flow-development-collection/pull/2180#discussion_r550197400
+
+* Packages: ``Flow``
+
+`BUGFIX: Clarify regex syntax for Uri request pattern <https://github.com/neos/flow-development-collection/pull/2470>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`BUGFIX: ActionResponse contains negotiated media type as content-type <https://github.com/neos/flow-development-collection/pull/2180>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+This sets the negotiated media type from the Controller in the ``ActionResponse`` if nothing was set in the action.
+
+Follow-up to #2005
+
+* Packages: ``Flow``
+
+`BUGFIX: Add TTL to tags in RedisBackend <https://github.com/neos/flow-development-collection/pull/2052>`_
+----------------------------------------------------------------------------------------------------------
+
+Previously the tags did not expire with their key, so they were never removed from Redis. Now the same lifetime as their corresponding entries is added to tags set by the RedisBackend
+
+This is a continuation of #1194. To prevent race conditions when two processes write to the same cache tags at the same time, the list of keys that will be written is `watched <https://redis.io/commands/watch>``_ before and during the transaction. If the key is modified during that time, the transaction ``exec` will fail and the TTL is calculated again (up to 4 retries).
+
+* Packages: ``Flow``
+
+`TASK: Make JsonView datetime format configurable <https://github.com/neos/flow-development-collection/pull/2445>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This allows to override the badly chosen default format of DateTimeInterface::ISO8601 which is not really compatible to ISO8601 in the JsonView options ``datetimeFormat`` - see https://www.php.net/manual/en/class.datetimeinterface.php#datetime.constants.iso8601
+
+* Packages: ``Flow``
+
+`TASK: Make ActionResponse::getContentType non-nullable <https://github.com/neos/flow-development-collection/pull/2471>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This removes the nullability of the ``getContentType()`` getter on the ``ActionResponse``, which was only added to technically fit the possibility that the value is ``null`` without thinking about the API.
+A content type of empty string is already enough to denote a "not set/unspecified" case and an additional ``null`` only makes the API more complex than needed.
+This change is not technically breaking, even though it changes a return type, since the new return type is more strict. It could be breaking if you check for a ``null`` return value only without handling an empty string case. You should use the ``hasContentType()`` method before calling the getter.
+
+Follow-up to `#2458 <https://github.com/neos/flow-development-collection/issues/2458>``_which is a follow-up to ``#2180 <https://github.com/neos/flow-development-collection/issues/2180>`_
+
+* Packages: ``Flow``
+
+`TASK: Remove generic persistence left-overs <https://github.com/neos/flow-development-collection/pull/2464>`_
+--------------------------------------------------------------------------------------------------------------
+
+This removes some left-over namespace imports and the signal/slot connection for ``allObjectsPersisted`` on the generic persistence.
+
+* Packages: ``Flow``
+
+`TASK: Tweak polyfill replacements <https://github.com/neos/flow-development-collection/pull/2469>`_
+----------------------------------------------------------------------------------------------------
+
+The replacements added according to the symfony/polyfill README (and
+tweaked recently to actually appear in the split manifest) lead to an
+installation issue (`#9834 <https://github.com/composer/composer/issues/9834>`_)
+
+Thus this removes the PHP 5 polyfills (those not being replaced should
+not be an issue) to fix that. Also, since we require PHP 7.1, the 7.2
+polyfill must not be replaced.
+
+* Packages: ``Flow`` ``Utility.Unicode``
+
+`TASK: Add test that covers signal arguments by reference passing <https://github.com/neos/flow-development-collection/pull/2465>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+These tests verify that our current signal/slot dispatching works with byReference arguments.
+
+* Related to: `#2412 <https://github.com/neos/flow-development-collection/issues/2412>`_
+
+* Packages: ``Flow``
+
+`TASK: Replace deprecated Guzzle functions <https://github.com/neos/flow-development-collection/pull/2455>`_
+------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#2383 <https://github.com/neos/flow-development-collection/issues/2383>`_
+
+* Packages: ``Flow``
+
+`TASK: Support header title for table output in console <https://github.com/neos/flow-development-collection/pull/2419>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+The `Symfony Console Table components <https://symfony.com/doc/current/components/console/helpers/table.html>`_ supports settings a header title for a table.
+
+So should we :-)
+
+* Packages: ``Flow``
+
+`TASK: Fix unit tests <https://github.com/neos/flow-development-collection/pull/2453>`_
+---------------------------------------------------------------------------------------
+
+Fixes the ``RequestInformationHelperTest`` that fails since `441b61b4b5b7a9b9340f77ea992c323a40d2f13c <https://github.com/neos/flow-development-collection/commit/441b61b4b5b7a9b9340f77ea992c323a40d2f13c>`_
+
+* Packages: ``Flow``
+
+`TASK: JsonView code cleanup <https://github.com/neos/flow-development-collection/pull/2439>`_
+----------------------------------------------------------------------------------------------
+
+* Some code cleanup
+* usage of NullCoalescing
+* Hardening the JSON encoding
+
+ no further functional changes
+
+* Packages: ``Flow``
+
+`TASK: Persistent caches will have a defaultLifetime of 0 <https://github.com/neos/flow-development-collection/pull/2346>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+Persistent caches, even non-file backends, should be pretty persistent. This is the way.
+
+* Related to: `#2345 <https://github.com/neos/flow-development-collection/issues/2345>`_ 
+
+* Packages: ``Flow``
+
+`TASK: Use GH actions for builds <https://github.com/neos/flow-development-collection/pull/2273>`_
+--------------------------------------------------------------------------------------------------
+
+Still WIP, needs to be backported to lowest maintained branch once finished, but I want to get psalm running too and that's not in <6.0
+
+* Packages: ``.github``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/7.0.5...7.1.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
