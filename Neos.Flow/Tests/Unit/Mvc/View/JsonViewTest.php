@@ -481,7 +481,7 @@ class JsonViewTest extends UnitTestCase
         $this->view->assign('array', $array);
         $this->view->setVariablesToRender(['array']);
 
-        $expectedResult = json_encode(['foo' => '2021-05-02 13:00:00 UTC']);
+        $expectedResult = json_encode(['foo' => '2021-05-02 13:00:00 GMT+00:00']);
 
         $actualResult = $this->view->render();
         $this->assertEquals($expectedResult, $actualResult);
