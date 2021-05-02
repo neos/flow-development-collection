@@ -26,6 +26,11 @@
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
+  <file src="Packages/Framework/Neos.Cache/Classes/Backend/RedisBackend.php">
+    <TypeDoesNotContainType occurrences="1">
+      <code>$transactionResult === false</code>
+    </TypeDoesNotContainType>
+  </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Frontend/PhpFrontend.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string|bool</code>
@@ -1248,11 +1253,6 @@
       <code>SetHeaderComponent</code>
     </UndefinedClass>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/AbstractController.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$mediaType</code>
-    </PossiblyNullArgument>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/ActionController.php">
     <PossiblyNullPropertyAssignmentValue occurrences="2">
       <code>null</code>
@@ -1449,14 +1449,6 @@
     <UnsafeInstantiation occurrences="1">
       <code>new static($options)</code>
     </UnsafeInstantiation>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Mvc/View/JsonView.php">
-    <InvalidReturnStatement occurrences="1">
-      <code>$object-&gt;format(\DateTime::ISO8601)</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>array</code>
-    </InvalidReturnType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/ViewConfigurationManager.php">
     <PossiblyNullIterator occurrences="1">
@@ -1726,7 +1718,6 @@
       <code>$uniqueConstraint-&gt;name</code>
       <code>$uniqueConstraint-&gt;options</code>
     </InvalidPropertyFetch>
-    <InvalidScalarArgument occurrences="1"/>
     <LessSpecificImplementedReturnType occurrences="1">
       <code>array</code>
     </LessSpecificImplementedReturnType>
@@ -1739,14 +1730,6 @@
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$primaryTable['name']</code>
     </PossiblyUndefinedArrayOffset>
-    <ReferenceConstraintViolation occurrences="1">
-      <code>$mapping</code>
-    </ReferenceConstraintViolation>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/PersistenceManager.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$this-&gt;entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
-    </ArgumentTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Query.php">
     <ImplementedReturnTypeMismatch occurrences="1">
@@ -1787,10 +1770,6 @@
     </PossiblyInvalidArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Service.php">
-    <ArgumentTypeCoercion occurrences="2">
-      <code>$allMetaData</code>
-      <code>$allMetaData</code>
-    </ArgumentTypeCoercion>
     <PossiblyNullReference occurrences="1">
       <code>getAllClassNames</code>
     </PossiblyNullReference>

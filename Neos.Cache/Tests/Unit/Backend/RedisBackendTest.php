@@ -245,11 +245,9 @@ class RedisBackendTest extends BaseTestCase
         $this->redis->expects($this->once())
             ->method('watch')
             ->with(
-                [
-                    'Foo_Cache:tag:baz',
-                    'Foo_Cache:tags:foo',
-                    'Foo_Cache:entry:foo'
-                ]
+                'Foo_Cache:tag:baz',
+                'Foo_Cache:tags:foo',
+                'Foo_Cache:entry:foo'
             );
 
         $this->backend->set('foo', 'bar', ['baz']);
