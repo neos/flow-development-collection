@@ -475,7 +475,7 @@ class JsonViewTest extends UnitTestCase
      */
     public function viewObeysDateTimeFormatOption()
     {
-        $array = ['foo' => new DateTime('2021-05-02T13:00:00+0000')];
+        $array = ['foo' => new \DateTime('2021-05-02T13:00:00+0000')];
 
         $this->view->setOption('datetimeFormat', 'Y-m-d H:i:s T');
         $this->view->assign('array', $array);
