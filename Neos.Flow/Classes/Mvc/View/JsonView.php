@@ -29,7 +29,8 @@ class JsonView extends AbstractView
      * @var array
      */
     protected $supportedOptions = [
-        'jsonEncodingOptions' => [0, 'Bitmask of supported Encoding options. See http://php.net/manual/en/json.constants.php', 'integer']
+        'jsonEncodingOptions' => [0, 'Bitmask of supported Encoding options. See https://php.net/manual/en/json.constants.php', 'integer'],
+        'datetimeFormat' => [\DateTime::ISO8601, 'The datetime format to use for all DateTime objects. See https://www.php.net/manual/en/class.datetime.php#datetime.synopsis', 'string']
     ];
 
     /**
@@ -273,7 +274,7 @@ class JsonView extends AbstractView
     protected function transformObject($object, array $configuration)
     {
         if ($object instanceof \DateTimeInterface) {
-            return $object->format(\DateTime::ISO8601);
+            return $object->format($this->getOption('datetimeFormat'));
         } else {
             $propertyNames = ObjectAccess::getGettablePropertyNames($object);
 
