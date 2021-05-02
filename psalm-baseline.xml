@@ -1734,6 +1734,7 @@
       <code>$uniqueConstraint-&gt;name</code>
       <code>$uniqueConstraint-&gt;options</code>
     </InvalidPropertyFetch>
+    <InvalidScalarArgument occurrences="1"/>
     <LessSpecificImplementedReturnType occurrences="1">
       <code>array</code>
     </LessSpecificImplementedReturnType>
@@ -1746,6 +1747,14 @@
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$primaryTable['name']</code>
     </PossiblyUndefinedArrayOffset>
+    <ReferenceConstraintViolation occurrences="1">
+      <code>$mapping</code>
+    </ReferenceConstraintViolation>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/PersistenceManager.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$this-&gt;entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
+    </ArgumentTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/PersistenceManager.php">
     <NullableReturnStatement occurrences="2">
@@ -1797,6 +1806,10 @@
     </PossiblyInvalidArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Service.php">
+    <ArgumentTypeCoercion occurrences="2">
+      <code>$allMetaData</code>
+      <code>$allMetaData</code>
+    </ArgumentTypeCoercion>
     <PossiblyNullReference occurrences="1">
       <code>getAllClassNames</code>
     </PossiblyNullReference>
