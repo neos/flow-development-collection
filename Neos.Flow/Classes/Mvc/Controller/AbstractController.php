@@ -89,6 +89,13 @@ abstract class AbstractController implements ControllerInterface
     protected $supportedMediaTypes = ['text/html'];
 
     /**
+     * The media type that was negotiated by this controller
+     *
+     * @var string
+     */
+    protected $negotiatedMediaType;
+
+    /**
      * Initializes the controller
      *
      * This method should be called by the concrete processRequest() method.
@@ -113,6 +120,7 @@ abstract class AbstractController implements ControllerInterface
         if ($mediaType === null) {
             $this->throwStatus(406);
         }
+        $this->negotiatedMediaType = $mediaType;
         if ($request->getFormat() === '') {
             $this->request->setFormat(MediaTypes::getFilenameExtensionFromMediaType($mediaType));
         }
@@ -176,7 +184,7 @@ abstract class AbstractController implements ControllerInterface
      * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
      * @param string $packageKey Key of the package containing the controller to forward to. May also contain the sub package, concatenated with backslash (Vendor.Foo\Bar\Baz). If not specified, the current package is assumed.
      * @param array $arguments Arguments to pass to the target action
-     * @return void
+     * @psalm-return never-returns
      * @throws ForwardException
      * @see redirect()
      * @api
@@ -306,6 +314,7 @@ abstract class AbstractController implements ControllerInterface
      * @param mixed $uri Either a string representation of a URI or a \Neos\Flow\Http\Uri object
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
+     * @psalm-return never-returns
      * @throws UnsupportedRequestTypeException If the request is not a web request
      * @throws StopActionException
      * @api
@@ -332,6 +341,7 @@ abstract class AbstractController implements ControllerInterface
      * @param integer $statusCode The HTTP status code
      * @param string $statusMessage A custom HTTP status message
      * @param string $content Body content which further explains the status
+     * @psalm-return never-returns
      * @throws StopActionException
      * @api
      */

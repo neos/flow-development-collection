@@ -35,12 +35,8 @@
     "replace": {
         "typo3/eel": "self.version",
         "typo3/flow": "self.version",
-        "symfony/polyfill-php54": "*",
-        "symfony/polyfill-php55": "*",
-        "symfony/polyfill-php56": "*",
         "symfony/polyfill-php70": "*",
         "symfony/polyfill-php71": "*",
-        "symfony/polyfill-php72": "*",
         "symfony/polyfill-mbstring": "*",
         "typo3/kickstart": "self.version",
         "neos/cache": "self.version",
