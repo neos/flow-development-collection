@@ -243,10 +243,12 @@ class ResourceCommandController extends CommandController
                 if ($mediaPackagePresent) {
                     $assets = $assetRepository->findByResource($resource);
                     if ($assets !== null) {
+                        /** @psalm-suppress PossiblyNullArrayOffset */
                         $relatedAssets[$resource] = $assets;
                     }
                     $thumbnails = $thumbnailRepository->findByResource($resource);
                     if ($assets !== null) {
+                        /** @psalm-suppress PossiblyNullArrayOffset */
                         $relatedThumbnails[$resource] = $thumbnails;
                     }
                 }
@@ -258,8 +260,11 @@ class ResourceCommandController extends CommandController
             $this->outputLine();
 
             foreach ($brokenResources as $resource) {
+                /** @psalm-suppress PossiblyNullReference */
                 $this->outputLine('%s (%s) from "%s" collection', [$resource->getFilename(), $resource->getSha1(), $resource->getCollectionName()]);
+                /** @psalm-suppress PossiblyNullArgument */
                 if (isset($relatedAssets[$resource])) {
+                    /** @psalm-suppress PossiblyNullArrayOffset */
                     foreach ($relatedAssets[$resource] as $asset) {
                         $this->outputLine(' -> %s (%s)', [get_class($asset), $asset->getIdentifier()]);
                     }
@@ -275,12 +280,15 @@ class ResourceCommandController extends CommandController
                     $brokenAssetCounter = 0;
                     $brokenThumbnailCounter = 0;
                     foreach ($brokenResources as $resource) {
+                        /** @psalm-suppress PossiblyNullReference */
                         $this->outputLine('- delete %s (%s) from "%s" collection', [
                             $resource->getFilename(),
                             $resource->getSha1(),
                             $resource->getCollectionName()
                         ]);
+                        /** @psalm-suppress PossiblyNullReference */
                         $resource->disableLifecycleEvents();
+                        /** @psalm-suppress PossiblyNullArgument */
                         $this->resourceRepository->remove($resource);
                         if (isset($relatedAssets[$resource])) {
                             foreach ($relatedAssets[$resource] as $asset) {

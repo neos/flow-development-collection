@@ -3,7 +3,7 @@
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2021-04-09
+This reference was automatically generated from code on 2021-04-25
 
 
 .. _`Flow Annotation Reference: After`:
@@ -263,6 +263,10 @@ Arguments
 * ``lazy`` (boolean): Whether the dependency should be injected instantly or if a lazy dependency
   proxy should be injected instead
 
+* ``name`` (string): Optional object name
+  This is useful if the object name does not match the class name of the object to be injected:
+  (at)Inject(name="Some.Package:Some.Virtual.Object")
+
 
 
 
@@ -356,6 +360,29 @@ layer of Flow. For Doctrine based persistence this is ignored.
 
 :Applicable to: Class, Property
 
+
+
+
+
+.. _`Flow Annotation Reference: MapRequestBody`:
+
+MapRequestBody
+--------------
+
+Used to map the request body to a single action argument.
+
+Normally, Flow will map the request body into the arguments as an associative array. With this it is possible to
+map the full body into a single argument without wrapping the request body.
+
+:Applicable to: Method
+
+
+
+
+Arguments
+*********
+
+* ``argumentName`` (string): Name of the argument to map the request body into. (Can be given as anonymous argument.)
 
 
 

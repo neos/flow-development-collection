@@ -11,7 +11,6 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
-use Neos\Flow\Http\Headers;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -52,10 +51,23 @@ abstract class RequestInformationHelper
      */
     public static function getScriptRequestPath(ServerRequestInterface $request): string
     {
-        // FIXME: Shouldn't this be a simple dirname on getScriptRequestPathAndFilename
+        // This is not a simple `dirname()` because on Windows it will end up with backslashes in the URL
         $requestPathSegments = explode('/', self::getScriptRequestPathAndFilename($request));
         array_pop($requestPathSegments);
         return implode('/', $requestPathSegments) . '/';
+    }
+
+    /**
+     * Constructs a relative path for this request,
+     * that is the path segments left after removing the baseUri.
+     *
+     * @param ServerRequestInterface $request
+     * @return string
+     */
+    public static function getRelativeRequestPath(ServerRequestInterface $request): string
+    {
+        $baseUri = self::generateBaseUri($request);
+        return UriHelper::getRelativePath($baseUri, $request->getUri());
     }
 
     /**
@@ -99,15 +111,11 @@ abstract class RequestInformationHelper
     {
         $renderedHeaders = '';
         $headers = $request->getHeaders();
-        if ($headers instanceof Headers) {
-            $renderedHeaders .= preg_replace('/Authorization:[^\r\n]+/', 'Authorization: ****', $headers->__toString());
-        } else {
-            foreach (array_keys($headers) as $name) {
-                if ($name === 'Authorization') {
-                    $renderedHeaders .= 'Authorization: ****';
-                } else {
-                    $renderedHeaders .= $request->getHeaderLine($name);
-                }
+        foreach (array_keys($headers) as $name) {
+            if ($name === 'Authorization') {
+                $renderedHeaders .= 'Authorization: ****';
+            } else {
+                $renderedHeaders .= $request->getHeaderLine($name);
             }
         }
 
@@ -128,5 +136,33 @@ abstract class RequestInformationHelper
         }
 
         return '';
+    }
+
+    /**
+     * Extract header key/value pairs from a $_SERVER array.
+     *
+     * @param array $server
+     * @return array
+     */
+    public static function extractHeadersFromServerVariables(array $server): array
+    {
+        $headerFields = [];
+        if (isset($server['PHP_AUTH_USER']) && isset($server['PHP_AUTH_PW'])) {
+            $headerFields['Authorization'] = 'Basic ' . base64_encode($server['PHP_AUTH_USER'] . ':' . $server['PHP_AUTH_PW']);
+        }
+
+        foreach ($server as $name => $value) {
+            if (strpos($name, 'HTTP_') === 0) {
+                $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+                $headerFields[$name] = $value;
+            } elseif ($name == 'REDIRECT_REMOTE_AUTHORIZATION' && !isset($headerFields['Authorization'])) {
+                $headerFields['Authorization'] = $value;
+            } elseif (in_array($name, ['CONTENT_TYPE', 'CONTENT_LENGTH'])) {
+                $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $name))));
+                $headerFields[$name] = $value;
+            }
+        }
+
+        return $headerFields;
     }
 }

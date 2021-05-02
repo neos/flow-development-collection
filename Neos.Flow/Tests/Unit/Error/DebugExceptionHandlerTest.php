@@ -104,6 +104,6 @@ Third line'
         $expectedResult = ['subject' => $expectedSubject, 'body' => $expectedBody];
         $actualResult = $debugExceptionHandler->_call('splitExceptionMessage', $message);
 
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 }

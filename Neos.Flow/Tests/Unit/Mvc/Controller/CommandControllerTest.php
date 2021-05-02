@@ -15,6 +15,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\CommandManager;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Cli\Request;
+use Neos\Flow\Cli\Response;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
@@ -31,26 +32,26 @@ class CommandControllerTest extends UnitTestCase
     protected $commandController;
 
     /**
-     * @var ReflectionService|\PHPUnit_Framework_MockObject_MockObject
+     * @var ReflectionService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockReflectionService;
 
     /**
-     * @var CommandManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CommandManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockCommandManager;
 
     /**
-     * @var ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockConsoleOutput;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->commandController = $this->getAccessibleMock(CommandController::class, ['resolveCommandMethodName', 'callCommandMethod']);
 
         $this->mockCommandManager = $this->getMockBuilder(CommandManager::class)->disableOriginalConstructor()->getMock();
-        $this->mockCommandManager->expects($this->any())->method('getCommandMethodParameters')->will($this->returnValue([]));
+        $this->mockCommandManager->expects(self::any())->method('getCommandMethodParameters')->will(self::returnValue([]));
         $this->inject($this->commandController, 'commandManager', $this->mockCommandManager);
 
         $this->mockConsoleOutput = $this->getMockBuilder(ConsoleOutput::class)->disableOriginalConstructor()->getMock();
@@ -60,12 +61,12 @@ class CommandControllerTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      */
     public function processRequestThrowsExceptionIfGivenRequestIsNoCliRequest()
     {
-        $mockRequest = $this->createMock(Mvc\RequestInterface::class);
-        $mockResponse = $this->createMock(Mvc\ResponseInterface::class);
+        $this->expectException(\Error::class);
+        $mockRequest = $this->createMock(Mvc\ActionRequest::class);
+        $mockResponse = new Mvc\ActionResponse();
 
         $this->commandController->processRequest($mockRequest, $mockResponse);
     }
@@ -76,9 +77,9 @@ class CommandControllerTest extends UnitTestCase
     public function processRequestMarksRequestDispatched()
     {
         $mockRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $mockResponse = $this->getMockBuilder(Mvc\ResponseInterface::class)->getMock();
+        $mockResponse = $this->getMockBuilder(Response::class)->getMock();
 
-        $mockRequest->expects($this->once())->method('setDispatched')->with(true);
+        $mockRequest->expects(self::once())->method('setDispatched')->with(true);
 
         $this->commandController->processRequest($mockRequest, $mockResponse);
     }
@@ -89,15 +90,15 @@ class CommandControllerTest extends UnitTestCase
     public function processRequestResetsCommandMethodArguments()
     {
         $mockRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $mockResponse = $this->getMockBuilder(Mvc\ResponseInterface::class)->getMock();
+        $mockResponse = $this->getMockBuilder(Response::class)->getMock();
 
         $mockArguments = new Arguments();
         $mockArguments->addNewArgument('foo');
         $this->inject($this->commandController, 'arguments', $mockArguments);
 
-        $this->assertCount(1, $this->commandController->_get('arguments'));
+        self::assertCount(1, $this->commandController->_get('arguments'));
         $this->commandController->processRequest($mockRequest, $mockResponse);
-        $this->assertCount(0, $this->commandController->_get('arguments'));
+        self::assertCount(0, $this->commandController->_get('arguments'));
     }
 
     /**
@@ -105,7 +106,7 @@ class CommandControllerTest extends UnitTestCase
      */
     public function outputWritesGivenStringToTheConsoleOutput()
     {
-        $this->mockConsoleOutput->expects($this->once())->method('output')->with('some text');
+        $this->mockConsoleOutput->expects(self::once())->method('output')->with('some text');
         $this->commandController->_call('output', 'some text');
     }
 
@@ -114,7 +115,7 @@ class CommandControllerTest extends UnitTestCase
      */
     public function outputReplacesArgumentsInGivenString()
     {
-        $this->mockConsoleOutput->expects($this->once())->method('output')->with('%2$s %1$s', ['text', 'some']);
+        $this->mockConsoleOutput->expects(self::once())->method('output')->with('%2$s %1$s', ['text', 'some']);
         $this->commandController->_call('output', '%2$s %1$s', ['text', 'some']);
     }
 }

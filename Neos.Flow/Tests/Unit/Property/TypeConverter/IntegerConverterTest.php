@@ -28,7 +28,7 @@ class IntegerConverterTest extends UnitTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converter = new IntegerConverter();
     }
@@ -38,9 +38,9 @@ class IntegerConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['integer', 'string', 'DateTime'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        $this->assertEquals('integer', $this->converter->getSupportedTargetType(), 'Target type does not match');
-        $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+        self::assertEquals(['integer', 'string', 'DateTime'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        self::assertEquals('integer', $this->converter->getSupportedTargetType(), 'Target type does not match');
+        self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
     /**
@@ -48,7 +48,7 @@ class IntegerConverterTest extends UnitTestCase
      */
     public function convertFromCastsStringToInteger()
     {
-        $this->assertSame(15, $this->converter->convertFrom('15', 'integer'));
+        self::assertSame(15, $this->converter->convertFrom('15', 'integer'));
     }
 
     /**
@@ -57,7 +57,7 @@ class IntegerConverterTest extends UnitTestCase
     public function convertFromCastsDateTimeToInteger()
     {
         $dateTime = new \DateTime();
-        $this->assertSame($dateTime->format('U'), $this->converter->convertFrom($dateTime, 'integer'));
+        self::assertSame($dateTime->format('U'), $this->converter->convertFrom($dateTime, 'integer'));
     }
 
     /**
@@ -66,7 +66,7 @@ class IntegerConverterTest extends UnitTestCase
     public function convertFromDoesNotModifyIntegers()
     {
         $source = 123;
-        $this->assertSame($source, $this->converter->convertFrom($source, 'integer'));
+        self::assertSame($source, $this->converter->convertFrom($source, 'integer'));
     }
 
     /**
@@ -74,7 +74,7 @@ class IntegerConverterTest extends UnitTestCase
      */
     public function convertFromReturnsNullIfEmptyStringSpecified()
     {
-        $this->assertNull($this->converter->convertFrom('', 'integer'));
+        self::assertNull($this->converter->convertFrom('', 'integer'));
     }
 
     /**
@@ -82,7 +82,7 @@ class IntegerConverterTest extends UnitTestCase
      */
     public function convertFromReturnsAnErrorIfSpecifiedStringIsNotNumeric()
     {
-        $this->assertInstanceOf(FlowError\Error::class, $this->converter->convertFrom('not numeric', 'integer'));
+        self::assertInstanceOf(FlowError\Error::class, $this->converter->convertFrom('not numeric', 'integer'));
     }
 
     /**
@@ -90,7 +90,7 @@ class IntegerConverterTest extends UnitTestCase
      */
     public function canConvertFromShouldReturnTrueForANumericStringSource()
     {
-        $this->assertTrue($this->converter->canConvertFrom('15', 'integer'));
+        self::assertTrue($this->converter->canConvertFrom('15', 'integer'));
     }
 
     /**
@@ -98,7 +98,7 @@ class IntegerConverterTest extends UnitTestCase
      */
     public function canConvertFromShouldReturnTrueForAnIntegerSource()
     {
-        $this->assertTrue($this->converter->canConvertFrom(123, 'integer'));
+        self::assertTrue($this->converter->canConvertFrom(123, 'integer'));
     }
 
     /**
@@ -106,7 +106,7 @@ class IntegerConverterTest extends UnitTestCase
      */
     public function canConvertFromShouldReturnTrueForAnEmptyValue()
     {
-        $this->assertTrue($this->converter->canConvertFrom('', 'integer'));
+        self::assertTrue($this->converter->canConvertFrom('', 'integer'));
     }
 
     /**
@@ -114,7 +114,7 @@ class IntegerConverterTest extends UnitTestCase
      */
     public function canConvertFromShouldReturnTrueForANullValue()
     {
-        $this->assertTrue($this->converter->canConvertFrom(null, 'integer'));
+        self::assertTrue($this->converter->canConvertFrom(null, 'integer'));
     }
 
     /**
@@ -122,7 +122,7 @@ class IntegerConverterTest extends UnitTestCase
      */
     public function canConvertFromShouldReturnTrueForADateTimeValue()
     {
-        $this->assertTrue($this->converter->canConvertFrom(new \DateTime(), 'integer'));
+        self::assertTrue($this->converter->canConvertFrom(new \DateTime(), 'integer'));
     }
 
     /**
@@ -130,6 +130,6 @@ class IntegerConverterTest extends UnitTestCase
      */
     public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray()
     {
-        $this->assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted('myString'));
+        self::assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted('myString'));
     }
 }

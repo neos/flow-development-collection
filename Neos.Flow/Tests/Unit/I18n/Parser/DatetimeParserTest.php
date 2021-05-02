@@ -48,7 +48,7 @@ class DatetimeParserTest extends UnitTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->sampleLocale = new I18n\Locale('en_GB');
         $this->sampleLocalizedLiterals = require(__DIR__ . '/../Fixtures/MockLocalizedLiteralsArray.php');
@@ -96,7 +96,7 @@ class DatetimeParserTest extends UnitTestCase
     {
         $parser = $this->getAccessibleMock(I18n\Parser\DatetimeParser::class, ['dummy']);
         $result = $parser->_call('doParsingInStrictMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
-        $this->assertEquals($expectedParsedDatetime, $result);
+        self::assertEquals($expectedParsedDatetime, $result);
     }
 
     /**
@@ -107,7 +107,7 @@ class DatetimeParserTest extends UnitTestCase
     {
         $parser = $this->getAccessibleMock(I18n\Parser\DatetimeParser::class, ['dummy']);
         $result = $parser->_call('doParsingInStrictMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
-        $this->assertEquals(false, $result);
+        self::assertEquals(false, $result);
     }
 
     /**
@@ -118,7 +118,7 @@ class DatetimeParserTest extends UnitTestCase
     {
         $parser = $this->getAccessibleMock(I18n\Parser\DatetimeParser::class, ['dummy']);
         $result = $parser->_call('doParsingInLenientMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
-        $this->assertEquals($expectedParsedDatetime, $result);
+        self::assertEquals($expectedParsedDatetime, $result);
     }
 
     /**
@@ -129,6 +129,6 @@ class DatetimeParserTest extends UnitTestCase
     {
         $parser = $this->getAccessibleMock(I18n\Parser\DatetimeParser::class, ['dummy']);
         $result = $parser->_call('doParsingInLenientMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
-        $this->assertEquals($expectedParsedDatetime, $result);
+        self::assertEquals($expectedParsedDatetime, $result);
     }
 }

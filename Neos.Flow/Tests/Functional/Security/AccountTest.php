@@ -31,7 +31,7 @@ class AccountTest extends FunctionalTestCase
      */
     protected $account;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -44,7 +44,7 @@ class AccountTest extends FunctionalTestCase
     public function freshAccountIsActive()
     {
         $this->account->setExpirationDate(null);
-        $this->assertTrue($this->account->isActive());
+        self::assertTrue($this->account->isActive());
     }
 
     /**
@@ -53,7 +53,7 @@ class AccountTest extends FunctionalTestCase
     public function expiredAccountIsInActive()
     {
         $this->account->setExpirationDate((new \DateTime("now"))->sub(new \DateInterval("PT1H")));
-        $this->assertFalse($this->account->isActive());
+        self::assertFalse($this->account->isActive());
     }
 
     /**
@@ -62,6 +62,6 @@ class AccountTest extends FunctionalTestCase
     public function notYetExpiredAccountIsInActive()
     {
         $this->account->setExpirationDate((new \DateTime("now"))->add(new \DateInterval("PT1H")));
-        $this->assertTrue($this->account->isActive());
+        self::assertTrue($this->account->isActive());
     }
 }

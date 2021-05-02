@@ -12,6 +12,7 @@ namespace Neos\Flow\Mvc\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
@@ -370,7 +371,7 @@ class Route
     public function matches(RouteContext $routeContext)
     {
         $httpRequest = $routeContext->getHttpRequest();
-        $routePath = $httpRequest->getRelativePath();
+        $routePath = RequestInformationHelper::getRelativeRequestPath($httpRequest);
         $this->matchResults = null;
         $this->matchedTags = RouteTags::createEmpty();
         if ($this->uriPattern === null) {
@@ -521,7 +522,7 @@ class Route
             unset($routeValues['@format']);
         }
 
-        // add query string
+        $queryString = '';
         if (count($routeValues) > 0) {
             $routeValues = Arrays::removeEmptyElementsRecursively($routeValues);
             $routeValues = $this->persistenceManager->convertObjectsToIdentityArrays($routeValues);
@@ -533,10 +534,9 @@ class Route
                 $routeValues = $internalArguments;
             }
             $queryString = http_build_query($routeValues, null, '&');
-            if ($queryString !== '') {
-                $resolvedUriPath .= strpos($resolvedUriPath, '?') !== false ? '&' . $queryString : '?' . $queryString;
-            }
         }
+
+        $this->resolvedUriConstraints = $this->resolvedUriConstraints->withQueryString($queryString);
         $this->resolvedUriConstraints = $this->resolvedUriConstraints->withPath($resolvedUriPath);
         return true;
     }

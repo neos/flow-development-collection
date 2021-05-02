@@ -16,3 +16,27 @@ Neos:
       routes: []
       view:
         defaultImplementation: Neos\Flow\Mvc\View\SimpleTemplateView
+
+      flashMessages:
+        # Defines FlashMessage "namespaces" with custom storage implementations
+        #
+        # The only required option is the "storage" class name, which has to implement the FlashMessageStorageInterface
+        # "storageOptions" can be passed, i.e. to change the "sessionKey" that is used to persist FlashMessages
+        #
+        # By default, the FlashMessages are stored in a session cookie, but this can be changed here:
+        containers:
+          'default':
+            position: 'end'
+            storage: 'Neos\Flow\Mvc\FlashMessage\Storage\FlashMessageSessionStorage'
+
+          # Custom FlashMessage containers can be added here:
+          # Example:
+          #   'customFlashMessages':
+          #     storage: 'Neos\Flow\Mvc\FlashMessage\Storage\FlashMessageCookieStorage'
+          #     storageOptions:
+          #       cookieName: 'Neos_Flow_FlashMessages_My_Custom'
+          #     requestPatterns:
+          #       'SomeControllers':
+          #         pattern: 'ControllerObjectName'
+          #         patternOptions:
+          #           'controllerObjectNamePattern': 'Some\Package\Controller\.*'

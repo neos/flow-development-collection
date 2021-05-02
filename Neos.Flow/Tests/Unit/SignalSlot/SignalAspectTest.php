@@ -27,12 +27,12 @@ class SignalAspectTest extends UnitTestCase
     public function forwardSignalToDispatcherForwardsTheSignalsMethodArgumentsToTheDispatcher()
     {
         $mockJoinPoint = $this->getMockBuilder(JoinPoint::class)->disableOriginalConstructor()->getMock();
-        $mockJoinPoint->expects($this->any())->method('getClassName')->will($this->returnValue('SampleClass'));
-        $mockJoinPoint->expects($this->any())->method('getMethodName')->will($this->returnValue('emitSignal'));
-        $mockJoinPoint->expects($this->any())->method('getMethodArguments')->will($this->returnValue(['arg1' => 'val1', 'arg2' => ['val2']]));
+        $mockJoinPoint->expects(self::any())->method('getClassName')->will(self::returnValue('SampleClass'));
+        $mockJoinPoint->expects(self::any())->method('getMethodName')->will(self::returnValue('emitSignal'));
+        $mockJoinPoint->expects(self::any())->method('getMethodArguments')->will(self::returnValue(['arg1' => 'val1', 'arg2' => ['val2']]));
 
         $mockDispatcher = $this->createMock(Dispatcher::class);
-        $mockDispatcher->expects($this->once())->method('dispatch')->with('SampleClass', 'signal', ['arg1' => 'val1', 'arg2' => ['val2']]);
+        $mockDispatcher->expects(self::once())->method('dispatch')->with('SampleClass', 'signal', ['arg1' => 'val1', 'arg2' => ['val2']]);
 
         $aspect = $this->getAccessibleMock(SignalAspect::class, ['dummy']);
         $aspect->_set('dispatcher', $mockDispatcher);

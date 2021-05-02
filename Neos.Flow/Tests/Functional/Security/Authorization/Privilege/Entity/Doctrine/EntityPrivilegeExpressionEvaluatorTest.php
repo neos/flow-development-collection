@@ -31,7 +31,7 @@ class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -75,8 +75,8 @@ class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
         $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $sqlFilter = new SqlFilter($entityManager);
 
-        $this->assertEquals(Fixtures\RestrictableEntity::class, $result['entityType']);
-        $this->assertEquals($expectedSqlCode, $result['conditionGenerator']->getSql($sqlFilter, $entityManager->getClassMetadata(Fixtures\RestrictableEntity::class), 't0'));
+        self::assertEquals(Fixtures\RestrictableEntity::class, $result['entityType']);
+        self::assertEquals($expectedSqlCode, $result['conditionGenerator']->getSql($sqlFilter, $entityManager->getClassMetadata(Fixtures\RestrictableEntity::class), 't0'));
     }
 
     /**
@@ -92,8 +92,8 @@ class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
         $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $sqlFilter = new SqlFilter($entityManager);
 
-        $this->assertEquals(TestEntityC::class, $result['entityType']);
-        $this->assertEquals(
+        self::assertEquals(TestEntityC::class, $result['entityType']);
+        self::assertEquals(
             '(t0.persistence_object_identifier IN (SELECT n0_.manytoonetorelatedentityc AS sclr_0 FROM neos_flow_tests_functional_security_fixtures_testentityd n0_ WHERE n0_.persistence_object_identifier = \'c1ed7ad7-3618-4e0d-bcf8-c849a505dfe1\'))',
             $result['conditionGenerator']->getSql($sqlFilter, $entityManager->getClassMetadata(TestEntityC::class), 't0')
         );
@@ -112,8 +112,8 @@ class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
         $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $sqlFilter = new SqlFilter($entityManager);
 
-        $this->assertEquals(TestEntityC::class, $result['entityType']);
-        $this->assertEquals(
+        self::assertEquals(TestEntityC::class, $result['entityType']);
+        self::assertEquals(
             '(t0.persistence_object_identifier IN (SELECT flow_fixtures_testentityc FROM neos_flow_tests_functiona_09cce_manytomanytorelatedentityd_join WHERE flow_fixtures_testentityd = \'c1ed7ad7-3618-4e0d-bcf8-c849a505dfe1\'))',
             $result['conditionGenerator']->getSql($sqlFilter, $entityManager->getClassMetadata(TestEntityC::class), 't0')
         );

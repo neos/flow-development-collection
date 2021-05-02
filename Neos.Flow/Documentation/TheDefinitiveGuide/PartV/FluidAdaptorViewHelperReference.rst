@@ -3,7 +3,7 @@
 FluidAdaptor ViewHelper Reference
 =================================
 
-This reference was automatically generated from code on 2021-04-09
+This reference was automatically generated from code on 2021-04-25
 
 
 .. _`FluidAdaptor ViewHelper Reference: f:debug`:
@@ -2153,7 +2153,7 @@ arguments.
 Arguments
 *********
 
-* ``arguments`` (array, *optional*)
+* ``arguments`` (array, *optional*): Arguments to pass to the rendering
 
 
 
@@ -2721,15 +2721,15 @@ Make sure to include jQuery and jQuery UI in the HTML, like that:
 Arguments
 *********
 
-* ``objects`` (Neos\Flow\Persistence\QueryResultInterface)
-
-* ``for`` (string)
-
-* ``searchProperty`` (string)
-
-* ``configuration`` (array, *optional*)
-
 * ``widgetId`` (string, *optional*): Unique identifier of the widget instance
+
+* ``objects`` (Neos\Flow\Persistence\QueryResultInterface): Objects
+
+* ``for`` (string): for
+
+* ``searchProperty`` (string): Property to search
+
+* ``configuration`` (array, *optional*): Widget configuration
 
 
 
@@ -2753,18 +2753,6 @@ Arguments
 * ``additionalAttributes`` (array, *optional*): Additional tag attributes. They will be added directly to the resulting HTML tag.
 
 * ``data`` (array, *optional*): Additional data-* attributes. They will each be added with a "data-" prefix.
-
-* ``action`` (string, *optional*): Target action
-
-* ``arguments`` (array, *optional*): Arguments
-
-* ``section`` (string, *optional*): The anchor to be added to the URI
-
-* ``format`` (string, *optional*): The requested format, e.g. ".html
-
-* ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise.
-
-* ``includeWidgetContext`` (boolean, *optional*): true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
 
 * ``class`` (string, *optional*): CSS class(es) for this element
 
@@ -2792,6 +2780,18 @@ Arguments
 
 * ``target`` (string, *optional*): Specifies where to open the linked document
 
+* ``action`` (string, *optional*): Target action
+
+* ``arguments`` (array, *optional*): Arguments
+
+* ``section`` (string, *optional*): The anchor to be added to the URI
+
+* ``format`` (string, *optional*): The requested format, e.g. ".html"
+
+* ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise
+
+* ``includeWidgetContext`` (boolean, *optional*): true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
+
 
 
 
@@ -2810,13 +2810,13 @@ This ViewHelper renders a Pagination of objects.
 Arguments
 *********
 
-* ``objects`` (Neos\Flow\Persistence\QueryResultInterface)
-
-* ``as`` (string)
-
-* ``configuration`` (array, *optional*)
-
 * ``widgetId`` (string, *optional*): Unique identifier of the widget instance
+
+* ``objects`` (Neos\Flow\Persistence\QueryResultInterface): Objects
+
+* ``as`` (string): as
+
+* ``configuration`` (array, *optional*): Widget configuration
 
 
 
@@ -2837,15 +2837,15 @@ This ViewHelper can be used inside widget templates in order to render URIs poin
 Arguments
 *********
 
-* ``action`` (string, *optional*): Target action
+* ``action`` (string): Target action
 
 * ``arguments`` (array, *optional*): Arguments
 
 * ``section`` (string, *optional*): The anchor to be added to the URI
 
-* ``format`` (string, *optional*): The requested format, e.g. ".html
+* ``format`` (string, *optional*): The requested format, e.g. ".html"
 
-* ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise.
+* ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise
 
 * ``includeWidgetContext`` (boolean, *optional*): true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
 

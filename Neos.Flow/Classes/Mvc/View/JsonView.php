@@ -198,7 +198,7 @@ class JsonView extends AbstractView
      */
     public function render()
     {
-        $this->controllerContext->getResponse()->setHeader('Content-Type', 'application/json');
+        $this->controllerContext->getResponse()->setContentType('application/json');
         $propertiesToRender = $this->renderArray();
         $options = $this->getOption('jsonEncodingOptions');
         return json_encode($propertiesToRender, $options);
