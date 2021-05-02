@@ -40,7 +40,7 @@ class Algorithms
             return strtolower(uuid_create(UUID_TYPE_RANDOM));
         }
 
-        return (string)Uuid::uuid4();
+        return Uuid::uuid4()->toString();
     }
 
     /**
