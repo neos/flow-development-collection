@@ -699,6 +699,9 @@ controllers will be authenticated by the default username/password provider.
 |                      |                                               |                                          | ``cidrPattern: 'fd9e:21a7:a92c:2323::/96'``                      |
 +----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
 
+.. note:: The pattern for ``Uri`` will have slashes escaped and is amended with ``^…$``
+  automatically, so do not include those in your pattern!
+
 Authentication entry points
 ---------------------------
 
@@ -1594,12 +1597,12 @@ firewall configuration will look like:
             'Some.Package:AllowedUris':
               pattern:  'Uri'
               patternOptions:
-                'uriPattern': '\/some\/url\/.*'
+                'uriPattern': '/some/url/.*'
               interceptor:  'AccessGrant'
             'Some.Package:BlockedUris':
               pattern:  'Uri'
               patternOptions:
-                'uriPattern': '\/some\/url\/blocked.*'
+                'uriPattern': '/some/url/blocked.*'
               interceptor:  'AccessDeny'
             'Some.Package:BlockedHosts':
               pattern:  'Host'

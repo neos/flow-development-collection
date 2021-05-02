@@ -245,12 +245,17 @@ final class ActionResponse
         return $this->statusCode ?? 200;
     }
 
+    public function hasContentType(): bool
+    {
+        return !empty($this->contentType);
+    }
+
     /**
      * @return string
      */
     public function getContentType(): ?string
     {
-        return $this->contentType;
+        return $this->contentType ?? '';
     }
 
     /**
@@ -272,7 +277,7 @@ final class ActionResponse
             $actionResponse->setContent($this->content);
         }
 
-        if ($this->contentType !== null) {
+        if ($this->hasContentType()) {
             $actionResponse->setContentType($this->contentType);
         }
 
@@ -316,7 +321,7 @@ final class ActionResponse
             $httpResponse = $httpResponse->withBody($this->content);
         }
 
-        if ($this->contentType !== null) {
+        if ($this->hasContentType()) {
             $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);
         }
 
