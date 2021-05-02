@@ -57,13 +57,8 @@
         "phpunit/phpunit": "~7.1"
     },
     "replace": {
-        "symfony/polyfill-php54": "*",
-        "symfony/polyfill-php55": "*",
-        "symfony/polyfill-php56": "*",
         "symfony/polyfill-php70": "*",
-        "symfony/polyfill-php71": "*",
-        "symfony/polyfill-php72": "*",
-        "symfony/polyfill-mbstring": "*"
+        "symfony/polyfill-php71": "*"
     },
     "suggest": {
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
