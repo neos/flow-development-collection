@@ -21,13 +21,6 @@
       <code>\APCUIterator</code>
     </UndefinedDocblockClass>
   </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Backend/MemcachedBackend.php">
-    <PossiblyInvalidArgument occurrences="3">
-      <code>$port</code>
-      <code>$value</code>
-      <code>$value</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/PdoBackend.php">
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>null</code>
@@ -1160,15 +1153,6 @@
       <code>$dotPosition</code>
     </PossiblyFalseArgument>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/I18n/Translator.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>string</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="2">
-      <code>null</code>
-      <code>null</code>
-    </NullableReturnStatement>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/I18n/Xliff/Model/FileAdapter.php">
     <InvalidScalarArgument occurrences="1">
       <code>LOG_DEBUG</code>
@@ -1258,10 +1242,6 @@
     </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/ActionResponse.php">
-    <PropertyTypeCoercion occurrences="2">
-      <code>$content</code>
-      <code>stream_for()</code>
-    </PropertyTypeCoercion>
     <UndefinedClass occurrences="4">
       <code>ReplaceHttpResponseComponent</code>
       <code>ReplaceHttpResponseComponent</code>
@@ -1595,8 +1575,7 @@
     </ArgumentTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Package.php">
-    <UndefinedClass occurrences="3">
-      <code>Persistence\Generic\PersistenceManager</code>
+    <UndefinedClass occurrences="2">
       <code>Tests\FunctionalTestCase</code>
       <code>Tests\FunctionalTestRequestHandler</code>
     </UndefinedClass>
@@ -1756,12 +1735,6 @@
       <code>$this-&gt;entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
     </ArgumentTypeCoercion>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/PersistenceManager.php">
-    <NullableReturnStatement occurrences="2">
-      <code>$this-&gt;entityManager-&gt;find($objectType, $identifier)</code>
-      <code>$this-&gt;entityManager-&gt;getReference($objectType, $identifier)</code>
-    </NullableReturnStatement>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Query.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>Comparison|string</code>
@@ -1783,14 +1756,6 @@
     <PropertyTypeCoercion occurrences="1">
       <code>$entityManager</code>
     </PropertyTypeCoercion>
-    <UndefinedDocblockClass occurrences="1">
-      <code>Constraint</code>
-    </UndefinedDocblockClass>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/QueryResult.php">
-    <NullableReturnStatement occurrences="1">
-      <code>(isset($rows[0])) ? $rows[0] : null</code>
-    </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Repository.php">
     <ArgumentTypeCoercion occurrences="1">
