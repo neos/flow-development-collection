@@ -155,7 +155,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 
         do {
             // Watch the given keys for changes so if the TTL is changed during the transaction it can be retried
-            $this->redis->watch($keysToWatch);
+            $this->redis->watch(...$keysToWatch);
 
             foreach ($redisTags as $i => $tag) {
                 $expire = $this->calculateRemainingLifetimeForKey($tag['key'], $lifetime);
