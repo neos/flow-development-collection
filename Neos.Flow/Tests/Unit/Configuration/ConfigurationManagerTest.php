@@ -649,7 +649,7 @@ EOD;
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => ['settings' => ['foo' => 'bar']]
         ];
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfiguration', 'constructConfigurationCachePath']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfiguration', 'constructConfigurationCachePath', 'loadConfigurationCache']);
         $configurationManager->setTemporaryDirectoryPath($temporaryDirectoryPath);
         $configurationManager->expects(self::any())->method('constructConfigurationCachePath')->willReturn($cachedConfigurationsPathAndFilename);
         $configurationManager->_set('configurations', $mockConfigurations);
