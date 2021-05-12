@@ -20,16 +20,16 @@ class PolicyConfigurationSource implements ConfigurationSourceInterface
 {
 
     /**
-     * An absolute file path to store configuration caches in. Used only for Testing context
+     * @var YamlSource
+     */
+    private $yamlSource;
+
+    /**
+     * An absolute file path to store configuration caches in. If null no cache will be active.
      *
      * @var string
      */
     protected $temporaryDirectoryPath;
-
-    /**
-     * @var YamlSource
-     */
-    private $yamlSource;
 
     public function __construct(YamlSource $yamlSource)
     {

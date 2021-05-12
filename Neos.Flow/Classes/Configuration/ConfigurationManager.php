@@ -175,6 +175,8 @@ class ConfigurationManager
     public function setTemporaryDirectoryPath(string $temporaryDirectoryPath): void
     {
         $this->temporaryDirectoryPath = $temporaryDirectoryPath;
+
+        $this->loadConfigurationCache();
     }
 
     /**
@@ -214,6 +216,12 @@ class ConfigurationManager
         }
         if (!is_callable($configurationSource)) {
             throw new \InvalidArgumentException(sprintf('Specified invalid configuration source of type "%s" while registering custom configuration type "%s".', is_object($configurationSource) ? get_class($configurationSource) : gettype($configurationSource), $configurationType), 1617895964);
+        }
+
+        // if the configuration was already registered and the there is an unprocessed loaded configuration, the configuration needs to be loaded again
+        // on the other hand, if there is a procesed configuration loaded, but no unprocessed configuration, the config must be from the cache and is assumed to be valid
+        if (isset($this->configurationSources[$configurationType]) && isset($this->unprocessedConfiguration[$configurationType])) {
+            unset($this->configurations[$configurationType], $this->unprocessedConfiguration[$configurationType]);
         }
         $this->configurationSources[$configurationType] = $configurationSource;
     }
@@ -257,6 +265,7 @@ class ConfigurationManager
     {
         if (empty($this->configurations[$configurationType])) {
             $this->loadConfiguration($configurationType, $this->packages);
+            $this->processConfiguration($configurationType);
         }
 
         $configuration = $this->configurations[$configurationType] ?? [];
@@ -311,15 +320,16 @@ class ConfigurationManager
      */
     protected function loadConfiguration(string $configurationType, array $packages)
     {
+        if (!isset($this->configurationSources[$configurationType])) {
+            throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1339166495);
+        }
+
         if (!isset($this->configurations[$configurationType])) {
             $this->configurations[$configurationType] = [];
         }
 
         $this->cacheNeedsUpdate = true;
 
-        if (!isset($this->configurationSources[$configurationType])) {
-            throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1339166495);
-        }
         $this->configurations[$configurationType] = $this->configurationSources[$configurationType]($packages, $this->context);
         $this->unprocessedConfiguration[$configurationType] = $this->configurations[$configurationType];
     }
@@ -329,7 +339,7 @@ class ConfigurationManager
      *
      * @return boolean If cached configuration was loaded or not
      */
-    public function loadConfigurationCache(): bool
+    protected function loadConfigurationCache(): bool
     {
         $cachePathAndFilename = $this->constructConfigurationCachePath();
         $configurations = @include $cachePathAndFilename;
@@ -364,6 +374,12 @@ class ConfigurationManager
             }
             OpcodeCacheHelper::clearAllActive($cachePathAndFilename);
         }
+    }
+
+    protected function processConfiguration(string $configurationType){
+        $config = null;
+        eval('$config = '.$this->replaceVariablesInPhpString(var_export($this->unprocessedConfiguration[$configurationType], true)).';');
+        $this->configurations[$configurationType] = $config;
     }
 
     /**

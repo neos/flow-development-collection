@@ -208,23 +208,17 @@ class Scripts
         $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
 
         $configurationManager = new ConfigurationManager($context);
+        $configurationManager->setPackages($packageManager->getFlowPackages());
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
-        $yamlSource = new YamlSource();
 
+        $yamlSource = new YamlSource();
         $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, new DefaultConfigurationSource($yamlSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES));
         $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, new ObjectsConfigurationSource($yamlSource));
         $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, new RoutesConfigurationSource($yamlSource, $configurationManager));
-
         $policyConfigurationSource = new PolicyConfigurationSource($yamlSource);
         $policyConfigurationSource->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
         $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $policyConfigurationSource);
-
         $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, new SettingsConfigurationSource($yamlSource));
-
-        $configurationManager->setPackages($packageManager->getFlowPackages());
-        if ($configurationManager->loadConfigurationCache() === false) {
-            $configurationManager->refreshConfiguration();
-        }
 
         // Manually inject settings into the PackageManager as the package manager is excluded from the proxy class building
         $flowSettings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
@@ -249,7 +243,7 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
-        $throwableStorage = self::initializeExceptionStorage($bootstrap, $settings);
+        $throwableStorage = self::initializeExceptionStorage($bootstrap);
         $bootstrap->setEarlyInstance(ThrowableStorageInterface::class, $throwableStorage);
 
         /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
@@ -265,16 +259,17 @@ class Scripts
      * Initialize the exception storage
      *
      * @param Bootstrap $bootstrap
-     * @param array $settings The Neos.Flow settings
      * @return ThrowableStorageInterface
      * @throws FlowException
      * @throws InvalidConfigurationTypeException
      */
-    protected static function initializeExceptionStorage(Bootstrap $bootstrap, array $settings): ThrowableStorageInterface
+    protected static function initializeExceptionStorage(Bootstrap $bootstrap): ThrowableStorageInterface
     {
+        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
+        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
+
         $storageClassName = $settings['log']['throwables']['storageClass'] ?? FileStorage::class;
         $storageOptions = $settings['log']['throwables']['optionsByImplementation'][$storageClassName] ?? [];
-        $renderRequestInformation = $settings['log']['throwables']['renderRequestInformation'] ?? true;
 
 
         if (!in_array(ThrowableStorageInterface::class, class_implements($storageClassName, true))) {
@@ -291,7 +286,7 @@ class Scripts
             return Debugger::getBacktraceCode($backtrace, false, true);
         });
 
-        $throwableStorage->setRequestInformationRenderer(function () use ($renderRequestInformation) {
+        $throwableStorage->setRequestInformationRenderer(static function () {
             // The following lines duplicate FileStorage::__construct(), which is intended to provide a renderer
             // to alternative implementations of ThrowableStorageInterface
 
@@ -308,9 +303,8 @@ class Scripts
             }
 
             $request = $requestHandler->getHttpRequest();
-            if ($renderRequestInformation) {
-                $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestHeaders($request) : '[request was empty]') . PHP_EOL;
-            }
+            // TODO: Sensible error output
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestHeaders($request) : '[request was empty]') . PHP_EOL;
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;

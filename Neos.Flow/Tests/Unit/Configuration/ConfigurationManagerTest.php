@@ -53,10 +53,11 @@ class ConfigurationManagerTest extends UnitTestCase
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => [],
         ];
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration', 'processConfiguration']);
         $configurationManager->_set('configurations', $initialConfigurations);
 
         $configurationManager->expects(self::once())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
+        $configurationManager->expects(self::once())->method('processConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
         $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Foo');
     }
 
@@ -86,10 +87,11 @@ class ConfigurationManagerTest extends UnitTestCase
     {
         $packages = ['SomePackage' => $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock()];
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration', 'processConfiguration']);
         $configurationManager->_set('configurations', [ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => []]);
         $configurationManager->setPackages($packages);
         $configurationManager->expects(self::once())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $packages);
+        $configurationManager->expects(self::once())->method('processConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
 
         $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'SomePackage');
     }
@@ -101,10 +103,11 @@ class ConfigurationManagerTest extends UnitTestCase
     {
         $packages = ['SomePackage' => $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock()];
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration', 'processConfiguration']);
         $configurationManager->_set('configurations', [ConfigurationManager::CONFIGURATION_TYPE_OBJECTS => []]);
         $configurationManager->setPackages($packages);
         $configurationManager->expects(self::once())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, $packages);
+        $configurationManager->expects(self::once())->method('processConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS);
 
         $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'SomePackage');
     }
@@ -118,10 +121,11 @@ class ConfigurationManagerTest extends UnitTestCase
             ConfigurationManager::CONFIGURATION_TYPE_ROUTES => ['foo' => 'bar'],
         ];
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration', 'processConfiguration']);
         $configurationManager->_set('configurations', $initialConfigurations);
 
         $configurationManager->expects(self::atLeastOnce())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_CACHES);
+        $configurationManager->expects(self::atLeastOnce())->method('processConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_CACHES);
 
         $configurationTypes = [
             ConfigurationManager::CONFIGURATION_TYPE_ROUTES,
