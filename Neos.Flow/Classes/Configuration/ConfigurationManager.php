@@ -378,10 +378,10 @@ class ConfigurationManager
 
     /**
      * Generate configuration with environment variables replaced without modifying or loading the cache
-     * 
      * @param string $configurationType
      */
-    protected function processConfiguration(string $configurationType) {
+    protected function processConfiguration(string $configurationType)
+    {
         $config = null;
         eval('$config = '.$this->replaceVariablesInPhpString(var_export($this->unprocessedConfiguration[$configurationType], true)).';');
         $this->configurations[$configurationType] = $config;
