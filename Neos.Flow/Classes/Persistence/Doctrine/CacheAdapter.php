@@ -56,9 +56,9 @@ class CacheAdapter extends CacheProvider
      * Fetches an entry from the cache.
      *
      * @param string $id The id of the cache entry to fetch.
-     * @return mixed The cached data or false, if no cache entry exists for the given id.
+     * @return mixed|false The cached data or FALSE, if no cache entry exists for the given id.
      */
-    public function fetch($id)
+    protected function doFetch($id);
     {
         return $this->cache->get($this->convertCacheIdentifier($id));
     }
@@ -67,9 +67,10 @@ class CacheAdapter extends CacheProvider
      * Tests if an entry exists in the cache.
      *
      * @param string $id The cache id of the entry to check for.
-     * @return boolean true if a cache entry exists for the given cache id, false otherwise.
+     *
+     * @return bool TRUE if a cache entry exists for the given cache id, FALSE otherwise.
      */
-    public function contains($id)
+    protected function doContains($id);
     {
         return $this->cache->has($this->convertCacheIdentifier($id));
     }
@@ -77,12 +78,14 @@ class CacheAdapter extends CacheProvider
     /**
      * Puts data into the cache.
      *
-     * @param string $id The cache id.
-     * @param mixed $data The cache entry/data.
-     * @param int $lifeTime The cache lifetime. If != 0, sets a specific lifetime for this cache entry (0 => infinite lifeTime).
-     * @return boolean true if the entry was successfully stored in the cache, false otherwise.
+     * @param string $id       The cache id.
+     * @param string $data     The cache entry/data.
+     * @param int    $lifeTime The lifetime. If != 0, sets a specific lifetime for this
+     *                           cache entry (0 => infinite lifeTime).
+     *
+     * @return bool TRUE if the entry was successfully stored in the cache, FALSE otherwise.
      */
-    public function save($id, $data, $lifeTime = 0)
+    protected function doSave($id, $data, $lifeTime = 0)
     {
         $this->cache->set($this->convertCacheIdentifier($id), $data, [], $lifeTime);
     }
@@ -91,11 +94,23 @@ class CacheAdapter extends CacheProvider
      * Deletes a cache entry.
      *
      * @param string $id The cache id.
-     * @return boolean true if the cache entry was successfully deleted, false otherwise.
+     *
+     * @return bool TRUE if the cache entry was successfully deleted, FALSE otherwise.
      */
-    public function delete($id)
+    protected function doDelete($id)
     {
         return $this->cache->remove($this->convertCacheIdentifier($id));
+    }
+
+    /**
+     * Flushes all cache entries.
+     *
+     * @return bool TRUE if the cache entries were successfully flushed, FALSE otherwise.
+     */
+    protected function doFlush()
+    {
+        $this->cache->flush();
+        return true;
     }
 
     /**
@@ -114,7 +129,7 @@ class CacheAdapter extends CacheProvider
      *
      * @return array|null An associative array with server's statistics if available, NULL otherwise.
      */
-    public function getStats()
+    protected function doGetStats()
     {
         return null;
     }
