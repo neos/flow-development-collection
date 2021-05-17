@@ -11,7 +11,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\CacheProvider;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Flow\Security\Context;
@@ -19,7 +19,7 @@ use Neos\Flow\Security\Context;
 /**
  * Cache adapter to use Flow caches as Doctrine cache
  */
-class CacheAdapter implements Cache
+class CacheAdapter extends CacheProvider
 {
     /**
      * @var FrontendInterface
