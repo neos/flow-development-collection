@@ -115,7 +115,7 @@ class ConfigurationManager
     /**
      * Defines which Configuration Type is processed by which logic
      *
-     * @var ConfigurationSourceInterface[]
+     * @var ConfigurationSourceInterface[]|callable[]
      */
     protected $configurationSources = [];
 

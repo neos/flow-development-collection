@@ -19,6 +19,7 @@ use Neos\Flow\Configuration\Exception\ParseErrorException;
 use Neos\Flow\Configuration\Exception\RecursionException;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
@@ -131,6 +132,7 @@ class RoutesConfigurationSource implements ConfigurationSourceInterface
                 if (!isset($packages[$subRouteOptions['package']])) {
                     throw new ParseErrorException(sprintf('The SubRoute Package "%s" referenced in Route "%s" is not available.', $subRouteOptions['package'], ($routeConfiguration['name'] ?? 'unnamed Route')), 1318414040);
                 }
+                /** @var FlowPackageInterface $package */
                 $package = $packages[$subRouteOptions['package']];
                 $subRouteFilename = 'Routes';
                 if (isset($subRouteOptions['suffix'])) {
