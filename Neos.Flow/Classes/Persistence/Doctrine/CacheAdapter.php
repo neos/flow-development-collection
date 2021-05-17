@@ -58,7 +58,7 @@ class CacheAdapter extends CacheProvider
      * @param string $id The id of the cache entry to fetch.
      * @return mixed|false The cached data or FALSE, if no cache entry exists for the given id.
      */
-    protected function doFetch($id);
+    protected function doFetch($id)
     {
         return $this->cache->get($this->convertCacheIdentifier($id));
     }
@@ -70,7 +70,7 @@ class CacheAdapter extends CacheProvider
      *
      * @return bool TRUE if a cache entry exists for the given cache id, FALSE otherwise.
      */
-    protected function doContains($id);
+    protected function doContains($id)
     {
         return $this->cache->has($this->convertCacheIdentifier($id));
     }
