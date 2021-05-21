@@ -10,6 +10,8 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\View\SimpleTemplateView;
@@ -309,6 +311,38 @@ class ActionControllerTest extends UnitTestCase
         $mockResponse = new Mvc\ActionResponse;
         $mockResponse->setContentType('application/json');
         $this->inject($this->actionController, 'supportedMediaTypes', ['application/xml']);
+
+        $this->actionController->processRequest($this->mockRequest, $mockResponse);
+        self::assertSame('application/json', $mockResponse->getContentType());
+    }
+
+    /**
+     * @test
+     * @dataProvider supportedAndRequestedMediaTypes
+     */
+    public function processRequestUsesContentTypeFromRenderedView($supportedMediaTypes, $acceptHeader, $expected)
+    {
+        $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'theActionAction', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView']);
+        $this->actionController->method('resolveActionMethodName')->willReturn('theActionAction');
+        $this->actionController->method('theActionAction')->willReturn(null);
+
+        $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
+
+        $mockMvcPropertyMappingConfigurationService = $this->createMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class);
+        $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
+
+        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $mockHttpRequest->method('getHeaderLine')->with('Accept')->willReturn('application/xml');
+        $mockHttpRequest->method('getHeaderLine')->with('Accept')->willReturn('application/xml');
+        $this->mockRequest->method('getHttpRequest')->willReturn($mockHttpRequest);
+
+        $mockResponse = new Mvc\ActionResponse;
+
+        $this->inject($this->actionController, 'supportedMediaTypes', ['application/xml']);
+
+        $mockView = $this->createMock(Mvc\View\ViewInterface::class);
+        $mockView->method('render')->willReturn(new Response(200, ['Content-Type' => 'application/json']));
+        $this->actionController->expects(self::once())->method('resolveView')->will(self::returnValue($mockView));
 
         $this->actionController->processRequest($this->mockRequest, $mockResponse);
         self::assertSame('application/json', $mockResponse->getContentType());

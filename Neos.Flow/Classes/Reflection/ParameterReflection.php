@@ -43,12 +43,12 @@ class ParameterReflection extends \ReflectionParameter
     public function getClass()
     {
         try {
-            $class = parent::getClass();
+            $class = parent::getType();
         } catch (\Exception $exception) {
             return null;
         }
 
-        return is_object($class) ? new ClassReflection($class->getName()) : null;
+        return is_object($class) && !$class->isBuiltin() ? new ClassReflection($class->getName()) : null;
     }
 
     /**
