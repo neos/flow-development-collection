@@ -789,6 +789,9 @@ class ActionController extends AbstractController
 
         if ($result instanceof ResponseInterface) {
             $this->response->replaceHttpResponse($result);
+            if ($result->hasHeader('Content-Type')) {
+                $this->response->setContentType($result->getHeaderLine('Content-Type'));
+            }
         }
 
         if (is_object($result) && is_callable([$result, '__toString'])) {
