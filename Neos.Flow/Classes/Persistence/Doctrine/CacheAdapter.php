@@ -84,12 +84,8 @@ class CacheAdapter implements Cache
      */
     public function save($id, $data, $lifeTime = 0)
     {
-        try {
-            $this->cache->set($this->convertCacheIdentifier($id), $data, [], $lifeTime);
-            return true;
-        } catch (\Exception $exception) {
-            return false;
-        }
+        $this->cache->set($this->convertCacheIdentifier($id), $data, [], $lifeTime);
+        return true;
     }
 
     /**
