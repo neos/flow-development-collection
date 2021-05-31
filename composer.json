@@ -21,7 +21,7 @@
         "psr/http-server-middleware": "^1.0",
         "psr/http-server-handler": "^1.0",
         "ramsey/uuid": "^3.0 || ^4.0",
-        "doctrine/orm": "^2.6",
+        "doctrine/orm": "^2.6, <2.9",
         "doctrine/migrations": "^1.8",
         "doctrine/dbal": "^2.9",
         "doctrine/common": "^2.4",
