@@ -19,7 +19,6 @@ use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\RepositoryInterface;
@@ -435,14 +434,14 @@ class ReflectionService
         if (count($classNamesFound) === 1) {
             return $classNamesFound[0];
         }
-        if (count($classNamesFound) !== 2 || !isset($this->classReflectionData[ProxyInterface::class][self::DATA_INTERFACE_IMPLEMENTATIONS])) {
+        if (count($classNamesFound) !== 2 || !isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS])) {
             return false;
         }
 
-        if (isset($this->classReflectionData[ProxyInterface::class][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[0]])) {
+        if (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[0]])) {
             return $classNamesFound[0];
         }
-        if (isset($this->classReflectionData[ProxyInterface::class][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[1]])) {
+        if (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$classNamesFound[1]])) {
             return $classNamesFound[1];
         }
 
