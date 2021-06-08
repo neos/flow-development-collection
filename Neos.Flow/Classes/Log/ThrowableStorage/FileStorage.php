@@ -4,11 +4,14 @@ namespace Neos\Flow\Log\ThrowableStorage;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Debugger;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Neos\Flow\Log\PlainTextFormatter;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Files;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Stores detailed information about throwables into files.
@@ -42,9 +45,7 @@ class FileStorage implements ThrowableStorageInterface
     public static function createWithOptions(array $options): ThrowableStorageInterface
     {
         $storagePath = $options['storagePath'] ?? (FLOW_PATH_DATA . 'Logs/Exceptions');
-        $storage = new static($storagePath);
-
-        return $storage;
+        return new static($storagePath);
     }
 
     /**
@@ -57,7 +58,10 @@ class FileStorage implements ThrowableStorageInterface
     {
         $this->storagePath = $storagePath;
 
-        $this->requestInformationRenderer = function () {
+        $this->requestInformationRenderer = static function () {
+            // The following lines duplicate Scripts::initializeExceptionStorage(), which is a fallback to handle
+            // exceptions that may occure before Scripts::initializeExceptionStorage() has finished.
+
             $output = '';
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
                 return $output;
@@ -70,10 +74,11 @@ class FileStorage implements ThrowableStorageInterface
                 return $output;
             }
 
-            $request = $requestHandler->getHttpRequest();
-            $response = $requestHandler->getHttpResponse();
-            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request == '' ? '[request was empty]' : $request) . PHP_EOL;
-            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response == '' ? '[response was empty]' : $response) . PHP_EOL;
+            $request = $requestHandler->getComponentContext()->getHttpRequest();
+            $response = $requestHandler->getComponentContext()->getHttpResponse();
+            // TODO: Sensible error output
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestHeaders($request) : '[request was empty]') . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response instanceof ResponseInterface ? $response->getStatusCode() : '[response was empty]') . PHP_EOL;
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;

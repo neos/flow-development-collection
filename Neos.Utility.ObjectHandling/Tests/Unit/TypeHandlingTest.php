@@ -11,6 +11,7 @@ namespace Neos\Utility\ObjectHandling\Tests\Unit;
  * source code.
  */
 
+use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 
 /**
@@ -20,19 +21,19 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Utility\Exception\InvalidTypeException
      */
     public function parseTypeThrowsExceptionOnInvalidType()
     {
+        $this->expectException(InvalidTypeException::class);
         TypeHandling::parseType('$something');
     }
 
     /**
      * @test
-     * @expectedException \Neos\Utility\Exception\InvalidTypeException
      */
     public function parseTypeThrowsExceptionOnInvalidElementTypeHint()
     {
+        $this->expectException(InvalidTypeException::class);
         TypeHandling::parseType('string<integer>');
     }
 
@@ -69,7 +70,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      */
     public function parseTypeReturnsArrayWithInformation(string $type, array $expectedResult)
     {
-        $this->assertEquals(
+        self::assertEquals(
             $expectedResult,
             TypeHandling::parseType($type),
             'Failed for ' . $type
@@ -106,7 +107,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      */
     public function extractCollectionTypeReturnsOnlyTheMainType(string $type, string $expectedResult)
     {
-        $this->assertEquals(
+        self::assertEquals(
             $expectedResult,
             TypeHandling::truncateElementType($type),
             'Failed for ' . $type
@@ -132,7 +133,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      */
     public function normalizeTypesReturnsNormalizedType(string $type, string $normalized)
     {
-        $this->assertEquals(TypeHandling::normalizeType($type), $normalized);
+        self::assertEquals(TypeHandling::normalizeType($type), $normalized);
     }
 
     /**
@@ -155,7 +156,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      */
     public function isLiteralReturnsFalseForNonLiteralTypes(string $type)
     {
-        $this->assertFalse(TypeHandling::isLiteral($type), 'Failed for ' . $type);
+        self::assertFalse(TypeHandling::isLiteral($type), 'Failed for ' . $type);
     }
 
     /**
@@ -180,7 +181,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      */
     public function isLiteralReturnsTrueForLiteralType(string $type)
     {
-        $this->assertTrue(TypeHandling::isLiteral($type), 'Failed for ' . $type);
+        self::assertTrue(TypeHandling::isLiteral($type), 'Failed for ' . $type);
     }
 
     /**
@@ -211,7 +212,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      */
     public function isCollectionTypeReturnsTrueForCollectionType(string $type, bool $expected)
     {
-        $this->assertSame($expected, TypeHandling::isCollectionType($type), 'Failed for ' . $type);
+        self::assertSame($expected, TypeHandling::isCollectionType($type), 'Failed for ' . $type);
     }
 
     /**
@@ -250,7 +251,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      */
     public function stripNullableTypesReturnsOnlyTheType($type, $expectedResult)
     {
-        $this->assertEquals(
+        self::assertEquals(
             $expectedResult,
             TypeHandling::stripNullableType($type),
             'Failed for ' . $type

@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Uri;
  * source code.
  */
 
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
 
@@ -78,8 +79,13 @@ class ActionViewHelper extends AbstractViewHelper
             if ($request->isMainRequest()) {
                 throw new ViewHelper\Exception('You can\'t use the parent Request, you are already in the MainRequest.', 1360590758);
             }
+            $parentRequest = $request->getParentRequest();
+            if (!$parentRequest instanceof ActionRequest) {
+                throw new ViewHelper\Exception('The parent requests was unexpectedly empty, probably the current request is broken.', 1565948254);
+            }
+
             $uriBuilder = clone $uriBuilder;
-            $uriBuilder->setRequest($request->getParentRequest());
+            $uriBuilder->setRequest($parentRequest);
         } elseif ($this->arguments['useMainRequest'] === true) {
             $request = $this->controllerContext->getRequest();
             if (!$request->isMainRequest()) {

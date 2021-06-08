@@ -26,7 +26,12 @@ abstract class LogEnvironment
     /**
      * @var array
      */
-    protected static $packageKeys = null;
+    protected static $packageKeys = [];
+
+    /**
+     * @var bool
+     */
+    protected static $initialized = false;
 
     /**
      * Returns an array containing the log environment variables
@@ -85,7 +90,7 @@ abstract class LogEnvironment
      */
     protected static function getPackageKeys(): array
     {
-        if (self::$packageKeys === null) {
+        if (self::$initialized === false) {
             if (!Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
                 return [];
             }
@@ -99,6 +104,7 @@ abstract class LogEnvironment
                     self::$packageKeys[$package->getPackageKey()] = true;
                 }
             }
+            self::$initialized = true;
         }
 
         return self::$packageKeys;

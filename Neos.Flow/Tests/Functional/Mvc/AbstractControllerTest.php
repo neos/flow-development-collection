@@ -24,7 +24,7 @@ class AbstractControllerTest extends FunctionalTestCase
     /**
      * Additional setup: Routes
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -49,7 +49,7 @@ class AbstractControllerTest extends FunctionalTestCase
     public function forwardPassesRequestToActionWithoutArguments()
     {
         $response = $this->browser->request('http://localhost/test/mvc/abstractcontrollertesta/forward?actionName=second');
-        $this->assertEquals('Second action was called', $response->getContent());
+        self::assertEquals('Second action was called', $response->getBody()->getContents());
     }
 
     /**
@@ -61,7 +61,7 @@ class AbstractControllerTest extends FunctionalTestCase
     public function forwardPassesRequestToActionWithArguments()
     {
         $response = $this->browser->request('http://localhost/test/mvc/abstractcontrollertesta/forward?actionName=third&arguments[firstArgument]=foo&arguments[secondArgument]=bar');
-        $this->assertEquals('thirdAction-foo-bar--default', $response->getContent());
+        self::assertEquals('thirdAction-foo-bar--default', $response->getBody()->getContents());
     }
 
     /**
@@ -73,6 +73,15 @@ class AbstractControllerTest extends FunctionalTestCase
     public function forwardPassesRequestToActionWithInternalArgumentsContainingObjects()
     {
         $response = $this->browser->request('http://localhost/test/mvc/abstractcontrollertesta/forward?actionName=fourth&passSomeObjectArguments=1&arguments[nonObject1]=First&arguments[nonObject2]=42');
-        $this->assertEquals('fourthAction-First-42-Neos\Error\Messages\Message', $response->getContent());
+        self::assertEquals('fourthAction-First-42-Neos\Error\Messages\Message', $response->getBody()->getContents());
+    }
+
+    /**
+     * @test
+     */
+    public function responseContainsNegotiatedContentType()
+    {
+        $response = $this->browser->request('http://localhost/test/mvc/abstractcontrollertesta/second');
+        self::assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
     }
 }

@@ -11,7 +11,7 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\Debug;
 use Doctrine\DBAL\Migrations\MigrationException;
 use Neos\Flow\Annotations as Flow;
@@ -479,7 +479,7 @@ class DoctrineCommandController extends CommandController
             /** @var Package $package */
             foreach ($this->packageManager->getAvailablePackages() as $package) {
                 $type = $package->getComposerManifest('type');
-                if ($type === null || (strpos($type, 'typo3-') !== 0 && strpos($type, 'neos-') !== 0)) {
+                if ($type === null || !is_string($type) || (strpos($type, 'typo3-') !== 0 && strpos($type, 'neos-') !== 0)) {
                     continue;
                 }
                 $choices[] = $package->getPackageKey();

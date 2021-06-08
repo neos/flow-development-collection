@@ -18,6 +18,7 @@ namespace Neos\Flow\Persistence\Generic\Qom;
  * To satisfy the Not constraint, the tuple must not satisfy $constraint.
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 class LogicalNot extends Constraint
 {

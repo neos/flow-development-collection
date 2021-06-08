@@ -75,35 +75,18 @@ class InstallerScripts
         $packageExtraConfig = $package->getExtra();
         $installPath = $event->getComposer()->getInstallationManager()->getInstallPath($package);
 
-        $evaluatedInstallerResources = false;
         if (isset($packageExtraConfig['neos']['installer-resource-folders'])) {
             foreach ($packageExtraConfig['neos']['installer-resource-folders'] as $installerResourceDirectory) {
                 static::copyDistributionFiles($installPath . $installerResourceDirectory);
             }
-            $evaluatedInstallerResources = true;
         }
 
-        if ($operation instanceof InstallOperation) {
-            if (isset($packageExtraConfig['typo3/flow']['post-install'])) {
-                self::runPackageScripts($packageExtraConfig['typo3/flow']['post-install']);
-            }
-            if (isset($packageExtraConfig['neos/flow']['post-install'])) {
-                self::runPackageScripts($packageExtraConfig['neos/flow']['post-install']);
-            }
+        if ($operation instanceof InstallOperation && isset($packageExtraConfig['neos/flow']['post-install'])) {
+            self::runPackageScripts($packageExtraConfig['neos/flow']['post-install']);
         }
 
-        if ($operation instanceof UpdateOperation) {
-            if (isset($packageExtraConfig['typo3/flow']['post-update'])) {
-                self::runPackageScripts($packageExtraConfig['typo3/flow']['post-update']);
-            }
-            if (isset($packageExtraConfig['neos/flow']['post-update'])) {
-                self::runPackageScripts($packageExtraConfig['neos/flow']['post-update']);
-            }
-        }
-
-        // TODO: Deprecated from Flow 3.1 remove three versions after.
-        if (!$evaluatedInstallerResources && isset($packageExtraConfig['typo3/flow']['manage-resources']) && $packageExtraConfig['typo3/flow']['manage-resources'] === true) {
-            static::copyDistributionFiles($installPath . 'Resources/Private/Installer/');
+        if ($operation instanceof UpdateOperation && isset($packageExtraConfig['neos/flow']['post-update'])) {
+            self::runPackageScripts($packageExtraConfig['neos/flow']['post-update']);
         }
     }
 

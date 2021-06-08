@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -43,7 +45,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @throws Exception if no cache frontend has been set.
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1238244992);
@@ -106,13 +108,18 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * specified tag.
      *
      * @param string $tag The tag to search for
-     * @return array An array with identifiers of all matching entries. An empty array if no entries matched
+     * @return string[] An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
     public function findIdentifiersByTag(string $tag): array
     {
         if (isset($this->tagsAndEntries[$tag])) {
-            return array_keys($this->tagsAndEntries[$tag]);
+            return array_map(
+                static function ($value) {
+                    return (string)$value;
+                },
+                array_keys($this->tagsAndEntries[$tag])
+            );
         }
         return [];
     }
@@ -123,7 +130,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return void
      * @api
      */
-    public function flush()
+    public function flush(): void
     {
         $this->entries = [];
         $this->tagsAndEntries = [];
@@ -151,7 +158,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @return void
      * @api
      */
-    public function collectGarbage()
+    public function collectGarbage(): void
     {
     }
 }

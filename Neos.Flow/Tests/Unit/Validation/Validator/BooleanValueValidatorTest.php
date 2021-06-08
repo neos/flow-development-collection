@@ -27,7 +27,7 @@ class BooleanValueValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
-        $this->assertFalse($this->validator->validate('')->hasErrors());
+        self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -35,7 +35,7 @@ class BooleanValueValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -43,7 +43,7 @@ class BooleanValueValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsTrueAndNoOptionIsSet()
     {
-        $this->assertFalse($this->validator->validate(true)->hasErrors());
+        self::assertFalse($this->validator->validate(true)->hasErrors());
     }
 
     /**
@@ -52,7 +52,7 @@ class BooleanValueValidatorTest extends AbstractValidatorTestcase
     public function validateReturnsNoErrorIfTheGivenValueIsFalseAndExpectedValueIsFalse()
     {
         $this->validatorOptions(['expectedValue' => false]);
-        $this->assertFalse($this->validator->validate(false)->hasErrors());
+        self::assertFalse($this->validator->validate(false)->hasErrors());
     }
 
     /**
@@ -60,7 +60,7 @@ class BooleanValueValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsErrorIfTheGivenValueIsAString()
     {
-        $this->assertTrue($this->validator->validate('1')->hasErrors());
+        self::assertTrue($this->validator->validate('1')->hasErrors());
     }
 
     /**
@@ -68,7 +68,7 @@ class BooleanValueValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsErrorIfTheGivenValueIsFalse()
     {
-        $this->assertTrue($this->validator->validate(false)->hasErrors());
+        self::assertTrue($this->validator->validate(false)->hasErrors());
     }
 
     /**
@@ -76,6 +76,6 @@ class BooleanValueValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsErrorIfTheGivenValueIsAnInteger()
     {
-        $this->assertTrue($this->validator->validate(1)->hasErrors());
+        self::assertTrue($this->validator->validate(1)->hasErrors());
     }
 }

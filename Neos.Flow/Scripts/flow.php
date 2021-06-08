@@ -32,7 +32,7 @@ if (isset($argv[1]) && ($argv[1] === 'neos.flow:core:setfilepermissions' || $arg
     array_shift($argv);
     array_shift($argv);
     $returnValue = 0;
-    exec(__DIR__ . '/setfilepermissions.sh ' . implode($argv, ' '), $output, $returnValue);
+    exec(__DIR__ . '/setfilepermissions.sh ' . implode(' ', $argv), $output, $returnValue);
     exit($returnValue);
 } elseif (isset($argv[1]) && ($argv[1] === 'neos.flow:core:migrate' || $argv[1] === 'flow:core:migrate' || $argv[1] === 'core:migrate')) {
     array_shift($argv);

@@ -26,7 +26,7 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelp
     protected $viewHelper;
 
     /**
-     * @var \Neos\Flow\Mvc\FlashMessageContainer
+     * @var \Neos\Flow\Mvc\FlashMessage\FlashMessageContainer
      */
     protected $mockFlashMessageContainer;
 
@@ -40,14 +40,14 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelp
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
-        $this->mockFlashMessageContainer = $this->createMock(\Neos\Flow\Mvc\FlashMessageContainer::class);
+        $this->mockFlashMessageContainer = $this->createMock(\Neos\Flow\Mvc\FlashMessage\FlashMessageContainer::class);
         $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $mockControllerContext->expects($this->any())->method('getFlashMessageContainer')->will($this->returnValue($this->mockFlashMessageContainer));
+        $mockControllerContext->expects(self::any())->method('getFlashMessageContainer')->will(self::returnValue($this->mockFlashMessageContainer));
 
         $this->mockTagBuilder = $this->createMock(TagBuilder::class);
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FlashMessagesViewHelper::class, ['dummy', 'registerRenderMethodArguments']);
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FlashMessagesViewHelper::class, ['dummy']);
         $this->viewHelper->_set('controllerContext', $mockControllerContext);
         $this->viewHelper->_set('tag', $this->mockTagBuilder);
     }
@@ -57,9 +57,9 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelp
      */
     public function renderReturnsEmptyStringIfNoFlashMessagesAreInQueue()
     {
-        $this->mockFlashMessageContainer->expects($this->once())->method('getMessagesAndFlush')->will($this->returnValue([]));
+        $this->mockFlashMessageContainer->expects(self::once())->method('getMessagesAndFlush')->will(self::returnValue([]));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
-        $this->assertEmpty($this->viewHelper->render());
+        self::assertEmpty($this->viewHelper->render());
     }
 
     /**
@@ -102,8 +102,8 @@ class FlashMessagesViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelp
      */
     public function renderTests($expectedResult, array $flashMessages = [], $class = null)
     {
-        $this->mockFlashMessageContainer->expects($this->once())->method('getMessagesAndFlush')->will($this->returnValue($flashMessages));
-        $this->mockTagBuilder->expects($this->once())->method('setContent')->with($expectedResult);
+        $this->mockFlashMessageContainer->expects(self::once())->method('getMessagesAndFlush')->will(self::returnValue($flashMessages));
+        $this->mockTagBuilder->expects(self::once())->method('setContent')->with($expectedResult);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['class' => $class]);
         $this->viewHelper->render();
     }

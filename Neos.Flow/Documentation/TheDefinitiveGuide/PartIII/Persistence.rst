@@ -9,6 +9,10 @@ the persistence based on the *Doctrine* 2 ORM first. There is another mechanism 
 called *Generic* persistence, which can be used to add your own persistence backends to
 Flow. It is explained separately later in the chapter.
 
+.. note::
+
+  The *Generic* persistence is deprecated as of Flow 6.0 and will be dropped in Flow 7.0.
+
 .. tip::
 
 	If you have experience with Doctrine 2 already, your knowledge can
@@ -1203,6 +1207,10 @@ What is now called *Generic* Persistence, used to be the only persistence layer 
 Back in those days there was no ORM available that fit our needs. That being said, with
 the advent of Doctrine 2, your best bet as a PHP developer is to use that instead of any
 home-brewn ORM.
+
+.. note::
+
+  The *Generic* persistence is deprecated as of Flow 6.0 and will be dropped in Flow 7.0.
 
 When your target is not a relational database, things look slightly different, which is
 why the "old" code is still available for use, primarily by alternative backends like the

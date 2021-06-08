@@ -13,12 +13,13 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Request;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -32,27 +33,27 @@ class RoutingComponentTest extends UnitTestCase
     protected $routingComponent;
 
     /**
-     * @var Router|\PHPUnit_Framework_MockObject_MockObject
+     * @var Router|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockRouter;
 
     /**
-     * @var ConfigurationManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigurationManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockConfigurationManager;
 
     /**
-     * @var ComponentContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var ComponentContext|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockComponentContext;
 
     /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     * @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockHttpRequest;
 
     /**
-     * @var UriInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UriInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockRequestUri;
 
@@ -60,7 +61,7 @@ class RoutingComponentTest extends UnitTestCase
      * Sets up this test case
      *
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->routingComponent = new RoutingComponent([]);
 
@@ -72,11 +73,12 @@ class RoutingComponentTest extends UnitTestCase
 
         $this->mockComponentContext = $this->getMockBuilder(ComponentContext::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockHttpRequest = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->mockComponentContext->expects($this->any())->method('getHttpRequest')->will($this->returnValue($this->mockHttpRequest));
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest->method('withAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS)->willReturn($this->mockHttpRequest);
+        $this->mockComponentContext->method('getHttpRequest')->willReturn($this->mockHttpRequest);
 
         $this->mockRequestUri = $this->getMockBuilder(UriInterface::class)->getMock();
-        $this->mockHttpRequest->expects($this->any())->method('getUri')->will($this->returnValue($this->mockRequestUri));
+        $this->mockHttpRequest->method('getUri')->willReturn($this->mockRequestUri);
     }
 
     /**
@@ -87,8 +89,8 @@ class RoutingComponentTest extends UnitTestCase
         $mockMatchResults = ['someRouterMatchResults'];
         $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
 
-        $this->mockRouter->expects($this->atLeastOnce())->method('route')->with($routeContext)->will($this->returnValue($mockMatchResults));
-        $this->mockComponentContext->expects($this->atLeastOnce())->method('setParameter')->with(RoutingComponent::class, 'matchResults', $mockMatchResults);
+        $this->mockRouter->expects(self::atLeastOnce())->method('route')->with($routeContext)->willReturn($mockMatchResults);
+        $this->mockComponentContext->expects(self::atLeastOnce())->method('setParameter')->with(RoutingComponent::class, 'matchResults', $mockMatchResults);
 
         $this->routingComponent->handle($this->mockComponentContext);
     }
