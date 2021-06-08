@@ -127,8 +127,8 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
         }
 
         $this->templatePaths->setPatternReplacementVariables([
-            'packageKey' => $request->getControllerPackageKey(),
-            'subPackageKey' => $request->getControllerSubpackageKey(),
+            'packageKey' => (string)$request->getControllerPackageKey(),
+            'subPackageKey' => (string)$request->getControllerSubpackageKey(),
             'controllerName' => $request->getControllerName(),
             'action' => $request->getControllerActionName(),
             'format' => $request->getFormat() ?: 'html'

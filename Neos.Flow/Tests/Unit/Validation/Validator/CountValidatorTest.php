@@ -29,7 +29,7 @@ class CountValidatorTest extends AbstractValidatorTestcase
     public function countValidatorReturnsNoErrorsIfTheGivenValueIsNull()
     {
         $this->validatorOptions(['minimum' => 1, 'maximum' => 10]);
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -38,7 +38,7 @@ class CountValidatorTest extends AbstractValidatorTestcase
     public function countValidatorReturnsNoErrorsIfTheGivenStringIsEmpty()
     {
         $this->validatorOptions(['minimum' => 1, 'maximum' => 10]);
-        $this->assertFalse($this->validator->validate('')->hasErrors());
+        self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -62,7 +62,7 @@ class CountValidatorTest extends AbstractValidatorTestcase
     public function countValidatorReturnsNoErrorsForValidCountables($countable)
     {
         $this->validatorOptions(['minimum' => 1, 'maximum' => 10]);
-        $this->assertFalse($this->validator->validate($countable)->hasErrors());
+        self::assertFalse($this->validator->validate($countable)->hasErrors());
     }
 
     /**
@@ -72,7 +72,7 @@ class CountValidatorTest extends AbstractValidatorTestcase
     public function countValidatorReturnsErrorsForInvalidCountables($countable)
     {
         $this->validatorOptions(['minimum' => 5, 'maximum' => 10]);
-        $this->assertTrue($this->validator->validate($countable)->hasErrors());
+        self::assertTrue($this->validator->validate($countable)->hasErrors());
     }
 
     /**
@@ -94,6 +94,6 @@ class CountValidatorTest extends AbstractValidatorTestcase
      */
     public function countValidatorReturnsErrorsForNonCountables($nonCountable)
     {
-        $this->assertTrue($this->validator->validate($nonCountable)->hasErrors());
+        self::assertTrue($this->validator->validate($nonCountable)->hasErrors());
     }
 }

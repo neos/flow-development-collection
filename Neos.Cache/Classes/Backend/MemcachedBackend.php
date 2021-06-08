@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -113,7 +115,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
         }
 
         $this->memcache = extension_loaded('memcached') ? new \MemCached() : new \Memcache();
-        $defaultPort = ini_get('memcache.default_port') ?: 11211;
+        $defaultPort = (int)ini_get('memcache.default_port') ?: 11211;
 
         foreach ($this->servers as $server) {
             $host = $server;
@@ -159,7 +161,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @param FrontendInterface $cache
      * @return void
      */
-    public function setCache(FrontendInterface $cache)
+    public function setCache(FrontendInterface $cache): void
     {
         parent::setCache($cache);
 
@@ -197,7 +199,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @throws \InvalidArgumentException if the identifier is not valid or the final memcached key is longer than 250 characters
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
         if (strlen($this->identifierPrefix . $entryIdentifier) > 250) {
             throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->identifierPrefix . $entryIdentifier . ').', 1232969508);
@@ -264,8 +266,8 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     public function get(string $entryIdentifier)
     {
         $value = $this->memcache->get($this->identifierPrefix . $entryIdentifier);
-        if ($value !== false && substr($value, 0, 13) === 'Flow*chunked:') {
-            list(, $chunkCount) = explode(':', $value);
+        if (is_string($value) && strpos($value, 'Flow*chunked:') === 0) {
+            [, $chunkCount] = explode(':', $value);
             $value = '';
             for ($chunkNumber = 1; $chunkNumber < $chunkCount; $chunkNumber++) {
                 $value .= $this->memcache->get($this->identifierPrefix . $entryIdentifier . '_chunk_' . $chunkNumber);
@@ -306,7 +308,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * specified tag.
      *
      * @param string $tag The tag to search for
-     * @return array An array with identifiers of all matching entries. An empty array if no entries matched
+     * @return string[] An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
     public function findIdentifiersByTag(string $tag): array
@@ -338,7 +340,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @throws Exception
      * @api
      */
-    public function flush()
+    public function flush(): void
     {
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('Yet no cache frontend has been set via setCache().', 1204111376);
@@ -425,7 +427,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @return void
      * @api
      */
-    public function collectGarbage()
+    public function collectGarbage(): void
     {
     }
 }

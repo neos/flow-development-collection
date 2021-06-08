@@ -38,7 +38,7 @@ class AggregateTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -63,12 +63,12 @@ class AggregateTest extends FunctionalTestCase
         $imageIdentifier = $this->persistenceManager->getIdentifierByObject($image);
 
         $retrievedImage = $this->persistenceManager->getObjectByIdentifier($imageIdentifier, Fixtures\Image::class);
-        $this->assertSame($image, $retrievedImage);
+        self::assertSame($image, $retrievedImage);
 
         $this->postRepository->remove($post);
         $this->persistenceManager->persistAll();
 
-        $this->assertTrue($this->persistenceManager->isNewObject($retrievedImage));
+        self::assertTrue($this->persistenceManager->isNewObject($retrievedImage));
     }
 
     /**
@@ -88,13 +88,13 @@ class AggregateTest extends FunctionalTestCase
         $commentIdentifier = $this->persistenceManager->getIdentifierByObject($comment);
 
         $retrievedComment = $this->persistenceManager->getObjectByIdentifier($commentIdentifier, Fixtures\Comment::class);
-        $this->assertSame($comment, $retrievedComment);
+        self::assertSame($comment, $retrievedComment);
 
         $this->postRepository->remove($post);
         $this->persistenceManager->persistAll();
 
         $retrievedComment = $this->persistenceManager->getObjectByIdentifier($commentIdentifier, Fixtures\Comment::class);
-        $this->assertSame($comment, $retrievedComment);
+        self::assertSame($comment, $retrievedComment);
     }
 
     /**
@@ -118,6 +118,6 @@ class AggregateTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         // if all goes well the value object is not deleted
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 }

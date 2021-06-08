@@ -19,6 +19,7 @@ namespace Neos\Flow\Persistence\Generic\Qom;
  * constraint2.
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 class LogicalAnd extends Constraint
 {

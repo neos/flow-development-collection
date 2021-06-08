@@ -25,11 +25,11 @@ class ComponentChainTest extends UnitTestCase
     protected $componentChain;
 
     /**
-     * @var Http\Component\ComponentContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var Http\Component\ComponentContext|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockComponentContext;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mockComponentContext = $this->getMockBuilder(Http\Component\ComponentContext::class)->disableOriginalConstructor()->getMock();
     }
@@ -51,9 +51,9 @@ class ComponentChainTest extends UnitTestCase
     public function handleProcessesConfiguredComponents()
     {
         $mockComponent1 = $this->getMockBuilder(Http\Component\ComponentInterface::class)->getMock();
-        $mockComponent1->expects($this->once())->method('handle')->with($this->mockComponentContext);
+        $mockComponent1->expects(self::once())->method('handle')->with($this->mockComponentContext);
         $mockComponent2 = $this->getMockBuilder(Http\Component\ComponentInterface::class)->getMock();
-        $mockComponent2->expects($this->once())->method('handle')->with($this->mockComponentContext);
+        $mockComponent2->expects(self::once())->method('handle')->with($this->mockComponentContext);
 
         $options = ['components' => [$mockComponent1, $mockComponent2]];
         $this->componentChain = new Http\Component\ComponentChain($options);
@@ -66,11 +66,11 @@ class ComponentChainTest extends UnitTestCase
     public function handleStopsProcessingIfAComponentCancelsTheCurrentChain()
     {
         $mockComponent1 = $this->getMockBuilder(Http\Component\ComponentInterface::class)->getMock();
-        $mockComponent1->expects($this->once())->method('handle')->with($this->mockComponentContext);
+        $mockComponent1->expects(self::once())->method('handle')->with($this->mockComponentContext);
         $mockComponent2 = $this->getMockBuilder(Http\Component\ComponentInterface::class)->getMock();
-        $mockComponent2->expects($this->never())->method('handle');
+        $mockComponent2->expects(self::never())->method('handle');
 
-        $this->mockComponentContext->expects($this->once())->method('getParameter')->with(Http\Component\ComponentChain::class, 'cancel')->will($this->returnValue(true));
+        $this->mockComponentContext->expects(self::once())->method('getParameter')->with(Http\Component\ComponentChain::class, 'cancel')->will(self::returnValue(true));
 
         $options = ['components' => [$mockComponent1, $mockComponent2]];
         $this->componentChain = new Http\Component\ComponentChain($options);
@@ -84,8 +84,8 @@ class ComponentChainTest extends UnitTestCase
     {
         $mockComponent1 = $this->getMockBuilder(Http\Component\ComponentInterface::class)->getMock();
 
-        $this->mockComponentContext->expects($this->at(1))->method('getParameter')->with(Http\Component\ComponentChain::class, 'cancel')->will($this->returnValue(true));
-        $this->mockComponentContext->expects($this->at(2))->method('setParameter')->with(Http\Component\ComponentChain::class, 'cancel', null);
+        $this->mockComponentContext->expects(self::at(1))->method('getParameter')->with(Http\Component\ComponentChain::class, 'cancel')->will(self::returnValue(true));
+        $this->mockComponentContext->expects(self::at(2))->method('setParameter')->with(Http\Component\ComponentChain::class, 'cancel', null);
 
         $options = ['components' => [$mockComponent1]];
         $this->componentChain = new Http\Component\ComponentChain($options);

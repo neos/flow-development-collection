@@ -15,7 +15,7 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Psr\Http\Message\UploadedFileInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error as FlowError;
-use Neos\Flow\Http\FlowUploadedFile;
+use Neos\Http\Factories\FlowUploadedFile;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
@@ -281,7 +281,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     {
         if ($source instanceof FlowUploadedFile && $source->getError() === UPLOAD_ERR_NO_FILE && $source->getOriginallySubmittedResource() !== null) {
             $identifier = is_array($source->getOriginallySubmittedResource()) ? $source->getOriginallySubmittedResource()['__identity'] : $source->getOriginallySubmittedResource();
-            /* @var $resource PersistentResource|null */
+            /** @var PersistentResource|null $resource */
             $resource = $this->persistenceManager->getObjectByIdentifier($identifier, PersistentResource::class);
             return $resource;
         }

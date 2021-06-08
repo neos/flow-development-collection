@@ -115,6 +115,30 @@ class ActionControllerTestBController extends ActionController
     }
 
     /**
+     * @param TestObjectArgument $argument
+     * @Flow\MapRequestBody("$argument")
+     * @return string
+     */
+    public function mappedRequestBodyAction(TestObjectArgument $argument)
+    {
+        return $argument->getName() . '-' . $argument->getEmailAddress();
+    }
+
+    protected function initializeMappedRequestBodyWithoutAnnotationAction()
+    {
+        $this->arguments['argument']->setMapRequestBody(true);
+    }
+
+    /**
+     * @param TestObjectArgument $argument
+     * @return string
+     */
+    public function mappedRequestBodyWithoutAnnotationAction(TestObjectArgument $argument)
+    {
+        return $argument->getName() . '-' . $argument->getEmailAddress();
+    }
+
+    /**
      * @param string $argument
      * @return string
      */

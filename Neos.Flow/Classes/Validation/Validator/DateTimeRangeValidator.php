@@ -80,15 +80,15 @@ class DateTimeRangeValidator extends AbstractValidator
 
         if (isset($earliestDate) && isset($latestDate)) {
             if ($dateTime < $earliestDate || $dateTime > $latestDate) {
-                $this->addError('The given date must be between %s and %s', 1325615630, [$earliestDate->format('Y-m-d H:i:s'), $latestDate->format('Y-m-d H:i:s')]);
+                $this->addError('The given date must be between %s and %s', 1325615630, [$earliestDate, $latestDate]);
             }
         } elseif (isset($earliestDate)) {
             if ($dateTime < $earliestDate) {
-                $this->addError('The given date must be after %s', 1324315107, [$earliestDate->format('Y-m-d H:i:s')]);
+                $this->addError('The given date must be after %s', 1324315107, [$earliestDate]);
             }
         } elseif (isset($latestDate)) {
             if ($dateTime > $latestDate) {
-                $this->addError('The given date must be before %s', 1324315115, [$latestDate->format('Y-m-d H:i:s')]);
+                $this->addError('The given date must be before %s', 1324315115, [$latestDate]);
             }
         }
     }

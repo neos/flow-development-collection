@@ -3,7 +3,7 @@
 Flow TypeConverter Reference
 ============================
 
-This reference was automatically generated from code on 2021-04-04
+This reference was automatically generated from code on 2021-05-31
 
 
 .. _`Flow TypeConverter Reference: ArrayConverter`:
@@ -517,7 +517,7 @@ A type converter for converting URI strings to Http Uri objects.
 This converter simply creates a Neos\Flow\Http\Uri instance from the source string.
 
 :Priority: 1
-:Target type: Neos\Flow\Http\Uri
+:Target type: Psr\Http\Message\UriInterface
 :Source type: string
 
 

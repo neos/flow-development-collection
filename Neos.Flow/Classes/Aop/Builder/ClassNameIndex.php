@@ -168,7 +168,7 @@ class ClassNameIndex
             if ($left > $right) {
                 break;
             }
-            $currentPosition = $left + floor(($right - $left) / 2);
+            $currentPosition = $left + (int)floor(($right - $left) / 2);
             if (strpos($pointcuts[$currentPosition], $prefixFilter) === 0) {
                 $found = true;
                 break;

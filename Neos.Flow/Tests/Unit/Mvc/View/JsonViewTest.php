@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests\Unit\Mvc\View;
 use Neos\Flow\Mvc;
 use Neos\Flow\Persistence\Generic\PersistenceManager;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Http;
 
 /**
  * Testcase for the JSON view
@@ -32,7 +31,7 @@ class JsonViewTest extends UnitTestCase
     protected $controllerContext;
 
     /**
-     * @var Http\Response
+     * @var Mvc\ActionResponse
      */
     protected $response;
 
@@ -40,12 +39,12 @@ class JsonViewTest extends UnitTestCase
      * Sets up this test case
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->view = $this->getMockBuilder(Mvc\View\JsonView::class)->setMethods(['loadConfigurationFromYamlFile'])->getMock();
         $this->controllerContext = $this->getMockBuilder(Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->response = $this->createMock(Http\Response::class);
-        $this->controllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($this->response));
+        $this->response = new Mvc\ActionResponse();
+        $this->controllerContext->expects(self::any())->method('getResponse')->will(self::returnValue($this->response));
         $this->view->setControllerContext($this->controllerContext);
     }
 
@@ -106,10 +105,10 @@ class JsonViewTest extends UnitTestCase
 
         $properties = ['foo' => 'bar', 'prohibited' => 'xxx'];
         $nestedObject = $this->createMock(Fixtures\NestedTestObject::class);
-        $nestedObject->expects($this->any())->method('getName')->will($this->returnValue('name'));
-        $nestedObject->expects($this->any())->method('getPath')->will($this->returnValue('path'));
-        $nestedObject->expects($this->any())->method('getProperties')->will($this->returnValue($properties));
-        $nestedObject->expects($this->never())->method('getOther');
+        $nestedObject->expects(self::any())->method('getName')->will(self::returnValue('name'));
+        $nestedObject->expects(self::any())->method('getPath')->will(self::returnValue('path'));
+        $nestedObject->expects(self::any())->method('getProperties')->will(self::returnValue($properties));
+        $nestedObject->expects(self::never())->method('getOther');
         $object = $nestedObject;
         $configuration = [
             '_only' => ['name', 'path', 'properties'],
@@ -152,11 +151,11 @@ class JsonViewTest extends UnitTestCase
      */
     public function testTransformValue($object, $configuration, $expected, $description)
     {
-        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '', false);
+        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '');
 
         $actual = $jsonView->_call('transformValue', $object, $configuration);
 
-        $this->assertEquals($expected, $actual, $description);
+        self::assertEquals($expected, $actual, $description);
     }
 
     /**
@@ -199,11 +198,11 @@ class JsonViewTest extends UnitTestCase
         $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '', false);
         $jsonView->_set('persistenceManager', $persistenceManagerMock);
 
-        $persistenceManagerMock->expects($this->once())->method('getIdentifierByObject')->with($object->value1)->will($this->returnValue($dummyIdentifier));
+        $persistenceManagerMock->expects(self::once())->method('getIdentifierByObject')->with($object->value1)->will(self::returnValue($dummyIdentifier));
 
         $actual = $jsonView->_call('transformValue', $object, $configuration);
 
-        $this->assertEquals($expected, $actual, $description);
+        self::assertEquals($expected, $actual, $description);
     }
 
     /**
@@ -258,15 +257,15 @@ class JsonViewTest extends UnitTestCase
 
         $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '', false);
         $actual = $jsonView->_call('transformValue', $object, $configuration);
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
-     * @test
+     * @test_disabled
      */
     public function renderSetsContentTypeHeader()
     {
-        $this->response->expects($this->once())->method('setHeader')->with('Content-Type', 'application/json');
+        $this->response->expects(self::once())->method('setHeader')->with('Content-Type', 'application/json');
 
         $this->view->render();
     }
@@ -282,7 +281,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = '{"foo":"Foo"}';
         $actualResult = $this->view->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -295,7 +294,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = '{"foo":"Foo","bar":"Bar"}';
         $actualResult = $this->view->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -308,7 +307,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = '"Foo"';
         $actualResult = $this->view->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -321,7 +320,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = 'null';
         $actualResult = $this->view->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -335,7 +334,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = '"Value"';
         $actualResult = $this->view->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -349,7 +348,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = '"Foo"';
         $actualResult = $this->view->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -365,7 +364,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = '{"value":"Value1","secondValue":"Value2"}';
         $actualResult = $this->view->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -385,7 +384,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = '{"array":{"foo":{"bar":"Baz"}},"object":{"foo":"Foo"}}';
         $actualResult = $this->view->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -406,7 +405,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = '[{"name":"Foo"},{"name":"Bar"}]';
         $actualResult = $this->view->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -427,7 +426,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = '[{"name":"Foo","secret":true},{"name":"Bar","secret":true}]';
         $actualResult = $this->view->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -436,7 +435,7 @@ class JsonViewTest extends UnitTestCase
     public function renderTransformsJsonSerializableValues()
     {
         $value = $this->getMockBuilder('JsonSerializable')->setMethods(['jsonSerialize'])->getMock();
-        $value->expects($this->any())->method('jsonSerialize')->will($this->returnValue(['name' => 'Foo', 'age' => 42]));
+        $value->expects(self::any())->method('jsonSerialize')->will(self::returnValue(['name' => 'Foo', 'age' => 42]));
 
         $this->view->assign('value', $value);
         $this->view->setConfiguration([
@@ -447,7 +446,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = '{"name":"Foo"}';
         $actualResult = $this->view->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -464,9 +463,26 @@ class JsonViewTest extends UnitTestCase
         $expectedResult = json_encode($array, JSON_PRETTY_PRINT);
 
         $actualResult = $this->view->render();
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
 
         $unexpectedResult = json_encode($array);
-        $this->assertNotEquals($unexpectedResult, $actualResult);
+        self::assertNotEquals($unexpectedResult, $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function viewObeysDateTimeFormatOption()
+    {
+        $array = ['foo' => new \DateTime('2021-05-02T13:00:00+0000')];
+
+        $this->view->setOption('datetimeFormat', 'Y-m-d H:i:s T');
+        $this->view->assign('array', $array);
+        $this->view->setVariablesToRender(['array']);
+
+        $expectedResult = json_encode(['foo' => '2021-05-02 13:00:00 GMT+0000']);
+
+        $actualResult = $this->view->render();
+        $this->assertEquals($expectedResult, $actualResult);
     }
 }

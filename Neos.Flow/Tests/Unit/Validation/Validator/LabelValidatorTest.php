@@ -28,7 +28,7 @@ class LabelValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -36,7 +36,7 @@ class LabelValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
-        $this->assertFalse($this->validator->validate('')->hasErrors());
+        self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -80,7 +80,7 @@ class LabelValidatorTest extends AbstractValidatorTestcase
      */
     public function labelValidatorReturnsNoErrorForValidLabels($label)
     {
-        $this->assertFalse($this->validator->validate($label)->hasErrors());
+        self::assertFalse($this->validator->validate($label)->hasErrors());
     }
 
     /**
@@ -89,6 +89,6 @@ class LabelValidatorTest extends AbstractValidatorTestcase
      */
     public function labelValidatorReturnsErrorsForInvalidLabels($label)
     {
-        $this->assertTrue($this->validator->validate($label)->hasErrors());
+        self::assertTrue($this->validator->validate($label)->hasErrors());
     }
 }

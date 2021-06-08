@@ -179,14 +179,178 @@ from the ``getAuthenticationStatus()`` method of any token.
   This indicates, that the token received credentials, but has not been authenticated yet.
 
 Now you might ask yourself, how a token receives its credentials. The simple answer
-is: It's up to the token, to fetch them from somewhere. The ``UsernamePassword``
-token for example checks for a username and password in the two POST parameters:
-``__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]`` and
-``__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]`` (see
-:ref:`Using the authentication controller`). The framework only makes sure that
-``updateCredentials()`` is called on every token, then the token has to set possibly
-available credentials itself, e.g. from available headers or parameters or anything else
-you can provide credentials with.
+is: It's up to the token, to fetch them from somewhere.
+The ``UsernamePassword`` token for example checks for a username and password in POST parameters:
+By default those parameters are ``__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][username]``
+and ``__authentication[Neos][Flow][Security][Authentication][Token][UsernamePassword][password]``. This can be
+changed via ``tokenOptions``:
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      security:
+        authentication:
+          providers:
+            'SomeAuthenticationProvider':
+              provider: 'PersistedUsernamePasswordProvider'
+              tokenOptions:
+                usernamePostField: 'auth.username'
+                passwordPostField: 'auth.password'
+
+With that, the ``auth[username]`` & ``auth[password]`` parameters would be evaluated instead – The login template has
+to be adjusted accordingly of course (see :ref:`Using the authentication controller`).
+
+The framework only makes sure that ``updateCredentials()`` is called on every token, then the token has to set possibly
+available credentials itself, e.g. from available headers or parameters or anything else you can provide credentials with.
+
+Flow ships with the following authentication tokens:
+
+#. ``UsernamePassword``: Extracts username & password from a POST parameter.
+   Options: ``usernamePostField`` and ``passwordPostField``
+#. ``UsernamePasswordHttpBasic``: Extracts username & password from the the ``Authorization``
+   header (Basic auth). This token is sessionless (see below)
+#. ``PasswordToken``: Extracts password from a POST parameter.
+   Options: ``passwordPostField``
+
+But it's really easy to create additional tokens:
+
+Custom authentication tokens
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Any class that implements the ``TokenInterface`` can be used as an authentication token.
+The following example implements a token that extracts the ``Bearer`` from an ``Authentication`` header:
+
+*Example: BearerToken.php* ::
+
+  <?php
+  namespace Acme\YourPackage;
+
+  use Neos\Flow\Annotations as Flow;
+  use Neos\Flow\Mvc\ActionRequest;
+  use Neos\Flow\Security\Authentication\Token\AbstractToken;
+  use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
+
+  final class BearerToken extends AbstractToken implements SessionlessTokenInterface
+  {
+      public function updateCredentials(ActionRequest $actionRequest)
+      {
+          $authorizationHeader = $actionRequest->getHttpRequest()->getHeaderLine('Authorization');
+          if (strncmp($authorizationHeader, 'Bearer ', 7) !== 0) {
+              $this->credentials['bearer'] = null;
+              $this->authenticationStatus = self::NO_CREDENTIALS_GIVEN;
+              return;
+          }
+
+          $this->credentials['bearer'] = substr($authorizationHeader, 7);
+          $this->authenticationStatus = self::AUTHENTICATION_NEEDED;
+      }
+  }
+
+In order to make use of this token, the fully qualified class name has to be specified in the ``token`` configuration
+of the corresponding provider:
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      security:
+        authentication:
+          providers:
+            'SomeAuthenticationProvider':
+              provider: # ...
+              token: 'Acme\YourPackage\BearerToken'
+
+.. tip::
+
+  Since the Bearer authentication header is expected to be sent with every request, this
+  token also implements the ``SessionlessTokenInterface`` (see next section).
+
+For the above token a custom Provider is needed, since the built-in providers won't know how
+to deal with the ``Bearer`` token. If a custom token represents username and/or password credentials,
+they can implement the ``UsernamePasswordTokenInterface`` or ``PasswordTokenInterface``. That way
+they can be used with the existing ``PersistedUsernamePasswordProvider`` or ``FileBasedSimpleKeyProvider``.
+
+The following example implements a custom token that extracts username and token from a HTTP header
+that can be specified via options:
+
+*Example: UsernamePasswordFromHeaderToken.php* ::
+
+  <?php
+  namespace Acme\YourPackage;
+
+  use Neos\Flow\Mvc\ActionRequest;
+  use Neos\Flow\Security\Authentication\Token\AbstractToken;
+  use Neos\Flow\Security\Authentication\Token\UsernamePasswordTokenInterface;
+
+  final class UsernamePasswordFromHeaderToken extends AbstractToken implements UsernamePasswordTokenInterface
+  {
+      /**
+       * @var string
+       */
+      private $usernameHeaderName;
+
+      /**
+       * @var string
+       */
+      private $passwordHeaderName;
+
+      public function __construct(array $options)
+      {
+          $this->usernameHeaderName = $options['usernameHeaderName'] ?? 'X-Username';
+          $this->passwordHeaderName = $options['passwordHeaderName'] ?? 'X-Password';
+      }
+
+      public function updateCredentials(ActionRequest $actionRequest)
+      {
+          $username = $actionRequest->getHttpRequest()->getHeaderLine($this->usernameHeaderName);
+          $password = $actionRequest->getHttpRequest()->getHeaderLine($this->passwordHeaderName);
+          if (empty($username) || empty($password)) {
+              $this->credentials = ['username' => null, 'password' => null];
+              $this->authenticationStatus = self::NO_CREDENTIALS_GIVEN;
+              return;
+          }
+
+          $this->credentials = ['username' => $username, 'password' => $password];
+          $this->authenticationStatus = self::AUTHENTICATION_NEEDED;
+      }
+
+      public function getUsername(): string
+      {
+          return $this->credentials['username'] ?? '';
+      }
+
+      public function getPassword(): string
+      {
+          return $this->credentials['password'] ?? '';
+      }
+  }
+
+
+This would read username & password from ``X-Username`` and ``X-Password`` headers by default, but allow
+the header names to be specified via ``tokenOptions``.
+
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      security:
+        authentication:
+          providers:
+            DefaultProvider:
+              provider: PersistedUsernamePasswordProvider
+              token: 'Acme\YourPackage\UsernamePasswordFromHeaderToken'
+              tokenOptions:
+                usernameHeaderName: 'Some-Header'
+                passwordHeaderName: 'Some-Other-Header'
+
+The ``tokenOptions`` will be passed to the constructor of the token.
+
+.. note::
+
+  This serves merely as a simple example of the extension mechanism.
+  It's probably not a good idea to specify credentials via arbitrary HTTP headers!
 
 Sessionless authentication tokens
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -363,6 +527,44 @@ providers as you like, but keep in mind that the order matters.
   description to know if a specific provider needs more options to be configured and
   which.
 
+Parallel authentication for the same account
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Accounts are bound to an authentication provider and by default the ``PersistedUsernamePasswordProvider`` will only
+lookup accounts that belong to the provider (i.e. with an ``authenticationProviderName`` that is equal to the configured
+provider name, ``SomeAuthenticationProvider`` in this example.
+That lookup name can be changed via the ``lookupProviderName`` option that allows the provider to lookup accounts for
+a different configuration. This can be useful in order to re-use the same provider & accounts for multiple authentication
+types, for example classic form-based and HTTP basic auth:
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      security:
+        authentication:
+          providers:
+            'Acme.SomePackage:Default':
+              requestPatterns:
+                # ...
+              provider: PersistedUsernamePasswordProvider
+              token: UsernamePassword
+              entryPoint: WebRedirect
+              entryPointOptions:
+                routeValues:
+                  '@package': Acme.SomePackage
+                  '@controller': Authentication
+                  '@action': login
+
+            'Acme.SomePackage:Default.HttpBasic':
+              requestPatterns:
+                # ...
+              provider: PersistedUsernamePasswordProvider
+              providerOptions:
+                lookupProviderName: 'Acme.SomePackage:Default'
+              token: UsernamePasswordHttpBasic
+              entryPoint: HttpBasic
+
 Multi-factor authentication strategy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -504,6 +706,9 @@ controllers will be authenticated by the default username/password provider.
 |                      |                                               |                                          | ``cidrPattern: '192.168.178.0/24'`` or                           |
 |                      |                                               |                                          | ``cidrPattern: 'fd9e:21a7:a92c:2323::/96'``                      |
 +----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
+
+.. note:: The pattern for ``Uri`` will have slashes escaped and is amended with ``^…$``
+  automatically, so do not include those in your pattern!
 
 Authentication entry points
 ---------------------------
@@ -1381,7 +1586,7 @@ available interceptors, shipped with Flow:
 |                       | the current request.                  |
 +-----------------------+---------------------------------------+
 
-Of course you are able to configure as many request filters as
+Of course, you are able to configure as many request filters as
 you like. Have a look at the following example to get an idea how a
 firewall configuration will look like:
 
@@ -1399,12 +1604,12 @@ firewall configuration will look like:
             'Some.Package:AllowedUris':
               pattern:  'Uri'
               patternOptions:
-                'uriPattern': '\/some\/url\/.*'
+                'uriPattern': '/some/url/.*'
               interceptor:  'AccessGrant'
             'Some.Package:BlockedUris':
               pattern:  'Uri'
               patternOptions:
-                'uriPattern': '\/some\/url\/blocked.*'
+                'uriPattern': '/some/url/blocked.*'
               interceptor:  'AccessDeny'
             'Some.Package:BlockedHosts':
               pattern:  'Host'
@@ -1435,32 +1640,32 @@ security interceptors.
 CSRF protection
 ---------------
 
-A special use case for the filter firewall is CSRF protection. A custom csrf filter is installed and active by default.
+A special use case for the filter firewall is CSRF protection. A custom CSRF filter is installed and active by default.
 It checks every non-safe request (requests are considered safe, if they do not manipulate any persistent data) for a
 CSRF token and blocks the request if the token is invalid or missing.
 
 .. note::
 
-  Besides safe requests csrf protection is also skipped for requests with an anonyous
+  Besides safe requests CSRF protection is also skipped for requests with an anonymous
   authentication status, as these requests are considered publicly callable anyways.
 
 The needed token is automatically added to all URIs generated in Fluid forms, sending data via POST, if any account is
 authenticated. To add CSRF tokens to URIs, e.g. used for AJAX calls, Fluid provides a special view helper, called
 ``Security.CsrfTokenViewHelper``, which makes the currently valid token available for custom use in templates. In
-general you can retrieve the token by callding ``getCsrfProtectionToken`` on the security context.
+general, you can retrieve the token by calling ``getCsrfProtectionToken`` on the security context.
 
 .. tip::
 
   There might be actions, which are considered non-safe by the framework but still cannot be
   protected by a CSRF token (e.g. authentication requests, send via HTTP POST). For these
   special cases you can tag the respective action with the ``@Flow\SkipCsrfProtection``
-  annotation. Make sure you know what your are doing when using this annotation, it might
+  annotation. Make sure you know what you are doing when using this annotation, it might
   decrease security for your application when used in the wrong place!
 
 Channel security
 ================
 
-Currently channel security is not a specific feature of Flow. Instead you have to make sure to transfer sensitive
+Currently, channel security is not a specific feature of Flow. Instead, you have to make sure to transfer sensitive
 data, like passwords, over a secure channel. This is e.g. to use an SSL connection.
 
 .. _Cryptography:
@@ -1473,7 +1678,7 @@ Hash service
 
 Creating cryptographically secure hashes is a crucial part to many security related tasks. To make sure the hashes are
 built correctly Flow provides a central hash service ``Neos\Flow\Security\Cryptography\HashService``, which
-brings well tested hashing algorithms to the developer. We highly recommend to use this service to make sure hashes are
+brings well tested hashing algorithms to the developer. We highly recommend using this service to make sure hashes are
 securely created.
 
 Flow’s hash services provides you with functions to generate and validate HMAC hashes for given strings, as well as
@@ -1482,12 +1687,12 @@ methods for hashing passwords with different hashing strategies.
 RSA wallet service
 ------------------
 
-Flow provides a so called RSA wallet service, to manage public/private key encryptions. The idea behind this
+Flow provides a so called RSA wallet service to manage public/private key encryption. The idea behind this
 service is to store private keys securely within the application by only exposing the public key via API. The default
-implementation shipped with Flow is based on the openssl functions shipped with PHP:
+implementation shipped with Flow is based on the OpenSSL functions shipped with PHP:
 ``Neos\Flow\Security\Cryptography\RsaWalletServicePhp``.
 
-The service can either create new key pairs itself, while returning the fingerprint as identifier for this keypair.
+The service can either create new key pairs itself, while returning the fingerprint as identifier for this key pair.
 This identifier can be used to export the public key, decrypt and encrypt data or sign data and verify signatures.
 
 To use existing keys the following commands can be used to import keys to be stored and used within the wallet:

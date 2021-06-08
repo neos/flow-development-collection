@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Persistence\Doctrine\Logging;
 
 /*
@@ -11,11 +13,12 @@ namespace Neos\Flow\Persistence\Doctrine\Logging;
  * source code.
  */
 
-use Neos\Flow\Log\LoggerInterface;
+use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Psr\Log\LoggerInterface;
 
 /**
  * A SQL logger that logs to a Flow logger.
- *
  */
 class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger
 {
@@ -34,9 +37,12 @@ class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger
      */
     public function startQuery($sql, array $params = null, array $types = null)
     {
+        if ($this->logger instanceof DependencyProxy) {
+            $this->logger->_activateDependency();
+        }
         // this is a safeguard for when no logger might be available...
-        if ($this->logger !== null) {
-            $this->logger->log($sql, LOG_DEBUG, ['params' => $params, 'types' => $types]);
+        if ($this->logger instanceof LoggerInterface) {
+            $this->logger->debug($sql, array_merge(LogEnvironment::fromMethodName(__METHOD__), ['params' => $params, 'types' => $types]));
         }
     }
 

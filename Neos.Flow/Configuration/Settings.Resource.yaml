@@ -76,7 +76,7 @@ Neos:
             extensionBlacklist: *uploadExtensionBlacklist
 
             # If the generated URI path segment containing the sha1 should be divided into multiple segments (recommended if you expect many resources):
-            subdivideHashPathSegment: false
+            subdivideHashPathSegment: true
 
             # If the symlinks should be relative instead of absolute
-            #relativeSymlinks: false
+            relativeSymlinks: true

@@ -11,10 +11,13 @@ namespace Neos\Flow\Tests;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http;
+use Neos\Http\Factories\ResponseFactory;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A request handler which boots up Flow into a basic runtime level and then returns
@@ -93,9 +96,9 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
     /**
      * Returns the currently processed HTTP request
      *
-     * @return \Neos\Flow\Http\Request
+     * @return ServerRequestInterface
      */
-    public function getHttpRequest()
+    public function getHttpRequest(): ServerRequestInterface
     {
         return $this->getComponentContext()->getHttpRequest();
     }
@@ -103,7 +106,7 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
     /**
      * Returns the HTTP response corresponding to the currently handled request
      *
-     * @return \Neos\Flow\Http\Response
+     * @return ResponseInterface
      * @api
      */
     public function getHttpResponse()
@@ -129,37 +132,13 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
      *
      * @return ComponentContext
      */
-    protected function getComponentContext()
+    public function getComponentContext(): ComponentContext
     {
+        // FIXME: Use PSR-15 factories
         if ($this->componentContext === null) {
-            $this->componentContext = new ComponentContext(Http\Request::createFromEnvironment(), new Http\Response());
+            $responseFactory = new ResponseFactory();
+            $this->componentContext = new ComponentContext(ServerRequest::fromGlobals(), $responseFactory->createResponse());
         }
         return $this->componentContext;
-    }
-
-    /**
-     * Allows to set the currently processed HTTP request by the base functional
-     * test case.
-     *
-     * @param \Neos\Flow\Http\Request $request
-     * @return void
-     * @deprecated since Flow 3.3, use setComponentContext() instead
-     */
-    public function setHttpRequest(\Neos\Flow\Http\Request $request)
-    {
-        $this->getComponentContext()->replaceHttpRequest($request);
-    }
-
-    /**
-     * Allows to set the currently processed HTTP response by the base functional
-     * test case.
-     *
-     * @param \Neos\Flow\Http\Response $response
-     * @return void
-     * @deprecated since Flow 3.3, use setComponentContext() instead
-     */
-    public function setHttpResponse(\Neos\Flow\Http\Response $response)
-    {
-        $this->getComponentContext()->replaceHttpResponse($response);
     }
 }

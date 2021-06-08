@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\I18n\Cldr\Reader;
 
 /*
@@ -197,6 +199,7 @@ class NumbersReader
      * Shutdowns the object, saving parsed format strings to the cache.
      *
      * @return void
+     * @throws \Neos\Cache\Exception
      */
     public function shutdownObject()
     {
@@ -216,9 +219,12 @@ class NumbersReader
      * @param string $formatType A type of format (one of constant values)
      * @param string $formatLength A length of format (one of constant values)
      * @return array An array representing parsed format
+     * @throws Exception\InvalidFormatLengthException
+     * @throws Exception\InvalidFormatTypeException
      * @throws Exception\UnableToFindFormatException When there is no proper format string in CLDR
+     * @throws Exception\UnsupportedNumberFormatException
      */
-    public function parseFormatFromCldr(Locale $locale, $formatType, $formatLength = self::FORMAT_LENGTH_DEFAULT)
+    public function parseFormatFromCldr(Locale $locale, string $formatType, string $formatLength = self::FORMAT_LENGTH_DEFAULT): array
     {
         self::validateFormatType($formatType);
         self::validateFormatLength($formatLength);
@@ -252,8 +258,9 @@ class NumbersReader
      *
      * @param string $format Format string to parse
      * @return array An array representing parsed format
+     * @throws Exception\UnsupportedNumberFormatException
      */
-    public function parseCustomFormat($format)
+    public function parseCustomFormat(string $format): array
     {
         if (isset($this->parsedFormats[$format])) {
             return $this->parsedFormats[$format];
@@ -274,7 +281,7 @@ class NumbersReader
      * @param Locale $locale
      * @return array Symbols array
      */
-    public function getLocalizedSymbolsForLocale(Locale $locale)
+    public function getLocalizedSymbolsForLocale(Locale $locale): array
     {
         if (isset($this->localizedSymbols[(string)$locale])) {
             return $this->localizedSymbols[(string)$locale];
@@ -292,7 +299,7 @@ class NumbersReader
      * @return void
      * @throws Exception\InvalidFormatTypeException When value is unallowed
      */
-    public static function validateFormatType($formatType)
+    public static function validateFormatType(string $formatType): void
     {
         if (!in_array($formatType, [self::FORMAT_TYPE_DECIMAL, self::FORMAT_TYPE_PERCENT, self::FORMAT_TYPE_CURRENCY])) {
             throw new Exception\InvalidFormatTypeException('Provided formatType, "' . $formatType . '", is not one of allowed values.', 1281439179);
@@ -307,7 +314,7 @@ class NumbersReader
      * @return void
      * @throws Exception\InvalidFormatLengthException When value is unallowed
      */
-    public static function validateFormatLength($formatLength)
+    public static function validateFormatLength(string $formatLength): void
     {
         if (!in_array($formatLength, [self::FORMAT_LENGTH_DEFAULT, self::FORMAT_LENGTH_FULL, self::FORMAT_LENGTH_LONG, self::FORMAT_LENGTH_MEDIUM, self::FORMAT_LENGTH_SHORT])) {
             throw new Exception\InvalidFormatLengthException('Provided formatLength, "' . $formatLength . '", is not one of allowed values.', 1281439180);
@@ -325,7 +332,7 @@ class NumbersReader
      * @throws Exception\UnsupportedNumberFormatException When unsupported format characters encountered
      * @see NumbersReader::$parsedFormats
      */
-    protected function parseFormat($format)
+    protected function parseFormat(string $format): array
     {
         foreach (['E', '@', '*', '\''] as $unsupportedFeature) {
             if (strpos($format, $unsupportedFeature) !== false) {
@@ -333,7 +340,7 @@ class NumbersReader
             }
         }
 
-        $parsedFormat =  [
+        $parsedFormat = [
             'positivePrefix' => '',
             'positiveSuffix' => '',
             'negativePrefix' => '-',

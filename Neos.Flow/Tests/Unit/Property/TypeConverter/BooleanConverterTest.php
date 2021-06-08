@@ -24,7 +24,7 @@ class BooleanConverterTest extends UnitTestCase
      */
     protected $converter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->converter = new BooleanConverter();
     }
@@ -34,9 +34,9 @@ class BooleanConverterTest extends UnitTestCase
      */
     public function checkMetadata()
     {
-        $this->assertEquals(['boolean', 'string', 'integer', 'float'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-        $this->assertEquals('boolean', $this->converter->getSupportedTargetType(), 'Target type does not match');
-        $this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+        self::assertEquals(['boolean', 'string', 'integer', 'float'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+        self::assertEquals('boolean', $this->converter->getSupportedTargetType(), 'Target type does not match');
+        self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
     /**
@@ -45,7 +45,7 @@ class BooleanConverterTest extends UnitTestCase
     public function convertFromDoesNotModifyTheBooleanSource()
     {
         $source = true;
-        $this->assertSame($source, $this->converter->convertFrom($source, 'boolean'));
+        self::assertSame($source, $this->converter->convertFrom($source, 'boolean'));
     }
 
     /**
@@ -54,7 +54,7 @@ class BooleanConverterTest extends UnitTestCase
     public function convertFromCastsSourceStringToBoolean()
     {
         $source = 'true';
-        $this->assertTrue($this->converter->convertFrom($source, 'boolean'));
+        self::assertTrue($this->converter->convertFrom($source, 'boolean'));
     }
 
     /**
@@ -63,7 +63,7 @@ class BooleanConverterTest extends UnitTestCase
     public function convertFromCastsNumericSourceStringToBoolean()
     {
         $source = '1';
-        $this->assertTrue($this->converter->convertFrom($source, 'boolean'));
+        self::assertTrue($this->converter->convertFrom($source, 'boolean'));
     }
 
     public function convertFromDataProvider()
@@ -98,6 +98,6 @@ class BooleanConverterTest extends UnitTestCase
      */
     public function convertFromTests($source, $expected)
     {
-        $this->assertSame($expected, $this->converter->convertFrom($source, 'boolean'));
+        self::assertSame($expected, $this->converter->convertFrom($source, 'boolean'));
     }
 }

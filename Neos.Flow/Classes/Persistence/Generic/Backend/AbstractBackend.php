@@ -14,7 +14,6 @@ namespace Neos\Flow\Persistence\Generic\Backend;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
@@ -35,6 +34,7 @@ use Psr\Log\LoggerInterface;
  * An abstract storage backend for the Flow persistence
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 abstract class AbstractBackend implements BackendInterface
 {
@@ -69,12 +69,6 @@ abstract class AbstractBackend implements BackendInterface
      * @var ValidatorResolver
      */
     protected $validatorResolver;
-
-    /**
-     * @var SystemLoggerInterface
-     * @deprecated Use the PSR $this->logger
-     */
-    protected $systemLogger;
 
     /**
      * @var LoggerInterface
@@ -159,17 +153,6 @@ abstract class AbstractBackend implements BackendInterface
     public function injectValidatorResolver(ValidatorResolver $validatorResolver)
     {
         $this->validatorResolver = $validatorResolver;
-    }
-
-    /**
-     * Injects the system logger
-     *
-     * @param SystemLoggerInterface $systemLogger
-     * @return void
-     */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
-    {
-        $this->systemLogger = $systemLogger;
     }
 
     /**
