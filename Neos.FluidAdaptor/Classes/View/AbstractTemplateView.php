@@ -186,25 +186,6 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
     }
 
     /**
-     * Renders a given section.
-     *
-     * @param string $sectionName Name of section to render
-     * @param array $variables The variables to use
-     * @param boolean $ignoreUnknown Ignore an unknown section and just return an empty string
-     * @return string rendered template for the section
-     * @throws \Neos\FluidAdaptor\View\Exception\InvalidSectionException
-     */
-    public function renderSection($sectionName, array $variables = [], $ignoreUnknown = false)
-    {
-        // FIXME: We should probably give variables explicitly to this method.
-        if ($variables === []) {
-            $variables = $this->getRenderingContext()->getVariableProvider()->getAll();
-        }
-
-        return parent::renderSection($sectionName, $variables, $ignoreUnknown);
-    }
-
-    /**
      * Validate options given to this view.
      *
      * @param array $options
