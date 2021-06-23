@@ -84,6 +84,13 @@ class ObjectConverter extends AbstractTypeConverter
     protected $constructorReflectionFirstLevelCache = [];
 
     /**
+     * The method names are very likely rebuilt multiple times for the same property, so we cache them.
+     *
+     * @var array
+     */
+    protected $methodNamesFirstLevelCache = [];
+
+    /**
      * Only convert non-persistent types
      *
      * @param mixed $source
@@ -184,7 +191,11 @@ class ObjectConverter extends AbstractTypeConverter
     {
         $object = $this->buildObject($convertedChildProperties, $targetType);
         foreach ($convertedChildProperties as $propertyName => $propertyValue) {
-            $result = ObjectAccess::setProperty($object, $propertyName, $propertyValue);
+            if ($this->isCollectionPropertyWithAddRemoveMethods($object, $propertyName, $propertyValue)) {
+                $result = $this->updateCollectionWithAddRemoveCalls($object, $propertyName, $propertyValue);
+            } else {
+                $result = ObjectAccess::setProperty($object, $propertyName, $propertyValue);
+            }
             if ($result === false) {
                 $exceptionMessage = sprintf(
                     'Property "%s" having a value of type "%s" could not be set in target object of type "%s". Make sure that the property is accessible properly, for example via an appropriate setter method.',
@@ -289,5 +300,119 @@ class ObjectConverter extends AbstractTypeConverter
         }
 
         return $this->constructorReflectionFirstLevelCache[$className];
+    }
+
+    /**
+     * Check if the given $property is any type that can be assigned to a collection type property and $subject
+     * has add* and remove* methods but no setter for that property.
+     *
+     * @param mixed $subject The subject to check the collection property on
+     * @param string $propertyName The property name of the collection property
+     * @param mixed $propertyValue The new value for the collection property
+     * @return boolean TRUE if $value is either NULL or any collection Type and $subject has both an add* and remove* method but no setter for this property
+     */
+    protected function isCollectionPropertyWithAddRemoveMethods($subject, $propertyName, $propertyValue)
+    {
+        $isCollectionType = true;
+        if ($propertyValue !== null) {
+            $propertyType = TypeHandling::getTypeForValue($propertyValue);
+            $isCollectionType = TypeHandling::isCollectionType($propertyType);
+        }
+        if (!$isCollectionType) {
+            return false;
+        }
+
+        return !is_callable([$subject, $this->buildSetterMethodName($propertyName)])
+                && is_callable([$subject, $this->buildAdderMethodName($propertyName)])
+                && is_callable([$subject, $this->buildRemoverMethodName($propertyName)]);
+    }
+
+    /**
+     * @param mixed $subject The subject to update the collection property on
+     * @param string $propertyName The property name of the collection property to update
+     * @param mixed $propertyValue The new value to change the collection property to
+     * @return boolean
+     */
+    protected function updateCollectionWithAddRemoveCalls($subject, string $propertyName, $propertyValue): bool
+    {
+        $itemsToAdd = ($propertyValue instanceof \Traversable) ? iterator_to_array($propertyValue) : (array)$propertyValue;
+        $itemsToRemove = [];
+        $currentValue = ObjectAccess::getProperty($subject, $propertyName);
+        $currentValue = ($currentValue instanceof \Traversable) ? iterator_to_array($currentValue) : (array)$currentValue;
+        foreach ($currentValue as $currentItem) {
+            foreach ($itemsToAdd as $key => $newItem) {
+                if ($currentItem === $newItem) {
+                    unset($itemsToAdd[$key]);
+                    // Continue to next $currentItem
+                    continue 2;
+                }
+            }
+            $itemsToRemove[] = $currentItem;
+        }
+
+        $addMethodName = $this->buildAdderMethodName($propertyName);
+        $removeMethodName = $this->buildRemoverMethodName($propertyName);
+        foreach ($itemsToRemove as $item) {
+            $subject->$removeMethodName($item);
+        }
+        foreach ($itemsToAdd as $item) {
+            $subject->$addMethodName($item);
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $propertyName
+     * @return string
+     */
+    protected function singularize(string $propertyName): string
+    {
+        return \Doctrine\Common\Inflector\Inflector::singularize($propertyName);
+    }
+
+    /**
+     * Build the setter method name for a given property by capitalizing the first letter of the property,
+     * then prepending it with "set".
+     *
+     * @param string $propertyName Name of the property
+     * @return string Name of the setter method name
+     */
+    protected function buildSetterMethodName(string $propertyName): string
+    {
+        if (!isset($this->methodNamesFirstLevelCache['set'][$propertyName])) {
+            $this->methodNamesFirstLevelCache['set'][$propertyName] =  'set' . ucfirst($propertyName);
+        }
+        return $this->methodNamesFirstLevelCache['set'][$propertyName];
+    }
+
+    /**
+     * Build the remover method name for a given property by singularizing the name
+     * and capitalizing the first letter of the property, then prepending it with "remove".
+     *
+     * @param string $propertyName Name of the property
+     * @return string Name of the remover method name
+     */
+    protected function buildRemoverMethodName(string $propertyName): string
+    {
+        if (!isset($this->methodNamesFirstLevelCache['remove'][$propertyName])) {
+            $this->methodNamesFirstLevelCache['remove'][$propertyName] =  'remove' . ucfirst($this->singularize($propertyName));
+        }
+        return $this->methodNamesFirstLevelCache['remove'][$propertyName];
+    }
+
+    /**
+     * Build the adder method name for a given property by singularizing the name
+     * and capitalizing the first letter of the property, then prepending it with "add".
+     *
+     * @param string $propertyName Name of the property
+     * @return string Name of the adder method name
+     */
+    protected function buildAdderMethodName(string $propertyName): string
+    {
+        if (!isset($this->methodNamesFirstLevelCache['add'][$propertyName])) {
+            $this->methodNamesFirstLevelCache['add'][$propertyName] =  'add' . ucfirst($this->singularize($propertyName));
+        }
+        return $this->methodNamesFirstLevelCache['add'][$propertyName];
     }
 }

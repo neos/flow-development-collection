@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Functional\Property\Fixtures;
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 
@@ -44,6 +45,18 @@ class TestEntity implements TestEntityInterface
      * @Flow\Transient
      */
     protected $relatedEntity;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection<TestEntity>
+     * @ORM\OneToMany(cascade={"all"},mappedBy="parent")
+     */
+    protected $children;
+
+    /**
+     * @var TestEntity
+     * @ORM\ManyToOne
+     */
+    protected $parent;
 
     /**
      * @return string
@@ -109,5 +122,50 @@ class TestEntity implements TestEntityInterface
     public function getRelatedEntity()
     {
         return $this->relatedEntity;
+    }
+
+    /**
+     * @param $parent TestEntity
+     */
+    public function setParent($parent)
+    {
+        $this->parent = $parent;
+    }
+
+    /**
+     * @return TestEntity
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param $child TestEntity
+     */
+    public function addChild(TestEntity $child)
+    {
+        $child->setParent($this);
+        $this->getChildren()->add($child);
+    }
+
+    /**
+     * @param $child TestEntity
+     */
+    public function removeChild(TestEntity $child)
+    {
+        $child->setParent(null);
+        $this->getChildren()->removeElement($child);
+    }
+
+    /**
+     * @return \Doctrine\Common\Collections\Collection<TestEntity>
+     */
+    public function getChildren()
+    {
+        if ($this->children === null) {
+            $this->children = new ArrayCollection();
+        }
+        return $this->children;
     }
 }

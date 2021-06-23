@@ -136,6 +136,66 @@ In this case, the following steps happen:
 
 Here, you see that we can also set associations using the Property Mapper.
 
+If your association is a ``*ToMany`` relation, there are two ways how the ``ObjectConverter`` will update
+your entity with an incoming collection.
+If your model has both an ``add*`` and ``remove*`` method matching the collection type property,
+those methods will be called for all items that have changed. This is especially useful for bidirectional
+relations, where you need to update both sides for all changes.
+
+.. code-block:: php
+
+	/**
+	 * @Flow\Entity
+	 */
+	class Parent {
+
+		/**
+		 * @ORM\OneToMany(mappedBy="parent")
+		 * @var Collection<Child>
+		 */
+		protected $children;
+
+		...
+
+		/**
+		 * @return Collection
+		 */
+		public function getChildren() {
+			return $this->children;
+		}
+
+		/**
+		 * Adds a child to this parent
+		 *
+		 * @param Child $child
+		 * @return void
+		 */
+		public function addChild(Child $child) {
+			$child->setParent($this);
+			$this->children->add($child);
+		}
+
+		/**
+		 * Removes a child from this parent
+		 *
+		 * @param Post $child
+		 * @return void
+		 */
+		public function removeChild(Child $child) {
+			$child->setParent(null);
+			$this->children->removeElement($child);
+		}
+
+.. note::
+
+	Note how the method names for add and remove are singularized from the property name. This is achieved by
+	using Doctrine`s Inflector utility class of Doctrine.Common package and works for nearly all english nouns.
+
+Otherwise the ``ObjectConverter`` will fall back to using the generic ``set*`` collection setter method,
+which will directly overwrite the collection with the new incoming collection. This works well for
+all unidirectional relations, but be aware that OneToMany relations are always bidirectional.
+Also see the chapter about :doc:`ModelAndRepository`.
+
 Configuring the Conversion Process
 ==================================
 
