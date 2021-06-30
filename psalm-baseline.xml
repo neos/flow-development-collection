@@ -1779,7 +1779,7 @@
       <code>getAllClassNames</code>
     </PossiblyNullReference>
     <UndefinedConstant occurrences="1">
-      <code>FLOW_PATH_DATA</code>
+      <code>FLOW_PATH_TEMPORARY</code>
     </UndefinedConstant>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/EmptyQueryResult.php">
