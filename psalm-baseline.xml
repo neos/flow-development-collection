@@ -1700,12 +1700,21 @@
     <MoreSpecificReturnType occurrences="1">
       <code>ClassReflection</code>
     </MoreSpecificReturnType>
+    <PropertyTypeCoercion occurrences="1">
+      <code>$this-&gt;rootEntityName = $this-&gt;reflClass-&gt;getName()</code>
+    </PropertyTypeCoercion>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Mapping/ClassMetadataFactory.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$className</code>
+    </ArgumentTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Mapping/Driver/FlowAnnotationDriver.php">
     <ArgumentTypeCoercion occurrences="2">
       <code>$className</code>
       <code>$classSchema-&gt;getRepositoryClassName()</code>
     </ArgumentTypeCoercion>
+    <InvalidArgument occurrences="1"/>
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>new IndexedReader(new AnnotationReader())</code>
     </InvalidPropertyAssignmentValue>
@@ -1730,9 +1739,9 @@
       <code>$mapping</code>
     </ReferenceConstraintViolation>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/PersistenceManager.php">
+  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/ObjectValidationAndDeDuplicationListener.php">
     <ArgumentTypeCoercion occurrences="1">
-      <code>$this-&gt;entityManager-&gt;getMetadataFactory()-&gt;getAllMetadata()</code>
+      <code>$className</code>
     </ArgumentTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Query.php">
@@ -1774,10 +1783,6 @@
     </PossiblyInvalidArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Service.php">
-    <ArgumentTypeCoercion occurrences="2">
-      <code>$allMetaData</code>
-      <code>$allMetaData</code>
-    </ArgumentTypeCoercion>
     <PossiblyNullReference occurrences="1">
       <code>getAllClassNames</code>
     </PossiblyNullReference>
@@ -1969,13 +1974,6 @@
     </MoreSpecificReturnType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Reflection/ParameterReflection.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>ClassReflection</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="2">
-      <code>is_object($class) ? new ClassReflection($class-&gt;getName()) : null</code>
-      <code>null</code>
-    </NullableReturnStatement>
     <PossiblyNullReference occurrences="1">
       <code>getName</code>
     </PossiblyNullReference>
