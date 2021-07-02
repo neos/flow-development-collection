@@ -21,71 +21,15 @@
       <code>\APCUIterator</code>
     </UndefinedDocblockClass>
   </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Backend/MemcachedBackend.php">
-    <UndefinedClass occurrences="2">
-      <code>\Memcached</code>
-      <code>\Memcached</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="12">
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>\Memcache|\Memcached</code>
-    </UndefinedDocblockClass>
-  </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/PdoBackend.php">
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/RedisBackend.php">
-    <UndefinedClass occurrences="3">
-      <code>\Redis</code>
-      <code>\Redis</code>
-      <code>\Redis</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="32">
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>\Redis</code>
-    </UndefinedDocblockClass>
+    <TypeDoesNotContainType occurrences="1">
+      <code>$transactionResult === false</code>
+    </TypeDoesNotContainType>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Frontend/PhpFrontend.php">
     <ImplementedReturnTypeMismatch occurrences="1">
@@ -339,9 +283,6 @@
     <PossiblyFalseOperand occurrences="1">
       <code>array_search($result, array_keys($array), true)</code>
     </PossiblyFalseOperand>
-    <PossiblyNullArgument occurrences="1">
-      <code>$callback</code>
-    </PossiblyNullArgument>
   </file>
   <file src="Packages/Framework/Neos.Eel/Classes/Helper/FileHelper.php">
     <InvalidReturnStatement occurrences="1">
@@ -1207,15 +1148,6 @@
       <code>$dotPosition</code>
     </PossiblyFalseArgument>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/I18n/Translator.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>string</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="2">
-      <code>null</code>
-      <code>null</code>
-    </NullableReturnStatement>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/I18n/Xliff/Model/FileAdapter.php">
     <InvalidScalarArgument occurrences="1">
       <code>LOG_DEBUG</code>
@@ -1309,11 +1241,6 @@
       <code>$content</code>
       <code>stream_for()</code>
     </PropertyTypeCoercion>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/AbstractController.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$mediaType</code>
-    </PossiblyNullArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/ActionController.php">
     <PossiblyNullPropertyAssignmentValue occurrences="2">
@@ -1422,10 +1349,6 @@
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Routing/ObjectPathMappingRepository.php">
     <LessSpecificReturnStatement occurrences="2"/>
-    <MoreSpecificReturnType occurrences="2">
-      <code>ObjectPathMapping</code>
-      <code>ObjectPathMapping</code>
-    </MoreSpecificReturnType>
     <TooManyArguments occurrences="3">
       <code>flush</code>
       <code>logicalAnd</code>
@@ -1506,14 +1429,6 @@
     <UnsafeInstantiation occurrences="1">
       <code>new static($options)</code>
     </UnsafeInstantiation>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Mvc/View/JsonView.php">
-    <InvalidReturnStatement occurrences="1">
-      <code>$object-&gt;format(\DateTime::ISO8601)</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>array</code>
-    </InvalidReturnType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/ViewConfigurationManager.php">
     <PossiblyNullIterator occurrences="1">
@@ -1703,11 +1618,6 @@
       <code>getConfigurationValue</code>
     </PossiblyNullReference>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/CacheAdapter.php">
-    <InvalidReturnType occurrences="1">
-      <code>boolean</code>
-    </InvalidReturnType>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/CountWalker.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>void</code>
@@ -1795,12 +1705,6 @@
       <code>$primaryTable['name']</code>
     </PossiblyUndefinedArrayOffset>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/PersistenceManager.php">
-    <NullableReturnStatement occurrences="2">
-      <code>$this-&gt;entityManager-&gt;find($objectType, $identifier)</code>
-      <code>$this-&gt;entityManager-&gt;getReference($objectType, $identifier)</code>
-    </NullableReturnStatement>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Query.php">
     <ImplicitToStringCast occurrences="1">
       <code>$this-&gt;queryBuilder-&gt;expr()-&gt;lower($aliasedPropertyName)</code>
@@ -1832,11 +1736,6 @@
       <code>$entityManager</code>
     </PropertyTypeCoercion>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/QueryResult.php">
-    <NullableReturnStatement occurrences="1">
-      <code>(isset($rows[0])) ? $rows[0] : null</code>
-    </NullableReturnStatement>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Repository.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$classMetadata</code>
@@ -1844,12 +1743,6 @@
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>\Neos\Flow\Persistence\QueryResultInterface</code>
     </ImplementedReturnTypeMismatch>
-    <InvalidNullableReturnType occurrences="1">
-      <code>object</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="1">
-      <code>$this-&gt;entityManager-&gt;find($this-&gt;objectType, $identifier)</code>
-    </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Service.php">
     <ImplicitToStringCast occurrences="3">
@@ -1941,9 +1834,6 @@
     <InvalidReturnType occurrences="1">
       <code>object</code>
     </InvalidReturnType>
-    <NullableReturnStatement occurrences="1">
-      <code>null</code>
-    </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/Qom/QueryObjectModelFactory.php">
     <InvalidScalarArgument occurrences="1">
@@ -2105,9 +1995,6 @@
     </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Property/TypeConverter/PersistentObjectConverter.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>object</code>
-    </InvalidNullableReturnType>
     <InvalidScalarArgument occurrences="5">
       <code>self::CONFIGURATION_CREATION_ALLOWED</code>
       <code>self::CONFIGURATION_CREATION_ALLOWED</code>
@@ -2115,8 +2002,7 @@
       <code>self::CONFIGURATION_MODIFICATION_ALLOWED</code>
       <code>self::CONFIGURATION_TARGET_TYPE</code>
     </InvalidScalarArgument>
-    <NullableReturnStatement occurrences="2">
-      <code>null</code>
+    <NullableReturnStatement occurrences="1">
       <code>null</code>
     </NullableReturnStatement>
     <TooManyArguments occurrences="2">
@@ -2449,10 +2335,6 @@
       <code>$object</code>
     </ArgumentTypeCoercion>
     <LessSpecificReturnStatement occurrences="2"/>
-    <MoreSpecificReturnType occurrences="2">
-      <code>Account</code>
-      <code>Account</code>
-    </MoreSpecificReturnType>
     <TooManyArguments occurrences="3">
       <code>logicalAnd</code>
       <code>logicalAnd</code>
@@ -3083,6 +2965,11 @@
     <UndefinedInterfaceMethod occurrences="1">
       <code>setViewHelperNode</code>
     </UndefinedInterfaceMethod>
+  </file>
+  <file src="Packages/Framework/Neos.FluidAdaptor/Classes/Core/Rendering/RenderingContext.php">
+    <TooManyArguments occurrences="1">
+      <code>parent::__construct($view)</code>
+    </TooManyArguments>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/Core/ViewHelper/AbstractConditionViewHelper.php">
     <LessSpecificImplementedReturnType occurrences="1">
