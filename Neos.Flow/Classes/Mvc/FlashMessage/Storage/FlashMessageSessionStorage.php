@@ -81,7 +81,6 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
         if (!$this->session->hasKey($this->sessionKey)) {
             return null;
         }
-        /** @var FlashMessageContainer $flashMessageContainer */
         $flashMessageContainer = $this->session->getData($this->sessionKey);
         if ($flashMessageContainer instanceof FlashMessageContainer) {
             return $flashMessageContainer;
