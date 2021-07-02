@@ -21,26 +21,6 @@
       <code>\APCUIterator</code>
     </UndefinedDocblockClass>
   </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Backend/MemcachedBackend.php">
-    <UndefinedClass occurrences="2">
-      <code>\Memcached</code>
-      <code>\Memcached</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="12">
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>\Memcache|\Memcached</code>
-    </UndefinedDocblockClass>
-  </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/PdoBackend.php">
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>null</code>
@@ -1638,11 +1618,6 @@
       <code>getConfigurationValue</code>
     </PossiblyNullReference>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/CacheAdapter.php">
-    <InvalidReturnType occurrences="1">
-      <code>boolean</code>
-    </InvalidReturnType>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/CountWalker.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>void</code>
@@ -2990,6 +2965,11 @@
     <UndefinedInterfaceMethod occurrences="1">
       <code>setViewHelperNode</code>
     </UndefinedInterfaceMethod>
+  </file>
+  <file src="Packages/Framework/Neos.FluidAdaptor/Classes/Core/Rendering/RenderingContext.php">
+    <TooManyArguments occurrences="1">
+      <code>parent::__construct($view)</code>
+    </TooManyArguments>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/Core/ViewHelper/AbstractConditionViewHelper.php">
     <LessSpecificImplementedReturnType occurrences="1">
