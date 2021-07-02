@@ -38,7 +38,7 @@ class ParameterReflection extends \ReflectionParameter
     /**
      * Returns the parameter class
      *
-     * @return ClassReflection The parameter class
+     * @return ClassReflection|null The parameter class
      */
     public function getClass()
     {
