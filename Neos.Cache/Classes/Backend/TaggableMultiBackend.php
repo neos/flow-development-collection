@@ -54,6 +54,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
      */
     public function flushByTag(string $tag): int
     {
+        $this->prepareBackends();
         $count = 0;
         foreach ($this->backends as $backend) {
             try {
@@ -72,6 +73,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
      */
     public function findIdentifiersByTag(string $tag): array
     {
+        $this->prepareBackends();
         $identifiers = [];
         foreach ($this->backends as $backend) {
             try {
