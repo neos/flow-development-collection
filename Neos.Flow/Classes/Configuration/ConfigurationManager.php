@@ -349,9 +349,9 @@ class ConfigurationManager
         $configurations = @include $cachePathAndFilename;
         if ($configurations !== false) {
             if ($configurationType === null) {
-                $this->configurations[$configurationType] = $configurations;
-            } else {
                 $this->configurations = $configurations;
+            } else {
+                $this->configurations[$configurationType] = $configurations;
             }
             return true;
         }
