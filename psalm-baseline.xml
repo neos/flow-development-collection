@@ -742,7 +742,7 @@
       <code>FLOW_PATH_CONFIGURATION</code>
     </UndefinedConstant>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationSource/DefaultConfigurationSource.php">
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationSource/MergeConfigurationSource.php">
     <UndefinedConstant occurrences="2">
       <code>FLOW_PATH_CONFIGURATION</code>
       <code>FLOW_PATH_CONFIGURATION</code>
