@@ -14,7 +14,7 @@ namespace Neos\Flow\Configuration;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationSource\AppendConfigurationSource;
 use Neos\Flow\Configuration\ConfigurationSource\ConfigurationSourceInterface;
-use Neos\Flow\Configuration\ConfigurationSource\DefaultConfigurationSource;
+use Neos\Flow\Configuration\ConfigurationSource\MergeConfigurationSource;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Source\YamlSource;
@@ -229,7 +229,7 @@ class ConfigurationManager
     private function convertLegacyProcessingType(string $configurationType, string $configurationProcessingType): ConfigurationSourceInterface
     {
         if ($configurationProcessingType === self::CONFIGURATION_PROCESSING_TYPE_DEFAULT) {
-            return new DefaultConfigurationSource(new YamlSource(), $configurationType);
+            return new MergeConfigurationSource(new YamlSource(), $configurationType);
         }
         if ($configurationProcessingType === self::CONFIGURATION_PROCESSING_TYPE_APPEND) {
             return new AppendConfigurationSource(new YamlSource(), $configurationType);
@@ -265,7 +265,7 @@ class ConfigurationManager
     {
         if (empty($this->configurations[$configurationType])) {
             $this->loadConfiguration($configurationType, $this->packages);
-            $this->processConfiguration($configurationType);
+            $this->processConfigurationType($configurationType);
         }
 
         $configuration = $this->configurations[$configurationType] ?? [];
@@ -337,14 +337,22 @@ class ConfigurationManager
     /**
      * If a cache file with previously saved configuration exists, it is loaded.
      *
+     * @param string $cachePathAndFilename The cache file to load the configuration from
+     * @param string $configurationType The kind of configuration to fetch
      * @return boolean If cached configuration was loaded or not
      */
-    protected function loadConfigurationCache(): bool
+    protected function loadConfigurationCache(string $cachePathAndFilename = null, string $configurationType = null): bool
     {
-        $cachePathAndFilename = $this->constructConfigurationCachePath();
+        if ($cachePathAndFilename === null) {
+            $cachePathAndFilename = $this->constructConfigurationCachePath();
+        }
         $configurations = @include $cachePathAndFilename;
         if ($configurations !== false) {
-            $this->configurations = $configurations;
+            if ($configurationType === null) {
+                $this->configurations[$configurationType] = $configurations;
+            } else {
+                $this->configurations = $configurations;
+            }
             return true;
         }
 
@@ -378,13 +386,17 @@ class ConfigurationManager
 
     /**
      * Generate configuration with environment variables replaced without modifying or loading the cache
-     * @param string $configurationType
+     *
+     * @param string $configurationType The kind of configuration to fetch
      */
-    protected function processConfiguration(string $configurationType)
+    protected function processConfigurationType(string $configurationType)
     {
-        $config = null;
-        eval('$config = '.$this->replaceVariablesInPhpString(var_export($this->unprocessedConfiguration[$configurationType], true)).';');
-        $this->configurations[$configurationType] = $config;
+        if ($this->temporaryDirectoryPath !== null) {
+            $cachePathAndFilename = $this->constructConfigurationCachePath().'.tmp';
+            $this->writeConfigurationCacheFile($cachePathAndFilename, $configurationType);
+            $this->loadConfigurationCache($cachePathAndFilename, $configurationType);
+            @unlink($cachePathAndFilename);
+        }
     }
 
     /**
@@ -408,13 +420,27 @@ class ConfigurationManager
         }
 
         $cachePathAndFilename = $this->constructConfigurationCachePath();
+        $this->writeConfigurationCacheFile($cachePathAndFilename);
+        $this->cacheNeedsUpdate = false;
+    }
+
+    /**
+     * Writes the cache on disk in the given cache file
+     *
+     * @param string $cachePathAndFilename The file to save the cache
+     */
+    protected function writeConfigurationCacheFile(string $cachePathAndFilename, string $configurationType = null): void
+    {
         if (!file_exists(dirname($cachePathAndFilename))) {
             Files::createDirectoryRecursively(dirname($cachePathAndFilename));
         }
 
-        file_put_contents($cachePathAndFilename, '<?php return ' . $this->replaceVariablesInPhpString(var_export($this->unprocessedConfiguration, true)) . ';');
+        $configToWrite = $this->unprocessedConfiguration;
+        if ($configurationType) {
+            $configToWrite = $this->unprocessedConfiguration[$configurationType];
+        }
+        file_put_contents($cachePathAndFilename, '<?php return ' . $this->replaceVariablesInPhpString(var_export($configToWrite, true)) . ';');
         OpcodeCacheHelper::clearAllActive($cachePathAndFilename);
-        $this->cacheNeedsUpdate = false;
     }
 
     /**

@@ -18,7 +18,6 @@ use Neos\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationContro
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * A trait with shared step definitions for testing compile time security privilege types

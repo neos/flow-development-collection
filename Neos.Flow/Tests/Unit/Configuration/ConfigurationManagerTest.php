@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Configuration;
 
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSource\AppendConfigurationSource;
-use Neos\Flow\Configuration\ConfigurationSource\DefaultConfigurationSource;
+use Neos\Flow\Configuration\ConfigurationSource\MergeConfigurationSource;
 use Neos\Flow\Configuration\ConfigurationSource\ObjectsConfigurationSource;
 use Neos\Flow\Configuration\ConfigurationSource\RoutesConfigurationSource;
 use Neos\Flow\Configuration\ConfigurationSource\SettingsConfigurationSource;
@@ -53,11 +53,11 @@ class ConfigurationManagerTest extends UnitTestCase
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => [],
         ];
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration', 'processConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration', 'processConfigurationType']);
         $configurationManager->_set('configurations', $initialConfigurations);
 
         $configurationManager->expects(self::once())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
-        $configurationManager->expects(self::once())->method('processConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
+        $configurationManager->expects(self::once())->method('processConfigurationType')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
         $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Foo');
     }
 
@@ -87,11 +87,11 @@ class ConfigurationManagerTest extends UnitTestCase
     {
         $packages = ['SomePackage' => $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock()];
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration', 'processConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration', 'processConfigurationType']);
         $configurationManager->_set('configurations', [ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => []]);
         $configurationManager->setPackages($packages);
         $configurationManager->expects(self::once())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $packages);
-        $configurationManager->expects(self::once())->method('processConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
+        $configurationManager->expects(self::once())->method('processConfigurationType')->with(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
 
         $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'SomePackage');
     }
@@ -103,11 +103,11 @@ class ConfigurationManagerTest extends UnitTestCase
     {
         $packages = ['SomePackage' => $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock()];
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration', 'processConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration', 'processConfigurationType']);
         $configurationManager->_set('configurations', [ConfigurationManager::CONFIGURATION_TYPE_OBJECTS => []]);
         $configurationManager->setPackages($packages);
         $configurationManager->expects(self::once())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, $packages);
-        $configurationManager->expects(self::once())->method('processConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS);
+        $configurationManager->expects(self::once())->method('processConfigurationType')->with(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS);
 
         $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'SomePackage');
     }
@@ -121,11 +121,11 @@ class ConfigurationManagerTest extends UnitTestCase
             ConfigurationManager::CONFIGURATION_TYPE_ROUTES => ['foo' => 'bar'],
         ];
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration', 'processConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['loadConfiguration', 'processConfigurationType']);
         $configurationManager->_set('configurations', $initialConfigurations);
 
         $configurationManager->expects(self::atLeastOnce())->method('loadConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_CACHES);
-        $configurationManager->expects(self::atLeastOnce())->method('processConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_CACHES);
+        $configurationManager->expects(self::atLeastOnce())->method('processConfigurationType')->with(ConfigurationManager::CONFIGURATION_TYPE_CACHES);
 
         $configurationTypes = [
             ConfigurationManager::CONFIGURATION_TYPE_ROUTES,
@@ -192,7 +192,7 @@ class ConfigurationManagerTest extends UnitTestCase
             'PackageA' => $mockPackageA,
         ];
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType']);
         $configurationManager->_set('configurationSource', $mockYamlSource);
 
         $settingsConfigurationSource = new SettingsConfigurationSource($mockYamlSource);
@@ -476,8 +476,8 @@ class ConfigurationManagerTest extends UnitTestCase
         $mockPackages = $this->getMockPackages();
 
         $configurationSource = $configurationManager->_get('configurationSource');
-        $defaultConfigurationSource = new DefaultConfigurationSource($configurationSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES);
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, $defaultConfigurationSource);
+        $mergeConfigurationSource = new MergeConfigurationSource($configurationSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, $mergeConfigurationSource);
 
         $configurationManager->_call('loadConfiguration', ConfigurationManager::CONFIGURATION_TYPE_CACHES, $mockPackages);
 
@@ -594,7 +594,7 @@ EOD;
         $cachedConfigurationsPathAndFilename = vfsStream::url('Flow/Cache/Configurations.php');
         file_put_contents($cachedConfigurationsPathAndFilename, $configurationsCode);
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfiguration', 'constructConfigurationCachePath', 'refreshConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType', 'constructConfigurationCachePath', 'refreshConfiguration']);
         $configurationManager->expects(self::any())->method('constructConfigurationCachePath')->willReturn('notfound.php', $cachedConfigurationsPathAndFilename);
         $configurationManager->_set('configurations', ['foo' => 'untouched']);
         $configurationManager->_call('loadConfigurationCache');
@@ -612,7 +612,7 @@ EOD;
         $mockYamlSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
         $mockYamlSource->expects(self::any())->method('load')->will(self::returnCallBack([$this, 'packageSettingsCallback']));
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType']);
         $configurationManager->_set('configurationSource', $mockYamlSource);
 
         $settingsConfigurationSource = new SettingsConfigurationSource($mockYamlSource);
@@ -649,7 +649,7 @@ EOD;
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => ['settings' => ['foo' => 'bar']]
         ];
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfiguration', 'constructConfigurationCachePath', 'loadConfigurationCache']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType', 'constructConfigurationCachePath', 'loadConfigurationCache']);
         $configurationManager->setTemporaryDirectoryPath($temporaryDirectoryPath);
         $configurationManager->expects(self::any())->method('constructConfigurationCachePath')->willReturn($cachedConfigurationsPathAndFilename);
         $configurationManager->_set('configurations', $mockConfigurations);
@@ -1100,7 +1100,7 @@ EOD;
         $mockYamlSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
         $mockYamlSource->expects(self::any())->method('load')->will(self::returnCallBack([$this, 'packageRoutesAndSettingsCallback']));
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType']);
         $configurationManager->_set('configurationSource', $mockYamlSource);
 
         $mockPackages = $this->getMockPackages();
@@ -1221,7 +1221,7 @@ EOD;
         $mockYamlSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
         $mockYamlSource->expects(self::any())->method('load')->will(self::returnValue([$mockSubRouteConfiguration]));
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType']);
 
         $settingsConfigurationSource = new SettingsConfigurationSource($mockYamlSource);
         $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingsConfigurationSource);
@@ -1256,7 +1256,7 @@ EOD;
         $mockYamlSource->expects(self::any())->method('load')->will(self::returnValue([$routesConfiguration]));
 
         $applicationContext = new ApplicationContext('Production');
-        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfiguration']);
+        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType']);
 
         $mockRoutesConfigurationSource = $this->getAccessibleMock(RoutesConfigurationSource::class, [], [$mockYamlSource, $configurationManager], '', true, true, true, false, true);
 
@@ -1707,7 +1707,7 @@ EOD;
         $mockYamlSource = $this->getMockBuilder(YamlSource::class)->setMethods(['load', 'save'])->getMock();
         $mockYamlSource->expects(self::any())->method('load')->will(self::returnCallBack([$this, $configurationSourceCallbackName]));
 
-        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfiguration', 'includeSubRoutesFromSettings'], new ApplicationContext($contextName));
+        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType', 'includeSubRoutesFromSettings'], new ApplicationContext($contextName));
         $configurationManager->_set('configurationSource', $mockYamlSource);
 
         return $configurationManager;

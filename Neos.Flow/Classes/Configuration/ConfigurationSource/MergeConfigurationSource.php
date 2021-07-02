@@ -15,7 +15,7 @@ use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Utility\Arrays;
 
-class DefaultConfigurationSource implements ConfigurationSourceInterface
+class MergeConfigurationSource implements ConfigurationSourceInterface
 {
     /**
      * @var YamlSource
