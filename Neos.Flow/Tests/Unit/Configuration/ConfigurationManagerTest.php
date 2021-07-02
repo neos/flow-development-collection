@@ -1445,11 +1445,11 @@ EOD;
                     '@controller' => 'Standard',
                     '@action' => 'redirect',
                     '--posts-paginator' => [
-                        '@package' => '',
-                        '@subpackage' => '',
-                        '@controller' => '',
-                        '@action' => '<someOtherVariable>',
-                        'currentPage' => '1'
+                      '@package' => '',
+                      '@subpackage' => '',
+                      '@controller' => '',
+                      '@action' => '<someOtherVariable>',
+                      'currentPage' => '1'
                     ]
                 ],
             ]
