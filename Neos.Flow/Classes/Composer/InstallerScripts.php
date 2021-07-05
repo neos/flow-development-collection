@@ -23,6 +23,17 @@ use Neos\Utility\Files;
  */
 class InstallerScripts
 {
+
+    /**
+     * @var bool
+     */
+    protected static $postPackageUpdateAndInstallAlreadyRun = false;
+
+    /**
+     * @var bool
+     */
+    protected static $postUpdateAndInstallAlreadyRun = false;
+
     /**
      * Make sure required paths and files are available outside of Package
      * Run on every Composer install or update - must be configured in root manifest
@@ -32,6 +43,11 @@ class InstallerScripts
      */
     public static function postUpdateAndInstall(Event $event)
     {
+
+        if (self::$postUpdateAndInstallAlreadyRun) {
+            return;
+        }
+
         if (!defined('FLOW_PATH_ROOT')) {
             define('FLOW_PATH_ROOT', Files::getUnixStylePath(getcwd()) . '/');
         }
@@ -56,6 +72,8 @@ class InstallerScripts
         $packageManager->rescanPackages();
 
         chmod('flow', 0755);
+
+        self::$postUpdateAndInstallAlreadyRun = true;
     }
 
     /**
@@ -67,6 +85,10 @@ class InstallerScripts
      */
     public static function postPackageUpdateAndInstall(PackageEvent $event)
     {
+        if (self::$postPackageUpdateAndInstallAlreadyRun) {
+            return;
+        }
+
         $operation = $event->getOperation();
         if (!$operation instanceof InstallOperation && !$operation instanceof UpdateOperation) {
             throw new Exception\UnexpectedOperationException('Handling of operation of type "' . get_class($operation) . '" not supported', 1348750840);
@@ -88,6 +110,8 @@ class InstallerScripts
         if ($operation instanceof UpdateOperation && isset($packageExtraConfig['neos/flow']['post-update'])) {
             self::runPackageScripts($packageExtraConfig['neos/flow']['post-update']);
         }
+
+        self::$postPackageUpdateAndInstallAlreadyRun = true;
     }
 
     /**
