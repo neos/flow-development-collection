@@ -13,13 +13,13 @@
 			<target state="translated">Şifre</target></trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target state="translated">Yeni şifreniz</target></trans-unit>
+			<target state="translated">Yeni şifre</target></trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target state="translated">Giriş Yap</target></trans-unit>
+			<target state="translated">Oturum aç</target></trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target state="translated">Çıkış Yap</target></trans-unit>
+			<target state="translated">Oturumu kapat</target></trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
 			<target state="translated">Güncelle</target></trans-unit>

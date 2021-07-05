@@ -12,6 +12,9 @@ namespace Neos\Flow\Tests\Unit\Core\Booting;
  */
 
 use Neos\Flow\Core\Booting\Scripts;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Package\PackageManager;
+use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -32,7 +35,7 @@ class ScriptsMock extends Scripts
     {
     }
 
-    public static function buildSubprocessCommand($commandIdentifier, array $settings, array $commandArguments = []): string
+    public static function buildSubprocessCommand(string $commandIdentifier, array $settings, array $commandArguments = []): string
     {
         return parent::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
     }
@@ -87,5 +90,22 @@ class ScriptsTest extends UnitTestCase
 
         self::assertStringContainsString(sprintf(' -d %s=%s ', escapeshellarg('someSetting'), escapeshellarg('withValue')), $actual);
         self::assertStringContainsString(sprintf(' -d %s ', escapeshellarg('someFlagSettingWithoutValue')), $actual);
+    }
+
+    /**
+     * @test
+     */
+    public function initializeConfigurationInjectsSettingsToPackageManager()
+    {
+        $mockSignalSlotDispatcher = $this->createMock(Dispatcher::class);
+        $mockPackageManager = $this->createMock(PackageManager::class, ['injectSettings'], [], '', false, true);
+
+        $bootstrap = new Bootstrap('Testing');
+        $bootstrap->setEarlyInstance(Dispatcher::class, $mockSignalSlotDispatcher);
+        $bootstrap->setEarlyInstance(PackageManager::class, $mockPackageManager);
+
+        $mockPackageManager->expects(self::once())->method('injectSettings');
+
+        Scripts::initializeConfiguration($bootstrap);
     }
 }

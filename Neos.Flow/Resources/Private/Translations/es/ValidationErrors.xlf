@@ -33,7 +33,7 @@
 			<target state="translated">La fecha dada debe estar después {0,datetime,datetime}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0,datetime,datetime}</source>
-			<target state="needs-translation">The given date must be before {0,datetime,datetime}</target></trans-unit>
+			<target state="translated">La fecha dada debe estar antes de {0,datetime,datetime}.</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>

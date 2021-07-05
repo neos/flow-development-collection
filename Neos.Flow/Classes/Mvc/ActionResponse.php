@@ -191,12 +191,17 @@ final class ActionResponse
         return $this->statusCode ?? 200;
     }
 
+    public function hasContentType(): bool
+    {
+        return !empty($this->contentType);
+    }
+
     /**
      * @return string
      */
     public function getContentType(): string
     {
-        return $this->contentType;
+        return $this->contentType ?? '';
     }
 
     /**
@@ -209,16 +214,16 @@ final class ActionResponse
             $actionResponse->setContent($this->content);
         }
 
-        if ($this->contentType !== null) {
+        if ($this->hasContentType()) {
             $actionResponse->setContentType($this->contentType);
-        }
-
-        if ($this->statusCode !== null) {
-            $actionResponse->setStatusCode($this->statusCode);
         }
 
         if ($this->redirectUri !== null) {
             $actionResponse->setRedirectUri($this->redirectUri);
+        }
+
+        if ($this->statusCode !== null) {
+            $actionResponse->setStatusCode($this->statusCode);
         }
 
         foreach ($this->componentParameters as $componentClass => $parameters) {
@@ -248,7 +253,7 @@ final class ActionResponse
             $httpResponse = $httpResponse->withBody($this->content);
         }
 
-        if ($this->contentType) {
+        if ($this->hasContentType()) {
             $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);
         }
 
@@ -293,7 +298,7 @@ final class ActionResponse
             $httpResponse = $httpResponse->withBody($this->content);
         }
 
-        if ($this->contentType !== null) {
+        if ($this->hasContentType()) {
             $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);
         }
 

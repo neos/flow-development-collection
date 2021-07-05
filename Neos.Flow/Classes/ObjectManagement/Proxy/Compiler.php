@@ -286,10 +286,14 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     {
         $annotationAsString = '@\\' . get_class($annotation);
 
-        $optionNames = get_class_vars(get_class($annotation));
+        $optionDefaults = get_class_vars(get_class($annotation));
+        $optionValues = get_object_vars($annotation);
         $optionsAsStrings = [];
-        foreach ($optionNames as $optionName => $optionDefault) {
-            $optionValue = $annotation->$optionName;
+        foreach ($optionValues as $optionName => $optionValue) {
+            // FIXME: This is a workaround for https://github.com/neos/flow-development-collection/issues/2387
+            if ($optionName[0] === '_') {
+                continue;
+            }
             $optionValueAsString = '';
             if (is_object($optionValue)) {
                 $optionValueAsString = self::renderAnnotation($optionValue);
@@ -307,7 +311,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
                     $optionsAsStrings[] = $optionValueAsString;
                     break;
                 default:
-                    if ($optionValue === $optionDefault) {
+                    if ($optionValue === $optionDefaults[$optionName]) {
                         break;
                     }
                     $optionsAsStrings[] = $optionName . '=' . $optionValueAsString;

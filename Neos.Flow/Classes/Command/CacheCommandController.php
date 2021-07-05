@@ -247,7 +247,7 @@ class CacheCommandController extends CommandController
      * @param bool $quiet If set, this command only outputs errors & warnings
      * @return void
      * @see neos.flow:cache:show
-     * @throws NoSuchCacheException | StopActionException
+     * @throws NoSuchCacheException|StopActionException
      */
     public function listCommand(bool $quiet = false)
     {
@@ -391,7 +391,7 @@ class CacheCommandController extends CommandController
      * @param bool $quiet If set, this command only outputs errors & warnings
      * @return void
      * @see neos.flow:cache:setup
-     * @throws NoSuchCacheException | StopActionException
+     * @throws NoSuchCacheException|StopActionException
      */
     public function setupAllCommand(bool $quiet = false)
     {
