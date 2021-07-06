@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Composer;
 
 /*
@@ -23,15 +25,33 @@ use Neos\Utility\Files;
  */
 class InstallerScripts
 {
+
+    /**
+     * @var bool
+     */
+    protected static $postPackageUpdateAndInstallAlreadyRun = false;
+
+    /**
+     * @var bool
+     */
+    protected static $postUpdateAndInstallAlreadyRun = false;
+
     /**
      * Make sure required paths and files are available outside of Package
      * Run on every Composer install or update - must be configured in root manifest
      *
      * @param Event $event
      * @return void
+     * @throws Exception\InvalidConfigurationException
+     * @throws \Neos\Flow\Package\Exception
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    public static function postUpdateAndInstall(Event $event)
+    public static function postUpdateAndInstall(Event $event): void
     {
+        if (self::$postUpdateAndInstallAlreadyRun) {
+            return;
+        }
+
         if (!defined('FLOW_PATH_ROOT')) {
             define('FLOW_PATH_ROOT', Files::getUnixStylePath(getcwd()) . '/');
         }
@@ -56,6 +76,8 @@ class InstallerScripts
         $packageManager->rescanPackages();
 
         chmod('flow', 0755);
+
+        self::$postUpdateAndInstallAlreadyRun = true;
     }
 
     /**
@@ -63,10 +85,16 @@ class InstallerScripts
      *
      * @param PackageEvent $event
      * @return void
+     * @throws Exception\InvalidConfigurationException
      * @throws Exception\UnexpectedOperationException
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    public static function postPackageUpdateAndInstall(PackageEvent $event)
+    public static function postPackageUpdateAndInstall(PackageEvent $event): void
     {
+        if (self::$postPackageUpdateAndInstallAlreadyRun) {
+            return;
+        }
+
         $operation = $event->getOperation();
         if (!$operation instanceof InstallOperation && !$operation instanceof UpdateOperation) {
             throw new Exception\UnexpectedOperationException('Handling of operation of type "' . get_class($operation) . '" not supported', 1348750840);
@@ -88,6 +116,8 @@ class InstallerScripts
         if ($operation instanceof UpdateOperation && isset($packageExtraConfig['neos/flow']['post-update'])) {
             self::runPackageScripts($packageExtraConfig['neos/flow']['post-update']);
         }
+
+        self::$postPackageUpdateAndInstallAlreadyRun = true;
     }
 
     /**
@@ -95,8 +125,9 @@ class InstallerScripts
      *
      * @param string $installerResourcesDirectory Path to the installer directory that contains the Distribution/Essentials and/or Distribution/Defaults directories.
      * @return void
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    protected static function copyDistributionFiles(string $installerResourcesDirectory)
+    protected static function copyDistributionFiles(string $installerResourcesDirectory): void
     {
         $essentialsPath = $installerResourcesDirectory . 'Distribution/Essentials';
         if (is_dir($essentialsPath)) {
@@ -116,7 +147,7 @@ class InstallerScripts
      * @return void
      * @throws Exception\InvalidConfigurationException
      */
-    protected static function runPackageScripts(string $staticMethodReference)
+    protected static function runPackageScripts(string $staticMethodReference): void
     {
         $className = substr($staticMethodReference, 0, strpos($staticMethodReference, '::'));
         $methodName = substr($staticMethodReference, strpos($staticMethodReference, '::') + 2);
