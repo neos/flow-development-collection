@@ -48,7 +48,6 @@ class InstallerScripts
      */
     public static function postUpdateAndInstall(Event $event): void
     {
-
         if (self::$postUpdateAndInstallAlreadyRun) {
             return;
         }
