@@ -11,6 +11,7 @@ namespace Neos\Utility;
  * source code.
  */
 
+use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
 
 /**
@@ -114,6 +115,9 @@ abstract class ObjectAccess
         $className = TypeHandling::getTypeForValue($subject);
 
         if ($forceDirectAccess === true) {
+            if ($subject instanceof ProxyInterface) {
+                $className = get_parent_class($className);
+            }
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
                 $propertyReflection->setAccessible(true);
@@ -248,6 +252,9 @@ abstract class ObjectAccess
 
         if ($forceDirectAccess === true) {
             $className = TypeHandling::getTypeForValue($subject);
+            if ($subject instanceof ProxyInterface) {
+                $className = get_parent_class($className);
+            }
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
                 $propertyReflection->setAccessible(true);

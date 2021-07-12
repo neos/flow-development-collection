@@ -15,12 +15,14 @@ use Neos\Utility\Exception\PropertyNotAccessibleException;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\ArrayAccessClass;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\DummyClassWithGettersAndSetters;
+use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\ProxiedClassWithPrivateProperty;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\Model\EntityWithDoctrineProxy;
 use Neos\Utility\TypeHandling;
 
 require_once('Fixture/DummyClassWithGettersAndSetters.php');
 require_once('Fixture/ArrayAccessClass.php');
 require_once('Fixture/Model/EntityWithDoctrineProxy.php');
+require_once('Fixture/ProxiedClassWithPrivateProperty.php');
 
 /**
  * Testcase for Object Access
@@ -540,5 +542,26 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals('booh!', ObjectAccess::getProperty($object1, 'property'));
         ObjectAccess::getProperty($object2, 'property');
+    }
+
+    /**
+     * @test
+     */
+    public function getPropertyUsingDirectAccessWorksOnPrivatePropertyOfProxyParent()
+    {
+        $proxyObject = new ProxiedClassWithPrivateProperty();
+
+        self::assertEquals('original', ObjectAccess::getProperty($proxyObject, 'property', true));
+    }
+
+    /**
+     * @test
+     */
+    public function setPropertyUsingDirectAccessWorksOnPrivatePropertyOfProxyParent()
+    {
+        $proxyObject = new ProxiedClassWithPrivateProperty();
+ 
+        ObjectAccess::setProperty($proxyObject, 'property', 'changed', true);
+        self::assertEquals('changed', $proxyObject->getProperty());
     }
 }
