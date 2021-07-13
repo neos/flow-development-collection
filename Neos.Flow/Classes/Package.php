@@ -12,7 +12,7 @@ namespace Neos\Flow;
  */
 
 use Neos\Flow\Cache\AnnotationsCacheFlusher;
-use Neos\Flow\Configuration\ConfigurationSource\AppendConfigurationSource;
+use Neos\Flow\Configuration\Loader\AppendLoader;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Booting\Step;
 use Neos\Flow\Http\Helper\SecurityHelper;
@@ -132,7 +132,7 @@ class Package extends BasePackage
         $dispatcher->connect(Tests\FunctionalTestCase::class, 'functionalTestTearDown', Mvc\Routing\RouterCachingService::class, 'flushCaches');
 
         $dispatcher->connect(Configuration\ConfigurationManager::class, 'configurationManagerReady', function (Configuration\ConfigurationManager $configurationManager) {
-            $configurationManager->registerConfigurationType('Views', new AppendConfigurationSource(new YamlSource(), 'Views'));
+            $configurationManager->registerConfigurationType('Views', new AppendLoader(new YamlSource(), 'Views'));
         });
         $dispatcher->connect(Command\CacheCommandController::class, 'warmupCaches', Configuration\ConfigurationManager::class, 'warmup');
 

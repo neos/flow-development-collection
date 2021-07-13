@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Configuration\ConfigurationSource;
+namespace Neos\Flow\Configuration\Loader;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -16,7 +16,7 @@ use Neos\Flow\Core\ApplicationContext;
 /**
  * The interface for a configuration source
  */
-interface ConfigurationSourceInterface
+interface LoaderInterface
 {
 
     /**

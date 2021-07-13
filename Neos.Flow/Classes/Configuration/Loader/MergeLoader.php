@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Configuration\ConfigurationSource;
+namespace Neos\Flow\Configuration\Loader;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -13,10 +13,10 @@ namespace Neos\Flow\Configuration\ConfigurationSource;
 
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
+use Neos\Utility\Arrays;
 
-class AppendConfigurationSource implements ConfigurationSourceInterface
+class MergeLoader implements LoaderInterface
 {
-
     /**
      * @var YamlSource
      */
@@ -37,17 +37,17 @@ class AppendConfigurationSource implements ConfigurationSourceInterface
     {
         $configuration = [];
         foreach ($packages as $package) {
-            $configuration[] = $this->yamlSource->load($package->getConfigurationPath() . $this->filePrefix, true);
+            $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load($package->getConfigurationPath() . $this->filePrefix, true));
         }
-        $configuration[] = $this->yamlSource->load(FLOW_PATH_CONFIGURATION . $this->filePrefix, true);
+        $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load(FLOW_PATH_CONFIGURATION . $this->filePrefix, true));
 
         foreach ($context->getHierarchy() as $contextName) {
             foreach ($packages as $package) {
-                $configuration[] = $this->yamlSource->load($package->getConfigurationPath() . $contextName . '/' . $this->filePrefix, true);
+                $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load($package->getConfigurationPath() . $contextName . '/' . $this->filePrefix, true));
             }
-            $configuration[] = $this->yamlSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $this->filePrefix, true);
+            $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->yamlSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $this->filePrefix, true));
         }
 
-        return array_merge([], ...$configuration);
+        return $configuration;
     }
 }

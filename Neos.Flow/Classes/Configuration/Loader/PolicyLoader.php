@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Configuration\ConfigurationSource;
+namespace Neos\Flow\Configuration\Loader;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -16,7 +16,7 @@ use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Utility\Arrays;
 
-class PolicyConfigurationSource implements ConfigurationSourceInterface
+class PolicyLoader implements LoaderInterface
 {
 
     /**

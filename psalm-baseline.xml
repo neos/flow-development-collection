@@ -736,25 +736,25 @@
       <code>FLOW_PATH_CONFIGURATION</code>
     </UndefinedConstant>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationSource/AppendConfigurationSource.php">
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/AppendLoader.php">
     <UndefinedConstant occurrences="2">
       <code>FLOW_PATH_CONFIGURATION</code>
       <code>FLOW_PATH_CONFIGURATION</code>
     </UndefinedConstant>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationSource/MergeConfigurationSource.php">
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/MergeLoader.php">
     <UndefinedConstant occurrences="2">
       <code>FLOW_PATH_CONFIGURATION</code>
       <code>FLOW_PATH_CONFIGURATION</code>
     </UndefinedConstant>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationSource/ObjectsConfigurationSource.php">
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/ObjectsLoader.php">
     <UndefinedConstant occurrences="2">
       <code>FLOW_PATH_CONFIGURATION</code>
       <code>FLOW_PATH_CONFIGURATION</code>
     </UndefinedConstant>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationSource/SettingsConfigurationSource.php">
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/SettingsLoader.php">
     <UndefinedConstant occurrences="2">
       <code>FLOW_PATH_CONFIGURATION</code>
       <code>FLOW_PATH_CONFIGURATION</code>
@@ -766,13 +766,13 @@
       <code>$settings</code>
     </ReferenceConstraintViolation>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationSource/PolicyConfigurationSource.php">
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/PolicyLoader.php">
     <UndefinedConstant occurrences="2">
       <code>FLOW_PATH_CONFIGURATION</code>
       <code>FLOW_PATH_CONFIGURATION</code>
     </UndefinedConstant>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationSource/RoutesConfigurationSource.php">
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/RoutesLoader.php">
     <UndefinedConstant occurrences="2">
       <code>FLOW_PATH_CONFIGURATION</code>
       <code>FLOW_PATH_CONFIGURATION</code>

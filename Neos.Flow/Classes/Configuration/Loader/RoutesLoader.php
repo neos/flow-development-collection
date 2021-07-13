@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Configuration\ConfigurationSource;
+namespace Neos\Flow\Configuration\Loader;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -24,7 +24,7 @@ use Neos\Flow\Package\PackageInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
 
-class RoutesConfigurationSource implements ConfigurationSourceInterface
+class RoutesLoader implements LoaderInterface
 {
     /**
      * The maximum number of recursions when merging subroute configurations.

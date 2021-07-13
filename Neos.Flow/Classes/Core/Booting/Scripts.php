@@ -17,11 +17,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheFactory;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Configuration\ConfigurationSource\MergeConfigurationSource;
-use Neos\Flow\Configuration\ConfigurationSource\ObjectsConfigurationSource;
-use Neos\Flow\Configuration\ConfigurationSource\PolicyConfigurationSource;
-use Neos\Flow\Configuration\ConfigurationSource\RoutesConfigurationSource;
-use Neos\Flow\Configuration\ConfigurationSource\SettingsConfigurationSource;
+use Neos\Flow\Configuration\Loader\MergeLoader;
+use Neos\Flow\Configuration\Loader\ObjectsLoader;
+use Neos\Flow\Configuration\Loader\PolicyLoader;
+use Neos\Flow\Configuration\Loader\RoutesLoader;
+use Neos\Flow\Configuration\Loader\SettingsLoader;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Bootstrap;
@@ -212,13 +212,13 @@ class Scripts
         $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
 
         $yamlSource = new YamlSource();
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, new MergeConfigurationSource($yamlSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES));
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, new ObjectsConfigurationSource($yamlSource));
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, new RoutesConfigurationSource($yamlSource, $configurationManager));
-        $policyConfigurationSource = new PolicyConfigurationSource($yamlSource);
-        $policyConfigurationSource->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $policyConfigurationSource);
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, new SettingsConfigurationSource($yamlSource));
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, new MergeLoader($yamlSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES));
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, new ObjectsLoader($yamlSource));
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, new RoutesLoader($yamlSource, $configurationManager));
+        $policyLoader = new PolicyLoader($yamlSource);
+        $policyLoader->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $policyLoader);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, new SettingsLoader($yamlSource));
 
         // Manually inject settings into the PackageManager as the package manager is excluded from the proxy class building
         $flowSettings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');

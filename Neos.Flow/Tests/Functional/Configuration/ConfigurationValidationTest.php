@@ -13,8 +13,8 @@ namespace Neos\Flow\Tests\Functional\Configuration;
 
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
-use Neos\Flow\Configuration\ConfigurationSource\RoutesConfigurationSource;
-use Neos\Flow\Configuration\ConfigurationSource\SettingsConfigurationSource;
+use Neos\Flow\Configuration\Loader\RoutesLoader;
+use Neos\Flow\Configuration\Loader\SettingsLoader;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Error\Messages\Error;
@@ -99,8 +99,8 @@ class ConfigurationValidationTest extends FunctionalTestCase
 
         $this->mockConfigurationManager = clone $this->originalConfigurationManager;
         $this->mockConfigurationManager->setPackages($configurationPackages);
-        $this->mockConfigurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, new SettingsConfigurationSource($rootDirectoryIgnoringYamlSource));
-        $this->mockConfigurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, new RoutesConfigurationSource($rootDirectoryIgnoringYamlSource, $this->mockConfigurationManager));
+        $this->mockConfigurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, new SettingsLoader($rootDirectoryIgnoringYamlSource));
+        $this->mockConfigurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, new RoutesLoader($rootDirectoryIgnoringYamlSource, $this->mockConfigurationManager));
 
         $this->objectManager->setInstance(ConfigurationManager::class, $this->mockConfigurationManager);
 

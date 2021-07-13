@@ -12,9 +12,9 @@ namespace Neos\Flow\Configuration;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\ConfigurationSource\AppendConfigurationSource;
-use Neos\Flow\Configuration\ConfigurationSource\ConfigurationSourceInterface;
-use Neos\Flow\Configuration\ConfigurationSource\MergeConfigurationSource;
+use Neos\Flow\Configuration\Loader\AppendLoader;
+use Neos\Flow\Configuration\Loader\LoaderInterface;
+use Neos\Flow\Configuration\Loader\MergeLoader;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Source\YamlSource;
@@ -115,9 +115,9 @@ class ConfigurationManager
     /**
      * Defines which Configuration Type is processed by which logic
      *
-     * @var ConfigurationSourceInterface[]|callable[]
+     * @var LoaderInterface[]|callable[]
      */
-    protected $configurationSources = [];
+    protected $configurationLoaders = [];
 
     /**
      * The application context of the configuration to manage
@@ -197,42 +197,42 @@ class ConfigurationManager
      */
     public function getAvailableConfigurationTypes(): array
     {
-        return array_keys($this->configurationSources);
+        return array_keys($this->configurationLoaders);
     }
 
     /**
      * Registers a new configuration type with the given source.
      *
      * @param string $configurationType The type to register, may be anything
-     * @param ConfigurationSourceInterface|callable|string $configurationSource
-     * @throws \InvalidArgumentException on invalid configuration processing type
+     * @param LoaderInterface|callable|string $configurationLoader
      * @return void
+     *@throws \InvalidArgumentException on invalid configuration processing type
      */
-    public function registerConfigurationType(string $configurationType, $configurationSource): void
+    public function registerConfigurationType(string $configurationType, $configurationLoader): void
     {
         // B/C layer
-        if (is_string($configurationSource)) {
-            $configurationSource = $this->convertLegacyProcessingType($configurationType, $configurationSource);
+        if (is_string($configurationLoader)) {
+            $configurationLoader = $this->convertLegacyProcessingType($configurationType, $configurationLoader);
         }
-        if (!is_callable($configurationSource)) {
-            throw new \InvalidArgumentException(sprintf('Specified invalid configuration source of type "%s" while registering custom configuration type "%s".', is_object($configurationSource) ? get_class($configurationSource) : gettype($configurationSource), $configurationType), 1617895964);
+        if (!is_callable($configurationLoader)) {
+            throw new \InvalidArgumentException(sprintf('Specified invalid configuration source of type "%s" while registering custom configuration type "%s".', is_object($configurationLoader) ? get_class($configurationLoader) : gettype($configurationLoader), $configurationType), 1617895964);
         }
 
         // if the configuration was already registered and the there is an unprocessed loaded configuration, the configuration needs to be loaded again
         // on the other hand, if there is a procesed configuration loaded, but no unprocessed configuration, the config must be from the cache and is assumed to be valid
-        if (isset($this->configurationSources[$configurationType]) && isset($this->unprocessedConfiguration[$configurationType])) {
+        if (isset($this->configurationLoaders[$configurationType]) && isset($this->unprocessedConfiguration[$configurationType])) {
             unset($this->configurations[$configurationType], $this->unprocessedConfiguration[$configurationType]);
         }
-        $this->configurationSources[$configurationType] = $configurationSource;
+        $this->configurationLoaders[$configurationType] = $configurationLoader;
     }
 
-    private function convertLegacyProcessingType(string $configurationType, string $configurationProcessingType): ConfigurationSourceInterface
+    private function convertLegacyProcessingType(string $configurationType, string $configurationProcessingType): LoaderInterface
     {
         if ($configurationProcessingType === self::CONFIGURATION_PROCESSING_TYPE_DEFAULT) {
-            return new MergeConfigurationSource(new YamlSource(), $configurationType);
+            return new MergeLoader(new YamlSource(), $configurationType);
         }
         if ($configurationProcessingType === self::CONFIGURATION_PROCESSING_TYPE_APPEND) {
-            return new AppendConfigurationSource(new YamlSource(), $configurationType);
+            return new AppendLoader(new YamlSource(), $configurationType);
         }
         throw new \InvalidArgumentException(sprintf('Specified invalid configuration processing type "%s" while registering custom configuration type "%s".', $configurationProcessingType, $configurationType), 1365496111);
     }
@@ -320,7 +320,7 @@ class ConfigurationManager
      */
     protected function loadConfiguration(string $configurationType, array $packages)
     {
-        if (!isset($this->configurationSources[$configurationType])) {
+        if (!isset($this->configurationLoaders[$configurationType])) {
             throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1339166495);
         }
 
@@ -330,7 +330,7 @@ class ConfigurationManager
 
         $this->cacheNeedsUpdate = true;
 
-        $this->configurations[$configurationType] = $this->configurationSources[$configurationType]($packages, $this->context);
+        $this->configurations[$configurationType] = $this->configurationLoaders[$configurationType]($packages, $this->context);
         $this->unprocessedConfiguration[$configurationType] = $this->configurations[$configurationType];
     }
 
@@ -409,7 +409,7 @@ class ConfigurationManager
     protected function saveConfigurationCache(): void
     {
         // Make sure that all configuration types are loaded before writing configuration caches.
-        foreach (array_keys($this->configurationSources) as $configurationType) {
+        foreach (array_keys($this->configurationLoaders) as $configurationType) {
             if (!isset($this->unprocessedConfiguration[$configurationType]) || !is_array($this->unprocessedConfiguration[$configurationType])) {
                 $this->loadConfiguration($configurationType, $this->packages);
             }
