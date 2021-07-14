@@ -228,12 +228,23 @@ class ConfigurationManager
 
     private function convertLegacyProcessingType(string $configurationType, string $configurationProcessingType): LoaderInterface
     {
-        if ($configurationProcessingType === self::CONFIGURATION_PROCESSING_TYPE_DEFAULT) {
-            return new MergeLoader(new YamlSource(), $configurationType);
+        switch ($configurationProcessingType) {
+            case self::CONFIGURATION_PROCESSING_TYPE_APPEND:
+                return new AppendLoader(new YamlSource(), $configurationType);
+            case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
+                return new MergeLoader(new YamlSource(), $configurationType);
+            case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
+                return new ObjectsLoader(new YamlSource());
+            case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
+                $policyLoader = new PolicyLoader(new YamlSource());
+                $policyLoader->setTemporaryDirectoryPath($this->temporaryDirectoryPath);
+                return $policyLoader;
+            case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
+                return new RoutesLoader(new YamlSource(), $this);
+            case self::CONFIGURATION_PROCESSING_TYPE_SETTINGS:
+                return new SettingsLoader(new YamlSource());
         }
-        if ($configurationProcessingType === self::CONFIGURATION_PROCESSING_TYPE_APPEND) {
-            return new AppendLoader(new YamlSource(), $configurationType);
-        }
+
         throw new \InvalidArgumentException(sprintf('Specified invalid configuration processing type "%s" while registering custom configuration type "%s".', $configurationProcessingType, $configurationType), 1365496111);
     }
 
@@ -257,9 +268,8 @@ class ConfigurationManager
      *
      * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
      * @param string|null $configurationPath The path inside the configuration to fetch
-     * @return mixed|null The configuration or NULL if the configuration doesn't exist
+     * @return mixed The configuration or NULL if the configuration doesn't exist
      * @throws Exception\InvalidConfigurationTypeException on invalid configuration types
-     * @throws Exception\InvalidConfigurationException
      */
     public function getConfiguration(string $configurationType, string $configurationPath = null)
     {
