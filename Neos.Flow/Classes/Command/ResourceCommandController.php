@@ -161,7 +161,7 @@ class ResourceCommandController extends CommandController
             $this->quit(1);
         }
 
-        if (!empty($targetCollection->getObjects())) {
+        if (!$targetCollection->getObjects()) {
             $this->outputLine('The target collection "%s" is not empty.', [$targetCollectionName]);
             $this->quit(1);
         }
