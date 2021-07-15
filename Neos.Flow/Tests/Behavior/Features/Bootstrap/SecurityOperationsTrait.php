@@ -1,7 +1,6 @@
 <?php
 namespace Neos\Flow\Tests\Behavior\Features\Bootstrap;
 
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
@@ -94,11 +93,6 @@ trait SecurityOperationsTrait
 
         self::$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy.yaml';
         file_put_contents(self::$testingPolicyPathAndFilename, $string->getRaw());
-
-        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
-        $configurations = ObjectAccess::getProperty($configurationManager, 'configurations', true);
-        unset($configurations[ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_POLICY]);
-        ObjectAccess::setProperty($configurationManager, 'configurations', $configurations, true);
 
         $policyService = $this->objectManager->get(PolicyService::class);
         ObjectAccess::setProperty($policyService, 'initialized', false, true);
