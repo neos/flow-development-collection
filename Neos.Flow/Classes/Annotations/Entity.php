@@ -11,6 +11,8 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Marks an object as an entity.
  *
@@ -18,13 +20,15 @@ namespace Neos\Flow\Annotations;
  * with that.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target("CLASS")
  */
+#[\Attribute(\Attribute::TARGET_CLASS)]
 final class Entity
 {
     /**
      * Name of the repository class to use for managing the entity.
-     * @var string
+     * @var string|null
      */
     public $repositoryClass;
 
@@ -33,4 +37,10 @@ final class Entity
      * @var boolean
      */
     public $readOnly = false;
+
+    public function __construct(?string $repositoryClass = null, bool $readOnly = false)
+    {
+        $this->repositoryClass = $repositoryClass;
+        $this->readOnly = $readOnly;
+    }
 }

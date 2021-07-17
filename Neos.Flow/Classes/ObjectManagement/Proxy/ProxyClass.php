@@ -162,6 +162,7 @@ class ProxyClass
      */
     public function addProperty($name, $initialValueCode, $visibility = 'private', $docComment = '')
     {
+        // TODO: Add support for PHP attributes?
         $this->properties[$name] = [
             'initialValueCode' => $initialValueCode,
             'visibility' => $visibility,
@@ -259,6 +260,12 @@ class ProxyClass
 
         $classDocumentation .= " * @codeCoverageIgnore\n";
         $classDocumentation .= " */\n";
+        if (PHP_MAJOR_VERSION >= 8) {
+            foreach ($classReflection->getAttributes() as $attribute) {
+                $classDocumentation .= Compiler::renderAttribute($attribute) . "\n";
+            }
+        }
+
         return $classDocumentation;
     }
 

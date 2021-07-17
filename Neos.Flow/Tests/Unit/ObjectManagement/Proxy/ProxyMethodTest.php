@@ -22,15 +22,15 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function buildMethodDocumentationAddsAllExpectedAnnotations()
     {
-        $validateFoo1 = new Flow\Validate(['value' => 'foo1', 'type' => 'bar1']);
-        $validateFoo2 = new Flow\Validate(['value' => 'foo2', 'type' => 'bar2']);
+        $validateFoo1 = new Flow\Validate('foo1', 'bar1');
+        $validateFoo2 = new Flow\Validate('foo2', 'bar2');
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects(self::any())->method('hasMethod')->will(self::returnValue(true));
-        $mockReflectionService->expects(self::any())->method('getMethodTagsValues')->with('My\Class\Name', 'myMethod')->will(self::returnValue([
+        $mockReflectionService->expects(self::any())->method('getMethodTagsValues')->with('My\ClassName', 'myMethod')->will(self::returnValue([
             'param' => ['string $name']
         ]));
-        $mockReflectionService->expects(self::any())->method('getMethodAnnotations')->with('My\Class\Name', 'myMethod')->will(self::returnValue([
+        $mockReflectionService->expects(self::any())->method('getMethodAnnotations')->with('My\ClassName', 'myMethod')->will(self::returnValue([
             $validateFoo1,
             $validateFoo2,
             new Flow\SkipCsrfProtection([])
@@ -38,7 +38,8 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
 
         $mockProxyMethod = $this->getAccessibleMock(ProxyMethod::class, ['dummy'], [], '', false);
         $mockProxyMethod->injectReflectionService($mockReflectionService);
-        $methodDocumentation = $mockProxyMethod->_call('buildMethodDocumentation', 'My\Class\Name', 'myMethod');
+        eval('namespace My; class ClassName { public function myMethod() {} }');
+        $methodDocumentation = $mockProxyMethod->_call('buildMethodDocumentation', 'My\ClassName', 'myMethod');
 
         $expected =
             '    /**' . chr(10) .

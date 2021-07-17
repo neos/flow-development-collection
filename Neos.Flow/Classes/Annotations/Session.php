@@ -11,13 +11,17 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Used to control the behavior of session handling when the annotated
  * method is called.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target("METHOD")
  */
+#[\Attribute(\Attribute::TARGET_METHOD)]
 final class Session
 {
     /**
@@ -25,4 +29,9 @@ final class Session
      * @var boolean
      */
     public $autoStart = false;
+
+    public function __construct(bool $autoStart = false)
+    {
+        $this->autoStart = $autoStart;
+    }
 }

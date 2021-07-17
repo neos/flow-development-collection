@@ -21,6 +21,7 @@ namespace Neos\Flow\Annotations;
  * @Annotation
  * @Target("PROPERTY")
  */
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
 final class Transient
 {
 }

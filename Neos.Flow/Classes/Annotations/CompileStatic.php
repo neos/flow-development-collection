@@ -17,6 +17,7 @@ use Doctrine\Common\Annotations\Annotation as DoctrineAnnotation;
  * @Annotation
  * @DoctrineAnnotation\Target({"METHOD"})
  */
+#[\Attribute(\Attribute::TARGET_METHOD)]
 final class CompileStatic
 {
 }
