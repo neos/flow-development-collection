@@ -15,8 +15,8 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Tests\BaseTestCase;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * Testcase for the redis cache backend
@@ -249,32 +249,5 @@ class RedisBackendTest extends BaseTestCase
             $actualEntries[] = $key;
         }
         $this->assertEmpty($actualEntries, 'Entries should be empty');
-    }
-
-    /**
-     * @test
-     */
-    public function tagsAlsoReceiveTheTtl()
-    {
-        $this->backend->set('entry1', 'foo', ['bar', 'baz'], 1);
-        sleep(2);
-        $this->assertFalse($this->backend->has('entry1'));
-
-        $this->assertEmpty($this->backend->findIdentifiersByTag('bar'));
-        $this->assertEmpty($this->backend->findIdentifiersByTag('baz'));
-    }
-
-    /**
-     * @test
-     */
-    public function tagsForMultipleEntriesExpireIndividually()
-    {
-        $this->backend->set('entry1', 'foo', ['bar', 'baz'], 1);
-        $this->backend->set('entry2', 'foo', ['baz'], 10);
-        sleep(2);
-        $this->assertFalse($this->backend->has('entry1'));
-
-        $this->assertEmpty($this->backend->findIdentifiersByTag('bar'));
-        $this->assertEquals(['entry2'], $this->backend->findIdentifiersByTag('baz'));
     }
 }
