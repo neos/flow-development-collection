@@ -20,6 +20,7 @@ namespace Neos\Flow\Annotations;
  * @Annotation
  * @Target("CLASS")
  */
+#[\Attribute(\Attribute::TARGET_CLASS)]
 final class Aspect
 {
 }

@@ -87,9 +87,10 @@ class CldrParser extends AbstractXmlParser
 
             $parsedChild = $this->parseNode($child);
 
-            if (count($child->attributes()) > 0) {
+            $childAttributes = $child->attributes();
+            if ($childAttributes !== null && count($childAttributes) > 0) {
                 $parsedAttributes = '';
-                foreach ($child->attributes() as $attributeName => $attributeValue) {
+                foreach ($childAttributes as $attributeName => $attributeValue) {
                     if ($this->isDistinguishingAttribute($attributeName)) {
                         $parsedAttributes .= '[@' . $attributeName . '="' . $attributeValue . '"]';
                     }

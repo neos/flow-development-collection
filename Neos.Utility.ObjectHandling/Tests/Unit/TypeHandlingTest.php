@@ -43,24 +43,24 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     public function types()
     {
         return [
-            ['int', ['type' => 'integer', 'elementType' => null]],
-            ['string', ['type' => 'string', 'elementType' => null]],
-            ['DateTime', ['type' => 'DateTime', 'elementType' => null]],
-            ['DateTimeImmutable', ['type' => 'DateTimeImmutable', 'elementType' => null]],
-            ['TYPO3\Foo\Bar', ['type' => 'TYPO3\Foo\Bar', 'elementType' => null]],
-            ['\TYPO3\Foo\Bar', ['type' => 'TYPO3\Foo\Bar', 'elementType' => null]],
-            ['\stdClass', ['type' => 'stdClass', 'elementType' => null]],
-            ['array<integer>', ['type' => 'array', 'elementType' => 'integer']],
-            ['ArrayObject<string>', ['type' => 'ArrayObject', 'elementType' => 'string']],
-            ['SplObjectStorage<TYPO3\Foo\Bar>', ['type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar']],
-            ['SplObjectStorage<\TYPO3\Foo\Bar>', ['type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar']],
-            ['Doctrine\Common\Collections\Collection<\TYPO3\Foo\Bar>', ['type' => 'Doctrine\Common\Collections\Collection', 'elementType' => 'TYPO3\Foo\Bar']],
-            ['Doctrine\Common\Collections\ArrayCollection<\TYPO3\Foo\Bar>', ['type' => 'Doctrine\Common\Collections\ArrayCollection', 'elementType' => 'TYPO3\Foo\Bar']],
-            ['\SomeClass with appendix', ['type' => 'SomeClass', 'elementType' => null]],
+            ['int', ['type' => 'integer', 'elementType' => null, 'nullable' => false]],
+            ['string', ['type' => 'string', 'elementType' => null, 'nullable' => false]],
+            ['DateTime', ['type' => 'DateTime', 'elementType' => null, 'nullable' => false]],
+            ['DateTimeImmutable', ['type' => 'DateTimeImmutable', 'elementType' => null, 'nullable' => false]],
+            ['Neos\Foo\Bar', ['type' => 'Neos\Foo\Bar', 'elementType' => null, 'nullable' => false]],
+            ['\Neos\Foo\Bar', ['type' => 'Neos\Foo\Bar', 'elementType' => null, 'nullable' => false]],
+            ['\stdClass', ['type' => 'stdClass', 'elementType' => null, 'nullable' => false]],
+            ['array<integer>', ['type' => 'array', 'elementType' => 'integer', 'nullable' => false]],
+            ['ArrayObject<string>', ['type' => 'ArrayObject', 'elementType' => 'string', 'nullable' => false]],
+            ['SplObjectStorage<Neos\Foo\Bar>', ['type' => 'SplObjectStorage', 'elementType' => 'Neos\Foo\Bar', 'nullable' => false]],
+            ['SplObjectStorage<\Neos\Foo\Bar>', ['type' => 'SplObjectStorage', 'elementType' => 'Neos\Foo\Bar', 'nullable' => false]],
+            ['Doctrine\Common\Collections\Collection<\Neos\Foo\Bar>', ['type' => 'Doctrine\Common\Collections\Collection', 'elementType' => 'Neos\Foo\Bar', 'nullable' => false]],
+            ['Doctrine\Common\Collections\ArrayCollection<\Neos\Foo\Bar>', ['type' => 'Doctrine\Common\Collections\ArrayCollection', 'elementType' => 'Neos\Foo\Bar', 'nullable' => false]],
+            ['\SomeClass with appendix', ['type' => 'SomeClass', 'elementType' => null, 'nullable' => false]],
 
             // Types might also contain underscores at various points.
-            ['Doctrine\Common\Collections\Special_Class_With_Underscores', ['type' => 'Doctrine\Common\Collections\Special_Class_With_Underscores', 'elementType' => null]],
-            ['Doctrine\Common\Collections\ArrayCollection<\TYPO3\Foo_\Bar>', ['type' => 'Doctrine\Common\Collections\ArrayCollection', 'elementType' => 'TYPO3\Foo_\Bar']],
+            ['Doctrine\Common\Collections\Special_Class_With_Underscores', ['type' => 'Doctrine\Common\Collections\Special_Class_With_Underscores', 'elementType' => null, 'nullable' => false]],
+            ['Doctrine\Common\Collections\ArrayCollection<\Neos\Foo_\Bar>', ['type' => 'Doctrine\Common\Collections\ArrayCollection', 'elementType' => 'Neos\Foo_\Bar', 'nullable' => false]],
         ];
     }
 
@@ -225,22 +225,26 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
         return [
             ['integer|null', 'integer'],
             ['null|int', 'int'],
+            ['?int', 'int'],
             ['array|null', 'array'],
+            ['?array', 'array'],
             ['ArrayObject|null', 'ArrayObject'],
             ['null|SplObjectStorage', 'SplObjectStorage'],
             ['Doctrine\Common\Collections\Collection|null', 'Doctrine\Common\Collections\Collection'],
             ['Doctrine\Common\Collections\ArrayCollection|null', 'Doctrine\Common\Collections\ArrayCollection'],
             ['array<\Some\Other\Class>|null', 'array<\Some\Other\Class>'],
             ['ArrayObject<int>|null', 'ArrayObject<int>'],
+            ['?ArrayObject<int>', 'ArrayObject<int>'],
             ['SplObjectStorage<\object>|null', 'SplObjectStorage<\object>'],
             ['Doctrine\Common\Collections\Collection<ElementType>|null', 'Doctrine\Common\Collections\Collection<ElementType>'],
-            ['Doctrine\Common\Collections\ArrayCollection<>|null', 'Doctrine\Common\Collections\ArrayCollection<>'],
+            ['Doctrine\Common\Collections\ArrayCollection<string>|null', 'Doctrine\Common\Collections\ArrayCollection<string>'],
 
             // This is not even a use case for Flow and is bad API design, but we still should handle it correctly.
             ['integer|null|bool', 'integer|bool'],
+            ['?int|null', 'int'],
 
             // Types might also contain underscores at various points.
-            ['null|Doctrine\Common\Collections\Array_Collection<>', 'Doctrine\Common\Collections\Array_Collection<>'],
+            ['null|Doctrine\Common\Collections\Array_Collection', 'Doctrine\Common\Collections\Array_Collection'],
 
             // This is madness. This... is... NULL!
             ['null', 'null']
@@ -258,5 +262,22 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
             TypeHandling::stripNullableType($type),
             'Failed for ' . $type
         );
+    }
+
+    /**
+     * @test
+     * @dataProvider nullableTypes
+     */
+    public function parseTypeReturnsNullableHint($type, $expectedResult)
+    {
+        try {
+            $parsedType = TypeHandling::parseType($type);
+            self::assertTrue(
+                $parsedType['nullable'],
+                'Failed for ' . $type
+            );
+        } catch (InvalidTypeException $e) {
+            self::assertTrue(true);
+        }
     }
 }

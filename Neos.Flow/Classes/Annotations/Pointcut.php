@@ -11,30 +11,28 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Declares a named pointcut. The annotated method does not become an advice
  * but can be used as a named pointcut instead of the given expression.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target("METHOD")
  */
+#[\Attribute(\Attribute::TARGET_METHOD)]
 final class Pointcut
 {
     /**
      * The pointcut expression. (Can be given as anonymous argument.)
      * @var string
+     * @Required
      */
     public $expression;
 
-    /**
-     * @param array $values
-     * @throws \InvalidArgumentException
-     */
-    public function __construct(array $values)
+    public function __construct(string $expression)
     {
-        if (!isset($values['value']) && !isset($values['expression'])) {
-            throw new \InvalidArgumentException('A Pointcut annotation must specify a pointcut expression.', 1318456604);
-        }
-        $this->expression = isset($values['expression']) ? $values['expression'] : $values['value'];
+        $this->expression = $expression;
     }
 }

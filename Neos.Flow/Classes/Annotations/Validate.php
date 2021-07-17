@@ -11,17 +11,21 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Controls how a property or method argument will be validated by Flow.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"METHOD", "PROPERTY"})
  */
+#[\Attribute(\Attribute::TARGET_METHOD|\Attribute::TARGET_PROPERTY|\Attribute::IS_REPEATABLE)]
 final class Validate
 {
     /**
      * The validator type, either a FQCN or a Flow validator class name.
-     * @var string
+     * @var string|null
      */
     public $type;
 
@@ -43,27 +47,18 @@ final class Validate
      */
     public $validationGroups = ['Default'];
 
-    /**
-     * @param array $values
-     * @throws \InvalidArgumentException
-     */
-    public function __construct(array $values)
+    public function __construct(?string $argumentName = null, string $type = null, array $options = [], ?array $validationGroups = null)
     {
-        if (!isset($values['type'])) {
-            throw new \InvalidArgumentException('Validate annotations must be given a validator type.', 1318494791);
-        }
-        $this->type = $values['type'];
+        $this->type = $type;
 
-        if (isset($values['options']) && is_array($values['options'])) {
-            $this->options = $values['options'];
-        }
+        $this->options = $options;
 
-        if (isset($values['value']) || isset($values['argumentName'])) {
-            $this->argumentName = ltrim(isset($values['argumentName']) ? $values['argumentName'] : $values['value'], '$');
+        if ($argumentName !== null) {
+            $this->argumentName = ltrim($argumentName, '$');
         }
 
-        if (isset($values['validationGroups']) && is_array($values['validationGroups'])) {
-            $this->validationGroups = $values['validationGroups'];
+        if ($validationGroups !== null) {
+            $this->validationGroups = $validationGroups;
         }
     }
 }

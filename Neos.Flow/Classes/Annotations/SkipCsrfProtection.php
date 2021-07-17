@@ -22,6 +22,7 @@ namespace Neos\Flow\Annotations;
  * @Annotation
  * @Target("METHOD")
  */
+#[\Attribute(\Attribute::TARGET_METHOD)]
 final class SkipCsrfProtection
 {
 }
