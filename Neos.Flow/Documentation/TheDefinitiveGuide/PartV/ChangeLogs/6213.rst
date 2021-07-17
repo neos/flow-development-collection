@@ -1,0 +1,17 @@
+`6.2.13 (2021-07-17) <https://github.com/neos/flow-development-collection/releases/tag/6.2.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Revert #2052 - Add TTL to tags in RedisBackend <https://github.com/neos/flow-development-collection/pull/2516>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This resolves the issues with the redis backend that came up after the changes in #2052, which unfortunately are worse than the benefits. We'd still like to get the TTL for tags in, but likely need to refrain from having them consistent/in sync.
+
+See https://github.com/neos/flow-development-collection/issues/2483
+
+* Packages: ``Cache`` ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.2.12...6.2.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
