@@ -68,6 +68,13 @@ class ConfigurationManager
     const CONFIGURATION_TYPE_SETTINGS = 'Settings';
 
     /**
+     * Contains the configuration of NodeTypes
+     *
+     * @var string
+     */
+    const CONFIGURATION_TYPE_NODETYPES = 'NodeTypes';
+
+    /**
      * This is the default processing, which merges configurations similar to how CONFIGURATION_PROCESSING_TYPE_SETTINGS
      * are merged (except that for settings an empty array is initialized for each package)
      *
@@ -112,6 +119,13 @@ class ConfigurationManager
     const CONFIGURATION_PROCESSING_TYPE_APPEND = 'AppendProcessing';
 
     /**
+     * Loads all NodeType definitions
+     *
+     * @var string
+     */
+    const CONFIGURATION_PROCESSING_TYPE_NODETYPES = 'NodeTypesProcessing';
+
+    /**
      * Defines which Configuration Type is processed by which logic
      *
      * @var array
@@ -121,7 +135,8 @@ class ConfigurationManager
         self::CONFIGURATION_TYPE_OBJECTS => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_OBJECTS, 'allowSplitSource' => true],
         self::CONFIGURATION_TYPE_ROUTES => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_ROUTES, 'allowSplitSource' => false],
         self::CONFIGURATION_TYPE_POLICY => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_POLICY, 'allowSplitSource' => true],
-        self::CONFIGURATION_TYPE_SETTINGS => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_SETTINGS, 'allowSplitSource' => true]
+        self::CONFIGURATION_TYPE_SETTINGS => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_SETTINGS, 'allowSplitSource' => true],
+        self::CONFIGURATION_TYPE_NODETYPES => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_NODETYPES, 'allowSplitSource' => true]
     ];
 
     /**
@@ -290,7 +305,8 @@ class ConfigurationManager
             self::CONFIGURATION_PROCESSING_TYPE_POLICY,
             self::CONFIGURATION_PROCESSING_TYPE_ROUTES,
             self::CONFIGURATION_PROCESSING_TYPE_SETTINGS,
-            self::CONFIGURATION_PROCESSING_TYPE_APPEND
+            self::CONFIGURATION_PROCESSING_TYPE_APPEND,
+            self::CONFIGURATION_PROCESSING_TYPE_NODETYPES
         ];
         if (!in_array($configurationProcessingType, $configurationProcessingTypes)) {
             throw new \InvalidArgumentException(sprintf('Specified invalid configuration processing type "%s" while registering custom configuration type "%s"', $configurationProcessingType, $configurationType), 1365496111);
@@ -451,6 +467,21 @@ class ConfigurationManager
                     $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
                 }
             break;
+            case self::CONFIGURATION_PROCESSING_TYPE_NODETYPES:
+                foreach ($packages as $package) {
+                    $this->loadSubdirectoryConfigurations($package, $configurationType, $allowSplitSource);
+                    $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
+                }
+                $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
+
+                foreach ($this->orderedListOfContextNames as $contextName) {
+                    foreach ($packages as $package) {
+                        $this->loadSubdirectoryConfigurations($package, $configurationType, $allowSplitSource);
+                        $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource));
+                    }
+                    $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
+                }
+                break;
             case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
                 foreach ($packages as $package) {
                     $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
@@ -663,5 +694,33 @@ class ConfigurationManager
     {
         $configurationCachePath = $this->temporaryDirectoryPath . 'Configuration/';
         return $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
+    }
+
+    /**
+     * Helper function to load nested configuration files
+     *
+     * @param FlowPackageInterface $package
+     * @param string $configurationType
+     * @param bool $allowSplitSource
+     * @throws Exception
+     * @throws Exception\ParseErrorException
+     */
+    protected function loadSubdirectoryConfigurations(FlowPackageInterface $package, string $configurationType, bool $allowSplitSource)
+    {
+        $directoryContents = is_dir($package->getConfigurationPath()) ? scandir($package->getConfigurationPath()) : false;
+        if ($directoryContents) {
+            $subdirectories = array_filter(array_diff($directoryContents, ['..', '.']), function ($directoryOrFilename) {
+                if (strpos($directoryOrFilename, '.yaml') === false && !in_array($directoryOrFilename, $this->orderedListOfContextNames) && !in_array($directoryOrFilename, ['Testing'])) {
+                    return $directoryOrFilename;
+                }
+                return false;
+            });
+
+            if (!empty($subdirectories)) {
+                foreach ($subdirectories as $subdirectory) {
+                    $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $subdirectory . '/' . $configurationType, $allowSplitSource));
+                }
+            }
+        }
     }
 }
