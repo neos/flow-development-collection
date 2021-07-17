@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Mvc\Controller\AbstractController;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -23,6 +24,9 @@ use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\ObjectManagement\ObjectManager;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\RouteAnnotatedController;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -405,6 +409,13 @@ class RouterTest extends UnitTestCase
     {
         /** @var Router|\PHPUnit\Framework\MockObject\MockObject $router */
         $router = $this->getAccessibleMock(Router::class, ['dummy']);
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService->expects(self::once())->method('getAllSubClassNamesForClass')->with(AbstractController::class)->willReturn([RouteAnnotatedController::class]);
+
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager->expects(self::once())->method('get')->with(ReflectionService::class)->willReturn($mockReflectionService);
+
+        $this->inject($router, 'objectManager', $mockObjectManager);
         $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
         $this->inject($router, 'logger', $this->mockSystemLogger);
 
