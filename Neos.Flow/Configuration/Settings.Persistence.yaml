@@ -38,9 +38,9 @@ Neos:
         # See Flow manual, chapter "Persistence" for further information on how to subscribe to Doctrine events.
         eventSubscribers: []
         eventListeners:
-          'Neos\Flow\Persistence\Doctrine\PersistenceManager':
+          'Neos\Flow\Persistence\Doctrine\AllowedObjectsListener':
             events: ['onFlush']
-            listener: 'Neos\Flow\Persistence\Doctrine\PersistenceManager'
+            listener: 'Neos\Flow\Persistence\Doctrine\AllowedObjectsListener'
           'Neos\Flow\Persistence\Doctrine\ObjectValidationAndDeDuplicationListener':
             events: ['onFlush']
             listener: 'Neos\Flow\Persistence\Doctrine\ObjectValidationAndDeDuplicationListener'
