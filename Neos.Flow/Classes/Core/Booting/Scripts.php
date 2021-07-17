@@ -842,7 +842,8 @@ class Scripts
             return;
         }
 
-        $realPhpBinary = realpath(PHP_BINARY);
+        exec(PHP_BINARY . ' -r "echo realpath(PHP_BINARY);"', $output);
+        $realPhpBinary = $output[0];
         if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
             throw new FlowException(sprintf(
                 'You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
