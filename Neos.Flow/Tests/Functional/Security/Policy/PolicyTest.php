@@ -10,6 +10,9 @@ namespace Neos\Flow\Tests\Functional\Security\Policy;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
+use Neos\Flow\Tests\Functional\Security\Fixtures\Controller\PrivilegeAnnotatedController;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -21,6 +24,13 @@ class PolicyTest extends FunctionalTestCase
      * @var boolean
      */
     protected $testableSecurityEnabled = true;
+
+
+    /**
+     * @Flow\Inject
+     * @var \Neos\Flow\Security\Policy\PolicyService
+     */
+    protected $policyService;
 
     /**
      * @test
@@ -46,5 +56,41 @@ class PolicyTest extends FunctionalTestCase
 
         self::assertTrue($this->securityContext->hasRole('Neos.Flow:Anonymous'), 'Anonymous - hasRole()');
         self::assertTrue($hasAnonymousRole, 'Anonymous - getRoles()');
+    }
+
+    /**
+     * @test
+     */
+    public function annotatedPrivilegeWithGrantedRolesGrantsPermission()
+    {
+        $annotatedRole = $this->policyService->getRole('Neos.Flow:PrivilegeAnnotationRole1');
+
+        $className = PrivilegeAnnotatedController::class;
+        $methodName = 'actionWithGrantedRolesAction';
+        $privilegeId = sprintf('%s:Privilege.%s', 'Neos.Flow', md5($className.'->'.$methodName));
+
+        self::assertTrue($annotatedRole->getPrivilegeForTarget($privilegeId)->isGranted());
+    }
+
+    /**
+     * @test
+     */
+    public function annotatedPrivilegeWithGrantedRolesAndIdGrantsPermissionToPrivilegeId()
+    {
+        $annotatedRole = $this->policyService->getRole('Neos.Flow:PrivilegeAnnotationRole3');
+        self::assertTrue($annotatedRole->getPrivilegeForTarget('Neos.Flow:Granted.Roles.Privilege')->isGranted());
+    }
+
+    /**
+     * @test
+     */
+    public function annotatedPrivilegeWithIdConfiguresPrivilege()
+    {
+        $privilegeTarget = $this->policyService->getPrivilegeTargetByIdentifier('Neos.Flow:Privilege.From.Annotation');
+        self::assertInstanceOf(PrivilegeTarget::class, $privilegeTarget);
+        self::assertEquals(
+            $privilegeTarget->getMatcher(),
+            sprintf('method(%s->%s())', PrivilegeAnnotatedController::class, 'actionWithPrivilegeIdAndNoGrantedRoles')
+        );
     }
 }
