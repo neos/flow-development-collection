@@ -1628,7 +1628,7 @@ security interceptors.
 
 .. note::
 
-  You might have noticed the ``rejectAll`` option. If this is set to ``yes``,
+  You might have noticed the ``rejectAll`` option. If this is set to ``true``,
   only request which are explicitly allowed by a request filter will be able
   to pass the firewall.
 

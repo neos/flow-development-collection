@@ -112,7 +112,7 @@ class TranslationHelper implements ProtectedContextAwareInterface
         $translationParameterToken
             ->value($originalLabel)
             ->arguments($arguments)
-            ->source($source)
+            ->source(str_replace('.', '/', $source))
             ->package($package)
             ->quantity($quantity);
 

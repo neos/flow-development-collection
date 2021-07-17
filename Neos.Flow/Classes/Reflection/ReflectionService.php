@@ -1381,7 +1381,7 @@ class ReflectionService
         }
 
         $returnType = $method->getDeclaredReturnType();
-        if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void']) && !TypeHandling::isSimpleType($returnType)) {
+        if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void', 'iterable', 'object', 'mixed']) && !TypeHandling::isSimpleType($returnType)) {
             $returnType = '\\' . $returnType;
         }
         if ($method->isDeclaredReturnTypeNullable()) {
