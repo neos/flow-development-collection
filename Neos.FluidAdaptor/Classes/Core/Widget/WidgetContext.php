@@ -39,7 +39,7 @@ class WidgetContext
     /**
      * Per-User unique identifier of the widget, if it is an AJAX widget.
      *
-     * @var integer
+     * @var string
      */
     protected $ajaxWidgetIdentifier;
 
@@ -103,7 +103,7 @@ class WidgetContext
     }
 
     /**
-     * @return integer
+     * @return string
      */
     public function getAjaxWidgetIdentifier()
     {
@@ -111,7 +111,7 @@ class WidgetContext
     }
 
     /**
-     * @param integer $ajaxWidgetIdentifier
+     * @param string $ajaxWidgetIdentifier
      * @return void
      */
     public function setAjaxWidgetIdentifier($ajaxWidgetIdentifier)
