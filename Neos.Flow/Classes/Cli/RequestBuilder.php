@@ -216,8 +216,7 @@ class RequestBuilder
                     $argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $optionalArguments[$argumentName]['type']);
                     if ($optionalArguments[$argumentName]['type'] == 'array') {
                         $commandLineArguments[$optionalArguments[$argumentName]['parameterName']][] = $argumentValue;
-                    }
-                    else {
+                    } else {
                         $commandLineArguments[$optionalArguments[$argumentName]['parameterName']] = $argumentValue;
                     }
                 } elseif (isset($requiredArguments[$argumentName])) {
@@ -228,8 +227,7 @@ class RequestBuilder
                     $argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $requiredArguments[$argumentName]['type']);
                     if ($requiredArguments[$argumentName]['type'] == 'array') {
                         $commandLineArguments[$requiredArguments[$argumentName]['parameterName']][] = $argumentValue;
-                    }
-                    else {
+                    } else {
                         $commandLineArguments[$requiredArguments[$argumentName]['parameterName']] = $argumentValue;
                         unset($requiredArguments[$argumentName]);
                     }

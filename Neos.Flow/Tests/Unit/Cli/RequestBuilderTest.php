@@ -445,7 +445,8 @@ class RequestBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function arrayArgumentIsParsedCorrectly(){
+    public function arrayArgumentIsParsedCorrectly()
+    {
         $methodParameters = [
             'a1' => ['optional' => false, 'type' => 'array'],
             'a2' => ['optional' => true, 'type' => 'array'],
