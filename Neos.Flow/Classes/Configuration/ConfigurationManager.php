@@ -408,7 +408,11 @@ class ConfigurationManager
     protected function processConfigurationType(string $configurationType)
     {
         if ($this->temporaryDirectoryPath !== null) {
-            $cachePathAndFilename = $this->constructConfigurationCachePath().'.tmp';
+            // to avoid issues regarding concurrency and invalid filesystem characters
+            // the configurationType is encoded as a uniqueid
+            $configurationTypeId = \uniqid(\sprintf('%x', \crc32($configurationType)), true);
+            $cachePathAndFilename = $this->constructConfigurationCachePath() . '.' . $configurationTypeId . '.tmp';
+
             $this->writeConfigurationCacheFile($cachePathAndFilename, $configurationType);
             $this->loadConfigurationCache($cachePathAndFilename, $configurationType);
             @unlink($cachePathAndFilename);
