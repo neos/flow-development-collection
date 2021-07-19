@@ -109,10 +109,11 @@ class TranslationHelper implements ProtectedContextAwareInterface
     protected function translateByExplicitlyPassedOrderedArguments($id, $originalLabel = null, array $arguments = [], $source = 'Main', $package = null, $quantity = null, $locale = null)
     {
         $translationParameterToken = $this->createTranslationParameterToken($id);
+        $source = isset($source) ? str_replace('.', '/', $source) : 'Main');
         $translationParameterToken
             ->value($originalLabel)
             ->arguments($arguments)
-            ->source(str_replace('.', '/', $source))
+            ->source($source)
             ->package($package)
             ->quantity($quantity);
 
