@@ -28,7 +28,7 @@ jobs:
             dependencies: 'highest'
 
           # Experimental build for PHP nightly
-          - php-versions: 'nightly'
+          - php-versions: '8.1'
             composer-arguments: '--ignore-platform-reqs'
             static-analysis: 'no'
             experimental: true
