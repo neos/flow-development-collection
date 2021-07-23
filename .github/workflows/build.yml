@@ -28,11 +28,11 @@ jobs:
             dependencies: 'highest'
 
           # Experimental build for PHP nightly
-          #- php-versions: 'nightly'
-          #  composer-arguments: '--ignore-platform-reqs'
-          #  static-analysis: 'no'
-          #  experimental: true
-          #  dependencies: 'highest'
+          - php-versions: 'nightly'
+            composer-arguments: '--ignore-platform-reqs'
+            static-analysis: 'no'
+            experimental: true
+            dependencies: 'highest'
 
           # Build for minimum dependencies.
           - php-versions: '7.3'
