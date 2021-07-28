@@ -100,7 +100,7 @@ class TranslationHelper implements ProtectedContextAwareInterface
      * @param string $id Id to use for finding translation (trans-unit id in XLIFF)
      * @param string $originalLabel The original translation value (the untranslated source string).
      * @param array $arguments Numerically indexed array of values to be inserted into placeholders
-     * @param string $source Name of file with translations
+     * @param string|null $source Name of file with translations, defaults to 'Main'
      * @param string $package Target package key. If not set, the current package key will be used
      * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
      * @param string $locale An identifier of locale to use (NULL for use the default locale)
@@ -109,10 +109,11 @@ class TranslationHelper implements ProtectedContextAwareInterface
     protected function translateByExplicitlyPassedOrderedArguments($id, $originalLabel = null, array $arguments = [], $source = 'Main', $package = null, $quantity = null, $locale = null)
     {
         $translationParameterToken = $this->createTranslationParameterToken($id);
+        $source = $source === null ? 'Main' : str_replace('.', '/', $source);
         $translationParameterToken
             ->value($originalLabel)
             ->arguments($arguments)
-            ->source(str_replace('.', '/', $source))
+            ->source($source)
             ->package($package)
             ->quantity($quantity);
 
