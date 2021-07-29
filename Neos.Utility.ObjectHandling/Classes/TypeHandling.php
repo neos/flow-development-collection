@@ -12,8 +12,9 @@ namespace Neos\Utility;
  */
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\ORM\Proxy\Proxy as DoctrineProxy;
 use Neos\Utility\Exception\InvalidTypeException;
+use Neos\Flow\ObjectManagement\Proxy\ProxyInterface as FlowProxy;
 
 /**
  * PHP type handling functions
@@ -172,7 +173,7 @@ abstract class TypeHandling
     public static function getTypeForValue($value): string
     {
         if (is_object($value)) {
-            if ($value instanceof Proxy) {
+            if ($value instanceof DoctrineProxy || $value insanceof FlowProxy) {
                 $type = get_parent_class($value);
             } else {
                 $type = get_class($value);
