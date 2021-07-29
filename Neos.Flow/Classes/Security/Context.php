@@ -217,12 +217,8 @@ class Context
         try {
             /** @noinspection PhpUndefinedMethodInspection */
             $callback->__invoke();
-        } catch (\Exception $exception) {
-            $this->authorizationChecksDisabled = false;
-            throw $exception;
-        }
-        if ($authorizationChecksAreAlreadyDisabled === false) {
-            $this->authorizationChecksDisabled = false;
+        } finally {
+            $this->authorizationChecksDisabled = $authorizationChecksAreAlreadyDisabled;
         }
     }
 
