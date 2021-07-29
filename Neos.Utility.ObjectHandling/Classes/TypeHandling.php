@@ -173,7 +173,7 @@ abstract class TypeHandling
     public static function getTypeForValue($value): string
     {
         if (is_object($value)) {
-            if ($value instanceof DoctrineProxy || $value insanceof FlowProxy) {
+            if ($value instanceof DoctrineProxy || $value instanceof FlowProxy) {
                 $type = get_parent_class($value);
             } else {
                 $type = get_class($value);
