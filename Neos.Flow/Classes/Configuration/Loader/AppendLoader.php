@@ -35,7 +35,7 @@ class AppendLoader implements LoaderInterface
         $this->filePrefix = $filePrefix;
     }
 
-    public function __invoke(array $packages, ApplicationContext $context): array
+    public function load(array $packages, ApplicationContext $context): array
     {
         $configuration = [];
         foreach ($packages as $package) {

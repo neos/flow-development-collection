@@ -121,7 +121,7 @@ class ConfigurationManager
     /**
      * Defines which Configuration Type is processed by which logic
      *
-     * @var LoaderInterface[]|callable[]
+     * @var LoaderInterface[]
      */
     protected $configurationLoaders = [];
 
@@ -210,9 +210,9 @@ class ConfigurationManager
      * Registers a new configuration type with the given source.
      *
      * @param string $configurationType The type to register, may be anything
-     * @param LoaderInterface|callable|string $configurationLoader
+     * @param LoaderInterface|string $configurationLoader This should be an instance of LoaderInterface. For backwards compatibility reasons it might also be a string representing one of the CONFIGURATION_PROCESSING_TYPE_* constants
      * @return void
-     *@throws \InvalidArgumentException on invalid configuration processing type
+     * @throws \InvalidArgumentException on invalid configuration processing type
      */
     public function registerConfigurationType(string $configurationType, $configurationLoader): void
     {
@@ -220,12 +220,12 @@ class ConfigurationManager
         if (is_string($configurationLoader)) {
             $configurationLoader = $this->convertLegacyProcessingType($configurationType, $configurationLoader);
         }
-        if (!is_callable($configurationLoader)) {
-            throw new \InvalidArgumentException(sprintf('Specified invalid configuration source of type "%s" while registering custom configuration type "%s".', is_object($configurationLoader) ? get_class($configurationLoader) : gettype($configurationLoader), $configurationType), 1617895964);
+        if (!$configurationLoader instanceof LoaderInterface) {
+            throw new \InvalidArgumentException(sprintf('Specified invalid configuration load of type "%s" while registering custom configuration type "%s". This should be an instance of %s', is_object($configurationLoader) ? get_class($configurationLoader) : gettype($configurationLoader), $configurationType, LoaderInterface::class), 1617895964);
         }
 
         // if the configuration was already registered and the there is an unprocessed loaded configuration, the configuration needs to be loaded again
-        // on the other hand, if there is a procesed configuration loaded, but no unprocessed configuration, the config must be from the cache and is assumed to be valid
+        // on the other hand, if there is a processed configuration loaded, but no unprocessed configuration, the config must be from the cache and is assumed to be valid
         if (isset($this->configurationLoaders[$configurationType]) && isset($this->unprocessedConfiguration[$configurationType])) {
             unset($this->configurations[$configurationType], $this->unprocessedConfiguration[$configurationType]);
         }
@@ -346,7 +346,7 @@ class ConfigurationManager
 
         $this->cacheNeedsUpdate = true;
 
-        $this->configurations[$configurationType] = $this->configurationLoaders[$configurationType]($packages, $this->context);
+        $this->configurations[$configurationType] = $this->configurationLoaders[$configurationType]->load($packages, $this->context);
         $this->unprocessedConfiguration[$configurationType] = $this->configurations[$configurationType];
     }
 

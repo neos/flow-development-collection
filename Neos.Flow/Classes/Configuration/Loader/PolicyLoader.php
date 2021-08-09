@@ -48,7 +48,7 @@ class PolicyLoader implements LoaderInterface
         $this->temporaryDirectoryPath = $temporaryDirectoryPath;
     }
 
-    public function __invoke(array $packages, ApplicationContext $context): array
+    public function load(array $packages, ApplicationContext $context): array
     {
         if ($context->isTesting()) {
             $testingPolicyPathAndFilename = $this->temporaryDirectoryPath . 'Policy';

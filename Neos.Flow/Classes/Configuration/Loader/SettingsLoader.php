@@ -31,7 +31,7 @@ class SettingsLoader implements LoaderInterface
         $this->yamlSource = $yamlSource;
     }
 
-    public function __invoke(array $packages, ApplicationContext $context): array
+    public function load(array $packages, ApplicationContext $context): array
     {
         // Make sure that the Flow package is the first item of the packages array:
         if (isset($packages['Neos.Flow'])) {

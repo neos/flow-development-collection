@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Configuration;
 
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Loader\AppendLoader;
+use Neos\Flow\Configuration\Loader\LoaderInterface;
 use Neos\Flow\Configuration\Loader\MergeLoader;
 use Neos\Flow\Configuration\Loader\ObjectsLoader;
 use Neos\Flow\Configuration\Loader\RoutesLoader;
@@ -1663,11 +1664,13 @@ EOD;
     {
         $configurationManager = $this->getConfigurationManagerWithFlowPackage('loadingConfigurationOfCustomConfigurationTypeCallback', 'Testing');
 
-        $configurationSource = $configurationManager->_get('configurationSource');
-        $configurationManager->registerConfigurationType('MyCustomConfiguration', function (array $packages, ApplicationContext $context) use ($configurationSource) {
-            $settingsLoader = new SettingsLoader($configurationSource);
-            return $settingsLoader($packages, $context);
-        });
+        $customLoader = new class implements LoaderInterface {
+            public function load(array $packages, ApplicationContext $context): array
+            {
+                return ['SomeKey' => 'SomeValue'];
+            }
+        };
+        $configurationManager->registerConfigurationType('MyCustomConfiguration', $customLoader);
 
         $configurationManager->_call('loadConfiguration', 'MyCustomConfiguration', $this->getMockPackages());
         $configuration = $configurationManager->getConfiguration('MyCustomConfiguration');

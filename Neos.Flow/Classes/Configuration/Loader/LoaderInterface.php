@@ -28,5 +28,5 @@ interface LoaderInterface
      * @param ApplicationContext $context
      * @return array The Configuration array for the current configurationType
      */
-    public function __invoke(array $packages, ApplicationContext $context) : array;
+    public function load(array $packages, ApplicationContext $context) : array;
 }

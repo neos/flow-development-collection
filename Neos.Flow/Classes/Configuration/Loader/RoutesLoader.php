@@ -57,7 +57,7 @@ class RoutesLoader implements LoaderInterface
      * @return array
      * @throws ConfigurationException | InvalidConfigurationException | InvalidConfigurationTypeException | ParseErrorException | RecursionException
      */
-    public function __invoke(array $packages, ApplicationContext $context): array
+    public function load(array $packages, ApplicationContext $context): array
     {
         // load main routes
         $routesConfiguration = [];
