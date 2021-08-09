@@ -16,7 +16,7 @@ namespace Neos\Flow\Configuration\Loader;
 use Neos\Flow\Core\ApplicationContext;
 
 /**
- * The interface for a configuration source
+ * The interface for a configuration loader
  */
 interface LoaderInterface
 {
