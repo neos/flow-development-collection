@@ -736,6 +736,54 @@
       <code>FLOW_PATH_CONFIGURATION</code>
     </UndefinedConstant>
   </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/AppendLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/MergeLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/ObjectsLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/SettingsLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$settings</code>
+    </PossiblyInvalidArgument>
+    <ReferenceConstraintViolation occurrences="1">
+      <code>$settings</code>
+    </ReferenceConstraintViolation>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/PolicyLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/RoutesLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+    <PossiblyInvalidOperand occurrences="1">
+      <code>$mergedSubRouteConfiguration['name']</code>
+    </PossiblyInvalidOperand>
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$this->replacePlaceholders($routeConfiguration['uriPattern'], [$subRouteKey => ''])</code>
+    </PossiblyInvalidArgument>
+  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationSchemaValidator.php">
     <PossiblyNullArgument occurrences="2">
       <code>$configuration</code>
@@ -744,14 +792,6 @@
     <UndefinedConstant occurrences="1">
       <code>FLOW_PATH_ROOT</code>
     </UndefinedConstant>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/RouteConfigurationProcessor.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>array</code>
-    </InvalidNullableReturnType>
-    <MissingDocblockType occurrences="1">
-      <code>$package</code>
-    </MissingDocblockType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Core/Booting/Scripts.php">
     <ArgumentTypeCoercion occurrences="3">
