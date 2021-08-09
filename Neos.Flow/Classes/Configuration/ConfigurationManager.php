@@ -210,14 +210,17 @@ class ConfigurationManager
      * Registers a new configuration type with the given source.
      *
      * @param string $configurationType The type to register, may be anything
-     * @param LoaderInterface|string $configurationLoader This should be an instance of LoaderInterface. For backwards compatibility reasons it might also be a string representing one of the CONFIGURATION_PROCESSING_TYPE_* constants
+     * @param LoaderInterface|string|null $configurationLoader This should be an instance of LoaderInterface. For backwards compatibility reasons it might also be a string representing one of the CONFIGURATION_PROCESSING_TYPE_* constants. If null, the default "MergeLoader" is used
      * @return void
      * @throws \InvalidArgumentException on invalid configuration processing type
      */
-    public function registerConfigurationType(string $configurationType, $configurationLoader): void
+    public function registerConfigurationType(string $configurationType, $configurationLoader = null): void
     {
-        // B/C layer
-        if (is_string($configurationLoader)) {
+        if ($configurationLoader === null) {
+            $configurationLoader = new MergeLoader(new YamlSource(), $configurationType);
+
+            // B/C layer
+        } elseif (is_string($configurationLoader)) {
             $configurationLoader = $this->convertLegacyProcessingType($configurationType, $configurationLoader);
         }
         if (!$configurationLoader instanceof LoaderInterface) {
