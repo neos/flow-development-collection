@@ -421,7 +421,7 @@ class ConfigurationManager
             $cachePathAndFilename = $this->constructConfigurationCachePath() . '.' . $configurationTypeId . '.tmp';
 
             $this->writeConfigurationCacheFile($cachePathAndFilename, $configurationType);
-            $this->loadConfigurationCache($cachePathAndFilename, $configurationType);
+            $this->replaceConfigurationForConfigurationType($configurationType, $cachePathAndFilename);
             @unlink($cachePathAndFilename);
         }
     }
