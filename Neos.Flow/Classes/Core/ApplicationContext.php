@@ -144,9 +144,9 @@ class ApplicationContext
     }
 
     /**
-     * Returns the names of this context and all parents in descending specificity
+     * Returns the names of this context and all parents in ascending specificity
      *
-     * @return string[] for example ['Production', 'Staging', 'Server1']
+     * @return string[] for example ['Production', 'Production/Staging', 'Production/Staging/Server1']
      * @api
      */
     public function getHierarchy(): array
