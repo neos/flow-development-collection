@@ -598,10 +598,10 @@ EOD;
         $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType', 'constructConfigurationCachePath', 'refreshConfiguration']);
         $configurationManager->expects(self::any())->method('constructConfigurationCachePath')->willReturn('notfound.php', $cachedConfigurationsPathAndFilename);
         $configurationManager->_set('configurations', ['foo' => 'untouched']);
-        $configurationManager->_call('loadConfigurationCache');
+        $configurationManager->_call('loadConfigurationsFromCache');
         self::assertSame(['foo' => 'untouched'], $configurationManager->_get('configurations'));
 
-        $configurationManager->_call('loadConfigurationCache');
+        $configurationManager->_call('loadConfigurationsFromCache');
         self::assertSame(['bar' => 'touched'], $configurationManager->_get('configurations'));
     }
 

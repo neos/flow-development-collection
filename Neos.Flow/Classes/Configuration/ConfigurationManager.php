@@ -182,7 +182,7 @@ class ConfigurationManager
     {
         $this->temporaryDirectoryPath = $temporaryDirectoryPath;
 
-        $this->loadConfigurationCache();
+        $this->loadConfigurationsFromCache();
     }
 
     /**
@@ -356,26 +356,30 @@ class ConfigurationManager
     /**
      * If a cache file with previously saved configuration exists, it is loaded.
      *
-     * @param string $cachePathAndFilename The cache file to load the configuration from
      * @param string $configurationType The kind of configuration to fetch
-     * @return boolean If cached configuration was loaded or not
+     * @param string $cachePathAndFilename The cache file to load the configuration from
+     * @return void
      */
-    protected function loadConfigurationCache(string $cachePathAndFilename = null, string $configurationType = null): bool
+    protected function replaceConfigurationForConfigurationType(string $configurationType, string $cachePathAndFilename): void
     {
-        if ($cachePathAndFilename === null) {
-            $cachePathAndFilename = $this->constructConfigurationCachePath();
-        }
+        /** @noinspection UsingInclusionReturnValueInspection */
         $configurations = @include $cachePathAndFilename;
         if ($configurations !== false) {
-            if ($configurationType === null) {
-                $this->configurations = $configurations;
-            } else {
-                $this->configurations[$configurationType] = $configurations;
-            }
-            return true;
+            $this->configurations[$configurationType] = $configurations;
         }
+    }
 
-        return false;
+    /**
+     * Includes the cached configuration file such that $this->configurations is fully populated
+     */
+    protected function loadConfigurationsFromCache(): void
+    {
+        $cachePathAndFilename = $this->constructConfigurationCachePath();
+        /** @noinspection UsingInclusionReturnValueInspection */
+        $configurations = @include $cachePathAndFilename;
+        if ($configurations !== false) {
+            $this->configurations = $configurations;
+        }
     }
 
     /**
@@ -474,7 +478,7 @@ class ConfigurationManager
     {
         $this->flushConfigurationCache();
         $this->saveConfigurationCache();
-        $this->loadConfigurationCache();
+        $this->loadConfigurationsFromCache();
     }
 
     /**
