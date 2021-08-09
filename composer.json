@@ -33,6 +33,8 @@
         "egulias/email-validator": "^2.1",
         "typo3fluid/fluid": "~2.5.11 || ^2.6.10",
         "guzzlehttp/psr7": "^1.4.1, !=1.8.0",
+        "neos/fusion-afx": "*",
+        "neos/fusion-form": "*",
         "ext-mbstring": "*"
     },
     "replace": {
@@ -119,7 +121,7 @@
     },
     "require-dev": {
         "mikey179/vfsstream": "^1.6.1",
-        "phpunit/phpunit": "^9.1",
+        "phpunit/phpunit": "~9.1",
         "vimeo/psalm": "~4.1.1"
     },
     "autoload-dev": {
