@@ -55,7 +55,7 @@
     "require-dev": {
         "vimeo/psalm": "~4.1.1",
         "mikey179/vfsstream": "^1.6.1",
-        "phpunit/phpunit": "~7.1"
+        "phpunit/phpunit": "~9.1"
     },
     "replace": {
         "symfony/polyfill-php70": "*",
