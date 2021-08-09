@@ -224,7 +224,7 @@ class ConfigurationManager
             $configurationLoader = $this->convertLegacyProcessingType($configurationType, $configurationLoader);
         }
         if (!$configurationLoader instanceof LoaderInterface) {
-            throw new \InvalidArgumentException(sprintf('Specified invalid configuration load of type "%s" while registering custom configuration type "%s". This should be an instance of %s', is_object($configurationLoader) ? get_class($configurationLoader) : gettype($configurationLoader), $configurationType, LoaderInterface::class), 1617895964);
+            throw new \InvalidArgumentException(sprintf('Specified invalid configuration loader of type "%s" while registering custom configuration type "%s". This should be an instance of %s', is_object($configurationLoader) ? get_class($configurationLoader) : gettype($configurationLoader), $configurationType, LoaderInterface::class), 1617895964);
         }
 
         // if the configuration was already registered and the there is an unprocessed loaded configuration, the configuration needs to be loaded again
