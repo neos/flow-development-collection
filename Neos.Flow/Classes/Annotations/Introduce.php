@@ -11,50 +11,43 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Introduces the given interface or property into any target class matching
  * the given pointcut expression.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"CLASS", "PROPERTY"})
  */
+#[\Attribute(\Attribute::TARGET_CLASS|\Attribute::TARGET_PROPERTY|\Attribute::IS_REPEATABLE)]
 final class Introduce
 {
     /**
      * The pointcut expression. (Can be given as anonymous argument.)
      * @var string
+     * @Required
      */
     public $pointcutExpression;
 
     /**
      * The interface name to introduce.
-     * @var string
+     * @var string|null
      */
     public $interfaceName;
 
     /**
      * The trait name to introduce
      *
-     * @var string
+     * @var string|null
      */
     public $traitName;
 
-    /**
-     * @param array $values
-     * @throws \InvalidArgumentException
-     */
-    public function __construct(array $values)
+    public function __construct(string $pointcutExpression, ?string $interfaceName = null, ?string $traitName = null)
     {
-        if (!isset($values['value']) && !isset($values['pointcutExpression'])) {
-            throw new \InvalidArgumentException('An Introduce annotation must specify a pointcut expression.', 1318456624);
-        }
-        $this->pointcutExpression = isset($values['pointcutExpression']) ? $values['pointcutExpression'] : $values['value'];
-
-        if (isset($values['interfaceName'])) {
-            $this->interfaceName = $values['interfaceName'];
-        }
-        if (isset($values['traitName'])) {
-            $this->traitName = $values['traitName'];
-        }
+        $this->pointcutExpression = $pointcutExpression;
+        $this->interfaceName = $interfaceName;
+        $this->traitName = $traitName;
     }
 }

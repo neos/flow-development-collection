@@ -12,6 +12,7 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ReflectionService;
 
 /**
@@ -238,9 +239,17 @@ class ProxyMethod
             foreach ($methodAnnotations as $annotation) {
                 $methodDocumentation .= '     * ' . Compiler::renderAnnotation($annotation) . "\n";
             }
-        }
+            $methodDocumentation .= "     */\n";
 
-        $methodDocumentation .= "     */\n";
+            if (PHP_MAJOR_VERSION >= 8) {
+                $method = new MethodReflection($className, $methodName);
+                foreach ($method->getAttributes() as $attribute) {
+                    $methodDocumentation .= '    ' . Compiler::renderAttribute($attribute) . "\n";
+                }
+            }
+        } else {
+            $methodDocumentation .= "     */\n";
+        }
         return $methodDocumentation;
     }
 

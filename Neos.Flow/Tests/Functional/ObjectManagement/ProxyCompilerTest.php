@@ -129,4 +129,19 @@ class ProxyCompilerTest extends FunctionalTestCase
         $reflectionClass = new ClassReflection(Fixtures\FinalClassWithDependencies::class);
         self::assertTrue($reflectionClass->isFinal());
     }
+
+    /**
+     * @test
+     */
+    public function attributesArePreserved()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Attributes');
+        }
+        $reflectionClass = new ClassReflection(Fixtures\ClassWithPhpAttributes::class);
+        $attributes = $reflectionClass->getAttributes();
+        self::assertCount(2, $attributes);
+        self::assertEquals(Fixtures\SampleAttribute::class, $attributes[0]->getName());
+        self::assertEquals(Fixtures\ClassWithPhpAttributes::class, $attributes[0]->getArguments()[0]);
+    }
 }
