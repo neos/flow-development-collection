@@ -26,7 +26,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $validateFoo2 = new Flow\Validate('foo2', 'bar2');
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects(self::any())->method('hasMethod')->will(self::returnValue(true));
+        $mockReflectionService->method('hasMethod')->willReturn(true);
         $mockReflectionService->method('getMethodTagsValues')->with('My\ClassName', 'myMethod')->willReturn([
             'param' => ['string $name']
         ]);
