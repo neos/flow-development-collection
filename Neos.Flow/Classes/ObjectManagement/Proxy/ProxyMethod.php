@@ -12,7 +12,6 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ReflectionService;
 
 /**
