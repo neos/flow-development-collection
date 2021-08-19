@@ -567,7 +567,7 @@ class ReflectionService
      * Returns the specified class annotation or NULL.
      *
      * If multiple annotations are set on the target you will
-     * get one (random) instance of them.
+     * get the first instance of them.
      *
      * @param string $className Name of the class
      * @param string $annotationClassName Annotation to filter for
@@ -580,7 +580,7 @@ class ReflectionService
         }
         $annotations = $this->getClassAnnotations($className, $annotationClassName);
 
-        return $annotations === [] ? null : current($annotations);
+        return $annotations === [] ? null : reset($annotations);
     }
 
     /**
@@ -814,7 +814,7 @@ class ReflectionService
      * Returns the specified method annotation or NULL.
      *
      * If multiple annotations are set on the target you will
-     * get one (random) instance of them.
+     * get the first instance of them.
      *
      * @param string $className Name of the class
      * @param string $methodName Name of the method
@@ -828,7 +828,7 @@ class ReflectionService
         }
         $annotations = $this->getMethodAnnotations($className, $methodName, $annotationClassName);
 
-        return $annotations === [] ? null : current($annotations);
+        return $annotations === [] ? null : reset($annotations);
     }
 
     /**
@@ -1079,7 +1079,7 @@ class ReflectionService
      * Returns the specified property annotation or NULL.
      *
      * If multiple annotations are set on the target you will
-     * get one (random) instance of them.
+     * get the first instance of them.
      *
      * @param string $className Name of the class
      * @param string $propertyName Name of the property
@@ -1093,7 +1093,7 @@ class ReflectionService
         }
         $annotations = $this->getPropertyAnnotations($className, $propertyName, $annotationClassName);
 
-        return $annotations === [] ? null : current($annotations);
+        return $annotations === [] ? null : reset($annotations);
     }
 
     /**
