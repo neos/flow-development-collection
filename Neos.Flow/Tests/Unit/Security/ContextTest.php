@@ -1095,6 +1095,49 @@ class ContextTest extends UnitTestCase
     /**
      * @test
      */
+    public function withoutAuthorizationChecksKeepsAuthorizationCheckCorrectlyWhenCalledNestedAndExceptionFromInnerClosureIsCaught()
+    {
+        /** @var Context $securityContext */
+        $securityContext = $this->getAccessibleMock(Context::class, ['initialize']);
+        $self = $this;
+        $securityContext->withoutAuthorizationChecks(function () use ($securityContext, $self) {
+            try {
+                $securityContext->withoutAuthorizationChecks(function () use ($securityContext, $self) {
+                    $self->assertTrue($securityContext->areAuthorizationChecksDisabled());
+                    throw new \Exception('Some exception');
+                });
+            } catch (\Exception $exception) {
+            }
+            $self->assertTrue($securityContext->areAuthorizationChecksDisabled());
+        });
+        self::assertFalse($securityContext->areAuthorizationChecksDisabled());
+    }
+
+    /**
+     * @test
+     */
+    public function withoutAuthorizationChecksKeepsAuthorizationCheckCorrectlyWhenCalledNestedAndExceptionFromOuterClosureIsCaught()
+    {
+        /** @var Context $securityContext */
+        $securityContext = $this->getAccessibleMock(Context::class, ['initialize']);
+        $self = $this;
+        $securityContext->withoutAuthorizationChecks(function () use ($securityContext, $self) {
+            try {
+                $securityContext->withoutAuthorizationChecks(function () use ($securityContext, $self) {
+                    $self->assertTrue($securityContext->areAuthorizationChecksDisabled());
+                });
+
+                throw new \Exception('Some exception');
+            } catch (\Exception $exception) {
+            }
+            $self->assertTrue($securityContext->areAuthorizationChecksDisabled());
+        });
+        self::assertFalse($securityContext->areAuthorizationChecksDisabled());
+    }
+
+    /**
+     * @test
+     */
     public function getContextHashReturnsStaticStringIfAuthorizationChecksAreDisabled()
     {
         $self = $this;
