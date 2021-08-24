@@ -179,7 +179,7 @@ supported by Flow natively, as soon as you have a file named ``Views.yaml`` in y
 folder(s). See `Working with other configuration`_ for details.
 
 If you want to use a custom configuration processing loader, you can pass an implementation of
-``Configuration\Loader\LoaderInterface`` when registering the configuration or use one of the implementations
+``\Neos\Flow\Configuration\Loader\LoaderInterface`` when registering the configuration or use one of the implementations
 found in ``Configuration\Loader``.
 
 **Example: Register a custom configuration type and loader**
