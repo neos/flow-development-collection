@@ -758,7 +758,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                             if (strpos($propertyMetaData['type'], '\\') !== false) {
                                 if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], Flow\ValueObject::class)) {
                                     $valueObjectAnnotation = $this->reflectionService->getClassAnnotation($propertyMetaData['type'], Flow\ValueObject::class);
-                                    if ($valueObjectAnnotation->embedded === true) {
+                                    if ($valueObjectAnnotation && $valueObjectAnnotation->embedded === true) {
                                         $mapping['class'] = $propertyMetaData['type'];
                                         $mapping['columnPrefix'] = $mapping['columnName'];
                                         $metadata->mapEmbedded($mapping);
