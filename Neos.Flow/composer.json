@@ -48,7 +48,7 @@
         "neos/composer-plugin": "^2.0",
         "neos/utility-pdo": "~7.0.0",
 
-        "composer/composer": "^1.9 || ^2.0",
+        "composer/composer": "^1.10.22 || ^2.0.13",
 
         "egulias/email-validator": "^2.1.17"
     },
