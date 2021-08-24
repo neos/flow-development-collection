@@ -570,7 +570,7 @@ class ReflectionService
      *
      * @param string $className Name of the class
      * @param string $annotationClassName Annotation to filter for
-     * @return object
+     * @return object|null
      */
     public function getClassAnnotation($className, $annotationClassName)
     {
@@ -818,7 +818,7 @@ class ReflectionService
      * @param string $className Name of the class
      * @param string $methodName Name of the method
      * @param string $annotationClassName Annotation to filter for
-     * @return object
+     * @return object|null
      */
     public function getMethodAnnotation($className, $methodName, $annotationClassName)
     {
@@ -1083,7 +1083,7 @@ class ReflectionService
      * @param string $className Name of the class
      * @param string $propertyName Name of the property
      * @param string $annotationClassName Annotation to filter for
-     * @return object
+     * @return object|null
      */
     public function getPropertyAnnotation($className, $propertyName, $annotationClassName)
     {
@@ -1661,7 +1661,8 @@ class ReflectionService
                 continue;
             }
 
-            if (!$this->isClassAnnotatedWith($repositoryClassName, Flow\Scope::class) || $this->getClassAnnotation($repositoryClassName, Flow\Scope::class)->value !== 'singleton') {
+            $scopeAnnotation = $this->getClassAnnotation($repositoryClassName, Flow\Scope::class);
+            if ($scopeAnnotation === null || $scopeAnnotation->value !== 'singleton') {
                 throw new ClassSchemaConstraintViolationException('The repository "' . $repositoryClassName . '" must be of scope singleton, but it is not.', 1335790707);
             }
             if (defined($repositoryClassName . '::ENTITY_CLASSNAME') && isset($this->classSchemata[$repositoryClassName::ENTITY_CLASSNAME])) {

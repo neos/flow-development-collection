@@ -12,11 +12,10 @@ namespace Neos\Flow\Tests\Unit\Security;
  */
 
 use Neos\Flow\Exception;
+use Neos\Flow\Fixtures\SessionlessTestToken;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Account;
-use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -29,6 +28,8 @@ use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Security\Policy\Role;
 use Psr\Log\LoggerInterface;
+
+require_once(__DIR__ . '/../Fixtures/ClassWithBoolConstructor.php');
 
 /**
  * Testcase for the security context
@@ -234,7 +235,7 @@ class ContextTest extends UnitTestCase
         $activeToken->method('getAuthenticationProviderName')->willReturn('activeTokenProvider');
         $activeToken->method('getAuthenticationStatus')->willReturn(TokenInterface::AUTHENTICATION_NEEDED);
 
-        $sessionlessToken = $this->createMock([TokenInterface::class, SessionlessTokenInterface::class]);
+        $sessionlessToken = $this->createMock(SessionlessTestToken::class);
         $sessionlessToken->expects(self::once())->method('hasRequestPatterns')->willReturn(false);
         $sessionlessToken->method('getAuthenticationProviderName')->willReturn('sessionlessTokenProvider');
         $sessionlessToken->method('getAuthenticationStatus')->willReturn(TokenInterface::AUTHENTICATION_NEEDED);

@@ -47,7 +47,7 @@
         "neos/composer-plugin": "^2.0",
         "neos/utility-pdo": "~6.1.0",
 
-        "composer/composer": "^1.9 || ^2.0"
+        "composer/composer": "^1.10.22 || ^2.0.13"
     },
     "require-dev": {
         "vimeo/psalm": "~4.1.1",
