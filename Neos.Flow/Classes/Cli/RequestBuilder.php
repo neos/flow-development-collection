@@ -214,15 +214,23 @@ class RequestBuilder
 
                 if (isset($optionalArguments[$argumentName])) {
                     $argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $optionalArguments[$argumentName]['type']);
-                    $commandLineArguments[$optionalArguments[$argumentName]['parameterName']] = $argumentValue;
+                    if ($optionalArguments[$argumentName]['type'] == 'array') {
+                        $commandLineArguments[$optionalArguments[$argumentName]['parameterName']][] = $argumentValue;
+                    } else {
+                        $commandLineArguments[$optionalArguments[$argumentName]['parameterName']] = $argumentValue;
+                    }
                 } elseif (isset($requiredArguments[$argumentName])) {
                     if ($decidedToUseUnnamedArguments) {
                         throw new InvalidArgumentMixingException(sprintf('Unexpected named argument "%s". If you use unnamed arguments, all required arguments must be passed without a name.', $argumentName), 1309971821);
                     }
                     $decidedToUseNamedArguments = true;
                     $argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $requiredArguments[$argumentName]['type']);
-                    $commandLineArguments[$requiredArguments[$argumentName]['parameterName']] = $argumentValue;
-                    unset($requiredArguments[$argumentName]);
+                    if ($requiredArguments[$argumentName]['type'] == 'array') {
+                        $commandLineArguments[$requiredArguments[$argumentName]['parameterName']][] = $argumentValue;
+                    } else {
+                        $commandLineArguments[$requiredArguments[$argumentName]['parameterName']] = $argumentValue;
+                        unset($requiredArguments[$argumentName]);
+                    }
                 }
             } else {
                 if (count($requiredArguments) > 0) {

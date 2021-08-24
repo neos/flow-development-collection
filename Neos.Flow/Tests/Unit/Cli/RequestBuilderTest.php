@@ -441,4 +441,23 @@ class RequestBuilderTest extends UnitTestCase
         $request = $this->requestBuilder->build('acme.test:default:list firstArgumentValue ' . $quotedArgument);
         self::assertEquals($expectedArguments, $request->getArguments());
     }
+
+    /**
+     * @test
+     */
+    public function arrayArgumentIsParsedCorrectly()
+    {
+        $methodParameters = [
+            'a1' => ['optional' => false, 'type' => 'array'],
+            'a2' => ['optional' => true, 'type' => 'array'],
+        ];
+        $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
+
+        $expectedArguments = [
+            'a1' => ['1', 'x'], 'a2' => ['y', 'z']
+        ];
+
+        $request = $this->requestBuilder->build('acme.test:default:list --a1 1 --a2 y --a1 x --a2 z');
+        self::assertEquals($expectedArguments, $request->getArguments());
+    }
 }
