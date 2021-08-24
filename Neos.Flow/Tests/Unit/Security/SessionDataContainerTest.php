@@ -11,11 +11,13 @@ namespace Neos\Flow\Tests\Unit\Security;
  * source code.
  */
 
+use Neos\Flow\Fixtures\SessionlessTestToken;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\SessionDataContainer;
 use Neos\Flow\Tests\UnitTestCase;
+
+require_once(__DIR__ . '/../Fixtures/ClassWithBoolConstructor.php');
 
 /**
  * Testcase for the SessionDataContainer
@@ -66,7 +68,7 @@ class SessionDataContainerTest extends UnitTestCase
     public function setSecurityTokensThrowsExceptionWhenTryingToAddSessionlessTokens(): void
     {
         $mockSecurityTokens = [
-            'someProvider' => $this->getMockBuilder([TokenInterface::class, SessionlessTokenInterface::class])->getMock()
+            'someProvider' => $this->getMockBuilder(SessionlessTestToken::class)->getMock()
         ];
         $this->expectException(\InvalidArgumentException::class);
         $this->sessionDataContainer->setSecurityTokens($mockSecurityTokens);
