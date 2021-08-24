@@ -87,7 +87,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
      */
     public function __construct(ViewInterface $view, array $options = [])
     {
-        parent::__construct();
+        parent::__construct($view);
         $this->setTemplateParser(new TemplateParser());
         $this->setViewHelperResolver(new ViewHelperResolver());
         $this->setTemplateProcessors([
