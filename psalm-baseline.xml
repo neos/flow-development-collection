@@ -26,11 +26,6 @@
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Backend/RedisBackend.php">
-    <TypeDoesNotContainType occurrences="1">
-      <code>$transactionResult === false</code>
-    </TypeDoesNotContainType>
-  </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Frontend/PhpFrontend.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string|bool</code>
@@ -500,11 +495,6 @@
       <code>$methodDeclaringClassName</code>
     </ArgumentTypeCoercion>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Aop/Pointcut/PointcutSettingFilter.php">
-    <PossiblyNullArrayAccess occurrences="1">
-      <code>$settingValue[$currentKey]</code>
-    </PossiblyNullArrayAccess>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Aop/Pointcut/RuntimeExpressionEvaluator.php">
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>$cacheManager-&gt;getCache('Flow_Aop_RuntimeExpressions')</code>
@@ -582,10 +572,6 @@
     </PropertyTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/ConfigurationCommandController.php">
-    <PossiblyNullArgument occurrences="2">
-      <code>$configuration</code>
-      <code>$data</code>
-    </PossiblyNullArgument>
     <UndefinedConstant occurrences="1">
       <code>FLOW_PATH_ROOT</code>
     </UndefinedConstant>
@@ -711,47 +697,61 @@
       <code>strpos($staticMethodReference, '::')</code>
     </PossiblyFalseOperand>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationManager.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$settings</code>
-    </PossiblyInvalidArgument>
-    <ReferenceConstraintViolation occurrences="1">
-      <code>$settings</code>
-    </ReferenceConstraintViolation>
-    <TypeDoesNotContainType occurrences="1">
-      <code>$this-&gt;configurations[$configurationType] !== []</code>
-    </TypeDoesNotContainType>
-    <UndefinedConstant occurrences="12">
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-    </UndefinedConstant>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationSchemaValidator.php">
-    <PossiblyNullArgument occurrences="2">
-      <code>$configuration</code>
+    <PossiblyNullArgument occurrences="1">
       <code>$schemaPath</code>
     </PossiblyNullArgument>
     <UndefinedConstant occurrences="1">
       <code>FLOW_PATH_ROOT</code>
     </UndefinedConstant>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/RouteConfigurationProcessor.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>array</code>
-    </InvalidNullableReturnType>
-    <MissingDocblockType occurrences="1">
-      <code>$package</code>
-    </MissingDocblockType>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/AppendLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/MergeLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/ObjectsLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/PolicyLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/RoutesLoader.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$this-&gt;replacePlaceholders($routeConfiguration['uriPattern'], [$subRouteKey =&gt; ''])</code>
+    </PossiblyInvalidArgument>
+    <PossiblyInvalidOperand occurrences="1">
+      <code>$mergedSubRouteConfiguration['name']</code>
+    </PossiblyInvalidOperand>
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/SettingsLoader.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$settings</code>
+    </PossiblyInvalidArgument>
+    <ReferenceConstraintViolation occurrences="1">
+      <code>$settings</code>
+    </ReferenceConstraintViolation>
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Core/Booting/Scripts.php">
     <ArgumentTypeCoercion occurrences="3">
@@ -768,9 +768,6 @@
     <PossiblyFalseOperand occurrences="1">
       <code>date('YmdHis', $_SERVER['REQUEST_TIME'])</code>
     </PossiblyFalseOperand>
-    <PossiblyNullArgument occurrences="1">
-      <code>$configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES)</code>
-    </PossiblyNullArgument>
     <UndefinedConstant occurrences="19">
       <code>FLOW_ONLY_COMPOSER_LOADER</code>
       <code>FLOW_PATH_CONFIGURATION</code>
@@ -1410,9 +1407,8 @@
     <PossiblyInvalidMethodCall occurrences="1">
       <code>applyTo</code>
     </PossiblyInvalidMethodCall>
-    <PossiblyNullPropertyAssignmentValue occurrences="5">
+    <PossiblyNullPropertyAssignmentValue occurrences="4">
       <code>$routesConfiguration</code>
-      <code>$this-&gt;configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES)</code>
       <code>null</code>
       <code>null</code>
       <code>null</code>
@@ -1446,18 +1442,10 @@
       <code>new static($options)</code>
     </UnsafeInstantiation>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Mvc/ViewConfigurationManager.php">
-    <PossiblyNullIterator occurrences="1">
-      <code>$configurations</code>
-    </PossiblyNullIterator>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/ObjectManagement/CompileTimeObjectManager.php">
     <ParamNameMismatch occurrences="1">
       <code>$objectName</code>
     </ParamNameMismatch>
-    <PossiblyNullArgument occurrences="1">
-      <code>$rawCustomObjectConfigurations</code>
-    </PossiblyNullArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/ObjectManagement/Configuration/Configuration.php">
     <InvalidPropertyAssignmentValue occurrences="2">
@@ -1560,6 +1548,9 @@
     <UndefinedClass occurrences="1">
       <code>BaseTestCase</code>
     </UndefinedClass>
+    <UndefinedDocblockClass occurrences="1">
+      <code>\ReflectionAttribute</code>
+    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/ObjectManagement/Proxy/ProxyClass.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -1568,11 +1559,18 @@
     <PossiblyFalseArgument occurrences="1">
       <code>strrpos($fullOriginalClassName, '\\')</code>
     </PossiblyFalseArgument>
+    <UndefinedMethod occurrences="1">
+      <code>getAttributes</code>
+    </UndefinedMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/ObjectManagement/Proxy/ProxyMethod.php">
-    <ArgumentTypeCoercion occurrences="1">
+    <ArgumentTypeCoercion occurrences="2">
       <code>$annotation</code>
+      <code>$className</code>
     </ArgumentTypeCoercion>
+    <UndefinedMethod occurrences="1">
+      <code>getAttributes</code>
+    </UndefinedMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Package.php">
     <UndefinedClass occurrences="2">
@@ -1984,11 +1982,6 @@
       <code>$className</code>
       <code>$this-&gt;cleanClassName($className)</code>
     </ArgumentTypeCoercion>
-    <InvalidNullableReturnType occurrences="3">
-      <code>object</code>
-      <code>object</code>
-      <code>object</code>
-    </InvalidNullableReturnType>
     <LessSpecificReturnStatement occurrences="1">
       <code>is_object($this-&gt;classSchemata[$className]) ? $this-&gt;classSchemata[$className] : null</code>
     </LessSpecificReturnStatement>
@@ -2002,10 +1995,7 @@
     <MoreSpecificReturnType occurrences="1">
       <code>ClassSchema</code>
     </MoreSpecificReturnType>
-    <NullableReturnStatement occurrences="6">
-      <code>$annotations === [] ? null : current($annotations)</code>
-      <code>$annotations === [] ? null : current($annotations)</code>
-      <code>$annotations === [] ? null : current($annotations)</code>
+    <NullableReturnStatement occurrences="3">
       <code>is_object($this-&gt;classSchemata[$className]) ? $this-&gt;classSchemata[$className] : null</code>
       <code>null</code>
       <code>null</code>
@@ -2022,6 +2012,11 @@
       <code>freeze</code>
       <code>isFrozen</code>
     </UndefinedInterfaceMethod>
+    <UndefinedMethod occurrences="3">
+      <code>getAttributes</code>
+      <code>getAttributes</code>
+      <code>getAttributes</code>
+    </UndefinedMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Reflection/ReflectionServiceFactory.php">
     <ArgumentTypeCoercion occurrences="2">
@@ -2572,14 +2567,6 @@
       <code>null</code>
       <code>null</code>
       <code>null</code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Policy/PolicyService.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;policyConfiguration</code>
-    </PossiblyNullArgument>
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>$this-&gt;configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_POLICY)</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Session/Aspect/LoggingAspect.php">

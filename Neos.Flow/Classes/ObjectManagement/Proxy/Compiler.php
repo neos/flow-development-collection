@@ -286,6 +286,29 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
 
     /**
+     * Render the source (string) form of a PHP Attribute.
+     * @param \ReflectionAttribute $attribute
+     * @return string
+     */
+    public static function renderAttribute($attribute): string
+    {
+        $attributeAsString = '\\' . $attribute->getName();
+        if (count($attribute->getArguments()) > 0) {
+            $argumentsAsString = [];
+            foreach ($attribute->getArguments() as $argumentName => $argumentValue) {
+                $renderedArgumentValue = var_export($argumentValue, true);
+                if (is_numeric($argumentName)) {
+                    $argumentsAsString[] = $renderedArgumentValue;
+                } else {
+                    $argumentsAsString[] = "$argumentName: $renderedArgumentValue";
+                }
+            }
+            $attributeAsString .= '(' . implode(', ', $argumentsAsString) . ')';
+        }
+        return "#[$attributeAsString]";
+    }
+
+    /**
      * Render the source (string) form of an Annotation instance.
      *
      * @param \Doctrine\Common\Annotations\Annotation $annotation

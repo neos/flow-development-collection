@@ -17,6 +17,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheFactory;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\Loader\MergeLoader;
+use Neos\Flow\Configuration\Loader\ObjectsLoader;
+use Neos\Flow\Configuration\Loader\PolicyLoader;
+use Neos\Flow\Configuration\Loader\RoutesLoader;
+use Neos\Flow\Configuration\Loader\SettingsLoader;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Bootstrap;
@@ -203,12 +208,17 @@ class Scripts
         $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
 
         $configurationManager = new ConfigurationManager($context);
-        $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
-        $configurationManager->injectConfigurationSource(new YamlSource());
         $configurationManager->setPackages($packageManager->getFlowPackages());
-        if ($configurationManager->loadConfigurationCache() === false) {
-            $configurationManager->refreshConfiguration();
-        }
+        $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
+
+        $yamlSource = new YamlSource();
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, new MergeLoader($yamlSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES));
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, new ObjectsLoader($yamlSource));
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, new RoutesLoader($yamlSource, $configurationManager));
+        $policyLoader = new PolicyLoader($yamlSource);
+        $policyLoader->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $policyLoader);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, new SettingsLoader($yamlSource));
 
         // Manually inject settings into the PackageManager as the package manager is excluded from the proxy class building
         $flowSettings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
@@ -839,7 +849,8 @@ class Scripts
             return;
         }
 
-        $realPhpBinary = realpath(PHP_BINARY);
+        exec(PHP_BINARY . ' -r "echo realpath(PHP_BINARY);"', $output);
+        $realPhpBinary = $output[0];
         if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
             throw new FlowException(sprintf(
                 'You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .

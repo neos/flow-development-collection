@@ -12,11 +12,14 @@ namespace Neos\Flow\Annotations;
  */
 
 use Doctrine\Common\Annotations\Annotation as DoctrineAnnotation;
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
 /**
  * @Annotation
+ * @NamedArgumentConstructor
  * @DoctrineAnnotation\Target({"METHOD"})
  */
+#[\Attribute(\Attribute::TARGET_METHOD)]
 final class ValidationGroups
 {
     /**
@@ -25,15 +28,8 @@ final class ValidationGroups
      */
     public $validationGroups = ['Default', 'Controller'];
 
-    /**
-     * @param array $values
-     */
-    public function __construct(array $values)
+    public function __construct(array $validationGroups)
     {
-        if (isset($values['validationGroups']) && is_array($values['validationGroups'])) {
-            $this->validationGroups = $values['validationGroups'];
-        } elseif (isset($values['value']) && is_array($values['value'])) {
-            $this->validationGroups = $values['value'];
-        }
+        $this->validationGroups = $validationGroups;
     }
 }

@@ -67,6 +67,10 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
 
             $response = $this->buildHttpResponse();
             foreach ($tokensWithEntryPoint as $token) {
+                if ($token->isAuthenticated()) {
+                    continue;
+                }
+
                 $entryPoint = $token->getAuthenticationEntryPoint();
                 $this->securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', \get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
 

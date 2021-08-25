@@ -270,6 +270,54 @@ This method returns an ``IterableResult`` over which you can iterate, getting on
         // Iterate over all posts
     }
 
+On Flow's use of UUIDs as primary keys
+--------------------------------------
+
+Flow uses UUIDs as the identifier of anything stored in the database by default. This
+is in rather stark contrast to the de-facto standard of using some auto-incremented
+integer for that purpose. Such "UUID string identifiers" can lead to performance issues.
+Is that only an "academic discussion" or a real-life problem?
+
+It is a bit slower than integer primary keys and very tiny bit slower than bin(16) UUIDs.
+Insertion performance is the primary bottleneck then, as for reads as long as things
+are in the cache a few bytes likely don't make a difference.
+
+With integer (autoinc) primary keys you lose all the benefits of UUIDs (conflict-free
+backup and restore, potential for horizontal write scaling, client generated ids, ...).
+The trade-off then for bin(16) vs string UUIDs is human readability vs. performance in
+high insertion scenarios, which is very rarely the case. So unless you fall under such
+a high-throughput business case, you shouldn't really need to care and that's why Flow
+chooses this format by default.
+
+If you want to optimize performance with UUIDs the first thing is to choose another
+encoding which contains the timestamp in the first bytes (see the article
+https://www.percona.com/blog/2014/12/19/store-uuid-optimized-way/ and try
+https://uuid.ramsey.dev/en/latest/customize/timestamp-first-comb-codec.html)
+and then possibly switch the column type to bin(16).
+
+The primary benefit you have from the binary format is that a few more entries
+fit into cache, so any bottleneck is primarily shifted a bit back, but not
+generally removed. If insertion performance is an issue, then the timestamp-first
+UUIDs will yield much better improvements due to how RDBMS handle data internally
+(b-tree). Keep in mind we're talking about multiple thousand insertions per second
+on commodity server hardware here. In which case one should first investigate what
+drives that high throughout in the first place and if it is a real business cause
+or accidental complexity from e.g. a suboptimal domain model with an ORM or alike.
+
+Only if you then still find UUIDs to be a bottleneck, closely investigate alternatives
+(though auto-inc/int most likely isn't a solution then, because at that point you are
+having scalability issues and integer primary keys suffer in that part as mentioned,
+as they need a single central counter instance).
+
+Auto-inc keys also suffer from the fact that you need to cascade relation inserts - you
+need to insert the parent first, then retrieve the generated ID and only then can insert
+the children. This quite easily becomes a real bottleneck, because you need to cross the
+network multiple times, which is orders of magnitude slower than int vs string key
+insertion. Plus, with int IDs you always run into the issue of disclosing guessable
+identifiers in URLs, which you then hack around with offsets, some encoding or eventually
+add another secondary random identifier, at which point you pay the performance for both
+types.
+
 Conventions for File and Class Names
 ====================================
 
