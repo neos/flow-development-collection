@@ -48,9 +48,9 @@
         "neos/composer-plugin": "^2.0",
         "neos/utility-pdo": "~7.1.0",
 
-        "composer/composer": "^1.9 || ^2.0",
+        "composer/composer": "^1.10.22 || ^2.0.13",
 
-        "egulias/email-validator": "^2.1 || ^3.0"
+        "egulias/email-validator": "^2.1.17 || ^3.0"
     },
     "require-dev": {
         "vimeo/psalm": "~4.1.1",
