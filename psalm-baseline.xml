@@ -9,17 +9,9 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/ApcuBackend.php">
-    <UndefinedClass occurrences="1">
-      <code>\APCUIterator</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="6">
-      <code>$this-&gt;cacheEntriesIterator</code>
-      <code>$this-&gt;cacheEntriesIterator</code>
-      <code>$this-&gt;cacheEntriesIterator</code>
-      <code>$this-&gt;cacheEntriesIterator</code>
-      <code>$this-&gt;cacheEntriesIterator</code>
-      <code>\APCUIterator</code>
-    </UndefinedDocblockClass>
+    <RedundantCast occurrences="1">
+      <code>(string)$this-&gt;cacheEntriesIterator-&gt;key()</code>
+    </RedundantCast>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/FileBackend.php">
     <NonInvariantDocblockPropertyType occurrences="1">
