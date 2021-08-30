@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\Core\Widget;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Utility\Algorithms;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 
 /**
@@ -26,14 +27,6 @@ use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 class AjaxWidgetContextHolder
 {
     /**
-     * Counter which points to the next free Ajax Widget ID which
-     * can be used.
-     *
-     * @var integer
-     */
-    protected $nextFreeAjaxWidgetId = 0;
-
-    /**
      * An array $ajaxWidgetIdentifier => $widgetContext
      * which stores the widget context.
      *
@@ -44,15 +37,14 @@ class AjaxWidgetContextHolder
     /**
      * Get the widget context for the given $ajaxWidgetId.
      *
-     * @param integer $ajaxWidgetId
+     * @param string $ajaxWidgetId
      * @return WidgetContext
      * @throws Exception\WidgetContextNotFoundException
      */
     public function get($ajaxWidgetId)
     {
-        $ajaxWidgetId = (int) $ajaxWidgetId;
         if (!isset($this->widgetContexts[$ajaxWidgetId])) {
-            throw new WidgetContextNotFoundException('No widget context was found for the Ajax Widget Identifier "' . $ajaxWidgetId . '". This only happens if AJAX URIs are called without including the widget on a page.', 1284793775);
+            throw new WidgetContextNotFoundException('No widget context was found for the Ajax Widget Identifier "' . $ajaxWidgetId . '". This only happens if AJAX URIs are called without including the widget on a page or the session containing this id has timed out.', 1284793775);
         }
         return $this->widgetContexts[$ajaxWidgetId];
     }
@@ -67,7 +59,7 @@ class AjaxWidgetContextHolder
      */
     public function store(WidgetContext $widgetContext)
     {
-        $ajaxWidgetId = $this->nextFreeAjaxWidgetId++;
+        $ajaxWidgetId = Algorithms::generateUUID();
         $widgetContext->setAjaxWidgetIdentifier($ajaxWidgetId);
         $this->widgetContexts[$ajaxWidgetId] = $widgetContext;
     }

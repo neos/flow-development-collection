@@ -7,8 +7,6 @@
         "php": "^7.3 || ^8.0",
         "neos/flow": "~7.1.0",
         "neos/fluid-adaptor": "~7.1.0",
-        "neos/fusion-afx": "*",
-        "neos/fusion-form": "*",
         "neos/utility-arrays": "*"
     },
     "autoload": {
