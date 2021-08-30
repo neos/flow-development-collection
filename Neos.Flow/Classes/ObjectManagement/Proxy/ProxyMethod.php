@@ -29,6 +29,7 @@ class ProxyMethod
      * Fully qualified class name of the original class
      *
      * @var string
+     * @psalm-var class-string
      */
     protected $fullOriginalClassName;
 
@@ -76,6 +77,7 @@ class ProxyMethod
      *
      * @param string $fullOriginalClassName The fully qualified class name of the original class
      * @param string $methodName Name of the proxy (and original) method
+     * @psalm-param class-string $fullOriginalClassName
      */
     public function __construct($fullOriginalClassName, $methodName)
     {
@@ -216,6 +218,7 @@ class ProxyMethod
      * @param string $className Name of the class the method is declared in
      * @param string $methodName Name of the method to create the parameters code for
      * @return string $methodDocumentation DocComment for the given method
+     * @psalm-param class-string $className
      */
     protected function buildMethodDocumentation($className, $methodName)
     {
@@ -277,9 +280,7 @@ class ProxyMethod
                     } else {
                         $methodParameterTypeName = '';
                     }
-                    if (\PHP_MAJOR_VERSION >= 7 && \PHP_MINOR_VERSION >= 1) {
-                        $nullableSign = $methodParameterInfo['allowsNull'] ? '?' : '';
-                    }
+                    $nullableSign = $methodParameterInfo['allowsNull'] ? '?' : '';
                     if ($methodParameterInfo['optional'] === true) {
                         $rawDefaultValue = $methodParameterInfo['defaultValue'] ?? null;
                         if ($rawDefaultValue === null) {
