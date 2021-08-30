@@ -815,7 +815,7 @@ An entity with only the annotations needed in Flow::
 	  protected $date;
 
 	  /**
-	   * @var string
+	   * @var ?string
 	   * @ORM\Column(type="text")
 	   */
 	  protected $content;
@@ -864,7 +864,7 @@ metadata::
 
 	  /**
 	   * @var string
-	   * @ORM\Column(type="text")
+	   * @ORM\Column(type="text", nullable=true)
 	   */
 	  protected $content;
 

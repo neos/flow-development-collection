@@ -598,6 +598,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             $mapping['fieldName'] = $property->getName();
             $mapping['columnName'] = strtolower($property->getName());
             $mapping['targetEntity'] = $propertyMetaData['type'];
+            $mapping['nullable'] = $propertyMetaData['nullable'];
 
             $joinColumns = $this->evaluateJoinColumnAnnotations($property);
 
