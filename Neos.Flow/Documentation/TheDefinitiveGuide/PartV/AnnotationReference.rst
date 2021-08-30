@@ -3,7 +3,7 @@
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2021-05-03
+This reference was automatically generated from code on 2021-08-25
 
 
 .. _`Flow Annotation Reference: After`:
@@ -176,7 +176,7 @@ with that.
 Arguments
 *********
 
-* ``repositoryClass`` (string): Name of the repository class to use for managing the entity.
+* ``repositoryClass`` (string|null): Name of the repository class to use for managing the entity.
 
 * ``readOnly`` (boolean): Whether the entity should be read-only.
 
@@ -263,7 +263,7 @@ Arguments
 * ``lazy`` (boolean): Whether the dependency should be injected instantly or if a lazy dependency
   proxy should be injected instead
 
-* ``name`` (string): Optional object name
+* ``name`` (string|null): Optional object name
   This is useful if the object name does not match the class name of the object to be injected:
   (at)Inject(name="Some.Package:Some.Virtual.Object")
 
@@ -288,14 +288,14 @@ to inject the configured configuration.
 Arguments
 *********
 
-* ``path`` (string): Path of a configuration which should be injected into the property.
+* ``path`` (string|null): Path of a configuration which should be injected into the property.
   Can be specified as anonymous argument: InjectConfiguration("some.path")
   
   For type "Settings" this refers to the relative path (excluding the package key)
   
   Example: session.name
 
-* ``package`` (string): Defines the package key to be used for retrieving settings. If no package key is specified, we'll assume the
+* ``package`` (string|null): Defines the package key to be used for retrieving settings. If no package key is specified, we'll assume the
   package to be the same which contains the class where the InjectConfiguration annotation is used.
   
   Note: This property is only supported for type "Settings"
@@ -341,9 +341,9 @@ Arguments
 
 * ``pointcutExpression`` (string): The pointcut expression. (Can be given as anonymous argument.)
 
-* ``interfaceName`` (string): The interface name to introduce.
+* ``interfaceName`` (string|null): The interface name to introduce.
 
-* ``traitName`` (string): The trait name to introduce
+* ``traitName`` (string|null): The trait name to introduce
 
 
 
@@ -537,7 +537,7 @@ Controls how a property or method argument will be validated by Flow.
 Arguments
 *********
 
-* ``type`` (string): The validator type, either a FQCN or a Flow validator class name.
+* ``type`` (string|null): The validator type, either a FQCN or a Flow validator class name.
 
 * ``options`` (array): Options for the validator, validator-specific.
 

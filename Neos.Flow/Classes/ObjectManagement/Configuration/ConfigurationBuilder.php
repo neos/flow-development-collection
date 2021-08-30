@@ -186,10 +186,12 @@ class ConfigurationBuilder
     protected function enhanceRawConfigurationWithAnnotationOptions($className, array $rawObjectConfiguration)
     {
         if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Scope::class)) {
-            $rawObjectConfiguration['scope'] = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class)->value;
+            $annotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
+            $rawObjectConfiguration['scope'] = $annotation->value ?? null;
         }
         if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Autowiring::class)) {
-            $rawObjectConfiguration['autowiring'] = $this->reflectionService->getClassAnnotation($className, Flow\Autowiring::class)->enabled;
+            $annotation = $this->reflectionService->getClassAnnotation($className, Flow\Autowiring::class);
+            $rawObjectConfiguration['autowiring'] = $annotation->enabled ?? null;
         }
         return $rawObjectConfiguration;
     }
