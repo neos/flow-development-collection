@@ -107,7 +107,7 @@ abstract class RequestInformationHelper
      * @param RequestInterface $request
      * @return string
      */
-    public static function renderRequestInfo(RequestInterface $request): string
+    public static function renderRequestInformation(RequestInterface $request): string
     {
         $info = [
             sprintf('target: %s', $request->getRequestTarget()),
