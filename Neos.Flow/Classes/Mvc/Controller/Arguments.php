@@ -18,6 +18,7 @@ use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
  * A composite of controller arguments
  *
  * @api
+ * @extends \ArrayObject<Argument>
  */
 class Arguments extends \ArrayObject
 {

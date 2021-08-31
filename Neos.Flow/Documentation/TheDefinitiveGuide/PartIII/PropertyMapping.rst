@@ -283,6 +283,37 @@ of the controller, as in the following example:
   Since the ``getArgument()`` method is explicitly annotated, common IDEs will recognize the type
   and there is no break in the type hinting chain.
 
+Mapping classes dynamically
+---------------------------
+
+Technically your controller actions can accept interfaces (or abstract classes) as arguments. In order to be able to map
+those and correctly validate the input the implementing class needs to be specified though. Since Flow 7.2 it is possible
+to enable a "dynamic validation" mode by setting the controller property ``$enableDynamicTypeValidation = true;``.
+With this enabled, you can do either of this, to tell Flow the implementation class for the controller argument at runtime:
+
+.. code-block:: php
+
+  protected $enableDynamicTypeValidation = true;
+
+  /**
+   * @param \My\Package\Domain\MyInterface $target
+   */
+  public function myDynamicAction(MyInterface $target)
+  {
+    ...
+  }
+
+  protected function initializeMyDynamicAction()
+  {
+    $propertyMappingConfiguration = $this->arguments['target']->getPropertyMappingConfiguration();
+    // Do this, but decide on the actual class depending on some runtime decision
+    $propertyMappingConfiguration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_TARGET_TYPE, \My\Package\Domain\MyImplementation::class);
+    // OR submit '_type' => '\My\Package\Domain\MyImplementation' to make the decision client-side with
+    $propertyMappingConfiguration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
+  }
+
+All validation annotations of your ``MyImplementation`` class will then be used to validate the input.
+
 Mapping whole request body
 --------------------------
 

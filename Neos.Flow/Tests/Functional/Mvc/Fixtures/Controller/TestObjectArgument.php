@@ -18,7 +18,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * An object argument with validation
  */
-class TestObjectArgument
+class TestObjectArgument implements TestObjectInterface
 {
     /**
      * @var string
