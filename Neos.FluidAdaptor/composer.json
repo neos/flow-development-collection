@@ -11,7 +11,7 @@
     "neos/cache": "*",
     "neos/utility-files": "*",
     "neos/utility-objecthandling": "*",
-    "typo3fluid/fluid": "~2.5.11 || ~2.6.10",
+    "typo3fluid/fluid": "^2.7.0",
     "psr/log": "^1.0"
   },
   "autoload": {
