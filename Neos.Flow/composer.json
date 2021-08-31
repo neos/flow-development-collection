@@ -53,7 +53,7 @@
         "composer/composer": "^1.10.22 || ^2.0.13"
     },
     "require-dev": {
-        "vimeo/psalm": "~4.1.1",
+        "vimeo/psalm": "~4.9.3",
         "mikey179/vfsstream": "^1.6.1",
         "phpunit/phpunit": "~8.5"
     },
