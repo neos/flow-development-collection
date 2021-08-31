@@ -287,7 +287,7 @@ Mapping classes dynamically
 ---------------------------
 
 Technically your controller actions can accept interfaces (or abstract classes) as arguments. In order to be able to map
-those and correctly validate the input the implementing class needs to be specified though. Since Flow 7.1 it is possible
+those and correctly validate the input the implementing class needs to be specified though. Since Flow 7.2 it is possible
 to enable a "dynamic validation" mode by setting the controller property ``$enableDynamicTypeValidation = true;``.
 With this enabled, you can do either of this, to tell Flow the implementation class for the controller argument at runtime:
 
