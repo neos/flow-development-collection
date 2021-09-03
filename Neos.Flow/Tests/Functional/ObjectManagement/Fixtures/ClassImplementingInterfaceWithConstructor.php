@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 
 class ClassImplementingInterfaceWithConstructor implements InterfaceWithConstructor
 {
-
     public function __construct(array $someArgument = [])
     {
     }
