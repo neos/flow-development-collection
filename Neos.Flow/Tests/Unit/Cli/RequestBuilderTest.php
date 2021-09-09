@@ -447,21 +447,21 @@ class RequestBuilderTest extends UnitTestCase
      *
      * @return array
      */
-    public function arrayValues()
+    public function arrayCliArgumentValues()
     {
         return [
             [
-                'acme.test:default:list --a1 1 --a2 y --a1 x --a2 z',
+                '--a1 1 --a2 y --a1 x --a2 z',
                 ['a1' => ['1', 'x'], 'a2' => ['y', 'z']],
                 []
             ],
             [
-                'acme.test:default:list ---a1 1 --a2 y --a1 x --a2 z foo bar',
+                '--a1 1 --a2 y --a1 x --a2 z foo bar',
                 ['a1' => ['1', 'x'], 'a2' => ['y', 'z']],
                 ['foo', 'bar']
             ],
             [
-                'acme.test:default:list --a1 1 --a1 x foo bar',
+                '--a1 1 --a1 x foo bar',
                 ['a1' => ['1', 'x']],
                 ['foo', 'bar']
             ]
@@ -470,9 +470,9 @@ class RequestBuilderTest extends UnitTestCase
 
     /**
      * @test
-     * @dataProvider arrayValues
+     * @dataProvider arrayCliArgumentValues
      */
-    public function arrayArgumentIsParsedCorrectly(string $commandLine, array $expectedArguments, array $exceedingArguments)
+    public function arrayArgumentIsParsedCorrectly(string $cliArguments, array $expectedArguments, array $epectedExceedingArguments)
     {
         $methodParameters = [
             'a1' => ['optional' => false, 'type' => 'array'],
@@ -480,8 +480,8 @@ class RequestBuilderTest extends UnitTestCase
         ];
         $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
-        $request = $this->requestBuilder->build($commandLine);
+        $request = $this->requestBuilder->build('acme.test:default:list ' . $cliArguments);
         self::assertEquals($expectedArguments, $request->getArguments());
-        self::assertEquals($exceedingArguments, $request->getExceedingArguments());
+        self::assertEquals($epectedExceedingArguments, $request->getExceedingArguments());
     }
 }
