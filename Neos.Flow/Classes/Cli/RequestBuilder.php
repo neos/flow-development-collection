@@ -183,6 +183,7 @@ class RequestBuilder
         $commandMethodName = $controllerCommandName . 'Command';
         $commandMethodParameters = $this->commandManager->getCommandMethodParameters($controllerObjectName, $commandMethodName);
 
+        $requiredArgumentNames = [];
         $requiredArguments = [];
         $optionalArguments = [];
         foreach ($commandMethodParameters as $parameterName => $parameterInfo) {
@@ -191,6 +192,7 @@ class RequestBuilder
                     'parameterName' => $parameterName,
                     'type' => $parameterInfo['type']
                 ];
+                $requiredArgumentNames[strtolower($parameterName)] = $parameterName;
             } else {
                 $optionalArguments[strtolower($parameterName)] = [
                     'parameterName' => $parameterName,
@@ -229,16 +231,16 @@ class RequestBuilder
                         $commandLineArguments[$requiredArguments[$argumentName]['parameterName']][] = $argumentValue;
                     } else {
                         $commandLineArguments[$requiredArguments[$argumentName]['parameterName']] = $argumentValue;
-                        unset($requiredArguments[$argumentName]);
                     }
+                    unset($requiredArgumentNames[strtolower($requiredArguments[$argumentName]['parameterName'])]);
                 }
             } else {
-                if (count($requiredArguments) > 0) {
+                if (count($requiredArgumentNames) > 0) {
                     if ($decidedToUseNamedArguments) {
                         throw new InvalidArgumentMixingException(sprintf('Unexpected unnamed argument "%s". If you use named arguments, all required arguments must be passed named.', $rawArgument), 1309971820);
                     }
-                    $argument = array_shift($requiredArguments);
-                    $commandLineArguments[$argument['parameterName']] = $rawArgument;
+                    $argumentName = array_shift($requiredArgumentNames);
+                    $commandLineArguments[$argumentName] = $rawArgument;
                     $decidedToUseUnnamedArguments = true;
                 } else {
                     $exceedingArguments[] = $rawArgument;
