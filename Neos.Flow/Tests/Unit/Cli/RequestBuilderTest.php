@@ -443,9 +443,36 @@ class RequestBuilderTest extends UnitTestCase
     }
 
     /**
-     * @test
+     * Data provider
+     *
+     * @return array
      */
-    public function arrayArgumentIsParsedCorrectly()
+    public function arrayValues()
+    {
+        return [
+            [
+                'acme.test:default:list --a1 1 --a2 y --a1 x --a2 z',
+                ['a1' => ['1', 'x'], 'a2' => ['y', 'z']],
+                []
+            ],
+            [
+                'acme.test:default:list ---a1 1 --a2 y --a1 x --a2 z foo bar',
+                ['a1' => ['1', 'x'], 'a2' => ['y', 'z']],
+                ['foo', 'bar']
+            ],
+            [
+                'acme.test:default:list --a1 1 --a1 x foo bar',
+                ['a1' => ['1', 'x']],
+                ['foo', 'bar']
+            ]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider arrayValues
+     */
+    public function arrayArgumentIsParsedCorrectly(string $commandLine, array $expectedArguments, array $exceedingArguments)
     {
         $methodParameters = [
             'a1' => ['optional' => false, 'type' => 'array'],
@@ -453,11 +480,8 @@ class RequestBuilderTest extends UnitTestCase
         ];
         $this->mockCommandManager->expects(self::once())->method('getCommandMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will(self::returnValue($methodParameters));
 
-        $expectedArguments = [
-            'a1' => ['1', 'x'], 'a2' => ['y', 'z']
-        ];
-
-        $request = $this->requestBuilder->build('acme.test:default:list --a1 1 --a2 y --a1 x --a2 z');
+        $request = $this->requestBuilder->build($commandLine);
         self::assertEquals($expectedArguments, $request->getArguments());
+        self::assertEquals($exceedingArguments, $request->getExceedingArguments());
     }
 }
