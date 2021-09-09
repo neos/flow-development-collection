@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Functional\Security\Fixtures;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Repository;
-use Neos\Flow\Tests\Functional\Security\Fixtures;
 
 /**
  * A repository for restrictable entities
