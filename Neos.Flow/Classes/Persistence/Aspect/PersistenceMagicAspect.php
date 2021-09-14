@@ -11,7 +11,6 @@ namespace Neos\Flow\Persistence\Aspect;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
