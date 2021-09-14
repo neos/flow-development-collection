@@ -70,8 +70,8 @@ class PersistenceMagicAspect
 
     /**
      * @var string
-     * @ORM\Id
-     * @ORM\Column(length=40)
+     * @Doctrine\ORM\Mapping\Id
+     * @Doctrine\ORM\Mapping\Column(length=40)
      * @Flow\Introduce("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && filter(Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
      */
     protected $Persistence_Object_Identifier;
