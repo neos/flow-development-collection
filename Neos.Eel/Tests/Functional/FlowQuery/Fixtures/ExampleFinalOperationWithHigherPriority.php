@@ -11,7 +11,6 @@ namespace Neos\Eel\Tests\Functional\FlowQuery\Fixtures;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 
 class ExampleFinalOperationWithHigherPriority extends \Neos\Eel\FlowQuery\Operations\AbstractOperation
 {
