@@ -48,9 +48,9 @@ class XliffReader
             $iterator($reader, $offset, $version);
             while ($reader->next()) {
                 if ($this->isFileNode($reader)) {
+                    $offset++;
                     $iterator($reader, $offset, $version);
                 }
-                $offset++;
             }
         } else {
             $this->i18nLogger->log('Given source "' . $sourcePath . '" is not a valid XLIFF file');
