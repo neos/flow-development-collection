@@ -229,11 +229,7 @@ class ProxyClass
         if ($methodsCode . $constantsCode === '') {
             return '';
         }
-        $classCode = ($namespace !== '' ? 'namespace ' . $namespace . ";\n\n" : '') .
-            "use Doctrine\\ORM\\Mapping as ORM;\n" .
-            "use Neos\\Flow\\Annotations as Flow;\n" .
-            "\n" .
-            $this->buildClassDocumentation() .
+        $classCode = $this->buildClassDocumentation() .
             $classModifier . 'class ' . $proxyClassName . ' extends ' . $originalClassName . ' implements ' . implode(', ', array_unique($this->interfaces)) . " {\n\n" .
             $traitsCode .
             $constantsCode .
