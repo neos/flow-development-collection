@@ -11,10 +11,8 @@ namespace Neos\Flow\Tests\Functional\Security\Fixtures;
  * source code.
  */
 
-use Doctrine\ORM\Query;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
-use Neos\Flow\Tests\Functional\Security\Fixtures;
 
 /**
  * @Flow\Scope("singleton")
