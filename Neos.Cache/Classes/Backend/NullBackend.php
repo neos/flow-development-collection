@@ -25,6 +25,18 @@ use Neos\Cache\Backend\AbstractBackend as AbstractCacheBackend;
 class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInterface, TaggableBackendInterface
 {
     /**
+     * Successfully ignore every configured property
+     *
+     * @param string $propertyName
+     * @param mixed $propertyValue
+     * @return boolean TRUE
+     */
+    protected function setProperty(string $propertyName, $propertyValue) : bool
+    {
+        return true;
+    }
+
+    /**
      * Acts as if it would save data
      *
      * @param string $entryIdentifier ignored
