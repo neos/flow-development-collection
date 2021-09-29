@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Functional\Security\Fixtures;
+namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -12,16 +12,10 @@ namespace Neos\Flow\Tests\Functional\Security\Fixtures;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence\Repository;
 
-/**
- * A repository for restrictable entities
- * @Flow\Scope("singleton")
- */
-class RestrictableEntityRepository extends Repository
+class ClassImplementingInterfaceWithConstructor implements InterfaceWithConstructor
 {
-    /**
-     * @var string
-     */
-    const ENTITY_CLASSNAME = RestrictableEntity::class;
+    public function __construct(array $someArgument = [])
+    {
+    }
 }

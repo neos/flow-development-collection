@@ -102,6 +102,22 @@ abstract class RequestInformationHelper
     }
 
     /**
+     * Renders information about the request
+     *
+     * @param RequestInterface $request
+     * @return string
+     */
+    public static function renderRequestInformation(RequestInterface $request): string
+    {
+        $info = [
+            sprintf('target: %s', $request->getRequestTarget()),
+            self::renderRequestHeaders($request)
+        ];
+
+        return implode(PHP_EOL, $info);
+    }
+
+    /**
      * Renders the HTTP headers - EXCLUDING the status header - of the given request
      *
      * @param RequestInterface $request
@@ -109,17 +125,17 @@ abstract class RequestInformationHelper
      */
     public static function renderRequestHeaders(RequestInterface $request): string
     {
-        $renderedHeaders = '';
-        $headers = $request->getHeaders();
-        foreach (array_keys($headers) as $name) {
+        $renderedHeaders = [];
+        foreach (array_keys($request->getHeaders()) as $name) {
             if ($name === 'Authorization') {
-                $renderedHeaders .= 'Authorization: ****';
+                $value = '****';
             } else {
-                $renderedHeaders .= $request->getHeaderLine($name);
+                $value = $request->getHeaderLine($name);
             }
+            $renderedHeaders[] = sprintf('%s: %s', $name, $value);
         }
 
-        return $renderedHeaders;
+        return implode(PHP_EOL, $renderedHeaders);
     }
 
     /**

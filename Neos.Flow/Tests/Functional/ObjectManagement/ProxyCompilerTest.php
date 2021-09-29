@@ -11,8 +11,12 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * source code.
  */
 
+use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
+use Neos\Flow\ObjectManagement\Proxy\ProxyClass;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Reflection\ClassReflection;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterfaceWithConstructor;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -128,5 +132,19 @@ class ProxyCompilerTest extends FunctionalTestCase
     {
         $reflectionClass = new ClassReflection(Fixtures\FinalClassWithDependencies::class);
         self::assertTrue($reflectionClass->isFinal());
+    }
+
+
+    /**
+     * @test
+     * @see https://github.com/neos/flow-development-collection/issues/2554
+     */
+    public function proxyingClassImplementingInterfacesWithParametrizedConstructorsLeadsToException()
+    {
+        $this->expectException(CannotBuildObjectException::class);
+        $proxyClass = new ProxyClass(ClassImplementingInterfaceWithConstructor::class);
+        $proxyClass->injectReflectionService($this->objectManager->get(ReflectionService::class));
+        $proxyClass->getConstructor()->addPreParentCallCode('// some code');
+        $proxyClass->render();
     }
 }
