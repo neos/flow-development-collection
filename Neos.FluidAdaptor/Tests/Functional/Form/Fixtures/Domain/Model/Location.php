@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A test value object which is used to test Fluid forms in combination with
