@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\SignalSlot\Fixtures;
  * source code.
  */
 
-use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 
 /**
