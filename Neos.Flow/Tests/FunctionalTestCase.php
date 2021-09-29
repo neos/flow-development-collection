@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use Psr\Http\Message\ServerRequestInterface as HttpRequest;
@@ -111,6 +112,11 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     protected $policyService;
 
     /**
+     * @var TokenAndProviderFactory
+     */
+    protected $tokenAndProviderFactory;
+
+    /**
      * @var \Neos\Flow\Security\Authentication\Provider\TestingProvider
      */
     protected $testingProvider;
@@ -188,8 +194,8 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
 
             $this->authenticationManager = $this->objectManager->get(\Neos\Flow\Security\Authentication\AuthenticationProviderManager::class);
 
-            $this->testingProvider = $this->objectManager->get(\Neos\Flow\Security\Authentication\Provider\TestingProvider::class);
-            $this->testingProvider->setName('TestingProvider');
+            $this->tokenAndProviderFactory = $this->objectManager->get(TokenAndProviderFactory::class);
+            $this->testingProvider = $this->tokenAndProviderFactory->getProviders()['TestingProvider'];
 
             $this->registerRoute('functionaltestroute', 'neos/flow/test', [
                 '@package' => 'Neos.Flow',
