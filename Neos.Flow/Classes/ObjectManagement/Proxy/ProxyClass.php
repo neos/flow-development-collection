@@ -229,11 +229,7 @@ class ProxyClass
         if ($methodsCode . $constantsCode === '') {
             return '';
         }
-        $classCode = ($namespace !== '' ? 'namespace ' . $namespace . ";\n\n" : '') .
-            "use Doctrine\\ORM\\Mapping as ORM;\n" .
-            "use Neos\\Flow\\Annotations as Flow;\n" .
-            "\n" .
-            $this->buildClassDocumentation() .
+        $classCode = $this->buildClassDocumentation() .
             $classModifier . 'class ' . $proxyClassName . ' extends ' . $originalClassName . ' implements ' . implode(', ', array_unique($this->interfaces)) . " {\n\n" .
             $traitsCode .
             $constantsCode .
@@ -250,18 +246,9 @@ class ProxyClass
      */
     protected function buildClassDocumentation()
     {
-        $classDocumentation = "/**\n";
-
         $classReflection = new ClassReflection($this->fullOriginalClassName);
-        $classDescription = $classReflection->getDescription();
-        $classDocumentation .= ' * ' . str_replace("\n", "\n * ", $classDescription) . "\n";
 
-        foreach ($this->reflectionService->getClassAnnotations($this->fullOriginalClassName) as $annotation) {
-            $classDocumentation .= ' * ' . Compiler::renderAnnotation($annotation) . "\n";
-        }
-
-        $classDocumentation .= " * @codeCoverageIgnore\n";
-        $classDocumentation .= " */\n";
+        $classDocumentation = str_replace("*/", "* @codeCoverageIgnore\n */", $classReflection->getDocComment()) . "\n";
         if (PHP_MAJOR_VERSION >= 8) {
             foreach ($classReflection->getAttributes() as $attribute) {
                 $classDocumentation .= Compiler::renderAttribute($attribute) . "\n";

@@ -57,11 +57,6 @@ class ProxyClassBuilder
     protected $pointcutExpressionParser;
 
     /**
-     * @var ProxyClassBuilder
-     */
-    protected $proxyClassBuilder;
-
-    /**
      * @var VariableFrontend
      */
     protected $objectConfigurationCache;
