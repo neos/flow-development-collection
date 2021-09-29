@@ -220,8 +220,7 @@ trait SecurityOperationsTrait
         // Making sure providers and tokens were actually build, so the singleton TestingProvider exists.
         $this->tokenAndProviderFactory->getProviders();
 
-        $this->testingProvider = $this->objectManager->get(TestingProvider::class);
-        $this->testingProvider->setName('TestingProvider');
+        $this->testingProvider = $this->tokenAndProviderFactory->getProviders()['TestingProvider'];
 
         $this->securityContext = $this->objectManager->get(Security\Context::class);
         $this->securityContext->clearContext();
