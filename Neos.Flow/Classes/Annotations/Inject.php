@@ -11,6 +11,8 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Used to enable property injection.
  *
@@ -18,8 +20,10 @@ namespace Neos\Flow\Annotations;
  * to inject a value as specified by the var annotation.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target("PROPERTY")
  */
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
 final class Inject
 {
     /**
@@ -35,20 +39,16 @@ final class Inject
      * This is useful if the object name does not match the class name of the object to be injected:
      * (at)Inject(name="Some.Package:Some.Virtual.Object")
      *
-     * @var string
+     * @var string|null
      */
     public $name;
 
     /**
      * @param array $values
      */
-    public function __construct(array $values)
+    public function __construct(?string $name = null, bool $lazy = true)
     {
-        if (isset($values['lazy'])) {
-            $this->lazy = (boolean)$values['lazy'];
-        }
-        if (isset($values['name'])) {
-            $this->name = $values['name'];
-        }
+        $this->lazy = $lazy;
+        $this->name = $name;
     }
 }

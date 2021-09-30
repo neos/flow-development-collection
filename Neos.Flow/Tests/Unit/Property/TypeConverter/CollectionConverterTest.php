@@ -54,7 +54,7 @@ class CollectionConverterTest extends UnitTestCase
      */
     public function getTypeOfChildPropertyThrowsExceptionForMissingElementType()
     {
-        self::expectException(InvalidDataTypeException::class);
+        $this->expectException(InvalidDataTypeException::class);
         $this->converter->getTypeOfChildProperty('array', 'collection', $this->createMock(PropertyMappingConfigurationInterface::class));
     }
 }

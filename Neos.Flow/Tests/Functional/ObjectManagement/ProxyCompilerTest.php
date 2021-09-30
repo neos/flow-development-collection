@@ -11,8 +11,14 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * source code.
  */
 
+use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
+use Neos\Flow\ObjectManagement\Proxy\ProxyClass;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Reflection\ClassReflection;
+use Neos\Flow\Reflection\MethodReflection;
+use Neos\Flow\Reflection\PropertyReflection;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterfaceWithConstructor;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -128,5 +134,98 @@ class ProxyCompilerTest extends FunctionalTestCase
     {
         $reflectionClass = new ClassReflection(Fixtures\FinalClassWithDependencies::class);
         self::assertTrue($reflectionClass->isFinal());
+    }
+
+    /**
+     * @test
+     */
+    public function attributesArePreserved()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Attributes');
+        }
+        $reflectionClass = new ClassReflection(Fixtures\ClassWithPhpAttributes::class);
+        $attributes = $reflectionClass->getAttributes();
+        self::assertCount(2, $attributes);
+        self::assertEquals(Fixtures\SampleAttribute::class, $attributes[0]->getName());
+        self::assertEquals(Fixtures\ClassWithPhpAttributes::class, $attributes[0]->getArguments()[0]);
+    }
+
+    /**
+     * @test
+     * @see https://github.com/neos/flow-development-collection/issues/2554
+     */
+    public function proxyingClassImplementingInterfacesWithParametrizedConstructorsLeadsToException()
+    {
+        $this->expectException(CannotBuildObjectException::class);
+        $proxyClass = new ProxyClass(ClassImplementingInterfaceWithConstructor::class);
+        $proxyClass->injectReflectionService($this->objectManager->get(ReflectionService::class));
+        $proxyClass->getConstructor()->addPreParentCallCode('// some code');
+        $proxyClass->render();
+    }
+
+    /**
+     * @test
+     */
+    public function complexPropertyTypesArePreserved()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with UnionTypes');
+        }
+        $reflectionClass = new ClassReflection(Fixtures\PHP8\ClassWithUnionTypes::class);
+        /** @var PropertyReflection $property */
+        foreach ($reflectionClass->getProperties() as $property) {
+            if ($property->getName() !== 'propertyA' && $property->getName() !== 'propertyB') {
+                self::assertInstanceOf(\ReflectionUnionType::class, $property->getType(), $property->getName() . ': ' . $property->getType());
+            }
+        }
+        self::assertEquals(
+            $reflectionClass->getProperty('propertyA')->getType(),
+            $reflectionClass->getProperty('propertyB')->getType(),
+            '?string is equal to string|null'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function complexMethodReturnTypesArePreserved()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with UnionTypes');
+        }
+        $reflectionClass = new ClassReflection(Fixtures\PHP8\ClassWithUnionTypes::class);
+        /** @var MethodReflection $method */
+        foreach ($reflectionClass->getMethods() as $method) {
+            if (str_starts_with($method->getName(), 'get') &&
+                !str_ends_with($method->getName(), 'PropertyA') &&
+                !str_ends_with($method->getName(), 'PropertyB')) {
+                self::assertInstanceOf(\ReflectionUnionType::class, $method->getReturnType(), $method->getName() . ': ' . $method->getReturnType());
+            }
+        }
+        self::assertEquals(
+            $reflectionClass->getMethod('getPropertyA')->getReturnType(),
+            $reflectionClass->getMethod('getPropertyB')->getReturnType(),
+            '?string is equal to string|null'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function constructorPropertiesArePreserved()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Constructor properties');
+        }
+        $reflectionClass = new ClassReflection(Fixtures\PHP8\ClassWithConstructorProperties::class);
+        /** @var PropertyReflection $property */
+        self::assertTrue($reflectionClass->hasProperty('propertyA'));
+        self::assertTrue($reflectionClass->hasProperty('propertyB'));
+        self::assertTrue($reflectionClass->hasProperty('propertyC'));
+
+        self::assertEquals('?string', (string)$reflectionClass->getProperty('propertyA')->getType());
+        self::assertEquals('?int', (string)$reflectionClass->getProperty('propertyB')->getType());
+        self::assertEquals('?DateTime', (string)$reflectionClass->getProperty('propertyC')->getType());
     }
 }

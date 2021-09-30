@@ -11,6 +11,8 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Marks the annotate class as a value object.
  *
@@ -20,8 +22,10 @@ namespace Neos\Flow\Annotations;
  * of the value object.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target("CLASS")
  */
+#[\Attribute(\Attribute::TARGET_CLASS)]
 final class ValueObject
 {
     /**
@@ -29,4 +33,9 @@ final class ValueObject
      * @var boolean
      */
     public $embedded = true;
+
+    public function __construct(bool $embedded = true)
+    {
+        $this->embedded = $embedded;
+    }
 }

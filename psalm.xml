@@ -13,6 +13,8 @@
             <directory name="Packages/Framework/**/Tests" />
             <directory name="Packages/Framework/**/Resources" />
             <file name="Packages/Framework/Neos.Eel/Classes/FlowQuery/FizzleParser.php" />
+            <file name="Packages/Framework/Neos.Eel/Classes/AbstractParser.php" />
+            <file name="Packages/Framework/Neos.Eel/Classes/EelParser.php" />
             <file name="Packages/Framework/Neos.Flow/.phpstorm.meta.php" />
         </ignoreFiles>
     </projectFiles>
@@ -76,5 +78,7 @@
         <RawObjectIteration errorLevel="info" />
 
         <InvalidStringClass errorLevel="info" />
+
+        <ParamNameMismatch errorLevel="info" />
     </issueHandlers>
 </psalm>

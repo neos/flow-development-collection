@@ -1,7 +1,6 @@
 <?php
 namespace Neos\Flow\Tests\Behavior\Features\Bootstrap;
 
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
@@ -94,11 +93,6 @@ trait SecurityOperationsTrait
 
         self::$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy.yaml';
         file_put_contents(self::$testingPolicyPathAndFilename, $string->getRaw());
-
-        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
-        $configurations = ObjectAccess::getProperty($configurationManager, 'configurations', true);
-        unset($configurations[ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_POLICY]);
-        ObjectAccess::setProperty($configurationManager, 'configurations', $configurations, true);
 
         $policyService = $this->objectManager->get(PolicyService::class);
         ObjectAccess::setProperty($policyService, 'initialized', false, true);
@@ -220,8 +214,7 @@ trait SecurityOperationsTrait
         // Making sure providers and tokens were actually build, so the singleton TestingProvider exists.
         $this->tokenAndProviderFactory->getProviders();
 
-        $this->testingProvider = $this->objectManager->get(TestingProvider::class);
-        $this->testingProvider->setName('TestingProvider');
+        $this->testingProvider = $this->tokenAndProviderFactory->getProviders()['TestingProvider'];
 
         $this->securityContext = $this->objectManager->get(Security\Context::class);
         $this->securityContext->clearContext();
