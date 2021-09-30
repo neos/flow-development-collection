@@ -164,3 +164,24 @@ This is not a breaking change for most cases, but the signature of ``Configurati
 
  // now
  $configurationManager->registerConfigurationType('SomeCustom', new AppendLoader($yamlSource, 'SomeCustom'));
+
+`!!! BUGFIX: Avoid broken proxy docblocks <https://github.com/neos/flow-development-collection/pull/2568>`_
+------------------------------------------------------------------------------------------------------------
+
+With PR #2533 docblocks are copied from the original class to the proxy class. This breaks when using annotations
+without the "standard" imports Flow and ORM. One example is the ImportedAsset domain model.
+
+This fixes that by some changes to the proxy building.
+
+Note, if you use property introduction via AOP, those properties must from now on use fully-qualified classnames for
+annotations on them!
+
+Example::
+
+    /**
+     * @var string
+     * @Doctrine\ORM\Mapping\Id
+     * @Doctrine\ORM\Mapping\Column(length=40)
+     * @Flow\Introduce("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && filter(Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
+     */
+    protected $Persistence_Object_Identifier;
