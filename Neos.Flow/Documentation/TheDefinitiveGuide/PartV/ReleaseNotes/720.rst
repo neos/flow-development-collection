@@ -1,0 +1,166 @@
+========
+Flow 7.2
+========
+
+This release of Flow comes with some new features, bugfixes and a lot of modernisation of the existing code base.
+As usual, we worked hard to keep this release as backwards compatible as possible but some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+
+************
+New Features
+************
+
+`!!! FEATURE: Extensible configuration loaders <https://github.com/neos/flow-development-collection/pull/2449>`_
+----------------------------------------------------------------------------------------------------------------
+
+This allows to implement custom ConfigurationLoader classes which replace the currently rather hardcoded ConfigurationProcessor's in an OOP way.
+
+It is then possible to load custom configurations in the ConfigurationManager with custom locations and custom configuration formats. E.g. it is possible to load json files or NodeTypes from another directory than ``Configuration``.
+
+This is not a breaking change for most cases, but the signature of ``ConfigurationManager::registerConfigurationType()`` has been changed and the usage of "configurationProcessingTypes" deprecated in favor of ``Neos\\Flow\\Configuration\\Loader\\LoaderInterface`` instances::
+
+ // legacy (and still supported)
+ $configurationManager->registerConfigurationType('SomeCustom', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_APPEND);
+
+ // now
+ $configurationManager->registerConfigurationType('SomeCustom', new AppendLoader($yamlSource, 'SomeCustom'));
+
+`FEATURE: Support PHP8 attributes <https://github.com/neos/flow-development-collection/pull/2468>`_
+---------------------------------------------------------------------------------------------------
+
+This allows to use all existing Annotations as PHP8 Attributes and makes the ReflectionService pick up attributes like annotations.
+Hence all ``is*AnnotatedWith()`` and ``*Annotation()`` methods will return attribute classes as if they were annotations.
+
+.. code-block:: php
+
+   #[Flow\\Scope("singleton")]
+   class MyClass {
+
+     /**
+      * @var LoggerInterface
+      */
+     #[Flow\\Inject]
+     protected $logger;
+
+Note though, that this means a class that has both annotation and the equal attribute will behave as if all annotations were duplicated.
+
+Also, in case you manually instanciated an Annotation class, you need to adjust to the changed constructor, which no longer takes a named array, but the list of actual properties.
+In most cases instead of ``new Flow\\Inject($args)`` you can probably do ``new Flow\\Inject(...$args)`` with PHP8 and named parameters.
+
+For Doctrine Annotations - see https://github.com/doctrine/orm/pull/8266 which will be available with 2.9
+
+`FEATURE:  I18n.translate() now accept $source to contain dots instead of only a path to the translation file <https://github.com/neos/flow-development-collection/pull/2476>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+``translateByExplicitlyPassedOrderedArguments()`` and ``I18n.translate()`` now accept ``$source`` argument to contain dots instead of only a path to the translation file.
+
+When we use translations we use for example the shorthand::
+
+  {I18n.translate('Muensmedia.DistributionPackage:NodeTypes.Content.Todo.Container:ui.label')}
+
+when we want to pass arguments we had to use::
+
+  ${I18n.translate('progress', null, {solved: this.checkedElementsCount, total: this.checkboxCount}, 'NodeTypes/Content/Todo/Container', 'Muensmedia.DistributionPackage')}
+
+As you can see, you have to pass the **path** to the translation file instead of the well known dot-notation.
+
+This commit enables you to use also the well known dot-notation for the source argument::
+
+  ${I18n.translate('progress', null, {solved: this.checkedElementsCount, total: this.checkboxCount}, 'NodeTypes.Content.Todo.Container', 'Muensmedia.DistributionPackage')}
+
+
+********************
+Upgrade Instructions
+********************
+
+This section contains instructions for upgrading your Flow **7.1**
+based applications to Flow **7.2**.
+
+In general just make sure to run the following commands:
+
+To clear all file caches::
+
+ ./flow flow:cache:flush --force
+
+If you have additional cache backends configured, make sure to flush them too.
+
+To apply core migrations::
+
+  ./flow flow:core:migrate <Package-Key>
+
+For every package you have control over (see `Upgrading existing code`_ below).
+
+To validate/fix the database encoding, apply pending migrations and to (re)publish file resources::
+
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+As usual it is a good idea to read the upgrade instructions from the previous Release Notes first.
+
+Upgrading existing code
+-----------------------
+
+There could be changes in Flow 7.2 that require your attention. If you are unsure, it's never
+wrong to run migrations when updating.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate Acme.Demo
+
+This will adjust the package code automatically and/or output further information.
+Read the output carefully and manually adjust the code if needed.
+
+To see all the other helpful options this command provides, make sure to run::
+
+ ./flow help core:migrate
+
+Also make sure to read about the `Potentially breaking changes`_ below.
+
+Inside core:migrate
+^^^^^^^^^^^^^^^^^^^
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from the specified package
+* For each migration
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.
+
+
+****************************
+Potentially breaking changes
+****************************
+
+Flow 7.2 comes with one potentially breaking change, so be sure to read the
+following changes and adjust your code respectively. For a full list of changes
+please refer to the change log.
+
+`!!! FEATURE: Extensible configuration loaders <https://github.com/neos/flow-development-collection/pull/2449>`_
+----------------------------------------------------------------------------------------------------------------
+
+This allows to implement custom ConfigurationLoader classes which replace the currently rather hardcoded ConfigurationProcessor's in an OOP way.
+
+It is then possible to load custom configurations in the ConfigurationManager with custom locations and custom configuration formats. E.g. it is possible to load json files or NodeTypes from another directory than ``Configuration``.
+
+This is not a breaking change for most cases, but the signature of ``ConfigurationManager::registerConfigurationType()`` has been changed and the usage of "configurationProcessingTypes" deprecated in favor of ``Neos\\Flow\\Configuration\\Loader\\LoaderInterface`` instances::
+
+ // legacy (and still supported)
+ $configurationManager->registerConfigurationType('SomeCustom', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_APPEND);
+
+ // now
+ $configurationManager->registerConfigurationType('SomeCustom', new AppendLoader($yamlSource, 'SomeCustom'));
