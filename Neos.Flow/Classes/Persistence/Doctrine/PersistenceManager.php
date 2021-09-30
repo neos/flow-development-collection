@@ -92,7 +92,8 @@ class PersistenceManager extends AbstractPersistenceManager
     public function persistAll(bool $onlyAllowedObjects = false): void
     {
         if ($onlyAllowedObjects === true) {
-            return $this->persistOnlyAllowedObjects();
+            $this->persistOnlyAllowedObjects();
+            return;
         }
         if (!$this->entityManager->isOpen()) {
             $this->logger->error('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.', LogEnvironment::fromMethodName(__METHOD__));
