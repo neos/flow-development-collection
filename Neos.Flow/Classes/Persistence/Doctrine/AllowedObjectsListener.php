@@ -75,6 +75,7 @@ class AllowedObjectsListener
             && $unitOfWork->getScheduledCollectionDeletions() === []
             && $unitOfWork->getScheduledCollectionUpdates() === []
         ) {
+            $this->allowedObjects->checkNext(false);
             return;
         }
 
