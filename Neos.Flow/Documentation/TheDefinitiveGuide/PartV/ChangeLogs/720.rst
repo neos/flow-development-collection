@@ -1,0 +1,708 @@
+`7.2.0 (2021-09-30) <https://github.com/neos/flow-development-collection/releases/tag/7.2.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`!!! FEATURE: Extensible configuration loaders <https://github.com/neos/flow-development-collection/pull/2449>`_
+----------------------------------------------------------------------------------------------------------------
+
+This PR allows to implement custom ConfigurationLoader classes which replace the currently rather hardcoded ConfigurationProcessor's in an OOP way.
+
+It is then possible to load custom configurations in the ConfigurationManager with custom locations and custom configuration formats. E.g. it is possible to load json files or NodeTypes from another directory than ``Configuration``.
+
+This is not a breaking change for most cases, but the signature of ``ConfigurationManager::registerConfigurationType()`` has been changed and the usage of "configurationProcessingTypes" deprecated in favor of ``Neos\\Flow\\Configuration\\Loader\\LoaderInterface`` instances::
+
+  // legacy (and still supported)
+  $configurationManager->registerConfigurationType('SomeCustom', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_APPEND);
+
+  // now
+  $configurationManager->registerConfigurationType('SomeCustom', new AppendLoader($yamlSource, 'SomeCustom'));
+
+Related: https://github.com/neos/neos-development-collection/issues/3000
+
+Related: https://github.com/neos/flow-development-collection/issues/1824
+
+* Packages: ``Flow``
+
+`FEATURE: Preserve class and method doc blocks <https://github.com/neos/flow-development-collection/pull/2533>`_
+----------------------------------------------------------------------------------------------------------------
+
+This preserves the docblocks when generating proxies in order to not accidentially generate invalid annotations that break the classes.
+
+See also #2387
+
+* Packages: ``Flow``
+
+`FEATURE: Allow validation of dynamic argument types <https://github.com/neos/flow-development-collection/pull/1906>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This allows correct validation of action method arguments that are not
+statically typed, e.g. have a type hint of an interface.
+The type override via ``__type`` or the property mapping configuration will
+now take effect for building the correct validator chain, if the controller has
+the property ``$enableDynamicTypeValidation`` set to ``true``.
+
+If you enable this flag, note that the point in time when the validation
+chain is built is moved until **after** calling the ``initialize*Action`` method.
+This means that validator information is not available there any more.
+
+* Resolves: `#1905 <https://github.com/neos/flow-development-collection/issues/1905>`_
+* Packages: ``Flow``
+
+`FEATURE: CLI parse array type controller arguments <https://github.com/neos/flow-development-collection/pull/2519>`_
+---------------------------------------------------------------------------------------------------------------------
+
+With this PR, a CLI command can make use of array's as an argument type.
+
+If an argument is given multiple times and the type is an array, the argument values are pushed at the end of the array.
+
+As an example, this can be handy, if you need to process multiple language dimensions, nodes or urls, like::
+
+  ./flow my.pckg:index --dimension en --dimension de
+
+Maybe this can also be considered for the 7.2 release?
+
+The CLI ``RequestBuilder`` now distinguishes between array and non-array arguments. If an argument is of type ``array`` the argumentValue is appended to the array.
+
+Create a command controller command with an array signature like::
+
+  public function indexCommand(array $dimension){
+
+and then use the argument ``--dimension`` multiple times.
+
+* Packages: ``Flow``
+
+`FEATURE: Update documentation for new configuration loader <https://github.com/neos/flow-development-collection/pull/2539>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+I've added an updated documentation for the new configuration loader implemeted via https://github.com/neos/flow-development-collection/pull/2449
+
+* Packages: ``Flow``
+
+`FEATURE: Support PHP8 attributes <https://github.com/neos/flow-development-collection/pull/2468>`_
+---------------------------------------------------------------------------------------------------
+
+This allows to use all existing Annotations as PHP8 Attributes and makes the ReflectionService pick up attributes like annotations.
+Hence all ``is*AnnotatedWith()`` and ``*Annotation()`` methods will return attribute classes as if they were annotations.
+
+.. code-block:: php
+ #[Flow\\Scope("singleton")]
+ class MyClass {
+
+     /**
+      * @var LoggerInterface
+      */
+     #[Flow\\Inject]
+    protected $logger;
+
+
+Note though, that this means a class that has both annotation and the equal attribute will behave as if all annotations were duplicated.
+
+Also, in case you manually instanciated an Annotation class, you need to adjust to the changed constructor, which no longer takes a named array, but the list of actual properties.
+
+In most cases instead of ``new Flow\\Inject($args)`` you can probably do ``new Flow\\Inject(...$args)`` with PHP8 and named parameters.
+
+For Doctrine Annotations - see https://github.com/doctrine/orm/pull/8266 which will be available with 2.9
+
+* Packages: ``Flow``
+
+`FEATURE:  I18n.translate() now accept $source to contain dots instead of only a path to the translation file <https://github.com/neos/flow-development-collection/pull/2476>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+``translateByExplicitlyPassedOrderedArguments()`` and ``I18n.translate()`` now accept ``$source`` argument to contain dots instead of only a path to the translation file.
+
+When we use translations we use for example the shorthand::
+
+ {I18n.translate('Muensmedia.DistributionPackage:NodeTypes.Content.Todo.Container:ui.label')}
+
+when we want to pass arguments we had to use::
+
+ ${I18n.translate('progress', null, {solved: this.checkedElementsCount, total: this.checkboxCount}, 'NodeTypes/Content/Todo/Container', 'Muensmedia.DistributionPackage')}
+
+As you can see, you have to pass the **path** to the translation file instead of the well known dot-notation.
+
+This commit enables you to use also the well known dot-notation for the source argument::
+
+${I18n.translate('progress', null, {solved: this.checkedElementsCount, total: this.checkboxCount}, 'NodeTypes.Content.Todo.Container', 'Muensmedia.DistributionPackage')}
+
+In the method ``translateByShortHandString()`` we already replace dots with slashes, so I just copied this behavior to the method ``translateByExplicitlyPassedOrderedArguments()``
+
+* Packages: ``Flow``
+
+`!!! BUGFIX: Avoid broken proxy docblocks <https://github.com/neos/flow-development-collection/pull/2568>`_
+-----------------------------------------------------------------------------------------------------------
+
+With PR `#2533 <https://github.com/neos/flow-development-collection/issues/2533>`_ docblocks are copied from the original class to the proxy class. This breaks when using annotations without the "standard" imports ``Flow`` and ``ORM``. One example is the ImportedAsset domain model.
+
+This fixes that by some changes to the proxy building.
+
+Note, if you use property introduction via AOP, those properties must from now on use fully-qualified classnames for annoatations on them!
+
+* Fixes: `#2564 <https://github.com/neos/flow-development-collection/issues/2564>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Reset next check for allowed object if no changes exist <https://github.com/neos/flow-development-collection/pull/2586>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Do not pass signal information to persistAll <https://github.com/neos/flow-development-collection/pull/2582>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+With PR `#2448 <https://github.com/neos/flow-development-collection/issues/2448>`_ the ``shouldCheck()`` was added, having a return type
+declaration of ``bool``. The value returned is set only by the argument
+given to ``persistAll()``, so having Behat tests fail when the value was
+a string seemed strange.
+
+The actual value was even stranger::
+
+    Neos\\\Flow\\\Cli\\\SlaveRequestHandler::dispatchedCommandLineSlaveRequest
+
+Reason: The ``Package`` class in ``Neos.Flow`` connects a signal to the
+``persistAll()`` method, and the "signal information" is passed as an
+argument…
+
+This change fixes that.
+
+* Packages: ``Flow``
+
+`BUGFIX: Correctly set up TestingProvider for Behat tests <https://github.com/neos/flow-development-collection/pull/2581>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+The "same fix" as in #2567, see #2386.
+
+* Packages: ``Flow``
+
+`BUGFIX: Correctly set up TestingProvider for "testable security" <https://github.com/neos/flow-development-collection/pull/2567>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+As of https://github.com/neos/flow-development-collection/pull/1213
+the authentication providers are created using a factory method, this
+breaks the assumption the ``TestingProvider`` is a singleton.
+
+The result is that e.g. ``authenticateRoles([])`` no longer works as
+expected in functional tests.
+
+This fixes the issue by fetching the provider from the factory instead
+of the object manager.
+
+* Fixes: `#2386 <https://github.com/neos/flow-development-collection/issues/2386>`_
+* Packages: ``Flow``
+
+`BUGFIX: Handle required and exceeding arguments properly in combination with cli array arguments  <https://github.com/neos/flow-development-collection/pull/2562>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+When a cli argument of type array was used it was not removed from the list of required arguments and thus
+later when unnamed arguments where checked was regarded as still missing. That way exceeding unnamed arguments could not be used together with required array arguments.
+
+This is solved by having an explicit list of required argumentNames instead of removing the configuration of a
+required argument after it was set.
+
+This fixes an issue with the array feature that was introduced with `#2519 <https://github.com/neos/flow-development-collection/issues/2519>`_
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Prevent proxies for classes with unsupported interfaces <https://github.com/neos/flow-development-collection/pull/2555>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Adjusts the proxy building for classes such that it throws a more
+helpful exception when trying to generate proxies for classes
+implementing an interface with constructor and parameters.
+
+* Fixes: `#2554 <https://github.com/neos/flow-development-collection/issues/2554>`_
+
+`BUGFIX: NullBackend ignores configured properties <https://github.com/neos/flow-development-collection/pull/2545>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The ``NullBackend`` just return's ``true`` in ``setProperty()`` for all configured properties.
+
+I'm using split sources Objects.local.yaml to disable caches in my local setup where I only change the ``backend:`` configuration to ``Neos\\Cache\\Backend\\NullBackend``.
+
+The problem I have is, that the Objects.yaml merge strategy also includes the ``backendOptions`` and thus by just using::
+
+ Neos_Fusion_Content:
+   backend: Neos\\Cache\\Backend\\NullBackend
+
+in my ``Objects.local.yaml`` I get an Exception, thrown by AbstractBackend, that the ``NullBackend`` doesn't accept the backendOption ``hostname`` - from my default redis configuration.
+
+
+* Packages: ``Flow`` ``Cache``
+
+`BUGFIX: Add missing method to Generic\PersistenceManager <https://github.com/neos/flow-development-collection/pull/2544>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+With https://github.com/neos/flow-development-collection/pull/2448
+the method ``throwExceptionIfObjectIsNotAllowed()`` was removed, but
+the ``Generic\\PersistenceManager`` was not adjusted. This fixes that in
+the simplest possible way…
+
+* Packages: ``Flow``
+
+`BUGFIX: Bring back RenderingContext view argument, pin Fluid version <https://github.com/neos/flow-development-collection/pull/2546>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+With ``typo3fluid/fluid`` 2.7.0 the ``$view`` constructor argument to
+``RenderingContext`` is gone, but we support lower versions, thus things
+break.
+
+This brings back the argument in our code and pins Fluid to < 2.7.0
+for Flow below 7.2.0.
+
+See https://github.com/neos/flow-development-collection/issues/2541
+See https://github.com/TYPO3/Fluid/pull/548
+
+* Packages: ``FluidAdaptor``
+
+`BUGFIX: Extract doctrine EventListener functionality from PersistenceManager <https://github.com/neos/flow-development-collection/pull/2448>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+With the changes in `#2423 <https://github.com/neos/flow-development-collection/issues/2423>`_ the PersistenceManager was registered as a Doctrine EventListener.
+Hence, when building the EntityManager, the PersistenceManager got instanciated with a completely new non-lazy EntityManager. This caused errors when trying to persist entities, as they were not known to that instance of the EntityManager.
+This change extracts the EventListener behaviour from the PersistenceManager.
+
+* Packages: ``Flow``
+
+`BUGFIX: Avoid using the same widget id after session timeout <https://github.com/neos/flow-development-collection/pull/2509>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+If a session times out and the user starts a new one the AjaxWidgetContextHolder assigned ids starting from 0 to each widget id, which might conflict with already generated pages, which had a different widget generating this id.
+
+Now each ajax widget gets an uuid, avoiding such type of collisions.
+
+`BUGFIX: Do not run before and afterControllerInvocation signals in compile time <https://github.com/neos/flow-development-collection/pull/2529>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+Together with Flow 6.x the Cli commands have been seperated from the Http ActionControllers.
+
+Before these slots have been guaranteed to be executed during runtime only. This patch restores
+that behavior. There will be another commit against master, which introduces new 4 new signals,
+so in future you can even use compile time slots.
+
+* Fixes: `#2528 <https://github.com/neos/flow-development-collection/issues/2528>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Return first existing annotation, not "current" one <https://github.com/neos/flow-development-collection/pull/2536>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+In some cases this error comes up::
+
+    Trying to get property 'lazy' of non-object in ConfigurationBuilder
+
+The reason for the error is the fact that the ``current()`` call does not return the existing annotation instance. The array pointer seems to point somewhere else. Using ``reset()`` instead of current solves the issue.
+
+Using ``reset()`` does not really alter the (promised) behaviour of the method, so it is used instead.
+
+* Fixes: `#2532 <https://github.com/neos/flow-development-collection/issues/2532>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Keep authorization checks disabled if an exception is swallowed <https://github.com/neos/flow-development-collection/pull/2522>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+When code is wrapped in a ``Security\\Context::withoutAuthorizationChecks()`` call
+and exceptions are caught, authorization checks are no longer disabled in the outer
+closure leading to exceptions like::
+
+ The security Context cannot be initialized yet
+
+This change fixes this by resetting the ``authorizationChecksDisabled`` to the
+previous value in a ``finally`` block.
+
+* Fixes: `#2521 <https://github.com/neos/flow-development-collection/issues/2521>`_
+
+`BUGFIX: Allow null for source in translation helper <https://github.com/neos/flow-development-collection/pull/2520>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This fixes a bug that was introduced with PR `#2476 <https://github.com/neos/flow-development-collection/issues/2476>`_
+
+Before it was possible to set the filename to ``null``::
+
+ I18n.translate('foo', null, [], null, 'Foo.Bar')
+
+but without this fix, you have to set the source to ``Main``::
+
+ I18n.translate('foo', null, [], 'Main', 'Foo.Bar')
+
+* Packages: ``Flow``
+
+`BUGFIX: Change empty check on target collection to valid() in resource:copy <https://github.com/neos/flow-development-collection/pull/2513>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+``$targetCollection->getObjects()`` method returns a generator, which will always return ``false`` in an ``empty()`` check.
+This makes it impossible to use ``resource:copy`` as this always fails with a ``The target collection "tmpNewCollection" is not empty.`` error.
+
+The problem is mentioned here: https://github.com/neos/flow-development-collection/issues/2510
+
+**What I did**
+Change ``!empty()`` against a ``->valid()`` check
+
+**How to verify it**
+Use ``resource:copy`` to copy assets to an empty Storage.
+
+This replaced PR https://github.com/neos/flow-development-collection/pull/2512
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow for multiple authentication header <https://github.com/neos/flow-development-collection/pull/2494>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This allows to use the BearerToken in combination with other
+authentication header bases authentications like UsernamePasswordHttpBasic
+
+* closes `#2490 <https://github.com/neos/flow-development-collection/issues/2490>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: retrieve package by case insensitive packageKey <https://github.com/neos/flow-development-collection/pull/2493>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The ``PackageManager::getPackage($packageKey)`` method should throw an exception or return the found package. There is a case, such that ``getPackage`` returns ``null``. In recent php versions, this causes a php error because the return value of the api ``public function getPackage($packageKey): PackageInterface`` is not met:
+
+``Exception in line 514 of /…/Flow_Object_Classes/Neos_Flow_ResourceManagement_Streams_ResourceStreamWrapper.php: Return value of Neos\\Flow\\Package\\PackageManager::getPackage() must implement interface Neos\\Flow\\Package\\PackageInterface, null returned - See also: 202106101712258f223a.txt``
+
+In older flow versions (4.0 and up), this might also be a problem, because the method actually can return null instead of throwing an exception.
+
+**Problem analysis**
+
+The problem occures, because the check, if an exception should be thrown by ``isPackageAvailable()``, ignores the case during the check, whereas the actual return statement ``return $this->packages[$packageKey];`` needs the correct case.
+
+**How I did it**
+
+I'm using ``$this->getCaseSensitivePackageKey($packageKey)`` to retrieve the key in the correct case, such that ``$this->packages`` returns the correct package.
+
+**How to verify it**
+
+A call like ``$packageManager->getPackage('Neos.some.package.with.wrong.case')`` should throw a php error in recent versions.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Avoid open_basedir restriction with realpath <https://github.com/neos/flow-development-collection/pull/2491>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+I encountered the following error in the setup (/setup/index?step=1):
+
+(Plesk / PHP7.4 / Flow7.1)
+
+.. image:: https://user-images.githubusercontent.com/85400359/121085865-b51c5000-c7e2-11eb-81f8-602eb0c51167.png
+
+
+The error source::
+
+  $realPhpBinary = realpath(PHP_BINARY);
+
+My web hoster doesn't allow me to change the open_basedir to include "/usr/local/php74/bin/php".
+
+But using:
+``php -r "echo realpath(PHP_BINARY);"``
+in ``exec()`` will work and bypass open_basedir.
+
+Implemented::
+
+ exec(PHP_BINARY . ' -r "echo realpath(PHP_BINARY);"', $output);
+ $realPhpBinary = $output[0];
+
+Tested with:
+(Plesk / PHP7.4 / Flow7.1)
+
+``exec()`` is also used in a similar manner on line 844: ``exec($phpBinaryPathAndFilename . ' -r "echo realpath(PHP_BINARY);"', $output, $result);``
+
+... using realpath was introduced with `#2032 <https://github.com/neos/flow-development-collection/issues/2032>`_
+
+**Recap**
+
+This change brings up the compatibility for some ISPs(web hosting)
+
+By getting the realPhpBinary see #2032:
+``$realPhpBinary = realpath(PHP_BINARY);``
+a Neos\\Flow\\Error\\Exception is thrown with the Code: 1355480641
+``Warning: realpath(): open_basedir restriction in effect. File(/usr/local/php74/bin/php) is not within the allowed path(s)``
+on the most(rather all) web hosting platforms(f.x. Plesk).
+
+By using system commands to get the realpath inside exec() this behavior can be avoided.
+
+* Packages: ``Flow``
+
+`BUGFIX: Avoid bool return value in restoreFlashMessageContainerFromSession() <https://github.com/neos/flow-development-collection/pull/2499>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+It can happen, that ``getData(…)`` returns a boolean, leading to an error
+due to the return type declaration.
+
+`BUGFIX: Ensure cache backends are prepared before usage <https://github.com/neos/flow-development-collection/pull/2500>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+If the flushByTag or findIdentifiersByTag methods of the TaggableMultiBackend are used before backend initialization by other methods, the backends have to be prepared. Otherwise, ``$this->backends`` is an empty array and no cache entries are flushed.
+
+**What I did**
+I added the ``$this->prepareBackends()`` calls in the two methods.
+
+**How to verify it**
+- Configure the TaggableMultiBackend for the Neos_Fusion_Content cache
+- Change a node property in the Neos backend
+- Reload the page
+
+Before this change, the change of the node property was saved to the db, but the cache was not flushed. Thus, the incorrect property value was shown in the Neos backend after a page reload.
+
+* Packages: ``Cache``
+
+`BUGFIX: Return boolean in doctrine CacheAdapter::save <https://github.com/neos/flow-development-collection/pull/2482>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Follow up to `#2480 <https://github.com/neos/flow-development-collection/issues/2480>`_ when the issue was found to live inside our CacheAdapter and missing return value
+
+* Packages: ``Flow``
+
+`BUGFIX: Apply Content-Type header from PSR-7 Responses <https://github.com/neos/flow-development-collection/pull/2478>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Before this change a content type set as header in a
+rendered view would be ignored.
+As example this resulted in an incorrect header for FusionViews
+which rendered a PSR-7 Response with a non html Content-Type.
+
+This broke due the middleware change in Flow 6, as the behaviour of ``applyToHttpResponse`` was different than the now used ``replaceHttpResponse``.
+
+Fixes: https://github.com/neos/neos-development-collection/issues/3346
+
+**What I did**
+
+Set response content type based on content type header optionally provided by a rendered view.
+
+**How I did it**
+
+If the view returns a PSR-7 Response and contains a ``Content-Type`` header, it is applied to the final response.
+
+**How to verify it**
+
+Run tests.
+
+
+`TASK: improve request information in exception logfiles <https://github.com/neos/flow-development-collection/pull/2552>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+According to https://github.com/neos/flow-development-collection/issues/2548
+this is my suggestion for better request information in the exception
+dump files.
+
+The goal is better readability of the request information for humans
+and the chance to parse them with scripts:
+
+- Add the name of the request headers
+- Separate each header (name: value) into an own line
+- Add the request target (requested url)
+
+`TASK: Update psalm to 4.9 <https://github.com/neos/flow-development-collection/pull/2549>`_
+--------------------------------------------------------------------------------------------
+
+This updates psalm to 4.9 and also updates the baseline.
+The new ``ParamNameMismatch`` error is lowered to ``info`` level.
+
+Related to https://github.com/neos/flow-development-distribution/issues/74
+* Resolves: `#2515 <https://github.com/neos/flow-development-collection/issues/2515>`_
+
+* Packages: ``Flow``
+
+`TASK: The RenderingContext no longer has a view argument <https://github.com/neos/flow-development-collection/pull/2543>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`TASK: Support PHP8 types and class property promotion <https://github.com/neos/flow-development-collection/pull/2404>`_
+------------------------------------------------------------------------------------------------------------------------
+
+This change makes sure that PHP8 union types, nullable types and promoted properties can be used with proxied classes.
+
+Depends on `#2287 <https://github.com/neos/flow-development-collection/issues/2287>`_
+* Related to: `#2468 <https://github.com/neos/flow-development-collection/issues/2468>`_
+* Related to: `#2233 <https://github.com/neos/flow-development-collection/issues/2233>`_
+
+* Packages: ``Flow``
+
+`TASK: Update doctrine/orm requirement from ^2.7, <2.9 to ^2.9.3 <https://github.com/neos/flow-development-collection/pull/2495>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+Updates the requirements on
+
+- doctrine/orm
+- doctrine/dbal
+- doctrine/common
+
+to permit the latest version.
+
+* Packages: ``Flow``
+
+`TASK: Fix PhpUnit deprecation warnings <https://github.com/neos/flow-development-collection/pull/2542>`_
+---------------------------------------------------------------------------------------------------------
+
+The new ``SessionlessTestToken`` class is needed to replace the mocking of two interfaces (``TokenInterface`` and ``SessionlessTokeInterface``) in one call.
+
+* Packages: ``Flow``
+
+`TASK: Fix Psalm issues <https://github.com/neos/flow-development-collection/pull/2541>`_
+-----------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`TASK: Require fixed composer/composer packages <https://github.com/neos/flow-development-collection/pull/2540>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This makes sure the required ``composer/composer`` dependency is not
+affected by CVE-2021-29472
+
+https://github.com/composer/composer/security/advisories/GHSA-h5h8-pc6h-jvvx
+
+* Packages: ``Flow``
+
+`TASK: Add explicit doctrine annotations dependency <https://github.com/neos/flow-development-collection/pull/2535>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This also fixes onto ^1.12 to include the ``@NamedConstructorAnnotation`` we use since adding PHP8 attributes support
+
+* Packages: ``Flow``
+
+`TASK: Raise minimum egulias/email-validator version to 2.1.17 <https://github.com/neos/flow-development-collection/pull/2531>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This is required to pass emailAddressValidatorUsingStrictHasErrorsForAnEmailAddressWithWarnings with data set `#0 <https://github.com/neos/flow-development-collection/issues/0>`_
+
+See https://github.com/egulias/EmailValidator/pull/233
+
+* Packages: ``Flow``
+
+`TASK: Add information about UUIDs as primary keys <https://github.com/neos/flow-development-collection/pull/2538>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Based on a great explanation by @albe in the Neos Slack.
+
+* Packages: ``Flow``
+
+`TASK: Remove fusion dependencies <https://github.com/neos/flow-development-collection/pull/2526>`_
+---------------------------------------------------------------------------------------------------
+
+Only the created package has a dependency on Fusion, iff it uses generated Fusion templates
+
+This needs to be followed up with a change that will add those dependencies to the created packages composer manifest via some way.
+
+* Packages: ``Flow`` ``Kickstarter``
+
+`TASK: Only invoke authentication entry point for unauthenticated tokens <https://github.com/neos/flow-development-collection/pull/2339>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+In the SecurityEntryPoint, when an AuthenticationRequiredException is handled and multiple tokens are "active" and have an entry point, the startAuthentication() will be invoked for all of them, even if the token is already authenticated. This could lead to wrong entry points being invoked in a multi-factor authentication setup.
+This changes that by only invoking the entry point for unauthenticated tokens.
+
+* Resolves: `#2234 <https://github.com/neos/flow-development-collection/issues/2234>`_
+
+* Packages: ``Utility.MediaTypes``
+
+`TASK: Raise minimal guzzlehttp/psr7 to 1.7 <https://github.com/neos/flow-development-collection/pull/2527>`_
+-------------------------------------------------------------------------------------------------------------
+
+Version 1.7 introduces the GuzzleHttp\\Psr7\\Utils class
+which is used since Flow 7.1
+
+* See: `#2525 <https://github.com/neos/flow-development-collection/issues/2525>`_ and `#2501 <https://github.com/neos/flow-development-collection/issues/2501>`_
+
+`TASK: Raise minimal phpunit to 9.1  <https://github.com/neos/flow-development-collection/pull/2530>`_
+------------------------------------------------------------------------------------------------------
+
+Version 9.1 introduces the method ``assertFileDoesNotExist()``
+which is used since Flow 7.0 (#2310)
+
+`TASK: Run post-update scripts only once  <https://github.com/neos/flow-development-collection/pull/2507>`_
+-----------------------------------------------------------------------------------------------------------
+
+Previously the scripts were run for every package at the end of the install process.
+The scripts only need to be run once.
+
+* Packages: ``Flow``
+
+`TASK: Add minimal dependencies build <https://github.com/neos/flow-development-collection/pull/2454>`_
+-------------------------------------------------------------------------------------------------------
+
+This should make sure that our minimum dependency requirements actually lead to a working installation.
+If this build fails, we need to raise some dependencies minimum version.
+
+`TASK: Revert #2052 - Add TTL to tags in RedisBackend <https://github.com/neos/flow-development-collection/pull/2516>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This resolves the issues with the redis backend that came up after the changes in #2052, which unfortunately are worse than the benefits. We'd still like to get the TTL for tags in, but likely need to refrain from having them consistent/in sync.
+
+See https://github.com/neos/flow-development-collection/issues/2483
+
+* Packages: ``Flow`` ``Cache``
+
+`TASK: Fix documentation for firewall option "rejectAll" <https://github.com/neos/flow-development-collection/pull/2514>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The ``rejectAll`` option needs to be set as boolean.
+See:  https://github.com/neos/flow-development-collection/blob/6.3/Neos.Flow/Classes/Security/Authorization/FilterFirewall.php#L53
+
+* Packages: ``Flow``
+
+`TASK: Disallow installing guzzlehttp/psr7 2.0 <https://github.com/neos/flow-development-collection/pull/2502>`_
+----------------------------------------------------------------------------------------------------------------
+
+It is incompatible with versions < 1.7 due to the replaced ``stream_for`` method. The ~2.0 dependency was added before the actual 2.0 release and this breaking change was added later, making it incompatible. If 2.0+ is needed, you need to upgrade to Flow 7.1
+
+* Packages: ``Flow`` ``Http.Factories``
+
+`TASK: Allow installing Doctrine 2.9 <https://github.com/neos/flow-development-collection/pull/2496>`_
+------------------------------------------------------------------------------------------------------
+
+As of doctrine/orm 2.9.3 it is again compatible with Flow (see #2495), so we can allow installing it (again).
+
+* Packages: ``Flow``
+
+`TASK: Move DoctrineMigrations folder to Temporary Data folder <https://github.com/neos/flow-development-collection/pull/2426>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Move DoctrineMigrations folder to the Temporary folder. See related ticket `#2425 <https://github.com/neos/flow-development-collection/issues/2425>`_ for explanation on the topic
+
+* Resolves: `#2425 <https://github.com/neos/flow-development-collection/issues/2425>`_
+
+* Packages: ``Flow``
+
+`TASK: Disable old class loader in testing context by default <https://github.com/neos/flow-development-collection/pull/2418>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This makes our own tests only use the old class loader if the ``FLOW_ONLY_COMPOSER_LOADER`` env var is set to ``false``.
+
+* Related to: `#2417 <https://github.com/neos/flow-development-collection/issues/2417>`_
+
+* Packages: ``Flow``
+
+`TASK: Fix FLOW_VERSION_BRANCH constant <https://github.com/neos/flow-development-collection/pull/2485>`_
+---------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: PHP 8 Unit-Test fixes <https://github.com/neos/flow-development-collection/pull/2484>`_
+----------------------------------------------------------------------------------------------
+
+
+
+`TASK: Constrain doctrine/orm <2.9 due to breaking changes <https://github.com/neos/flow-development-collection/pull/2489>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Avoids the ``Argument 1 passed to Doctrine\\ORM\\Mapping\\ManyToMany::__construct() must be of the type string, null given`` error.
+
+See https://github.com/doctrine/orm/pull/8266#issuecomment-850421549
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/7.1.0...7.2.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
