@@ -37,12 +37,17 @@ class CurlEngine implements RequestEngineInterface
 
     /**
      * Sets an option to be used by cURL.
+     * Setting headers is not allowed, please use request object.
      *
      * @param integer $optionName One of the CURLOPT_* constants
      * @param mixed $value The value to set
+     * @throws Http\Exception
      */
     public function setOption($optionName, $value)
     {
+        if ($optionName === CURLOPT_HTTPHEADER) {
+            throw new Http\Exception("Just CurlEngine specific options are allowed here. Please use request object for setting up request headers.", 1633334307);
+        }
         $this->options[$optionName] = $value;
     }
 
