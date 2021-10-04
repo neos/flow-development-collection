@@ -97,7 +97,7 @@ class ObjectValidationAndDeDuplicationListener
                 $identifier = $this->persistenceManager->getIdentifierByObject($entity);
 
                 if (isset($knownValueObjects[$className][$identifier]) || $unitOfWork->getEntityPersister($className)->exists($entity)) {
-                    unset($entityInsertions[spl_object_hash($entity)]);
+                    $unitOfWork->scheduleForDelete($entity);
                     continue;
                 }
 
