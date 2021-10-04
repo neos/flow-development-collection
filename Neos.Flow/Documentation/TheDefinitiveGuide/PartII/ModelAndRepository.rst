@@ -688,7 +688,8 @@ Then adjust the post model code as follows:
 
 	use Neos\Flow\Annotations as Flow;
 	use Doctrine\ORM\Mapping as ORM;
-  use Doctrine\Common\Collections;
+	use Doctrine\Common\Collections\Collection;
+	use Doctrine\Common\Collections\ArrayCollection;  
 
 	/**
 	 * @Flow\Entity
@@ -730,6 +731,7 @@ Then adjust the post model code as follows:
 		public function __construct() {
 			$this->date = new \DateTime();
 			$this->comments = new ArrayCollection();
+			$this->tags = new ArrayCollection();
 		}
 
 		...
