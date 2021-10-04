@@ -46,7 +46,7 @@ class CurlEngine implements RequestEngineInterface
     public function setOption($optionName, $value)
     {
         if ($optionName === CURLOPT_HTTPHEADER) {
-            throw new Http\Exception("Just CurlEngine specific options are allowed here. Please use request object for setting up request headers.", 1633334307);
+            throw new \InvalidArgumentException("Setting CURL headers is only possible via the request object and not by using the setOption method.", 1633334307);
         }
         $this->options[$optionName] = $value;
     }
