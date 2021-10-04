@@ -104,8 +104,6 @@ class ObjectValidationAndDeDuplicationListener
                 $knownValueObjects[$className][$identifier] = true;
             }
         }
-
-        ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, true);
     }
 
     /**
