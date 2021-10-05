@@ -18,7 +18,6 @@ use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
-use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
 
 /**
