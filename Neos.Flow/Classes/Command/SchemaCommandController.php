@@ -22,7 +22,7 @@ use Symfony\Component\Yaml\Yaml;
 use Neos\Utility\Files;
 
 /**
- * Configuration command controller for the TYPO3.Flow package
+ * Configuration command controller for the Neos.Flow package
  *
  * @Flow\Scope("singleton")
  */
@@ -98,54 +98,6 @@ class SchemaCommandController extends CommandController
             foreach ($errors as $path => $pathErrors) {
                 foreach ($pathErrors as $error) {
                     $this->outputLine(' - %s -> %s', [$path, $error->render()]);
-                }
-            }
-            $this->quit(1);
-        } else {
-            $this->outputLine('<b>All Valid!</b>');
-        }
-    }
-
-    /**
-     * Validate the given configurationfile againt a schema file
-     *
-     * @param string $configurationFile path to the validated configuration file
-     * @param string $schemaFile path to the schema file
-     * @param boolean $verbose if true, output more verbose information on the schema files which were used
-     * @return void
-     */
-    public function validateSchemaCommand(string $configurationFile, string $schemaFile = 'resource://Neos.Flow/Private/Schema/Schema.schema.yaml', bool $verbose = false)
-    {
-        $this->outputLine('Validating <b>' . $configurationFile . '</b> with schema  <b>' . $schemaFile . '</b>');
-        $this->outputLine();
-
-        $configuration = Yaml::parseFile($configurationFile);
-        $schema = Yaml::parseFile($schemaFile);
-
-        $result = $this->schemaValidator->validate($configuration, $schema);
-
-        if ($verbose) {
-            $this->outputLine();
-            if ($result->hasNotices()) {
-                $notices = $result->getFlattenedNotices();
-                $this->outputLine('<b>%d notices:</b>', [count($notices)]);
-                /** @var Notice $notice */
-                foreach ($notices as $path => $pathNotices) {
-                    foreach ($pathNotices as $notice) {
-                        $this->outputLine(' - %s -> %s', [$path, $notice->render()]);
-                    }
-                }
-                $this->outputLine();
-            }
-        }
-
-        if ($result->hasErrors()) {
-            $errors = $result->getFlattenedErrors();
-            $this->outputLine('<b>%d errors were found:</b>', [count($errors)]);
-            /** @var Error $error */
-            foreach ($errors as $path => $pathErrors) {
-                foreach ($pathErrors as $error) {
-                    $this->outputLine(' - %s', [$error->render()]);
                 }
             }
             $this->quit(1);
