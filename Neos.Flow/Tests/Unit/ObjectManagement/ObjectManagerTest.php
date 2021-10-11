@@ -2,7 +2,7 @@
 namespace Neos\Flow\Tests\Unit\ObjectManagement;
 
 /*
- * This file is part of the TYPO3.Flow package.
+ * This file is part of the Neos.Flow package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

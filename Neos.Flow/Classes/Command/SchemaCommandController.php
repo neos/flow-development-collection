@@ -22,7 +22,7 @@ use Symfony\Component\Yaml\Yaml;
 use Neos\Utility\Files;
 
 /**
- * Configuration command controller for the TYPO3.Flow package
+ * Configuration command controller for the Neos.Flow package
  *
  * @Flow\Scope("singleton")
  */
