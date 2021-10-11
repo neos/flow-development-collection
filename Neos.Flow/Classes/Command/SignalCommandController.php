@@ -56,14 +56,14 @@ class SignalCommandController extends CommandController
                 }
 
                 $this->outputFormatted('<b>%s</b>', [$signalMethodName], 2);
-                for ($i = 0; count($slots) > $i; $i++) {
-                    $slotClassName = $slots[$i]['class'];
-                    $slotMethodName = $slots[$i]['method'];
+                foreach ($slots as $slot) {
+                    $slotClassName = $slot['class'];
+                    $slotMethodName = $slot['method'];
 
                     if ($slotClassName !== null) {
-                        $this->outputFormatted('[%d] %s::%s', [$i, $slotClassName, $slotMethodName], 4);
+                        $this->outputFormatted('%s::%s', [$slotClassName, $slotMethodName], 4);
                     } else {
-                        $this->outputFormatted('[%d] <i>Closure</i>', [$i], 4);
+                        $this->outputFormatted('<i>Closure</i>', [], 4);
                     }
                 }
             }
