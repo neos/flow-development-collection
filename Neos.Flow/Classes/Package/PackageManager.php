@@ -24,6 +24,7 @@ use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Package\Exception as PackageException;
 use Composer\Console\Application as ComposerApplication;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 /**
  * The default Flow Package Manager
@@ -405,7 +406,7 @@ class PackageManager
 
             $composerApplication = new ComposerApplication();
             $composerApplication->setAutoExit(false);
-            $composerErrorCode = $composerApplication->run($composerRequireArguments);
+            $composerErrorCode = $composerApplication->run($composerRequireArguments, new NullOutput());
 
             if ($composerErrorCode !== 0) {
                 throw new Exception("The installation was not successful. Composer returned the error code: $composerErrorCode", 1572187932);
