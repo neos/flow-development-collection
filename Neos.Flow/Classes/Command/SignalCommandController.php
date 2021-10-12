@@ -44,14 +44,12 @@ class SignalCommandController extends CommandController
 
         $connectedSignals = $this->dispatcher->getSignals();
         foreach ($connectedSignals as $signalClassName => $signalsByClass) {
-
             if ($className !== null && $signalClassName !== $className) {
                 continue;
             }
 
             $this->outputFormatted('<b>%s</b>', [$signalClassName]);
             foreach ($signalsByClass as $signalMethodName => $slots) {
-
                 if ($methodName !== null && $signalMethodName !== $methodName) {
                     continue;
                 }
