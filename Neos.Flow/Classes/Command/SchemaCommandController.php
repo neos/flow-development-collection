@@ -58,8 +58,8 @@ class SchemaCommandController extends CommandController
 
         if (is_null($configurationFile)) {
             $result = new Result();
-            $activePackages = $this->packageManager->getAvailablePackages();
-            foreach ($activePackages as $package) {
+            $activeFlowPackages = $this->packageManager->getFlowPackages();
+            foreach ($activeFlowPackages as $package) {
                 $packageKey = $package->getPackageKey();
                 $packageSchemaPath = Files::concatenatePaths([$package->getResourcesPath(), 'Private/Schema']);
                 if (is_dir($packageSchemaPath) && $packageKey !== 'Neos.Utility.Schema') {
