@@ -134,7 +134,7 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
         foreach ($this->providerConfigurations as $providerName => $providerConfiguration) {
             
             // ignore removed provider configurations
-            if($providerConfiguration === null) {
+            if(!$providerConfiguration) {
                 continue;
             }
             
