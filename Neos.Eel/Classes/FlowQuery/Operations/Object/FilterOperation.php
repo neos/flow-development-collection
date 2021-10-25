@@ -234,7 +234,7 @@ class FilterOperation extends AbstractOperation
             case '=':
                 return $value === $operand;
             case '=~':
-                return strcasecmp($value, $operand) == 0;
+                return strcasecmp($value, $operand) === 0;
             case '!=':
                 return $value !== $operand;
             case '!=~':
