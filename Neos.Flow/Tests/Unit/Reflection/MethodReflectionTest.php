@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  */
 
 use Neos\Flow\Reflection;
+use Neos\Flow\Tests\Unit\Reflection\Fixture\ClassWithAnnotatedMethod;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -43,5 +44,23 @@ class MethodReflectionTest extends UnitTestCase
             self::assertInstanceOf(Reflection\ParameterReflection::class, $parameter);
             self::assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
         }
+    }
+
+    public function classAndMethodWithAnnotations()
+    {
+        return [
+            [ClassWithAnnotatedMethod::class, 'methodWithComment'],
+            [ClassWithAnnotatedMethod::class, 'methodWithoutComment']
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider classAndMethodWithAnnotations
+     */
+    public function commentsAfterAnnotationShouldBeIgnored($class, $method)
+    {
+        $method = new Reflection\MethodReflection($class, $method);
+        self::assertTrue($method->isTaggedWith('skipcsrfprotection'));
     }
 }
