@@ -25,6 +25,6 @@ class PointcutExpressionTest extends FunctionalTestCase
     public function settingFilterMatchesIfSpecifiedSettingIsEnabled()
     {
         $target = new Fixtures\PointcutExpressionTestingTarget();
-        $this->assertSame('pointcutExpressionSettingFilterOptionA on', $target->testSettingFilter());
+        self::assertSame('pointcutExpressionSettingFilterOptionA on', $target->testSettingFilter());
     }
 }

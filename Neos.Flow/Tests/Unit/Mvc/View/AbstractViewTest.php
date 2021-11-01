@@ -31,7 +31,7 @@ class AbstractViewTest extends UnitTestCase
 
         $expectedResult = ['foo' => 'FooValue', 'bar' => 'BarValue'];
         $actualResult = $view->_get('variables');
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -45,7 +45,7 @@ class AbstractViewTest extends UnitTestCase
 
         $expectedResult = ['foo' => 'FooValueOverridden'];
         $actualResult = $view->_get('variables');
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -60,7 +60,7 @@ class AbstractViewTest extends UnitTestCase
 
         $expectedResult = ['foo' => 'FooValue', 'bar' => 'BarValue', 'baz' => 'BazValue'];
         $actualResult = $view->_get('variables');
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -74,6 +74,6 @@ class AbstractViewTest extends UnitTestCase
 
         $expectedResult = ['foo' => 'FooValueOverridden', 'bar' => 'BarValue'];
         $actualResult = $view->_get('variables');
-        $this->assertEquals($expectedResult, $actualResult);
+        self::assertEquals($expectedResult, $actualResult);
     }
 }

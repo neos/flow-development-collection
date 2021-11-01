@@ -8,6 +8,7 @@ namespace Neos\FluidAdaptor\ViewHelpers;
  * the terms of the MIT license.                                          *
  *                                                                        */
 
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\Widget\Exception\RenderingContextNotFoundException;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
@@ -52,17 +53,30 @@ class RenderChildrenViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
-     * @param array $arguments
-     * @return string
+     * Initialize the arguments.
+     *
+     * @return void
+     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
-    public function render(array $arguments = [])
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('arguments', 'array', 'Arguments to pass to the rendering', false, []);
+    }
+
+    /**
+     * @return string
+     * @throws RenderingContextNotFoundException
+     * @throws WidgetContextNotFoundException
+     */
+    public function render(): string
     {
         $renderingContext = $this->getWidgetRenderingContext();
         $widgetChildNodes = $this->getWidgetChildNodes();
 
-        $this->addArgumentsToTemplateVariableContainer($arguments);
+        $this->addArgumentsToTemplateVariableContainer($this->arguments['arguments']);
         $output = $widgetChildNodes->evaluate($renderingContext);
-        $this->removeArgumentsFromTemplateVariableContainer($arguments);
+        $this->removeArgumentsFromTemplateVariableContainer($this->arguments['arguments']);
 
         return $output;
     }
@@ -72,8 +86,9 @@ class RenderChildrenViewHelper extends AbstractViewHelper
      *
      * @return RenderingContextInterface
      * @throws RenderingContextNotFoundException
+     * @throws WidgetContextNotFoundException
      */
-    protected function getWidgetRenderingContext()
+    protected function getWidgetRenderingContext(): RenderingContextInterface
     {
         $renderingContext = $this->getWidgetContext()->getViewHelperChildNodeRenderingContext();
         if (!($renderingContext instanceof RenderingContextInterface)) {
@@ -84,8 +99,9 @@ class RenderChildrenViewHelper extends AbstractViewHelper
 
     /**
      * @return RootNode
+     * @throws WidgetContextNotFoundException
      */
-    protected function getWidgetChildNodes()
+    protected function getWidgetChildNodes(): RootNode
     {
         return $this->getWidgetContext()->getViewHelperChildNodes();
     }
@@ -94,8 +110,9 @@ class RenderChildrenViewHelper extends AbstractViewHelper
      * @return WidgetContext
      * @throws WidgetContextNotFoundException
      */
-    protected function getWidgetContext()
+    protected function getWidgetContext(): WidgetContext
     {
+        /** @var ActionRequest $request */
         $request = $this->controllerContext->getRequest();
         /** @var $widgetContext WidgetContext */
         $widgetContext = $request->getInternalArgument('__widgetContext');
@@ -111,8 +128,10 @@ class RenderChildrenViewHelper extends AbstractViewHelper
      *
      * @param array $arguments
      * @return void
+     * @throws RenderingContextNotFoundException
+     * @throws WidgetContextNotFoundException
      */
-    protected function addArgumentsToTemplateVariableContainer(array $arguments)
+    protected function addArgumentsToTemplateVariableContainer(array $arguments): void
     {
         $templateVariableContainer = $this->getWidgetRenderingContext()->getVariableProvider();
         foreach ($arguments as $identifier => $value) {
@@ -125,8 +144,10 @@ class RenderChildrenViewHelper extends AbstractViewHelper
      *
      * @param array $arguments
      * @return void
+     * @throws RenderingContextNotFoundException
+     * @throws WidgetContextNotFoundException
      */
-    protected function removeArgumentsFromTemplateVariableContainer(array $arguments)
+    protected function removeArgumentsFromTemplateVariableContainer(array $arguments): void
     {
         $templateVariableContainer = $this->getWidgetRenderingContext()->getVariableProvider();
         foreach ($arguments as $identifier => $value) {

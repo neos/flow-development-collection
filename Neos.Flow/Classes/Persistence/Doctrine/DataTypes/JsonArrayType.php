@@ -114,7 +114,7 @@ class JsonArrayType extends DoctrineJsonArrayType
      * Converts a value from its PHP representation to its database representation
      * of this type.
      *
-     * @param array $array The value to convert.
+     * @param mixed $array The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
      * @return mixed The database representation of the value.
      */
@@ -122,6 +122,10 @@ class JsonArrayType extends DoctrineJsonArrayType
     {
         if ($array === null) {
             return null;
+        }
+
+        if (!is_array($array)) {
+            throw new \InvalidArgumentException(sprintf('The JsonArrayType only converts arrays, %s given', gettype($array)), 1569944963);
         }
 
         $this->initializeDependencies();

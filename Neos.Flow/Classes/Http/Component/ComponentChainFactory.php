@@ -19,6 +19,8 @@ use Neos\Utility\PositionalArraySorter;
  * Creates a new ComponentChain according to the specified settings
  *
  * @Flow\Scope("singleton")
+ *
+ * @deprecated Will be removed with next major and is superseeded by MiddlewaresChainFactory
  */
 class ComponentChainFactory
 {
@@ -43,7 +45,7 @@ class ComponentChainFactory
 
         $chainComponents = [];
         foreach ($sortedChainConfiguration as $componentName => $configuration) {
-            $componentOptions = isset($configuration['componentOptions']) ? $configuration['componentOptions'] : [];
+            $componentOptions = $configuration['componentOptions'] ?? [];
             if (isset($configuration['chain'])) {
                 $component = $this->create($configuration['chain']);
             } else {

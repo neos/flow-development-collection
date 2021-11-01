@@ -30,7 +30,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
 
     protected $mockValidatorResolver;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->mockValidatorResolver = $this->getMockBuilder(ValidatorResolver::class)->setMethods(['createValidator', 'buildBaseValidatorConjunction'])->getMock();
@@ -42,7 +42,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
      */
     public function collectionValidatorReturnsNoErrorsForANullValue()
     {
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -50,7 +50,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
      */
     public function collectionValidatorFailsForAValueNotBeingACollection()
     {
-        $this->assertTrue($this->validator->validate(new \StdClass())->hasErrors());
+        self::assertTrue($this->validator->validate(new \StdClass())->hasErrors());
     }
 
     /**
@@ -59,7 +59,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
     public function collectionValidatorValidatesEveryElementOfACollectionWithTheGivenElementValidator()
     {
         $this->validator->_set('options', ['elementValidator' => 'EmailAddress', 'elementValidatorOptions' => []]);
-        $this->mockValidatorResolver->expects($this->exactly(4))->method('createValidator')->with('EmailAddress')->will($this->returnValue(new EmailAddressValidator()));
+        $this->mockValidatorResolver->expects(self::exactly(4))->method('createValidator')->with('EmailAddress')->will(self::returnValue(new EmailAddressValidator()));
 
         $arrayOfEmailAddresses = [
             'andreas@neos.io',
@@ -70,8 +70,8 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
 
         $result = $this->validator->validate($arrayOfEmailAddresses);
 
-        $this->assertTrue($result->hasErrors());
-        $this->assertEquals(2, count($result->getFlattenedErrors()));
+        self::assertTrue($result->hasErrors());
+        self::assertEquals(2, count($result->getFlattenedErrors()));
     }
 
     /**
@@ -89,8 +89,8 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
         $B->a = $A;
         $B->c = [$A];
 
-        $this->mockValidatorResolver->expects($this->any())->method('createValidator')->with('Integer')->will($this->returnValue(new IntegerValidator()));
-        $this->mockValidatorResolver->expects($this->any())->method('buildBaseValidatorConjunction')->will($this->returnValue(new GenericObjectValidator()));
+        $this->mockValidatorResolver->expects(self::any())->method('createValidator')->with('Integer')->will(self::returnValue(new IntegerValidator()));
+        $this->mockValidatorResolver->expects(self::any())->method('buildBaseValidatorConjunction')->will(self::returnValue(new GenericObjectValidator()));
 
         // Create validators
         $aValidator = new GenericObjectValidator([]);
@@ -102,7 +102,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
         $aValidator->addPropertyValidator('integer', $integerValidator);
 
         $result = $aValidator->validate($A)->getFlattenedErrors();
-        $this->assertEquals('A valid integer number is expected.', $result['b.0'][0]->getMessage());
+        self::assertEquals('A valid integer number is expected.', $result['b.0'][0]->getMessage());
     }
 
     /**
@@ -114,7 +114,7 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
         $persistentCollection = new \Doctrine\ORM\PersistentCollection($entityManager, new \Doctrine\ORM\Mapping\ClassMetadata(''), new \Doctrine\Common\Collections\ArrayCollection());
         ObjectAccess::setProperty($persistentCollection, 'initialized', false, true);
 
-        $this->mockValidatorResolver->expects($this->never())->method('createValidator');
+        $this->mockValidatorResolver->expects(self::never())->method('createValidator');
 
         $this->validator->validate($persistentCollection);
     }
@@ -139,10 +139,10 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
     {
         $elementValidatorOptions = ['minimum' => 5];
         $this->validator->_set('options', ['elementValidator' => 'NumberRange', 'elementValidatorOptions' => $elementValidatorOptions]);
-        $this->mockValidatorResolver->expects($this->any())->method('createValidator')->with('NumberRange', $elementValidatorOptions)->will($this->returnValue(new NumberRangeValidator($elementValidatorOptions)));
+        $this->mockValidatorResolver->expects(self::any())->method('createValidator')->with('NumberRange', $elementValidatorOptions)->will(self::returnValue(new NumberRangeValidator($elementValidatorOptions)));
 
         $result = $this->validator->validate([5, 6, 1]);
 
-        $this->assertCount(1, $result->getFlattenedErrors());
+        self::assertCount(1, $result->getFlattenedErrors());
     }
 }

@@ -13,8 +13,8 @@ namespace Neos\Flow\Persistence\Doctrine\Mapping\Driver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\IndexedReader;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver as DoctrineMappingDriverInterface;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver as DoctrineMappingDriverInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\Builder\EntityListenerBuilder;
@@ -740,6 +740,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
                 if (!isset($mapping['type'])) {
                     switch ($propertyMetaData['type']) {
+                        case 'DateTimeInterface': // fall through b/c fix for #1640
                         case 'DateTime':
                             $mapping['type'] = 'datetime';
                             break;
@@ -757,7 +758,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                             if (strpos($propertyMetaData['type'], '\\') !== false) {
                                 if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], Flow\ValueObject::class)) {
                                     $valueObjectAnnotation = $this->reflectionService->getClassAnnotation($propertyMetaData['type'], Flow\ValueObject::class);
-                                    if ($valueObjectAnnotation->embedded === true) {
+                                    if ($valueObjectAnnotation && $valueObjectAnnotation->embedded === true) {
                                         $mapping['class'] = $propertyMetaData['type'];
                                         $mapping['columnPrefix'] = $mapping['columnName'];
                                         $metadata->mapEmbedded($mapping);
@@ -795,8 +796,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         'allocationSize' => $seqGeneratorAnnotation->allocationSize,
                         'initialValue' => $seqGeneratorAnnotation->initialValue
                     ]);
-                } elseif ($this->reader->getPropertyAnnotation($property, ORM\TableGenerator::class) !== null) {
-                    throw ORM\MappingException::tableIdGeneratorNotImplemented($className);
                 } elseif ($customGeneratorAnnotation = $this->reader->getPropertyAnnotation($property, ORM\CustomIdGenerator::class)) {
                     $metadata->setCustomGeneratorDefinition([
                         'class' => $customGeneratorAnnotation->class
@@ -966,7 +965,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             foreach ($entityListenersAnnotation->value as $item) {
                 $listenerClassName = $metadata->fullyQualifiedClassName($item);
 
-                if (!class_exists($listenerClassName)) {
+                if ($listenerClassName === null || !class_exists($listenerClassName)) {
                     throw ORM\MappingException::entityListenerClassNotFound($listenerClassName, $class->getName());
                 }
 

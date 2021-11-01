@@ -14,8 +14,7 @@ namespace Neos\Flow\Security\Authentication\Provider;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountRepository;
-use Neos\Flow\Security\Authentication\Token\UsernamePassword;
-use Neos\Flow\Security\Authentication\Token\UsernamePasswordHttpBasic;
+use Neos\Flow\Security\Authentication\Token\UsernamePasswordTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
@@ -59,7 +58,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
      */
     public function getTokenClassNames()
     {
-        return [UsernamePassword::class, UsernamePasswordHttpBasic::class];
+        return [UsernamePasswordTokenInterface::class];
     }
 
     /**
@@ -74,37 +73,38 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
      */
     public function authenticate(TokenInterface $authenticationToken)
     {
-        if (!($authenticationToken instanceof UsernamePassword)) {
-            throw new UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
+        if (!($authenticationToken instanceof UsernamePasswordTokenInterface)) {
+            throw new UnsupportedAuthenticationTokenException(sprintf('This provider cannot authenticate the given token. The token must implement %s', UsernamePasswordTokenInterface::class), 1217339840);
         }
 
         /** @var $account Account */
         $account = null;
-        $credentials = $authenticationToken->getCredentials();
 
         if ($authenticationToken->getAuthenticationStatus() !== TokenInterface::AUTHENTICATION_SUCCESSFUL) {
             $authenticationToken->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
         }
 
-        if (!is_array($credentials) || !isset($credentials['username']) || !isset($credentials['password'])) {
+        $username = $authenticationToken->getUsername();
+        $password = $authenticationToken->getPassword();
+
+        if ($username === '' || $password === '') {
             return;
         }
 
-        $providerName = $this->name;
-        $accountRepository = $this->accountRepository;
-        $this->securityContext->withoutAuthorizationChecks(function () use ($credentials, $providerName, $accountRepository, &$account) {
-            $account = $accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($credentials['username'], $providerName);
+        $providerName = $this->options['lookupProviderName'] ?? $this->name;
+        $this->securityContext->withoutAuthorizationChecks(function () use ($username, &$account, $providerName) {
+            $account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($username, $providerName);
         });
 
         $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
 
         if ($account === null) {
             // validate the account anyways (with a dummy salt) in order to prevent timing attacks on this provider
-            $this->hashService->validatePassword($credentials['password'], 'bcrypt=>$2a$16$RW.NZM/uP3mC8rsXKJGuN.2pG52thRp5w39NFO.ShmYWV7mJQp0rC');
+            $this->hashService->validatePassword($password, 'bcrypt=>$2a$16$RW.NZM/uP3mC8rsXKJGuN.2pG52thRp5w39NFO.ShmYWV7mJQp0rC');
             return;
         }
 
-        if ($this->hashService->validatePassword($credentials['password'], $account->getCredentialsSource())) {
+        if ($this->hashService->validatePassword($password, $account->getCredentialsSource())) {
             $account->authenticationAttempted(TokenInterface::AUTHENTICATION_SUCCESSFUL);
             $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
             $authenticationToken->setAccount($account);

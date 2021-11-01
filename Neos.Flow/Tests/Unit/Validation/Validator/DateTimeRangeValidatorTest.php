@@ -34,7 +34,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     /**
      * Sets up this test case
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->accessibleValidator = $this->getAccessibleMock(DateTimeRangeValidator::class, ['dummy']);
     }
@@ -45,7 +45,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     public function parseReferenceDateReturnsInstanceOfDateTime()
     {
         $testResult = $this->accessibleValidator->_call('parseReferenceDate', '2007-03-01T13:00:00Z/P1Y2M10DT2H30M');
-        $this->assertTrue($testResult instanceof \DateTime);
+        self::assertTrue($testResult instanceof \DateTime);
     }
 
     /**
@@ -54,7 +54,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     public function parseReferenceDateReturnsTimeWithoutCalculationCorrectly()
     {
         $testResult = $this->accessibleValidator->_call('parseReferenceDate', '2007-03-01T13:00:00Z');
-        $this->assertEquals('2007-03-01 13:00', $testResult->format('Y-m-d H:i'));
+        self::assertEquals('2007-03-01 13:00', $testResult->format('Y-m-d H:i'));
     }
 
     /**
@@ -63,7 +63,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     public function parseReferenceDateAddsTimeIntervalCorrectlyUsingOnlyHourAndMinute()
     {
         $testResult = $this->accessibleValidator->_call('parseReferenceDate', '2007-03-01T13:00:00Z/PT2H30M');
-        $this->assertEquals('2007-03-01 15:30', $testResult->format('Y-m-d H:i'));
+        self::assertEquals('2007-03-01 15:30', $testResult->format('Y-m-d H:i'));
     }
 
     /**
@@ -72,7 +72,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     public function parseReferenceDateSubstractsTimeIntervalCorrectlyUsingMonthAndMinuteForcingYearSwap()
     {
         $testResult = $this->accessibleValidator->_call('parseReferenceDate', 'P4MT15M/2013-02-01T13:00:00Z');
-        $this->assertEquals('2012-10-01 12:45', $testResult->format('Y-m-d H:i'));
+        self::assertEquals('2012-10-01 12:45', $testResult->format('Y-m-d H:i'));
     }
 
     /**
@@ -81,7 +81,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
         $this->validatorOptions(['earliestDate' => '2007-03-01T13:00:00Z']);
-        $this->assertFalse($this->validator->validate(null)->hasErrors());
+        self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
     /**
@@ -90,7 +90,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
         $this->validatorOptions(['earliestDate' => '2007-03-01T13:00:00Z']);
-        $this->assertFalse($this->validator->validate('')->hasErrors());
+        self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
     /**
@@ -101,7 +101,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
         $this->validatorOptions(['earliestDate' => '2007-03-01T13:00:00Z']);
 
         $errors = $this->validator->validate('no DateTime object')->getErrors();
-        $this->assertSame(1, count($errors));
+        self::assertSame(1, count($errors));
     }
 
     /**
@@ -111,7 +111,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     {
         $this->validatorOptions(['earliestDate' => '2007-03-01T13:00:00Z']);
 
-        $this->assertFalse($this->validator->validate(new \DateTime('2009-03-01T13:00:00Z'))->hasErrors());
+        self::assertFalse($this->validator->validate(new \DateTime('2009-03-01T13:00:00Z'))->hasErrors());
     }
 
     /**
@@ -121,7 +121,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     {
         $this->validatorOptions(['earliestDate' => '2007-03-01T13:00:00Z']);
 
-        $this->assertTrue($this->validator->validate(new \DateTime('2007-02-01T13:00:00Z'))->hasErrors());
+        self::assertTrue($this->validator->validate(new \DateTime('2007-02-01T13:00:00Z'))->hasErrors());
     }
 
     /**
@@ -131,7 +131,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     {
         $this->validatorOptions(['earliestDate' => '2007-03-01T13:00:00Z/P1Y2M10DT2H30M']);
 
-        $this->assertFalse($this->validator->validate(new \DateTime('2009-03-01T13:00:00Z'))->hasErrors());
+        self::assertFalse($this->validator->validate(new \DateTime('2009-03-01T13:00:00Z'))->hasErrors());
     }
 
     /**
@@ -141,7 +141,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     {
         $this->validatorOptions(['earliestDate' => 'P2M10DT2H30M/2011-03-01T13:00:00Z']);
 
-        $this->assertTrue($this->validator->validate(new \DateTime('2009-03-01T13:00:00Z'))->hasErrors());
+        self::assertTrue($this->validator->validate(new \DateTime('2009-03-01T13:00:00Z'))->hasErrors());
     }
 
     /**
@@ -151,7 +151,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     {
         $this->validatorOptions(['latestDate' => '2007-03-01T13:00:00Z/P1Y2M10DT2H30M']);
 
-        $this->assertFalse($this->validator->validate(new \DateTime('2008-03-01T13:00:00Z'))->hasErrors());
+        self::assertFalse($this->validator->validate(new \DateTime('2008-03-01T13:00:00Z'))->hasErrors());
     }
 
     /**
@@ -161,7 +161,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
     {
         $this->validatorOptions(['latestDate' => 'P2M10DT2H30M/2011-03-01T13:00:00Z']);
 
-        $this->assertTrue($this->validator->validate(new \DateTime('2011-02-01T13:00:00Z'))->hasErrors());
+        self::assertTrue($this->validator->validate(new \DateTime('2011-02-01T13:00:00Z'))->hasErrors());
     }
 
     /**
@@ -174,7 +174,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
             'latestDate' => '2011-03-01T13:00:00Z'
         ]);
 
-        $this->assertTrue($this->validator->validate(new \DateTime('2011-04-01T13:00:00Z'))->hasErrors());
+        self::assertTrue($this->validator->validate(new \DateTime('2011-04-01T13:00:00Z'))->hasErrors());
     }
 
     /**
@@ -187,7 +187,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
             'latestDate' => '2011-03-01T13:00:00Z'
         ]);
 
-        $this->assertFalse($this->validator->validate(new \DateTime('2011-02-01T13:00:00Z'))->hasErrors());
+        self::assertFalse($this->validator->validate(new \DateTime('2011-02-01T13:00:00Z'))->hasErrors());
     }
 
     /**
@@ -199,7 +199,7 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
             'earliestDate' => '2011-01-01T13:00:00Z',
         ]);
 
-        $this->assertFalse($this->validator->validate(new \DateTime('2011-01-01T13:00:00Z'))->hasErrors());
+        self::assertFalse($this->validator->validate(new \DateTime('2011-01-01T13:00:00Z'))->hasErrors());
     }
 
     /**
@@ -211,6 +211,6 @@ class DateTimeRangeValidatorTest extends AbstractValidatorTestcase
             'latestDate' => '2011-01-01T13:00:00Z',
         ]);
 
-        $this->assertFalse($this->validator->validate(new \DateTime('2011-01-01T13:00:00Z'))->hasErrors());
+        self::assertFalse($this->validator->validate(new \DateTime('2011-01-01T13:00:00Z'))->hasErrors());
     }
 }

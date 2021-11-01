@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Security\Policy;
  * source code.
  */
 
+use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -21,10 +22,10 @@ class PolicyExpressionParserTest extends UnitTestCase
 {
     /**
      * @test
-     * @expectedException \Neos\Flow\Aop\Exception\InvalidPointcutExpressionException
      */
     public function parseMethodThrowsAnExceptionIfAnotherPrivilegeTargetIsReferencedInAnExpression()
     {
+        $this->expectException(InvalidPointcutExpressionException::class);
         $parser = $this->getMockBuilder(MethodTargetExpressionParser::class)->setMethods(['parseDesignatorMethod'])->getMock();
         $parser->parse('method(TYPO3\TestPackage\BasicClass->setSomeProperty()) || privilegeTarget2', 'FunctionTests');
     }

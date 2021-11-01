@@ -11,7 +11,6 @@ namespace Neos\Flow\Security\Authentication\Provider;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\Token\TestingToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -19,8 +18,6 @@ use Neos\Flow\Security\Authentication\TokenInterface;
 /**
  * A singleton authentication provider for functional tests with
  * mockable authentication.
- *
- * @Flow\Scope("singleton")
  */
 class TestingProvider extends AbstractProvider
 {

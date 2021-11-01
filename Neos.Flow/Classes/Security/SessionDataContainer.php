@@ -2,7 +2,7 @@
 namespace Neos\Flow\Security;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\RequestInterface;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 
 /**
@@ -28,7 +28,7 @@ class SessionDataContainer
     /**
      * A possible request that was intercepted on a security exception
      *
-     * @var RequestInterface|null
+     * @var ActionRequest|null
      */
     protected $interceptedRequest;
 
@@ -80,9 +80,9 @@ class SessionDataContainer
     /**
      * Get a possible saved request after a security exceptoin happeened.
      *
-     * @return RequestInterface
+     * @return ActionRequest
      */
-    public function getInterceptedRequest():? RequestInterface
+    public function getInterceptedRequest(): ?ActionRequest
     {
         return $this->interceptedRequest;
     }
@@ -90,9 +90,9 @@ class SessionDataContainer
     /**
      * Save a request that triggered a security exception.
      *
-     * @param RequestInterface $interceptedRequest
+     * @param ActionRequest $interceptedRequest
      */
-    public function setInterceptedRequest(RequestInterface $interceptedRequest = null): void
+    public function setInterceptedRequest(ActionRequest $interceptedRequest = null): void
     {
         $this->interceptedRequest = $interceptedRequest;
     }

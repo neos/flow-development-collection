@@ -25,8 +25,8 @@ class AbstractBackendTest extends UnitTestCase
     public function commitDelegatesToPersistObjectsAndProcessDeletedObjects()
     {
         $backend = $this->getMockBuilder(Persistence\Generic\Backend\AbstractBackend::class)->setMethods(['persistObjects', 'processDeletedObjects', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected'])->getMock();
-        $backend->expects($this->once())->method('persistObjects');
-        $backend->expects($this->once())->method('processDeletedObjects');
+        $backend->expects(self::once())->method('persistObjects');
+        $backend->expects(self::once())->method('processDeletedObjects');
         $backend->commit();
     }
 
@@ -43,7 +43,7 @@ class AbstractBackendTest extends UnitTestCase
         $backend = $this->getAccessibleMock(Persistence\Generic\Backend\AbstractBackend::class, ['persistObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected']);
 
         $backend->injectPersistenceSession($mockPersistenceSession);
-        $backend->expects($this->exactly(2))->method('persistObject');
+        $backend->expects(self::exactly(2))->method('persistObject');
         $backend->setAggregateRootObjects($objects);
         $backend->_call('persistObjects');
     }
@@ -58,13 +58,13 @@ class AbstractBackendTest extends UnitTestCase
         $objects->attach($object);
 
         $mockSession = $this->createMock(Persistence\Generic\Session::class);
-        $mockSession->expects($this->at(0))->method('hasObject')->with($object)->will($this->returnValue(true));
-        $mockSession->expects($this->at(1))->method('unregisterReconstitutedEntity')->with($object);
-        $mockSession->expects($this->at(2))->method('unregisterObject')->with($object);
+        $mockSession->expects(self::at(0))->method('hasObject')->with($object)->will(self::returnValue(true));
+        $mockSession->expects(self::at(1))->method('unregisterReconstitutedEntity')->with($object);
+        $mockSession->expects(self::at(2))->method('unregisterObject')->with($object);
 
         $backend = $this->getAccessibleMock(Persistence\Generic\Backend\AbstractBackend::class, ['getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected']);
         $backend->injectPersistenceSession($mockSession);
-        $backend->expects($this->once())->method('removeEntity')->with($object);
+        $backend->expects(self::once())->method('removeEntity')->with($object);
         $backend->setDeletedEntities($objects);
         $backend->_call('processDeletedObjects');
     }
@@ -79,12 +79,12 @@ class AbstractBackendTest extends UnitTestCase
         $objects->attach($object);
 
         $mockSession = $this->createMock(Persistence\Generic\Session::class);
-        $mockSession->expects($this->at(0))->method('hasObject')->with($object)->will($this->returnValue(false));
-        $mockSession->expects($this->never())->method('unregisterObject');
+        $mockSession->expects(self::at(0))->method('hasObject')->with($object)->will(self::returnValue(false));
+        $mockSession->expects(self::never())->method('unregisterObject');
 
         $backend = $this->getAccessibleMock(Persistence\Generic\Backend\AbstractBackend::class, ['getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject', 'isConnected']);
         $backend->injectPersistenceSession($mockSession);
-        $backend->expects($this->never())->method('removeEntity');
+        $backend->expects(self::never())->method('removeEntity');
         $backend->setDeletedEntities($objects);
         $backend->_call('processDeletedObjects');
     }
@@ -95,7 +95,7 @@ class AbstractBackendTest extends UnitTestCase
     public function getTypeNormalizesDoubleToFloat()
     {
         $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
-        $this->assertEquals('float', $backend->_call('getType', 1.234));
+        self::assertEquals('float', $backend->_call('getType', 1.234));
     }
 
     /**
@@ -104,7 +104,7 @@ class AbstractBackendTest extends UnitTestCase
     public function getTypeReturnsClassNameForObjects()
     {
         $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
-        $this->assertEquals('stdClass', $backend->_call('getType', new \stdClass()));
+        self::assertEquals('stdClass', $backend->_call('getType', new \stdClass()));
     }
 
     /**
@@ -119,7 +119,7 @@ class AbstractBackendTest extends UnitTestCase
         $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $backend->injectPersistenceSession($mockSession);
 
-        $this->assertTrue($backend->_call('arrayContainsObject', [$object], $object, 'fakeUuid'));
+        self::assertTrue($backend->_call('arrayContainsObject', [$object], $object, 'fakeUuid'));
     }
 
     /**
@@ -128,12 +128,12 @@ class AbstractBackendTest extends UnitTestCase
     public function arrayContainsObjectReturnsFalseForDifferentObject()
     {
         $mockSession = $this->createMock(Persistence\Generic\Session::class);
-        $mockSession->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue('uuid2'));
+        $mockSession->expects(self::any())->method('getIdentifierByObject')->will(self::returnValue('uuid2'));
 
         $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $backend->injectPersistenceSession($mockSession);
 
-        $this->assertFalse($backend->_call('arrayContainsObject', [new \stdClass()], new \stdClass(), 'uuid1'));
+        self::assertFalse($backend->_call('arrayContainsObject', [new \stdClass()], new \stdClass(), 'uuid1'));
     }
 
     /**
@@ -145,11 +145,11 @@ class AbstractBackendTest extends UnitTestCase
         $clone = clone $object;
 
         $mockSession = $this->createMock(Persistence\Generic\Session::class);
-        $mockSession->expects($this->any())->method('getIdentifierByObject')->with($object)->will($this->returnValue('fakeUuid'));
+        $mockSession->expects(self::any())->method('getIdentifierByObject')->with($object)->will(self::returnValue('fakeUuid'));
 
         $backend = $this->getAccessibleMockForAbstractClass(Persistence\Generic\Backend\AbstractBackend::class);
         $backend->injectPersistenceSession($mockSession);
 
-        $this->assertFalse($backend->_call('arrayContainsObject', [$object], $clone, 'clonedFakeUuid'));
+        self::assertFalse($backend->_call('arrayContainsObject', [$object], $clone, 'clonedFakeUuid'));
     }
 }

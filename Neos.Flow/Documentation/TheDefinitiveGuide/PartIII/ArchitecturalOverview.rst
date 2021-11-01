@@ -43,6 +43,7 @@ The Flow framework is composed of the following submodules:
 
 * The *HTTP* component is a standards-compliant implementation of a
   number of RFCs around HTTP, Cookies, content negotiation and more.
+  It is based on the PHP-FIG PSR-15 and PSR-7 specifications.
 
 * The *MVC* framework takes care of requests and responses and provides
   you with a powerful, easy-to use Model-View-Controller

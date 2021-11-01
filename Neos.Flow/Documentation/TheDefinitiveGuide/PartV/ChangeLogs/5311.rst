@@ -1,8 +1,0 @@
-`5.3.11 (2020-01-15) <https://github.com/neos/flow-development-collection/releases/tag/5.3.11>`_
-================================================================================================
-
-Overview of merged pull requests
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`Detailed log <https://github.com/neos/flow-development-collection/compare/5.3.10...5.3.11>`_
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

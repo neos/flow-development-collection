@@ -12,8 +12,8 @@ namespace Neos\Flow\Mvc\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Response;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
@@ -31,7 +31,7 @@ class RestController extends ActionController
 
     /**
      * The response which will be returned by this action controller
-     * @var Response
+     * @var ActionResponse
      */
     protected $response;
 
@@ -118,7 +118,7 @@ class RestController extends ActionController
      * @param mixed $uri Either a string representation of a URI or a \Neos\Flow\Http\Uri object
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-     * @return void
+     * @psalm-return never-returns
      * @throws StopActionException
      * @api
      */

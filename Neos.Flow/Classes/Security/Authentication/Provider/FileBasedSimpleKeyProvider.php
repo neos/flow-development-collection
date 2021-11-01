@@ -13,7 +13,7 @@ namespace Neos\Flow\Security\Authentication\Provider;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Account;
-use Neos\Flow\Security\Authentication\Token\PasswordToken;
+use Neos\Flow\Security\Authentication\Token\PasswordTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Cryptography\FileBasedSimpleKeyService;
 use Neos\Flow\Security\Cryptography\HashService;
@@ -70,7 +70,7 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
      */
     public function getTokenClassNames()
     {
-        return [PasswordToken::class];
+        return [PasswordTokenInterface::class];
     }
 
     /**
@@ -84,13 +84,13 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
      */
     public function authenticate(TokenInterface $authenticationToken)
     {
-        if (!($authenticationToken instanceof PasswordToken)) {
+        if (!($authenticationToken instanceof PasswordTokenInterface)) {
             throw new UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
         }
 
-        $credentials = $authenticationToken->getCredentials();
-        if (is_array($credentials) && isset($credentials['password'])) {
-            $this->validateCredentials($authenticationToken, $credentials);
+        $password = $authenticationToken->getPassword();
+        if ($password !== '') {
+            $this->validateCredentials($authenticationToken);
             return;
         }
 
@@ -100,14 +100,13 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
     }
 
     /**
-     * @param TokenInterface $authenticationToken
-     * @param array $credentials
+     * @param PasswordTokenInterface $authenticationToken
      * @return void
      * @throws \Neos\Flow\Security\Exception
      */
-    protected function validateCredentials(TokenInterface $authenticationToken, $credentials): void
+    protected function validateCredentials(PasswordTokenInterface $authenticationToken): void
     {
-        if (!$this->hashService->validatePassword($credentials['password'], $this->fileBasedSimpleKeyService->getKey($this->options['keyName']))) {
+        if (!$this->hashService->validatePassword($authenticationToken->getPassword(), $this->fileBasedSimpleKeyService->getKey($this->options['keyName']))) {
             $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
             return;
         }

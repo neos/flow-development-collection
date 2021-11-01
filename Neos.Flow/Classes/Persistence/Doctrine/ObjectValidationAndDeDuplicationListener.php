@@ -18,7 +18,6 @@ use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
-use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
 
 /**
@@ -97,15 +96,13 @@ class ObjectValidationAndDeDuplicationListener
                 $identifier = $this->persistenceManager->getIdentifierByObject($entity);
 
                 if (isset($knownValueObjects[$className][$identifier]) || $unitOfWork->getEntityPersister($className)->exists($entity)) {
-                    unset($entityInsertions[spl_object_hash($entity)]);
+                    $unitOfWork->scheduleForDelete($entity);
                     continue;
                 }
 
                 $knownValueObjects[$className][$identifier] = true;
             }
         }
-
-        ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, true);
     }
 
     /**

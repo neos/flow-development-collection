@@ -103,9 +103,9 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest
         $evaluator->injectExpressionCache($stringFrontendMock);
         // note, this is not a public method. We should expect expressions coming in here to be trimmed already.
         $code = $evaluator->_call('generateEvaluatorCode', trim($expression));
-        $this->assertSame($expected, $evaluator->evaluate($expression, $context), 'Code ' . $code . ' should evaluate to expected result');
+        self::assertSame($expected, $evaluator->evaluate($expression, $context), 'Code ' . $code . ' should evaluate to expected result');
 
         $wrappedExpression = '${' . $expression . '}';
-        $this->assertSame(1, preg_match(\Neos\Eel\Package::EelExpressionRecognizer, $wrappedExpression), 'The wrapped expression ' . $wrappedExpression . ' was not detected as Eel expression');
+        self::assertSame(1, preg_match(\Neos\Eel\Package::EelExpressionRecognizer, $wrappedExpression), 'The wrapped expression ' . $wrappedExpression . ' was not detected as Eel expression');
     }
 }

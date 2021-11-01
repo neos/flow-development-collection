@@ -87,7 +87,7 @@ class FilterFirewall implements FirewallInterface
      *
      * @param ActionRequest $request The request to be analyzed
      * @return void
-     * @throws AccessDeniedException if the
+     * @throws AccessDeniedException
      */
     public function blockIllegalRequests(ActionRequest $request)
     {

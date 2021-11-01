@@ -15,6 +15,7 @@ namespace Neos\Flow\Persistence\Generic\Exception;
  * An "Invalid Object Data" Exception
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 class InvalidObjectDataException extends \Neos\Flow\Persistence\Exception
 {
