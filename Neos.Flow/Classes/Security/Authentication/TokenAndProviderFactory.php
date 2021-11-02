@@ -146,6 +146,12 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
         $this->providers = [];
 
         foreach ($this->providerConfigurations as $providerName => $providerConfiguration) {
+            
+            // ignore removed provider configurations
+            if (!$providerConfiguration) {
+                continue;
+            }
+            
             if (!is_array($providerConfiguration) || !isset($providerConfiguration['provider'])) {
                 throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" needs a "provider" option!', 1248209521);
             }
