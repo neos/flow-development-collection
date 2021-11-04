@@ -196,7 +196,12 @@ abstract class Files
                     // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
                 }
             }
-            if (@rmdir($path) === false) {
+            try {
+                if (@rmdir($path) === false) {
+                    throw new FilesException(sprintf('Could not remove directory "%s".', $path), 1634928640);
+                }
+            } catch (\Throwable $e) {
+                // PHP 8 throws for rmdir even with a shutup operator set. To ensure the loop gets correctly ended in PHP 8 and below, an additional FilesException is used.
                 break;
             }
             $path = substr($path, 0, -(strlen($currentSegment) + 1));
