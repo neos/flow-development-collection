@@ -223,7 +223,7 @@ class Argument
         $configuredType = $configuration->getConfigurationValue(ObjectConverter::class, ObjectConverter::CONFIGURATION_TARGET_TYPE);
         if ($configuredType !== null) {
             $this->dataType = $configuredType;
-        } elseif (isset($rawValue['__type']) && $configuration->getConfigurationValue(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) === true) {
+        } elseif (is_array($rawValue) && isset($rawValue['__type']) && $configuration->getConfigurationValue(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) === true) {
             $this->dataType = $rawValue['__type'];
         }
         $this->value = $this->propertyMapper->convert($rawValue, $this->dataType, $this->getPropertyMappingConfiguration());
