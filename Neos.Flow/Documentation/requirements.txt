@@ -1,1 +1,2 @@
-sphinx>=3.ß.0, <= 4.0.0
+sphinx==3.2.1
+sphinx_rtd_theme==1.0.0
