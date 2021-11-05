@@ -16,6 +16,9 @@
 
 import os
 import sys
+# load PhpLexer
+from sphinx.highlighting import lexers
+from pygments.lexers.web import PhpLexer
 
 # -- Project information -----------------------------------------------------
 
@@ -24,10 +27,9 @@ copyright = '2006 and onwards by the authors'
 author = 'Neos Team and Contributors'
 
 # The short X.Y version.
-version = 'dev-6.3'
+version = '6.3'
 # The full version, including alpha/beta/rc tags.
-release = 'dev-6.3.x'
-
+release = '6.3.x'
 
 # -- General configuration ---------------------------------------------------
 
@@ -49,46 +51,19 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
-
-
-
-
-# The suffix(es) of source filenames.
-# You can specify multiple suffix as a list of string:
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
-# The master toctree document.
-master_doc = 'index'
-# The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
-# If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = False
-
-
-
-
+# Use PHP syntax highlighting in code examples by default
+highlight_language='php'
 
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
 html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-
-# Output file base name for HTML help builder.
-htmlhelp_basename = 'FlowFrameworkdoc'
-
-# on_rtd is whether we are on readthedocs.org, this line of code grabbed from docs.readthedocs.org
-# on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-# if not on_rtd:  # only import and set the theme if we're building docs locally
-#     import sphinx_rtd_theme
-#     html_theme = 'sphinx_rtd_theme'
-#     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 html_theme_options = {
   'prev_next_buttons_location': 'both',
@@ -102,13 +77,6 @@ intersphinx_mapping = {
     'neos': ('https://neos.readthedocs.io/en/stable', None),
 }
 
-# load PhpLexer
-from sphinx.highlighting import lexers
-from pygments.lexers.web import PhpLexer
-
 # enable highlighting for PHP code not between <?php ... ?> by default
 lexers['php'] = PhpLexer(startinline=True)
 lexers['php-annotations'] = PhpLexer(startinline=True)
-
-# Use PHP syntax highlighting in code examples by default
-highlight_language='php'
