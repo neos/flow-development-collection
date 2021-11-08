@@ -257,7 +257,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     private function buildKey(string $identifier): string
     {
-        return $this->cacheIdentifier . ':' . $identifier;
+        return $this->applicationContextHash . ':' . $this->cacheIdentifier . ':' . $identifier;
     }
 
     /**
