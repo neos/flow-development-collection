@@ -60,11 +60,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * @var string
      */
-    protected $context;
-
-    /**
-     * @var string
-     */
     protected $cacheTableName = 'cache';
 
     /**
@@ -171,14 +166,14 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $this->removeWithoutTransaction($entryIdentifier);
 
             $statementHandle = $this->databaseHandle->prepare('INSERT INTO "' . $this->cacheTableName . '" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
-            $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, time(), $lifetime, $data]);
+            $result = $statementHandle->execute([$entryIdentifier, $this->applicationContextHash, $this->cacheIdentifier, time(), $lifetime, $data]);
             if ($result === false) {
                 throw new Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
             }
 
             $statementHandle = $this->databaseHandle->prepare('INSERT INTO "' . $this->tagsTableName . '" ("identifier", "context", "cache", "tag") VALUES (?, ?, ?, ?)');
             foreach ($tags as $tag) {
-                $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
+                $result = $statementHandle->execute([$entryIdentifier, $this->applicationContextHash, $this->cacheIdentifier, $tag]);
                 if ($result === false) {
                     throw new Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
                 }
@@ -205,7 +200,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         $this->connect();
 
         $statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
-        $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
+        $statementHandle->execute([$entryIdentifier, $this->applicationContextHash, $this->cacheIdentifier]);
         /** @var false|string|null $fetchedColumn */
         $fetchedColumn = $statementHandle->fetchColumn();
 
@@ -231,7 +226,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         $this->connect();
 
         $statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
-        $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
+        $statementHandle->execute([$entryIdentifier, $this->applicationContextHash, $this->cacheIdentifier]);
         return ($statementHandle->fetchColumn() > 0);
     }
 
@@ -276,10 +271,10 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     private function removeWithoutTransaction(string $entryIdentifier)
     {
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $this->tagsTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?');
-        $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
+        $statementHandle->execute([$entryIdentifier, $this->applicationContextHash, $this->cacheIdentifier]);
 
         $statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?');
-        $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
+        $statementHandle->execute([$entryIdentifier, $this->applicationContextHash, $this->cacheIdentifier]);
 
         return ($statementHandle->rowCount() > 0);
     }
@@ -298,10 +293,10 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         $this->databaseHandle->beginTransaction();
         try {
             $statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $this->tagsTableName . '" WHERE "context"=? AND "cache"=?');
-            $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+            $statementHandle->execute([$this->applicationContextHash, $this->cacheIdentifier]);
 
             $statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $this->cacheTableName . '" WHERE "context"=? AND "cache"=?');
-            $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+            $statementHandle->execute([$this->applicationContextHash, $this->cacheIdentifier]);
 
             $this->databaseHandle->commit();
         } catch (\Exception $exception) {
@@ -326,12 +321,12 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         $this->databaseHandle->beginTransaction();
         try {
             $statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $this->cacheTableName . '" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?)');
-            $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier, $tag]);
+            $statementHandle->execute([$this->applicationContextHash, $this->cacheIdentifier, $this->applicationContextHash, $this->cacheIdentifier, $tag]);
 
             $flushed = $statementHandle->rowCount();
 
             $statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $this->tagsTableName . '" WHERE "context"=? AND "cache"=? AND "tag"=?');
-            $statementHandle->execute([$this->context(), $this->cacheIdentifier, $tag]);
+            $statementHandle->execute([$this->applicationContextHash, $this->cacheIdentifier, $tag]);
 
             $this->databaseHandle->commit();
         } catch (\Exception $exception) {
@@ -357,7 +352,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         $this->connect();
 
         $statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "' . $this->tagsTableName . '" WHERE "context"=?  AND "cache"=? AND "tag"=?');
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier, $tag]);
+        $statementHandle->execute([$this->applicationContextHash, $this->cacheIdentifier, $tag]);
         return $statementHandle->fetchAll(\PDO::FETCH_COLUMN);
     }
 
@@ -375,10 +370,10 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         $this->databaseHandle->beginTransaction();
         try {
             $statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $this->tagsTableName . '" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time() . ')');
-            $statementHandle->execute([$this->context(), $this->cacheIdentifier, $this->context(), $this->cacheIdentifier]);
+            $statementHandle->execute([$this->applicationContextHash, $this->cacheIdentifier, $this->applicationContextHash, $this->cacheIdentifier]);
 
             $statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $this->cacheTableName . '" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time());
-            $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+            $statementHandle->execute([$this->applicationContextHash, $this->cacheIdentifier]);
 
             $this->databaseHandle->commit();
         } catch (\Exception $exception) {
@@ -533,7 +528,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         $cacheEntries = [];
 
         $statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "content" FROM "' . $this->cacheTableName . '" WHERE "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
-        $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
+        $statementHandle->execute([$this->applicationContextHash, $this->cacheIdentifier]);
         $fetchedColumns = $statementHandle->fetchAll();
 
         foreach ($fetchedColumns as $fetchedColumn) {
@@ -547,17 +542,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         }
 
         $this->cacheEntriesIterator = new \ArrayIterator($cacheEntries);
-    }
-
-    /**
-     * @return string
-     */
-    protected function context(): string
-    {
-        if ($this->context === null) {
-            $this->context = md5($this->environmentConfiguration->getApplicationIdentifier());
-        }
-        return $this->context;
     }
 
     /**

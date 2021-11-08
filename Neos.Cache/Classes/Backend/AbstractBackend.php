@@ -35,6 +35,11 @@ abstract class AbstractBackend implements BackendInterface
     /**
      * @var string
      */
+    protected $applicationContextHash;
+
+    /**
+     * @var string
+     */
     protected $cacheIdentifier;
 
     /**
@@ -58,6 +63,8 @@ abstract class AbstractBackend implements BackendInterface
     public function __construct(EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
     {
         $this->environmentConfiguration = $environmentConfiguration;
+
+        $this->applicationContextHash = md5($environmentConfiguration->getApplicationIdentifier());
 
         if (is_array($options) || $options instanceof \Iterator) {
             $this->setProperties($options);
