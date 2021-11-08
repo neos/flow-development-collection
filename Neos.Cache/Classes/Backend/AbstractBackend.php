@@ -35,7 +35,7 @@ abstract class AbstractBackend implements BackendInterface
     /**
      * @var string
      */
-    protected $applicationContextHash;
+    protected $applicationContextHash = '';
 
     /**
      * @var string
@@ -64,7 +64,9 @@ abstract class AbstractBackend implements BackendInterface
     {
         $this->environmentConfiguration = $environmentConfiguration;
 
-        $this->applicationContextHash = md5($environmentConfiguration->getApplicationIdentifier());
+        if ($environmentConfiguration instanceof EnvironmentConfiguration) {
+            $this->applicationContextHash = md5($environmentConfiguration->getApplicationIdentifier());
+        }
 
         if (is_array($options) || $options instanceof \Iterator) {
             $this->setProperties($options);
