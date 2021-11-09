@@ -117,7 +117,8 @@ abstract class AbstractBackend implements BackendInterface
     {
         $this->cache = $cache;
         $this->cacheIdentifier = $this->cache->getIdentifier();
-        $this->identifierPrefix = md5($this->environmentConfiguration->getApplicationIdentifier()) . ':' . $this->cacheIdentifier . ':';
+        $applicationIdentifier = $this->environmentConfiguration instanceof EnvironmentConfiguration ? $this->environmentConfiguration->getApplicationIdentifier() : '';
+        $this->identifierPrefix = md5($applicationIdentifier) . ':' . $this->cacheIdentifier . ':';
     }
 
     /**
