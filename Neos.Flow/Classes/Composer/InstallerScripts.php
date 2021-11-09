@@ -29,11 +29,6 @@ class InstallerScripts
     /**
      * @var bool
      */
-    protected static $postPackageUpdateAndInstallAlreadyRun = false;
-
-    /**
-     * @var bool
-     */
     protected static $postUpdateAndInstallAlreadyRun = false;
 
     /**
@@ -91,10 +86,6 @@ class InstallerScripts
      */
     public static function postPackageUpdateAndInstall(PackageEvent $event): void
     {
-        if (self::$postPackageUpdateAndInstallAlreadyRun) {
-            return;
-        }
-
         $operation = $event->getOperation();
         if (!$operation instanceof InstallOperation && !$operation instanceof UpdateOperation) {
             throw new Exception\UnexpectedOperationException('Handling of operation of type "' . get_class($operation) . '" not supported', 1348750840);
@@ -116,8 +107,6 @@ class InstallerScripts
         if ($operation instanceof UpdateOperation && isset($packageExtraConfig['neos/flow']['post-update'])) {
             self::runPackageScripts($packageExtraConfig['neos/flow']['post-update']);
         }
-
-        self::$postPackageUpdateAndInstallAlreadyRun = true;
     }
 
     /**
