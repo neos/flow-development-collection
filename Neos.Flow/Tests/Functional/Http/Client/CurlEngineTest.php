@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Functional\Http\Client;
  */
 
 use Neos\Flow\Http\Client\CurlEngine;
+use Neos\Flow\Http\InvalidArgumentException;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -59,5 +60,17 @@ class CurlEngineTest extends FunctionalTestCase
     {
         $response = $this->browser->request('http://www.neos.io');
         self::assertStringContainsString('This website is powered by Neos', $response->getBody()->getContents());
+    }
+
+    /**
+     * Check if setting Http Headers directly in Curl throws Exception
+     *
+     * @test
+     */
+    public function setRequestHeadersViaOptionThrowsException()
+    {
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionCode(1633334307);
+        $this->browser->getRequestEngine()->setOption(CURLOPT_HTTPHEADER, ['X-Custom-Header' => 'Hello world']);
     }
 }

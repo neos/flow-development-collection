@@ -13,6 +13,7 @@ namespace Neos\Flow\Http\Client;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
+use Neos\Flow\Http\InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use GuzzleHttp\Psr7\Message;
@@ -37,12 +38,17 @@ class CurlEngine implements RequestEngineInterface
 
     /**
      * Sets an option to be used by cURL.
+     * Setting headers is not allowed, please use request object.
      *
      * @param integer $optionName One of the CURLOPT_* constants
      * @param mixed $value The value to set
+     * @throws \InvalidArgumentException
      */
     public function setOption($optionName, $value)
     {
+        if ($optionName === CURLOPT_HTTPHEADER) {
+            throw new InvalidArgumentException("Setting CURL headers is only possible via the request object and not by using the setOption method.", 1633334307);
+        }
         $this->options[$optionName] = $value;
     }
 
