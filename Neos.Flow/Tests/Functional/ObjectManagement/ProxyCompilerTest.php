@@ -24,7 +24,6 @@ use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
  * Functional tests for the Proxy Compiler and related features
- *
  */
 class ProxyCompilerTest extends FunctionalTestCase
 {
@@ -153,6 +152,16 @@ class ProxyCompilerTest extends FunctionalTestCase
     {
         $reflectionClass = new ClassReflection(Fixtures\FinalClassWithDependencies::class);
         self::assertTrue($reflectionClass->isFinal());
+    }
+
+    /**
+     * @see https://github.com/neos/flow-development-collection/issues/1835
+     * @test
+     */
+    public function classKeywordIsIgnoredInsideClassBody()
+    {
+        $reflectionClass = new ClassReflection(Fixtures\ClassWithKeywordsInClassBody::class);
+        self::assertEquals(Fixtures\ClassWithKeywordsInClassBody::class, $reflectionClass->getNamespaceName() . '\ClassWithKeywordsInClassBody');
     }
 
     /**
