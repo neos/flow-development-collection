@@ -4,31 +4,40 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target state="translated">Kimlik doğrulaması gerekiyor</target></trans-unit>
+        <target state="translated">Kimlik doğrulaması gerekiyor</target>
+      </trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target state="translated">Kullanıcı adı</target></trans-unit>
+        <target state="translated">Kullanıcı adı</target>
+      </trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target state="translated">Şifre</target></trans-unit>
+        <target state="translated">Şifre</target>
+      </trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target state="translated">Yeni şifre</target></trans-unit>
+        <target state="translated">Yeni şifre</target>
+      </trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target state="translated">Oturum aç</target></trans-unit>
+        <target state="translated">Oturum aç</target>
+      </trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target state="translated">Oturumu kapat</target></trans-unit>
+        <target state="translated">Oturumu kapat</target>
+      </trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target state="translated">Güncelle</target></trans-unit>
+        <target state="translated">Güncelle</target>
+      </trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target state="translated">Gönder</target></trans-unit>
+        <target state="translated">Gönder</target>
+      </trans-unit>
       <trans-unit id="configurationSchemaValidator.anErrorOccurredDuringValidationOfTheConfiguration.body" xml:space="preserve">
 				<source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
-			<target state="needs-translation">The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</target></trans-unit>
+        <target state="translated">"{0}" yapılandırma türü bulunamadı. Yalnızca şu yapılandırma türleri destekleniyor: "{1}"</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

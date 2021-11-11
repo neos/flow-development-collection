@@ -5,7 +5,7 @@
       <!-- AlphanumericValidator -->
       <trans-unit id="1221551320" xml:space="preserve">
 				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-        <target state="needs-translation">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target>
+        <target state="translated">Only regular characters (a to z, umlauts, ...) and numbers are allowed.</target>
       </trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve">
@@ -15,12 +15,12 @@
       <!-- CollectionValidator -->
       <trans-unit id="1317204797" xml:space="preserve">
 				<source>The given subject is not a collection</source>
-        <target state="needs-translation">The given subject is not a collection</target>
+        <target state="translated">The given subject is not a collection</target>
       </trans-unit>
       <!-- CountValidator -->
       <trans-unit id="1253718666" xml:space="preserve">
 				<source>The given subject is not countable</source>
-        <target state="needs-translation">The given subject is not countable</target>
+        <target state="translated">The given subject is not countable</target>
       </trans-unit>
       <trans-unit id="1253718831" xml:space="preserve">
 				<source>The count must be between {0,number} and {1,number}</source>
@@ -46,7 +46,7 @@
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-        <target state="needs-translation">The "locale" option can be only set to string identifier, or Locale object</target>
+        <target state="translated">The "locale" option can be only set to string identifier, or Locale object</target>
       </trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
@@ -77,7 +77,7 @@
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
-        <target state="needs-translation">Object expected, {0} given</target>
+        <target state="translated">Object expected, {0} given</target>
       </trans-unit>
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
@@ -96,7 +96,7 @@
       <!-- LocaleIdentifierValidator -->
       <trans-unit id="1327090892" xml:space="preserve">
 				<source>Value is no valid I18n locale identifier</source>
-        <target state="needs-translation">Value is no valid I18n locale identifier</target>
+        <target state="translated">Value is no valid I18n locale identifier</target>
       </trans-unit>
       <!-- NotEmptyValidator -->
       <trans-unit id="1221560910" xml:space="preserve">
@@ -119,7 +119,7 @@
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-        <target state="needs-translation">The "locale" option can be only set to string identifier, or Locale object</target>
+        <target state="translated">The "locale" option can be only set to string identifier, or Locale object</target>
       </trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
@@ -132,48 +132,36 @@
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve">
 				<source>The given subject did not match the pattern. Got: {0}</source>
-        <target state="needs-translation">The given subject did not match the pattern. Got: {0}</target>
+        <target state="translated">The given subject did not match the pattern. Got: {0}</target>
       </trans-unit>
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve">
 				<source>The given object could not be converted to a string</source>
-        <target state="needs-translation">The given object could not be converted to a string</target>
+        <target state="translated">The given object could not be converted to a string</target>
       </trans-unit>
       <trans-unit id="1269883975" xml:space="preserve">
 				<source>The given value is not a valid string</source>
-        <target state="needs-translation">The given value is not a valid string</target>
+        <target state="translated">The given value is not a valid string</target>
       </trans-unit>
       <trans-unit id="1238108067" xml:space="preserve">
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
-        <target state="needs-translation">The length of this text must be between {0,number} and {1,number} characters</target>
+        <target state="translated">The length of this text must be between {0,number} and {1,number} characters</target>
       </trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
-          <source>This field must contain at least {0,number} characters</source>
-          <target state="needs-translation">This field must contain at least {0,number} characters</target>
-        </trans-unit>
-        <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} character</source>
-          <target state="needs-translation">This field must contain at least {0,number} character</target>
-        </trans-unit>
-        <trans-unit id="1238108068[5]">
+          <target state="translated">This field must contain at least {0,number} characters</target> </trans-unit>
+        <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} characters</source>
-          <target state="needs-translation">This field must contain at least {0,number} characters</target>
-        </trans-unit>
+          <target state="translated">This field must contain at least {0,number} character</target> </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
-          <source>This text may not exceed {0,number} characters</source>
-          <target state="needs-translation">This text may not exceed {0,number} characters</target>
-        </trans-unit>
-        <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} character</source>
-          <target state="needs-translation">This text may not exceed {0,number} character</target>
-        </trans-unit>
-        <trans-unit id="1238108069[5]">
+          <target state="translated">This text may not exceed {0,number} characters</target> </trans-unit>
+        <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} characters</source>
-          <target state="needs-translation">This text may not exceed {0,number} characters</target>
-        </trans-unit>
+          <target state="translated">This text may not exceed {0,number} character</target> </trans-unit>
       </group>
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve">
@@ -188,12 +176,12 @@
       <!-- UuidValidator -->
       <trans-unit id="1221565853" xml:space="preserve">
 				<source>The given subject is not a valid UUID</source>
-        <target state="needs-translation">The given subject is not a valid UUID</target>
+        <target state="translated">The given subject is not a valid UUID</target>
       </trans-unit>
       <!-- ElectronicAddressValidator -->
       <trans-unit id="1268676030" xml:space="preserve">
 				<source>No validator found for electronic address of type "{0}"</source>
-        <target state="needs-translation">No validator found for electronic address of type "{0}"</target>
+        <target state="translated">No validator found for electronic address of type "{0}"</target>
       </trans-unit>
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve">
@@ -237,11 +225,11 @@
       </trans-unit>
       <trans-unit id="1319813336" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</source>
-        <target state="needs-translation">The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</target>
+        <target state="translated">The given image size of {0,number} x {1,number} is too low for the required minimum resolution of {2,number}</target>
       </trans-unit>
       <trans-unit id="1319813355" xml:space="preserve">
 				<source>The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</source>
-        <target state="needs-translation">The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</target>
+        <target state="translated">The given image size of {0,number} x {1,number} is too high for the required maximum resolution of {2,number}</target>
       </trans-unit>
       <!-- ImageOrientationValidator -->
       <trans-unit id="1328028604" xml:space="preserve">
