@@ -69,6 +69,7 @@ class XliffFileProviderTest extends FunctionalTestCase
             'de/BasePackage.Main.xlf' => 'Resources/Private/Translations/de/Main.xlf',
             'de/BasePackage.DependentMain.xlf' => 'Resources/Private/Translations/de/DependentMain.xlf',
             'de/BasePackage.GlobalOverride.xlf' => 'Resources/Private/Translations/de/GlobalOverride.xlf',
+            'de/BasePackage.MultipleFileItems.xlf' => 'Resources/Private/Translations/de/MultipleFileItems.xlf',
             'en/BasePackage.GlobalOverride.Global.xlf' => 'Resources/Private/GlobalTranslations/en/BasePackage.GlobalOverride.xlf'
         ]);
         $packages[$basePackage->getPackageKey()] = $basePackage;
@@ -202,6 +203,23 @@ class XliffFileProviderTest extends FunctionalTestCase
                 [
                     'source' => 'Source string',
                     'target' => 'Übersetzte Zeichenkette'
+                ]
+            ]
+        ], $fileData['translationUnits']);
+    }
+
+    /**
+     * @test
+     */
+    public function fileProviderMergesTranslationWithMultipleFileItems()
+    {
+        $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:MultipleFileItems', new Locale('de'));
+
+        self::assertSame([
+            'key3' => [
+                [
+                    'source' => 'Source string 3',
+                    'target' => 'Übersetzte Zeichenkette 3'
                 ]
             ]
         ], $fileData['translationUnits']);
