@@ -33,15 +33,15 @@
       </trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
 				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
-        <target state="needs-translation">The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</target>
+        <target state="translated">The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</target>
       </trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0,datetime,datetime}</source>
-        <target state="needs-translation">The given date must be after {0,datetime,datetime}</target>
+        <target state="translated">The given date must be after {0,datetime,datetime}</target>
       </trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0,datetime,datetime}</source>
-        <target state="needs-translation">The given date must be before {0,datetime,datetime}</target>
+        <target state="translated">The given date must be before {0,datetime,datetime}</target>
       </trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
@@ -77,7 +77,7 @@
       <!-- GenericObjectValidator -->
       <trans-unit id="1241099149" xml:space="preserve">
 				<source>Object expected, {0} given</source>
-        <target state="needs-translation">Object expected, {0} given</target>
+        <target state="translated">Object expected, {0} given</target>
       </trans-unit>
       <!-- IntegerValidator -->
       <trans-unit id="1221560494" xml:space="preserve">
@@ -132,7 +132,7 @@
       <!-- RegularExpressionValidator -->
       <trans-unit id="1221565130" xml:space="preserve">
 				<source>The given subject did not match the pattern. Got: {0}</source>
-        <target state="needs-translation">The given subject did not match the pattern. Got: {0}</target>
+        <target state="translated">The given subject did not match the pattern. Got: {0}</target>
       </trans-unit>
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve">
@@ -150,22 +150,18 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} character</source>
-          <target state="needs-translation">This field must contain at least {0,number} character</target>
-        </trans-unit>
+          <target state="translated">This field must contain at least {0,number} character</target> </trans-unit>
         <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} characters</source>
-          <target state="needs-translation">This field must contain at least {0,number} characters</target>
-        </trans-unit>
+          <target state="translated">This field must contain at least {0,number} characters</target> </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} character</source>
-          <target state="needs-translation">This text may not exceed {0,number} character</target>
-        </trans-unit>
+          <target state="translated">This text may not exceed {0,number} character</target> </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} characters</source>
-          <target state="needs-translation">This text may not exceed {0,number} characters</target>
-        </trans-unit>
+          <target state="translated">This text may not exceed {0,number} characters</target> </trans-unit>
       </group>
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve">
@@ -185,7 +181,7 @@
       <!-- ElectronicAddressValidator -->
       <trans-unit id="1268676030" xml:space="preserve">
 				<source>No validator found for electronic address of type "{0}"</source>
-        <target state="needs-translation">No validator found for electronic address of type "{0}"</target>
+        <target state="translated">No validator found for electronic address of type "{0}"</target>
       </trans-unit>
       <!-- PersonNameValidator -->
       <trans-unit id="1268676765" xml:space="preserve">
