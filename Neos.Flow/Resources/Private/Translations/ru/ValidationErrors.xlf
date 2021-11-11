@@ -156,10 +156,6 @@
           <source>This field must contain at least {0,number} characters</source>
           <target state="final">Это поле должно содержать по крайней мере {0,number} символов</target>
         </trans-unit>
-        <trans-unit id="1238108068[3]" approved="yes">
-          <source>This field must contain at least {0,number} characters</source>
-          <target state="final">Это поле должно содержать по крайней мере {0,number} символов</target>
-        </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]" approved="yes">
@@ -169,10 +165,6 @@
         <trans-unit id="1238108069[1]" approved="yes">
           <source>This text may not exceed {0,number} characters</source>
           <target state="final">Длинна этого текста не может превышать {0,number} символа</target>
-        </trans-unit>
-        <trans-unit id="1238108069[3]" approved="yes">
-          <source>This text may not exceed {0,number} characters</source>
-          <target state="final">Длинна этого текста не может превышать {0,number} символов</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->
