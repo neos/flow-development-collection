@@ -20,7 +20,7 @@ class RequestInformationHelperTest extends UnitTestCase
             ->withAddedHeader('Authorization', 'Bearer SomeToken');
 
         $renderedHeaders = RequestInformationHelper::renderRequestHeaders($request);
-        self::assertNotContains('SomePassword', $renderedHeaders);
-        self::assertNotContains('SomeToken', $renderedHeaders);
+        self::assertStringNotContainsString('SomePassword', $renderedHeaders);
+        self::assertStringNotContainsString('SomeToken', $renderedHeaders);
     }
 }

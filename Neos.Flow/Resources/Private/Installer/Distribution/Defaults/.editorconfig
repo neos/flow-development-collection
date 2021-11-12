@@ -1,15 +1,26 @@
+# editorconfig.org
 root = true
 
 [*]
+indent_style = space
+indent_size = 2
 end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
-indent_style = space
+
+# Composer uses 4 spaces itself
+[composer.json]
 indent_size = 4
 
-[*.yaml]
-indent_size = 2
+# PHP should follow the PSR-2 standard
+[*.php]
+indent_size = 4
 
+# JS,SASS, HTML should use tabs, to reduce conflicts
+[*.{js,scss,html}]
+indent_style = tab
+
+# Markdown uses trailing whitespace for line breaks
 [*.md]
 trim_trailing_whitespace = false

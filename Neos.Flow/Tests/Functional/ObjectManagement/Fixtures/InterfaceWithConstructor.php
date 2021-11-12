@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Functional\Property\Fixtures;
+namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -11,15 +11,7 @@ namespace Neos\Flow\Tests\Functional\Property\Fixtures;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
-/**
- * A simple interface for PropertyMapper test
- */
-interface TestEntityInterface
+interface InterfaceWithConstructor
 {
-    /**
-     * @return string
-     */
-    public function getName();
+    public function __construct(array $someArgument = []);
 }

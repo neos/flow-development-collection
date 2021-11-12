@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Aop\Advice;
 
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\SignalSlot;
 use Neos\Flow\Aop;
 
 /**
@@ -34,11 +35,16 @@ class AroundAdviceTest extends UnitTestCase
         $mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
         $mockObjectManager->expects(self::once())->method('get')->with('aspectObjectName')->will(self::returnValue($mockAspect));
 
+        $mockDispatcher = $this->createMock(SignalSlot\Dispatcher::class);
+
         $advice = new Aop\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function (Aop\JoinPointInterface $joinPoint) {
             if ($joinPoint !== null) {
                 return true;
             }
         });
+
+        $this->inject($advice, 'dispatcher', $mockDispatcher);
+
         $result = $advice->invoke($mockJoinPoint);
 
         self::assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
