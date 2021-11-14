@@ -37,7 +37,7 @@
       </trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
 				<source>The given date must be after {0,datetime,datetime}</source>
-        <target state="translated">The given date must be after {0,datetime,datetime}</target>
+        <target state="translated">Datumam ir jābūt pēc {0,datetime,datetime}</target>
       </trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
 				<source>The given date must be before {0,datetime,datetime}</source>
