@@ -4,31 +4,40 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
-			<target state="final">Nepieciešama autentifikācija</target></trans-unit>
+        <target state="final">Nepieciešama autentifikācija</target>
+      </trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target state="final">Lietotājvārds</target></trans-unit>
+        <target state="final">Lietotājvārds</target>
+      </trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target state="final">Parole</target></trans-unit>
+        <target state="final">Parole</target>
+      </trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve" approved="yes">
 				<source>New password</source>
-			<target state="final">Jaunā parole</target></trans-unit>
+        <target state="final">Jaunā parole</target>
+      </trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
 				<source>Login</source>
-			<target state="final">Ienākt</target></trans-unit>
+        <target state="final">Ienākt</target>
+      </trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
-			<target state="final">Iziet</target></trans-unit>
+        <target state="final">Iziet</target>
+      </trans-unit>
       <trans-unit id="update" xml:space="preserve" approved="yes">
 				<source>Update</source>
-			<target state="final">Atjaunināt</target></trans-unit>
+        <target state="final">Atjaunināt</target>
+      </trans-unit>
       <trans-unit id="submit" xml:space="preserve" approved="yes">
 				<source>Submit</source>
-			<target state="final">Apstiprināt</target></trans-unit>
+        <target state="final">Apstiprināt</target>
+      </trans-unit>
       <trans-unit id="configurationSchemaValidator.anErrorOccurredDuringValidationOfTheConfiguration.body" xml:space="preserve">
 				<source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
-			<target state="needs-translation">The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</target></trans-unit>
+        <target state="translated">Konfigurācijas tips "{0}" nav atrasts. Tiek atbalstīti tikai šādi konfigurācijas tipi: "{1}"</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
