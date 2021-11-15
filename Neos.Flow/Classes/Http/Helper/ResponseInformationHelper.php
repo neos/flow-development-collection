@@ -198,11 +198,9 @@ abstract class ResponseInformationHelper
             $response = $response->withBody(stream_for(''));
         }
 
-        $cacheControlHeaderLine = $response->getHeaderLine('Cache-Control');
-
-        if ((!empty($cacheControlHeaderLine) && strpos('no-cache', $cacheControlHeaderLine) !== false)
+        $cacheControlHeaderValue = $response->getHeaderLine('Cache-Control');
+        if (($cacheControlHeaderValue !== '' && strpos('no-cache', $cacheControlHeaderValue) !== false)
             || $response->hasHeader('Expires')) {
-            $cacheControlHeaderValue = trim(substr($cacheControlHeaderLine, 14));
             $cacheControlHeaderValue = str_replace('max-age', '', $cacheControlHeaderValue);
             $cacheControlHeaderValue = trim($cacheControlHeaderValue, ' ,');
             $response = $response->withHeader('Cache-Control', $cacheControlHeaderValue);
