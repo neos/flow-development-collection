@@ -109,12 +109,15 @@ class PackageManager
     protected $flowPackages = [];
 
     /**
+     * Inject settings into the package manager. Has to be called explicitly on object initialization as
+     * the package manager subpackage is excluded from proxy class building.
+     *
      * @param array $settings
      * @return void
      */
     public function injectSettings(array $settings): void
     {
-        $this->settings = $settings['package'];
+        $this->settings = $settings['package'] ?? [];
     }
 
     /**
@@ -205,7 +208,7 @@ class PackageManager
             throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available. Please check if the package exists and that the package key is correct (package keys are case sensitive).', 1166546734);
         }
 
-        return $this->packages[$packageKey];
+        return $this->packages[$this->getCaseSensitivePackageKey($packageKey)];
     }
 
     /**

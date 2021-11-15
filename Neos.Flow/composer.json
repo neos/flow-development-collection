@@ -35,12 +35,13 @@
         "psr/http-server-middleware": "^1.0",
         "psr/http-server-handler": "^1.0",
 
-        "ramsey/uuid": "^3.0",
+        "ramsey/uuid": "^3.0 || ^4.0",
 
         "doctrine/orm": "^2.6",
-        "doctrine/migrations": "^1.8",
+        "doctrine/migrations": "^1.8.1",
         "doctrine/dbal": "^2.9",
         "doctrine/common": "^2.4",
+        "doctrine/persistence": "^1.3",
 
         "symfony/yaml": "^4.2",
         "symfony/dom-crawler": "^4.2",
@@ -49,10 +50,16 @@
         "neos/composer-plugin": "^2.0",
         "neos/utility-pdo": "~6.3.0",
 
-        "composer/composer": "^1.9 || ^2.0"
+        "composer/composer": "^1.10.22 || ^2.0.13"
     },
     "require-dev": {
-        "vimeo/psalm": "~4.1.1"
+        "vimeo/psalm": "~4.9.3",
+        "mikey179/vfsstream": "^1.6.1",
+        "phpunit/phpunit": "~8.5"
+    },
+    "replace": {
+        "symfony/polyfill-php70": "*",
+        "symfony/polyfill-php71": "*"
     },
     "suggest": {
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",

@@ -43,16 +43,31 @@ class PersistenceTest extends FunctionalTestCase
     protected $extendedTypesEntityRepository;
 
     /**
+     * @var EntityManagerInterface
+     */
+    protected $earlyEntityManager;
+
+    /**
      * @return void
      */
     protected function setUp(): void
     {
+        $this->earlyEntityManager = self::$bootstrap->getObjectManager()->get(EntityManagerInterface::class);
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
         $this->testEntityRepository = new Fixtures\TestEntityRepository();
         $this->extendedTypesEntityRepository = new Fixtures\ExtendedTypesEntityRepository();
+    }
+
+    /**
+     * @test
+     */
+    public function entityManagerIsSingletonInstanceInPersistenceManager()
+    {
+        $this->earlyEntityManager->persist(new Fixtures\TestEntity());
+        self::assertTrue($this->persistenceManager->hasUnpersistedChanges());
     }
 
     /**
@@ -169,6 +184,11 @@ class PersistenceTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $serializedData = serialize($testEntityWithArrayProperty);
+        // the original object should never change by serialization its "public" properties
+        $this->assertEquals(
+            $testEntityWithArrayProperty->getArrayProperty()['some']['nestedArray']['key'],
+            $testEntityLyingInsideTheArray
+        );
 
         $testEntityLyingInsideTheArray->setName('Neos');
         $this->persistenceManager->persistAll();

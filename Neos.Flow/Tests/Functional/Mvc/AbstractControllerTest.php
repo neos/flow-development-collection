@@ -75,4 +75,13 @@ class AbstractControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/abstractcontrollertesta/forward?actionName=fourth&passSomeObjectArguments=1&arguments[nonObject1]=First&arguments[nonObject2]=42');
         self::assertEquals('fourthAction-First-42-Neos\Error\Messages\Message', $response->getBody()->getContents());
     }
+
+    /**
+     * @test
+     */
+    public function responseContainsNegotiatedContentType()
+    {
+        $response = $this->browser->request('http://localhost/test/mvc/abstractcontrollertesta/second');
+        self::assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
+    }
 }
