@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Http\Helper;
 
 /*
@@ -11,12 +13,12 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Response;
-use function GuzzleHttp\Psr7\parse_response;
-use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Http\CacheControlDirectives;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use function GuzzleHttp\Psr7\parse_response;
+use function GuzzleHttp\Psr7\stream_for;
 
 /**
  * Helper to extract various information from PSR-7 responses.
@@ -111,7 +113,7 @@ abstract class ResponseInformationHelper
             599 => 'Network Connect Timeout Error',
         ];
 
-        return isset($statusMessages[$statusCode]) ? $statusMessages[$statusCode] : 'Unknown Status';
+        return $statusMessages[$statusCode] ?? 'Unknown Status';
     }
 
     /**
@@ -162,7 +164,7 @@ abstract class ResponseInformationHelper
      * It is recommended to call this method before the response is sent and Flow
      * does so by default in its built-in HTTP request handler.
      *
-     * @param ResponseInterface $response
+     * @param ResponseInterface|MessageInterface $response
      * @param RequestInterface $request The corresponding request
      * @return ResponseInterface
      * @api
@@ -204,7 +206,7 @@ abstract class ResponseInformationHelper
         }
 
         if (in_array($response->getStatusCode(), [100, 101, 204, 304])) {
-            $response = $response->withBody(stream_for(''));
+            $response = $response->withBody(stream_for());
         }
 
         if ($response->hasHeader('Cache-Control')) {
@@ -226,7 +228,7 @@ abstract class ResponseInformationHelper
         }
 
         if ($request->getMethod() === 'HEAD') {
-            $response = $response->withBody(stream_for(''));
+            $response = $response->withBody(stream_for());
         }
 
         if ($response->hasHeader('Transfer-Encoding')) {

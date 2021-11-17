@@ -59,7 +59,7 @@ class Headers implements \Iterator
     public static function createFromServer(array $server)
     {
         $headerFields = [];
-        if (isset($server['PHP_AUTH_USER']) && isset($server['PHP_AUTH_PW'])) {
+        if (isset($server['PHP_AUTH_USER'], $server['PHP_AUTH_PW'])) {
             $headerFields['Authorization'] = 'Basic ' . base64_encode($server['PHP_AUTH_USER'] . ':' . $server['PHP_AUTH_PW']);
         }
 
@@ -67,7 +67,7 @@ class Headers implements \Iterator
             if (strpos($name, 'HTTP_') === 0) {
                 $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
                 $headerFields[$name] = $value;
-            } elseif ($name == 'REDIRECT_REMOTE_AUTHORIZATION' && !isset($headerFields['Authorization'])) {
+            } elseif ($name === 'REDIRECT_REMOTE_AUTHORIZATION' && !isset($headerFields['Authorization'])) {
                 $headerFields['Authorization'] = $value;
             } elseif (in_array($name, ['CONTENT_TYPE', 'CONTENT_LENGTH'])) {
                 $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $name))));
@@ -151,11 +151,8 @@ class Headers implements \Iterator
 
             return $cookies;
         }
-        if (!isset($this->fields[$name])) {
-            return [];
-        }
 
-        return $this->fields[$name];
+        return $this->fields[$name] ?? [];
     }
 
     /**
@@ -375,7 +372,7 @@ class Headers implements \Iterator
             if (strpos($cookiePair, '=') === false) {
                 continue;
             }
-            list($name, $value) = explode('=', $cookiePair, 2);
+            [$name, $value] = explode('=', $cookiePair, 2);
             $trimmedName = trim($name);
 
             if ($trimmedName !== '' && preg_match(Cookie::PATTERN_TOKEN, $trimmedName) === 1) {
@@ -393,10 +390,10 @@ class Headers implements \Iterator
     {
         $preparedValues = [];
         foreach ($this->getAll() as $name => $values) {
-            $preparedValues = array_merge($preparedValues, $this->prepareValues($name, $values));
+            $preparedValues[] = $this->prepareValues($name, $values);
         }
 
-        return $preparedValues;
+        return array_merge([], ...$preparedValues);
     }
 
     /**
