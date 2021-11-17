@@ -33,17 +33,9 @@ class Headers implements \Iterator
     protected $cookies = [];
 
     /**
-     * @var array
+     * @var CacheControlDirectives
      */
-    protected $cacheDirectives = [
-        'visibility' => '',
-        'max-age' => '',
-        's-maxage' => '',
-        'must-revalidate' => '',
-        'proxy-revalidate' => '',
-        'no-store' => '',
-        'no-transform' => ''
-    ];
+    protected $cacheControlDirectives;
 
     /**
      * Constructs a new Headers object.
@@ -52,6 +44,7 @@ class Headers implements \Iterator
      */
     public function __construct(array $fields = [])
     {
+        $this->cacheControlDirectives = CacheControlDirectives::fromRawHeader('');
         foreach ($fields as $name => $values) {
             $this->set($name, $values);
         }
@@ -121,7 +114,7 @@ class Headers implements \Iterator
                 $this->fields = ['Host' => $values] + $this->fields;
             break;
             case 'Cache-Control':
-                $this->setCacheControlDirectivesFromRawHeader(implode(', ', $values));
+                $this->cacheControlDirectives = CacheControlDirectives::fromRawHeader(implode(', ', $values));
             break;
             case 'Cookie':
                 if (count($values) !== 1) {
@@ -147,7 +140,7 @@ class Headers implements \Iterator
     public function getRaw(string $name): array
     {
         if (strtolower($name) === 'cache-control') {
-            return $this->getCacheControlDirectives();
+            return $this->cacheControlDirectives->getDirectives();
         }
 
         if (strtolower($name) === 'set-cookie') {
@@ -177,7 +170,7 @@ class Headers implements \Iterator
     public function get($name)
     {
         if (strtolower($name) === 'cache-control') {
-            return $this->getCacheControlHeader();
+            return $this->cacheControlDirectives->getCacheControlHeaderValue();
         }
 
         if (strtolower($name) === 'set-cookie') {
@@ -216,9 +209,9 @@ class Headers implements \Iterator
     public function getAll()
     {
         $fields = $this->fields;
-        $cacheControlHeader = $this->getCacheControlHeader();
-        $fields['Cache-Control'] = [$cacheControlHeader];
-        if (empty($cacheControlHeader)) {
+        $cacheControlHeaderValue = $this->cacheControlDirectives->getCacheControlHeaderValue();
+        $fields['Cache-Control'] = [$cacheControlHeaderValue];
+        if (empty($cacheControlHeaderValue)) {
             unset($fields['Cache-Control']);
         }
         return $fields;
@@ -234,7 +227,7 @@ class Headers implements \Iterator
     public function has($name)
     {
         if ($name === 'Cache-Control') {
-            return ($this->getCacheControlHeader() !== null);
+            return ($this->cacheControlDirectives->getCacheControlHeaderValue() !== null);
         }
         return isset($this->fields[$name]);
     }
@@ -332,31 +325,13 @@ class Headers implements \Iterator
      * RFC 2616 / 14.9
      *
      * @param string $name Name of the directive, for example "max-age"
-     * @param string $value An optional value
+     * @param mixed $value An optional value
      * @return void
      * @api
      */
     public function setCacheControlDirective($name, $value = null)
     {
-        switch ($name) {
-            case 'public':
-                $this->cacheDirectives['visibility'] = 'public';
-            break;
-            case 'private':
-            case 'no-cache':
-                $this->cacheDirectives['visibility'] = $name . (!empty($value) ? '="' . $value . '"' : '');
-            break;
-            case 'no-store':
-            case 'no-transform':
-            case 'must-revalidate':
-            case 'proxy-revalidate':
-                $this->cacheDirectives[$name] = $name;
-            break;
-            case 'max-age':
-            case 's-maxage':
-                $this->cacheDirectives[$name] = $name . '=' . $value;
-            break;
-        }
+        $this->cacheControlDirectives->setDirective($name, $value);
     }
 
     /**
@@ -367,21 +342,7 @@ class Headers implements \Iterator
      */
     public function removeCacheControlDirective($name)
     {
-        switch ($name) {
-            case 'public':
-            case 'private':
-            case 'no-cache':
-                $this->cacheDirectives['visibility'] = '';
-            break;
-            case 'no-store':
-            case 'max-age':
-            case 's-maxage':
-            case 'no-transform':
-            case 'must-revalidate':
-            case 'proxy-revalidate':
-                $this->cacheDirectives[$name] = '';
-            break;
-        }
+        $this->cacheControlDirectives->removeDirective($name);
     }
 
     /**
@@ -397,90 +358,7 @@ class Headers implements \Iterator
      */
     public function getCacheControlDirective($name)
     {
-        $value = null;
-
-        switch ($name) {
-            case 'public':
-                $value = ($this->cacheDirectives['visibility'] === 'public' ? true : null);
-            break;
-            case 'private':
-            case 'no-cache':
-                preg_match('/^(' . $name . ')(?:="([^"]+)")?$/', $this->cacheDirectives['visibility'], $matches);
-                if (!isset($matches[1])) {
-                    $value = null;
-                } else {
-                    $value = (isset($matches[2]) ? $matches[2] : true);
-                }
-            break;
-            case 'no-store':
-            case 'no-transform':
-            case 'must-revalidate':
-            case 'proxy-revalidate':
-                $value = ($this->cacheDirectives[$name] !== '' ? true : null);
-            break;
-            case 'max-age':
-            case 's-maxage':
-                preg_match('/^(' . $name . ')=(.+)$/', $this->cacheDirectives[$name], $matches);
-                if (!isset($matches[1])) {
-                    $value = null;
-                } else {
-                    $value = (isset($matches[2]) ? intval($matches[2]) : true);
-                }
-            break;
-        }
-
-        return $value;
-    }
-
-    /**
-     * Internally sets the cache directives correctly by parsing the given
-     * Cache-Control field value.
-     *
-     * @param string $rawFieldValue The value of a specification compliant Cache-Control header
-     * @return void
-     * @see set()
-     */
-    protected function setCacheControlDirectivesFromRawHeader($rawFieldValue)
-    {
-        foreach (array_keys($this->cacheDirectives) as $key) {
-            $this->cacheDirectives[$key] = '';
-        }
-        preg_match_all('/([a-zA-Z][a-zA-Z_-]*)\s*(?:=\s*(?:"([^"]*)"|([^,;\s"]*)))?/', $rawFieldValue, $matches, PREG_SET_ORDER);
-        foreach ($matches as $match) {
-            if (isset($match[2]) && $match[2] !== '') {
-                $value = $match[2];
-            } elseif (isset($match[3]) && $match[3] !== '') {
-                $value = $match[3];
-            } else {
-                $value = null;
-            }
-            $this->setCacheControlDirective(strtolower($match[1]), $value);
-        }
-    }
-
-    /**
-     * @return array
-     */
-    private function getCacheControlDirectives(): array
-    {
-        return array_values(array_filter($this->cacheDirectives));
-    }
-
-    /**
-     * Renders and returns a Cache-Control header, based on the previously set
-     * cache control directives.
-     *
-     * @return string Either the value of the header or NULL if it shall be omitted
-     * @see get()
-     */
-    protected function getCacheControlHeader()
-    {
-        $cacheControl = '';
-        foreach ($this->cacheDirectives as $cacheDirective) {
-            $cacheControl .= ($cacheDirective !== '' ? $cacheDirective . ', ' : '');
-        }
-        $cacheControl = trim($cacheControl, ' ,');
-        return ($cacheControl === '' ? null : $cacheControl);
+        return $this->cacheControlDirectives->getDirective($name);
     }
 
     /**

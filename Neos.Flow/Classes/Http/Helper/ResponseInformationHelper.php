@@ -14,6 +14,7 @@ namespace Neos\Flow\Http\Helper;
 use GuzzleHttp\Psr7\Response;
 use function GuzzleHttp\Psr7\parse_response;
 use function GuzzleHttp\Psr7\stream_for;
+use Neos\Flow\Http\CacheControlDirectives;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -198,12 +199,18 @@ abstract class ResponseInformationHelper
             $response = $response->withBody(stream_for(''));
         }
 
+        if ($response->hasHeader('Cache-Control')) {
         $cacheControlHeaderValue = $response->getHeaderLine('Cache-Control');
-        if (($cacheControlHeaderValue !== '' && strpos('no-cache', $cacheControlHeaderValue) !== false)
-            || $response->hasHeader('Expires')) {
-            $cacheControlHeaderValue = str_replace('max-age', '', $cacheControlHeaderValue);
-            $cacheControlHeaderValue = trim($cacheControlHeaderValue, ' ,');
+            $cacheControlDirectives = CacheControlDirectives::fromRawHeader($cacheControlHeaderValue);
+            if ($cacheControlDirectives->getDirective('no-cache') !== null || $response->hasHeader('Expires')) {
+                $cacheControlDirectives->removeDirective('max-age');
+            }
+            $cacheControlHeaderValue = $cacheControlDirectives->getCacheControlHeaderValue();
+            if ($cacheControlHeaderValue === null) {
+                $response = $response->withoutHeader('Cache-Control');
+            } else {
             $response = $response->withHeader('Cache-Control', $cacheControlHeaderValue);
+        }
         }
 
         if (!$response->hasHeader('Content-Length')) {
