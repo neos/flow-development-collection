@@ -14,7 +14,6 @@ namespace Neos\Flow\Http\Helper;
  */
 
 use Neos\Flow\Http\CacheControlDirectives;
-use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use function GuzzleHttp\Psr7\parse_response;
@@ -164,7 +163,7 @@ abstract class ResponseInformationHelper
      * It is recommended to call this method before the response is sent and Flow
      * does so by default in its built-in HTTP request handler.
      *
-     * @param ResponseInterface|MessageInterface $response
+     * @param ResponseInterface $response
      * @param RequestInterface $request The corresponding request
      * @return ResponseInterface
      * @api
