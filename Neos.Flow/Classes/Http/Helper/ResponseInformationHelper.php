@@ -30,8 +30,8 @@ abstract class ResponseInformationHelper
      *
      * @param string $rawResponse
      *
-     * @throws \InvalidArgumentException
      * @return ResponseInterface
+     * @throws \InvalidArgumentException
      */
     public static function createFromRaw(string $rawResponse): ResponseInterface
     {
@@ -174,23 +174,23 @@ abstract class ResponseInformationHelper
         $statusCode = $response->getStatusCode();
         if ($statusCode === 200 && in_array($request->getMethod(), ['HEAD', 'GET'])) {
             if ($request->hasHeader('If-None-Match') && $response->hasHeader('ETag')) {
-            $ifNoneMatchHeaders = $request->getHeader('If-None-Match');
-            $eTagHeader = $response->getHeader('ETag')[0];
-            foreach ($ifNoneMatchHeaders as $ifNoneMatchHeader) {
+                $ifNoneMatchHeaders = $request->getHeader('If-None-Match');
+                $eTagHeader = $response->getHeader('ETag')[0];
+                foreach ($ifNoneMatchHeaders as $ifNoneMatchHeader) {
                     if (ltrim($ifNoneMatchHeader, 'W/') === ltrim($eTagHeader, 'W/')) {
-                    $response = $response
+                        $response = $response
                             ->withStatus(304);
-                    break;
+                        break;
+                    }
                 }
-            }
             } elseif ($response->hasHeader('Last-Modified')) {
                 if ($request->hasHeader('If-Modified-Since')) {
                     $ifModifiedSince = $request->getHeaderLine('If-Modified-Since');
-            $ifModifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifModifiedSince);
+                    $ifModifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifModifiedSince);
                     $lastModified = $response->getHeaderLine('Last-Modified');
-            $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
-            if ($lastModifiedDate <= $ifModifiedSinceDate) {
-                $response = $response
+                    $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
+                    if ($lastModifiedDate <= $ifModifiedSinceDate) {
+                        $response = $response
                             ->withStatus(304);
                     }
                 } elseif ($request->hasHeader('If-Unmodified-Since')) {
@@ -210,7 +210,7 @@ abstract class ResponseInformationHelper
         }
 
         if ($response->hasHeader('Cache-Control')) {
-        $cacheControlHeaderValue = $response->getHeaderLine('Cache-Control');
+            $cacheControlHeaderValue = $response->getHeaderLine('Cache-Control');
             $cacheControlDirectives = CacheControlDirectives::fromRawHeader($cacheControlHeaderValue);
             if ($cacheControlDirectives->getDirective('no-cache') !== null || $response->hasHeader('Expires')) {
                 $cacheControlDirectives->removeDirective('max-age');
@@ -219,8 +219,8 @@ abstract class ResponseInformationHelper
             if ($cacheControlHeaderValue === null) {
                 $response = $response->withoutHeader('Cache-Control');
             } else {
-            $response = $response->withHeader('Cache-Control', $cacheControlHeaderValue);
-        }
+                $response = $response->withHeader('Cache-Control', $cacheControlHeaderValue);
+            }
         }
 
         if (!$response->hasHeader('Content-Length')) {
