@@ -170,28 +170,36 @@ abstract class ResponseInformationHelper
     public static function makeStandardsCompliant(ResponseInterface $response, RequestInterface $request): ResponseInterface
     {
         $statusCode = $response->getStatusCode();
-        if ($request->hasHeader('If-None-Match') && in_array($request->getMethod(), ['HEAD', 'GET'])
-            && $response->hasHeader('ETag') && $statusCode === 200) {
+        if ($statusCode === 200 && in_array($request->getMethod(), ['HEAD', 'GET'])) {
+            if ($request->hasHeader('If-None-Match') && $response->hasHeader('ETag')) {
             $ifNoneMatchHeaders = $request->getHeader('If-None-Match');
             $eTagHeader = $response->getHeader('ETag')[0];
             foreach ($ifNoneMatchHeaders as $ifNoneMatchHeader) {
-                if (ltrim($ifNoneMatchHeader, 'W/') == ltrim($eTagHeader, 'W/')) {
+                    if (ltrim($ifNoneMatchHeader, 'W/') === ltrim($eTagHeader, 'W/')) {
                     $response = $response
-                        ->withStatus(304)
-                        ->withBody(stream_for(''));
+                            ->withStatus(304);
                     break;
                 }
             }
-        } elseif ($request->hasHeader('If-Modified-Since') && in_array($request->getMethod(), ['HEAD', 'GET'])
-            && $response->hasHeader('Last-Modified') && $statusCode === 200) {
-            $ifModifiedSince = $request->getHeader('If-Modified-Since')[0];
+            } elseif ($response->hasHeader('Last-Modified')) {
+                if ($request->hasHeader('If-Modified-Since')) {
+                    $ifModifiedSince = $request->getHeaderLine('If-Modified-Since');
             $ifModifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifModifiedSince);
-            $lastModified = $response->getHeader('Last-Modified')[0];
+                    $lastModified = $response->getHeaderLine('Last-Modified');
             $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
             if ($lastModifiedDate <= $ifModifiedSinceDate) {
                 $response = $response
-                    ->withStatus(304)
-                    ->withBody(stream_for(''));
+                            ->withStatus(304);
+                    }
+                } elseif ($request->hasHeader('If-Unmodified-Since')) {
+                    $ifUnmodifiedSince = $request->getHeaderLine('If-Unmodified-Since');
+                    $ifUnmodifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifUnmodifiedSince);
+                    $lastModified = $response->getHeaderLine('Last-Modified');
+                    $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
+                    if ($lastModifiedDate > $ifUnmodifiedSinceDate) {
+                        $response = $response->withStatus(412);
+                    }
+                }
             }
         }
 
