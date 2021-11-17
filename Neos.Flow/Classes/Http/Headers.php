@@ -167,7 +167,7 @@ class Headers implements \Iterator
     public function get($name)
     {
         if (strtolower($name) === 'cache-control') {
-            return $this->cacheControlDirectives->getCacheControlHeaderValue();
+            return $this->cacheControlDirectives->getCacheControlHeaderValue() ?? '';
         }
 
         if (strtolower($name) === 'set-cookie') {
