@@ -9,40 +9,56 @@ class ClassWithAnnotatedMethod
     /**
      * @skipcsrfprotection
      */
-    public function methodWithTag() {}
+    public function methodWithTag()
+    {
+    }
 
     /**
      * @skipcsrfprotection with some comment
      */
-    public function methodWithTagAndComment() {}
+    public function methodWithTagAndComment()
+    {
+    }
 
     /**
      * @Flow\SkipCsrfProtection
      */
-    public function methodWithAnnotation() {}
+    public function methodWithAnnotation()
+    {
+    }
 
     /**
      * @Flow\SkipCsrfProtection Some comment
      */
-    public function methodWithAnnotationAndComment() {}
+    public function methodWithAnnotationAndComment()
+    {
+    }
 
     /**
      * @Flow\Validate("foo")
      */
-    public function methodWithAnnotationArgument(string $foo) {}
+    public function methodWithAnnotationArgument(string $foo)
+    {
+    }
 
     /**
      * @Flow\Validate("foo") Some comment
      */
-    public function methodWithAnnotationArgumentAndComment(string $foo) {}
+    public function methodWithAnnotationArgumentAndComment(string $foo)
+    {
+    }
 
     /**
      * @Flow\IgnoreValidation(argumentName="foo", evaluate=true)
      */
-    public function methodWithMultipleAnnotationArguments(string $foo) {}
+    public function methodWithMultipleAnnotationArguments(string $foo)
+    {
+    }
 
     /**
      * @Flow\IgnoreValidation(argumentName="foo", evaluate=true) Some comment
      */
-    public function methodWithMultipleAnnotationArgumentsAndComment(string $foo) {}
+    public function methodWithMultipleAnnotationArgumentsAndComment(string $foo)
+    {
+    }
 }
