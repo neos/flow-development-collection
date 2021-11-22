@@ -28,7 +28,7 @@ final class IgnoreValidation
 {
     /**
      * Name of the argument to skip validation for. (Can be given as anonymous argument.)
-     * @var string
+     * @var string|null
      */
     public $argumentName;
 
@@ -38,9 +38,9 @@ final class IgnoreValidation
      */
     public $evaluate = false;
 
-    public function __construct(string $argumentName, bool $evaluate = false)
+    public function __construct(string $argumentName = null, bool $evaluate = false)
     {
-        $this->argumentName = ltrim($argumentName, '$');
+        $this->argumentName = $argumentName ? ltrim($argumentName, '$') : null;
         $this->evaluate = $evaluate;
     }
 }

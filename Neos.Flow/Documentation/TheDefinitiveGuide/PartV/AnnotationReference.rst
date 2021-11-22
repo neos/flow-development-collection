@@ -235,7 +235,7 @@ processing, the "evaluate" option can be set to true (while still ignoring any v
 Arguments
 *********
 
-* ``argumentName`` (string): Name of the argument to skip validation for. (Can be given as anonymous argument.)
+* ``argumentName`` (string|null): Name of the argument to skip validation for. (Can be given as anonymous argument.)
 
 * ``evaluate`` (boolean): Whether to evaluate the validation results of the argument
 
