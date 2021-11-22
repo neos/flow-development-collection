@@ -546,6 +546,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      */
     protected function createIdentifierForFile($pathAndFilename, $prefix)
     {
+        $pathAndFilename = (string)$pathAndFilename;
         $templateModifiedTimestamp = 0;
         $isStandardInput = $pathAndFilename === 'php://stdin';
         $isFile = is_file($pathAndFilename);
