@@ -49,8 +49,14 @@ class MethodReflectionTest extends UnitTestCase
     public function classAndMethodWithAnnotations()
     {
         return [
-            [ClassWithAnnotatedMethod::class, 'methodWithComment'],
-            [ClassWithAnnotatedMethod::class, 'methodWithoutComment']
+            [ClassWithAnnotatedMethod::class, 'methodWithTag', ['skipcsrfprotection' => []]],
+            [ClassWithAnnotatedMethod::class, 'methodWithTagAndComment', ['skipcsrfprotection' => ['Some comment']]],
+            [ClassWithAnnotatedMethod::class, 'methodWithAnnotation', ['flow\skipcsrfprotection' => []]],
+            [ClassWithAnnotatedMethod::class, 'methodWithAnnotationAndComment', ['flow\skipcsrfprotection' => ['Some comment']]],
+            [ClassWithAnnotatedMethod::class, 'methodWithAnnotationArgument', ['flow\validate' => ['"foo"']]],
+            [ClassWithAnnotatedMethod::class, 'methodWithAnnotationArgumentAndComment', ['flow\validate' => ['"foo"']]],
+            [ClassWithAnnotatedMethod::class, 'methodWithMultipleAnnotationArguments', ['flow\ignorevalidation' => ['argumentName="foo", evaluate=true']]],
+            [ClassWithAnnotatedMethod::class, 'methodWithMultipleAnnotationArgumentsAndComment', ['flow\ignorevalidation' => ['argumentName="foo", evaluate=true']]],
         ];
     }
 
@@ -58,9 +64,9 @@ class MethodReflectionTest extends UnitTestCase
      * @test
      * @dataProvider classAndMethodWithAnnotations
      */
-    public function commentsAfterAnnotationShouldBeIgnored($class, $method)
+    public function commentsAfterAnnotationShouldBeIgnored($class, $method, $expected)
     {
         $method = new Reflection\MethodReflection($class, $method);
-        self::assertTrue($method->isTaggedWith('skipcsrfprotection'));
+        self::assertEquals($method->getTagValues());
     }
 }
