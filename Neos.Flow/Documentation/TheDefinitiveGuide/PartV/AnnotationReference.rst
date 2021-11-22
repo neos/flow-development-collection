@@ -3,7 +3,7 @@
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2021-11-14
+This reference was automatically generated from code on 2021-11-22
 
 
 .. _`Flow Annotation Reference: After`:
@@ -235,7 +235,7 @@ processing, the "evaluate" option can be set to true (while still ignoring any v
 Arguments
 *********
 
-* ``argumentName`` (string): Name of the argument to skip validation for. (Can be given as anonymous argument.)
+* ``argumentName`` (string|null): Name of the argument to skip validation for. (Can be given as anonymous argument.)
 
 * ``evaluate`` (boolean): Whether to evaluate the validation results of the argument
 
