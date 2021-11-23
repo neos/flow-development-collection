@@ -67,6 +67,6 @@ class MethodReflectionTest extends UnitTestCase
     public function commentsAfterAnnotationShouldBeIgnored($class, $method, $expected)
     {
         $method = new Reflection\MethodReflection($class, $method);
-        self::assertEquals($method->getTagValues());
+        self::assertEquals($method->getTagsValues());
     }
 }
