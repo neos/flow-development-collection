@@ -14,7 +14,7 @@ class ClassWithAnnotatedMethod
     }
 
     /**
-     * @skipcsrfprotection with some comment
+     * @skipcsrfprotection Some comment
      */
     public function methodWithTagAndComment()
     {
