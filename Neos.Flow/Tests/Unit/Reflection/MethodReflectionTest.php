@@ -53,8 +53,8 @@ class MethodReflectionTest extends UnitTestCase
             [ClassWithAnnotatedMethod::class, 'methodWithTagAndComment', ['skipcsrfprotection' => ['Some comment']]],
             [ClassWithAnnotatedMethod::class, 'methodWithAnnotation', ['flow\skipcsrfprotection' => []]],
             [ClassWithAnnotatedMethod::class, 'methodWithAnnotationAndComment', ['flow\skipcsrfprotection' => ['Some comment']]],
-            [ClassWithAnnotatedMethod::class, 'methodWithAnnotationArgument', ['flow\validate' => ['"foo"']]],
-            [ClassWithAnnotatedMethod::class, 'methodWithAnnotationArgumentAndComment', ['flow\validate' => ['"foo"']]],
+            [ClassWithAnnotatedMethod::class, 'methodWithAnnotationArgument', ['flow\validate' => ['foo']]],
+            [ClassWithAnnotatedMethod::class, 'methodWithAnnotationArgumentAndComment', ['flow\validate' => ['foo']]],
             [ClassWithAnnotatedMethod::class, 'methodWithMultipleAnnotationArguments', ['flow\ignorevalidation' => ['argumentName="foo", evaluate=true']]],
             [ClassWithAnnotatedMethod::class, 'methodWithMultipleAnnotationArgumentsAndComment', ['flow\ignorevalidation' => ['argumentName="foo", evaluate=true']]],
         ];
