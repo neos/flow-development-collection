@@ -116,6 +116,19 @@ class FlowQueryTest extends UnitTestCase
         self::assertSame([], $query->filter('[arrayProperty *= fo]')->get());
 
 
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *=~ bAr]'));
+        self::assertSame([$myObject], $query->filter('[arrayProperty *=~ bAr]')->get());
+
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *=~ fOo]'));
+        self::assertSame([$myObject, $myObject2], $query->filter('[arrayProperty *=~ fOo]')->get());
+
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *=~ dIng]'));
+        self::assertSame([], $query->filter('[arrayProperty *=~ dIng]')->get());
+
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty *=~ fO]'));
+        self::assertSame([], $query->filter('[arrayProperty *=~ fO]')->get());
+
+
         self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^= zing]'));
         self::assertSame([$myObject3], $query->filter('[arrayProperty ^= zing]')->get());
 
@@ -132,6 +145,22 @@ class FlowQueryTest extends UnitTestCase
         self::assertSame([], $query->filter('[arrayProperty ^= bar]')->get());
 
 
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^=~ zIng]'));
+        self::assertSame([$myObject3], $query->filter('[arrayProperty ^=~ zIng]')->get());
+
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^=~ fOo]'));
+        self::assertSame([$myObject, $myObject2], $query->filter('[arrayProperty ^=~ fOo]')->get());
+
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^=~ dIng]'));
+        self::assertSame([], $query->filter('[arrayProperty ^=~ dIng]')->get());
+
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^=~ zI]'));
+        self::assertSame([], $query->filter('[arrayProperty ^=~ zI]')->get());
+
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty ^=~ bAr]'));
+        self::assertSame([], $query->filter('[arrayProperty ^=~ bAr]')->get());
+
+
         self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= baz]'));
         self::assertSame([$myObject], $query->filter('[arrayProperty $= baz]')->get());
 
@@ -146,6 +175,22 @@ class FlowQueryTest extends UnitTestCase
 
         self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $= bar]'));
         self::assertSame([], $query->filter('[arrayProperty $= bar]')->get());
+
+
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $=~ bAz]'));
+        self::assertSame([$myObject], $query->filter('[arrayProperty $=~ bAz]')->get());
+
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $=~ zOng]'));
+        self::assertSame([$myObject2, $myObject3], $query->filter('[arrayProperty $=~ zOng]')->get());
+
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $=~ dIng]'));
+        self::assertSame([], $query->filter('[arrayProperty $=~ dIng]')->get());
+
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $=~ aZ]'));
+        self::assertSame([], $query->filter('[arrayProperty $=~ aZ]')->get());
+
+        self::assertInstanceOf(FlowQuery::class, $query->filter('[arrayProperty $=~ bAr]'));
+        self::assertSame([], $query->filter('[arrayProperty $=~ bAr]')->get());
     }
 
     /**

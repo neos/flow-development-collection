@@ -293,7 +293,7 @@ aspect.
 	advice, introduction or pointcut has been defined.
 
 .. Note::
-	With Flow 4.0+ classes that are marked ``final`` can now be targeted by AOP advices
+	With Flow classes that are marked ``final`` can be targeted by AOP advices
 	by default.
 	This can be explicitly disabled with a ``@Flow\Proxy(false)`` annotation on the
 	class in question.
@@ -952,37 +952,36 @@ The following example introduces a new interface ``NewInterface`` to the class
 
 *Example: Interface introduction*::
 
-	namespace Example\MyPackage;
-	use Neos\Flow\AOP\JoinPointInterface;
+    namespace Example\MyPackage;
+    use Neos\Flow\AOP\JoinPointInterface;
 
-	/**
-	 * An aspect for demonstrating introductions
-	 *
-	 * Introduces Example\MyPackage\NewInterface to the class Example\MyPackage\OldClass:
-	 *
-	 * @Flow\Introduce("class(Example\MyPackage\OldClass)", interfaceName="Example\MyPackage\NewInterface")
-	 * @Flow\Aspect
-	 */
-	class IntroductionAspect
-	{
+    /**
+     * An aspect for demonstrating introductions
+     *
+     * Introduces Example\MyPackage\NewInterface to the class Example\MyPackage\OldClass:
+     *
+     * @Flow\Introduce("class(Example\MyPackage\OldClass)", interfaceName="Example\MyPackage\NewInterface")
+     * @Flow\Aspect
+     */
+    class IntroductionAspect
+    {
+        /**
+         * Around advice, implements the new method "newMethod" of the
+         * "NewInterface" interface
+         *
+         * @Flow\Around("method(Example\MyPackage\OldClass->newMethod())")
+         */
+        public function newMethodImplementation(JoinPointInterface $joinPoint): int
+        {
+                // We call the advice chain, in case any other advice is declared for
+                // this method, but we don't care about the result.
+            $someResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
-		/**
-		 * Around advice, implements the new method "newMethod" of the
-		 * "NewInterface" interface
-		 *
-		 * @Flow\Around("method(Example\MyPackage\OldClass->newMethod())")
-		 */
-		public function newMethodImplementation(JoinPointInterface $joinPoint): int
-		{
-				// We call the advice chain, in case any other advice is declared for
-				// this method, but we don't care about the result.
-			$someResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
-
-			$a = $joinPoint->getMethodArgument('a');
-			$b = $joinPoint->getMethodArgument('b');
-			return $a + $b;
-		}
-	}
+            $a = $joinPoint->getMethodArgument('a');
+            $b = $joinPoint->getMethodArgument('b');
+            return $a + $b;
+        }
+    }
 
 Trait introduction
 -------------------
@@ -999,19 +998,21 @@ The following example introduces a trait ``SomeTrait`` to the class ``MyClass``.
 
 *Example: Trait introduction*::
 
-	namespace Example\MyPackage;
+    namespace Example\MyPackage;
 
-	/**
-	 * An aspect for demonstrating trait introduction
-	 *
-	 * Introduces Example\MyPackage\SomeTrait to the class Example\MyPackage\MyClass:
-	 *
-	 * @Flow\Introduce("class(Example\MyPackage\MyClass)", traitName="Example\MyPackage\SomeTrait")
-	 * @Flow\Aspect
-	 */
-	class TraitIntroductionAspect
-	{
-	}
+    use Neos\Flow\Annotations as Flow;
+
+    /**
+     * An aspect for demonstrating trait introduction
+     *
+     * Introduces Example\MyPackage\SomeTrait to the class Example\MyPackage\MyClass:
+     *
+     * @Flow\Introduce("class(Example\MyPackage\MyClass)", traitName="Example\MyPackage\SomeTrait")
+     * @Flow\Aspect
+     */
+    class TraitIntroductionAspect
+    {
+    }
 
 Property introduction
 -----------------------
@@ -1020,11 +1021,11 @@ The declaration of a property introduction anchors to a property inside an aspec
 
 Form of the declaration::
 
-	/**
-	 * @var type
-	 * @Flow\Introduce("PointcutExpression")
-	 */
-	protected $propertyName;
+    /**
+     * @var type
+     * @Flow\Introduce("PointcutExpression")
+     */
+    protected $propertyName;
 
 The declared property will be added to the target classes matched by the pointcut.
 
@@ -1033,23 +1034,30 @@ The following example introduces a new property "subtitle" to the class
 
 *Example: Property introduction*::
 
-	namespace Example\MyPackage;
+    namespace Example\MyPackage;
 
-	/**
-	 * An aspect for demonstrating property introductions
-	 *
-	 * @Flow\Aspect
-	 */
-	class PropertyIntroductionAspect {
+    use Neos\Flow\Annotations as Flow;
 
-		/**
-		 * @var string
-		 * @Column(length=40)
-		 * @Flow\Introduce("class(Example\Blog\Domain\Model\Post)")
-		 */
-		protected $subtitle;
+    /**
+     * An aspect for demonstrating property introductions
+     *
+     * @Flow\Aspect
+     */
+    class PropertyIntroductionAspect
+    {
 
-	}
+        /**
+         * @var string
+         * @Doctrine\ORM\Mapping\Column(length=40)
+         * @Flow\Introduce("class(Example\Blog\Domain\Model\Post)")
+         */
+        protected $subtitle;
+    }
+
+.. note::
+    Any annotation on the introduced property (except the actual ``Introduce``)
+    **must use the fully qualified class name** for Flow to build working proxy
+    class code.
 
 Implementation details
 ======================

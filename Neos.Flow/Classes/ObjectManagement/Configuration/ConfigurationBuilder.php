@@ -186,10 +186,12 @@ class ConfigurationBuilder
     protected function enhanceRawConfigurationWithAnnotationOptions($className, array $rawObjectConfiguration)
     {
         if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Scope::class)) {
-            $rawObjectConfiguration['scope'] = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class)->value;
+            $annotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
+            $rawObjectConfiguration['scope'] = $annotation->value ?? null;
         }
         if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Autowiring::class)) {
-            $rawObjectConfiguration['autowiring'] = $this->reflectionService->getClassAnnotation($className, Flow\Autowiring::class)->enabled;
+            $annotation = $this->reflectionService->getClassAnnotation($className, Flow\Autowiring::class);
+            $rawObjectConfiguration['autowiring'] = $annotation->enabled ?? null;
         }
         return $rawObjectConfiguration;
     }
@@ -507,7 +509,11 @@ class ConfigurationBuilder
                 continue;
             }
 
-            $classMethodNames = get_class_methods($className);
+            try {
+                $classMethodNames = get_class_methods($className);
+            } catch (\TypeError $error) {
+                throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371372);
+            }
             if (!is_array($classMethodNames)) {
                 if (!class_exists($className)) {
                     throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371371);

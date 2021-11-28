@@ -17,6 +17,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\StandardController;
+use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Psr\Http\Message\ServerRequestFactoryInterface;
@@ -429,7 +430,6 @@ class ActionControllerTest extends FunctionalTestCase
             'required date string'              => ['requiredDate', '1980-12-13T14:22:12+02:00', '1980-12-13'],
             'required date - missing value'     => ['requiredDate', null, $requiredArgumentExceptionText],
             'required date - mapping error'     => ['requiredDate', 'no date', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredDateAction().'],
-            'required date - empty value'       => ['requiredDate', '', 'Uncaught Exception in Flow Argument 1 passed to Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given'],
             'optional date string'              => ['optionalDate', '1980-12-13T14:22:12+02:00', '1980-12-13'],
             'optional date - default value'     => ['optionalDate', null, 'null'],
             'optional date - mapping error'     => ['optionalDate', 'no date', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalDateAction().'],
@@ -457,6 +457,25 @@ class ActionControllerTest extends FunctionalTestCase
 
         $uri = str_replace('{@action}', strtolower($action), 'http://localhost/test/mvc/actioncontrollertestb/{@action}');
         $response = $this->browser->request($uri, 'POST', $arguments);
+        self::assertTrue(strpos(trim($response->getBody()->getContents()), (string)$expectedResult) === 0, sprintf('The resulting string did not start with the expected string. Expected: "%s", Actual: "%s"', $expectedResult, $response->getBody()->getContents()));
+    }
+
+    /**
+     * @test
+     */
+    public function requiredDateNullArgumentTest()
+    {
+        $arguments = [
+            'argument' => '',
+        ];
+
+        $uri = str_replace('{@action}', 'requireddate', 'http://localhost/test/mvc/actioncontrollertestb/{@action}');
+        $response = $this->browser->request($uri, 'POST', $arguments);
+        if (PHP_MAJOR_VERSION < 8) {
+            $expectedResult = 'Uncaught Exception in Flow Argument 1 passed to Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction() must be an instance of DateTime, null given';
+        } else {
+            $expectedResult = 'Uncaught Exception in Flow Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction(): Argument #1 ($argument) must be of type DateTime, null given';
+        }
         self::assertTrue(strpos(trim($response->getBody()->getContents()), (string)$expectedResult) === 0, sprintf('The resulting string did not start with the expected string. Expected: "%s", Actual: "%s"', $expectedResult, $response->getBody()->getContents()));
     }
 
@@ -491,6 +510,41 @@ class ActionControllerTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/mappedrequestbodywithoutannotation', 'POST', [], [], [], $body);
 
         $expectedResult = 'Foo-foo@bar.org';
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
+    }
+
+    /**
+     * @test
+     */
+    public function dynamicArgumentCanBeValidatedByInternalTypeProperty()
+    {
+        $arguments = [
+            'argument' => [
+                '__type' => TestObjectArgument::class,
+                'name' => 'Foo',
+                'emailAddress' => '-invalid-'
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/dynamictype', 'POST', $arguments);
+
+        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->dynamicTypeAction().' . PHP_EOL;
+        self::assertEquals($expectedResult, $response->getBody()->getContents());
+    }
+
+    /**
+     * @test
+     */
+    public function dynamicArgumentCanBeValidatedByConfiguredType()
+    {
+        $arguments = [
+            'argument' => [
+                'name' => 'Foo',
+                'emailAddress' => '-invalid-'
+            ]
+        ];
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertestb/dynamicconfiguredtype', 'POST', $arguments);
+
+        $expectedResult = 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->dynamicConfiguredTypeAction().' . PHP_EOL;
         self::assertEquals($expectedResult, $response->getBody()->getContents());
     }
 
@@ -559,5 +613,16 @@ class ActionControllerTest extends FunctionalTestCase
 
         $expected = json_encode(['Redirect FlashMessage']);
         self::assertSame($expected, $redirectResponse->getBody()->getContents());
+    }
+
+    /**
+     * @test
+     */
+    public function nonstandardStatusCodeIsReturnedWithRedirect()
+    {
+        $this->browser->setFollowRedirects(false);
+        $response = $this->browser->request('http://localhost/test/mvc/actioncontrollertesta/redirect');
+        self::assertSame(302, $response->getStatusCode());
+        self::assertSame('http://some.uri', $response->getHeaderLine('Location'));
     }
 }

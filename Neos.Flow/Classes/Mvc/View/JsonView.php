@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\View;
 
 /*
@@ -29,7 +30,8 @@ class JsonView extends AbstractView
      * @var array
      */
     protected $supportedOptions = [
-        'jsonEncodingOptions' => [0, 'Bitmask of supported Encoding options. See http://php.net/manual/en/json.constants.php', 'integer']
+        'jsonEncodingOptions' => [0, 'Bitmask of supported Encoding options. See https://php.net/manual/en/json.constants.php', 'integer'],
+        'datetimeFormat' => [\DateTime::ISO8601, 'The datetime format to use for all DateTime objects. See https://www.php.net/manual/en/class.datetime.php#datetime.synopsis', 'string']
     ];
 
     /**
@@ -68,27 +70,27 @@ class JsonView extends AbstractView
      *
      * Example 1:
      *
-     * array(
-     * 		'variable1' => array(
-     * 			'_only' => array('property1', 'property2', ...)
-     * 		),
-     * 		'variable2' => array(
-     * 	 		'_exclude' => array('property3', 'property4, ...)
-     * 		),
-     * 		'variable3' => array(
-     * 			'_exclude' => array('secretTitle'),
-     * 			'_descend' => array(
-     * 				'customer' => array(
-     * 					'_only' => array('firstName', 'lastName')
-     * 				)
-     * 			)
-     * 		),
-     * 		'somearrayvalue' => array(
-     * 			'_descendAll' => array(
-     * 				'_only' => array('property1')
-     * 			)
-     * 		)
-     * )
+     * [
+     *        'variable1' => [
+     *            '_only' => ['property1', 'property2', ...]
+     *        ),
+     *        'variable2' => [
+     *            '_exclude' => ['property3', 'property4, ...]
+     *        ),
+     *        'variable3' => [
+     *            '_exclude' => ['secretTitle'],
+     *            '_descend' => [
+     *                'customer' => [
+     *                    '_only' => ['firstName', 'lastName']
+     *                ]
+     *            ]
+     *        ],
+     *        'somearrayvalue' => [
+     *            '_descendAll' => [
+     *                '_only' => ['property1']
+     *            ]
+     *        ]
+     * ]
      *
      * Of variable1 only property1 and property2 will be included.
      * Of variable2 all properties except property3 and property4
@@ -111,18 +113,18 @@ class JsonView extends AbstractView
      *
      * Example 2: exposing object identifier
      *
-     * array(
-     *		'variableFoo' => array(
-     *			'_exclude' => array('secretTitle'),
-     *			'_descend' => array(
-     *				'customer' => array(    // consider 'customer' being a persisted entity
-     *					'_only' => array('firstName'),
-     * 					'_exposeObjectIdentifier' => true,
-     * 					'_exposedObjectIdentifierKey' => 'guid'
-     *				)
-     *			)
-     *		)
-     * )
+     * [
+     *        'variableFoo' => [
+     *            '_exclude' => ['secretTitle'],
+     *            '_descend' => [
+     *                'customer' => [    // consider 'customer' being a persisted entity
+     *                    '_only' => ['firstName'],
+     *                    '_exposeObjectIdentifier' => true,
+     *                    '_exposedObjectIdentifierKey' => 'guid'
+     *                ]
+     *            ]
+     *        ]
+     * ]
      *
      * Note for entity objects you are able to expose the object's identifier
      * also, just add an "_exposeObjectIdentifier" directive set to true and
@@ -135,17 +137,17 @@ class JsonView extends AbstractView
      *
      * Example 3: exposing object's class name
      *
-     * array(
-     *		'variableFoo' => array(
-     *			'_exclude' => array('secretTitle'),
-     *			'_descend' => array(
-     *				'customer' => array(    // consider 'customer' being an object
-     *					'_only' => array('firstName'),
-     * 					'_exposeClassName' => Neos\Flow\Mvc\View\JsonView::EXPOSE_CLASSNAME_FULLY_QUALIFIED
-     *				)
-     *			)
-     *		)
-     * )
+     * [
+     *        'variableFoo' => [
+     *            '_exclude' => ['secretTitle'],
+     *            '_descend' => [
+     *                'customer' => [    // consider 'customer' being an object
+     *                    '_only' => ['firstName'],
+     *                    '_exposeClassName' => Neos\Flow\Mvc\View\JsonView::EXPOSE_CLASSNAME_FULLY_QUALIFIED
+     *                ]
+     *            ]
+     *        ]
+     * ]
      *
      * The ``_exposeClassName`` is similar to the objectIdentifier one, but the class name is added to the
      * JSON object output, for example (summarized):
@@ -201,26 +203,26 @@ class JsonView extends AbstractView
         $this->controllerContext->getResponse()->setContentType('application/json');
         $propertiesToRender = $this->renderArray();
         $options = $this->getOption('jsonEncodingOptions');
-        return json_encode($propertiesToRender, $options);
+        return json_encode($propertiesToRender, JSON_THROW_ON_ERROR | $options);
     }
 
     /**
      * Loads the configuration and transforms the value to a serializable
      * array.
      *
-     * @return array An array containing the values, ready to be JSON encoded
+     * @return array|string|int|float|null An array containing the values, ready to be JSON encoded
      * @api
      */
     protected function renderArray()
     {
         if (count($this->variablesToRender) === 1) {
             $variableName = current($this->variablesToRender);
-            $valueToRender = isset($this->variables[$variableName]) ? $this->variables[$variableName] : null;
-            $configuration = isset($this->configuration[$variableName]) ? $this->configuration[$variableName] : [];
+            $valueToRender = $this->variables[$variableName] ?? null;
+            $configuration = $this->configuration[$variableName] ?? [];
         } else {
             $valueToRender = [];
             foreach ($this->variablesToRender as $variableName) {
-                $valueToRender[$variableName] = isset($this->variables[$variableName]) ? $this->variables[$variableName] : null;
+                $valueToRender[$variableName] = $this->variables[$variableName] ?? null;
             }
             $configuration = $this->configuration;
         }
@@ -233,7 +235,7 @@ class JsonView extends AbstractView
      *
      * @param mixed $value The value to transform
      * @param array $configuration Configuration for transforming the value
-     * @return array The transformed value
+     * @return array|string|int|float|null The transformed value
      */
     protected function transformValue($value, array $configuration)
     {
@@ -249,7 +251,7 @@ class JsonView extends AbstractView
                     if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($key, $configuration['_exclude'])) {
                         continue;
                     }
-                    $array[$key] = $this->transformValue($element, isset($configuration[$key]) ? $configuration[$key] : []);
+                    $array[$key] = $this->transformValue($element, $configuration[$key] ?? []);
                 }
             }
             return $array;
@@ -268,12 +270,12 @@ class JsonView extends AbstractView
      *
      * @param object $object Object to traverse
      * @param array $configuration Configuration for transforming the given object or NULL
-     * @return array Object structure as an array
+     * @return array|string Object structure as an array
      */
     protected function transformObject($object, array $configuration)
     {
         if ($object instanceof \DateTimeInterface) {
-            return $object->format(\DateTime::ISO8601);
+            return $object->format($this->getOption('datetimeFormat'));
         } else {
             $propertyNames = ObjectAccess::getGettablePropertyNames($object);
 

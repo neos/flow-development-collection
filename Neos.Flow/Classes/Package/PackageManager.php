@@ -24,6 +24,7 @@ use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Package\Exception as PackageException;
 use Composer\Console\Application as ComposerApplication;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 /**
  * The default Flow Package Manager
@@ -109,12 +110,15 @@ class PackageManager
     protected $flowPackages = [];
 
     /**
+     * Inject settings into the package manager. Has to be called explicitly on object initialization as
+     * the package manager subpackage is excluded from proxy class building.
+     *
      * @param array $settings
      * @return void
      */
     public function injectSettings(array $settings): void
     {
-        $this->settings = $settings['package'];
+        $this->settings = $settings['package'] ?? [];
     }
 
     /**
@@ -205,7 +209,7 @@ class PackageManager
             throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available. Please check if the package exists and that the package key is correct (package keys are case sensitive).', 1166546734);
         }
 
-        return $this->packages[$packageKey];
+        return $this->packages[$this->getCaseSensitivePackageKey($packageKey)];
     }
 
     /**
@@ -402,7 +406,7 @@ class PackageManager
 
             $composerApplication = new ComposerApplication();
             $composerApplication->setAutoExit(false);
-            $composerErrorCode = $composerApplication->run($composerRequireArguments);
+            $composerErrorCode = $composerApplication->run($composerRequireArguments, new NullOutput());
 
             if ($composerErrorCode !== 0) {
                 throw new Exception("The installation was not successful. Composer returned the error code: $composerErrorCode", 1572187932);
@@ -764,7 +768,11 @@ class PackageManager
         // Clean legacy file TODO: Remove at some point
         $legacyPackageStatesPath = FLOW_PATH_CONFIGURATION . 'PackageStates.php';
         if (is_file($legacyPackageStatesPath)) {
-            @unlink($legacyPackageStatesPath);
+            try {
+                @unlink($legacyPackageStatesPath);
+            } catch (\Throwable $e) {
+                // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
+            }
         }
         OpcodeCacheHelper::clearAllActive($this->packageInformationCacheFilePath);
 

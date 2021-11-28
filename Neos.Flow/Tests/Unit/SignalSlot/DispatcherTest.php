@@ -151,6 +151,26 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
+    public function dispatchPassesUnnamedSignalArgumentsToTheSlotMethod(): void
+    {
+        $arguments = [];
+        $mockSlot = function () use (&$arguments) {
+            $arguments = func_get_args();
+        };
+
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $dispatcher = new Dispatcher();
+        $dispatcher->connect('Foo', 'bar', $mockSlot, '', false);
+        $dispatcher->injectObjectManager($mockObjectManager);
+
+        $dispatcher->dispatch('Foo', 'bar', ['bar', 'quux']);
+        self::assertSame(['bar', 'quux'], $arguments);
+    }
+
+    /**
+     * @test
+     */
     public function dispatchPassesTheSignalArgumentsToTheStaticSlotMethod(): void
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
@@ -281,6 +301,48 @@ class DispatcherTest extends UnitTestCase
 
         $dispatcher = new Dispatcher();
         $dispatcher->connect(get_class($mockSignal), 'emitSomeSignal', get_class($mockSlot), 'someSlotMethod', false);
+    }
+
+    /**
+     * @test
+     */
+    public function dispatchPassesSignalArgumentsAsReferenceInSignalInformation(): void
+    {
+        $mockSlot = function (SignalInformation $s) {
+            $s->getSignalArguments()[0]['foo'] = 'bar';
+        };
+
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $dispatcher = new Dispatcher();
+        $dispatcher->wire('SignalClassName', 'methodName', $mockSlot);
+        $dispatcher->injectObjectManager($mockObjectManager);
+
+        $referencedArray = [];
+        $passedArguments = [&$referencedArray];
+        $dispatcher->dispatch('SignalClassName', 'methodName', $passedArguments);
+        self::assertEquals('bar', $referencedArray['foo']);
+    }
+
+    /**
+     * @test
+     */
+    public function dispatchPassesSignalArgumentsAsReference(): void
+    {
+        $mockSlot = function (array &$array) {
+            $array['foo'] = 'bar';
+        };
+
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $dispatcher = new Dispatcher();
+        $dispatcher->connect('SignalClassName', 'methodName', $mockSlot);
+        $dispatcher->injectObjectManager($mockObjectManager);
+
+        $referencedArray = [];
+        $passedArguments = [&$referencedArray];
+        $dispatcher->dispatch('SignalClassName', 'methodName', $passedArguments);
+        self::assertEquals('bar', $referencedArray['foo']);
     }
 
     /**

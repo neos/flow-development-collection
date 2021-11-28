@@ -17,6 +17,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheFactory;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\Loader\MergeLoader;
+use Neos\Flow\Configuration\Loader\ObjectsLoader;
+use Neos\Flow\Configuration\Loader\PolicyLoader;
+use Neos\Flow\Configuration\Loader\RoutesLoader;
+use Neos\Flow\Configuration\Loader\SettingsLoader;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Bootstrap;
@@ -203,11 +208,22 @@ class Scripts
         $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
 
         $configurationManager = new ConfigurationManager($context);
-        $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
-        $configurationManager->injectConfigurationSource(new YamlSource());
         $configurationManager->setPackages($packageManager->getFlowPackages());
-        if ($configurationManager->loadConfigurationCache() === false) {
-            $configurationManager->refreshConfiguration();
+        $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
+
+        $yamlSource = new YamlSource();
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, new MergeLoader($yamlSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES));
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, new ObjectsLoader($yamlSource));
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, new RoutesLoader($yamlSource, $configurationManager));
+        $policyLoader = new PolicyLoader($yamlSource);
+        $policyLoader->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $policyLoader);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, new SettingsLoader($yamlSource));
+
+        // Manually inject settings into the PackageManager as the package manager is excluded from the proxy class building
+        $flowSettings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
+        if (is_array($flowSettings)) {
+            $packageManager->injectSettings($flowSettings);
         }
 
         $bootstrap->getSignalSlotDispatcher()->dispatch(ConfigurationManager::class, 'configurationManagerReady', [$configurationManager]);
@@ -227,7 +243,7 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
-        $throwableStorage = self::initializeExceptionStorage($bootstrap);
+        $throwableStorage = self::initializeExceptionStorage($bootstrap, $settings);
         $bootstrap->setEarlyInstance(ThrowableStorageInterface::class, $throwableStorage);
 
         /** @var PsrLoggerFactoryInterface $psrLoggerFactoryName */
@@ -243,17 +259,16 @@ class Scripts
      * Initialize the exception storage
      *
      * @param Bootstrap $bootstrap
+     * @param array $settings The Neos.Flow settings
      * @return ThrowableStorageInterface
      * @throws FlowException
      * @throws InvalidConfigurationTypeException
      */
-    protected static function initializeExceptionStorage(Bootstrap $bootstrap): ThrowableStorageInterface
+    protected static function initializeExceptionStorage(Bootstrap $bootstrap, array $settings): ThrowableStorageInterface
     {
-        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
-        $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
-
         $storageClassName = $settings['log']['throwables']['storageClass'] ?? FileStorage::class;
         $storageOptions = $settings['log']['throwables']['optionsByImplementation'][$storageClassName] ?? [];
+        $renderRequestInformation = $settings['log']['throwables']['renderRequestInformation'] ?? true;
 
 
         if (!in_array(ThrowableStorageInterface::class, class_implements($storageClassName, true))) {
@@ -270,7 +285,7 @@ class Scripts
             return Debugger::getBacktraceCode($backtrace, false, true);
         });
 
-        $throwableStorage->setRequestInformationRenderer(static function () {
+        $throwableStorage->setRequestInformationRenderer(function () use ($renderRequestInformation) {
             // The following lines duplicate FileStorage::__construct(), which is intended to provide a renderer
             // to alternative implementations of ThrowableStorageInterface
 
@@ -287,8 +302,9 @@ class Scripts
             }
 
             $request = $requestHandler->getHttpRequest();
-            // TODO: Sensible error output
-            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestHeaders($request) : '[request was empty]') . PHP_EOL;
+            if ($renderRequestInformation) {
+                $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestInformation($request) : '[request was empty]') . PHP_EOL;
+            }
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;
@@ -833,7 +849,8 @@ class Scripts
             return;
         }
 
-        $realPhpBinary = realpath(PHP_BINARY);
+        exec(PHP_BINARY . ' -r "echo realpath(PHP_BINARY);"', $output);
+        $realPhpBinary = $output[0];
         if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
             throw new FlowException(sprintf(
                 'You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
@@ -894,6 +911,6 @@ class Scripts
      */
     protected static function useClassLoader(Bootstrap $bootstrap)
     {
-        return (!FLOW_ONLY_COMPOSER_LOADER || $bootstrap->getContext()->isTesting());
+        return !FLOW_ONLY_COMPOSER_LOADER;
     }
 }

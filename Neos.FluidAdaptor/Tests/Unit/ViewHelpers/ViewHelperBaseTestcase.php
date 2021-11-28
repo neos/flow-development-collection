@@ -15,7 +15,6 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
@@ -104,7 +103,7 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
         $this->controllerContext->expects($this->any())->method('getRequest')->will(self::returnValue($this->request));
         $this->tagBuilder = $this->createMock(TagBuilder::class);
         $this->arguments = [];
-        $this->renderingContext = new \Neos\FluidAdaptor\Core\Rendering\RenderingContext(new StandaloneView(), []);
+        $this->renderingContext = new \Neos\FluidAdaptor\Core\Rendering\RenderingContext([]);
         $this->renderingContext->setVariableProvider($this->templateVariableContainer);
         $this->renderingContext->setViewHelperVariableContainer($this->viewHelperVariableContainer);
         $this->renderingContext->setControllerContext($this->controllerContext);

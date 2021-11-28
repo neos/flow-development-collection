@@ -55,6 +55,11 @@ class ApplicationContext
     protected $parentContext;
 
     /**
+     * @var string[]
+     */
+    protected $hierarchy = [];
+
+    /**
      * Initialize the context object.
      *
      * @param string $contextString
@@ -64,6 +69,13 @@ class ApplicationContext
     {
         $contextStringParts = explode('/', $contextString);
         $this->rootContextString = reset($contextStringParts);
+
+        $combinedContextStrings = '';
+        foreach ($contextStringParts as $contextStringPart) {
+            $this->hierarchy[] = $combinedContextStrings . $contextStringPart;
+            $combinedContextStrings .= $contextStringPart . '/';
+        }
+
         array_pop($contextStringParts);
         if ($contextStringParts !== []) {
             $this->parentContext = new ApplicationContext(implode('/', $contextStringParts));
@@ -72,7 +84,6 @@ class ApplicationContext
         if (!in_array($this->rootContextString, ['Development', 'Production', 'Testing'])) {
             throw new FlowException('The given context "' . $contextString . '" was not valid. Only allowed are Development, Production and Testing, including their sub-contexts', 1335436551);
         }
-
         $this->contextString = $contextString;
     }
 
@@ -130,5 +141,16 @@ class ApplicationContext
     public function getParent()
     {
         return $this->parentContext;
+    }
+
+    /**
+     * Returns the names of this context and all parents in ascending specificity
+     *
+     * @return string[] for example ['Production', 'Production/Staging', 'Production/Staging/Server1']
+     * @api
+     */
+    public function getHierarchy(): array
+    {
+        return $this->hierarchy;
     }
 }

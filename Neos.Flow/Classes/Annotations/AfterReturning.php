@@ -11,30 +11,28 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Declares a method as an after returning advice to be triggered
  * after any pointcut matching the given expression returns.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target("METHOD")
  */
+#[\Attribute(\Attribute::TARGET_METHOD)]
 final class AfterReturning
 {
     /**
      * The pointcut expression. (Can be given as anonymous argument.)
      * @var string
+     * @Required
      */
     public $pointcutExpression;
 
-    /**
-     * @param array $values
-     * @throws \InvalidArgumentException
-     */
-    public function __construct(array $values)
+    public function __construct(string $pointcutExpression)
     {
-        if (!isset($values['value']) && !isset($values['pointcutExpression'])) {
-            throw new \InvalidArgumentException('An AfterReturning annotation must specify a pointcut expression.', 1318456618);
-        }
-        $this->pointcutExpression = isset($values['pointcutExpression']) ? $values['pointcutExpression'] : $values['value'];
+        $this->pointcutExpression = $pointcutExpression;
     }
 }

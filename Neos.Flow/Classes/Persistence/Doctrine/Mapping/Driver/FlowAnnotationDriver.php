@@ -598,6 +598,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             $mapping['fieldName'] = $property->getName();
             $mapping['columnName'] = strtolower($property->getName());
             $mapping['targetEntity'] = $propertyMetaData['type'];
+            $mapping['nullable'] = $propertyMetaData['nullable'];
 
             $joinColumns = $this->evaluateJoinColumnAnnotations($property);
 
@@ -796,7 +797,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                             if (strpos($propertyMetaData['type'], '\\') !== false) {
                                 if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], Flow\ValueObject::class)) {
                                     $valueObjectAnnotation = $this->reflectionService->getClassAnnotation($propertyMetaData['type'], Flow\ValueObject::class);
-                                    if ($valueObjectAnnotation->embedded === true) {
+                                    if ($valueObjectAnnotation && $valueObjectAnnotation->embedded === true) {
                                         $mapping['class'] = $propertyMetaData['type'];
                                         $mapping['columnPrefix'] = $mapping['columnName'];
                                         $metadata->mapEmbedded($mapping);

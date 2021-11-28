@@ -43,9 +43,9 @@ class ClassSchemaTest extends UnitTestCase
     public function getPropertiesReturnsAddedProperties()
     {
         $expectedProperties = [
-            'a' => ['type' => 'string', 'elementType' => null, 'lazy' => false, 'transient' => false],
-            'b' => ['type' => 'Neos\Flow\SomeObject', 'elementType' => null, 'lazy' => true, 'transient' => false],
-            'c' => ['type' => 'Neos\Flow\SomeOtherObject', 'elementType' => null, 'lazy' => true, 'transient' => true]
+            'a' => ['type' => 'string', 'elementType' => null, 'nullable' => false, 'lazy' => false, 'transient' => false],
+            'b' => ['type' => 'Neos\Flow\SomeObject', 'elementType' => null, 'nullable' => false, 'lazy' => true, 'transient' => false],
+            'c' => ['type' => 'Neos\Flow\SomeOtherObject', 'elementType' => null, 'nullable' => false, 'lazy' => true, 'transient' => true]
         ];
 
         $classSchema = new ClassSchema('SomeClass');
@@ -140,7 +140,14 @@ class ClassSchemaTest extends UnitTestCase
             ['\Some\Object'],
             ['SomeObject'],
             ['array<string>'],
-            ['array<Neos\Flow\Baz>']
+            ['array<Neos\Flow\Baz>'],
+            ['?string'],
+            ['null|string'],
+            ['string|null'],
+            ['?\Some\Object'],
+            ['\Some\Object|null'],
+            ['?array<Neos\Flow\Baz>'],
+            ['null|array<Neos\Flow\Baz>']
         ];
     }
 
@@ -245,5 +252,30 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema = new ClassSchema('SomeClass');
         $classSchema->addProperty('testProperty', $type);
         self::assertTrue($classSchema->isMultiValuedProperty('testProperty'));
+    }
+
+    /**
+     * @return array
+     */
+    public function nullableTypes()
+    {
+        return [
+            ['?string'],
+            ['integer|null'],
+            ['null|array'],
+            ['Doctrine\Common\Collections\ArrayCollection|null']
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider nullableTypes
+     * @param string $type
+     */
+    public function correctlyReturnsNullabilityForProperties($type)
+    {
+        $classSchema = new ClassSchema('SomeClass');
+        $classSchema->addProperty('testProperty', $type);
+        self::assertTrue($classSchema->isPropertyNullable('testProperty'));
     }
 }

@@ -38,28 +38,28 @@ class ParameterReflection extends \ReflectionParameter
     /**
      * Returns the parameter class
      *
-     * @return ClassReflection The parameter class
+     * @return ClassReflection|null The parameter class
      */
     public function getClass()
     {
         try {
-            $class = parent::getClass();
+            $class = parent::getType();
         } catch (\Exception $exception) {
             return null;
         }
 
-        return is_object($class) ? new ClassReflection($class->getName()) : null;
+        return is_object($class) && !$class->isBuiltin() ? new ClassReflection($class->getName()) : null;
     }
 
     /**
-     * @return string The name of a builtin type (e.g. string, int) if it was declared for the parameter (scalar type declaration), null otherwise
+     * @return string|null The name of a builtin type (e.g. string, int) if it was declared for the parameter (scalar type declaration), null otherwise
      */
     public function getBuiltinType()
     {
         $type = $this->getType();
-        if ($type === null || !$type->isBuiltin()) {
+        if (!$type instanceof \ReflectionNamedType) {
             return null;
         }
-        return $type instanceof \ReflectionNamedType ? $type->getName() : (string)$type;
+        return $type->isBuiltin() ? $type->getName() : null;
     }
 }

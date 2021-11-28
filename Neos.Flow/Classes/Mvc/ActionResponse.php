@@ -1,13 +1,12 @@
 <?php
 namespace Neos\Flow\Mvc;
 
+use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Http\Cookie;
 use Psr\Http\Message\ResponseInterface;
-use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
-use GuzzleHttp\Psr7\Stream;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
@@ -22,7 +21,7 @@ use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
 final class ActionResponse
 {
     /**
-     * @var Stream
+     * @var StreamInterface
      */
     protected $content;
 
@@ -63,7 +62,7 @@ final class ActionResponse
 
     public function __construct()
     {
-        $this->content = stream_for();
+        $this->content = Utils::streamFor();
     }
 
     /**
@@ -74,7 +73,7 @@ final class ActionResponse
     public function setContent($content): void
     {
         if (!$content instanceof StreamInterface) {
-            $content = stream_for($content);
+            $content = Utils::streamFor($content);
         }
 
         $this->content = $content;
@@ -245,12 +244,17 @@ final class ActionResponse
         return $this->statusCode ?? 200;
     }
 
+    public function hasContentType(): bool
+    {
+        return !empty($this->contentType);
+    }
+
     /**
      * @return string
      */
-    public function getContentType(): ?string
+    public function getContentType(): string
     {
-        return $this->contentType;
+        return $this->contentType ?? '';
     }
 
     /**
@@ -272,12 +276,8 @@ final class ActionResponse
             $actionResponse->setContent($this->content);
         }
 
-        if ($this->contentType !== null) {
+        if ($this->hasContentType()) {
             $actionResponse->setContentType($this->contentType);
-        }
-
-        if ($this->statusCode !== null) {
-            $actionResponse->setStatusCode($this->statusCode);
         }
 
         if ($this->redirectUri !== null) {
@@ -286,6 +286,9 @@ final class ActionResponse
 
         if ($this->httpResponse !== null) {
             $actionResponse->replaceHttpResponse($this->httpResponse);
+        }
+        if ($this->statusCode !== null) {
+            $actionResponse->setStatusCode($this->statusCode);
         }
         foreach ($this->cookies as $cookie) {
             $actionResponse->setCookie($cookie);
@@ -317,7 +320,7 @@ final class ActionResponse
             $httpResponse = $httpResponse->withBody($this->content);
         }
 
-        if ($this->contentType !== null) {
+        if ($this->hasContentType()) {
             $httpResponse = $httpResponse->withHeader('Content-Type', $this->contentType);
         }
 

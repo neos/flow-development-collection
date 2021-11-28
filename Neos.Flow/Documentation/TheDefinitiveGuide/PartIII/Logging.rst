@@ -107,15 +107,17 @@ You might already have stumbled across such an exception (though hopefully not!)
   HTTP REQUEST:
   127.0.0.1:8081keep-aliveno-cacheno-cacheimageMozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.361image/webp,image/apng,image/*,*/*;q=0.8same-originno-corshttp://127.0.0.1:8081/flow/welcomegzip, deflate, brde-DE,de;q=0.9,en-US;q=0.8,en;q=0.7
 
-  HTTP RESPONSE:
-  200
-
   PHP PROCESS:
   Inode: 
   PID: 2296
   UID: 1
   GID: 1
   User: 
+
+.. note::
+
+  As of Flow 7.1 you can configure if the HTTP Request should be logged in the default ThrowableStorage via the boolean setting ``Neos.Flow.log.throwables.renderRequestInformation``.
+  This could be a requirement in order to prevent storing personally identifiable information that is submitted in the request headers or the URL.
 
 .. _throwable-storage:
 

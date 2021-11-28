@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A sample entity for tests

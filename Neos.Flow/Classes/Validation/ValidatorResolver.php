@@ -153,7 +153,7 @@ class ValidatorResolver
      * @param string $methodName
      * @param array $methodParameters Optional pre-compiled array of method parameters
      * @param array $methodValidateAnnotations Optional pre-compiled array of validate annotations (as array)
-     * @return array An Array of ValidatorConjunctions for each method parameters.
+     * @return array<ConjunctionValidator> An Array of ValidatorConjunctions for each method parameters.
      * @throws Exception\InvalidValidationConfigurationException
      * @throws Exception\NoSuchValidatorException
      * @throws Exception\InvalidTypeHintException
@@ -307,6 +307,12 @@ class ValidatorResolver
                 }
 
                 if ($this->reflectionService->isPropertyAnnotatedWith($targetClassName, $classPropertyName, Flow\IgnoreValidation::class)) {
+                    continue;
+                }
+                if ($classSchema !== null
+                    && $classSchema->hasProperty($classPropertyName)
+                    && $classSchema->isPropertyTransient($classPropertyName)
+                    && $validationGroups === ['Persistence', 'Default']) {
                     continue;
                 }
 

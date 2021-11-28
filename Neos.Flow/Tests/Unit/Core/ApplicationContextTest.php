@@ -153,4 +153,25 @@ class ApplicationContextTest extends UnitTestCase
         $rootContext = $parentContext->getParent();
         self::assertSame('Production', (string) $rootContext);
     }
+
+    public function getHierarchyDataProvider(): array
+    {
+        return [
+            ['contextString' => 'Development', 'expectedResult' => ['Development']],
+            ['contextString' => 'Testing/Staging', 'expectedResult' => ['Testing', 'Testing/Staging']],
+            ['contextString' => 'Production/Staging/Stage1', 'expectedResult' => ['Production', 'Production/Staging', 'Production/Staging/Stage1']],
+        ];
+    }
+
+    /**
+     * @dataProvider getHierarchyDataProvider
+     * @test
+     * @param string $contextString
+     * @param array $expectedResult
+     */
+    public function getHierarchyTest(string $contextString, array $expectedResult): void
+    {
+        $context = new ApplicationContext($contextString);
+        self::assertSame($expectedResult, $context->getHierarchy());
+    }
 }

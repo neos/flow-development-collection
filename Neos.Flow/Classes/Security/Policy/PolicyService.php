@@ -107,7 +107,7 @@ class PolicyService
         $privilegeTargetsForEverybody = $this->privilegeTargets;
 
         $this->roles = [];
-        $everybodyRole = new Role('Neos.Flow:Everybody');
+        $everybodyRole = new Role('Neos.Flow:Everybody', [], (string)($this->policyConfiguration['roles']['Neos.Flow:Everybody']['label'] ?? ''), (string)($this->policyConfiguration['roles']['Neos.Flow:Everybody']['description'] ?? ''));
         $everybodyRole->setAbstract(true);
         if (isset($this->policyConfiguration['roles'])) {
             foreach ($this->policyConfiguration['roles'] as $roleIdentifier => $roleConfiguration) {

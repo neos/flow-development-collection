@@ -183,6 +183,7 @@ class RequestBuilder
         $commandMethodName = $controllerCommandName . 'Command';
         $commandMethodParameters = $this->commandManager->getCommandMethodParameters($controllerObjectName, $commandMethodName);
 
+        $requiredArgumentNames = [];
         $requiredArguments = [];
         $optionalArguments = [];
         foreach ($commandMethodParameters as $parameterName => $parameterInfo) {
@@ -191,6 +192,7 @@ class RequestBuilder
                     'parameterName' => $parameterName,
                     'type' => $parameterInfo['type']
                 ];
+                $requiredArgumentNames[strtolower($parameterName)] = $parameterName;
             } else {
                 $optionalArguments[strtolower($parameterName)] = [
                     'parameterName' => $parameterName,
@@ -214,23 +216,31 @@ class RequestBuilder
 
                 if (isset($optionalArguments[$argumentName])) {
                     $argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $optionalArguments[$argumentName]['type']);
-                    $commandLineArguments[$optionalArguments[$argumentName]['parameterName']] = $argumentValue;
+                    if ($optionalArguments[$argumentName]['type'] == 'array') {
+                        $commandLineArguments[$optionalArguments[$argumentName]['parameterName']][] = $argumentValue;
+                    } else {
+                        $commandLineArguments[$optionalArguments[$argumentName]['parameterName']] = $argumentValue;
+                    }
                 } elseif (isset($requiredArguments[$argumentName])) {
                     if ($decidedToUseUnnamedArguments) {
                         throw new InvalidArgumentMixingException(sprintf('Unexpected named argument "%s". If you use unnamed arguments, all required arguments must be passed without a name.', $argumentName), 1309971821);
                     }
                     $decidedToUseNamedArguments = true;
                     $argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $requiredArguments[$argumentName]['type']);
-                    $commandLineArguments[$requiredArguments[$argumentName]['parameterName']] = $argumentValue;
-                    unset($requiredArguments[$argumentName]);
+                    if ($requiredArguments[$argumentName]['type'] == 'array') {
+                        $commandLineArguments[$requiredArguments[$argumentName]['parameterName']][] = $argumentValue;
+                    } else {
+                        $commandLineArguments[$requiredArguments[$argumentName]['parameterName']] = $argumentValue;
+                    }
+                    unset($requiredArgumentNames[strtolower($requiredArguments[$argumentName]['parameterName'])]);
                 }
             } else {
-                if (count($requiredArguments) > 0) {
+                if (count($requiredArgumentNames) > 0) {
                     if ($decidedToUseNamedArguments) {
                         throw new InvalidArgumentMixingException(sprintf('Unexpected unnamed argument "%s". If you use named arguments, all required arguments must be passed named.', $rawArgument), 1309971820);
                     }
-                    $argument = array_shift($requiredArguments);
-                    $commandLineArguments[$argument['parameterName']] = $rawArgument;
+                    $argumentName = array_shift($requiredArgumentNames);
+                    $commandLineArguments[$argumentName] = $rawArgument;
                     $decidedToUseUnnamedArguments = true;
                 } else {
                     $exceedingArguments[] = $rawArgument;

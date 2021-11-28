@@ -4,31 +4,40 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target state="translated">Autenticazione richiesta</target></trans-unit>
+        <target state="translated">Autenticazione richiesta</target>
+      </trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target state="translated">Nome utente</target></trans-unit>
+        <target state="translated">Nome utente</target>
+      </trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target state="translated">Password</target></trans-unit>
+        <target state="translated">Password</target>
+      </trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target state="translated">Nuova password</target></trans-unit>
+        <target state="translated">Nuova password</target>
+      </trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target state="translated">Login</target></trans-unit>
+        <target state="translated">Accedi</target>
+      </trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target state="translated">Logout</target></trans-unit>
+        <target state="translated">Esci</target>
+      </trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target state="translated">Aggiornamento</target></trans-unit>
+        <target state="translated">Aggiornamento</target>
+      </trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target state="translated">Invia</target></trans-unit>
+        <target state="translated">Invia</target>
+      </trans-unit>
       <trans-unit id="configurationSchemaValidator.anErrorOccurredDuringValidationOfTheConfiguration.body" xml:space="preserve">
 				<source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
-			<target state="needs-translation">The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</target></trans-unit>
+        <target state="needs-translation">The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -9,8 +9,8 @@
     "neos/utility-objecthandling": "*"
   },
   "require-dev": {
-    "mikey179/vfsstream": "~1.6",
-    "phpunit/phpunit": "~9.0"
+    "mikey179/vfsstream": "^1.6.1",
+    "phpunit/phpunit": "~9.1"
   },
   "autoload": {
     "psr-4": {
