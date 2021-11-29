@@ -44,11 +44,14 @@ class DebugExceptionHandler extends AbstractExceptionHandler
         %s
         <br />
         <details class="Flow-Debug-Exception-Backtrace-Code">
-            <summary>Backtrace code</summary>
+            <summary>Toggle backtrace code</summary>
             %s
         </details>
         <br />
         %s
+        <script>
+        %s
+        </script>
     </body>
 </html>
 EOD;
@@ -145,7 +148,8 @@ EOD;
             file_get_contents(__DIR__ . '/../../Resources/Public/Error/Exception.css'),
             $exceptionHeader,
             $backtraceCode,
-            $footer
+            $footer,
+            file_get_contents(__DIR__ . '/../../Resources/Public/Error/Exception.js')
         );
     }
 }

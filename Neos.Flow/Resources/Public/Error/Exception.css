@@ -85,6 +85,10 @@ pre {
     color: #656a71;
     padding: 5px;
 }
+.Flow-Debug-Exception-Backtrace-Code summary{
+    cursor: pointer;
+
+}
 
 .Flow-Debug-Backtrace {
     padding: 0;
