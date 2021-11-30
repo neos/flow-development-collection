@@ -151,6 +151,9 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
         }
 
+        $privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
+        $privilegeManager->reset();
+
         if ($this->testableSecurityEnabled === true || static::$testablePersistenceEnabled === true) {
             if (is_callable([self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class), 'compile'])) {
                 $result = self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->compile();
@@ -160,7 +163,6 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             }
             $this->persistenceManager = $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         } else {
-            $privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
             $privilegeManager->setOverrideDecision(true);
         }
 

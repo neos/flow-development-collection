@@ -80,7 +80,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->redis->expects(self::once())
             ->method('sMembers')
-            ->with('Foo_Cache:tag:some_tag')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:tag:some_tag')
             ->will(self::returnValue(['entry_1', 'entry_2']));
 
         $this->assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
@@ -93,7 +93,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->redis->expects(self::once())
             ->method('lRange')
-            ->with('Foo_Cache:entries', 0, -1)
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entries', 0, -1)
             ->will(self::returnValue(['entry_1', 'entry_2']));
 
         $this->redis->expects(self::exactly(2))
@@ -101,7 +101,7 @@ class RedisBackendTest extends BaseTestCase
 
         $this->redis->expects(self::once())
             ->method('set')
-            ->with('Foo_Cache:frozen', true);
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen', true);
 
         $this->backend->freeze();
     }
@@ -159,7 +159,7 @@ class RedisBackendTest extends BaseTestCase
 
         $this->redis->expects(self::once())
             ->method('set')
-            ->with('Foo_Cache:entry:entry_1', 'foo')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:entry_1', 'foo')
             ->willReturn($this->redis);
 
         $this->backend->set('entry_1', 'foo');
@@ -172,7 +172,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->redis->expects(self::once())
             ->method('get')
-            ->with('Foo_Cache:entry:foo')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo')
             ->will(self::returnValue('bar'));
 
         self::assertEquals('bar', $this->backend->get('foo'));
@@ -185,7 +185,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->redis->expects(self::once())
             ->method('exists')
-            ->with('Foo_Cache:entry:foo')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo')
             ->will(self::returnValue(true));
 
         self::assertEquals(true, $this->backend->has('foo'));
@@ -202,7 +202,7 @@ class RedisBackendTest extends BaseTestCase
         $this->inject($this->backend, 'frozen', null);
         $this->redis->expects(self::once())
             ->method('exists')
-            ->with('Foo_Cache:frozen')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen')
             ->will(self::returnValue(true));
 
         $this->backend->$method('foo', 'bar');
