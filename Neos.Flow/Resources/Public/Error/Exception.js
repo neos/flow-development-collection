@@ -1,5 +1,5 @@
-let backtrace = document.querySelector(".Flow-Debug-Exception-Backtrace-Code");
-let localStorageItemIdentifier = 'Flow-Debug-Exception-Backtrace-Code-Open';
+const backtrace = document.querySelector(".Flow-Debug-Exception-Backtrace-Code");
+const localStorageItemIdentifier = 'Flow-Debug-Exception-Backtrace-Code-Open';
 
 if (window.localStorage.getItem(localStorageItemIdentifier) === "true") {
     backtrace.open = true;
