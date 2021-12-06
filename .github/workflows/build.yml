@@ -155,11 +155,13 @@ jobs:
           ./flow routing:list
 
       - name: Static analysis
+        id: psalm
         if: matrix.static-analysis == 'psalm'
+        continue-on-error: true
         run: composer test-static
 
       - name: Update psalm baseline
-        if: ${{ failure() && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+        if: ${{ steps.psalm.outcome != 'success' && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
         run: |
           composer psalm-baseline-update
           cd ./Packages/Framework
