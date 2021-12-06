@@ -9,14 +9,42 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/ApcuBackend.php">
-    <RedundantCast occurrences="1">
-      <code>(string)$this-&gt;cacheEntriesIterator-&gt;key()</code>
-    </RedundantCast>
+    <UndefinedClass occurrences="1">
+      <code>\APCUIterator</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="6">
+      <code>$this-&gt;cacheEntriesIterator</code>
+      <code>$this-&gt;cacheEntriesIterator</code>
+      <code>$this-&gt;cacheEntriesIterator</code>
+      <code>$this-&gt;cacheEntriesIterator</code>
+      <code>$this-&gt;cacheEntriesIterator</code>
+      <code>\APCUIterator</code>
+    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/FileBackend.php">
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$cacheEntryIdentifiers</code>
     </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="Packages/Framework/Neos.Cache/Classes/Backend/MemcachedBackend.php">
+    <UndefinedClass occurrences="2">
+      <code>\Memcached</code>
+      <code>\Memcached</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="12">
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>\Memcache|\Memcached</code>
+    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/PdoBackend.php">
     <PossiblyNullPropertyAssignmentValue occurrences="1">
@@ -24,10 +52,45 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/RedisBackend.php">
-    <RedundantCast occurrences="2">
-      <code>(array)$this-&gt;redis-&gt;info('SERVER')</code>
-      <code>(array)$this-&gt;redis-&gt;info('SERVER')</code>
-    </RedundantCast>
+    <UndefinedClass occurrences="3">
+      <code>\Redis</code>
+      <code>\Redis</code>
+      <code>\Redis</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="32">
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>\Redis</code>
+    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/SimpleFileBackend.php">
     <RedundantPropertyInitializationCheck occurrences="2">
@@ -597,10 +660,6 @@
     <UndefinedConstant occurrences="1">
       <code>FLOW_PATH_ROOT</code>
     </UndefinedConstant>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>getPackageKey</code>
-      <code>getResourcesPath</code>
-    </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/SecurityCommandController.php">
     <PossiblyNullIterator occurrences="1">
