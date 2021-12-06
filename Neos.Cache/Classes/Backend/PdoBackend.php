@@ -295,6 +295,11 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
 
+        // Flushes can happen due to filemonitoring before setup can be called, so you might not be able to reach the setup command without this.
+        if (!$this->tableExists($this->cacheTableName) && !$this->tableExists($this->tagsTableName)) {
+            return;
+        }
+
         $this->databaseHandle->beginTransaction();
         try {
             $statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $this->tagsTableName . '" WHERE "context"=? AND "cache"=?');
