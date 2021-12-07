@@ -17,7 +17,7 @@ FEATURE: Make backtrace code expandable with HTML5 <summary> element
 
 The backtrace code is printed when the DebugExceptionHandler is active (in "Development" context).
 
-This can be queit a mouthful for new users and developers. The backtrace go all the way back to the Flow Bootstrapping - things that are interesting when you get more into Flow.
+This can be quite a mouthful for new users and developers. The backtrace go all the way back to the Flow Bootstrapping - things that are interesting when you get more into Flow.
 
 This is changed, by using the HTML5 element ``<summary>`` element that support collapsing without any extra libraries or code
 
@@ -37,7 +37,7 @@ PrefixMatchInsensitive: ^=~
 SubstringMatchInsensitive: *=~
 ````
 
-I extended the FilterOperation Class. Also i extended the Fizzle.peg.inc and compiled the FizzleParser.php with generateEelParser.sh.
+I extended the FilterOperation Class. Also I extended the Fizzle.peg.inc and compiled the FizzleParser.php with generateEelParser.sh.
 
 I extended the related tests for FizzleParser and FlowQuery. And run the test. Both have passed.
 
