@@ -1,0 +1,9 @@
+`7.3.0 (2021-12-07) <https://github.com/neos/flow-development-collection/releases/tag/7.3.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/7.3.0...7.3.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
