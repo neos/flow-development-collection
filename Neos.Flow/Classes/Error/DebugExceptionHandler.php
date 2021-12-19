@@ -64,7 +64,8 @@ EOD;
             header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
         }
 
-        if ($this->useCustomErrorView === false) {
+        $useCustomErrorView = isset($this->renderingOptions['templatePathAndFilename']) || isset($this->renderingOptions['renderingGroup']);
+        if ($useCustomErrorView === false) {
             $this->renderStatically($statusCode, $exception);
             return;
         }

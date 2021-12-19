@@ -50,16 +50,20 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Merged custom error view options from defaultRenderingOptions and of the first matching renderingGroup
      *
-     * @var array
+     * @var array{
+     *      viewClassName: string,
+     *      viewOptions: array,
+     *      renderTechnicalDetails: bool,
+     *      logException: bool,
+     *      renderingGroup?: string,
+     *      variables?: array,
+     *      templatePathAndFilename?: string,
+     *      layoutRootPath?: string,
+     *      partialRootPath?: string,
+     *      format?: string
+     * }
      */
     protected $renderingOptions;
-
-    /**
-     * Should a custom error view be used
-     *
-     * @var bool
-     */
-    protected $useCustomErrorView;
 
     /**
      * @param LoggerInterface $logger
@@ -217,18 +221,14 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     protected function resolveCustomRenderingOptions(\Throwable $exception): array
     {
         $renderingOptions = [];
-        $useCustomErrorView = false;
         if (isset($this->options['defaultRenderingOptions'])) {
             $renderingOptions = $this->options['defaultRenderingOptions'];
-            $useCustomErrorView = isset($renderingOptions['templatePathAndFilename']);
         }
         $renderingGroup = $this->resolveRenderingGroup($exception);
         if ($renderingGroup !== null) {
-            $useCustomErrorView = true;
             $renderingOptions = Arrays::arrayMergeRecursiveOverrule($renderingOptions, $this->options['renderingGroups'][$renderingGroup]['options']);
             $renderingOptions['renderingGroup'] = $renderingGroup;
         }
-        $this->useCustomErrorView = $useCustomErrorView;
         return $renderingOptions;
     }
 
