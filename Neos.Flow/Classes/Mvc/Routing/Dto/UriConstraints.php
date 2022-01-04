@@ -337,7 +337,7 @@ final class UriConstraints
                 $uri = $uri->withHost($baseUri->getHost());
             }
             if (empty($uri->getPort()) && !isset($this->constraints[self::CONSTRAINT_PORT])) {
-                $port = $baseUri->getPort() ?? UriHelper::getDefaultPortForScheme($baseUri->getScheme());
+                $port = $baseUri->getPort() ?? UriHelper::getDefaultPortForScheme($uri->getScheme());
                 $uri = $uri->withPort($port);
             }
         }
