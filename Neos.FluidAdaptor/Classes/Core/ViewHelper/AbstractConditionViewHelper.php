@@ -71,7 +71,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
      * @return boolean
      * @api
      */
-    protected static function evaluateCondition($arguments, RenderingContextInterface $renderingContext)
+    protected static function evaluateCondition(RenderingContextInterface $renderingContext, ?array $arguments)
     {
         return (boolean)$arguments['condition'];
     }
@@ -84,7 +84,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
-        if (static::evaluateCondition($arguments, $renderingContext)) {
+        if (static::evaluateCondition($renderingContext, $arguments)) {
             if (isset($arguments['then'])) {
                 return $arguments['then'];
             }

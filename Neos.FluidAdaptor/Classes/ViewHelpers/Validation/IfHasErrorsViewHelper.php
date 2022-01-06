@@ -64,7 +64,7 @@ class IfHasErrorsViewHelper extends AbstractConditionViewHelper
      */
     public function render()
     {
-        if (self::evaluateCondition($this->arguments, $this->renderingContext)) {
+        if (self::evaluateCondition($this->renderingContext, $this->arguments)) {
             return $this->renderThenChild();
         } else {
             return $this->renderElseChild();
@@ -72,11 +72,11 @@ class IfHasErrorsViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * @param null $arguments
+     * @param array|null $arguments
      * @param FlowAwareRenderingContextInterface|RenderingContextInterface $renderingContext
      * @return boolean
      */
-    protected static function evaluateCondition($arguments, RenderingContextInterface $renderingContext)
+    protected static function evaluateCondition(RenderingContextInterface $renderingContext, ?array $arguments)
     {
         /** @var ActionRequest $request */
         /** @var FlowAwareRenderingContextInterface $renderingContext */

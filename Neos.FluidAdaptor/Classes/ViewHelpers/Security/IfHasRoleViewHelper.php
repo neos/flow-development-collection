@@ -95,7 +95,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
      */
     public function render()
     {
-        if (static::evaluateCondition($this->arguments, $this->renderingContext)) {
+        if (static::evaluateCondition($this->renderingContext, $this->arguments)) {
             return $this->renderThenChild();
         }
 
@@ -103,11 +103,11 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * @param null $arguments
+     * @param array|null $arguments
      * @param RenderingContextInterface $renderingContext
      * @return boolean
      */
-    protected static function evaluateCondition($arguments, RenderingContextInterface $renderingContext)
+    protected static function evaluateCondition(RenderingContextInterface $renderingContext, ?array $arguments)
     {
         $objectManager = $renderingContext->getObjectManager();
         /** @var PolicyService $policyService */
