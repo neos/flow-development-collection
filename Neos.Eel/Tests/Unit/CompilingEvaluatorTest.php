@@ -47,6 +47,8 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest
             // Arrow function with parentheses
             ['map(items, (x) => x * x)', $c, [1, 4, 9, 16]],
             ['mapWithIndex(items, (v, k) => k * v)', $c, [0, 2, 6, 12]],
+            // Arrow function with parentheses and no arguments taken
+            ['map(items, () => 1)', $c, [1, 1, 1, 1]],
         ];
     }
 

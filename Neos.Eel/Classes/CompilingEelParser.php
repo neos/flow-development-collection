@@ -320,7 +320,7 @@ class CompilingEelParser extends EelParser
 
     public function MethodArguments_arguments(&$result, $sub)
     {
-        $result['val'] = $sub['val'];
+        $result['val'] = $sub['val'] ?? [];
     }
 
     public function ArrowFunction_arguments(&$result, $sub)
