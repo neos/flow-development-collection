@@ -57,6 +57,6 @@ if (isset($argv[1]) && ($argv[1] === 'neos.flow:core:setfilepermissions' || $arg
 
     $context = trim((string)\Neos\Flow\Core\Bootstrap::getEnvironmentConfigurationSetting('FLOW_CONTEXT'), '"\' ') ?: 'Development';
 
-    $bootstrap = new \Neos\Flow\Core\Bootstrap(trim($context, '"\' '), $composerAutoloader);
+    $bootstrap = new \Neos\Flow\Core\Bootstrap($context, $composerAutoloader);
     $bootstrap->run();
 }
