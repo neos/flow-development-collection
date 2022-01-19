@@ -173,6 +173,11 @@ class FileSystemSymlinkTarget extends FileSystemTarget
             $result = false;
         }
 
+        if (Files::is_link($targetPathAndFilename) && realpath($targetPathAndFilename) === realpath($sourcePathAndFilename)) {
+            $this->logger->debug(sprintf('FileSystemSymlinkTarget: File already published, probably a concurrent write. (target: %s, file: %s)', $this->name, $targetPathAndFilename));
+            return [true, null];
+        }
+
         return [$result, $exception];
     }
 }
