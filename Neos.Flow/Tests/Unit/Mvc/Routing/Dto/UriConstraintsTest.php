@@ -37,7 +37,8 @@ class UriConstraintsTest extends UnitTestCase
     {
         return [
             ['constraints' => [UriConstraints::CONSTRAINT_SCHEME => 'http'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => '/'],
-            ['constraints' => [UriConstraints::CONSTRAINT_SCHEME => 'https'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'https://some-domain.tld:80/'],
+            ['constraints' => [UriConstraints::CONSTRAINT_SCHEME => 'https'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'https://some-domain.tld/'],
+            ['constraints' => [UriConstraints::CONSTRAINT_SCHEME => 'https', UriConstraints::CONSTRAINT_PORT => 80], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'https://some-domain.tld:80/'],
 
             ['constraints' => [UriConstraints::CONSTRAINT_HOST => 'some-domain.tld'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => '/'],
             ['constraints' => [UriConstraints::CONSTRAINT_HOST => 'some-other-domain.tld'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-other-domain.tld/'],
