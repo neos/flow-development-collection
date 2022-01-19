@@ -404,7 +404,7 @@ final class UriConstraints
                 $uri = $uri->withHost($baseUri->getHost());
             }
             if (!isset($this->constraints[self::CONSTRAINT_PORT]) && $uri->getPort() === null) {
-                $port = $baseUri->getPort() ?? UriHelper::getDefaultPortForScheme($baseUri->getScheme());
+                $port = $baseUri->getPort() ?? UriHelper::getDefaultPortForScheme($uri->getScheme());
                 $uri = $uri->withPort($port);
             }
         }
