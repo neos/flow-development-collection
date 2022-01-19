@@ -15,6 +15,8 @@ Neos:
         charset: 'utf8mb4'
         defaultTableOptions:
           charset: 'utf8mb4'
+      # Doctrine DBAL result caching, see Flow documentation on persistence and
+      # https://www.doctrine-project.org/projects/doctrine-dbal/en/2.13/reference/caching.html
       cacheAllQueryResults: false
 
       doctrine:
@@ -45,6 +47,16 @@ Neos:
             events: ['onFlush']
             listener: 'Neos\Flow\Persistence\Doctrine\ObjectValidationAndDeDuplicationListener'
 
+        # Doctrine ORM Second Level Cache configuration.
+        # For further information, check the Flow manual, chapter "Persistence"  and
+        # https://www.doctrine-project.org/projects/doctrine-orm/en/2.10/reference/second-level-cache.html
+        #
+        # Example:
+        # secondLevelCache:
+        #   enable: true
+        #   defaultLifetime: 3600
+        #   regions:
+        #     'my_entity_region': 7200
         secondLevelCache: []
 
         # List of table name prefixes matched against in the doctrine service
