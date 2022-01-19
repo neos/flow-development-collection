@@ -3,7 +3,7 @@
 FluidAdaptor ViewHelper Reference
 =================================
 
-This reference was automatically generated from code on 2021-12-08
+This reference was automatically generated from code on 2022-01-19
 
 
 .. _`FluidAdaptor ViewHelper Reference: f:debug`:
@@ -2167,9 +2167,9 @@ Examples
 	Header
 	<f:renderChildren arguments="{foo: 'bar'}" />
 	Footer
-
+	
 	<-- in the outer template, using the widget -->
-
+	
 	<x:widget.someWidget>
 	  Foo: {foo}
 	</x:widget.someWidget>
