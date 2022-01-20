@@ -37,8 +37,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
         }
 
         try {
-            $useCustomErrorView = isset($this->renderingOptions['templatePathAndFilename']) || isset($this->renderingOptions['renderingGroup']);
-            if ($useCustomErrorView) {
+            if ($this->useCustomErrorView()) {
                 try {
                     echo $this->buildView($exception, $this->renderingOptions)->render();
                 } catch (\Throwable $throwable) {

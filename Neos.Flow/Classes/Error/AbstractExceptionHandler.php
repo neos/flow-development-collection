@@ -259,6 +259,23 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     }
 
     /**
+     * If a renderingGroup was successfully resolved via @see resolveRenderingGroup
+     * We will use a custom error view.
+     *
+     * Also check for legacy 'templatePathAndFilename'
+     *
+     */
+    protected function useCustomErrorView(): bool
+    {
+        // for legacy reasons 'templatePathAndFilename' was enough to use the view,
+        // so it could theoretically be used without a 'renderingGroup' (will be deprecated!)
+        if (isset($this->renderingOptions['templatePathAndFilename'])) {
+            return true;
+        }
+        return isset($this->renderingOptions['renderingGroup']);
+    }
+
+    /**
      * Formats and echoes the exception and its previous exceptions (if any) for the command line
      *
      * @param \Throwable $exception
