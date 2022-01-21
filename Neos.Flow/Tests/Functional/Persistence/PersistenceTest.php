@@ -184,11 +184,6 @@ class PersistenceTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $serializedData = serialize($testEntityWithArrayProperty);
-        // the original object should never change by serialization its "public" properties
-        $this->assertEquals(
-            $testEntityWithArrayProperty->getArrayProperty()['some']['nestedArray']['key'],
-            $testEntityLyingInsideTheArray
-        );
 
         $testEntityLyingInsideTheArray->setName('Neos');
         $this->persistenceManager->persistAll();
