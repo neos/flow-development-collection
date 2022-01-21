@@ -1,0 +1,76 @@
+`7.3.1 (2022-01-21) <https://github.com/neos/flow-development-collection/releases/tag/7.3.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Revert "BUGFIX: Do not remove related entities during persistence" <https://github.com/neos/flow-development-collection/pull/2661>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Reverts `#2517 <https://github.com/neos/flow-development-collection/issues/2517>`_
+
+`BUGFIX: Fix UriConstraints.applyTo() port handling <https://github.com/neos/flow-development-collection/pull/2676>`_
+---------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Add doctrine/annotation as dependency <https://github.com/neos/flow-development-collection/pull/2674>`_
+----------------------------------------------------------------------------------------------------------------
+
+Prevents exception in booting flow, as it is requiring the 'Doctrine\\Common\\Annotations\\AnnotationRegistry'
+
+fixes: #2673
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix PHP 8.1 compatibility of flow.php script <https://github.com/neos/flow-development-collection/pull/2663>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Without this fix, every interaction with Flow/Neos on PHP 8.1 will lead to a Deprecation warning:
+
+```
+PHP Deprecated:  trim(): Passing null to parameter `#1 <https://github.com/neos/flow-development-collection/issues/1>`_($string) of type string is deprecated in /Packages/Framework/Neos.Flow/Scripts/flow.php on line 68
+
+Deprecated: trim(): Passing null to parameter `#1 <https://github.com/neos/flow-development-collection/issues/1>`_($string) of type string is deprecated in /Packages/Framework/Neos.Flow/Scripts/flow.php on line 68
+```
+
+* Packages: ``Flow``
+
+`BUGFIX: Wrong port assigned in applyTo() <https://github.com/neos/flow-development-collection/pull/2654>`_
+-----------------------------------------------------------------------------------------------------------
+
+This fixes the following:
+
+- given an HTTPS connection to a proxy that passes the request handling to a server via HTTP
+- given a shortcut node pointing to ``http://www.acme.com``
+- will result in ``http://www.acme.com:443`` leading to errors
+
+This fixes it by using the (at this point already set!) scheme of the ``$uri`` to fill in the standard
+port.
+
+* Packages: ``Flow``
+
+`BUGFIX: Add correct changelog for 7.3.0 <https://github.com/neos/flow-development-collection/pull/2647>`_
+----------------------------------------------------------------------------------------------------------
+
+The automatic changelog from the Jenkins job was just a GitHub comparison link for detailed information.
+This adds the output from our changelog script.
+
+* Packages: ``Flow``
+
+`TASK: Small tweak to Doctrine caching documentation <https://github.com/neos/flow-development-collection/pull/2650>`_
+----------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: Update psalm baseline <https://github.com/neos/flow-development-collection/pull/2643>`_
+----------------------------------------------------------------------------------------------
+
+
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/7.3.0...7.3.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
