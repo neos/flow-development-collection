@@ -13,15 +13,11 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\ThrowableStorageInterface;
-use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\AllowedObjectsContainer;
 use Neos\Flow\Persistence\Exception as PersistenceException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * An onFlush listener for Flow's Doctrine PersistenceManager, that validates to be persisted entities
@@ -37,18 +33,6 @@ class AllowedObjectsListener
 {
     /**
      * @Flow\Inject
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @Flow\Inject
-     * @var ThrowableStorageInterface
-     */
-    protected $throwableStorage;
-
-    /**
-     * @Flow\Inject
      * @var AllowedObjectsContainer
      */
     protected $allowedObjects;
@@ -60,8 +44,7 @@ class AllowedObjectsListener
     protected $persistenceManager;
 
     /**
-     * Doctrine onFlush listener that checks for only allowed objects and reconnects
-     * if the database connection was closed.
+     * Doctrine onFlush listener that checks for only allowed objects.
      *
      * @param OnFlushEventArgs $args
      * @throws PersistenceException
@@ -84,18 +67,6 @@ class AllowedObjectsListener
             foreach ($objectsToBePersisted as $object) {
                 $this->throwExceptionIfObjectIsNotAllowed($object);
             }
-        }
-
-        $connection = $args->getEntityManager()->getConnection();
-        try {
-            if ($connection->ping() === false) {
-                $this->logger->info('Reconnecting the Doctrine EntityManager to the persistence backend.', LogEnvironment::fromMethodName(__METHOD__));
-                $connection->close();
-                $connection->connect();
-            }
-        } catch (ConnectionException $exception) {
-            $message = $this->throwableStorage->logThrowable($exception);
-            $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
         }
     }
 
