@@ -86,8 +86,6 @@ class PersistenceManagerTest extends UnitTestCase
         $this->inject($this->persistenceManager, 'allowedObjects', $allowedObjectsContainer);
         $allowedObjectsListener = new AllowedObjectsListener();
         $this->inject($allowedObjectsListener, 'allowedObjects', $allowedObjectsContainer);
-        $this->inject($allowedObjectsListener, 'logger', $this->mockSystemLogger);
-        $this->inject($allowedObjectsListener, 'throwableStorage', $mockThrowableStorage);
         $this->inject($allowedObjectsListener, 'persistenceManager', $this->persistenceManager);
         $this->mockEntityManager->method('flush')->willReturnCallback(function () use ($allowedObjectsListener) {
             $allowedObjectsListener->onFlush(new OnFlushEventArgs($this->mockEntityManager));
@@ -166,19 +164,6 @@ class PersistenceManagerTest extends UnitTestCase
     {
         $this->mockEntityManager->expects(self::once())->method('flush');
         $this->persistenceManager->expects(self::once())->method('emitAllObjectsPersisted');
-
-        $this->persistenceManager->persistAll();
-    }
-
-    /**
-     * @test
-     */
-    public function persistAllReconnectsConnectionWhenConnectionLost()
-    {
-        $this->mockPing->willReturn(false);
-
-        $this->mockConnection->expects(self::once())->method('close');
-        $this->mockConnection->expects(self::once())->method('connect');
 
         $this->persistenceManager->persistAll();
     }
