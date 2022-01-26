@@ -16,8 +16,6 @@ use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Parser\NumberParser;
 use Neos\Flow\Validation\Validator\NumberValidator;
 
-require_once('AbstractValidatorTestcase.php');
-
 /**
  * Testcase for the number validator
  */

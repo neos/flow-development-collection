@@ -13,8 +13,6 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 use Neos\Flow\Validation\Validator\FloatValidator;
 
-require_once('AbstractValidatorTestcase.php');
-
 /**
  * Testcase for the float validator
  *

@@ -18,8 +18,6 @@ use Neos\Flow\Validation\Validator\IntegerValidator;
 use Neos\Flow\Validation\Validator\NumberRangeValidator;
 use Neos\Flow\Validation\ValidatorResolver;
 
-require_once('AbstractValidatorTestcase.php');
-
 /**
  * Testcase for the collection validator
  */

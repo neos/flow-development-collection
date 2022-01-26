@@ -14,8 +14,6 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
 use Neos\Flow\Validation\Validator\RegularExpressionValidator;
 use Neos\Flow\Validation;
 
-require_once('AbstractValidatorTestcase.php');
-
 /**
  * Testcase for the regular expression validator
  *

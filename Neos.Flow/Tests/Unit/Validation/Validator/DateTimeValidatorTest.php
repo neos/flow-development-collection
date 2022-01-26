@@ -15,8 +15,6 @@ use Neos\Flow\I18n\Locale;
 use Neos\Flow\Validation\Validator\DateTimeValidator;
 use Neos\Flow\I18n;
 
-require_once('AbstractValidatorTestcase.php');
-
 /**
  * Testcase for the DateTime validator
  */

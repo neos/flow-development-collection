@@ -14,8 +14,6 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
 use Egulias\EmailValidator\EmailValidator;
 use Neos\Flow\Validation\Validator\EmailAddressValidator;
 
-require_once('AbstractValidatorTestcase.php');
-
 /**
  * Testcase for the email address validator
  *

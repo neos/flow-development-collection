@@ -16,8 +16,6 @@ use Neos\Error\Messages as Error;
 use Neos\Flow\Validation\Validator\IntegerValidator;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
 
-require_once('AbstractValidatorTestcase.php');
-
 /**
  * Testcase for the Generic Object Validator
  *

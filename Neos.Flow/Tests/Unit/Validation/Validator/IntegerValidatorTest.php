@@ -13,8 +13,6 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 use Neos\Flow\Validation\Validator\IntegerValidator;
 
-require_once('AbstractValidatorTestcase.php');
-
 /**
  * Testcase for the integer validator
  *

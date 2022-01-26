@@ -14,8 +14,6 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
 use Neos\Flow\Validation\Validator\TextValidator;
 use Neos\Flow\Validation;
 
-require_once('AbstractValidatorTestcase.php');
-
 /**
  * Testcase for the text validator
  *

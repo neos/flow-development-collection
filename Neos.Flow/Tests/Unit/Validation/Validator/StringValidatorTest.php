@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 use Neos\Flow\Validation\Validator\StringValidator;
 
-require_once('AbstractValidatorTestcase.php');
 /**
  * Testcase for the string length validator
  *

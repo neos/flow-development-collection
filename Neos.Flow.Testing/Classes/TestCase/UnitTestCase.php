@@ -1,8 +1,8 @@
 <?php
-namespace Neos\Flow\Tests;
+namespace Neos\Flow\Testing\TestCase;
 
 /*
- * This file is part of the Neos.Flow package.
+ * This file is part of the Neos.Flow.Testing package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -20,7 +20,6 @@ namespace Neos\Flow\Tests;
  * will profit from it automatically.
  *
  * @api
- * @deprecated use \Neos\Flow\Testing\TestCase\BaseTestCase
  */
 abstract class UnitTestCase extends \Neos\Flow\Testing\TestCase\BaseTestCase
 {
