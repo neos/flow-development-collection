@@ -15,6 +15,7 @@ use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -22,6 +23,7 @@ use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
+use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\Exception\ViewNotFoundException;
 use Neos\Flow\Mvc\View\ViewInterface;
@@ -151,6 +153,12 @@ class ActionController extends AbstractController
     protected $logger;
 
     /**
+     * @Flow\Inject
+     * @var ThrowableStorageInterface
+     */
+    protected $throwableStorage;
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -200,7 +208,13 @@ class ActionController extends AbstractController
         }
         $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
 
-        $this->mapRequestArgumentsToControllerArguments();
+        try {
+            $this->mapRequestArgumentsToControllerArguments();
+        } catch (RequiredArgumentMissingException $e) {
+            $message = $this->throwableStorage->logThrowable($e);
+            $this->logger->notice('Request argument mapping failed due to a missing required argument. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
+            $this->throwStatus(400, '400 Bad Request', 'Required argument is missing');
+        }
 
         if ($this->view === null) {
             $this->view = $this->resolveView();
