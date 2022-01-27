@@ -153,10 +153,9 @@ class ActionController extends AbstractController
     protected $logger;
 
     /**
-     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
-    protected $throwableStorage;
+    private $throwableStorage;
 
     /**
      * @param array $settings
@@ -176,6 +175,17 @@ class ActionController extends AbstractController
     public function injectLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * Injects the throwable storage.
+     *
+     * @param ThrowableStorageInterface $throwableStorage
+     * @return void
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
     }
 
     /**
