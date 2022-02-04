@@ -73,6 +73,7 @@ class Browser implements ClientInterface
     protected $automaticRequestHeaders;
 
     /**
+     * @Flow\Inject
      * @var RequestEngineInterface
      */
     protected $requestEngine;
