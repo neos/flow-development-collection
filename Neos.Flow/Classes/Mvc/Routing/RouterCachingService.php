@@ -152,7 +152,6 @@ class RouterCachingService
         }
 
         $cacheIdentifier = $this->buildResolveCacheIdentifier($resolveContext, $routeValues);
-        \Neos\Flow\var_dump($resolvedTags->getTags(), 'Tags');exit;
         $this->resolveCache->set($cacheIdentifier, $uriConstraints, $resolvedTags !== null ? $resolvedTags->getTags() : []);
     }
 
