@@ -11,10 +11,10 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
+use Neos\Cache\Exception as CacheException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
@@ -22,7 +22,6 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
-use Neos\Flow\Validation\Validator\UuidValidator;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -78,11 +77,12 @@ class RouterCachingService
 
     /**
      * @return void
+     * @throws CacheException
      */
-    public function initializeObject()
+    public function initializeObject(): void
     {
         // flush routing caches if in Development context & routing settings changed
-        if ($this->objectManager->getContext()->isDevelopment() && $this->routeCache->get('routingSettings') !== $this->routingSettings) {
+        if ($this->routeCache->get('routingSettings') !== $this->routingSettings && $this->objectManager->getContext()->isDevelopment()) {
             $this->flushCaches();
             $this->routeCache->set('routingSettings', $this->routingSettings);
         }
@@ -111,18 +111,14 @@ class RouterCachingService
      * @param array $matchResults
      * @param RouteTags|null $matchedTags
      * @return void
+     * @throws CacheException
      */
-    public function storeMatchResults(RouteContext $routeContext, array $matchResults, RouteTags $matchedTags = null)
+    public function storeMatchResults(RouteContext $routeContext, array $matchResults, RouteTags $matchedTags = null): void
     {
         if ($this->containsObject($matchResults)) {
             return;
         }
-
-        $tags = $this->generateRouteTags(RequestInformationHelper::getRelativeRequestPath($routeContext->getHttpRequest()), $matchResults);
-        if ($matchedTags !== null) {
-            $tags = array_unique(array_merge($matchedTags->getTags(), $tags));
-        }
-        $this->routeCache->set($routeContext->getCacheEntryIdentifier(), $matchResults, $tags);
+        $this->routeCache->set($routeContext->getCacheEntryIdentifier(), $matchResults, $matchedTags !== null ? $matchedTags->getTags() : []);
     }
 
     /**
@@ -156,31 +152,8 @@ class RouterCachingService
         }
 
         $cacheIdentifier = $this->buildResolveCacheIdentifier($resolveContext, $routeValues);
-        $tags = $this->generateRouteTags((string)$uriConstraints->toUri(), $routeValues);
-        if ($resolvedTags !== null) {
-            $tags = array_unique(array_merge($resolvedTags->getTags(), $tags));
-        }
-        $this->resolveCache->set($cacheIdentifier, $uriConstraints, $tags);
-    }
-
-    /**
-     * @param string $uriPath
-     * @param array $routeValues
-     * @return array
-     */
-    protected function generateRouteTags($uriPath, $routeValues)
-    {
-        $uriPath = trim($uriPath, '/');
-        $tags = $this->extractUuids($routeValues);
-        $path = '';
-        $uriPath = explode('/', $uriPath);
-        foreach ($uriPath as $uriPathSegment) {
-            $path .= '/' . $uriPathSegment;
-            $path = trim($path, '/');
-            $tags[] = md5($path);
-        }
-
-        return $tags;
+        \Neos\Flow\var_dump($resolvedTags->getTags(), 'Tags');exit;
+        $this->resolveCache->set($cacheIdentifier, $uriConstraints, $resolvedTags !== null ? $resolvedTags->getTags() : []);
     }
 
     /**
@@ -281,27 +254,5 @@ class RouterCachingService
         Arrays::sortKeysRecursively($routeValues);
 
         return md5(sprintf('abs:%s|prefix:%s|routeValues:%s', $resolveContext->isForceAbsoluteUri() ? 1 : 0, $resolveContext->getUriPathPrefix(), trim(http_build_query($routeValues), '/')));
-    }
-
-    /**
-     * Helper method to generate tags by taking all UUIDs contained
-     * in the given $routeValues or $matchResults
-     *
-     * @param array $values
-     * @return array
-     */
-    protected function extractUuids(array $values)
-    {
-        $uuids = [];
-        foreach ($values as $value) {
-            if (is_string($value)) {
-                if (preg_match(UuidValidator::PATTERN_MATCH_UUID, $value) !== 0) {
-                    $uuids[] = $value;
-                }
-            } elseif (is_array($value)) {
-                $uuids = array_merge($uuids, $this->extractUuids($value));
-            }
-        }
-        return $uuids;
     }
 }
