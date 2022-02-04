@@ -290,6 +290,24 @@ which can be stored using a specific frontend.
 	The PHP frontend can only be used to cache PHP files, it does not work with strings,
 	arrays or objects.
 
+PSR Cache Interfaces
+====================
+
+The implementations of the PSR Cache Interfaces allow to provide caches for external
+libraries that do not know the flow cache interfaces.
+
+PSR-6 Caching Interface
+-----------------------
+
+The classes ``\Neos\Cache\Psr\Cache\CachePool`` and ``\Neos\Cache\Psr\Cache\CacheItem``
+implement the Caching Interface as specified in https://www.php-fig.org/psr/psr-6/
+
+PSR-16 Simple Cache Interface
+-----------------------------
+
+The class ``\Neos\Cache\Psr\SimpleCache\SimpleCache`` implements the SimpleCacheInterface
+that is specified in https://www.php-fig.org/psr/psr-16/
+
 Cache Backends
 ==============
 
@@ -818,9 +836,52 @@ This configures what will be injected into the following setter::
 		$this->fooCache = $cache;
 	}
 
+or injected class property::
+
+  /**
+   * @Flow\Inject
+   * @var \Neos\Cache\Frontend\StringFrontend $cache
+   */
+  protected $cache;
+
 To make it even simpler you could omit the setter method and annotate the member with the
 ``Inject`` annotations. The injected cache is fully initialized, all available frontend
 operations like ``get()``, ``set()`` and ``flushByTag()`` can be executed on ``$this->fooCache``.
+
+For configuring PSR Caches the factoryMethods used in the Objects.yaml have to be adjusted::
+
+	MyCompany\MyPackage\SomeClass:
+	  properties:
+	    # PSR-6
+	    cacheItemPool:
+	      object:
+	        factoryObjectName: Neos\Flow\Cache\CacheManager
+	        factoryMethodName: getCacheItemPool
+	        arguments:
+	          1:
+	            value: MyPackage_CacheItemPool
+	    # PSR-16
+	    simpleCache:
+	      object:
+	        factoryObjectName: Neos\Flow\Cache\CacheManager
+	        factoryMethodName: getSimpleCache
+	        arguments:
+	          1:
+	            value: MyPackage_SimpleCache
+
+This configures what will be injected into the following properties::
+
+  /**
+   * @Flow\Inject
+   * @var \Psr\Cache\CacheItemPoolInterface $cache
+   */
+  protected $cacheItemPool:
+
+  /**
+   * @Flow\Inject
+   * @var \Psr\SimpleCache\CacheInterface $cache
+   */
+  protected $simpleCache;
 
 Using the CacheFactory
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -836,3 +897,12 @@ convenience) for a cache::
 .. _PHP memcache bug 16927:      https://bugs.php.net/bug.php?id=58943
 .. _APCu:                        http://php.net/manual/en/book.apcu.php
 .. _PHP warning:                 https://bugs.php.net/bug.php?id=58982
+
+To retrieve PSR Cache implementations the cache manager provides methods to get
+PSR-6 CacheItemPool PSR-16 SimpleCache implementations for a given cache identifier::
+
+	$this->simpleCache = $this->cacheManager->getSimpleCache('MyPackage_SimpleCache');
+	$this->cacheItemPool = $this->cacheManager->getCacheItemPool('MyPackage_CacheItemPool');
+
+.. warning::
+   While possible it is not advisible to access the same cache with different interfaces as the storage formats may differ!
