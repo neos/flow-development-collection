@@ -30,6 +30,7 @@ class MethodReflection extends \ReflectionMethod
      *
      * @return ClassReflection The declaring class
      */
+    #[\ReturnTypeWillChange]
     public function getDeclaringClass()
     {
         return new ClassReflection(parent::getDeclaringClass()->getName());
@@ -42,6 +43,7 @@ class MethodReflection extends \ReflectionMethod
      *
      * @return array<ParameterReflection> objects of the parameters of this method
      */
+    #[\ReturnTypeWillChange]
     public function getParameters()
     {
         $extendedParameters = [];
