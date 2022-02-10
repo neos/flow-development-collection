@@ -15,6 +15,7 @@ use Neos\Cache\Exception as CacheException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
@@ -29,29 +30,29 @@ use Psr\Log\LoggerInterface;
  *
  * @Flow\Scope("singleton")
  */
-class RouterCachingService
+final class RouterCachingService
 {
     /**
-     * @var VariableFrontend
      * @Flow\Inject
+     * @var VariableFrontend
      */
     protected $routeCache;
 
     /**
-     * @var VariableFrontend
      * @Flow\Inject
+     * @var VariableFrontend
      */
     protected $resolveCache;
 
     /**
-     * @var PersistenceManagerInterface
      * @Flow\Inject
+     * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
-     * @var LoggerInterface
      * @Flow\Inject(name="Neos.Flow:SystemLogger")
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -68,21 +69,12 @@ class RouterCachingService
     protected $routingSettings;
 
     /**
-     * @param LoggerInterface $logger
-     */
-    public function injectLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @return void
      * @throws CacheException
      */
     public function initializeObject(): void
     {
         // flush routing caches if in Development context & routing settings changed
-        if ($this->routeCache->get('routingSettings') !== $this->routingSettings && $this->objectManager->getContext()->isDevelopment()) {
+        if ($this->objectManager->getContext()->isDevelopment() && $this->routeCache->get('routingSettings') !== $this->routingSettings) {
             $this->flushCaches();
             $this->routeCache->set('routingSettings', $this->routingSettings);
         }
@@ -91,7 +83,6 @@ class RouterCachingService
     /**
      * Checks the cache for the given RouteContext and returns the result or false if no matching ache entry was found
      *
-     * @param RouteContext $routeContext
      * @return array|boolean the cached route values or false if no cache entry was found
      */
     public function getCachedMatchResults(RouteContext $routeContext)
@@ -107,10 +98,6 @@ class RouterCachingService
     /**
      * Stores the $matchResults in the cache
      *
-     * @param RouteContext $routeContext
-     * @param array $matchResults
-     * @param RouteTags|null $matchedTags
-     * @return void
      * @throws CacheException
      */
     public function storeMatchResults(RouteContext $routeContext, array $matchResults, RouteTags $matchedTags = null): void
@@ -118,14 +105,17 @@ class RouterCachingService
         if ($this->containsObject($matchResults)) {
             return;
         }
-        $this->routeCache->set($routeContext->getCacheEntryIdentifier(), $matchResults, $matchedTags !== null ? $matchedTags->getTags() : []);
+        $tags = $this->generateRouteTags(RequestInformationHelper::getRelativeRequestPath($routeContext->getHttpRequest()));
+        if ($matchedTags !== null) {
+            $tags = array_unique(array_merge($matchedTags->getTags(), $tags));
+        }
+        $this->routeCache->set($routeContext->getCacheEntryIdentifier(), $matchResults, $tags);
     }
 
     /**
      * Checks the cache for the given ResolveContext and returns the cached UriConstraints if a cache entry is found
      *
-     * @param ResolveContext $resolveContext
-     * @return UriConstraints|boolean the cached URI or false if no cache entry was found
+     * @return UriConstraints|bool the cached URI or false if no cache entry was found
      */
     public function getCachedResolvedUriConstraints(ResolveContext $resolveContext)
     {
@@ -138,13 +128,9 @@ class RouterCachingService
 
     /**
      * Stores the resolved UriConstraints in the cache together with the $routeValues
-     *
-     * @param ResolveContext $resolveContext
-     * @param UriConstraints $uriConstraints
-     * @param RouteTags|null $resolvedTags
-     * @return void
+     * @throws CacheException
      */
-    public function storeResolvedUriConstraints(ResolveContext $resolveContext, UriConstraints $uriConstraints, RouteTags $resolvedTags = null)
+    public function storeResolvedUriConstraints(ResolveContext $resolveContext, UriConstraints $uriConstraints, RouteTags $resolvedTags = null): void
     {
         $routeValues = $this->convertObjectsToHashes($resolveContext->getRouteValues());
         if ($routeValues === null) {
@@ -152,15 +138,29 @@ class RouterCachingService
         }
 
         $cacheIdentifier = $this->buildResolveCacheIdentifier($resolveContext, $routeValues);
-        $this->resolveCache->set($cacheIdentifier, $uriConstraints, $resolvedTags !== null ? $resolvedTags->getTags() : []);
+        $tags = $this->generateRouteTags((string)$uriConstraints->toUri());
+        if ($resolvedTags !== null) {
+            $tags = array_unique(array_merge($resolvedTags->getTags(), $tags));
+        }
+        $this->resolveCache->set($cacheIdentifier, $uriConstraints, $tags);
+    }
+
+    private function generateRouteTags(string $uriPath): array
+    {
+        $tags = [];
+        $path = '';
+        foreach (explode('/', trim($uriPath, '/')) as $uriPathSegment) {
+            $path .= '/' . $uriPathSegment;
+            $path = trim($path, '/');
+            $tags[] = md5($path);
+        }
+        return $tags;
     }
 
     /**
      * Flushes 'route' and 'resolve' caches.
-     *
-     * @return void
      */
-    public function flushCaches()
+    public function flushCaches(): void
     {
         $this->routeCache->flush();
         $this->resolveCache->flush();
@@ -168,11 +168,8 @@ class RouterCachingService
 
     /**
      * Flushes 'findMatchResults' and 'resolve' caches for the given $tag
-     *
-     * @param string $tag
-     * @return void
      */
-    public function flushCachesByTag($tag)
+    public function flushCachesByTag(string $tag): void
     {
         $this->routeCache->flushByTag($tag);
         $this->resolveCache->flushByTag($tag);
@@ -180,11 +177,8 @@ class RouterCachingService
 
     /**
      * Flushes 'findMatchResults' caches that are tagged with the given $uriPath
-     *
-     * @param string $uriPath
-     * @return void
      */
-    public function flushCachesForUriPath($uriPath)
+    public function flushCachesForUriPath(string $uriPath): void
     {
         $uriPathTag = md5(trim($uriPath, '/'));
         $this->flushCachesByTag($uriPathTag);
@@ -193,10 +187,9 @@ class RouterCachingService
     /**
      * Checks if the given subject contains an object
      *
-     * @param mixed $subject
-     * @return boolean true if $subject contains an object, otherwise false
+     * @return bool true if $subject contains an object, otherwise false
      */
-    protected function containsObject($subject)
+    private function containsObject($subject): bool
     {
         if (is_object($subject)) {
             return true;
@@ -216,9 +209,9 @@ class RouterCachingService
      * Recursively converts objects in an array to their identifiers
      *
      * @param array $routeValues the array to be processed
-     * @return array the modified array or NULL if $routeValues contain an object and its identifier could not be determined
+     * @return array|null the modified array or NULL if $routeValues contain an object and its identifier could not be determined
      */
-    protected function convertObjectsToHashes(array $routeValues)
+    private function convertObjectsToHashes(array $routeValues): ?array
     {
         foreach ($routeValues as &$value) {
             if (is_object($value)) {
@@ -243,12 +236,8 @@ class RouterCachingService
 
     /**
      * Generates the Resolve cache identifier for the given Request
-     *
-     * @param ResolveContext $resolveContext
-     * @param array $routeValues
-     * @return string
      */
-    protected function buildResolveCacheIdentifier(ResolveContext $resolveContext, array $routeValues)
+    private function buildResolveCacheIdentifier(ResolveContext $resolveContext, array $routeValues): string
     {
         Arrays::sortKeysRecursively($routeValues);
 
