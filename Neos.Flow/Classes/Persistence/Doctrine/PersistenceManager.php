@@ -119,7 +119,7 @@ class PersistenceManager extends AbstractPersistenceManager
      */
     public function isNewObject($object)
     {
-        return ($this->entityManager->getUnitOfWork()->getEntityState($object, \Doctrine\ORM\UnitOfWork::STATE_NEW) === \Doctrine\ORM\UnitOfWork::STATE_NEW);
+        return ($this->entityManager->getUnitOfWork()->getEntityState($object) === \Doctrine\ORM\UnitOfWork::STATE_NEW);
     }
 
     /**
