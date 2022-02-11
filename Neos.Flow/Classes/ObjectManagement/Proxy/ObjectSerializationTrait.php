@@ -131,6 +131,7 @@ trait ObjectSerializationTrait
                 'identifier' => $identifier,
                 'entityPath' => $path
             ];
+            $this->$originalPropertyName = Arrays::setValueByPath($this->$originalPropertyName, $path, null);
         }
     }
 
