@@ -22,10 +22,10 @@ jobs:
         static-analysis: ['no']
         experimental: [false]
         include:
-          - php-versions: '7.3'
-            static-analysis: 'psalm'
-            experimental: true
-            dependencies: 'highest'
+          #- php-versions: '7.3'
+          #  static-analysis: 'psalm'
+          #  experimental: true
+          #  dependencies: 'highest'
 
           # Experimental build for PHP nightly
           #- php-versions: 'nightly'
@@ -35,10 +35,10 @@ jobs:
           #  dependencies: 'highest'
 
           # Build for minimum dependencies.
-          - php-versions: '7.3'
-            static-analysis: 'no'
-            experimental: false
-            dependencies: 'lowest'
+          #- php-versions: '7.3'
+          #  static-analysis: 'no'
+          #  experimental: false
+          #  dependencies: 'lowest'
 
     runs-on: ubuntu-latest
     services:
