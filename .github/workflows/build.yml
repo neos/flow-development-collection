@@ -21,7 +21,7 @@ jobs:
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
         experimental: [false]
-        include:
+        #include:
           #- php-versions: '7.3'
           #  static-analysis: 'psalm'
           #  experimental: true
