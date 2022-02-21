@@ -22,6 +22,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ObjectManagement\Proxy\Compiler;
 use Neos\Flow\ObjectManagement\Proxy\ObjectSerializationTrait;
 use Neos\Flow\ObjectManagement\Proxy\ProxyClass;
+use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\Arrays;
@@ -299,15 +300,15 @@ class ProxyClassBuilder
                             }
                             $assignments[$argumentPosition] = $assignmentPrologue . '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
                         }
-                        break;
+                    break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                         $assignments[$argumentPosition] = $assignmentPrologue . var_export($argumentValue, true);
-                        break;
+                    break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
                         $assignments[$argumentPosition] = $assignmentPrologue . '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, \'' . $argumentValue . '\')';
-                        break;
+                    break;
                 }
             }
         }
@@ -360,7 +361,7 @@ class ProxyClassBuilder
                         $commands = array_merge($commands, $this->buildPropertyInjectionCodeByString($objectConfiguration, $propertyConfiguration, $propertyName, $propertyValue));
                     }
 
-                    break;
+                break;
                 case ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE:
                     if (is_string($propertyValue)) {
                         $preparedSetterArgument = '\'' . str_replace('\'', '\\\'', $propertyValue) . '\'';
@@ -372,14 +373,14 @@ class ProxyClassBuilder
                         $preparedSetterArgument = $propertyValue;
                     }
                     $commands[] = 'if (\Neos\Utility\ObjectAccess::setProperty($this, \'' . $propertyName . '\', ' . $preparedSetterArgument . ') === false) { $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';}';
-                    break;
+                break;
                 case ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION:
                     $configurationType = $propertyValue['type'];
                     if (!in_array($configurationType, $this->configurationManager->getAvailableConfigurationTypes())) {
                         throw new ObjectException\UnknownObjectException('The configuration injection specified for property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" refers to the unknown configuration type "' . $configurationType . '".', 1420736211);
                     }
                     $commands = array_merge($commands, $this->buildPropertyInjectionCodeByConfigurationTypeAndPath($objectConfiguration, $propertyName, $configurationType, $propertyValue['path']));
-                    break;
+                break;
             }
             $injectedProperties[] = $propertyName;
         }
@@ -406,7 +407,6 @@ class ProxyClassBuilder
     protected function buildPropertyInjectionCodeByConfiguration(Configuration $objectConfiguration, $propertyName, Configuration $propertyConfiguration)
     {
         $className = $objectConfiguration->getClassName();
-        $propertyObjectName = $propertyConfiguration->getObjectName();
         $propertyClassName = $propertyConfiguration->getClassName();
         if ($propertyClassName === null) {
             $preparedSetterArgument = $this->buildCustomFactoryCall($propertyConfiguration->getFactoryObjectName(), $propertyConfiguration->getFactoryMethodName(), $propertyConfiguration->getFactoryArguments());
@@ -427,7 +427,9 @@ class ProxyClassBuilder
             return $result;
         }
 
-        return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
+        // It's hard to predict what we are going to inject due to what can be configured via Objects.yaml,
+        // so we don't allow lazy injection in this case:
+        return ['    $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
     }
 
     /**
@@ -466,7 +468,33 @@ class ProxyClassBuilder
             return $result;
         }
 
-        if ($propertyConfiguration->isLazyLoading() && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
+        $propertyClassHasInterfaceWithConstructor = false;
+        $propertyClassHasFinalMethod = false;
+        if ($propertyClassName) {
+            foreach ((new ClassReflection($propertyClassName))->getInterfaceNames() as $interfaceName) {
+                if (method_exists($interfaceName, '__construct')) {
+                    $propertyClassHasInterfaceWithConstructor = true;
+                    break;
+                }
+            }
+            foreach (get_class_methods($propertyClassName) as $methodName) {
+                if ($this->reflectionService->isMethodFinal($propertyClassName, $methodName)) {
+                    $propertyClassHasFinalMethod = true;
+                }
+            }
+        }
+
+        # There are several cases when providing lazy loading is not possible, due to the way
+        # lazy loading is implemented. If any of the check fails, we fall back to eager loading:
+        if (
+            $propertyConfiguration->isLazyLoading() &&
+            $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE &&
+            !interface_exists($this->objectConfigurations[$propertyObjectName]->getClassName()) &&
+            !$this->objectConfigurations[$propertyObjectName]->isCreatedByFactory() &&
+            !$propertyClassHasInterfaceWithConstructor &&
+            !$propertyClassHasFinalMethod &&
+            $this->compiler->getProxyClass($propertyClassName) !== false
+        ) {
             return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
         } else {
             return ['    $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
@@ -628,20 +656,21 @@ class ProxyClassBuilder
                         } else {
                             if (strpos($argumentValue, '.') !== false) {
                                 $settingPath = explode('.', $argumentValue);
-                                $settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
+                                $settings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
+                                $settings = Arrays::getValueByPath($settings, array_shift($settingPath));
                                 $argumentValue = Arrays::getValueByPath($settings, $settingPath);
                             }
                             $preparedArguments[] = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
                         }
-                        break;
+                    break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                         $preparedArguments[] = var_export($argumentValue, true);
-                        break;
+                    break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
                         $preparedArguments[] = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, \'' . $argumentValue . '\')';
-                        break;
+                    break;
                 }
             }
         }

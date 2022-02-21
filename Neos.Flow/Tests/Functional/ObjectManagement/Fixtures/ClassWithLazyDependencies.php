@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpMissingFieldTypeInspection */
 namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
 
 /*
@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
  */
 
 use Neos\Flow\Annotations as Flow;
-
 /**
  * A class which has lazy dependencies
  */
@@ -26,9 +25,9 @@ class ClassWithLazyDependencies
 
     /**
      * @Flow\Inject
-     * @var SingletonClassB
+     * @var SingletonClassB|null
      */
-    public $lazyB;
+    public ?SingletonClassB $lazyB = null;
 
     /**
      * @Flow\Inject(lazy = false)

@@ -11,9 +11,18 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
+use Laminas\Code\Generator\ClassGenerator;
+use Laminas\Code\Generator\MethodGenerator;
+use Laminas\Code\Generator\ParameterGenerator;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
+use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxyTrait;
+use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
 use Neos\Flow\Reflection\ClassReflection;
+use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
+use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ReflectionService;
+use ReflectionException;
 
 /**
  * Representation of a Proxy Class during rendering time
@@ -204,17 +213,20 @@ class ProxyClass
      * Renders and returns the PHP code for this ProxyClass.
      *
      * @return string
+     * @throws ReflectionException
+     * @throws ClassLoadingForReflectionFailedException
+     * @throws CannotBuildObjectException
      */
     public function render()
     {
-        $namespace = $this->namespace;
         $proxyClassName = $this->originalClassName;
         $originalClassName = $this->originalClassName . Compiler::ORIGINAL_CLASSNAME_SUFFIX;
-        $classModifier = '';
         if ($this->reflectionService->isClassAbstract($this->fullOriginalClassName)) {
             $classModifier = 'abstract ';
-        } elseif ($this->reflectionService->isClassFinal($this->fullOriginalClassName)) {
-            $classModifier = 'final ';
+        } else {
+            # Don't add a "final" class modified, even if the original class had one, because
+            # otherwise, a Lazy Proxy cannot extend the generated proxy class.
+            $classModifier = '';
         }
 
         $constantsCode = $this->renderConstantsCode();
@@ -235,7 +247,27 @@ class ProxyClass
             $constantsCode .
             $propertiesCode .
             $methodsCode .
-            '}';
+            "}\n\n";
+
+        $hasInterfaceWithConstructor = false;
+        foreach ((new ClassReflection($this->fullOriginalClassName))->getInterfaceNames() as $interfaceName) {
+            if (method_exists($interfaceName, '__construct')) {
+                $hasInterfaceWithConstructor = true;
+                break;
+            }
+        }
+
+        $hasFinalMethod = false;
+        foreach (get_class_methods($this->fullOriginalClassName) as $methodName) {
+            if ($this->reflectionService->isMethodFinal($this->fullOriginalClassName, $methodName)) {
+                $hasFinalMethod = true;
+            }
+        }
+
+        if (!$hasInterfaceWithConstructor && !$hasFinalMethod && !$this->reflectionService->isClassAbstract($this->fullOriginalClassName)) {
+            $classCode .= $this->buildLazyProxyClass($proxyClassName, $originalClassName);
+        }
+
         return $classCode;
     }
 
@@ -301,5 +333,67 @@ class ProxyClass
         }
 
         return '    use ' . implode(', ', $this->traits) . ";\n\n";
+    }
+
+    /**
+     * @param $proxyClassName
+     * @param string $originalClassName
+     * @return string
+     * @throws ReflectionException
+     */
+    protected function buildLazyProxyClass($proxyClassName, string $originalClassName): string
+    {
+        $methods = [$this->buildCallMagicMethod()];
+
+        foreach (get_class_methods($this->fullOriginalClassName) as $methodName) {
+            if (!$this->reflectionService->isMethodPublic($this->fullOriginalClassName, $methodName) || $methodName === '__call' || $methodName === '__construct') {
+                continue;
+            }
+            $methodReturnType = $this->reflectionService->getMethodDeclaredReturnType($this->fullOriginalClassName, $methodName);
+            $returnKeyword = ($methodReturnType === 'void') ? '' : 'return ';
+            $method = MethodGenerator::fromReflection(new \Laminas\Code\Reflection\MethodReflection($this->fullOriginalClassName, $methodName));
+            $method->removeDocBlock();
+            $method->setBody(
+                <<< CODE
+                    \$arguments = func_get_args();
+                    {$returnKeyword}\$this->_activateDependency()->{$methodName}(...\$arguments);
+                CODE
+            );
+            $methods[] = $method;
+        }
+
+        return ClassGenerator::fromArray(['name' => $proxyClassName . '_LazyProxy'])
+            ->setExtendedClass($proxyClassName)
+            ->setImplementedInterfaces([DependencyProxy::class])
+            ->addTrait('\\' . DependencyProxyTrait::class)
+            ->removeMethod('__call')
+            ->addMethods($methods)
+            ->generate();
+    }
+
+    /**
+     * @return MethodGenerator
+     * @throws ReflectionException
+     */
+    protected function buildCallMagicMethod(): MethodGenerator
+    {
+        if (method_exists($this->fullOriginalClassName, '__call')) {
+            $callMagicMethod = MethodGenerator::fromReflection(new \Laminas\Code\Reflection\MethodReflection($this->fullOriginalClassName, '__call'));
+        } else {
+            $callMagicMethod = MethodGenerator::fromArray(['name' => '__call']);
+            $callMagicMethod->setParameters([
+                ParameterGenerator::fromArray(['name' => 'methodName', 'type' => 'string']),
+                ParameterGenerator::fromArray(['name' => 'arguments', 'type' => 'array']),
+            ]);
+        }
+
+        $callMagicMethod->setBody(
+            <<< CODE
+                [\$methodName, \$arguments] = func_get_args();
+                return \$this->_activateDependency()->\$methodName(...\$arguments);
+            CODE
+        );
+        $callMagicMethod->removeDocBlock();
+        return $callMagicMethod;
     }
 }

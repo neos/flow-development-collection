@@ -561,7 +561,13 @@ class ConfigurationBuilder
                 if (!array_key_exists($propertyName, $properties)) {
                     /** @var Inject $injectAnnotation */
                     $injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, Inject::class);
-                    $objectName = $injectAnnotation->name !== null ? $injectAnnotation->name : trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
+                    $objectName = $injectAnnotation->name;
+                    if ($objectName === null) {
+                        $objectName = $this->reflectionService->getPropertyType($className, $propertyName);
+                    }
+                    if ($objectName === null) {
+                        $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
+                    }
                     $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $injectAnnotation->lazy);
                     $properties[$propertyName] = $configurationProperty;
                 }
