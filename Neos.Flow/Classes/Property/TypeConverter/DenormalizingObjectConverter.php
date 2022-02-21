@@ -161,9 +161,9 @@ final class DenormalizingObjectConverter implements TypeConverterInterface
             case 'string':
                 return $targetType::fromString($source);
             case 'boolean':
-                return $targetType::fromBool($source);
+                return $targetType::fromBoolean($source);
             case 'integer':
-                return $targetType::fromInt($source);
+                return $targetType::fromInteger($source);
             case 'double':
                 return $targetType::fromFloat($source);
             default:
