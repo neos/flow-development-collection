@@ -82,10 +82,10 @@ final class DenormalizingObjectConverter implements TypeConverterInterface
                     return method_exists($targetType, 'fromString');
                 case 'bool':
                 case 'boolean':
-                    return method_exists($targetType, 'fromBool');
+                    return method_exists($targetType, 'fromBoolean');
                 case 'int':
                 case 'integer':
-                    return method_exists($targetType, 'fromInt');
+                    return method_exists($targetType, 'fromInteger');
                 case 'double':
                 case 'float':
                     return method_exists($targetType, 'fromFloat');
