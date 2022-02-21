@@ -30,7 +30,7 @@ final class IntegerBasedValueObject implements \JsonSerializable
      * @param int $int
      * @return self
      */
-    public static function fromInt(int $int): self
+    public static function fromInteger(int $int): self
     {
         return new self($int);
     }
