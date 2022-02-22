@@ -65,7 +65,7 @@ class Configuration
     protected $factoryArguments = [];
 
     /**
-     * @var string
+     * @var int
      */
     protected $scope = self::SCOPE_PROTOTYPE;
 
@@ -255,7 +255,7 @@ class Configuration
      * @param integer $scope Name of the scope
      * @return void
      */
-    public function setScope($scope)
+    public function setScope(int $scope)
     {
         $this->scope = $scope;
     }
@@ -263,7 +263,7 @@ class Configuration
     /**
      * Returns the scope for this object
      *
-     * @return string The scope, one of the SCOPE constants
+     * @return int The scope, one of the SCOPE constants
      */
     public function getScope()
     {

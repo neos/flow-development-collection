@@ -117,7 +117,7 @@ class CompileTimeObjectManager extends ObjectManager
     }
 
     /**
-     * Initializes the the object configurations and some other parts of this Object Manager.
+     * Initializes the object configurations and some other parts of this Object Manager.
      *
      * @param PackageInterface[] $packages An array of active packages to consider
      * @return void

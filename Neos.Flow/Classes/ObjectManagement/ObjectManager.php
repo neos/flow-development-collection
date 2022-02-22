@@ -130,7 +130,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * Returns true if an object with the given name is registered
      *
-     * @param  string $objectName Name of the object
+     * @param string $objectName Name of the object
      * @return boolean true if the object has been registered, otherwise false
      * @throws \InvalidArgumentException
      * @api
@@ -248,7 +248,7 @@ class ObjectManager implements ObjectManagerInterface
      * case sensitive name is not available. This method helps you in these
      * rare cases.
      *
-     * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
+     * @param string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
      * @return string|null Either the mixed case object name or false if no object of that name was found.
      * @internal
      */
@@ -420,7 +420,7 @@ class ObjectManager implements ObjectManagerInterface
      * Unsets the instance of the given object
      *
      * If run during standard runtime, the whole application might become unstable
-     * because certain parts might already use an instance of this object. Therefore
+     * because certain parts might already use an instance of this object. Therefore,
      * this method should only be used in a setUp() method of a functional test case.
      *
      * @param string $objectName The object name

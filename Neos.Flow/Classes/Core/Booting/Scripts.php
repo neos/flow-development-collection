@@ -391,7 +391,7 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $settings = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
 
-        // The compile sub command will only be run if the code cache is completely empty:
+        // The "core:compile" sub command will only be run if the code cache is completely empty:
         OpcodeCacheHelper::clearAllActive(FLOW_PATH_CONFIGURATION);
         OpcodeCacheHelper::clearAllActive(FLOW_PATH_DATA);
         self::executeCommand('neos.flow:core:compile', $settings);
