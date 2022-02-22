@@ -19,7 +19,7 @@ use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterfaceWithConstructor;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP8\BackedEnumWithMethod;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\BackedEnumWithMethod;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
