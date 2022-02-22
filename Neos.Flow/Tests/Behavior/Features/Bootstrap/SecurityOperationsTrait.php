@@ -104,7 +104,7 @@ trait SecurityOperationsTrait
      */
     public static function cleanUpSecurity()
     {
-        if (file_exists(self::$testingPolicyPathAndFilename)) {
+        if (self::$testingPolicyPathAndFilename !== null && file_exists(self::$testingPolicyPathAndFilename)) {
             unlink(self::$testingPolicyPathAndFilename);
         }
     }
