@@ -130,15 +130,6 @@ class ProxyCompilerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function proxiedFinalClassesAreStillFinal()
-    {
-        $reflectionClass = new ClassReflection(Fixtures\FinalClassWithDependencies::class);
-        self::assertTrue($reflectionClass->isFinal());
-    }
-
-    /**
-     * @test
-     */
     public function attributesArePreserved()
     {
         if (PHP_MAJOR_VERSION < 8) {

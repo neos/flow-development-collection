@@ -219,7 +219,7 @@ class ObjectManager implements ObjectManagerInterface
             return $this->instantiateClass($className, $constructorArguments);
         }
 
-        $this->objects[$objectName]['i'] = $this->instantiateClass($className, []);
+        $this->objects[$objectName]['i'] = $this->instantiateClass($className, $constructorArguments);
         return $this->objects[$objectName]['i'];
     }
 
