@@ -1318,7 +1318,7 @@ class ReflectionService
         $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] = $visibility;
 
         if ($property->hasType()) {
-            $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TYPE] = (string)$property->getType();
+            $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TYPE] = trim($property->getType(), '?');
         }
 
         foreach ($property->getTagsValues() as $tagName => $tagValues) {
