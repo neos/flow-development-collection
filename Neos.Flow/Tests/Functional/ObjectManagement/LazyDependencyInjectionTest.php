@@ -24,9 +24,13 @@ class LazyDependencyInjectionTest extends FunctionalTestCase
      */
     public function lazyDependencyIsOnlyInjectedIfMethodOnDependencyIsCalledForTheFirstTime()
     {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Test this only with PHP 8');
+        }
+
         $this->objectManager->forgetInstance(Fixtures\SingletonClassA::class);
 
-        $object = $this->objectManager->get(Fixtures\ClassWithLazyDependencies::class);
+        $object = $this->objectManager->get(Fixtures\PHP8\ClassWithLazyDependencies::class);
         self::assertInstanceOf(DependencyProxy::class, $object->lazyA);
 
         $actualObjectB = $object->lazyA->getObjectB();
@@ -43,7 +47,11 @@ class LazyDependencyInjectionTest extends FunctionalTestCase
      */
     public function dependencyIsInjectedDirectlyIfLazyWasDisabledViaAnnotation()
     {
-        $object = $this->objectManager->get(Fixtures\ClassWithLazyDependencies::class);
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Test this only with PHP 8');
+        }
+
+        $object = $this->objectManager->get(Fixtures\PHP8\ClassWithLazyDependencies::class);
         self::assertInstanceOf(Fixtures\SingletonClassC::class, $object->eagerC);
     }
 
@@ -52,10 +60,14 @@ class LazyDependencyInjectionTest extends FunctionalTestCase
      */
     public function lazyDependencyIsInjectedIntoAllClassesWhichNeedItIfItIsUsedTheFirstTime()
     {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Test this only with PHP 8');
+        }
+
         $this->objectManager->forgetInstance(Fixtures\SingletonClassA::class);
         $this->objectManager->forgetInstance(Fixtures\SingletonClassBsub::class);
 
-        $object1 = $this->objectManager->get(Fixtures\ClassWithLazyDependencies::class);
+        $object1 = $this->objectManager->get(Fixtures\PHP8\ClassWithLazyDependencies::class);
         $object2 = $this->objectManager->get(Fixtures\AnotherClassWithLazyDependencies::class);
 
         self::assertInstanceOf(DependencyProxy::class, $object1->lazyA);

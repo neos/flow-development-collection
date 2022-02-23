@@ -1,5 +1,5 @@
 <?php /** @noinspection PhpMissingFieldTypeInspection */
-namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
+namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP8;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -12,6 +12,10 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassB;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassC;
+
 /**
  * A class which has lazy dependencies
  */
