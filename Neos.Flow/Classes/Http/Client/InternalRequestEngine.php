@@ -109,7 +109,6 @@ class InternalRequestEngine implements RequestEngineInterface
      * @return ResponseInterface
      * @throws FlowException
      * @throws Http\Exception
-     * @api
      */
     public function sendRequest(RequestInterface $httpRequest): ResponseInterface
     {
