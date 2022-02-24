@@ -30,6 +30,8 @@ use Neos\Flow\Validation\ValidatorResolver;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 /**
@@ -84,6 +86,12 @@ class InternalRequestEngine implements RequestEngineInterface
 
     /**
      * @Flow\Inject
+     * @var ServerRequestFactoryInterface
+     */
+    protected $serverRequestFactory;
+
+    /**
+     * @Flow\Inject
      * @var ResponseFactoryInterface
      */
     protected $responseFactory;
@@ -105,6 +113,19 @@ class InternalRequestEngine implements RequestEngineInterface
      */
     public function sendRequest(RequestInterface $httpRequest): ResponseInterface
     {
+        // convert RequestInterface to ServerRequestInterface if needed
+        if (!$httpRequest instanceof ServerRequestInterface) {
+            $serverRequest = $this->serverRequestFactory->createServerRequest(
+                $httpRequest->getMethod(),
+                $httpRequest->getUri()
+            );
+            foreach ($httpRequest->getHeaders() as $header => $value) {
+                $serverRequest = $serverRequest->withHeader($header, $value);
+            }
+            $serverRequest = $serverRequest->withBody($httpRequest->getBody());
+            $httpRequest = $serverRequest;
+        }
+
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         if (!$requestHandler instanceof FunctionalTestRequestHandler) {
             throw new Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
@@ -115,6 +136,10 @@ class InternalRequestEngine implements RequestEngineInterface
         $this->validatorResolver->reset();
 
         $objectManager = $this->bootstrap->getObjectManager();
+
+        /**
+         * @var Http\Middleware\MiddlewaresChain $middlewaresChain
+         */
         $middlewaresChain = $objectManager->get(Http\Middleware\MiddlewaresChain::class);
 
         try {
