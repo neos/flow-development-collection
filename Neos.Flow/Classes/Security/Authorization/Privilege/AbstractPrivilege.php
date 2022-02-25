@@ -74,7 +74,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
      * @param string $permission One of the constants GRANT, DENY or ABSTAIN
      * @param PrivilegeParameterInterface[] $parameters
      */
-    public function __construct(PrivilegeTarget $privilegeTarget, $matcher, string $permission, array $parameters)
+    public function __construct(PrivilegeTarget $privilegeTarget, $matcher, $permission, array $parameters)
     {
         $this->privilegeTarget = $privilegeTarget;
         $this->matcher = $matcher;
