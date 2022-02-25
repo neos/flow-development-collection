@@ -53,7 +53,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
     protected $parsedMatcher;
 
     /**
-     * @var integer One of the constants ABSTAIN, GRANT or DENY
+     * @var string One of the constants ABSTAIN, GRANT or DENY
      */
     protected $permission;
 
@@ -74,7 +74,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
      * @param string $permission One of the constants GRANT, DENY or ABSTAIN
      * @param PrivilegeParameterInterface[] $parameters
      */
-    public function __construct(PrivilegeTarget $privilegeTarget, $matcher, $permission, array $parameters)
+    public function __construct(PrivilegeTarget $privilegeTarget, $matcher, string $permission, array $parameters)
     {
         $this->privilegeTarget = $privilegeTarget;
         $this->matcher = $matcher;
@@ -120,7 +120,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
     }
 
     /**
-     * @return integer
+     * @return string
      */
     public function getPermission()
     {
