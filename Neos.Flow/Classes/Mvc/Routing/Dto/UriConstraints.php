@@ -86,8 +86,8 @@ final class UriConstraints
         if ($uri->getPort() !== null) {
             $constraints[self::CONSTRAINT_PORT] = $uri->getPort();
         }
-        if ($uri->getPath() !== '') {
-            $constraints[self::CONSTRAINT_PATH] = $uri->getPath();
+        if ($uri->getPort() !== null || $uri->getScheme() !== '') {
+            $constraints[self::CONSTRAINT_PORT] = $uri->getPort() ?? UriHelper::getDefaultPortForScheme($uri->getScheme());
         }
         if ($uri->getQuery() !== '') {
             $constraints[self::CONSTRAINT_QUERY_STRING] = $uri->getQuery();

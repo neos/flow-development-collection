@@ -362,7 +362,8 @@ class UriConstraintsTest extends UnitTestCase
     {
         return [
             ['uri' => '', 'expectedConstraints' => []],
-            ['uri' => 'https://neos.io', 'expectedConstraints' => [UriConstraints::CONSTRAINT_SCHEME => 'https', UriConstraints::CONSTRAINT_HOST => 'neos.io']],
+            ['uri' => 'https://neos.io', 'expectedConstraints' => [UriConstraints::CONSTRAINT_SCHEME => 'https', UriConstraints::CONSTRAINT_HOST => 'neos.io', UriConstraints::CONSTRAINT_PORT => 443]],
+            ['uri' => 'http://www.neos.io', 'expectedConstraints' => [UriConstraints::CONSTRAINT_SCHEME => 'http', UriConstraints::CONSTRAINT_HOST => 'www.neos.io', UriConstraints::CONSTRAINT_PORT => 80]],
             ['uri' => 'http://localhost:8080', 'expectedConstraints' => [UriConstraints::CONSTRAINT_SCHEME => 'http', UriConstraints::CONSTRAINT_HOST => 'localhost', UriConstraints::CONSTRAINT_PORT => 8080]],
             ['uri' => '/some/path', 'expectedConstraints' => [UriConstraints::CONSTRAINT_PATH => '/some/path']],
             ['uri' => '?some&query=string', 'expectedConstraints' => [UriConstraints::CONSTRAINT_QUERY_STRING => 'some&query=string']],
