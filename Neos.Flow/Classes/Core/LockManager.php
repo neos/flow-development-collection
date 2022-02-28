@@ -133,7 +133,7 @@ class LockManager
         if (is_resource($this->lockResource)) {
             flock($this->lockResource, LOCK_UN);
             fclose($this->lockResource);
-            unlink($this->lockPathAndFilename);
+            @unlink($this->lockPathAndFilename);
         }
         @unlink($this->lockFlagPathAndFilename);
     }
