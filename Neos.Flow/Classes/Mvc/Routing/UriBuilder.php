@@ -457,7 +457,7 @@ final class UriBuilder
                             unset($requestArguments[$argumentToBeExcluded]);
                         }
                     }
-                } else if ($this->request->getArgumentNamespace() !== '') {
+                } elseif ($this->request->getArgumentNamespace() !== '') {
                     $requestNamespace = $this->getRequestNamespacePath($this->request);
                     if ($this->addQueryString === false) {
                         $requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace);

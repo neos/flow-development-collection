@@ -13,7 +13,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Link;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Flow\Security\RequestPattern\Uri;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
 
