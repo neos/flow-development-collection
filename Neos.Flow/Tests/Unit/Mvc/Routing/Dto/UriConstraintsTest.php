@@ -338,26 +338,6 @@ class UriConstraintsTest extends UnitTestCase
         self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
 
-    /**
-     * @test
-     */
-    public function getPathConstraintReturnsNullByDefault()
-    {
-        self::assertNull(UriConstraints::create()->getPathConstraint());
-    }
-
-    /**
-     * @test
-     */
-    public function getPathConstraintReturnsPathConstraintWithoutPrefixAndSuffix()
-    {
-        $uriConstraints = UriConstraints::create()
-            ->withPath('some/path')
-            ->withPathPrefix('prefix')
-            ->withPathSuffix('suffix');
-        self::assertSame('some/path', $uriConstraints->getPathConstraint());
-    }
-
     public function fromUriDataProvider()
     {
         return [
