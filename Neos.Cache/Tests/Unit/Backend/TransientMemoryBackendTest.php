@@ -215,6 +215,27 @@ class TransientMemoryBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function flushByTagsRemovesCacheEntriesWithSpecifiedTags(): void
+    {
+        $cache = $this->createMock(FrontendInterface::class);
+        $backend = new TransientMemoryBackend($this->getEnvironmentConfiguration());
+        $backend->setCache($cache);
+
+        $data = 'some data' . microtime();
+        $backend->set('TransientMemoryBackendTest1', $data, ['UnitTestTag%test', 'UnitTestTag%boring']);
+        $backend->set('TransientMemoryBackendTest2', $data, ['UnitTestTag%test', 'UnitTestTag%special']);
+        $backend->set('TransientMemoryBackendTest3', $data, ['UnitTestTag%test']);
+
+        $backend->flushByTags(['UnitTestTag%boring', 'UnitTestTag%special']);
+
+        self::assertFalse($backend->has('TransientMemoryBackendTest1'), 'TransientMemoryBackendTest1');
+        self::assertFalse($backend->has('TransientMemoryBackendTest2'), 'TransientMemoryBackendTest2');
+        self::assertTrue($backend->has('TransientMemoryBackendTest3'), 'TransientMemoryBackendTest3');
+    }
+
+    /**
+     * @test
+     */
     public function flushRemovesAllCacheEntries(): void
     {
         $cache = $this->createMock(FrontendInterface::class);
