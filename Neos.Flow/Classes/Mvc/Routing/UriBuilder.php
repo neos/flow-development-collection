@@ -29,7 +29,7 @@ use Neos\Utility\Arrays;
  *
  * @api
  */
-final class UriBuilder
+class UriBuilder
 {
     /**
      * @Flow\Inject
