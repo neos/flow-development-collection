@@ -83,13 +83,11 @@ class WebRedirect extends AbstractEntryPoint
     protected function generateUriFromRouteValues(array $routeValues, ServerRequestInterface $request): string
     {
         $actionRequest = ActionRequest::fromHttpRequest($request);
-        $this->uriBuilder->setRequest($actionRequest);
-
         $actionName = $this->extractRouteValue($routeValues, '@action');
         $controllerName = $this->extractRouteValue($routeValues, '@controller');
         $packageKey = $this->extractRouteValue($routeValues, '@package');
         $subPackageKey = $this->extractRouteValue($routeValues, '@subpackage');
-        return $this->uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $routeValues, $controllerName, $packageKey, $subPackageKey);
+        return (new UriBuilder($actionRequest))->withCreateAbsoluteUri(true)->uriFor($actionName, $routeValues, $controllerName, $packageKey, $subPackageKey);
     }
 
     /**

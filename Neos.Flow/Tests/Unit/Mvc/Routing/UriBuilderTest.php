@@ -100,11 +100,10 @@ class UriBuilderTest extends UnitTestCase
         $environment = $this->getMockBuilder(Utility\Environment::class)->disableOriginalConstructor()->setMethods(['isRewriteEnabled'])->getMock();
         $environment->expects(self::any())->method('isRewriteEnabled')->will(self::returnValue(true));
 
-        $this->uriBuilder = new Mvc\Routing\UriBuilder();
+        $this->uriBuilder = new Mvc\Routing\UriBuilder($this->mockMainRequest);
         $this->inject($this->uriBuilder, 'router', $this->mockRouter);
         $this->inject($this->uriBuilder, 'environment', $environment);
         $this->inject($this->uriBuilder, 'baseUriProvider', $this->mockBaseUriProvider);
-        $this->uriBuilder->setRequest($this->mockMainRequest);
     }
 
     /**
@@ -837,10 +836,21 @@ class UriBuilderTest extends UnitTestCase
      */
     public function setRequestResetsUriBuilder()
     {
-        /** @var Mvc\Routing\UriBuilder|\PHPUnit\Framework\MockObject\MockObject $uriBuilder */
-        $uriBuilder = $this->getAccessibleMock(Mvc\Routing\UriBuilder::class, ['reset']);
-        $uriBuilder->expects(self::once())->method('reset');
+        $uriBuilder = $this->uriBuilder
+            ->withCreateAbsoluteUri(true)
+            ->withArguments(['foo' => 'bar'])
+            ->withFormat('xml')
+            ->withAddQueryString(true)
+            ->withArgumentsToBeExcludedFromQueryString(['bar' => 'baz'])
+            ->withSection('some-section');
+
         $uriBuilder->setRequest($this->mockMainRequest);
+        self::assertFalse($uriBuilder->getCreateAbsoluteUri());
+        self::assertEmpty($uriBuilder->getArguments());
+        self::assertNull($uriBuilder->getFormat());
+        self::assertFalse($uriBuilder->getAddQueryString());
+        self::assertEmpty($uriBuilder->getArgumentsToBeExcludedFromQueryString());
+        self::assertEmpty($uriBuilder->getSection());
     }
 
     /**

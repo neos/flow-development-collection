@@ -14,6 +14,7 @@ namespace Neos\FluidAdaptor\ViewHelpers;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
@@ -218,20 +219,17 @@ class FormViewHelper extends AbstractFormViewHelper
                     throw new ViewHelper\Exception('The parent requests was unexpectedly empty, probably the current request is broken.', 1565947917);
                 }
 
-                $uriBuilder = clone $uriBuilder;
-                $uriBuilder->setRequest($parentRequest);
+                $uriBuilder = new UriBuilder($parentRequest);
             }
-            $uriBuilder
-                ->reset()
-                ->setSection($this->arguments['section'])
-                ->setCreateAbsoluteUri($this->arguments['absolute'])
-                ->setAddQueryString($this->arguments['addQueryString'])
-                ->setFormat($this->arguments['format']);
+            $uriBuilder = $uriBuilder
+                ->withSection($this->arguments['section'])
+                ->withAddQueryString($this->arguments['addQueryString'])
+                ->withFormat($this->arguments['format']);
             if (is_array($this->arguments['additionalParams'])) {
-                $uriBuilder->setArguments($this->arguments['additionalParams']);
+                $uriBuilder = $uriBuilder->withArguments($this->arguments['additionalParams']);
             }
             if (is_array($this->arguments['argumentsToBeExcludedFromQueryString'])) {
-                $uriBuilder->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
+                $uriBuilder = $uriBuilder->withArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
             }
             try {
                 $this->formActionUri = $uriBuilder

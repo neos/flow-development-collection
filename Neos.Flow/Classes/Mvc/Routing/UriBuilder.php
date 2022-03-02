@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\Flow\Mvc\Routing;
 
 /*
@@ -13,11 +14,14 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
+use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+use Neos\Flow\Utility\Environment;
 use Neos\Utility\Arrays;
 
 /**
@@ -25,17 +29,17 @@ use Neos\Utility\Arrays;
  *
  * @api
  */
-class UriBuilder
+final class UriBuilder
 {
     /**
      * @Flow\Inject
-     * @var \Neos\Flow\Mvc\Routing\RouterInterface
+     * @var RouterInterface
      */
     protected $router;
 
     /**
      * @Flow\Inject
-     * @var \Neos\Flow\Utility\Environment
+     * @var Environment
      */
     protected $environment;
 
@@ -45,56 +49,28 @@ class UriBuilder
      */
     protected $baseUriProvider;
 
-    /**
-     * @var ActionRequest
-     */
-    protected $request;
+    private ActionRequest $request;
+    private array $arguments = [];
+    private array $lastArguments = [];
+    private string $section = '';
+    private bool $createAbsoluteUri = false;
+    private bool $addQueryString = false;
+    private array $argumentsToBeExcludedFromQueryString = [];
+    private ?string $format = null;
 
-    /**
-     * @var array
-     */
-    protected $arguments = [];
+    public function __construct(ActionRequest $request)
+    {
+        $this->request = $request;
+    }
 
-    /**
-     * Arguments which have been used for building the last URI
-     * @var array
-     */
-    protected $lastArguments = [];
-
-    /**
-     * @var string
-     */
-    protected $section = '';
-
-    /**
-     * @var boolean
-     */
-    protected $createAbsoluteUri = false;
-
-    /**
-     * @var boolean
-     */
-    protected $addQueryString = false;
-
-    /**
-     * @var array
-     */
-    protected $argumentsToBeExcludedFromQueryString = [];
-
-    /**
-     * @var string
-     */
-    protected $format = null;
 
     /**
      * Sets the current request and resets the UriBuilder
      *
-     * @param ActionRequest $request
-     * @return void
-     * @api
      * @see reset()
+     * @deprecated with Flow 8.0 – create a new instance instead: new UriBuilder($request);
      */
-    public function setRequest(ActionRequest $request)
+    public function setRequest(ActionRequest $request): void
     {
         $this->request = $request;
         $this->reset();
@@ -105,9 +81,20 @@ class UriBuilder
      *
      * @return ActionRequest
      */
-    public function getRequest()
+    public function getRequest(): ActionRequest
     {
         return $this->request;
+    }
+
+    /**
+     * @param array $arguments
+     * @return UriBuilder the current UriBuilder to allow method chaining
+     * @deprecated with Flow 8.0 – use {@see withArguments()} instead
+     */
+    public function setArguments(array $arguments): self
+    {
+        $this->arguments = $arguments;
+        return $this;
     }
 
     /**
@@ -115,132 +102,195 @@ class UriBuilder
      * If you want to "prefix" arguments, you can pass in multidimensional arrays:
      * array('prefix1' => array('foo' => 'bar')) gets "&prefix1[foo]=bar"
      *
-     * @param array $arguments
-     * @return UriBuilder the current UriBuilder to allow method chaining
      * @api
      */
-    public function setArguments(array $arguments)
+    public function withArguments(array $arguments): self
     {
-        $this->arguments = $arguments;
-        return $this;
+        if ($arguments === $this->arguments) {
+            return $this;
+        }
+        $newInstance = clone $this;
+        $newInstance->arguments = $arguments;
+        return $newInstance;
     }
 
     /**
      * @return array
      * @api
      */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->arguments;
     }
 
     /**
-     * If specified, adds a given HTML anchor to the URI (#...)
-     *
      * @param string $section
      * @return UriBuilder the current UriBuilder to allow method chaining
+     * @deprecated with Flow 8.0 – use {@see withSection()} instead
+     */
+    public function setSection(string $section): self
+    {
+        $this->section = $section;
+        return $this;
+    }
+
+    /**
+     * Adds a given HTML anchor to the URI (#...)
+     *
      * @api
      */
-    public function setSection($section)
+    public function withSection(string $section): self
     {
-        $this->section = (string)$section;
-        return $this;
+        if ($section === $this->section) {
+            return $this;
+        }
+        $newInstance = clone $this;
+        $newInstance->section = $section;
+        return $newInstance;
     }
 
     /**
      * @return string
      * @api
      */
-    public function getSection()
+    public function getSection(): string
     {
         return $this->section;
     }
 
     /**
-     * Specifies the format of the target (e.g. "html" or "xml")
-     *
      * @param string $format (e.g. "html" or "xml"), will be transformed to lowercase!
      * @return UriBuilder the current UriBuilder to allow method chaining
-     * @api
+     * @deprecated with Flow 8.0 – use {@see withFormat()} instead
      */
-    public function setFormat($format)
+    public function setFormat(string $format): self
     {
         $this->format = strtolower($format);
         return $this;
     }
 
     /**
+     * Specifies the format of the target (e.g. "html" or "xml")
+     *
+     * @api
+     */
+    public function withFormat(string $format): self
+    {
+        if ($format === $this->format) {
+            return $this;
+        }
+        $newInstance = clone $this;
+        $newInstance->format = $format;
+        return $newInstance;
+    }
+
+    /**
      * @return string
      * @api
      */
-    public function getFormat()
+    public function getFormat(): ?string
     {
         return $this->format;
     }
 
     /**
-     * If set, the URI is prepended with the current base URI. Defaults to false.
-     *
-     * @param boolean $createAbsoluteUri
+     * @param bool $createAbsoluteUri
      * @return UriBuilder the current UriBuilder to allow method chaining
-     * @api
+     * @deprecated with Flow 8.0 – use {@see withCreateAbsoluteUri()} instead
      */
-    public function setCreateAbsoluteUri($createAbsoluteUri)
+    public function setCreateAbsoluteUri(bool $createAbsoluteUri): self
     {
-        $this->createAbsoluteUri = (boolean)$createAbsoluteUri;
+        $this->createAbsoluteUri = $createAbsoluteUri;
         return $this;
     }
 
     /**
-     * @return boolean
+     * If set, the URI is prepended with the current base URI. Defaults to false.
+     *
      * @api
      */
-    public function getCreateAbsoluteUri()
+    public function withCreateAbsoluteUri(bool $createAbsoluteUri): self
+    {
+        if ($createAbsoluteUri === $this->createAbsoluteUri) {
+            return $this;
+        }
+        $newInstance = clone $this;
+        $newInstance->createAbsoluteUri = $createAbsoluteUri;
+        return $newInstance;
+    }
+
+    /**
+     * @return bool
+     * @api
+     */
+    public function getCreateAbsoluteUri(): bool
     {
         return $this->createAbsoluteUri;
     }
 
     /**
-     * If set, the current query parameters will be merged with $this->arguments. Defaults to false.
-     *
-     * @param boolean $addQueryString
-     * @return UriBuilder the current UriBuilder to allow method chaining
-     * @api
+     * @deprecated with Flow 8.0 – use {@see withAddQueryString()} instead
      */
-    public function setAddQueryString($addQueryString)
+    public function setAddQueryString($addQueryString): self
     {
-        $this->addQueryString = (boolean)$addQueryString;
+        $this->addQueryString = (bool)$addQueryString;
         return $this;
     }
 
     /**
-     * @return boolean
+     * If set, the current query parameters will be merged with $this->arguments. Defaults to false.
+     *
      * @api
      */
-    public function getAddQueryString()
+    public function withAddQueryString(bool $addQueryString): self
+    {
+        if ($addQueryString === $this->addQueryString) {
+            return $this;
+        }
+        $newInstance = clone $this;
+        $newInstance->addQueryString = $addQueryString;
+        return $newInstance;
+    }
+
+    /**
+     * @return bool
+     * @api
+     */
+    public function getAddQueryString(): bool
     {
         return $this->addQueryString;
     }
 
     /**
-     * A list of arguments to be excluded from the query parameters
-     * Only active if addQueryString is set
-     *
-     * @param array $argumentsToBeExcludedFromQueryString
-     * @return UriBuilder the current UriBuilder to allow method chaining
-     * @api
+     * @deprecated with Flow 8.0 - use {@see withArgumentsToBeExcludedFromQueryString()} instead
      */
-    public function setArgumentsToBeExcludedFromQueryString(array $argumentsToBeExcludedFromQueryString)
+    public function setArgumentsToBeExcludedFromQueryString(array $argumentsToBeExcludedFromQueryString): self
     {
         $this->argumentsToBeExcludedFromQueryString = $argumentsToBeExcludedFromQueryString;
         return $this;
     }
 
     /**
+     * A list of arguments to be excluded from the query parameters
+     * Only active if addQueryString is set
+     *
+     * @api
+     */
+    public function withArgumentsToBeExcludedFromQueryString(array $argumentsToBeExcludedFromQueryString): self
+    {
+        if ($argumentsToBeExcludedFromQueryString === $this->argumentsToBeExcludedFromQueryString) {
+            return $this;
+        }
+        $newInstance = clone $this;
+        $newInstance->argumentsToBeExcludedFromQueryString = $argumentsToBeExcludedFromQueryString;
+        return $newInstance;
+    }
+
+    /**
      * @return array
      * @api
      */
-    public function getArgumentsToBeExcludedFromQueryString()
+    public function getArgumentsToBeExcludedFromQueryString(): array
     {
         return $this->argumentsToBeExcludedFromQueryString;
     }
@@ -251,7 +301,7 @@ class UriBuilder
      *
      * @return array The last arguments
      */
-    public function getLastArguments()
+    public function getLastArguments(): array
     {
         return $this->lastArguments;
     }
@@ -261,9 +311,9 @@ class UriBuilder
      * Note: This won't reset the Request that is attached to this UriBuilder (@see setRequest())
      *
      * @return UriBuilder the current UriBuilder to allow method chaining
-     * @api
+     * @deprecated with Flow 8.0 - create a new instance instead
      */
-    public function reset()
+    public function reset(): self
     {
         $this->arguments = [];
         $this->section = '';
@@ -276,20 +326,20 @@ class UriBuilder
     }
 
     /**
-     * Creates an URI used for linking to an Controller action.
+     * Creates a URI used for linking to a Controller action.
      *
      * @param string $actionName Name of the action to be called
      * @param array $controllerArguments Additional query parameters. Will be merged with $this->arguments.
-     * @param string $controllerName Name of the target controller. If not set, current ControllerName is used.
-     * @param string $packageKey Name of the target package. If not set, current Package is used.
-     * @param string $subPackageKey Name of the target SubPackage. If not set, current SubPackage is used.
+     * @param string|null $controllerName Name of the target controller. If not set, current ControllerName is used.
+     * @param string|null $packageKey Name of the target package. If not set, current Package is used.
+     * @param string|null $subPackageKey Name of the target SubPackage. If not set, current SubPackage is used.
      * @return string the rendered URI
      * @api
      * @see build()
      * @throws Exception\MissingActionNameException if $actionName parameter is empty
-     * @throws \Neos\Flow\Http\Exception
+     * @throws NoMatchingRouteException
      */
-    public function uriFor(string $actionName, array $controllerArguments = [], string $controllerName = null, string $packageKey = null, string $subPackageKey = null)
+    public function uriFor(string $actionName, array $controllerArguments = [], string $controllerName = null, string $packageKey = null, string $subPackageKey = null): string
     {
         if (empty($actionName)) {
             throw new Exception\MissingActionNameException('The URI Builder could not build a URI linking to an action controller because no action name was specified. Please check the stack trace to see which code or template was requesting the link and check the arguments passed to the URI Builder.', 1354629891);
@@ -332,7 +382,7 @@ class UriBuilder
      * @param ActionRequest $currentRequest
      * @return array arguments with namespace
      */
-    protected function addNamespaceToArguments(array $arguments, ActionRequest $currentRequest)
+    private function addNamespaceToArguments(array $arguments, ActionRequest $currentRequest): array
     {
         while ($currentRequest instanceof ActionRequest && !$currentRequest->isMainRequest()) {
             $argumentNamespace = $currentRequest->getArgumentNamespace();
@@ -349,10 +399,10 @@ class UriBuilder
      *
      * @param array $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
      * @return string the (absolute or relative) URI as string
-     * @throws \Neos\Flow\Http\Exception
+     * @throws NoMatchingRouteException
      * @api
      */
-    public function build(array $arguments = [])
+    public function build(array $arguments = []): string
     {
         $arguments = Arrays::arrayMergeRecursiveOverrule($this->arguments, $arguments);
         $arguments = $this->mergeArgumentsWithRequestArguments($arguments);
@@ -364,7 +414,11 @@ class UriBuilder
         $uriPathPrefix = ltrim($uriPathPrefix, '/');
 
         $routeParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
-        $resolveContext = new ResolveContext($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($httpRequest), $arguments, $this->createAbsoluteUri, $uriPathPrefix, $routeParameters);
+        try {
+            $resolveContext = new ResolveContext($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($httpRequest), $arguments, $this->createAbsoluteUri, $uriPathPrefix, $routeParameters);
+        } catch (HttpException $e) {
+            throw new \RuntimeException(sprintf('Failed to determine base URI: %s', $e->getMessage()), 1645455082, $e);
+        }
         $resolvedUri = $this->router->resolve($resolveContext);
         if ($this->section !== '') {
             $resolvedUri = $resolvedUri->withFragment($this->section);
@@ -386,16 +440,13 @@ class UriBuilder
      *
      * The request hierarchy is structured as follows:
      * root (HTTP) > main (Action) > sub (Action) > sub sub (Action)
-     *
-     * @param array $arguments
-     * @return array
      */
-    protected function mergeArgumentsWithRequestArguments(array $arguments)
+    private function mergeArgumentsWithRequestArguments(array $arguments): array
     {
         if ($this->request !== $this->request->getMainRequest()) {
             $subRequest = $this->request;
             while ($subRequest instanceof ActionRequest) {
-                $requestArguments = (array)$subRequest->getArguments();
+                $requestArguments = $subRequest->getArguments();
 
                 // Reset arguments for the request that is bound to this UriBuilder instance
                 if ($subRequest === $this->request) {
@@ -406,16 +457,13 @@ class UriBuilder
                             unset($requestArguments[$argumentToBeExcluded]);
                         }
                     }
-                } else {
-                    // Remove all arguments of the current sub request if it's namespaced
-                    if ($this->request->getArgumentNamespace() !== '') {
-                        $requestNamespace = $this->getRequestNamespacePath($this->request);
-                        if ($this->addQueryString === false) {
-                            $requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace);
-                        } else {
-                            foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
-                                $requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace . '.' . $argumentToBeExcluded);
-                            }
+                } else if ($this->request->getArgumentNamespace() !== '') {
+                    $requestNamespace = $this->getRequestNamespacePath($this->request);
+                    if ($this->addQueryString === false) {
+                        $requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace);
+                    } else {
+                        foreach ($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
+                            $requestArguments = Arrays::unsetValueByPath($requestArguments, $requestNamespace . '.' . $argumentToBeExcluded);
                         }
                     }
                 }
@@ -470,7 +518,7 @@ class UriBuilder
      * @param ActionRequest $request
      * @return string
      */
-    protected function getRequestNamespacePath(ActionRequest $request): string
+    private function getRequestNamespacePath(ActionRequest $request): string
     {
         $namespaceParts = [];
         while ($request !== null && $request->isMainRequest() === false) {

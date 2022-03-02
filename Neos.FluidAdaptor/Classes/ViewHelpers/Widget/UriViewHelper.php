@@ -117,20 +117,17 @@ class UriViewHelper extends AbstractViewHelper
      */
     protected function getWidgetUri(): string
     {
-        $uriBuilder = $this->controllerContext->getUriBuilder();
-
         $argumentsToBeExcludedFromQueryString = [
             '@package',
             '@subpackage',
             '@controller'
         ];
 
-        $uriBuilder
-            ->reset()
-            ->setSection($this->arguments['section'])
-            ->setCreateAbsoluteUri(true)
-            ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-            ->setFormat($this->arguments['format']);
+        $uriBuilder = $this->controllerContext->getUriBuilder()
+            ->withSection($this->arguments['section'])
+            ->withCreateAbsoluteUri(true)
+            ->withArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
+            ->withFormat($this->arguments['format']);
         try {
             $uri = $uriBuilder->uriFor($this->arguments['action'], $this->arguments['arguments'], '', '', '');
         } catch (\Exception $exception) {

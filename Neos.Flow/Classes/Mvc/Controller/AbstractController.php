@@ -110,8 +110,7 @@ abstract class AbstractController implements ControllerInterface
         $this->request->setDispatched(true);
         $this->response = $response;
 
-        $this->uriBuilder = new UriBuilder();
-        $this->uriBuilder->setRequest($this->request);
+        $this->uriBuilder = new UriBuilder($this->request);
 
         $this->arguments = new Arguments([]);
         $this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder);
@@ -271,14 +270,13 @@ abstract class AbstractController implements ControllerInterface
         } else {
             $subpackageKey = null;
         }
-        $this->uriBuilder->reset();
         if ($format === null) {
-            $this->uriBuilder->setFormat($this->request->getFormat());
+            $this->uriBuilder = $this->uriBuilder->withFormat($this->request->getFormat());
         } else {
-            $this->uriBuilder->setFormat($format);
+            $this->uriBuilder = $this->uriBuilder->withFormat($format);
         }
 
-        $uri = $this->uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
+        $uri = $this->uriBuilder->withCreateAbsoluteUri(true)->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
         $this->redirectToUri($uri, $delay, $statusCode);
     }
 

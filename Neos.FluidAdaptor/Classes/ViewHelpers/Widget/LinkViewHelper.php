@@ -133,20 +133,17 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
      */
     protected function getWidgetUri(): string
     {
-        $uriBuilder = $this->controllerContext->getUriBuilder();
-
         $argumentsToBeExcludedFromQueryString = [
             '@package',
             '@subpackage',
             '@controller'
         ];
 
-        $uriBuilder
-            ->reset()
-            ->setSection($this->arguments['section'] ?? $this->argumentDefinitions['section']->getDefaultValue())
-            ->setCreateAbsoluteUri(true)
-            ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
-            ->setFormat($this->arguments['format'] ?? $this->argumentDefinitions['format']->getDefaultValue());
+        $uriBuilder = $this->controllerContext->getUriBuilder()
+            ->withSection($this->arguments['section'] ?? $this->argumentDefinitions['section']->getDefaultValue())
+            ->withCreateAbsoluteUri(true)
+            ->withArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
+            ->withFormat($this->arguments['format'] ?? $this->argumentDefinitions['format']->getDefaultValue());
         try {
             $uri = $uriBuilder->uriFor($this->arguments['action'] ?? $this->argumentDefinitions['action']->getDefaultValue(), $this->arguments['arguments'] ?? $this->argumentDefinitions['arguments']->getDefaultValue(), '', '', '');
         } catch (\Exception $exception) {

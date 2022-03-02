@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Uri;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
 
@@ -84,24 +85,21 @@ class ActionViewHelper extends AbstractViewHelper
                 throw new ViewHelper\Exception('The parent requests was unexpectedly empty, probably the current request is broken.', 1565948254);
             }
 
-            $uriBuilder = clone $uriBuilder;
-            $uriBuilder->setRequest($parentRequest);
+            $uriBuilder = new UriBuilder($parentRequest);
         } elseif ($this->arguments['useMainRequest'] === true) {
             $request = $this->controllerContext->getRequest();
             if (!$request->isMainRequest()) {
-                $uriBuilder = clone $uriBuilder;
-                $uriBuilder->setRequest($request->getMainRequest());
+                $uriBuilder = new UriBuilder($request->getMainRequest());
             }
         }
 
-        $uriBuilder
-            ->reset()
-            ->setSection($this->arguments['section'])
-            ->setCreateAbsoluteUri($this->arguments['absolute'])
-            ->setArguments($this->arguments['additionalParams'])
-            ->setAddQueryString($this->arguments['addQueryString'])
-            ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString'])
-            ->setFormat($this->arguments['format']);
+        $uriBuilder = $uriBuilder
+            ->withSection($this->arguments['section'])
+            ->withCreateAbsoluteUri($this->arguments['absolute'])
+            ->withArguments($this->arguments['additionalParams'])
+            ->withAddQueryString($this->arguments['addQueryString'])
+            ->withArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString'])
+            ->withFormat($this->arguments['format']);
         try {
             $uri = $uriBuilder->uriFor($this->arguments['action'], $this->arguments['arguments'], $this->arguments['controller'], $this->arguments['package'], $this->arguments['subpackage']);
         } catch (\Exception $exception) {
