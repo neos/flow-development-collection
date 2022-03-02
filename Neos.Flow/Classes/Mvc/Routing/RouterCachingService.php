@@ -30,7 +30,7 @@ use Psr\Log\LoggerInterface;
  *
  * @Flow\Scope("singleton")
  */
-final class RouterCachingService
+class RouterCachingService
 {
     /**
      * @Flow\Inject
