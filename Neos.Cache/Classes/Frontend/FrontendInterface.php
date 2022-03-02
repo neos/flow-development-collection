@@ -110,6 +110,15 @@ interface FrontendInterface
     public function flushByTag(string $tag): int;
 
     /**
+     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     *
+     * @param array<string> $tags The tags the entries must have
+     * @return integer The number of entries which have been affected by this flush or NULL if the number is unknown
+     * @api
+     */
+    public function flushByTags(array $tags): int;
+
+    /**
      * Does garbage collection
      *
      * @return void

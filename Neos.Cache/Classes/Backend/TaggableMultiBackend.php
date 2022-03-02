@@ -68,6 +68,21 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
     }
 
     /**
+     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     *
+     * @throws \Throwable
+     * @api
+     */
+    public function flushByTags(array $tags): int
+    {
+        $flushed = 0;
+        foreach ($tags as $tag) {
+            $flushed += $this->flushByTag($tag);
+        }
+        return $flushed;
+    }
+
+    /**
      * @param string $tag
      * @return string[]
      */
