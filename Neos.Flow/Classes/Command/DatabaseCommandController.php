@@ -141,7 +141,7 @@ class DatabaseCommandController extends CommandController
                     $this->connection->exec($statement);
                 }
             } catch (\Exception $exception) {
-                $this->outputLine(<error>[ERROR] %s</error>', [$exception->getMessage()]);
+                $this->outputLine('<error>[ERROR] %s</error>', [$exception->getMessage()]);
             }
         } else {
             file_put_contents($outputPathAndFilename, implode(';' . PHP_EOL, $statements) . ';');
