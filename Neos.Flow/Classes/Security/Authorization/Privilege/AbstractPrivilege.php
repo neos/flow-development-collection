@@ -53,7 +53,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
     protected $parsedMatcher;
 
     /**
-     * @var integer One of the constants ABSTAIN, GRANT or DENY
+     * @var string One of the constants ABSTAIN, GRANT or DENY
      */
     protected $permission;
 
@@ -120,7 +120,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
     }
 
     /**
-     * @return integer
+     * @return string
      */
     public function getPermission()
     {

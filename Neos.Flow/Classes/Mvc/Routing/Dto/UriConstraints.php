@@ -358,7 +358,7 @@ final class UriConstraints
                 $uri = $uri->withHost($host);
             }
         }
-        if (isset($this->constraints[self::CONSTRAINT_PORT]) && ($forceAbsoluteUri || $this->constraints[self::CONSTRAINT_PORT] !== $baseUri->getPort()) && ($baseUri->getPort() !== null || $this->constraints[self::CONSTRAINT_PORT] !== UriHelper::getDefaultPortForScheme($baseUri->getScheme()))) {
+        if (isset($this->constraints[self::CONSTRAINT_PORT]) && ($forceAbsoluteUri || $this->constraints[self::CONSTRAINT_PORT] !== $baseUri->getPort()) && ($baseUri->getPort() !== null || $this->constraints[self::CONSTRAINT_PORT] !== UriHelper::getDefaultPortForScheme($this->constraints[self::CONSTRAINT_SCHEME] ?? $baseUri->getScheme()))) {
             $forceAbsoluteUri = true;
             $uri = $uri->withPort($this->constraints[self::CONSTRAINT_PORT]);
         }
@@ -404,7 +404,7 @@ final class UriConstraints
                 $uri = $uri->withHost($baseUri->getHost());
             }
             if (!isset($this->constraints[self::CONSTRAINT_PORT]) && $uri->getPort() === null) {
-                $port = $baseUri->getPort() ?? UriHelper::getDefaultPortForScheme($baseUri->getScheme());
+                $port = $baseUri->getPort() ?? UriHelper::getDefaultPortForScheme($uri->getScheme());
                 $uri = $uri->withPort($port);
             }
         }

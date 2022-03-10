@@ -50,7 +50,7 @@ class PropertyReflection extends \ReflectionProperty
      *
      * @return ClassReflection The declaring class
      */
-    public function getDeclaringClass()
+    public function getDeclaringClass(): ClassReflection
     {
         return new ClassReflection(parent::getDeclaringClass()->getName());
     }
@@ -93,6 +93,7 @@ class PropertyReflection extends \ReflectionProperty
      * @return mixed Value of the property
      * @throws Exception
      */
+    #[\ReturnTypeWillChange]
     public function getValue($object = null)
     {
         if (!is_object($object)) {
@@ -114,7 +115,7 @@ class PropertyReflection extends \ReflectionProperty
      * @return void
      * @throws Exception
      */
-    public function setValue($object = null, $value = null)
+    public function setValue($object = null, $value = null): void
     {
         if (!is_object($object)) {
             throw new Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);

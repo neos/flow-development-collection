@@ -7,7 +7,7 @@
         "MIT"
     ],
     "require": {
-        "php": "^7.3 || ^8.0",
+        "php": "^8.0",
         "neos/utility-files": "*",
         "psr/log": "^1.0.1"
     },

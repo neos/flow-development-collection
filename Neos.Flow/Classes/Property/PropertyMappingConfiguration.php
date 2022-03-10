@@ -302,7 +302,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      * Set a single option (denoted by $optionKey) for the given $typeConverter.
      *
      * @param string $typeConverter class name of type converter
-     * @param string $optionKey
+     * @param int|string $optionKey
      * @param mixed $optionValue
      * @return PropertyMappingConfiguration this
      * @api

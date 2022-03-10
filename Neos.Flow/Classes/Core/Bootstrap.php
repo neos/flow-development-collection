@@ -34,7 +34,7 @@ class Bootstrap
     /**
      * Required PHP version
      */
-    const MINIMUM_PHP_VERSION = '7.3.0';
+    const MINIMUM_PHP_VERSION = '8.0.0';
 
     const RUNLEVEL_COMPILETIME = 'Compiletime';
     const RUNLEVEL_RUNTIME = 'Runtime';
@@ -548,7 +548,7 @@ class Bootstrap
         }
 
         define('FLOW_ONLY_COMPOSER_LOADER', $onlyUseComposerAutoLoaderForPackageClasses);
-        define('FLOW_VERSION_BRANCH', '7.2');
+        define('FLOW_VERSION_BRANCH', 'master');
         define('FLOW_APPLICATION_CONTEXT', (string)$this->context);
     }
 
