@@ -105,7 +105,7 @@ class RouterCachingService
         if ($this->containsObject($matchResults)) {
             return;
         }
-        $tags = $this->generateRouteTags(RequestInformationHelper::getRelativeRequestPath($routeContext->getHttpRequest()));
+        $tags = $this->generateRouteTagsFromUriPath(RequestInformationHelper::getRelativeRequestPath($routeContext->getHttpRequest()));
         if ($matchedTags !== null) {
             $tags = array_unique(array_merge($matchedTags->getTags(), $tags));
         }
@@ -138,14 +138,14 @@ class RouterCachingService
         }
 
         $cacheIdentifier = $this->buildResolveCacheIdentifier($resolveContext, $routeValues);
-        $tags = $this->generateRouteTags((string)$uriConstraints->toUri());
+        $tags = $this->generateRouteTagsFromUriPath((string)$uriConstraints->toUri());
         if ($resolvedTags !== null) {
             $tags = array_unique(array_merge($resolvedTags->getTags(), $tags));
         }
         $this->resolveCache->set($cacheIdentifier, $uriConstraints, $tags);
     }
 
-    private function generateRouteTags(string $uriPath): array
+    private function generateRouteTagsFromUriPath(string $uriPath): array
     {
         $tags = [];
         $path = '';
@@ -155,6 +155,14 @@ class RouterCachingService
             $tags[] = md5($path);
         }
         return $tags;
+    }
+
+    /**
+     * @deprecated with Flow 8.0 - This method is no longer used! It is just kept in order to keep AOP aspects from failing
+     */
+    protected function generateRouteTags($uriPath, $routeValues)
+    {
+        return [];
     }
 
     /**
