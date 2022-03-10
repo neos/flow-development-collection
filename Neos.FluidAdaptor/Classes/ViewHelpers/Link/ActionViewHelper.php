@@ -94,11 +94,11 @@ class ActionViewHelper extends AbstractTagBasedViewHelper
                 throw new ViewHelper\Exception('The parent requests was unexpectedly empty, probably the current request is broken.', 1565948237);
             }
 
-            $uriBuilder = new UriBuilder($parentRequest);
+            $uriBuilder = $uriBuilder->forRequest($parentRequest);
         } elseif ($this->arguments['useMainRequest'] === true) {
             $request = $this->controllerContext->getRequest();
             if (!$request->isMainRequest()) {
-                $uriBuilder = new UriBuilder($request->getMainRequest());
+                $uriBuilder = $uriBuilder->forRequest($request->getMainRequest());
             }
         }
 

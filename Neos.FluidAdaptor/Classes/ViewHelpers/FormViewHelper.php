@@ -219,7 +219,7 @@ class FormViewHelper extends AbstractFormViewHelper
                     throw new ViewHelper\Exception('The parent requests was unexpectedly empty, probably the current request is broken.', 1565947917);
                 }
 
-                $uriBuilder = new UriBuilder($parentRequest);
+                $uriBuilder = $uriBuilder->forRequest($parentRequest);
             }
             $uriBuilder = $uriBuilder
                 ->withSection($this->arguments['section'])

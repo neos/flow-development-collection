@@ -286,9 +286,8 @@ class AbstractControllerTest extends UnitTestCase
         $arguments = ['foo' => 'bar'];
 
         $mockUriBuilder = $this->createMock(UriBuilder::class);
-        $mockUriBuilder->expects(self::once())->method('reset')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setFormat')->with('doc')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects(self::once())->method('withFormat')->with('doc')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects(self::once())->method('withCreateAbsoluteUri')->willReturn($mockUriBuilder);
         $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->willReturn('the uri');
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
@@ -310,9 +309,8 @@ class AbstractControllerTest extends UnitTestCase
         $this->mockActionRequest->expects(self::atLeastOnce())->method('getFormat')->willReturn('json');
 
         $mockUriBuilder = $this->createMock(UriBuilder::class);
-        $mockUriBuilder->expects(self::once())->method('reset')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setFormat')->with('json')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects(self::once())->method('withFormat')->with('json')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects(self::once())->method('withCreateAbsoluteUri')->willReturn($mockUriBuilder);
         $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', null)->willReturn('the uri');
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);

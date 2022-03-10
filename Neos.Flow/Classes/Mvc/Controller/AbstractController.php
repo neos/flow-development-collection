@@ -270,13 +270,10 @@ abstract class AbstractController implements ControllerInterface
         } else {
             $subpackageKey = null;
         }
-        if ($format === null) {
-            $this->uriBuilder = $this->uriBuilder->withFormat($this->request->getFormat());
-        } else {
-            $this->uriBuilder = $this->uriBuilder->withFormat($format);
-        }
-
-        $uri = $this->uriBuilder->withCreateAbsoluteUri(true)->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
+        $uri = $this->uriBuilder
+            ->withFormat($format ?? $this->request->getFormat())
+            ->withCreateAbsoluteUri(true)
+            ->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
         $this->redirectToUri($uri, $delay, $statusCode);
     }
 

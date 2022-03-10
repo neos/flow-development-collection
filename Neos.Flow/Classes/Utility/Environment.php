@@ -106,6 +106,7 @@ class Environment
      * Whether or not URL rewriting is enabled.
      *
      * @return bool
+     * @deprecated with Flow 8.0 - This flag is no longer evaluated by the UriBuilder
      */
     public function isRewriteEnabled(): bool
     {

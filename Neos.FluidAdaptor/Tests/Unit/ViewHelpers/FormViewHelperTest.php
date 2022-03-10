@@ -526,7 +526,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         ];
 
         $viewHelper->render('index');
-        self::assertNull($viewHelper->_get('formActionUri'));
+        self::assertEmpty($viewHelper->_get('formActionUri'));
     }
 
     /**
@@ -574,7 +574,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $mockSubRequest->expects(self::once())->method('isMainRequest')->will(self::returnValue(false));
         $mockSubRequest->expects(self::once())->method('getParentRequest')->will(self::returnValue($mockParentRequest));
 
-        $this->uriBuilder->expects(self::once())->method('setRequest')->with($mockParentRequest);
+        $this->uriBuilder->expects(self::once())->method('forRequest')->with($mockParentRequest)->willReturn($this->uriBuilder);
 
         $viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\FormViewHelper::class, ['dummy'], [], '', false);
         $this->arguments['useParentRequest'] = true;

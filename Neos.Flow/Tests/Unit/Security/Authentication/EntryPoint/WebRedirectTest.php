@@ -19,6 +19,7 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Authentication\EntryPoint\WebRedirect;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for web redirect authentication entry point
@@ -99,7 +100,8 @@ class WebRedirectTest extends UnitTestCase
         $request = new ServerRequest('GET', new Uri('http://robertlemke.com/admin'));
         $response = new Response();
 
-        $entryPoint = $this->getAccessibleMock(WebRedirect::class, ['dummy']);
+        /** @var WebRedirect|MockObject $entryPoint */
+        $entryPoint = $this->getAccessibleMock(WebRedirect::class, ['getUriBuilderForRequest']);
         $routeValues = [
             '@package' => 'SomePackage',
             '@subpackage' => 'SomeSubPackage',
@@ -111,9 +113,9 @@ class WebRedirectTest extends UnitTestCase
         $entryPoint->setOptions(['routeValues' => $routeValues]);
 
         $mockUriBuilder = $this->createMock(UriBuilder::class);
-        $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->with(true)->will(self::returnValue($mockUriBuilder));
-        $mockUriBuilder->expects(self::once())->method('uriFor')->with('someAction', ['otherArguments' => ['foo' => 'bar'], '@format' => 'someFormat'], 'SomeController', 'SomePackage', 'SomeSubPackage')->will(self::returnValue('http://resolved/redirect/uri'));
-        $entryPoint->_set('uriBuilder', $mockUriBuilder);
+        $mockUriBuilder->expects(self::once())->method('withCreateAbsoluteUri')->with(true)->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects(self::once())->method('uriFor')->with('someAction', ['otherArguments' => ['foo' => 'bar'], '@format' => 'someFormat'], 'SomeController', 'SomePackage', 'SomeSubPackage')->willReturn('http://resolved/redirect/uri');
+        $entryPoint->method('getUriBuilderForRequest')->willReturn($mockUriBuilder);
 
         $response = $entryPoint->startAuthentication($request, $response);
 

@@ -51,12 +51,12 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
      */
     public function renderCorrectlyPassesDefaultArgumentsToUriBuilder()
     {
-        $this->uriBuilder->expects(self::once())->method('setSection')->with('');
-        $this->uriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->with(false);
-        $this->uriBuilder->expects(self::once())->method('setArguments')->with([]);
-        $this->uriBuilder->expects(self::once())->method('setAddQueryString')->with(false);
-        $this->uriBuilder->expects(self::once())->method('setArgumentsToBeExcludedFromQueryString')->with([]);
-        $this->uriBuilder->expects(self::once())->method('setFormat')->with('');
+        $this->uriBuilder->expects(self::once())->method('withSection')->with('');
+        $this->uriBuilder->expects(self::once())->method('withCreateAbsoluteUri')->with(false);
+        $this->uriBuilder->expects(self::once())->method('withArguments')->with([]);
+        $this->uriBuilder->expects(self::once())->method('withAddQueryString')->with(false);
+        $this->uriBuilder->expects(self::once())->method('withArgumentsToBeExcludedFromQueryString')->with([]);
+        $this->uriBuilder->expects(self::once())->method('withFormat')->with('');
         $this->uriBuilder->expects(self::once())->method('uriFor')->with('theActionName', [], null, null, null);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['action' => 'theActionName']);
@@ -68,12 +68,12 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
      */
     public function renderCorrectlyPassesAllArgumentsToUriBuilder()
     {
-        $this->uriBuilder->expects(self::once())->method('setSection')->with('someSection');
-        $this->uriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->with(true);
-        $this->uriBuilder->expects(self::once())->method('setArguments')->with(['additional' => 'RouteParameters']);
-        $this->uriBuilder->expects(self::once())->method('setAddQueryString')->with(true);
-        $this->uriBuilder->expects(self::once())->method('setArgumentsToBeExcludedFromQueryString')->with(['arguments' => 'toBeExcluded']);
-        $this->uriBuilder->expects(self::once())->method('setFormat')->with('someFormat');
+        $this->uriBuilder->expects(self::once())->method('withSection')->with('someSection');
+        $this->uriBuilder->expects(self::once())->method('withCreateAbsoluteUri')->with(true);
+        $this->uriBuilder->expects(self::once())->method('withArguments')->with(['additional' => 'RouteParameters']);
+        $this->uriBuilder->expects(self::once())->method('withAddQueryString')->with(true);
+        $this->uriBuilder->expects(self::once())->method('withArgumentsToBeExcludedFromQueryString')->with(['arguments' => 'toBeExcluded']);
+        $this->uriBuilder->expects(self::once())->method('withFormat')->with('someFormat');
         $this->uriBuilder->expects(self::once())->method('uriFor')->with('someAction', ['some' => 'argument'], 'someController', 'somePackage', 'someSubpackage');
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['action' => 'someAction', 'arguments' => ['some' => 'argument'], 'controller' => 'someController', 'package' => 'somePackage', 'subpackage' => 'someSubpackage', 'section' => 'someSection', 'format' => 'someFormat', 'additionalParams' => ['additional' => 'RouteParameters'], 'absolute' => true, 'addQueryString' => true, 'argumentsToBeExcludedFromQueryString' => ['arguments' => 'toBeExcluded']]);
@@ -122,7 +122,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
         $this->controllerContext->expects(self::any())->method('getUriBuilder')->will(self::returnValue($this->uriBuilder));
         $this->controllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($this->request));
 
-        $this->uriBuilder->expects(self::atLeastOnce())->method('setRequest')->with($parentRequest);
+        $this->uriBuilder->expects(self::atLeastOnce())->method('forRequest')->with($parentRequest);
 
         $this->renderingContext->setControllerContext($this->controllerContext);
         $this->injectDependenciesIntoViewHelper($viewHelper);
@@ -148,7 +148,7 @@ class ActionViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Vie
         $this->controllerContext->expects(self::any())->method('getUriBuilder')->will(self::returnValue($this->uriBuilder));
         $this->controllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($this->request));
 
-        $this->uriBuilder->expects(self::atLeastOnce())->method('setRequest')->with($mainRequest);
+        $this->uriBuilder->expects(self::atLeastOnce())->method('forRequest')->with($mainRequest);
 
         $this->renderingContext->setControllerContext($this->controllerContext);
         $this->injectDependenciesIntoViewHelper($viewHelper);

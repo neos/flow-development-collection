@@ -14,6 +14,8 @@ namespace Neos\Flow\Security\Authentication\EntryPoint;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Psr\Http\Message\ResponseInterface;
@@ -25,12 +27,6 @@ use GuzzleHttp\Psr7\Utils;
  */
 class WebRedirect extends AbstractEntryPoint
 {
-    /**
-     * @Flow\Inject(lazy = false)
-     * @Flow\Transient
-     * @var UriBuilder
-     */
-    protected $uriBuilder;
 
     /**
      * @Flow\Inject
@@ -52,7 +48,7 @@ class WebRedirect extends AbstractEntryPoint
         $uri = null;
 
         if (isset($this->options['uri'])) {
-            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : (string)$this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest() . $this->options['uri'];
+            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest() . $this->options['uri'];
         }
 
         if (isset($this->options['routeValues'])) {
@@ -78,7 +74,7 @@ class WebRedirect extends AbstractEntryPoint
      * @param array $routeValues
      * @param ServerRequestInterface $request
      * @return string
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws NoMatchingRouteException | MissingActionNameException
      */
     protected function generateUriFromRouteValues(array $routeValues, ServerRequestInterface $request): string
     {
@@ -87,7 +83,12 @@ class WebRedirect extends AbstractEntryPoint
         $controllerName = $this->extractRouteValue($routeValues, '@controller');
         $packageKey = $this->extractRouteValue($routeValues, '@package');
         $subPackageKey = $this->extractRouteValue($routeValues, '@subpackage');
-        return (new UriBuilder($actionRequest))->withCreateAbsoluteUri(true)->uriFor($actionName, $routeValues, $controllerName, $packageKey, $subPackageKey);
+        return $this->getUriBuilderForRequest($actionRequest)->withCreateAbsoluteUri(true)->uriFor($actionName, $routeValues, $controllerName, $packageKey, $subPackageKey);
+    }
+
+    protected function getUriBuilderForRequest(ActionRequest $actionRequest): UriBuilder
+    {
+        return new UriBuilder($actionRequest);
     }
 
     /**

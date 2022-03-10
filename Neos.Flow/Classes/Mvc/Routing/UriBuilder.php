@@ -56,6 +56,11 @@ class UriBuilder
         $this->request = $request;
     }
 
+    public function forRequest(ActionRequest $request): self
+    {
+        return new self($request);
+    }
+
 
     /**
      * Sets the current request and resets the UriBuilder

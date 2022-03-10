@@ -85,13 +85,19 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
         $this->viewHelperVariableContainer->expects($this->any())->method('addOrUpdate')->will($this->returnCallback([$this, 'viewHelperVariableContainerAddOrUpdateCallback']));
         $this->templateVariableContainer = $this->createMock(TemplateVariableContainer::class);
         $this->uriBuilder = $this->createMock(\Neos\Flow\Mvc\Routing\UriBuilder::class);
-        $this->uriBuilder->expects($this->any())->method('reset')->will(self::returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setArguments')->will(self::returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setSection')->will(self::returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setFormat')->will(self::returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setCreateAbsoluteUri')->will(self::returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setAddQueryString')->will(self::returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setArgumentsToBeExcludedFromQueryString')->will(self::returnValue($this->uriBuilder));
+        $this->uriBuilder->method('reset')->willReturn($this->uriBuilder);
+        $this->uriBuilder->method('setArguments')->willReturn($this->uriBuilder);
+        $this->uriBuilder->method('setSection')->willReturn($this->uriBuilder);
+        $this->uriBuilder->method('setFormat')->willReturn($this->uriBuilder);
+        $this->uriBuilder->method('setCreateAbsoluteUri')->willReturn($this->uriBuilder);
+        $this->uriBuilder->method('setAddQueryString')->willReturn($this->uriBuilder);
+        $this->uriBuilder->method('setArgumentsToBeExcludedFromQueryString')->willReturn($this->uriBuilder);
+        $this->uriBuilder->method('withArguments')->willReturn($this->uriBuilder);
+        $this->uriBuilder->method('withSection')->willReturn($this->uriBuilder);
+        $this->uriBuilder->method('withFormat')->willReturn($this->uriBuilder);
+        $this->uriBuilder->method('withCreateAbsoluteUri')->willReturn($this->uriBuilder);
+        $this->uriBuilder->method('withAddQueryString')->willReturn($this->uriBuilder);
+        $this->uriBuilder->method('withArgumentsToBeExcludedFromQueryString')->willReturn($this->uriBuilder);
 
         $httpRequestFactory = new ServerRequestFactory(new UriFactory());
         $httpRequest = $httpRequestFactory->createServerRequest('GET', new Uri('http://localhost/foo'));
