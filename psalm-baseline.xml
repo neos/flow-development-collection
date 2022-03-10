@@ -601,7 +601,6 @@
     </UndefinedConstant>
     <UndefinedInterfaceMethod occurrences="2">
       <code>getPackageKey</code>
-      <code>getResourcesPath</code>
     </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/SecurityCommandController.php">
