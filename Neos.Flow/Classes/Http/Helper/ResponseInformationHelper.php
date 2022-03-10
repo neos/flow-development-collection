@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Http\Helper;
 
 /*
@@ -11,11 +13,11 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Response;
-use function GuzzleHttp\Psr7\parse_response;
-use function GuzzleHttp\Psr7\stream_for;
+use Neos\Flow\Http\CacheControlDirectives;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use function GuzzleHttp\Psr7\parse_response;
+use function GuzzleHttp\Psr7\stream_for;
 
 /**
  * Helper to extract various information from PSR-7 responses.
@@ -27,8 +29,8 @@ abstract class ResponseInformationHelper
      *
      * @param string $rawResponse
      *
-     * @throws \InvalidArgumentException
      * @return ResponseInterface
+     * @throws \InvalidArgumentException
      */
     public static function createFromRaw(string $rawResponse): ResponseInterface
     {
@@ -116,7 +118,7 @@ abstract class ResponseInformationHelper
             599 => 'Network Connect Timeout Error',
         ];
 
-        return isset($statusMessages[$statusCode]) ? $statusMessages[$statusCode] : 'Unknown Status';
+        return $statusMessages[$statusCode] ?? 'Unknown Status';
     }
 
     /**
@@ -175,43 +177,55 @@ abstract class ResponseInformationHelper
     public static function makeStandardsCompliant(ResponseInterface $response, RequestInterface $request): ResponseInterface
     {
         $statusCode = $response->getStatusCode();
-        if ($request->hasHeader('If-None-Match') && in_array($request->getMethod(), ['HEAD', 'GET'])
-            && $response->hasHeader('ETag') && $statusCode === 200) {
-            $ifNoneMatchHeaders = $request->getHeader('If-None-Match');
-            $eTagHeader = $response->getHeader('ETag')[0];
-            foreach ($ifNoneMatchHeaders as $ifNoneMatchHeader) {
-                if (ltrim($ifNoneMatchHeader, 'W/') == ltrim($eTagHeader, 'W/')) {
-                    $response = $response
-                        ->withStatus(304)
-                        ->withBody(stream_for(''));
-                    break;
+        if ($statusCode === 200 && in_array($request->getMethod(), ['HEAD', 'GET'])) {
+            if ($request->hasHeader('If-None-Match') && $response->hasHeader('ETag')) {
+                $ifNoneMatchHeaders = $request->getHeader('If-None-Match');
+                $eTagHeader = $response->getHeader('ETag')[0];
+                foreach ($ifNoneMatchHeaders as $ifNoneMatchHeader) {
+                    if (ltrim($ifNoneMatchHeader, 'W/') === ltrim($eTagHeader, 'W/')) {
+                        $response = $response
+                            ->withStatus(304);
+                        break;
+                    }
                 }
-            }
-        } elseif ($request->hasHeader('If-Modified-Since') && in_array($request->getMethod(), ['HEAD', 'GET'])
-            && $response->hasHeader('Last-Modified') && $statusCode === 200) {
-            $ifModifiedSince = $request->getHeader('If-Modified-Since')[0];
-            $ifModifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifModifiedSince);
-            $lastModified = $response->getHeader('Last-Modified')[0];
-            $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
-            if ($lastModifiedDate <= $ifModifiedSinceDate) {
-                $response = $response
-                    ->withStatus(304)
-                    ->withBody(stream_for(''));
+            } elseif ($response->hasHeader('Last-Modified')) {
+                if ($request->hasHeader('If-Modified-Since')) {
+                    $ifModifiedSince = $request->getHeaderLine('If-Modified-Since');
+                    $ifModifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifModifiedSince);
+                    $lastModified = $response->getHeaderLine('Last-Modified');
+                    $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
+                    if ($lastModifiedDate <= $ifModifiedSinceDate) {
+                        $response = $response
+                            ->withStatus(304);
+                    }
+                } elseif ($request->hasHeader('If-Unmodified-Since')) {
+                    $ifUnmodifiedSince = $request->getHeaderLine('If-Unmodified-Since');
+                    $ifUnmodifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifUnmodifiedSince);
+                    $lastModified = $response->getHeaderLine('Last-Modified');
+                    $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
+                    if ($lastModifiedDate > $ifUnmodifiedSinceDate) {
+                        $response = $response->withStatus(412);
+                    }
+                }
             }
         }
 
         if (in_array($response->getStatusCode(), [100, 101, 204, 304])) {
-            $response = $response->withBody(stream_for(''));
+            $response = $response->withBody(stream_for());
         }
 
-        $cacheControlHeaderLine = $response->getHeaderLine('Cache-Control');
-
-        if ((!empty($cacheControlHeaderLine) && strpos('no-cache', $cacheControlHeaderLine) !== false)
-            || $response->hasHeader('Expires')) {
-            $cacheControlHeaderValue = trim(substr($cacheControlHeaderLine, 14));
-            $cacheControlHeaderValue = str_replace('max-age', '', $cacheControlHeaderValue);
-            $cacheControlHeaderValue = trim($cacheControlHeaderValue, ' ,');
-            $response = $response->withHeader('Cache-Control', $cacheControlHeaderValue);
+        if ($response->hasHeader('Cache-Control')) {
+            $cacheControlHeaderValue = $response->getHeaderLine('Cache-Control');
+            $cacheControlDirectives = CacheControlDirectives::fromRawHeader($cacheControlHeaderValue);
+            if ($cacheControlDirectives->getDirective('no-cache') !== null || $response->hasHeader('Expires')) {
+                $cacheControlDirectives->removeDirective('max-age');
+            }
+            $cacheControlHeaderValue = $cacheControlDirectives->getCacheControlHeaderValue();
+            if ($cacheControlHeaderValue === null) {
+                $response = $response->withoutHeader('Cache-Control');
+            } else {
+                $response = $response->withHeader('Cache-Control', $cacheControlHeaderValue);
+            }
         }
 
         if (!$response->hasHeader('Content-Length')) {
@@ -219,7 +233,7 @@ abstract class ResponseInformationHelper
         }
 
         if ($request->getMethod() === 'HEAD') {
-            $response = $response->withBody(stream_for(''));
+            $response = $response->withBody(stream_for());
         }
 
         if ($response->hasHeader('Transfer-Encoding')) {

@@ -492,6 +492,15 @@ is an example – from the context of an Action Controller – for setting the `
 	$headers = $this->request->getHttpRequest()->getHeaders();
 	$headers->setCacheControlDirective('max-age', 3600);
 
+Note this internally uses the `CacheControlDirectives` class, which you should be using, too. This avoids the need for
+further changes, should the `Headers` class be dropped in the future::
+
+  $cacheControlHeaderValue = $response->getHeaderLine('Cache-Control');
+  $cacheControlDirectives = CacheControlDirectives::fromRawHeader($cacheControlHeaderValue);
+  $cacheControlDirectives->setDirective('max-age', 3600);
+  $cacheControlHeaderValue = $cacheControlDirectives->getCacheControlHeaderValue();
+  $response = $response->withHeader('Cache-Control', $cacheControlHeaderValue);
+
 Cookies
 -------
 
