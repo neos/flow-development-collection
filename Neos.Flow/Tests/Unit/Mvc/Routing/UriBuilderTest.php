@@ -16,7 +16,6 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Mvc;
-use Neos\Flow\Utility;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
