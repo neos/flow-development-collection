@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Uri;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
 
