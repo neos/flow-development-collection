@@ -68,9 +68,6 @@ class UriBuilderTest extends UnitTestCase
     {
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
 
-
-
-
         $this->mockBaseUri = $this->getMockBuilder(UriInterface::class)->getMock();
         $this->mockBaseUriProvider = $this->createMock(Http\BaseUriProvider::class);
         $this->mockBaseUriProvider->expects(self::any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willReturn($this->mockBaseUri);
@@ -97,12 +94,8 @@ class UriBuilderTest extends UnitTestCase
         $this->mockSubSubRequest->expects(self::any())->method('isMainRequest')->willReturn(false);
         $this->mockSubSubRequest->expects(self::any())->method('getParentRequest')->willReturn($this->mockSubRequest);
 
-        $environment = $this->getMockBuilder(Utility\Environment::class)->disableOriginalConstructor()->setMethods(['isRewriteEnabled'])->getMock();
-        $environment->expects(self::any())->method('isRewriteEnabled')->will(self::returnValue(true));
-
         $this->uriBuilder = new Mvc\Routing\UriBuilder($this->mockMainRequest);
         $this->inject($this->uriBuilder, 'router', $this->mockRouter);
-        $this->inject($this->uriBuilder, 'environment', $environment);
         $this->inject($this->uriBuilder, 'baseUriProvider', $this->mockBaseUriProvider);
     }
 
@@ -782,24 +775,6 @@ class UriBuilderTest extends UnitTestCase
         $this->mockHttpRequest->expects(self::atLeastOnce())->method('getServerParams')->willReturn(['SCRIPT_NAME' => '/document-root/index.php']);
         $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             self::assertSame('document-root/', $resolveContext->getUriPathPrefix());
-            return $this->getMockBuilder(UriInterface::class)->getMock();
-        });
-
-        $this->uriBuilder->setCreateAbsoluteUri(false);
-
-        $this->uriBuilder->build();
-    }
-
-    /**
-     * @test
-     */
-    public function buildPrependsIndexFileIfRewriteUrlsIsOff()
-    {
-        $mockEnvironment = $this->getMockBuilder(Utility\Environment::class)->disableOriginalConstructor()->setMethods(['isRewriteEnabled'])->getMock();
-        $this->inject($this->uriBuilder, 'environment', $mockEnvironment);
-
-        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
-            self::assertSame('index.php/', $resolveContext->getUriPathPrefix());
             return $this->getMockBuilder(UriInterface::class)->getMock();
         });
 

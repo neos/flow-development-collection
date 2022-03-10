@@ -21,7 +21,6 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
-use Neos\Flow\Utility\Environment;
 use Neos\Utility\Arrays;
 
 /**
@@ -36,12 +35,6 @@ class UriBuilder
      * @var RouterInterface
      */
     protected $router;
-
-    /**
-     * @Flow\Inject
-     * @var Environment
-     */
-    protected $environment;
 
     /**
      * @Flow\Inject
@@ -409,13 +402,9 @@ class UriBuilder
 
         $httpRequest = $this->request->getHttpRequest();
 
-        $uriPathPrefix = $this->environment->isRewriteEnabled() ? '' : 'index.php/';
-        $uriPathPrefix = RequestInformationHelper::getScriptRequestPath($httpRequest) . $uriPathPrefix;
-        $uriPathPrefix = ltrim($uriPathPrefix, '/');
-
         $routeParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
         try {
-            $resolveContext = new ResolveContext($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($httpRequest), $arguments, $this->createAbsoluteUri, $uriPathPrefix, $routeParameters);
+            $resolveContext = new ResolveContext($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($httpRequest), $arguments, $this->createAbsoluteUri, ltrim(RequestInformationHelper::getScriptRequestPath($httpRequest), '/'), $routeParameters);
         } catch (HttpException $e) {
             throw new \RuntimeException(sprintf('Failed to determine base URI: %s', $e->getMessage()), 1645455082, $e);
         }
