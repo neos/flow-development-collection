@@ -36,12 +36,6 @@ class UriBuilder
      */
     protected $router;
 
-    /**
-     * @Flow\Inject
-     * @var BaseUriProvider
-     */
-    protected $baseUriProvider;
-
     private ActionRequest $request;
     private array $arguments = [];
     private array $lastArguments = [];
@@ -51,14 +45,22 @@ class UriBuilder
     private array $argumentsToBeExcludedFromQueryString = [];
     private ?string $format = null;
 
+    /**
+     * @deprecated with Flow 8.0 – use UriBuilder::fromRequest() instead
+     */
     public function __construct(ActionRequest $request)
     {
         $this->request = $request;
     }
 
+    public static function fromRequest(ActionRequest $request): self
+    {
+        return new static($request);
+    }
+
     public function forRequest(ActionRequest $request): self
     {
-        return new self($request);
+        return new static($request);
     }
 
 
@@ -66,7 +68,7 @@ class UriBuilder
      * Sets the current request and resets the UriBuilder
      *
      * @see reset()
-     * @deprecated with Flow 8.0 – create a new instance instead: new UriBuilder($request);
+     * @deprecated with Flow 8.0 – create a new instance instead: UriBuilder::fromRequest($request);
      */
     public function setRequest(ActionRequest $request): void
     {
@@ -78,6 +80,7 @@ class UriBuilder
      * Gets the current request
      *
      * @return ActionRequest
+     * @deprecated with Flow 8.0 – The UriBuilder holding an instance of the ActionRequest is an implementation detail that might change in the future. Retrieve the ActionRequest from the controller context or create a new instance
      */
     public function getRequest(): ActionRequest
     {
@@ -408,8 +411,11 @@ class UriBuilder
         $httpRequest = $this->request->getHttpRequest();
 
         $routeParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) ?? RouteParameters::createEmpty();
+        if (!$routeParameters->has('requestUriHost')) {
+            $routeParameters = $routeParameters->withParameter('requestUriHost', $httpRequest->getUri()->getHost());
+        }
         try {
-            $resolveContext = new ResolveContext($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($httpRequest), $arguments, $this->createAbsoluteUri, ltrim(RequestInformationHelper::getScriptRequestPath($httpRequest), '/'), $routeParameters);
+            $resolveContext = new ResolveContext($httpRequest->getUri()->withPath(''), $arguments, $this->createAbsoluteUri, ltrim(RequestInformationHelper::getScriptRequestPath($httpRequest), '/'), $routeParameters);
         } catch (HttpException $e) {
             throw new \RuntimeException(sprintf('Failed to determine base URI: %s', $e->getMessage()), 1645455082, $e);
         }

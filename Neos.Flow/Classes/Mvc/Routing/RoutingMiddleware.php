@@ -53,6 +53,9 @@ class RoutingMiddleware implements MiddlewareInterface
         if ($parameters === null) {
             $parameters = RouteParameters::createEmpty();
         }
+        if (!$parameters->has('requestUriHost')) {
+            $parameters = $parameters->withParameter('requestUriHost', $request->getUri()->getHost());
+        }
         $routeContext = new RouteContext($request, $parameters);
 
         try {

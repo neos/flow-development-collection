@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Mvc;
 use Psr\Http\Message\ServerRequestInterface;
@@ -65,37 +66,35 @@ class UriBuilderTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-
         $this->mockBaseUri = $this->getMockBuilder(UriInterface::class)->getMock();
-        $this->mockBaseUriProvider = $this->createMock(Http\BaseUriProvider::class);
-        $this->mockBaseUriProvider->expects(self::any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willReturn($this->mockBaseUri);
+        $this->mockBaseUri->method('getHost')->willReturn('localhost');
+        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest->method('getUri')->willReturn($this->mockBaseUri);
 
         $this->mockRouter = $this->createMock(Mvc\Routing\RouterInterface::class);
 
         $this->mockMainRequest = $this->createMock(Mvc\ActionRequest::class);
-        $this->mockMainRequest->expects(self::any())->method('getHttpRequest')->willReturn($this->mockHttpRequest);
-        $this->mockMainRequest->expects(self::any())->method('getParentRequest')->willReturn(null);
-        $this->mockMainRequest->expects(self::any())->method('getMainRequest')->willReturn($this->mockMainRequest);
-        $this->mockMainRequest->expects(self::any())->method('isMainRequest')->willReturn(true);
-        $this->mockMainRequest->expects(self::any())->method('getArgumentNamespace')->willReturn('');
+        $this->mockMainRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockMainRequest->method('getParentRequest')->willReturn(null);
+        $this->mockMainRequest->method('getMainRequest')->willReturn($this->mockMainRequest);
+        $this->mockMainRequest->method('isMainRequest')->willReturn(true);
+        $this->mockMainRequest->method('getArgumentNamespace')->willReturn('');
 
         $this->mockSubRequest = $this->createMock(Mvc\ActionRequest::class);
-        $this->mockSubRequest->expects(self::any())->method('getHttpRequest')->willReturn($this->mockHttpRequest);
-        $this->mockSubRequest->expects(self::any())->method('getMainRequest')->willReturn($this->mockMainRequest);
-        $this->mockSubRequest->expects(self::any())->method('isMainRequest')->willReturn(false);
-        $this->mockSubRequest->expects(self::any())->method('getParentRequest')->willReturn($this->mockMainRequest);
-        $this->mockSubRequest->expects(self::any())->method('getArgumentNamespace')->willReturn('SubNamespace');
+        $this->mockSubRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockSubRequest->method('getMainRequest')->willReturn($this->mockMainRequest);
+        $this->mockSubRequest->method('isMainRequest')->willReturn(false);
+        $this->mockSubRequest->method('getParentRequest')->willReturn($this->mockMainRequest);
+        $this->mockSubRequest->method('getArgumentNamespace')->willReturn('SubNamespace');
 
         $this->mockSubSubRequest = $this->createMock(Mvc\ActionRequest::class);
-        $this->mockSubSubRequest->expects(self::any())->method('getHttpRequest')->willReturn($this->mockHttpRequest);
-        $this->mockSubSubRequest->expects(self::any())->method('getMainRequest')->willReturn($this->mockMainRequest);
-        $this->mockSubSubRequest->expects(self::any())->method('isMainRequest')->willReturn(false);
-        $this->mockSubSubRequest->expects(self::any())->method('getParentRequest')->willReturn($this->mockSubRequest);
+        $this->mockSubSubRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockSubSubRequest->method('getMainRequest')->willReturn($this->mockMainRequest);
+        $this->mockSubSubRequest->method('isMainRequest')->willReturn(false);
+        $this->mockSubSubRequest->method('getParentRequest')->willReturn($this->mockSubRequest);
 
-        $this->uriBuilder = new Mvc\Routing\UriBuilder($this->mockMainRequest);
+        $this->uriBuilder = UriBuilder::fromRequest($this->mockMainRequest);
         $this->inject($this->uriBuilder, 'router', $this->mockRouter);
-        $this->inject($this->uriBuilder, 'baseUriProvider', $this->mockBaseUriProvider);
     }
 
     /**

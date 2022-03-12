@@ -86,9 +86,15 @@ class WebRedirect extends AbstractEntryPoint
         return $this->getUriBuilderForRequest($actionRequest)->withCreateAbsoluteUri(true)->uriFor($actionName, $routeValues, $controllerName, $packageKey, $subPackageKey);
     }
 
+    /**
+     * The reason for this method is merely to allow the UriBuilder to be mocked for tests
+     *
+     * @param ActionRequest $actionRequest
+     * @return UriBuilder
+     */
     protected function getUriBuilderForRequest(ActionRequest $actionRequest): UriBuilder
     {
-        return new UriBuilder($actionRequest);
+        return UriBuilder::fromRequest($actionRequest);
     }
 
     /**

@@ -110,7 +110,7 @@ abstract class AbstractController implements ControllerInterface
         $this->request->setDispatched(true);
         $this->response = $response;
 
-        $this->uriBuilder = new UriBuilder($this->request);
+        $this->uriBuilder = UriBuilder::fromRequest($this->request);
 
         $this->arguments = new Arguments([]);
         $this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder);

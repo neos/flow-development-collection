@@ -80,6 +80,7 @@ class RoutingMiddlewareTest extends UnitTestCase
         $this->mockHttpRequest->method('withAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS)->willReturn($this->mockHttpRequest);
 
         $this->mockRequestUri = $this->getMockBuilder(UriInterface::class)->getMock();
+        $this->mockRequestUri->method('getHost')->willReturn('localhost');
         $this->mockHttpRequest->method('getUri')->willReturn($this->mockRequestUri);
     }
 
@@ -89,7 +90,7 @@ class RoutingMiddlewareTest extends UnitTestCase
     public function handleStoresRouterMatchResultsInTheRequestAttributes()
     {
         $mockMatchResults = ['someRouterMatchResults'];
-        $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
+        $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty()->withParameter('requestUriHost', 'localhost'));
 
         $this->mockRouter->expects(self::atLeastOnce())->method('route')->with($routeContext)->willReturn($mockMatchResults);
         $this->mockHttpRequest->expects(self::atLeastOnce())->method('withAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS, $mockMatchResults);

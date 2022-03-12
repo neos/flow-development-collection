@@ -102,13 +102,11 @@ class StandaloneView extends AbstractTemplateView
             }
         }
 
-        $uriBuilder = new UriBuilder($this->request);
-
         $this->setControllerContext(new ControllerContext(
             $this->request,
             new ActionResponse(),
             new Arguments([]),
-            $uriBuilder
+            UriBuilder::fromRequest($this->request)
         ));
     }
 
