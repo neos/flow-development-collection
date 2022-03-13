@@ -68,6 +68,7 @@ class UriBuilderTest extends UnitTestCase
     {
         $this->mockBaseUri = $this->getMockBuilder(UriInterface::class)->getMock();
         $this->mockBaseUri->method('getHost')->willReturn('localhost');
+        $this->mockBaseUri->method('withPath')->willReturn($this->mockBaseUri);
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest->method('getUri')->willReturn($this->mockBaseUri);
 
