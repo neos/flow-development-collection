@@ -21,11 +21,11 @@ jobs:
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
         experimental: [false]
-        #include:
-          #- php-versions: '7.3'
-          #  static-analysis: 'psalm'
-          #  experimental: true
-          #  dependencies: 'highest'
+        include:
+          - php-versions: '8.0'
+            static-analysis: 'psalm'
+            experimental: true
+            dependencies: 'highest'
 
           # Experimental build for PHP nightly
           #- php-versions: 'nightly'
