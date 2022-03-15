@@ -5,7 +5,6 @@ namespace Neos\Flow\Tests\Unit\Http\Helper;
 
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
-use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Tests\UnitTestCase;
 
