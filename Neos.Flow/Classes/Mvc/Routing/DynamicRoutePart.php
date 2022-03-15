@@ -227,7 +227,13 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
             return false;
         }
         if (is_object($value)) {
-            $value = $this->persistenceManager->getIdentifierByObject($value);
+            $identifier = $this->persistenceManager->getIdentifierByObject($value);
+
+            if ($identifier === null && method_exists($value, '__toString')) {
+                $identifier = (string) $value;
+            }
+            $value = $identifier;
+
             if ($value === null || (!is_string($value) && !is_integer($value))) {
                 return false;
             }

@@ -52,6 +52,9 @@ class Algorithms
      */
     public static function generateRandomBytes(int $count): string
     {
+        if ($count < 1) {
+            throw new \InvalidArgumentException('The count must be greater than zero.', 1647010364);
+        }
         return random_bytes($count);
     }
 
@@ -64,6 +67,9 @@ class Algorithms
      */
     public static function generateRandomToken(int $count): string
     {
+        if ($count < 1) {
+            throw new \InvalidArgumentException('The count must be greater than zero.', 1647010365);
+        }
         return bin2hex(random_bytes($count));
     }
 
