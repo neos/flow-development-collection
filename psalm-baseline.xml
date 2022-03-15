@@ -799,6 +799,9 @@
     <UndefinedConstant occurrences="1">
       <code>FLOW_SAPITYPE</code>
     </UndefinedConstant>
+    <UndefinedMethod occurrences="1">
+      <code>isInitialized</code>
+    </UndefinedMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Error/ErrorHandler.php">
     <InvalidArgument occurrences="1">
