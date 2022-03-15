@@ -11,8 +11,6 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81;
  * source code.
  */
 
-use Neos\Flow\Annotations\Proxy;
-
 /**
  * A PHP 8.1 value-backed enum with methods
  */
