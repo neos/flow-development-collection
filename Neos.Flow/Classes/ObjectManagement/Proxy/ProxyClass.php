@@ -20,7 +20,6 @@ use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxyTrait;
 use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
 use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
-use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ReflectionService;
 use ReflectionException;
 

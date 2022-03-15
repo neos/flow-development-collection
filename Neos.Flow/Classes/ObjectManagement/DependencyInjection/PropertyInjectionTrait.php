@@ -11,8 +11,6 @@ namespace Neos\Flow\ObjectManagement\DependencyInjection;
  * source code.
  */
 
-use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
-
 /**
  * Boilerplate code for dependency injection
  */
