@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Tests\Unit\Mvc\Routing\Fixtures\UriArgumentObjectWithToString;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -394,6 +395,15 @@ class DynamicRoutePartTest extends UnitTestCase
         $object = new \stdClass();
         $this->mockPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($object)->will(self::returnValue(null));
         self::assertFalse($this->dynamicRoutPart->_call('resolveValue', $object));
+    }
+
+    /**
+     * @test
+     */
+    public function resolveValueReturnsToStringValueOfObjectNotAvailableFromPersistenceManager()
+    {
+        $resolveResult = $this->dynamicRoutPart->_call('resolveValue', new UriArgumentObjectWithToString());
+        self::assertSame('string%20to%20identify%20object', $resolveResult->getResolvedValue());
     }
 
     /**

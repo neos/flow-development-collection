@@ -252,10 +252,14 @@ abstract class Files
         if (substr($path, -2) === '/.') {
             $path = substr($path, 0, -1);
         }
+        if ($path === '') {
+            return;
+        }
+        clearstatcache(true, $path);
         if (is_file($path)) {
             throw new FilesException('Could not create directory "' . $path . '", because a file with that name exists!', 1349340620);
         }
-        if (!is_link($path) && !is_dir($path) && $path !== '') {
+        if (!is_link($path) && !is_dir($path)) {
             $oldMask = umask(000);
             mkdir($path, 0777, true);
             umask($oldMask);

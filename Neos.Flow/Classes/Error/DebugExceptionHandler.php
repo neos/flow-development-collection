@@ -70,7 +70,7 @@ EOD;
             header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
         }
 
-        if (!isset($this->renderingOptions['templatePathAndFilename'])) {
+        if ($this->useCustomErrorView() === false) {
             $this->renderStatically($statusCode, $exception);
             return;
         }
