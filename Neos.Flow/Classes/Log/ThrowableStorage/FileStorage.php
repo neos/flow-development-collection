@@ -108,6 +108,13 @@ class FileStorage implements ThrowableStorageInterface
     }
 
     /**
+     * Stores information about the given exception and returns information about
+     * the exception and where the details have been stored. The returned message
+     * can be logged or displayed as needed.
+     *
+     * The returned message follows this pattern:
+     * Exception #<code> in <line> of <file>: <message> - See also: <dumpFilename>
+     *
      * @param \Throwable $throwable
      * @param array $additionalData
      * @return string Informational message about the stored throwable

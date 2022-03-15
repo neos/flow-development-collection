@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -29,6 +30,8 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
+use Neos\Flow\Security\Exception\InvalidHashException;
 use Neos\Utility\TypeHandling;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -150,6 +153,11 @@ class ActionController extends AbstractController
     protected $logger;
 
     /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
      * Feature flag to enable the potentially breaking support of validation for dynamic types specified with `__type` argument or in the `PropertyMapperConfiguration`.
      * Note: This will be enabled by default in a future version.
      * See https://github.com/neos/flow-development-collection/pull/1905
@@ -175,6 +183,17 @@ class ActionController extends AbstractController
     public function injectLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * Injects the throwable storage.
+     *
+     * @param ThrowableStorageInterface $throwableStorage
+     * @return void
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
     }
 
     /**
@@ -207,7 +226,13 @@ class ActionController extends AbstractController
         if (method_exists($this, $actionInitializationMethodName)) {
             call_user_func([$this, $actionInitializationMethodName]);
         }
-        $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
+        try {
+            $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
+        } catch (InvalidArgumentForHashGenerationException|InvalidHashException $e) {
+            $message = $this->throwableStorage->logThrowable($e);
+            $this->logger->notice('Property mapping configuration failed due to HMAC errors. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
+            $this->throwStatus(400, '400 Bad Request', 'Invalid HMAC submitted');
+        }
 
         $this->mapRequestArgumentsToControllerArguments();
         if ($this->enableDynamicTypeValidation === true) {
