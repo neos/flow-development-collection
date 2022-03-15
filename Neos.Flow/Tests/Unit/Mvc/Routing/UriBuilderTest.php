@@ -972,7 +972,6 @@ class UriBuilderTest extends UnitTestCase
      */
     public function withArgumentsReturnsTheSameInstanceIfArgumentsMatch(): void
     {
-
         self::assertSame($this->uriBuilder, $this->uriBuilder->withArguments([]));
 
         $uriBuilderWithArguments = $this->uriBuilder->withArguments(['foo' => 'bar']);
