@@ -829,6 +829,159 @@ class UriBuilderTest extends UnitTestCase
     /**
      * @test
      */
+    public function forRequestReturnsAFreshInstance(): void
+    {
+        $uriBuilder = $this->uriBuilder
+            ->withCreateAbsoluteUri(true)
+            ->withArguments(['foo' => 'bar'])
+            ->withFormat('xml')
+            ->withAddQueryString(true)
+            ->withArgumentsToBeExcludedFromQueryString(['bar' => 'baz'])
+            ->withSection('some-section');
+
+        $newInstance = $uriBuilder->forRequest($this->mockMainRequest);
+        self::assertNotSame($uriBuilder, $newInstance);
+        self::assertFalse($newInstance->getCreateAbsoluteUri());
+        self::assertEmpty($newInstance->getArguments());
+        self::assertNull($newInstance->getFormat());
+        self::assertFalse($newInstance->getAddQueryString());
+        self::assertEmpty($newInstance->getArgumentsToBeExcludedFromQueryString());
+        self::assertEmpty($newInstance->getSection());
+    }
+
+    /**
+     * @test
+     */
+    public function getRequestReturnsTheRequest(): void
+    {
+        self::assertSame($this->mockMainRequest, $this->uriBuilder->getRequest());
+    }
+
+    /**
+     * @test
+     */
+    public function withSectionReturnsANewInstanceWithSpecifiedSection(): void
+    {
+        $uriBuilder = $this->uriBuilder->withSection('some-section');
+        self::assertNotSame($this->uriBuilder, $uriBuilder);
+        self::assertSame('some-section', $uriBuilder->getSection());
+    }
+
+    /**
+     * @test
+     */
+    public function withSectionReturnsTheSameInstanceIfSectionMatch(): void
+    {
+        self::assertSame($this->uriBuilder, $this->uriBuilder->withSection(''));
+        $uriBuilderWithSection = $this->uriBuilder->withSection('some-section');
+        self::assertSame($uriBuilderWithSection, $uriBuilderWithSection->withSection('some-section'));
+    }
+
+    /**
+     * @test
+     */
+    public function withFormatReturnsANewInstanceWithSpecifiedFormat(): void
+    {
+        $uriBuilder = $this->uriBuilder->withFormat('some-format');
+        self::assertNotSame($this->uriBuilder, $uriBuilder);
+        self::assertSame('some-format', $uriBuilder->getFormat());
+    }
+
+    /**
+     * @test
+     */
+    public function withFormatReturnsTheSameInstanceIfFormatMatch(): void
+    {
+        $uriBuilderWithFormat = $this->uriBuilder->withFormat('some-format');
+        self::assertSame($uriBuilderWithFormat, $uriBuilderWithFormat->withFormat('some-format'));
+    }
+
+    /**
+     * @test
+     */
+    public function withCreateAbsoluteUriReturnsANewInstanceWithSpecifiedCreateAbsoluteUri(): void
+    {
+        $uriBuilder = $this->uriBuilder->withCreateAbsoluteUri(true);
+        self::assertNotSame($this->uriBuilder, $uriBuilder);
+        self::assertTrue($uriBuilder->getCreateAbsoluteUri());
+    }
+
+    /**
+     * @test
+     */
+    public function withCreateAbsoluteUriReturnsTheSameInstanceIfCreateAbsoluteUriMatch(): void
+    {
+        self::assertSame($this->uriBuilder, $this->uriBuilder->withCreateAbsoluteUri(false));
+        $uriBuilderWithCreateAbsoluteUri = $this->uriBuilder->withCreateAbsoluteUri(true);
+        self::assertSame($uriBuilderWithCreateAbsoluteUri, $uriBuilderWithCreateAbsoluteUri->withCreateAbsoluteUri(true));
+    }
+
+    /**
+     * @test
+     */
+    public function withAddQueryStringReturnsANewInstanceWithSpecifiedCreateAbsoluteUri(): void
+    {
+        $uriBuilder = $this->uriBuilder->withAddQueryString(true);
+        self::assertNotSame($this->uriBuilder, $uriBuilder);
+        self::assertTrue($uriBuilder->getAddQueryString());
+    }
+
+    /**
+     * @test
+     */
+    public function withAddQueryStringReturnsTheSameInstanceIfCreateAbsoluteUriMatch(): void
+    {
+        self::assertSame($this->uriBuilder, $this->uriBuilder->withAddQueryString(false));
+        $uriBuilderWithCreateAbsoluteUri = $this->uriBuilder->withAddQueryString(true);
+        self::assertSame($uriBuilderWithCreateAbsoluteUri, $uriBuilderWithCreateAbsoluteUri->withAddQueryString(true));
+    }
+
+    /**
+     * @test
+     */
+    public function withArgumentsToBeExcludedFromQueryStringReturnsANewInstanceWithSpecifiedCreateAbsoluteUri(): void
+    {
+        $uriBuilder = $this->uriBuilder->withArgumentsToBeExcludedFromQueryString(['foo' => 'bar']);
+        self::assertNotSame($this->uriBuilder, $uriBuilder);
+        self::assertSame(['foo' => 'bar'], $uriBuilder->getArgumentsToBeExcludedFromQueryString());
+    }
+
+    /**
+     * @test
+     */
+    public function withArgumentsToBeExcludedFromQueryStringReturnsTheSameInstanceIfCreateAbsoluteUriMatch(): void
+    {
+        self::assertSame($this->uriBuilder, $this->uriBuilder->withArgumentsToBeExcludedFromQueryString([]));
+        $uriBuilderWithCreateAbsoluteUri = $this->uriBuilder->withArgumentsToBeExcludedFromQueryString(['foo' => 'bar']);
+        self::assertSame($uriBuilderWithCreateAbsoluteUri, $uriBuilderWithCreateAbsoluteUri->withArgumentsToBeExcludedFromQueryString(['foo' => 'bar']));
+    }
+
+
+    /**
+     * @test
+     */
+    public function withArgumentsReturnsANewInstanceWithSpecifiedArguments(): void
+    {
+        $uriBuilder = $this->uriBuilder->withArguments(['foo' => 'bar']);
+        self::assertNotSame($this->uriBuilder, $uriBuilder);
+        self::assertSame(['foo' => 'bar'], $uriBuilder->getArguments());
+    }
+
+    /**
+     * @test
+     */
+    public function withArgumentsReturnsTheSameInstanceIfArgumentsMatch(): void
+    {
+
+        self::assertSame($this->uriBuilder, $this->uriBuilder->withArguments([]));
+
+        $uriBuilderWithArguments = $this->uriBuilder->withArguments(['foo' => 'bar']);
+        self::assertSame($uriBuilderWithArguments, $uriBuilderWithArguments->withArguments(['foo' => 'bar']));
+    }
+
+    /**
+     * @test
+     */
     public function setArgumentsSetsNonPrefixedArgumentsByDefault()
     {
         $arguments = [

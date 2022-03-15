@@ -13,7 +13,6 @@ namespace Neos\Flow\Mvc\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
@@ -413,11 +412,7 @@ class UriBuilder
         if (!$routeParameters->has('requestUriHost')) {
             $routeParameters = $routeParameters->withParameter('requestUriHost', $httpRequest->getUri()->getHost());
         }
-        try {
-            $resolveContext = new ResolveContext($httpRequest->getUri()->withPath(''), $arguments, $this->createAbsoluteUri, ltrim(RequestInformationHelper::getScriptRequestPath($httpRequest), '/'), $routeParameters);
-        } catch (HttpException $e) {
-            throw new \RuntimeException(sprintf('Failed to determine base URI: %s', $e->getMessage()), 1645455082, $e);
-        }
+        $resolveContext = new ResolveContext($httpRequest->getUri()->withPath(''), $arguments, $this->createAbsoluteUri, ltrim(RequestInformationHelper::getScriptRequestPath($httpRequest), '/'), $routeParameters);
         $resolvedUri = $this->router->resolve($resolveContext);
         if ($this->section !== '') {
             $resolvedUri = $resolvedUri->withFragment($this->section);
