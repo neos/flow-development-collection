@@ -25,12 +25,12 @@ use Psr\Http\Message\UriInterface;
  */
 final class ActionUriBuilderFactory
 {
-
     private array $instances = [];
 
     public function __construct(
         private RouterInterface $router,
-    ) {}
+    ) {
+    }
 
     private function createFromBaseUriAndRouteParameters(UriInterface $baseUri, RouteParameters $routeParameters): ActionUriBuilder
     {

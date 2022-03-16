@@ -28,7 +28,8 @@ final class ActionUriBuilder
         private RouterInterface $router,
         private UriInterface $baseUri,
         private RouteParameters $routeParameters,
-    ) {}
+    ) {
+    }
 
     public static function fromRouterAndBaseUriAndRouteParameters(RouterInterface $router, UriInterface $baseUri, RouteParameters $routeParameters): self
     {
@@ -59,5 +60,4 @@ final class ActionUriBuilder
     {
         return $this->router->resolve(new ResolveContext($this->baseUri, $action->toRouteValues(), false, ltrim($this->baseUri->getPath(), '\/'), $this->routeParameters));
     }
-
 }
