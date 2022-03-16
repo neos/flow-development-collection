@@ -919,8 +919,8 @@ class RouteTest extends UnitTestCase
         $this->routeValues = ['baz' => 'bazValue'];
 
         $this->resolveRouteValues($this->routeValues);
-        $expectedResult = 'foo/barDefaultValue/bazvalue';
-        $actualResult = $this->route->getResolvedUriConstraints()->getPathConstraint();
+        $expectedResult = '/foo/barDefaultValue/bazvalue';
+        $actualResult = $this->route->getResolvedUriConstraints()->toUri()->getPath();
         self::assertSame($expectedResult, $actualResult);
     }
 
@@ -973,7 +973,7 @@ class RouteTest extends UnitTestCase
 
         $this->routeValues = ['differentKey' => 'value1'];
         self::assertFalse($this->resolveRouteValues($this->routeValues));
-        self::assertNull($this->route->getResolvedUriConstraints()->getPathConstraint());
+        self::assertSame('/', $this->route->getResolvedUriConstraints()->toUri()->getPath());
     }
 
     /**

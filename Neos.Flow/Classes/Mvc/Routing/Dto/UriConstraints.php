@@ -285,22 +285,6 @@ final class UriConstraints
     }
 
     /**
-     * Returns the URI path constraint, which consists of the path and query string parts, or NULL if none was set
-     *
-     * @return string|null
-     * @deprecated With Flow 7.0, use toUri()->getPath() and/or toUri()->getQuery() instead. @see toUri()
-     */
-    public function getPathConstraint(): ?string
-    {
-        $pathPart = $this->constraints[self::CONSTRAINT_PATH] ?? null;
-        $queryPart = $this->constraints[self::CONSTRAINT_QUERY_STRING] ?? null;
-        if ($pathPart === null && $queryPart === null) {
-            return null;
-        }
-        return $pathPart . ($queryPart ? '?' . $queryPart : '');
-    }
-
-    /**
      * Applies all constraints of this instance to the given $templateUri and returns a new UriInterface instance
      * satisfying all of the constraints (see example above)
      *
