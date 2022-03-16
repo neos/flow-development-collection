@@ -106,6 +106,7 @@ class Environment
      * Whether or not URL rewriting is enabled.
      *
      * @return bool
+     * @deprecated with Flow 8.0 - URL rewriting is now assumed to be supported
      */
     public function isRewriteEnabled(): bool
     {
