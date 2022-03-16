@@ -112,7 +112,7 @@ class WebRedirectTest extends UnitTestCase
         /** @var RouterInterface|MockObject $mockRouter */
         $mockRouter = $this->getMockBuilder(RouterInterface::class)->getMock();
 
-        $mockRouter->expects(self::atLeastOnce())->method('resolve')->willReturnCallback(function(ResolveContext $resolveContext) {
+        $mockRouter->expects(self::atLeastOnce())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             $expectedRuteValues = [
                 '@package' => 'somepackage',
                 '@subpackage' => 'SomeSubPackage',
