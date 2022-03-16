@@ -16,13 +16,8 @@ Neos:
       #
       applicationToken: 'MinorVersion'
 
-      # Defines an explicit base URI that should be used. This affects
-      # resource management, routing and all other parts accessing
-      # "Http\Request->getBaseUri()".
-      #
-      # If this setting is NULL, the base URI will be detected from the current
-      # request (default).
-      baseUri: NULL
+      # Deprecated with Flow 8.0
+      baseUri: null
 
       # Defines the PSR-15 middlewares that a request goes through in a flow
       middlewares:

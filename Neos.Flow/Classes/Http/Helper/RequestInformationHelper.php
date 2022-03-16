@@ -78,12 +78,7 @@ abstract class RequestInformationHelper
      */
     public static function generateBaseUri(ServerRequestInterface $request): UriInterface
     {
-        $baseUri = clone $request->getUri();
-        $baseUri = $baseUri->withQuery('');
-        $baseUri = $baseUri->withFragment('');
-        $baseUri = $baseUri->withPath(self::getScriptRequestPath($request));
-
-        return $baseUri;
+        return $request->getUri()->withPath(self::getScriptRequestPath($request))->withQuery('')->withFragment('');
     }
 
     /**

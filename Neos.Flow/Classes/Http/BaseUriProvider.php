@@ -12,6 +12,7 @@ use Psr\Http\Message\UriInterface;
  * Supports to get a baseUri from various possible sources.
  *
  * @Flow\Scope("singleton")
+ * @deprecated with Flow 8.0 - use the current HTTP request instead, e.g. via $actionRequest->getHttpRequest() or $bootstrap->getActiveRequestHandler()->getHttpRequest()
  */
 class BaseUriProvider
 {

@@ -14,6 +14,8 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Routing\ActionUriBuilderFactory;
+use Neos\Flow\Mvc\Routing\RouterInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 use Neos\FluidAdaptor\Core\Widget\WidgetContext;
@@ -60,6 +62,8 @@ class AbstractWidgetControllerTest extends UnitTestCase
 
         $abstractWidgetController = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AbstractWidgetController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'detectFormat', 'resolveView', 'callActionMethod']);
         $abstractWidgetController->_set('mvcPropertyMappingConfigurationService', $this->createMock(\Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService::class));
+        $mockRouter = $this->getMockBuilder(RouterInterface::class)->getMock();
+        $this->inject($abstractWidgetController, 'actionUriBuilderFactory', new ActionUriBuilderFactory($mockRouter));
 
         $abstractWidgetController->processRequest($mockActionRequest, $mockResponse);
 
