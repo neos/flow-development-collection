@@ -13,6 +13,8 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Mvc\Routing\ActionUriBuilderFactory;
+use Neos\Flow\Mvc\Routing\RouterInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -50,14 +52,23 @@ class AbstractControllerTest extends UnitTestCase
      */
     protected $mockActionRequest;
 
+    /**
+     * @var ActionUriBuilderFactory
+     */
+    protected $mockActionUriBuilderFactory;
+
     protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest->method('getUri')->willReturn(new Uri('http://localhost'));
 
         $this->actionResponse = new ActionResponse();
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+
+        $mockRouter = $this->getMockBuilder(RouterInterface::class)->getMock();
+        $this->mockActionUriBuilderFactory = new ActionUriBuilderFactory($mockRouter);
     }
 
     /**
@@ -84,6 +95,7 @@ class AbstractControllerTest extends UnitTestCase
         $request = ActionRequest::fromHttpRequest(new ServerRequest('GET', new Uri('http://localhost/foo')));
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
 
         self::assertFalse($request->isDispatched());
         $controller->_call('initializeController', $request, $this->actionResponse);
@@ -166,6 +178,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerActionName')->with('theTarget');
@@ -193,6 +206,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         try {
@@ -219,6 +233,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerActionName')->with('theTarget');
@@ -242,6 +257,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerActionName')->with('theTarget');
@@ -268,6 +284,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $this->mockActionRequest->expects(self::atLeastOnce())->method('setArguments')->with($convertedArguments);
@@ -293,6 +310,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
         //$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
@@ -316,6 +334,7 @@ class AbstractControllerTest extends UnitTestCase
         $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', null)->willReturn('the uri');
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
@@ -330,6 +349,7 @@ class AbstractControllerTest extends UnitTestCase
     {
         $this->expectException(StopActionException::class);
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $controller->_call('redirectToUri', 'http://some.uri');
@@ -342,6 +362,7 @@ class AbstractControllerTest extends UnitTestCase
     {
         /** @var AbstractController $controller */
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         try {
@@ -360,6 +381,7 @@ class AbstractControllerTest extends UnitTestCase
         $uri = 'http://flow.neos.io/awesomeness';
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         try {
@@ -378,6 +400,7 @@ class AbstractControllerTest extends UnitTestCase
         $uri = 'http://flow.neos.io/awesomeness';
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         try {
@@ -395,6 +418,7 @@ class AbstractControllerTest extends UnitTestCase
     {
         $this->expectException(StopActionException::class);
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $controller->_call('throwStatus', 404);
@@ -406,6 +430,7 @@ class AbstractControllerTest extends UnitTestCase
     public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction()
     {
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         $message = '<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>';
@@ -425,6 +450,7 @@ class AbstractControllerTest extends UnitTestCase
     public function throwStatusSetsTheStatusMessageAsContentIfNoFurtherContentIsProvided()
     {
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
         try {
@@ -453,6 +479,7 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $controller->_set('arguments', $controllerArguments);
 
@@ -482,6 +509,7 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $controller->_set('arguments', $controllerArguments);
 
