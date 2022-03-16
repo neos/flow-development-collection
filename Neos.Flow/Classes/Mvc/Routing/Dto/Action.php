@@ -20,14 +20,14 @@ use Neos\Flow\Mvc\ActionRequest;
  */
 final class Action
 {
-
     private function __construct(
         private string $actionName,
         private string $controllerName,
         private string $packageKey,
         private string $format,
         private array $additionalArguments,
-    ) {}
+    ) {
+    }
 
     public static function create(string $packageKey, string $controllerName, string $actionName): self
     {
@@ -91,6 +91,4 @@ final class Action
         }
         return $routeValues;
     }
-
-
 }
