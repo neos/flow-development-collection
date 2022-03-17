@@ -20,7 +20,6 @@ use Neos\Flow\Mvc\ActionRequest;
  */
 final class Action
 {
-
     private function __construct(
         private string $actionName,
         private string $controllerName,
