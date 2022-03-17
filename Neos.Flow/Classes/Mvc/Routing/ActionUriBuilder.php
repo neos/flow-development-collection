@@ -58,6 +58,6 @@ final class ActionUriBuilder
      */
     public function absoluteUriFor(Action $action): UriInterface
     {
-        return $this->router->resolve(new ResolveContext($this->baseUri, $action->toRouteValues(), false, ltrim($this->baseUri->getPath(), '\/'), $this->routeParameters));
+        return $this->router->resolve(new ResolveContext($this->baseUri, $action->toRouteValues(), true, ltrim($this->baseUri->getPath(), '\/'), $this->routeParameters));
     }
 }
