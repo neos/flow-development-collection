@@ -282,12 +282,23 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function redirect($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $delay = 0, $statusCode = 303, $format = null)
     {
-        $uri = $this->actionUriBuilder->absoluteUriFor(
-            Action::create($packageKey ?? $this->request->getControllerPackageKey(), $controllerName ?? $this->request->getControllerName(), $actionName)
+        if ($packageKey === null) {
+            $packageKey = $this->request->getControllerPackageKey();
+            $subpackageKey = $this->request->getControllerSubpackageKey();
+        } elseif (str_contains($packageKey, '\\')) {
+            [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
+        } else {
+            $subpackageKey = null;
+        }
+
+        $targetAction = Action::create($packageKey ?? $this->request->getControllerPackageKey(), $controllerName ?? $this->request->getControllerName(), $actionName)
             ->withFormat($format ?? $this->request->getFormat())
-            ->withAdditionalArguments($arguments)
-        );
-        $this->redirectToUri($uri, $delay, $statusCode);
+            ->withAdditionalArguments($arguments);
+        if ($subpackageKey !== null) {
+            $targetAction = $targetAction->withSubpackageKey($subpackageKey);
+        }
+
+        $this->redirectToUri($this->actionUriBuilder->absoluteUriFor($targetAction), $delay, $statusCode);
     }
 
     /**

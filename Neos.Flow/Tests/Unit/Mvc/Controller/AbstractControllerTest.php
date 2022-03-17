@@ -14,7 +14,9 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\Routing\ActionUriBuilderFactory;
+use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\RouterInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -57,6 +59,11 @@ class AbstractControllerTest extends UnitTestCase
      */
     protected $mockActionUriBuilderFactory;
 
+    /**
+     * @var RouterInterface|MockObject
+     */
+    protected $mockRouter;
+
     protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
@@ -67,8 +74,8 @@ class AbstractControllerTest extends UnitTestCase
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
 
-        $mockRouter = $this->getMockBuilder(RouterInterface::class)->getMock();
-        $this->mockActionUriBuilderFactory = new ActionUriBuilderFactory($mockRouter);
+        $this->mockRouter = $this->getMockBuilder(RouterInterface::class)->getMock();
+        $this->mockActionUriBuilderFactory = new ActionUriBuilderFactory($this->mockRouter);
     }
 
     /**
@@ -302,21 +309,117 @@ class AbstractControllerTest extends UnitTestCase
     {
         $arguments = ['foo' => 'bar'];
 
-        $mockUriBuilder = $this->createMock(UriBuilder::class);
-        $mockUriBuilder->expects(self::once())->method('reset')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setFormat')->with('doc')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->willReturn('the uri');
-
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
-        //$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
         $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
-        $this->inject($controller, 'uriBuilder', $mockUriBuilder);
+        $mockUri = new Uri('the-uri');
+        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) use ($mockUri) {
+            $expectedRouteValues = [
+                'foo' => 'bar',
+                '@action' => 'show',
+                '@controller' => 'stuff',
+                '@package' => 'super',
+                '@subpackage' => 'duper\package',
+                '@format' => 'doc',
+            ];
+            self::assertEquals($expectedRouteValues, $resolveContext->getRouteValues());
+            self::assertTrue($resolveContext->isForceAbsoluteUri());
+            return $mockUri;
+        });
 
-        $controller->expects(self::once())->method('redirectToUri')->with('the uri');
+        $controller->expects(self::once())->method('redirectToUri')->with($mockUri);
         $controller->_call('redirect', 'show', 'Stuff', 'Super\Duper\Package', $arguments, 0, 303, 'doc');
     }
+
+    public function redirectMergesFallsBackToRequestPackageKeyAndControllerNameDataProvider(): \Traversable
+    {
+        yield [
+            'requestPackageKey' => 'RequestPackageKey',
+            'requestSubpackageKey' => null,
+            'requestControllerName' => 'RequestControllerName',
+            'packageKey' => 'PackageKey',
+            'controllerName' => 'ControllerName',
+            'expectedRouteValues' => ['@action' => 'action', '@package' => 'packagekey', '@controller' => 'controllername'],
+        ];
+        yield [
+            'requestPackageKey' => 'RequestPackageKey',
+            'requestSubpackageKey' => null,
+            'requestControllerName' => 'RequestControllerName',
+            'packageKey' => null,
+            'controllerName' => 'ControllerName',
+            'expectedRouteValues' => ['@action' => 'action', '@package' => 'requestpackagekey', '@controller' => 'controllername'],
+        ];
+        yield [
+            'requestPackageKey' => 'RequestPackageKey',
+            'requestSubpackageKey' => null,
+            'requestControllerName' => 'RequestControllerName',
+            'packageKey' => null,
+            'controllerName' => null,
+            'expectedRouteValues' => ['@action' => 'action', '@package' => 'requestpackagekey', '@controller' => 'requestcontrollername'],
+        ];
+        yield [
+            'requestPackageKey' => 'RequestPackageKey',
+            'requestSubpackageKey' => 'RequestSubpackageKey',
+            'requestControllerName' => 'RequestControllerName',
+            'packageKey' => null,
+            'controllerName' => null,
+            'expectedRouteValues' => ['@action' => 'action', '@package' => 'requestpackagekey', '@subpackage' => 'requestsubpackagekey', '@controller' => 'requestcontrollername'],
+        ];
+        yield [
+            'requestPackageKey' => 'RequestPackageKey',
+            'requestSubpackageKey' => 'RequestSubpackageKey',
+            'requestControllerName' => 'RequestControllerName',
+            'packageKey' => 'PackageKey\\SubpackageKey',
+            'controllerName' => 'ControllerName',
+            'expectedRouteValues' => ['@action' => 'action', '@package' => 'packagekey', '@subpackage' => 'subpackagekey', '@controller' => 'controllername'],
+        ];
+        yield [
+            'requestPackageKey' => 'RequestPackageKey',
+            'requestSubpackageKey' => 'RequestSubpackageKey',
+            'requestControllerName' => 'RequestControllerName',
+            'packageKey' => 'PackageKey',
+            'controllerName' => 'ControllerName',
+            'expectedRouteValues' => ['@action' => 'action', '@package' => 'packagekey', '@controller' => 'controllername'],
+        ];
+
+        // Note: The following two tests merely document the current behavior
+        yield [
+            'requestPackageKey' => 'RequestPackageKey',
+            'requestSubpackageKey' => 'RequestSubpackageKey',
+            'requestControllerName' => 'RequestControllerName',
+            'packageKey' => null,
+            'controllerName' => 'ControllerName',
+            'expectedRouteValues' => ['@action' => 'action', '@package' => 'requestpackagekey', '@subpackage' => 'requestsubpackagekey', '@controller' => 'controllername'],
+        ];
+        yield [
+            'requestPackageKey' => 'RequestPackageKey',
+            'requestSubpackageKey' => 'RequestSubpackageKey',
+            'requestControllerName' => 'RequestControllerName',
+            'packageKey' => 'PackageKey',
+            'controllerName' => null,
+            'expectedRouteValues' => ['@action' => 'action', '@package' => 'packagekey', '@controller' => 'requestcontrollername'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider redirectMergesFallsBackToRequestPackageKeyAndControllerNameDataProvider
+     */
+    public function redirectMergesFallsBackToRequestPackageKeyAndControllerName(string $requestPackageKey, ?string $requestSubpackageKey, string $requestControllerName, ?string $packageKey, ?string $controllerName, array $expectedRouteValues): void
+    {
+        $this->mockActionRequest->method('getControllerPackageKey')->willReturn($requestPackageKey);
+        $this->mockActionRequest->method('getControllerSubpackageKey')->willReturn($requestSubpackageKey);
+        $this->mockActionRequest->method('getControllerName')->willReturn($requestControllerName);
+        $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
+        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) use ($expectedRouteValues) {
+            self::assertEquals($expectedRouteValues, $resolveContext->getRouteValues());
+            return new Uri();
+        });
+        $controller->_call('redirect', 'action', $controllerName, $packageKey);
+    }
+
 
     /**
      * @test
@@ -327,19 +430,42 @@ class AbstractControllerTest extends UnitTestCase
 
         $this->mockActionRequest->expects(self::atLeastOnce())->method('getFormat')->willReturn('json');
 
-        $mockUriBuilder = $this->createMock(UriBuilder::class);
-        $mockUriBuilder->expects(self::once())->method('reset')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setFormat')->with('json')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', null)->willReturn('the uri');
+        $mockUri = new Uri('the-uri');
+        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function(ResolveContext $resolveContext) use ($mockUri) {
+            $expectedRouteValues = [
+                'foo' => 'bar',
+                '@action' => 'show',
+                '@controller' => 'stuff',
+                '@package' => 'super',
+                '@format' => 'json',
+            ];
+            self::assertEquals($expectedRouteValues, $resolveContext->getRouteValues());
+            self::assertTrue($resolveContext->isForceAbsoluteUri());
+            return $mockUri;
+        });
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
         $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
-        $this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
-        $controller->expects(self::once())->method('redirectToUri')->with('the uri');
+        $controller->expects(self::once())->method('redirectToUri')->with($mockUri);
         $controller->_call('redirect', 'show', 'Stuff', 'Super', $arguments);
+    }
+
+    /**
+     * @test
+     */
+    public function redirectRespectsSpecifiedDelayAndStatusCode(): void
+    {
+        $mockUri = new Uri('the-uri');
+        $this->mockRouter->method('resolve')->willReturn($mockUri);
+
+        $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
+
+        $controller->expects(self::once())->method('redirectToUri')->with($mockUri, 123, 333);
+        $controller->_call('redirect', 'show', 'Stuff', 'Super', [], 123, 333);
     }
 
     /**
@@ -409,6 +535,27 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         self::assertNull($this->actionResponse->getRedirectUri());
+    }
+
+    /**
+     * @test
+     */
+    public function redirectToUriRendersRedirectMetaTagIfDelayIsNotZero()
+    {
+        $uri = 'http://flow.neos.io/awesomeness';
+
+        $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
+        $this->inject($controller, 'actionUriBuilderFactory', $this->mockActionUriBuilderFactory);
+        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
+
+        try {
+            $controller->_call('redirectToUri', $uri, 123, 333);
+        } catch (StopActionException $e) {
+        }
+
+        $expectedContent = '<html><head><meta http-equiv="refresh" content="123;url=http://flow.neos.io/awesomeness"/></head></html>';
+        self::assertSame($expectedContent, $this->actionResponse->getContent());
+        self::assertSame(333, $this->actionResponse->getStatusCode());
     }
 
     /**
