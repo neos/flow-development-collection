@@ -27,7 +27,6 @@ use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\UnitTestCase;
@@ -431,7 +430,7 @@ class AbstractControllerTest extends UnitTestCase
         $this->mockActionRequest->expects(self::atLeastOnce())->method('getFormat')->willReturn('json');
 
         $mockUri = new Uri('the-uri');
-        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function(ResolveContext $resolveContext) use ($mockUri) {
+        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) use ($mockUri) {
             $expectedRouteValues = [
                 'foo' => 'bar',
                 '@action' => 'show',
