@@ -55,11 +55,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      *      renderTechnicalDetails: bool,
      *      logException: bool,
      *      renderingGroup?: string,
-     *      variables?: array,
-     *      templatePathAndFilename?: string,
-     *      layoutRootPath?: string,
-     *      partialRootPath?: string,
-     *      format?: string
+     *      variables?: array
      * }
      */
     protected $renderingOptions;
