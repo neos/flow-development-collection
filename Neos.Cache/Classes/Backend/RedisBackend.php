@@ -281,6 +281,20 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
+     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     *
+     * @api
+     */
+    public function flushByTags(array $tags): int
+    {
+        $flushed = 0;
+        foreach ($tags as $tag) {
+            $flushed += $this->flushByTag($tag);
+        }
+        return $flushed;
+    }
+
+    /**
      * Finds and returns all cache entry identifiers which are tagged by the
      * specified tag.
      *

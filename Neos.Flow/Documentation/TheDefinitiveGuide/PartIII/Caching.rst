@@ -244,6 +244,9 @@ with these methods.
 ``flushByTag()``
 	Flush all cache entries which are tagged with the given tag.
 
+``flushByTags()``
+	Flush all cache entries which are tagged with any of the given tags.
+
 ``collectGarbage()``
 	Call the garbage collection method of the backend. This is important for backends
 	which are unable to do this internally.

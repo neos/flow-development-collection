@@ -182,11 +182,54 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function flushByTagsFlushesEntryByTags()
+    {
+        for ($i = 0; $i < 10; $i++) {
+            $this->backend->set('entry_' . $i, 'foo', ['tag1', 'tag2']);
+        }
+        for ($i = 10; $i < 20; $i++) {
+            $this->backend->set('entry_' . $i, 'foo', ['tag2']);
+        }
+        for ($i = 20; $i < 30; $i++) {
+            $this->backend->set('entry_' . $i, 'foo', ['tag3']);
+        }
+        self::assertCount(10, $this->backend->findIdentifiersByTag('tag1'));
+        self::assertCount(20, $this->backend->findIdentifiersByTag('tag2'));
+        self::assertCount(10, $this->backend->findIdentifiersByTag('tag3'));
+
+        $count = $this->backend->flushByTags(['tag1', 'tag3']);
+        self::assertEquals(20, $count, 'flushByTag returns amount of flushed entries');
+        self::assertCount(0, $this->backend->findIdentifiersByTag('tag1'));
+        self::assertCount(10, $this->backend->findIdentifiersByTag('tag2'));
+        self::assertCount(0, $this->backend->findIdentifiersByTag('tag3'));
+    }
+
+    /**
+     * @test
+     */
     public function flushByTagRemovesEntries()
     {
         $this->backend->set('some_entry', 'foo', ['tag1', 'tag2']);
 
         $this->backend->flushByTag('tag1');
+
+        $entryIdentifiers = [];
+        foreach ($this->backend as $entryIdentifier => $entryValue) {
+            $entryIdentifiers[] = $entryIdentifier;
+        }
+
+        self::assertEquals([], $entryIdentifiers);
+    }
+
+    /**
+     * @test
+     */
+    public function flushByTagsRemovesEntries()
+    {
+        $this->backend->set('some_entry', 'foo', ['tag1', 'tag2']);
+        $this->backend->set('some_other_entry', 'bar', ['tag3']);
+
+        $this->backend->flushByTags(['tag1', 'tag3']);
 
         $entryIdentifiers = [];
         foreach ($this->backend as $entryIdentifier => $entryValue) {
