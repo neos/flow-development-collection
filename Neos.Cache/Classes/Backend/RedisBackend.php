@@ -147,18 +147,41 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $setOptions['ex'] = $lifetime;
         }
 
+        $redisTags = array_reduce($tags, function ($redisTags, $tag) use ($lifetime, $entryIdentifier) {
+            $expire = $this->calculateExpires($this->getPrefixedIdentifier('tag:' . $tag), $lifetime);
+            $redisTags[] = ['key' => $this->getPrefixedIdentifier('tag:' . $tag), 'value' => $entryIdentifier, 'expire' => $expire];
+
+            $expire = $this->calculateExpires($this->getPrefixedIdentifier('tags:' . $entryIdentifier), $lifetime);
+            $redisTags[] = ['key' => $this->getPrefixedIdentifier('tags:' . $entryIdentifier), 'value' => $tag, 'expire' => $expire];
+            return $redisTags;
+        }, []);
+
         $this->redis->multi();
         $result = $this->redis->set($this->getPrefixedIdentifier('entry:' . $entryIdentifier), $this->compress($data), $setOptions);
-        if ($result === false) {
+        if (!$result instanceof \Redis) {
             $this->verifyRedisVersionIsSupported();
         }
-        $this->redis->lRem($this->getPrefixedIdentifier('entries'), $entryIdentifier, 0);
-        $this->redis->rPush($this->getPrefixedIdentifier('entries'), $entryIdentifier);
-        foreach ($tags as $tag) {
-            $this->redis->sAdd($this->getPrefixedIdentifier('tag:' . $tag), $entryIdentifier);
-            $this->redis->sAdd($this->getPrefixedIdentifier('tags:' . $entryIdentifier), $tag);
+        foreach ($redisTags as $tag) {
+            $this->redis->sAdd($tag['key'], $tag['value']);
+            if ($tag['expire'] > 0) {
+                $this->redis->expire($tag['key'], $tag['expire']);
+            } else {
+                $this->redis->persist($tag['key']);
+            }
         }
         $this->redis->exec();
+    }
+
+    /**
+     * Calculate the max lifetime for a tag
+     */
+    private function calculateExpires(string $tag, int $lifetime): int
+    {
+        $ttl = $this->redis->ttl($tag);
+        if ($ttl < 0 || $lifetime === self::UNLIMITED_LIFETIME) {
+            return -1;
+        }
+        return max($ttl, $lifetime);
     }
 
     /**
@@ -211,7 +234,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
                 $this->redis->sRem($this->getPrefixedIdentifier('tag:' . $tag), $entryIdentifier);
             }
             $this->redis->del($this->getPrefixedIdentifier('tags:' . $entryIdentifier));
-            $this->redis->lRem($this->getPrefixedIdentifier('entries'), $entryIdentifier, 0);
             $result = $this->redis->exec();
         } while ($result === false);
 
@@ -229,20 +251,14 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function flush(): void
     {
+        // language=lua
         $script = "
-		local entries = redis.call('LRANGE',KEYS[1],0,-1)
-		for k1,entryIdentifier in ipairs(entries) do
-			redis.call('DEL', ARGV[1]..'entry:'..entryIdentifier)
-			local tags = redis.call('SMEMBERS', ARGV[1]..'tags:'..entryIdentifier)
-			for k2,tagName in ipairs(tags) do
-				redis.call('DEL', ARGV[1]..'tag:'..tagName)
-			end
-			redis.call('DEL', ARGV[1]..'tags:'..entryIdentifier)
+        local keys = redis.call('KEYS', ARGV[1] .. '*')
+		for k1,key in ipairs(keys) do
+			redis.call('DEL', key)
 		end
-		redis.call('DEL', KEYS[1])
-		redis.call('DEL', KEYS[2])
 		";
-        $this->redis->eval($script, [$this->getPrefixedIdentifier('entries'), $this->getPrefixedIdentifier('frozen'), $this->getPrefixedIdentifier('')], 2);
+        $this->redis->eval($script, [$this->getPrefixedIdentifier('')], 0);
 
         $this->frozen = null;
     }
@@ -274,16 +290,12 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 		local entries = redis.call('SMEMBERS', KEYS[1])
 		for k1,entryIdentifier in ipairs(entries) do
 			redis.call('DEL', ARGV[1]..'entry:'..entryIdentifier)
-			local tags = redis.call('SMEMBERS', ARGV[1]..'tags:'..entryIdentifier)
-			for k2,tagName in ipairs(tags) do
-				redis.call('SREM', ARGV[1]..'tag:'..tagName, entryIdentifier)
-			end
 			redis.call('DEL', ARGV[1]..'tags:'..entryIdentifier)
-			redis.call('LREM', KEYS[2], 0, entryIdentifier)
 		end
+		redis.call('DEL', KEYS[1])
 		return #entries
 		";
-        return $this->redis->eval($script, [$this->getPrefixedIdentifier('tag:' . $tag), $this->getPrefixedIdentifier('entries'), $this->getPrefixedIdentifier('')], 2);
+        return $this->redis->eval($script, [$this->getPrefixedIdentifier('tag:' . $tag), $this->getPrefixedIdentifier('')], 1);
     }
 
     /**
