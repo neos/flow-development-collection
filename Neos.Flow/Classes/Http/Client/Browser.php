@@ -20,7 +20,6 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
@@ -35,7 +34,7 @@ use Symfony\Component\DomCrawler\Form;
 class Browser implements ClientInterface
 {
     /**
-     * @var ServerRequestInterface
+     * @var RequestInterface
      */
     protected $lastRequest;
 
@@ -235,7 +234,7 @@ class Browser implements ClientInterface
     /**
      * Returns the last request executed.
      *
-     * @return ServerRequestInterface The HTTP request or NULL if there wasn't a request yet
+     * @return RequestInterface The HTTP request or NULL if there wasn't a request yet
      * @api
      */
     public function getLastRequest()
