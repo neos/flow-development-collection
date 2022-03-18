@@ -364,9 +364,9 @@ class ProxyClass
         return ClassGenerator::fromArray(['name' => $proxyClassName . '_LazyProxy'])
             ->setExtendedClass($proxyClassName)
             ->setImplementedInterfaces([DependencyProxy::class])
-            ->addTrait('\\' . DependencyProxyTrait::class)
             ->removeMethod('__call')
             ->addMethods($methods)
+            ->addTrait('\\' . DependencyProxyTrait::class)
             ->generate();
     }
 
