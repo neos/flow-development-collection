@@ -126,7 +126,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
      * @param array $tags Tags to associate with this cache entry. If the backend does not support tags, this option can be ignored.
-     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param integer|null $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @throws \RuntimeException
      * @throws CacheException
      * @return void
@@ -225,7 +225,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * in an atomic way.
      *
      * @throws \RuntimeException
-     * @return void
      * @api
      */
     public function flush(): void
@@ -251,7 +250,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * This backend does not need an externally triggered garbage collection
      *
-     * @return void
      * @api
      */
     public function collectGarbage(): void
@@ -472,9 +470,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         $this->database = (int)$database;
     }
 
-    /**
-     * @param string $password
-     */
     public function setPassword(string $password): void
     {
         $this->password = $password;
@@ -498,10 +493,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         $this->batchSize = $batchSize;
     }
 
-    /**
-     * @param \Redis $redis
-     * @return void
-     */
     public function setRedis(\Redis $redis = null): void
     {
         if ($redis !== null) {
@@ -515,31 +506,23 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     private function uncompress($value)
     {
-        if ($value === false || empty($value)) {
+        if (empty($value)) {
             return $value;
         }
         return $this->useCompression() ? gzdecode((string) $value) : $value;
     }
 
-    /**
-     * @param string $value
-     * @return string
-     */
     private function compress(string $value): string
     {
         return $this->useCompression() ? gzencode($value, $this->compressionLevel) : $value;
     }
 
-    /**
-     * @return boolean
-     */
     private function useCompression(): bool
     {
         return $this->compressionLevel > 0;
     }
 
     /**
-     * @return \Redis
      * @throws CacheException
      */
     private function getRedisClient(): \Redis
@@ -549,7 +532,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         try {
             $connected = false;
             // keep the assignment above! the connect calls below leaves the variable undefined, if an error occurs.
-            if (strpos($this->hostname, '/') !== false) {
+            if (str_contains($this->hostname, '/')) {
                 $connected = $redis->connect($this->hostname);
             } else {
                 $connected = $redis->connect($this->hostname, $this->port);
@@ -561,17 +544,14 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             }
         }
 
-        if ($this->password !== '') {
-            if (!$redis->auth($this->password)) {
-                throw new CacheException('Redis authentication failed.', 1502366200);
-            }
+        if ($this->password !== '' && !$redis->auth($this->password)) {
+            throw new CacheException('Redis authentication failed.', 1502366200);
         }
         $redis->select($this->database);
         return $redis;
     }
 
     /**
-     * @return void
      * @throws CacheException
      */
     protected function verifyRedisVersionIsSupported(): void
@@ -591,7 +571,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * Validates that the configured redis backend is accessible and returns some details about its configuration if that's the case
      *
-     * @return Result
      * @api
      */
     public function getStatus(): Result
