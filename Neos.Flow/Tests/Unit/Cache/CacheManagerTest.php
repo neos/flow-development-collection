@@ -19,6 +19,8 @@ use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Environment;
 use Psr\Log\LoggerInterface;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Testcase for the Cache Manager
@@ -106,6 +108,12 @@ class CacheManagerTest extends UnitTestCase
         $this->cacheManager->registerCache($cache2);
 
         self::assertSame($cache2, $this->cacheManager->getCache('cache2'), 'The cache returned by getCache() was not the same I registered.');
+
+        $cacheItemPool = $this->cacheManager->getCacheItemPool('cache2');
+        self::assertInstanceOf(CacheItemPoolInterface::class, $cacheItemPool);
+
+        $simpleCache = $this->cacheManager->getSimpleCache('cache2');
+        self::assertInstanceOf(CacheInterface::class, $simpleCache);
     }
 
     /**
@@ -121,6 +129,36 @@ class CacheManagerTest extends UnitTestCase
         $this->cacheManager->getCache('someidentifier');
 
         $this->cacheManager->getCache('doesnotexist');
+    }
+
+    /**
+     * @test
+     */
+    public function getCacheItemPoolThrowsExceptionForNonExistingIdentifier()
+    {
+        $this->expectException(Cache\Exception\NoSuchCacheException::class);
+        $cache = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
+        $cache->expects(self::atLeastOnce())->method('getIdentifier')->will(self::returnValue('someidentifier'));
+
+        $this->cacheManager->registerCache($cache);
+        $this->cacheManager->getCacheItemPool('someidentifier');
+
+        $this->cacheManager->getCacheItemPool('doesnotexist');
+    }
+
+    /**
+     * @test
+     */
+    public function getSimpleCacheThrowsExceptionForNonExistingIdentifier()
+    {
+        $this->expectException(Cache\Exception\NoSuchCacheException::class);
+        $cache = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
+        $cache->expects(self::atLeastOnce())->method('getIdentifier')->will(self::returnValue('someidentifier'));
+
+        $this->cacheManager->registerCache($cache);
+        $this->cacheManager->getSimpleCache('someidentifier');
+
+        $this->cacheManager->getSimpleCache('doesnotexist');
     }
 
     /**
