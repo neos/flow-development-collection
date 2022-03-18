@@ -479,9 +479,21 @@ Options
 |                | * sqlite:/path/to/sqlite.db                        |           |        |         |
 |                | * sqlite::memory:                                  |           |        |         |
 +----------------+----------------------------------------------------+-----------+--------+---------+
-| username       | Username to use for the database connection        | No        |        |         |
+| username       | Username to use for the database connection.       | No        |        |         |
 +----------------+----------------------------------------------------+-----------+--------+---------+
 | password       | Password to use for the database connection.       | No        |        |         |
++----------------+----------------------------------------------------+-----------+--------+---------+
+| cacheTableName | Table name to store cache entries                  | No        | string | cache   |
++----------------+----------------------------------------------------+-----------+--------+---------+
+| tagsTableName  | Table name to store cache tags                     | No        | string | tags    |
++----------------+----------------------------------------------------+-----------+--------+---------+
+| batchSize      | Maximum number of parameters per query for         | No        | int    | 999     |
+|                | for batch operations.                              |           |        |         |
+|                |                                                    |           |        |         |
+|                | This value should be adjusted based on type of     |           |        |         |
+|                | the data source to increase performance.           |           |        |         |
+|                | E.g. Postgres supports up to 65535 parameters,     |           |        |         |
+|                | but SQLite only 999 for older versions.            |           |        |         |
 +----------------+----------------------------------------------------+-----------+--------+---------+
 
 Neos\\Cache\\Backend\\RedisBackend
