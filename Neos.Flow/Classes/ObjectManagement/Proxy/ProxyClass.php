@@ -361,13 +361,15 @@ class ProxyClass
             $methods[] = $method;
         }
 
-        return ClassGenerator::fromArray(['name' => $proxyClassName . '_LazyProxy'])
+        $classGenerator = ClassGenerator::fromArray(['name' => $proxyClassName . '_LazyProxy'])
             ->setExtendedClass($proxyClassName)
             ->setImplementedInterfaces([DependencyProxy::class])
             ->removeMethod('__call')
             ->addMethods($methods)
-            ->addTrait('\\' . DependencyProxyTrait::class)
-            ->generate();
+            ->addTrait('\\' . DependencyProxyTrait::class);
+        // This is just for making Psalm happy, since addTrait() returns TraitUsageInterface which doesn't provide generate()
+        assert($classGenerator instanceof ClassGenerator);
+        return $classGenerator->generate();
     }
 
     /**
