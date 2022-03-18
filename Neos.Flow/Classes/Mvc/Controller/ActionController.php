@@ -223,7 +223,7 @@ class ActionController extends AbstractController
         } catch (InvalidArgumentForHashGenerationException|InvalidHashException $e) {
             $message = $this->throwableStorage->logThrowable($e);
             $this->logger->notice('Property mapping configuration failed due to HMAC errors. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
-            $this->throwStatus(400, '400 Bad Request', 'Invalid HMAC submitted');
+            $this->throwStatus(400, null, 'Invalid HMAC submitted');
         }
 
         try {
@@ -231,7 +231,7 @@ class ActionController extends AbstractController
         } catch (RequiredArgumentMissingException $e) {
             $message = $this->throwableStorage->logThrowable($e);
             $this->logger->notice('Request argument mapping failed due to a missing required argument. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
-            $this->throwStatus(400, '400 Bad Request', 'Required argument is missing');
+            $this->throwStatus(400, null, 'Required argument is missing');
         }
 
         if ($this->view === null) {
