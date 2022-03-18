@@ -12,10 +12,10 @@ namespace Neos\Flow\Http\Client;
  */
 
 /**
- * An exception for the Curl Engine
+ * A generic HTTP exception
  *
  * @api
  */
-class CurlEngineException extends Exception
+class Exception extends \Neos\Flow\Http\Exception implements \Psr\Http\Client\ClientExceptionInterface
 {
 }

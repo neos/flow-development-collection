@@ -16,7 +16,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -30,7 +32,7 @@ use Symfony\Component\DomCrawler\Form;
  *
  * @api
  */
-class Browser
+class Browser implements ClientInterface
 {
     /**
      * @var ServerRequestInterface
@@ -71,6 +73,7 @@ class Browser
     protected $automaticRequestHeaders;
 
     /**
+     * @Flow\Inject
      * @var RequestEngineInterface
      */
     protected $requestEngine;
@@ -202,11 +205,12 @@ class Browser
     /**
      * Sends a prepared request and returns the respective response.
      *
-     * @param ServerRequestInterface $request
+     * @param RequestInterface $request
      * @return ResponseInterface
+     * @throws \Psr\Http\Client\ClientExceptionInterface
      * @api
      */
-    public function sendRequest(ServerRequestInterface $request)
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         foreach ($this->automaticRequestHeaders->getAll() as $name => $values) {
             $request = $request->withAddedHeader($name, $values);
