@@ -35,6 +35,7 @@ use Neos\Error\Messages\Result;
  *  - database:        The database index that will be used. By default,
  *                     Redis has 16 databases with index number 0 - 15
  *  - password:        The password needed for redis clients to connect to the server (hostname)
+ *  - batchSize:       Maximum number of parameters per query for batch operations
  *
  * Requirements:
  *  - Redis 2.6.0+ (tested with 2.6.14 and 2.8.5)
@@ -96,6 +97,13 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @var integer
      */
     protected $compressionLevel = 0;
+
+    /**
+     * Redis allows a maximum of 1024 * 1024 parameters, but we use a lower limit to prevent long blocking calls.
+     *
+     * @var integer
+     */
+    protected $batchSize = 100000;
 
     /**
      * Constructs this backend
@@ -281,17 +289,49 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     }
 
     /**
-     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     * Removes all cache entries of this cache which are tagged by the specified tags.
      *
+     * @param array<string> $tags The tag the entries must have
+     * @throws \RuntimeException
+     * @return integer The number of entries which have been affected by this flush
      * @api
      */
     public function flushByTags(array $tags): int
     {
-        $flushed = 0;
-        foreach ($tags as $tag) {
-            $flushed += $this->flushByTag($tag);
+        if ($this->isFrozen()) {
+            throw new \RuntimeException(sprintf('Cannot add or modify cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1647642328);
         }
-        return $flushed;
+
+        $script = "
+        local total_entries = 0
+        local num_arg = #ARGV
+        for i = 1, num_arg do
+            local entries = redis.call('SMEMBERS', KEYS[i])
+            for k1,entryIdentifier in ipairs(entries) do
+                redis.call('UNLINK', ARGV[i]..'entry:'..entryIdentifier)
+                redis.call('UNLINK', ARGV[i]..'tags:'..entryIdentifier)
+            end
+            redis.call('UNLINK', KEYS[i])
+            total_entries = total_entries + #entries
+        end
+        return total_entries
+        ";
+
+        $flushedEntriesTotal = 0;
+
+        // Flush tags in batches
+        for ($i = 0, $iMax = count($tags); $i < $iMax; $i += $this->batchSize) {
+            $tagList = array_slice($tags, $i, $this->batchSize);
+            $keys = array_map(function ($tag) {
+                return $this->getPrefixedIdentifier('tag:' . $tag);
+            }, $tagList);
+            $values = array_fill(0, count($keys), $this->getPrefixedIdentifier(''));
+
+            $flushedEntries = $this->redis->eval($script, array_merge($keys, $values), count($keys));
+            $flushedEntriesTotal = is_int($flushedEntries) ? $flushedEntries : 0;
+        }
+
+        return $flushedEntriesTotal;
     }
 
     /**
@@ -446,6 +486,16 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     public function setCompressionLevel($compressionLevel): void
     {
         $this->compressionLevel = (int)$compressionLevel;
+    }
+
+    /**
+     * Sets the maximum number of items for batch operations
+     *
+     * @api
+     */
+    protected function setBatchSize(int $batchSize): void
+    {
+        $this->batchSize = $batchSize;
     }
 
     /**
