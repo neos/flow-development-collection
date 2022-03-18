@@ -492,6 +492,15 @@ is an example – from the context of an Action Controller – for setting the `
 	$headers = $this->request->getHttpRequest()->getHeaders();
 	$headers->setCacheControlDirective('max-age', 3600);
 
+Note this internally uses the `CacheControlDirectives` class, which you should be using, too. This avoids the need for
+further changes, should the `Headers` class be dropped in the future::
+
+  $cacheControlHeaderValue = $response->getHeaderLine('Cache-Control');
+  $cacheControlDirectives = CacheControlDirectives::fromRawHeader($cacheControlHeaderValue);
+  $cacheControlDirectives->setDirective('max-age', 3600);
+  $cacheControlHeaderValue = $cacheControlDirectives->getCacheControlHeaderValue();
+  $response = $response->withHeader('Cache-Control', $cacheControlHeaderValue);
+
 Cookies
 -------
 
@@ -569,10 +578,11 @@ You are encouraged to use the ``Uri`` class for your own purposes – you'll get
 Virtual Browser
 ---------------
 
-The HTTP foundation comes with a virtual browser which allows for sending and receiving HTTP requests and responses.
-The browser's API basically follows the functions of a typical web browser. The requests and responses are used in form
-of ``Http\Request`` and ``Http\Response`` instances, similar to the requests and responses used by Flow's request
-handling mechanism.
+The HTTP foundation comes with a virtual browser that implements the ``Psr\Http\Client\ClientInterface`` which allows
+for sending and receiving HTTP requests and responses. The browser's API basically follows the functions of a typical
+web browser. The requests and responses are used in form of ``Psr\Http\Message\RequestInterface`` and
+``\Psr\Http\Message\ResponseInterface`` instances, similar to the requests and responses used by Flow's
+request handling mechanism.
 
 Request Engines
 ~~~~~~~~~~~~~~~
@@ -580,8 +590,8 @@ Request Engines
 The engine responsible for actually sending the request is pluggable. Currently there are two engines delivered with
 Flow:
 
+* ``CurlEngine`` (Default) uses the cURL extension to send real requests to other servers
 * ``InternalRequestEngine`` simulates requests for use in functional tests
-* ``CurlEngine`` uses the cURL extension to send real requests to other servers
 
 Sending a request and processing the response is a matter of a few lines::
 
@@ -598,24 +608,45 @@ Sending a request and processing the response is a matter of a few lines::
 		protected $browser;
 
 		/**
-		 * @Flow\Inject
-		 * @var \Neos\Flow\Http\Client\CurlEngine
+		 * Some action
 		 */
-		protected $browserRequestEngine;
+		public function testAction(): string
+		{
+			$response = $this->browser->request('https://www.flowframework.io');
+			return ($response->hasHeader('X-Flow-Powered') ? 'yes' : 'no');
+		}
+	}
+
+The same request can also be performed by purely relying on psr interfaces implemented by Neos::
+
+	/**
+	 * A sample controller
+	 */
+	class MyController extends ActionController
+	{
+
+		/**
+		 * @Flow\Inject
+		 * @var \Psr\Http\Client\ClientInterface
+		 */
+		protected $client;
+
+		/**
+		 * @Flow\Inject
+		 * @var \Psr\Http\Message\RequestFactoryInterface
+		 */
+		protected $requestFactory;
 
 		/**
 		 * Some action
 		 */
 		public function testAction(): string
 		{
-			$this->browser->setRequestEngine($this->browserRequestEngine);
-			$response = $this->browser->request('https://www.flowframework.io');
+		  $request = $this->requestFactory->createRequest('get', 'https://www.flowframework.io');
+			$response = $this->client->request($request);
 			return ($response->hasHeader('X-Flow-Powered') ? 'yes' : 'no');
 		}
 	}
-
-As there is no default engine selected for the browser, you need to set one yourself. Of course you can use the advanced
-Dependency Injection techniques (through Objects.yaml) for injecting an engine into the browser you use.
 
 Also note that the virtual browser is of scope Prototype in order to support multiple browsers with possibly different
 request engines.

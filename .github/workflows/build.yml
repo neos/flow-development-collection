@@ -16,16 +16,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['7.4', '8.0', '8.1']
+        php-versions: ['8.0', '8.1']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
         experimental: [false]
-        #include:
-          #- php-versions: '7.3'
-          #  static-analysis: 'psalm'
-          #  experimental: true
-          #  dependencies: 'highest'
+        include:
+          - php-versions: '8.0'
+            static-analysis: 'psalm'
+            experimental: true
+            dependencies: 'highest'
 
           # Experimental build for PHP nightly
           #- php-versions: 'nightly'

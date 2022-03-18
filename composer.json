@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "php": "^7.3 || ^8.0",
+        "php": "^8.0",
         "psr/simple-cache": "^1.0",
         "psr/cache": "~1.0",
         "psr/log": "^1.0",
@@ -20,6 +20,7 @@
         "psr/container": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "psr/http-server-handler": "^1.0",
+        "psr/http-client": "^1.0",
         "ramsey/uuid": "^3.0 || ^4.0",
         "doctrine/orm": "^2.9.3",
         "doctrine/migrations": "^3.0",

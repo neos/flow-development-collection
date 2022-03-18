@@ -34,7 +34,7 @@ class Bootstrap
     /**
      * Required PHP version
      */
-    const MINIMUM_PHP_VERSION = '7.3.0';
+    const MINIMUM_PHP_VERSION = '8.0.0';
 
     const RUNLEVEL_COMPILETIME = 'Compiletime';
     const RUNLEVEL_RUNTIME = 'Runtime';

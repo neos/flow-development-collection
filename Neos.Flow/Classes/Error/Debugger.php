@@ -289,7 +289,11 @@ class Debugger
                     $dump .= chr(10);
                     $dump .= str_repeat(' ', $level) . ($plaintext ? '' : '<span class="debug-property">') . self::ansiEscapeWrap($property->getName(), '36', $ansiColors) . ($plaintext ? '' : '</span>') . ' => ';
                     $property->setAccessible(true);
-                    $value = $property->getValue($object);
+                    if (PHP_VERSION_ID >= 70400 && $property->isInitialized($object) === false) {
+                        $value = null;
+                    } else {
+                        $value = $property->getValue($object);
+                    }
                     if (is_array($value)) {
                         $dump .= self::renderDump($value, $level + 1, $plaintext, $ansiColors);
                     } elseif (is_object($value)) {
