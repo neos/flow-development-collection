@@ -43,9 +43,10 @@ interface ObjectManagerInterface extends ContainerInterface
      * new keyword and Singleton objects should rather be injected by some type of
      * Dependency Injection.
      *
-     * @param string $objectName The name of the object to return an instance of
-     * @param mixed[] ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
-     * @return object The object instance
+     * @template T of object
+     * @param class-string<T> $objectName The name of the object to return an instance of
+     * @param mixed ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
+     * @return T The object instance
      * @api
      */
     public function get($objectName, ...$constructorArguments);

@@ -179,9 +179,10 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * Returns a fresh or existing instance of the object specified by $objectName.
      *
-     * @param string $objectName The name of the object to return an instance of
+     * @template T of object
+     * @param class-string<T> $objectName The name of the object to return an instance of
      * @param mixed ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
-     * @return object The object instance
+     * @return T The object instance
      * @throws Exception\CannotBuildObjectException
      * @throws Exception\UnknownObjectException if an object with the given name does not exist
      * @throws \InvalidArgumentException
@@ -368,8 +369,9 @@ class ObjectManager implements ObjectManagerInterface
      * Returns the instance of the specified object or NULL if no instance has been
      * registered yet.
      *
-     * @param string $objectName The object name
-     * @return object The object or NULL
+     * @template T of object
+     * @param class-string<T> $objectName The object name
+     * @return T|null The object instance or null
      */
     public function getInstance($objectName)
     {

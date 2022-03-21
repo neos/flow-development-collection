@@ -362,8 +362,9 @@ class Bootstrap
     /**
      * Returns an instance which was registered earlier through setEarlyInstance()
      *
-     * @param string $objectName Object name of the registered instance
-     * @return object
+     * @template T of object
+     * @param class-string<T> $objectName Object name of the registered instance
+     * @return T
      * @throws FlowException
      * @api
      */
