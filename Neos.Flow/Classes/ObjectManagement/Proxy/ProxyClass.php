@@ -260,6 +260,7 @@ class ProxyClass
         foreach (get_class_methods($this->fullOriginalClassName) as $methodName) {
             if ($this->reflectionService->isMethodFinal($this->fullOriginalClassName, $methodName)) {
                 $hasFinalMethod = true;
+                break;
             }
         }
 

@@ -417,7 +417,7 @@ class ObjectManager implements ObjectManagerInterface
         class_exists($className) || interface_exists($className);
         $lazyProxyClassName = $className . '_LazyProxy';
 
-        // If proxy classes were partially flushed in Development context, it might happen, that
+        // If proxy classes were partially flushed in Development context, it might happen that
         // the original class $className was already loaded by the ConfigurationBuilder. In that
         // case, the proxy class for $className cannot be loaded any more by the ProxyClassLoader,
         // so we need to fall back to eager dependency injection.
