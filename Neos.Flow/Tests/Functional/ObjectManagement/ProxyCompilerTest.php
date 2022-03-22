@@ -19,6 +19,7 @@ use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterfaceWithConstructor;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\BackedEnumWithMethod;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -92,6 +93,24 @@ class ProxyCompilerTest extends FunctionalTestCase
     {
         $singletonB = $this->objectManager->get(Fixtures\SingletonClassB::class);
         $this->assertNotInstanceOf(ProxyInterface::class, $singletonB);
+    }
+
+    /**
+     * This test would fail with a fatal error, if Flow would try to build a proxy class for the given Enum:
+     *
+     * PHP Fatal error:  Cannot declare class Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP8\BackedEnumWithMethod,
+     * because the name is already in use in …/Flow_Object_Classes/Neos_Flow_Tests_Functional_ObjectManagement_Fixtures_PHP8_BackedEnumWithMethod.php on line 47
+     *
+     * @test
+     */
+    public function enumsAreNotProxied()
+    {
+        if (version_compare(PHP_VERSION, '8.1', '<=')) {
+            $this->markTestSkipped('Only for PHP.1 8 with Enums');
+        }
+
+        # PHP < 8.1 would fail compiling this test case if we used the syntax BackedEnumWithMethod::ESPRESSO->label()
+        $this->assertSame('Espresso', BackedEnumWithMethod::getLabel(BackedEnumWithMethod::ESPRESSO));
     }
 
     /**

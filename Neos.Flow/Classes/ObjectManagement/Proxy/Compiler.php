@@ -116,12 +116,13 @@ class Compiler
      * If no such proxy class has been created yet by this renderer,
      * this function will create one and register it for later use.
      *
-     * If the class is not proxable, false will be returned
+     * If the class is not proxyable, or is not a real class at all,
+     * false will be returned
      *
      * @param string $fullClassName Name of the original class
      * @return ProxyClass|boolean
      */
-    public function getProxyClass($fullClassName)
+    public function getProxyClass(string $fullClassName)
     {
         if (interface_exists($fullClassName) || in_array(BaseTestCase::class, class_parents($fullClassName))) {
             return false;
@@ -133,6 +134,10 @@ class Compiler
 
         $classReflection = new \ReflectionClass($fullClassName);
         if ($classReflection->isInternal() === true) {
+            return false;
+        }
+
+        if (method_exists($classReflection, 'isEnum') && $classReflection->isEnum()) {
             return false;
         }
 

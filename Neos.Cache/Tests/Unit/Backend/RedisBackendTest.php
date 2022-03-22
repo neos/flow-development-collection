@@ -209,6 +209,23 @@ class RedisBackendTest extends BaseTestCase
     }
 
     /**
+     * @test
+     * @dataProvider batchWritingOperationsProvider
+     * @param string $method
+     */
+    public function batchWritingOperationsThrowAnExceptionIfCacheIsFrozen($method)
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->inject($this->backend, 'frozen', null);
+        $this->redis->expects(self::once())
+            ->method('exists')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen')
+            ->will(self::returnValue(true));
+
+        $this->backend->$method(['foo', 'bar']);
+    }
+
+    /**
      * @return array
      */
     public static function writingOperationsProvider()
@@ -218,6 +235,16 @@ class RedisBackendTest extends BaseTestCase
             ['remove'],
             ['flushByTag'],
             ['freeze']
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function batchWritingOperationsProvider()
+    {
+        return [
+            ['flushByTags'],
         ];
     }
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Http\Client;
+namespace Neos\Flow\Tests\Unit\Mvc\Routing\Fixtures;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -11,11 +11,12 @@ namespace Neos\Flow\Http\Client;
  * source code.
  */
 
-/**
- * An exception for the Curl Engine
- *
- * @api
- */
-class CurlEngineException extends Exception
+class UriArgumentObjectWithToString
 {
+    protected $identifier = 'String To Identify Object';
+
+    public function __toString(): string
+    {
+        return $this->identifier;
+    }
 }

@@ -311,6 +311,20 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     }
 
     /**
+     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     *
+     * @api
+     */
+    public function flushByTags(array $tags): int
+    {
+        $flushed = 0;
+        foreach ($tags as $tag) {
+            $flushed += $this->flushByTag($tag);
+        }
+        return $flushed;
+    }
+
+    /**
      * Checks if the given cache entry files are still valid or if their
      * lifetime has exceeded.
      *

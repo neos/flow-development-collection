@@ -33,6 +33,9 @@
         "psr/log": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "psr/http-server-handler": "^1.0",
+        "psr/http-client": "^1.0",
+        "psr/simple-cache": "^1.0",
+        "psr/cache": "~1.0",
 
         "ramsey/uuid": "^3.0 || ^4.0",
         "laminas/laminas-code": "~3.4.1|^4.0",
@@ -55,7 +58,7 @@
         "egulias/email-validator": "^2.1.17 || ^3.0"
     },
     "require-dev": {
-        "vimeo/psalm": "~4.9.3",
+        "vimeo/psalm": "~4.22.0",
         "mikey179/vfsstream": "^1.6.1",
         "phpunit/phpunit": "~9.1"
     },

@@ -677,6 +677,19 @@ class FileBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function flushByTagsRemovesCacheEntriesWithSpecifiedTags()
+    {
+        $backend = $this->prepareDefaultBackend(['findIdentifiersByTag', 'remove']);
+
+        $backend->expects(self::once())->method('findIdentifiersByTag')->with('UnitTestTag%special')->will(self::returnValue(['foo', 'bar', 'baz']));
+        $backend->expects(self::atLeast(3))->method('remove')->withConsecutive(['foo'], ['bar'], ['baz']);
+
+        $backend->flushByTags(['UnitTestTag%special']);
+    }
+
+    /**
+     * @test
+     */
     public function collectGarbageRemovesExpiredCacheEntries()
     {
         $mockCache = $this->createMock(AbstractFrontend::class);
