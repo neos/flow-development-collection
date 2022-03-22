@@ -356,14 +356,20 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      *     Array.push(array, e1, e2)
      *
-     * @param iterable $array
+     * @param iterable|scalar $array
      * @param mixed $element
      * @return array The array with the inserted elements
      */
-    public function push(iterable $array, $element): array
+    public function push($array, $element): array
     {
         if ($array instanceof \Traversable) {
             $array = iterator_to_array($array);
+        }
+        if (is_scalar($array)) {
+            $array = [$array];
+        }
+        if (is_array($array) === false) {
+            throw new \InvalidArgumentException('$array must be of type iterable|scalar got: ' . gettype($array), 1647595715);
         }
         $elements = func_get_args();
         array_shift($elements);

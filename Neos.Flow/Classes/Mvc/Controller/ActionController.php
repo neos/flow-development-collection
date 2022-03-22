@@ -22,6 +22,7 @@ use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
+use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\Exception\ViewNotFoundException;
 use Neos\Flow\Mvc\View\ViewInterface;
@@ -221,10 +222,16 @@ class ActionController extends AbstractController
         } catch (InvalidArgumentForHashGenerationException|InvalidHashException $e) {
             $message = $this->throwableStorage->logThrowable($e);
             $this->logger->notice('Property mapping configuration failed due to HMAC errors. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
-            $this->throwStatus(400, '400 Bad Request', 'Invalid HMAC submitted');
+            $this->throwStatus(400, null, 'Invalid HMAC submitted');
         }
 
-        $this->mapRequestArgumentsToControllerArguments();
+        try {
+            $this->mapRequestArgumentsToControllerArguments();
+        } catch (RequiredArgumentMissingException $e) {
+            $message = $this->throwableStorage->logThrowable($e);
+            $this->logger->notice('Request argument mapping failed due to a missing required argument. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
+            $this->throwStatus(400, null, 'Required argument is missing');
+        }
 
         if ($this->view === null) {
             $this->view = $this->resolveView();
