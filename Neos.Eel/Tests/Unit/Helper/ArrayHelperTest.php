@@ -423,6 +423,9 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], 42, 'foo', ['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz', 42, 'foo']],
             'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], 42, 'foo', ['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53, 42, 'foo']],
             'traversable' => [TestArrayIterator::fromArray(['a']), 'b', 'c', ['a', 'b', 'c']],
+            # expect cast scalar (as arg $array) to array
+            'string' => ['a', 'b', 'c', ['a', 'b', 'c']],
+            'int' => [123, 'b', 'c', [123, 'b', 'c']],
         ];
     }
 
