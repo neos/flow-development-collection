@@ -48,7 +48,20 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     protected $options = [];
 
     /**
-     * @var array
+     * Merged custom error view options from defaultRenderingOptions and of the first matching renderingGroup
+     *
+     * @var array{
+     *      viewClassName: string,
+     *      viewOptions: array,
+     *      renderTechnicalDetails: bool,
+     *      logException: bool,
+     *      renderingGroup?: string,
+     *      variables?: array,
+     *      templatePathAndFilename?: string,
+     *      layoutRootPath?: string,
+     *      partialRootPath?: string,
+     *      format?: string
+     * }
      */
     protected $renderingOptions;
 
@@ -143,8 +156,11 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
         $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $viewClassName = $renderingOptions['viewClassName'];
+        $viewOptions = array_filter($renderingOptions['viewOptions'], static function ($optionValue) {
+            return $optionValue !== null;
+        });
         /** @var ViewInterface $view */
-        $view = $viewClassName::createWithOptions($renderingOptions['viewOptions']);
+        $view = $viewClassName::createWithOptions($viewOptions);
         $view = $this->applyLegacyViewOptions($view, $renderingOptions);
 
         $httpRequest = ServerRequest::fromGlobals();
@@ -243,6 +259,23 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
             }
         }
         return null;
+    }
+
+    /**
+     * If a renderingGroup was successfully resolved via @see resolveRenderingGroup
+     * We will use a custom error view.
+     *
+     * Also check for legacy 'templatePathAndFilename'
+     *
+     */
+    protected function useCustomErrorView(): bool
+    {
+        // for legacy reasons 'templatePathAndFilename' was enough to use the view,
+        // so it could theoretically be used without a 'renderingGroup' (will be deprecated!)
+        if (isset($this->renderingOptions['templatePathAndFilename'])) {
+            return true;
+        }
+        return isset($this->renderingOptions['renderingGroup']);
     }
 
     /**
