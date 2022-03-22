@@ -399,45 +399,42 @@ class ActionControllerTest extends FunctionalTestCase
      */
     public function argumentTestsDataProvider()
     {
-        $requiredArgumentExceptionText = 'Uncaught Exception in Flow #1298012500: Required argument "argument" is not set.';
-        $data = [
-            'required string            '       => ['requiredString', 'some String', '\'some String\''],
-            'required string - missing value'   => ['requiredString', null, $requiredArgumentExceptionText],
-            'optional string'                   => ['optionalString', '123', '\'123\''],
-            'optional string - default'         => ['optionalString', null, '\'default\''],
-            'optional string - nullable'        => ['optionalNullableString', null, 'NULL'],
-            'required integer'                  => ['requiredInteger', '234', 234],
-            'required integer - missing value'  => ['requiredInteger', null, $requiredArgumentExceptionText],
-            'required integer - mapping error'  => ['requiredInteger', 'not an integer', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredIntegerAction().'],
-            'required integer - empty value'    => ['requiredInteger', '', 'NULL'],
-            'optional integer'                  => ['optionalInteger', 456, 456],
-            'optional integer - default value'  => ['optionalInteger', null, 123],
-            'optional integer - mapping error'  => ['optionalInteger', 'not an integer', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalIntegerAction().'],
-            'optional integer - empty value'    => ['optionalInteger', '', 123],
-            'optional integer - nullable'       => ['optionalNullableInteger', null, 'NULL'],
-            'required float'                    => ['requiredFloat', 34.56, 34.56],
-            'required float - integer'          => ['requiredFloat', 485, '485'],
-            'required float - integer2'         => ['requiredFloat', '888', '888'],
-            'required float - missing value'    => ['requiredFloat', null, $requiredArgumentExceptionText],
-            'required float - mapping error'    => ['requiredFloat', 'not a float', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredFloatAction().'],
-            'required float - empty value'      => ['requiredFloat', '', 'NULL'],
-            'optional float'                    => ['optionalFloat', 78.90, 78.9],
-            'optional float - default value'    => ['optionalFloat', null, 112.34],
-            'optional float - mapping error'    => ['optionalFloat', 'not a float', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalFloatAction().'],
-            'optional float - empty value'      => ['optionalFloat', '', 112.34],
-            'optional float - nullable'         => ['optionalNullableFloat', null, 'NULL'],
-            'required date'                     => ['requiredDate', ['date' => '1980-12-13', 'dateFormat' => 'Y-m-d'], '1980-12-13'],
-            'required date string'              => ['requiredDate', '1980-12-13T14:22:12+02:00', '1980-12-13'],
-            'required date - missing value'     => ['requiredDate', null, $requiredArgumentExceptionText],
-            'required date - mapping error'     => ['requiredDate', 'no date', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredDateAction().'],
-            'optional date string'              => ['optionalDate', '1980-12-13T14:22:12+02:00', '1980-12-13'],
-            'optional date - default value'     => ['optionalDate', null, 'null'],
-            'optional date - mapping error'     => ['optionalDate', 'no date', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalDateAction().'],
-            'optional date - missing value'     => ['optionalDate', null, 'null'],
-            'optional date - empty value'       => ['optionalDate', '', 'null'],
+        return [
+            'required string            '       => ['requiredString', 'some String', '\'some String\'', 200],
+            'required string - missing value'   => ['requiredString', null, 'Required argument is missing', 400],
+            'optional string'                   => ['optionalString', '123', '\'123\'', 200],
+            'optional string - default'         => ['optionalString', null, '\'default\'', 200],
+            'optional string - nullable'        => ['optionalNullableString', null, 'NULL', 200],
+            'required integer'                  => ['requiredInteger', '234', 234, 200],
+            'required integer - missing value'  => ['requiredInteger', null, 'Required argument is missing', 400],
+            'required integer - mapping error'  => ['requiredInteger', 'not an integer', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredIntegerAction().', 200],
+            'required integer - empty value'    => ['requiredInteger', '', 'NULL', 200],
+            'optional integer'                  => ['optionalInteger', 456, 456, 200],
+            'optional integer - default value'  => ['optionalInteger', null, 123, 200],
+            'optional integer - mapping error'  => ['optionalInteger', 'not an integer', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalIntegerAction().', 200],
+            'optional integer - empty value'    => ['optionalInteger', '', 123, 200],
+            'optional integer - nullable'       => ['optionalNullableInteger', null, 'NULL', 200],
+            'required float'                    => ['requiredFloat', 34.56, 34.56, 200],
+            'required float - integer'          => ['requiredFloat', 485, '485', 200],
+            'required float - integer2'         => ['requiredFloat', '888', '888', 200],
+            'required float - missing value'    => ['requiredFloat', null, 'Required argument is missing', 400],
+            'required float - mapping error'    => ['requiredFloat', 'not a float', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredFloatAction().', 200],
+            'required float - empty value'      => ['requiredFloat', '', 'NULL', 200],
+            'optional float'                    => ['optionalFloat', 78.90, 78.9, 200],
+            'optional float - default value'    => ['optionalFloat', null, 112.34, 200],
+            'optional float - mapping error'    => ['optionalFloat', 'not a float', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalFloatAction().', 200],
+            'optional float - empty value'      => ['optionalFloat', '', 112.34, 200],
+            'optional float - nullable'         => ['optionalNullableFloat', null, 'NULL', 200],
+            'required date'                     => ['requiredDate', ['date' => '1980-12-13', 'dateFormat' => 'Y-m-d'], '1980-12-13', 200],
+            'required date string'              => ['requiredDate', '1980-12-13T14:22:12+02:00', '1980-12-13', 200],
+            'required date - missing value'     => ['requiredDate', null, 'Required argument is missing', 400],
+            'required date - mapping error'     => ['requiredDate', 'no date', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->requiredDateAction().', 200],
+            'optional date string'              => ['optionalDate', '1980-12-13T14:22:12+02:00', '1980-12-13', 200],
+            'optional date - default value'     => ['optionalDate', null, 'null', 200],
+            'optional date - mapping error'     => ['optionalDate', 'no date', 'Validation failed while trying to call Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController->optionalDateAction().', 200],
+            'optional date - missing value'     => ['optionalDate', null, 'null', 200],
+            'optional date - empty value'       => ['optionalDate', '', 'null', 200],
         ];
-
-        return $data;
     }
 
     /**
@@ -446,10 +443,11 @@ class ActionControllerTest extends FunctionalTestCase
      * @param string $action
      * @param mixed $argument
      * @param string $expectedResult
+     * @param int $expectedStatusCode
      * @test
      * @dataProvider argumentTestsDataProvider
      */
-    public function argumentTests($action, $argument, $expectedResult)
+    public function argumentTests($action, $argument, $expectedResult, $expectedStatusCode)
     {
         $arguments = [
             'argument' => $argument,
@@ -457,7 +455,8 @@ class ActionControllerTest extends FunctionalTestCase
 
         $uri = str_replace('{@action}', strtolower($action), 'http://localhost/test/mvc/actioncontrollertestb/{@action}');
         $response = $this->browser->request($uri, 'POST', $arguments);
-        self::assertTrue(strpos(trim($response->getBody()->getContents()), (string)$expectedResult) === 0, sprintf('The resulting string did not start with the expected string. Expected: "%s", Actual: "%s"', $expectedResult, $response->getBody()->getContents()));
+        self::assertEquals($expectedStatusCode, $response->getStatusCode());
+        self::assertStringStartsWith((string)$expectedResult, trim($response->getBody()->getContents()));
     }
 
     /**
