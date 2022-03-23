@@ -57,10 +57,9 @@ class FileSystemSymlinkTarget extends FileSystemTarget
      */
     protected function publishFile($sourceStream, $relativeTargetPathAndFilename)
     {
-        $pathInfo = pathinfo($relativeTargetPathAndFilename);
-        $extension = isset($pathInfo['extension']) ? strtolower($pathInfo['extension']) : null;
-        if ($extension !== null && array_key_exists($extension, $this->excludedExtensions) && $this->excludedExtensions[$extension] === true) {
-            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is excluded.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447152230);
+        $extension = strtolower(pathinfo($relativeTargetPathAndFilename, PATHINFO_EXTENSION));
+        if ($extension !== '' && array_key_exists($extension, $this->excludedExtensions) && $this->excludedExtensions[$extension] === true) {
+            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is excluded.', $sourceStream, $this->name, $extension), 1447152230);
         }
 
         $streamMetaData = stream_get_meta_data($sourceStream);

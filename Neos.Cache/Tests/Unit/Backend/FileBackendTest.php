@@ -666,9 +666,9 @@ class FileBackendTest extends BaseTestCase
      */
     public function flushByTagRemovesCacheEntriesWithSpecifiedTag()
     {
-        $backend = $this->prepareDefaultBackend(['findIdentifiersByTag', 'remove']);
+        $backend = $this->prepareDefaultBackend(['findIdentifiersByTags', 'remove']);
 
-        $backend->expects(self::once())->method('findIdentifiersByTag')->with('UnitTestTag%special')->will(self::returnValue(['foo', 'bar', 'baz']));
+        $backend->expects(self::once())->method('findIdentifiersByTags')->with(['UnitTestTag%special'])->will(self::returnValue(['foo', 'bar', 'baz']));
         $backend->expects(self::atLeast(3))->method('remove')->withConsecutive(['foo'], ['bar'], ['baz']);
 
         $backend->flushByTag('UnitTestTag%special');
@@ -679,9 +679,9 @@ class FileBackendTest extends BaseTestCase
      */
     public function flushByTagsRemovesCacheEntriesWithSpecifiedTags()
     {
-        $backend = $this->prepareDefaultBackend(['findIdentifiersByTag', 'remove']);
+        $backend = $this->prepareDefaultBackend(['findIdentifiersByTags', 'remove']);
 
-        $backend->expects(self::once())->method('findIdentifiersByTag')->with('UnitTestTag%special')->will(self::returnValue(['foo', 'bar', 'baz']));
+        $backend->expects(self::once())->method('findIdentifiersByTags')->with(['UnitTestTag%special'])->will(self::returnValue(['foo', 'bar', 'baz']));
         $backend->expects(self::atLeast(3))->method('remove')->withConsecutive(['foo'], ['bar'], ['baz']);
 
         $backend->flushByTags(['UnitTestTag%special']);

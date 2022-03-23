@@ -65,7 +65,9 @@ class AbstractExceptionHandlerTest extends UnitTestCase
                     'matchingStatusCodes' => [404],
                     'options' => [
                         'logException' => false,
-                        'templatePathAndFilename' => 'resource://Neos.Flow/Private/Templates/Error/Default.html',
+                        'viewOptions' => [
+                            'templatePathAndFilename' => 'resource://Neos.Flow/Private/Templates/Error/Default.html',
+                        ],
                         'variables' => [
                             'errorDescription' => 'Sorry, the page you requested was not found.'
                         ]
