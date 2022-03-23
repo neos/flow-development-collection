@@ -17,6 +17,7 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
+use Neos\Flow\Security\Exception\InvalidHashException;
 
 /**
  * This is a Service which can generate a request hash and check whether the currently given arguments
@@ -106,7 +107,6 @@ class MvcPropertyMappingConfigurationService
         return $this->hashService->appendHmac($serializedFormFieldArray);
     }
 
-
     /**
      * Initialize the property mapping configuration in $controllerArguments if
      * the trusted properties are set inside the request.
@@ -114,6 +114,9 @@ class MvcPropertyMappingConfigurationService
      * @param ActionRequest $request
      * @param Arguments $controllerArguments
      * @return void
+     * @throws InvalidArgumentForHashGenerationException
+     * @throws InvalidHashException
+     * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
      */
     public function initializePropertyMappingConfigurationFromRequest(ActionRequest $request, Arguments $controllerArguments)
     {
