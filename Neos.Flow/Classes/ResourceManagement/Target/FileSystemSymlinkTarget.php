@@ -76,27 +76,9 @@ class FileSystemSymlinkTarget extends FileSystemTarget
             throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file is not accessible (file stat failed).', $sourcePathAndFilename, $this->name), 1415716366);
         }
 
-        if (!file_exists(dirname($targetPathAndFilename))) {
-            Files::createDirectoryRecursively(dirname($targetPathAndFilename));
-        }
-
-        try {
-            if (Files::is_link($targetPathAndFilename)) {
-                Files::unlink($targetPathAndFilename);
-            }
-
-            if ($this->relativeSymlinks) {
-                $result = Files::createRelativeSymlink($sourcePathAndFilename, $targetPathAndFilename);
-            } else {
-                $temporaryTargetPathAndFilename = $targetPathAndFilename . '.' . Algorithms::generateRandomString(13) . '.tmp';
-                symlink($sourcePathAndFilename, $temporaryTargetPathAndFilename);
-                $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
-            }
-        } catch (\Exception $exception) {
-            $result = false;
-        }
+        [$result, $exception] = $this->publish($targetPathAndFilename, $sourcePathAndFilename);
         if ($result === false) {
-            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be symlinked at target location.', $sourcePathAndFilename, $this->name), 1415716368, (isset($exception) ? $exception : null));
+            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be symlinked at target location.', $sourcePathAndFilename, $this->name), 1415716368, ($exception ?? null));
         }
 
         $this->logger->debug(sprintf('FileSystemSymlinkTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename));
@@ -131,8 +113,8 @@ class FileSystemSymlinkTarget extends FileSystemTarget
      *
      * @param string $sourcePath Absolute path to the source directory
      * @param string $relativeTargetPathAndFilename relative path and filename in the target directory
-     * @throws TargetException
      * @return void
+     * @throws TargetException
      */
     protected function publishDirectory($sourcePath, $relativeTargetPathAndFilename)
     {
@@ -142,26 +124,9 @@ class FileSystemSymlinkTarget extends FileSystemTarget
             throw new TargetException(sprintf('Could not publish directory "%s" into resource publishing target "%s" because the source is not accessible (file stat failed).', $sourcePath, $this->name), 1416244512);
         }
 
-        if (!file_exists(dirname($targetPathAndFilename))) {
-            Files::createDirectoryRecursively(dirname($targetPathAndFilename));
-        }
-
-        try {
-            if (Files::is_link($targetPathAndFilename)) {
-                Files::unlink($targetPathAndFilename);
-            }
-            if ($this->relativeSymlinks) {
-                $result = Files::createRelativeSymlink($sourcePath, $targetPathAndFilename);
-            } else {
-                $temporaryTargetPathAndFilename = $targetPathAndFilename . '.' . Algorithms::generateRandomString(13) . '.tmp';
-                symlink($sourcePath, $temporaryTargetPathAndFilename);
-                $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
-            }
-        } catch (\Exception $exception) {
-            $result = false;
-        }
+        [$result, $exception] = $this->publish($targetPathAndFilename, $sourcePath);
         if ($result === false) {
-            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source directory could not be symlinked at target location.', $sourcePath, $this->name), 1416244515, (isset($exception) ? $exception : null));
+            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source directory could not be symlinked at target location.', $sourcePath, $this->name), 1416244515, ($exception ?? null));
         }
 
         $this->logger->debug(sprintf('FileSystemSymlinkTarget: Published directory. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename));
@@ -182,5 +147,37 @@ class FileSystemSymlinkTarget extends FileSystemTarget
         }
 
         return parent::setOption($key, $value);
+    }
+
+    private function publish(string $targetPathAndFilename, string $sourcePathAndFilename): array
+    {
+        $exception = null;
+
+        if (!file_exists(dirname($targetPathAndFilename))) {
+            Files::createDirectoryRecursively(dirname($targetPathAndFilename));
+        }
+
+        try {
+            if (Files::is_link($targetPathAndFilename)) {
+                Files::unlink($targetPathAndFilename);
+            }
+
+            if ($this->relativeSymlinks) {
+                $result = Files::createRelativeSymlink($sourcePathAndFilename, $targetPathAndFilename);
+            } else {
+                $temporaryTargetPathAndFilename = $targetPathAndFilename . '.' . Algorithms::generateRandomString(13) . '.tmp';
+                symlink($sourcePathAndFilename, $temporaryTargetPathAndFilename);
+                $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
+            }
+        } catch (\Exception $exception) {
+            $result = false;
+        }
+
+        if (Files::is_link($targetPathAndFilename) && realpath($targetPathAndFilename) === realpath($sourcePathAndFilename)) {
+            $this->logger->debug(sprintf('FileSystemSymlinkTarget: File already published, probably a concurrent write. (target: %s, file: %s)', $this->name, $targetPathAndFilename));
+            return [true, null];
+        }
+
+        return [$result, $exception];
     }
 }
