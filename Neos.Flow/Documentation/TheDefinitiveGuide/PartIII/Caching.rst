@@ -488,7 +488,7 @@ Options
 | tagsTableName  | Table name to store cache tags                     | No        | string | tags    |
 +----------------+----------------------------------------------------+-----------+--------+---------+
 | batchSize      | Maximum number of parameters per query for         | No        | int    | 999     |
-|                | for batch operations.                              |           |        |         |
+|                | batch operations.                                  |           |        |         |
 |                |                                                    |           |        |         |
 |                | This value should be adjusted based on type of     |           |        |         |
 |                | the data source to increase performance.           |           |        |         |
