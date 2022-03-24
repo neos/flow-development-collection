@@ -356,7 +356,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      *     Array.push(array, e1, e2)
      *
-     * @param iterable|scalar $array
+     * @param iterable|scalar|null $array
      * @param mixed $element
      * @return array The array with the inserted elements
      */
@@ -368,8 +368,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
         if (is_scalar($array)) {
             $array = [$array];
         }
+        if ($array === null) {
+            $array = [];
+        }
         if (is_array($array) === false) {
-            throw new \InvalidArgumentException('$array must be of type iterable|scalar got: ' . gettype($array), 1647595715);
+            throw new \InvalidArgumentException('$array must be of type iterable|scalar|null got: ' . gettype($array), 1647595715);
         }
         $elements = func_get_args();
         array_shift($elements);
