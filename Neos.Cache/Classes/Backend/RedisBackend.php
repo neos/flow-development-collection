@@ -61,7 +61,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     protected $redis;
 
-    protected ?bool $frozen;
+    protected ?bool $frozen = null;
 
     protected string $hostname = '127.0.0.1';
 
