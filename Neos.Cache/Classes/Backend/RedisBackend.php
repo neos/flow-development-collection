@@ -177,7 +177,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     private function calculateExpires(string $tag, int $lifetime): int
     {
-        $ttl = $this->redis->ttl($tag);
+        $ttl = (int)$this->redis->ttl($tag);
         if ($ttl < 0 || $lifetime === self::UNLIMITED_LIFETIME) {
             return -1;
         }
