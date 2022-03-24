@@ -26,7 +26,7 @@ use Neos\Error\Messages\Result;
  * in proportion to the amount of entries and data size.
  *
  * @see http://redis.io/
- * @see https://github.com/nicolasff/phpredis
+ * @see https://github.com/phpredis/phpredis
  *
  * Available backend options:
  *  - defaultLifetime: The default lifetime of a cache entry
@@ -47,8 +47,6 @@ use Neos\Error\Messages\Result;
  * so one single database can be used for different caches.
  *
  * Cache entry data is stored in a simple key. Tags are stored in Sets.
- * Since Redis < 2.8.0 does not provide a mechanism for iterating over keys,
- * a separate list with all entries is populated
  *
  * @api
  */
@@ -56,49 +54,29 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 {
     use RequireOnceFromValueTrait;
 
-    const MIN_REDIS_VERSION = '6.0.0';
+    public const MIN_REDIS_VERSION = '6.0.0';
 
     /**
      * @var \Redis
      */
     protected $redis;
 
-    /**
-     * @var boolean|null
-     */
-    protected $frozen;
+    protected ?bool $frozen;
 
-    /**
-     * @var string
-     */
-    protected $hostname = '127.0.0.1';
+    protected string $hostname = '127.0.0.1';
 
-    /**
-     * @var integer
-     */
-    protected $port = 6379;
+    protected int $port = 6379;
 
-    /**
-     * @var integer
-     */
-    protected $database = 0;
+    protected int $database = 0;
 
-    /**
-     * @var string
-     */
-    protected $password = '';
+    protected string $password = '';
 
-    /**
-     * @var integer
-     */
-    protected $compressionLevel = 0;
+    protected int $compressionLevel = 0;
 
     /**
      * Redis allows a maximum of 1024 * 1024 parameters, but we use a lower limit to prevent long blocking calls.
-     *
-     * @var integer
      */
-    protected $batchSize = 100000;
+    protected int $batchSize = 100000;
 
     /**
      * @var \ArrayIterator|null
@@ -129,7 +107,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @param integer|null $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @throws \RuntimeException
      * @throws CacheException
-     * @return void
      * @api
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
@@ -188,10 +165,10 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * Loads data from the cache.
      *
      * @param string $entryIdentifier An identifier which describes the cache entry to load
-     * @return mixed The cache entry's content as a string or false if the cache entry could not be loaded
+     * @return bool|string The cache entry's content as a string or false if the cache entry could not be loaded
      * @api
      */
-    public function get(string $entryIdentifier)
+    public function get(string $entryIdentifier): string|bool
     {
         return $this->uncompress($this->redis->get($this->getPrefixedIdentifier('entry:' . $entryIdentifier)));
     }
@@ -290,6 +267,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             throw new \RuntimeException(sprintf('Cannot add or modify cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344192);
         }
 
+        // language=lua
         $script = "
         local entries = redis.call('SMEMBERS', KEYS[1])
         for k1,entryIdentifier in ipairs(entries) do
@@ -322,6 +300,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             throw new \RuntimeException(sprintf('Cannot add or modify cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1647642328);
         }
 
+        // language=lua
         $script = "
         local total_entries = 0
         local num_arg = #ARGV
@@ -376,7 +355,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
-    public function current()
+    public function current(): string|bool
     {
         return $this->get($this->getEntryIterator()->current());
     }
@@ -384,7 +363,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
-    public function next()
+    public function next(): void
     {
         $this->getEntryIterator()->next();
     }
@@ -392,7 +371,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
-    public function key()
+    public function key(): string|bool
     {
         $entryIdentifier = $this->getEntryIterator()->current();
 
@@ -414,7 +393,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->getEntryIterator()->rewind();
     }
@@ -429,7 +408,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * A frozen backend can only be thawn by calling the flush() method.
      *
      * @throws \RuntimeException
-     * @return void
      */
     public function freeze(): void
     {
@@ -451,8 +429,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 
     /**
      * Tells if this backend is frozen.
-     *
-     * @return boolean
      */
     public function isFrozen(): bool
     {
@@ -465,8 +441,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 
     /**
      * Sets the hostname or the socket of the Redis server
-     *
-     * @param string $hostname Hostname of the Redis server
      * @api
      */
     public function setHostname(string $hostname): void
@@ -478,22 +452,18 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * Sets the port of the Redis server.
      *
      * Unused if you want to connect to a socket (i.e. hostname contains a /)
-     *
-     * @param integer|string $port Port of the Redis server
      * @api
      */
-    public function setPort($port): void
+    public function setPort(int|string $port): void
     {
         $this->port = (int)$port;
     }
 
     /**
      * Sets the database that will be used for this backend
-     *
-     * @param integer|string $database Database that will be used
      * @api
      */
-    public function setDatabase($database): void
+    public function setDatabase(int|string $database): void
     {
         $this->database = (int)$database;
     }
@@ -503,22 +473,19 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         $this->password = $password;
     }
 
-    /**
-     * @param integer|string $compressionLevel
-     */
-    public function setCompressionLevel($compressionLevel): void
+    public function setCompressionLevel(int|string $compressionLevel): void
     {
         $this->compressionLevel = (int)$compressionLevel;
     }
 
     /**
-     * Sets the maximum number of items for batch operations
+     * Sets the Maximum number of items for batch operations
      *
      * @api
      */
-    protected function setBatchSize(int $batchSize): void
+    public function setBatchSize(int|string $batchSize): void
     {
-        $this->batchSize = $batchSize;
+        $this->batchSize = (int)$batchSize;
     }
 
     public function setRedis(\Redis $redis = null): void
@@ -528,11 +495,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         }
     }
 
-    /**
-     * @param string|bool $value
-     * @return string|bool
-     */
-    private function uncompress($value)
+    private function uncompress(bool|string $value): bool|string
     {
         if (empty($value)) {
             return $value;
