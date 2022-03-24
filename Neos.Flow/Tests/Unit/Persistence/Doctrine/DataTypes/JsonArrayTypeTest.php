@@ -98,7 +98,7 @@ class JsonArrayTypeTest extends UnitTestCase
                 '__value_object_value' => true
             ],
             JsonArrayType::serializeValueObject(
-                BooleanBasedValueObject::fromBoolean(true)
+                BooleanBasedValueObject::fromBool(true)
             )
         );
 
@@ -108,7 +108,7 @@ class JsonArrayTypeTest extends UnitTestCase
                 '__value_object_value' => 12
             ],
             JsonArrayType::serializeValueObject(
-                IntegerBasedValueObject::fromInteger(12)
+                IntegerBasedValueObject::fromInt(12)
             )
         );
 
@@ -140,9 +140,9 @@ class JsonArrayTypeTest extends UnitTestCase
                     'array' => ArrayBasedValueObject::fromArray([
                         'key' => 'value'
                     ]),
-                    'boolean' => BooleanBasedValueObject::fromBoolean(false),
+                    'boolean' => BooleanBasedValueObject::fromBool(false),
                     'string' => StringBasedValueObject::fromString('string value'),
-                    'integer' => IntegerBasedValueObject::fromInteger(23),
+                    'integer' => IntegerBasedValueObject::fromInt(23),
                     'float' => FloatBasedValueObject::fromFloat(22.22)
                 ])
             )

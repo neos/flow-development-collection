@@ -30,7 +30,7 @@ final class BooleanBasedValueObject implements \JsonSerializable
      * @param bool $bool
      * @return self
      */
-    public static function fromBoolean(bool $bool): self
+    public static function fromBool(bool $bool): self
     {
         return new self($bool);
     }
