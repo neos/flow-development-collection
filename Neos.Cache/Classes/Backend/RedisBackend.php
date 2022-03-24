@@ -290,6 +290,12 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         local entries = redis.call('SMEMBERS', KEYS[1])
         for k1,entryIdentifier in ipairs(entries) do
             redis.call('DEL', ARGV[1]..'entry:'..entryIdentifier)
+
+            local tags = redis.call('SMEMBERS', ARGV[1]..'tags:'..entryIdentifier)
+            for k2,tagName in ipairs(tags) do
+                redis.call('SREM', ARGV[1]..'tag:'..tagName, entryIdentifier)
+            end
+
             redis.call('DEL', ARGV[1]..'tags:'..entryIdentifier)
         end
         redis.call('DEL', KEYS[1])
@@ -319,6 +325,12 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             local entries = redis.call('SMEMBERS', KEYS[i])
             for k1,entryIdentifier in ipairs(entries) do
                 redis.call('UNLINK', ARGV[i]..'entry:'..entryIdentifier)
+
+                local tags = redis.call('SMEMBERS', ARGV[i]..'tags:'..entryIdentifier)
+                for k2,tagName in ipairs(tags) do
+                    redis.call('SREM', ARGV[i]..'tag:'..tagName, entryIdentifier)
+                end
+
                 redis.call('UNLINK', ARGV[i]..'tags:'..entryIdentifier)
             end
             redis.call('UNLINK', KEYS[i])
