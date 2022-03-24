@@ -38,8 +38,8 @@ use Neos\Error\Messages\Result;
  *  - batchSize:       Maximum number of parameters per query for batch operations
  *
  * Requirements:
- *  - Redis 2.6.0+ (tested with 2.6.14 and 2.8.5)
- *  - phpredis with Redis 2.6 support, e.g. 2.2.4 (tested with 92782639b0329ff91658a0602a3d816446a3663d from 2014-01-06)
+ *  - Redis 6.0.0+
+ *  - phpredis with Redis 6.0 support
  *
  * Implementation based on ext:rediscache by Christopher Hlubek - networkteam GmbH
  *
@@ -56,7 +56,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 {
     use RequireOnceFromValueTrait;
 
-    const MIN_REDIS_VERSION = '2.6.0';
+    const MIN_REDIS_VERSION = '6.0.0';
 
     /**
      * @var \Redis
