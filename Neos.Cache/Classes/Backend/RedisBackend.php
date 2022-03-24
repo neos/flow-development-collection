@@ -64,11 +64,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     protected $redis;
 
     /**
-     * @var integer Cursor used for iterating over cache entries
-     */
-    protected $entryCursor = 0;
-
-    /**
      * @var boolean|null
      */
     protected $frozen;
@@ -104,6 +99,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @var integer
      */
     protected $batchSize = 100000;
+
+    /**
+     * @var \ArrayIterator
+     */
+    private $entryIterator;
 
     /**
      * Constructs this backend
@@ -237,6 +237,9 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $result = $this->redis->exec();
         } while ($result === false);
 
+        // Reset iterator because it will be out of sync after a removal
+        $this->entryIterator = null;
+
         return true;
     }
 
@@ -261,6 +264,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         $this->redis->eval($script, [$this->getPrefixedIdentifier('frozen'), $this->getPrefixedIdentifier('')], 1);
 
         $this->frozen = null;
+        $this->entryIterator = null;
     }
 
     /**
@@ -374,7 +378,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function current()
     {
-        return $this->get($this->key());
+        return $this->get($this->getEntryIterator()->current());
     }
 
     /**
@@ -382,7 +386,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function next()
     {
-        $this->entryCursor++;
+        $this->getEntryIterator()->next();
     }
 
     /**
@@ -390,10 +394,12 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function key()
     {
-        $entryIdentifier = $this->redis->lIndex($this->getPrefixedIdentifier('entries'), $this->entryCursor);
-        if ($entryIdentifier !== false && !$this->has($entryIdentifier)) {
+        $entryIdentifier = $this->getEntryIterator()->current();
+
+        if (!$entryIdentifier || !$this->has($entryIdentifier)) {
             return false;
         }
+
         return $entryIdentifier;
     }
 
@@ -410,7 +416,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function rewind()
     {
-        $this->entryCursor = 0;
+        $this->getEntryIterator()->rewind();
     }
 
     /**
@@ -431,16 +437,14 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             throw new \RuntimeException(sprintf('Cannot add or modify cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344192);
         }
         do {
-            $entriesKey = $this->getPrefixedIdentifier('entries');
-            $this->redis->watch($entriesKey);
-            $entries = $this->redis->lRange($entriesKey, 0, -1);
+            $iterator = $this->getEntryIterator();
             $this->redis->multi();
-            foreach ($entries as $entryIdentifier) {
+            foreach ($iterator as $entryIdentifier) {
                 $this->redis->persist($this->getPrefixedIdentifier('entry:' . $entryIdentifier));
             }
-            $this->redis->set($this->getPrefixedIdentifier('frozen'), 1);
             /** @var array|bool $result */
             $result = $this->redis->exec();
+            $this->redis->set($this->getPrefixedIdentifier('frozen'), 1);
         } while ($result === false);
         $this->frozen = true;
     }
@@ -617,5 +621,19 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $result->addNotice(new Notice((string)$serverInfo['uptime_in_seconds'], null, [], 'Uptime (seconds)'));
         }
         return $result;
+    }
+
+    /**
+     * Create iterator over all entry keys in the cache, prefixed by its identifier
+     */
+    private function getEntryIterator(): \Iterator
+    {
+        if (!$this->entryIterator) {
+            $prefix = $this->getPrefixedIdentifier('entry:');
+            $prefixLength = strlen($prefix);
+            $keys = array_map(static fn (string $key) => substr($key, $prefixLength), $this->redis->keys($prefix . '*'));
+            $this->entryIterator = new \ArrayIterator($keys);
+        }
+        return $this->entryIterator;
     }
 }
