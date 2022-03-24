@@ -631,8 +631,9 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         if (!$this->entryIterator) {
             $prefix = $this->getPrefixedIdentifier('entry:');
             $prefixLength = strlen($prefix);
-            $keys = array_map(static fn (string $key) => substr($key, $prefixLength), $this->redis->keys($prefix . '*'));
-            $this->entryIterator = new \ArrayIterator($keys);
+            $keys = $this->redis->keys($prefix . '*') ?? [];
+            $entryIdentifiers = array_map(static fn (string $key) => substr($key, $prefixLength), $keys);
+            $this->entryIterator = new \ArrayIterator($entryIdentifiers);
         }
         return $this->entryIterator;
     }
