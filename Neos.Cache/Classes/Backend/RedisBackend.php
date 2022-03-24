@@ -254,11 +254,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         // language=lua
         $script = "
         local keys = redis.call('KEYS', ARGV[1] .. '*')
-		for k1,key in ipairs(keys) do
-			redis.call('DEL', key)
-		end
-		";
-        $this->redis->eval($script, [$this->getPrefixedIdentifier('')], 0);
+        for k1,key in ipairs(keys) do
+            redis.call('DEL', key)
+        end
+        ";
+        $this->redis->eval($script, [$this->getPrefixedIdentifier('')], 2);
 
         $this->frozen = null;
     }
@@ -287,14 +287,14 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         }
 
         $script = "
-		local entries = redis.call('SMEMBERS', KEYS[1])
-		for k1,entryIdentifier in ipairs(entries) do
-			redis.call('DEL', ARGV[1]..'entry:'..entryIdentifier)
-			redis.call('DEL', ARGV[1]..'tags:'..entryIdentifier)
-		end
-		redis.call('DEL', KEYS[1])
-		return #entries
-		";
+        local entries = redis.call('SMEMBERS', KEYS[1])
+        for k1,entryIdentifier in ipairs(entries) do
+            redis.call('DEL', ARGV[1]..'entry:'..entryIdentifier)
+            redis.call('DEL', ARGV[1]..'tags:'..entryIdentifier)
+        end
+        redis.call('DEL', KEYS[1])
+        return #entries
+        ";
         return $this->redis->eval($script, [$this->getPrefixedIdentifier('tag:' . $tag), $this->getPrefixedIdentifier('')], 1);
     }
 
