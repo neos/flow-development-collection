@@ -480,6 +480,7 @@ class ProxyClassBuilder
             foreach (get_class_methods($propertyClassName) as $methodName) {
                 if ($this->reflectionService->isMethodFinal($propertyClassName, $methodName)) {
                     $propertyClassHasFinalMethod = true;
+                    break;
                 }
             }
         }
