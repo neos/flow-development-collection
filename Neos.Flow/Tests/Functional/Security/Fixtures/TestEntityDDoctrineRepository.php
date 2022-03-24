@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Security\Fixtures;
  * source code.
  */
 
-use Neos\Flow\Tests\Functional\Security\Fixtures;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
 
