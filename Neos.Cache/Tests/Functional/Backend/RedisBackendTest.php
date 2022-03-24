@@ -162,6 +162,18 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function flushUnfreezesTheCache()
+    {
+        self::assertFalse($this->backend->isFrozen());
+        $this->backend->freeze();
+        self::assertTrue($this->backend->isFrozen());
+        $this->backend->flush();
+        self::assertFalse($this->backend->isFrozen());
+    }
+
+    /**
+     * @test
+     */
     public function flushByTagFlushesEntryByTag()
     {
         for ($i = 0; $i < 10; $i++) {
