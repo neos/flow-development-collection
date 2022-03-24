@@ -5,9 +5,9 @@ namespace Neos\Flow\Tests\Unit\Http\Helper;
 
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
-use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Tests\UnitTestCase;
+use function GuzzleHttp\Psr7\stream_for;
 
 /**
  * Tests for the ResponseInformationHelper
@@ -236,7 +236,7 @@ class ResponseInformationHelperTest extends UnitTestCase
     {
         $request = ServerRequest::fromGlobals();
         $response = new Response(200, ['Cache-Control' => 'must-revalidate']);
-        $response = $response->withBody(Utils::streamFor(''));
+        $response = $response->withBody(stream_for(''));
         self::assertTrue($response->hasHeader('Cache-Control'));
 
         $compliantResponse = ResponseInformationHelper::makeStandardsCompliant($response, $request);
