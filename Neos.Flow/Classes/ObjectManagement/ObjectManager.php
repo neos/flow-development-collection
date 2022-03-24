@@ -425,7 +425,7 @@ class ObjectManager implements ObjectManagerInterface
             return null;
         }
 
-        $this->dependencyProxies[$hash] = call_user_func_array([$lazyProxyClassName, '_createDependencyProxy'], [$className, $builder]);
+        $this->dependencyProxies[$hash] = $lazyProxyClassName::_createDependencyProxy($className, $builder);
         $this->dependencyProxies[$hash]->_addPropertyVariable($propertyReferenceVariable);
 
         return $this->dependencyProxies[$hash];
