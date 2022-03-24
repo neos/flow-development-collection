@@ -426,7 +426,8 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             # expect cast scalar (as arg $array) to array
             'string' => ['a', 'b', 'c', ['a', 'b', 'c']],
             'int' => [123, 'b', 'c', [123, 'b', 'c']],
-            'null' => [null, 'b', 'c', [null, 'b', 'c']],
+            # ignore null (as arg $array)
+            'null' => [null, 'b', 'c', ['b', 'c']],
         ];
     }
 
