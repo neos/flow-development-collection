@@ -351,8 +351,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
         if ($array instanceof \Traversable) {
             $array = iterator_to_array($array);
         }
-        if (is_scalar($array) || $array === null) {
+        if (is_scalar($array)) {
             $array = [$array];
+        }
+        if ($array === null) {
+            $array = [];
         }
         if (is_array($array) === false) {
             throw new \InvalidArgumentException('$array must be of type iterable|scalar|null got: ' . gettype($array), 1647595715);
