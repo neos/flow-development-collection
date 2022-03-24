@@ -215,6 +215,7 @@ class JsonArrayType extends DoctrineJsonArrayType
             }
             if ($value instanceof \JsonSerializable && DenormalizingObjectConverter::isDenormalizable(get_class($value))) {
                 $value = self::serializeValueObject($value);
+                continue;
             }
 
             $propertyClassName = TypeHandling::getTypeForValue($value);

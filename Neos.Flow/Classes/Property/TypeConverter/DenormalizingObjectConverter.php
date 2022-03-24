@@ -138,7 +138,7 @@ final class DenormalizingObjectConverter implements TypeConverterInterface
      * @param string $targetType
      * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return mixed|null|Error the target type, or an error object if a user-error occurred
+     * @return mixed
      * @throws TypeConverterException thrown in case a developer error occurred
      * @api
      */
