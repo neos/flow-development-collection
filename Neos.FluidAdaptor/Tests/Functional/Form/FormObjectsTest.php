@@ -181,7 +181,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['__trustedProperties']->setValue($form['__trustedProperties']->getValue() . 'a');
         $this->browser->submit($form);
 
-        self::assertSame(500, $this->browser->getLastResponse()->getStatusCode());
+        self::assertSame(400, $this->browser->getLastResponse()->getStatusCode());
     }
 
     /**
@@ -306,7 +306,7 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
         $form['__trustedProperties']->setValue($form['__trustedProperties']->getValue() . 'a');
         $this->browser->submit($form);
 
-        self::assertSame(500, $this->browser->getLastResponse()->getStatusCode());
+        self::assertSame(400, $this->browser->getLastResponse()->getStatusCode());
     }
 
     /**
