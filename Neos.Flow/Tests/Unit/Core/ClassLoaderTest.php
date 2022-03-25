@@ -60,10 +60,6 @@ class ClassLoaderTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        if (FLOW_ONLY_COMPOSER_LOADER) {
-            $this->markTestSkipped('Not testing if composer-only loading is requested.');
-        }
-
         vfsStream::setup('Test');
 
         self::$testClassWasLoaded = false;

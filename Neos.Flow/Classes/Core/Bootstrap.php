@@ -540,14 +540,6 @@ class Bootstrap
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
 
-        // Setting this flag to false will enable the custom Class Loader on top of the default autoloading provided by composer
-        // @deprecated since Version 4.3. Packages should use the default composer autoloading mechanism
-        $onlyUseComposerAutoLoaderForPackageClasses = true;
-        if (in_array(self::getEnvironmentConfigurationSetting('FLOW_ONLY_COMPOSER_LOADER'), [false, 'false', 0, '0'])) {
-            $onlyUseComposerAutoLoaderForPackageClasses = false;
-        }
-
-        define('FLOW_ONLY_COMPOSER_LOADER', $onlyUseComposerAutoLoaderForPackageClasses);
         define('FLOW_VERSION_BRANCH', 'master');
         define('FLOW_APPLICATION_CONTEXT', (string)$this->context);
     }
