@@ -25,7 +25,6 @@ use Neos\Flow\Configuration\Loader\SettingsLoader;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Core\LockManager as CoreLockManager;
 use Neos\Flow\Core\ProxyClassLoader;
 use Neos\Flow\Error\Debugger;
@@ -71,33 +70,6 @@ class Scripts
         $proxyClassLoader = new ProxyClassLoader($bootstrap->getContext());
         spl_autoload_register([$proxyClassLoader, 'loadClass'], true, true);
         $bootstrap->setEarlyInstance(ProxyClassLoader::class, $proxyClassLoader);
-
-        if (!self::useClassLoader($bootstrap)) {
-            return;
-        }
-
-        $initialClassLoaderMappings = [
-            [
-                'namespace' => 'Neos\\Flow\\',
-                'classPath' => FLOW_PATH_FLOW . 'Classes/',
-                'mappingType' => ClassLoader::MAPPING_TYPE_PSR4
-            ]
-        ];
-
-        if ($bootstrap->getContext()->isTesting()) {
-            $initialClassLoaderMappings[] = [
-                'namespace' => 'Neos\\Flow\\Tests\\',
-                'classPath' => FLOW_PATH_FLOW . 'Tests/',
-                'mappingType' => ClassLoader::MAPPING_TYPE_PSR4
-            ];
-        }
-
-        $classLoader = new ClassLoader($initialClassLoaderMappings);
-        spl_autoload_register([$classLoader, 'loadClass'], true);
-        $bootstrap->setEarlyInstance(ClassLoader::class, $classLoader);
-        if ($bootstrap->getContext()->isTesting()) {
-            $classLoader->setConsiderTestsNamespace(true);
-        }
     }
 
     /**
@@ -110,9 +82,6 @@ class Scripts
     public static function registerClassLoaderInAnnotationRegistry(Bootstrap $bootstrap)
     {
         AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(\Composer\Autoload\ClassLoader::class), 'loadClass']);
-        if (self::useClassLoader($bootstrap)) {
-            AnnotationRegistry::registerLoader([$bootstrap->getEarlyInstance(ClassLoader::class), 'loadClass']);
-        }
     }
 
     /**
@@ -185,9 +154,6 @@ class Scripts
         }
 
         $packageManager->initialize($bootstrap);
-        if (self::useClassLoader($bootstrap)) {
-            $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages($packageManager->getAvailablePackages());
-        }
     }
 
     /**
@@ -897,20 +863,5 @@ class Scripts
                 PHP_VERSION
             ), 1536563428);
         }
-    }
-
-    /**
-     * Check if the old fallback classloader should be used.
-     *
-     * The old class loader is used only in the cases:
-     * * the environment variable "FLOW_ONLY_COMPOSER_LOADER" is not set or false
-     * * in a testing context
-     *
-     * @param Bootstrap $bootstrap
-     * @return bool
-     */
-    protected static function useClassLoader(Bootstrap $bootstrap)
-    {
-        return !FLOW_ONLY_COMPOSER_LOADER;
     }
 }
