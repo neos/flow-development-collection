@@ -253,14 +253,13 @@ class PackageManager
      * the given package state, path, and type filters. All three filters must match, if given.
      *
      * @param string $packageState defaults to available
-     * @param string $packagePath DEPRECATED since Flow 5.0
      * @param string $packageType
      *
      * @return array<PackageInterface>
      * @throws Exception\InvalidPackageStateException
      * @api
      */
-    public function getFilteredPackages($packageState = 'available', $packagePath = null, $packageType = null): array
+    public function getFilteredPackages($packageState = 'available', $packageType = null): array
     {
         switch (strtolower($packageState)) {
             case 'available':
@@ -273,37 +272,11 @@ class PackageManager
                 throw new Exception\InvalidPackageStateException('The package state "' . $packageState . '" is invalid', 1372458274);
         }
 
-        if ($packagePath !== null) {
-            $packages = $this->filterPackagesByPath($packages, $packagePath);
-        }
         if ($packageType !== null) {
             $packages = $this->filterPackagesByType($packages, $packageType);
         }
 
         return $packages;
-    }
-
-    /**
-     * Returns an array of PackageInterface objects in the given array of packages
-     * that are in the specified Package Path
-     *
-     * @param array $packages Array of PackageInterface to be filtered
-     * @param string $filterPath Filter out anything that's not in this path
-     * @return array<PackageInterface>
-     */
-    protected function filterPackagesByPath($packages, $filterPath): array
-    {
-        $filteredPackages = [];
-        /** @var $package Package */
-        foreach ($packages as $package) {
-            $packagePath = substr($package->getPackagePath(), strlen($this->packagesBasePath));
-            $packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
-            if ($packageGroup === $filterPath) {
-                $filteredPackages[$package->getPackageKey()] = $package;
-            }
-        }
-
-        return $filteredPackages;
     }
 
     /**
