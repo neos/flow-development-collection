@@ -149,7 +149,7 @@ final class DenormalizingObjectConverter implements TypeConverterInterface
 
     /**
      * @param mixed $source
-     * @param string $targetType
+     * @param class-string $targetType
      * @return mixed
      * @throws TypeConverterException thrown in case a developer error occurred
      */
