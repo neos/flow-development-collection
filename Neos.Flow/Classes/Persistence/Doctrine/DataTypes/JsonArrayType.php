@@ -9,6 +9,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Property\TypeConverter\DenormalizingObjectConverter;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
 
@@ -165,12 +166,34 @@ class JsonArrayType extends DoctrineJsonArrayType
                 continue;
             }
 
-            if (isset($value['__flow_object_type'])) {
+            if (isset($value['__value_object_value']) && isset($value['__value_object_type'])) {
+                $value = self::deserializeValueObject($value);
+            } elseif (isset($value['__flow_object_type'])) {
                 $value = $this->persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type'], true);
             } else {
                 $this->decodeObjectReferences($value);
             }
         }
+    }
+
+    /**
+     * @param array<mixed> $serializedValueObject
+     * @return \JsonSerializable
+     * @throws \InvalidArgumentException
+     */
+    public static function deserializeValueObject(array $serializedValueObject): \JsonSerializable
+    {
+        if (isset($serializedValueObject['__value_object_value']) && isset($serializedValueObject['__value_object_type'])) {
+            return DenormalizingObjectConverter::convertFromSource(
+                $serializedValueObject['__value_object_value'],
+                $serializedValueObject['__value_object_type']
+            );
+        }
+
+        throw new \InvalidArgumentException(
+            '$serializedValueObject must contain keys "__value_object_value" and "__value_object_type"',
+            1621332088
+        );
     }
 
     /**
@@ -190,6 +213,7 @@ class JsonArrayType extends DoctrineJsonArrayType
             if (!is_object($value) || (is_object($value) && $value instanceof DependencyProxy)) {
                 continue;
             }
+
 
             $propertyClassName = TypeHandling::getTypeForValue($value);
 
@@ -216,8 +240,36 @@ class JsonArrayType extends DoctrineJsonArrayType
                     '__flow_object_type' => $propertyClassName,
                     '__identifier' => $this->persistenceManager->getIdentifierByObject($value)
                 ];
+            } elseif ($value instanceof \JsonSerializable
+                && DenormalizingObjectConverter::isDenormalizable(get_class($value))
+            ) {
+                $value = self::serializeValueObject($value);
             }
         }
+    }
+
+    /**
+     * @param \JsonSerializable $valueObject
+     * @return array<mixed>
+     * @throws \RuntimeException
+     */
+    public static function serializeValueObject(\JsonSerializable $valueObject): array
+    {
+        if ($json = json_encode($valueObject)) {
+            return [
+                '__value_object_type' => get_class($valueObject),
+                '__value_object_value' =>
+                    json_decode($json, true)
+            ];
+        }
+
+        throw new \RuntimeException(
+            sprintf(
+                'Could not serialize $valueObject due to: %s',
+                json_last_error_msg()
+            ),
+            1621333154
+        );
     }
 
     /**
