@@ -13,7 +13,6 @@ namespace Neos\Flow\Core;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package;
-use Neos\Utility\Files;
 
 /**
  * Class Loader implementation as fallback to the compoer loader and for test classes.
