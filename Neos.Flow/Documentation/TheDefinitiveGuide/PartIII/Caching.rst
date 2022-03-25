@@ -577,6 +577,15 @@ Options
 | compressionLevel | Set gzip compression level to a | No        | integer   | 0         |
 |                  | specific value.                 |           | (0 to 9)  |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
+| batchSize        | Maximum number of parameters    | No        | int       | 100000    |
+|                  | per query for batch operations. |           |           |           |
+|                  |                                 |           |           |           |
+|                  | Redis supports up to            |           |           |           |
+|                  | 1.048.576 parameters, but a     |           |           |           |
+|                  | lower batch size allows other   |           |           |           |
+|                  | calls to Redis to be processed  |           |           |           |
+|                  | between each batch.             |           |           |           |
++------------------+---------------------------------+-----------+-----------+-----------+
 
 Neos\\Cache\\Backend\\MemcachedBackend
 --------------------------------------

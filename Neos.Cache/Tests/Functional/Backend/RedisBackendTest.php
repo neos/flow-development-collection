@@ -49,8 +49,8 @@ class RedisBackendTest extends BaseTestCase
     protected function setUp(): void
     {
         $phpredisVersion = phpversion('redis');
-        if (version_compare($phpredisVersion, '1.2.0', '<')) {
-            $this->markTestSkipped(sprintf('phpredis extension version %s is not supported. Please update to verson 1.2.0+.', $phpredisVersion));
+        if (version_compare($phpredisVersion, '5.0.0', '<')) {
+            $this->markTestSkipped(sprintf('phpredis extension version %s is not supported. Please update to version 5.0.0+.', $phpredisVersion));
         }
         try {
             if (!@fsockopen('127.0.0.1', 6379)) {
@@ -157,6 +157,18 @@ class RedisBackendTest extends BaseTestCase
         }
         $this->backend->freeze();
         self::assertTrue($this->backend->isFrozen());
+    }
+
+    /**
+     * @test
+     */
+    public function flushUnfreezesTheCache()
+    {
+        self::assertFalse($this->backend->isFrozen());
+        $this->backend->freeze();
+        self::assertTrue($this->backend->isFrozen());
+        $this->backend->flush();
+        self::assertFalse($this->backend->isFrozen());
     }
 
     /**
