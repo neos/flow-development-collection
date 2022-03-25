@@ -368,9 +368,9 @@ Starting with version 8, Flow can map simple types to the corresponding Value Ob
 Supported simple types and their corresponding named constructor signature:
 
 * ``array`` => ``public static function fromArray(array $array): self``
-* ``boolean`` => ``public static function fromBool(bool $value): self`` (or ``public static function fromBoolean(bool $value): self``
+* ``boolean`` => ``public static function fromBool(bool $value): self`` (or ``public static function fromBoolean(bool $value): self``)
 * ``double``/``float`` => ``public static function fromFloat(double $value): self``
-* ``integer`` => ``public static function fromInt(int $value): self`` (or ``public static function fromInteger(int $value): self``
+* ``integer`` => ``public static function fromInt(int $value): self`` (or ``public static function fromInteger(int $value): self``)
 * ``string`` => ``public static function fromString(string $value): self``
 
 Example Value Object representing an email address::
