@@ -115,17 +115,20 @@ abstract class ObjectAccess
         $className = TypeHandling::getTypeForValue($subject);
 
         if ($forceDirectAccess === true) {
+            // try actual class property first
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
                 $propertyReflection->setAccessible(true);
                 return $propertyReflection->getValue($subject);
             }
+            // then see if it's a Flow proxy and try to get the parent class property
             $className = get_parent_class($className);
             if ($subject instanceof ProxyInterface && $className !== false && property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
                 $propertyReflection->setAccessible(true);
                 return $propertyReflection->getValue($subject);
             }
+            // then try to get the property directly
             if (property_exists($subject, $propertyName)) {
                 return $subject->$propertyName;
             }
