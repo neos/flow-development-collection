@@ -244,6 +244,10 @@ abstract class ObjectAccess
      */
     public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
     {
+        if (!is_string($propertyName) && !is_int($propertyName)) {
+            throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
+        }
+
         if (is_array($subject)) {
             $subject[$propertyName] = $propertyValue;
             return true;
@@ -252,11 +256,11 @@ abstract class ObjectAccess
         if (!is_object($subject)) {
             throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject) . ' given.', 1237301368);
         }
-        if (!is_string($propertyName) && !is_int($propertyName)) {
-            throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
-        }
 
         if ($forceDirectAccess === true) {
+            if (!is_string($propertyName)) {
+                throw new \InvalidArgumentException('Given property name is not of type string.', 1648244846);
+            }
             $className = TypeHandling::getTypeForValue($subject);
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
@@ -269,7 +273,7 @@ abstract class ObjectAccess
             } else {
                 $subject->$propertyName = $propertyValue;
             }
-        } elseif (is_callable([$subject, $setterMethodName = self::buildSetterMethodName($propertyName)])) {
+        } elseif (is_callable([$subject, $setterMethodName = self::buildSetterMethodName((string)$propertyName)])) {
             $subject->$setterMethodName($propertyValue);
         } elseif ($subject instanceof \ArrayAccess) {
             $subject[$propertyName] = $propertyValue;
