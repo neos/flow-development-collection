@@ -12,7 +12,7 @@ namespace Neos\Utility;
  */
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\Persistence\Proxy;
 use Neos\Utility\Exception\InvalidTypeException;
 
 /**

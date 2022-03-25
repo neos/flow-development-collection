@@ -561,7 +561,7 @@ class ProxyClassBuilder
         if ($cause === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
             $code .= "\n" . '        $classParents = class_parents($this);';
             $code .= "\n" . '        $classImplements = class_implements($this);';
-            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== false && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== false;' . "\n";
+            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== false && array_search(\'Doctrine\Persistence\Proxy\', $classImplements) !== false;' . "\n";
             $code .= "\n" . '        if ($isSameClass || $isClassProxy) {' . "\n";
         } else {
             $code .= "\n" . '        if ($isSameClass) {' . "\n";
@@ -589,7 +589,7 @@ class ProxyClassBuilder
         if ($cause === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
             $code .= "\n" . '        $classParents = class_parents($this);';
             $code .= "\n" . '        $classImplements = class_implements($this);';
-            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== false && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== false;' . "\n";
+            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== false && array_search(\'Doctrine\Persistence\Proxy\', $classImplements) !== false;' . "\n";
             $code .= "\n" . '        if ($isSameClass || $isClassProxy) {' . "\n";
         } else {
             $code .= "\n" . '        if ($isSameClass) {' . "\n";
