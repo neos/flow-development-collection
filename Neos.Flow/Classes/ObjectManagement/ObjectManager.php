@@ -13,12 +13,14 @@ namespace Neos\Flow\ObjectManagement;
  * source code.
  */
 
+use Closure;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
+use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Core\ProxyClassLoader;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
-use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Security\Context;
 
@@ -130,7 +132,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * Returns true if an object with the given name is registered
      *
-     * @param  string $objectName Name of the object
+     * @param string $objectName Name of the object
      * @return boolean true if the object has been registered, otherwise false
      * @throws \InvalidArgumentException
      * @api
@@ -248,7 +250,7 @@ class ObjectManager implements ObjectManagerInterface
      * case sensitive name is not available. This method helps you in these
      * rare cases.
      *
-     * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
+     * @param string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
      * @return string|null Either the mixed case object name or false if no object of that name was found.
      * @internal
      */
@@ -403,24 +405,37 @@ class ObjectManager implements ObjectManagerInterface
      * Internally used by the injectProperties method of generated proxy classes.
      *
      * @param string $hash An md5 hash over the code needed to actually build the dependency instance
-     * @param string &$propertyReferenceVariable A first variable where the dependency needs to be injected into
+     * @param mixed &$propertyReferenceVariable A first variable where the dependency needs to be injected into
      * @param string $className Name of the class of the dependency which eventually will be instantiated
-     * @param \Closure $builder An anonymous function which creates the instance to be injected
-     * @return DependencyProxy
+     * @param Closure $builder An anonymous function which creates the instance to be injected
+     * @return DependencyProxy | null
      */
-    public function createLazyDependency($hash, &$propertyReferenceVariable, $className, \Closure $builder): DependencyProxy
+    public function createLazyDependency(string $hash, &$propertyReferenceVariable, string $className, Closure $builder): ?DependencyProxy
     {
-        $this->dependencyProxies[$hash] = new DependencyProxy($className, $builder);
+        // Trigger auto-loading of the original class, because any generated lazy proxy will be
+        // contained in the same file and the auto-loader does not know how to find a lazy proxy:
+        class_exists($className) || interface_exists($className);
+        $lazyProxyClassName = $className . '_LazyProxy';
+
+        // If proxy classes were partially flushed in Development context, it might happen that
+        // the original class $className was already loaded by the ConfigurationBuilder. In that
+        // case, the proxy class for $className cannot be loaded any more by the ProxyClassLoader,
+        // so we need to fall back to eager dependency injection.
+        if (!class_exists($lazyProxyClassName)) {
+            return null;
+        }
+
+        $this->dependencyProxies[$hash] = $lazyProxyClassName::_createDependencyProxy($className, $builder);
         $this->dependencyProxies[$hash]->_addPropertyVariable($propertyReferenceVariable);
+
         return $this->dependencyProxies[$hash];
     }
-
 
     /**
      * Unsets the instance of the given object
      *
      * If run during standard runtime, the whole application might become unstable
-     * because certain parts might already use an instance of this object. Therefore
+     * because certain parts might already use an instance of this object. Therefore,
      * this method should only be used in a setUp() method of a functional test case.
      *
      * @param string $objectName The object name

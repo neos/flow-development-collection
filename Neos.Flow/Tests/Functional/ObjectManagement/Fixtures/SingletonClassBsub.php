@@ -14,25 +14,10 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A class which has lazy dependencies
+ * A class of scope singleton
+ *
+ * @Flow\Scope("singleton")
  */
-class ClassWithLazyDependencies
+class SingletonClassBsub
 {
-    /**
-     * @Flow\Inject
-     * @var SingletonClassA
-     */
-    public $lazyA;
-
-    /**
-     * @Flow\Inject
-     * @var SingletonClassB
-     */
-    public $lazyB;
-
-    /**
-     * @Flow\Inject(lazy = false)
-     * @var SingletonClassC
-     */
-    public $eagerC;
 }

@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement\Proxy;
 use Neos\Flow\ObjectManagement\Proxy\Compiler;
 use Neos\Flow\ObjectManagement\Proxy\ProxyClass;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\ClassImplementingInterfaceWithConstructor;
 use Neos\Flow\Tests\UnitTestCase;
 
 class ProxyClassTest extends UnitTestCase
@@ -23,16 +24,20 @@ class ProxyClassTest extends UnitTestCase
      */
     public function proxyClassesDataProvider()
     {
+        require_once(__DIR__ . '/../Fixture/ClassWithoutNamespace.php');
+
         return [
             [
-                'originalClassName' => '\Acme\Namespace\ClassName',
+                'originalClassName' => ClassImplementingInterfaceWithConstructor::class,
                 'originalClassAnnotations' => [],
                 'originalClassDocumentation' => '',
                 'originalClassConstants' => [['name' => 'TEST_CONSTANT', 'value' => '1']],
                 'expectedProxyCode' =>
-                    'class ClassName extends ClassName' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \\Neos\\Flow\\ObjectManagement\\Proxy\\ProxyInterface {\n\n" .
+                    "class ClassImplementingInterfaceWithConstructor extends ClassImplementingInterfaceWithConstructor" . Compiler::ORIGINAL_CLASSNAME_SUFFIX .
+                    " implements \\Neos\\Flow\\ObjectManagement\\Proxy\\ProxyInterface {\n\n" .
                     "    const TEST_CONSTANT = 1;\n\n" .
-                    '}',
+                    "}\n\n"
+
             ],
             [
                 'originalClassName' => '\ClassWithoutNamespace',
@@ -42,7 +47,16 @@ class ProxyClassTest extends UnitTestCase
                 'expectedProxyCode' =>
                     'class ClassWithoutNamespace extends ClassWithoutNamespace' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \\Neos\\Flow\\ObjectManagement\\Proxy\\ProxyInterface {\n\n" .
                     "    const TEST_CONSTANT = 1;\n\n" .
-                    '}',
+                    "}\n\n" .
+                    "class ClassWithoutNamespace_LazyProxy extends ClassWithoutNamespace implements \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy\n" .
+                    "{\n" .
+                    "    use \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxyTrait;\n\n" .
+                    "    public function __call(string \$methodName, array \$arguments)\n" .
+                    "    {\n" .
+                    "        [\$methodName, \$arguments] = func_get_args();\n" .
+                    "            return \$this->_activateDependency()->\$methodName(...\$arguments);\n" .
+                    "    }\n" .
+                    "}\n"
             ],
             [
                 'originalClassName' => 'ClassWithoutNamespace',
@@ -52,7 +66,16 @@ class ProxyClassTest extends UnitTestCase
                 'expectedProxyCode' =>
                     'class ClassWithoutNamespace extends ClassWithoutNamespace' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . " implements \\Neos\\Flow\\ObjectManagement\\Proxy\\ProxyInterface {\n\n" .
                     "    const TEST_CONSTANT = 1;\n\n" .
-                    '}',
+                    "}\n\n" .
+                    "class ClassWithoutNamespace_LazyProxy extends ClassWithoutNamespace implements \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy\n" .
+                    "{\n" .
+                    "    use \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxyTrait;\n\n" .
+                    "    public function __call(string \$methodName, array \$arguments)\n" .
+                    "    {\n" .
+                    "        [\$methodName, \$arguments] = func_get_args();\n" .
+                    "            return \$this->_activateDependency()->\$methodName(...\$arguments);\n" .
+                    "    }\n" .
+                    "}\n"
             ],
         ];
     }

@@ -174,6 +174,9 @@ class CoreCommandController extends CommandController
      * Although a compilation run is triggered automatically by Flow, there might
      * be cases in a production context where a manual compile run is needed.
      *
+     * This command is called internally from Neos\Flow\Core\Booting\Script if the
+     * code caches are empty.
+     *
      * @Flow\Internal
      * @param boolean $force If set, classes will be compiled even though the cache says that everything is up to date.
      * @return void

@@ -14,10 +14,10 @@ namespace Neos\Flow\Reflection;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\PhpParser;
 use Doctrine\ORM\Mapping as ORM;
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
@@ -27,8 +27,8 @@ use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Flow\Reflection\Exception\ClassSchemaConstraintViolationException;
 use Neos\Flow\Reflection\Exception\InvalidPropertyTypeException;
 use Neos\Flow\Reflection\Exception\InvalidValueObjectException;
-use Neos\Utility\Arrays;
 use Neos\Flow\Utility\Environment;
+use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 use Neos\Utility\TypeHandling;
 use Psr\Log\LoggerInterface;
@@ -89,7 +89,8 @@ class ReflectionService
     const DATA_METHOD_DECLARED_RETURN_TYPE = 25;
     const DATA_PROPERTY_TAGS_VALUES = 14;
     const DATA_PROPERTY_ANNOTATIONS = 15;
-    const DATA_PROPERTY_VISIBILITY = 24;
+    const DATA_PROPERTY_VISIBILITY = 25;
+    const DATA_PROPERTY_TYPE = 26;
     const DATA_PARAMETER_POSITION = 16;
     const DATA_PARAMETER_OPTIONAL = 17;
     const DATA_PARAMETER_TYPE = 18;
@@ -996,6 +997,16 @@ class ReflectionService
     }
 
     /**
+     * @param $className
+     * @param $propertyName
+     * @return mixed|null
+     */
+    public function getPropertyType($className, $propertyName)
+    {
+        return $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TYPE] ?? null;
+    }
+
+    /**
      * Tells if the specified property is private
      *
      * @param string $className Name of the class containing the method
@@ -1306,6 +1317,10 @@ class ReflectionService
         $visibility = $property->isPublic() ? self::VISIBILITY_PUBLIC : ($property->isProtected() ? self::VISIBILITY_PROTECTED : self::VISIBILITY_PRIVATE);
         $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] = $visibility;
 
+        if ($property->hasType()) {
+            $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TYPE] = trim((string)$property->getType(), '?');
+        }
+
         foreach ($property->getTagsValues() as $tagName => $tagValues) {
             $tagValues = $this->reflectPropertyTag($className, $property, $tagName, $tagValues);
             if ($tagValues === null) {
@@ -1314,9 +1329,10 @@ class ReflectionService
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tagName] = $tagValues;
         }
 
-        foreach ($this->annotationReader->getPropertyAnnotations($property, $propertyName) as $annotation) {
+        foreach ($this->annotationReader->getPropertyAnnotations($property) as $annotation) {
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
         }
+
         if (PHP_MAJOR_VERSION >= 8) {
             foreach ($property->getAttributes() as $attribute) {
                 $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attribute->newInstance();

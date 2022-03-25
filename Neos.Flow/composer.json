@@ -38,6 +38,7 @@
         "psr/cache": "~1.0",
 
         "ramsey/uuid": "^3.0 || ^4.0",
+        "laminas/laminas-code": "~3.4.1 || ^4.0",
 
         "doctrine/orm": "^2.9.3",
         "doctrine/migrations": "^3.0",

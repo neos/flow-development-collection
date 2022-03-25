@@ -27,7 +27,7 @@ trait PropertyInjectionTrait
      * @param callable $lazyInjectionResolver
      * @return void
      */
-    private function Flow_Proxy_LazyPropertyInjection($propertyObjectName, $propertyClassName, $propertyName, $setterArgumentHash, callable $lazyInjectionResolver)
+    private function Flow_Proxy_LazyPropertyInjection(string $propertyObjectName, string $propertyClassName, string $propertyName, string $setterArgumentHash, callable $lazyInjectionResolver)
     {
         $injection_reference = &$this->$propertyName;
         $this->$propertyName = \Neos\Flow\Core\Bootstrap::$staticObjectManager->getInstance($propertyObjectName);
@@ -35,6 +35,10 @@ trait PropertyInjectionTrait
             $this->$propertyName = \Neos\Flow\Core\Bootstrap::$staticObjectManager->getLazyDependencyByHash($setterArgumentHash, $injection_reference);
             if ($this->$propertyName === null) {
                 $this->$propertyName = \Neos\Flow\Core\Bootstrap::$staticObjectManager->createLazyDependency($setterArgumentHash, $injection_reference, $propertyClassName, $lazyInjectionResolver);
+                if ($this->$propertyName === null) {
+                    // Fall back to eager injection, if lazy property injection was not possible
+                    $this->$propertyName = \Neos\Flow\Core\Bootstrap::$staticObjectManager->get($propertyObjectName);
+                }
             }
         }
     }

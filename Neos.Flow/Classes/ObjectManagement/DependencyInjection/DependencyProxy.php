@@ -19,49 +19,15 @@ use Neos\Flow\Annotations as Flow;
  * @Flow\Proxy(false)
  * @api
  */
-class DependencyProxy
+interface DependencyProxy
 {
-    /**
-     * @var string
-     */
-    protected $className;
-
-    /**
-     * @var \Closure
-     */
-    protected $builder;
-
-    /**
-     * @var array
-     */
-    protected $propertyVariables = [];
-
-    /**
-     * Constructs this proxy
-     *
-     * @param string $className Implementation class name of the dependency to proxy
-     * @param \Closure $builder The closure which eventually builds the dependency
-     */
-    public function __construct($className, \Closure $builder)
-    {
-        $this->className = $className;
-        $this->builder = $builder;
-    }
-
     /**
      * Activate the dependency and set it in the object.
      *
      * @return object The real dependency object
      * @api
      */
-    public function _activateDependency()
-    {
-        $realDependency = $this->builder->__invoke();
-        foreach ($this->propertyVariables as &$propertyVariable) {
-            $propertyVariable = $realDependency;
-        }
-        return $realDependency;
-    }
+    public function _activateDependency();
 
     /**
      * Returns the class name of the proxied dependency
@@ -69,10 +35,7 @@ class DependencyProxy
      * @return string Fully qualified class name of the proxied object
      * @api
      */
-    public function _getClassName()
-    {
-        return $this->className;
-    }
+    public function _getClassName();
 
     /**
      * Adds another variable by reference where the actual dependency object should
@@ -81,21 +44,5 @@ class DependencyProxy
      * @param mixed &$propertyVariable The variable to replace
      * @return void
      */
-    public function _addPropertyVariable(&$propertyVariable)
-    {
-        $this->propertyVariables[] = &$propertyVariable;
-    }
-
-    /**
-     * Proxy magic call method which triggers the injection of the real dependency
-     * and returns the result of a call to the original method in the dependency
-     *
-     * @param string $methodName Name of the method to be called
-     * @param array $arguments An array of arguments to be passed to the method
-     * @return mixed
-     */
-    public function __call($methodName, array $arguments)
-    {
-        return $this->_activateDependency()->$methodName(...$arguments);
-    }
+    public function _addPropertyVariable(&$propertyVariable);
 }
