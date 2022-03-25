@@ -149,25 +149,27 @@ final class DenormalizingObjectConverter implements TypeConverterInterface
 
     /**
      * @param mixed $source
-     * @param class-string $targetType
+     * @param string $targetType
      * @return mixed
      * @throws TypeConverterException thrown in case a developer error occurred
      */
     public static function convertFromSource($source, string $targetType)
     {
-        switch (gettype($source)) {
-            case 'array':
-                return $targetType::fromArray($source);
-            case 'string':
-                return $targetType::fromString($source);
-            case 'boolean':
-                return method_exists($targetType, 'fromBool') ? $targetType::fromBool($source) : $targetType::fromBoolean($source);
-            case 'integer':
-                return method_exists($targetType, 'fromInt') ? $targetType::fromInt($source) : $targetType::fromInteger($source);
-            case 'double':
-                return $targetType::fromFloat($source);
-            default:
-                break;
+        if (class_exists($targetType)) {
+            switch (gettype($source)) {
+                case 'array':
+                    return $targetType::fromArray($source);
+                case 'string':
+                    return $targetType::fromString($source);
+                case 'boolean':
+                    return method_exists($targetType, 'fromBool') ? $targetType::fromBool($source) : $targetType::fromBoolean($source);
+                case 'integer':
+                    return method_exists($targetType, 'fromInt') ? $targetType::fromInt($source) : $targetType::fromInteger($source);
+                case 'double':
+                    return $targetType::fromFloat($source);
+                default:
+                    break;
+            }
         }
 
         throw new TypeConverterException(
