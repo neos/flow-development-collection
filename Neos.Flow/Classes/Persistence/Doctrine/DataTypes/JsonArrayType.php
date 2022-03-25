@@ -213,10 +213,7 @@ class JsonArrayType extends DoctrineJsonArrayType
             if (!is_object($value) || (is_object($value) && $value instanceof DependencyProxy)) {
                 continue;
             }
-            if ($value instanceof \JsonSerializable && DenormalizingObjectConverter::isDenormalizable(get_class($value))) {
-                $value = self::serializeValueObject($value);
-                continue;
-            }
+
 
             $propertyClassName = TypeHandling::getTypeForValue($value);
 
@@ -243,6 +240,10 @@ class JsonArrayType extends DoctrineJsonArrayType
                     '__flow_object_type' => $propertyClassName,
                     '__identifier' => $this->persistenceManager->getIdentifierByObject($value)
                 ];
+            } elseif ($value instanceof \JsonSerializable
+                && DenormalizingObjectConverter::isDenormalizable(get_class($value))
+            ) {
+                $value = self::serializeValueObject($value);
             }
         }
     }
