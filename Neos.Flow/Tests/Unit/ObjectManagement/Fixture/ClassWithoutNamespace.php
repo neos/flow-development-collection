@@ -12,4 +12,19 @@
 
 class ClassWithoutNamespace
 {
+    /**
+     * Some method
+     *
+     * @param string $argument
+     * @param bool $flag
+     * @return string
+     * @throws Exception
+     */
+    public function doSomething(string $argument, bool $flag = false): string
+    {
+        if ($flag) {
+            throw new Exception('Something went wrong');
+        }
+        return $argument;
+    }
 }

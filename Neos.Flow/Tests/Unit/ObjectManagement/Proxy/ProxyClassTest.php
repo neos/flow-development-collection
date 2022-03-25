@@ -22,7 +22,7 @@ class ProxyClassTest extends UnitTestCase
     /**
      * @return array
      */
-    public function proxyClassesDataProvider()
+    public function proxyClassesDataProvider(): array
     {
         require_once(__DIR__ . '/../Fixture/ClassWithoutNamespace.php');
 
@@ -87,7 +87,7 @@ class ProxyClassTest extends UnitTestCase
     public function renderWorksAsExpected($originalClassName, $originalClassAnnotations, $originalClassDocumentation, $originalClassConstants, $expectedProxyCode)
     {
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects(self::any())->method('isClassAbstract')->will(self::returnValue(strpos($expectedProxyCode, 'abstract ') !== false));
+        $mockReflectionService->expects(self::any())->method('isClassAbstract')->will(self::returnValue(str_contains($expectedProxyCode, 'abstract ')));
         $mockReflectionService->expects(self::any())->method('getClassAnnotations')->will(self::returnValue($originalClassAnnotations));
 
         $mockProxyClass = $this->getAccessibleMock(ProxyClass::class, ['buildClassDocumentation'], [$originalClassName], '', true);
@@ -98,6 +98,96 @@ class ProxyClassTest extends UnitTestCase
         }
 
         $proxyCode = $mockProxyClass->render();
+
+        self::assertEquals($expectedProxyCode, $proxyCode);
+    }
+
+    /**
+     * @return array
+     */
+    public function lazyProxyClassesDataProvider(): array
+    {
+        require_once(__DIR__ . '/../Fixture/ClassWithoutNamespace.php');
+
+        return [
+            [
+                'originalClassName' => ClassImplementingInterfaceWithConstructor::class,
+                'originalClassAnnotations' => [],
+                'originalClassDocumentation' => '',
+                'originalClassConstants' => [['name' => 'TEST_CONSTANT', 'value' => '1']],
+                'expectedProxyCode' =>
+                    "namespace Neos\Flow\Tests\Unit\ObjectManagement\Fixture;\n\n" .
+                    "class ClassImplementingInterfaceWithConstructor_LazyProxy extends ClassImplementingInterfaceWithConstructor implements \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy\n" .
+                    "{\n" .
+                    "    use \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxyTrait;\n\n" .
+                    '    public function __call(string $methodName, array $arguments)' . "\n" .
+                    "    {\n" .
+                    '        [$methodName, $arguments] = func_get_args();' . "\n" .
+                    '            return $this->_activateDependency()->$methodName(...$arguments);' . "\n" .
+                    "    }\n" .
+                    "}\n"
+            ],
+            [
+                'originalClassName' => '\ClassWithoutNamespace',
+                'originalClassAnnotations' => [],
+                'originalClassDocumentation' => '',
+                'originalClassConstants' => [['name' => 'TEST_CONSTANT', 'value' => '1']],
+                'expectedProxyCode' =>
+                    "namespace ;\n\n" .
+                    "class ClassWithoutNamespace_LazyProxy extends ClassWithoutNamespace implements \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy\n" .
+                    "{\n" .
+                    "    use \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxyTrait;\n\n" .
+                    '    public function __call(string $methodName, array $arguments)' . "\n" .
+                    "    {\n" .
+                    '        [$methodName, $arguments] = func_get_args();' . "\n" .
+                    '            return $this->_activateDependency()->$methodName(...$arguments);' . "\n" .
+                    "    }\n\n" .
+                    '    public function doSomething(string $argument, bool $flag = false) : string' . "\n" .
+                    "    {\n" .
+                    '        $arguments = func_get_args();' . "\n" .
+                    '            return $this->_activateDependency()->doSomething(...$arguments);' . "\n" .
+                    "    }\n".
+                    "}\n"
+            ],
+            [
+                'originalClassName' => 'ClassWithoutNamespace',
+                'originalClassAnnotations' => [],
+                'originalClassDocumentation' => '',
+                'originalClassConstants' => [['name' => 'TEST_CONSTANT', 'value' => '1']],
+                'expectedProxyCode' =>
+                    "class ClassWithoutNamespace_LazyProxy extends ClassWithoutNamespace implements \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy\n" .
+                    "{\n" .
+                    "    use \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxyTrait;\n\n" .
+                    '    public function __call(string $methodName, array $arguments)' . "\n" .
+                    "    {\n" .
+                    '        [$methodName, $arguments] = func_get_args();' . "\n" .
+                    '            return $this->_activateDependency()->$methodName(...$arguments);' . "\n" .
+                    "    }\n\n" .
+                    '    public function doSomething(string $argument, bool $flag = false) : string' . "\n" .
+                    "    {\n" .
+                    '        $arguments = func_get_args();' . "\n" .
+                    '            return $this->_activateDependency()->doSomething(...$arguments);' . "\n" .
+                    "    }\n".
+                    "}\n"
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider lazyProxyClassesDataProvider
+     */
+    public function lazyProxyClassIsRenderedAsExpected($originalClassName, $originalClassAnnotations, $originalClassDocumentation, $originalClassConstants, $expectedProxyCode)
+    {
+        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
+        $mockReflectionService->expects(self::once())->method('isMethodPublic')->will(self::returnValue(true));
+        $mockReflectionService->expects(self::any())->method('isClassAbstract')->will(self::returnValue(str_contains($expectedProxyCode, 'abstract ')));
+        $mockReflectionService->expects(self::any())->method('getClassAnnotations')->will(self::returnValue($originalClassAnnotations));
+
+        $mockProxyClass = $this->getAccessibleMock(ProxyClass::class, ['buildClassDocumentation'], [$originalClassName], '', true);
+        $mockProxyClass->injectReflectionService($mockReflectionService);
+
+        $proxyCode = $mockProxyClass->_call('buildLazyProxyClass', $originalClassName);
 
         self::assertEquals($expectedProxyCode, $proxyCode);
     }
