@@ -82,10 +82,10 @@ final class DenormalizingObjectConverter implements TypeConverterInterface
                     return method_exists($targetType, 'fromString');
                 case 'bool':
                 case 'boolean':
-                    return method_exists($targetType, 'fromBool');
+                    return method_exists($targetType, 'fromBool') || method_exists($targetType, 'fromBoolean');
                 case 'int':
                 case 'integer':
-                    return method_exists($targetType, 'fromInt');
+                    return method_exists($targetType, 'fromInt') || method_exists($targetType, 'fromInteger');
                 case 'double':
                 case 'float':
                     return method_exists($targetType, 'fromFloat');
@@ -155,19 +155,21 @@ final class DenormalizingObjectConverter implements TypeConverterInterface
      */
     public static function convertFromSource($source, string $targetType)
     {
-        switch (gettype($source)) {
-            case 'array':
-                return $targetType::fromArray($source);
-            case 'string':
-                return $targetType::fromString($source);
-            case 'boolean':
-                return $targetType::fromBool($source);
-            case 'integer':
-                return $targetType::fromInt($source);
-            case 'double':
-                return $targetType::fromFloat($source);
-            default:
-                break;
+        if (class_exists($targetType)) {
+            switch (gettype($source)) {
+                case 'array':
+                    return $targetType::fromArray($source);
+                case 'string':
+                    return $targetType::fromString($source);
+                case 'boolean':
+                    return method_exists($targetType, 'fromBool') ? $targetType::fromBool($source) : $targetType::fromBoolean($source);
+                case 'integer':
+                    return method_exists($targetType, 'fromInt') ? $targetType::fromInt($source) : $targetType::fromInteger($source);
+                case 'double':
+                    return $targetType::fromFloat($source);
+                default:
+                    break;
+            }
         }
 
         throw new TypeConverterException(
