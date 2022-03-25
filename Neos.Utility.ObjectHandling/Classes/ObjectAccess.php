@@ -115,9 +115,7 @@ abstract class ObjectAccess
 
         if ($forceDirectAccess === true) {
             if (property_exists($className, $propertyName)) {
-                $propertyReflection = new \ReflectionProperty($className, $propertyName);
-                $propertyReflection->setAccessible(true);
-                return $propertyReflection->getValue($subject);
+                return \Closure::bind(static fn &($subject) => $subject->{$propertyName}, null, $subject)($subject);
             }
             if (property_exists($subject, $propertyName)) {
                 return $subject->$propertyName;
@@ -249,9 +247,8 @@ abstract class ObjectAccess
         if ($forceDirectAccess === true) {
             $className = TypeHandling::getTypeForValue($subject);
             if (property_exists($className, $propertyName)) {
-                $propertyReflection = new \ReflectionProperty($className, $propertyName);
-                $propertyReflection->setAccessible(true);
-                $propertyReflection->setValue($subject, $propertyValue);
+                $propertyReference = &\Closure::bind(static fn &($subject) => $subject->{$propertyName}, null, $subject)($subject);
+                $propertyReference = $propertyValue;
             } else {
                 $subject->$propertyName = $propertyValue;
             }
