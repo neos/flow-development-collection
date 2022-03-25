@@ -86,13 +86,13 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @param boolean $onlyAllowedObjects If true an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "allowed" (see AbstractPersistenceManager::allowObject())
      * @return void
-     * @throws PersistenceException
      * @api
      */
     public function persistAll(bool $onlyAllowedObjects = false): void
     {
         if (!$this->entityManager->isOpen()) {
-            $this->logger->error('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.', LogEnvironment::fromMethodName(__METHOD__));
+            $message = $this->throwableStorage->logThrowable(new PersistenceException('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error messages.', 1643015626));
+            $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return;
         }
 
