@@ -115,7 +115,11 @@ abstract class ObjectAccess
 
         if ($forceDirectAccess === true) {
             if (property_exists($className, $propertyName)) {
-                return \Closure::bind(static fn &($subject) => $subject->{$propertyName}, null, $subject)($subject);
+                $bound = \Closure::bind(static fn &($subject) => $subject->{$propertyName}, null, $subject);
+                if ($bound === false) {
+                    throw new PropertyNotAccessibleException('Could not bind to the subject to read the property "' . $propertyName . '" on the subject.', 1648229957);
+                }
+                return $bound($subject);
             }
             if (property_exists($subject, $propertyName)) {
                 return $subject->$propertyName;
@@ -229,6 +233,7 @@ abstract class ObjectAccess
      * @param boolean $forceDirectAccess directly access property using reflection(!)
      * @return boolean true if the property could be set, false otherwise
      * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
+     * @throws PropertyNotAccessibleException
      */
     public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
     {
@@ -247,7 +252,11 @@ abstract class ObjectAccess
         if ($forceDirectAccess === true) {
             $className = TypeHandling::getTypeForValue($subject);
             if (property_exists($className, $propertyName)) {
-                $propertyReference = &\Closure::bind(static fn &($subject) => $subject->{$propertyName}, null, $subject)($subject);
+                $bound = \Closure::bind(static fn &($subject) => $subject->{$propertyName}, null, $subject);
+                if ($bound === false) {
+                    throw new PropertyNotAccessibleException('Could not bind to the subject to set the property "' . $propertyName . '" on the subject.', 1648229960);
+                }
+                $propertyReference = &$bound($subject);
                 $propertyReference = $propertyValue;
             } else {
                 $subject->$propertyName = $propertyValue;
