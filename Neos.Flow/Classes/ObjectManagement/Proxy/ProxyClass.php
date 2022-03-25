@@ -93,11 +93,10 @@ class ProxyClass
      * Creates a new ProxyClass instance.
      *
      * @param string $fullOriginalClassName The fully qualified class name of the original class
-     * @psalm-param class-string $fullOriginalClassName
      */
-    public function __construct($fullOriginalClassName)
+    public function __construct(string $fullOriginalClassName)
     {
-        if (strpos($fullOriginalClassName, '\\') === false) {
+        if (!str_contains($fullOriginalClassName, '\\')) {
             $this->originalClassName = $fullOriginalClassName;
         } else {
             $this->namespace = substr($fullOriginalClassName, 0, strrpos($fullOriginalClassName, '\\'));
@@ -122,7 +121,7 @@ class ProxyClass
      *
      * @return ProxyConstructor
      */
-    public function getConstructor()
+    public function getConstructor(): ProxyConstructor
     {
         if (!isset($this->constructor)) {
             $this->constructor = new ProxyConstructor($this->fullOriginalClassName);
@@ -137,7 +136,7 @@ class ProxyClass
      * @param string $methodName The name of the methods to return
      * @return ProxyMethod
      */
-    public function getMethod($methodName)
+    public function getMethod(string $methodName): ProxyMethod
     {
         if ($methodName === '__construct') {
             return $this->getConstructor();
@@ -156,7 +155,7 @@ class ProxyClass
      * @param string $valueCode PHP code which assigns the value. Example: 'foo' (including quotes!)
      * @return void
      */
-    public function addConstant($name, $valueCode)
+    public function addConstant(string $name, string $valueCode)
     {
         $this->constants[$name] = $valueCode;
     }
@@ -170,7 +169,7 @@ class ProxyClass
      * @param string $docComment
      * @return void
      */
-    public function addProperty($name, $initialValueCode, $visibility = 'private', $docComment = '')
+    public function addProperty(string $name, string $initialValueCode, string $visibility = 'private', string $docComment = '')
     {
         // TODO: Add support for PHP attributes?
         $this->properties[$name] = [
@@ -216,7 +215,7 @@ class ProxyClass
      * @throws ClassLoadingForReflectionFailedException
      * @throws CannotBuildObjectException
      */
-    public function render()
+    public function render(): string
     {
         $proxyClassName = $this->originalClassName;
         $originalClassName = $this->originalClassName . Compiler::ORIGINAL_CLASSNAME_SUFFIX;
@@ -265,7 +264,7 @@ class ProxyClass
         }
 
         if (!$hasInterfaceWithConstructor && !$hasFinalMethod && !$this->reflectionService->isClassAbstract($this->fullOriginalClassName)) {
-            $classCode .= $this->buildLazyProxyClass($proxyClassName, $originalClassName);
+            $classCode .= $this->buildLazyProxyClass($proxyClassName);
         }
 
         return $classCode;
@@ -275,8 +274,9 @@ class ProxyClass
      * Builds the class documentation block for the specified class keeping doc comments and vital annotations
      *
      * @return string $methodDocumentation DocComment for the given method
+     * @throws ClassLoadingForReflectionFailedException
      */
-    protected function buildClassDocumentation()
+    protected function buildClassDocumentation(): string
     {
         $classReflection = new ClassReflection($this->fullOriginalClassName);
 
@@ -295,7 +295,7 @@ class ProxyClass
      *
      * @return string
      */
-    protected function renderConstantsCode()
+    protected function renderConstantsCode(): string
     {
         $code = '';
         foreach ($this->constants as $name => $valueCode) {
@@ -309,7 +309,7 @@ class ProxyClass
      *
      * @return string
      */
-    protected function renderPropertiesCode()
+    protected function renderPropertiesCode(): string
     {
         $code = '';
         foreach ($this->properties as $name => $attributes) {
@@ -326,7 +326,7 @@ class ProxyClass
      *
      * @return string
      */
-    protected function renderTraitsCode()
+    protected function renderTraitsCode(): string
     {
         if ($this->traits === []) {
             return '';
@@ -337,11 +337,10 @@ class ProxyClass
 
     /**
      * @param $proxyClassName
-     * @param string $originalClassName
      * @return string
      * @throws ReflectionException
      */
-    protected function buildLazyProxyClass($proxyClassName, string $originalClassName): string
+    protected function buildLazyProxyClass($proxyClassName): string
     {
         $methods = [$this->buildCallMagicMethod()];
 
