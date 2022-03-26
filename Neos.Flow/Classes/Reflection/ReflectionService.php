@@ -14,6 +14,7 @@ namespace Neos\Flow\Reflection;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\PhpParser;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Persistence\Proxy as DoctrineProxy;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
@@ -1236,7 +1237,7 @@ class ReflectionService
         $this->log(sprintf('Reflecting class %s', $className), LogLevel::DEBUG);
 
         $className = $this->cleanClassName($className);
-        if (strpos($className, 'Neos\Flow\Persistence\Doctrine\Proxies') === 0 && in_array(\Doctrine\ORM\Proxy\Proxy::class, class_implements($className))) {
+        if (strpos($className, 'Neos\Flow\Persistence\Doctrine\Proxies') === 0 && in_array(DoctrineProxy::class, class_implements($className))) {
             // Somebody tried to reflect a doctrine proxy, which will have severe side effects.
             // see bug http://forge.typo3.org/issues/29449 for details.
             throw new Exception\InvalidClassException('The class with name "' . $className . '" is a Doctrine proxy. It is not supported to reflect doctrine proxy classes.', 1314944681);
