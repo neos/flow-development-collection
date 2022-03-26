@@ -134,18 +134,14 @@ class DatabaseCommandController extends CommandController
 
         if ($outputPathAndFilename === null) {
             try {
-                $this->connection->beginTransaction();
                 foreach ($statements as $statement) {
                     if ($verbose) {
                         $this->outputLine($statement);
                     }
                     $this->connection->exec($statement);
                 }
-                $this->connection->commit();
             } catch (\Exception $exception) {
-                $this->connection->rollBack();
-                $this->outputLine($exception->getMessage());
-                $this->outputLine('[ERROR] The transaction was rolled back.');
+                $this->outputLine('<error>[ERROR] %s</error>', [$exception->getMessage()]);
             }
         } else {
             file_put_contents($outputPathAndFilename, implode(';' . PHP_EOL, $statements) . ';');
