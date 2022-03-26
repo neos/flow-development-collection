@@ -1801,17 +1801,15 @@ class ReflectionService
             // TODO: This needs to handle ReflectionUnionType
             $parameterType = ($parameterType instanceof \ReflectionNamedType) ? $parameterType->getName() : $parameterType->__toString();
         }
-        if ($parameterType !== null && !TypeHandling::isSimpleType($parameterType)) {
+        $builtinType = $parameter->getBuiltinType();
+        if ($parameterType !== null && $builtinType === null) {
             // We use parameter type here to make class_alias usage work and return the hinted class name instead of the alias
             $parameterInformation[self::DATA_PARAMETER_CLASS] = $parameterType;
         } elseif ($parameterType === 'array') {
             $parameterInformation[self::DATA_PARAMETER_ARRAY] = true;
         } else {
-            $builtinType = $parameter->getBuiltinType();
-            if ($builtinType !== null) {
-                $parameterInformation[self::DATA_PARAMETER_TYPE] = $builtinType;
-                $parameterInformation[self::DATA_PARAMETER_SCALAR_DECLARATION] = true;
-            }
+            $parameterInformation[self::DATA_PARAMETER_TYPE] = $builtinType;
+            $parameterInformation[self::DATA_PARAMETER_SCALAR_DECLARATION] = true;
         }
         if ($parameter->isOptional() && $parameter->isDefaultValueAvailable()) {
             $parameterInformation[self::DATA_PARAMETER_DEFAULT_VALUE] = $parameter->getDefaultValue();
