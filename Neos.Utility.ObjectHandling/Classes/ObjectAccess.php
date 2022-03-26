@@ -192,13 +192,8 @@ abstract class ObjectAccess
      * @param string $propertyPath
      * @return mixed Value of the property
      */
-    public static function getPropertyPath($subject, string $propertyPath = null)
+    public static function getPropertyPath($subject, string $propertyPath)
     {
-        // TODO: This default value handling is only in place for b/c to have this method accept nulls.
-        //       It can be removed with Flow 5.0 and other breaking typehint changes.
-        if ($propertyPath === null) {
-            return null;
-        }
         $propertyPathSegments = explode('.', $propertyPath);
         foreach ($propertyPathSegments as $pathSegment) {
             $propertyExists = false;
