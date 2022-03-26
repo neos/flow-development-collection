@@ -85,7 +85,7 @@ class ReflectionServiceTest extends UnitTestCase
      */
     public function getMethodParametersReturnsCorrectTypeForObjectType()
     {
-        $this->reflectionService->_call('reflectClass', Fixture\ClassWithAliasDependency::class);
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithBuiltinTypes::class);
         $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithBuiltinTypes::class, 'doCoolStuffWithObject');
         $this->assertEquals('object', $parameters['firstArgument']['type']);
         $this->assertTrue($parameters['firstArgument']['scalarDeclaration']);
@@ -96,8 +96,9 @@ class ReflectionServiceTest extends UnitTestCase
      */
     public function getMethodParametersReturnsCorrectTypeForIterableType()
     {
-        $this->reflectionService->_call('reflectClass', Fixture\ClassWithAliasDependency::class);
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithBuiltinTypes::class);
         $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithBuiltinTypes::class, 'doCoolStuffWithIterable');
+        var_dump($parameters);
         $this->assertEquals('iterable', $parameters['firstArgument']['type']);
         $this->assertTrue($parameters['firstArgument']['scalarDeclaration']);
     }
@@ -107,7 +108,7 @@ class ReflectionServiceTest extends UnitTestCase
      */
     public function getMethodParametersReturnsCorrectTypeForClassType()
     {
-        $this->reflectionService->_call('reflectClass', Fixture\ClassWithAliasDependency::class);
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithBuiltinTypes::class);
         $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithBuiltinTypes::class, 'doCoolStuffWithClass');
         $this->assertEquals('stdClass', $parameters['firstArgument']['class']);
         $this->assertEmpty($parameters['firstArgument']['scalarDeclaration']);
