@@ -11,6 +11,7 @@ namespace Neos\Utility;
  * source code.
  */
 
+use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
 
 /**
@@ -114,11 +115,20 @@ abstract class ObjectAccess
         $className = TypeHandling::getTypeForValue($subject);
 
         if ($forceDirectAccess === true) {
+            // try actual class property first
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
                 $propertyReflection->setAccessible(true);
                 return $propertyReflection->getValue($subject);
             }
+            // then see if it's a Flow proxy and try to get the parent class property
+            $className = get_parent_class($className);
+            if ($subject instanceof ProxyInterface && $className !== false && property_exists($className, $propertyName)) {
+                $propertyReflection = new \ReflectionProperty($className, $propertyName);
+                $propertyReflection->setAccessible(true);
+                return $propertyReflection->getValue($subject);
+            }
+            // then try to get the property directly
             if (property_exists($subject, $propertyName)) {
                 return $subject->$propertyName;
             }
@@ -229,6 +239,10 @@ abstract class ObjectAccess
      */
     public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
     {
+        if (!is_string($propertyName) && !is_int($propertyName)) {
+            throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
+        }
+
         if (is_array($subject)) {
             $subject[$propertyName] = $propertyValue;
             return true;
@@ -237,20 +251,24 @@ abstract class ObjectAccess
         if (!is_object($subject)) {
             throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject) . ' given.', 1237301368);
         }
-        if (!is_string($propertyName) && !is_int($propertyName)) {
-            throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
-        }
 
         if ($forceDirectAccess === true) {
+            if (!is_string($propertyName)) {
+                throw new \InvalidArgumentException('Given property name is not of type string.', 1648244846);
+            }
             $className = TypeHandling::getTypeForValue($subject);
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
                 $propertyReflection->setAccessible(true);
                 $propertyReflection->setValue($subject, $propertyValue);
+            } elseif ($subject instanceof ProxyInterface && property_exists(get_parent_class($className), $propertyName)) {
+                $propertyReflection = new \ReflectionProperty(get_parent_class($className), $propertyName);
+                $propertyReflection->setAccessible(true);
+                $propertyReflection->setValue($subject, $propertyValue);
             } else {
                 $subject->$propertyName = $propertyValue;
             }
-        } elseif (is_callable([$subject, $setterMethodName = self::buildSetterMethodName($propertyName)])) {
+        } elseif (is_callable([$subject, $setterMethodName = self::buildSetterMethodName((string)$propertyName)])) {
             $subject->$setterMethodName($propertyValue);
         } elseif ($subject instanceof \ArrayAccess) {
             $subject[$propertyName] = $propertyValue;
