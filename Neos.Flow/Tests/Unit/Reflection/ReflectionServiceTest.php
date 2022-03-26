@@ -83,6 +83,39 @@ class ReflectionServiceTest extends UnitTestCase
     /**
      * @test
      */
+    public function getMethodParametersReturnsCorrectTypeForObjectType()
+    {
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithAliasDependency::class);
+        $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithBuiltinTypes::class, 'doCoolStuffWithObject');
+        $this->assertEquals('object', $parameters['firstArgument']['type']);
+        $this->assertTrue($parameters['firstArgument']['scalarDeclaration']);
+    }
+
+    /**
+     * @test
+     */
+    public function getMethodParametersReturnsCorrectTypeForIterableType()
+    {
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithAliasDependency::class);
+        $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithBuiltinTypes::class, 'doCoolStuffWithIterable');
+        $this->assertEquals('iterable', $parameters['firstArgument']['type']);
+        $this->assertTrue($parameters['firstArgument']['scalarDeclaration']);
+    }
+
+    /**
+     * @test
+     */
+    public function getMethodParametersReturnsCorrectTypeForClassType()
+    {
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithAliasDependency::class);
+        $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithBuiltinTypes::class, 'doCoolStuffWithClass');
+        $this->assertEquals('stdClass', $parameters['firstArgument']['class']);
+        $this->assertEmpty($parameters['firstArgument']['scalarDeclaration']);
+    }
+
+    /**
+     * @test
+     */
     public function isTagIgnoredReturnsTrueForIgnoredTags()
     {
         $settings = ['reflection' => ['ignoredTags' => ['ignored' => true]]];
