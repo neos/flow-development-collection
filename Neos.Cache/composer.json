@@ -13,7 +13,7 @@
         "neos/utility-opcodecache": "*"
     },
     "require-dev": {
-        "mikey179/vfsstream": "^1.6.1",
+        "mikey179/vfsstream": "^1.6.10",
         "phpunit/phpunit": "~9.1"
     },
     "autoload": {
