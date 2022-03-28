@@ -60,11 +60,11 @@ class Logger implements LoggerInterface
 
     /**
      * @param mixed $level
-     * @param string $message
+     * @param string|\Stringable $message
      * @param array $context
      * @api
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, string|\Stringable $message, array $context = []): void
     {
         $backendLogLevel = self::LOGLEVEL_MAPPING[$level];
 
