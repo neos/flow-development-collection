@@ -44,7 +44,6 @@ class EntityWithUseStatements
     }
 
     /**
-     * @param PF\SubEntity $parameter
      * @return void
      */
     public function aliasedClassName(SubEntity $parameter)

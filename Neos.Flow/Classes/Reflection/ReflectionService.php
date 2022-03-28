@@ -93,6 +93,7 @@ class ReflectionService
     const DATA_PROPERTY_TYPE = 26;
     const DATA_PARAMETER_POSITION = 16;
     const DATA_PARAMETER_OPTIONAL = 17;
+    const DATA_PARAMETER_VARIADIC = 27;
     const DATA_PARAMETER_TYPE = 18;
     const DATA_PARAMETER_ARRAY = 19;
     const DATA_PARAMETER_CLASS = 20;
@@ -213,7 +214,7 @@ class ReflectionService
      *
      * @var array
      */
-    protected $classReflectionData = [];
+    public $classReflectionData = [];
 
     /**
      * Array with updated reflection information (e.g. in Development context after classes have changed)
@@ -809,10 +810,8 @@ class ReflectionService
 
             $method = new MethodReflection($className, $methodName);
             $methodAnnotations = $this->annotationReader->getMethodAnnotations($method);
-            if (PHP_MAJOR_VERSION >= 8) {
-                foreach ($method->getAttributes() as $attribute) {
-                    $methodAnnotations[] = $attribute->newInstance();
-                }
+            foreach ($method->getAttributes() as $attribute) {
+                $methodAnnotations[] = $attribute->newInstance();
             }
             $this->methodAnnotationsRuntimeCache[$className][$methodName] = $methodAnnotations;
         }
@@ -1280,12 +1279,10 @@ class ReflectionService
             $this->annotatedClasses[$annotationClassName][$className] = true;
             $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $annotation;
         }
-        if (PHP_MAJOR_VERSION >= 8) {
-            foreach ($class->getAttributes() as $attribute) {
-                $annotationClassName = $attribute->getName();
-                $this->annotatedClasses[$annotationClassName][$className] = true;
-                $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $attribute->newInstance();
-            }
+        foreach ($class->getAttributes() as $attribute) {
+            $annotationClassName = $attribute->getName();
+            $this->annotatedClasses[$annotationClassName][$className] = true;
+            $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $attribute->newInstance();
         }
 
         /** @var $property PropertyReflection */
@@ -1333,10 +1330,8 @@ class ReflectionService
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
         }
 
-        if (PHP_MAJOR_VERSION >= 8) {
-            foreach ($property->getAttributes() as $attribute) {
-                $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attribute->newInstance();
-            }
+        foreach ($property->getAttributes() as $attribute) {
+            $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attribute->newInstance();
         }
 
         return $visibility;
@@ -1427,10 +1422,15 @@ class ReflectionService
         }
 
         $returnType = $method->getDeclaredReturnType();
-        if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void', 'iterable', 'object', 'mixed']) && !TypeHandling::isSimpleType($returnType)) {
+        if (
+            $returnType !== null &&
+            !in_array($returnType, ['self', 'null', 'callable', 'void', 'iterable', 'object', 'mixed']) &&
+            !TypeHandling::isSimpleType($returnType) &&
+            !str_contains($returnType, '|')
+        ){
             $returnType = '\\' . $returnType;
         }
-        if ($method->isDeclaredReturnTypeNullable()) {
+        if ($method->isDeclaredReturnTypeNullable() && !str_contains($returnType, '|')) {
             $returnType = '?' . $returnType;
         }
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
@@ -1807,16 +1807,18 @@ class ReflectionService
             $parameters[$parameterName] = [
                 'position' => $parameterData[self::DATA_PARAMETER_POSITION],
                 'optional' => isset($parameterData[self::DATA_PARAMETER_OPTIONAL]),
+                'variadic' => isset($parameterData[self::DATA_PARAMETER_VARIADIC]),
                 'type' => $parameterData[self::DATA_PARAMETER_TYPE],
                 'class' => $parameterData[self::DATA_PARAMETER_CLASS] ?? null,
                 'array' => isset($parameterData[self::DATA_PARAMETER_ARRAY]),
                 'byReference' => isset($parameterData[self::DATA_PARAMETER_BY_REFERENCE]),
                 'allowsNull' => isset($parameterData[self::DATA_PARAMETER_ALLOWS_NULL]),
-                'defaultValue' => $parameterData[self::DATA_PARAMETER_DEFAULT_VALUE] ?? null,
                 'scalarDeclaration' => isset($parameterData[self::DATA_PARAMETER_SCALAR_DECLARATION])
             ];
+            if (isset($parameterData[self::DATA_PARAMETER_DEFAULT_VALUE])) {
+                $parameters[$parameterName]['defaultValue'] = $parameterData[self::DATA_PARAMETER_DEFAULT_VALUE];
+            }
         }
-
         return $parameters;
     }
 
@@ -1840,6 +1842,9 @@ class ReflectionService
         }
         if ($parameter->allowsNull()) {
             $parameterInformation[self::DATA_PARAMETER_ALLOWS_NULL] = true;
+        }
+        if ($parameter->isVariadic()) {
+            $parameterInformation[self::DATA_PARAMETER_VARIADIC] = true;
         }
 
         $parameterType = $parameter->getType();
@@ -1867,6 +1872,11 @@ class ReflectionService
             $explodedParameters = explode(' ', $paramAnnotations[$parameter->getPosition()]);
             if (count($explodedParameters) >= 2) {
                 $parameterType = $this->expandType($method->getDeclaringClass(), $explodedParameters[0]);
+                // Normalize invalid union types such as "mixed|something", because mixed cannot be composed in a union with any other types
+                if (str_contains($parameterType, 'mixed')) {
+                    $parameterType = 'mixed';
+                }
+
             }
         }
         if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterType !== null) {

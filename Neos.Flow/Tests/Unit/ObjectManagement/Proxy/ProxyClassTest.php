@@ -115,6 +115,8 @@ class ProxyClassTest extends UnitTestCase
                 'originalClassAnnotations' => [],
                 'originalClassDocumentation' => '',
                 'originalClassConstants' => [['name' => 'TEST_CONSTANT', 'value' => '1']],
+                'methodParameters' => [],
+                'methodReturnType' => 'void',
                 'expectedProxyCode' =>
                     "namespace Neos\Flow\Tests\Unit\ObjectManagement\Fixture;\n\n" .
                     "class ClassImplementingInterfaceWithConstructor_LazyProxy extends ClassImplementingInterfaceWithConstructor implements \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy\n" .
@@ -132,6 +134,31 @@ class ProxyClassTest extends UnitTestCase
                 'originalClassAnnotations' => [],
                 'originalClassDocumentation' => '',
                 'originalClassConstants' => [['name' => 'TEST_CONSTANT', 'value' => '1']],
+                'methodParameters' => [
+                    'argument' => [
+                        'position' => 0,
+                        'optional' => false,
+                        'type' => 'string',
+                        'class' => null,
+                        'array' => false,
+                        'byReference' => false,
+                        'allowsNull' => false,
+                        'defaultValue' => null,
+                        'scalarDeclaration' => true
+                    ],
+                    'flag' => [
+                        'position' => 1,
+                        'optional' => true,
+                        'type' => 'bool',
+                        'class' => null,
+                        'array' => false,
+                        'byReference' => false,
+                        'allowsNull' => true,
+                        'defaultValue' => false,
+                        'scalarDeclaration' => true
+                    ],
+                ],
+                'methodReturnType' => 'string',
                 'expectedProxyCode' =>
                     "namespace ;\n\n" .
                     "class ClassWithoutNamespace_LazyProxy extends ClassWithoutNamespace implements \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy\n" .
@@ -154,6 +181,31 @@ class ProxyClassTest extends UnitTestCase
                 'originalClassAnnotations' => [],
                 'originalClassDocumentation' => '',
                 'originalClassConstants' => [['name' => 'TEST_CONSTANT', 'value' => '1']],
+                'methodParameters' => [
+                    'argument' => [
+                        'position' => 0,
+                        'optional' => false,
+                        'type' => 'string',
+                        'class' => null,
+                        'array' => false,
+                        'byReference' => false,
+                        'allowsNull' => false,
+                        'defaultValue' => null,
+                        'scalarDeclaration' => true
+                    ],
+                    'flag' => [
+                        'position' => 1,
+                        'optional' => true,
+                        'type' => 'bool',
+                        'class' => null,
+                        'array' => false,
+                        'byReference' => false,
+                        'allowsNull' => true,
+                        'defaultValue' => false,
+                        'scalarDeclaration' => true
+                    ],
+                ],
+                'methodReturnType' => 'string',
                 'expectedProxyCode' =>
                     "class ClassWithoutNamespace_LazyProxy extends ClassWithoutNamespace implements \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy\n" .
                     "{\n" .
@@ -177,13 +229,21 @@ class ProxyClassTest extends UnitTestCase
      * @test
      * @dataProvider lazyProxyClassesDataProvider
      */
-    public function lazyProxyClassIsRenderedAsExpected($originalClassName, $originalClassAnnotations, $originalClassDocumentation, $originalClassConstants, $expectedProxyCode)
+    public function lazyProxyClassIsRenderedAsExpected($originalClassName, $originalClassAnnotations, $originalClassDocumentation, $originalClassConstants, $methodParameters, $methodReturnType, $expectedProxyCode)
     {
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects(self::once())->method('isMethodPublic')->will(self::returnValue(true));
+        $mockReflectionService->expects(self::any())->method('isMethodPublic')->will(self::returnValue(true));
+        $mockReflectionService->expects(self::any())->method('isMethodStatic')->will(self::returnCallback(function ($className, $methodName) use ($methodParameters) {
+            return $methodName === 'aStaticFunction';
+        }));
         $mockReflectionService->expects(self::any())->method('isClassAbstract')->will(self::returnValue(str_contains($expectedProxyCode, 'abstract ')));
         $mockReflectionService->expects(self::any())->method('getClassAnnotations')->will(self::returnValue($originalClassAnnotations));
-
+        $mockReflectionService->expects(self::any())->method('getMethodParameters')->will(self::returnCallback(function ($className, $methodName) use ($methodParameters) {
+            return ($methodName === 'doSomething') ? $methodParameters : [];
+        }));
+        $mockReflectionService->expects(self::any())->method('getMethodDeclaredReturnType')->will(self::returnCallback(function ($className, $methodName) use ($methodReturnType) {
+            return ($methodName === 'doSomething') ? $methodReturnType : 'void';
+        }));
         $mockProxyClass = $this->getAccessibleMock(ProxyClass::class, ['buildClassDocumentation'], [$originalClassName], '', true);
         $mockProxyClass->injectReflectionService($mockReflectionService);
 

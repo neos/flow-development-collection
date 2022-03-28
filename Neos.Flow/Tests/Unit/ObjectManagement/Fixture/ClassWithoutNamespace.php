@@ -10,8 +10,21 @@
  * source code.
  */
 
+use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass;
+
 class ClassWithoutNamespace
 {
+
+    protected $someService;
+
+    /**
+     * @param BasicClass $someService
+     */
+    public function injectSomeService(BasicClass $someService)
+    {
+        $this->someService = $someService;
+    }
+
     /**
      * Some method
      *
@@ -26,5 +39,20 @@ class ClassWithoutNamespace
             throw new Exception('Something went wrong');
         }
         return $argument;
+    }
+
+    /**
+     * @return static
+     */
+    public static function aStaticFunction(): static
+    {
+        return new static();
+    }
+
+    /**
+     * @return void
+     */
+    public function shutdownObject(): void
+    {
     }
 }

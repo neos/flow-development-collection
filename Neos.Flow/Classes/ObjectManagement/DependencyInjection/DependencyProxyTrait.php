@@ -11,6 +11,8 @@ namespace Neos\Flow\ObjectManagement\DependencyInjection;
  * source code.
  */
 
+use Closure;
+
 trait DependencyProxyTrait
 {
     /**
@@ -19,7 +21,7 @@ trait DependencyProxyTrait
     protected $_dependencyClassName;
 
     /**
-     * @var \Closure
+     * @var Closure
      */
     protected $_dependencyBuilder;
 
@@ -39,10 +41,10 @@ trait DependencyProxyTrait
      * Constructs this proxy
      *
      * @param string $className Implementation class name of the dependency to proxy
-     * @param \Closure $builder The closure which eventually builds the dependency
+     * @param Closure $builder The closure which eventually builds the dependency
      * @return static
      */
-    public static function _createDependencyProxy(string $className, \Closure $builder)
+    public static function _createDependencyProxy(string $className, Closure $builder): static
     {
         $instance = new static();
         $instance->_dependencyClassName = $className;
@@ -56,7 +58,7 @@ trait DependencyProxyTrait
      * @return object The real dependency object
      * @api
      */
-    public function _activateDependency()
+    public function _activateDependency(): object
     {
         $realDependency = $this->_dependencyBuilder->__invoke();
         foreach ($this->_dependencyPropertyVariables as &$propertyVariable) {
@@ -83,7 +85,7 @@ trait DependencyProxyTrait
      * @param mixed &$propertyVariable The variable to replace
      * @return void
      */
-    public function _addPropertyVariable(&$propertyVariable): void
+    public function _addPropertyVariable(mixed &$propertyVariable): void
     {
         $this->_dependencyPropertyVariables[] = &$propertyVariable;
     }

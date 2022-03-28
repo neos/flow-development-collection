@@ -14,7 +14,9 @@ namespace Neos\Flow\ObjectManagement\Proxy;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\MethodGenerator;
 use Laminas\Code\Generator\ParameterGenerator;
+use Laminas\Code\Reflection\MethodReflection;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxyTrait;
 use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
@@ -30,6 +32,16 @@ use ReflectionException;
  */
 class ProxyClass
 {
+    private const LAZY_PROXY_IGNORED_METHOD_NAMES = [
+        '__construct',
+        '__clone',
+        '__sleep',
+        '__wakeup',
+        '__destruct',
+        '__call',
+        'shutdownObject',
+    ];
+
     /**
      * Namespace, extracted from the fully qualified original class name
      *
@@ -264,7 +276,7 @@ class ProxyClass
         }
 
         if (!$hasInterfaceWithConstructor && !$hasFinalMethod && !$this->reflectionService->isClassAbstract($this->fullOriginalClassName)) {
-            $classCode .= $this->buildLazyProxyClass($proxyClassName);
+#            $classCode .= $this->buildLazyProxyClass($proxyClassName);
         }
 
         return $classCode;
@@ -345,17 +357,22 @@ class ProxyClass
         $methods = [$this->buildCallMagicMethod()];
 
         foreach (get_class_methods($this->fullOriginalClassName) as $methodName) {
-            if (!$this->reflectionService->isMethodPublic($this->fullOriginalClassName, $methodName) || $methodName === '__call' || $methodName === '__construct') {
+            if (
+                !$this->reflectionService->isMethodPublic($this->fullOriginalClassName, $methodName) ||
+                $this->reflectionService->isMethodStatic($this->fullOriginalClassName, $methodName) ||
+                in_array($methodName, self::LAZY_PROXY_IGNORED_METHOD_NAMES) ||
+                str_starts_with($methodName, 'inject')
+            ) {
                 continue;
             }
             $methodReturnType = $this->reflectionService->getMethodDeclaredReturnType($this->fullOriginalClassName, $methodName);
             $returnKeyword = ($methodReturnType === 'void') ? '' : 'return ';
-            $method = MethodGenerator::fromReflection(new \Laminas\Code\Reflection\MethodReflection($this->fullOriginalClassName, $methodName));
-            $method->removeDocBlock();
+
+            $method = $this->copyMethodSignature($this->fullOriginalClassName, $methodName);
             $method->setBody(
                 <<< CODE
-                    \$arguments = func_get_args();
-                    {$returnKeyword}\$this->_activateDependency()->{$methodName}(...\$arguments);
+                \$arguments = func_get_args();
+                {$returnKeyword}\$this->_activateDependency()->{$methodName}(...\$arguments);
                 CODE
             );
             $methods[] = $method;
@@ -367,6 +384,7 @@ class ProxyClass
             ->removeMethod('__call')
             ->addMethods($methods)
             ->addTrait('\\' . DependencyProxyTrait::class);
+
         // This is just for making Psalm happy, since addTrait() returns TraitUsageInterface which doesn't provide generate()
         assert($classGenerator instanceof ClassGenerator);
         return $classGenerator->generate();
@@ -397,4 +415,85 @@ class ProxyClass
         $callMagicMethod->removeDocBlock();
         return $callMagicMethod;
     }
+
+    /**
+     * Uses the Flow Reflection Service to copy the method signature.
+     *
+     * @param string $fullOriginalClassName
+     * @param string $methodName
+     * @return MethodGenerator
+     * @throws Exception
+     */
+    protected function copyMethodSignature(string $fullOriginalClassName, string $methodName): MethodGenerator
+    {
+        $method = new MethodGenerator($methodName);
+
+        $returnType = $this->reflectionService->getMethodDeclaredReturnType($fullOriginalClassName, $methodName);
+
+        // Normalize invalid types such as array<TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface>
+        $returnType = preg_replace('/^([a-zA-z0-9\\\\]+)<([a-zA-Z0-9\\\\]+)>$/', '$1', $returnType);
+        try {
+            if (!empty($returnType)) {
+                $method->setReturnType($returnType);
+            }
+        } catch (\Laminas\Code\Generator\Exception\InvalidArgumentException $exception) {
+            throw new Exception(sprintf('Failed reflecting signature of method %s while creating proxy class for %s: %s', $methodName, $fullOriginalClassName, $exception->getMessage()));
+        }
+        $method->setReturnsReference(str_contains($returnType, '&'));
+
+        if ($this->reflectionService->isMethodPrivate($fullOriginalClassName, $methodName)) {
+            $method->setVisibility(MethodGenerator::VISIBILITY_PRIVATE);
+        } elseif ($this->reflectionService->isMethodProtected($fullOriginalClassName, $methodName)) {
+            $method->setVisibility(MethodGenerator::VISIBILITY_PROTECTED);
+        } else {
+            $method->setVisibility(MethodGenerator::VISIBILITY_PUBLIC);
+        }
+
+        $method->setStatic($this->reflectionService->isMethodStatic($fullOriginalClassName, $methodName));
+
+        // FIXME: Support abstract methods
+        # $method->setAbstract($this->reflectionService->isMethodAbstract($className, $methodName));
+        foreach ($this->reflectionService->getMethodParameters($fullOriginalClassName, $methodName) as $methodParameterName => $methodParameter) {
+            // FIXME: Implement support for promoted properties
+
+            $parameterDefinition = [
+                'name' => $methodParameterName,
+                'passedByReference' => $methodParameter['byReference'],
+                'position' => $methodParameter['position'],
+                'sourceDirty' => true,
+#                'omitDefaultValue' => $methodParameter['optional'] !== true,
+            ];
+
+            if ($methodParameter['class'] || $methodParameter['scalarDeclaration']) {
+
+                // Normalize invalid types such as array<TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface>
+                $type = preg_replace('/^([a-zA-z0-9\\\\]+)<([a-zA-Z0-9\\\\]+)>$/', '$1', $methodParameter['type']);
+                if (!empty($type)) {
+                    $parameterDefinition['type'] = $type;
+                }
+            }
+
+            $parameter = ParameterGenerator::fromArray($parameterDefinition);
+
+            if ($methodParameter['variadic']) {
+                $parameter->setVariadic($methodParameter['variadic']);
+            } elseif ($methodParameter['optional']) {
+                if (isset($methodParameter['defaultValue'])) {
+                    $parameter->setDefaultValue($methodParameter['defaultValue']);
+                } else {
+                    $parameter->setDefaultValue(null);
+                    $parameter->omitDefaultValue(true);
+                }
+            }
+
+            $method->setParameter($parameter);
+            if ($fullOriginalClassName === 'Neos\Flow\Monitor\FileMonitor' && $methodName === 'monitorDirectory') {
+                var_dump($methodName, $methodParameter);
+#                var_dump($method->getParameters());
+            }
+        }
+
+        return $method;
+    }
+
 }
