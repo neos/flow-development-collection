@@ -897,9 +897,7 @@ class Scripts
     /**
      * Check if the old fallback classloader should be used.
      *
-     * The old class loader is used only in the cases:
-     * * the environment variable "FLOW_ONLY_COMPOSER_LOADER" is not set or false
-     * * in a testing context
+     * The old class loader is used only in a testing context.
      *
      * @param Bootstrap $bootstrap
      * @return bool
