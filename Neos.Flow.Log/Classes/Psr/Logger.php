@@ -71,6 +71,9 @@ class Logger implements LoggerInterface
         list($packageKey, $className, $methodName) = $this->extractLegacyDataFromContext($context);
         $additionalData = $this->removeLegacyDataFromContext($context);
 
+        if ($message instanceof \Stringable) {
+            $message = (string) $message;
+        }
         foreach ($this->backends as $backend) {
             $backend->append($message, $backendLogLevel, $additionalData, $packageKey, $className, $methodName);
         }
