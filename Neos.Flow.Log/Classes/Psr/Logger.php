@@ -60,17 +60,20 @@ class Logger implements LoggerInterface
 
     /**
      * @param mixed $level
-     * @param string $message
+     * @param string|\Stringable $message
      * @param array $context
      * @api
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, string|\Stringable $message, array $context = []): void
     {
         $backendLogLevel = self::LOGLEVEL_MAPPING[$level];
 
         list($packageKey, $className, $methodName) = $this->extractLegacyDataFromContext($context);
         $additionalData = $this->removeLegacyDataFromContext($context);
 
+        if ($message instanceof \Stringable) {
+            $message = (string) $message;
+        }
         foreach ($this->backends as $backend) {
             $backend->append($message, $backendLogLevel, $additionalData, $packageKey, $className, $methodName);
         }

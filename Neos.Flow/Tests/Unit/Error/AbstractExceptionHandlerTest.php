@@ -38,7 +38,7 @@ class AbstractExceptionHandlerTest extends UnitTestCase
         $exception = new \Exception('The Message', 12345);
 
         $mockThrowableStorage = $this->createMock(ThrowableStorageInterface::class);
-        $mockThrowableStorage->expects(self::once())->method('logThrowable')->with($exception);
+        $mockThrowableStorage->expects(self::once())->method('logThrowable')->with($exception)->willReturn('Exception got logged!');
 
         $mockLogger = $this->createMock(LoggerInterface::class);
 
