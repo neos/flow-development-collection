@@ -467,11 +467,11 @@ class ProxyClassBuilder
         }
 
         # Disable lazy property injection, see https://github.com/neos/flow-development-collection/issues/2114
-//        if ($propertyConfiguration->isLazyLoading() && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
-//            return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
-//        } else {
+        if ($propertyConfiguration->isLazyLoading() && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
+            return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
+        } else {
             return ['    $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
-//        }
+        }
     }
 
     /**

@@ -561,14 +561,18 @@ class ConfigurationBuilder
                 if (!array_key_exists($propertyName, $properties)) {
                     /** @var Inject $injectAnnotation */
                     $injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, Inject::class);
+                    $enableLazyInjection = $injectAnnotation->lazy;
                     $objectName = $injectAnnotation->name;
                     if ($objectName === null) {
                         $objectName = $this->reflectionService->getPropertyType($className, $propertyName);
+                        if ($objectName !== null) {
+                            $enableLazyInjection = false; # See:  https://github.com/neos/flow-development-collection/issues/2114
+                        }
                     }
                     if ($objectName === null) {
                         $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
                     }
-                    $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $injectAnnotation->lazy);
+                    $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $enableLazyInjection);
                     $properties[$propertyName] = $configurationProperty;
                 }
             }
