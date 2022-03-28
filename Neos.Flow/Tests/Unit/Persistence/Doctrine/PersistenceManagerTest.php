@@ -80,6 +80,7 @@ class PersistenceManagerTest extends UnitTestCase
         $this->inject($this->persistenceManager, 'logger', $this->mockSystemLogger);
 
         $mockThrowableStorage = $this->getMockBuilder(ThrowableStorageInterface::class)->getMock();
+        $mockThrowableStorage->method('logThrowable')->willReturn('Exception got logged!');
         $this->inject($this->persistenceManager, 'throwableStorage', $mockThrowableStorage);
 
         $allowedObjectsContainer = new AllowedObjectsContainer();
