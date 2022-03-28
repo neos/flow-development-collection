@@ -91,7 +91,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * @return void
      * @api
      */
-    public function allowObject($object): void
+    public function allowObject($object)
     {
         $this->allowedObjects->attach($object);
     }
@@ -103,7 +103,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * @return array The identity array in the format array('__identity' => '...')
      * @throws Exception\UnknownObjectException if the given object is not known to the Persistence Manager
      */
-    public function convertObjectToIdentityArray(object $object): array
+    public function convertObjectToIdentityArray($object): array
     {
         $identifier = $this->getIdentifierByObject($object);
         if ($identifier === null) {

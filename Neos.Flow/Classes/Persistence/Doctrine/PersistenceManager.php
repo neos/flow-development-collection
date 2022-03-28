@@ -122,7 +122,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return boolean true if the object is new, false if the object exists in the repository
      * @api
      */
-    public function isNewObject(object $object): bool
+    public function isNewObject($object): bool
     {
         return ($this->entityManager->getUnitOfWork()->getEntityState($object, UnitOfWork::STATE_NEW) === UnitOfWork::STATE_NEW);
     }
@@ -141,7 +141,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @todo improve try/catch block
      * @api
      */
-    public function getIdentifierByObject(object $object)
+    public function getIdentifierByObject($object)
     {
         if (property_exists($object, 'Persistence_Object_Identifier')) {
             $identifierCandidate = ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
@@ -207,7 +207,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @throws PropertyNotAccessibleException
      * @api
      */
-    public function add(object $object): void
+    public function add($object): void
     {
         if (!$this->isNewObject($object)) {
             throw new KnownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
@@ -227,7 +227,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return void
      * @api
      */
-    public function remove(object $object): void
+    public function remove($object): void
     {
         $this->entityManager->remove($object);
     }
@@ -242,7 +242,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @throws PropertyNotAccessibleException
      * @api
      */
-    public function update(object $object): void
+    public function update($object): void
     {
         if ($this->isNewObject($object)) {
             throw new UnknownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->update() is not a previously persisted object. Check the code which updates this entity and make sure that only objects are updated which were persisted before. Alternatively use add() for persisting new objects."', 1313663277);
