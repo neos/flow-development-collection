@@ -91,6 +91,7 @@ class ReflectionService
     const DATA_PROPERTY_TAGS_VALUES = 14;
     const DATA_PROPERTY_ANNOTATIONS = 15;
     const DATA_PROPERTY_VISIBILITY = 24;
+    const DATA_PROPERTY_TYPE = 26;
     const DATA_PARAMETER_POSITION = 16;
     const DATA_PARAMETER_OPTIONAL = 17;
     const DATA_PARAMETER_TYPE = 18;
@@ -997,6 +998,18 @@ class ReflectionService
     }
 
     /**
+     * Returns the property type
+     *
+     * @param $className
+     * @param $propertyName
+     * @return string|null
+     */
+    public function getPropertyType($className, $propertyName)
+    {
+        return $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TYPE] ?? null;
+    }
+
+    /**
      * Tells if the specified property is private
      *
      * @param string $className Name of the class containing the method
@@ -1303,6 +1316,9 @@ class ReflectionService
     {
         $propertyName = $property->getName();
         $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName] = [];
+        if ($property->hasType()) {
+            $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TYPE] = trim((string)$property->getType(), '?');
+        }
 
         $visibility = $property->isPublic() ? self::VISIBILITY_PUBLIC : ($property->isProtected() ? self::VISIBILITY_PROTECTED : self::VISIBILITY_PRIVATE);
         $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] = $visibility;
@@ -1315,7 +1331,7 @@ class ReflectionService
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tagName] = $tagValues;
         }
 
-        foreach ($this->annotationReader->getPropertyAnnotations($property, $propertyName) as $annotation) {
+        foreach ($this->annotationReader->getPropertyAnnotations($property) as $annotation) {
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
         }
         if (PHP_MAJOR_VERSION >= 8) {
