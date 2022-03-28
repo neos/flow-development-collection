@@ -231,6 +231,4 @@ class SimpleCache implements CacheInterface
         );
         return $lifetime;
     }
-
-
 }
