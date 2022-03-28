@@ -25,6 +25,7 @@ class LazyDependencyInjectionTest extends FunctionalTestCase
      */
     public function lazyDependencyIsOnlyInjectedIfMethodOnDependencyIsCalledForTheFirstTime()
     {
+        $this->markTestSkipped('Lazy dependency injection is currently disabled.'); # See https://github.com/neos/flow-development-collection/issues/2114
         $this->objectManager->forgetInstance(Fixtures\SingletonClassA::class);
 
         $object = $this->objectManager->get(Fixtures\ClassWithLazyDependencies::class);
@@ -53,6 +54,7 @@ class LazyDependencyInjectionTest extends FunctionalTestCase
      */
     public function lazyDependencyIsInjectedIntoAllClassesWhichNeedItIfItIsUsedTheFirstTime()
     {
+        $this->markTestSkipped('Lazy dependency injection is currently disabled.'); # See https://github.com/neos/flow-development-collection/issues/2114
         $this->objectManager->forgetInstance(Fixtures\SingletonClassA::class);
         $this->objectManager->forgetInstance(Fixtures\SingletonClassB::class);
 
