@@ -58,7 +58,7 @@ interface PersistenceManagerInterface
      * @return boolean true if the object is new, false if the object exists in the repository
      * @api
      */
-    public function isNewObject(object $object): bool;
+    public function isNewObject($object): bool;
 
     /**
      * Registers an object which has been created or cloned during this request.
@@ -87,7 +87,7 @@ interface PersistenceManagerInterface
      * @return mixed The identifier for the object if it is known, or NULL
      * @api
      */
-    public function getIdentifierByObject(object $object);
+    public function getIdentifierByObject($object);
 
     /**
      * Returns the object with the (internal) identifier, if it is known to the
@@ -110,7 +110,7 @@ interface PersistenceManagerInterface
      * @throws UnknownObjectException if the given object is not known to the Persistence Manager
      * @api
      */
-    public function convertObjectToIdentityArray(object $object): array;
+    public function convertObjectToIdentityArray($object): array;
 
     /**
      * Recursively iterates through the given array and turns objects
@@ -140,7 +140,7 @@ interface PersistenceManagerInterface
      * @return void
      * @api
      */
-    public function add(object $object): void;
+    public function add($object): void;
 
     /**
      * Removes an object to the persistence.
@@ -149,7 +149,7 @@ interface PersistenceManagerInterface
      * @return void
      * @api
      */
-    public function remove(object $object): void;
+    public function remove($object): void;
 
     /**
      * Update an object in the persistence.
@@ -159,7 +159,7 @@ interface PersistenceManagerInterface
      * @throws UnknownObjectException
      * @api
      */
-    public function update(object $object): void;
+    public function update($object): void;
 
     /**
      * Adds the given object to a list of allowed objects which may be persisted when persistAll() is called with the
@@ -169,7 +169,7 @@ interface PersistenceManagerInterface
      * @return void
      * @api
      */
-    public function allowObject(object $object): void;
+    public function allowObject($object);
 
     /**
      * Returns true, if an active connection to the persistence
