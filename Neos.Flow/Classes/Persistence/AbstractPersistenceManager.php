@@ -92,7 +92,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * @return void
      * @api
      */
-    public function allowObject($object)
+    public function allowObject(object $object): void
     {
         $this->allowedObjects->attach($object);
     }
