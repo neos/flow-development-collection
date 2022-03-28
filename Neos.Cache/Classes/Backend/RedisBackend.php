@@ -238,7 +238,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             redis.call('DEL', key)
         end
         ";
-        $this->redis->eval($script, [$this->getPrefixedIdentifier('frozen'), $this->getPrefixedIdentifier('')], 1);
+        $this->redis->eval($script, [$this->getPrefixedIdentifier('')], 0);
 
         $this->frozen = null;
         $this->entryIterator = null;
