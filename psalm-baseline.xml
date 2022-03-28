@@ -3035,6 +3035,16 @@
       <code>FLOW_VERSION_BRANCH</code>
     </UndefinedConstant>
   </file>
+  <file src="Packages/Framework/Neos.Http.Factories/Classes/HttpFactory.php">
+    <UndefinedConstant occurrences="1">
+      <code>FLOW_VERSION_BRANCH</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Http.Factories/Classes/ServerRequestFactoryTrait.php">
+    <UndefinedConstant occurrences="1">
+      <code>FLOW_VERSION_BRANCH</code>
+    </UndefinedConstant>
+  </file>
   <file src="Packages/Framework/Neos.Kickstarter/Classes/Command/KickstartCommandController.php">
     <InvalidReturnType occurrences="7">
       <code>boolean</code>
