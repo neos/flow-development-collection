@@ -293,9 +293,7 @@ abstract class Arrays
                 }
             }
         }
-        return is_int($sortFlags)
-            ? ksort($array, $sortFlags)
-            : ksort($array);
+        return ksort($array, $sortFlags);
     }
 
     /**
