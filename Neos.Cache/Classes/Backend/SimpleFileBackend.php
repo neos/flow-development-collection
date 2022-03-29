@@ -344,7 +344,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return mixed
      * @api
      */
-    public function current()
+    public function current(): mixed
     {
         if ($this->cacheFilesIterator === null) {
             $this->rewind();
@@ -360,7 +360,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
-    public function next()
+    public function next(): void
     {
         if ($this->cacheFilesIterator === null) {
             $this->rewind();
@@ -406,7 +406,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->cacheFilesIterator === null) {
             $this->cacheFilesIterator = new \DirectoryIterator($this->cacheDirectory);

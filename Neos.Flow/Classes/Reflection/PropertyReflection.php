@@ -93,8 +93,7 @@ class PropertyReflection extends \ReflectionProperty
      * @return mixed Value of the property
      * @throws Exception
      */
-    #[\ReturnTypeWillChange]
-    public function getValue($object = null)
+    public function getValue($object = null): mixed
     {
         if (!is_object($object)) {
             throw new Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);

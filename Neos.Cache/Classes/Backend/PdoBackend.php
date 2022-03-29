@@ -537,7 +537,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return mixed
      * @api
      */
-    public function current()
+    public function current(): mixed
     {
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
@@ -551,7 +551,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function next()
+    public function next(): void
     {
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
@@ -595,7 +595,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function rewind()
+    public function rewind(): void
     {
         try {
             $this->connect();

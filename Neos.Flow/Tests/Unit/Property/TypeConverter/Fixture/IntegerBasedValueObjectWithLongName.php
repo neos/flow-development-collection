@@ -46,7 +46,7 @@ final class IntegerBasedValueObjectWithLongName implements \JsonSerializable
     /**
      * @return int
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->value;
     }

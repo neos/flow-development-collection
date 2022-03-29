@@ -113,7 +113,7 @@ class ClassReflection extends \ReflectionClass
      * @return ClassReflection|false Reflection of the parent class - if any
      */
     #[\ReturnTypeWillChange]
-    public function getParentClass()
+    public function getParentClass(): ClassReflection|false
     {
         $parentClass = parent::getParentClass();
         return ($parentClass === false) ? false : new ClassReflection($parentClass->getName());
