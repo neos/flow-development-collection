@@ -70,6 +70,9 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      */
     final public function match(&$routePath)
     {
+        if ($routePath === null || $routePath === '') {
+            return false;
+        }
         return $this->matchWithParameters($routePath, RouteParameters::createEmpty());
     }
 

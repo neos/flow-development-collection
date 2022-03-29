@@ -25,7 +25,7 @@ class Arguments extends \ArrayObject
      * Names of the arguments contained by this object
      * @var array
      */
-    protected $argumentNames = [];
+    protected array $argumentNames = [];
 
     /**
      * Adds or replaces the argument specified by $value. The argument's name is taken from the
@@ -37,7 +37,7 @@ class Arguments extends \ArrayObject
      * @throws \InvalidArgumentException if the argument is not a valid Controller Argument object
      * @api
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (!$value instanceof Argument) {
             throw new \InvalidArgumentException(sprintf('Controller arguments must be valid %s objects.', Argument::class), 1187953786);
@@ -56,7 +56,7 @@ class Arguments extends \ArrayObject
      * @throws \InvalidArgumentException if the argument is not a valid Controller Argument object
      * @api
      */
-    public function append($value)
+    public function append($value): void
     {
         if (!$value instanceof Argument) {
             throw new \InvalidArgumentException(sprintf('Controller arguments must be valid %s objects.', Argument::class), 1187953786);
@@ -71,7 +71,7 @@ class Arguments extends \ArrayObject
      * @return void
      * @api
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $translatedOffset = $this->validateArgumentExistence($offset);
         parent::offsetUnset($translatedOffset);
@@ -89,7 +89,7 @@ class Arguments extends \ArrayObject
      * @return boolean
      * @api
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         $translatedOffset = $this->validateArgumentExistence($offset);
         return parent::offsetExists($translatedOffset);
@@ -103,7 +103,7 @@ class Arguments extends \ArrayObject
      * @throws NoSuchArgumentException if the argument does not exist
      * @api
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         $translatedOffset = $this->validateArgumentExistence($offset);
         if ($translatedOffset === false) {

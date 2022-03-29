@@ -283,7 +283,7 @@ class IdentityRoutePart extends DynamicRoutePart
                         throw new InvalidUriPatternException(sprintf('Invalid uriPattern "%s" for route part "%s". Property "%s" must be of type string or \DateTime. "%s" given.', $this->getUriPattern(), $this->getName(), $propertyPath, is_object($dynamicPathSegment) ? get_class($dynamicPathSegment) : gettype($dynamicPathSegment)), 1316442409);
                     }
                 } else {
-                    $pathSegment .= $this->rewriteForUri($dynamicPathSegment);
+                    $pathSegment .= $this->rewriteForUri((string)$dynamicPathSegment);
                 }
             }
         }
@@ -316,7 +316,7 @@ class IdentityRoutePart extends DynamicRoutePart
      * @return string
      * @todo use transliteration of the I18n sub package
      */
-    protected function rewriteForUri($value)
+    protected function rewriteForUri(string $value)
     {
         $transliteration = [
             'ä' => 'ae',
