@@ -620,7 +620,7 @@ class Bootstrap
      * - $_SERVER[REDIRECT_ . $variableName] (again for php cgi environments)
      *
      * @param string $variableName
-     * @return string or NULL if this variable was not set at all.
+     * @return string|null NULL if this variable was not set at all.
      */
     public static function getEnvironmentConfigurationSetting(string $variableName)
     {
