@@ -823,7 +823,7 @@ class ReflectionService
             $methodAnnotations = $this->annotationReader->getMethodAnnotations($method);
             if (PHP_MAJOR_VERSION >= 8) {
                 foreach ($method->getAttributes() as $attribute) {
-                    if ($this->isAttributeIgnored($attribute->getName()) {
+                    if ($this->isAttributeIgnored($attribute->getName())) {
                         continue;
                     }
                     $methodAnnotations[] = $attribute->newInstance();
@@ -1300,7 +1300,7 @@ class ReflectionService
         if (PHP_MAJOR_VERSION >= 8) {
             foreach ($class->getAttributes() as $attribute) {
                 $annotationClassName = $attribute->getName();
-                if ($this->isAttributeIgnored($annotationClassName) {
+                if ($this->isAttributeIgnored($annotationClassName)) {
                     continue;
                 }
                 $this->annotatedClasses[$annotationClassName][$className] = true;
@@ -1353,7 +1353,7 @@ class ReflectionService
         }
         if (PHP_MAJOR_VERSION >= 8) {
             foreach ($property->getAttributes() as $attribute) {
-                if ($this->isAttributeIgnored($attribute->getName()) {
+                if ($this->isAttributeIgnored($attribute->getName())) {
                     continue;
                 }
                 $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attribute->newInstance();
