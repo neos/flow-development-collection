@@ -34,8 +34,8 @@
         "psr/http-server-middleware": "^1.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-client": "^1.0",
-        "psr/simple-cache": "^3.0",
-        "psr/cache": "~3.0",
+        "psr/simple-cache": "^2.0 || ^3.0",
+        "psr/cache": "^2.0 || ^3.0",
 
         "ramsey/uuid": "^3.0 || ^4.0",
 
