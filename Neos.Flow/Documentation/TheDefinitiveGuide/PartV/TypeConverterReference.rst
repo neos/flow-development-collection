@@ -47,6 +47,21 @@ TypeConverter which converts generic objects to arrays by converting and returni
 
 
 
+.. _`Flow TypeConverter Reference: ArrayObjectConverter`:
+
+ArrayObjectConverter
+--------------------
+
+Converter which transforms ArrayObjects to arrays.
+
+:Priority: 1
+:Target type: array
+:Source type: ArrayObject
+
+
+
+
+
 .. _`Flow TypeConverter Reference: ArrayTypeConverter`:
 
 ArrayTypeConverter
