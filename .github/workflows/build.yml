@@ -35,10 +35,10 @@ jobs:
           #  dependencies: 'highest'
 
           # Build for minimum dependencies.
-          #- php-versions: '7.3'
-          #  static-analysis: 'no'
-          #  experimental: false
-          #  dependencies: 'lowest'
+          - php-versions: '8.0'
+            static-analysis: 'no'
+            experimental: false
+            dependencies: 'lowest'
 
     runs-on: ubuntu-latest
     services:
