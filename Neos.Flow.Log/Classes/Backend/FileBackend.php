@@ -57,7 +57,7 @@ class FileBackend extends AbstractBackend
     protected $logMessageOrigin = false;
 
     /**
-     * @var resource
+     * @var resource|false
      */
     protected $fileHandle;
 
@@ -222,9 +222,9 @@ class FileBackend extends AbstractBackend
      * @param string $message The message to log
      * @param int $severity One of the LOG_* constants
      * @param mixed $additionalData A variable containing more information about the event to be logged
-     * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
-     * @param string $className Name of the class triggering the log (determined automatically if not specified)
-     * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
+     * @param string|null $packageKey Key of the package triggering the log (determined automatically if not specified)
+     * @param string|null $className Name of the class triggering the log (determined automatically if not specified)
+     * @param string|null $methodName Name of the method triggering the log (determined automatically if not specified)
      * @return void
      * @api
      */
@@ -241,7 +241,7 @@ class FileBackend extends AbstractBackend
         }
         $ipAddress = ($this->logIpAddress === true) ? str_pad(($_SERVER['REMOTE_ADDR'] ?? ''), 15) : '';
         $severityLabel = $this->severityLabels[$severity] ?? 'UNKNOWN  ';
-        $output = strftime('%y-%m-%d %H:%M:%S', time()) . $processId . ' ' . $ipAddress . $severityLabel . ' ' . str_pad((string)$packageKey, 20) . ' ' . $message;
+        $output = date('y-m-d H:i:s') . $processId . ' ' . $ipAddress . $severityLabel . ' ' . str_pad((string)$packageKey, 20) . ' ' . $message;
 
         if ($this->logMessageOrigin === true && ($className !== null || $methodName !== null)) {
             $output .= ' [logged in ' . $className . '::' . $methodName . '()]';
@@ -250,7 +250,7 @@ class FileBackend extends AbstractBackend
             $output .= PHP_EOL . (new PlainTextFormatter($additionalData))->format();
         }
         if ($this->fileHandle !== false) {
-            fputs($this->fileHandle, $output . PHP_EOL);
+            fwrite($this->fileHandle, $output . PHP_EOL);
         }
     }
 
