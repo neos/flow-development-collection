@@ -54,7 +54,8 @@ class LockManager
         $lockPath = $this->getLockPath();
         $this->lockPathAndFilename = $lockPath . md5(FLOW_PATH_ROOT) . '_Flow.lock';
         $this->lockFlagPathAndFilename = $lockPath . md5(FLOW_PATH_ROOT) . '_FlowIsLocked';
-        $this->lockHoldingPage = defined('FLOW_LOCKHOLDINGPAGE') ? FLOW_PATH_PACKAGES . FLOW_LOCKHOLDINGPAGE : FLOW_PATH_FLOW . 'Resources/Private/Core/LockHoldingStackPage.html';
+        $configuredLockHoldingPage = Bootstrap::getEnvironmentConfigurationSetting('FLOW_LOCKHOLDINGPAGE');
+        $this->lockHoldingPage = $configuredLockHoldingPage ? FLOW_PATH_PACKAGES . $configuredLockHoldingPage : FLOW_PATH_FLOW . 'Resources/Private/Core/LockHoldingStackPage.html';
         $this->removeExpiredLock();
     }
 
