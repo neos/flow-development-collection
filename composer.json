@@ -120,7 +120,7 @@
         }
     },
     "require-dev": {
-        "mikey179/vfsstream": "^1.6.1",
+        "mikey179/vfsstream": "^1.6.7",
         "phpunit/phpunit": "~9.1",
         "vimeo/psalm": "~4.9.3"
     },
