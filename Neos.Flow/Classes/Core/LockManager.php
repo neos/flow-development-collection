@@ -42,6 +42,11 @@ class LockManager
     protected $lockFlagPathAndFilename;
 
     /**
+     * @var string
+     */
+    protected $lockHoldingPage;
+
+    /**
      * @var resource
      */
     protected $lockResource;
