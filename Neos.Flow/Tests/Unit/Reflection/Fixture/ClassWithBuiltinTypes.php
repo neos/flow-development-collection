@@ -27,4 +27,12 @@ class ClassWithBuiltinTypes
     public function doCoolStuffWithClass(\stdClass $firstArgument)
     {
     }
+
+    public function doCoolStuffWithString(string $firstArgument)
+    {
+    }
+
+    public function doCoolStuffWithNullableString(?string $firstArgument)
+    {
+    }
 }

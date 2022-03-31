@@ -1809,7 +1809,11 @@ class ReflectionService
             $parameterInformation[self::DATA_PARAMETER_ARRAY] = true;
         } else {
             $parameterInformation[self::DATA_PARAMETER_TYPE] = $builtinType;
-            $parameterInformation[self::DATA_PARAMETER_SCALAR_DECLARATION] = true;
+            // The isSimpleType() check is needed to avoid a problem with AOP proxy building, see
+            // https://github.com/neos/flow-development-collection/pull/2786#issuecomment-1084450139
+            if ($parameterType !== null && !TypeHandling::isSimpleType($parameterType)) {
+                $parameterInformation[self::DATA_PARAMETER_SCALAR_DECLARATION] = true;
+            }
         }
         if ($parameter->isOptional() && $parameter->isDefaultValueAvailable()) {
             $parameterInformation[self::DATA_PARAMETER_DEFAULT_VALUE] = $parameter->getDefaultValue();
