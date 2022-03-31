@@ -1798,9 +1798,17 @@ class ReflectionService
 
         $parameterType = $parameter->getType();
         if ($parameterType !== null) {
-            if ($parameterType instanceof \ReflectionUnionType || $parameterType instanceof \ReflectionIntersectionType) {
-                // ReflectionUnionType as of PHP 8, ReflectionIntersectionType as of PHP 8.1
+            if ($parameterType instanceof \ReflectionUnionType) {
+                // ReflectionUnionType as of PHP 8
                 $parameterType = implode('|', array_map(
+                    static function (\ReflectionNamedType $type) {
+                        return $type->getName();
+                    },
+                    $parameterType->getTypes()
+                ));
+            } elseif ($parameterType instanceof \ReflectionIntersectionType) {
+                // ReflectionIntersectionType as of PHP 8.1
+                $parameterType = implode('&', array_map(
                     static function (\ReflectionNamedType $type) {
                         return $type->getName();
                     },
