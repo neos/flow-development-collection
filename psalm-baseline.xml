@@ -745,18 +745,14 @@
       <code>$this-&gt;lockResource</code>
       <code>$this-&gt;lockResource</code>
     </InvalidPropertyAssignmentValue>
-    <UndefinedConstant occurrences="4">
+    <UndefinedConstant occurrences="6">
+      <code>FLOW_PATH_FLOW</code>
+      <code>FLOW_PATH_PACKAGES</code>
       <code>FLOW_PATH_ROOT</code>
       <code>FLOW_PATH_ROOT</code>
       <code>FLOW_PATH_TEMPORARY</code>
       <code>FLOW_SAPITYPE</code>
     </UndefinedConstant>
-    <UndefinedThisPropertyAssignment occurrences="1">
-      <code>$this-&gt;lockHoldingPage</code>
-    </UndefinedThisPropertyAssignment>
-    <UndefinedThisPropertyFetch occurrences="1">
-      <code>$this-&gt;lockHoldingPage</code>
-    </UndefinedThisPropertyFetch>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Core/ProxyClassLoader.php">
     <UndefinedConstant occurrences="1">
@@ -3353,10 +3349,7 @@
     </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Utility.ObjectHandling/Classes/ObjectAccess.php">
-    <InvalidScalarArgument occurrences="4">
-      <code>$propertyName</code>
-      <code>$propertyName</code>
-      <code>$propertyName</code>
+    <InvalidScalarArgument occurrences="1">
       <code>$propertyName</code>
     </InvalidScalarArgument>
   </file>
