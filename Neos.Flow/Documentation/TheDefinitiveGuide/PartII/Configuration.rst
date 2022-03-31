@@ -196,7 +196,7 @@ Variable                      Description
 ``FLOW_ROOTPATH``             Can be used to override the path to the Flow root.
 ``FLOW_CONTEXT``              Use to set the flow context (see above).
 ``FLOW_PATH_TEMPORARY_BASE``  Can be used to set a path for temporary data.
-``FLOW_LOCKHOLDINGPAGE``      Use to specify the html page shown when the site is
+``FLOW_LOCK_HOLDING_PAGE``    Use to specify the html page shown when the site is
                               locked. This is relative to the Packages directory.
                               Can be given as ``FLOW_LOCKHOLDINGPAGE``, too.
                               That is deprecated as of Flow 8.0.
