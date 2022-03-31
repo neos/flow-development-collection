@@ -774,6 +774,17 @@ class ReflectionService
     }
 
     /**
+     * Tells if a specific PHP attribute is to be ignored for reflection
+     */
+    public function isAttributeIgnored(string $attributeName): bool
+    {
+        if (in_array($attributeName, ['ReturnTypeWillChange']) && !class_exists($attributeName)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Tells if the specified method has the given annotation
      *
      * @param string $className Name of the class
@@ -812,6 +823,9 @@ class ReflectionService
             $methodAnnotations = $this->annotationReader->getMethodAnnotations($method);
             if (PHP_MAJOR_VERSION >= 8) {
                 foreach ($method->getAttributes() as $attribute) {
+                    if ($this->isAttributeIgnored($attribute->getName())) {
+                        continue;
+                    }
                     $methodAnnotations[] = $attribute->newInstance();
                 }
             }
@@ -1286,6 +1300,9 @@ class ReflectionService
         if (PHP_MAJOR_VERSION >= 8) {
             foreach ($class->getAttributes() as $attribute) {
                 $annotationClassName = $attribute->getName();
+                if ($this->isAttributeIgnored($annotationClassName)) {
+                    continue;
+                }
                 $this->annotatedClasses[$annotationClassName][$className] = true;
                 $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $attribute->newInstance();
             }
@@ -1336,6 +1353,9 @@ class ReflectionService
         }
         if (PHP_MAJOR_VERSION >= 8) {
             foreach ($property->getAttributes() as $attribute) {
+                if ($this->isAttributeIgnored($attribute->getName())) {
+                    continue;
+                }
                 $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attribute->newInstance();
             }
         }

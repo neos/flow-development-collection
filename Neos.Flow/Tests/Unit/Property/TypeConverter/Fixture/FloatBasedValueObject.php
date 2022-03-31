@@ -46,7 +46,7 @@ final class FloatBasedValueObject implements \JsonSerializable
     /**
      * @return float
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->value;
     }

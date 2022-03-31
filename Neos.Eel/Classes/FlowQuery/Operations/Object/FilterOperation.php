@@ -192,7 +192,7 @@ class FilterOperation extends AbstractOperation
             $operand = $attributeFilter['Operand'];
         }
 
-        return $this->evaluateOperator($value, $attributeFilter['Operator'], $operand);
+        return $this->evaluateOperator($value, (string)$attributeFilter['Operator'], $operand);
     }
 
     /**
@@ -228,17 +228,17 @@ class FilterOperation extends AbstractOperation
      * @param mixed $operand
      * @return boolean
      */
-    protected function evaluateOperator($value, $operator, $operand)
+    protected function evaluateOperator($value, string $operator, $operand)
     {
         switch ($operator) {
             case '=':
                 return $value === $operand;
             case '=~':
-                return strcasecmp($value, $operand) === 0;
+                return strcasecmp((string)$value, (string)$operand) === 0;
             case '!=':
                 return $value !== $operand;
             case '!=~':
-                return strcasecmp($value, $operand) !== 0;
+                return strcasecmp((string)$value, (string)$operand) !== 0;
             case '<':
                 return $value < $operand;
             case '<=':
@@ -254,7 +254,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strrpos($value, (string)$operand) === strlen($value) - strlen($operand);
+                    return strrpos((string)$value, (string)$operand) === strlen((string)$value) - strlen((string)$operand);
                 }
             // no break
             case '$=~':
@@ -274,7 +274,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strpos($value, (string)$operand) === 0;
+                    return strpos((string)$value, (string)$operand) === 0;
                 }
             // no break
             case '^=~':
@@ -284,7 +284,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return stripos($value, (string)$operand) === 0;
+                    return stripos((string)$value, (string)$operand) === 0;
                 }
             // no break
             case '*=':
@@ -296,7 +296,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strpos($value, (string)$operand) !== false;
+                    return strpos((string)$value, (string)$operand) !== false;
                 }
             // no break
             case '*=~':
@@ -308,7 +308,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return stripos($value, (string)$operand) !== false;
+                    return stripos((string)$value, (string)$operand) !== false;
                 }
             // no break
             case 'instanceof':

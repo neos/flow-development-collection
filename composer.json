@@ -7,8 +7,8 @@
     "type": "neos-package-collection",
     "require": {
         "php": "^8.0",
-        "psr/simple-cache": "^3.0",
-        "psr/cache": "~3.0",
+        "psr/simple-cache": "^2.0 || ^3.0",
+        "psr/cache": "^2.0 || ^3.0",
         "psr/log": "^2.0",
         "ext-zlib": "*",
         "ext-SPL": "*",
@@ -120,7 +120,7 @@
         }
     },
     "require-dev": {
-        "mikey179/vfsstream": "^1.6.1",
+        "mikey179/vfsstream": "^1.6.10",
         "phpunit/phpunit": "~9.1",
         "vimeo/psalm": "~4.9.3"
     },

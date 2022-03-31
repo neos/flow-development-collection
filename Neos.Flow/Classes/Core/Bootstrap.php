@@ -540,7 +540,7 @@ class Bootstrap
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
 
-        define('FLOW_VERSION_BRANCH', 'master');
+        define('FLOW_VERSION_BRANCH', '8.0');
         define('FLOW_APPLICATION_CONTEXT', (string)$this->context);
     }
 
@@ -612,7 +612,7 @@ class Bootstrap
      * - $_SERVER[REDIRECT_ . $variableName] (again for php cgi environments)
      *
      * @param string $variableName
-     * @return string or NULL if this variable was not set at all.
+     * @return string|null NULL if this variable was not set at all.
      */
     public static function getEnvironmentConfigurationSetting(string $variableName)
     {

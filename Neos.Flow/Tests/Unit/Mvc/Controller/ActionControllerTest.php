@@ -204,6 +204,7 @@ class ActionControllerTest extends UnitTestCase
     public function processRequestInjectsControllerContextToView()
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod', 'initializeController']);
+        $this->actionController->method('resolveActionMethodName')->willReturn('indexAction');
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
         $this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
@@ -234,6 +235,7 @@ class ActionControllerTest extends UnitTestCase
     public function processRequestInjectsSettingsToView()
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod']);
+        $this->actionController->method('resolveActionMethodName')->willReturn('indexAction');
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
         $this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
@@ -274,6 +276,7 @@ class ActionControllerTest extends UnitTestCase
     public function processRequestSetsNegotiatedContentTypeOnResponse($supportedMediaTypes, $acceptHeader, $expected)
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod']);
+        $this->actionController->method('resolveActionMethodName')->willReturn('indexAction');
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
 
@@ -298,6 +301,7 @@ class ActionControllerTest extends UnitTestCase
     public function processRequestUsesContentTypeFromActionResponse($supportedMediaTypes, $acceptHeader, $expected)
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod']);
+        $this->actionController->method('resolveActionMethodName')->willReturn('indexAction');
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
 

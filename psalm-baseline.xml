@@ -75,12 +75,6 @@
       <code>$expiration</code>
     </PropertyTypeCoercion>
   </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Psr/SimpleCache/SimpleCache.php">
-    <MoreSpecificImplementedParamType occurrences="2">
-      <code>$lifetime</code>
-      <code>$ttl</code>
-    </MoreSpecificImplementedParamType>
-  </file>
   <file src="Packages/Framework/Neos.Eel/Classes/CompilingEvaluator.php">
     <UndefinedPropertyFetch occurrences="1">
       <code>$parser-&gt;pos</code>
@@ -209,13 +203,30 @@
       <code>$x</code>
       <code>$x</code>
     </InvalidScalarArgument>
-    <PossiblyNullArgument occurrences="1">
-      <code>$x</code>
-    </PossiblyNullArgument>
-    <RedundantCastGivenDocblockType occurrences="3">
+    <RedundantCastGivenDocblockType occurrences="23">
       <code>(float)$subject</code>
       <code>(float)$x</code>
       <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+      <code>(float)$y</code>
     </RedundantCastGivenDocblockType>
   </file>
   <file src="Packages/Framework/Neos.Eel/Classes/Helper/StringHelper.php">
@@ -228,10 +239,6 @@
       <code>$iterator-&gt;preceding($maximumCharacters)</code>
       <code>$iterator-&gt;preceding($maximumCharacters)</code>
     </InvalidScalarArgument>
-    <NullArgument occurrences="2">
-      <code>null</code>
-      <code>null</code>
-    </NullArgument>
     <NullableReturnStatement occurrences="3">
       <code>min(mb_strlen($string, 'UTF-8'), $fromIndex)</code>
       <code>null</code>
@@ -245,8 +252,10 @@
       <code>(integer)$index</code>
       <code>(integer)$index</code>
     </RedundantCast>
-    <RedundantCastGivenDocblockType occurrences="36">
+    <RedundantCastGivenDocblockType occurrences="38">
       <code>(int)$value</code>
+      <code>(string)$search</code>
+      <code>(string)$search</code>
       <code>(string)$string</code>
       <code>(string)$string</code>
       <code>(string)$string</code>
@@ -464,12 +473,6 @@
     </UndefinedConstant>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Cache/CacheManager.php">
-    <NullableReturnStatement occurrences="1">
-      <code>$this-&gt;caches[$identifier]</code>
-    </NullableReturnStatement>
-    <PossiblyUndefinedArrayOffset occurrences="1">
-      <code>$this-&gt;caches[$identifier]</code>
-    </PossiblyUndefinedArrayOffset>
     <UndefinedClass occurrences="1">
       <code>FileBackend</code>
     </UndefinedClass>
@@ -714,8 +717,7 @@
     <PossiblyFalseOperand occurrences="1">
       <code>date('YmdHis', $_SERVER['REQUEST_TIME'])</code>
     </PossiblyFalseOperand>
-    <UndefinedConstant occurrences="19">
-      <code>FLOW_ONLY_COMPOSER_LOADER</code>
+    <UndefinedConstant occurrences="18">
       <code>FLOW_PATH_CONFIGURATION</code>
       <code>FLOW_PATH_CONFIGURATION</code>
       <code>FLOW_PATH_DATA</code>
@@ -864,9 +866,6 @@
     <InvalidNullableReturnType occurrences="1">
       <code>Cookie</code>
     </InvalidNullableReturnType>
-    <InvalidScalarArgument occurrences="1">
-      <code>$value</code>
-    </InvalidScalarArgument>
     <NullableReturnStatement occurrences="2">
       <code>null</code>
       <code>null</code>
@@ -878,6 +877,9 @@
       <code>$domain</code>
       <code>$maximumAge</code>
     </PossiblyNullPropertyAssignmentValue>
+    <RedundantCastGivenDocblockType occurrences="1">
+      <code>(string)$this-&gt;value</code>
+    </RedundantCastGivenDocblockType>
     <UnsafeInstantiation occurrences="1"/>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/Headers.php">
@@ -1503,13 +1505,9 @@
     </InvalidReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Package/PackageManager.php">
-    <MissingDocblockType occurrences="2">
-      <code>$package</code>
+    <MissingDocblockType occurrences="1">
       <code>$package</code>
     </MissingDocblockType>
-    <PossiblyFalseArgument occurrences="1">
-      <code>strpos($packagePath, '/')</code>
-    </PossiblyFalseArgument>
     <PossiblyFalseOperand occurrences="1">
       <code>strrpos(trim($packagePath, '/'), '/')</code>
     </PossiblyFalseOperand>
@@ -1937,9 +1935,6 @@
       <code>$this-&gt;classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS]</code>
       <code>$this-&gt;classReflectionData[$parentClassName][self::DATA_CLASS_SUBCLASSES]</code>
     </PossiblyNullArrayAssignment>
-    <TooManyArguments occurrences="1">
-      <code>getPropertyAnnotations</code>
-    </TooManyArguments>
     <UndefinedInterfaceMethod occurrences="3">
       <code>freeze</code>
       <code>freeze</code>
@@ -2021,9 +2016,6 @@
       <code>logicalAnd</code>
       <code>logicalAnd</code>
     </TooManyArguments>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>allowObject</code>
-    </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/ResourceManagement/ResourceTypeConverter.php">
     <InvalidScalarArgument occurrences="1">
@@ -2099,9 +2091,6 @@
     <InvalidArgument occurrences="1">
       <code>$sourceStream</code>
     </InvalidArgument>
-    <PossiblyUndefinedArrayOffset occurrences="1">
-      <code>$pathInfo['extension']</code>
-    </PossiblyUndefinedArrayOffset>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/ResourceManagement/Target/FileSystemTarget.php">
     <InvalidArgument occurrences="4">
@@ -2417,11 +2406,6 @@
       <code>null</code>
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Cryptography/Algorithms.php">
-    <NullArgument occurrences="1">
-      <code>null</code>
-    </NullArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Security/Cryptography/BCryptHashingStrategy.php">
     <InvalidPropertyAssignmentValue occurrences="1">
@@ -3104,10 +3088,7 @@
     </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Utility.ObjectHandling/Classes/ObjectAccess.php">
-    <InvalidScalarArgument occurrences="4">
-      <code>$propertyName</code>
-      <code>$propertyName</code>
-      <code>$propertyName</code>
+    <InvalidScalarArgument occurrences="1">
       <code>$propertyName</code>
     </InvalidScalarArgument>
   </file>

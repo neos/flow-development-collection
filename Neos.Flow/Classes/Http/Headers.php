@@ -25,12 +25,12 @@ class Headers implements \Iterator
     /**
      * @var array
      */
-    protected $fields = ['Cache-Control' => []];
+    protected array $fields = ['Cache-Control' => []];
 
     /**
      * @var array
      */
-    protected $cookies = [];
+    protected array $cookies = [];
 
     /**
      * @var CacheControlDirectives
@@ -440,7 +440,7 @@ class Headers implements \Iterator
     /**
      * @return string[]|mixed
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->getRaw($this->key());
     }
@@ -448,7 +448,7 @@ class Headers implements \Iterator
     /**
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         next($this->fields);
     }
@@ -456,7 +456,7 @@ class Headers implements \Iterator
     /**
      * @return mixed
      */
-    public function key()
+    public function key(): mixed
     {
         return key($this->fields);
     }
@@ -464,7 +464,7 @@ class Headers implements \Iterator
     /**
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return !(key($this->fields) === null && current($this->fields) === false);
     }
@@ -472,7 +472,7 @@ class Headers implements \Iterator
     /**
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->fields);
     }
