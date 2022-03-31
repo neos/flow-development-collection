@@ -52,7 +52,6 @@ abstract class TypeHandling
         }
 
         $typeWithoutNull = self::stripNullableType($matches['type']);
-        $isNullable = $typeWithoutNull !== $matches['type'];
         $type = self::normalizeType($typeWithoutNull);
         $elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : null;
 

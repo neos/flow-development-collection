@@ -98,7 +98,6 @@ class ReflectionServiceTest extends UnitTestCase
     {
         $this->reflectionService->_call('reflectClass', Fixture\ClassWithBuiltinTypes::class);
         $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithBuiltinTypes::class, 'doCoolStuffWithIterable');
-        var_dump($parameters);
         $this->assertEquals('iterable', $parameters['firstArgument']['type']);
         $this->assertTrue($parameters['firstArgument']['scalarDeclaration']);
     }
