@@ -11,6 +11,10 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
+use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
+use Neos\Flow\Reflection\ClassReflection;
+use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
+
 /**
  * Representation of a constructor method within a proxy class
  *
@@ -18,26 +22,21 @@ namespace Neos\Flow\ObjectManagement\Proxy;
 class ProxyConstructor extends ProxyMethod
 {
     /**
-     * Name of the original method
-     *
-     * @var string
-     */
-    protected $methodName = '__construct';
-
-    /**
      *
      *
      * @param string $fullOriginalClassName The fully qualified class name of the original class
+     * @psalm-param class-string $fullOriginalClassName
      */
     public function __construct($fullOriginalClassName)
     {
-        $this->fullOriginalClassName = $fullOriginalClassName;
+        parent::__construct($fullOriginalClassName, '__construct');
     }
 
     /**
      * Renders the code for a proxy constructor
      *
      * @return string PHP code
+     * @throws CannotBuildObjectException|ClassLoadingForReflectionFailedException
      */
     public function render()
     {
@@ -49,6 +48,11 @@ class ProxyConstructor extends ProxyMethod
 
         $code = '';
         if ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '') {
+            foreach ((new ClassReflection($this->fullOriginalClassName))->getInterfaceNames() as $interfaceName) {
+                if ($this->reflectionService->getMethodParameters($interfaceName, $this->methodName) !== []) {
+                    throw new CannotBuildObjectException(sprintf('Cannot build proxy for class "%s" because it implements interface "%s" that defines a constructor with arguments. Adjust the interface or avoid the proxy class from being created (for example by adjusting the Method privilege in your Policy)', $this->fullOriginalClassName, $interfaceName), 1630656424);
+                }
+            }
             $argumentsCode = (count($this->reflectionService->getMethodParameters($this->fullOriginalClassName, $this->methodName)) > 0) ? '        $arguments = func_get_args();' . "\n" : '';
             $code = "\n" .
                 $methodDocumentation .

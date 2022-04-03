@@ -24,6 +24,7 @@ use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Package\Exception as PackageException;
 use Composer\Console\Application as ComposerApplication;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 /**
  * The default Flow Package Manager
@@ -208,7 +209,7 @@ class PackageManager
             throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available. Please check if the package exists and that the package key is correct (package keys are case sensitive).', 1166546734);
         }
 
-        return $this->packages[$packageKey];
+        return $this->packages[$this->getCaseSensitivePackageKey($packageKey)];
     }
 
     /**
@@ -252,14 +253,13 @@ class PackageManager
      * the given package state, path, and type filters. All three filters must match, if given.
      *
      * @param string $packageState defaults to available
-     * @param string $packagePath DEPRECATED since Flow 5.0
      * @param string $packageType
      *
      * @return array<PackageInterface>
      * @throws Exception\InvalidPackageStateException
      * @api
      */
-    public function getFilteredPackages($packageState = 'available', $packagePath = null, $packageType = null): array
+    public function getFilteredPackages($packageState = 'available', $packageType = null): array
     {
         switch (strtolower($packageState)) {
             case 'available':
@@ -272,37 +272,11 @@ class PackageManager
                 throw new Exception\InvalidPackageStateException('The package state "' . $packageState . '" is invalid', 1372458274);
         }
 
-        if ($packagePath !== null) {
-            $packages = $this->filterPackagesByPath($packages, $packagePath);
-        }
         if ($packageType !== null) {
             $packages = $this->filterPackagesByType($packages, $packageType);
         }
 
         return $packages;
-    }
-
-    /**
-     * Returns an array of PackageInterface objects in the given array of packages
-     * that are in the specified Package Path
-     *
-     * @param array $packages Array of PackageInterface to be filtered
-     * @param string $filterPath Filter out anything that's not in this path
-     * @return array<PackageInterface>
-     */
-    protected function filterPackagesByPath($packages, $filterPath): array
-    {
-        $filteredPackages = [];
-        /** @var $package Package */
-        foreach ($packages as $package) {
-            $packagePath = substr($package->getPackagePath(), strlen($this->packagesBasePath));
-            $packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
-            if ($packageGroup === $filterPath) {
-                $filteredPackages[$package->getPackageKey()] = $package;
-            }
-        }
-
-        return $filteredPackages;
     }
 
     /**
@@ -405,7 +379,7 @@ class PackageManager
 
             $composerApplication = new ComposerApplication();
             $composerApplication->setAutoExit(false);
-            $composerErrorCode = $composerApplication->run($composerRequireArguments);
+            $composerErrorCode = $composerApplication->run($composerRequireArguments, new NullOutput());
 
             if ($composerErrorCode !== 0) {
                 throw new Exception("The installation was not successful. Composer returned the error code: $composerErrorCode", 1572187932);

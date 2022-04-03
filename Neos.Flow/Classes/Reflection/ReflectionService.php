@@ -14,6 +14,7 @@ namespace Neos\Flow\Reflection;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\PhpParser;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Persistence\Proxy as DoctrineProxy;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
@@ -90,6 +91,7 @@ class ReflectionService
     const DATA_PROPERTY_TAGS_VALUES = 14;
     const DATA_PROPERTY_ANNOTATIONS = 15;
     const DATA_PROPERTY_VISIBILITY = 24;
+    const DATA_PROPERTY_TYPE = 26;
     const DATA_PARAMETER_POSITION = 16;
     const DATA_PARAMETER_OPTIONAL = 17;
     const DATA_PARAMETER_TYPE = 18;
@@ -225,6 +227,13 @@ class ReflectionService
      * @var boolean
      */
     protected $initialized = false;
+
+    /**
+     * A runtime cache for reflected method annotations to speed up repeating checks.
+     *
+     * @var array
+     */
+    protected $methodAnnotationsRuntimeCache = [];
 
     /**
      * Sets the status cache
@@ -567,11 +576,11 @@ class ReflectionService
      * Returns the specified class annotation or NULL.
      *
      * If multiple annotations are set on the target you will
-     * get one (random) instance of them.
+     * get the first instance of them.
      *
      * @param string $className Name of the class
      * @param string $annotationClassName Annotation to filter for
-     * @return object
+     * @return object|null
      */
     public function getClassAnnotation($className, $annotationClassName)
     {
@@ -580,7 +589,7 @@ class ReflectionService
         }
         $annotations = $this->getClassAnnotations($className, $annotationClassName);
 
-        return $annotations === [] ? null : current($annotations);
+        return $annotations === [] ? null : reset($annotations);
     }
 
     /**
@@ -765,6 +774,17 @@ class ReflectionService
     }
 
     /**
+     * Tells if a specific PHP attribute is to be ignored for reflection
+     */
+    public function isAttributeIgnored(string $attributeName): bool
+    {
+        if (in_array($attributeName, ['ReturnTypeWillChange']) && !class_exists($attributeName)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Tells if the specified method has the given annotation
      *
      * @param string $className Name of the class
@@ -789,14 +809,28 @@ class ReflectionService
      */
     public function getMethodAnnotations($className, $methodName, $annotationClassName = null)
     {
-        if (!$this->initialized) {
-            $this->initialize();
-        }
         $className = $this->cleanClassName($className);
         $annotationClassName = $annotationClassName === null ? null : $this->cleanClassName($annotationClassName);
 
+        $methodAnnotations = $this->methodAnnotationsRuntimeCache[$className][$methodName] ?? null;
         $annotations = [];
-        $methodAnnotations = $this->annotationReader->getMethodAnnotations(new MethodReflection($className, $methodName));
+        if ($methodAnnotations === null) {
+            if (!$this->initialized) {
+                $this->initialize();
+            }
+
+            $method = new MethodReflection($className, $methodName);
+            $methodAnnotations = $this->annotationReader->getMethodAnnotations($method);
+            if (PHP_MAJOR_VERSION >= 8) {
+                foreach ($method->getAttributes() as $attribute) {
+                    if ($this->isAttributeIgnored($attribute->getName())) {
+                        continue;
+                    }
+                    $methodAnnotations[] = $attribute->newInstance();
+                }
+            }
+            $this->methodAnnotationsRuntimeCache[$className][$methodName] = $methodAnnotations;
+        }
         if ($annotationClassName === null) {
             return $methodAnnotations;
         }
@@ -814,12 +848,12 @@ class ReflectionService
      * Returns the specified method annotation or NULL.
      *
      * If multiple annotations are set on the target you will
-     * get one (random) instance of them.
+     * get the first instance of them.
      *
      * @param string $className Name of the class
      * @param string $methodName Name of the method
      * @param string $annotationClassName Annotation to filter for
-     * @return object
+     * @return object|null
      */
     public function getMethodAnnotation($className, $methodName, $annotationClassName)
     {
@@ -828,7 +862,7 @@ class ReflectionService
         }
         $annotations = $this->getMethodAnnotations($className, $methodName, $annotationClassName);
 
-        return $annotations === [] ? null : current($annotations);
+        return $annotations === [] ? null : reset($annotations);
     }
 
     /**
@@ -978,6 +1012,18 @@ class ReflectionService
     }
 
     /**
+     * Returns the property type
+     *
+     * @param $className
+     * @param $propertyName
+     * @return string|null
+     */
+    public function getPropertyType($className, $propertyName)
+    {
+        return $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TYPE] ?? null;
+    }
+
+    /**
      * Tells if the specified property is private
      *
      * @param string $className Name of the class containing the method
@@ -1079,12 +1125,12 @@ class ReflectionService
      * Returns the specified property annotation or NULL.
      *
      * If multiple annotations are set on the target you will
-     * get one (random) instance of them.
+     * get the first instance of them.
      *
      * @param string $className Name of the class
      * @param string $propertyName Name of the property
      * @param string $annotationClassName Annotation to filter for
-     * @return object
+     * @return object|null
      */
     public function getPropertyAnnotation($className, $propertyName, $annotationClassName)
     {
@@ -1093,7 +1139,7 @@ class ReflectionService
         }
         $annotations = $this->getPropertyAnnotations($className, $propertyName, $annotationClassName);
 
-        return $annotations === [] ? null : current($annotations);
+        return $annotations === [] ? null : reset($annotations);
     }
 
     /**
@@ -1218,7 +1264,7 @@ class ReflectionService
         $this->log(sprintf('Reflecting class %s', $className), LogLevel::DEBUG);
 
         $className = $this->cleanClassName($className);
-        if (strpos($className, 'Neos\Flow\Persistence\Doctrine\Proxies') === 0 && in_array(\Doctrine\ORM\Proxy\Proxy::class, class_implements($className))) {
+        if (strpos($className, 'Neos\Flow\Persistence\Doctrine\Proxies') === 0 && in_array(DoctrineProxy::class, class_implements($className))) {
             // Somebody tried to reflect a doctrine proxy, which will have severe side effects.
             // see bug http://forge.typo3.org/issues/29449 for details.
             throw new Exception\InvalidClassException('The class with name "' . $className . '" is a Doctrine proxy. It is not supported to reflect doctrine proxy classes.', 1314944681);
@@ -1251,6 +1297,16 @@ class ReflectionService
             $this->annotatedClasses[$annotationClassName][$className] = true;
             $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $annotation;
         }
+        if (PHP_MAJOR_VERSION >= 8) {
+            foreach ($class->getAttributes() as $attribute) {
+                $annotationClassName = $attribute->getName();
+                if ($this->isAttributeIgnored($annotationClassName)) {
+                    continue;
+                }
+                $this->annotatedClasses[$annotationClassName][$className] = true;
+                $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $attribute->newInstance();
+            }
+        }
 
         /** @var $property PropertyReflection */
         foreach ($class->getProperties() as $property) {
@@ -1277,6 +1333,9 @@ class ReflectionService
     {
         $propertyName = $property->getName();
         $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName] = [];
+        if ($property->hasType()) {
+            $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TYPE] = trim((string)$property->getType(), '?');
+        }
 
         $visibility = $property->isPublic() ? self::VISIBILITY_PUBLIC : ($property->isProtected() ? self::VISIBILITY_PROTECTED : self::VISIBILITY_PRIVATE);
         $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] = $visibility;
@@ -1289,8 +1348,16 @@ class ReflectionService
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tagName] = $tagValues;
         }
 
-        foreach ($this->annotationReader->getPropertyAnnotations($property, $propertyName) as $annotation) {
+        foreach ($this->annotationReader->getPropertyAnnotations($property) as $annotation) {
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
+        }
+        if (PHP_MAJOR_VERSION >= 8) {
+            foreach ($property->getAttributes() as $attribute) {
+                if ($this->isAttributeIgnored($attribute->getName())) {
+                    continue;
+                }
+                $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attribute->newInstance();
+            }
         }
 
         return $visibility;
@@ -1381,7 +1448,7 @@ class ReflectionService
         }
 
         $returnType = $method->getDeclaredReturnType();
-        if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void']) && !TypeHandling::isSimpleType($returnType)) {
+        if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void', 'iterable', 'object', 'mixed']) && !TypeHandling::isSimpleType($returnType)) {
             $returnType = '\\' . $returnType;
         }
         if ($method->isDeclaredReturnTypeNullable()) {
@@ -1662,7 +1729,8 @@ class ReflectionService
                 continue;
             }
 
-            if (!$this->isClassAnnotatedWith($repositoryClassName, Flow\Scope::class) || $this->getClassAnnotation($repositoryClassName, Flow\Scope::class)->value !== 'singleton') {
+            $scopeAnnotation = $this->getClassAnnotation($repositoryClassName, Flow\Scope::class);
+            if ($scopeAnnotation === null || $scopeAnnotation->value !== 'singleton') {
                 throw new ClassSchemaConstraintViolationException('The repository "' . $repositoryClassName . '" must be of scope singleton, but it is not.', 1335790707);
             }
             if (defined($repositoryClassName . '::ENTITY_CLASSNAME') && isset($this->classSchemata[$repositoryClassName::ENTITY_CLASSNAME])) {

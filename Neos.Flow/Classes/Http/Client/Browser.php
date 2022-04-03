@@ -16,9 +16,10 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\UploadedFilesHelper;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
@@ -30,10 +31,10 @@ use Symfony\Component\DomCrawler\Form;
  *
  * @api
  */
-class Browser
+class Browser implements ClientInterface
 {
     /**
-     * @var ServerRequestInterface
+     * @var RequestInterface
      */
     protected $lastRequest;
 
@@ -71,6 +72,7 @@ class Browser
     protected $automaticRequestHeaders;
 
     /**
+     * @Flow\Inject
      * @var RequestEngineInterface
      */
     protected $requestEngine;
@@ -202,11 +204,12 @@ class Browser
     /**
      * Sends a prepared request and returns the respective response.
      *
-     * @param ServerRequestInterface $request
+     * @param RequestInterface $request
      * @return ResponseInterface
+     * @throws \Psr\Http\Client\ClientExceptionInterface
      * @api
      */
-    public function sendRequest(ServerRequestInterface $request)
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         foreach ($this->automaticRequestHeaders->getAll() as $name => $values) {
             $request = $request->withAddedHeader($name, $values);
@@ -231,7 +234,7 @@ class Browser
     /**
      * Returns the last request executed.
      *
-     * @return ServerRequestInterface The HTTP request or NULL if there wasn't a request yet
+     * @return RequestInterface The HTTP request or NULL if there wasn't a request yet
      * @api
      */
     public function getLastRequest()

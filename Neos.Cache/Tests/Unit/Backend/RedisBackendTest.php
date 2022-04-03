@@ -48,8 +48,8 @@ class RedisBackendTest extends BaseTestCase
     protected function setUp(): void
     {
         $phpredisVersion = phpversion('redis');
-        if (version_compare($phpredisVersion, '1.2.0', '<')) {
-            $this->markTestSkipped(sprintf('phpredis extension version %s is not supported. Please update to verson 1.2.0+.', $phpredisVersion));
+        if (version_compare($phpredisVersion, '5.0.0', '<')) {
+            $this->markTestSkipped(sprintf('phpredis extension version %s is not supported. Please update to version 5.0.0+.', $phpredisVersion));
         }
 
         $this->redis = $this->getMockBuilder(\Redis::class)->disableOriginalConstructor()->getMock();
@@ -80,15 +80,10 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->redis->expects(self::once())
             ->method('sMembers')
-            ->with('Foo_Cache:tag:some_tag')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:tag:some_tag')
             ->will(self::returnValue(['entry_1', 'entry_2']));
 
-        $this->redis->expects(self::exactly(2))
-            ->method('exists')
-            ->withConsecutive(['Foo_Cache:entry:entry_1'], ['Foo_Cache:entry:entry_2'])
-            ->willReturn(true);
-
-        self::assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
+        $this->assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
     }
 
     /**
@@ -97,8 +92,7 @@ class RedisBackendTest extends BaseTestCase
     public function freezeInvokesRedis()
     {
         $this->redis->expects(self::once())
-            ->method('lRange')
-            ->with('Foo_Cache:entries', 0, -1)
+            ->method('keys')
             ->will(self::returnValue(['entry_1', 'entry_2']));
 
         $this->redis->expects(self::exactly(2))
@@ -106,7 +100,7 @@ class RedisBackendTest extends BaseTestCase
 
         $this->redis->expects(self::once())
             ->method('set')
-            ->with('Foo_Cache:frozen', true);
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen', true);
 
         $this->backend->freeze();
     }
@@ -164,7 +158,7 @@ class RedisBackendTest extends BaseTestCase
 
         $this->redis->expects(self::once())
             ->method('set')
-            ->with('Foo_Cache:entry:entry_1', 'foo')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:entry_1', 'foo')
             ->willReturn($this->redis);
 
         $this->backend->set('entry_1', 'foo');
@@ -177,7 +171,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->redis->expects(self::once())
             ->method('get')
-            ->with('Foo_Cache:entry:foo')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo')
             ->will(self::returnValue('bar'));
 
         self::assertEquals('bar', $this->backend->get('foo'));
@@ -190,153 +184,10 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->redis->expects(self::once())
             ->method('exists')
-            ->with('Foo_Cache:entry:foo')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo')
             ->will(self::returnValue(true));
 
         self::assertEquals(true, $this->backend->has('foo'));
-    }
-
-    /**
-     * @test
-     */
-    public function transactionWillBeRetriedIfItFails()
-    {
-        $this->redis->expects($this->exactly(3))
-            ->method('multi')
-            ->willReturn($this->redis);
-
-        $this->redis->expects($this->exactly(3))
-            ->method('set')
-            ->with('Foo_Cache:entry:entry_1', 'foo')
-            ->willReturn($this->redis);
-
-        $this->redis->expects($this->exactly(3))
-            ->method('exec')
-            ->willReturnOnConsecutiveCalls(false, false, $this->redis);
-
-        $this->redis->expects($this->exactly(2))
-            ->method('discard');
-
-        $this->backend->set('entry_1', 'foo');
-    }
-
-    /**
-     * @test
-     */
-    public function exceptionIsThrownIfTransactionCannotBeCompletedAfter4Retries()
-    {
-        $this->expectExceptionCode(1594725688);
-
-        // 4 retries = 5 tries in total
-        $this->redis->expects($this->exactly(5))
-            ->method('exec')
-            ->willReturn(false);
-        $this->redis->expects($this->exactly(5))
-            ->method('discard');
-
-        $this->backend->set('entry_1', 'foo');
-    }
-
-    /**
-     * @test
-     */
-    public function setWatchesKeysDuringTransaction()
-    {
-        $this->redis->expects($this->once())
-            ->method('watch')
-            ->with(
-                'Foo_Cache:tag:baz',
-                'Foo_Cache:tags:foo',
-                'Foo_Cache:entry:foo'
-            );
-
-        $this->backend->set('foo', 'bar', ['baz']);
-    }
-
-    /**
-     * @test
-     */
-    public function tagsTtlIsCaclulatedUsingExistingKeys()
-    {
-        $this->backend->set('foo', 'bar', ['baz'], 1000);
-
-        $this->redis->expects($this->any())
-            ->method('ttl')
-            ->willReturn(2500);
-
-        $this->redis->expects($this->exactly(2))
-            ->method('expire')
-            ->withConsecutive(
-                ['Foo_Cache:tag:baz', 2500],
-                ['Foo_Cache:tags:foo', 2500]
-            )
-            ->willReturn(true);
-
-        $this->backend->set('foo', 'bar', ['baz'], 10);
-    }
-
-    /**
-     * @test
-     */
-    public function tagsWithTtlArePersistedIfNewTtlIsUnlimited()
-    {
-        $this->backend->set('foo', 'bar', ['baz'], 10);
-
-        $this->redis->expects($this->any())
-            ->method('ttl')
-            ->willReturn(10);
-
-        $this->redis->expects($this->exactly(2))
-            ->method('persist')
-            ->withConsecutive(
-                ['Foo_Cache:tag:baz'],
-                ['Foo_Cache:tags:foo']
-            )
-            ->willReturn(true);
-
-        $this->backend->set('foo', 'bar', ['baz'], 0);
-    }
-
-    /**
-     * @test
-     */
-    public function tagsKeepTheirTtlIfNewTtlIsLower()
-    {
-        $this->backend->set('foo', 'bar', ['baz'], 1000);
-
-        $this->redis->expects($this->any())
-            ->method('ttl')
-            ->willReturn(1000);
-
-        $this->redis->expects($this->exactly(2))
-            ->method('expire')
-            ->withConsecutive(
-                ['Foo_Cache:tag:baz', 1000],
-                ['Foo_Cache:tags:foo', 1000]
-            )
-            ->willReturn(true);
-
-        $this->backend->set('foo', 'bar', ['baz'], 150);
-    }
-
-    /**
-     * @test
-     */
-    public function givenLifetimeIsUsedForTagsThatDoNotExist()
-    {
-        $this->redis->expects($this->any())
-            ->method('ttl')
-            ->willReturn(-2);
-
-        $this->redis->expects($this->exactly(2))
-            ->method('expire')
-            ->withConsecutive(
-                ['Foo_Cache:tag:baz', 1000],
-                ['Foo_Cache:tags:foo', 1000]
-            )
-            ->willReturn(true);
-
-        $this->backend->set('foo', 'bar', ['baz'], 1000);
     }
 
     /**
@@ -350,10 +201,27 @@ class RedisBackendTest extends BaseTestCase
         $this->inject($this->backend, 'frozen', null);
         $this->redis->expects(self::once())
             ->method('exists')
-            ->with('Foo_Cache:frozen')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen')
             ->will(self::returnValue(true));
 
         $this->backend->$method('foo', 'bar');
+    }
+
+    /**
+     * @test
+     * @dataProvider batchWritingOperationsProvider
+     * @param string $method
+     */
+    public function batchWritingOperationsThrowAnExceptionIfCacheIsFrozen($method)
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->inject($this->backend, 'frozen', null);
+        $this->redis->expects(self::once())
+            ->method('exists')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen')
+            ->will(self::returnValue(true));
+
+        $this->backend->$method(['foo', 'bar']);
     }
 
     /**
@@ -366,6 +234,16 @@ class RedisBackendTest extends BaseTestCase
             ['remove'],
             ['flushByTag'],
             ['freeze']
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function batchWritingOperationsProvider()
+    {
+        return [
+            ['flushByTags'],
         ];
     }
 }

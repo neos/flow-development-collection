@@ -2,15 +2,15 @@
 namespace Neos\Flow\Log;
 
 /**
- * An interface for storages that can log full exceptions and their stacktraces.
+ * An interface for storages that can store full exceptions and their stack traces.
  *
  * @api
  */
 interface ThrowableStorageInterface
 {
     /**
-     *
      * A factory method to create an instance of the throwable storage.
+     *
      * Note that throwable storages must work without proxy so all dependencies need to be resolved manually or via options.
      *
      * @param array $options
@@ -20,7 +20,9 @@ interface ThrowableStorageInterface
 
 
     /**
-     * Writes information about the given exception into the log.
+     * Stores information about the given exception and returns information about
+     * the exception and where the details have been stored. The returned message
+     * can be logged or displayed as needed.
      *
      * @param \Throwable $throwable The throwable to log
      * @param array $additionalData Additional data to log

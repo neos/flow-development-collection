@@ -34,7 +34,7 @@ class Bootstrap
     /**
      * Required PHP version
      */
-    const MINIMUM_PHP_VERSION = '7.3.0';
+    const MINIMUM_PHP_VERSION = '8.0.0';
 
     const RUNLEVEL_COMPILETIME = 'Compiletime';
     const RUNLEVEL_RUNTIME = 'Runtime';
@@ -540,15 +540,7 @@ class Bootstrap
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
 
-        // Setting this flag to false will enable the custom Class Loader on top of the default autoloading provided by composer
-        // @deprecated since Version 4.3. Packages should use the default composer autoloading mechanism
-        $onlyUseComposerAutoLoaderForPackageClasses = true;
-        if (in_array(self::getEnvironmentConfigurationSetting('FLOW_ONLY_COMPOSER_LOADER'), [false, 'false', 0, '0'])) {
-            $onlyUseComposerAutoLoaderForPackageClasses = false;
-        }
-
-        define('FLOW_ONLY_COMPOSER_LOADER', $onlyUseComposerAutoLoaderForPackageClasses);
-        define('FLOW_VERSION_BRANCH', '7.1');
+        define('FLOW_VERSION_BRANCH', '8.0');
         define('FLOW_APPLICATION_CONTEXT', (string)$this->context);
     }
 
@@ -620,7 +612,7 @@ class Bootstrap
      * - $_SERVER[REDIRECT_ . $variableName] (again for php cgi environments)
      *
      * @param string $variableName
-     * @return string or NULL if this variable was not set at all.
+     * @return string|null NULL if this variable was not set at all.
      */
     public static function getEnvironmentConfigurationSetting(string $variableName)
     {

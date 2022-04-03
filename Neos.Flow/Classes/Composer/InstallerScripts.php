@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Composer;
 
 /*
@@ -29,8 +31,11 @@ class InstallerScripts
      *
      * @param Event $event
      * @return void
+     * @throws Exception\InvalidConfigurationException
+     * @throws \Neos\Flow\Package\Exception
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    public static function postUpdateAndInstall(Event $event)
+    public static function postUpdateAndInstall(Event $event): void
     {
         if (!defined('FLOW_PATH_ROOT')) {
             define('FLOW_PATH_ROOT', Files::getUnixStylePath(getcwd()) . '/');
@@ -63,9 +68,11 @@ class InstallerScripts
      *
      * @param PackageEvent $event
      * @return void
+     * @throws Exception\InvalidConfigurationException
      * @throws Exception\UnexpectedOperationException
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    public static function postPackageUpdateAndInstall(PackageEvent $event)
+    public static function postPackageUpdateAndInstall(PackageEvent $event): void
     {
         $operation = $event->getOperation();
         if (!$operation instanceof InstallOperation && !$operation instanceof UpdateOperation) {
@@ -95,8 +102,9 @@ class InstallerScripts
      *
      * @param string $installerResourcesDirectory Path to the installer directory that contains the Distribution/Essentials and/or Distribution/Defaults directories.
      * @return void
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    protected static function copyDistributionFiles(string $installerResourcesDirectory)
+    protected static function copyDistributionFiles(string $installerResourcesDirectory): void
     {
         $essentialsPath = $installerResourcesDirectory . 'Distribution/Essentials';
         if (is_dir($essentialsPath)) {
@@ -116,7 +124,7 @@ class InstallerScripts
      * @return void
      * @throws Exception\InvalidConfigurationException
      */
-    protected static function runPackageScripts(string $staticMethodReference)
+    protected static function runPackageScripts(string $staticMethodReference): void
     {
         $className = substr($staticMethodReference, 0, strpos($staticMethodReference, '::'));
         $methodName = substr($staticMethodReference, strpos($staticMethodReference, '::') + 2);

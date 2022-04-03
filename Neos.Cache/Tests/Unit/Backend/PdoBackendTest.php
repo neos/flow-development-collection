@@ -178,6 +178,25 @@ class PdoBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function flushByTagsRemovesCacheEntriesWithSpecifiedTags()
+    {
+        $backend = $this->setUpBackend();
+
+        $data = 'some data' . microtime();
+        $backend->set('PdoBackendTest1', $data, ['UnitTestTag%test', 'UnitTestTag%boring']);
+        $backend->set('PdoBackendTest2', $data, ['UnitTestTag%test', 'UnitTestTag%special']);
+        $backend->set('PdoBackendTest3', $data, ['UnitTestTag%test']);
+
+        $backend->flushByTags(['UnitTestTag%boring', 'UnitTestTag%special']);
+
+        self::assertFalse($backend->has('PdoBackendTest1'), 'PdoBackendTest1');
+        self::assertFalse($backend->has('PdoBackendTest2'), 'PdoBackendTest2');
+        self::assertTrue($backend->has('PdoBackendTest3'), 'PdoBackendTest3');
+    }
+
+    /**
+     * @test
+     */
     public function flushRemovesAllCacheEntries()
     {
         $backend = $this->setUpBackend();

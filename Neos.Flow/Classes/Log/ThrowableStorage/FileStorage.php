@@ -74,8 +74,7 @@ class FileStorage implements ThrowableStorageInterface
             }
 
             $request = $requestHandler->getHttpRequest();
-            // TODO: Sensible error output
-            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestHeaders($request) : '[request was empty]') . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestInformation($request) : '[request was empty]') . PHP_EOL;
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;
@@ -109,6 +108,13 @@ class FileStorage implements ThrowableStorageInterface
     }
 
     /**
+     * Stores information about the given exception and returns information about
+     * the exception and where the details have been stored. The returned message
+     * can be logged or displayed as needed.
+     *
+     * The returned message follows this pattern:
+     * Exception #<code> in <line> of <file>: <message> - See also: <dumpFilename>
+     *
      * @param \Throwable $throwable
      * @param array $additionalData
      * @return string Informational message about the stored throwable

@@ -16,13 +16,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['7.3', '7.4', '8.0']
+        php-versions: ['8.0', '8.1']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
         experimental: [false]
         include:
-          - php-versions: '7.3'
+          - php-versions: '8.0'
             static-analysis: 'psalm'
             experimental: true
             dependencies: 'highest'
@@ -34,11 +34,11 @@ jobs:
           #  experimental: true
           #  dependencies: 'highest'
 
-          # Build for minimum dependencies. Fails right now, hence deactivated.
-          #- php-versions: '7.3'
-          #  static-analysis: 'no'
-          #  experimental: false
-          #  dependencies: 'lowest'
+          # Build for minimum dependencies.
+          - php-versions: '8.0'
+            static-analysis: 'no'
+            experimental: false
+            dependencies: 'lowest'
 
     runs-on: ubuntu-latest
     services:
@@ -176,7 +176,7 @@ jobs:
         run: composer test-func -- --verbose
 
       - name: Run behat tests
-        if: matrix.static-analysis == 'no'
+        if: ${{ matrix.static-analysis == 'no' && matrix.dependencies != 'lowest' }}
         #if: env.BEHAT == true
         run: |
           FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
@@ -213,7 +213,7 @@ jobs:
         run: composer test-func -- --verbose
 
       - name: Run behat tests (PGSQL)
-        if: matrix.static-analysis == 'no'
+        if: ${{ matrix.static-analysis == 'no' && matrix.dependencies != 'lowest' }}
         #if: env.BEHAT == true
         run: |
           FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all

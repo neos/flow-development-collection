@@ -16,6 +16,6 @@ namespace Neos\Flow\Http\Client;
  *
  * @api
  */
-class CurlEngineException extends \Neos\Flow\Http\Exception
+class CurlEngineException extends Exception
 {
 }

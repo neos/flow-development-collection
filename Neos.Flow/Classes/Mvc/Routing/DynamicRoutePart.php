@@ -65,11 +65,14 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      *
      * @see matchWithParameters()
      *
-     * @param string $routePath The request path to be matched - without query parameters, host and fragment.
+     * @param string|null $routePath The request path to be matched - without query parameters, host and fragment.
      * @return bool|MatchResult true or an instance of MatchResult if Route Part matched $routePath, otherwise false.
      */
     final public function match(&$routePath)
     {
+        if ($routePath === null) {
+            return false;
+        }
         return $this->matchWithParameters($routePath, RouteParameters::createEmpty());
     }
 
@@ -227,7 +230,13 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
             return false;
         }
         if (is_object($value)) {
-            $value = $this->persistenceManager->getIdentifierByObject($value);
+            $identifier = $this->persistenceManager->getIdentifierByObject($value);
+
+            if ($identifier === null && method_exists($value, '__toString')) {
+                $identifier = (string) $value;
+            }
+            $value = $identifier;
+
             if ($value === null || (!is_string($value) && !is_integer($value))) {
                 return false;
             }

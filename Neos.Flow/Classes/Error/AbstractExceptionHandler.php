@@ -23,7 +23,6 @@ use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\View\ViewInterface;
-use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 use Psr\Log\LoggerInterface;
 
@@ -48,7 +47,16 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     protected $options = [];
 
     /**
-     * @var array
+     * Merged custom error view options from defaultRenderingOptions and of the first matching renderingGroup
+     *
+     * @var array{
+     *      viewClassName: string,
+     *      viewOptions: array,
+     *      renderTechnicalDetails: bool,
+     *      logException: bool,
+     *      renderingGroup?: string,
+     *      variables?: array
+     * }
      */
     protected $renderingOptions;
 
@@ -143,9 +151,11 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
         $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $viewClassName = $renderingOptions['viewClassName'];
+        $viewOptions = array_filter($renderingOptions['viewOptions'], static function ($optionValue) {
+            return $optionValue !== null;
+        });
         /** @var ViewInterface $view */
-        $view = $viewClassName::createWithOptions($renderingOptions['viewOptions']);
-        $view = $this->applyLegacyViewOptions($view, $renderingOptions);
+        $view = $viewClassName::createWithOptions($viewOptions);
 
         $httpRequest = ServerRequest::fromGlobals();
         $request = ActionRequest::fromHttpRequest($httpRequest);
@@ -170,31 +180,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
             'statusMessage' => $statusMessage,
             'referenceCode' => $referenceCode
         ]);
-
-        return $view;
-    }
-
-    /**
-     * Sets legacy "option" properties to the view for backwards compatibility.
-     *
-     * @param ViewInterface $view
-     * @param array $renderingOptions
-     * @return ViewInterface
-     */
-    protected function applyLegacyViewOptions(ViewInterface $view, array $renderingOptions): ViewInterface
-    {
-        if (isset($renderingOptions['templatePathAndFilename'])) {
-            ObjectAccess::setProperty($view, 'templatePathAndFilename', $renderingOptions['templatePathAndFilename']);
-        }
-        if (isset($renderingOptions['layoutRootPath'])) {
-            ObjectAccess::setProperty($view, 'layoutRootPath', $renderingOptions['layoutRootPath']);
-        }
-        if (isset($renderingOptions['partialRootPath'])) {
-            ObjectAccess::setProperty($view, 'partialRootPath', $renderingOptions['partialRootPath']);
-        }
-        if (isset($renderingOptions['format'])) {
-            ObjectAccess::setProperty($view, 'format', $renderingOptions['format']);
-        }
 
         return $view;
     }
@@ -243,6 +228,15 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
             }
         }
         return null;
+    }
+
+    /**
+     * If a renderingGroup was successfully resolved via @see resolveRenderingGroup
+     * We will use a custom error view.
+     */
+    protected function useCustomErrorView(): bool
+    {
+        return isset($this->renderingOptions['renderingGroup']);
     }
 
     /**

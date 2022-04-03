@@ -112,6 +112,6 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
             $account->authenticationAttempted(TokenInterface::WRONG_CREDENTIALS);
         }
         $this->accountRepository->update($account);
-        $this->persistenceManager->whitelistObject($account);
+        $this->persistenceManager->allowObject($account);
     }
 }

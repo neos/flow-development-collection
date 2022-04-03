@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use Psr\Http\Message\ServerRequestInterface as HttpRequest;
@@ -111,6 +112,11 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     protected $policyService;
 
     /**
+     * @var TokenAndProviderFactory
+     */
+    protected $tokenAndProviderFactory;
+
+    /**
      * @var \Neos\Flow\Security\Authentication\Provider\TestingProvider
      */
     protected $testingProvider;
@@ -145,6 +151,9 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
         }
 
+        $privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
+        $privilegeManager->reset();
+
         if ($this->testableSecurityEnabled === true || static::$testablePersistenceEnabled === true) {
             if (is_callable([self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class), 'compile'])) {
                 $result = self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->compile();
@@ -154,7 +163,6 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             }
             $this->persistenceManager = $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         } else {
-            $privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
             $privilegeManager->setOverrideDecision(true);
         }
 
@@ -188,8 +196,8 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
 
             $this->authenticationManager = $this->objectManager->get(\Neos\Flow\Security\Authentication\AuthenticationProviderManager::class);
 
-            $this->testingProvider = $this->objectManager->get(\Neos\Flow\Security\Authentication\Provider\TestingProvider::class);
-            $this->testingProvider->setName('TestingProvider');
+            $this->tokenAndProviderFactory = $this->objectManager->get(TokenAndProviderFactory::class);
+            $this->testingProvider = $this->tokenAndProviderFactory->getProviders()['TestingProvider'];
 
             $this->registerRoute('functionaltestroute', 'neos/flow/test', [
                 '@package' => 'Neos.Flow',

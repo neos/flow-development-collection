@@ -11,6 +11,8 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Used to ignore validation on a specific method argument or class property.
  *
@@ -18,13 +20,15 @@ namespace Neos\Flow\Annotations;
  * processing, the "evaluate" option can be set to true (while still ignoring any validation error).
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"METHOD", "PROPERTY"})
  */
+#[\Attribute(\Attribute::TARGET_METHOD|\Attribute::TARGET_PROPERTY|\Attribute::IS_REPEATABLE)]
 final class IgnoreValidation
 {
     /**
      * Name of the argument to skip validation for. (Can be given as anonymous argument.)
-     * @var string
+     * @var string|null
      */
     public $argumentName;
 
@@ -34,18 +38,9 @@ final class IgnoreValidation
      */
     public $evaluate = false;
 
-    /**
-     * @param array $values
-     * @throws \InvalidArgumentException
-     */
-    public function __construct(array $values)
+    public function __construct(string $argumentName = null, bool $evaluate = false)
     {
-        if (isset($values['value']) || isset($values['argumentName'])) {
-            $this->argumentName = ltrim(isset($values['argumentName']) ? $values['argumentName'] : $values['value'], '$');
-        }
-
-        if (isset($values['evaluate'])) {
-            $this->evaluate = (boolean)$values['evaluate'];
-        }
+        $this->argumentName = $argumentName ? ltrim($argumentName, '$') : null;
+        $this->evaluate = $evaluate;
     }
 }

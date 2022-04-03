@@ -186,10 +186,12 @@ class ConfigurationBuilder
     protected function enhanceRawConfigurationWithAnnotationOptions($className, array $rawObjectConfiguration)
     {
         if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Scope::class)) {
-            $rawObjectConfiguration['scope'] = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class)->value;
+            $annotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
+            $rawObjectConfiguration['scope'] = $annotation->value ?? null;
         }
         if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Autowiring::class)) {
-            $rawObjectConfiguration['autowiring'] = $this->reflectionService->getClassAnnotation($className, Flow\Autowiring::class)->enabled;
+            $annotation = $this->reflectionService->getClassAnnotation($className, Flow\Autowiring::class);
+            $rawObjectConfiguration['autowiring'] = $annotation->enabled ?? null;
         }
         return $rawObjectConfiguration;
     }
@@ -559,8 +561,18 @@ class ConfigurationBuilder
                 if (!array_key_exists($propertyName, $properties)) {
                     /** @var Inject $injectAnnotation */
                     $injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, Inject::class);
-                    $objectName = $injectAnnotation->name !== null ? $injectAnnotation->name : trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
-                    $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $injectAnnotation->lazy);
+                    $enableLazyInjection = $injectAnnotation->lazy;
+                    $objectName = $injectAnnotation->name;
+                    if ($objectName === null) {
+                        $objectName = $this->reflectionService->getPropertyType($className, $propertyName);
+                        if ($objectName !== null) {
+                            $enableLazyInjection = false; # See:  https://github.com/neos/flow-development-collection/issues/2114
+                        }
+                    }
+                    if ($objectName === null) {
+                        $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
+                    }
+                    $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $enableLazyInjection);
                     $properties[$propertyName] = $configurationProperty;
                 }
             }

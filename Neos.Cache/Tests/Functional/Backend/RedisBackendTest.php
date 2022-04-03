@@ -15,8 +15,8 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Tests\BaseTestCase;
+use Neos\Cache\Frontend\FrontendInterface;
 
 /**
  * Testcase for the redis cache backend
@@ -49,8 +49,8 @@ class RedisBackendTest extends BaseTestCase
     protected function setUp(): void
     {
         $phpredisVersion = phpversion('redis');
-        if (version_compare($phpredisVersion, '1.2.0', '<')) {
-            $this->markTestSkipped(sprintf('phpredis extension version %s is not supported. Please update to verson 1.2.0+.', $phpredisVersion));
+        if (version_compare($phpredisVersion, '5.0.0', '<')) {
+            $this->markTestSkipped(sprintf('phpredis extension version %s is not supported. Please update to version 5.0.0+.', $phpredisVersion));
         }
         try {
             if (!@fsockopen('127.0.0.1', 6379)) {
@@ -162,6 +162,18 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function flushUnfreezesTheCache()
+    {
+        self::assertFalse($this->backend->isFrozen());
+        $this->backend->freeze();
+        self::assertTrue($this->backend->isFrozen());
+        $this->backend->flush();
+        self::assertFalse($this->backend->isFrozen());
+    }
+
+    /**
+     * @test
+     */
     public function flushByTagFlushesEntryByTag()
     {
         for ($i = 0; $i < 10; $i++) {
@@ -182,11 +194,54 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function flushByTagsFlushesEntryByTags()
+    {
+        for ($i = 0; $i < 10; $i++) {
+            $this->backend->set('entry_' . $i, 'foo', ['tag1', 'tag2']);
+        }
+        for ($i = 10; $i < 20; $i++) {
+            $this->backend->set('entry_' . $i, 'foo', ['tag2']);
+        }
+        for ($i = 20; $i < 30; $i++) {
+            $this->backend->set('entry_' . $i, 'foo', ['tag3']);
+        }
+        self::assertCount(10, $this->backend->findIdentifiersByTag('tag1'));
+        self::assertCount(20, $this->backend->findIdentifiersByTag('tag2'));
+        self::assertCount(10, $this->backend->findIdentifiersByTag('tag3'));
+
+        $count = $this->backend->flushByTags(['tag1', 'tag3']);
+        self::assertEquals(20, $count, 'flushByTag returns amount of flushed entries');
+        self::assertCount(0, $this->backend->findIdentifiersByTag('tag1'));
+        self::assertCount(10, $this->backend->findIdentifiersByTag('tag2'));
+        self::assertCount(0, $this->backend->findIdentifiersByTag('tag3'));
+    }
+
+    /**
+     * @test
+     */
     public function flushByTagRemovesEntries()
     {
         $this->backend->set('some_entry', 'foo', ['tag1', 'tag2']);
 
         $this->backend->flushByTag('tag1');
+
+        $entryIdentifiers = [];
+        foreach ($this->backend as $entryIdentifier => $entryValue) {
+            $entryIdentifiers[] = $entryIdentifier;
+        }
+
+        self::assertEquals([], $entryIdentifiers);
+    }
+
+    /**
+     * @test
+     */
+    public function flushByTagsRemovesEntries()
+    {
+        $this->backend->set('some_entry', 'foo', ['tag1', 'tag2']);
+        $this->backend->set('some_other_entry', 'bar', ['tag3']);
+
+        $this->backend->flushByTags(['tag1', 'tag3']);
 
         $entryIdentifiers = [];
         foreach ($this->backend as $entryIdentifier => $entryValue) {
@@ -249,32 +304,5 @@ class RedisBackendTest extends BaseTestCase
             $actualEntries[] = $key;
         }
         self::assertEmpty($actualEntries, 'Entries should be empty');
-    }
-
-    /**
-     * @test
-     */
-    public function tagsAlsoReceiveTheTtl()
-    {
-        $this->backend->set('entry1', 'foo', ['bar', 'baz'], 1);
-        sleep(2);
-        $this->assertFalse($this->backend->has('entry1'));
-
-        $this->assertEmpty($this->backend->findIdentifiersByTag('bar'));
-        $this->assertEmpty($this->backend->findIdentifiersByTag('baz'));
-    }
-
-    /**
-     * @test
-     */
-    public function tagsForMultipleEntriesExpireIndividually()
-    {
-        $this->backend->set('entry1', 'foo', ['bar', 'baz'], 1);
-        $this->backend->set('entry2', 'foo', ['baz'], 10);
-        sleep(2);
-        $this->assertFalse($this->backend->has('entry1'));
-
-        $this->assertEmpty($this->backend->findIdentifiersByTag('bar'));
-        $this->assertEquals(['entry2'], $this->backend->findIdentifiersByTag('baz'));
     }
 }

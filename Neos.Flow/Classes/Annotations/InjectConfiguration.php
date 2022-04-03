@@ -12,6 +12,7 @@ namespace Neos\Flow\Annotations;
  */
 
 use Neos\Flow\Configuration\ConfigurationManager;
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
 /**
  * Used to enable property injection for configuration including settings.
@@ -20,8 +21,10 @@ use Neos\Flow\Configuration\ConfigurationManager;
  * to inject the configured configuration.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target("PROPERTY")
  */
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
 final class InjectConfiguration
 {
     /**
@@ -32,7 +35,7 @@ final class InjectConfiguration
      *
      * Example: session.name
      *
-     * @var string
+     * @var string|null
      */
     public $path;
 
@@ -44,7 +47,7 @@ final class InjectConfiguration
      *
      * Example: Neos.Flow
      *
-     * @var string
+     * @var string|null
      */
     public $package;
 
@@ -55,19 +58,12 @@ final class InjectConfiguration
      */
     public $type = ConfigurationManager::CONFIGURATION_TYPE_SETTINGS;
 
-    /**
-     * @param array $values
-     */
-    public function __construct(array $values)
+    public function __construct(?string $path = null, ?string $package = null, ?string $type = null)
     {
-        if (isset($values['value']) || isset($values['path'])) {
-            $this->path = isset($values['path']) ? (string)$values['path'] : (string)$values['value'];
-        }
-        if (isset($values['package'])) {
-            $this->package = (string)$values['package'];
-        }
-        if (isset($values['type'])) {
-            $this->type = (string)$values['type'];
+        $this->path = $path;
+        $this->package = $package;
+        if ($type !== null) {
+            $this->type = $type;
         }
     }
 }

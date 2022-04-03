@@ -126,7 +126,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         $tags[] = '%APCUBE%' . $this->cacheIdentifier;
         $expiration = $lifetime !== null ? $lifetime : $this->defaultLifetime;
 
-        $success = apcu_store($this->identifierPrefix . 'entry_' . $entryIdentifier, $data, $expiration);
+        $success = apcu_store($this->getPrefixedIdentifier($entryIdentifier), $data, $expiration);
         if ($success === true) {
             $this->removeIdentifierFromAllTags($entryIdentifier);
             $this->addIdentifierToTags($entryIdentifier, $tags);
@@ -145,7 +145,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     public function get(string $entryIdentifier)
     {
         $success = false;
-        $value = apcu_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
+        $value = apcu_fetch($this->getPrefixedIdentifier($entryIdentifier), $success);
         return ($success ? $value : $success);
     }
 
@@ -159,7 +159,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     public function has(string $entryIdentifier): bool
     {
         $success = false;
-        apcu_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
+        apcu_fetch($this->getPrefixedIdentifier($entryIdentifier), $success);
         return $success;
     }
 
@@ -175,7 +175,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     public function remove(string $entryIdentifier): bool
     {
         $this->removeIdentifierFromAllTags($entryIdentifier);
-        return apcu_delete($this->identifierPrefix . 'entry_' . $entryIdentifier);
+        return apcu_delete($this->getPrefixedIdentifier($entryIdentifier));
     }
 
     /**
@@ -239,6 +239,20 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
             $this->remove($identifier);
         }
         return count($identifiers);
+    }
+
+    /**
+     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     *
+     * @api
+     */
+    public function flushByTags(array $tags): int
+    {
+        $flushed = 0;
+        foreach ($tags as $tag) {
+            $flushed += $this->flushByTag($tag);
+        }
+        return $flushed;
     }
 
     /**

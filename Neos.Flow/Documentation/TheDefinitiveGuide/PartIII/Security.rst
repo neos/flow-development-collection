@@ -495,6 +495,11 @@ them in "parallel".
 
   You will have to make sure, that each provider has a unique name. In the example above
   the provider name is ``DefaultProvider``.
+  
+.. note::
+
+  You can also disable an authentication provider by setting the 
+  provider value to ``false`` in the YAML configuration. For instance ``DefaultProvider: false``.  
 
 *Example: Configuration of two authentication providers*
 
@@ -1628,7 +1633,7 @@ security interceptors.
 
 .. note::
 
-  You might have noticed the ``rejectAll`` option. If this is set to ``yes``,
+  You might have noticed the ``rejectAll`` option. If this is set to ``true``,
   only request which are explicitly allowed by a request filter will be able
   to pass the firewall.
 
