@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Security\Policy;
 
 /*
@@ -13,6 +15,7 @@ namespace Neos\Flow\Security\Policy;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterDefinition;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
@@ -32,7 +35,7 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 class PolicyService
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected $initialized = false;
 
@@ -67,7 +70,7 @@ class PolicyService
      * @param ConfigurationManager $configurationManager The configuration manager
      * @return void
      */
-    public function injectConfigurationManager(ConfigurationManager $configurationManager)
+    public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
     }
@@ -78,7 +81,7 @@ class PolicyService
      * @param ObjectManagerInterface $objectManager
      * @return void
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
@@ -88,8 +91,9 @@ class PolicyService
      *
      * @return void
      * @throws SecurityException
+     * @throws InvalidConfigurationTypeException
      */
-    protected function initialize()
+    protected function initialize(): void
     {
         if ($this->initialized) {
             return;
@@ -103,17 +107,15 @@ class PolicyService
         $privilegeTargetsForEverybody = $this->privilegeTargets;
 
         $this->roles = [];
-        $everybodyRole = new Role('Neos.Flow:Everybody');
+        $everybodyRole = new Role('Neos.Flow:Everybody', [], (string)($this->policyConfiguration['roles']['Neos.Flow:Everybody']['label'] ?? ''), (string)($this->policyConfiguration['roles']['Neos.Flow:Everybody']['description'] ?? ''));
         $everybodyRole->setAbstract(true);
         if (isset($this->policyConfiguration['roles'])) {
             foreach ($this->policyConfiguration['roles'] as $roleIdentifier => $roleConfiguration) {
                 if ($roleIdentifier === 'Neos.Flow:Everybody') {
                     $role = $everybodyRole;
                 } else {
-                    $role = new Role($roleIdentifier);
-                    if (isset($roleConfiguration['abstract'])) {
-                        $role->setAbstract((boolean)$roleConfiguration['abstract']);
-                    }
+                    $role = new Role($roleIdentifier, [], (string)($roleConfiguration['label'] ?? ''), (string)($roleConfiguration['description'] ?? ''));
+                    $role->setAbstract((bool)($roleConfiguration['abstract'] ?? false));
                 }
 
                 if (isset($roleConfiguration['privileges'])) {
@@ -126,7 +128,7 @@ class PolicyService
                         if (!isset($privilegeConfiguration['permission'])) {
                             throw new SecurityException(sprintf('No permission set for privilegeTarget "%s" in Role "%s"', $privilegeTargetIdentifier, $roleIdentifier), 1395869331);
                         }
-                        $privilegeParameters = isset($privilegeConfiguration['parameters']) ? $privilegeConfiguration['parameters'] : [];
+                        $privilegeParameters = $privilegeConfiguration['parameters'] ?? [];
                         try {
                             $privilege = $privilegeTarget->createPrivilege($privilegeConfiguration['permission'], $privilegeParameters);
                         } catch (\Exception $exception) {
@@ -145,7 +147,6 @@ class PolicyService
         }
 
         // create ABSTAIN privilege for all uncovered privilegeTargets
-        /** @var PrivilegeTarget $privilegeTarget */
         foreach ($privilegeTargetsForEverybody as $privilegeTarget) {
             if ($privilegeTarget->hasParameters()) {
                 continue;
@@ -175,18 +176,19 @@ class PolicyService
      * @return void
      * @throws SecurityException
      */
-    protected function initializePrivilegeTargets()
+    protected function initializePrivilegeTargets(): void
     {
         if (!isset($this->policyConfiguration['privilegeTargets'])) {
             return;
         }
+
         foreach ($this->policyConfiguration['privilegeTargets'] as $privilegeClassName => $privilegeTargetsConfiguration) {
             foreach ($privilegeTargetsConfiguration as $privilegeTargetIdentifier => $privilegeTargetConfiguration) {
                 if (!isset($privilegeTargetConfiguration['matcher'])) {
                     throw new SecurityException(sprintf('No "matcher" configured for privilegeTarget "%s"', $privilegeTargetIdentifier), 1401795388);
                 }
                 $parameterDefinitions = [];
-                $privilegeParameterConfiguration = isset($privilegeTargetConfiguration['parameters']) ? $privilegeTargetConfiguration['parameters'] : [];
+                $privilegeParameterConfiguration = $privilegeTargetConfiguration['parameters'] ?? [];
                 foreach ($privilegeParameterConfiguration as $parameterName => $parameterValue) {
                     if (!isset($privilegeTargetConfiguration['parameters'][$parameterName])) {
                         throw new SecurityException(sprintf('No parameter definition found for parameter "%s" in privilegeTarget "%s"', $parameterName, $privilegeTargetIdentifier), 1395869330);
@@ -196,7 +198,9 @@ class PolicyService
                     }
                     $parameterDefinitions[$parameterName] = new PrivilegeParameterDefinition($parameterName, $privilegeTargetConfiguration['parameters'][$parameterName]['className']);
                 }
-                $privilegeTarget = new PrivilegeTarget($privilegeTargetIdentifier, $privilegeClassName, $privilegeTargetConfiguration['matcher'], $parameterDefinitions);
+
+                $label = $privilegeTargetConfiguration['label'] ?? $privilegeTargetIdentifier;
+                $privilegeTarget = new PrivilegeTarget($privilegeTargetIdentifier, $privilegeClassName, $privilegeTargetConfiguration['matcher'], $parameterDefinitions, $label);
                 $privilegeTarget->injectObjectManager($this->objectManager);
                 $this->privilegeTargets[$privilegeTargetIdentifier] = $privilegeTarget;
             }
@@ -207,9 +211,11 @@ class PolicyService
      * Checks if a role exists
      *
      * @param string $roleIdentifier The role identifier, format: (<PackageKey>:)<Role>
-     * @return boolean
+     * @return bool
+     * @throws InvalidConfigurationTypeException
+     * @throws SecurityException
      */
-    public function hasRole($roleIdentifier)
+    public function hasRole(string $roleIdentifier): bool
     {
         $this->initialize();
         return isset($this->roles[$roleIdentifier]);
@@ -220,14 +226,16 @@ class PolicyService
      *
      * @param string $roleIdentifier The role identifier of the role, format: (<PackageKey>:)<Role>
      * @return Role
+     * @throws InvalidConfigurationTypeException
      * @throws NoSuchRoleException
+     * @throws SecurityException
      */
-    public function getRole($roleIdentifier)
+    public function getRole(string $roleIdentifier): Role
     {
         if ($this->hasRole($roleIdentifier)) {
             return $this->roles[$roleIdentifier];
         }
-        throw new NoSuchRoleException();
+        throw new NoSuchRoleException(sprintf('Role with roleIdentifier %s has not been found', $roleIdentifier), 1602423622);
     }
 
     /**
@@ -235,12 +243,14 @@ class PolicyService
      *
      * @param boolean $includeAbstract If true the result includes abstract roles, otherwise those will be skipped
      * @return Role[] Array of all configured roles, indexed by role identifier
+     * @throws InvalidConfigurationTypeException
+     * @throws SecurityException
      */
-    public function getRoles($includeAbstract = false)
+    public function getRoles($includeAbstract = false): array
     {
         $this->initialize();
         if (!$includeAbstract) {
-            return array_filter($this->roles, function (Role $role) {
+            return array_filter($this->roles, static function (Role $role) {
                 return $role->isAbstract() !== true;
             });
         }
@@ -252,8 +262,10 @@ class PolicyService
      *
      * @param string $type Full qualified class or interface name
      * @return array
+     * @throws InvalidConfigurationTypeException
+     * @throws SecurityException
      */
-    public function getAllPrivilegesByType($type)
+    public function getAllPrivilegesByType(string $type): array
     {
         $this->initialize();
         $privileges = [];
@@ -267,8 +279,10 @@ class PolicyService
      * Returns all configured privilege targets
      *
      * @return PrivilegeTarget[]
+     * @throws InvalidConfigurationTypeException
+     * @throws SecurityException
      */
-    public function getPrivilegeTargets()
+    public function getPrivilegeTargets(): array
     {
         $this->initialize();
         return $this->privilegeTargets;
@@ -278,12 +292,14 @@ class PolicyService
      * Returns the privilege target identified by the given string
      *
      * @param string $privilegeTargetIdentifier Identifier of a privilege target
-     * @return PrivilegeTarget
+     * @return PrivilegeTarget|null
+     * @throws InvalidConfigurationTypeException
+     * @throws SecurityException
      */
-    public function getPrivilegeTargetByIdentifier($privilegeTargetIdentifier)
+    public function getPrivilegeTargetByIdentifier(string $privilegeTargetIdentifier): ?PrivilegeTarget
     {
         $this->initialize();
-        return isset($this->privilegeTargets[$privilegeTargetIdentifier]) ? $this->privilegeTargets[$privilegeTargetIdentifier] : null;
+        return $this->privilegeTargets[$privilegeTargetIdentifier] ?? null;
     }
 
     /**
@@ -292,7 +308,7 @@ class PolicyService
      *
      * @return void
      */
-    public function reset()
+    public function reset(): void
     {
         $this->initialized = false;
         $this->roles = [];
@@ -308,7 +324,7 @@ class PolicyService
      * @return void
      * @Flow\Signal
      */
-    protected function emitConfigurationLoaded(array &$policyConfiguration)
+    protected function emitConfigurationLoaded(array &$policyConfiguration): void
     {
     }
 
@@ -322,7 +338,7 @@ class PolicyService
      * @return void
      * @Flow\Signal
      */
-    protected function emitRolesInitialized(array &$roles)
+    protected function emitRolesInitialized(array &$roles): void
     {
     }
 }

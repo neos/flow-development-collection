@@ -49,15 +49,16 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
 
     /**
      * @param string $tag
-     * @return int
+     * @return int the maximum number flushed entries returned by the backends
      * @throws \Throwable
      */
     public function flushByTag(string $tag): int
     {
+        $this->prepareBackends();
         $count = 0;
         foreach ($this->backends as $backend) {
             try {
-                $count = $count | $backend->flushByTag($tag);
+                $count |= $backend->flushByTag($tag);
             } catch (\Throwable $t) {
                 $this->handleError($t);
             }
@@ -67,20 +68,36 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
     }
 
     /**
+     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     *
+     * @throws \Throwable
+     * @api
+     */
+    public function flushByTags(array $tags): int
+    {
+        $flushed = 0;
+        foreach ($tags as $tag) {
+            $flushed += $this->flushByTag($tag);
+        }
+        return $flushed;
+    }
+
+    /**
      * @param string $tag
      * @return string[]
      */
     public function findIdentifiersByTag(string $tag): array
     {
+        $this->prepareBackends();
         $identifiers = [];
         foreach ($this->backends as $backend) {
             try {
-                $localIdentifiers = $backend->findIdentifiersByTag($tag);
-                $identifiers = array_merge($identifiers, $localIdentifiers);
+                $identifiers[] = $backend->findIdentifiersByTag($tag);
             } catch (\Throwable $t) {
             }
         }
-
-        return array_values(array_unique($identifiers));
+        // avoid array_merge in the loop, this trades memory for speed
+        // the empty array covers cases when no loops were made
+        return array_values(array_unique(array_merge([], ...$identifiers)));
     }
 }

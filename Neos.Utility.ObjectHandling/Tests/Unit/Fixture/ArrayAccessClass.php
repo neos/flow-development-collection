@@ -17,31 +17,31 @@ namespace Neos\Utility\ObjectHandling\Tests\Unit\Fixture;
  */
 class ArrayAccessClass implements \ArrayAccess
 {
-    protected $internalProperty = 'access through forceDirectAccess';
+    protected string $internalProperty = 'access through forceDirectAccess';
 
-    protected $array = [];
+    protected array $array = [];
 
     public function __construct(array $array)
     {
         $this->array = $array;
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return array_key_exists($offset, $this->array);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->array[$offset];
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->array[$offset] = $value;
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->array[$offset]);
     }

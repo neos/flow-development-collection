@@ -11,6 +11,7 @@ namespace Neos\Flow\Validation\Validator;
  * source code.
  */
 
+use Doctrine\Persistence\Proxy as DoctrineProxy;
 use Neos\Utility\ObjectAccess;
 use Neos\Error\Messages\Result as ErrorResult;
 
@@ -87,7 +88,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
      */
     protected function isUninitializedProxy($object)
     {
-        return ($object instanceof \Doctrine\ORM\Proxy\Proxy && $object->__isInitialized() === false);
+        return ($object instanceof DoctrineProxy && $object->__isInitialized() === false);
     }
 
     /**
@@ -119,7 +120,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
      */
     protected function getPropertyValue($object, $propertyName)
     {
-        if ($object instanceof \Doctrine\ORM\Proxy\Proxy) {
+        if ($object instanceof DoctrineProxy) {
             $object->__load();
         }
 

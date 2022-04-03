@@ -11,6 +11,7 @@ namespace Neos\Utility;
  * source code.
  */
 
+use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
 
 /**
@@ -114,11 +115,20 @@ abstract class ObjectAccess
         $className = TypeHandling::getTypeForValue($subject);
 
         if ($forceDirectAccess === true) {
+            // try actual class property first
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
                 $propertyReflection->setAccessible(true);
                 return $propertyReflection->getValue($subject);
             }
+            // then see if it's a Flow proxy and try to get the parent class property
+            $className = get_parent_class($className);
+            if ($subject instanceof ProxyInterface && $className !== false && property_exists($className, $propertyName)) {
+                $propertyReflection = new \ReflectionProperty($className, $propertyName);
+                $propertyReflection->setAccessible(true);
+                return $propertyReflection->getValue($subject);
+            }
+            // then try to get the property directly
             if (property_exists($subject, $propertyName)) {
                 return $subject->$propertyName;
             }
@@ -192,13 +202,8 @@ abstract class ObjectAccess
      * @param string $propertyPath
      * @return mixed Value of the property
      */
-    public static function getPropertyPath($subject, string $propertyPath = null)
+    public static function getPropertyPath($subject, string $propertyPath)
     {
-        // TODO: This default value handling is only in place for b/c to have this method accept nulls.
-        //       It can be removed with Flow 5.0 and other breaking typehint changes.
-        if ($propertyPath === null) {
-            return null;
-        }
         $propertyPathSegments = explode('.', $propertyPath);
         foreach ($propertyPathSegments as $pathSegment) {
             $propertyExists = false;
@@ -234,6 +239,10 @@ abstract class ObjectAccess
      */
     public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
     {
+        if (!is_string($propertyName) && !is_int($propertyName)) {
+            throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
+        }
+
         if (is_array($subject)) {
             $subject[$propertyName] = $propertyValue;
             return true;
@@ -242,20 +251,24 @@ abstract class ObjectAccess
         if (!is_object($subject)) {
             throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject) . ' given.', 1237301368);
         }
-        if (!is_string($propertyName) && !is_int($propertyName)) {
-            throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
-        }
 
         if ($forceDirectAccess === true) {
+            if (!is_string($propertyName)) {
+                throw new \InvalidArgumentException('Given property name is not of type string.', 1648244846);
+            }
             $className = TypeHandling::getTypeForValue($subject);
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
                 $propertyReflection->setAccessible(true);
                 $propertyReflection->setValue($subject, $propertyValue);
+            } elseif ($subject instanceof ProxyInterface && property_exists(get_parent_class($className), $propertyName)) {
+                $propertyReflection = new \ReflectionProperty(get_parent_class($className), $propertyName);
+                $propertyReflection->setAccessible(true);
+                $propertyReflection->setValue($subject, $propertyValue);
             } else {
                 $subject->$propertyName = $propertyValue;
             }
-        } elseif (is_callable([$subject, $setterMethodName = self::buildSetterMethodName($propertyName)])) {
+        } elseif (is_callable([$subject, $setterMethodName = self::buildSetterMethodName((string)$propertyName)])) {
             $subject->$setterMethodName($propertyValue);
         } elseif ($subject instanceof \ArrayAccess) {
             $subject[$propertyName] = $propertyValue;
@@ -429,51 +442,5 @@ abstract class ObjectAccess
     public static function buildSetterMethodName(string $propertyName): string
     {
         return 'set' . ucfirst($propertyName);
-    }
-
-    /**
-     * Instantiates the class named `$className` using the `$arguments` as constructor
-     * arguments (in array order).
-     *
-     * For less than 7 arguments `new` is used, for more a `ReflectionClass` is created
-     * and `newInstanceArgs` is used.
-     *
-     * Note: this should be used sparingly, just calling `new` yourself or using Dependency
-     * Injection are most probably better alternatives.
-     *
-     * @param string $className
-     * @param array $arguments
-     * @return object
-     */
-    public static function instantiateClass($className, $arguments)
-    {
-        switch (count($arguments)) {
-            case 0:
-                $object = new $className();
-            break;
-            case 1:
-                $object = new $className($arguments[0]);
-            break;
-            case 2:
-                $object = new $className($arguments[0], $arguments[1]);
-            break;
-            case 3:
-                $object = new $className($arguments[0], $arguments[1], $arguments[2]);
-            break;
-            case 4:
-                $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
-            break;
-            case 5:
-                $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]);
-            break;
-            case 6:
-                $object = new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5]);
-            break;
-            default:
-                $class = new \ReflectionClass($className);
-                $object = $class->newInstanceArgs($arguments);
-        }
-
-        return $object;
     }
 }

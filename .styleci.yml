@@ -1,5 +1,7 @@
 preset: psr2
 
+version: 8.1
+
 finder:
   path:
     - "Neos.Cache/Classes"

@@ -14,7 +14,7 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
-use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -22,6 +22,7 @@ use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
+use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\Exception\ViewNotFoundException;
 use Neos\Flow\Mvc\View\ViewInterface;
@@ -30,6 +31,8 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
+use Neos\Flow\Security\Exception\InvalidHashException;
 use Neos\Utility\TypeHandling;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -151,6 +154,19 @@ class ActionController extends AbstractController
     protected $logger;
 
     /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * Feature flag to enable the potentially breaking support of validation for dynamic types specified with `__type` argument or in the `PropertyMapperConfiguration`.
+     * Note: This will be enabled by default in a future version.
+     * See https://github.com/neos/flow-development-collection/pull/1905
+     * @var boolean
+     */
+    protected $enableDynamicTypeValidation = false;
+
+    /**
      * @param array $settings
      * @return void
      */
@@ -168,6 +184,17 @@ class ActionController extends AbstractController
     public function injectLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * Injects the throwable storage.
+     *
+     * @param ThrowableStorageInterface $throwableStorage
+     * @return void
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
     }
 
     /**
@@ -191,16 +218,33 @@ class ActionController extends AbstractController
         $this->actionMethodName = $this->resolveActionMethodName();
 
         $this->initializeActionMethodArguments();
-        $this->initializeActionMethodValidators();
+        if ($this->enableDynamicTypeValidation !== true) {
+            $this->initializeActionMethodValidators();
+        }
 
         $this->initializeAction();
         $actionInitializationMethodName = 'initialize' . ucfirst($this->actionMethodName);
         if (method_exists($this, $actionInitializationMethodName)) {
             call_user_func([$this, $actionInitializationMethodName]);
         }
-        $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
+        try {
+            $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
+        } catch (InvalidArgumentForHashGenerationException|InvalidHashException $e) {
+            $message = $this->throwableStorage->logThrowable($e);
+            $this->logger->notice('Property mapping configuration failed due to HMAC errors. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
+            $this->throwStatus(400, null, 'Invalid HMAC submitted');
+        }
 
-        $this->mapRequestArgumentsToControllerArguments();
+        try {
+            $this->mapRequestArgumentsToControllerArguments();
+        } catch (RequiredArgumentMissingException $e) {
+            $message = $this->throwableStorage->logThrowable($e);
+            $this->logger->notice('Request argument mapping failed due to a missing required argument. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
+            $this->throwStatus(400, null, 'Required argument is missing');
+        }
+        if ($this->enableDynamicTypeValidation === true) {
+            $this->initializeActionMethodValidators();
+        }
 
         if ($this->view === null) {
             $this->view = $this->resolveView();
@@ -212,6 +256,10 @@ class ActionController extends AbstractController
         }
 
         $this->callActionMethod();
+
+        if (!$this->response->hasContentType()) {
+            $this->response->setContentType($this->negotiatedMediaType);
+        }
     }
 
     /**
@@ -362,6 +410,7 @@ class ActionController extends AbstractController
             $ignoredArguments = [];
         }
 
+        /* @var $argument Argument */
         foreach ($this->arguments as $argument) {
             $argumentName = $argument->getName();
             if (isset($ignoredArguments[$argumentName]) && !$ignoredArguments[$argumentName]['evaluate']) {
@@ -471,7 +520,7 @@ class ActionController extends AbstractController
         $validationResult = $this->arguments->getValidationResults();
 
         if (!$validationResult->hasErrors()) {
-            $actionResult = call_user_func_array([$this, $this->actionMethodName], $preparedArguments);
+            $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
         } else {
             $actionIgnoredArguments = static::getActionIgnoredValidationArguments($this->objectManager);
             if (isset($actionIgnoredArguments[$this->actionMethodName])) {
@@ -496,9 +545,9 @@ class ActionController extends AbstractController
             }
 
             if ($shouldCallActionMethod) {
-                $actionResult = call_user_func_array([$this, $this->actionMethodName], $preparedArguments);
+                $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
             } else {
-                $actionResult = call_user_func([$this, $this->errorMethodName]);
+                $actionResult = $this->{$this->errorMethodName}();
             }
         }
 
@@ -586,8 +635,12 @@ class ActionController extends AbstractController
         }
 
         if (!is_a($viewObjectName, ViewInterface::class, true)) {
-            throw new ViewNotFoundException(sprintf('View class has to implement ViewInterface but "%s" in action "%s" of controller "%s" does not.',
-                $viewObjectName, $this->request->getControllerActionName(), get_class($this)), 1355153188);
+            throw new ViewNotFoundException(sprintf(
+                'View class has to implement ViewInterface but "%s" in action "%s" of controller "%s" does not.',
+                $viewObjectName,
+                $this->request->getControllerActionName(),
+                get_class($this)
+            ), 1355153188);
         }
 
         $viewOptions = isset($viewsConfiguration['options']) ? $viewsConfiguration['options'] : [];
@@ -781,8 +834,10 @@ class ActionController extends AbstractController
         }
 
         if ($result instanceof ResponseInterface) {
-            $finalResponse = $this->response->applyToHttpResponse($result);
-            $this->response->setComponentParameter(ReplaceHttpResponseComponent::class, ReplaceHttpResponseComponent::PARAMETER_RESPONSE, $finalResponse);
+            $this->response->replaceHttpResponse($result);
+            if ($result->hasHeader('Content-Type')) {
+                $this->response->setContentType($result->getHeaderLine('Content-Type'));
+            }
         }
 
         if (is_object($result) && is_callable([$result, '__toString'])) {

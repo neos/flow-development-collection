@@ -1,0 +1,207 @@
+========
+Flow 7.1
+========
+
+This release of Flow comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+As usual, we worked hard to keep this release as backwards compatible as possible but some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+
+************
+New Features
+************
+
+!!! FEATURE: Enable URL Rewriting by default
+--------------------------------------------
+
+This flips the default behavior for the ``FLOW_REWRITEURLS`` environment
+variable: If it is _not_ specified (or contains a value other than ``0``)
+URL rewriting will be enabled.
+
+Previously URL rewriting was enabled with a corresponding ``SetEnv`` configuration
+for Apache.
+For other servers and CLI a corresponding configuration (or a
+``putenv('FLOW_REWRITEURLS=1')`` call at runtime) was required in order to
+activate URL rewriting.
+
+This could be a breaking change in case you relied on the previous behavior.
+For example: Using the ``UriBuilder`` in CLI previously created URLs in the format ``/index.php/some/path``. Now it will lead to ``/some/path`` by default.
+To re-establish the former behavior, the ``FLOW_REWRITEURLS`` can be set to 0 explicitly, for example via ``putenv('FLOW_REWRITEURLS=1');``.
+
+
+FEATURE: Allow flushing caches by compiled classes
+--------------------------------------------------
+
+This adds a signal to the proxy compiler when classes have been compiled and a slot to the a new ``AnnotationsCacheFlusher`` class that checks the compiled classes for existing annotations and flushes matching configured caches.
+This is required when annotations are used to change configuration, like the ``@Flow\\Route`` or ``@Flow\\Privilege`` annotations.
+
+Related to https://github.com/neos/flow-development-collection/pull/2421
+Related to https://github.com/neos/flow-development-collection/pull/2412
+
+
+FEATURE: Make rendering of request in exception log configurable
+----------------------------------------------------------------
+
+With this it is possible to configure if the request data should be rendered into exception stack traces with the newly added configuration setting ``Neos.Flow.log.throwables.renderRequestInformation``.
+
+
+FEATURE: Cli ProgressBar is public accessible
+---------------------------------------------
+
+The access modifier for ``getProgressBar()`` in ``ConsoleOutput.php`` is now public.
+
+I'm using reflection to access the progressbar in a project to use symfonie's time estimation for a long running command. I think there shouldn't be much harm in just making ``getProgressBar()`` public.
+
+Maybe this could go into the 7.1 release?
+
+`Symfony Progressbar Docs <https://symfony.com/doc/current/components/console/helpers/progressbar.html>`_
+
+
+FEATURE: Add fusion template support
+------------------------------------
+
+With this it is possible to specify the option ``--generate-fusion`` for the ``kickstart:actioncontroller`` command, which will generate ``.fusion`` files instead of Fluid templates and a ``Root.fusion`` in the according folders.
+
+Depends on https://github.com/neos/neos-development-collection/pull/3255
+
+
+FEATURE: Add rfc6750 bearer token
+---------------------------------
+
+Adds the bearer token class to extract a rfc6750 bearer token
+from the HTTP header.
+
+
+FEATURE: Introduce ability to add Fluid namespaces via configuration
+--------------------------------------------------------------------
+
+Added the ability to add Fluid namespaces via configuration.
+
+By adding a new configuration option:
+```
+Neos:
+  FluidAdaptor:
+    namespaces:
+```
+This configuration is used, to add namespaces inside the ViewHelperResolver.
+
+Add a default namespace in Settings.yaml and try to use its view helpers in any template, without including the namespace there.
+
+Related issue: `#2375 <https://github.com/neos/flow-development-collection/issues/2375>`_
+
+
+FEATURE: Expose array_values() in Array eelHelper
+-------------------------------------------------
+
+related to: https://github.com/neos/neos-development-collection/issues/3287
+
+
+********************
+Upgrade Instructions
+********************
+
+This section contains instructions for upgrading your Flow **7.0**
+based applications to Flow **7.1**.
+
+In general just make sure to run the following commands:
+
+To clear all file caches::
+
+ ./flow flow:cache:flush --force
+
+If you have additional cache backends configured, make sure to flush them too.
+
+To apply core migrations::
+
+  ./flow flow:core:migrate <Package-Key>
+
+For every package you have control over (see `Upgrading existing code`_ below).
+
+To validate/fix the database encoding, apply pending migrations and to (re)publish file resources::
+
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+If you are upgrading from a lower version than 7.0, be sure to read the
+upgrade instructions from the previous Release Notes first.
+
+Upgrading your Packages
+=======================
+
+Upgrading existing code
+-----------------------
+
+There have been only two changes in Flow 7.1 which might require your attention. Still, if you are unsure, it's never
+wrong to run migrations when updating.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate Acme.Demo
+
+This will adjust the package code automatically and/or output further information.
+Read the output carefully and manually adjust the code if needed.
+
+To see all the other helpful options this command provides, make sure to run::
+
+ ./flow help core:migrate
+
+Also make sure to read about the `Potentially breaking changes`_ below.
+
+Inside core:migrate
+^^^^^^^^^^^^^^^^^^^
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from the specified package
+* For each migration
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.
+
+
+****************************
+Potentially breaking changes
+****************************
+
+Flow 7.1 comes with some breaking changes and removes several deprecated
+functionalities, be sure to read the following changes and adjust
+your code respectively. For a full list of changes please refer
+to the change log.
+
+!!! FEATURE: Enable URL Rewriting by default
+--------------------------------------------
+
+This flips the default behavior for the ``FLOW_REWRITEURLS`` environment
+variable: If it is _not_ specified (or contains a value other than ``0``)
+URL rewriting will be enabled.
+
+Previously URL rewriting was enabled with a corresponding ``SetEnv`` configuration
+for Apache.
+For other servers and CLI a corresponding configuration (or a
+``putenv('FLOW_REWRITEURLS=1')`` call at runtime) was required in order to
+activate URL rewriting.
+
+This could be a breaking change in case you relied on the previous behavior.
+For example: Using the ``UriBuilder`` in CLI previously created URLs in the format ``/index.php/some/path``. Now it will lead to ``/some/path`` by default.
+To re-establish the former behavior, the ``FLOW_REWRITEURLS`` can be set to 0 explicitly, for example via ``putenv('FLOW_REWRITEURLS=1');``.
+
+
+TASK: Make ActionResponse::getContentType non-nullable
+------------------------------------------------------
+
+This removes the nullability of the getContentType() getter on the ActionResponse, which was only added to technically fit the possibility that the value is null without thinking about the API.
+A content type of empty string is already enough to denote a "not set/unspecified" case and an additional null only makes the API more complex than needed.
+This change is not technically breaking, even though it changes a return type, since the new return type is more strict. It could be breaking if you check for a null return value only without handling an empty string case. You should use the hasContentType() method before calling the getter.

@@ -54,12 +54,10 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
     protected $namespaces = [];
 
     /**
-     * ViewHelperResolver constructor.
+     * @Flow\InjectConfiguration(path="namespaces")
+     * @var array
      */
-    public function __construct()
-    {
-        $this->setNamespaces($this->getDefaultNamespaces());
-    }
+    protected $namespacesFromConfiguration;
 
     public function initializeObject($reason)
     {
@@ -78,19 +76,10 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
                 $this->addNamespace(strtolower($package->getPackageKey()), $viewHelperNamespace);
             }
         }
-    }
 
-    /**
-     *
-     */
-    public function getDefaultNamespaces()
-    {
-        return [
-            'f' => [
-                'TYPO3Fluid\\Fluid\\ViewHelpers',
-                'Neos\\FluidAdaptor\\ViewHelpers'
-            ]
-        ];
+        foreach ($this->namespacesFromConfiguration as $identifier => $namespace) {
+            $this->addNamespace($identifier, $namespace);
+        }
     }
 
     /**

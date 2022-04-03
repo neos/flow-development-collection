@@ -60,7 +60,6 @@ class Debugger
         'Neos\\\\Flow\\\\Sec.*' => true,
         'Neos\\\\Flow\\\\Sig.*' => true,
         'Neos\\\\Flow\\\\.*ResourceManager' => true,
-        'Neos\\\\FluidAdaptor\\\\.*' => true,
         '.+Service$' => true,
         '.+Repository$' => true,
         'PHPUnit_Framework_MockObject_InvocationMocker' => true
@@ -84,7 +83,7 @@ class Debugger
     /**
      * @var string
      */
-    protected static $blacklistedPropertyNames = '/
+    protected static $excludedPropertyNames = '/
 		(Flow_Aop_.*)
 		/xs';
 
@@ -284,13 +283,17 @@ class Debugger
                 $objectReflection = new \ReflectionObject($object);
                 $properties = $objectReflection->getProperties();
                 foreach ($properties as $property) {
-                    if (preg_match(self::$blacklistedPropertyNames, $property->getName())) {
+                    if (preg_match(self::$excludedPropertyNames, $property->getName())) {
                         continue;
                     }
                     $dump .= chr(10);
                     $dump .= str_repeat(' ', $level) . ($plaintext ? '' : '<span class="debug-property">') . self::ansiEscapeWrap($property->getName(), '36', $ansiColors) . ($plaintext ? '' : '</span>') . ' => ';
                     $property->setAccessible(true);
-                    $value = $property->getValue($object);
+                    if (PHP_VERSION_ID >= 70400 && $property->isInitialized($object) === false) {
+                        $value = null;
+                    } else {
+                        $value = $property->getValue($object);
+                    }
                     if (is_array($value)) {
                         $dump .= self::renderDump($value, $level + 1, $plaintext, $ansiColors);
                     } elseif (is_object($value)) {

@@ -48,7 +48,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function concatWorks($arguments, $expected)
     {
         $helper = new ArrayHelper();
-        $result = call_user_func_array([$helper, 'concat'], $arguments);
+        $result = $helper->concat(...$arguments);
         self::assertEquals($expected, $result);
     }
 
@@ -149,6 +149,30 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertEquals($expected, $result);
     }
 
+    public function valuesExamples(): array
+    {
+        return [
+            'empty array' => [[], []],
+            'numeric indices' => [[0 => 'a', 2 => 'b', 3 => 'c'], ['a', 'b', 'c']],
+            'string keys' => [['foo' => 'bar', 'bar' => 'baz'], ['bar', 'baz']],
+            'traversable' => [TestArrayIterator::fromArray(['foo' => 'bar', 'bar' => 'baz']), ['bar', 'baz']],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider valuesExamples
+     * @param array $array
+     * @param array $expected
+     */
+    public function valuesWorks($array, array $expected): void
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->values($array);
+
+        self::assertEquals($expected, $result);
+    }
+
     public function lengthExamples()
     {
         return [
@@ -176,8 +200,9 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'empty array' => [[], 42, null, -1],
             'array with values' => [['a', 'b', 'c', 'b'], 'b', null, 1],
             'with offset' => [['a', 'b', 'c', 'b'], 'b', 2, 3],
-            'traversable' => [TestArrayIterator::fromArray(['a', 'b', 'c', 'b']), 'b', null, 1],
-        ];
+            'associative' => [['a' => 'el1', 'b' => 'el2'], 'el2', null, 1],
+            'associative with offset' => [['a' => 'el1', 'b' => 'el2'], 'el2', 1, 1],
+            'traversable' => [TestArrayIterator::fromArray(['a', 'b', 'c', 'b']), 'b', null, 1]        ];
     }
 
     /**
@@ -422,6 +447,11 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             'string keys' => [['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz'], 42, 'foo', ['foo' => 'bar', 'baz' => 'foo', 'bar' => 'baz', 42, 'foo']],
             'mixed keys' => [['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53], 42, 'foo', ['bar', '24' => 'foo', 'i' => 181.84, 'foo' => 'abc', '84216', 76, 'k' => 53, 42, 'foo']],
             'traversable' => [TestArrayIterator::fromArray(['a']), 'b', 'c', ['a', 'b', 'c']],
+            # expect cast scalar (as arg $array) to array
+            'string' => ['a', 'b', 'c', ['a', 'b', 'c']],
+            'int' => [123, 'b', 'c', [123, 'b', 'c']],
+            # ignore null (as arg $array)
+            'null' => [null, 'b', 'c', ['b', 'c']],
         ];
     }
 
@@ -558,7 +588,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function rangeWorks($arguments, $expected)
     {
         $helper = new ArrayHelper();
-        $result = call_user_func_array([$helper, 'range'], $arguments);
+        $result = $helper->range(...$arguments);
         self::assertEquals($expected, $result);
     }
 
@@ -592,7 +622,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function setWorks($arguments, $expected)
     {
         $helper = new ArrayHelper();
-        $result = call_user_func_array([$helper, 'set'], $arguments);
+        $result = $helper->set(...$arguments);
         self::assertEquals($expected, $result);
     }
 
@@ -728,6 +758,15 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
                 [
                     0 => 'a',
                     2 => 'c',
+                ],
+            ],
+            'test with empty filter function' => [
+                [1,null,2,null,3],
+                null,
+                [
+                    0 => 1,
+                    2 => 2,
+                    4 => 3,
                 ],
             ],
             'traversable' => [

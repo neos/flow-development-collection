@@ -65,11 +65,14 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      *
      * @see matchWithParameters()
      *
-     * @param string $routePath The request path to be matched - without query parameters, host and fragment.
+     * @param string|null $routePath The request path to be matched - without query parameters, host and fragment.
      * @return bool|MatchResult true or an instance of MatchResult if Route Part matched $routePath, otherwise false.
      */
     final public function match(&$routePath)
     {
+        if ($routePath === null) {
+            return false;
+        }
         return $this->matchWithParameters($routePath, RouteParameters::createEmpty());
     }
 
@@ -162,13 +165,28 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
     /**
      * Checks whether $routeValues contains elements which correspond to this Dynamic Route Part.
      * If a corresponding element is found in $routeValues, this element is removed from the array.
+     * @see resolveWithParameters()
      *
      * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
      * @return bool|ResolveResult true or an instance of ResolveResult if current Route Part could be resolved, otherwise false
      */
     final public function resolve(array &$routeValues)
     {
+        return $this->resolveWithParameters($routeValues, RouteParameters::createEmpty());
+    }
+
+    /**
+     * Checks whether $routeValues contains elements which correspond to this Dynamic Route Part.
+     * If a corresponding element is found in $routeValues, this element is removed from the array.
+     *
+     * @param array $routeValues
+     * @param RouteParameters $parameters
+     * @return bool|ResolveResult
+     */
+    final public function resolveWithParameters(array &$routeValues, RouteParameters $parameters)
+    {
         $this->value = null;
+        $this->parameters = $parameters;
         if ($this->name === null || $this->name === '') {
             return false;
         }
@@ -212,7 +230,13 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
             return false;
         }
         if (is_object($value)) {
-            $value = $this->persistenceManager->getIdentifierByObject($value);
+            $identifier = $this->persistenceManager->getIdentifierByObject($value);
+
+            if ($identifier === null && method_exists($value, '__toString')) {
+                $identifier = (string) $value;
+            }
+            $value = $identifier;
+
             if ($value === null || (!is_string($value) && !is_integer($value))) {
                 return false;
             }

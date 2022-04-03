@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Provider;
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security;
+use Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -101,6 +102,31 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
 
         $this->persistedUsernamePasswordProvider->authenticate($this->mockToken);
         self::assertSame(\Neos\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL, $lastAuthenticationStatus);
+    }
+
+    /**
+     * @test
+     */
+    public function authenticatingAndUsernamePasswordTokenRespectsTheConfiguredLookupProviderName()
+    {
+        $this->mockHashService->expects(self::once())->method('validatePassword')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will(self::returnValue(true));
+
+        $this->mockAccount->expects(self::once())->method('getCredentialsSource')->will(self::returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
+
+        $this->mockAccountRepository->expects(self::once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'customLookupName')->will(self::returnValue($this->mockAccount));
+
+        $this->mockToken->expects(self::atLeastOnce())->method('getUsername')->will(self::returnValue('admin'));
+        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue('password'));
+
+        $this->mockToken->expects(self::once())->method('setAccount')->with($this->mockAccount);
+
+        $persistedUsernamePasswordProvider = PersistedUsernamePasswordProvider::create('providerName', ['lookupProviderName' => 'customLookupName']);
+        $this->inject($persistedUsernamePasswordProvider, 'hashService', $this->mockHashService);
+        $this->inject($persistedUsernamePasswordProvider, 'accountRepository', $this->mockAccountRepository);
+        $this->inject($persistedUsernamePasswordProvider, 'persistenceManager', $this->mockPersistenceManager);
+        $this->inject($persistedUsernamePasswordProvider, 'securityContext', $this->mockSecurityContext);
+
+        $persistedUsernamePasswordProvider->authenticate($this->mockToken);
     }
 
     /**

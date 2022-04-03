@@ -71,11 +71,11 @@ You may also want to override ``onAuthenticationFailure()`` to react on login pr
 		/**
 		 * Will be triggered upon successful authentication
 		 *
-		 * @param ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
+		 * @param ActionRequest $originalRequest The request that was intercepted by the security framework, null if there was none
 		 * @return string
 		 */
-		protected function onAuthenticationSuccess(ActionRequest $originalRequest = NULL) {
-			if ($originalRequest !== NULL) {
+		protected function onAuthenticationSuccess(ActionRequest $originalRequest = null) {
+			if ($originalRequest !== null) {
 				$this->redirectToRequest($originalRequest);
 			}
 			$this->redirect('someDefaultActionAfterLogin');
@@ -210,6 +210,8 @@ Flow ships with the following authentication tokens:
    Options: ``usernamePostField`` and ``passwordPostField``
 #. ``UsernamePasswordHttpBasic``: Extracts username & password from the the ``Authorization``
    header (Basic auth). This token is sessionless (see below)
+#. ``BearerToken``: Extracts a rfc6750 bearer token (See: `https://tools.ietf.org/html/rfc6750`_) from a given
+   ``Authorization`` header. This token is sessionless (see below) and has no configuration options.
 #. ``PasswordToken``: Extracts password from a POST parameter.
    Options: ``passwordPostField``
 
@@ -387,14 +389,6 @@ set the correct authentication status (see above) and ``Roles`` in its correspon
 The role implementation resides in the ``Neos\Flow\Security\Policy`` namespace. (see the
 Policy section for details).
 
-.. note::
-
-  Previously roles were entities, so they were stored in the database. This is no longer
-  the case since Flow 3.0. Instead the active roles will be determined from the configured
-  policies. Creating a new role is as easy as adding a line to your ``Policy.yaml``.
-  If you do need to add roles during runtime, you can use the ``rolesInitialized`` Signal of
-  the :abbr:`PolicyService (\\Neos\\Flow\\Security\\Policy\\PolicyService)`.
-
 .. _Account management:
 
 Account management
@@ -501,6 +495,11 @@ them in "parallel".
 
   You will have to make sure, that each provider has a unique name. In the example above
   the provider name is ``DefaultProvider``.
+  
+.. note::
+
+  You can also disable an authentication provider by setting the 
+  provider value to ``false`` in the YAML configuration. For instance ``DefaultProvider: false``.  
 
 *Example: Configuration of two authentication providers*
 
@@ -526,6 +525,44 @@ providers as you like, but keep in mind that the order matters.
   are specific configuration options for each provider, have a look in the detailed
   description to know if a specific provider needs more options to be configured and
   which.
+
+Parallel authentication for the same account
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Accounts are bound to an authentication provider and by default the ``PersistedUsernamePasswordProvider`` will only
+lookup accounts that belong to the provider (i.e. with an ``authenticationProviderName`` that is equal to the configured
+provider name, ``SomeAuthenticationProvider`` in this example.
+That lookup name can be changed via the ``lookupProviderName`` option that allows the provider to lookup accounts for
+a different configuration. This can be useful in order to re-use the same provider & accounts for multiple authentication
+types, for example classic form-based and HTTP basic auth:
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      security:
+        authentication:
+          providers:
+            'Acme.SomePackage:Default':
+              requestPatterns:
+                # ...
+              provider: PersistedUsernamePasswordProvider
+              token: UsernamePassword
+              entryPoint: WebRedirect
+              entryPointOptions:
+                routeValues:
+                  '@package': Acme.SomePackage
+                  '@controller': Authentication
+                  '@action': login
+
+            'Acme.SomePackage:Default.HttpBasic':
+              requestPatterns:
+                # ...
+              provider: PersistedUsernamePasswordProvider
+              providerOptions:
+                lookupProviderName: 'Acme.SomePackage:Default'
+              token: UsernamePasswordHttpBasic
+              entryPoint: HttpBasic
 
 Multi-factor authentication strategy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -668,6 +705,9 @@ controllers will be authenticated by the default username/password provider.
 |                      |                                               |                                          | ``cidrPattern: '192.168.178.0/24'`` or                           |
 |                      |                                               |                                          | ``cidrPattern: 'fd9e:21a7:a92c:2323::/96'``                      |
 +----------------------+-----------------------------------------------+------------------------------------------+------------------------------------------------------------------+
+
+.. note:: The pattern for ``Uri`` will have slashes escaped and is amended with ``^…$``
+  automatically, so do not include those in your pattern!
 
 Authentication entry points
 ---------------------------
@@ -886,16 +926,6 @@ Authorization
 This section covers the authorization features of Flow and how those can be leveraged in
 order to configure fine grained access rights.
 
-.. note::
-
-  With version 3.0 of Flow the security framework was subject to a major refactoring.
-  In that process the format of the policy configuration was adjusted in order to gain
-  flexibility.
-  Amongst others the term ``resource`` has been renamed to ``privilege`` and ACLs are
-  now configured directly with the respective role.
-  All changes are covered by code migrations, so make sure to run the ``./flow core:migrate``
-  command when upgrading from a previous version.
-
 Privileges
 ----------
 
@@ -921,8 +951,8 @@ All policy definitions are configured in the ``Policy.yaml`` files.
 *Privilege Targets*
 
 In general a Privilege Target is the definition pointing to something you want to protect.
-It consists of a **Privilege Type**, a **unique name** and a **matcher expression** defining which
-things should be protected by this target.
+It consists of a **Privilege Type**, a **unique name**, an optional human readable **label** and a **matcher expression**
+defining which things should be protected by this target.
 
 The privilege type defines the nature of the element to protect. This could be the execution of a certain action in your
 system, the retrieval of objects from the database, or any other kind of action you want to supervise in your
@@ -939,6 +969,7 @@ methods.
     'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
       'Acme.MyPackage:RestrictedController.customerAction':
+        label: 'Optional label to describe this privilege target'
         matcher: 'method(Acme\MyPackage\Controller\RestrictedController->customerAction())'
 
       'Acme.MyPackage:RestrictedController.adminAction':
@@ -947,7 +978,10 @@ methods.
       'Acme.MyPackage:editOwnPost':
         matcher: 'method(Acme\MyPackage\Controller\PostController->editAction(post.owner == current.userService.currentUser))'
 
+.. note:
 
+  The label will be rendered by the ``./flow security:describeRole <role>`` CLI command for a corresponding role and it
+  can be used to render a more human readable description in UIs (such as the user management module in the Neos backend)
 
 Privilege targets are defined in the ``Policy.yaml`` file of your package and are grouped by their respective types,
 which are define by the fully qualified classname of the privilege type to be used (e.g.
@@ -988,6 +1022,8 @@ privileges to them.
 
   roles:
     'Acme.MyPackage:Administrator':
+      label: 'Optional label for this role'
+      description: 'Optional description of this role'
       privileges: []
 
     'Acme.MyPackage:Customer':
@@ -1006,6 +1042,11 @@ configure yourself. This role will also be present, if no account is authenticat
 
 Likewise, the magic role ``Neos.Flow:Anonymous`` is added to the security context if no user
 is authenticated and ``Neos.Flow:AuthenticatedUser`` if there is an authenticated user.
+
+.. note:
+
+  The label and description will be rendered by the ``./flow security:describeRole <role>`` CLI command for a corresponding role
+  and it can be used to render more human readable descriptions in UIs (such as the user management module in the Neos backend)
 
 *Defining Privileges and Permissions*
 
@@ -1061,7 +1102,7 @@ when writing your policies:
 
 This leads to the following best practice when writing policies: Use the implicit deny feature as much as possible!
 By defining privilege targets, all matched subjects (methods, entities, etc.) will be denied implicitly. Use GRANT
-permissions to whitelist access to them for certain roles. The use of a DENY permission should be the ultimate last
+permissions to allow access to them for certain roles. The use of a DENY permission should be the ultimate last
 resort for edge cases. Be careful, there is no way to override a DENY permission, if you use it anyways!
 
 Using privilege parameters
@@ -1209,10 +1250,10 @@ The following example shows the matcher syntax used for entity privilege targets
       matcher: 'isType("Acme\MyPackage\RestrictableEntity")'
 
     'Acme.MyPackage.HiddenEntities':
-      matcher: 'isType("Acme\MyPackage\RestrictableEntity") && TRUE == property("hidden")'
+      matcher: 'isType("Acme\MyPackage\RestrictableEntity") && true == property("hidden")'
 
     'Acme.MyPackage.OthersEntities':
-      matcher: 'isType("Acme\MyPackage\RestrictableEntity") && !(property("ownerAccount").equals("context.securityContext.account")) && property("ownerAccount") != NULL'
+      matcher: 'isType("Acme\MyPackage\RestrictableEntity") && !(property("ownerAccount").equals("context.securityContext.account")) && property("ownerAccount") != null'
 
 EEL expressions are used to target the respective entities. You have to define the entity type, can match on property
 values and use global objects for comparison.
@@ -1231,7 +1272,7 @@ from the functional tests, show some more advanced matcher statements:
       matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.stringValue") == "Admin"'
 
     'Acme.MyPackage.RelatedPropertyComparedWithGlobalObject':
-     matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.ownerAccount") != "context.securityContext.account" && property("relatedEntityB.ownerAccount") != NULL'
+     matcher: 'isType("Acme\MyPackage\EntityA") && property("relatedEntityB.ownerAccount") != "context.securityContext.account" && property("relatedEntityB.ownerAccount") != null'
 
     'Acme.MyPackage.CompareStringPropertyWithCollection':
       matcher: 'isType("Acme\MyPackage\EntityC") && property("simpleStringProperty").in(["Andi", "Robert", "Karsten"])'
@@ -1545,7 +1586,7 @@ available interceptors, shipped with Flow:
 |                       | the current request.                  |
 +-----------------------+---------------------------------------+
 
-Of course you are able to configure as many request filters as
+Of course, you are able to configure as many request filters as
 you like. Have a look at the following example to get an idea how a
 firewall configuration will look like:
 
@@ -1557,18 +1598,18 @@ firewall configuration will look like:
     Flow:
       security:
         firewall:
-          rejectAll: FALSE
+          rejectAll: false
 
           filters:
             'Some.Package:AllowedUris':
               pattern:  'Uri'
               patternOptions:
-                'uriPattern': '\/some\/url\/.*'
+                'uriPattern': '/some/url/.*'
               interceptor:  'AccessGrant'
             'Some.Package:BlockedUris':
               pattern:  'Uri'
               patternOptions:
-                'uriPattern': '\/some\/url\/blocked.*'
+                'uriPattern': '/some/url/blocked.*'
               interceptor:  'AccessDeny'
             'Some.Package:BlockedHosts':
               pattern:  'Host'
@@ -1592,39 +1633,39 @@ security interceptors.
 
 .. note::
 
-  You might have noticed the ``rejectAll`` option. If this is set to ``yes``,
+  You might have noticed the ``rejectAll`` option. If this is set to ``true``,
   only request which are explicitly allowed by a request filter will be able
   to pass the firewall.
 
 CSRF protection
 ---------------
 
-A special use case for the filter firewall is CSRF protection. A custom csrf filter is installed and active by default.
+A special use case for the filter firewall is CSRF protection. A custom CSRF filter is installed and active by default.
 It checks every non-safe request (requests are considered safe, if they do not manipulate any persistent data) for a
 CSRF token and blocks the request if the token is invalid or missing.
 
 .. note::
 
-  Besides safe requests csrf protection is also skipped for requests with an anonyous
+  Besides safe requests CSRF protection is also skipped for requests with an anonymous
   authentication status, as these requests are considered publicly callable anyways.
 
 The needed token is automatically added to all URIs generated in Fluid forms, sending data via POST, if any account is
 authenticated. To add CSRF tokens to URIs, e.g. used for AJAX calls, Fluid provides a special view helper, called
 ``Security.CsrfTokenViewHelper``, which makes the currently valid token available for custom use in templates. In
-general you can retrieve the token by callding ``getCsrfProtectionToken`` on the security context.
+general, you can retrieve the token by calling ``getCsrfProtectionToken`` on the security context.
 
 .. tip::
 
   There might be actions, which are considered non-safe by the framework but still cannot be
   protected by a CSRF token (e.g. authentication requests, send via HTTP POST). For these
   special cases you can tag the respective action with the ``@Flow\SkipCsrfProtection``
-  annotation. Make sure you know what your are doing when using this annotation, it might
+  annotation. Make sure you know what you are doing when using this annotation, it might
   decrease security for your application when used in the wrong place!
 
 Channel security
 ================
 
-Currently channel security is not a specific feature of Flow. Instead you have to make sure to transfer sensitive
+Currently, channel security is not a specific feature of Flow. Instead, you have to make sure to transfer sensitive
 data, like passwords, over a secure channel. This is e.g. to use an SSL connection.
 
 .. _Cryptography:
@@ -1637,7 +1678,7 @@ Hash service
 
 Creating cryptographically secure hashes is a crucial part to many security related tasks. To make sure the hashes are
 built correctly Flow provides a central hash service ``Neos\Flow\Security\Cryptography\HashService``, which
-brings well tested hashing algorithms to the developer. We highly recommend to use this service to make sure hashes are
+brings well tested hashing algorithms to the developer. We highly recommend using this service to make sure hashes are
 securely created.
 
 Flow’s hash services provides you with functions to generate and validate HMAC hashes for given strings, as well as
@@ -1646,12 +1687,12 @@ methods for hashing passwords with different hashing strategies.
 RSA wallet service
 ------------------
 
-Flow provides a so called RSA wallet service, to manage public/private key encryptions. The idea behind this
+Flow provides a so called RSA wallet service to manage public/private key encryption. The idea behind this
 service is to store private keys securely within the application by only exposing the public key via API. The default
-implementation shipped with Flow is based on the openssl functions shipped with PHP:
+implementation shipped with Flow is based on the OpenSSL functions shipped with PHP:
 ``Neos\Flow\Security\Cryptography\RsaWalletServicePhp``.
 
-The service can either create new key pairs itself, while returning the fingerprint as identifier for this keypair.
+The service can either create new key pairs itself, while returning the fingerprint as identifier for this key pair.
 This identifier can be used to export the public key, decrypt and encrypt data or sign data and verify signatures.
 
 To use existing keys the following commands can be used to import keys to be stored and used within the wallet:

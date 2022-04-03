@@ -42,7 +42,7 @@ class DebuggerTest extends UnitTestCase
     {
         $object = new \stdClass();
         $object->__IS_PROXY__ = true;
-        self::assertRegExp('/\sclass=\"debug\-proxy\"/', Debugger::renderDump($object, 0, false));
+        self::assertMatchesRegularExpression('/\sclass=\"debug\-proxy\"/', Debugger::renderDump($object, 0, false));
     }
 
     /**
@@ -61,5 +61,26 @@ class DebuggerTest extends UnitTestCase
     {
         $object = new ApplicationContext('Development');
         self::assertEquals('Neos\Flow\Core\ApplicationContext object', Debugger::renderDump($object, 0, true));
+    }
+
+    /**
+     * @test
+     */
+    public function uninitializedTypedPropertiesAreNotAccessed()
+    {
+        if (PHP_VERSION_ID < 70400) {
+            self::markTestSkipped('Test only works on PHP 7.4 and above');
+        }
+        // if the test fails, an exception raises an error, no assertion needed
+        $this->expectNotToPerformAssertions();
+
+        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        eval('
+            class ' . $className . ' {
+                public string $stringProperty;
+            }
+        ');
+        $object = new $className();
+        Debugger::renderDump($object, 1, true);
     }
 }

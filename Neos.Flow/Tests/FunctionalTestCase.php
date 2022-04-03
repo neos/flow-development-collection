@@ -14,8 +14,7 @@ namespace Neos\Flow\Tests;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Http\Factories\ResponseFactory;
+use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use Psr\Http\Message\ServerRequestInterface as HttpRequest;
@@ -113,6 +112,11 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     protected $policyService;
 
     /**
+     * @var TokenAndProviderFactory
+     */
+    protected $tokenAndProviderFactory;
+
+    /**
      * @var \Neos\Flow\Security\Authentication\Provider\TestingProvider
      */
     protected $testingProvider;
@@ -147,6 +151,9 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
         }
 
+        $privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
+        $privilegeManager->reset();
+
         if ($this->testableSecurityEnabled === true || static::$testablePersistenceEnabled === true) {
             if (is_callable([self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class), 'compile'])) {
                 $result = self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->compile();
@@ -156,7 +163,6 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             }
             $this->persistenceManager = $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         } else {
-            $privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
             $privilegeManager->setOverrideDecision(true);
         }
 
@@ -190,10 +196,10 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
 
             $this->authenticationManager = $this->objectManager->get(\Neos\Flow\Security\Authentication\AuthenticationProviderManager::class);
 
-            $this->testingProvider = $this->objectManager->get(\Neos\Flow\Security\Authentication\Provider\TestingProvider::class);
-            $this->testingProvider->setName('TestingProvider');
+            $this->tokenAndProviderFactory = $this->objectManager->get(TokenAndProviderFactory::class);
+            $this->testingProvider = $this->tokenAndProviderFactory->getProviders()['TestingProvider'];
 
-            $this->registerRoute('functionaltestroute', 'typo3/flow/test', [
+            $this->registerRoute('functionaltestroute', 'neos/flow/test', [
                 '@package' => 'Neos.Flow',
                 '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
                 '@controller' => 'Standard',
@@ -380,10 +386,8 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $_FILES = [];
         $_SERVER = [
             'REDIRECT_FLOW_CONTEXT' => 'Development',
-            'REDIRECT_FLOW_REWRITEURLS' => '1',
             'REDIRECT_STATUS' => '200',
             'FLOW_CONTEXT' => 'Testing',
-            'FLOW_REWRITEURLS' => '1',
             'HTTP_HOST' => 'localhost',
             'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/534.52.7 (KHTML, like Gecko) Version/5.1.2 Safari/534.52.7',
             'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -429,12 +433,11 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $this->router->setRoutesConfiguration(null);
 
         $serverRequestFactory = new ServerRequestFactory(new UriFactory());
-        $responseFactory = new ResponseFactory();
+        $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost/neos/flow/test');
 
-        $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost/typo3/flow/test');
-        $componentContext = new ComponentContext($request, $responseFactory->createResponse());
-        $requestHandler->setComponentContext($componentContext);
+        /** @var FunctionalTestRequestHandler $activeRequestHandler */
+        $activeRequestHandler = self::$bootstrap->getActiveRequestHandler();
+        $activeRequestHandler->setHttpRequest($request);
     }
 
     /**

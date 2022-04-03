@@ -109,7 +109,7 @@ class Environment
      */
     public function isRewriteEnabled(): bool
     {
-        return (bool)Bootstrap::getEnvironmentConfigurationSetting('FLOW_REWRITEURLS');
+        return (string)Bootstrap::getEnvironmentConfigurationSetting('FLOW_REWRITEURLS') !== '0';
     }
 
     /**

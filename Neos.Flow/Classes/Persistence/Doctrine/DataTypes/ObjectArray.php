@@ -1,8 +1,10 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\DataTypes;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types;
+use Doctrine\ORM\Mapping\Entity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
@@ -82,7 +84,7 @@ class ObjectArray extends Types\ArrayType
             case 'postgresql':
                 $value = (is_resource($value)) ? stream_get_contents($value) : $value;
                 $array = parent::convertToPHPValue(hex2bin($value), $platform);
-                break;
+            break;
             default:
                 $array = parent::convertToPHPValue($value, $platform);
         }
@@ -176,17 +178,22 @@ class ObjectArray extends Types\ArrayType
 
             if ($value instanceof \SplObjectStorage) {
                 throw new \RuntimeException('SplObjectStorage in array properties is not supported', 1375196580);
-            } elseif ($value instanceof \Doctrine\Common\Collections\Collection) {
+            }
+
+            if ($value instanceof Collection) {
                 throw new \RuntimeException('Collection in array properties is not supported', 1375196581);
-            } elseif ($value instanceof \ArrayObject) {
+            }
+
+            if ($value instanceof \ArrayObject) {
                 throw new \RuntimeException('ArrayObject in array properties is not supported', 1375196582);
-            } elseif ($this->persistenceManager->isNewObject($value) === false
+            }
+
+            if ($this->persistenceManager->isNewObject($value) === false
                 && (
                     $this->reflectionService->isClassAnnotatedWith($propertyClassName, Flow\Entity::class)
                     || $this->reflectionService->isClassAnnotatedWith($propertyClassName, Flow\ValueObject::class)
-                    || $this->reflectionService->isClassAnnotatedWith($propertyClassName, \Doctrine\ORM\Mapping\Entity::class)
-                )
-            ) {
+                    || $this->reflectionService->isClassAnnotatedWith($propertyClassName, Entity::class)
+                )) {
                 $value = [
                     '__flow_object_type' => $propertyClassName,
                     '__identifier' => $this->persistenceManager->getIdentifierByObject($value)

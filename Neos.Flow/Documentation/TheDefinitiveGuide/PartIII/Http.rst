@@ -1,3 +1,5 @@
+.. _ch-http:
+
 HTTP Foundation
 ===============
 
@@ -30,29 +32,36 @@ The basic walk through a Flow-based web application is as follows:
   request handler
 * by default, the :abbr:`HTTP Request Handler (\\Neos\\Flow\\Http\\RequestHandler)` takes over and runs a boot sequence
   which initializes all important parts of Flow
-* the HTTP Request Handler builds an PSR-7 HTTP Request and Response object. The
+* the HTTP Request Handler builds an PSR-7 HTTP Request object. The
   :abbr:`Request object (\\Psr\\Http\\Message\\ServerRequestInterface)` contains all important properties of the real HTTP request.
-  The :abbr:`Response object (\\Psr\Http\\Message\\ResponseInterface)` in turn is empty and will be filled with information by a
-  controller at a later point
-  Both are stored in the so-called :abbr:`ComponentContext (\\Neos\\Flow\\Http\\Component\\ComponentContext)`, which you need to use to access and/or replace any of the two.
 * the HTTP Request Handler initializes the
-  :abbr:`HTTP Component Chain (\\Neos\\Flow\\Http\\Component\\ComponentChain)`, a set of independent units that have
-  access to the current HTTP request and response and can share information amongst each other.
-  The `chain`_ is fully configurable, but by default it consists of the following steps:
-* the ``trusted proxies`` component verifies headers that override request information, like the host, port or client IP address to
-  come from a server (reverse proxy) who's IP address is safe-listed in the settings.
-* the ``session cookie`` component, which restores the session from a cookie and later sets the session cookie in the response.
-* the ``routing`` component invokes the :abbr:`Router (\\Neos\\Flow\\Mvc\\Routing\\Router)` to determine which
-  controller and action is responsible for processing the request. This information (controller name, action name,
-  arguments) is stored in the ``ComponentContext``
-* the ``dispatching`` component tries to invoke the corresponding controller action via the
-  :abbr:`Dispatcher (Neos\\Flow\\Mvc\\Dispatcher)`
+  :abbr:`HTTP Middlewares chain (\\Neos\\Flow\\Http\\Middleware\\MiddlewaresChain)`, which is a PSR-15 RequestHandler
+  implementation wrapping a configurable list of `PSR-15 Middlewares`_.
+  The `Middlewares Chain`_ is fully configurable, but by default it consists of the following steps:
+    * the ``standardsCompliance`` middleware tries to make the HTTP Response standards compliant by adding required HTTP
+      headers and setting the correct status code (if not already the case)
+    * the ``trustedProxies`` middleware verifies headers that override request information, like the host, port or client IP address to
+      come from a server (reverse proxy) who's IP address is safe-listed in the settings.
+    * the ``session`` middleware, which restores the session from a cookie and later sets the session cookie in the response.
+    * the ``ajaxWidget`` middleware, which reacts to AJAX requests from Fluid widget view helpers before the default
+      routing is invoked (only if the ``neos/fluid-adaptor`` package is installed)
+    * the ``routing`` middleware invokes the :abbr:`Router (\\Neos\\Flow\\Mvc\\Routing\\Router)` to determine which
+      controller and action is responsible for processing the request. This information (controller name, action name,
+      arguments) is stored in the ``ServerRequest`` attribute named "routingResults"
+    * the ``poweredByHeader`` middleware sets the ``X-Flow-Powered`` response header according to the ``Neos.Flow.http.applicationToken``
+      configuration
+    * the ``flashMessages`` middleware persists any pending Flash message in the configured storage
+    * the ``parseBody`` middleware parses the incoming request according to its ``Content-Type`` so that the incoming data is
+      available via ``ServerRequest::getParsedBody()``
+    * the ``securityEntryPoint`` middleware initializes the :abbr:`Security Context (Neos\\Flow\\Security\\Context)` and
+      starts the authentication flow
+    * the ``dispatch`` middleware tries to invoke the corresponding controller action via the
+      :abbr:`Dispatcher (Neos\\Flow\\Mvc\\Dispatcher)`. This middleware has to be the last one in the chain since it
+      creates the :abbr:`Response (\\Psr\Http\\Message\\ResponseInterface)` and won't invoke other middlewares
 * the controller, usually an :abbr:`Action Controller (\\Neos\\Flow\\Mvc\\Controller\\ActionController)`, processes the
   request and modifies the given HTTP Response object which will, in the end, contain the content to display (body) as
   well as any headers to be passed back to the client
-* the ``standardsCompliance`` component tries to make the HTTP Response standards compliant by adding required HTTP
-  headers and setting the correct status code (if not already the case)
-* Finally the RequestHandler sends the HTTP Response back to the browser
+* Finally the RequestHandler sends the HTTP Response back to the browser, after it was passed back through all of the middlewares
 
 In practice, there are a few more intermediate steps being carried out, but in
 essence, this is the path a request is taking.
@@ -63,18 +72,8 @@ essence, this is the path a request is taking.
 
 	Simplified application flow
 
-The Response is modified within the HTTP Component Chain, visualized by the highlighted "loop" block above. The
-component chain is configurable. If no components were registered every request would result in a blank HTTP Response.
-The component chain is a component too, so chains can be nested. By default the base component chain is divided into
-three sub chains "preprocess", "process" and "postprocess".
-The "preprocess" chain is empty by default, the "process" chain contains components for "routing" and "dispatching" and
-the "postprocess" chain contains a "standardsCompliance" component:
-
-.. figure:: Images/Http_ComponentChain.png
-	:alt: Default HTTP Component Chain
-	:class: screenshot-fullsize
-
-	Default HTTP Component Chain
+The Response is modified within the HTTP Middlewares Chain, visualized by the highlighted "loop" block above. The
+chain is configurable. If no middleware were registered every request would result in a blank HTTP Response.
 
 The next sections shed some light on the most important actors of this application flow.
 
@@ -82,7 +81,7 @@ Request Handler
 ---------------
 
 The request handler is responsible for taking a request and responding in a manner the client understands. The default
-HTTP Request Handler invokes the ``Bootstrap runtime sequence`` and initializes the ``HTTP Component chain``. Other
+HTTP Request Handler invokes the ``Bootstrap runtime sequence`` and initializes the ``HTTP Middlewares chain``. Other
 request handlers may choose a completely different way to handle requests.
 Although Flow also supports other types of requests (most notably, from the command line interface), this chapter
 only deals with HTTP requests.
@@ -118,89 +117,182 @@ the ``Package`` class of the package containing the request handler::
 
 	}
 
-Component Chain
----------------
+Middlewares Chain
+-----------------
 
-Instead of registering a new RequestHandler the application workflow can also be altered by a custom ``HTTP Component``.
-A HTTP component must implement the :abbr:`Component interface (\\Neos\\Flow\\Http\\Component\\ComponentInterface)`
-that defines the ``handle()`` method::
+Instead of registering a new RequestHandler the application workflow can also be altered by a custom ``PSR-15 Middleware``.
+A HTTP middleware must implement the :abbr:`Middleware interface (\\Psr\\Http\\Server\\MiddlewareInterface)`
+that defines the ``process($request, $next)`` method::
 
-	use Neos\Flow\Http\Component\ComponentInterface;
-	use Neos\Flow\Http\Component\ComponentContext;
+  use Psr\Http\Message\ResponseInterface;
+  use Psr\Http\Message\ServerRequestInterface;
+  use Psr\Http\Server\MiddlewareInterface;
+  use Psr\Http\Server\RequestHandlerInterface;
 
-	/**
-	 * A sample HTTP component that intercepts the default handling and returns "bar" if the request contains an argument "foo"
-	 */
-	class SomeHttpComponent implements ComponentInterface {
+  /**
+   * A sample HTTP middleware that adds a custom header to the response
+   */
+  final class SomeMiddleware implements MiddlewareInterface
+  {
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
+      $response = $next->handle($httpRequest);
+      return $response->withAddedHeader('X-MyHeader', '123');
+    }
+  }
 
-		/**
-		 * @var array
-		 */
-		protected $options;
+To activate a middleware, it must be configured in the ``Settings.yaml``::
 
-		/**
-		 * @param array $options
-		 */
-		public function __construct(array $options = array()) {
-			$this->options = $options;
-		}
+  Neos:
+    Flow:
+      http:
+        middlewares:
+          'custom':
+            position: 'before dispatch'
+            middleware: 'Some\Package\Http\SomeMiddleware'
 
-		/**
-		 * @param ComponentContext $componentContext
-		 * @return void
-		 */
-		public function handle(ComponentContext $componentContext) {
-			$httpRequest = $componentContext->getHttpRequest();
-			if (!$httpRequest->hasArgument('foo')) {
-				return;
-			}
-			$httpResponse = $componentContext->getHttpResponse();
-      $modifiedResponse = $httpResponse->withContent('bar');
-			$componentContext->replaceHttpResponse($modifiedResponse);
-		}
-	}
+With the ``position`` directive the order of a middleware within the chain can be defined. In this case the new component
+will be handled before the ``dispatch`` middleware that is configured in the Neos.Flow package. Note though, that any middleware
+will always be able to act on the request, so *before* any following middleware and also on the response, hence *after*
+the following middleware. A middleware chain basically works like a onion ring, where each middleware is a single layer
+of the onion around the inner core of the application. Each request passes inside through the layer and a response passes
+outside through the layer.
 
-The ``ComponentContext`` contains a reference to the current HTTP request and response, besides it can be used to
-pass arbitrary parameters to successive components.
-To activate a component, it must be configured in the ``Settings.yaml``::
+.. figure:: Images/Http_MiddlewaresChain.png
+	:alt: A middleware onion
+	:class: screenshot-fullsize
 
-	Neos:
-	  Flow:
-	    http:
-	      chain:
-	        'process':
-	          chain:
-	            'custom':
-	              position: 'before routing'
-	              component: 'Some\Package\Http\SomeHttpComponent'
-	              componentOptions:
-	                'someOption': 'someValue'
+..note::
 
-With the ``position`` directive the order of a component within the chain can be defined. In this case the new component
-will be handled before the routing component that is configured in the Neos.Flow package.
-``componentOptions`` is an optional key/value array with options that will be passed to the component's constructor.
+  By default, the ``dispatch`` middleware represents the inner most onion layer since it creates the :abbr:`Response (\\Psr\Http\\Message\\ResponseInterface)`
+  and won't invoke any further middlewares.
+  For this reason no middleware must be configured to be executed _after_ the "dispatch" middleware
+
+CLI
+~~~
+
+The ``middleware:list`` command can be used to list active middlewares::
+
+  ./flow middleware:list
+
+this will return the all middlewares in the order they are configured, by default::
+
+  Currently configured middlewares:
+  +----+---------------------+---------------------------------------------------------+
+  | #  | Name                | Class name                                              |
+  +----+---------------------+---------------------------------------------------------+
+  | 1  | standardsCompliance | Neos\Flow\Http\Middleware\StandardsComplianceMiddleware |
+  | 2  | trustedProxies      | Neos\Flow\Http\Middleware\TrustedProxiesMiddleware      |
+  | 3  | session             | Neos\Flow\Http\Middleware\SessionMiddleware             |
+  | 4  | ajaxWidget          | Neos\FluidAdaptor\Core\Widget\AjaxWidgetMiddleware      |
+  | 5  | routing             | Neos\Flow\Mvc\Routing\RoutingMiddleware                 |
+  | 6  | poweredByHeader     | Neos\Flow\Http\Middleware\PoweredByMiddleware           |
+  | 7  | flashMessages       | Neos\Flow\Mvc\FlashMessage\FlashMessageMiddleware       |
+  | 8  | parseBody           | Neos\Flow\Http\Middleware\RequestBodyParsingMiddleware  |
+  | 9  | securityEntryPoint  | Neos\Flow\Http\Middleware\SecurityEntryPointMiddleware  |
+  | 10 | dispatch            | Neos\Flow\Mvc\DispatchMiddleware                        |
+  +----+---------------------+---------------------------------------------------------+
 
 Interrupting the chain
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Sometimes it is necessary to stop processing of a chain in order to prevent successive components to be executed.
-For example if one wants to handle an AJAX request and prevent the default dispatching. This can be done by setting the
-``cancel`` parameter of the ``ComponentChain``::
+Sometimes it is necessary to stop processing of a chain in order to prevent successive middlewares to be executed.
+For example if one wants to handle an AJAX request and prevent the default dispatching. This can be done by returning
+a response instead of invoking the next middleware::
 
-	/**
-	 * @param ComponentContext $componentContext
-	 * @return void
-	 */
-	public function handle(ComponentContext $componentContext) {
-		// check if the request should be handled and return otherwise
-
-		$componentContext->setParameter(\Neos\Flow\Http\Component\ComponentChain::class, 'cancel', TRUE);
+	final class SomeAjaxMiddleware implements MiddlewareInterface
+	{
+		public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
+			parse_str($request->getUri()->getQuery(), $queryArguments);
+			if (!isset($queryArguments['__ajax'])) {
+				return $next->handle($request);
+			}
+			return new Response(200, ['Content-Type' => 'application/json'], json_encode(['success' => true]));
+		}
 	}
 
-Note that component chains can be nested. By default the three sub chains ``preprocess``, ``process`` and ``postprocess``
-are configured. Setting the ``cancel`` parameter only affects the currently processed chain.
-With the examples from above the new component is added to the ``process`` chain. This way the ``postprocess`` chain is
-still handled even if the new component cancels the current chain.
+This would interrupt the request and return a JSON response of ``{"success": true}`` if the request URI contains a query of ``?__ajax``.
+For this to work as expected, the component should be registered relatively early for example before the routing component::
+
+  Neos:
+    Flow:
+      http:
+        middlewares:
+          'customAjaxResponse':
+            position: 'before routing'
+            middleware: 'Some\Package\Http\SomeAjaxMiddleware'
+
+Communicating between middlewares
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In order to share data between multiple middleware components, request attributes can be used::
+
+	final class SomeRoutingMiddleware implements MiddlewareInterface
+	{
+		public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
+			// access previously specified attributes via $request->getAttribute('attributeName');
+			return $next->handle($request->withAttribute('someAttribute', 'someAttributeValue'));
+		}
+	}
+
+This can be used to specify Routing parameters for example, see :ref:`ch-routing`.
+
+Custom middleware options
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is no (PSR-15 compatible) way to specify middleware options via Settings. However, options can be realized with the use of :ref:`ch-object-management`.
+For example, in order to extend the AJAX middleware of the example above so that the argument name can be configured, we can add a constructor argument::
+
+	final class SomeAjaxMiddleware implements MiddlewareInterface
+	{
+		private string $queryArgumentName;
+
+		public function __construct(string $queryArgumentName)
+		{
+			$this->queryArgumentName = $queryArgumentName;
+		}
+
+		public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
+			// ...
+			if (!isset($queryArguments[$this->queryArgumentName])) {
+				return $next->handle($request);
+			}
+			// ...
+		}
+	}
+
+...and add a few lines of ``Objects.yaml`` configuration::
+
+  Some\Package\Http\SomeAjaxMiddleware:
+    arguments:
+      1:
+        value: '__ajax'
+
+Besides, :ref:`sect-virtual-objects` can be used in order to re-use the same middleware with different options::
+
+  'Some.Package:AjaxMiddleware1':
+    className: Some\Package\Http\SomeAjaxMiddleware
+    arguments:
+      1:
+        value: 'custom1'
+
+  'Some.Package:AjaxMiddleware2':
+    className: Some\Package\Http\SomeAjaxMiddleware
+    arguments:
+      1:
+        value: 'custom2'
+
+With that, the two pre-configured virtual objects can be referred to individually in the ``Settings.yaml``::
+
+  Neos:
+    Flow:
+      http:
+        middlewares:
+          'customAjax1':
+            position: 'before routing'
+            middleware: 'Some.Package:AjaxMiddleware1'
+          'customAjax2':
+            position: 'before routing'
+            middleware: 'Some.Package:AjaxMiddleware2'
 
 Request
 -------
@@ -212,15 +304,24 @@ Http Client implementation.
 On the other side the incoming request is something you should never try to create an instance of yourself, as it is
 provided by the framework. In theory, you could also call the ``ServerRequestFactory::createServerRequest`` or
 the Guzzle ``ServerRequest::fromGlobals()`` convenience method, but this does not have any relation to the current request
-object handled by the framework. It will not have any of the processing from components applied and might therefore lead
+object handled by the framework. It will not have any of the processing from middlewares applied and might therefore lead
 to unexpected results, like the trusted proxy headers ``X-Forwarded-*`` not being applied and the ``ServerRequest`` providing
 wrong protocol, host or client IP address.
-If you need access to the **current** HTTP ``Request``, either create a :ref:`Http Component<Component Chain>` or only access it inside the
+If you need access to the **current** HTTP ``Request``, either create a :ref:`Http Middleware<Middlewares Chain>` or only access it inside the
 controller through the ``ActionRequest`` for inspecting::
 
-	public function myAction() {
+	public function myAction(): void
+	{
 		$requestBody = $this->request->getHttpRequest()->getParsedBody();
 		...
+	}
+
+
+To create a new ServerRequest instance (for example in CLI context) the ``ServerRequestFactory`` can be used::
+
+	public function __construct(ServerRequestFactoryInterface $serverRequestFactory)
+	{
+		$this->httpRequest = $serverRequestFactory->createServerRequest('GET', 'http://localhost');
 	}
 
 Creating an ActionRequest
@@ -266,9 +367,9 @@ getParsedBody()
 ~~~~~~~~~~~~~~~
 
 You can access the request body easily by calling the ``getParsedBody()`` method. For performance reasons you may also
-retrieve the content as a stream instead of a parsed structure by calling ``getBody()`` before the ``RequestBodyParsingComponent``.
+retrieve the content as a stream instead of a parsed structure by calling ``getBody()`` before the ``RequestBodyParsingMiddleware``.
 Please be aware though that, due to how input streams work in PHP, it is not possible to retrieve the content as a stream a second
-time, so the ``RequestBodyParsingComponent`` will not be able to parse the request body then.
+time, so the ``RequestBodyParsingMiddleware`` will not be able to parse the request body then.
 
 Media Types
 ~~~~~~~~~~~
@@ -391,6 +492,15 @@ is an example – from the context of an Action Controller – for setting the `
 	$headers = $this->request->getHttpRequest()->getHeaders();
 	$headers->setCacheControlDirective('max-age', 3600);
 
+Note this internally uses the `CacheControlDirectives` class, which you should be using, too. This avoids the need for
+further changes, should the `Headers` class be dropped in the future::
+
+  $cacheControlHeaderValue = $response->getHeaderLine('Cache-Control');
+  $cacheControlDirectives = CacheControlDirectives::fromRawHeader($cacheControlHeaderValue);
+  $cacheControlDirectives->setDirective('max-age', 3600);
+  $cacheControlHeaderValue = $cacheControlDirectives->getCacheControlHeaderValue();
+  $response = $response->withHeader('Cache-Control', $cacheControlHeaderValue);
+
 Cookies
 -------
 
@@ -401,7 +511,8 @@ Like requests and responses, a cookie also is represented by a PHP class. Instea
 instances of the ``Cookie`` class are used.
 In order to set a cookie, just create a new ``Cookie`` object and add it to the HTTP response::
 
-	public function myAction() {
+	public function myAction(): void
+	{
 		$cookie = new Cookie('myCounter', 1);
 		$this->response->setCookie($cookie);
 	}
@@ -410,7 +521,8 @@ As soon as the response is sent to the browser, the cookie is sent as part of it
 will send the cookie through the ``Cookie`` header. These headers are parsed automatically and can be retrieved from the
 ``HttpRequest`` object::
 
-	public function myAction() {
+	public function myAction(): void
+	{
 		$httpRequest = $this->request->getHttpRequest();
 		$cookieParams = $httpRequest->getCookieParams();
 		if (isset($cookieParams['myCounter']) {
@@ -420,7 +532,8 @@ will send the cookie through the ``Cookie`` header. These headers are parsed aut
 
 The cookie value can be updated and re-assigned to the response::
 
-	public function myAction() {
+	public function myAction(): void
+	{
 		$httpRequest = $this->request->getHttpRequest();
 		$counter = $httpRequest->getCookieParams()['myCounter'] ?? 0;
 		$this->view->assign('counter', $counter);
@@ -431,7 +544,8 @@ The cookie value can be updated and re-assigned to the response::
 
 Finally, a cookie can be deleted by calling the ``deleteCookie()`` method::
 
-	public function myAction() {
+	public function myAction(): void
+	{
 		$this->response->deleteCookie('myCounter');
 	}
 
@@ -464,10 +578,11 @@ You are encouraged to use the ``Uri`` class for your own purposes – you'll get
 Virtual Browser
 ---------------
 
-The HTTP foundation comes with a virtual browser which allows for sending and receiving HTTP requests and responses.
-The browser's API basically follows the functions of a typical web browser. The requests and responses are used in form
-of ``Http\Request`` and ``Http\Response`` instances, similar to the requests and responses used by Flow's request
-handling mechanism.
+The HTTP foundation comes with a virtual browser that implements the ``Psr\Http\Client\ClientInterface`` which allows
+for sending and receiving HTTP requests and responses. The browser's API basically follows the functions of a typical
+web browser. The requests and responses are used in form of ``Psr\Http\Message\RequestInterface`` and
+``\Psr\Http\Message\ResponseInterface`` instances, similar to the requests and responses used by Flow's
+request handling mechanism.
 
 Request Engines
 ~~~~~~~~~~~~~~~
@@ -475,15 +590,16 @@ Request Engines
 The engine responsible for actually sending the request is pluggable. Currently there are two engines delivered with
 Flow:
 
+* ``CurlEngine`` (Default) uses the cURL extension to send real requests to other servers
 * ``InternalRequestEngine`` simulates requests for use in functional tests
-* ``CurlEngine`` uses the cURL extension to send real requests to other servers
 
 Sending a request and processing the response is a matter of a few lines::
 
 	/**
 	 * A sample controller
 	 */
-	class MyController extends ActionController {
+	class MyController extends ActionController
+	{
 
 		/**
 		 * @Flow\Inject
@@ -492,23 +608,45 @@ Sending a request and processing the response is a matter of a few lines::
 		protected $browser;
 
 		/**
-		 * @Flow\Inject
-		 * @var \Neos\Flow\Http\Client\CurlEngine
-		 */
-		protected $browserRequestEngine;
-
-		/**
 		 * Some action
 		 */
-		public function testAction() {
-			$this->browser->setRequestEngine($this->browserRequestEngine);
+		public function testAction(): string
+		{
 			$response = $this->browser->request('https://www.flowframework.io');
 			return ($response->hasHeader('X-Flow-Powered') ? 'yes' : 'no');
 		}
 	}
 
-As there is no default engine selected for the browser, you need to set one yourself. Of course you can use the advanced
-Dependency Injection techniques (through Objects.yaml) for injecting an engine into the browser you use.
+The same request can also be performed by purely relying on psr interfaces implemented by Neos::
+
+	/**
+	 * A sample controller
+	 */
+	class MyController extends ActionController
+	{
+
+		/**
+		 * @Flow\Inject
+		 * @var \Psr\Http\Client\ClientInterface
+		 */
+		protected $client;
+
+		/**
+		 * @Flow\Inject
+		 * @var \Psr\Http\Message\RequestFactoryInterface
+		 */
+		protected $requestFactory;
+
+		/**
+		 * Some action
+		 */
+		public function testAction(): string
+		{
+		  $request = $this->requestFactory->createRequest('get', 'https://www.flowframework.io');
+			$response = $this->client->request($request);
+			return ($response->hasHeader('X-Flow-Powered') ? 'yes' : 'no');
+		}
+	}
 
 Also note that the virtual browser is of scope Prototype in order to support multiple browsers with possibly different
 request engines.
@@ -534,12 +672,13 @@ other application parts which are accessible via HTTP. This browser has the ``In
 	/**
 	 * Some functional tests
 	 */
-	class SomeTest extends \Neos\Flow\Tests\FunctionalTestCase {
+	class SomeTest extends \Neos\Flow\Tests\FunctionalTestCase
+	{
 
 		/**
-		 * @var boolean
+		 * @var bool
 		 */
-		protected $testableHttpEnabled = TRUE;
+		protected $testableHttpEnabled = true;
 
 		/**
 		 * Send a request to a controller of my application.
@@ -547,7 +686,8 @@ other application parts which are accessible via HTTP. This browser has the ``In
 		 *
 		 * @test
 		 */
-		public function someTest() {
+		public function someTest(): void
+		{
 			$response = $this->browser->request('http://localhost/Acme.Demo/Foo/bar.html');
 			$this->assertContains('it works', $response->getContent());
 		}
@@ -560,4 +700,5 @@ other application parts which are accessible via HTTP. This browser has the ``In
 .. _Coordinated Universal Time: http://en.wikipedia.org/wiki/Coordinated_Universal_Time
 .. _Greenwich Mean Time: http://en.wikipedia.org/wiki/Greenwich_Mean_Time
 .. _Forwarded Header: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
-.. _chain: https://github.com/neos/flow-development-collection/blob/5.3/Neos.Flow/Configuration/Settings.Http.yaml#L31-L57
+.. _Middlewares chain: https://github.com/neos/flow-development-collection/blob/7.0/Neos.Flow/Configuration/Settings.Http.yaml#L28-L57
+.. _PSR-15 Middlewares: https://www.php-fig.org/psr/psr-15/#22-psrhttpservermiddlewareinterface

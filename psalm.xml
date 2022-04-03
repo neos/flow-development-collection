@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <psalm
-    totallyTyped="false"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
-    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    xsi:schemaLocation="https://getpsalm.org/schema/config ../Libraries/vimeo/psalm/config.xsd"
     errorBaseline="Packages/Framework/psalm-baseline.xml"
+    resolveFromConfigFile="false"
 >
     <projectFiles>
         <directory name="Packages/Framework/**" />
@@ -13,14 +13,20 @@
             <directory name="Packages/Framework/**/Tests" />
             <directory name="Packages/Framework/**/Resources" />
             <file name="Packages/Framework/Neos.Eel/Classes/FlowQuery/FizzleParser.php" />
+            <file name="Packages/Framework/Neos.Eel/Classes/AbstractParser.php" />
+            <file name="Packages/Framework/Neos.Eel/Classes/EelParser.php" />
             <file name="Packages/Framework/Neos.Flow/.phpstorm.meta.php" />
         </ignoreFiles>
     </projectFiles>
 
+    <stubs>
+        <file name="Packages/Framework/Neos.Flow/.phpstorm.meta.php" />
+    </stubs>
+
     <issueHandlers>
         <LessSpecificReturnType errorLevel="info" />
 
-        <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
+        <!-- level 3 issues - slightly lazy code writing, but probably low false-negatives -->
 
         <DeprecatedMethod errorLevel="info" />
         <DeprecatedProperty errorLevel="info" />
@@ -38,7 +44,6 @@
         <MissingReturnType errorLevel="info" />
         <MissingPropertyType errorLevel="info" />
         <InvalidDocblock errorLevel="info" />
-        <MisplacedRequiredParam errorLevel="info" />
 
         <PropertyNotSetInConstructor errorLevel="info" />
         <MissingConstructor errorLevel="info" />
@@ -73,5 +78,7 @@
         <RawObjectIteration errorLevel="info" />
 
         <InvalidStringClass errorLevel="info" />
+
+        <ParamNameMismatch errorLevel="info" />
     </issueHandlers>
 </psalm>

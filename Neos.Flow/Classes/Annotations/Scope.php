@@ -11,12 +11,16 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Used to set the scope of an object.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target("CLASS")
  */
+#[\Attribute(\Attribute::TARGET_CLASS)]
 final class Scope
 {
     /**
@@ -25,13 +29,10 @@ final class Scope
      */
     public $value = 'prototype';
 
-    /**
-     * @param array $values
-     */
-    public function __construct(array $values)
+    public function __construct(?string $value = null)
     {
-        if (isset($values['value'])) {
-            $this->value = $values['value'];
+        if ($value !== null) {
+            $this->value = $value;
         }
     }
 }

@@ -15,10 +15,10 @@ namespace Neos\Flow\Security\Aspect;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Log\PsrSecurityLoggerInterface;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
+use Psr\Log\LoggerInterface;
 
 /**
  * An aspect which centralizes the logging of security relevant actions.
@@ -29,8 +29,8 @@ use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 class LoggingAspect
 {
     /**
-     * @var PsrSecurityLoggerInterface
-     * @Flow\Inject
+     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
+     * @var LoggerInterface
      */
     protected $securityLogger;
 
@@ -151,7 +151,7 @@ class LoggingAspect
         $subjectJoinPoint = $joinPoint->getMethodArgument('subject');
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';
         $message = sprintf('Decided "%s" on method call %s::%s().', $decision, $subjectJoinPoint->getClassName(), $subjectJoinPoint->getMethodName());
-        $this->securityLogger->info($message, $this->getLogEnvironmentFromJoinPoint($joinPoint));
+        $this->securityLogger->debug($message, $this->getLogEnvironmentFromJoinPoint($joinPoint));
     }
 
     /**
@@ -165,7 +165,7 @@ class LoggingAspect
     {
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';
         $message = sprintf('Decided "%s" on privilege "%s".', $decision, $joinPoint->getMethodArgument('privilegeTargetIdentifier'));
-        $this->securityLogger->info($message, $this->getLogEnvironmentFromJoinPoint($joinPoint));
+        $this->securityLogger->debug($message, $this->getLogEnvironmentFromJoinPoint($joinPoint));
     }
 
     /**

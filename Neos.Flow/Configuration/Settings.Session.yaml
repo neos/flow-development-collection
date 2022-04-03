@@ -56,5 +56,5 @@ Neos:
         domain: NULL
 
         # The cookie samesite.
-        # possible values: 'none', 'strict', 'lax' and null
-        samesite: NULL
+        # possible values: 'none', 'strict' and 'lax'
+        samesite: 'lax'

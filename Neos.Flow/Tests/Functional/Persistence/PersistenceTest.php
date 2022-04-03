@@ -43,16 +43,31 @@ class PersistenceTest extends FunctionalTestCase
     protected $extendedTypesEntityRepository;
 
     /**
+     * @var EntityManagerInterface
+     */
+    protected $earlyEntityManager;
+
+    /**
      * @return void
      */
     protected function setUp(): void
     {
+        $this->earlyEntityManager = self::$bootstrap->getObjectManager()->get(EntityManagerInterface::class);
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
         $this->testEntityRepository = new Fixtures\TestEntityRepository();
         $this->extendedTypesEntityRepository = new Fixtures\ExtendedTypesEntityRepository();
+    }
+
+    /**
+     * @test
+     */
+    public function entityManagerIsSingletonInstanceInPersistenceManager()
+    {
+        $this->earlyEntityManager->persist(new Fixtures\TestEntity());
+        self::assertTrue($this->persistenceManager->hasUnpersistedChanges());
     }
 
     /**
@@ -178,6 +193,26 @@ class PersistenceTest extends FunctionalTestCase
 
         self::assertNotSame($testEntityWithArrayProperty, $testEntityWithArrayPropertyUnserialized);
         self::assertEquals('Neos', $arrayPropertyAfterUnserialize['some']['nestedArray']['key']->getName(), 'The entity inside the array property has not been updated to the current persistend state after wakeup.');
+    }
+
+    /**
+     * @test
+     */
+    public function objectsWithPersistedEntitiesCanBeSerializedMultipleTimes()
+    {
+        $persistedEntity = new Fixtures\TestEntity();
+        $persistedEntity->setName('Flow');
+        $this->testEntityRepository->add($persistedEntity);
+        $this->persistenceManager->persistAll();
+
+        $objectHoldingTheEntity = new Fixtures\ObjectHoldingAnEntity();
+        $objectHoldingTheEntity->testEntity = $persistedEntity;
+
+        for ($i = 0; $i < 2; $i++) {
+            $serializedData = serialize($objectHoldingTheEntity);
+            $unserializedObjectHoldingTheEntity = unserialize($serializedData);
+            $this->assertInstanceOf(Fixtures\TestEntity::class, $unserializedObjectHoldingTheEntity->testEntity);
+        }
     }
 
     /**
@@ -378,7 +413,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreDirtyAndFlagIsSet()
+    public function persistAllThrowsExceptionIfNonAllowedObjectsAreDirtyAndFlagIsSet()
     {
         $this->expectException(Exception::class);
         $testEntity = new Fixtures\TestEntity();
@@ -390,7 +425,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function persistAllThrowsExceptionIfNonWhitelistedObjectsAreUpdatedAndFlagIsSet()
+    public function persistAllThrowsExceptionIfNonAllowedObjectsAreUpdatedAndFlagIsSet()
     {
         $this->expectException(Exception::class);
         $this->removeExampleEntities();
@@ -407,13 +442,13 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function persistAllThrowsNoExceptionIfWhitelistedObjectsAreDirtyAndFlagIsSet()
+    public function persistAllThrowsNoExceptionIfAllowedObjectsAreDirtyAndFlagIsSet()
     {
         $testEntity = new Fixtures\TestEntity();
         $testEntity->setName('Surfer girl');
         $this->testEntityRepository->add($testEntity);
 
-        $this->persistenceManager->whitelistObject($testEntity);
+        $this->persistenceManager->allowObject($testEntity);
         $this->persistenceManager->persistAll(true);
         self::assertTrue(true);
     }

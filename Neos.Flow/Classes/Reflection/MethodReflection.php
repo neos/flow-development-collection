@@ -30,7 +30,7 @@ class MethodReflection extends \ReflectionMethod
      *
      * @return ClassReflection The declaring class
      */
-    public function getDeclaringClass()
+    public function getDeclaringClass(): ClassReflection
     {
         return new ClassReflection(parent::getDeclaringClass()->getName());
     }
@@ -42,7 +42,7 @@ class MethodReflection extends \ReflectionMethod
      *
      * @return array<ParameterReflection> objects of the parameters of this method
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         $extendedParameters = [];
         foreach (parent::getParameters() as $parameter) {
@@ -95,7 +95,7 @@ class MethodReflection extends \ReflectionMethod
     }
 
     /**
-     * @return string The name of a type (e.g. string, \stdClass) if it was declared as a return type, null otherwise
+     * @return string|null The name of a type (e.g. string, \stdClass) if it was declared as a return type, null otherwise
      */
     public function getDeclaredReturnType()
     {
@@ -103,7 +103,7 @@ class MethodReflection extends \ReflectionMethod
             return null;
         }
         $type = $this->getReturnType();
-        return $type !== null ? (string)$type : null;
+        return $type !== null ? ltrim((string)$type, '?') : null;
     }
 
     /**

@@ -182,7 +182,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * @return integer
      */
-    public function count()
+    public function count(): int
     {
         return $this->__call('count', []);
     }
@@ -194,7 +194,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         if (count($this->operations) > 0) {
             $this->evaluateOperations();

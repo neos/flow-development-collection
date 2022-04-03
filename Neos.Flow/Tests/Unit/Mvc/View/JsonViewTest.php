@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\View;
  */
 
 use Neos\Flow\Mvc;
-use Neos\Flow\Persistence\Generic\PersistenceManager;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -135,12 +135,12 @@ class JsonViewTest extends UnitTestCase
 
         $dateTimeObject = new \DateTime('2011-02-03T03:15:23', new \DateTimeZone('UTC'));
         $configuration = [];
-        $expected = '2011-02-03T03:15:23+0000';
+        $expected = '2011-02-03T03:15:23+00:00';
         $output[] = [$dateTimeObject, $configuration, $expected, 'DateTime object in UTC time zone could not be serialized.'];
 
         $dateTimeObject = new \DateTime('2013-08-15T15:25:30', new \DateTimeZone('America/Los_Angeles'));
         $configuration = [];
-        $expected = '2013-08-15T15:25:30-0700';
+        $expected = '2013-08-15T15:25:30-07:00';
         $output[] = [$dateTimeObject, $configuration, $expected, 'DateTime object in America/Los_Angeles time zone could not be serialized.'];
         return $output;
     }
@@ -151,7 +151,7 @@ class JsonViewTest extends UnitTestCase
      */
     public function testTransformValue($object, $configuration, $expected, $description)
     {
-        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '', false);
+        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '');
 
         $actual = $jsonView->_call('transformValue', $object, $configuration);
 
@@ -467,5 +467,22 @@ class JsonViewTest extends UnitTestCase
 
         $unexpectedResult = json_encode($array);
         self::assertNotEquals($unexpectedResult, $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function viewObeysDateTimeFormatOption()
+    {
+        $array = ['foo' => new \DateTime('2021-05-02T13:00:00+0000')];
+
+        $this->view->setOption('datetimeFormat', 'Y-m-d H:i:s T');
+        $this->view->assign('array', $array);
+        $this->view->setVariablesToRender(['array']);
+
+        $expectedResult = json_encode(['foo' => '2021-05-02 13:00:00 GMT+0000']);
+
+        $actualResult = $this->view->render();
+        $this->assertEquals($expectedResult, $actualResult);
     }
 }

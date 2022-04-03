@@ -50,9 +50,8 @@ class PluralsReaderTest extends UnitTestCase
         $mockRepository->expects(self::once())->method('getModel')->with('supplemental/plurals')->will(self::returnValue($mockModel));
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects(self::at(0))->method('has')->with('rulesets')->will(self::returnValue(false));
-        $mockCache->expects(self::at(1))->method('set')->with('rulesets');
-        $mockCache->expects(self::at(2))->method('set')->with('rulesetsIndices');
+        $mockCache->expects(self::once())->method('has')->with('rulesets')->willReturn(false);
+        $mockCache->expects(self::exactly(2))->method('set')->withConsecutive(['rulesets'], ['rulesetsIndices']);
 
         $this->reader = new PluralsReader();
         $this->reader->injectCldrRepository($mockRepository);

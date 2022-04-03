@@ -124,7 +124,7 @@ class ConfigurationBuilder
                 if ($isVirtualObject && empty($rawObjectConfiguration['className'])) {
                     throw new InvalidObjectConfigurationException(sprintf('Missing className for virtual object configuration "%s" of package %s. Please check your Objects.yaml.', $objectName, $packageKey), 1585758850);
                 }
-                if ($isVirtualObject && !isset($rawObjectConfiguration['factoryObjectName']) && !isset($rawObjectConfiguration['factoryMethodNameName'])) {
+                if ($isVirtualObject && !isset($rawObjectConfiguration['factoryObjectName']) && !isset($rawObjectConfiguration['factoryMethodName'])) {
                     $rawObjectConfiguration['factoryObjectName'] = ObjectManager::class;
                     $rawObjectConfiguration['factoryMethodName'] = 'get';
                     $newArguments = [1 => ['value' => $rawObjectConfiguration['className']]];
@@ -186,10 +186,12 @@ class ConfigurationBuilder
     protected function enhanceRawConfigurationWithAnnotationOptions($className, array $rawObjectConfiguration)
     {
         if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Scope::class)) {
-            $rawObjectConfiguration['scope'] = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class)->value;
+            $annotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
+            $rawObjectConfiguration['scope'] = $annotation->value ?? null;
         }
         if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Autowiring::class)) {
-            $rawObjectConfiguration['autowiring'] = $this->reflectionService->getClassAnnotation($className, Flow\Autowiring::class)->enabled;
+            $annotation = $this->reflectionService->getClassAnnotation($className, Flow\Autowiring::class);
+            $rawObjectConfiguration['autowiring'] = $annotation->enabled ?? null;
         }
         return $rawObjectConfiguration;
     }
@@ -444,6 +446,9 @@ class ConfigurationBuilder
                 continue;
             }
 
+            if ($objectConfiguration->isCreatedByFactory()) {
+                continue;
+            }
 
             $className = $objectConfiguration->getClassName();
             if (!$this->reflectionService->hasMethod($className, '__construct')) {
@@ -504,7 +509,11 @@ class ConfigurationBuilder
                 continue;
             }
 
-            $classMethodNames = get_class_methods($className);
+            try {
+                $classMethodNames = get_class_methods($className);
+            } catch (\TypeError $error) {
+                throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371372);
+            }
             if (!is_array($classMethodNames)) {
                 if (!class_exists($className)) {
                     throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371371);
@@ -552,8 +561,18 @@ class ConfigurationBuilder
                 if (!array_key_exists($propertyName, $properties)) {
                     /** @var Inject $injectAnnotation */
                     $injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, Inject::class);
-                    $objectName = $injectAnnotation->name !== null ? $injectAnnotation->name : trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
-                    $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $injectAnnotation->lazy);
+                    $enableLazyInjection = $injectAnnotation->lazy;
+                    $objectName = $injectAnnotation->name;
+                    if ($objectName === null) {
+                        $objectName = $this->reflectionService->getPropertyType($className, $propertyName);
+                        if ($objectName !== null) {
+                            $enableLazyInjection = false; # See:  https://github.com/neos/flow-development-collection/issues/2114
+                        }
+                    }
+                    if ($objectName === null) {
+                        $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
+                    }
+                    $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $enableLazyInjection);
                     $properties[$propertyName] = $configurationProperty;
                 }
             }

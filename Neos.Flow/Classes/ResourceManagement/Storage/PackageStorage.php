@@ -106,7 +106,6 @@ class PackageStorage extends FileSystemStorage
         $object = new StorageObject();
         $object->setFilename($pathInfo['basename']);
         $object->setSha1(sha1_file($resourcePathAndFilename));
-        $object->setMd5(md5_file($resourcePathAndFilename));
         $object->setFileSize(filesize($resourcePathAndFilename));
         if (isset($pathInfo['dirname'])) {
             $object->setRelativePublicationPath($this->prepareRelativePublicationPath($pathInfo['dirname'], $resourcePackage->getPackageKey(), $resourcePackage->getResourcesPath()));
@@ -141,7 +140,7 @@ class PackageStorage extends FileSystemStorage
      * Because we cannot store persistent resources in a PackageStorage, this method always returns false.
      *
      * @param PersistentResource $resource The resource stored in this storage
-     * @return resource | boolean The resource stream or false if the stream could not be obtained
+     * @return resource|boolean The resource stream or false if the stream could not be obtained
      */
     public function getStreamByResource(PersistentResource $resource)
     {

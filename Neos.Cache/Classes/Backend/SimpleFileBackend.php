@@ -344,7 +344,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return mixed
      * @api
      */
-    public function current()
+    public function current(): mixed
     {
         if ($this->cacheFilesIterator === null) {
             $this->rewind();
@@ -360,7 +360,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
-    public function next()
+    public function next(): void
     {
         if ($this->cacheFilesIterator === null) {
             $this->rewind();
@@ -406,7 +406,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->cacheFilesIterator === null) {
             $this->cacheFilesIterator = new \DirectoryIterator($this->cacheDirectory);
@@ -528,9 +528,11 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      */
     protected function writeCacheFile(string $cacheEntryPathAndFilename, string $data): bool
     {
+        // Once vfs is fixed for file_put_contents with LOCK_EX,
+        // see https://github.com/mikey179/vfsStream/wiki/Known-Issues
+        // this can be replaced by a simple:
+        // return !(file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX) === false);
         for ($i = 0; $i < 3; $i++) {
-            // This can be replaced by a simple file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX) once vfs
-            // is fixed for file_put_contents with LOCK_EX, see https://github.com/mikey179/vfsStream/wiki/Known-Issues
             $result = false;
             try {
                 $file = fopen($cacheEntryPathAndFilename, 'wb');
@@ -538,7 +540,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     continue;
                 }
                 if (flock($file, LOCK_EX) !== false) {
-                    $result = fwrite($file, $data) === false ?: true;
+                    $result = !(fwrite($file, $data) === false);
                     flock($file, LOCK_UN);
                 }
                 fclose($file);

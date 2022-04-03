@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Configuration;
 
 /*
@@ -12,9 +14,20 @@ namespace Neos\Flow\Configuration;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\Loader\AppendLoader;
+use Neos\Flow\Configuration\Loader\LoaderInterface;
+use Neos\Flow\Configuration\Loader\MergeLoader;
+use Neos\Flow\Configuration\Loader\ObjectsLoader;
+use Neos\Flow\Configuration\Loader\PolicyLoader;
+use Neos\Flow\Configuration\Loader\RoutesLoader;
+use Neos\Flow\Configuration\Loader\SettingsLoader;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
+use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\Arrays;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
 
@@ -34,7 +47,7 @@ class ConfigurationManager
      *
      * @var string
      */
-    const CONFIGURATION_TYPE_CACHES = 'Caches';
+    public const CONFIGURATION_TYPE_CACHES = 'Caches';
 
     /**
      * Contains object configuration, i.e. options which configure objects and the combination of those on a lower
@@ -42,7 +55,7 @@ class ConfigurationManager
      *
      * @var string
      */
-    const CONFIGURATION_TYPE_OBJECTS = 'Objects';
+    public const CONFIGURATION_TYPE_OBJECTS = 'Objects';
 
     /**
      * Contains routes configuration. This routing information is parsed and used by the MVC Web Routing mechanism.
@@ -50,14 +63,14 @@ class ConfigurationManager
      *
      * @var string
      */
-    const CONFIGURATION_TYPE_ROUTES = 'Routes';
+    public const CONFIGURATION_TYPE_ROUTES = 'Routes';
 
     /**
      * Contains the configuration of the security policies of the system. See the Security chapter for details.
      *
      * @var string
      */
-    const CONFIGURATION_TYPE_POLICY = 'Policy';
+    public const CONFIGURATION_TYPE_POLICY = 'Policy';
 
     /**
      * Contains user-level settings, i.e. configuration options the users or administrators are meant to change.
@@ -65,64 +78,52 @@ class ConfigurationManager
      *
      * @var string
      */
-    const CONFIGURATION_TYPE_SETTINGS = 'Settings';
+    public const CONFIGURATION_TYPE_SETTINGS = 'Settings';
+
 
     /**
-     * This is the default processing, which merges configurations similar to how CONFIGURATION_PROCESSING_TYPE_SETTINGS
-     * are merged (except that for settings an empty array is initialized for each package)
-     *
      * @var string
+     * @deprecated since 7.1 – Use the existing or custom ConfigurationType implementations instead
      */
-    const CONFIGURATION_PROCESSING_TYPE_DEFAULT = 'DefaultProcessing';
+    public const CONFIGURATION_PROCESSING_TYPE_DEFAULT = 'DefaultProcessing';
 
     /**
-     * Appends all configurations, prefixed by the PackageKey of the configuration source
-     *
      * @var string
+     * @deprecated since 7.1 – Use the existing or custom ConfigurationType implementations instead
      */
-    const CONFIGURATION_PROCESSING_TYPE_OBJECTS = 'ObjectsProcessing';
+    public const CONFIGURATION_PROCESSING_TYPE_OBJECTS = 'ObjectsProcessing';
 
     /**
-     * Loads and merges configurations from Packages (global Policy-configurations are not allowed)
-     *
      * @var string
+     * @deprecated since 7.1 – Use the existing or custom ConfigurationType implementations instead
      */
-    const CONFIGURATION_PROCESSING_TYPE_POLICY = 'PolicyProcessing';
+    public const CONFIGURATION_PROCESSING_TYPE_POLICY = 'PolicyProcessing';
 
     /**
-     * Loads and appends global configurations and resolves SubRoutes, creating a combined flat array of all Routes
-     *
      * @var string
+     * @deprecated since 7.1 – Use the existing or custom ConfigurationType implementations instead
      */
-    const CONFIGURATION_PROCESSING_TYPE_ROUTES = 'RoutesProcessing';
+    public const CONFIGURATION_PROCESSING_TYPE_ROUTES = 'RoutesProcessing';
 
     /**
-     * Similar to CONFIGURATION_PROCESSING_TYPE_DEFAULT, but for every active package an empty array is initialized.
-     * Besides this sets "Neos.Flow.core.context" to the current context
-     *
      * @var string
+     * @deprecated since 7.1 – Use the existing or custom ConfigurationType implementations instead
      */
-    const CONFIGURATION_PROCESSING_TYPE_SETTINGS = 'SettingsProcessing';
+    public const CONFIGURATION_PROCESSING_TYPE_SETTINGS = 'SettingsProcessing';
 
     /**
-     * Appends all configurations to one flat array
-     *
      * @var string
+     * @deprecated since 7.1 – Use the existing or custom ConfigurationType implementations instead
      */
-    const CONFIGURATION_PROCESSING_TYPE_APPEND = 'AppendProcessing';
+    public const CONFIGURATION_PROCESSING_TYPE_APPEND = 'AppendProcessing';
+
 
     /**
      * Defines which Configuration Type is processed by which logic
      *
-     * @var array
+     * @var LoaderInterface[]
      */
-    protected $configurationTypes = [
-        self::CONFIGURATION_TYPE_CACHES => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, 'allowSplitSource' => true],
-        self::CONFIGURATION_TYPE_OBJECTS => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_OBJECTS, 'allowSplitSource' => true],
-        self::CONFIGURATION_TYPE_ROUTES => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_ROUTES, 'allowSplitSource' => false],
-        self::CONFIGURATION_TYPE_POLICY => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_POLICY, 'allowSplitSource' => true],
-        self::CONFIGURATION_TYPE_SETTINGS => ['processingType' => self::CONFIGURATION_PROCESSING_TYPE_SETTINGS, 'allowSplitSource' => true]
-    ];
+    protected $configurationLoaders = [];
 
     /**
      * The application context of the configuration to manage
@@ -130,20 +131,6 @@ class ConfigurationManager
      * @var ApplicationContext
      */
     protected $context;
-
-    /**
-     * An array of context name strings, from the most generic one to the most special one.
-     * Example:
-     * Development, Development/Foo, Development/Foo/Bar
-     *
-     * @var array
-     */
-    protected $orderedListOfContextNames = [];
-
-    /**
-     * @var Source\YamlSource
-     */
-    protected $configurationSource;
 
     /**
      * Storage of the raw special configurations
@@ -184,24 +171,6 @@ class ConfigurationManager
     public function __construct(ApplicationContext $context)
     {
         $this->context = $context;
-
-        $orderedListOfContextNames = [];
-        $currentContext = $context;
-        do {
-            $orderedListOfContextNames[] = (string)$currentContext;
-        } while ($currentContext = $currentContext->getParent());
-        $this->orderedListOfContextNames = array_reverse($orderedListOfContextNames);
-    }
-
-    /**
-     * Injects the configuration source
-     *
-     * @param Source\YamlSource $configurationSource
-     * @return void
-     */
-    public function injectConfigurationSource(Source\YamlSource $configurationSource)
-    {
-        $this->configurationSource = $configurationSource;
     }
 
     /**
@@ -209,9 +178,11 @@ class ConfigurationManager
      *
      * @param string $temporaryDirectoryPath
      */
-    public function setTemporaryDirectoryPath(string $temporaryDirectoryPath)
+    public function setTemporaryDirectoryPath(string $temporaryDirectoryPath): void
     {
         $this->temporaryDirectoryPath = $temporaryDirectoryPath;
+
+        $this->loadConfigurationsFromCache();
     }
 
     /**
@@ -220,7 +191,7 @@ class ConfigurationManager
      * @param FlowPackageInterface[] $packages
      * @return void
      */
-    public function setPackages(array $packages)
+    public function setPackages(array $packages): void
     {
         $this->packages = $packages;
     }
@@ -232,70 +203,58 @@ class ConfigurationManager
      */
     public function getAvailableConfigurationTypes(): array
     {
-        return array_keys($this->configurationTypes);
+        return array_keys($this->configurationLoaders);
     }
 
     /**
-     * Resolve the processing type for the configuration type.
-     *
-     * This returns the CONFIGURATION_PROCESSING_TYPE_* to use for the given
-     * $configurationType.
-     *
-     * @param string $configurationType
-     * @return string
-     * @throws Exception\InvalidConfigurationTypeException on non-existing configurationType
-     */
-    public function resolveConfigurationProcessingType(string $configurationType): string
-    {
-        if (!isset($this->configurationTypes[$configurationType])) {
-            throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1339166495);
-        }
-
-        return $this->configurationTypes[$configurationType]['processingType'];
-    }
-
-    /**
-     * Check the allowSplitSource setting for the configuration type.
-     *
-     * @param string $configurationType
-     * @return boolean
-     * @throws Exception\InvalidConfigurationTypeException on non-existing configurationType
-     */
-    public function isSplitSourceAllowedForConfigurationType(string $configurationType): bool
-    {
-        if (!isset($this->configurationTypes[$configurationType])) {
-            throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1359998400);
-        }
-
-        return $this->configurationTypes[$configurationType]['allowSplitSource'];
-    }
-
-    /**
-     * Registers a new configuration type with the given configuration processing type.
-     *
-     * The processing type must be supported by the ConfigurationManager, see
-     * CONFIGURATION_PROCESSING_TYPE_* for what is available.
+     * Registers a new configuration type with the given source.
      *
      * @param string $configurationType The type to register, may be anything
-     * @param string $configurationProcessingType One of CONFIGURATION_PROCESSING_TYPE_*, defaults to CONFIGURATION_PROCESSING_TYPE_DEFAULT
-     * @param boolean $allowSplitSource If true, the type will be used as a "prefix" when looking for split configuration. Only supported for DEFAULT and SETTINGS processing types!
-     * @throws \InvalidArgumentException on invalid configuration processing type
+     * @param LoaderInterface|string|null $configurationLoader This should be an instance of LoaderInterface. For backwards compatibility reasons it might also be a string representing one of the CONFIGURATION_PROCESSING_TYPE_* constants. If null, the default "MergeLoader" is used
      * @return void
+     * @throws \InvalidArgumentException on invalid configuration processing type
      */
-    public function registerConfigurationType(string $configurationType, string $configurationProcessingType = self::CONFIGURATION_PROCESSING_TYPE_DEFAULT, bool $allowSplitSource = true)
+    public function registerConfigurationType(string $configurationType, $configurationLoader = null): void
     {
-        $configurationProcessingTypes = [
-            self::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
-            self::CONFIGURATION_PROCESSING_TYPE_OBJECTS,
-            self::CONFIGURATION_PROCESSING_TYPE_POLICY,
-            self::CONFIGURATION_PROCESSING_TYPE_ROUTES,
-            self::CONFIGURATION_PROCESSING_TYPE_SETTINGS,
-            self::CONFIGURATION_PROCESSING_TYPE_APPEND
-        ];
-        if (!in_array($configurationProcessingType, $configurationProcessingTypes)) {
-            throw new \InvalidArgumentException(sprintf('Specified invalid configuration processing type "%s" while registering custom configuration type "%s"', $configurationProcessingType, $configurationType), 1365496111);
+        if ($configurationLoader === null) {
+            $configurationLoader = new MergeLoader(new YamlSource(), $configurationType);
+
+        // B/C layer
+        } elseif (is_string($configurationLoader)) {
+            $configurationLoader = $this->convertLegacyProcessingType($configurationType, $configurationLoader);
         }
-        $this->configurationTypes[$configurationType] = ['processingType' => $configurationProcessingType, 'allowSplitSource' => $allowSplitSource];
+        if (!$configurationLoader instanceof LoaderInterface) {
+            throw new \InvalidArgumentException(sprintf('Specified invalid configuration loader of type "%s" while registering custom configuration type "%s". This should be an instance of %s', is_object($configurationLoader) ? get_class($configurationLoader) : gettype($configurationLoader), $configurationType, LoaderInterface::class), 1617895964);
+        }
+
+        // if the configuration was already registered and the there is an unprocessed loaded configuration, the configuration needs to be loaded again
+        // on the other hand, if there is a processed configuration loaded, but no unprocessed configuration, the config must be from the cache and is assumed to be valid
+        if (isset($this->configurationLoaders[$configurationType]) && isset($this->unprocessedConfiguration[$configurationType])) {
+            unset($this->configurations[$configurationType], $this->unprocessedConfiguration[$configurationType]);
+        }
+        $this->configurationLoaders[$configurationType] = $configurationLoader;
+    }
+
+    private function convertLegacyProcessingType(string $configurationType, string $configurationProcessingType): LoaderInterface
+    {
+        switch ($configurationProcessingType) {
+            case self::CONFIGURATION_PROCESSING_TYPE_APPEND:
+                return new AppendLoader(new YamlSource(), $configurationType);
+            case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
+                return new MergeLoader(new YamlSource(), $configurationType);
+            case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
+                return new ObjectsLoader(new YamlSource());
+            case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
+                $policyLoader = new PolicyLoader(new YamlSource());
+                $policyLoader->setTemporaryDirectoryPath($this->temporaryDirectoryPath);
+                return $policyLoader;
+            case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
+                return new RoutesLoader(new YamlSource(), $this);
+            case self::CONFIGURATION_PROCESSING_TYPE_SETTINGS:
+                return new SettingsLoader(new YamlSource());
+        }
+
+        throw new \InvalidArgumentException(sprintf('Specified invalid configuration processing type "%s" while registering custom configuration type "%s".', $configurationProcessingType, $configurationType), 1365496111);
     }
 
     /**
@@ -305,7 +264,7 @@ class ConfigurationManager
      * @return void
      * @Flow\Signal
      */
-    protected function emitConfigurationManagerReady(ConfigurationManager $configurationManager)
+    protected function emitConfigurationManagerReady(ConfigurationManager $configurationManager): void
     {
     }
 
@@ -317,22 +276,23 @@ class ConfigurationManager
      * If possible just use settings and have them injected.
      *
      * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
-     * @param string $configurationPath The path inside the configuration to fetch
-     * @return array|null The configuration or NULL if the configuration doesn't exist
+     * @param string|null $configurationPath The path inside the configuration to fetch
+     * @return mixed The configuration or NULL if the configuration doesn't exist
      * @throws Exception\InvalidConfigurationTypeException on invalid configuration types
      */
     public function getConfiguration(string $configurationType, string $configurationPath = null)
     {
         if (empty($this->configurations[$configurationType])) {
             $this->loadConfiguration($configurationType, $this->packages);
+            $this->processConfigurationType($configurationType);
         }
 
         $configuration = $this->configurations[$configurationType] ?? [];
-        if ($configurationPath === null || $configuration === null) {
+        if ($configurationPath === null || $configuration === []) {
             return $configuration;
         }
 
-        return (Arrays::getValueByPath($configuration, $configurationPath));
+        return Arrays::getValueByPath($configuration, $configurationPath);
     }
 
     /**
@@ -340,8 +300,11 @@ class ConfigurationManager
      * This method writes the current configuration into a cache file if Flow was configured to do so.
      *
      * @return void
+     * @throws Exception\InvalidConfigurationException
+     * @throws Exception\InvalidConfigurationTypeException
+     * @throws FilesException
      */
-    public function shutdown()
+    public function shutdown(): void
     {
         if ($this->cacheNeedsUpdate === true) {
             $this->saveConfigurationCache();
@@ -352,10 +315,11 @@ class ConfigurationManager
      * Warms up the complete configuration cache, i.e. fetching every configured configuration type
      * in order to be able to store it into the cache, if configured to do so.
      *
-     * @see \Neos\Flow\Configuration\ConfigurationManager::shutdown
      * @return void
+     * @throws InvalidConfigurationException | InvalidConfigurationTypeException
+     * @see \Neos\Flow\Configuration\ConfigurationManager::shutdown
      */
-    public function warmup()
+    public function warmup(): void
     {
         foreach ($this->getAvailableConfigurationTypes() as $configurationType) {
             $this->getConfiguration($configurationType);
@@ -370,149 +334,52 @@ class ConfigurationManager
      *
      * @param string $configurationType The kind of configuration to load - must be one of the CONFIGURATION_TYPE_* constants
      * @param FlowPackageInterface[] $packages An array of Package objects (indexed by package key) to consider
-     * @throws Exception\InvalidConfigurationTypeException
-     * @throws Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationTypeException
      * @return void
      */
     protected function loadConfiguration(string $configurationType, array $packages)
     {
-        $this->configurations[$configurationType] = [];
-        $this->cacheNeedsUpdate = true;
-
-        $configurationProcessingType = $this->resolveConfigurationProcessingType($configurationType);
-        $allowSplitSource = $this->isSplitSourceAllowedForConfigurationType($configurationType);
-        switch ($configurationProcessingType) {
-            case self::CONFIGURATION_PROCESSING_TYPE_SETTINGS:
-
-                // Make sure that the Flow package is the first item of the packages array:
-                if (isset($packages['Neos.Flow'])) {
-                    $flowPackage = $packages['Neos.Flow'];
-                    unset($packages['Neos.Flow']);
-                    $packages = array_merge(['Neos.Flow' => $flowPackage], $packages);
-                    unset($flowPackage);
-                }
-
-                $settings = [];
-                foreach ($packages as $packageKey => $package) {
-                    if (Arrays::getValueByPath($settings, $packageKey) === null) {
-                        $settings = Arrays::setValueByPath($settings, $packageKey, []);
-                    }
-                    $settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
-                }
-                $settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
-
-                foreach ($this->orderedListOfContextNames as $contextName) {
-                    foreach ($packages as $package) {
-                        $settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource));
-                    }
-                    $settings = Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
-                }
-
-                if ($this->configurations[$configurationType] !== []) {
-                    $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $settings);
-                } else {
-                    $this->configurations[$configurationType] = $settings;
-                }
-
-                $this->configurations[$configurationType]['Neos']['Flow']['core']['context'] = (string)$this->context;
-            break;
-            case self::CONFIGURATION_PROCESSING_TYPE_OBJECTS:
-                foreach ($packages as $packageKey => $package) {
-                    $configuration = $this->configurationSource->load($package->getConfigurationPath() . $configurationType);
-                    $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
-
-                    foreach ($this->orderedListOfContextNames as $contextName) {
-                        $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType));
-                        $configuration = Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType));
-                    }
-                    $this->configurations[$configurationType][$packageKey] = $configuration;
-                }
-            break;
-            case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
-                if ($this->context->isTesting()) {
-                    $testingPolicyPathAndFilename = $this->temporaryDirectoryPath . 'Policy';
-                    if ($this->configurationSource->has($testingPolicyPathAndFilename)) {
-                        $this->configurations[$configurationType] = $this->configurationSource->load($testingPolicyPathAndFilename);
-                        break;
-                    }
-                }
-
-                foreach ($packages as $package) {
-                    $packagePolicyConfiguration = $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource);
-                    $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $packagePolicyConfiguration);
-                }
-                $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
-
-                foreach ($this->orderedListOfContextNames as $contextName) {
-                    foreach ($packages as $package) {
-                        $packagePolicyConfiguration = $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource);
-                        $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $packagePolicyConfiguration);
-                    }
-                    $this->configurations[$configurationType] = $this->mergePolicyConfiguration($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
-                }
-            break;
-            case self::CONFIGURATION_PROCESSING_TYPE_DEFAULT:
-                foreach ($packages as $package) {
-                    $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
-                }
-                $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
-
-                foreach ($this->orderedListOfContextNames as $contextName) {
-                    foreach ($packages as $package) {
-                        $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource));
-                    }
-                    $this->configurations[$configurationType] = Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
-                }
-            break;
-            case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
-                // load main routes
-                foreach (array_reverse($this->orderedListOfContextNames) as $contextName) {
-                    $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType));
-                }
-                $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType));
-                $routeProcessor = new RouteConfigurationProcessor(
-                    ($this->getConfiguration(self::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.mvc.routes') ?? []),
-                    $this->orderedListOfContextNames,
-                    $this->packages,
-                    $this->configurationSource
-                );
-                $this->configurations[$configurationType] = $routeProcessor->process($this->configurations[$configurationType]);
-                break;
-            case self::CONFIGURATION_PROCESSING_TYPE_APPEND:
-                foreach ($packages as $package) {
-                    $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType, $allowSplitSource));
-                }
-                $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $configurationType, $allowSplitSource));
-
-                foreach ($this->orderedListOfContextNames as $contextName) {
-                    foreach ($packages as $package) {
-                        $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $contextName . '/' . $configurationType, $allowSplitSource));
-                    }
-                    $this->configurations[$configurationType] = array_merge($this->configurations[$configurationType], $this->configurationSource->load(FLOW_PATH_CONFIGURATION . $contextName . '/' . $configurationType, $allowSplitSource));
-                }
-            break;
-            default:
-                throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" cannot be loaded with loadConfiguration().', 1251450613);
+        if (!isset($this->configurationLoaders[$configurationType])) {
+            throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1339166495);
         }
 
+        if (!isset($this->configurations[$configurationType])) {
+            $this->configurations[$configurationType] = [];
+        }
+
+        $this->cacheNeedsUpdate = true;
+
+        $this->configurations[$configurationType] = $this->configurationLoaders[$configurationType]->load($packages, $this->context);
         $this->unprocessedConfiguration[$configurationType] = $this->configurations[$configurationType];
     }
 
     /**
      * If a cache file with previously saved configuration exists, it is loaded.
      *
-     * @return boolean If cached configuration was loaded or not
+     * @param string $configurationType The kind of configuration to fetch
+     * @param string $cachePathAndFilename The cache file to load the configuration from
+     * @return void
      */
-    public function loadConfigurationCache(): bool
+    protected function replaceConfigurationForConfigurationType(string $configurationType, string $cachePathAndFilename): void
+    {
+        /** @noinspection UsingInclusionReturnValueInspection */
+        $configurations = @include $cachePathAndFilename;
+        if ($configurations !== false) {
+            $this->configurations[$configurationType] = $configurations;
+        }
+    }
+
+    /**
+     * Includes the cached configuration file such that $this->configurations is fully populated
+     */
+    protected function loadConfigurationsFromCache(): void
     {
         $cachePathAndFilename = $this->constructConfigurationCachePath();
+        /** @noinspection UsingInclusionReturnValueInspection */
         $configurations = @include $cachePathAndFilename;
         if ($configurations !== false) {
             $this->configurations = $configurations;
-            return true;
         }
-
-        return false;
     }
 
     /**
@@ -524,7 +391,7 @@ class ConfigurationManager
      * @throws Exception
      * @see refreshConfiguration
      */
-    public function flushConfigurationCache()
+    public function flushConfigurationCache(): void
     {
         $this->configurations = [self::CONFIGURATION_TYPE_SETTINGS => []];
         if ($this->temporaryDirectoryPath === null) {
@@ -541,16 +408,35 @@ class ConfigurationManager
     }
 
     /**
+     * Generate configuration with environment variables replaced without modifying or loading the cache
+     *
+     * @param string $configurationType The kind of configuration to fetch
+     */
+    protected function processConfigurationType(string $configurationType)
+    {
+        if ($this->temporaryDirectoryPath !== null) {
+            // to avoid issues regarding concurrency and invalid filesystem characters
+            // the configurationType is encoded as a uniqueid
+            $configurationTypeId = \uniqid(\sprintf('%x', \crc32($configurationType)), true);
+            $cachePathAndFilename = $this->constructConfigurationCachePath() . '.' . $configurationTypeId . '.tmp';
+
+            $this->writeConfigurationCacheFile($cachePathAndFilename, $configurationType);
+            $this->replaceConfigurationForConfigurationType($configurationType, $cachePathAndFilename);
+            @unlink($cachePathAndFilename);
+        }
+    }
+
+    /**
      * Saves the current configuration into a cache file and creates a cache inclusion script
      * in the context's Configuration directory.
      *
      * @return void
-     * @throws Exception
+     * @throws InvalidConfigurationTypeException | FilesException
      */
-    protected function saveConfigurationCache()
+    protected function saveConfigurationCache(): void
     {
         // Make sure that all configuration types are loaded before writing configuration caches.
-        foreach (array_keys($this->configurationTypes) as $configurationType) {
+        foreach (array_keys($this->configurationLoaders) as $configurationType) {
             if (!isset($this->unprocessedConfiguration[$configurationType]) || !is_array($this->unprocessedConfiguration[$configurationType])) {
                 $this->loadConfiguration($configurationType, $this->packages);
             }
@@ -561,35 +447,50 @@ class ConfigurationManager
         }
 
         $cachePathAndFilename = $this->constructConfigurationCachePath();
-        if (!file_exists(dirname($cachePathAndFilename))) {
-            Files::createDirectoryRecursively(dirname($cachePathAndFilename));
-        }
-
-        file_put_contents($cachePathAndFilename, '<?php return ' . $this->replaceVariablesInPhpString(var_export($this->unprocessedConfiguration, true)) . ';');
-        OpcodeCacheHelper::clearAllActive($cachePathAndFilename);
+        $this->writeConfigurationCacheFile($cachePathAndFilename);
         $this->cacheNeedsUpdate = false;
     }
 
     /**
-     * @return void
+     * Writes the cache on disk in the given cache file
+     *
+     * @param string $cachePathAndFilename The file to save the cache
      */
-    public function refreshConfiguration()
+    protected function writeConfigurationCacheFile(string $cachePathAndFilename, string $configurationType = null): void
+    {
+        if (!file_exists(dirname($cachePathAndFilename))) {
+            Files::createDirectoryRecursively(dirname($cachePathAndFilename));
+        }
+
+        $configToWrite = $this->unprocessedConfiguration;
+        if ($configurationType) {
+            $configToWrite = $this->unprocessedConfiguration[$configurationType];
+        }
+        file_put_contents($cachePathAndFilename, '<?php return ' . $this->replaceVariablesInPhpString(var_export($configToWrite, true)) . ';');
+        OpcodeCacheHelper::clearAllActive($cachePathAndFilename);
+    }
+
+    /**
+     * @return void
+     * @throws InvalidConfigurationTypeException | FilesException | Exception
+     */
+    public function refreshConfiguration(): void
     {
         $this->flushConfigurationCache();
         $this->saveConfigurationCache();
-        $this->loadConfigurationCache();
+        $this->loadConfigurationsFromCache();
     }
 
     /**
      * Replaces variables (in the format %CONSTANT% or %env:ENVIRONMENT_VARIABLE%)
      * in the given php exported configuration string.
      *
-     * This is applied before caching to alllow runtime evaluation of constants and environment variables.
+     * This is applied before caching to allow runtime evaluation of constants and environment variables.
      *
      * @param string $phpString
-     * @return mixed
+     * @return string
      */
-    protected function replaceVariablesInPhpString(string $phpString)
+    protected function replaceVariablesInPhpString(string $phpString): string
     {
         $phpString = preg_replace_callback('/
             (?<startString>=>\s\'.*?)?         # optionally assignment operator and starting a string
@@ -629,28 +530,6 @@ class ConfigurationManager
         }, $phpString);
 
         return $phpString;
-    }
-
-    /**
-     * Merges two policy configuration arrays.
-     *
-     * @param array $firstConfigurationArray
-     * @param array $secondConfigurationArray
-     * @return array
-     */
-    protected function mergePolicyConfiguration(array $firstConfigurationArray, array $secondConfigurationArray): array
-    {
-        $result = Arrays::arrayMergeRecursiveOverrule($firstConfigurationArray, $secondConfigurationArray);
-        if (!isset($result['roles'])) {
-            return $result;
-        }
-        foreach ($result['roles'] as $roleIdentifier => $roleConfiguration) {
-            if (!isset($firstConfigurationArray['roles'][$roleIdentifier]['privileges']) || !isset($secondConfigurationArray['roles'][$roleIdentifier]['privileges'])) {
-                continue;
-            }
-            $result['roles'][$roleIdentifier]['privileges'] = array_merge($firstConfigurationArray['roles'][$roleIdentifier]['privileges'], $secondConfigurationArray['roles'][$roleIdentifier]['privileges']);
-        }
-        return $result;
     }
 
     /**

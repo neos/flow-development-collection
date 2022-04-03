@@ -4,9 +4,9 @@
     "description": "A simple generator for controller and views.",
     "license": "MIT",
     "require": {
-        "php": "^7.2",
-        "neos/flow": "~6.2.0",
-        "neos/fluid-adaptor": "*",
+        "php": "^8.0",
+        "neos/flow": "~8.0.0",
+        "neos/fluid-adaptor": "~8.0.0",
         "neos/utility-arrays": "*"
     },
     "autoload": {
@@ -18,9 +18,6 @@
         "psr-4": {
             "Neos\\Kickstarter\\Tests\\": "Tests"
         }
-    },
-    "replace": {
-        "typo3/kickstart": "self.version"
     },
     "extra": {
         "neos": {

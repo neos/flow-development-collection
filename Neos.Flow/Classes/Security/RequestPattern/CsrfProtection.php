@@ -61,6 +61,7 @@ class CsrfProtection implements RequestPatternInterface
     protected $policyService;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;

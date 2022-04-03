@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Validation\Validator\CollectionValidator;
-use Neos\Flow\Validation\Validator\EmailAddressValidator;
 use Neos\Flow\Validation\Validator\GenericObjectValidator;
 use Neos\Flow\Validation\Validator\IntegerValidator;
 use Neos\Flow\Validation\Validator\NumberRangeValidator;
@@ -58,17 +57,17 @@ class CollectionValidatorTest extends AbstractValidatorTestcase
      */
     public function collectionValidatorValidatesEveryElementOfACollectionWithTheGivenElementValidator()
     {
-        $this->validator->_set('options', ['elementValidator' => 'EmailAddress', 'elementValidatorOptions' => []]);
-        $this->mockValidatorResolver->expects(self::exactly(4))->method('createValidator')->with('EmailAddress')->will(self::returnValue(new EmailAddressValidator()));
+        $this->validator->_set('options', ['elementValidator' => 'Integer', 'elementValidatorOptions' => []]);
+        $this->mockValidatorResolver->expects(self::exactly(4))->method('createValidator')->with('Integer')->willReturn(new IntegerValidator());
 
-        $arrayOfEmailAddresses = [
-            'andreas@neos.io',
-            'not a valid address',
-            'robert@neos.io',
+        $arrayOfIntegers = [
+            1,
+            'not a valid integer',
+            10,
             'also not valid'
         ];
 
-        $result = $this->validator->validate($arrayOfEmailAddresses);
+        $result = $this->validator->validate($arrayOfIntegers);
 
         self::assertTrue($result->hasErrors());
         self::assertEquals(2, count($result->getFlattenedErrors()));
