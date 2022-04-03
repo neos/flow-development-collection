@@ -11,7 +11,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
     name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} (deps: ${{ matrix.dependencies }})"
 
-    continue-on-error: ${{ matrix.experimental }}
+    continue-on-error: ${{ matrix.experimental == 'true' || matrix.experimental == true }}
 
     strategy:
       fail-fast: false
@@ -24,13 +24,6 @@ jobs:
         include:
           - php-versions: '7.3'
             static-analysis: 'psalm'
-            experimental: true
-            dependencies: 'highest'
-
-          # Experimental build for PHP nightly
-          - php-versions: '8.1'
-            composer-arguments: '--ignore-platform-reqs'
-            static-analysis: 'no'
             experimental: true
             dependencies: 'highest'
 
