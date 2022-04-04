@@ -1381,7 +1381,7 @@ class ReflectionService
         }
 
         $returnType = $method->getDeclaredReturnType();
-        if ($returnType !== null && !in_array($returnType, ['self', 'static', 'parent']) && !$method->getReturnType()->isBuiltin()) {
+        if ($returnType !== null && !in_array($returnType, ['self', 'static', 'parent']) && $method->getReturnType() !== null && !$method->getReturnType()->isBuiltin()) {
             $returnType = '\\' . $returnType;
         }
         if ($method->isDeclaredReturnTypeNullable()) {
