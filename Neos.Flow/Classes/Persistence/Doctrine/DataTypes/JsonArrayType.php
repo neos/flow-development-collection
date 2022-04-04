@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\DBAL\Types\ConversionException;
-use Doctrine\DBAL\Types\JsonType;
+use Doctrine\DBAL\Types\JsonType as DoctrineJsonType;
 use Doctrine\ORM\Mapping\Entity as ORMEntity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
@@ -21,11 +21,9 @@ use Neos\Utility\TypeHandling;
 /**
  * Extends the default doctrine JsonArrayType to work with entities.
  *
- * TODO: If doctrine supports a Postgres 9.4 platform we could default to jsonb.
- *
  * @Flow\Proxy(false)
  */
-class JsonArrayType extends JsonType
+class JsonArrayType extends DoctrineJsonType
 {
     public const FLOW_JSON_ARRAY = 'flow_json_array';
     protected ?PersistenceManagerInterface $persistenceManager = null;
@@ -47,6 +45,7 @@ class JsonArrayType extends JsonType
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         if ($platform instanceof PostgreSQL94Platform) {
+            // FIXME: Is this special case still needed as of Doctrine/DBAL 3.3?
             return 'jsonb';
         }
 
@@ -54,7 +53,7 @@ class JsonArrayType extends JsonType
     }
 
     /**
-     * We map jsonb fields to our datatype by default. Doctrine doesn't use jsonb at all.
+     * We map jsonb fields to our datatype by default.
      */
     public function getMappedDatabaseTypes(AbstractPlatform $platform): array
     {
