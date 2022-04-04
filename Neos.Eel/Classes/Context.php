@@ -159,7 +159,7 @@ class Context
      *
      * This method is public for closure access.
      *
-     * @param $value
+     * @param mixed $value
      * @return mixed
      */
     public function unwrapValue($value)
