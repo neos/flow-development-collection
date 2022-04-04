@@ -280,7 +280,7 @@ class RouterCachingService
     {
         Arrays::sortKeysRecursively($routeValues);
 
-        return md5(sprintf('abs:%s|prefix:%s|routeValues:%s', $resolveContext->isForceAbsoluteUri() ? 1 : 0, $resolveContext->getUriPathPrefix(), trim(http_build_query($routeValues), '/')));
+        return md5(sprintf('abs:%s|prefix:%s|routeValues:%s|routeParams:%s', $resolveContext->isForceAbsoluteUri() ? 1 : 0, $resolveContext->getUriPathPrefix(), trim(http_build_query($routeValues), '/'), $resolveContext->getParameters()->getCacheEntryIdentifier()));
     }
 
     /**
