@@ -26,7 +26,7 @@ class ConditionGenerator
     protected $entityType;
 
     /**
-     * @param $entityType
+     * @param string $entityType
      * @return void
      * @throws InvalidPolicyException
      */

@@ -17,12 +17,9 @@ use Neos\Cache\Backend\FreezableBackendInterface;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Cli\Command;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Cli\CommandManager;
 use Neos\Flow\Cli\Dispatcher;
 use Neos\Flow\Cli\RequestBuilder;
-use Neos\Flow\Cli\Response;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\ObjectManagement\DependencyInjection\ProxyClassBuilder;
@@ -269,87 +266,6 @@ class CoreCommandController extends CommandController
     }
 
     /**
-     * Run the interactive Shell
-     *
-     * The shell command runs Flow's interactive shell. This shell allows for
-     * entering commands like through the regular command line interface but
-     * additionally supports autocompletion and a user-based command history.
-     *
-     * @return void
-     */
-    public function shellCommand()
-    {
-        if (!function_exists('readline_read_history')) {
-            $this->outputLine('Interactive Shell is not available on this system!');
-            $this->quit(1);
-        }
-        $subProcess = false;
-        $pipes = [];
-
-        $historyPathAndFilename = getenv('HOME') . '/.flow_' . md5(FLOW_PATH_ROOT);
-        readline_read_history($historyPathAndFilename);
-        readline_completion_function([$this, 'autocomplete']);
-
-        echo "Flow Interactive Shell\n\n";
-
-        while (true) {
-            $commandLine = readline('Flow > ');
-            if ($commandLine === '') {
-                echo "\n";
-                break;
-            }
-
-            readline_add_history($commandLine);
-            readline_write_history($historyPathAndFilename);
-
-            $request = $this->requestBuilder->build($commandLine);
-            $response = new Response();
-            $command = $request->getCommand();
-
-            if ($request === false || $command->getCommandIdentifier() === false) {
-                echo "Bad command\n";
-                continue;
-            }
-            if ($this->bootstrap->isCompiletimeCommand($command->getCommandIdentifier())) {
-                $this->dispatcher->dispatch($request, $response);
-                $response->send();
-                if (is_resource($subProcess)) {
-                    $this->quitSubProcess($subProcess, $pipes);
-                }
-            } else {
-                if (is_resource($subProcess)) {
-                    $subProcessStatus = proc_get_status($subProcess);
-                    if ($subProcessStatus['running'] === false) {
-                        proc_close($subProcess);
-                    }
-                };
-                if (!is_resource($subProcess)) {
-                    list($subProcess, $pipes) = $this->launchSubProcess();
-                    if ($subProcess === false || !is_array($pipes)) {
-                        echo "Failed launching the shell sub process for executing the runtime command.\n";
-                        continue;
-                    }
-                    $this->echoSubProcessResponse($pipes);
-                }
-
-                fwrite($pipes[0], $commandLine . "\n");
-                fflush($pipes[0]);
-                $this->echoSubProcessResponse($pipes);
-
-                if ($command->isFlushingCaches()) {
-                    $this->quitSubProcess($subProcess, $pipes);
-                }
-            }
-        }
-
-        if (is_resource($subProcess)) {
-            $this->quitSubProcess($subProcess, $pipes);
-        }
-
-        echo "Bye!\n";
-    }
-
-    /**
      * Signals that the compile command was successfully finished.
      *
      * @param integer $classCount Number of compiled proxy classes
@@ -359,92 +275,5 @@ class CoreCommandController extends CommandController
     protected function emitFinishedCompilationRun(int $classCount)
     {
         $this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompilationRun', [$classCount]);
-    }
-
-    /**
-     * Launch sub process
-     *
-     * @return array The new sub process and its STDIN, STDOUT, STDERR pipes – or false if an error occurred.
-     * @throws \RuntimeException
-     */
-    protected function launchSubProcess(): array
-    {
-        $systemCommand = 'FLOW_ROOTPATH=' . FLOW_PATH_ROOT . ' FLOW_PATH_TEMPORARY_BASE=' . FLOW_PATH_TEMPORARY_BASE . ' ' . 'FLOW_CONTEXT=' . $this->bootstrap->getContext() . ' ' . PHP_BINARY . ' -c ' . php_ini_loaded_file() . ' ' . FLOW_PATH_FLOW . 'Scripts/flow.php' . ' --start-slave';
-        $descriptorSpecification = [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'a']];
-        $subProcess = proc_open($systemCommand, $descriptorSpecification, $pipes);
-        if (!is_resource($subProcess)) {
-            throw new \RuntimeException('Could not execute sub process.');
-        }
-
-        $read = [$pipes[1]];
-        $write = null;
-        $except = null;
-        $readTimeout = 30;
-
-        stream_select($read, $write, $except, $readTimeout);
-
-        $subProcessStatus = proc_get_status($subProcess);
-        return ($subProcessStatus['running'] === true) ? [$subProcess, $pipes] : false;
-    }
-
-    /**
-     * Echoes the currently pending response from the sub process
-     *
-     * @param array $pipes
-     * @return void
-     */
-    protected function echoSubProcessResponse(array $pipes)
-    {
-        while (feof($pipes[1]) === false) {
-            $responseLine = fgets($pipes[1]);
-            if (trim($responseLine) === 'READY' || $responseLine === false) {
-                break;
-            }
-            echo($responseLine);
-        }
-    }
-
-    /**
-     * Cleanly terminates the given sub process
-     *
-     * @param resource $subProcess The sub process to quite
-     * @param array $pipes The current STDIN, STDOUT and STDERR pipes
-     * @return void
-     */
-    protected function quitSubProcess($subProcess, array $pipes)
-    {
-        fwrite($pipes[0], "QUIT\n");
-        fclose($pipes[0]);
-        fclose($pipes[1]);
-        fclose($pipes[2]);
-        proc_close($subProcess);
-    }
-
-    /**
-     * Returns autocomplete suggestions on hitting the TAB key.
-     *
-     * @param string $partialCommand The current (partial) command where the TAB key was hit
-     * @param integer $index The cursor index at the current (partial) command
-     * @return array
-     */
-    protected function autocomplete(string $partialCommand, int $index): array
-    {
-        // @TODO Add more functionality by parsing the current buffer with readline_info()
-        // @TODO Filter file system elements (if possible at all)
-
-        $suggestions = [];
-
-        $availableCommands = $this->bootstrap->getObjectManager()
-            ->get(CommandManager::class)
-            ->getAvailableCommands();
-
-        /** @var $command Command */
-        foreach ($availableCommands as $command) {
-            if ($command->isInternal() === false) {
-                $suggestions[] = $command->getCommandIdentifier();
-            }
-        }
-
-        return $suggestions;
     }
 }
