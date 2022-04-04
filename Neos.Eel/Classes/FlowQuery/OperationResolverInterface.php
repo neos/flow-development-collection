@@ -26,7 +26,7 @@ interface OperationResolverInterface
     /**
      * Resolve an operation, taking runtime constraints into account.
      *
-     * @param string      $operationName
+     * @param string $operationName
      * @param array|mixed $context
      * @return OperationInterface the resolved operation
      */

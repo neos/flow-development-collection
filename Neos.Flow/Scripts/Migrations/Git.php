@@ -87,7 +87,7 @@ class Git
     }
 
     /**
-     * @param $fileOrDirectory
+     * @param string $fileOrDirectory
      * @return integer
      */
     public static function remove($fileOrDirectory)
