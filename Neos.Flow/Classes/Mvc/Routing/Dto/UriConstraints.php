@@ -310,7 +310,7 @@ final class UriConstraints
      */
     public function applyTo(UriInterface $baseUri, bool $forceAbsoluteUri): UriInterface
     {
-        $uri = new Uri('/');
+        $uri = new Uri('');
         if (isset($this->constraints[self::CONSTRAINT_SCHEME]) && $this->constraints[self::CONSTRAINT_SCHEME] !== $baseUri->getScheme()) {
             $forceAbsoluteUri = true;
             $uri = $uri->withScheme($this->constraints[self::CONSTRAINT_SCHEME]);
@@ -383,7 +383,7 @@ final class UriConstraints
         $baseUriPath = trim($baseUri->getPath(), '/');
         if ($baseUriPath !== '') {
             $mergedUriPath = $baseUriPath;
-            if ($uri->getPath() !== '/') {
+            if ($uri->getPath() !== '') {
                 $mergedUriPath .= '/' . ltrim($uri->getPath(), '/');
             }
             $uri = $uri->withPath($mergedUriPath);
@@ -392,7 +392,7 @@ final class UriConstraints
         // Ensure the URL always starts with "/", no matter if it is empty of non-empty.
         // HINT: We need to enforce at least a "/" URL,a s otherwise e.g. linking to the root node of a Neos
         // site would not work.
-        if ($uri->getPath()[0] !== '/') {
+        if ($uri->getPath() === '' || $uri->getPath()[0] !== '/') {
             $uri = $uri->withPath('/' . $uri->getPath());
         }
 
@@ -420,7 +420,7 @@ final class UriConstraints
      */
     public function toUri(): UriInterface
     {
-        return $this->applyTo(new Uri('/'), false);
+        return $this->applyTo(new Uri(''), false);
     }
 
     /**
