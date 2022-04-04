@@ -112,7 +112,7 @@ class OperationResolver implements OperationResolverInterface
     /**
      * Resolve an operation, taking runtime constraints into account.
      *
-     * @param string      $operationName
+     * @param string $operationName
      * @param array|mixed $context
      * @throws FlowQueryException
      * @return OperationInterface the resolved operation

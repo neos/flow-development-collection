@@ -26,7 +26,7 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 interface EntityPrivilegeInterface extends PrivilegeInterface
 {
     /**
-     * @param $entityType
+     * @param string $entityType
      * @return bool
      */
     public function matchesEntityType($entityType);

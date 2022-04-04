@@ -25,8 +25,8 @@ interface CookieEnabledInterface extends SessionInterface
 
     /**
      * @param Cookie $sessionCookie
-     * @param $storageIdentifier
-     * @param $lastActivityTimestamp
+     * @param string $storageIdentifier
+     * @param int $lastActivityTimestamp
      * @param array $tags
      * @return CookieEnabledInterface|SessionInterface
      */
