@@ -101,7 +101,7 @@ class AllowedObjectsListener
     }
 
     /**
-     * Execute a dummy query on the given connection and return false if 
+     * Execute a dummy query on the given connection and return false if
      */
     protected function ping(Connection $connection): bool
     {
