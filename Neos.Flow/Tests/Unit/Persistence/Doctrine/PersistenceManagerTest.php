@@ -60,11 +60,6 @@ class PersistenceManagerTest extends UnitTestCase
      */
     protected $mockPing;
 
-    /**
-     * @var ConnectionException|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockConnectionException;
-
     protected function setUp(): void
     {
         $this->persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Doctrine\PersistenceManager::class)->setMethods(['emitAllObjectsPersisted'])->getMock();
@@ -77,9 +72,9 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockEntityManager->method('getUnitOfWork')->willReturn($this->mockUnitOfWork);
 
         $this->mockConnection = $this->getMockBuilder(\Doctrine\DBAL\Connection::class)->disableOriginalConstructor()->getMock();
-        $this->mockPing = $this->mockConnection->expects($this->atMost(1))->method('executeQuery');
-        $this->mockConnectionException = $this->getMockBuilder(ConnectionException::class)->disableOriginalConstructor()->getMock();
-        $this->mockEntityManager->expects(self::any())->method('getConnection')->willReturn($this->mockConnection);
+        $this->mockPing = $this->persistenceManager->method('ping');
+        $this->mockPing->willReturn(true);
+        $this->mockEntityManager->method('getConnection')->willReturn($this->mockConnection);
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
         $this->inject($this->persistenceManager, 'logger', $this->mockSystemLogger);
@@ -181,7 +176,7 @@ class PersistenceManagerTest extends UnitTestCase
      */
     public function persistAllReconnectsConnectionWhenConnectionLost()
     {
-        $this->mockPing->willThrow($this->mockConnectionException);
+        $this->mockPing->willReturn(false);
 
         $this->mockConnection->expects(self::once())->method('close');
         $this->mockConnection->expects(self::once())->method('connect');
