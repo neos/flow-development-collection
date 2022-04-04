@@ -280,7 +280,7 @@ class RouterCachingServiceTest extends UnitTestCase
     {
         $mockObject = new \stdClass();
         $routeValues = ['b' => 'route values', 'someObject' => $mockObject];
-        $cacheIdentifier = '415bf8745c304076a7139e4f4fcf2eb1';
+        $cacheIdentifier = '868abeec5c300408f418bf198542daec';
 
         $this->mockPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($mockObject)->will(self::returnValue('objectIdentifier'));
 
@@ -298,7 +298,7 @@ class RouterCachingServiceTest extends UnitTestCase
         $mockUuid = '550e8400-e29b-11d4-a716-446655440000';
         $mockObject = new \stdClass();
         $routeValues = ['b' => 'route values', 'someObject' => $mockObject];
-        $cacheIdentifier = 'e56bffd69837730b19089d3cf1eb7af9';
+        $cacheIdentifier = '368edb26a8347d7f635b872e73a8e5e9';
 
         $this->mockPersistenceManager->expects(self::once())->method('getIdentifierByObject')->with($mockObject)->will(self::returnValue($mockUuid));
 
@@ -327,6 +327,27 @@ class RouterCachingServiceTest extends UnitTestCase
         $this->mockResolveCache->expects(self::once())->method('set')->with('cacheIdentifier', $resolvedUriConstraints, [$uuid1, $uuid2, md5('some'), md5('some/request'), md5('some/request/path')]);
 
         $routerCachingService->storeResolvedUriConstraints($resolveContext, $resolvedUriConstraints);
+    }
+
+
+    /**
+     * @test
+     */
+    public function storeResolvedUriConstraintsCreatesSeparateCacheEntriesPerRouteParameters()
+    {
+        $routeValues = ['foo' => 'bar'];
+        $routeParameters1 = RouteParameters::createEmpty()->withParameter('foo', 'bar');
+        $routeParameters2 = RouteParameters::createEmpty()->withParameter('foo', 'baz');
+
+        $resolvedUriConstraints = UriConstraints::create()->withPath('path');
+        $createdCacheEntries = [];
+        $this->mockResolveCache->method('set')->willReturnCallback(static function(string $cacheEntryIdentifier) use (&$createdCacheEntries) {
+            $createdCacheEntries[$cacheEntryIdentifier] = true;
+        });
+
+        $this->routerCachingService->storeResolvedUriConstraints(new ResolveContext($this->mockUri, $routeValues, false, '', $routeParameters1), $resolvedUriConstraints);
+        $this->routerCachingService->storeResolvedUriConstraints(new ResolveContext($this->mockUri, $routeValues, false, '', $routeParameters2), $resolvedUriConstraints);
+        self::assertCount(2, $createdCacheEntries);
     }
 
     /**
@@ -366,7 +387,7 @@ class RouterCachingServiceTest extends UnitTestCase
 
         $routeValues = ['b' => 'route values', 'someObject' => $mockObject];
 
-        $cacheIdentifier = '415bf8745c304076a7139e4f4fcf2eb1';
+        $cacheIdentifier = '868abeec5c300408f418bf198542daec';
 
         $resolvedUriConstraints = UriConstraints::create()->withPath('uncached/matching/uri');
         $this->mockResolveCache->expects(self::once())->method('set')->with($cacheIdentifier, $resolvedUriConstraints);
