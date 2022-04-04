@@ -162,7 +162,7 @@ interface PersistenceManagerInterface
     public function update($object): void;
 
     /**
-     * Adds the given object to a list of allowed objects which may be persisted when persistOnlyAllowedObjects() is called.
+     * Adds the given object to a list of allowed objects which may be persisted when persistAllowedObjects() is called.
      * This is the case if "safe" HTTP request methods are used.
      *
      * @param object $object The object
