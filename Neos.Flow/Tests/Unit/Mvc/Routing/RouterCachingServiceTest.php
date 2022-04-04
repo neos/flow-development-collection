@@ -341,7 +341,7 @@ class RouterCachingServiceTest extends UnitTestCase
 
         $resolvedUriConstraints = UriConstraints::create()->withPath('path');
         $createdCacheEntries = [];
-        $this->mockResolveCache->method('set')->willReturnCallback(static function(string $cacheEntryIdentifier) use (&$createdCacheEntries) {
+        $this->mockResolveCache->method('set')->willReturnCallback(static function (string $cacheEntryIdentifier) use (&$createdCacheEntries) {
             $createdCacheEntries[$cacheEntryIdentifier] = true;
         });
 
