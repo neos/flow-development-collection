@@ -127,7 +127,7 @@ class Configuration
     /**
      * Sets the object name
      *
-     * @param string object name
+     * @param string $objectName
      * @return void
      */
     public function setObjectName($objectName)

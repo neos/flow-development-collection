@@ -126,8 +126,8 @@ class XliffParser extends AbstractXmlParser
     }
 
     /**
-     * @param $sourcePath
-     * @param $fileOffset
+     * @param string $sourcePath
+     * @param mixed $fileOffset
      * @return array|null
      * @throws InvalidXliffDataException
      * @throws InvalidXmlFileException

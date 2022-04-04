@@ -210,7 +210,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param $operandDefinition
+     * @param mixed $operandDefinition
      * @return $this
      * @throws InvalidPolicyException
      */

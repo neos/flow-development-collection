@@ -52,7 +52,7 @@ class RouteConfigurationProcessor
      * @param array $routeSettings
      * @param array $orderedListOfContextNames
      * @param array $packages
-     * @param $configurationSource
+     * @param YamlSource $configurationSource
      */
     public function __construct(array $routeSettings, array $orderedListOfContextNames, array $packages, $configurationSource)
     {
@@ -63,7 +63,7 @@ class RouteConfigurationProcessor
     }
 
     /**
-     * @param $routeDefinitions
+     * @param array $routeDefinitions
      * @return array
      * @throws Exception\ParseErrorException
      * @throws Exception\RecursionException
