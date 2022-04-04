@@ -3,7 +3,7 @@ namespace Neos\Flow\Persistence\Doctrine\DataTypes;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\JsonArrayType as DoctrineJsonArrayType;
+use Doctrine\DBAL\Types\JsonType as DoctrineJsonType;
 use Doctrine\ORM\Mapping\Entity as ORMEntity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
@@ -15,11 +15,9 @@ use Neos\Utility\TypeHandling;
 /**
  * Extends the default doctrine JsonArrayType to work with entities.
  *
- * TODO: If doctrine supports a Postgres 9.4 platform we could default to jsonb.
- *
  * @Flow\Proxy(false)
  */
-class JsonArrayType extends DoctrineJsonArrayType
+class JsonArrayType extends DoctrineJsonType
 {
     /**
      * @var string
@@ -68,6 +66,7 @@ class JsonArrayType extends DoctrineJsonArrayType
     {
         switch ($platform->getName()) {
             case 'postgresql':
+                // FIXME: Is this special case still needed as of Doctrine/DBAL 3.3?
                 return 'jsonb';
             default:
                 return $platform->getJsonTypeDeclarationSQL($fieldDeclaration);
@@ -75,7 +74,7 @@ class JsonArrayType extends DoctrineJsonArrayType
     }
 
     /**
-     * We map jsonb fields to our datatype by default. Doctrine doesn't use jsonb at all.
+     * We map jsonb fields to our datatype by default.
      *
      * @param AbstractPlatform $platform
      * @return array
@@ -97,14 +96,7 @@ class JsonArrayType extends DoctrineJsonArrayType
     {
         $this->initializeDependencies();
 
-        switch ($platform->getName()) {
-            case 'postgresql':
-                $value = (is_resource($value)) ? stream_get_contents($value) : $value;
-                $array = parent::convertToPHPValue($value, $platform);
-                break;
-            default:
-                $array = parent::convertToPHPValue($value, $platform);
-        }
+        $array = parent::convertToPHPValue($value, $platform);
         if (is_array($array)) {
             $this->decodeObjectReferences($array);
         }
