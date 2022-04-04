@@ -113,7 +113,7 @@ class PersistenceManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function persistAllThrowsExceptionIfTryingToPersistNonAllowedObjectsAndOnlyAllowedObjectsFlagIsTrue()
+    public function persistAllowedObjectsThrowsExceptionIfTryingToPersistNonAllowedObjects()
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessageMatches('/^Detected modified or new objects/');
@@ -125,13 +125,13 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockUnitOfWork->expects(self::any())->method('getScheduledEntityDeletions')->willReturn($scheduledEntityDeletes);
         $this->mockUnitOfWork->expects(self::any())->method('getScheduledEntityInsertions')->willReturn($scheduledEntityInsertions);
 
-        $this->persistenceManager->persistAll(true);
+        $this->persistenceManager->persistAllowedObjects();
     }
 
     /**
      * @test
      */
-    public function persistAllRespectsObjectAllowedIfOnlyAllowedObjectsFlagIsTrue()
+    public function persistAllowedObjectsRespectsObjectAllowed()
     {
         $mockObject = new \stdClass();
         $scheduledEntityUpdates = [spl_object_hash($mockObject) => $mockObject];
@@ -144,7 +144,7 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockEntityManager->expects(self::once())->method('flush');
 
         $this->persistenceManager->allowObject($mockObject);
-        $this->persistenceManager->persistAll(true);
+        $this->persistenceManager->persistAllowedObjects();
     }
 
     /**
