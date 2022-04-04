@@ -62,7 +62,7 @@ class PersistenceManagerTest extends UnitTestCase
 
     protected function setUp(): void
     {
-        $this->persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Doctrine\PersistenceManager::class)->setMethods(['emitAllObjectsPersisted'])->getMock();
+        $this->persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Doctrine\PersistenceManager::class)->setMethods(['emitAllObjectsPersisted', 'ping'])->getMock();
 
         $this->mockEntityManager = $this->getMockBuilder(\Doctrine\ORM\EntityManager::class)->disableOriginalConstructor()->getMock();
         $this->mockEntityManager->method('isOpen')->willReturn(true);
