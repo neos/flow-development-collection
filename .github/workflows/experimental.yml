@@ -13,19 +13,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        flow-versions: ['master']
         php-versions: ['nightly']
         dependencies: ['highest']
         composer-arguments: ['--ignore-platform-reqs'] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
         experimental: [true]
         include:
-          - php-versions: 'nightly'
+          - flow-versions: 'master'
+            php-versions: 'nightly'
             static-analysis: 'psalm'
             experimental: true
             dependencies: 'highest'
 
           # Build for minimum dependencies.
-          - php-versions: 'nightly'
+          - flow-versions: 'master'
+            php-versions: 'nightly'
             static-analysis: 'no'
             experimental: true
             dependencies: 'lowest'
@@ -73,7 +76,7 @@ jobs:
 
     steps:
       - name: Set Flow target branch name
-        run: echo "FLOW_TARGET_VERSION=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
+        run: echo "FLOW_TARGET_VERSION=${{ matrix.flow-versions }}" >> $GITHUB_ENV
         working-directory: .
 
       - name: Checkout
