@@ -1,0 +1,957 @@
+`8.0.0 (2022-04-04) <https://github.com/neos/flow-development-collection/releases/tag/8.0.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`!!! FEATURE: Introduce flushByTags to taggable cache backends <https://github.com/neos/flow-development-collection/pull/2718>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+This change introduces the ``flushByTags`` method to taggable cache backends. This allows each backend to be further optimised in the future to find the best way to flush multiple tags from its storage.
+
+* Resolves: `#2717 <https://github.com/neos/flow-development-collection/issues/2717>`_
+
+**How I did it**
+
+The ``TaggableBackendInterface`` and ``FrontendInterface`` were extended with the method ``flushByTags`` and each provided backend in the core got a simple implementation for it to fulfil the interface.
+
+* Packages: ``Cache``
+
+`!!! FEATURE: Implement Psr-18 HTTP\Client <https://github.com/neos/flow-development-collection/pull/2688>`_
+------------------------------------------------------------------------------------------------------------
+
+The ``Neos\\Flow\\Http\\Client\\Browser`` now implements the ``Psr\\Http\\Client\\ClientInterface`` and works with dependency injection by default.
+
+The signature of the method sendRequest is relaxed slightly from ServerRequestInterface to RequestInterface and the curl requestEngine is injected by default. That way any browser is ready for use from the start.
+
+Internally the request engines now also use the RequestInterface instead of ServerRequestInterface.
+This should be almost non breaky because changes ServerRequestInterface is still allowed as it extends the RequestInterface. The InternalRequestEngide will upcast the RequestInterfaces to ServerRequestInterface when needed.
+
+!!!The PR removes the @api annotation from the requestEngines to allow us to remove or alter those in the future.
+
+* Resolves: `#2691 <https://github.com/neos/flow-development-collection/issues/2691>`_ 
+
+
+* Packages: ``Flow``
+
+`FEATURE: Type declaration support for property injection <https://github.com/neos/flow-development-collection/pull/2782>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This change introduces basic support for PHP 7.4 class property types
+for property injection.
+
+It allows for using types as follows:
+
+```php
+/**
+ * @Flow\\Inject
+ **/
+protected LoggerInterface $logger;
+```
+
+In order to allow this syntax, Lazy Property Injection is disabled
+when a type is declared. To still use Lazy Property Injection, don't
+use a PHP type declaration but a ``@var`` annotation:
+
+```php
+/**
+ * @Flow\\Inject
+ * @var LoggerInterface
+ **/
+protected $logger;
+```
+
+If using both (type declaration _and_ ``@var``), it is handled non-lazily.
+
+Lazy Property Injection on properties with type declarations may 
+be re-implemented as part of a future release.
+
+`#2114 <https://github.com/neos/flow-development-collection/issues/2114>`_
+
+* Packages: ``Flow``
+
+`FEATURE: Extend DenormalizingObjectConverter to support fromBoolean and fromInteger <https://github.com/neos/flow-development-collection/pull/2766>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+...in addition to their short version (``fromBool()`` and ``fromInt()``).
+This also adds a short documentation about Value Object property mapping.
+
+* Related: `#2763 <https://github.com/neos/flow-development-collection/issues/2763>`_
+
+* Packages: ``Flow``
+
+`FEATURE: Optimised Redis cache backend <https://github.com/neos/flow-development-collection/pull/2721>`_
+---------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+With this change the ``flushByTags`` is optimised to run flush operations in batches. 
+The maximum batch size can and should be configured based on the used data source.
+
+This change relies on the interface changes in `#2718 <https://github.com/neos/flow-development-collection/issues/2718>`_
+
+Additionally all optimisations from https://github.com/sandstorm/OptimizedRedisCacheBackend were added.
+
+**How I did it**
+
+Instead of uploading the flush Lua script and only flushing the entries for one tag.
+The same is now done for batches of tags reducing the calls to Redis and the 
+evaluation time Redis needs to parse the script.
+
+**How to verify it**
+
+`#2718 <https://github.com/neos/flow-development-collection/issues/2718>`_includes updated tests for the Redis backend that will also check this method.
+
+
+* Packages: ``Cache``
+
+`FEATURE: Create ValueObjects from simple types by calling `from$TYPE` for objects and JsonArray properties <https://github.com/neos/flow-development-collection/pull/2762>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+When converting from simple types the denormalizer now checks wether the target class has a method ``from$TYPE`` and uses this to create the object.  Supported method names are ``fromArray``, ``fromString``, ``fromBool``, ``fromInt`` and ``fromFloat``.
+
+For example the following controller action would use the methods ``BirthDate::fromString`` or ``BirthDate::fromArray`` (depending on submitted data) to instantiate the $birthDate argument.
+```
+public function indexAction(BirthDate $birthDate) 
+```
+
+In addition the JsonArray Type is extended to support this aswell. The serialization as flow entities takes precedence over the serialization as value object flow objects that implement \\JsonSerializable are still serialized as Flow Objects in JsonArray properties. While beeing a Flow feature this allows to store and restore ValueObjects in Neos Node properties aswell. 
+
+Note: This is a rebased version of https://github.com/neos/flow-development-collection/pull/2703 from @nezaniel 
+
+* Resolves: `#2763 <https://github.com/neos/flow-development-collection/issues/2763>`_
+Replaces:  `#2703 <https://github.com/neos/flow-development-collection/issues/2703>`_
+
+
+* Packages: ``Flow``
+
+`FEATURE: Implement `flushByTags` for the PDO cache backend <https://github.com/neos/flow-development-collection/pull/2720>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+With this change the ``flushByTags`` is optimised to run in batches. 
+The maximum batch size can and should be configured based on the used data source.
+
+This change relies on the interface changes in `#2718 <https://github.com/neos/flow-development-collection/issues/2718>`_
+
+**How I did it**
+
+Instead of querying identifiers for each tag separately, they are now queried in batches
+for a number of tags and then deleted.
+
+**How to verify it**
+
+Configure PDO backend for the Neos content cache and force a flush by publishing something.
+
+
+* Packages: ``Flow``
+
+`FEATURE: `flushByTags` for the file based cache backend <https://github.com/neos/flow-development-collection/pull/2750>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+With this change the ``flushByTags`` is optimised by only reading the list of cache files once for all entries to be flushed instead of reading it for each entry.
+
+This can yield a huge speedup in situations where a single file based cache contains many entries, especially on older (non-ssd) storages.
+
+This change relies on the interface changes in #2717
+
+* Packages: ``Flow`` ``Cache``
+
+`FEATURE: Add methods getSimpleCache PSR-16 and getCacheItemPool PSR-6 to the cacheManager <https://github.com/neos/flow-development-collection/pull/2689>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The methods create PSR Frontends for the cache with the given identifier. This allows to configure psr caches via
+objects and caches yaml. This is an improvement as the included factories are not that easy to use.
+
+The following settings in Objects.yaml allow to inject PSR Caches into Flow Classes:
+```
+Vendor\\Site\\Service:
+
+  properties:
+    simpleCacheProperty:
+      object:
+        factoryObjectName: Neos\\Flow\\Cache\\CacheManager
+        factoryMethodName: getSimpleCache
+        arguments:
+          1:
+            value: Cache_Identifier_1
+
+    cachePoolProperty:
+      object:
+        factoryObjectName: Neos\\Flow\\Cache\\CacheManager
+        factoryMethodName: getCacheItemPool
+        arguments:
+          1:
+            value: Cache_Identifier_2
+```
+
+!!! While possible it is not advisible to access the same cache with multiple Interfaces as the storage formats may differ. !!!
+
+* Resolves: `#2690 <https://github.com/neos/flow-development-collection/issues/2690>`_ 
+
+
+`BUGFIX: Prevent UriConstraints to generate invalid URIs <https://github.com/neos/flow-development-collection/pull/2818>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Adjusts ``UriConstraints::applyTo()`` such that it never creates
+an ``Uri`` instance with a path of ``/`` (which according to ``guzzle/psr`` was
+deprecated since 1.x and invalid with 2.x)
+
+* Fixes: `#2473 <https://github.com/neos/flow-development-collection/issues/2473>`_
+
+* Packages: ``Flow``
+
+`Revert "BUGFIX: Uri must not be constructed with empty string" <https://github.com/neos/flow-development-collection/pull/2814>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Reverts `#2813 <https://github.com/neos/flow-development-collection/issues/2813>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Uri must not be constructed with empty string <https://github.com/neos/flow-development-collection/pull/2813>`_
+------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2473 <https://github.com/neos/flow-development-collection/issues/2473>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Use env var for FLOW_LOCK_HOLDING_PAGE <https://github.com/neos/flow-development-collection/pull/2803>`_
+-----------------------------------------------------------------------------------------------------------------
+
+The lock holding page was supposed to be customizable through
+an environment variable, but that never worked…
+
+Now it does, using the new variable name ``FLOW_LOCK_HOLDING_PAGE``
+as well as the (now deprecated) old name ``FLOW_LOCKHOLDINGPAGE``.
+
+* Fixes: `#2798 <https://github.com/neos/flow-development-collection/issues/2798>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Require psr/log ^2.0 in FluidAdapter <https://github.com/neos/flow-development-collection/pull/2802>`_
+---------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2801 <https://github.com/neos/flow-development-collection/issues/2801>`_
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Adjust code leading to deprecation warnings with PHP 8.1 <https://github.com/neos/flow-development-collection/pull/2800>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2797 <https://github.com/neos/flow-development-collection/issues/2797>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Address deprecation warnings from PHP 8.1 <https://github.com/neos/flow-development-collection/pull/2796>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The trim method did not like beeing called with a null argument when the FLOW_CONTEXT environment was not set.
+
+```
+PHP Deprecated:  trim(): Passing null to parameter `#1 <https://github.com/neos/flow-development-collection/issues/1>`_($string) of type string is deprecated in /Users/ficzel/PhpStormProjects/neos-development-distribution-8-0/Packages/Framework/Neos.Flow/Scripts/flow.php on line 68
+```
+
+* Packages: ``Flow``
+
+`BUGFIX: LockManager catches PHP 8 Throwable during unlockSite <https://github.com/neos/flow-development-collection/pull/2795>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This is a followup PR to https://github.com/neos/flow-development-collection/pull/2716 to catch PHP 8 Throwables possibly thrown during ``@unlink($this->lockPathAndFilename);``.
+
+* Packages: ``Flow`` ``Utility.ObjectHandling``
+
+`BUGFIX: Show origin of yaml parse errors <https://github.com/neos/flow-development-collection/pull/2794>`_
+-----------------------------------------------------------------------------------------------------------
+
+Previously this was only done when pecl yaml parse was used which made it quite hard to find the
+defect yaml file when the Symfony yaml parser was used.
+
+The change added the information about the currently parsed file to the exception message of symfony.
+
+* Packages: ``Flow``
+
+`BUGFIX: Add behat @BeforeSuite and @AfterSuite to ignored annotation tags <https://github.com/neos/flow-development-collection/pull/2726>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+This adds the missing behat annotations to ignored tags, so behat tests using those hooks can be reflected.
+
+**How to verify it**
+This is an example of the error that occurs currently when ``@BeforeSuite`` or ``@AfterSuite`` is used in any Behat Step class.
+!`image <https://user-images.githubusercontent.com/16836464/157476691-c5da169d-32d9-497f-b5ef-4806369a6600.png>`_
+see also https://github.com/sandstorm/Sandstorm.E2ETestTools/pull/6
+This can also be avoided when classes containing those annotations are *not reflected*, meaning if they are outside the psr classes directory.
+When they are *inside* psr class directories, an error is thrown (see screenshot)
+
+`BUGFIX: ArrayObjects are mapped correctly without PHP internal properties <https://github.com/neos/flow-development-collection/pull/2783>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Until now, ``ArrayObject``s would be mapped to array with a structure like this:
+```
+array(4) {
+  ["arrayCopy"]=>
+  array(1) {
+    ["foo"]=>
+    string(3) "bar"
+  }
+  ["flags"]=>
+  int(0)
+  ["iterator"]=>
+  object(ArrayIterator)`#10459 <https://github.com/neos/flow-development-collection/issues/10459>`_(1) {
+    ["storage":"ArrayIterator":private]=>
+    object(ArrayObject)`#10460 <https://github.com/neos/flow-development-collection/issues/10460>`_(1) {
+      ["storage":"ArrayObject":private]=>
+      array(1) {
+        ["foo"]=>
+        string(3) "bar"
+      }
+    }
+  }
+  ["iteratorClass"]=>
+  string(13) "ArrayIterator"
+}
+```
+This is because ``getGettablePropertyNames()`` would return the internal properties which have matching public ``get*`` methods on the ``ArrayObject`` PHP class https://www.php.net/manual/en/class.arrayobject.php#arrayobject.synopsis
+
+This adds an ArrayObjectConverter that allows to convert to a plain
+array containing only the intended custom properties. It uses ``getArrayCopy()`` to get the job done.
+
+* Fixes: `#2041 <https://github.com/neos/flow-development-collection/issues/2041>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: ObjectAccess with direct access on private properties of proxied classes <https://github.com/neos/flow-development-collection/pull/2389>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+With this classes with private properties do react as expected to
+ObjectAccess::getProperty() and ObjectAccess::setProperty() with
+$forceDirectAccess enabled, even when they have been subclassed by the
+proxy building of Flow.
+
+* Fixes: `#2388 <https://github.com/neos/flow-development-collection/issues/2388>`_
+
+* Packages: ``Utility.ObjectHandling``
+
+`BUGFIX: Prevent flush force error in production context <https://github.com/neos/flow-development-collection/pull/2716>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+The ``flow:cache:flush --force`` command run's ``Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());`` which removes the lock file in the temporary directory too. The call to unlockSite() then causes a php warning because of the missing lock file
+```
+Warning: unlink(/var/www/Data/Temporary/Production/SubContextDevelopment/cbe856ff790c9ba5208811309bdf168b_Flow.lock): No such file or directory in /var/www/Packages/Framework/Neos.Flow/Classes/Core/LockManager.php line 145
+```
+
+This PR just add's a bit of error handling to the corresponding unlink of the lock file.
+
+**How to verify it**
+
+Run ``./flow flow:cache:flush --force`` command in ``Production`` context.
+
+**Question**
+
+Since this is a bugfix, I used branch 6.3. In case of FLOW 7, some php8 compatiblity was added which would change the PR to 
+
+```
+            try {
+                @unlink($this->lockPathAndFilename);
+            } catch (\\Throwable $e) {
+                // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
+            }
+```
+
+Should I create another PR if this one is merged to get PHP 8 compatibility?
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Don't use transactions to change db character set <https://github.com/neos/flow-development-collection/pull/2725>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2724 <https://github.com/neos/flow-development-collection/issues/2724>`_
+
+`BUGFIX: Fix PhpAnalyzer to support PHP 8 <https://github.com/neos/flow-development-collection/pull/2640>`_
+-----------------------------------------------------------------------------------------------------------
+
+When running composer with PHP 8, the PhpAnalyzer did not work properly.
+
+* Fixes: `#2639 <https://github.com/neos/flow-development-collection/issues/2639>`_
+
+
+
+`BUGFIX: Fix UriConstraints port constraints for default ports <https://github.com/neos/flow-development-collection/pull/2715>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Previously, if ``UriConstraints`` were applied to an URL with a non-default
+port (e.g. "8080") this port constraint was applied to the target URL even
+if no explicit port constraint was set.
+
+* Fixes: `#2714 <https://github.com/neos/flow-development-collection/issues/2714>`_
+
+`BUGFIX: Make Array.push accept `null` for array type casting <https://github.com/neos/flow-development-collection/pull/2760>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+related: https://github.com/neos/neos-development-collection/pull/3658
+fixes: https://github.com/neos/neos-development-collection/issues/3657
+
+* Packages: ``Eel``
+
+`BUGFIX: Avoid race condition on symlink publishing <https://github.com/neos/flow-development-collection/pull/2669>`_
+---------------------------------------------------------------------------------------------------------------------
+
+If the symlink could not be created but exists, check if it points to
+the expected target and ignore the error in that case.
+
+* Fixes: `#2667 <https://github.com/neos/flow-development-collection/issues/2667>`_
+
+`BUGFIX: Use configured pdo cache tables during flush and garbage collection <https://github.com/neos/flow-development-collection/pull/2719>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Without this patch using custom table names for the PDO cache backend would cause problems
+as some queries didn’t respect the given table names but used the defaults during DELETE
+operations. This has been adjusted.
+
+**How I did it**
+
+Use the configured table names as in all the other queries.
+
+**How to verify it**
+
+Use the backend with custom table names and try to flush them. Without the change an error would occur if the default tables have never been used and setup.
+
+
+`BUGFIX: Eel Helper `Array.push()` auto cast string to array. #2710 <https://github.com/neos/flow-development-collection/pull/2733>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+fixes `#2710 <https://github.com/neos/flow-development-collection/issues/2710>`_
+
+same lose behaviour exists already for ``Array.concat()``
+
+* Packages: ``Eel``
+
+`BUGFIX: Properly encode error message in internal request header <https://github.com/neos/flow-development-collection/pull/2756>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+According to the HTTP spec, characters like line breaks and some other are not allowed within a request header. Exception messages typically include those. Since guzzlehttp/psr7 1.8.4 it validates headers to this spec and makes our builds fail. This fixes that by base64 encoding the exception message we transfer via the ``X-Flow-ExceptionMessage`` header. Currently there is no code in the core that uses this header, but if you read this header at some obscure place, you need to ``base64_decode()`` the value first.
+
+See https://github.com/guzzle/psr7/pull/486/files#diff-`fb174524a7bba27ce140bc6ccd1c30811a6abeed <https://github.com/neos/flow-development-collection/commit/fb174524a7bba27ce140bc6ccd1c30811a6abeed>`_9328e783b326189551ba7ed4R253
+
+* Packages: ``Flow``
+
+`BUGFIX: Use of undefined variable `$pathInfo['extension']` <https://github.com/neos/flow-development-collection/pull/2754>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Fixup for:
+``TASK: Further clarify use of only "extension" from pathinfo``
+https://github.com/neos/flow-development-collection/pull/2729
+
+commit https://github.com/neos/flow-development-collection/commit/`e1e9f006f491effe88111f92368810bf6e3d4bb7 <https://github.com/neos/flow-development-collection/commit/e1e9f006f491effe88111f92368810bf6e3d4bb7>`_
+
+noticed because psalm failed: https://github.com/neos/flow-development-collection/runs/5632499130?check_suite_focus=true
+
+* Packages: ``Flow``
+
+`BUGFIX: Adjust type annotations in Http\Browser to match the relaxing from ServerRequestInterface to RequestInterface <https://github.com/neos/flow-development-collection/pull/2749>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Cleanup an error introduced in https://github.com/neos/flow-development-collection/pull/2688
+
+* Packages: ``Flow``
+
+`BUGFIX: Custom error view: skip 'viewOptions' that are 'null' #2738 <https://github.com/neos/flow-development-collection/pull/2739>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+fixes `#2738 <https://github.com/neos/flow-development-collection/issues/2738>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Don't create proxy classes for PHP enums <https://github.com/neos/flow-development-collection/pull/2702>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This change introduces a check in the proxy class compiler which makes sure that PHP 8.1 enums are not considered as regular classes and are removed from the list of proxyable classes.
+
+How to reproduce:
+
+1. create an enum, for example in ``Packages/Acme/Classes/ExampleEnum.php``:
+```php
+namespace Acme;
+enum ExampleEnum
+{
+    case FOO;
+    case BAR;
+}
+```
+
+2. let Flow compile classes, the following error will appear:
+
+> PHP Fatal error:  Cannot declare class Acme\\ExampleEnum, because the name is already in use in /application/Data/Temporary/Development/Cache/Code/Flow_Object_Classes/Acme_ExampleEnum.php on line 23
+
+Addresses #2698
+
+* Packages: ``Flow``
+
+`BUGFIX: Documentation fix follow up to #1108 and #2638 <https://github.com/neos/flow-development-collection/pull/2731>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+related `#1108 <https://github.com/neos/flow-development-collection/issues/1108>`_
+related `#2638 <https://github.com/neos/flow-development-collection/issues/2638>`_
+
+Concerning:
+``Neos.Flow.error.exceptionHandler.renderingGroups.{exampleGroup}.options``
+
+include the overseen options:
+
+``viewClassName``, and ``viewOptions``
+
+mark the legacy options as @deprecated and show alternative
+
+* Packages: ``Flow``
+
+`BUGFIX: Use custom error view for rendering group independent of the configuration 'templatePathAndFilename' <https://github.com/neos/flow-development-collection/pull/2638>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+resolves: `#1108 <https://github.com/neos/flow-development-collection/issues/1108>`_
+
+previously, a custom error view is for rendering groups only used if ``templatePathAndFilename`` is set. * See: `#1108 <https://github.com/neos/flow-development-collection/issues/1108>`_
+
+**A custom view will now be used if ...**
+-  ... there is a matching rendering group (no further checks. It *could* be also a rendering group with empty options (no viewClassName or viewOptions) ... what would then trow an error probably - depending on the view)
+- ... ``defaultRenderingOptions.templatePathAndFilename`` passes isset() (to not change previous working behaviour - should get depreceated sometime)
+
+- [x] Code follows the PSR-2 coding style
+- [x] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Correctly adjust Cache-Control in makeStandardsCompliant() <https://github.com/neos/flow-development-collection/pull/2626>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2625 <https://github.com/neos/flow-development-collection/issues/2625>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Clear stat cache when checking for directory <https://github.com/neos/flow-development-collection/pull/2671>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Makes sure the check does not use potentially outdated information.
+
+* Fixes: `#2670 <https://github.com/neos/flow-development-collection/issues/2670>`_
+
+* Packages: ``Utility.Files``
+
+`BUGFIX: Use __toString for resolving value in DynamicRoutePart <https://github.com/neos/flow-development-collection/pull/2660>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+When resolving values for a route via DynamicRoutePart, object are only being looked up in the persistence manager.
+
+With this change, we honour if a identifier is found, and if not, we look at the object to see, if it has a __toString method available, to give us a value.
+
+This is backward compatible, since we respect the identifier, if given at first
+
+Reolves `#2658 <https://github.com/neos/flow-development-collection/issues/2658>`_
+
+`BUGFIX: Correct check on cache file write success <https://github.com/neos/flow-development-collection/pull/2678>`_
+--------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2677 <https://github.com/neos/flow-development-collection/issues/2677>`_
+
+`BUGFIX: Don't access uninitialized property in Debugger <https://github.com/neos/flow-development-collection/pull/2680>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2664 <https://github.com/neos/flow-development-collection/issues/2664>`_
+
+* Packages: ``Flow``
+
+`Revert "BUGFIX: Do not remove related entities during persistence" <https://github.com/neos/flow-development-collection/pull/2661>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Reverts `#2517 <https://github.com/neos/flow-development-collection/issues/2517>`_
+
+`BUGFIX: Fix UriConstraints.applyTo() port handling <https://github.com/neos/flow-development-collection/pull/2676>`_
+---------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Add doctrine/annotation as dependency <https://github.com/neos/flow-development-collection/pull/2674>`_
+----------------------------------------------------------------------------------------------------------------
+
+Prevents exception in booting flow, as it is requiring the 'Doctrine\\Common\\Annotations\\AnnotationRegistry'
+
+fixes: #2673
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix PHP 8.1 compatibility of flow.php script <https://github.com/neos/flow-development-collection/pull/2663>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Without this fix, every interaction with Flow/Neos on PHP 8.1 will lead to a Deprecation warning:
+
+```
+PHP Deprecated:  trim(): Passing null to parameter `#1 <https://github.com/neos/flow-development-collection/issues/1>`_($string) of type string is deprecated in /Packages/Framework/Neos.Flow/Scripts/flow.php on line 68
+
+Deprecated: trim(): Passing null to parameter `#1 <https://github.com/neos/flow-development-collection/issues/1>`_($string) of type string is deprecated in /Packages/Framework/Neos.Flow/Scripts/flow.php on line 68
+```
+
+* Packages: ``Flow``
+
+`BUGFIX: Wrong port assigned in applyTo() <https://github.com/neos/flow-development-collection/pull/2654>`_
+-----------------------------------------------------------------------------------------------------------
+
+This fixes the following:
+
+- given an HTTPS connection to a proxy that passes the request handling to a server via HTTP
+- given a shortcut node pointing to ``http://www.acme.com``
+- will result in ``http://www.acme.com:443`` leading to errors
+
+This fixes it by using the (at this point already set!) scheme of the ``$uri`` to fill in the standard
+port.
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix rendering of release notes <https://github.com/neos/flow-development-collection/pull/2649>`_
+---------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Add correct changelog for 7.3.0 <https://github.com/neos/flow-development-collection/pull/2647>`_
+----------------------------------------------------------------------------------------------------------
+
+The automatic changelog from the Jenkins job was just a GitHub comparison link for detailed information.
+This adds the output from our changelog script.
+
+* Packages: ``Flow``
+
+`!!!TASK: Adjust security event log levels <https://github.com/neos/flow-development-collection/pull/2809>`_
+------------------------------------------------------------------------------------------------------------
+
+This adjusts some security related log levels, specifically:
+
+- Privilege decisions are now DEBUG (before INFO)
+- Authentication starts are now DEBUG (before INFO)
+- Session starts moved to the Security log but kept their level
+
+It is marked breaking in case anyone is observing these log events.
+
+* Packages: ``Flow``
+
+`!!!TASK: Update psr/log to 2.0 <https://github.com/neos/flow-development-collection/pull/2792>`_
+-------------------------------------------------------------------------------------------------
+
+This updates the psr/log interface to version 2.0 with type hints.
+
+* Packages: ``Flow``
+
+`!!!TASK: Update PSR Cache and SimpleCache Interfaces to 3.0 <https://github.com/neos/flow-development-collection/pull/2789>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Raise the versions of the cache interfaces and add type annotations.
+
+- psr/simple-cache: "^1.0" > "^3.0",
+- psr/cache: "^1.0" > "^2.0",
+
+* Packages: ``Cache`` ``Flow``
+
+`!!!TASK: Remove support for Flow's custom class loader <https://github.com/neos/flow-development-collection/pull/2775>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This drops support for the Flow ClassLoader – except for functional
+testing. There it's still used to load test classes & fixtures.
+If you still used the ``FLOW_ONLY_COMPOSER_LOADER`` environment variable to fallback to the old Flow autoloader, you need to update your package to use proper composer autoloading via ``autoload`` section.
+
+* Packages: ``Flow``
+
+`!!! TASK: Remove whitelistObject() / add allowObject() in PersistenceManagerInterface <https://github.com/neos/flow-development-collection/pull/2784>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#2398 <https://github.com/neos/flow-development-collection/issues/2398>`_
+
+* Packages: ``Flow``
+
+`!!!TASK: Add method argument and return type hints <https://github.com/neos/flow-development-collection/pull/2584>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Adds PHP typehints to some places.
+
+* Packages: ``Flow``
+
+`!!!TASK: Change default JsonView DateTime format to ISO compliant DateTime::ATOM <https://github.com/neos/flow-development-collection/pull/2474>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+The JsonView will now by default output dates as ISO string ``'2011-02-03T03:15:23+00:00'`` - before it was the subtly different ``'2011-02-03T03:15:23+0000'`` without the colon in the time offset.
+
+* Resolves: `#2446 <https://github.com/neos/flow-development-collection/issues/2446>`_
+Related to  `#2445 <https://github.com/neos/flow-development-collection/issues/2445>`_
+
+* Packages: ``Flow``
+
+`!!!TASK: Remove legacy fluid custom error view options and migrate to `viewOptions` <https://github.com/neos/flow-development-collection/pull/2743>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+resolves: `#2742 <https://github.com/neos/flow-development-collection/issues/2742>`_
+
+## Concerning the options of any custom error view:
+```
+Neos.Flow.error.exceptionHandler.renderingGroups.{exampleGroup}.options
+```
+
+### removes with Flow8 the legacy way of passing these options to a fluid view:
+
+* templatePathAndFilename
+* layoutRootPath
+* partialRootPath
+* format
+
+(those were fluid only and not set via ``$view->setOption($option, $value)`` but set with ``ObjectAccess::setProperty`` directly on the view instance. ``link <https://github.com/neos/flow-development-collection/blob/``0fd339c365397ed27430b1ce47963ec7761cb934 <https://github.com/neos/flow-development-collection/commit/0fd339c365397ed27430b1ce47963ec7761cb934>`_/Neos.Flow/Classes/Error/AbstractExceptionHandler.php#L184>`_)
+
+## !!! Breaking
+
+```diff
+array{
+    viewClassName: string,
+    viewOptions: array,
+    renderTechnicalDetails: bool,
+    logException: bool,
+    variables?: array,
+-    templatePathAndFilename?: string,
+-    layoutRootPath?: string,
+-    partialRootPath?: string,
+-    format?: string
+}
+```
+one is advised to migrate those settings manually to the equivalent option in the subkey ``viewOptions`` or use the Flow migration ``Neos.Flow-20220318174300``
+
+```diff
+options:
+-  templatePathAndFilename: 'file'
+-  layoutRootPath: 'path'
+-  partialRootPath: 'path'
+-  format: 'html'
++  viewOptions:
++    templatePathAndFilename: 'file'
++    layoutRootPaths: ['path']
++    partialRootPaths: ['path']
+```
+
+* Packages: ``Flow``
+
+`!!! TASK: Raise minimal supported PHP version to 8.0.0 <https://github.com/neos/flow-development-collection/pull/2707>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Neos 8 will depend on php 8. This change adjusts composer dependencies, the MINIMUM_PHP_VERSION in the flow bootstrap and adjusts the github actions to only run for supported php-versions.
+
+* Resolves: `#2708 <https://github.com/neos/flow-development-collection/issues/2708>`_
+
+* Packages: ``Flow`` ``.github`` ``Cache`` ``Eel`` ``Error.Messages`` ``Flow.Log`` ``FluidAdaptor`` ``Http.Factories`` ``Kickstarter`` ``Utility.Arrays`` ``Utility.Files`` ``Utility.MediaTypes`` ``Utility.ObjectHandling`` ``Utility.OpcodeCache`` ``Utility.Pdo`` ``Utility.Schema`` ``Utility.Unicode``
+
+`TASK: Allow guzzlehttp/psr7 2.0 <https://github.com/neos/flow-development-collection/pull/2501>`_
+--------------------------------------------------------------------------------------------------
+
+This allows installing guzzlehttp/psr7 2.0
+
+`TASK: Add versions to symfony/polyfill replacements <https://github.com/neos/flow-development-collection/pull/2812>`_
+----------------------------------------------------------------------------------------------------------------------
+
+As explained in https://github.com/symfony/polyfill#design
+
+`TASK: Remove interactive shell and deprecate infrastructure <https://github.com/neos/flow-development-collection/pull/2810>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+This removes the interactive shell functionality and deeprecates
+the support classes for this. Those are still used by the behat
+tests and everything should be moved to a separate package at
+which point we will reintroduce the interactive shell in that
+new package. At that point renaming will likely happen, therefore
+the respective classes are marked deprecated. None of it was public
+API before so this is not marked breaking.
+
+* Packages: ``Flow``
+
+`TASK: Tweak some @param annotations <https://github.com/neos/flow-development-collection/pull/2807>`_
+------------------------------------------------------------------------------------------------------
+
+For good measure… 🤷‍♂️
+
+This doesn't change anything, but it's cleaner.
+
+* Packages: ``Flow``
+
+`TASK: Relax psr cache constraints <https://github.com/neos/flow-development-collection/pull/2805>`_
+----------------------------------------------------------------------------------------------------
+
+* Fixes: `#2804 <https://github.com/neos/flow-development-collection/issues/2804>`_
+
+* Packages: ``Cache`` ``Flow``
+
+`TASK: Reenable lowest dependencies build <https://github.com/neos/flow-development-collection/pull/2806>`_
+-----------------------------------------------------------------------------------------------------------
+
+This reenables the lowest dependencies build that was deactivated with https://github.com/neos/flow-development-collection/commit/`cf8d28d87af78e71cc7cb6656172dfe6904f37db <https://github.com/neos/flow-development-collection/commit/cf8d28d87af78e71cc7cb6656172dfe6904f37db>``_#diff-``5c3fa597431eda03ac3339ae6bf7f05e1a50d6fc <https://github.com/neos/flow-development-collection/commit/5c3fa597431eda03ac3339ae6bf7f05e1a50d6fc>`_7333679ec38e21b337cb6721R38-R41
+
+* Packages: ``Flow`` ``Cache`` ``Utility.Arrays`` ``Utility.Files`` ``Utility.MediaTypes`` ``Utility.Schema`` ``Utility.Unicode``
+
+`Revert "TASK: Add type declarations in PersistenceManagerInterface" <https://github.com/neos/flow-development-collection/pull/2787>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+This reverts commit `18386878d77b5d93ff976769f967a3713ce2d7e6 <https://github.com/neos/flow-development-collection/commit/18386878d77b5d93ff976769f967a3713ce2d7e6>`_. 
+
+The return type ``object`` is not handled properly yet in proxy class building which causes trouble on the Neos side. We are reverting this now as hotfix. The proper handling of ``object`` types can be added as bugfix. The type annotations for the PersistenceManagerInterface will have to wait until next major.
+
+* Packages: ``Flow``
+
+`TASK: Remove unused parameter in Redis flush <https://github.com/neos/flow-development-collection/pull/2781>`_
+---------------------------------------------------------------------------------------------------------------
+
+The ``frozen`` key is already included in the prefixed argument in combination with the wildcard in the Lua script.
+Therefore it can be safely removed. The script anyway didn’t use it.
+
+The matching functional test works correctly.
+
+* Packages: ``Cache``
+
+`TASK: Drop deprecated $packagePath from getFilteredPackages() <https://github.com/neos/flow-development-collection/pull/2774>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Utility.ObjectHandling`` ``Flow``
+
+`TASK: Drop nullability of $propertyPath on getPropertyPath() <https://github.com/neos/flow-development-collection/pull/2773>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+That has been deprecated for ages and was to be dropped with 5.0
+already.
+
+* Packages: ``FluidAdaptor`` ``Utility.ObjectHandling``
+
+`TASK: Avoid deprecated Doctrine ORM proxy <https://github.com/neos/flow-development-collection/pull/2772>`_
+------------------------------------------------------------------------------------------------------------
+
+The ``Doctrine\\ORM\\Proxy\\Proxy`` is deprecated and extends the
+``Doctrine\\Persistence\\Proxy``.
+
+* Packages: ``Flow`` ``Utility.ObjectHandling``
+
+`TASK: Provide better error message if EntityManager is closed <https://github.com/neos/flow-development-collection/pull/2765>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: Add unit test (thanks @sorenmalling) <https://github.com/neos/flow-development-collection/pull/2761>`_
+-------------------------------------------------------------------------------------------------------------
+
+* Related: `#2626 <https://github.com/neos/flow-development-collection/issues/2626>`_
+
+* Packages: ``Eel``
+
+`TASK: Return 400 response if required argument is missing <https://github.com/neos/flow-development-collection/pull/2686>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+When a required argument is missing request processing, the controller
+will return a response with a status code of 400, as that is caused
+by a bad request. The exception is logged with a notice to the log,
+to aid in debugging errors.
+
+Previously the uncaught exception would cause a status 500 response
+and log a critical error.
+
+* Fixes: `#2682 <https://github.com/neos/flow-development-collection/issues/2682>`_
+
+`TASK: Further clarify use of only "extension" from pathinfo <https://github.com/neos/flow-development-collection/pull/2729>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: Reenable psalm static analysis <https://github.com/neos/flow-development-collection/pull/2704>`_
+-------------------------------------------------------------------------------------------------------
+
+WIP to get psalm builds working again with increased minimum PHP version.
+
+* Packages: ``.github``
+
+`TASK: Fix some psalm complaints, update baseline <https://github.com/neos/flow-development-collection/pull/2730>`_
+-------------------------------------------------------------------------------------------------------------------
+
+
+
+`TASK: Return 400 response when HMAC validation fails <https://github.com/neos/flow-development-collection/pull/2685>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When HMAC validation fails during request processing, the controller
+will return a response with a status code of 400, as that is caused
+by a bad request. The exception is logged with a notice to the log,
+to aid in debugging errors
+
+Previously the uncaught exception would cause a status 500 response
+and log a critical error.
+
+* Fixes: `#2681 <https://github.com/neos/flow-development-collection/issues/2681>`_
+
+`TASK: Update vimeo/psalm 4.9.3 to 4.22.0 <https://github.com/neos/flow-development-collection/pull/2728>`_
+-----------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: Improve ThrowableStorage docblocks <https://github.com/neos/flow-development-collection/pull/2684>`_
+-----------------------------------------------------------------------------------------------------------
+
+This clarifies the use of ``logThrowable()`` from ``ThrowableStorage`` and
+``ThrowableStorageInterface``.
+
+`TASK: Drop call to unicode-safe pathinfo() <https://github.com/neos/flow-development-collection/pull/2668>`_
+-------------------------------------------------------------------------------------------------------------
+
+As the docblock of that function states:
+
+    It's not necessary to use this function in cases,
+    where only file extension is determined, as it's
+    hard to imagine a unicode file extension.
+
+* Packages: ``Flow``
+
+`TASK: Adjust types where necessary for the ESCR <https://github.com/neos/flow-development-collection/pull/2709>`_
+------------------------------------------------------------------------------------------------------------------
+
+Adds/fixes type hints and annotations to satisfy static code analysis
+
+* Packages: ``Flow``
+
+`TASK: Small tweak to Doctrine caching documentation <https://github.com/neos/flow-development-collection/pull/2650>`_
+----------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: Delete FUNDING.yml <https://github.com/neos/flow-development-collection/pull/2646>`_
+-------------------------------------------------------------------------------------------
+
+We use the organization wide .github repository and can share the FUNDING.yml with all repositories.
+We updated the URL already.
+
+* Packages: ``Flow`` ``.github``
+
+`TASK: Update psalm baseline <https://github.com/neos/flow-development-collection/pull/2643>`_
+----------------------------------------------------------------------------------------------
+
+
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/7.3.0...8.0.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
