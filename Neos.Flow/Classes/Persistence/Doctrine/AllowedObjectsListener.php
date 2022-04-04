@@ -88,7 +88,9 @@ class AllowedObjectsListener
 
         $connection = $args->getEntityManager()->getConnection();
         try {
-            if ($connection->ping() === false) {
+            try {
+                $connection->executeQuery($connection->getDatabasePlatform()->getDummySelectSQL());
+            } catch (ConnectionException $e) {
                 $this->logger->info('Reconnecting the Doctrine EntityManager to the persistence backend.', LogEnvironment::fromMethodName(__METHOD__));
                 $connection->close();
                 $connection->connect();
