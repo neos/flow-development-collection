@@ -42,6 +42,8 @@
         "symfony/polyfill-php71": "*",
         "symfony/polyfill-php72": "*",
         "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
         "symfony/polyfill-mbstring": "*",
         "neos/cache": "self.version",
         "neos/eel": "self.version",
