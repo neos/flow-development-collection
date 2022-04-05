@@ -7,15 +7,11 @@ Overview of merged pull requests
 `!!! FEATURE: Introduce flushByTags to taggable cache backends <https://github.com/neos/flow-development-collection/pull/2718>`_
 --------------------------------------------------------------------------------------------------------------------------------
 
-**What I did**
-
 This change introduces the ``flushByTags`` method to taggable cache backends. This allows each backend to be further optimised in the future to find the best way to flush multiple tags from its storage.
 
-* Resolves: `#2717 <https://github.com/neos/flow-development-collection/issues/2717>`_
-
-**How I did it**
-
 The ``TaggableBackendInterface`` and ``FrontendInterface`` were extended with the method ``flushByTags`` and each provided backend in the core got a simple implementation for it to fulfil the interface.
+
+* Resolves: `#2717 <https://github.com/neos/flow-development-collection/issues/2717>`_
 
 * Packages: ``Cache``
 
@@ -32,7 +28,6 @@ This should be almost non breaky because changes ServerRequestInterface is still
 !!!The PR removes the @api annotation from the requestEngines to allow us to remove or alter those in the future.
 
 * Resolves: `#2691 <https://github.com/neos/flow-development-collection/issues/2691>`_ 
-
 
 * Packages: ``Flow``
 
@@ -85,8 +80,6 @@ This also adds a short documentation about Value Object property mapping.
 `FEATURE: Optimised Redis cache backend <https://github.com/neos/flow-development-collection/pull/2721>`_
 ---------------------------------------------------------------------------------------------------------
 
-**What I did**
-
 With this change the ``flushByTags`` is optimised to run flush operations in batches. 
 The maximum batch size can and should be configured based on the used data source.
 
@@ -94,16 +87,9 @@ This change relies on the interface changes in `#2718 <https://github.com/neos/f
 
 Additionally all optimisations from https://github.com/sandstorm/OptimizedRedisCacheBackend were added.
 
-**How I did it**
-
 Instead of uploading the flush Lua script and only flushing the entries for one tag.
 The same is now done for batches of tags reducing the calls to Redis and the 
 evaluation time Redis needs to parse the script.
-
-**How to verify it**
-
-`#2718 <https://github.com/neos/flow-development-collection/issues/2718>`_includes updated tests for the Redis backend that will also check this method.
-
 
 * Packages: ``Cache``
 
@@ -130,29 +116,18 @@ Replaces:  `#2703 <https://github.com/neos/flow-development-collection/issues/27
 `FEATURE: Implement `flushByTags` for the PDO cache backend <https://github.com/neos/flow-development-collection/pull/2720>`_
 -----------------------------------------------------------------------------------------------------------------------------
 
-**What I did**
-
 With this change the ``flushByTags`` is optimised to run in batches. 
 The maximum batch size can and should be configured based on the used data source.
 
 This change relies on the interface changes in `#2718 <https://github.com/neos/flow-development-collection/issues/2718>`_
 
-**How I did it**
-
 Instead of querying identifiers for each tag separately, they are now queried in batches
 for a number of tags and then deleted.
-
-**How to verify it**
-
-Configure PDO backend for the Neos content cache and force a flush by publishing something.
-
 
 * Packages: ``Flow``
 
 `FEATURE: `flushByTags` for the file based cache backend <https://github.com/neos/flow-development-collection/pull/2750>`_
 --------------------------------------------------------------------------------------------------------------------------
-
-**What I did**
 
 With this change the ``flushByTags`` is optimised by only reading the list of cache files once for all entries to be flushed instead of reading it for each entry.
 
@@ -278,10 +253,8 @@ The change added the information about the currently parsed file to the exceptio
 `BUGFIX: Add behat @BeforeSuite and @AfterSuite to ignored annotation tags <https://github.com/neos/flow-development-collection/pull/2726>`_
 --------------------------------------------------------------------------------------------------------------------------------------------
 
-**What I did**
 This adds the missing behat annotations to ignored tags, so behat tests using those hooks can be reflected.
 
-**How to verify it**
 This is an example of the error that occurs currently when ``@BeforeSuite`` or ``@AfterSuite`` is used in any Behat Step class.
 !`image <https://user-images.githubusercontent.com/16836464/157476691-c5da169d-32d9-497f-b5ef-4806369a6600.png>`_
 see also https://github.com/sandstorm/Sandstorm.E2ETestTools/pull/6
@@ -340,33 +313,12 @@ proxy building of Flow.
 `BUGFIX: Prevent flush force error in production context <https://github.com/neos/flow-development-collection/pull/2716>`_
 --------------------------------------------------------------------------------------------------------------------------
 
-**What I did**
-
-The ``flow:cache:flush --force`` command run's ``Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());`` which removes the lock file in the temporary directory too. The call to unlockSite() then causes a php warning because of the missing lock file
+The ``flow:cache:flush --force`` command runs ``Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());`` which removes the lock file in the temporary directory too. The call to unlockSite() then causes a php warning because of the missing lock file
 ```
 Warning: unlink(/var/www/Data/Temporary/Production/SubContextDevelopment/cbe856ff790c9ba5208811309bdf168b_Flow.lock): No such file or directory in /var/www/Packages/Framework/Neos.Flow/Classes/Core/LockManager.php line 145
 ```
 
-This PR just add's a bit of error handling to the corresponding unlink of the lock file.
-
-**How to verify it**
-
-Run ``./flow flow:cache:flush --force`` command in ``Production`` context.
-
-**Question**
-
-Since this is a bugfix, I used branch 6.3. In case of FLOW 7, some php8 compatiblity was added which would change the PR to 
-
-```
-            try {
-                @unlink($this->lockPathAndFilename);
-            } catch (\\Throwable $e) {
-                // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
-            }
-```
-
-Should I create another PR if this one is merged to get PHP 8 compatibility?
-
+This PR just adds a bit of error handling to the corresponding unlink of the lock file.
 
 * Packages: ``Flow``
 
@@ -412,19 +364,9 @@ the expected target and ignore the error in that case.
 `BUGFIX: Use configured pdo cache tables during flush and garbage collection <https://github.com/neos/flow-development-collection/pull/2719>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-**What I did**
-
 Without this patch using custom table names for the PDO cache backend would cause problems
 as some queries didn’t respect the given table names but used the defaults during DELETE
 operations. This has been adjusted.
-
-**How I did it**
-
-Use the configured table names as in all the other queries.
-
-**How to verify it**
-
-Use the backend with custom table names and try to flush them. Without the change an error would occur if the default tables have never been used and setup.
 
 
 `BUGFIX: Eel Helper `Array.push()` auto cast string to array. #2710 <https://github.com/neos/flow-development-collection/pull/2733>`_
@@ -880,7 +822,7 @@ and log a critical error.
 `TASK: Reenable psalm static analysis <https://github.com/neos/flow-development-collection/pull/2704>`_
 -------------------------------------------------------------------------------------------------------
 
-WIP to get psalm builds working again with increased minimum PHP version.
+Get psalm builds working again with increased minimum PHP version.
 
 * Packages: ``.github``
 
