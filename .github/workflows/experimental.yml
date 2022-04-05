@@ -1,4 +1,4 @@
-name: build
+name: Experimental PHP test
 
 on:
   schedule:
