@@ -17,12 +17,20 @@ jobs:
       fail-fast: false
       matrix:
         php-versions: ['8.0', '8.1']
+        # see https://mariadb.com/kb/en/mariadb-server-release-dates/
+        # this should be a current release, e.g. the LTS version
+        mariadb-versions: ['10.6']
+        # see https://www.postgresql.org/support/versioning/
+        # this should be a current release
+        postgresql-versions: ['14-alpine']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
         experimental: [false]
         include:
           - php-versions: '8.0'
+            mariadb-versions: '' # skip mariadb setup
+            postgresql-versions: '' # skip postgresql setup
             static-analysis: 'psalm'
             experimental: true
             dependencies: 'highest'
@@ -36,31 +44,14 @@ jobs:
 
           # Build for minimum dependencies.
           - php-versions: '8.0'
+            mariadb-versions: '10.2'
+            postgresql-versions: '10-alpine'
             static-analysis: 'no'
             experimental: false
             dependencies: 'lowest'
 
     runs-on: ubuntu-latest
     services:
-      mariadb:
-        image: mariadb:10.2
-        env:
-          MYSQL_USER: neos
-          MYSQL_PASSWORD: neos
-          MYSQL_DATABASE: flow_functional_testing
-          MYSQL_ROOT_PASSWORD: neos
-        ports:
-          - "3306:3306"
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-      postgres:
-        image: postgres:9.5-alpine
-        env:
-          POSTGRES_USER: neos
-          POSTGRES_PASSWORD: neos
-          POSTGRES_DB: flow_functional_testing
-        ports:
-          - "5432:5432"
-        options:  --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
       redis:
         image: redis:alpine
         ports:
@@ -91,13 +82,31 @@ jobs:
         with:
           path: ${{ env.FLOW_FOLDER }}
 
-      - name: Setup PHP
+      - name: Setup PHP ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, memcache, apcu
           coverage: xdebug #optional
           ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
+
+      - name: Setup PostgreSQL ${{ matrix.postgresql-versions }}
+        if: ${{ matrix.postgresql-versions != '' }}
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql version: ${{ matrix.postgresql-versions }}
+          postgresql db: 'flow_functional_testing'
+          postgresql user: 'neos'
+          postgresql password: 'neos'
+
+      - name: Setup MariaDB ${{ matrix.mariadb-versions }}
+        if: ${{ matrix.mariadb-versions != '' }}
+        uses: getong/mariadb-action@v1.1
+        with:
+          mariadb version: ${{ matrix.mariadb-versions }}
+          collation server: 'utf8mb4_unicode_ci'
+          mysql database: 'flow_functional_testing'
+          mysql root password: 'neos'
 
       - name: Checkout development distribution
         uses: actions/checkout@v2
@@ -143,7 +152,7 @@ jobs:
                 backendOptions:
                   host: '127.0.0.1'
                   driver: pdo_mysql
-                  user: 'neos'
+                  user: 'root'
                   password: 'neos'
                   dbname: 'flow_functional_testing'
               mvc:
