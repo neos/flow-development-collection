@@ -1,6 +1,7 @@
 name: Experimental PHP test
 
 on:
+  workflow_dispatch: # allow manual runs
   schedule:
     - cron:  '0 0 * * *' # Runs every day at midnight
 
