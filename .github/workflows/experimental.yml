@@ -23,6 +23,7 @@ jobs:
         include:
           - flow-versions: 'master'
             php-versions: 'nightly'
+            composer-arguments: '--ignore-platform-reqs'
             static-analysis: 'psalm'
             experimental: true
             dependencies: 'highest'
@@ -30,6 +31,7 @@ jobs:
           # Build for minimum dependencies.
           - flow-versions: 'master'
             php-versions: 'nightly'
+            composer-arguments: '--ignore-platform-reqs'
             static-analysis: 'no'
             experimental: true
             dependencies: 'lowest'
