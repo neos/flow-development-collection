@@ -1,36 +1,36 @@
-name: build
+name: Experimental PHP test
 
 on:
-  push:
-    branches: [ master, '[0-9]+.[0-9]' ]
-  pull_request:
-    branches: [ master, '[0-9]+.[0-9]' ]
+  schedule:
+    - cron:  '0 0 * * *' # Runs every day at midnight
 
 jobs:
   build:
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} (deps: ${{ matrix.dependencies }})"
+    name: "Experimental PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} (deps: ${{ matrix.dependencies }})"
 
-    continue-on-error: ${{ matrix.experimental == 'true' || matrix.experimental == true }}
+    continue-on-error: true
 
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.0', '8.1']
+        flow-versions: ['master']
+        php-versions: ['nightly']
         dependencies: ['highest']
-        composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
+        composer-arguments: ['--ignore-platform-reqs'] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
-        experimental: [false]
+        experimental: [true]
         include:
-          - php-versions: '8.0'
+          - flow-versions: 'master'
+            php-versions: 'nightly'
             static-analysis: 'psalm'
             experimental: true
             dependencies: 'highest'
 
           # Build for minimum dependencies.
-          - php-versions: '8.0'
+          - flow-versions: 'master'
+            php-versions: 'nightly'
             static-analysis: 'no'
-            experimental: false
+            experimental: true
             dependencies: 'lowest'
 
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
 
     steps:
       - name: Set Flow target branch name
-        run: echo "FLOW_TARGET_VERSION=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
+        run: echo "FLOW_TARGET_VERSION=${{ matrix.flow-versions }}" >> $GITHUB_ENV
         working-directory: .
 
       - name: Checkout
@@ -151,15 +151,6 @@ jobs:
         if: matrix.static-analysis == 'psalm'
         run: composer test-static
 
-      - name: Update psalm baseline
-        if: ${{ failure() && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
-        run: |
-          composer psalm-baseline-update
-          cd ./Packages/Framework
-          git add psalm-baseline.xml
-          git -c user.name='gh-action' -c user.email='gh-action@noreply.github.com' commit -m "TASK: Update psalm-baseline"
-          git push -f origin HEAD:${FLOW_TARGET_VERSION}
-
       - name: Run unit tests
         if: matrix.static-analysis == 'no'
         run: composer test-unit -- --verbose
@@ -211,13 +202,3 @@ jobs:
         run: |
           FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
           bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
-
-  buildall:
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    runs-on: ubuntu-latest
-    name: CI build (matrix)
-    needs: build
-    steps:
-      - name: Check build matrix status
-        if: ${{ needs.build.result != 'success' }}
-        run: exit 1
