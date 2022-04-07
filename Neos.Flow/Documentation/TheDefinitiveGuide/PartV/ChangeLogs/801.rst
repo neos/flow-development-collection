@@ -1,0 +1,32 @@
+`8.0.1 (2022-04-07) <https://github.com/neos/flow-development-collection/releases/tag/8.0.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Allow installing psr/log 3.0 and provide implementation for it <https://github.com/neos/flow-development-collection/pull/2827>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+The change in https://github.com/neos/flow-development-collection/pull/2792 did only allow for psr/log 2.0 while already adding the return type hints that are only part of 3.0. This change allows installing both 2.0 || 3.0 like we do for the other psr interfaces and provides implementations for both versions. Thanks @jonnitto for bringing this up
+See also https://github.com/neos/flow-development-collection/pull/2805
+
+* Packages: ``Flow.Log`` ``Flow`` ``FluidAdaptor``
+
+`TASK: Add release notes <https://github.com/neos/flow-development-collection/pull/2826>`_
+------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: Run tests against current database versions <https://github.com/neos/flow-development-collection/pull/2825>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This runs the various tests in the build matrix against MariaDB 10.6 and PostgreSQL 14. The "lowest dependencies" job is run against MariaDB 10.2 and PostgreSQL 10.
+
+* See: `#2824 <https://github.com/neos/flow-development-collection/issues/2824>`_
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.0.0...8.0.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
