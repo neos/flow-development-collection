@@ -479,4 +479,83 @@ class SimpleFileBackendTest extends BaseTestCase
         }
         self::assertEquals(100, $i);
     }
+
+    /**
+     * @test
+     */
+    public function iterationOverEmptyCacheYieldsNoData()
+    {
+        $backend = $this->getSimpleFileBackend();
+        $data = \iterator_to_array($backend);
+        self::assertEmpty($data);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationOverNotEmptyCacheYieldsData()
+    {
+        $backend = $this->getSimpleFileBackend();
+
+        $backend->set('first', 'firstData');
+        $backend->set('second', 'secondData');
+
+        $data = \iterator_to_array($backend);
+        self::assertEquals(
+            ['first' => 'firstData', 'second' => 'secondData'],
+            $data
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function iterationResetsWhenDataIsSet()
+    {
+        $backend = $this->getSimpleFileBackend();
+
+        $backend->set('first', 'firstData');
+        $backend->set('second', 'secondData');
+        \iterator_to_array($backend);
+
+        $backend->set('third', 'thirdData');
+
+        $data = \iterator_to_array($backend);
+        self::assertEquals(
+            ['first' => 'firstData', 'second' => 'secondData', 'third' => 'thirdData'],
+            $data
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function iterationResetsWhenDataGetsRemoved()
+    {
+        $backend = $this->getSimpleFileBackend();
+
+        $backend->set('first', 'firstData');
+        \iterator_to_array($backend);
+
+        $backend->remove('first');
+
+        $data = \iterator_to_array($backend);
+        self::assertEmpty($data);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationResetsWhenDataFlushed()
+    {
+        $backend = $this->getSimpleFileBackend();
+
+        $backend->set('first', 'firstData');
+        \iterator_to_array($backend);
+
+        $backend->flush();
+
+        $data = \iterator_to_array($backend);
+        self::assertEmpty($data);
+    }
 }

@@ -186,6 +186,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             }
 
             $this->databaseHandle->commit();
+            $this->cacheEntriesIterator = null;
         } catch (\Exception $exception) {
             $this->databaseHandle->rollBack();
 
@@ -240,7 +241,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
      * @return boolean true if (at least) one entry could be removed or false if no entry was found
-     * @throws Exception
+     * @throws \Exception
      * @api
      */
     public function remove(string $entryIdentifier): bool
@@ -251,6 +252,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         try {
             $rowsWereDeleted = $this->removeWithoutTransaction($entryIdentifier);
             $this->databaseHandle->commit();
+            $this->cacheEntriesIterator = null;
 
             return $rowsWereDeleted;
         } catch (\Exception $exception) {
@@ -286,7 +288,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * Removes all cache entries of this cache.
      *
      * @return void
-     * @throws Exception
+     * @throws \Exception
      * @api
      */
     public function flush(): void
@@ -307,6 +309,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
 
             $this->databaseHandle->commit();
+            $this->cacheEntriesIterator = null;
         } catch (\Exception $exception) {
             $this->databaseHandle->rollBack();
 
@@ -319,7 +322,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @param string $tag The tag the entries must have
      * @return integer
-     * @throws Exception
+     * @throws \Exception
      * @api
      */
     public function flushByTag(string $tag): int
@@ -337,13 +340,14 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $statementHandle->execute([$this->context(), $this->cacheIdentifier, $tag]);
 
             $this->databaseHandle->commit();
+            $this->cacheEntriesIterator = null;
+
+            return $flushed;
         } catch (\Exception $exception) {
             $this->databaseHandle->rollBack();
 
             throw $exception;
         }
-
-        return $flushed;
     }
 
     /**
@@ -389,6 +393,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
             throw $exception;
         }
+        $this->cacheEntriesIterator = null;
     }
 
     /**
