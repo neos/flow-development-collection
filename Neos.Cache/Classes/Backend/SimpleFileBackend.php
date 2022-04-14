@@ -159,6 +159,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
             if ($this->cacheEntryFileExtension === '.php') {
                 OpcodeCacheHelper::clearAllActive($cacheEntryPathAndFilename);
             }
+            $this->cacheFilesIterator = null;
             return;
         }
 
@@ -257,6 +258,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
 
                 if ($result === true) {
                     clearstatcache(true, $cacheEntryPathAndFilename);
+                    $this->cacheFilesIterator = null;
                     return $result;
                 }
             } catch (\Exception $e) {
@@ -277,6 +279,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     public function flush()
     {
         Files::emptyDirectoryRecursively($this->cacheDirectory);
+        $this->cacheFilesIterator = null;
     }
 
     /**

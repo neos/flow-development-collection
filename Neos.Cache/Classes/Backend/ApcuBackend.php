@@ -131,6 +131,8 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         } else {
             throw new Exception('Could not set value.', 1232986877);
         }
+
+        $this->cacheEntriesIterator = null;
     }
 
     /**
@@ -173,6 +175,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     public function remove(string $entryIdentifier): bool
     {
         $this->removeIdentifierFromAllTags($entryIdentifier);
+        $this->cacheEntriesIterator = null;
         return apcu_delete($this->identifierPrefix . 'entry_' . $entryIdentifier);
     }
 
@@ -236,6 +239,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         foreach ($identifiers as $identifier) {
             $this->remove($identifier);
         }
+        $this->cacheEntriesIterator = null;
         return count($identifiers);
     }
 

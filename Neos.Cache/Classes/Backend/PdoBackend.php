@@ -188,6 +188,8 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
             throw $exception;
         }
+
+        $this->cacheEntriesIterator = null;
     }
 
     /**
@@ -251,6 +253,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $rowsWereDeleted = $this->removeWithoutTransaction($entryIdentifier);
             $this->databaseHandle->commit();
 
+            $this->cacheEntriesIterator = null;
             return $rowsWereDeleted;
         } catch (\Exception $exception) {
             $this->databaseHandle->rollBack();
@@ -306,6 +309,8 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
             throw $exception;
         }
+
+        $this->cacheEntriesIterator = null;
     }
 
     /**
@@ -337,6 +342,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             throw $exception;
         }
 
+        $this->cacheEntriesIterator = null;
         return $flushed;
     }
 
