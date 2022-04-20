@@ -1,0 +1,16 @@
+`8.0.2 (2022-04-20) <https://github.com/neos/flow-development-collection/releases/tag/8.0.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Respect RouteParameters in ResolveCache <https://github.com/neos/flow-development-collection/pull/2816>`_
+------------------------------------------------------------------------------------------------------------------
+
+Adjusts ``RouterCachingService`` such that it includes the specified
+``RouteParameters`` into the generated ``resolveCacheIdentifier``.
+
+* Fixes: `#2815 <https://github.com/neos/flow-development-collection/issues/2815>`_
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.0.1...8.0.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
