@@ -176,12 +176,18 @@ class RequestBuilder
      * @return array All and exceeding command line arguments
      * @throws InvalidArgumentMixingException
      */
-    protected function parseRawCommandLineArguments(array $rawCommandLineArguments, string $controllerObjectName, string $controllerCommandName): array
-    {
+    protected function parseRawCommandLineArguments(
+        array $rawCommandLineArguments,
+        string $controllerObjectName,
+        string $controllerCommandName
+    ): array {
         $commandLineArguments = [];
         $exceedingArguments = [];
         $commandMethodName = $controllerCommandName . 'Command';
-        $commandMethodParameters = $this->commandManager->getCommandMethodParameters($controllerObjectName, $commandMethodName);
+        $commandMethodParameters = $this->commandManager->getCommandMethodParameters(
+            $controllerObjectName,
+            $commandMethodName
+        );
 
         $requiredArgumentNames = [];
         $requiredArguments = [];
@@ -214,10 +220,44 @@ class RequestBuilder
                 }
                 $argumentName = $this->extractArgumentNameFromCommandLinePart($rawArgument);
 
+                $parameterNameForArrayType = $this->findParameterNameForArrayArgument(
+                    $argumentName,
+                    $optionalArguments,
+                    $requiredArguments
+                );
+                $pathAsArray = [];
+                $matches = [];
+                // if a command controller parameter name with type array is found, parse the dot syntax
+                if (!empty($parameterNameForArrayType) &&
+                    0 < \preg_match_all('/([^\."\']+)|"([^"]*)"|\'([^\']*)\'/', $argumentName, $matches)
+                ) {
+                    // replace the associative argument name with the real controller parameter name
+                    $argumentName = $parameterNameForArrayType;
+                    // generate the path into the associative array
+                    $pathAsArray = $matches[1];
+                    foreach ($pathAsArray as $k => $v) {
+                        if (empty($v)) {
+                            $pathAsArray[$k] = $matches[2][$k];
+                        }
+                    }
+
+                    // remove the actual command line controller parameter name
+                    \array_shift($pathAsArray);
+                }
+
                 if (isset($optionalArguments[$argumentName])) {
-                    $argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $optionalArguments[$argumentName]['type']);
-                    if ($optionalArguments[$argumentName]['type'] == 'array') {
-                        $commandLineArguments[$optionalArguments[$argumentName]['parameterName']][] = $argumentValue;
+                    $argumentValue = $this->getValueOfCurrentCommandLineOption(
+                        $rawArgument,
+                        $rawCommandLineArguments,
+                        $optionalArguments[$argumentName]['type']
+                    );
+                    if ($optionalArguments[$argumentName]['type'] === 'array') {
+                        $this->setCommandLineArrayArgument(
+                            $commandLineArguments,
+                            $optionalArguments[$argumentName],
+                            $argumentValue,
+                            $pathAsArray
+                        );
                     } else {
                         $commandLineArguments[$optionalArguments[$argumentName]['parameterName']] = $argumentValue;
                     }
@@ -226,29 +266,117 @@ class RequestBuilder
                         throw new InvalidArgumentMixingException(sprintf('Unexpected named argument "%s". If you use unnamed arguments, all required arguments must be passed without a name.', $argumentName), 1309971821);
                     }
                     $decidedToUseNamedArguments = true;
-                    $argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $requiredArguments[$argumentName]['type']);
-                    if ($requiredArguments[$argumentName]['type'] == 'array') {
-                        $commandLineArguments[$requiredArguments[$argumentName]['parameterName']][] = $argumentValue;
+                    $argumentValue = $this->getValueOfCurrentCommandLineOption(
+                        $rawArgument,
+                        $rawCommandLineArguments,
+                        $requiredArguments[$argumentName]['type']
+                    );
+                    if ($requiredArguments[$argumentName]['type'] === 'array') {
+                        $this->setCommandLineArrayArgument(
+                            $commandLineArguments,
+                            $requiredArguments[$argumentName],
+                            $argumentValue,
+                            $pathAsArray
+                        );
                     } else {
                         $commandLineArguments[$requiredArguments[$argumentName]['parameterName']] = $argumentValue;
                     }
                     unset($requiredArgumentNames[strtolower($requiredArguments[$argumentName]['parameterName'])]);
                 }
-            } else {
-                if (count($requiredArgumentNames) > 0) {
-                    if ($decidedToUseNamedArguments) {
-                        throw new InvalidArgumentMixingException(sprintf('Unexpected unnamed argument "%s". If you use named arguments, all required arguments must be passed named.', $rawArgument), 1309971820);
-                    }
-                    $argumentName = array_shift($requiredArgumentNames);
-                    $commandLineArguments[$argumentName] = $rawArgument;
-                    $decidedToUseUnnamedArguments = true;
-                } else {
-                    $exceedingArguments[] = $rawArgument;
+            } elseif (count($requiredArgumentNames) > 0) {
+                if ($decidedToUseNamedArguments) {
+                    throw new InvalidArgumentMixingException(sprintf('Unexpected unnamed argument "%s". If you use named arguments, all required arguments must be passed named.', $rawArgument), 1309971820);
                 }
+                $argumentName = array_shift($requiredArgumentNames);
+                $commandLineArguments[$argumentName] = $rawArgument;
+                $decidedToUseUnnamedArguments = true;
+            } else {
+                $exceedingArguments[] = $rawArgument;
             }
         }
 
         return [$commandLineArguments, $exceedingArguments];
+    }
+
+    /**
+     * Returns the command line controller parameter name for a possible associative array argument
+     *
+     * @param string $argumentName The command line argument name
+     * @param array $optionalArguments Parsed command controller optional arguments
+     * @param array $requiredArguments Parsed command controller required arguments
+     *
+     * @return string|null The parameter name or null if no associative name could be parsed
+     */
+    protected function findParameterNameForArrayArgument(
+        string $argumentName,
+        array $optionalArguments,
+        array $requiredArguments
+    ) : ?string {
+        $argumentStartsWithParameterNameAndIsArray = static function ($arguments) use ($argumentName) {
+            $filteredArguments = \array_filter(
+                $arguments,
+                static function ($parameterValue, $parameterName) use (&$argumentName) {
+                    return
+                        \str_starts_with($argumentName, $parameterName . '.') &&
+                        $parameterValue['type'] === 'array'
+                        ;
+                },
+                ARRAY_FILTER_USE_BOTH
+            );
+
+            if (!empty($filteredArguments)) {
+                return \array_keys($filteredArguments)[0];
+            }
+
+            return null;
+        };
+
+        return
+            $argumentStartsWithParameterNameAndIsArray($optionalArguments) ??
+            $argumentStartsWithParameterNameAndIsArray($requiredArguments);
+    }
+
+    /**
+     * Set command line argument array value for optional path
+     *
+     * @param array $commandLineArguments The command line arguments that will be passed to the command controller
+     * @param array $argument An argument configuration
+     * @param $argumentValue The argument value
+     * @param array $pathAsArray Optional path to set the associative array value
+     *
+     * @return void
+     */
+    protected function setCommandLineArrayArgument(
+        array &$commandLineArguments,
+        array $argument,
+        $argumentValue,
+        array $pathAsArray = []
+    ) : void {
+        $setArrayValueByPath = static function ($array, array $path, $value) {
+            $element = &$array;
+            foreach ($path as $key) {
+                if (!isset($element[$key])) {
+                    $element[$key] = [];
+                }
+                $element = &$element[$key];
+            }
+            $element = $value;
+            return $array;
+        };
+
+        if (!isset($commandLineArguments[$argument['parameterName']])) {
+            $commandLineArguments[$argument['parameterName']] = [];
+        }
+
+        if (!empty($pathAsArray)) {
+            $commandLineArguments[$argument['parameterName']] = $setArrayValueByPath(
+                $commandLineArguments[$argument['parameterName']],
+                $pathAsArray,
+                $argumentValue
+            );
+        } else {
+            $commandLineArguments[$argument['parameterName']][] = $argumentValue;
+        }
     }
 
     /**

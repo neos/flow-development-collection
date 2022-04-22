@@ -464,6 +464,22 @@ class RequestBuilderTest extends UnitTestCase
                 '--a1 1 --a1 x foo bar',
                 ['a1' => ['1', 'x']],
                 ['foo', 'bar']
+            ],
+            [
+                '--a1.k1.k2 1 --a1.k1.k3=x --a2.l1 a --a2 n foo bar',
+                [
+                    'a1' => [
+                        'k1' => [
+                            'k2' => 1,
+                            'k3' => 'x'
+                        ]
+                    ],
+                    'a2' => [
+                        'l1' => 'a',
+                        0 => 'n'
+                    ]
+                ],
+                ['foo', 'bar']
             ]
         ];
     }
