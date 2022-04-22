@@ -466,7 +466,7 @@ class RequestBuilderTest extends UnitTestCase
                 ['foo', 'bar']
             ],
             [
-                '--a1.k1.k2 1 --a1.k1.k3=x --a2.l1 a --a2 n foo bar',
+                '--a1.k1.k2 1 --a1.k1.k3=x --a2.\\"l.1\\".2 a --a2 n foo bar',
                 [
                     'a1' => [
                         'k1' => [
@@ -475,7 +475,9 @@ class RequestBuilderTest extends UnitTestCase
                         ]
                     ],
                     'a2' => [
-                        'l1' => 'a',
+                        'l.1' => [
+                            2 => 'a'
+                        ],
                         0 => 'n'
                     ]
                 ],
