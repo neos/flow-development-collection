@@ -205,7 +205,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
         if ($this->isAuthenticated === null) {
             try {
                 $this->authenticate();
-            } catch (AuthenticationRequiredException $exception) {
+            } catch (AuthenticationRequiredException) {
             }
         }
         return $this->isAuthenticated;

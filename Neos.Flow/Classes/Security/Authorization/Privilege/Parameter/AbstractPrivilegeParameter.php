@@ -16,7 +16,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A privilege parameter
  */
-abstract class AbstractPrivilegeParameter implements PrivilegeParameterInterface
+abstract class AbstractPrivilegeParameter implements PrivilegeParameterInterface, \Stringable
 {
     /**
      * @var string
@@ -62,7 +62,7 @@ abstract class AbstractPrivilegeParameter implements PrivilegeParameterInterface
      * Returns the string representation of this parameter
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->getValue();
     }

@@ -21,7 +21,7 @@ use Psr\Log\LoggerInterface;
  *
  * @api PSR-7
  */
-class ContentStream implements StreamInterface
+class ContentStream implements StreamInterface, \Stringable
 {
     /**
      * @var resource
@@ -394,7 +394,7 @@ class ContentStream implements StreamInterface
      * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (!$this->isReadable()) {
             return '';

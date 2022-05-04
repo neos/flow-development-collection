@@ -23,7 +23,7 @@ use Neos\Utility\ObjectAccess;
  *
  * @Flow\Proxy(false)
  */
-class Context
+class Context implements \Stringable
 {
     /**
      * @var mixed
@@ -63,7 +63,7 @@ class Context
             } elseif (is_object($this->value)) {
                 try {
                     return ObjectAccess::getProperty($this->value, $path);
-                } catch (PropertyNotAccessibleException $exception) {
+                } catch (PropertyNotAccessibleException) {
                     return null;
                 }
             }
@@ -204,7 +204,7 @@ class Context
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (is_object($this->value) && !method_exists($this->value, '__toString')) {
             return '[object ' . get_class($this->value) . ']';

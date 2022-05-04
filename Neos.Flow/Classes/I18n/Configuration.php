@@ -44,7 +44,7 @@ class Configuration
     {
         try {
             $this->defaultLocale = new Locale($defaultLocaleIdentifier);
-        } catch (Exception\InvalidLocaleIdentifierException $exception) {
+        } catch (Exception\InvalidLocaleIdentifierException) {
             throw new Exception\InvalidLocaleIdentifierException('The default locale identifier "' . $defaultLocaleIdentifier . '" given is invalid.', 1280935191);
         }
     }

@@ -350,7 +350,7 @@ class Configuration
                 if ($value instanceof ConfigurationProperty) {
                     $this->setProperty($value);
                 } else {
-                    throw new InvalidConfigurationException(sprintf('Only ConfigurationProperty instances are allowed, "%s" given', is_object($value) ? get_class($value) : gettype($value)), 1449217567);
+                    throw new InvalidConfigurationException(sprintf('Only ConfigurationProperty instances are allowed, "%s" given', get_debug_type($value)), 1449217567);
                 }
             }
         }
@@ -394,7 +394,7 @@ class Configuration
                 if ($argument instanceof ConfigurationArgument) {
                     $this->setArgument($argument);
                 } else {
-                    throw new InvalidConfigurationException(sprintf('Only ConfigurationArgument instances are allowed, "%s" given', is_object($argument) ? get_class($argument) : gettype($argument)), 1449217803);
+                    throw new InvalidConfigurationException(sprintf('Only ConfigurationArgument instances are allowed, "%s" given', get_debug_type($argument)), 1449217803);
                 }
             }
         }

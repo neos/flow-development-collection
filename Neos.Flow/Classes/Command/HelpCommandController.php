@@ -234,7 +234,7 @@ class HelpCommandController extends CommandController
                 try {
                     $command = $this->commandManager->getCommandByIdentifier($commandIdentifier);
                     $this->outputLine('%-2s%s (%s)', [' ', $commandIdentifier, $command->getShortDescription()]);
-                } catch (CommandException $exception) {
+                } catch (CommandException) {
                     $this->outputLine('%-2s%s (%s)', [' ', $commandIdentifier, '<i>Command not available</i>']);
                 }
             }

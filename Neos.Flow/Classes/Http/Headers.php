@@ -20,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
  * @Flow\Proxy(false)
  * TODO: case-insensitive header name matching
  */
-class Headers implements \Iterator
+class Headers implements \Iterator, \Stringable
 {
     /**
      * @var array
@@ -427,7 +427,7 @@ class Headers implements \Iterator
      * @return string
      * @api
      */
-    public function __toString()
+    public function __toString(): string
     {
         $headers = '';
         foreach ($this->getAll() as $name => $values) {

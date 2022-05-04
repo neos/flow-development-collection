@@ -59,7 +59,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
                 $target = fopen($temporaryTargetPathAndFilename, 'wb');
                 stream_copy_to_stream($source, $target);
                 fclose($target);
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
                 throw new StorageException(sprintf('Could import the content stream to temporary file "%s".', $temporaryTargetPathAndFilename), 1380880079);
             }
         } else {
@@ -90,7 +90,7 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
         $temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Neos_Flow_ResourceImport_' . Algorithms::generateRandomString(13);
         try {
             file_put_contents($temporaryTargetPathAndFilename, $content);
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             throw new StorageException(sprintf('Could import the content stream to temporary file "%s".', $temporaryTargetPathAndFilename), 1381156098);
         }
 

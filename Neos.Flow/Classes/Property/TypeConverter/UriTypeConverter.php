@@ -54,7 +54,7 @@ class UriTypeConverter extends AbstractTypeConverter
     {
         try {
             return new Uri($source);
-        } catch (\InvalidArgumentException $exception) {
+        } catch (\InvalidArgumentException) {
             return new Error('The given URI "%s" could not be converted', 1351594881, [$source]);
         }
     }

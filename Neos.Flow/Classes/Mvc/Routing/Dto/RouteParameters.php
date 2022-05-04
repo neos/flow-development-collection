@@ -62,7 +62,7 @@ final class RouteParameters implements CacheAwareInterface
     public function withParameter(string $parameterName, $parameterValue): self
     {
         if (!TypeHandling::isLiteral(gettype($parameterValue)) && (!$parameterValue instanceof CacheAwareInterface)) {
-            throw new \InvalidArgumentException(sprintf('Parameter values must be literal types or implement the CacheAwareInterface, given: "%s"', is_object($parameterValue) ? get_class($parameterValue) : gettype($parameterValue)), 1511194273);
+            throw new \InvalidArgumentException(sprintf('Parameter values must be literal types or implement the CacheAwareInterface, given: "%s"', get_debug_type($parameterValue)), 1511194273);
         }
         $newParameters = $this->parameters;
         $newParameters[$parameterName] = $parameterValue;

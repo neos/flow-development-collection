@@ -26,7 +26,7 @@ use Neos\Eel\ProtectedContextAwareInterface;
  *
  * It also translates labels according to the configuration it stores
  */
-class TranslationParameterToken implements ProtectedContextAwareInterface
+class TranslationParameterToken implements ProtectedContextAwareInterface, \Stringable
 {
     /**
      * @var Translator
@@ -150,7 +150,7 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
     {
         try {
             $this->parameters['locale'] = new Locale($locale);
-        } catch (InvalidLocaleIdentifierException $e) {
+        } catch (InvalidLocaleIdentifierException) {
             throw new FlowException(sprintf('"%s" is not a valid locale identifier.', $locale), 1436784806);
         }
 
@@ -194,7 +194,7 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->translate();
     }

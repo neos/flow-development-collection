@@ -336,7 +336,7 @@ class PackageManagerTest extends UnitTestCase
     {
         try {
             $this->packageManager->createPackage('Invalid_PackageKey', [], 'vfs://Test/Packages/Application');
-        } catch (InvalidPackageKeyException $exception) {
+        } catch (InvalidPackageKeyException) {
         }
         self::assertFalse(is_dir('vfs://Test/Packages/Application/Invalid_PackageKey'), 'Package folder with invalid package key was created');
     }

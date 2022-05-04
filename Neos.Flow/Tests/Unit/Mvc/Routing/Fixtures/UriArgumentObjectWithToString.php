@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Fixtures;
  * source code.
  */
 
-class UriArgumentObjectWithToString
+class UriArgumentObjectWithToString implements \Stringable
 {
     protected $identifier = 'String To Identify Object';
 

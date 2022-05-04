@@ -230,7 +230,7 @@ abstract class Arrays
     public static function setValueByPath($subject, $path, $value)
     {
         if (!is_array($subject) && !($subject instanceof \ArrayAccess)) {
-            throw new \InvalidArgumentException('setValueByPath() expects $subject to be array or an object implementing \ArrayAccess, "' . (is_object($subject) ? get_class($subject) : gettype($subject)) . '" given.', 1306424308);
+            throw new \InvalidArgumentException('setValueByPath() expects $subject to be array or an object implementing \ArrayAccess, "' . (get_debug_type($subject)) . '" given.', 1306424308);
         }
         if (is_string($path)) {
             $path = explode('.', $path);

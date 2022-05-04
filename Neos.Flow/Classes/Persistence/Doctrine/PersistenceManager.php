@@ -178,7 +178,7 @@ class PersistenceManager extends AbstractPersistenceManager
         if ($this->entityManager->contains($object)) {
             try {
                 return current($this->entityManager->getUnitOfWork()->getEntityIdentifier($object));
-            } catch (ORMException $exception) {
+            } catch (ORMException) {
             }
         }
         return null;

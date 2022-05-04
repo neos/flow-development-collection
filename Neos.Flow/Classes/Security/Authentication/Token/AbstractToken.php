@@ -21,7 +21,7 @@ use Neos\Flow\Security\RequestPatternInterface;
 /**
  * An abstract authentication token.
  */
-abstract class AbstractToken implements TokenInterface
+abstract class AbstractToken implements TokenInterface, \Stringable
 {
     /**
      * @var string
@@ -224,7 +224,7 @@ abstract class AbstractToken implements TokenInterface
      *
      * @return string The class name
      */
-    public function __toString()
+    public function __toString(): string
     {
         return get_class($this);
     }

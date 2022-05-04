@@ -36,7 +36,7 @@ class FrameworkTest extends FunctionalTestCase
         $targetClass = new Fixtures\TargetClass01();
         try {
             $targetClass->sayHelloAndThrow(true);
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
         }
         self::assertSame('Hello World', $targetClass->sayHelloAndThrow(false));
     }

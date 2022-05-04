@@ -297,7 +297,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         if ($this->frozen === true) {
             try {
                 @unlink($this->cacheDirectory . 'FrozenCache.data');
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
             }
             $this->frozen = false;

@@ -408,7 +408,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         if (isset($translationConfiguration['locale'])) {
             try {
                 $localeObject = new Locale($translationConfiguration['locale']);
-            } catch (InvalidLocaleIdentifierException $e) {
+            } catch (InvalidLocaleIdentifierException) {
                 throw new ViewHelper\Exception('"' . $translationConfiguration['locale'] . '" is not a valid locale identifier.', 1330013193);
             }
         } else {

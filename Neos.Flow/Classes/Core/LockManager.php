@@ -87,12 +87,12 @@ class LockManager
         }
         try {
             @unlink($this->lockFlagPathAndFilename);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
         }
         try {
             @unlink($this->lockPathAndFilename);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
         }
     }
 
@@ -148,14 +148,14 @@ class LockManager
             fclose($this->lockResource);
             try {
                 @unlink($this->lockPathAndFilename);
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
             }
         }
         if ($this->isSiteLocked()) {
             try {
                 @unlink($this->lockFlagPathAndFilename);
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
             }
         }

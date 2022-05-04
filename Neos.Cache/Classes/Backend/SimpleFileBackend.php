@@ -261,7 +261,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     clearstatcache(true, $cacheEntryPathAndFilename);
                     return $result;
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
             }
             usleep(random_int(10, 500));
         }
@@ -460,7 +460,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         if (!is_writable($cacheDirectory)) {
             try {
                 Files::createDirectoryRecursively($cacheDirectory);
-            } catch (FilesException $exception) {
+            } catch (FilesException) {
                 throw new Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
             }
         }
@@ -507,7 +507,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     flock($file, LOCK_UN);
                 }
                 fclose($file);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
             }
 
             if ($data !== false) {
@@ -544,7 +544,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     flock($file, LOCK_UN);
                 }
                 fclose($file);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
             }
             if ($result !== false) {
                 clearstatcache(true, $cacheEntryPathAndFilename);

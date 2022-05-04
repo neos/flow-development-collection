@@ -192,7 +192,7 @@ abstract class Files
             if (file_exists($path . '/.DS_Store')) {
                 try {
                     @unlink($path . '/.DS_Store');
-                } catch (\Throwable $e) {
+                } catch (\Throwable) {
                     // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
                 }
             }
@@ -200,7 +200,7 @@ abstract class Files
                 if (@rmdir($path) === false) {
                     throw new FilesException(sprintf('Could not remove directory "%s".', $path), 1634928640);
                 }
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // PHP 8 throws for rmdir even with a shutup operator set. To ensure the loop gets correctly ended in PHP 8 and below, an additional FilesException is used.
                 break;
             }
@@ -231,7 +231,7 @@ abstract class Files
                 if (rmdir($path) !== true) {
                     throw new FilesException('Could not remove directory "' . $path . '".', 1316000298);
                 }
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
                 throw new FilesException('Could not remove directory "' . $path . '".', 1323961907);
             }
         }
@@ -331,7 +331,7 @@ abstract class Files
             } else {
                 $content = file_get_contents($pathAndFilename, $flags, $context, $offset);
             }
-        } catch (ErrorException $ignoredException) {
+        } catch (ErrorException) {
             $content = false;
         }
         return $content;
@@ -416,14 +416,14 @@ abstract class Files
                 }
                 return true;
             }
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             clearstatcache();
             return !file_exists($pathAndFilename);
         }
 
         try {
             return rmdir($pathAndFilename);
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             return false;
         }
     }

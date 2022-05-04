@@ -1070,7 +1070,7 @@ class ContextTest extends UnitTestCase
             $securityContext->withoutAuthorizationChecks(function () {
                 throw new \Exception('Test Exception');
             });
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
         }
         self::assertFalse($securityContext->areAuthorizationChecksDisabled());
     }
@@ -1106,7 +1106,7 @@ class ContextTest extends UnitTestCase
                     $self->assertTrue($securityContext->areAuthorizationChecksDisabled());
                     throw new \Exception('Some exception');
                 });
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
             }
             $self->assertTrue($securityContext->areAuthorizationChecksDisabled());
         });
@@ -1128,7 +1128,7 @@ class ContextTest extends UnitTestCase
                 });
 
                 throw new \Exception('Some exception');
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
             }
             $self->assertTrue($securityContext->areAuthorizationChecksDisabled());
         });

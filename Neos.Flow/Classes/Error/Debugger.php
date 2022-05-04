@@ -203,7 +203,7 @@ class Debugger
         // Objects returned from Doctrine's Debug::export function are stdClass with special properties:
         try {
             $objectIdentifier = ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
-        } catch (\Neos\Utility\Exception\PropertyNotAccessibleException $exception) {
+        } catch (\Neos\Utility\Exception\PropertyNotAccessibleException) {
             $objectIdentifier = spl_object_hash($object);
         }
         $className = ($object instanceof \stdClass && isset($object->__CLASS__)) ? $object->__CLASS__ : get_class($object);

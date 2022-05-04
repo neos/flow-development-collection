@@ -276,7 +276,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
                 $parsedType['nullable'],
                 'Failed for ' . $type
             );
-        } catch (InvalidTypeException $e) {
+        } catch (InvalidTypeException) {
             self::assertTrue(true);
         }
     }

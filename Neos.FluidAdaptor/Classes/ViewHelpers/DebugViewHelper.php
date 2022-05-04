@@ -75,7 +75,7 @@ class DebugViewHelper extends AbstractViewHelper
     {
         $expressionToExamine = $this->renderChildren();
         if ($this->arguments['typeOnly'] === true && $expressionToExamine !== null) {
-            $expressionToExamine = (is_object($expressionToExamine) ? get_class($expressionToExamine) : gettype($expressionToExamine));
+            $expressionToExamine = (get_debug_type($expressionToExamine));
         }
 
         return \Neos\Flow\var_dump($expressionToExamine, $this->arguments['title'], true);

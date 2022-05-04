@@ -115,7 +115,7 @@ final class RouteTags
     private static function validateTag($tag)
     {
         if (!is_string($tag)) {
-            throw new \InvalidArgumentException(sprintf('RouteTags have to be strings, %s given', is_object($tag) ? get_class($tag) : gettype($tag)), 1512553153);
+            throw new \InvalidArgumentException(sprintf('RouteTags have to be strings, %s given', get_debug_type($tag)), 1512553153);
         }
         if (preg_match(self::PATTERN_TAG, $tag) !== 1) {
             throw new \InvalidArgumentException(sprintf('The given string "%s" is not a valid tag', $tag), 1511807639);

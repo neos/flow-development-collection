@@ -314,12 +314,12 @@ class Service
 
         try {
             $resolvedVersion = $this->getDependencyFactory()->getVersionAliasResolver()->resolveVersionAlias($version);
-        } catch (UnknownMigrationVersion $e) {
+        } catch (UnknownMigrationVersion) {
             return sprintf(
                 'Unknown version: %s',
                 OutputFormatter::escape($version)
             );
-        } catch (NoMigrationsToExecute | NoMigrationsFoundWithCriteria $e) {
+        } catch (NoMigrationsToExecute | NoMigrationsFoundWithCriteria) {
             return ($quiet === false ? $this->exitMessageForAlias($version) : '');
         }
 
@@ -500,7 +500,7 @@ class Service
     {
         try {
             $availableMigration = $this->getDependencyFactory()->getMigrationRepository()->getMigration($version);
-        } catch (MigrationClassNotFound $e) {
+        } catch (MigrationClassNotFound) {
             $availableMigration = null;
         }
 
@@ -613,7 +613,7 @@ class Service
         $diffGenerator = $this->getDependencyFactory()->getDiffGenerator();
         try {
             $path = $diffGenerator->generate($fqcn, $filterExpression);
-        } catch (NoChangesDetected $exception) {
+        } catch (NoChangesDetected) {
             return ['No changes detected', false];
         }
 

@@ -157,7 +157,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if (is_array($source) && isset($source['timezone']) && $source['timezone'] !== '') {
             try {
                 $timezone = new \DateTimeZone($source['timezone']);
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
                 throw new TypeConverterException('The specified timezone "' . $source['timezone'] . '" is invalid.', 1308240974);
             }
             if (isset($source['timezone_type'])) {
@@ -206,7 +206,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if ($dateFormat === null) {
             return self::DEFAULT_DATE_FORMAT;
         } elseif (!is_string($dateFormat)) {
-            throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_DATE_FORMAT must be of type string, "' . (is_object($dateFormat) ? get_class($dateFormat) : gettype($dateFormat)) . '" given', 1307719569);
+            throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_DATE_FORMAT must be of type string, "' . (get_debug_type($dateFormat)) . '" given', 1307719569);
         }
         return $dateFormat;
     }

@@ -109,7 +109,7 @@ class EntityManagerFactory
         $connection = DriverManager::getConnection($this->settings['backendOptions'], $config, $eventManager);
         try {
             $connection->connect();
-        } catch (ConnectionException $exception) {
+        } catch (ConnectionException) {
             $settings = $this->settings['backendOptions'];
             $settings['platform'] = $connection->getDriver()->getDatabasePlatform();
             $connection = DriverManager::getConnection($settings, $config, $eventManager);

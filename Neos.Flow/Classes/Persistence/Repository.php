@@ -81,7 +81,7 @@ abstract class Repository implements RepositoryInterface
     public function add($object): void
     {
         if (!is_object($object) || !($object instanceof $this->entityClassName)) {
-            $type = (is_object($object) ? get_class($object) : gettype($object));
+            $type = (get_debug_type($object));
             throw new IllegalObjectTypeException('The value given to add() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1298403438);
         }
         $this->persistenceManager->add($object);
@@ -98,7 +98,7 @@ abstract class Repository implements RepositoryInterface
     public function remove($object): void
     {
         if (!is_object($object) || !($object instanceof $this->entityClassName)) {
-            $type = (is_object($object) ? get_class($object) : gettype($object));
+            $type = (get_debug_type($object));
             throw new IllegalObjectTypeException('The value given to remove() was ' . $type . ' , however the ' . get_class($this) . ' can only handle ' . $this->entityClassName . ' instances.', 1298403442);
         }
         $this->persistenceManager->remove($object);
@@ -195,7 +195,7 @@ abstract class Repository implements RepositoryInterface
     public function update($object): void
     {
         if (!is_object($object) || !($object instanceof $this->entityClassName)) {
-            $type = (is_object($object) ? get_class($object) : gettype($object));
+            $type = (get_debug_type($object));
             throw new IllegalObjectTypeException('The value given to update() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1249479625);
         }
 

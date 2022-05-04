@@ -292,7 +292,7 @@ class FileMonitor
         $currentDirectoryChanged = false;
         try {
             $currentSubDirectoriesAndFiles = $this->readMonitoredDirectoryRecursively($path, $filenamePattern);
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             $currentSubDirectoriesAndFiles = [];
             $this->changedPaths[$path] = ChangeDetectionStrategyInterface::STATUS_DELETED;
         }

@@ -77,7 +77,7 @@ class Detector
 
             try {
                 $locale = new Locale($languageIdentifier);
-            } catch (Exception\InvalidLocaleIdentifierException $exception) {
+            } catch (Exception\InvalidLocaleIdentifierException) {
                 continue;
             }
 
@@ -104,7 +104,7 @@ class Detector
     {
         try {
             return $this->detectLocaleFromTemplateLocale(new Locale($localeIdentifier));
-        } catch (Exception\InvalidLocaleIdentifierException $exception) {
+        } catch (Exception\InvalidLocaleIdentifierException) {
             return $this->localizationService->getConfiguration()->getDefaultLocale();
         }
     }

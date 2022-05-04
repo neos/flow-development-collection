@@ -93,7 +93,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
         foreach ($this->backends as $backend) {
             try {
                 $identifiers[] = $backend->findIdentifiersByTag($tag);
-            } catch (\Throwable $t) {
+            } catch (\Throwable) {
             }
         }
         // avoid array_merge in the loop, this trades memory for speed

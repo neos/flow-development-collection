@@ -20,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
  * @see http://tools.ietf.org/html/rfc6265
  * @Flow\Proxy(false)
  */
-class Cookie
+class Cookie implements \Stringable
 {
     /**
      * A token as per RFC 2616, Section 2.2
@@ -204,7 +204,7 @@ class Cookie
                     case 'EXPIRES':
                         try {
                             $expiresAttribute = new \DateTime($attributeValue);
-                        } catch (\Exception $exception) {
+                        } catch (\Exception) {
                             // as of RFC 6265 Section 5.2.1, a non parsable Expires date should result into
                             // ignoring, but since the Cookie constructor relies on it, we'll
                             // assume a Session cookie with an expiry date of 0.
@@ -413,7 +413,7 @@ class Cookie
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if ($this->value === false) {
             $value = 0;

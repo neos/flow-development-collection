@@ -81,7 +81,7 @@ class ArgumentsTest extends UnitTestCase
         try {
             $arguments->getArgument('someArgument');
             $this->fail('getArgument() did not throw an exception although the specified argument does not exist.');
-        } catch (NoSuchArgumentException $exception) {
+        } catch (NoSuchArgumentException) {
             self::assertTrue(true);
         }
     }

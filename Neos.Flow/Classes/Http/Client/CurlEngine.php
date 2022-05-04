@@ -148,7 +148,7 @@ class CurlEngine implements RequestEngineInterface
                 $response = Message::parseResponse($responseBody);
                 $responseBody = $response->getBody()->getContents();
             }
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException) {
         } finally {
             $response->getBody()->rewind();
         }

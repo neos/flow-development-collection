@@ -255,7 +255,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         // Wrap in try/catch to suppress errors after the actual test is run (e.g. validation)
         try {
             $persistenceManager->persistAll();
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
         }
 
         if (is_callable([$persistenceManager, 'tearDown'])) {

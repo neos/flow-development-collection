@@ -38,7 +38,7 @@ class MemcachedBackendTest extends BaseTestCase
             if (!@fsockopen('localhost', 11211)) {
                 $this->markTestSkipped('memcached not reachable');
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->markTestSkipped('memcached not reachable');
         }
     }

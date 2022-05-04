@@ -149,7 +149,7 @@ class Environment
         if (!is_dir($temporaryDirectory) && !is_link($temporaryDirectory)) {
             try {
                 Files::createDirectoryRecursively($temporaryDirectory);
-            } catch (ErrorException $exception) {
+            } catch (ErrorException) {
                 throw new UtilityException('The temporary directory "' . $temporaryDirectory . '" could not be created. Please make sure permissions are correct for this path or define another temporary directory in your Settings.yaml with the path "Neos.Flow.utility.environment.temporaryDirectoryBase".', 1335382361);
             }
         }

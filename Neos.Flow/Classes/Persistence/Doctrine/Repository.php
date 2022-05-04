@@ -104,7 +104,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     public function add($object): void
     {
         if (!is_object($object) || !($object instanceof $this->objectType)) {
-            $type = (is_object($object) ? get_class($object) : gettype($object));
+            $type = (get_debug_type($object));
             throw new IllegalObjectTypeException('The value given to add() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->objectType . ' instances.', 1517408062);
         }
         $this->entityManager->persist($object);
@@ -122,7 +122,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     public function remove($object): void
     {
         if (!is_object($object) || !($object instanceof $this->objectType)) {
-            $type = (is_object($object) ? get_class($object) : gettype($object));
+            $type = (get_debug_type($object));
             throw new IllegalObjectTypeException('The value given to remove() was ' . $type . ' , however the ' . get_class($this) . ' can only handle ' . $this->objectType . ' instances.', 1517408067);
         }
         $this->entityManager->remove($object);

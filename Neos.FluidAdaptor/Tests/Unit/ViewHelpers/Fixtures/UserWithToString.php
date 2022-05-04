@@ -14,12 +14,12 @@ namespace Neos\FluidAdaptor\ViewHelpers\Fixtures;
 /**
  * Dummy object to test Viewhelper behavior on objects with and without a __toString method
  */
-class UserWithToString extends UserWithoutToString
+class UserWithToString extends UserWithoutToString implements \Stringable
 {
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->name;
     }

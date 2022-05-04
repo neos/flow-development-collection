@@ -63,7 +63,7 @@ class Dispatcher
                 $this->emitBeforeControllerInvocation($request, $response, $controller);
                 $controller->processRequest($request, $response);
                 $this->emitAfterControllerInvocation($request, $response, $controller);
-            } catch (StopCommandException $exception) {
+            } catch (StopCommandException) {
                 $this->emitAfterControllerInvocation($request, $response, $controller);
             }
         }
@@ -134,7 +134,7 @@ class Dispatcher
 
         $controller = $this->objectManager->get($controllerObjectName);
         if (!$controller instanceof CommandControllerInterface) {
-            throw new InvalidCommandControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1565878098);
+            throw new InvalidCommandControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (get_debug_type($controller)) . ' given.', 1565878098);
         }
 
         return $controller;

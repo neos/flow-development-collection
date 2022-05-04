@@ -228,7 +228,7 @@ class AbstractControllerTest extends UnitTestCase
 
         try {
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage\MySubPackage', ['foo' => 'bar']);
-        } catch (ForwardException $exception) {
+        } catch (ForwardException) {
         }
     }
 
@@ -251,7 +251,7 @@ class AbstractControllerTest extends UnitTestCase
 
         try {
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage', ['foo' => 'bar']);
-        } catch (ForwardException $exception) {
+        } catch (ForwardException) {
         }
     }
 
@@ -274,7 +274,7 @@ class AbstractControllerTest extends UnitTestCase
 
         try {
             $controller->_call('forward', 'other', 'Bar', 'MyPackage', $originalArguments);
-        } catch (ForwardException $exception) {
+        } catch (ForwardException) {
         }
     }
 
@@ -346,7 +346,7 @@ class AbstractControllerTest extends UnitTestCase
 
         try {
             $controller->_call('redirectToUri', 'http://some.uri');
-        } catch (StopActionException $e) {
+        } catch (StopActionException) {
         }
 
         self::assertSame(303, $this->actionResponse->getStatusCode());
@@ -364,7 +364,7 @@ class AbstractControllerTest extends UnitTestCase
 
         try {
             $controller->_call('redirectToUri', $uri);
-        } catch (StopActionException $e) {
+        } catch (StopActionException) {
         }
 
         self::assertSame($uri, (string)$this->actionResponse->getRedirectUri());
@@ -382,7 +382,7 @@ class AbstractControllerTest extends UnitTestCase
 
         try {
             $controller->_call('redirectToUri', $uri, 10);
-        } catch (StopActionException $e) {
+        } catch (StopActionException) {
         }
 
         self::assertNull($this->actionResponse->getRedirectUri());
@@ -412,7 +412,7 @@ class AbstractControllerTest extends UnitTestCase
 
         try {
             $controller->_call('throwStatus', 404, 'File Really Not Found', $message);
-        } catch (StopActionException $e) {
+        } catch (StopActionException) {
         }
 
         self::assertSame(404, $this->actionResponse->getStatusCode());
@@ -429,7 +429,7 @@ class AbstractControllerTest extends UnitTestCase
 
         try {
             $controller->_call('throwStatus', 404);
-        } catch (StopActionException $e) {
+        } catch (StopActionException) {
         }
 
         self::assertSame(404, $this->actionResponse->getStatusCode());

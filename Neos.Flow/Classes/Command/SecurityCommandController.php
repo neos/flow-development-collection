@@ -189,7 +189,7 @@ class SecurityCommandController extends CommandController
                         $requestedRoles[$currentParentRole->getIdentifier()] = $currentParentRole;
                     }
                 }
-            } catch (NoSuchRoleException $exception) {
+            } catch (NoSuchRoleException) {
                 $this->outputLine('The role %s was not defined.', [$roleIdentifier]);
                 $this->quit(1);
             }
@@ -325,7 +325,7 @@ class SecurityCommandController extends CommandController
         foreach ($this->reflectionService->getAllClassNames() as $className) {
             try {
                 $reflectionClass = new \ReflectionClass($className);
-            } catch (\ReflectionException $exception) {
+            } catch (\ReflectionException) {
                 continue;
             }
             foreach ($reflectionClass->getMethods() as $reflectionMethod) {

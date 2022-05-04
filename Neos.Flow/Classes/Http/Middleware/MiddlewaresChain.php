@@ -35,7 +35,7 @@ final class MiddlewaresChain implements RequestHandlerInterface
     {
         array_walk($middlewaresChain, static function ($middleware) {
             if (!$middleware instanceof MiddlewareInterface) {
-                throw new Exception(sprintf('Invalid element "%s" in middleware chain. Must implement %s.', is_object($middleware) ? get_class($middleware) : gettype($middleware), MiddlewareInterface::class));
+                throw new Exception(sprintf('Invalid element "%s" in middleware chain. Must implement %s.', get_debug_type($middleware), MiddlewareInterface::class));
             }
         });
         $this->chain = $middlewaresChain;

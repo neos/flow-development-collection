@@ -244,7 +244,7 @@ class ConfigurationBuilderTest extends UnitTestCase
         $configurationBuilder->injectReflectionService($reflectionServiceMock);
         try {
             $configurationBuilder->_callRef('autowireArguments', $dummyObjectConfiguration);
-        } catch (UnresolvedDependenciesException $e) {
+        } catch (UnresolvedDependenciesException) {
             self::fail('Factory created objects should not throw UnresolvedDependenciesException by autowiring constructor arguments');
         }
         self::assertEquals([], $dummyObjectConfiguration[0]->getArguments());

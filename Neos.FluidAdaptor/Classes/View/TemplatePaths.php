@@ -242,7 +242,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
                     return $path;
                 }
             }
-        } catch (\Neos\Flow\ResourceManagement\Exception $resourceException) {/* ignoring to throw the exception below */
+        } catch (\Neos\Flow\ResourceManagement\Exception) {/* ignoring to throw the exception below */
         }
 
 

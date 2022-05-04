@@ -599,7 +599,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         try {
             $this->connect();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return;
         }
 
@@ -705,7 +705,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         try {
             $this->databaseHandle->prepare('SELECT 1 FROM "' . $tableName . '" LIMIT 1')->execute();
-        } catch (\PDOException $exception) {
+        } catch (\PDOException) {
             return false;
         }
         return true;

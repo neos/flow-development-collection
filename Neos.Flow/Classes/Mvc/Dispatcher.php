@@ -200,7 +200,7 @@ class Dispatcher
 
         $controller = $this->objectManager->get($controllerObjectName);
         if (!$controller instanceof ControllerInterface) {
-            throw new Controller\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619, null, $request);
+            throw new Controller\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (get_debug_type($controller)) . ' given.', 1202921619, null, $request);
         }
         return $controller;
     }

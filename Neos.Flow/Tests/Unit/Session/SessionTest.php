@@ -310,7 +310,7 @@ class SessionTest extends UnitTestCase
         try {
             $session->getId();
             $this->fail('No exception thrown although the session was not started yet.');
-        } catch (SessionNotStartedException $e) {
+        } catch (SessionNotStartedException) {
             $session->start();
             self::assertEquals(32, strlen($session->getId()));
         }

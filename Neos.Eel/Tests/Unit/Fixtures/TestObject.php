@@ -16,7 +16,7 @@ use Neos\Eel\ProtectedContextAwareInterface;
 /**
  * Test fixture object
  */
-class TestObject implements ProtectedContextAwareInterface
+class TestObject implements ProtectedContextAwareInterface, \Stringable
 {
     /**
      * @var string
@@ -91,7 +91,7 @@ class TestObject implements ProtectedContextAwareInterface
         $this->dynamicMethodName = $dynamicMethodName;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return 'Test Object';
     }

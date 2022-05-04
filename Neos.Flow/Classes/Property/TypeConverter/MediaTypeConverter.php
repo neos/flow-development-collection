@@ -102,7 +102,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
                     if (PHP_MAJOR_VERSION < 8) {
                         libxml_disable_entity_loader($entityLoaderValue);
                     }
-                } catch (\Exception $exception) {
+                } catch (\Exception) {
                     if (PHP_MAJOR_VERSION < 8) {
                         libxml_disable_entity_loader($entityLoaderValue);
                     }

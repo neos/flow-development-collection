@@ -208,7 +208,7 @@ class RoutingTest extends FunctionalTestCase
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri));
         try {
             $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
-        } catch (NoMatchingRouteException $exception) {
+        } catch (NoMatchingRouteException) {
             $matchResults = null;
         }
         $actionRequest = $this->createActionRequest($request, $matchResults);

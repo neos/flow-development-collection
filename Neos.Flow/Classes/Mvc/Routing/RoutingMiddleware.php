@@ -57,7 +57,7 @@ class RoutingMiddleware implements MiddlewareInterface
 
         try {
             $matchResults = $this->router->route($routeContext);
-        } catch (NoMatchingRouteException $exception) {
+        } catch (NoMatchingRouteException) {
             $matchResults = null;
         }
 

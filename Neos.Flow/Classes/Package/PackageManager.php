@@ -743,7 +743,7 @@ class PackageManager
         if (is_file($legacyPackageStatesPath)) {
             try {
                 @unlink($legacyPackageStatesPath);
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
             }
         }
@@ -751,7 +751,7 @@ class PackageManager
 
         try {
             $this->emitPackageStatesUpdated();
-        } catch (InvalidSlotException|\Neos\Flow\Exception $e) {
+        } catch (InvalidSlotException|\Neos\Flow\Exception) {
         }
     }
 

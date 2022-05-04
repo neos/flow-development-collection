@@ -35,7 +35,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-class Locale
+class Locale implements \Stringable
 {
     /**
      * Simplified pattern which matches (most) locale identifiers
@@ -160,7 +160,7 @@ class Locale
      * @return string The locale identifier (tag)
      * @api
      */
-    public function __toString()
+    public function __toString(): string
     {
         $localeIdentifier = $this->language;
 

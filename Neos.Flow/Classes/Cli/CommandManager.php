@@ -189,7 +189,7 @@ class CommandManager
                             $this->getCommandByIdentifier($shortCommandIdentifier);
                             $this->shortCommandIdentifiers[$availableCommand->getCommandIdentifier()] = $shortCommandIdentifier;
                             break;
-                        } catch (CommandException $exception) {
+                        } catch (CommandException) {
                         }
                     }
                 } else {

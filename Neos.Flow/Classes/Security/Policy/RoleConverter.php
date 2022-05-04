@@ -60,7 +60,7 @@ class RoleConverter extends AbstractTypeConverter
     {
         try {
             $role = $this->policyService->getRole($source);
-        } catch (NoSuchRoleException $exception) {
+        } catch (NoSuchRoleException) {
             return new Error('Could not find a role with the identifier "%s".', 1397212327, [$source]);
         }
         return $role;

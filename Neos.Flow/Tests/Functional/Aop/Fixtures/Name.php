@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Functional\Aop\Fixtures;
 /**
  * A simple value object class for testing the AOP framework
  */
-class Name
+class Name implements \Stringable
 {
     /**
      * @var string
@@ -40,7 +40,7 @@ class Name
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->name;
     }

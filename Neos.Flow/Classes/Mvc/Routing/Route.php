@@ -498,11 +498,11 @@ class Route
                 $remainingDefaults = Arrays::unsetValueByPath($remainingDefaults, $routePart->getName());
             }
             if ($hasRoutePartValue && !is_string($routePartValue)) {
-                throw new InvalidRoutePartValueException('RoutePart::getValue() must return a string after calling RoutePart::resolve(), got ' . (is_object($routePartValue) ? get_class($routePartValue) : gettype($routePartValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
+                throw new InvalidRoutePartValueException('RoutePart::getValue() must return a string after calling RoutePart::resolve(), got ' . (get_debug_type($routePartValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
             }
             $routePartDefaultValue = $routePart->getDefaultValue();
             if ($routePartDefaultValue !== null && !is_string($routePartDefaultValue)) {
-                throw new InvalidRoutePartValueException('RoutePart::getDefaultValue() must return a string, got ' . (is_object($routePartDefaultValue) ? get_class($routePartDefaultValue) : gettype($routePartDefaultValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
+                throw new InvalidRoutePartValueException('RoutePart::getDefaultValue() must return a string, got ' . (get_debug_type($routePartDefaultValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
             }
             if (!$routePart->isOptional()) {
                 $resolvedUriPath .= $hasRoutePartValue ? $routePartValue : $routePartDefaultValue;

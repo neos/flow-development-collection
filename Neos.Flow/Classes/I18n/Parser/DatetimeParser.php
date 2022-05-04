@@ -322,7 +322,7 @@ class DatetimeParser
                     $datetimeToParse = substr_replace($datetimeToParse, '', 0, $numberOfCharactersToRemove);
                 }
             }
-        } catch (Exception\InvalidParseStringException $exception) {
+        } catch (Exception\InvalidParseStringException) {
             // Method extractAndCheckNumber() throws exception when constraints in $datetimeToParse are not fulfilled
             return false;
         }
@@ -475,7 +475,7 @@ class DatetimeParser
                                         $datetimeElements['month'] = (int)$month;
                                         break;
                                     }
-                                } catch (Exception\InvalidParseStringException $exception) {
+                                } catch (Exception\InvalidParseStringException) {
                                     // Try to match month's name by cases below
                                 }
                             case 3:
@@ -569,7 +569,7 @@ class DatetimeParser
                 if ($numberOfCharactersToRemove > 0) {
                     $datetimeToParse = substr_replace($datetimeToParse, '', 0, $numberOfCharactersToRemove);
                 }
-            } catch (Exception\InvalidParseStringException $exception) {
+            } catch (Exception\InvalidParseStringException) {
                 // Matching failed, but in lenient mode we ignore it and try to match next element
                 continue;
             }

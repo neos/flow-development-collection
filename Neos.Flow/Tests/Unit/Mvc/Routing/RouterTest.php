@@ -427,7 +427,7 @@ class RouterTest extends UnitTestCase
 
         try {
             $router->route(new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty()));
-        } catch (NoMatchingRouteException $exception) {
+        } catch (NoMatchingRouteException) {
         }
 
         $routes = $router->getRoutes();
@@ -465,7 +465,7 @@ class RouterTest extends UnitTestCase
         $router->setRoutesConfiguration($routesConfiguration);
         try {
             $router->route(new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty()));
-        } catch (NoMatchingRouteException $exception) {
+        } catch (NoMatchingRouteException) {
         }
 
         $routes = $router->getRoutes();

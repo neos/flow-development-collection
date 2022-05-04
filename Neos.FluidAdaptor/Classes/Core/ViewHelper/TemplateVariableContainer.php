@@ -87,7 +87,7 @@ class TemplateVariableContainer extends StandardVariableProvider implements Vari
         if (TemplateVariableContainer::ACCESSOR_OBJECT_ACCESS === $accessor) {
             try {
                 $subject = ObjectAccess::getProperty($subject, $propertyName);
-            } catch (PropertyNotAccessibleException $e) {
+            } catch (PropertyNotAccessibleException) {
                 $subject = null;
             }
         } else {

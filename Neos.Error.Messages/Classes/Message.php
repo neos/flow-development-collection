@@ -16,7 +16,7 @@ namespace Neos\Error\Messages;
  *
  * @api
  */
-class Message
+class Message implements \Stringable
 {
     public const SEVERITY_NOTICE = 'Notice';
     public const SEVERITY_WARNING = 'Warning';

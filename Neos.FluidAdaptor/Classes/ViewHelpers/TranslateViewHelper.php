@@ -116,7 +116,7 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
         if ($locale !== null) {
             try {
                 $localeObject = new Locale($locale);
-            } catch (InvalidLocaleIdentifierException $e) {
+            } catch (InvalidLocaleIdentifierException) {
                 throw new ViewHelperException(sprintf('"%s" is not a valid locale identifier.', $locale), 1279815885);
             }
         }
