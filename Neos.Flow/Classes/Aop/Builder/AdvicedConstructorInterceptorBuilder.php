@@ -34,7 +34,7 @@ class AdvicedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuil
     public function build(string $methodName, array $interceptedMethods, string $targetClassName): void
     {
         if ($methodName !== '__construct') {
-            throw new Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
+            throw new Exception('The ' . self::class . ' can only build constructor interceptor code.', 1231789021);
         }
 
         $declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];

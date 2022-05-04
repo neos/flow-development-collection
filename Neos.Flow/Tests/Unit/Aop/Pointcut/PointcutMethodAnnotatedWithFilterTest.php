@@ -26,13 +26,13 @@ class PointcutMethodAnnotatedWithFilterTest extends UnitTestCase
     public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenAnnotation()
     {
         $mockReflectionService = $this->createMock(ReflectionService::class, ['getMethodAnnotations'], [], '', false, true);
-        $mockReflectionService->expects(self::any())->method('getMethodAnnotations')->with(__CLASS__, __FUNCTION__, 'Acme\Some\Annotation')->will($this->onConsecutiveCalls(['SomeAnnotation'], []));
+        $mockReflectionService->expects(self::any())->method('getMethodAnnotations')->with(self::class, __FUNCTION__, 'Acme\Some\Annotation')->will($this->onConsecutiveCalls(['SomeAnnotation'], []));
 
         $filter = new Aop\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Some\Annotation');
         $filter->injectReflectionService($mockReflectionService);
 
-        self::assertTrue($filter->matches(__CLASS__, __FUNCTION__, __CLASS__, 1234));
-        self::assertFalse($filter->matches(__CLASS__, __FUNCTION__, __CLASS__, 1234));
+        self::assertTrue($filter->matches(self::class, __FUNCTION__, self::class, 1234));
+        self::assertFalse($filter->matches(self::class, __FUNCTION__, self::class, 1234));
     }
 
     /**
@@ -45,8 +45,8 @@ class PointcutMethodAnnotatedWithFilterTest extends UnitTestCase
         $filter = new Aop\Pointcut\PointcutMethodAnnotatedWithFilter('Acme\Some\Annotation');
         $filter->injectReflectionService($mockReflectionService);
 
-        self::assertFalse($filter->matches(__CLASS__, __FUNCTION__, null, 1234));
-        self::assertFalse($filter->matches(__CLASS__, 'foo', __CLASS__, 1234));
+        self::assertFalse($filter->matches(self::class, __FUNCTION__, null, 1234));
+        self::assertFalse($filter->matches(self::class, 'foo', self::class, 1234));
     }
 
     /**

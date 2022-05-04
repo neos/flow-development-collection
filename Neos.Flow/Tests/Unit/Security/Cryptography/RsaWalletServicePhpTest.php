@@ -41,6 +41,7 @@ class RsaWalletServicePhpTest extends UnitTestCase
      */
     protected function setUp(): void
     {
+        $settings = [];
         vfsStream::setup('Foo');
         $settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'] = 'vfs://Foo/EncryptionKey';
         $settings['security']['cryptography']['RSAWalletServicePHP']['paddingAlgorithm'] = OPENSSL_PKCS1_OAEP_PADDING;

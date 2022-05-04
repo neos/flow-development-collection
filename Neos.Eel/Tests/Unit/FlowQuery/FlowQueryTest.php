@@ -627,6 +627,7 @@ class FlowQueryTest extends UnitTestCase
      */
     public function errorQueriesThrowError($expression)
     {
+        $result = null;
         $this->expectException(FizzleException::class);
 
         $x = new \stdClass();

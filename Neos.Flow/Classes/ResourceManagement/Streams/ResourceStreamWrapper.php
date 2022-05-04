@@ -167,7 +167,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      */
     public function removeDirectory($path, $options)
     {
-        throw new \BadMethodCallException(__CLASS__ . ' does not support removeDirectory().', 1256827649);
+        throw new \BadMethodCallException(self::class . ' does not support removeDirectory().', 1256827649);
     }
 
     /**
@@ -491,7 +491,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
     {
         $requestPathParts = explode('://', $requestedPath, 2);
         if ($requestPathParts[0] !== self::SCHEME) {
-            throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
+            throw new \InvalidArgumentException('The ' . self::class . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
         }
 
         if (!isset($requestPathParts[1])) {

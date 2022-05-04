@@ -72,7 +72,7 @@ abstract class AbstractOperation implements OperationInterface
     public static function getShortName()
     {
         if (static::$shortName === '') {
-            throw new FlowQueryException('Short name in class ' . __CLASS__ . ' is empty.', 1332488549);
+            throw new FlowQueryException('Short name in class ' . self::class . ' is empty.', 1332488549);
         }
         return static::$shortName;
     }

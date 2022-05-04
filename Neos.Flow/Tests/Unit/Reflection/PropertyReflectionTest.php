@@ -40,8 +40,8 @@ class PropertyReflectionTest extends UnitTestCase
     public function getValueThrowsAnExceptionOnReflectingANonObject()
     {
         $this->expectException(Reflection\Exception::class);
-        $reflectionProperty = new Reflection\PropertyReflection(__CLASS__, 'protectedProperty');
-        $reflectionProperty->getValue(__CLASS__);
+        $reflectionProperty = new Reflection\PropertyReflection(self::class, 'protectedProperty');
+        $reflectionProperty->getValue(self::class);
     }
 
     /**
@@ -49,7 +49,7 @@ class PropertyReflectionTest extends UnitTestCase
      */
     public function getValueReturnsValueOfAPublicProperty()
     {
-        $reflectionProperty = new Reflection\PropertyReflection(__CLASS__, 'publicProperty');
+        $reflectionProperty = new Reflection\PropertyReflection(self::class, 'publicProperty');
         self::assertEquals('I\'m public', $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the value of a public property.');
     }
 
@@ -58,7 +58,7 @@ class PropertyReflectionTest extends UnitTestCase
      */
     public function getValueEvenReturnsValueOfAProtectedProperty()
     {
-        $reflectionProperty = new Reflection\PropertyReflection(__CLASS__, 'protectedProperty');
+        $reflectionProperty = new Reflection\PropertyReflection(self::class, 'protectedProperty');
         self::assertEquals('abc', $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the value of a protected property.');
 
         $this->protectedProperty = 'def';
@@ -70,7 +70,7 @@ class PropertyReflectionTest extends UnitTestCase
      */
     public function getValueReturnsValueOfAProtectedPropertyEvenIfItIsAnObject()
     {
-        $reflectionProperty = new Reflection\PropertyReflection(__CLASS__, 'protectedProperty');
+        $reflectionProperty = new Reflection\PropertyReflection(self::class, 'protectedProperty');
         $this->protectedProperty = new \ArrayObject(['1', '2', '3']);
         self::assertEquals($this->protectedProperty, $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the object of our protected property.');
 
@@ -83,7 +83,7 @@ class PropertyReflectionTest extends UnitTestCase
      */
     public function setValueEvenSetsValueOfAPublicProperty()
     {
-        $reflectionProperty = new Reflection\PropertyReflection(__CLASS__, 'publicProperty');
+        $reflectionProperty = new Reflection\PropertyReflection(self::class, 'publicProperty');
         $reflectionProperty->setValue($this, 'modified');
         self::assertEquals('modified', $this->publicProperty, 'ReflectionProperty->setValue() did not successfully set the value of a public property.');
     }
@@ -93,7 +93,7 @@ class PropertyReflectionTest extends UnitTestCase
      */
     public function getValueEvenReturnsValueOfAPrivateProperty()
     {
-        $reflectionProperty = new Reflection\PropertyReflection(__CLASS__, 'privateProperty');
+        $reflectionProperty = new Reflection\PropertyReflection(self::class, 'privateProperty');
         self::assertEquals('123', $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the value of a private property.');
 
         $this->privateProperty = '456';
@@ -105,7 +105,7 @@ class PropertyReflectionTest extends UnitTestCase
      */
     public function getValueReturnsValueOfAPrivatePropertyEvenIfItIsAnObject()
     {
-        $reflectionProperty = new Reflection\PropertyReflection(__CLASS__, 'privateProperty');
+        $reflectionProperty = new Reflection\PropertyReflection(self::class, 'privateProperty');
         $this->protectedProperty = new \ArrayObject(['1', '2', '3']);
         self::assertEquals($this->privateProperty, $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the object of our private property.');
 

@@ -301,7 +301,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
                 return count($array);
             },
             'pow' => function ($base, $exp) {
-                return pow($base, $exp);
+                return $base ** $exp;
             },
             'funcs' => [
                 'dup' => function ($array) {

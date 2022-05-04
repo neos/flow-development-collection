@@ -468,7 +468,7 @@ abstract class Files
         $bytes = max($bytes, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
         $pow = min($pow, count(self::$sizeUnits) - 1);
-        $bytes /= pow(2, (10 * $pow));
+        $bytes /= 2 ** (10 * $pow);
 
         return sprintf(
             '%s %s',
@@ -502,7 +502,7 @@ abstract class Files
         if ($pow === false) {
             throw new FilesException(sprintf('Unknown file size unit "%s"', $matches['unit']), 1417695299);
         }
-        return $size * pow(2, (10 * $pow));
+        return $size * 2 ** (10 * $pow);
     }
 
     /**

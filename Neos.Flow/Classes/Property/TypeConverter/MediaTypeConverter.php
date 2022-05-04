@@ -76,6 +76,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
      */
     protected function convertMediaType($requestBody, $mediaType)
     {
+        $entityLoaderValue = null;
         $mediaTypeParts = MediaTypes::parseMediaType($mediaType);
         if (!isset($mediaTypeParts['subtype']) || $mediaTypeParts['subtype'] === '') {
             return [];

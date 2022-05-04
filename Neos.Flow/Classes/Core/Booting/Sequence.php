@@ -102,10 +102,10 @@ class Sequence
      */
     protected function invokeStep(Step $step, Bootstrap $bootstrap)
     {
-        $bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'beforeInvokeStep', [$step, $this->identifier]);
+        $bootstrap->getSignalSlotDispatcher()->dispatch(self::class, 'beforeInvokeStep', [$step, $this->identifier]);
         $identifier = $step->getIdentifier();
         $step($bootstrap);
-        $bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'afterInvokeStep', [$step, $this->identifier]);
+        $bootstrap->getSignalSlotDispatcher()->dispatch(self::class, 'afterInvokeStep', [$step, $this->identifier]);
         if (isset($this->steps[$identifier])) {
             foreach ($this->steps[$identifier] as $followingStep) {
                 $this->invokeStep($followingStep, $bootstrap);

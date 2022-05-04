@@ -318,6 +318,7 @@ class DatesReader
      */
     public function getLocalizedLiteralsForLocale(Locale $locale): array
     {
+        $localizedLiterals = [];
         if (isset($this->localizedLiterals[(string)$locale])) {
             return $this->localizedLiterals[(string)$locale];
         }

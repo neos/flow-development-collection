@@ -42,6 +42,7 @@ class DebuggerTest extends FunctionalTestCase
      */
     public function ignoredClassesCanBeOverwrittenBySettings()
     {
+        $configurationOverwrite = [];
         $object = new ApplicationContext('Development');
         self::assertEquals(sprintf('%s prototype object', ApplicationContext::class), Debugger::renderDump($object, 0, true));
         Debugger::clearState();

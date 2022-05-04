@@ -510,6 +510,7 @@ class ProxyClassBuilder
      */
     protected function buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument)
     {
+        $commands = [];
         $setterArgumentHash = "'" . md5($preparedSetterArgument) . "'";
         $commands[] = '    $this->Flow_Proxy_LazyPropertyInjection(\'' . $propertyObjectName . '\', \'' . $propertyClassName . '\', \'' . $propertyName . '\', ' . $setterArgumentHash . ', function() { return ' . $preparedSetterArgument . '; });';
 

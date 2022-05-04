@@ -36,7 +36,7 @@ trait ObjectSerializationTrait
      */
     private function Flow_serializeRelatedEntities(array $transientProperties, array $propertyVarTags)
     {
-        $reflectedClass = new \ReflectionClass(__CLASS__);
+        $reflectedClass = new \ReflectionClass(self::class);
         $allReflectedProperties = $reflectedClass->getProperties();
         foreach ($allReflectedProperties as $reflectionProperty) {
             $propertyName = $reflectionProperty->name;

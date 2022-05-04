@@ -160,7 +160,7 @@ class InterpretedEelParser extends EelParser
     {
         $lft = $this->unwrap($result['val']);
         $rgt = $this->unwrap($sub['val']);
-        $result['val'] = $lft ? $lft : $rgt;
+        $result['val'] = $lft ?: $rgt;
     }
 
     public function Conjunction_lft(&$result, $sub)

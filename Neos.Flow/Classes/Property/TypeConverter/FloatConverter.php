@@ -157,6 +157,7 @@ class FloatConverter extends AbstractTypeConverter
      */
     protected function parseUsingLocaleIfConfigured($source, PropertyMappingConfigurationInterface $configuration)
     {
+        $locale = null;
         $configuration = $this->getConfigurationKeysAndValues($configuration, ['locale', 'strictMode', 'formatLength', 'formatType']);
 
         if ($configuration['locale'] === null) {

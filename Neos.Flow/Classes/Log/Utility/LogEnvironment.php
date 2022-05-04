@@ -43,6 +43,7 @@ abstract class LogEnvironment
      */
     public static function fromMethodName(string $methodName): array
     {
+        $className = null;
         if (strpos($methodName, '::') > 0) {
             list($className, $functionName) = explode('::', $methodName);
         } elseif (substr($methodName, -9, 9) === '{closure}') {

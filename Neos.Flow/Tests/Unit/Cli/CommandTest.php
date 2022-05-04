@@ -39,7 +39,7 @@ class CommandTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->command = $this->getAccessibleMock(Cli\Command::class, ['getCommandMethodReflection'], [], '', false);
-        $this->methodReflection = $this->createMock(MethodReflection::class, [], [__CLASS__, 'dummyMethod']);
+        $this->methodReflection = $this->createMock(MethodReflection::class, [], [self::class, 'dummyMethod']);
         $this->command->expects(self::any())->method('getCommandMethodReflection')->will(self::returnValue($this->methodReflection));
     }
 
@@ -87,7 +87,7 @@ class CommandTest extends UnitTestCase
      */
     public function hasArgumentsReturnsTrueIfCommandExpectsArguments()
     {
-        $parameterReflection = $this->createMock(ParameterReflection::class, [], [[__CLASS__, 'dummyMethod'], 'arg']);
+        $parameterReflection = $this->createMock(ParameterReflection::class, [], [[self::class, 'dummyMethod'], 'arg']);
         $this->methodReflection->expects(self::atLeastOnce())->method('getParameters')->will(self::returnValue([$parameterReflection]));
         self::assertTrue($this->command->hasArguments());
     }
@@ -106,7 +106,7 @@ class CommandTest extends UnitTestCase
      */
     public function getArgumentDefinitionsReturnsArrayOfArgumentDefinitionIfCommandExpectsArguments()
     {
-        $parameterReflection = $this->createMock(ParameterReflection::class, [], [[__CLASS__, 'dummyMethod'], 'arg']);
+        $parameterReflection = $this->createMock(ParameterReflection::class, [], [[self::class, 'dummyMethod'], 'arg']);
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockMethodParameters = ['argument1' => ['optional' => false], 'argument2' => ['optional' => true]];
         $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue($mockMethodParameters));

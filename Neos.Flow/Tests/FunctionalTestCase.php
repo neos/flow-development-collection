@@ -475,6 +475,6 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      */
     protected function emitFunctionalTestTearDown()
     {
-        self::$bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'functionalTestTearDown');
+        self::$bootstrap->getSignalSlotDispatcher()->dispatch(self::class, 'functionalTestTearDown');
     }
 }

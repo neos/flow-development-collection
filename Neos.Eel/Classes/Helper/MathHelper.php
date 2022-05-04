@@ -172,7 +172,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function cbrt($x)
     {
-        $y = pow(abs($x), 1 / 3);
+        $y = abs($x) ** (1 / 3);
         return $x < 0 ? -$y : $y;
     }
 
@@ -360,7 +360,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function pow($x, $y)
     {
-        return pow($x, $y);
+        return $x ** $y;
     }
 
     /**

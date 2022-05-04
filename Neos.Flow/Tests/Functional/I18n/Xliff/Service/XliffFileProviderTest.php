@@ -62,6 +62,7 @@ class XliffFileProviderTest extends FunctionalTestCase
      */
     protected function setUpPackages()
     {
+        $packages = [];
         vfsStream::setup('Packages');
 
         $basePackage = $this->setUpPackage('BasePackage', [

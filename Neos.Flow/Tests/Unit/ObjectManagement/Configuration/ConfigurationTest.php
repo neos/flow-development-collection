@@ -103,8 +103,8 @@ class ConfigurationTest extends UnitTestCase
      */
     public function setFactoryObjectNameAcceptsValidClassNames()
     {
-        $this->objectConfiguration->setFactoryObjectName(__CLASS__);
-        self::assertSame(__CLASS__, $this->objectConfiguration->getFactoryObjectName());
+        $this->objectConfiguration->setFactoryObjectName(self::class);
+        self::assertSame(self::class, $this->objectConfiguration->getFactoryObjectName());
     }
 
     /**
@@ -130,7 +130,7 @@ class ConfigurationTest extends UnitTestCase
      */
     public function theDefaultFactoryMethodNameIsCreate()
     {
-        $this->objectConfiguration->setFactoryObjectName(__CLASS__);
+        $this->objectConfiguration->setFactoryObjectName(self::class);
         self::assertSame('create', $this->objectConfiguration->getFactoryMethodName());
     }
 }

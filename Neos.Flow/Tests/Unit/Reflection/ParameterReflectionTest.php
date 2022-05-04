@@ -25,7 +25,7 @@ class ParameterReflectionTest extends UnitTestCase
      */
     public function getDeclaringClassReturnsFlowsClassReflection($dummy = null)
     {
-        $parameter = new ParameterReflection([__CLASS__, 'fixtureMethod'], 'arg2');
+        $parameter = new ParameterReflection([self::class, 'fixtureMethod'], 'arg2');
         self::assertInstanceOf(ClassReflection::class, $parameter->getDeclaringClass());
     }
 
@@ -34,7 +34,7 @@ class ParameterReflectionTest extends UnitTestCase
      */
     public function getClassReturnsFlowsClassReflection($dummy = null)
     {
-        $parameter = new ParameterReflection([__CLASS__, 'fixtureMethod'], 'arg1');
+        $parameter = new ParameterReflection([self::class, 'fixtureMethod'], 'arg1');
         self::assertInstanceOf(ClassReflection::class, $parameter->getClass());
     }
 

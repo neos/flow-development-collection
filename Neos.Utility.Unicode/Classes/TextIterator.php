@@ -222,6 +222,7 @@ class TextIterator implements \Iterator
      */
     public function preceding(int $offset): string
     {
+        $currentElement = null;
         $this->rewind();
         while ($this->valid()) {
             $previousElement = $this->getCurrentElement();

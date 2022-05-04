@@ -209,6 +209,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      */
     protected function evaluateOperations()
     {
+        $lastOperationResult = null;
         while ($op = array_shift($this->operations)) {
             $operation = $this->operationResolver->resolveOperation($op['name'], $this->context);
             $lastOperationResult = $operation->evaluate($this, $op['arguments']);

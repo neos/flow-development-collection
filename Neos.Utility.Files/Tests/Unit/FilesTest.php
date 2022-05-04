@@ -29,7 +29,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     {
         vfsStream::setup('Foo');
 
-        $intendedTemporaryDirectory = sys_get_temp_dir() . '/' . str_replace('\\', '_', __CLASS__);
+        $intendedTemporaryDirectory = sys_get_temp_dir() . '/' . str_replace('\\', '_', self::class);
         if (!file_exists($intendedTemporaryDirectory)) {
             mkdir($intendedTemporaryDirectory);
         }
@@ -549,14 +549,14 @@ class FilesTest extends \PHPUnit\Framework\TestCase
                 'expected' => '1.024.0 MB'
             ],
             [
-                'bytes' => pow(1024, 5),
+                'bytes' => 1024 ** 5,
                 'decimals' => 1,
                 'decimalSeparator' => null,
                 'thousandsSeparator' => null,
                 'expected' => '1.0 PB'
             ],
             [
-                'bytes' => pow(1024, 8),
+                'bytes' => 1024 ** 8,
                 'decimals' => 1,
                 'decimalSeparator' => null,
                 'thousandsSeparator' => null,
@@ -632,11 +632,11 @@ class FilesTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'sizeString' => '1 GB',
-                'expected' => (float)pow(1024, 3)
+                'expected' => (float)1024 ** 3
             ],
             [
                 'sizeString' => '1 Z',
-                'expected' => (float)pow(1024, 7)
+                'expected' => (float)1024 ** 7
             ]
         ];
     }

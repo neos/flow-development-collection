@@ -61,17 +61,17 @@ class PointcutMethodNameFilterTest extends UnitTestCase
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', 'public');
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        self::assertTrue($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
-        self::assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
-        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
-        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', null, 1));
+        self::assertTrue($methodNameFilter->matches(self::class, 'somePublicMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(self::class, 'someProtectedMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(self::class, 'somePrivateMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(self::class, 'somePublicMethod', null, 1));
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', 'protected');
         $methodNameFilter->injectReflectionService($mockReflectionService);
-        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
-        self::assertTrue($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
-        self::assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
-        self::assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', null, 1));
+        self::assertFalse($methodNameFilter->matches(self::class, 'somePublicMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches(self::class, 'someProtectedMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(self::class, 'somePrivateMethod', $className, 1));
+        self::assertFalse($methodNameFilter->matches(self::class, 'someProtectedMethod', null, 1));
     }
 
     /**
@@ -115,10 +115,10 @@ class PointcutMethodNameFilterTest extends UnitTestCase
         $methodNameFilter->injectReflectionService($mockReflectionService);
         $methodNameFilter->injectLogger($mockSystemLogger);
 
-        $methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1);
+        $methodNameFilter->matches(self::class, 'somePublicMethod', $className, 1);
 
-        self::assertTrue($methodNameFilter->matches(__CLASS__, 'someOtherPublicMethod', $className, 1));
-        self::assertTrue($methodNameFilter->matches(__CLASS__, 'someThirdMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches(self::class, 'someOtherPublicMethod', $className, 1));
+        self::assertTrue($methodNameFilter->matches(self::class, 'someThirdMethod', $className, 1));
     }
 
     /**
