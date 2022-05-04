@@ -21,12 +21,12 @@ use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
  */
 class Configuration
 {
-    const AUTOWIRING_MODE_OFF = 0;
-    const AUTOWIRING_MODE_ON = 1;
+    public const AUTOWIRING_MODE_OFF = 0;
+    public const AUTOWIRING_MODE_ON = 1;
 
-    const SCOPE_PROTOTYPE = 1;
-    const SCOPE_SINGLETON = 2;
-    const SCOPE_SESSION = 3;
+    public const SCOPE_PROTOTYPE = 1;
+    public const SCOPE_SINGLETON = 2;
+    public const SCOPE_SESSION = 3;
 
     /**
      * Name of the object

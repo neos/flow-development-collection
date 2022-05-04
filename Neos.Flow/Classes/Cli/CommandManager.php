@@ -170,7 +170,7 @@ class CommandManager
             $commandsByCommandName = [];
             /** @var Command $availableCommand */
             foreach ($this->getAvailableCommands() as $availableCommand) {
-                list($packageKey, $controllerName, $commandName) = explode(':', $availableCommand->getCommandIdentifier());
+                [$packageKey, $controllerName, $commandName] = explode(':', $availableCommand->getCommandIdentifier());
                 if (!isset($commandsByCommandName[$commandName])) {
                     $commandsByCommandName[$commandName] = [];
                 }
@@ -180,7 +180,7 @@ class CommandManager
                 $commandsByCommandName[$commandName][$controllerName][] = $packageKey;
             }
             foreach ($this->getAvailableCommands() as $availableCommand) {
-                list($packageKey, $controllerName, $commandName) = explode(':', $availableCommand->getCommandIdentifier());
+                [$packageKey, $controllerName, $commandName] = explode(':', $availableCommand->getCommandIdentifier());
                 if (count($commandsByCommandName[$commandName][$controllerName]) > 1 || $this->bootstrap->isCompiletimeCommand($availableCommand->getCommandIdentifier())) {
                     $packageKeyParts = array_reverse(explode('.', $packageKey));
                     for ($i = 1; $i <= count($packageKeyParts); $i++) {

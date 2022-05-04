@@ -125,7 +125,7 @@ class PersistenceTest extends FunctionalTestCase
         self::assertEquals(1, count($allResults->toArray()), 'Not correct number of entities found before running test.');
 
         $unserializedResults = unserialize(serialize($allResults));
-        self::assertEquals(1, count($unserializedResults->toArray()));
+        self::assertEquals(1, is_array($unserializedResults->toArray()) || $unserializedResults->toArray() instanceof \Countable ? count($unserializedResults->toArray()) : 0);
         self::assertEquals('Flow', $unserializedResults[0]->getName());
     }
 

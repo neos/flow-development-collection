@@ -133,7 +133,7 @@ class ResourceViewHelper extends AbstractViewHelper
         }
         if (strpos($path, 'resource://') === 0) {
             try {
-                list($package, $path) = $resourceManager->getPackageAndPathByPublicPath($path);
+                [$package, $path] = $resourceManager->getPackageAndPathByPublicPath($path);
             } catch (Exception $exception) {
                 throw new InvalidVariableException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);
             }

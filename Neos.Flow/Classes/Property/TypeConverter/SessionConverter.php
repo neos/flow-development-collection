@@ -29,7 +29,7 @@ class SessionConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    const PATTERN_MATCH_SESSIONIDENTIFIER = '/([a-zA-Z0-9]){32}/';
+    public const PATTERN_MATCH_SESSIONIDENTIFIER = '/([a-zA-Z0-9]){32}/';
 
     /**
      * @var array

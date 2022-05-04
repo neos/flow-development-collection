@@ -48,7 +48,7 @@ class ServiceTest extends UnitTestCase
         $service = $this->getMockBuilder(I18n\Service::class)->setMethods(['getLocaleChain'])->getMock();
         $service->expects(self::atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will(self::returnValue($localeChain));
 
-        list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
+        [$result, ] = $service->getLocalizedFilename($filename, $desiredLocale);
         self::assertEquals($expectedFilename, $result);
     }
 
@@ -70,7 +70,7 @@ class ServiceTest extends UnitTestCase
         $service = $this->getMockBuilder(I18n\Service::class)->setMethods(['getLocaleChain'])->getMock();
         $service->expects(self::atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will(self::returnValue($localeChain));
 
-        list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
+        [$result, ] = $service->getLocalizedFilename($filename, $desiredLocale);
         self::assertEquals($expectedFilename, $result);
     }
 
@@ -87,7 +87,7 @@ class ServiceTest extends UnitTestCase
 
         $service = new I18n\Service();
 
-        list($result, ) = $service->getLocalizedFilename($filename, new I18n\Locale('en_GB'), true);
+        [$result, ] = $service->getLocalizedFilename($filename, new I18n\Locale('en_GB'), true);
         self::assertEquals($expectedFilename, $result);
     }
 
@@ -104,7 +104,7 @@ class ServiceTest extends UnitTestCase
 
         $service = new I18n\Service();
 
-        list($result, ) = $service->getLocalizedFilename($filename, new I18n\Locale('en_GB'), true);
+        [$result, ] = $service->getLocalizedFilename($filename, new I18n\Locale('en_GB'), true);
         self::assertEquals($expectedFilename, $result);
     }
 
@@ -117,7 +117,7 @@ class ServiceTest extends UnitTestCase
 
         $service = new I18n\Service();
 
-        list($result, ) = $service->getLocalizedFilename($filename, new I18n\Locale('pl'), true);
+        [$result, ] = $service->getLocalizedFilename($filename, new I18n\Locale('pl'), true);
         self::assertEquals($filename, $result);
     }
 
@@ -133,7 +133,7 @@ class ServiceTest extends UnitTestCase
         $service = $this->getMockBuilder(I18n\Service::class)->setMethods(['getLocaleChain'])->getMock();
         $service->expects(self::atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will(self::returnValue($localeChain));
 
-        list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
+        [$result, ] = $service->getLocalizedFilename($filename, $desiredLocale);
         self::assertEquals($filename, $result);
     }
 

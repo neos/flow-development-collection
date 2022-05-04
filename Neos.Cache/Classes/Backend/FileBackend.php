@@ -26,12 +26,12 @@ use Neos\Utility\OpcodeCacheHelper;
  */
 class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterface, FreezableBackendInterface, TaggableBackendInterface
 {
-    const SEPARATOR = '^';
+    public const SEPARATOR = '^';
 
-    const EXPIRYTIME_FORMAT = 'YmdHis';
-    const EXPIRYTIME_LENGTH = 14;
+    public const EXPIRYTIME_FORMAT = 'YmdHis';
+    public const EXPIRYTIME_LENGTH = 14;
 
-    const DATASIZE_DIGITS = 10;
+    public const DATASIZE_DIGITS = 10;
 
     /**
      * A file extension to use for each cache entry.

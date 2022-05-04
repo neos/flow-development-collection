@@ -34,7 +34,7 @@ class ResourceRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = PersistentResource::class;
+    public const ENTITY_CLASSNAME = PersistentResource::class;
 
     /**
      * @Flow\Inject

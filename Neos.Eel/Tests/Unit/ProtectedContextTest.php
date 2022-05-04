@@ -167,7 +167,7 @@ class ProtectedContextTest extends UnitTestCase
             // Simulate something like FlowQuery
             'q' => function ($value) {
                 $context = new ProtectedContext(['count' => function () use ($value) {
-                    return count($value);
+                    return is_array($value) || $value instanceof \Countable ? count($value) : 0;
                 }]);
                 $context->allow('*');
                 return $context;

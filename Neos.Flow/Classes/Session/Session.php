@@ -46,7 +46,7 @@ use Psr\Log\LoggerInterface;
  */
 class Session implements CookieEnabledInterface
 {
-    const TAG_PREFIX = 'customtag-';
+    public const TAG_PREFIX = 'customtag-';
 
     /**
      * @Flow\Inject

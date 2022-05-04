@@ -99,7 +99,7 @@ class QueryResult implements QueryResultInterface
     {
         if ($this->numberOfRows === null) {
             if (is_array($this->rows)) {
-                $this->numberOfRows = count($this->rows);
+                $this->numberOfRows = count((array) $this->rows);
             } else {
                 $this->numberOfRows = $this->query->count();
             }

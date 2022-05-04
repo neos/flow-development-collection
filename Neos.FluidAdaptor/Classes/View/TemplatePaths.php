@@ -297,7 +297,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         ]);
 
         if (strpos($partialName, ':') !== false) {
-            list($packageKey, $actualPartialName) = explode(':', $partialName);
+            [$packageKey, $actualPartialName] = explode(':', $partialName);
             $package = $this->packageManager->getPackage($packageKey);
             $patternReplacementVariables['package'] = $packageKey;
             $patternReplacementVariables['packageResourcesPath'] = $package->getResourcesPath();

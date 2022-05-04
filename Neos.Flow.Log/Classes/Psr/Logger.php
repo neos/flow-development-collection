@@ -26,7 +26,7 @@ class Logger implements LoggerInterface
 {
     use LoggerTrait;
 
-    const LOGLEVEL_MAPPING = [
+    public const LOGLEVEL_MAPPING = [
         LogLevel::EMERGENCY => LOG_EMERG,
         LogLevel::DEBUG => LOG_DEBUG,
         LogLevel::INFO => LOG_INFO,
@@ -68,7 +68,7 @@ class Logger implements LoggerInterface
     {
         $backendLogLevel = self::LOGLEVEL_MAPPING[$level];
 
-        list($packageKey, $className, $methodName) = $this->extractLegacyDataFromContext($context);
+        [$packageKey, $className, $methodName] = $this->extractLegacyDataFromContext($context);
         $additionalData = $this->removeLegacyDataFromContext($context);
 
         if ($message instanceof \Stringable) {

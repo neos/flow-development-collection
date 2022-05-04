@@ -25,8 +25,8 @@ use Neos\Flow\Configuration\ConfigurationManager;
  */
 class PointcutSettingFilter implements PointcutFilterInterface
 {
-    const PATTERN_SPLITBYEQUALSIGN = '/\s*( *= *)\s*/';
-    const PATTERN_MATCHVALUEINQUOTES = '/(?:"(?P<DoubleQuotedString>(?:\\"|[^"])*)"|\'(?P<SingleQuotedString>(?:\\\'|[^\'])*)\')/';
+    public const PATTERN_SPLITBYEQUALSIGN = '/\s*( *= *)\s*/';
+    public const PATTERN_MATCHVALUEINQUOTES = '/(?:"(?P<DoubleQuotedString>(?:\\"|[^"])*)"|\'(?P<SingleQuotedString>(?:\\\'|[^\'])*)\')/';
 
     /**
      * @var ConfigurationManager

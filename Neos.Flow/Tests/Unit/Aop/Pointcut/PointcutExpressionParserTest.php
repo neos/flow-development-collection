@@ -212,7 +212,7 @@ class PointcutExpressionParserTest extends UnitTestCase
         $parser->_call('parseDesignatorMethod', '&&', 'protected Foo->bar()', $composite);
         $filters = $composite->_get('filters');
         foreach ($filters as $operatorAndFilter) {
-            list(, $filter) = $operatorAndFilter;
+            [, $filter] = $operatorAndFilter;
             if ($filter instanceof Aop\Pointcut\PointcutMethodNameFilter) {
                 self::assertEquals('protected', $filter->getMethodVisibility());
                 return;

@@ -266,8 +266,8 @@ class FileMonitor
             $this->directoriesAndFiles = null;
         }
 
-        $changedFileCount = count($this->changedFiles);
-        $changedPathCount = count($this->changedPaths);
+        $changedFileCount = count((array) $this->changedFiles);
+        $changedPathCount = count((array) $this->changedPaths);
 
         if ($changedFileCount > 0) {
             $this->emitFilesHaveChanged($this->identifier, $this->changedFiles);

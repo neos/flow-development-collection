@@ -20,9 +20,9 @@ use Neos\Flow\Annotations as Flow;
  */
 class ConfigurationArgument
 {
-    const ARGUMENT_TYPES_STRAIGHTVALUE = 0;
-    const ARGUMENT_TYPES_OBJECT = 1;
-    const ARGUMENT_TYPES_SETTING = 2;
+    public const ARGUMENT_TYPES_STRAIGHTVALUE = 0;
+    public const ARGUMENT_TYPES_OBJECT = 1;
+    public const ARGUMENT_TYPES_SETTING = 2;
 
     /**
      * The position of the constructor argument. Counting starts at "1".

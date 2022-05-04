@@ -27,8 +27,8 @@ namespace Neos\Utility;
  */
 abstract class MediaTypes
 {
-    const PATTERN_SPLITMEDIARANGE = '/^(?P<type>(?:\*|[\.!#%&\'\`\^~\$\*\+\-\|\w]+))\/(?P<subtype>(?:\*|[\.!#%&\'\`\^~\$\*\+\-\|\w]+))(?P<parameters>.*)$/i';
-    const PATTERN_SPLITMEDIATYPE = '/^(?P<type>(?:[\.!#%&\'\`\^~\$\*\+\-\|\w]+))\/(?P<subtype>(?:[\.!#%&\'\`\^~\$\*\+\-\|\w]+))(?P<parameters>.*)$/i';
+    public const PATTERN_SPLITMEDIARANGE = '/^(?P<type>(?:\*|[\.!#%&\'\`\^~\$\*\+\-\|\w]+))\/(?P<subtype>(?:\*|[\.!#%&\'\`\^~\$\*\+\-\|\w]+))(?P<parameters>.*)$/i';
+    public const PATTERN_SPLITMEDIATYPE = '/^(?P<type>(?:[\.!#%&\'\`\^~\$\*\+\-\|\w]+))\/(?P<subtype>(?:[\.!#%&\'\`\^~\$\*\+\-\|\w]+))(?P<parameters>.*)$/i';
 
     /**
      * A map of file extensions to Internet Media Types

@@ -62,7 +62,7 @@ class PackageStorage extends FileSystemStorage
         $directories = [];
 
         if (strpos($pattern, '/') !== false) {
-            list($packageKeyPattern, $directoryPattern) = explode('/', $pattern, 2);
+            [$packageKeyPattern, $directoryPattern] = explode('/', $pattern, 2);
         } else {
             $packageKeyPattern = $pattern;
             $directoryPattern = '*';

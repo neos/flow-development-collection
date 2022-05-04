@@ -20,9 +20,9 @@ use Neos\Flow\Annotations as Flow;
  */
 class ConfigurationProperty
 {
-    const PROPERTY_TYPES_STRAIGHTVALUE = 0;
-    const PROPERTY_TYPES_OBJECT = 1;
-    const PROPERTY_TYPES_CONFIGURATION = 2;
+    public const PROPERTY_TYPES_STRAIGHTVALUE = 0;
+    public const PROPERTY_TYPES_OBJECT = 1;
+    public const PROPERTY_TYPES_CONFIGURATION = 2;
 
     /**
      * @var string Name of the property

@@ -32,12 +32,12 @@ interface MediaTypeConverterInterface extends TypeConverterInterface
      *
      * @var string
      */
-    const CONFIGURATION_MEDIA_TYPE = 'mediaType';
+    public const CONFIGURATION_MEDIA_TYPE = 'mediaType';
 
     /**
      * The default media type that should be used if no explicit media type was configured (see CONFIGURATION_MEDIA_TYPE)
      *
      * @var string
      */
-    const DEFAULT_MEDIA_TYPE = 'application/json';
+    public const DEFAULT_MEDIA_TYPE = 'application/json';
 }

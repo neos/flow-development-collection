@@ -23,5 +23,5 @@ class CommentRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = Comment::class;
+    public const ENTITY_CLASSNAME = Comment::class;
 }

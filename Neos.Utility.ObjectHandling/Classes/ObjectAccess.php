@@ -41,9 +41,9 @@ abstract class ObjectAccess
      */
     protected static $propertyGetterCache = [];
 
-    const ACCESS_GET = 0;
-    const ACCESS_SET = 1;
-    const ACCESS_PUBLIC = 2;
+    public const ACCESS_GET = 0;
+    public const ACCESS_SET = 1;
+    public const ACCESS_PUBLIC = 2;
 
     /**
      * Get a property of a given object or array.

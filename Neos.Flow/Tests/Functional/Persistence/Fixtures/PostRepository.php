@@ -22,5 +22,5 @@ class PostRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = Post::class;
+    public const ENTITY_CLASSNAME = Post::class;
 }

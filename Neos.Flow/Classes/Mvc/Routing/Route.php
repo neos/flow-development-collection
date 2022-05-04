@@ -33,9 +33,9 @@ use Neos\Utility\ObjectAccess;
  */
 class Route
 {
-    const ROUTEPART_TYPE_STATIC = 'static';
-    const ROUTEPART_TYPE_DYNAMIC = 'dynamic';
-    const PATTERN_EXTRACTROUTEPARTS = '/(?P<optionalStart>\(?)(?P<dynamic>{?)(?P<content>@?[^}{\(\)]+)}?(?P<optionalEnd>\)?)/';
+    public const ROUTEPART_TYPE_STATIC = 'static';
+    public const ROUTEPART_TYPE_DYNAMIC = 'dynamic';
+    public const PATTERN_EXTRACTROUTEPARTS = '/(?P<optionalStart>\(?)(?P<dynamic>{?)(?P<content>@?[^}{\(\)]+)}?(?P<optionalEnd>\)?)/';
 
     /**
      * Route name
@@ -528,7 +528,7 @@ class Route
             unset($routeValues['@format']);
         }
 
-        if (count($routeValues) > 0) {
+        if ((is_array($routeValues) || $routeValues instanceof \Countable ? count($routeValues) : 0) > 0) {
             $routeValues = Arrays::removeEmptyElementsRecursively($routeValues);
             $routeValues = $this->persistenceManager->convertObjectsToIdentityArrays($routeValues);
             if (!$this->appendExceedingArguments) {

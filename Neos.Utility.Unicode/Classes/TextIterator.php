@@ -19,35 +19,35 @@ use Neos\Utility\Unicode;
  */
 class TextIterator implements \Iterator
 {
-    const CODE_POINT = 1;
-    const COMB_SEQUENCE = 2;
-    const CHARACTER = 3;
-    const WORD = 4;
-    const LINE = 5;
-    const SENTENCE = 6;
+    public const CODE_POINT = 1;
+    public const COMB_SEQUENCE = 2;
+    public const CHARACTER = 3;
+    public const WORD = 4;
+    public const LINE = 5;
+    public const SENTENCE = 6;
 
-    const DONE = 'DONE';
+    public const DONE = 'DONE';
 
-    const WORD_NONE = 'WORD_NONE';
-    const WORD_NONE_LIMIT = 'WORD_NONE_LIMIT';
-    const WORD_NUMBER = 'WORD_NUMBER';
-    const WORD_NUMBER_LIMIT = 'WORD_NUMBER_LIMIT';
-    const WORD_LETTER = 'WORD_LETTER';
-    const WORD_LETTER_LIMIT = 'WORD_LETTER_LIMIT';
-    const WORD_KANA = 'WORD_KANA';
-    const WORD_KANA_LIMIT = 'WORD_KANA_LIMIT';
+    public const WORD_NONE = 'WORD_NONE';
+    public const WORD_NONE_LIMIT = 'WORD_NONE_LIMIT';
+    public const WORD_NUMBER = 'WORD_NUMBER';
+    public const WORD_NUMBER_LIMIT = 'WORD_NUMBER_LIMIT';
+    public const WORD_LETTER = 'WORD_LETTER';
+    public const WORD_LETTER_LIMIT = 'WORD_LETTER_LIMIT';
+    public const WORD_KANA = 'WORD_KANA';
+    public const WORD_KANA_LIMIT = 'WORD_KANA_LIMIT';
 
-    const LINE_SOFT = 'LINE_SOFT';
-    const LINE_SOFT_LIMIT = 'LINE_SOFT_LIMIT';
-    const LINE_HARD = 'LINE_HARD';
-    const LINE_HARD_LIMIT = 'LINE_HARD_LIMIT';
+    public const LINE_SOFT = 'LINE_SOFT';
+    public const LINE_SOFT_LIMIT = 'LINE_SOFT_LIMIT';
+    public const LINE_HARD = 'LINE_HARD';
+    public const LINE_HARD_LIMIT = 'LINE_HARD_LIMIT';
 
-    const SENTENCE_TERM = 'SENTENCE_TERM';
-    const SENTENCE_TERM_LIMIT = 'SENTENCE_TERM_LIMIT';
-    const SENTENCE_SEP = 'SENTENCE_SEP';
-    const SENTENCE_SEP_LIMIT = 'SENTENCE_SEP_LIMIT';
+    public const SENTENCE_TERM = 'SENTENCE_TERM';
+    public const SENTENCE_TERM_LIMIT = 'SENTENCE_TERM_LIMIT';
+    public const SENTENCE_SEP = 'SENTENCE_SEP';
+    public const SENTENCE_SEP_LIMIT = 'SENTENCE_SEP_LIMIT';
 
-    const REGEXP_SENTENCE_DELIMITERS = '[\.|,|!|\?|;]';
+    public const REGEXP_SENTENCE_DELIMITERS = '[\.|,|!|\?|;]';
 
     /**
      * @var integer
@@ -373,7 +373,7 @@ class TextIterator implements \Iterator
                         $this->iteratorCache->append(new TextIteratorElement($currentPart, $i, Unicode\Functions::strlen($currentPart), false));
                         $i += Unicode\Functions::strlen($currentPart);
                     }
-                    if ($j < count($delimitersMatches[0])) {
+                    if ($j < (is_array($delimitersMatches[0]) || $delimitersMatches[0] instanceof \Countable ? count($delimitersMatches[0]) : 0)) {
                         $this->iteratorCache->append(new TextIteratorElement($delimitersMatches[0][$j], $i, 1, true));
                     }
                     $i++;
@@ -438,7 +438,7 @@ class TextIterator implements \Iterator
         preg_match_all('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $this->subject, $delimitersMatches);
         $splittedSentence = preg_split('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $this->subject);
 
-        if (count($splittedSentence) == 1) {
+        if ((is_array($splittedSentence) || $splittedSentence instanceof \Countable ? count($splittedSentence) : 0) == 1) {
             $this->iteratorCache->append(new TextIteratorElement($splittedSentence[0], 0, Unicode\Functions::strlen($splittedSentence[0]), false));
             return;
         }
@@ -455,7 +455,7 @@ class TextIterator implements \Iterator
             }
             $i += $count;
 
-            if ($j >= count($delimitersMatches[0])) {
+            if ($j >= (is_array($delimitersMatches[0]) || $delimitersMatches[0] instanceof \Countable ? count($delimitersMatches[0]) : 0)) {
                 continue;
             }
             if ($currentPart !== '') {

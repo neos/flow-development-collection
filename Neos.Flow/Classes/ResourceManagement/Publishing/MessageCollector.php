@@ -27,7 +27,7 @@ use Psr\Log\LogLevel;
  */
 class MessageCollector
 {
-    const LOGLEVEL_MAPPING = [
+    public const LOGLEVEL_MAPPING = [
         Error::SEVERITY_ERROR => LogLevel::ERROR,
         Error::SEVERITY_NOTICE => LogLevel::NOTICE,
         Error::SEVERITY_OK => LogLevel::INFO,

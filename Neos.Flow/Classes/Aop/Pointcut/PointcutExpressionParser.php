@@ -31,10 +31,10 @@ use Neos\Flow\Reflection\ReflectionService;
  */
 class PointcutExpressionParser
 {
-    const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
-    const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classAnnotatedWith|class|methodAnnotatedWith|method|within|filter|setting|evaluate)/';
-    const PATTERN_MATCHVISIBILITYMODIFIER = '/^(public|protected) +/';
-    const PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION = '/(?:
+    public const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
+    public const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classAnnotatedWith|class|methodAnnotatedWith|method|within|filter|setting|evaluate)/';
+    public const PATTERN_MATCHVISIBILITYMODIFIER = '/^(public|protected) +/';
+    public const PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION = '/(?:
 														(?:
 															\s*(   "(?:\\\"|[^"])*"
 																|\(.*?\)
@@ -51,7 +51,7 @@ class PointcutExpressionParser
 														\s*,{0,1}?
 													)+
 												/x';
-    const PATTERN_MATCHRUNTIMEEVALUATIONSVALUELIST = '/(?:
+    public const PATTERN_MATCHRUNTIMEEVALUATIONSVALUELIST = '/(?:
 																	\s*(
 																		"(?:\\\"|[^"])*"
 																		|\'(?:\\\\\'|[^\'])*\'
@@ -60,7 +60,7 @@ class PointcutExpressionParser
 																	\s*,{0,1}?
 																)+
 																/x';
-    const PATTERN_MATCHMETHODNAMEANDARGUMENTS = '/^(?P<MethodName>.*)\((?P<MethodArguments>.*)\)$/';
+    public const PATTERN_MATCHMETHODNAMEANDARGUMENTS = '/^(?P<MethodName>.*)\((?P<MethodArguments>.*)\)$/';
 
     /**
      * @var ProxyClassBuilder
@@ -129,7 +129,7 @@ class PointcutExpressionParser
         $pointcutFilterComposite = new PointcutFilterComposite();
         $pointcutExpressionParts = preg_split(self::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-        $count = count($pointcutExpressionParts);
+        $count = is_array($pointcutExpressionParts) || $pointcutExpressionParts instanceof \Countable ? count($pointcutExpressionParts) : 0;
         for ($partIndex = 0; $partIndex < $count; $partIndex += 2) {
             $operator = ($partIndex > 0) ? trim($pointcutExpressionParts[$partIndex - 1]) : '&&';
             $expression = trim($pointcutExpressionParts[$partIndex]);
@@ -264,7 +264,7 @@ class PointcutExpressionParser
             throw new InvalidPointcutExpressionException('Syntax error: "->" expected in "' . $signaturePattern . '", defined in ' . $this->sourceHint, 1169027339);
         }
         $methodVisibility = $this->getVisibilityFromSignaturePattern($signaturePattern);
-        list($classPattern, $methodPattern) = explode('->', $signaturePattern, 2);
+        [$classPattern, $methodPattern] = explode('->', $signaturePattern, 2);
         if (strpos($methodPattern, '(') === false) {
             throw new InvalidPointcutExpressionException('Syntax error: "(" expected in "' . $methodPattern . '", defined in ' . $this->sourceHint, 1169144299);
         }
@@ -327,7 +327,7 @@ class PointcutExpressionParser
         if (strpos($pointcutExpression, '->') === false) {
             throw new InvalidPointcutExpressionException('Syntax error: "->" expected in "' . $pointcutExpression . '", defined in ' . $this->sourceHint, 1172219205);
         }
-        list($aspectClassName, $pointcutMethodName) = explode('->', $pointcutExpression, 2);
+        [$aspectClassName, $pointcutMethodName] = explode('->', $pointcutExpression, 2);
         $pointcutFilter = new PointcutFilter($aspectClassName, $pointcutMethodName);
         $pointcutFilter->injectProxyClassBuilder($this->proxyClassBuilder);
         $pointcutFilterComposite->addFilter($operator, $pointcutFilter);
@@ -462,7 +462,7 @@ class PointcutExpressionParser
 
         preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION, $methodArgumentsPattern, $matches);
 
-        $matchesCount = count($matches[0]);
+        $matchesCount = is_array($matches[0]) || $matches[0] instanceof \Countable ? count($matches[0]) : 0;
         for ($i = 0; $i < $matchesCount; $i++) {
             if ($matches[2][$i] === 'in' || $matches[2][$i] === 'matches') {
                 $list = [];
@@ -493,7 +493,7 @@ class PointcutExpressionParser
 
         preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION, $evaluateString, $matches);
 
-        $matchesCount = count($matches[0]);
+        $matchesCount = is_array($matches[0]) || $matches[0] instanceof \Countable ? count($matches[0]) : 0;
         for ($i = 0; $i < $matchesCount; $i++) {
             if ($matches[2][$i] === 'in' || $matches[2][$i] === 'matches') {
                 $list = [];

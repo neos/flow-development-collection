@@ -25,7 +25,7 @@ use Neos\Flow\Aop\Exception\CircularPointcutReferenceException;
  */
 class Pointcut implements PointcutFilterInterface
 {
-    const MAXIMUM_RECURSIONS = 99;
+    public const MAXIMUM_RECURSIONS = 99;
 
     /**
      * A pointcut expression which configures the pointcut

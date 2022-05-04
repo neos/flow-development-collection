@@ -35,10 +35,10 @@ class ResourceManager
     /**
      * Names of the default collections for static and persistent resources.
      */
-    const DEFAULT_STATIC_COLLECTION_NAME = 'static';
-    const DEFAULT_PERSISTENT_COLLECTION_NAME = 'persistent';
+    public const DEFAULT_STATIC_COLLECTION_NAME = 'static';
+    public const DEFAULT_PERSISTENT_COLLECTION_NAME = 'persistent';
 
-    const PUBLIC_RESSOURCE_REGEXP = '#^resource://(?<packageKey>[^/]+)/Public/(?<relativePathAndFilename>.*)#';
+    public const PUBLIC_RESSOURCE_REGEXP = '#^resource://(?<packageKey>[^/]+)/Public/(?<relativePathAndFilename>.*)#';
 
     /**
      * @Flow\Inject
@@ -441,7 +441,7 @@ class ResourceManager
     public function getPublicPackageResourceUriByPath($path)
     {
         $this->initialize();
-        list($packageKey, $relativePathAndFilename) = $this->getPackageAndPathByPublicPath($path);
+        [$packageKey, $relativePathAndFilename] = $this->getPackageAndPathByPublicPath($path);
         return $this->getPublicPackageResourceUri($packageKey, $relativePathAndFilename);
     }
 

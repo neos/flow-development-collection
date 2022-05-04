@@ -38,47 +38,47 @@ class Context
      * Authenticate as many tokens as possible but do not require
      * an authenticated token (e.g. for guest users with role Neos.Flow:Everybody).
      */
-    const AUTHENTICATE_ANY_TOKEN = 1;
+    public const AUTHENTICATE_ANY_TOKEN = 1;
 
     /**
      * Stop authentication of tokens after first successful
      * authentication of a token.
      */
-    const AUTHENTICATE_ONE_TOKEN = 2;
+    public const AUTHENTICATE_ONE_TOKEN = 2;
 
     /**
      * Authenticate all active tokens and throw an exception if
      * an active token could not be authenticated.
      */
-    const AUTHENTICATE_ALL_TOKENS = 3;
+    public const AUTHENTICATE_ALL_TOKENS = 3;
 
     /**
      * Authenticate as many tokens as possible but do not fail if
      * a token could not be authenticated and at least one token
      * could be authenticated.
      */
-    const AUTHENTICATE_AT_LEAST_ONE_TOKEN = 4;
+    public const AUTHENTICATE_AT_LEAST_ONE_TOKEN = 4;
 
     /**
      * Creates one csrf token per session
      */
-    const CSRF_ONE_PER_SESSION = 1;
+    public const CSRF_ONE_PER_SESSION = 1;
 
     /**
      * Creates one csrf token per uri
      */
-    const CSRF_ONE_PER_URI = 2;
+    public const CSRF_ONE_PER_URI = 2;
 
     /**
      * Creates one csrf token per request
      */
-    const CSRF_ONE_PER_REQUEST = 3;
+    public const CSRF_ONE_PER_REQUEST = 3;
 
     /**
      * If the security context isn't initialized (or authorization checks are disabled)
      * this constant will be returned by getContextHash()
      */
-    const CONTEXT_HASH_UNINITIALIZED = '__uninitialized__';
+    public const CONTEXT_HASH_UNINITIALIZED = '__uninitialized__';
 
     /**
      * One of the AUTHENTICATE_* constants to set the authentication strategy.
@@ -506,7 +506,7 @@ class Context
     {
         $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
         $csrfProtectionTokens = $sessionDataContainer->getCsrfProtectionTokens();
-        if ($this->csrfProtectionStrategy === self::CSRF_ONE_PER_SESSION && count($csrfProtectionTokens) === 1) {
+        if ($this->csrfProtectionStrategy === self::CSRF_ONE_PER_SESSION && (is_array($csrfProtectionTokens) || $csrfProtectionTokens instanceof \Countable ? count($csrfProtectionTokens) : 0) === 1) {
             reset($csrfProtectionTokens);
             return key($csrfProtectionTokens);
         }
@@ -537,7 +537,7 @@ class Context
     {
         $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
         $csrfProtectionTokens = $sessionDataContainer->getCsrfProtectionTokens();
-        return count($csrfProtectionTokens) > 0;
+        return (is_array($csrfProtectionTokens) || $csrfProtectionTokens instanceof \Countable ? count($csrfProtectionTokens) : 0) > 0;
     }
 
     /**

@@ -20,21 +20,21 @@ class Response
     /**
      * Constants for output styles
      */
-    const STYLE_BRIGHT = 1;
-    const STYLE_FAINT = 2;
-    const STYLE_ITALIC = 3;
-    const STYLE_UNDERLINED = 4;
-    const STYLE_INVERSE = 7;
-    const STYLE_STRIKETHROUGH = 9;
-    const STYLE_ERROR = 31;
-    const STYLE_SUCCESS = 32;
+    public const STYLE_BRIGHT = 1;
+    public const STYLE_FAINT = 2;
+    public const STYLE_ITALIC = 3;
+    public const STYLE_UNDERLINED = 4;
+    public const STYLE_INVERSE = 7;
+    public const STYLE_STRIKETHROUGH = 9;
+    public const STYLE_ERROR = 31;
+    public const STYLE_SUCCESS = 32;
 
     /**
      * Constants for output formats
      */
-    const OUTPUTFORMAT_RAW = 1;
-    const OUTPUTFORMAT_PLAIN = 2;
-    const OUTPUTFORMAT_STYLED = 3;
+    public const OUTPUTFORMAT_RAW = 1;
+    public const OUTPUTFORMAT_PLAIN = 2;
+    public const OUTPUTFORMAT_STYLED = 3;
 
     /**
      * @var integer

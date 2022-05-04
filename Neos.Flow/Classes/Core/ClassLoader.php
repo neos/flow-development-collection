@@ -26,22 +26,22 @@ class ClassLoader
     /**
      * @var string
      */
-    const MAPPING_TYPE_PSR0 = 'psr-0';
+    public const MAPPING_TYPE_PSR0 = 'psr-0';
 
     /**
      * @var string
      */
-    const MAPPING_TYPE_PSR4 = 'psr-4';
+    public const MAPPING_TYPE_PSR4 = 'psr-4';
 
     /**
      * @var string
      */
-    const MAPPING_TYPE_CLASSMAP = 'classmap';
+    public const MAPPING_TYPE_CLASSMAP = 'classmap';
 
     /**
      * @var string
      */
-    const MAPPING_TYPE_FILES = 'files';
+    public const MAPPING_TYPE_FILES = 'files';
 
     /**
      * A list of namespaces this class loader is definitely responsible for.

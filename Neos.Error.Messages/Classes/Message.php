@@ -18,10 +18,10 @@ namespace Neos\Error\Messages;
  */
 class Message
 {
-    const SEVERITY_NOTICE = 'Notice';
-    const SEVERITY_WARNING = 'Warning';
-    const SEVERITY_ERROR = 'Error';
-    const SEVERITY_OK = 'OK';
+    public const SEVERITY_NOTICE = 'Notice';
+    public const SEVERITY_WARNING = 'Warning';
+    public const SEVERITY_ERROR = 'Error';
+    public const SEVERITY_OK = 'OK';
 
     /**
      * The error message, could also be a key for translation.

@@ -38,57 +38,57 @@ class ArrayConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    const CONFIGURATION_STRING_DELIMITER = 'stringDelimiter';
+    public const CONFIGURATION_STRING_DELIMITER = 'stringDelimiter';
 
     /**
      * @var string
      */
-    const DEFAULT_STRING_DELIMITER = ',';
+    public const DEFAULT_STRING_DELIMITER = ',';
 
     /**
      * @var string
      */
-    const CONFIGURATION_STRING_FORMAT = 'stringFormat';
+    public const CONFIGURATION_STRING_FORMAT = 'stringFormat';
 
     /**
      * @var string
      */
-    const DEFAULT_STRING_FORMAT = self::STRING_FORMAT_CSV;
+    public const DEFAULT_STRING_FORMAT = self::STRING_FORMAT_CSV;
 
     /**
      * @var string
      */
-    const STRING_FORMAT_CSV = 'csv';
+    public const STRING_FORMAT_CSV = 'csv';
 
     /**
      * @var string
      */
-    const STRING_FORMAT_JSON = 'json';
+    public const STRING_FORMAT_JSON = 'json';
 
     /**
      * @var string
      */
-    const CONFIGURATION_RESOURCE_EXPORT_TYPE = 'resourceExportType';
+    public const CONFIGURATION_RESOURCE_EXPORT_TYPE = 'resourceExportType';
 
     /**
      * @var string
      */
-    const DEFAULT_RESOURCE_EXPORT_TYPE = self::RESOURCE_EXPORT_TYPE_BASE64;
+    public const DEFAULT_RESOURCE_EXPORT_TYPE = self::RESOURCE_EXPORT_TYPE_BASE64;
 
     /**
      * @var string
      */
-    const RESOURCE_EXPORT_TYPE_BASE64 = 'base64';
+    public const RESOURCE_EXPORT_TYPE_BASE64 = 'base64';
 
     /**
      * @var string
      */
-    const RESOURCE_EXPORT_TYPE_FILE = 'file';
+    public const RESOURCE_EXPORT_TYPE_FILE = 'file';
 
     /**
      * @var string
      */
-    const CONFIGURATION_RESOURCE_SAVE_PATH = 'resourceSavePath';
+    public const CONFIGURATION_RESOURCE_SAVE_PATH = 'resourceSavePath';
 
     /**
      * @var array<string>

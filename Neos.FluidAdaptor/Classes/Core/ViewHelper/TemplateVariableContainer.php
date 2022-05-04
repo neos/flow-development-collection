@@ -24,7 +24,7 @@ use TYPO3Fluid\Fluid\Core\Variables\VariableProviderInterface;
  */
 class TemplateVariableContainer extends StandardVariableProvider implements VariableProviderInterface
 {
-    const ACCESSOR_OBJECT_ACCESS = 'object_access';
+    public const ACCESSOR_OBJECT_ACCESS = 'object_access';
 
     /**
      * Get a variable by dotted path expression, retrieving the

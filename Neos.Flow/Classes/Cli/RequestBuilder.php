@@ -30,7 +30,7 @@ class RequestBuilder
     /**
      * This is used to parse the command line, when it's passed as a string
      */
-    const ARGUMENT_MATCHING_EXPRESSION = '/     # An argument is either...
+    public const ARGUMENT_MATCHING_EXPRESSION = '/     # An argument is either...
 		\'(?P<SingleQuotes>                     # a single-quoted string
 			(?:\\\\\'|[^\'])*                   # (internally: contains escaped single quotes or everything not being single quotes)
 		)\'
@@ -159,7 +159,7 @@ class RequestBuilder
         $request->setControllerObjectName($controllerObjectName);
         $request->setControllerCommandName($controllerCommandName);
 
-        list($commandLineArguments, $exceedingCommandLineArguments) = $this->parseRawCommandLineArguments($rawCommandLineArguments, $controllerObjectName, $controllerCommandName);
+        [$commandLineArguments, $exceedingCommandLineArguments] = $this->parseRawCommandLineArguments($rawCommandLineArguments, $controllerObjectName, $controllerCommandName);
         $request->setArguments($commandLineArguments);
         $request->setExceedingArguments($exceedingCommandLineArguments);
 
@@ -203,7 +203,7 @@ class RequestBuilder
 
         $decidedToUseNamedArguments = false;
         $decidedToUseUnnamedArguments = false;
-        while (count($rawCommandLineArguments) > 0) {
+        while ((is_array($rawCommandLineArguments) || $rawCommandLineArguments instanceof \Countable ? count($rawCommandLineArguments) : 0) > 0) {
             $rawArgument = array_shift($rawCommandLineArguments);
 
             if ($rawArgument !== '' && $rawArgument[0] === '-') {

@@ -383,7 +383,7 @@ class ActionController extends AbstractController
      */
     protected function initializeActionMethodValidators()
     {
-        list($validateGroupAnnotations, $actionMethodParameters, $actionValidateAnnotations, $actionIgnoredArguments) = $this->getInformationNeededForInitializeActionMethodValidators();
+        [$validateGroupAnnotations, $actionMethodParameters, $actionValidateAnnotations, $actionIgnoredArguments] = $this->getInformationNeededForInitializeActionMethodValidators();
 
         if (isset($validateGroupAnnotations[$this->actionMethodName])) {
             $validationGroups = $validateGroupAnnotations[$this->actionMethodName];

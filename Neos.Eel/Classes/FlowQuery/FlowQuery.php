@@ -109,7 +109,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      */
     public function __construct($context, array $operations = [])
     {
-        if (!(is_array($context) || $context instanceof \Traversable)) {
+        if (!(is_iterable($context))) {
             throw new Exception('The FlowQuery context must be an array or implement \Traversable but context was a ' . gettype($context), 1380816689);
         }
         if ($context instanceof FlowQuery) {
@@ -128,7 +128,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      */
     public static function q($element): self
     {
-        return new static(is_array($element) || $element instanceof \Traversable ? $element : [$element]);
+        return new static(is_iterable($element) ? $element : [$element]);
     }
 
     /**

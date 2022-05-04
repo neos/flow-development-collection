@@ -63,7 +63,7 @@ class CldrModelTest extends UnitTestCase
     public function returnsRawArrayCorrectly()
     {
         $result = $this->model->getRawArray('dates/calendars/calendar[@type="gregorian"]/months/monthContext[@type="format"]/monthWidth[@type="abbreviated"]');
-        self::assertEquals(2, count($result));
+        self::assertEquals(2, is_array($result) || $result instanceof \Countable ? count($result) : 0);
         self::assertEquals('jan', $result['month[@type="1"]']);
     }
 

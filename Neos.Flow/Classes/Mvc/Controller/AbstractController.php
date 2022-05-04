@@ -198,7 +198,7 @@ abstract class AbstractController implements ControllerInterface
             $nextRequest->setControllerName($controllerName);
         }
         if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
-            list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
+            [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
         } else {
             $subpackageKey = null;
         }
@@ -267,7 +267,7 @@ abstract class AbstractController implements ControllerInterface
     protected function redirect($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $delay = 0, $statusCode = 303, $format = null)
     {
         if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
-            list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
+            [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
         } else {
             $subpackageKey = null;
         }

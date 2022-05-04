@@ -99,7 +99,7 @@ class PluralsReaderTest extends UnitTestCase
     {
         $locale = new I18n\Locale($localeName);
         foreach ($quantities as $value) {
-            list($quantity, $pluralForm) = $value;
+            [$quantity, $pluralForm] = $value;
             $result = $this->reader->getPluralForm($quantity, $locale);
             self::assertEquals($pluralForm, $result);
         }

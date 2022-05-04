@@ -18,8 +18,8 @@ namespace Neos\Flow\Package;
  */
 interface PackageInterface
 {
-    const PATTERN_MATCH_PACKAGEKEY = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i';
-    const DEFAULT_COMPOSER_TYPE = 'neos-package';
+    public const PATTERN_MATCH_PACKAGEKEY = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i';
+    public const DEFAULT_COMPOSER_TYPE = 'neos-package';
 
     /**
      * Returns the array of filenames of the class files

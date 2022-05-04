@@ -34,10 +34,10 @@ class Bootstrap
     /**
      * Required PHP version
      */
-    const MINIMUM_PHP_VERSION = '8.0.0';
+    public const MINIMUM_PHP_VERSION = '8.0.0';
 
-    const RUNLEVEL_COMPILETIME = 'Compiletime';
-    const RUNLEVEL_RUNTIME = 'Runtime';
+    public const RUNLEVEL_COMPILETIME = 'Compiletime';
+    public const RUNLEVEL_RUNTIME = 'Runtime';
 
     /**
      * @var ApplicationContext
@@ -236,7 +236,7 @@ class Bootstrap
         $shortControllerIdentifier = implode(':', $commandIdentifierParts);
 
         foreach ($this->compiletimeCommands as $fullControllerIdentifier => $isCompiletimeCommandController) {
-            list($packageKey, $controllerName, $commandName) = explode(':', $fullControllerIdentifier);
+            [$packageKey, $controllerName, $commandName] = explode(':', $fullControllerIdentifier);
             $packageKeyParts = explode('.', $packageKey);
             $packageKeyPartsCount = count($packageKeyParts);
             for ($offset = 0; $offset < $packageKeyPartsCount; $offset++) {

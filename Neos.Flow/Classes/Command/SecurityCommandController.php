@@ -312,7 +312,7 @@ class SecurityCommandController extends CommandController
         }
         $privilegeParameters = [];
         foreach ($this->request->getExceedingArguments() as $argument) {
-            list($argumentName, $argumentValue) = explode(':', $argument, 2);
+            [$argumentName, $argumentValue] = explode(':', $argument, 2);
             $privilegeParameters[$argumentName] = $argumentValue;
         }
         $privilege = $privilegeTargetInstance->createPrivilege(PrivilegeInterface::GRANT, $privilegeParameters);

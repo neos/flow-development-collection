@@ -176,7 +176,7 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
         }
 
         $commentAssociationMapping = $classMetadata->getAssociationMapping('comment');
-        self::assertEquals(1, count($commentAssociationMapping['joinColumns']));
+        self::assertEquals(1, is_array($commentAssociationMapping['joinColumns']) || $commentAssociationMapping['joinColumns'] instanceof \Countable ? count($commentAssociationMapping['joinColumns']) : 0);
         foreach (array_keys($expectedCommentAssociationMapping) as $key) {
             self::assertEquals($expectedCommentAssociationMapping[$key], $commentAssociationMapping[$key], 'mapping for "comment" not as expected');
         }

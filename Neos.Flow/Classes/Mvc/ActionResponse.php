@@ -215,7 +215,7 @@ final class ActionResponse
             return null;
         }
 
-        return count($this->headers[$headerName]) > 1 ? $this->headers[$headerName] : reset($this->headers[$headerName]);
+        return (is_array($this->headers[$headerName]) || $this->headers[$headerName] instanceof \Countable ? count($this->headers[$headerName]) : 0) > 1 ? $this->headers[$headerName] : reset($this->headers[$headerName]);
     }
 
     /**

@@ -42,12 +42,12 @@ class ObjectConverter extends AbstractTypeConverter
     /**
      * @var integer
      */
-    const CONFIGURATION_TARGET_TYPE = 3;
+    public const CONFIGURATION_TARGET_TYPE = 3;
 
     /**
      * @var integer
      */
-    const CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED = 4;
+    public const CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED = 4;
 
     /**
      * @var array

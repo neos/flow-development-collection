@@ -19,7 +19,7 @@ use Neos\Eel\ProtectedContextAwareInterface;
  */
 class TranslationHelper implements ProtectedContextAwareInterface
 {
-    const I18N_LABEL_ID_PATTERN = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+:[a-z0-9.]+:.+$/i';
+    public const I18N_LABEL_ID_PATTERN = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+:[a-z0-9.]+:.+$/i';
 
     /**
      * Get the translated value for an id or original label
@@ -135,7 +135,7 @@ class TranslationHelper implements ProtectedContextAwareInterface
     {
         $shortHandStringParts = explode(':', $shortHandString);
         if (count($shortHandStringParts) === 3) {
-            list($package, $source, $id) = $shortHandStringParts;
+            [$package, $source, $id] = $shortHandStringParts;
             return $this->createTranslationParameterToken($id)
                 ->package($package)
                 ->source(str_replace('.', '/', $source))

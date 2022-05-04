@@ -751,8 +751,7 @@ class PackageManager
 
         try {
             $this->emitPackageStatesUpdated();
-        } catch (InvalidSlotException $e) {
-        } catch (\Neos\Flow\Exception $e) {
+        } catch (InvalidSlotException|\Neos\Flow\Exception $e) {
         }
     }
 

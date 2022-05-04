@@ -23,8 +23,8 @@ class ClassSchema
     /**
      * Available model types
      */
-    const MODELTYPE_ENTITY = 1;
-    const MODELTYPE_VALUEOBJECT = 2;
+    public const MODELTYPE_ENTITY = 1;
+    public const MODELTYPE_VALUEOBJECT = 2;
 
     /**
      * Name of the class this schema is referring to

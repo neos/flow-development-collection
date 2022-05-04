@@ -45,7 +45,7 @@ abstract class LogEnvironment
     {
         $className = null;
         if (strpos($methodName, '::') > 0) {
-            list($className, $functionName) = explode('::', $methodName);
+            [$className, $functionName] = explode('::', $methodName);
         } elseif (substr($methodName, -9, 9) === '{closure}') {
             $className = substr($methodName, 0, -9);
             $functionName = '{closure}';

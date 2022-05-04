@@ -46,7 +46,7 @@ class Ip
             $bits = null;
             $subnet = $range;
         } else {
-            list($subnet, $bits) = explode('/', $range);
+            [$subnet, $bits] = explode('/', $range);
         }
 
         $ip = inet_pton($ip);

@@ -298,7 +298,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         // Wrap an array with functions inside a context
         $contextArray = [
             'count' => function ($array) {
-                return count($array);
+                return is_array($array) || $array instanceof \Countable ? count($array) : 0;
             },
             'pow' => function ($base, $exp) {
                 return $base ** $exp;

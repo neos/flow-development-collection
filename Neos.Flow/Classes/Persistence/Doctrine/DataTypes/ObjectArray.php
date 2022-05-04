@@ -23,7 +23,7 @@ class ObjectArray extends Types\ArrayType
     /**
      * @var string
      */
-    const OBJECTARRAY = 'objectarray';
+    public const OBJECTARRAY = 'objectarray';
 
     /**
      * @var PersistenceManagerInterface

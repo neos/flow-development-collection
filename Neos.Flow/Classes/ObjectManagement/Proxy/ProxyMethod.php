@@ -22,8 +22,8 @@ use Neos\Flow\Reflection\ReflectionService;
  */
 class ProxyMethod
 {
-    const BEFORE_PARENT_CALL = 1;
-    const AFTER_PARENT_CALL = 2;
+    public const BEFORE_PARENT_CALL = 1;
+    public const AFTER_PARENT_CALL = 2;
 
     /**
      * Fully qualified class name of the original class

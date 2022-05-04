@@ -21,7 +21,7 @@ use Neos\Flow\Annotations as Flow;
  */
 class Package extends BasePackage
 {
-    const EelExpressionRecognizer = '/
+    public const EelExpressionRecognizer = '/
 			^\${(?P<exp>
 				(?:
 					{ (?P>exp) }			# match object literal expression recursively

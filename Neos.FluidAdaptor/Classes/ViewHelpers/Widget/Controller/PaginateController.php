@@ -72,7 +72,7 @@ class PaginateController extends AbstractWidgetController
     {
         $this->objects = $this->widgetConfiguration['objects'];
         $this->configuration = Arrays::arrayMergeRecursiveOverrule($this->configuration, $this->widgetConfiguration['configuration'], true);
-        $this->numberOfPages = (integer)ceil(count($this->objects) / (integer)$this->configuration['itemsPerPage']);
+        $this->numberOfPages = (integer)ceil((is_array($this->objects) || $this->objects instanceof \Countable ? count($this->objects) : 0) / (integer)$this->configuration['itemsPerPage']);
         $this->maximumNumberOfLinks = (integer)$this->configuration['maximumNumberOfLinks'];
     }
 

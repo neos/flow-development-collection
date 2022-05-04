@@ -23,7 +23,7 @@ use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
 class FlashMessageCookieStorage implements FlashMessageStorageInterface
 {
-    const DEFAULT_COOKIE_NAME = 'Neos_Flow_FlashMessages';
+    public const DEFAULT_COOKIE_NAME = 'Neos_Flow_FlashMessages';
 
     /**
      * @var array

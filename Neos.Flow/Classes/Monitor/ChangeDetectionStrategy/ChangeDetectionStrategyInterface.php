@@ -20,10 +20,10 @@ use Neos\Flow\Monitor\FileMonitor;
  */
 interface ChangeDetectionStrategyInterface
 {
-    const STATUS_UNCHANGED = 0;
-    const STATUS_CREATED = 1;
-    const STATUS_CHANGED = 2;
-    const STATUS_DELETED = 3;
+    public const STATUS_UNCHANGED = 0;
+    public const STATUS_CREATED = 1;
+    public const STATUS_CHANGED = 2;
+    public const STATUS_DELETED = 3;
 
     /**
      * Checks if the specified file has changed

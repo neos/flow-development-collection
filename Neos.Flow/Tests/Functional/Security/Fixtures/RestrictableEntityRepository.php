@@ -23,5 +23,5 @@ class RestrictableEntityRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = RestrictableEntity::class;
+    public const ENTITY_CLASSNAME = RestrictableEntity::class;
 }

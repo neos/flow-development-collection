@@ -107,7 +107,7 @@ class KickstartCommandController extends CommandController
     {
         $subpackageName = '';
         if (strpos($packageKey, '/') !== false) {
-            list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
+            [$packageKey, $subpackageName] = explode('/', $packageKey, 2);
         }
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -239,7 +239,7 @@ class KickstartCommandController extends CommandController
         $fieldsArguments = $this->request->getExceedingArguments();
         $fieldDefinitions = [];
         foreach ($fieldsArguments as $fieldArgument) {
-            list($fieldName, $fieldType) = explode(':', $fieldArgument, 2);
+            [$fieldName, $fieldType] = explode(':', $fieldArgument, 2);
 
             $fieldDefinitions[$fieldName] = ['type' => $fieldType];
             if (strpos($fieldType, 'array') !== false) {

@@ -61,46 +61,46 @@ use Psr\Log\LogLevel;
  */
 class ReflectionService
 {
-    const VISIBILITY_PRIVATE = 1;
-    const VISIBILITY_PROTECTED = 2;
-    const VISIBILITY_PUBLIC = 3;
+    public const VISIBILITY_PRIVATE = 1;
+    public const VISIBILITY_PROTECTED = 2;
+    public const VISIBILITY_PUBLIC = 3;
 
     // Implementations of an interface
-    const DATA_INTERFACE_IMPLEMENTATIONS = 1;
+    public const DATA_INTERFACE_IMPLEMENTATIONS = 1;
 
     // Implemented interfaces of a class
-    const DATA_CLASS_INTERFACES = 2;
+    public const DATA_CLASS_INTERFACES = 2;
 
     // Subclasses of a class
-    const DATA_CLASS_SUBCLASSES = 3;
+    public const DATA_CLASS_SUBCLASSES = 3;
 
     // Class tag values
-    const DATA_CLASS_TAGS_VALUES = 4;
+    public const DATA_CLASS_TAGS_VALUES = 4;
 
     // Class annotations
-    const DATA_CLASS_ANNOTATIONS = 5;
-    const DATA_CLASS_ABSTRACT = 6;
-    const DATA_CLASS_FINAL = 7;
-    const DATA_CLASS_METHODS = 8;
-    const DATA_CLASS_PROPERTIES = 9;
-    const DATA_METHOD_FINAL = 10;
-    const DATA_METHOD_STATIC = 11;
-    const DATA_METHOD_VISIBILITY = 12;
-    const DATA_METHOD_PARAMETERS = 13;
-    const DATA_METHOD_DECLARED_RETURN_TYPE = 25;
-    const DATA_PROPERTY_TAGS_VALUES = 14;
-    const DATA_PROPERTY_ANNOTATIONS = 15;
-    const DATA_PROPERTY_VISIBILITY = 24;
-    const DATA_PROPERTY_TYPE = 26;
-    const DATA_PARAMETER_POSITION = 16;
-    const DATA_PARAMETER_OPTIONAL = 17;
-    const DATA_PARAMETER_TYPE = 18;
-    const DATA_PARAMETER_ARRAY = 19;
-    const DATA_PARAMETER_CLASS = 20;
-    const DATA_PARAMETER_ALLOWS_NULL = 21;
-    const DATA_PARAMETER_DEFAULT_VALUE = 22;
-    const DATA_PARAMETER_BY_REFERENCE = 23;
-    const DATA_PARAMETER_SCALAR_DECLARATION = 24;
+    public const DATA_CLASS_ANNOTATIONS = 5;
+    public const DATA_CLASS_ABSTRACT = 6;
+    public const DATA_CLASS_FINAL = 7;
+    public const DATA_CLASS_METHODS = 8;
+    public const DATA_CLASS_PROPERTIES = 9;
+    public const DATA_METHOD_FINAL = 10;
+    public const DATA_METHOD_STATIC = 11;
+    public const DATA_METHOD_VISIBILITY = 12;
+    public const DATA_METHOD_PARAMETERS = 13;
+    public const DATA_METHOD_DECLARED_RETURN_TYPE = 25;
+    public const DATA_PROPERTY_TAGS_VALUES = 14;
+    public const DATA_PROPERTY_ANNOTATIONS = 15;
+    public const DATA_PROPERTY_VISIBILITY = 24;
+    public const DATA_PROPERTY_TYPE = 26;
+    public const DATA_PARAMETER_POSITION = 16;
+    public const DATA_PARAMETER_OPTIONAL = 17;
+    public const DATA_PARAMETER_TYPE = 18;
+    public const DATA_PARAMETER_ARRAY = 19;
+    public const DATA_PARAMETER_CLASS = 20;
+    public const DATA_PARAMETER_ALLOWS_NULL = 21;
+    public const DATA_PARAMETER_DEFAULT_VALUE = 22;
+    public const DATA_PARAMETER_BY_REFERENCE = 23;
+    public const DATA_PARAMETER_SCALAR_DECLARATION = 24;
 
     /**
      * @var \Doctrine\Common\Annotations\Reader

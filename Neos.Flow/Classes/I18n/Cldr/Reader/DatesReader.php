@@ -37,56 +37,56 @@ class DatesReader
      *
      * @var string
      */
-    const FORMAT_TYPE_DATE = 'date';
+    public const FORMAT_TYPE_DATE = 'date';
 
     /**
      * Constant for time-only format
      *
      * @var string
      */
-    const FORMAT_TYPE_TIME = 'time';
+    public const FORMAT_TYPE_TIME = 'time';
 
     /**
      * Constant for date and time format
      *
      * @var string
      */
-    const FORMAT_TYPE_DATETIME = 'dateTime';
+    public const FORMAT_TYPE_DATETIME = 'dateTime';
 
     /**
      * Constant for default length
      *
      * @var string
      */
-    const FORMAT_LENGTH_DEFAULT = 'default';
+    public const FORMAT_LENGTH_DEFAULT = 'default';
 
     /**
      * Constant for full length
      *
      * @var string
      */
-    const FORMAT_LENGTH_FULL = 'full';
+    public const FORMAT_LENGTH_FULL = 'full';
 
     /**
      * Constant for long length
      *
      * @var string
      */
-    const FORMAT_LENGTH_LONG = 'long';
+    public const FORMAT_LENGTH_LONG = 'long';
 
     /**
      * Constant for medium length
      *
      * @var string
      */
-    const FORMAT_LENGTH_MEDIUM = 'medium';
+    public const FORMAT_LENGTH_MEDIUM = 'medium';
 
     /**
      * Constant for short length
      *
      * @var string
      */
-    const FORMAT_LENGTH_SHORT = 'short';
+    public const FORMAT_LENGTH_SHORT = 'short';
 
     /**
      * @var CldrRepository

@@ -29,7 +29,7 @@ class Compiler
     /**
      * @var string
      */
-    const ORIGINAL_CLASSNAME_SUFFIX = '_Original';
+    public const ORIGINAL_CLASSNAME_SUFFIX = '_Original';
 
     /**
      * @var CompileTimeObjectManager

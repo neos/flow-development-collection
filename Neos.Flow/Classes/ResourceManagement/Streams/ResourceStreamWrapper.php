@@ -27,7 +27,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
     /**
      * @const string
      */
-    const SCHEME = 'resource';
+    public const SCHEME = 'resource';
 
     /**
      * @var resource
@@ -505,7 +505,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
             return $this->resourceManager->getStreamByResource($resource);
         }
 
-        list($packageName, $path) = explode('/', $resourceUriWithoutScheme, 2);
+        [$packageName, $path] = explode('/', $resourceUriWithoutScheme, 2);
 
         try {
             $package = $this->packageManager->getPackage($packageName);

@@ -48,7 +48,7 @@ class SchemaGenerator
                 $schema = $this->generateStringSchema($value);
                 break;
             case 'array':
-                $isDictionary = array_keys($value) !== range(0, count($value) - 1);
+                $isDictionary = array_keys($value) !== range(0, (is_array($value) || $value instanceof \Countable ? count($value) : 0) - 1);
                 if ($isDictionary) {
                     $schema = $this->generateDictionarySchema($value);
                 } else {

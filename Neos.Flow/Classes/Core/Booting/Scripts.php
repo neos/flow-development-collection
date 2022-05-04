@@ -682,7 +682,7 @@ class Scripts
         $command .= ' 2>&1';
         exec($command, $output, $result);
         if ($result !== 0) {
-            if (count($output) > 0) {
+            if ((is_array($output) || $output instanceof \Countable ? count($output) : 0) > 0) {
                 $exceptionMessage = implode(PHP_EOL, $output);
             } else {
                 $exceptionMessage = sprintf('Execution of subprocess failed with exit code %d without any further output. (Please check your PHP error log for possible Fatal errors)', $result);

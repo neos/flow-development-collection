@@ -422,7 +422,7 @@ class ProxyClassBuilder
         $this->addAdvicedMethodsToInterceptedMethods($interceptedMethods, array_merge($methodsFromTargetClass, $methodsFromIntroducedInterfaces), $targetClassName, $aspectContainers);
         $this->addIntroducedMethodsToInterceptedMethods($interceptedMethods, $methodsFromIntroducedInterfaces);
 
-        if (count($interceptedMethods) < 1 && count($introducedInterfaces) < 1 && count($introducedTraits) < 1 && count($propertyIntroductions) < 1) {
+        if ((is_array($interceptedMethods) || $interceptedMethods instanceof \Countable ? count($interceptedMethods) : 0) < 1 && count($introducedInterfaces) < 1 && count($introducedTraits) < 1 && count($propertyIntroductions) < 1) {
             return false;
         }
 
@@ -619,7 +619,7 @@ class ProxyClassBuilder
     protected function buildMethodsInterceptorCode(string $targetClassName, array $interceptedMethods): void
     {
         foreach ($interceptedMethods as $methodName => $methodMetaInformation) {
-            if (count($methodMetaInformation['groupedAdvices']) === 0) {
+            if ((is_array($methodMetaInformation['groupedAdvices']) || $methodMetaInformation['groupedAdvices'] instanceof \Countable ? count($methodMetaInformation['groupedAdvices']) : 0) === 0) {
                 throw new Aop\Exception\VoidImplementationException(sprintf('Refuse to introduce method %s into target class %s because it has no implementation code. You might want to create an around advice which implements this method.', $methodName, $targetClassName), 1303224472);
             }
             $builderType = 'Adviced' . ($methodName === '__construct' ? 'Constructor' : 'Method');
@@ -648,7 +648,7 @@ class ProxyClassBuilder
             foreach ($aspectContainer->getAdvisors() as $advisor) {
                 $pointcut = $advisor->getPointcut();
                 foreach ($methods as $method) {
-                    list($methodDeclaringClassName, $methodName) = $method;
+                    [$methodDeclaringClassName, $methodName] = $method;
 
                     if ($this->reflectionService->isMethodStatic($targetClassName, $methodName)) {
                         continue;
@@ -679,7 +679,7 @@ class ProxyClassBuilder
     protected function addIntroducedMethodsToInterceptedMethods(array &$interceptedMethods, array $methodsFromIntroducedInterfaces): void
     {
         foreach ($methodsFromIntroducedInterfaces as $interfaceAndMethodName) {
-            list($interfaceName, $methodName) = $interfaceAndMethodName;
+            [$interfaceName, $methodName] = $interfaceAndMethodName;
             if (!isset($interceptedMethods[$methodName])) {
                 $interceptedMethods[$methodName]['groupedAdvices'] = [];
                 $interceptedMethods[$methodName]['declaringClassName'] = $interfaceName;

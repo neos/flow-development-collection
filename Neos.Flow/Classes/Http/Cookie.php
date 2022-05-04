@@ -25,26 +25,26 @@ class Cookie
     /**
      * A token as per RFC 2616, Section 2.2
      */
-    const PATTERN_TOKEN = '/^([\x21\x23-\x27\x2A-\x2E0-9A-Z\x5E-\x60a-z\x7C\x7E]+)$/';
+    public const PATTERN_TOKEN = '/^([\x21\x23-\x27\x2A-\x2E0-9A-Z\x5E-\x60a-z\x7C\x7E]+)$/';
 
     /**
      * The max age pattern as per RFC 6265, Section 5.2.2
      */
-    const PATTERN_MAX_AGE = '/^\-?\d+$/';
+    public const PATTERN_MAX_AGE = '/^\-?\d+$/';
 
     /**
      * A simplified pattern for a basically valid domain (<subdomain>) as per RFC 6265, 4.1.1 / RFC 1034, 3.5 + RFC 1123, 2.1
      */
-    const PATTERN_DOMAIN = '/^([a-z0-9]+[a-z0-9.-]*[a-z0-9])$|([0-9\.]+[0-9])$/i';
+    public const PATTERN_DOMAIN = '/^([a-z0-9]+[a-z0-9.-]*[a-z0-9])$|([0-9\.]+[0-9])$/i';
 
     /**
      * A path as per RFC 6265, 4.1.1
      */
-    const PATTERN_PATH = '/^([\x20-\x3A\x3C-\x7E])+$/';
+    public const PATTERN_PATH = '/^([\x20-\x3A\x3C-\x7E])+$/';
 
-    const SAMESITE_NONE = 'none';
-    const SAMESITE_LAX = 'lax';
-    const SAMESITE_STRICT = 'strict';
+    public const SAMESITE_NONE = 'none';
+    public const SAMESITE_LAX = 'lax';
+    public const SAMESITE_STRICT = 'strict';
 
     /**
      * Cookie Name, a token (RFC 6265, 4.1.1)

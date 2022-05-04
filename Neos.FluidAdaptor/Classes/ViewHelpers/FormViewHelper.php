@@ -259,7 +259,7 @@ class FormViewHelper extends AbstractFormViewHelper
             $queryParts = explode('&', $query);
             foreach ($queryParts as $queryPart) {
                 if (strpos($queryPart, '=') !== false) {
-                    list($parameterName, $parameterValue) = explode('=', $queryPart, 2);
+                    [$parameterName, $parameterValue] = explode('=', $queryPart, 2);
                     $result .= chr(10) . '<input type="hidden" name="' . htmlspecialchars(urldecode($parameterName)) . '" value="' . htmlspecialchars(urldecode($parameterValue)) . '" />';
                 }
             }

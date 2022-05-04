@@ -333,7 +333,7 @@ class CompileTimeObjectManager extends ObjectManager
 
                 $objects[$objectName]['fa'] = [];
                 $factoryMethodArguments = $objectConfiguration->getFactoryArguments();
-                if (count($factoryMethodArguments) > 0) {
+                if ((is_array($factoryMethodArguments) || $factoryMethodArguments instanceof \Countable ? count($factoryMethodArguments) : 0) > 0) {
                     foreach ($factoryMethodArguments as $index => $argument) {
                         $objects[$objectName]['fa'][$index] = [
                             't' => $argument->getType(),
@@ -376,7 +376,7 @@ class CompileTimeObjectManager extends ObjectManager
             return $this->objects[$objectName]['i'];
         }
 
-        if (isset($this->objectConfigurations[$objectName]) && count($this->objectConfigurations[$objectName]->getArguments()) > 0) {
+        if (isset($this->objectConfigurations[$objectName]) && (is_array($this->objectConfigurations[$objectName]->getArguments()) || $this->objectConfigurations[$objectName]->getArguments() instanceof \Countable ? count($this->objectConfigurations[$objectName]->getArguments()) : 0) > 0) {
             throw new Exception\CannotBuildObjectException('Cannot build object "' . $objectName . '" because constructor injection is not available in the compile time Object Manager. Refactor your code to use setter injection instead. Configuration source: ' . $this->objectConfigurations[$objectName]->getConfigurationSourceHint() . '. Build stack: ' . implode(', ', $this->objectNameBuildStack), 1297090026);
         }
         if (!isset($this->objects[$objectName])) {

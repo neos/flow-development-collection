@@ -23,8 +23,8 @@ use Neos\Cache\Frontend\FrontendInterface;
  */
 abstract class AbstractBackend implements BackendInterface
 {
-    const DATETIME_EXPIRYTIME_UNLIMITED = '9999-12-31T23:59:59+0000';
-    const UNLIMITED_LIFETIME = 0;
+    public const DATETIME_EXPIRYTIME_UNLIMITED = '9999-12-31T23:59:59+0000';
+    public const UNLIMITED_LIFETIME = 0;
 
     /**
      * Reference to the cache frontend which uses this backend

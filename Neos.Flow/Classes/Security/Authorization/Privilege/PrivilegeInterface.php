@@ -22,9 +22,9 @@ use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
  */
 interface PrivilegeInterface extends CacheAwareInterface
 {
-    const ABSTAIN = 'abstain';
-    const GRANT = 'grant';
-    const DENY = 'deny';
+    public const ABSTAIN = 'abstain';
+    public const GRANT = 'grant';
+    public const DENY = 'deny';
 
     /**
      * Note: We can't define constructors in interfaces, but this is assumed to exist in the concrete implementation!

@@ -27,7 +27,7 @@ class ObjectPathMappingRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = ObjectPathMapping::class;
+    public const ENTITY_CLASSNAME = ObjectPathMapping::class;
 
     /**
      * Doctrine's Entity Manager.

@@ -26,5 +26,5 @@ class NonstandardEntityRepository extends Repository
      * Not using a ::class constant, since the class does not actually exist
      * @var string
      */
-    const ENTITY_CLASSNAME = 'Neos\Flow\Tests\Persistence\Fixture\Model\Entity';
+    public const ENTITY_CLASSNAME = 'Neos\Flow\Tests\Persistence\Fixture\Model\Entity';
 }

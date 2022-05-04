@@ -27,15 +27,15 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class TrustedProxiesMiddleware implements MiddlewareInterface
 {
-    const HEADER_CLIENT_IP = 'clientIp';
-    const HEADER_HOST = 'host';
-    const HEADER_PORT = 'port';
-    const HEADER_PROTOCOL = 'proto';
+    public const HEADER_CLIENT_IP = 'clientIp';
+    public const HEADER_HOST = 'host';
+    public const HEADER_PORT = 'port';
+    public const HEADER_PROTOCOL = 'proto';
 
     // Patterns for Forwarded headers, according to https://tools.ietf.org/html/rfc7239#section-4
-    const FOR_PATTERN = '(?:for=(?<for>"[^"]+"|[0-9a-z_\.:\-]+))';
-    const PROTO_PATTERN = '(?:proto=(?<proto>[a-z][a-z0-9+\.\-]+))';
-    const HOST_PATTERN = '(?:host=(?<host>"[^"]+"|[0-9a-z_\.:\-]+))';
+    public const FOR_PATTERN = '(?:for=(?<for>"[^"]+"|[0-9a-z_\.:\-]+))';
+    public const PROTO_PATTERN = '(?:proto=(?<proto>[a-z][a-z0-9+\.\-]+))';
+    public const HOST_PATTERN = '(?:host=(?<host>"[^"]+"|[0-9a-z_\.:\-]+))';
 
     /**
      * @var array

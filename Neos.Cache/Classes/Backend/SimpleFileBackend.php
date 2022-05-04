@@ -33,12 +33,12 @@ use Neos\Utility\OpcodeCacheHelper;
  */
 class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapableBackendInterface, IterableBackendInterface, WithSetupInterface, WithStatusInterface
 {
-    const SEPARATOR = '^';
+    public const SEPARATOR = '^';
 
-    const EXPIRYTIME_FORMAT = 'YmdHis';
-    const EXPIRYTIME_LENGTH = 14;
+    public const EXPIRYTIME_FORMAT = 'YmdHis';
+    public const EXPIRYTIME_LENGTH = 14;
 
-    const DATASIZE_DIGITS = 10;
+    public const DATASIZE_DIGITS = 10;
 
     /**
      * Directory where the files are stored.

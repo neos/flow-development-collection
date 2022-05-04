@@ -306,7 +306,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
                 $leftValue = '$joinPoint->getMethodArgument(\'' . $argumentName . '\')';
             }
 
-            for ($i = 0, $operatorCount = count($argumentConstraint['operator']); $i < $operatorCount; $i++) {
+            for ($i = 0, $operatorCount = is_array($argumentConstraint['operator']) || $argumentConstraint['operator'] instanceof \Countable ? count($argumentConstraint['operator']) : 0; $i < $operatorCount; $i++) {
                 $rightValue = $this->buildArgumentEvaluationAccessCode($argumentConstraint['value'][$i], $useGlobalObjects);
 
                 if ($argumentConstraint['operator'][$i] === 'in') {

@@ -27,7 +27,7 @@ final class RouteTags
     /**
      * Pattern a tag must match. @see \Neos\Cache\Frontend\FrontendInterface::PATTERN_TAG
      */
-    const PATTERN_TAG = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
+    public const PATTERN_TAG = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
 
     /**
      * @var string[] numeric array of strings satisfying the PATTERN_TAG regex

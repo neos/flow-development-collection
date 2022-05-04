@@ -42,7 +42,7 @@ class Locale
      *
      * @see http://rfc.net/rfc4646.html
      */
-    const PATTERN_MATCH_LOCALEIDENTIFIER = '/^(?P<language>[a-zA-Z]{2,3})(?:[-_](?P<script>[a-zA-Z]{4}))?(?:[-_](?P<region>[a-zA-Z]{2}|[0-9]{3})){0,1}(?:[-_](?P<variant>(?:[a-zA-Z0-9]{5,8})|(?:[0-9][a-zA-Z0-9]{3})))?(?:[-_].+)*$/';
+    public const PATTERN_MATCH_LOCALEIDENTIFIER = '/^(?P<language>[a-zA-Z]{2,3})(?:[-_](?P<script>[a-zA-Z]{4}))?(?:[-_](?P<region>[a-zA-Z]{2}|[0-9]{3})){0,1}(?:[-_](?P<variant>(?:[a-zA-Z0-9]{5,8})|(?:[0-9][a-zA-Z0-9]{3})))?(?:[-_].+)*$/';
 
     /**
      * The language identifier - a BCP47, ISO 639-3 or 639-5 code

@@ -84,7 +84,7 @@ class FileAdapter
                 continue;
             }
 
-            if (count($translationUnit) <= $pluralFormIndex) {
+            if ((is_array($translationUnit) || $translationUnit instanceof \Countable ? count($translationUnit) : 0) <= $pluralFormIndex) {
                 $this->i18nLogger->debug('The plural form index "' . $pluralFormIndex . '" for the source translation "' . $source . '"  in ' . $this->fileData['fileIdentifier'] . ' is not available.');
 
                 return false;

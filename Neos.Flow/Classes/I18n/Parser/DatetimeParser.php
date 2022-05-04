@@ -28,15 +28,15 @@ class DatetimeParser
      * Regex pattern for matching abbreviated timezones, like GMT, CEST, etc.
      * Two versions for strict and lenient matching modes.
      */
-    const PATTERN_MATCH_STRICT_TIMEZONE_ABBREVIATION = '/^[A-Z]{3,5}/';
-    const PATTERN_MATCH_LENIENT_TIMEZONE_ABBREVIATION = '/[A-Z]{3,5}/';
+    public const PATTERN_MATCH_STRICT_TIMEZONE_ABBREVIATION = '/^[A-Z]{3,5}/';
+    public const PATTERN_MATCH_LENIENT_TIMEZONE_ABBREVIATION = '/[A-Z]{3,5}/';
 
     /**
      * Regex pattern for matching TZ database timezones, like Europe/London.
      * Two versions for strict and lenient matching modes.
      */
-    const PATTERN_MATCH_STRICT_TIMEZONE_TZ = '/^[A-z]+\/[A-z_]+(:?\/[A-z_]+)?/';
-    const PATTERN_MATCH_LENIENT_TIMEZONE_TZ = '/[A-z]+\/[A-z_]+(:?\/[A-z_]+)?/';
+    public const PATTERN_MATCH_STRICT_TIMEZONE_TZ = '/^[A-z]+\/[A-z_]+(:?\/[A-z_]+)?/';
+    public const PATTERN_MATCH_LENIENT_TIMEZONE_TZ = '/[A-z]+\/[A-z_]+(:?\/[A-z_]+)?/';
 
     /**
      * @var DatesReader

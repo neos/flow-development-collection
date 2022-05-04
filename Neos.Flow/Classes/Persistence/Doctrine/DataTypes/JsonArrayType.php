@@ -25,7 +25,7 @@ class JsonArrayType extends DoctrineJsonArrayType
     /**
      * @var string
      */
-    const FLOW_JSON_ARRAY = 'flow_json_array';
+    public const FLOW_JSON_ARRAY = 'flow_json_array';
 
     /**
      * @var PersistenceManagerInterface

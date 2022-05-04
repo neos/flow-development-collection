@@ -105,7 +105,7 @@ abstract class UploadedFilesHelper
         }
 
         foreach ($fieldPaths as $fieldPath) {
-            if (count($fieldPath) === 1) {
+            if ((is_array($fieldPath) || $fieldPath instanceof \Countable ? count($fieldPath) : 0) === 1) {
                 $fileInformation = $convolutedFiles[$fieldPath[0]];
             } else {
                 $fileInformation = [];

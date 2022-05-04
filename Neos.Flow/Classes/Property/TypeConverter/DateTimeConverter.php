@@ -64,7 +64,7 @@ class DateTimeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    const CONFIGURATION_DATE_FORMAT = 'dateFormat';
+    public const CONFIGURATION_DATE_FORMAT = 'dateFormat';
 
     /**
      * The default date format is "YYYY-MM-DDT##:##:##+##:##", for example "2005-08-15T15:52:01+00:00"
@@ -72,7 +72,7 @@ class DateTimeConverter extends AbstractTypeConverter
      *
      * @var string
      */
-    const DEFAULT_DATE_FORMAT = \DateTime::W3C;
+    public const DEFAULT_DATE_FORMAT = \DateTime::W3C;
 
     /**
      * @var array<string>

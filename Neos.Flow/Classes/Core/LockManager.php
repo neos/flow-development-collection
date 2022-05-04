@@ -24,7 +24,7 @@ class LockManager
     /**
      * @var integer
      */
-    const LOCKFILE_MAXIMUM_AGE = 90;
+    public const LOCKFILE_MAXIMUM_AGE = 90;
 
     /**
      * This file contains the actual lock, set via \flock() in lockSiteOrExit()

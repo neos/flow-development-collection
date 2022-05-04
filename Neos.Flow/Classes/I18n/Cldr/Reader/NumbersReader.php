@@ -43,7 +43,7 @@ class NumbersReader
      * An expression to catch one subformat. One format string can have
      * one or two subformats (positive and negative, separated by semicolon).
      */
-    const PATTERN_MATCH_SUBFORMAT = '/^(.*?)[0-9#\.,]+(.*?)$/';
+    public const PATTERN_MATCH_SUBFORMAT = '/^(.*?)[0-9#\.,]+(.*?)$/';
 
     /**
      * An expression to catch float or decimal number embedded in the format
@@ -51,23 +51,23 @@ class NumbersReader
      * format string looks like '#,##0.05', it means that formatted number
      * should be rounded to the nearest 0.05.
      */
-    const PATTERN_MATCH_ROUNDING = '/([0-9]+(?:\.[0-9]+)?)/';
+    public const PATTERN_MATCH_ROUNDING = '/([0-9]+(?:\.[0-9]+)?)/';
 
     /**
      * Constants for available format types.
      */
-    const FORMAT_TYPE_DECIMAL = 'decimal';
-    const FORMAT_TYPE_PERCENT = 'percent';
-    const FORMAT_TYPE_CURRENCY = 'currency';
+    public const FORMAT_TYPE_DECIMAL = 'decimal';
+    public const FORMAT_TYPE_PERCENT = 'percent';
+    public const FORMAT_TYPE_CURRENCY = 'currency';
 
     /**
      * Constants for available format lengths.
      */
-    const FORMAT_LENGTH_DEFAULT = 'default';
-    const FORMAT_LENGTH_FULL = 'full';
-    const FORMAT_LENGTH_LONG = 'long';
-    const FORMAT_LENGTH_MEDIUM = 'medium';
-    const FORMAT_LENGTH_SHORT = 'short';
+    public const FORMAT_LENGTH_DEFAULT = 'default';
+    public const FORMAT_LENGTH_FULL = 'full';
+    public const FORMAT_LENGTH_LONG = 'long';
+    public const FORMAT_LENGTH_MEDIUM = 'medium';
+    public const FORMAT_LENGTH_SHORT = 'short';
 
     /**
      * @var CldrRepository
@@ -375,7 +375,7 @@ class NumbersReader
         ];
 
         if (strpos($format, ';') !== false) {
-            list($positiveFormat, $negativeFormat) = explode(';', $format);
+            [$positiveFormat, $negativeFormat] = explode(';', $format);
             $format = $positiveFormat;
         } else {
             $positiveFormat = $format;

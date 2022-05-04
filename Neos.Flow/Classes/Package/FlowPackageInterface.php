@@ -16,11 +16,11 @@ namespace Neos\Flow\Package;
  */
 interface FlowPackageInterface extends PackageInterface, PackageKeyAwareInterface
 {
-    const DIRECTORY_CLASSES = 'Classes/';
-    const DIRECTORY_CONFIGURATION = 'Configuration/';
-    const DIRECTORY_TESTS_FUNCTIONAL = 'Tests/Functional/';
-    const DIRECTORY_TESTS_UNIT = 'Tests/Unit/';
-    const DIRECTORY_RESOURCES = 'Resources/';
+    public const DIRECTORY_CLASSES = 'Classes/';
+    public const DIRECTORY_CONFIGURATION = 'Configuration/';
+    public const DIRECTORY_TESTS_FUNCTIONAL = 'Tests/Functional/';
+    public const DIRECTORY_TESTS_UNIT = 'Tests/Unit/';
+    public const DIRECTORY_RESOURCES = 'Resources/';
 
     /**
      * Returns the full path to this package's Resources directory

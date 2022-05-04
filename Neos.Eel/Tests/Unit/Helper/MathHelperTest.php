@@ -21,7 +21,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
     /**
      * Define a "not a number" constant for comparison (because NAN !== NAN)
      */
-    const NAN = 'NAN';
+    public const NAN = 'NAN';
 
     public function roundExamples()
     {

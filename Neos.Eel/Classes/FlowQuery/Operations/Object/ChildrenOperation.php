@@ -49,7 +49,7 @@ class ChildrenOperation extends AbstractOperation
         if (!isset($arguments[0]) || empty($arguments[0])) {
             if ($flowQuery->peekOperationName() === 'filter') {
                 $filterOperation = $flowQuery->popOperation();
-                if (count($filterOperation['arguments']) === 0 || empty($filterOperation['arguments'][0])) {
+                if ((is_array($filterOperation['arguments']) || $filterOperation['arguments'] instanceof \Countable ? count($filterOperation['arguments']) : 0) === 0 || empty($filterOperation['arguments'][0])) {
                     throw new FizzleException('Filter() needs arguments if it follows an empty children(): children().filter()', 1332489382);
                 }
                 $selectorAndFilter = $filterOperation['arguments'][0];
@@ -62,9 +62,9 @@ class ChildrenOperation extends AbstractOperation
 
         $parsedFilter = FizzleParser::parseFilterGroup($selectorAndFilter);
 
-        if (count($parsedFilter['Filters']) === 0) {
+        if ((is_array($parsedFilter['Filters']) || $parsedFilter['Filters'] instanceof \Countable ? count($parsedFilter['Filters']) : 0) === 0) {
             throw new FizzleException('filter needs to be specified in children()', 1332489416);
-        } elseif (count($parsedFilter['Filters']) === 1) {
+        } elseif ((is_array($parsedFilter['Filters']) || $parsedFilter['Filters'] instanceof \Countable ? count($parsedFilter['Filters']) : 0) === 1) {
             $filter = $parsedFilter['Filters'][0];
 
             if (isset($filter['PropertyNameFilter'])) {
@@ -97,7 +97,7 @@ class ChildrenOperation extends AbstractOperation
         foreach ($query->getContext() as $element) {
             $subProperty = ObjectAccess::getPropertyPath($element, $propertyNameFilter);
             if (is_object($subProperty) || is_array($subProperty)) {
-                if (is_array($subProperty) || $subProperty instanceof \Traversable) {
+                if (is_iterable($subProperty)) {
                     foreach ($subProperty as $childElement) {
                         if (!isset($resultObjectHashes[spl_object_hash($childElement)])) {
                             $resultObjectHashes[spl_object_hash($childElement)] = true;

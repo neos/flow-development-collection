@@ -412,7 +412,7 @@ class Result
      */
     public function flattenTree(string $propertyName, array &$result, array $level = [], string $messageTypeFilter = null)
     {
-        if (count($this->$propertyName) > 0) {
+        if ((is_array($this->$propertyName) || $this->$propertyName instanceof \Countable ? count($this->$propertyName) : 0) > 0) {
             $propertyPath = implode('.', $level);
             $result[$propertyPath] = $this->filterMessages($this->$propertyName, $messageTypeFilter);
         }

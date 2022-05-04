@@ -49,8 +49,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * @var integer
      */
-    const MAPPING_REGULAR = 0;
-    const MAPPING_MM_REGULAR = 1;
+    public const MAPPING_REGULAR = 0;
+    public const MAPPING_MM_REGULAR = 1;
 
     /**
      * @var ReflectionService

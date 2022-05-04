@@ -277,7 +277,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
 
         $associationMapping = $targetEntity->getAssociationMapping($targetEntityPropertyName);
         $identityColumnNames = $targetEntity->getIdentifierColumnNames();
-        if (count($identityColumnNames) > 1) {
+        if ((is_array($identityColumnNames) || $identityColumnNames instanceof \Countable ? count($identityColumnNames) : 0) > 1) {
             throw new InvalidQueryRewritingConstraintException('Cannot apply constraints on multi-identity entities.', 1545219903);
         }
 

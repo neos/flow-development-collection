@@ -32,13 +32,13 @@ class NumberParser
     /**
      * Regex pattern for matching one or more digits.
      */
-    const PATTERN_MATCH_DIGITS = '/^[0-9]+$/';
+    public const PATTERN_MATCH_DIGITS = '/^[0-9]+$/';
 
     /**
      * Regex pattern for matching all except digits. It's used for clearing
      * string in lenient mode.
      */
-    const PATTERN_MATCH_NOT_DIGITS = '/[^0-9]+/';
+    public const PATTERN_MATCH_NOT_DIGITS = '/[^0-9]+/';
 
     /**
      * @var NumbersReader

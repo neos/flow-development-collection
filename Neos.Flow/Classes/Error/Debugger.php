@@ -497,7 +497,7 @@ class Debugger
         $proxyClassPathPosition = strpos($file, 'Flow_Object_Classes/');
         if ($proxyClassPathPosition && is_file($file)) {
             $fileContent = @file($file);
-            $originalPath = trim(substr($fileContent[count($fileContent) - 2], 19));
+            $originalPath = trim(substr($fileContent[(is_array($fileContent) || $fileContent instanceof \Countable ? count($fileContent) : 0) - 2], 19));
         }
 
         $originalPath = str_replace($flowRoot, '', $originalPath);

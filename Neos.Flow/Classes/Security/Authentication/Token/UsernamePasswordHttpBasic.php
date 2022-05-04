@@ -37,7 +37,7 @@ class UsernamePasswordHttpBasic extends UsernamePassword implements SessionlessT
         }
 
         $credentials = base64_decode(substr($authorizationHeader, 6));
-        list($username, $password) = explode(':', $credentials, 2);
+        [$username, $password] = explode(':', $credentials, 2);
         $this->credentials['username'] = $username;
         $this->credentials['password'] = $password;
         $this->authenticationStatus = self::AUTHENTICATION_NEEDED;
