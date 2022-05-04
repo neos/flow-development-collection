@@ -260,7 +260,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
         // Note: Method name regex according to http://php.net/manual/en/language.oop5.basic.php
         $classCode = preg_replace_callback('/^(\s*)((public|protected)\s+)?final(\s+(public|protected))?(\s+function\s+)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]+\s*\()/m', static function ($matches) use ($proxyClassCode) {
             // the method is not advised => don't remove the final keyword
-            if (strpos($proxyClassCode, $matches[0]) === false) {
+            if (!str_contains($proxyClassCode, $matches[0])) {
                 return $matches[0];
             }
             return $matches[1] . $matches[2] . '/*final*/' . $matches[4] . $matches[6] . $matches[7];

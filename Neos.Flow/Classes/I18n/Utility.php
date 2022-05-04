@@ -56,7 +56,7 @@ class Utility
                     continue;
                 }
 
-                if (strpos($localeIdentifier, '-') !== false) {
+                if (str_contains($localeIdentifier, '-')) {
                     [$language, $region] = explode('-', $localeIdentifier);
                 } else {
                     $language = $localeIdentifier;
@@ -93,7 +93,7 @@ class Utility
      */
     public static function extractLocaleTagFromFilename($filename)
     {
-        if (strpos($filename, '.') === false) {
+        if (!str_contains($filename, '.')) {
             return false;
         }
 

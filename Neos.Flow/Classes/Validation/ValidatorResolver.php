@@ -177,7 +177,7 @@ class ValidatorResolver
             if (!array_key_exists('type', $methodParameter)) {
                 throw new Exception\InvalidTypeHintException('Missing type information, probably no @param annotation for parameter "$' . $parameterName . '" in ' . $className . '->' . $methodName . '()', 1281962564);
             }
-            if (strpos($methodParameter['type'], '\\') === false) {
+            if (!str_contains($methodParameter['type'], '\\')) {
                 $typeValidator = $this->createValidator($methodParameter['type']);
             } else {
                 $typeValidator = null;
@@ -205,7 +205,7 @@ class ValidatorResolver
             }
             if (isset($validatorConjunctions[$annotationParameters['argumentName']])) {
                 $validatorConjunctions[$annotationParameters['argumentName']]->addValidator($newValidator);
-            } elseif (strpos($annotationParameters['argumentName'], '.') !== false) {
+            } elseif (str_contains($annotationParameters['argumentName'], '.')) {
                 $objectPath = explode('.', $annotationParameters['argumentName']);
                 $argumentName = array_shift($objectPath);
                 $validatorConjunctions[$argumentName]->addValidator($this->buildSubObjectValidator($objectPath, $newValidator));
@@ -438,7 +438,7 @@ class ValidatorResolver
             return $validatorType;
         }
 
-        if (strpos($validatorType, ':') !== false) {
+        if (str_contains($validatorType, ':')) {
             [$packageName, $packageValidatorType] = explode(':', $validatorType);
             $possibleClassName = sprintf('%s\Validation\Validator\%sValidator', str_replace('.', '\\', $packageName), $this->getValidatorType($packageValidatorType));
         } else {

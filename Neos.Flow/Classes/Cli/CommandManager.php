@@ -217,7 +217,7 @@ class CommandManager
     protected function commandMatchesIdentifier(Command $command, string $commandIdentifier): bool
     {
         $commandIdentifierParts = explode(':', $command->getCommandIdentifier());
-        if (strpos($commandIdentifier, ':') === false && strpos($commandIdentifier, '.') === false) {
+        if (!str_contains($commandIdentifier, ':') && !str_contains($commandIdentifier, '.')) {
             return $commandIdentifier === $commandIdentifierParts[1];
         }
         $searchedCommandIdentifierParts = explode(':', $commandIdentifier);

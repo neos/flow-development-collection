@@ -1512,7 +1512,7 @@ class ReflectionService
         $typeWithoutNull = TypeHandling::stripNullableType($type);
         $isNullable = $typeWithoutNull !== $type;
         // expand "SomeType<SomeElementType>" to "\SomeTypeNamespace\SomeType<\ElementTypeNamespace\ElementType>"
-        if (strpos($type, '<') !== false) {
+        if (str_contains($type, '<')) {
             $typeParts = explode('<', $typeWithoutNull);
             $type = $typeParts[0];
             $elementType = rtrim($typeParts[1], '>');

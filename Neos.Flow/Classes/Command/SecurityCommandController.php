@@ -164,7 +164,7 @@ class SecurityCommandController extends CommandController
     {
         $systemRoleIdentifiers = ['Neos.Flow:Everybody', 'Neos.Flow:Anonymous', 'Neos.Flow:AuthenticatedUser'];
 
-        if (strpos($privilegeType, '\\') === false) {
+        if (!str_contains($privilegeType, '\\')) {
             $privilegeType = sprintf('\Neos\Flow\Security\Authorization\Privilege\%s\%sPrivilegeInterface', ucfirst($privilegeType), ucfirst($privilegeType));
         }
         if (!class_exists($privilegeType) && !interface_exists($privilegeType)) {

@@ -64,7 +64,7 @@ class ProxyClassTest extends UnitTestCase
     public function renderWorksAsExpected($originalClassName, $originalClassAnnotations, $originalClassDocumentation, $originalClassConstants, $expectedProxyCode)
     {
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects(self::any())->method('isClassAbstract')->will(self::returnValue(strpos($expectedProxyCode, 'abstract ') !== false));
+        $mockReflectionService->expects(self::any())->method('isClassAbstract')->will(self::returnValue(str_contains($expectedProxyCode, 'abstract ')));
         $mockReflectionService->expects(self::any())->method('getClassAnnotations')->will(self::returnValue($originalClassAnnotations));
 
         $mockProxyClass = $this->getAccessibleMock(ProxyClass::class, ['buildClassDocumentation'], [$originalClassName], '', true);

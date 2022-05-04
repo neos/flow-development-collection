@@ -62,7 +62,7 @@ class EntityPrivilegeExpressionParser extends CompilingEelParser
         $lval = $result['code'];
         $rval = $sub['code'];
 
-        if (strpos($lval, '$context->callAndWrap(\'property\'') === false) {
+        if (!str_contains($lval, '$context->callAndWrap(\'property\'')) {
             $temp = $rval;
             $rval = $lval;
             $lval = $temp;

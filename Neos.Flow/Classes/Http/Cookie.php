@@ -177,7 +177,7 @@ class Cookie implements \Stringable
         $expectedNameValuePair = $nameValueAndUnparsedAttributes[0];
         $unparsedAttributes = $nameValueAndUnparsedAttributes[1] ?? '';
 
-        if (strpos($expectedNameValuePair, '=') === false) {
+        if (!str_contains($expectedNameValuePair, '=')) {
             return null;
         }
         $cookieNameAndValue = explode('=', $expectedNameValuePair, 2);

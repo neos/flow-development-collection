@@ -146,7 +146,7 @@ abstract class TypeHandling
      */
     public static function truncateElementType(string $type): string
     {
-        if (strpos($type, '<') === false) {
+        if (!str_contains($type, '<')) {
             return $type;
         }
         return substr($type, 0, strpos($type, '<'));

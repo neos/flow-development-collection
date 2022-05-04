@@ -33,7 +33,7 @@ class FloatValidator extends AbstractValidator
         if (is_float($value)) {
             return;
         }
-        if (!is_string($value) || strpos($value, '.') === false || preg_match('/^[0-9.e+-]+$/', $value) !== 1) {
+        if (!is_string($value) || !str_contains($value, '.') || preg_match('/^[0-9.e+-]+$/', $value) !== 1) {
             $this->addError('A valid float number is expected.', 1221560288);
         }
     }

@@ -106,7 +106,7 @@ class KickstartCommandController extends CommandController
     public function actionControllerCommand($packageKey, $controllerName, $generateActions = false, $generateTemplates = true, $generateFusion = false, $generateRelated = false, $force = false)
     {
         $subpackageName = '';
-        if (strpos($packageKey, '/') !== false) {
+        if (str_contains($packageKey, '/')) {
             [$packageKey, $subpackageName] = explode('/', $packageKey, 2);
         }
         $this->validatePackageKey($packageKey);
@@ -242,10 +242,10 @@ class KickstartCommandController extends CommandController
             [$fieldName, $fieldType] = explode(':', $fieldArgument, 2);
 
             $fieldDefinitions[$fieldName] = ['type' => $fieldType];
-            if (strpos($fieldType, 'array') !== false) {
+            if (str_contains($fieldType, 'array')) {
                 $fieldDefinitions[$fieldName]['typeHint'] = 'array';
-            } elseif (strpos($fieldType, '\\') !== false) {
-                if (strpos($fieldType, '<') !== false) {
+            } elseif (str_contains($fieldType, '\\')) {
+                if (str_contains($fieldType, '<')) {
                     $fieldDefinitions[$fieldName]['typeHint'] = substr($fieldType, 0, strpos($fieldType, '<'));
                 } else {
                     $fieldDefinitions[$fieldName]['typeHint'] = $fieldType;

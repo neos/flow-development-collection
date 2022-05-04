@@ -221,7 +221,7 @@ class Query implements QueryInterface
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
 
             if (stripos($pdoException->getMessage(), 'unknown database') !== false
-                || (stripos($pdoException->getMessage(), 'database') !== false && strpos($pdoException->getMessage(), 'not') !== false && strpos($pdoException->getMessage(), 'exist') !== false)) {
+                || (stripos($pdoException->getMessage(), 'database') !== false && str_contains($pdoException->getMessage(), 'not') && str_contains($pdoException->getMessage(), 'exist'))) {
                 $message = 'The database which was specified in the configuration does not exist.';
                 $exception = new Exception\DatabaseConnectionException($message, $pdoException->getCode());
             } elseif (stripos($pdoException->getMessage(), 'access denied') !== false
@@ -660,7 +660,7 @@ class Query implements QueryInterface
     {
         $aliases = $this->queryBuilder->getRootAliases();
         $previousJoinAlias = $aliases[0];
-        if (strpos($propertyPath, '.') === false
+        if (!str_contains($propertyPath, '.')
             || $this->entityManager->getClassMetadata($this->entityClassName)->hasField($propertyPath)
         ) {
             return $previousJoinAlias . '.' . $propertyPath;

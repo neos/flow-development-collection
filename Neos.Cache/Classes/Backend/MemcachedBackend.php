@@ -126,7 +126,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
                 $server = substr($server, 6);
             }
 
-            if (strpos($server, ':') !== false) {
+            if (str_contains($server, ':')) {
                 [$host, $portValue] = explode(':', $server, 2);
                 $port = (int)$portValue;
             }

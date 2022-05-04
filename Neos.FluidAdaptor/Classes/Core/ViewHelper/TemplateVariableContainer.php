@@ -54,7 +54,7 @@ class TemplateVariableContainer extends StandardVariableProvider implements Vari
      */
     protected function resolveSubVariableReferences($propertyPath)
     {
-        if (strpos($propertyPath, '{') !== false) {
+        if (str_contains($propertyPath, '{')) {
             // NOTE: This is an inclusion of https://github.com/TYPO3/Fluid/pull/472 to allow multiple nested variables
             preg_match_all('/(\{.*?\})/', $propertyPath, $matches);
             foreach ($matches[1] as $match) {

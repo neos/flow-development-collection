@@ -887,7 +887,7 @@ class PackageManager
 
         if ($packageType !== null && ComposerUtility::isFlowPackageType($packageType)) {
             $lastSegmentOfPackagePath = substr(trim($packagePath, '/'), strrpos(trim($packagePath, '/'), '/') + 1);
-            if (strpos($lastSegmentOfPackagePath, '.') !== false) {
+            if (str_contains($lastSegmentOfPackagePath, '.')) {
                 $packageKey = $lastSegmentOfPackagePath;
             }
         }

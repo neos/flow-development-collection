@@ -216,7 +216,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
      */
     public function contains($operandDefinition): PropertyConditionGenerator
     {
-        if (strpos($this->path, '.') !== false) {
+        if (str_contains($this->path, '.')) {
             throw new InvalidPolicyException(sprintf('The "contains" operator does not work on nested property paths (contained a "."). Got: "%s"', $this->path), 1545212769);
         }
 
@@ -242,7 +242,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
 
         if ($targetEntity->hasAssociation($targetEntityPropertyName) === false) {
             return $this->getSqlForSimpleProperty($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);
-        } elseif (strstr($this->path, '.') === false && $targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === true && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === false) {
+        } elseif (!str_contains($this->path, '.') && $targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === true && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === false) {
             return $this->getSqlForManyToOneAndOneToOneRelationsWithoutPropertyPath($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);
         } elseif ($targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === true && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === false) {
             return $this->getSqlForManyToOneAndOneToOneRelationsWithPropertyPath($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);

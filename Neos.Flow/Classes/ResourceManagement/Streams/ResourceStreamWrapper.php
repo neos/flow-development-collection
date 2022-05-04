@@ -298,7 +298,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
     {
         // w, a or x should try to create the file
         // x should fail if file exists - fopen handles that below!
-        if (strpos($mode, 'w') !== false || strpos($mode, 'a') !== false || strpos($mode, 'x') !== false) {
+        if (str_contains($mode, 'w') || str_contains($mode, 'a') || str_contains($mode, 'x')) {
             $resourceUriOrStream = $this->evaluateResourcePath($path, false);
         } else {
             $resourceUriOrStream = $this->evaluateResourcePath($path);
@@ -500,7 +500,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
 
         $resourceUriWithoutScheme = $requestPathParts[1];
 
-        if (strpos($resourceUriWithoutScheme, '/') === false && preg_match('/^[0-9a-f]{40}$/i', $resourceUriWithoutScheme) === 1) {
+        if (!str_contains($resourceUriWithoutScheme, '/') && preg_match('/^[0-9a-f]{40}$/i', $resourceUriWithoutScheme) === 1) {
             $resource = $this->resourceManager->getResourceBySha1($resourceUriWithoutScheme);
             return $this->resourceManager->getStreamByResource($resource);
         }

@@ -29,7 +29,7 @@ abstract class Files
      */
     public static function getUnixStylePath(string $path): string
     {
-        if (strpos($path, ':') === false) {
+        if (!str_contains($path, ':')) {
             return str_replace(['//', '\\'], '/', $path);
         }
         return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace(['//', '\\'], '/', $path));

@@ -130,7 +130,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
                 $roleIdentifier = 'Neos.Flow:' . $roleIdentifier;
             }
 
-            if (strpos($roleIdentifier, '.') === false && strpos($roleIdentifier, ':') === false) {
+            if (!str_contains($roleIdentifier, '.') && !str_contains($roleIdentifier, ':')) {
                 $roleIdentifier = $packageKey . ':' . $roleIdentifier;
             }
 

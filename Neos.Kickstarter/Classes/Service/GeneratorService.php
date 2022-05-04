@@ -556,7 +556,7 @@ class GeneratorService
         if (str_starts_with($targetPathAndFilename, 'resource://')) {
             [$packageKey, $resourcePath] = explode('/', substr($targetPathAndFilename, 11), 2);
             $relativeTargetPathAndFilename = $packageKey . '/Resources/' . $resourcePath;
-        } elseif (strpos($targetPathAndFilename, 'Tests') !== false) {
+        } elseif (str_contains($targetPathAndFilename, 'Tests')) {
             $relativeTargetPathAndFilename = substr($targetPathAndFilename, strrpos(substr($targetPathAndFilename, 0, strpos($targetPathAndFilename, 'Tests/') - 1), '/') + 1);
         } else {
             $relativeTargetPathAndFilename = substr($targetPathAndFilename, strrpos(substr($targetPathAndFilename, 0, strpos($targetPathAndFilename, 'Classes/') - 1), '/') + 1);

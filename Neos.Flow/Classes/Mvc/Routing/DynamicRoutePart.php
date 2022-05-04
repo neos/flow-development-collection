@@ -123,7 +123,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
                 $valueToMatch = substr($valueToMatch, 0, $splitStringPosition);
             }
         }
-        if (strpos($valueToMatch, '/') !== false) {
+        if (str_contains($valueToMatch, '/')) {
             return '';
         }
         return $valueToMatch;

@@ -369,7 +369,7 @@ class Headers implements \Iterator, \Stringable
     {
         $cookiePairs = explode(';', $rawFieldValue);
         foreach ($cookiePairs as $cookiePair) {
-            if (strpos($cookiePair, '=') === false) {
+            if (!str_contains($cookiePair, '=')) {
                 continue;
             }
             [$name, $value] = explode('=', $cookiePair, 2);

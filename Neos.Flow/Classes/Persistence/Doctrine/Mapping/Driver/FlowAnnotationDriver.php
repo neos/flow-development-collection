@@ -794,7 +794,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                             $mapping['type'] = $propertyMetaData['type'];
                             break;
                         default:
-                            if (strpos($propertyMetaData['type'], '\\') !== false) {
+                            if (str_contains($propertyMetaData['type'], '\\')) {
                                 if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], Flow\ValueObject::class)) {
                                     $valueObjectAnnotation = $this->reflectionService->getClassAnnotation($propertyMetaData['type'], Flow\ValueObject::class);
                                     if ($valueObjectAnnotation && $valueObjectAnnotation->embedded === true) {
@@ -1123,7 +1123,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      */
     public function isTransient($className)
     {
-        return strpos($className, Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== false ||
+        return str_contains($className, Compiler::ORIGINAL_CLASSNAME_SUFFIX) ||
             (
                 !$this->reflectionService->isClassAnnotatedWith($className, Flow\Entity::class) &&
                 !$this->reflectionService->isClassAnnotatedWith($className, Flow\ValueObject::class) &&
@@ -1154,7 +1154,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         $this->classNames = array_filter(
             $this->classNames,
             fn ($className) => !interface_exists($className, false)
-                    && strpos($className, (string) Compiler::ORIGINAL_CLASSNAME_SUFFIX) === false
+                    && !str_contains($className, (string) Compiler::ORIGINAL_CLASSNAME_SUFFIX)
         );
 
         return $this->classNames;

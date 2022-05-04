@@ -350,7 +350,7 @@ class NumbersReader
     protected function parseFormat(string $format): array
     {
         foreach (['E', '@', '*', '\''] as $unsupportedFeature) {
-            if (strpos($format, $unsupportedFeature) !== false) {
+            if (str_contains($format, $unsupportedFeature)) {
                 throw new Exception\UnsupportedNumberFormatException('Encountered unsupported format characters in format string.', 1280219449);
             }
         }
@@ -374,7 +374,7 @@ class NumbersReader
             'rounding' => 0.0,
         ];
 
-        if (strpos($format, ';') !== false) {
+        if (str_contains($format, ';')) {
             [$positiveFormat, $negativeFormat] = explode(';', $format);
             $format = $positiveFormat;
         } else {
@@ -395,9 +395,9 @@ class NumbersReader
             $parsedFormat['negativeSuffix'] = $parsedFormat['positiveSuffix'];
         }
 
-        if (strpos($format, '%') !== false) {
+        if (str_contains($format, '%')) {
             $parsedFormat['multiplier'] = 100;
-        } elseif (strpos($format, '‰') !== false) {
+        } elseif (str_contains($format, '‰')) {
             $parsedFormat['multiplier'] = 1000;
         }
 

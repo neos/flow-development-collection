@@ -455,10 +455,10 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             }
 
             $resourcesStoragePath = $storageSettings['storageOptions']['path'];
-            if (strpos($resourcesStoragePath, (string) FLOW_PATH_DATA) === false) {
+            if (!str_contains($resourcesStoragePath, (string) FLOW_PATH_DATA)) {
                 throw new \Exception(sprintf('The storage path for persistent resources for the Testing context is "%s" for the "%s" storage, but it must point to a directory below "%s". Please check the Flow settings for the Testing context.', $resourcesStoragePath, $storageName, FLOW_PATH_DATA), 1382018388);
             }
-            if (strpos($resourcesStoragePath, '/Test/') === false) {
+            if (!str_contains($resourcesStoragePath, '/Test/')) {
                 throw new \Exception(sprintf('The storage path for persistent resources for the Testing context is "%s" for the "%s" storage, but it must contain "/Test/". Please check the Flow settings for the Testing context.', $resourcesStoragePath, $storageName), 1382018388);
             }
             if (file_exists($resourcesStoragePath)) {

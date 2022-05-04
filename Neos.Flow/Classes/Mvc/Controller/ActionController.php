@@ -337,7 +337,7 @@ class ActionController extends AbstractController
         $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
-            if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
+            if (strlen($methodName) > 6 && str_ends_with($methodName, 'Action')) {
                 $result[$methodName] = $reflectionService->getMethodParameters($className, $methodName);
 
                 /* @var $requestBodyAnnotation Flow\MapRequestBody */
@@ -443,7 +443,7 @@ class ActionController extends AbstractController
         $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
-            if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
+            if (strlen($methodName) > 6 && str_ends_with($methodName, 'Action')) {
                 $validationGroupsAnnotation = $reflectionService->getMethodAnnotation($className, $methodName, Flow\ValidationGroups::class);
                 if ($validationGroupsAnnotation !== null) {
                     $result[$methodName] = $validationGroupsAnnotation->validationGroups;
@@ -470,7 +470,7 @@ class ActionController extends AbstractController
         $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
-            if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
+            if (strlen($methodName) > 6 && str_ends_with($methodName, 'Action')) {
                 $validateAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, Flow\Validate::class);
                 $result[$methodName] = array_map(fn ($validateAnnotation) => [
                     'type' => $validateAnnotation->type,
@@ -570,7 +570,7 @@ class ActionController extends AbstractController
         $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
-            if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
+            if (strlen($methodName) > 6 && str_ends_with($methodName, 'Action')) {
                 $ignoreValidationAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, Flow\IgnoreValidation::class);
                 /** @var Flow\IgnoreValidation $ignoreValidationAnnotation */
                 foreach ($ignoreValidationAnnotations as $ignoreValidationAnnotation) {
@@ -602,7 +602,7 @@ class ActionController extends AbstractController
         $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
-            if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
+            if (strlen($methodName) > 6 && str_ends_with($methodName, 'Action')) {
                 if ($reflectionService->isMethodPublic($className, $methodName)) {
                     $result[$methodName] = true;
                 }

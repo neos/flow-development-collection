@@ -296,7 +296,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strpos((string)$value, (string)$operand) !== false;
+                    return str_contains((string)$value, (string)$operand);
                 }
             // no break
             case '*=~':

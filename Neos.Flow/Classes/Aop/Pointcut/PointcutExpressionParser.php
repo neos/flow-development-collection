@@ -139,7 +139,7 @@ class PointcutExpressionParser
                 $operator .= '!';
             }
 
-            if (strpos($expression, '(') === false) {
+            if (!str_contains($expression, '(')) {
                 $this->parseDesignatorPointcut($operator, $expression, $pointcutFilterComposite);
             } else {
                 $matches = [];
@@ -237,7 +237,7 @@ class PointcutExpressionParser
      */
     protected function parseAnnotationPattern(string &$annotationPattern, array &$annotationPropertyConstraints): void
     {
-        if (strpos($annotationPattern, '(') !== false) {
+        if (str_contains($annotationPattern, '(')) {
             $matches = [];
             preg_match(self::PATTERN_MATCHMETHODNAMEANDARGUMENTS, $annotationPattern, $matches);
 
@@ -260,12 +260,12 @@ class PointcutExpressionParser
      */
     protected function parseDesignatorMethod(string $operator, string $signaturePattern, PointcutFilterComposite $pointcutFilterComposite): void
     {
-        if (strpos($signaturePattern, '->') === false) {
+        if (!str_contains($signaturePattern, '->')) {
             throw new InvalidPointcutExpressionException('Syntax error: "->" expected in "' . $signaturePattern . '", defined in ' . $this->sourceHint, 1169027339);
         }
         $methodVisibility = $this->getVisibilityFromSignaturePattern($signaturePattern);
         [$classPattern, $methodPattern] = explode('->', $signaturePattern, 2);
-        if (strpos($methodPattern, '(') === false) {
+        if (!str_contains($methodPattern, '(')) {
             throw new InvalidPointcutExpressionException('Syntax error: "(" expected in "' . $methodPattern . '", defined in ' . $this->sourceHint, 1169144299);
         }
 
@@ -324,7 +324,7 @@ class PointcutExpressionParser
      */
     protected function parseDesignatorPointcut(string $operator, string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite): void
     {
-        if (strpos($pointcutExpression, '->') === false) {
+        if (!str_contains($pointcutExpression, '->')) {
             throw new InvalidPointcutExpressionException('Syntax error: "->" expected in "' . $pointcutExpression . '", defined in ' . $this->sourceHint, 1172219205);
         }
         [$aspectClassName, $pointcutMethodName] = explode('->', $pointcutExpression, 2);

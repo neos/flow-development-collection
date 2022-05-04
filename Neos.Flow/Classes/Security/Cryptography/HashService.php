@@ -162,7 +162,7 @@ class HashService
     public function validatePassword($password, $hashedPasswordAndSalt)
     {
         $strategyIdentifier = 'default';
-        if (strpos($hashedPasswordAndSalt, '=>') !== false) {
+        if (str_contains($hashedPasswordAndSalt, '=>')) {
             [$strategyIdentifier, $hashedPasswordAndSalt] = explode('=>', $hashedPasswordAndSalt, 2);
         }
 

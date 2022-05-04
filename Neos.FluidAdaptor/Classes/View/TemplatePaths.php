@@ -296,7 +296,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
             'partial' => $partialName,
         ]);
 
-        if (strpos($partialName, ':') !== false) {
+        if (str_contains($partialName, ':')) {
             [$packageKey, $actualPartialName] = explode(':', $partialName);
             $package = $this->packageManager->getPackage($packageKey);
             $patternReplacementVariables['package'] = $packageKey;
@@ -324,7 +324,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         if ($this->packageManager === null) {
             return '';
         }
-        if (strpos($packageName, '/') !== false) {
+        if (str_contains($packageName, '/')) {
             $packageName = $this->packageManager->getPackageKeyFromComposerName($packageName);
         }
 

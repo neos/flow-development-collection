@@ -289,7 +289,7 @@ class ProxyClassBuilder
                                 }
                             }
                         } else {
-                            if (strpos($argumentValue, '.') !== false) {
+                            if (str_contains($argumentValue, '.')) {
                                 $settingPath = explode('.', $argumentValue);
                                 $getConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
                                 $settings = Arrays::getValueByPath($getConfiguration, array_shift($settingPath));
@@ -629,7 +629,7 @@ class ProxyClassBuilder
                                 $preparedArguments[] = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
                             }
                         } else {
-                            if (strpos($argumentValue, '.') !== false) {
+                            if (str_contains($argumentValue, '.')) {
                                 $settingPath = explode('.', $argumentValue);
                                 $getConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
                                 $settings = Arrays::getValueByPath($getConfiguration, array_shift($settingPath));

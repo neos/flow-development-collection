@@ -427,7 +427,7 @@ class ActionRequest implements RequestInterface
      */
     public function setControllerName(string $controllerName): void
     {
-        if (strpos($controllerName, '_') !== false) {
+        if (str_contains($controllerName, '_')) {
             throw new Exception\InvalidControllerNameException('The controller name must not contain underscores.', 1217846412);
         }
         $this->controllerName = $controllerName;

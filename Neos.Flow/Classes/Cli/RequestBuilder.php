@@ -274,13 +274,13 @@ class RequestBuilder
      */
     protected function getValueOfCurrentCommandLineOption(string $currentArgument, array &$rawCommandLineArguments, string $expectedArgumentType)
     {
-        if ((!isset($rawCommandLineArguments[0]) && (strpos($currentArgument, '=') === false)) || (isset($rawCommandLineArguments[0]) && $rawCommandLineArguments[0][0] === '-' && (strpos($currentArgument, '=') === false))) {
+        if ((!isset($rawCommandLineArguments[0]) && (!str_contains($currentArgument, '='))) || (isset($rawCommandLineArguments[0]) && $rawCommandLineArguments[0][0] === '-' && (!str_contains($currentArgument, '=')))) {
             return true;
         }
 
-        if (strpos($currentArgument, '=') === false) {
+        if (!str_contains($currentArgument, '=')) {
             $possibleValue = trim(array_shift($rawCommandLineArguments));
-            if (strpos($possibleValue, '=') === false) {
+            if (!str_contains($possibleValue, '=')) {
                 if ($expectedArgumentType !== 'boolean') {
                     return $possibleValue;
                 }

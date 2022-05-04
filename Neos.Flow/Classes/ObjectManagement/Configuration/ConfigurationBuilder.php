@@ -120,7 +120,7 @@ class ConfigurationBuilder
                     $rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($rawObjectConfiguration['className'], $rawObjectConfiguration);
                 }
                 // Virtual objects are determined by a colon ":" in the name (e.g. "Some.Package:Some.Virtual.Object")
-                $isVirtualObject = strpos($objectName, ':') !== false;
+                $isVirtualObject = str_contains($objectName, ':');
                 if ($isVirtualObject && empty($rawObjectConfiguration['className'])) {
                     throw new InvalidObjectConfigurationException(sprintf('Missing className for virtual object configuration "%s" of package %s. Please check your Objects.yaml.', $objectName, $packageKey), 1585758850);
                 }

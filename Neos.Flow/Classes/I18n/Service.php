@@ -131,7 +131,7 @@ class Service
         }
 
         $filename = basename($pathAndFilename);
-        if ((strpos($filename, '.')) !== false) {
+        if (str_contains($filename, '.')) {
             $dotPosition = strrpos($pathAndFilename, '.');
             $pathAndFilenameWithoutExtension = substr($pathAndFilename, 0, $dotPosition);
             $extension = substr($pathAndFilename, $dotPosition);

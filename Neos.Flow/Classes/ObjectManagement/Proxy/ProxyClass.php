@@ -89,7 +89,7 @@ class ProxyClass
      */
     public function __construct($fullOriginalClassName)
     {
-        if (strpos($fullOriginalClassName, '\\') === false) {
+        if (!str_contains($fullOriginalClassName, '\\')) {
             $this->originalClassName = $fullOriginalClassName;
         } else {
             $this->namespace = substr($fullOriginalClassName, 0, strrpos($fullOriginalClassName, '\\'));

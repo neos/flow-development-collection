@@ -52,7 +52,7 @@ class UriTemplate
      */
     public static function expand($template, array $variables)
     {
-        if (strpos($template, '{') === false) {
+        if (!str_contains($template, '{')) {
             return $template;
         }
 

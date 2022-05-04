@@ -42,7 +42,7 @@ class Ip
      */
     public static function cidrMatch(string $ip, string $range): bool
     {
-        if (strpos($range, '/') === false) {
+        if (!str_contains($range, '/')) {
             $bits = null;
             $subnet = $range;
         } else {
