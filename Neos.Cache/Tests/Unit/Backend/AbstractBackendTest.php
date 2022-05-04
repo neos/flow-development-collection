@@ -34,7 +34,7 @@ class AbstractBackendTest extends BaseTestCase
     protected function setUp(): void
     {
         class_exists(AbstractBackend::class);
-        $className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
+        $className = 'ConcreteBackend_' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('
             class ' . $className . ' extends \Neos\Cache\Backend\AbstractBackend {
                 public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = NULL): void {}

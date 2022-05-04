@@ -477,7 +477,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
      */
     protected function getConstraintStringForSimpleProperty(SQLFilter $sqlFilter, $propertyPointer, $operandDefinition = null)
     {
-        $operandDefinition = ($operandDefinition === null ? $this->operandDefinition : $operandDefinition);
+        $operandDefinition = ($operandDefinition ?? $this->operandDefinition);
         $parameter = null;
         $addNullExpression = false;
         try {

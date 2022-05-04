@@ -492,10 +492,10 @@ class CacheManager
      */
     protected function createCache(string $identifier): void
     {
-        $frontend = isset($this->cacheConfigurations[$identifier]['frontend']) ? $this->cacheConfigurations[$identifier]['frontend'] : $this->cacheConfigurations['Default']['frontend'];
-        $backend = isset($this->cacheConfigurations[$identifier]['backend']) ? $this->cacheConfigurations[$identifier]['backend'] : $this->cacheConfigurations['Default']['backend'];
-        $backendOptions = isset($this->cacheConfigurations[$identifier]['backendOptions']) ? $this->cacheConfigurations[$identifier]['backendOptions'] : $this->cacheConfigurations['Default']['backendOptions'];
-        $persistent = isset($this->cacheConfigurations[$identifier]['persistent']) ? $this->cacheConfigurations[$identifier]['persistent'] : $this->cacheConfigurations['Default']['persistent'];
+        $frontend = $this->cacheConfigurations[$identifier]['frontend'] ?? $this->cacheConfigurations['Default']['frontend'];
+        $backend = $this->cacheConfigurations[$identifier]['backend'] ?? $this->cacheConfigurations['Default']['backend'];
+        $backendOptions = $this->cacheConfigurations[$identifier]['backendOptions'] ?? $this->cacheConfigurations['Default']['backendOptions'];
+        $persistent = $this->cacheConfigurations[$identifier]['persistent'] ?? $this->cacheConfigurations['Default']['persistent'];
         $cache = $this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions, $persistent);
         $this->registerCache($cache, $persistent);
     }

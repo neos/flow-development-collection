@@ -697,7 +697,7 @@ class Session implements CookieEnabledInterface
 
             $decimals = (integer)strlen(strrchr($this->garbageCollectionProbability, '.')) - 1;
             $factor = ($decimals > -1) ? $decimals * 10 : 1;
-            if (rand(1, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
+            if (random_int(1, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
                 $this->collectGarbage();
             }
         }

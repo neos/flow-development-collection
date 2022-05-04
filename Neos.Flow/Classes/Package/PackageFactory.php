@@ -74,7 +74,7 @@ class PackageFactory
         }
 
         $composerManifest = ComposerUtility::getComposerManifest($absolutePackagePath);
-        if (!ComposerUtility::isFlowPackageType(isset($composerManifest['type']) ? $composerManifest['type'] : '')) {
+        if (!ComposerUtility::isFlowPackageType($composerManifest['type'] ?? '')) {
             return ['className' => GenericPackage::class, 'pathAndFilename' => ''];
         }
 

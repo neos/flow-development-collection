@@ -26,7 +26,7 @@ class PointcutMethodNameFilterTest extends UnitTestCase
      */
     public function matchesRespectsFinalMethodsIfTheirNameMatches()
     {
-        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        $className = 'TestClass' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('
 			class ' . $className . ' {
 				final public function someFinalMethod() {}
@@ -45,7 +45,7 @@ class PointcutMethodNameFilterTest extends UnitTestCase
      */
     public function matchesTakesTheVisibilityModifierIntoAccountIfOneWasSpecified()
     {
-        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        $className = 'TestClass' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('
 			class ' . $className . ' {
 				public function somePublicMethod() {}
@@ -79,7 +79,7 @@ class PointcutMethodNameFilterTest extends UnitTestCase
      */
     public function matchesChecksTheAvailablityOfAnArgumentNameIfArgumentConstraintsHaveBeenConfigured()
     {
-        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        $className = 'TestClass' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('
 			class ' . $className . " {
 				public function somePublicMethod(\$arg1) {}

@@ -85,7 +85,7 @@ class ConsoleBackend extends AbstractBackend
             return;
         }
 
-        $severityLabel = (isset($this->severityLabels[$severity])) ? $this->severityLabels[$severity] : 'UNKNOWN  ';
+        $severityLabel = $this->severityLabels[$severity] ?? 'UNKNOWN  ';
         $output = $severityLabel . ' ' . $message;
         if (!empty($additionalData)) {
             $output .= PHP_EOL . (new PlainTextFormatter($additionalData))->format();

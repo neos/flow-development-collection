@@ -251,7 +251,7 @@ class CommandManager
     {
         $commandControllerMethodArgumentMap = static::getCommandControllerMethodArguments($this->objectManager);
 
-        return isset($commandControllerMethodArgumentMap[$controllerObjectName][$commandMethodName]) ? $commandControllerMethodArgumentMap[$controllerObjectName][$commandMethodName] : [];
+        return $commandControllerMethodArgumentMap[$controllerObjectName][$commandMethodName] ?? [];
     }
 
     /**

@@ -61,7 +61,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function buildMethodParametersCodeRendersParametersCodeWithCorrectTypeHintsAndDefaultValues()
     {
-        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        $className = 'TestClass' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('
             /**
              * @param string $arg1 Arg1
@@ -147,7 +147,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function buildMethodParametersCodeOmitsTypeHintsAndDefaultValuesIfToldSo()
     {
-        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        $className = 'TestClass' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('
             class ' . $className . ' {
                 public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = true) {}

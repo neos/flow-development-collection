@@ -400,7 +400,7 @@ class ActionRequestTest extends UnitTestCase
      */
     public function theActionNamesCaseIsFixedIfItIsAllLowerCaseAndTheControllerObjectNameIsKnown()
     {
-        $mockControllerClassName = 'Mock' . md5(uniqid(mt_rand(), true));
+        $mockControllerClassName = 'Mock' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('
 			class ' . $mockControllerClassName . ' extends \Neos\Flow\Mvc\Controller\ActionController {
 				public function someGreatAction() {}

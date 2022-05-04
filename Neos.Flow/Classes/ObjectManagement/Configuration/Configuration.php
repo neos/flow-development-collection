@@ -121,7 +121,7 @@ class Configuration
         }
 
         $this->objectName = $objectName;
-        $this->className = ($className === null ? $objectName : $className);
+        $this->className = ($className ?? $objectName);
     }
 
     /**

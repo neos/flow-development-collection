@@ -160,7 +160,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         }
 
         $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-        $lifetime = $lifetime === null ? $this->defaultLifetime : $lifetime;
+        $lifetime = $lifetime ?? $this->defaultLifetime;
         $expiryTime = ($lifetime === 0) ? 0 : (time() + $lifetime);
         $metaData = implode(' ', $tags) . str_pad((string)$expiryTime, self::EXPIRYTIME_LENGTH) . str_pad((string)strlen($data), self::DATASIZE_DIGITS);
 

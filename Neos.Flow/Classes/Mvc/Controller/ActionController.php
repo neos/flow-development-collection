@@ -643,7 +643,7 @@ class ActionController extends AbstractController
             ), 1355153188);
         }
 
-        $viewOptions = isset($viewsConfiguration['options']) ? $viewsConfiguration['options'] : [];
+        $viewOptions = $viewsConfiguration['options'] ?? [];
         $view = $viewObjectName::createWithOptions($viewOptions);
 
         $this->emitViewResolved($view);

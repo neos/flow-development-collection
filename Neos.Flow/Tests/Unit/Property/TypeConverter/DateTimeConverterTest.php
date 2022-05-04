@@ -507,7 +507,7 @@ class DateTimeConverterTest extends UnitTestCase
      */
     public function convertFromSupportsDateTimeSubClasses()
     {
-        $className = 'DateTimeSubClass' . md5(uniqid(mt_rand(), true));
+        $className = 'DateTimeSubClass' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('
         class ' . $className . ' extends \\DateTime {
             public static function createFromFormat(string $format, string $datetime, ?DateTimeZone $timezone = null): DateTime|false {

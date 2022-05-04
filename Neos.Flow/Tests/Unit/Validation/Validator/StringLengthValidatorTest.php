@@ -164,7 +164,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
         $this->validator = $this->getMockBuilder(StringLengthValidator::class)->disableOriginalConstructor()->setMethods(['addError'])->getMock();
         $this->validatorOptions(['minimum' => 5, 'maximum' => 100]);
 
-        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        $className = 'TestClass' . md5(uniqid(random_int(0, mt_getrandmax()), true));
 
         eval('
 			class ' . $className . ' {
@@ -186,7 +186,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
         $this->validator = $this->getMockBuilder(StringLengthValidator::class)->disableOriginalConstructor()->setMethods(['addError'])->getMock();
         $this->validatorOptions(['minimum' => 5, 'maximum' => 100]);
 
-        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        $className = 'TestClass' . md5(uniqid(random_int(0, mt_getrandmax()), true));
 
         eval('
 			class ' . $className . ' {

@@ -86,7 +86,7 @@ class QueryResult implements QueryResultInterface
             $rows = $query->getResult();
         }
 
-        return (isset($rows[0])) ? $rows[0] : null;
+        return $rows[0] ?? null;
     }
 
     /**
@@ -139,7 +139,7 @@ class QueryResult implements QueryResultInterface
     public function offsetGet($offset): mixed
     {
         $this->initialize();
-        return isset($this->rows[$offset]) ? $this->rows[$offset] : null;
+        return $this->rows[$offset] ?? null;
     }
 
     /**

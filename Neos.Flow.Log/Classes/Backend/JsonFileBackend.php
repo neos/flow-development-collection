@@ -42,7 +42,7 @@ class JsonFileBackend extends FileBackend
             $processId = 0;
         }
 
-        $remoteIp = ($this->logIpAddress === true) ? (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '') : '';
+        $remoteIp = ($this->logIpAddress === true) ? ($_SERVER['REMOTE_ADDR'] ?? '') : '';
         $severityLabel = (isset($this->severityLabels[$severity])) ? strtolower(trim($this->severityLabels[$severity])) : 'unknown';
 
         $logEntryData = [

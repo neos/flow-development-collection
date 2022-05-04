@@ -195,7 +195,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             }
             $metadata->isMappedSuperclass = true;
         } elseif (isset($classAnnotations[Flow\Entity::class]) || isset($classAnnotations[ORM\Entity::class])) {
-            $entityAnnotation = isset($classAnnotations[Flow\Entity::class]) ? $classAnnotations[Flow\Entity::class] : $classAnnotations[ORM\Entity::class];
+            $entityAnnotation = $classAnnotations[Flow\Entity::class] ?? $classAnnotations[ORM\Entity::class];
             if ($entityAnnotation->repositoryClass !== null) {
                 $metadata->setCustomRepositoryClass($entityAnnotation->repositoryClass);
             } elseif ($classSchema->getRepositoryClassName() !== null) {
@@ -424,7 +424,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             if (array_diff($idProperties, $metadata->getIdentifierFieldNames()) !== []) {
                 $uniqueIndexName = $this->truncateIdentifier('flow_identity_' . $primaryTable['name']);
                 foreach ($idProperties as $idProperty) {
-                    $primaryTable['uniqueConstraints'][$uniqueIndexName]['columns'][] = isset($metadata->columnNames[$idProperty]) ? $metadata->columnNames[$idProperty] : strtolower($idProperty);
+                    $primaryTable['uniqueConstraints'][$uniqueIndexName]['columns'][] = $metadata->columnNames[$idProperty] ?? strtolower($idProperty);
                 }
             }
         }
@@ -478,7 +478,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             $lengthLimit = $this->getMaxIdentifierLength();
         }
         if (strlen($identifier) > $lengthLimit) {
-            $identifier = substr($identifier, 0, $lengthLimit - 6) . '_' . substr(sha1($hashSource !== null ? $hashSource : $identifier), 0, 5);
+            $identifier = substr($identifier, 0, $lengthLimit - 6) . '_' . substr(sha1($hashSource ?? $identifier), 0, 5);
         }
 
         return $identifier;
@@ -556,10 +556,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                     $joinColumnName = $this->buildJoinTableColumnName($className);
                 }
                 if (count($idProperties) === 0) {
-                    $joinColumn['name'] = $joinColumn['name'] === null ? $joinColumnName : $joinColumn['name'];
+                    $joinColumn['name'] = $joinColumn['name'] ?? $joinColumnName;
                     $joinColumn['referencedColumnName'] = strtolower('Persistence_Object_Identifier');
                 } elseif (count($idProperties) === 1) {
-                    $joinColumn['name'] = $joinColumn['name'] === null ? $joinColumnName : $joinColumn['name'];
+                    $joinColumn['name'] = $joinColumn['name'] ?? $joinColumnName;
                     $joinColumn['referencedColumnName'] = strtolower(current($idProperties));
                 }
             }
@@ -1172,7 +1172,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     protected function joinColumnToArray(ORM\JoinColumn $joinColumnAnnotation, $propertyName = null)
     {
         return [
-            'name' => $joinColumnAnnotation->name === null ? $propertyName : $joinColumnAnnotation->name,
+            'name' => $joinColumnAnnotation->name ?? $propertyName,
             'unique' => $joinColumnAnnotation->unique,
             'nullable' => $joinColumnAnnotation->nullable,
             'onDelete' => $joinColumnAnnotation->onDelete,

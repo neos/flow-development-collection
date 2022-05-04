@@ -324,7 +324,7 @@ class FileSystemTarget implements TargetInterface
         }
 
         if (!is_writable(dirname($targetPathAndFilename))) {
-            throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the target file "%s" is not writable.', $sourceStream, $this->name, $targetPathAndFilename), 1428917322, (isset($exception) ? $exception : null));
+            throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the target file "%s" is not writable.', $sourceStream, $this->name, $targetPathAndFilename), 1428917322, ($exception ?? null));
         }
 
         try {
@@ -335,7 +335,7 @@ class FileSystemTarget implements TargetInterface
             $result = false;
         }
         if ($result === false) {
-            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be copied to the target location.', $sourceStream, $this->name), 1375258399, (isset($exception) ? $exception : null));
+            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be copied to the target location.', $sourceStream, $this->name), 1375258399, ($exception ?? null));
         }
 
         $this->logger->debug(sprintf('FileSystemTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename));

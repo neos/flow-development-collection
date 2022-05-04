@@ -394,8 +394,8 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
     {
         $translationConfiguration = $this->arguments['translate'];
 
-        $translateBy = isset($translationConfiguration['by']) ? $translationConfiguration['by'] : 'id';
-        $sourceName = isset($translationConfiguration['source']) ? $translationConfiguration['source'] : 'Main';
+        $translateBy = $translationConfiguration['by'] ?? 'id';
+        $sourceName = $translationConfiguration['source'] ?? 'Main';
         $request = $this->controllerContext->getRequest();
         $packageKey = 'Neos.Flow';
         if (isset($translationConfiguration['package'])) {
@@ -403,7 +403,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         } elseif ($request instanceof ActionRequest) {
             $packageKey = $request->getControllerPackageKey();
         }
-        $prefix = isset($translationConfiguration['prefix']) ? $translationConfiguration['prefix'] : '';
+        $prefix = $translationConfiguration['prefix'] ?? '';
 
         if (isset($translationConfiguration['locale'])) {
             try {
@@ -422,7 +422,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
             case 'id':
                 $id =  $prefix . (isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'label' ? $label : $value);
                 $translation = $this->translator->translateById($id, [], null, $localeObject, $sourceName, $packageKey);
-                return ($translation !== null) ? $translation : $label;
+                return $translation ?? $label;
             default:
                 throw new ViewHelper\Exception('You can only request to translate by "label" or by "id", but asked for "' . $translateBy . '" in your SelectViewHelper tag.', 1340050647);
         }

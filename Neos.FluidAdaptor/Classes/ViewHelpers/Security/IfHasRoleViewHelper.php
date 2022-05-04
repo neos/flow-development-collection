@@ -121,7 +121,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
 
         $role = $arguments['role'];
         $account = $arguments['account'];
-        $packageKey = isset($arguments['packageKey']) ? $arguments['packageKey'] : $renderingContext->getControllerContext()->getRequest()->getControllerPackageKey();
+        $packageKey = $arguments['packageKey'] ?? $renderingContext->getControllerContext()->getRequest()->getControllerPackageKey();
 
         if (is_string($role)) {
             $roleIdentifier = $role;

@@ -154,7 +154,7 @@ class FileStorage implements ThrowableStorageInterface
     protected function generateUniqueReferenceCode()
     {
         $timestamp = $_SERVER['REQUEST_TIME'] ?? time();
-        return date('YmdHis', $timestamp) . substr(md5(rand()), 0, 6);
+        return date('YmdHis', $timestamp) . substr(md5(random_int(0, mt_getrandmax())), 0, 6);
     }
 
     /**

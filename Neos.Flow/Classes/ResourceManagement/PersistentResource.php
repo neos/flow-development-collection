@@ -204,7 +204,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     public function getFileExtension()
     {
         $pathInfo = pathinfo($this->filename);
-        return isset($pathInfo['extension']) ? $pathInfo['extension'] : '';
+        return $pathInfo['extension'] ?? '';
     }
 
     /**

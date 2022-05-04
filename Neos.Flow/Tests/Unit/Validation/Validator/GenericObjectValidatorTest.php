@@ -67,7 +67,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         $resultWithError2 = new Error\Result();
         $resultWithError2->addError($error2);
 
-        $classNameForObjectWithPrivateProperties = 'B' . md5(uniqid(mt_rand(), true));
+        $classNameForObjectWithPrivateProperties = 'B' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('class ' . $classNameForObjectWithPrivateProperties . '{ protected $foo = \'foovalue\'; protected $bar = \'barvalue\'; }');
         $objectWithPrivateProperties = new $classNameForObjectWithPrivateProperties();
 
@@ -102,9 +102,9 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
      */
     public function validateCanHandleRecursiveTargetsWithoutEndlessLooping()
     {
-        $classNameA = 'B' . md5(uniqid(mt_rand(), true));
+        $classNameA = 'B' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('class ' . $classNameA . '{ public $b; }');
-        $classNameB = 'B' . md5(uniqid(mt_rand(), true));
+        $classNameB = 'B' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('class ' . $classNameB . '{ public $a; }');
         $A = new $classNameA();
         $B = new $classNameB();
@@ -124,9 +124,9 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
      */
     public function validateDetectsFailuresInRecursiveTargetsI()
     {
-        $classNameA = 'A' . md5(uniqid(mt_rand(), true));
+        $classNameA = 'A' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('class ' . $classNameA . '{ public $b; }');
-        $classNameB = 'B' . md5(uniqid(mt_rand(), true));
+        $classNameB = 'B' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('class ' . $classNameB . '{ public $a; public $uuid = 0xF; }');
         $A = new $classNameA();
         $B = new $classNameB();
@@ -154,9 +154,9 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
      */
     public function validateDetectsFailuresInRecursiveTargetsII()
     {
-        $classNameA = 'A' . md5(uniqid(mt_rand(), true));
+        $classNameA = 'A' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('class ' . $classNameA . '{ public $b; public $uuid = 0xF; }');
-        $classNameB = 'B' . md5(uniqid(mt_rand(), true));
+        $classNameB = 'B' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('class ' . $classNameB . '{ public $a; public $uuid = 0xF; }');
         $A = new $classNameA();
         $B = new $classNameB();
@@ -185,7 +185,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
      */
     public function objectsAreValidatedOnlyOnce()
     {
-        $className = 'A' . md5(uniqid(mt_rand(), true));
+        $className = 'A' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('class ' . $className . '{ public $integer = 1; }');
         $object = new $className();
 

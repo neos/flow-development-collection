@@ -108,10 +108,10 @@ class FilterFirewall implements FirewallInterface
      */
     protected function createFilterFromConfiguration(array $filterConfiguration): RequestFilter
     {
-        $patternType = isset($filterConfiguration['pattern']) ? $filterConfiguration['pattern'] : $filterConfiguration['patternType'];
+        $patternType = $filterConfiguration['pattern'] ?? $filterConfiguration['patternType'];
         $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
 
-        $patternOptions = isset($filterConfiguration['patternOptions']) ? $filterConfiguration['patternOptions'] : [];
+        $patternOptions = $filterConfiguration['patternOptions'] ?? [];
         /** @var $requestPattern RequestPatternInterface */
         $requestPattern = $this->objectManager->get($patternClassName, $patternOptions);
 

@@ -173,7 +173,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             throw new Exception('No cache frontend has been set yet via setCache().', 1259515600);
         }
 
-        $lifetime = ($lifetime === null) ? $this->defaultLifetime : $lifetime;
+        $lifetime = $lifetime ?? $this->defaultLifetime;
 
         // Convert binary data into hexadecimal representation,
         // because it is not allowed to store null bytes in PostgreSQL.

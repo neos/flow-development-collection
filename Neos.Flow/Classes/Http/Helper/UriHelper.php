@@ -44,7 +44,7 @@ abstract class UriHelper
     public static function getUsername(UriInterface $uri): string
     {
         $userInfo = explode(':', $uri->getUserInfo());
-        return (isset($userInfo[0]) ? $userInfo[0] : '');
+        return ($userInfo[0] ?? '');
     }
 
     /**
@@ -57,7 +57,7 @@ abstract class UriHelper
     {
         $userInfo = explode(':', $uri->getUserInfo());
 
-        return (isset($userInfo[1]) ? $userInfo[1] : '');
+        return ($userInfo[1] ?? '');
     }
 
     /**

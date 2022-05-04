@@ -232,7 +232,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
             $paths = $this->expandGenericPathPattern($this->options['templatePathAndFilenamePattern'], array_merge($this->patternReplacementVariables, [
                 'controllerName' => $controller,
                 'action' => $action,
-                'format' => ($format !== null ? $format : $this->patternReplacementVariables['format'])
+                'format' => ($format ?? $this->patternReplacementVariables['format'])
             ]), false, false);
         }
 
@@ -413,9 +413,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         $paths = $this->expandPatterns($paths, '@partialRoot', isset($patternReplacementVariables['partialRoot']) ? [$patternReplacementVariables['partialRoot']] : $this->getPartialRootPaths());
         $paths = $this->expandPatterns($paths, '@layoutRoot', isset($patternReplacementVariables['layoutRoot']) ? [$patternReplacementVariables['layoutRoot']] : $this->getLayoutRootPaths());
 
-        $subPackageKey = isset($patternReplacementVariables['subPackageKey']) ? $patternReplacementVariables['subPackageKey'] : '';
-        $controllerName = isset($patternReplacementVariables['controllerName']) ? $patternReplacementVariables['controllerName'] : '';
-        $format = isset($patternReplacementVariables['format']) ? $patternReplacementVariables['format'] : '';
+        $subPackageKey = $patternReplacementVariables['subPackageKey'] ?? '';
+        $controllerName = $patternReplacementVariables['controllerName'] ?? '';
+        $format = $patternReplacementVariables['format'] ?? '';
         unset($patternReplacementVariables['subPackageKey']);
         unset($patternReplacementVariables['controllerName']);
         unset($patternReplacementVariables['format']);

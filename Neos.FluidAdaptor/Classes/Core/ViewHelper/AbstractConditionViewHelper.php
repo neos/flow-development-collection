@@ -92,7 +92,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
                 return $arguments['__thenClosure']();
             }
         } elseif (!empty($arguments['__elseClosures'])) {
-            $elseIfClosures = isset($arguments['__elseifClosures']) ? $arguments['__elseifClosures'] : [];
+            $elseIfClosures = $arguments['__elseifClosures'] ?? [];
 
             return static::evaluateElseClosures($arguments['__elseClosures'], $elseIfClosures, $renderingContext);
         } elseif (array_key_exists('else', $arguments)) {
@@ -251,7 +251,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
         }
 
         if (!empty($arguments['__elseClosures'])) {
-            $elseIfClosures = isset($arguments['__elseifClosures']) ? $arguments['__elseifClosures'] : [];
+            $elseIfClosures = $arguments['__elseifClosures'] ?? [];
             return static::evaluateElseClosures($arguments['__elseClosures'], $elseIfClosures, $renderingContext);
         }
 

@@ -95,7 +95,7 @@ class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterf
         $evaluator = $this->objectManager->get(EntityPrivilegeExpressionEvaluator::class);
         $result = $evaluator->evaluate($this->getParsedMatcher(), $context);
         $this->entityType = $result['entityType'];
-        $this->conditionGenerator = $result['conditionGenerator'] !== null ? $result['conditionGenerator'] : new TrueConditionGenerator();
+        $this->conditionGenerator = $result['conditionGenerator'] ?? new TrueConditionGenerator();
         $this->isEvaluated = true;
     }
 

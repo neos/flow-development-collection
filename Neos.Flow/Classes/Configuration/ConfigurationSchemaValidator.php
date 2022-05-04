@@ -119,7 +119,7 @@ class ConfigurationSchemaValidator
                     $schemaNameParts = explode('.', str_replace('/', '.', $schemaName), 2);
 
                     $schemaType = $schemaNameParts[0];
-                    $schemaPath = isset($schemaNameParts[1]) ? $schemaNameParts[1] : null;
+                    $schemaPath = $schemaNameParts[1] ?? null;
 
                     if ($schemaType === $configurationType && ($path === null || strpos($schemaPath, $path) === 0)) {
                         $schemaFileInfos[] = [

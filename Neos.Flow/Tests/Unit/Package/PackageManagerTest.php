@@ -120,7 +120,7 @@ class PackageManagerTest extends UnitTestCase
     protected function createDummyObjectForPackage(PackageInterface $package)
     {
         $namespaces = $package->getNamespaces();
-        $dummyClassName = 'Someclass' . md5(uniqid(mt_rand(), true));
+        $dummyClassName = 'Someclass' . md5(uniqid(random_int(0, mt_getrandmax()), true));
 
         $fullyQualifiedClassName = '\\' . reset($namespaces) . '\\' . $dummyClassName;
 
@@ -150,10 +150,10 @@ class PackageManagerTest extends UnitTestCase
     public function scanAvailablePackagesTraversesThePackagesDirectoryAndRegistersPackagesItFinds()
     {
         $expectedPackageKeys = [
-            'Neos.Flow' . md5(uniqid(mt_rand(), true)),
-            'Neos.Flow.Test' . md5(uniqid(mt_rand(), true)),
-            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
-            'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true))
+            'Neos.Flow' . md5(uniqid(random_int(0, mt_getrandmax()), true)),
+            'Neos.Flow.Test' . md5(uniqid(random_int(0, mt_getrandmax()), true)),
+            'Neos.YetAnotherTestPackage' . md5(uniqid(random_int(0, mt_getrandmax()), true)),
+            'RobertLemke.Flow.NothingElse' . md5(uniqid(random_int(0, mt_getrandmax()), true))
         ];
 
         foreach ($expectedPackageKeys as $packageKey) {
@@ -183,9 +183,9 @@ class PackageManagerTest extends UnitTestCase
     public function packageStatesConfigurationContainsRelativePaths()
     {
         $packageKeys = [
-            'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true)),
-            'Neos.Flow' . md5(uniqid(mt_rand(), true)),
-            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
+            'RobertLemke.Flow.NothingElse' . md5(uniqid(random_int(0, mt_getrandmax()), true)),
+            'Neos.Flow' . md5(uniqid(random_int(0, mt_getrandmax()), true)),
+            'Neos.YetAnotherTestPackage' . md5(uniqid(random_int(0, mt_getrandmax()), true)),
         ];
 
         foreach ($packageKeys as $packageKey) {

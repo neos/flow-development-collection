@@ -91,10 +91,10 @@ class CommandRequestHandler implements RequestHandlerInterface
      */
     public function handleRequest()
     {
-        $runLevel = $this->bootstrap->isCompiletimeCommand(isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '') ? Bootstrap::RUNLEVEL_COMPILETIME : Bootstrap::RUNLEVEL_RUNTIME;
+        $runLevel = $this->bootstrap->isCompiletimeCommand($_SERVER['argv'][1] ?? '') ? Bootstrap::RUNLEVEL_COMPILETIME : Bootstrap::RUNLEVEL_RUNTIME;
         $this->boot($runLevel);
 
-        $commandLine = isset($_SERVER['argv']) ? $_SERVER['argv'] : [];
+        $commandLine = $_SERVER['argv'] ?? [];
         $this->request = $this->objectManager->get(RequestBuilder::class)->build(array_slice($commandLine, 1));
         $this->response = new Response();
 

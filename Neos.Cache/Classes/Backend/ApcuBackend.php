@@ -124,7 +124,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         }
 
         $tags[] = '%APCUBE%' . $this->cacheIdentifier;
-        $expiration = $lifetime !== null ? $lifetime : $this->defaultLifetime;
+        $expiration = $lifetime ?? $this->defaultLifetime;
 
         $success = apcu_store($this->getPrefixedIdentifier($entryIdentifier), $data, $expiration);
         if ($success === true) {

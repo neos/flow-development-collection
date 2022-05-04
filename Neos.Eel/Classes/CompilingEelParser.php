@@ -83,7 +83,7 @@ class CompilingEelParser extends EelParser
 
     public function ObjectPath_MethodCall(&$result, $sub)
     {
-        $arguments = isset($sub['arguments']) ? $sub['arguments'] : [];
+        $arguments = $sub['arguments'] ?? [];
         if (!array_key_exists('code', $result)) {
             $result['code'] = '$context';
         }

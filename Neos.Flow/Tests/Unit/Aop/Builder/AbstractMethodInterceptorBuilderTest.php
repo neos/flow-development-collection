@@ -27,7 +27,7 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
      */
     public function buildMethodArgumentsArrayCodeRendersCodeForPassingParametersToTheJoinPoint()
     {
-        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        $className = 'TestClass' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('
 			class ' . $className . ' {
 				public function foo($arg1, array $arg2, \ArrayObject $arg3, &$arg4, $arg5= "foo", $arg6 = true) {}
@@ -115,7 +115,7 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
      */
     public function buildSavedConstructorParametersCodeReturnsTheCorrectParametersCode()
     {
-        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        $className = 'TestClass' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('
 			class ' . $className . ' {
 				public function __construct($arg1, array $arg2, \ArrayObject $arg3, $arg4= "__construct", $arg5 = true) {}

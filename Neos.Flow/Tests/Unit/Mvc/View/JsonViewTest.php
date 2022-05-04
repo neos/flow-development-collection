@@ -210,7 +210,7 @@ class JsonViewTest extends UnitTestCase
      */
     public function exposeClassNameSettingsAndResults()
     {
-        $className = 'DummyClass' . md5(uniqid(mt_rand(), true));
+        $className = 'DummyClass' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         $namespace = 'Neos\Flow\Tests\Unit\Mvc\View\\' . $className;
         return [
             [

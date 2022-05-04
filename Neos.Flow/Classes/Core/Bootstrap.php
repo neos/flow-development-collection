@@ -486,7 +486,7 @@ class Bootstrap
         }
 
         if (!defined('FLOW_PATH_ROOT')) {
-            $rootPath = isset($_SERVER['FLOW_ROOTPATH']) ? $_SERVER['FLOW_ROOTPATH'] : false;
+            $rootPath = $_SERVER['FLOW_ROOTPATH'] ?? false;
             if ($rootPath === false && isset($_SERVER['REDIRECT_FLOW_ROOTPATH'])) {
                 $rootPath = $_SERVER['REDIRECT_FLOW_ROOTPATH'];
             }

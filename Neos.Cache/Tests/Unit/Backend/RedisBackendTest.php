@@ -110,7 +110,7 @@ class RedisBackendTest extends BaseTestCase
      */
     public function setUsesDefaultLifetimeIfNotProvided()
     {
-        $defaultLifetime = rand(1, 9999);
+        $defaultLifetime = random_int(1, 9999);
         $this->backend->setDefaultLifetime($defaultLifetime);
         $expected = ['ex' => $defaultLifetime];
 

@@ -134,7 +134,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
      * @param \Exception $exception
      * @return void
      */
-    protected function handleException(\Exception $exception)
+    protected function handleException(\Throwable $exception)
     {
         $response = new Response();
 

@@ -227,7 +227,7 @@ class ProxyClassBuilder
             $propertyVarTags = [];
             foreach ($this->reflectionService->getPropertyNamesByTag($className, 'var') as $propertyName) {
                 $varTagValues = $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var');
-                $propertyVarTags[$propertyName] = isset($varTagValues[0]) ? $varTagValues[0] : null;
+                $propertyVarTags[$propertyName] = $varTagValues[0] ?? null;
             }
             $code = "        \$this->Flow_Object_PropertiesToSerialize = array();
         unset(\$this->Flow_Persistence_RelatedEntities);
@@ -291,7 +291,8 @@ class ProxyClassBuilder
                         } else {
                             if (strpos($argumentValue, '.') !== false) {
                                 $settingPath = explode('.', $argumentValue);
-                                $settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
+                                $getConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
+                                $settings = Arrays::getValueByPath($getConfiguration, array_shift($settingPath));
                                 $argumentValue = Arrays::getValueByPath($settings, $settingPath);
                             }
                             if (!isset($this->objectConfigurations[$argumentValue])) {
@@ -630,7 +631,8 @@ class ProxyClassBuilder
                         } else {
                             if (strpos($argumentValue, '.') !== false) {
                                 $settingPath = explode('.', $argumentValue);
-                                $settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
+                                $getConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
+                                $settings = Arrays::getValueByPath($getConfiguration, array_shift($settingPath));
                                 $argumentValue = Arrays::getValueByPath($settings, $settingPath);
                             }
                             $preparedArguments[] = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';

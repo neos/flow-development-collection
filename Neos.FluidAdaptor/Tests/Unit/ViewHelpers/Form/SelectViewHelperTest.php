@@ -743,7 +743,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $mockTranslator = $this->createMock(\Neos\Flow\I18n\Translator::class);
         if ($by === 'label') {
             $mockTranslator->expects(self::once())->method('translateByOriginalLabel')->will(self::returnCallBack(function ($label) use ($translatedLabel) {
-                return $translatedLabel !== null ? $translatedLabel : $label;
+                return $translatedLabel ?? $label;
             }));
         } else {
             $mockTranslator->expects(self::once())->method('translateById')->will(self::returnValue($translatedId));

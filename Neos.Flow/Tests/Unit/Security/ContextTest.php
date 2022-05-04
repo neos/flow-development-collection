@@ -891,15 +891,15 @@ class ContextTest extends UnitTestCase
     {
         $mockAccount = $this->createMock(Account::class);
 
-        $token1 = $this->createMock(TokenInterface::class, [], [], 'token1' . md5(uniqid(mt_rand(), true)));
+        $token1 = $this->createMock(TokenInterface::class, [], [], 'token1' . md5(uniqid(random_int(0, mt_getrandmax()), true)));
         $token1->expects(self::any())->method('isAuthenticated')->will(self::returnValue(false));
         $token1->expects(self::never())->method('getAccount');
 
-        $token2 = $this->createMock(TokenInterface::class, [], [], 'token2' . md5(uniqid(mt_rand(), true)));
+        $token2 = $this->createMock(TokenInterface::class, [], [], 'token2' . md5(uniqid(random_int(0, mt_getrandmax()), true)));
         $token2->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
         $token2->expects(self::once())->method('getAccount')->will(self::returnValue($mockAccount));
 
-        $token3 = $this->createMock(TokenInterface::class, [], [], 'token3' . md5(uniqid(mt_rand(), true)));
+        $token3 = $this->createMock(TokenInterface::class, [], [], 'token3' . md5(uniqid(random_int(0, mt_getrandmax()), true)));
         $token3->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
         $token3->expects(self::never())->method('getAccount');
 
@@ -920,15 +920,15 @@ class ContextTest extends UnitTestCase
         $mockAccount1 = $this->createMock(Account::class);
         $mockAccount2 = $this->createMock(Account::class);
 
-        $token1 = $this->createMock(TokenInterface::class, [], [], 'token1' . md5(uniqid(mt_rand(), true)));
+        $token1 = $this->createMock(TokenInterface::class, [], [], 'token1' . md5(uniqid(random_int(0, mt_getrandmax()), true)));
         $token1->expects(self::any())->method('isAuthenticated')->will(self::returnValue(false));
         $token1->expects(self::never())->method('getAccount');
 
-        $token2 = $this->createMock(TokenInterface::class, [], [], 'token2' . md5(uniqid(mt_rand(), true)));
+        $token2 = $this->createMock(TokenInterface::class, [], [], 'token2' . md5(uniqid(random_int(0, mt_getrandmax()), true)));
         $token2->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
         $token2->expects(self::any())->method('getAccount')->will(self::returnValue($mockAccount1));
 
-        $token3 = $this->createMock(TokenInterface::class, [], [], 'token3' . md5(uniqid(mt_rand(), true)));
+        $token3 = $this->createMock(TokenInterface::class, [], [], 'token3' . md5(uniqid(random_int(0, mt_getrandmax()), true)));
         $token3->expects(self::any())->method('isAuthenticated')->will(self::returnValue(true));
         $token3->expects(self::any())->method('getAccount')->will(self::returnValue($mockAccount2));
 

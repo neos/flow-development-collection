@@ -375,7 +375,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function random()
     {
-        return mt_rand(0, mt_getrandmax() - 1) / mt_getrandmax();
+        return random_int(0, mt_getrandmax() - 1) / mt_getrandmax();
     }
 
     /**
@@ -389,7 +389,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function randomInt($min, $max)
     {
-        return mt_rand($min, $max);
+        return random_int($min, $max);
     }
 
     /**

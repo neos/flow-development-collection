@@ -34,7 +34,7 @@ class ConfigurationBuilderTest extends UnitTestCase
      */
     public function allBasicOptionsAreSetCorrectly()
     {
-        $factoryObjectName = 'ConfigurationBuilderTest' . md5(uniqid(mt_rand(), true));
+        $factoryObjectName = 'ConfigurationBuilderTest' . md5(uniqid(random_int(0, mt_getrandmax()), true));
         eval('class ' . $factoryObjectName . ' { public function manufacture() {} } ');
 
         $configurationArray = [];

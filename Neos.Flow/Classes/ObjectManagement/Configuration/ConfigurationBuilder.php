@@ -115,7 +115,7 @@ class ConfigurationBuilder
                     throw new InvalidObjectConfigurationException('Configuration of object "' . $objectName . '" in package "' . $packageKey . '" is not an array, please check your Objects.yaml for syntax errors.', 1295954338);
                 }
 
-                $existingObjectConfiguration = (isset($objectConfigurations[$objectName])) ? $objectConfigurations[$objectName] : null;
+                $existingObjectConfiguration = $objectConfigurations[$objectName] ?? null;
                 if (isset($rawObjectConfiguration['className'])) {
                     $rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($rawObjectConfiguration['className'], $rawObjectConfiguration);
                 }
@@ -262,7 +262,7 @@ class ConfigurationBuilder
                     $objectConfiguration->$methodName(trim($optionValue));
                 break;
                 case 'autowiring':
-                    $objectConfiguration->setAutowiring($this->parseAutowiring($optionValue));
+                    $objectConfiguration->setAutowiring(static::parseAutowiring($optionValue));
                 break;
                 default:
                     throw new InvalidObjectConfigurationException('Invalid configuration option "' . $optionName . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1167574981);
@@ -466,7 +466,7 @@ class ConfigurationBuilder
                 $index = $parameterInformation['position'] + 1;
                 if (!isset($arguments[$index])) {
                     if ($parameterInformation['optional'] === true) {
-                        $defaultValue = (isset($parameterInformation['defaultValue'])) ? $parameterInformation['defaultValue'] : null;
+                        $defaultValue = $parameterInformation['defaultValue'] ?? null;
                         $arguments[$index] = new ConfigurationArgument($index, $defaultValue, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
                         $arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
                     } elseif ($parameterInformation['class'] !== null && isset($objectConfigurations[$parameterInformation['class']])) {
@@ -587,7 +587,7 @@ class ConfigurationBuilder
                 /** @var InjectConfiguration $injectConfigurationAnnotation */
                 $injectConfigurationAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, InjectConfiguration::class);
                 if ($injectConfigurationAnnotation->type === ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
-                    $packageKey = $injectConfigurationAnnotation->package !== null ? $injectConfigurationAnnotation->package : $objectConfiguration->getPackageKey();
+                    $packageKey = $injectConfigurationAnnotation->package ?? $objectConfiguration->getPackageKey();
                     $configurationPath = rtrim($packageKey . '.' . $injectConfigurationAnnotation->path, '.');
                 } else {
                     if ($injectConfigurationAnnotation->package !== null) {

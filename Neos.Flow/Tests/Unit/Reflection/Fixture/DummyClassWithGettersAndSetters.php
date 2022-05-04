@@ -102,7 +102,7 @@ class DummyClassWithGettersAndSetters
 
     public function get($property)
     {
-        return isset($this->propertyBag[$property]) ? $this->propertyBag[$property] : null;
+        return $this->propertyBag[$property] ?? null;
     }
 
     public function set($property, $value)

@@ -474,7 +474,7 @@ class ResourceManager
     {
         $this->initialize();
 
-        return isset($this->storages[$storageName]) ? $this->storages[$storageName] : null;
+        return $this->storages[$storageName] ?? null;
     }
 
     /**
@@ -488,7 +488,7 @@ class ResourceManager
     {
         $this->initialize();
 
-        return isset($this->collections[$collectionName]) ? $this->collections[$collectionName] : null;
+        return $this->collections[$collectionName] ?? null;
     }
 
     /**
@@ -554,7 +554,7 @@ class ResourceManager
             if (!class_exists($storageDefinition['storage'])) {
                 throw new Exception(sprintf('The configuration for the resource storage "%s" defined in your settings has not defined a valid "storage" option. Please check the configuration syntax and make sure that the specified class "%s" really exists.', $storageName, $storageDefinition['storage']), 1361467212);
             }
-            $options = (isset($storageDefinition['storageOptions']) ? $storageDefinition['storageOptions'] : []);
+            $options = ($storageDefinition['storageOptions'] ?? []);
             $this->storages[$storageName] = new $storageDefinition['storage']($storageName, $options);
         }
     }
@@ -574,7 +574,7 @@ class ResourceManager
             if (!class_exists($targetDefinition['target'])) {
                 throw new Exception(sprintf('The configuration for the resource target "%s" defined in your settings has not defined a valid "target" option. Please check the configuration syntax and make sure that the specified class "%s" really exists.', $targetName, $targetDefinition['target']), 1361467839);
             }
-            $options = (isset($targetDefinition['targetOptions']) ? $targetDefinition['targetOptions'] : []);
+            $options = ($targetDefinition['targetOptions'] ?? []);
             $this->targets[$targetName] = new $targetDefinition['target']($targetName, $options);
         }
     }
@@ -601,8 +601,8 @@ class ResourceManager
                 throw new Exception(sprintf('The configuration for the resource collection "%s" defined in your settings has not defined a valid "target" option. Please check the configuration syntax and make sure that the specified class "%s" really exists.', $collectionName, $collectionDefinition['target']), 1361468924);
             }
 
-            $pathPatterns = (isset($collectionDefinition['pathPatterns'])) ? $collectionDefinition['pathPatterns'] : [];
-            $filenames = (isset($collectionDefinition['filenames'])) ? $collectionDefinition['filenames'] : [];
+            $pathPatterns = $collectionDefinition['pathPatterns'] ?? [];
+            $filenames = $collectionDefinition['filenames'] ?? [];
 
             $this->collections[$collectionName] = new Collection($collectionName, $this->storages[$collectionDefinition['storage']], $this->targets[$collectionDefinition['target']], $pathPatterns, $filenames);
         }

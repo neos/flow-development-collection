@@ -264,7 +264,7 @@ class BaseFunctionalityTestingAspect
     public function methodWithNullableScalarReturnTypeDeclarationAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
     {
         $originalResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
-        return 'adviced: ' . ($originalResult === null ? 'NULL' : $originalResult);
+        return 'adviced: ' . ($originalResult ?? 'NULL');
     }
 
 

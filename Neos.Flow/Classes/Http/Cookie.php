@@ -175,7 +175,7 @@ class Cookie
     {
         $nameValueAndUnparsedAttributes = explode(';', $header, 2);
         $expectedNameValuePair = $nameValueAndUnparsedAttributes[0];
-        $unparsedAttributes = isset($nameValueAndUnparsedAttributes[1]) ? $nameValueAndUnparsedAttributes[1] : '';
+        $unparsedAttributes = $nameValueAndUnparsedAttributes[1] ?? '';
 
         if (strpos($expectedNameValuePair, '=') === false) {
             return null;

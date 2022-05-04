@@ -73,8 +73,8 @@ class ComposerUtility
 
         $json = file_get_contents(FLOW_PATH_ROOT . 'composer.lock');
         $composerLock = json_decode($json, true);
-        $composerPackageVersions = isset($composerLock['packages']) ? $composerLock['packages'] : [];
-        $composerPackageDevVersions = isset($composerLock['packages-dev']) ? $composerLock['packages-dev'] : [];
+        $composerPackageVersions = $composerLock['packages'] ?? [];
+        $composerPackageDevVersions = $composerLock['packages-dev'] ?? [];
         self::$composerLockCache = array_merge($composerPackageVersions, $composerPackageDevVersions);
 
         return self::$composerLockCache;

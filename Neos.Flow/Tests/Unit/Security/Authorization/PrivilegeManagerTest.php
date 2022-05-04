@@ -102,8 +102,8 @@ class PrivilegeManagerTest extends UnitTestCase
      */
     public function isGrantedGrantsIfNoPrivilegeWasConfigured()
     {
-        $role1ClassName = 'role1' . md5(uniqid(mt_rand(), true));
-        $role2ClassName = 'role2' . md5(uniqid(mt_rand(), true));
+        $role1ClassName = 'role1' . md5(uniqid(random_int(0, mt_getrandmax()), true));
+        $role2ClassName = 'role2' . md5(uniqid(random_int(0, mt_getrandmax()), true));
 
         $mockRoleAdministrator = $this->createMock(Security\Policy\Role::class, [], [], $role1ClassName, false);
         $mockRoleAdministrator->expects(self::any())->method('getPrivilegesByType')->will(self::returnValue([]));
@@ -144,8 +144,8 @@ class PrivilegeManagerTest extends UnitTestCase
      */
     public function isGrantedDeniesAccessIfADenyPrivilegeWasConfiguredForOneOfTheRoles()
     {
-        $role1ClassName = 'role1' . md5(uniqid(mt_rand(), true));
-        $role2ClassName = 'role2' . md5(uniqid(mt_rand(), true));
+        $role1ClassName = 'role1' . md5(uniqid(random_int(0, mt_getrandmax()), true));
+        $role2ClassName = 'role2' . md5(uniqid(random_int(0, mt_getrandmax()), true));
 
         $mockRoleAdministrator = $this->createMock(Security\Policy\Role::class, [], [], $role1ClassName, false);
         $mockRoleAdministrator->expects(self::any())->method('getPrivilegesByType')->will(self::returnValue([$this->denyPrivilege]));
@@ -163,8 +163,8 @@ class PrivilegeManagerTest extends UnitTestCase
      */
     public function isGrantedGrantsAccessIfAGrantPrivilegeAndNoDenyPrivilegeWasConfigured()
     {
-        $role1ClassName = 'role1' . md5(uniqid(mt_rand(), true));
-        $role2ClassName = 'role2' . md5(uniqid(mt_rand(), true));
+        $role1ClassName = 'role1' . md5(uniqid(random_int(0, mt_getrandmax()), true));
+        $role2ClassName = 'role2' . md5(uniqid(random_int(0, mt_getrandmax()), true));
 
         $mockRoleAdministrator = $this->createMock(Security\Policy\Role::class, [], [], $role1ClassName, false);
         $mockRoleAdministrator->expects(self::any())->method('getPrivilegesByType')->will(self::returnValue([$this->grantPrivilege]));

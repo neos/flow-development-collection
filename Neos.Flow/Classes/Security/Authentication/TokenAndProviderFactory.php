@@ -194,7 +194,7 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
                     }
 
                     $patternType = $patternConfiguration['pattern'];
-                    $patternOptions = isset($patternConfiguration['patternOptions']) ? $patternConfiguration['patternOptions'] : [];
+                    $patternOptions = $patternConfiguration['patternOptions'] ?? [];
                     $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
                     $requestPattern = new $patternClassName($patternOptions);
                     if (!$requestPattern instanceof RequestPatternInterface) {

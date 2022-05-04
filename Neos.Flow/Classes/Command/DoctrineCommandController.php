@@ -519,7 +519,7 @@ class DoctrineCommandController extends CommandController
      * @return void
      * @throws StopCommandException
      */
-    protected function handleException(\Exception $exception): void
+    protected function handleException(\Throwable $exception): void
     {
         $this->outputLine('<error>%s</error>', [$exception->getMessage()]);
         $this->outputLine();

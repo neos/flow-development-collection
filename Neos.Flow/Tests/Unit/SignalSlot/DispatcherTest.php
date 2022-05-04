@@ -218,7 +218,7 @@ class DispatcherTest extends UnitTestCase
      */
     public function dispatchRetrievesSlotInstanceFromTheObjectManagerIfOnlyAClassNameWasSpecified(): void
     {
-        $slotClassName = 'Mock_' . md5(uniqid((string)mt_rand(), true));
+        $slotClassName = 'Mock_' . md5(uniqid((string)random_int(0, mt_getrandmax()), true));
         eval('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
         $mockSlot = new $slotClassName();
 
@@ -255,7 +255,7 @@ class DispatcherTest extends UnitTestCase
     public function dispatchThrowsAnExceptionIfTheSpecifiedSlotMethodDoesNotExist(): void
     {
         $this->expectException(InvalidSlotException::class);
-        $slotClassName = 'Mock_' . md5(uniqid((string)mt_rand(), true));
+        $slotClassName = 'Mock_' . md5(uniqid((string)random_int(0, mt_getrandmax()), true));
         eval('class ' . $slotClassName . ' {  }');
         $mockSlot = new $slotClassName();
 

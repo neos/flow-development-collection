@@ -351,7 +351,7 @@ class Scripts
         $environment = $bootstrap->getEarlyInstance(Environment::class);
 
         $cacheFactoryObjectConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, CacheFactoryInterface::class);
-        $cacheFactoryClass = isset($cacheFactoryObjectConfiguration['className']) ? $cacheFactoryObjectConfiguration['className'] : CacheFactory::class;
+        $cacheFactoryClass = $cacheFactoryObjectConfiguration['className'] ?? CacheFactory::class;
 
         /** @var CacheFactory $cacheFactory */
         $cacheFactory = new $cacheFactoryClass($bootstrap->getContext(), $environment, $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.cache.applicationIdentifier'));
@@ -696,7 +696,7 @@ class Scripts
                     Files::createDirectoryRecursively(FLOW_PATH_DATA . 'Logs/Exceptions');
                 }
                 if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
-                    $referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
+                    $referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(random_int(0, mt_getrandmax())), 0, 6);
                     $errorDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '-command.txt';
                     file_put_contents($errorDumpPathAndFilename, $command);
                     $exceptionMessage .= sprintf(' It has been stored in: %s', basename($errorDumpPathAndFilename));

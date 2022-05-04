@@ -13,7 +13,7 @@ return static function (RectorConfig $rectorConfig): void
         __DIR__ . '/*/Classes',
         __DIR__ . '/*/Tests'
     ]);
-    $rectorConfig->sets([LevelSetList::UP_TO_PHP_56]);
+    $rectorConfig->sets([LevelSetList::UP_TO_PHP_70]);
     $rectorConfig->skip([
         StringClassNameToClassConstantRector::class,
 

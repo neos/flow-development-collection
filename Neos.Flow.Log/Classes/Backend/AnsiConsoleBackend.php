@@ -112,7 +112,7 @@ class AnsiConsoleBackend extends ConsoleBackend
         do {
             $lastOutput = $output;
             $output = preg_replace_callback('|(<([^>]+?)>(.*?)</\2>)|s', function ($matches) use ($tagFormats, $disableAnsi) {
-                $format = isset($tagFormats[$matches[2]]) ? $tagFormats[$matches[2]] : '|';
+                $format = $tagFormats[$matches[2]] ?? '|';
                 if ($disableAnsi) {
                     return $matches[3];
                 } else {

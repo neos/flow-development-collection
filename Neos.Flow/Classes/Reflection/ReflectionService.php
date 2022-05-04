@@ -680,7 +680,7 @@ class ReflectionService
         if (!$this->initialized) {
             $this->initialize();
         }
-        return isset($this->classesByMethodAnnotations[$annotationClassName][$className]) ? $this->classesByMethodAnnotations[$annotationClassName][$className] : [];
+        return $this->classesByMethodAnnotations[$annotationClassName][$className] ?? [];
     }
 
     /**
@@ -989,7 +989,7 @@ class ReflectionService
             return [];
         }
 
-        return (isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES])) ? $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES] : [];
+        return $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES] ?? [];
     }
 
     /**
@@ -1008,7 +1008,7 @@ class ReflectionService
             return [];
         }
 
-        return (isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag])) ? $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag] : [];
+        return $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag] ?? [];
     }
 
     /**
@@ -2095,7 +2095,7 @@ class ReflectionService
         $reflectionData['classSchemata'] = $this->filterArrayByClassesInPackageNamespace($reflectionData['classSchemata'], $packageKey);
         $reflectionData['annotatedClasses'] = $this->filterArrayByClassesInPackageNamespace($reflectionData['annotatedClasses'], $packageKey);
 
-        $reflectionData['classesByMethodAnnotations'] = isset($reflectionData['classesByMethodAnnotations']) ? $reflectionData['classesByMethodAnnotations'] : [];
+        $reflectionData['classesByMethodAnnotations'] = $reflectionData['classesByMethodAnnotations'] ?? [];
         $methodAnnotationsFilters = function ($className) use ($packageKey) {
             return (isset($this->availableClassNames[$packageKey]) && in_array($className, $this->availableClassNames[$packageKey]));
         };

@@ -110,7 +110,7 @@ class FlashMessagesViewHelper extends AbstractTagBasedViewHelper
      */
     protected function renderAsList(array $flashMessages)
     {
-        $flashMessagesClass = isset($this->arguments['class']) ? $this->arguments['class'] : 'flashmessages';
+        $flashMessagesClass = $this->arguments['class'] ?? 'flashmessages';
         $tagContent = '';
         /** @var $singleFlashMessage Message */
         foreach ($flashMessages as $singleFlashMessage) {
