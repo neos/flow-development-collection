@@ -75,9 +75,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
 
         $expectedPassword = $this->testKeyClearText;
         $expectedHashedPasswordAndSalt = $this->testKeyHashed;
-        $this->mockHashService->expects(self::any())->method('validatePassword')->will(self::returnCallBack(function ($password, $hashedPasswordAndSalt) use ($expectedPassword, $expectedHashedPasswordAndSalt) {
-            return $hashedPasswordAndSalt === $expectedHashedPasswordAndSalt && $password === $expectedPassword;
-        }));
+        $this->mockHashService->expects(self::any())->method('validatePassword')->will(self::returnCallBack(fn($password, $hashedPasswordAndSalt) => $hashedPasswordAndSalt === $expectedHashedPasswordAndSalt && $password === $expectedPassword));
 
         $this->mockFileBasedSimpleKeyService = $this->getMockBuilder(FileBasedSimpleKeyService::class)->disableOriginalConstructor()->getMock();
         $this->mockFileBasedSimpleKeyService->expects(self::any())->method('getKey')->with('testKey')->will(self::returnValue($this->testKeyHashed));

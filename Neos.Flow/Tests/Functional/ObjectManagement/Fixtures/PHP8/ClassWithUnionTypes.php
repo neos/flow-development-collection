@@ -19,17 +19,17 @@ use Neos\Flow\Annotations as Flow;
  */
 class ClassWithUnionTypes
 {
-    protected ?string $propertyA;
+    protected ?string $propertyA = null;
 
     /* This should be fully equal to $propertyA */
-    protected string|null $propertyB;
+    protected string|null $propertyB = null;
 
     /* PHP8 allows `false` type to denote a boolean that can only be false */
     protected string|false $propertyC;
 
-    protected ClassToBeSerialized|string|null $propertyD;
+    protected ClassToBeSerialized|string|null $propertyD = null;
 
-    protected int|float|string|null $propertyE;
+    protected int|float|string|null $propertyE = null;
 
     public function getPropertyA(): ?string
     {

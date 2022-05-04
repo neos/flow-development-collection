@@ -120,7 +120,7 @@ class ClassLoader
 
         $classNamePart = array_pop($namespaceParts);
         $classNameParts = explode('_', $classNamePart);
-        $namespaceParts = array_merge($namespaceParts, $classNameParts);
+        $namespaceParts = [...$namespaceParts, ...$classNameParts];
         $namespacePartCount = count($namespaceParts);
 
         $currentPackageArray = $this->packageNamespaces;

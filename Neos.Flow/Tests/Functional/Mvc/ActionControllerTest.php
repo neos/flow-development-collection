@@ -592,9 +592,7 @@ class ActionControllerTest extends FunctionalTestCase
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://localhost/test/mvc/actioncontrollertest/redirectWithFlashMessage'));
         $response = $this->browser->sendRequest($request);
 
-        $sessionCookies = array_map(static function ($cookie) {
-            return Cookie::createFromRawSetCookieHeader($cookie);
-        }, $response->getHeader('Set-Cookie'));
+        $sessionCookies = array_map(static fn($cookie) => Cookie::createFromRawSetCookieHeader($cookie), $response->getHeader('Set-Cookie'));
         self::assertNotEmpty($sessionCookies);
 
         $redirect = $response->getHeaderLine('Location');

@@ -773,9 +773,7 @@ class Session implements CookieEnabledInterface
             'tags' => $this->tags
         ];
 
-        $tagsForCacheEntry = array_map(function ($tag) {
-            return Session::TAG_PREFIX . $tag;
-        }, $this->tags);
+        $tagsForCacheEntry = array_map(fn($tag) => Session::TAG_PREFIX . $tag, $this->tags);
         $tagsForCacheEntry[] = $this->sessionIdentifier;
         $tagsForCacheEntry[] = 'session';
 

@@ -68,9 +68,7 @@ class RouteTest extends UnitTestCase
         $this->route->_set('objectManager', $this->mockObjectManager);
 
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $this->mockPersistenceManager->method('convertObjectsToIdentityArrays')->will(self::returnCallBack(function ($array) {
-            return $array;
-        }));
+        $this->mockPersistenceManager->method('convertObjectsToIdentityArrays')->will(self::returnCallBack(fn($array) => $array));
         $this->inject($this->route, 'persistenceManager', $this->mockPersistenceManager);
     }
 
@@ -443,9 +441,7 @@ class RouteTest extends UnitTestCase
                 ]
             ]
         );
-        $mockRoutePartHandler = new MockRoutePartHandler(static function () {
-            return new MatchResult('_match_invoked_');
-        });
+        $mockRoutePartHandler = new MockRoutePartHandler(static fn() => new MatchResult('_match_invoked_'));
         $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
         $this->routeMatchesPath('foo/bar');
 
@@ -990,9 +986,7 @@ class RouteTest extends UnitTestCase
             ]
         );
         $this->routeValues = ['key2' => 'value2'];
-        $mockRoutePartHandler = new MockRoutePartHandler(null, static function () {
-            return new ResolveResult('_resolve_invoked_');
-        });
+        $mockRoutePartHandler = new MockRoutePartHandler(null, static fn() => new ResolveResult('_resolve_invoked_'));
         $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
         $this->resolveRouteValues($this->routeValues);
 
@@ -1080,9 +1074,7 @@ class RouteTest extends UnitTestCase
             ]
         );
         $this->routeValues = ['part1' => 'some-value'];
-        $mockRoutePartHandler = new MockRoutePartHandler(null, static function () {
-            return new ResolveResult('', UriConstraints::create()->withQueryString('some=query[string]'));
-        });
+        $mockRoutePartHandler = new MockRoutePartHandler(null, static fn() => new ResolveResult('', UriConstraints::create()->withQueryString('some=query[string]')));
         $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
         $this->resolveRouteValues($this->routeValues);
 
@@ -1117,9 +1109,7 @@ class RouteTest extends UnitTestCase
             ]
         );
         $this->routeValues = ['part1' => 'some-value', 'some' => ['nested' => ['foo' => 'ovérridden']]];
-        $mockRoutePartHandler = new MockRoutePartHandler(null, static function () {
-            return new ResolveResult('', UriConstraints::create()->withQueryString('some[nested][foo]=bar&some[nested][baz]=fôos'));
-        });
+        $mockRoutePartHandler = new MockRoutePartHandler(null, static fn() => new ResolveResult('', UriConstraints::create()->withQueryString('some[nested][foo]=bar&some[nested][baz]=fôos')));
         $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
         $this->resolveRouteValues($this->routeValues);
 
@@ -1141,9 +1131,7 @@ class RouteTest extends UnitTestCase
             ]
         );
         $this->routeValues = ['part1' => 'some-value', 'exceeding' => 'argument'];
-        $mockRoutePartHandler = new MockRoutePartHandler(null, static function () {
-            return new ResolveResult('', UriConstraints::fromUri(new Uri('https://neos.io:8080/some/path?some[query]=string#some-fragment')));
-        });
+        $mockRoutePartHandler = new MockRoutePartHandler(null, static fn() => new ResolveResult('', UriConstraints::fromUri(new Uri('https://neos.io:8080/some/path?some[query]=string#some-fragment'))));
         $this->mockObjectManager->expects(self::once())->method('get')->with(MockRoutePartHandler::class)->willReturn($mockRoutePartHandler);
         $this->resolveRouteValues($this->routeValues);
 

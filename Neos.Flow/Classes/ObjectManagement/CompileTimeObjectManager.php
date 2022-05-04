@@ -333,7 +333,7 @@ class CompileTimeObjectManager extends ObjectManager
 
                 $objects[$objectName]['fa'] = [];
                 $factoryMethodArguments = $objectConfiguration->getFactoryArguments();
-                if ((is_array($factoryMethodArguments) || $factoryMethodArguments instanceof \Countable ? count($factoryMethodArguments) : 0) > 0) {
+                if ((is_countable($factoryMethodArguments) ? count($factoryMethodArguments) : 0) > 0) {
                     foreach ($factoryMethodArguments as $index => $argument) {
                         $objects[$objectName]['fa'][$index] = [
                             't' => $argument->getType(),

@@ -186,9 +186,7 @@ abstract class Functions
             return false;
         }
 
-        $encodedUrl = preg_replace_callback('%[^:@/?#&=\.]+%usD', function ($matches) {
-            return urlencode($matches[0]);
-        }, $url);
+        $encodedUrl = preg_replace_callback('%[^:@/?#&=\.]+%usD', fn($matches) => urlencode($matches[0]), $url);
         $components = parse_url($encodedUrl);
 
         if ($components === false) {

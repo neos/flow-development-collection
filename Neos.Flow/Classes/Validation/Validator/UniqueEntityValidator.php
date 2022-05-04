@@ -76,7 +76,7 @@ class UniqueEntityValidator extends AbstractValidator
             $identityProperties = array_keys($classSchema->getIdentityProperties());
         }
 
-        if ((is_array($identityProperties) || $identityProperties instanceof \Countable ? count($identityProperties) : 0) === 0) {
+        if ((is_countable($identityProperties) ? count($identityProperties) : 0) === 0) {
             throw new InvalidValidationOptionsException('The object supplied for the UniqueEntityValidator must have at least one identity property.', 1358459831);
         }
 

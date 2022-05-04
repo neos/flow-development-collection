@@ -297,22 +297,12 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     {
         // Wrap an array with functions inside a context
         $contextArray = [
-            'count' => function ($array) {
-                return is_array($array) || $array instanceof \Countable ? count($array) : 0;
-            },
-            'pow' => function ($base, $exp) {
-                return $base ** $exp;
-            },
+            'count' => fn($array) => is_countable($array) ? count($array) : 0,
+            'pow' => fn($base, $exp) => $base ** $exp,
             'funcs' => [
-                'dup' => function ($array) {
-                    return array_map(function ($item) {
-                        return $item * 2;
-                    }, $array);
-                }
+                'dup' => fn($array) => array_map(fn($item) => $item * 2, $array)
             ],
-            'foo' => function () {
-                return ['a' => 'a1', 'b' => 'b1'];
-            },
+            'foo' => fn() => ['a' => 'a1', 'b' => 'b1'],
 
             'arr' => ['a' => 1, 'b' => 2, 'c' => 3],
             'someVariable' => 'b'
@@ -349,9 +339,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     public function arrayLiteralExpressions()
     {
         $c = new Context([
-            'test' => function ($string) {
-                return 'test|' . $string . '|';
-            },
+            'test' => fn($string) => 'test|' . $string . '|',
             'foo' => [
                 'baz' => 'Hello'
             ],
@@ -578,9 +566,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         $this->expectException(EvaluationException::class);
         $c = new Context([
             'arr' => [
-                'func' => function ($arg) {
-                    return 42;
-                }
+                'func' => fn($arg) => 42
             ]
         ]);
         $this->assertEvaluated(null, 'arr.funk("title")', $c);

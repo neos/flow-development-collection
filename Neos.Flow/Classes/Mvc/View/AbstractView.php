@@ -92,9 +92,7 @@ abstract class AbstractView implements ViewInterface
         // merge with default values
         $this->options = array_merge(
             array_map(
-                function ($value) {
-                    return $value[0];
-                },
+                fn($value) => $value[0],
                 $this->supportedOptions
             ),
             $options

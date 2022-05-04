@@ -98,9 +98,7 @@ class ProtectedContextTest extends UnitTestCase
     {
         $this->expectException(NotAllowedException::class);
         $context = new ProtectedContext([
-            'ident' => function ($value) {
-                return $value;
-            }
+            'ident' => fn($value) => $value
         ]);
 
         $evaluator = $this->createEvaluator();
@@ -117,9 +115,7 @@ class ProtectedContextTest extends UnitTestCase
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
-            'ident' => function ($value) {
-                return $value;
-            },
+            'ident' => fn($value) => $value,
             'value' => $securedObject
         ]);
         $context->allow(['ident']);
@@ -142,9 +138,7 @@ class ProtectedContextTest extends UnitTestCase
 
         $context = new ProtectedContext([
             'Array' => [
-                'reverse' => function ($value) {
-                    return array_reverse($value);
-                }
+                'reverse' => fn($value) => array_reverse($value)
             ],
             'value' => [$securedObject]
         ]);
@@ -166,9 +160,7 @@ class ProtectedContextTest extends UnitTestCase
         $context = new ProtectedContext([
             // Simulate something like FlowQuery
             'q' => function ($value) {
-                $context = new ProtectedContext(['count' => function () use ($value) {
-                    return is_array($value) || $value instanceof \Countable ? count($value) : 0;
-                }]);
+                $context = new ProtectedContext(['count' => fn() => is_countable($value) ? count($value) : 0]);
                 $context->allow('*');
                 return $context;
             },

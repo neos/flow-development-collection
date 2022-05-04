@@ -438,7 +438,7 @@ class TextIterator implements \Iterator
         preg_match_all('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $this->subject, $delimitersMatches);
         $splittedSentence = preg_split('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $this->subject);
 
-        if ((is_array($splittedSentence) || $splittedSentence instanceof \Countable ? count($splittedSentence) : 0) == 1) {
+        if ((is_countable($splittedSentence) ? count($splittedSentence) : 0) == 1) {
             $this->iteratorCache->append(new TextIteratorElement($splittedSentence[0], 0, Unicode\Functions::strlen($splittedSentence[0]), false));
             return;
         }

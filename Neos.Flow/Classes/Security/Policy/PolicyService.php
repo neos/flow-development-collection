@@ -250,9 +250,7 @@ class PolicyService
     {
         $this->initialize();
         if (!$includeAbstract) {
-            return array_filter($this->roles, static function (Role $role) {
-                return $role->isAbstract() !== true;
-            });
+            return array_filter($this->roles, static fn(Role $role) => $role->isAbstract() !== true);
         }
         return $this->roles;
     }

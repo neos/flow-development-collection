@@ -407,9 +407,7 @@ class Context
 
         $this->roles = ['Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody')];
 
-        $authenticatedTokens = array_filter($this->getAuthenticationTokens(), static function (TokenInterface $token) {
-            return $token->isAuthenticated();
-        });
+        $authenticatedTokens = array_filter($this->getAuthenticationTokens(), static fn(TokenInterface $token) => $token->isAuthenticated());
 
         if (empty($authenticatedTokens)) {
             $this->roles['Neos.Flow:Anonymous'] = $this->policyService->getRole('Neos.Flow:Anonymous');
@@ -506,7 +504,7 @@ class Context
     {
         $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
         $csrfProtectionTokens = $sessionDataContainer->getCsrfProtectionTokens();
-        if ($this->csrfProtectionStrategy === self::CSRF_ONE_PER_SESSION && (is_array($csrfProtectionTokens) || $csrfProtectionTokens instanceof \Countable ? count($csrfProtectionTokens) : 0) === 1) {
+        if ($this->csrfProtectionStrategy === self::CSRF_ONE_PER_SESSION && (is_countable($csrfProtectionTokens) ? count($csrfProtectionTokens) : 0) === 1) {
             reset($csrfProtectionTokens);
             return key($csrfProtectionTokens);
         }
@@ -537,7 +535,7 @@ class Context
     {
         $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
         $csrfProtectionTokens = $sessionDataContainer->getCsrfProtectionTokens();
-        return (is_array($csrfProtectionTokens) || $csrfProtectionTokens instanceof \Countable ? count($csrfProtectionTokens) : 0) > 0;
+        return (is_countable($csrfProtectionTokens) ? count($csrfProtectionTokens) : 0) > 0;
     }
 
     /**
@@ -718,7 +716,7 @@ class Context
             return $resultTokens;
         }
 
-        $sessionTokens = $sessionTokens ?? [];
+        $sessionTokens ??= [];
 
         /** @var $managerToken TokenInterface */
         foreach ($managerTokens as $managerToken) {
@@ -738,9 +736,7 @@ class Context
      */
     protected function findBestMatchingToken(TokenInterface $managerToken, array $sessionTokens): TokenInterface
     {
-        $matchingSessionTokens = array_filter($sessionTokens, function (TokenInterface $sessionToken) use ($managerToken) {
-            return ($sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName());
-        });
+        $matchingSessionTokens = array_filter($sessionTokens, fn(TokenInterface $sessionToken) => $sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName());
 
         if (empty($matchingSessionTokens)) {
             return $managerToken;
@@ -783,9 +779,7 @@ class Context
             $token->updateCredentials($this->request);
         }
 
-        $tokensForSession = array_filter(array_merge($this->inactiveTokens, $this->activeTokens), static function (TokenInterface $token) {
-            return !$token instanceof SessionlessTokenInterface;
-        });
+        $tokensForSession = array_filter(array_merge($this->inactiveTokens, $this->activeTokens), static fn(TokenInterface $token) => !$token instanceof SessionlessTokenInterface);
         $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
         $sessionDataContainer->setSecurityTokens($tokensForSession);
     }

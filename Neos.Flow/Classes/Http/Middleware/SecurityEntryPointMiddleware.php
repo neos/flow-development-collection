@@ -56,9 +56,7 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
             return $next->handle($request->withAttribute(ServerRequestAttributes::ACTION_REQUEST, $actionRequest));
         } catch (AuthenticationRequiredException $authenticationException) {
             /** @var TokenInterface[] $tokensWithEntryPoint */
-            $tokensWithEntryPoint = array_filter($this->securityContext->getAuthenticationTokens(), static function (TokenInterface $token) {
-                return $token->getAuthenticationEntryPoint() !== null;
-            });
+            $tokensWithEntryPoint = array_filter($this->securityContext->getAuthenticationTokens(), static fn(TokenInterface $token) => $token->getAuthenticationEntryPoint() !== null);
 
             if ($tokensWithEntryPoint === []) {
                 $this->securityLogger->notice('No authentication entry point found for active tokens, therefore cannot authenticate or redirect to authentication automatically.');

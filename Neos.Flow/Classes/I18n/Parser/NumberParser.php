@@ -165,7 +165,7 @@ class NumberParser
             }
         }
 
-        $positionOfDecimalSeparator = strpos($numberToParse, $localizedSymbols['decimal']);
+        $positionOfDecimalSeparator = strpos($numberToParse, (string) $localizedSymbols['decimal']);
         if ($positionOfDecimalSeparator === false) {
             $numberToParse = str_replace($localizedSymbols['group'], '', $numberToParse);
 
@@ -269,7 +269,7 @@ class NumberParser
             }
         }
 
-        $positionOfDecimalSeparator = strrpos($numberToParse, $localizedSymbols['decimal'], $positionOfFirstDigit);
+        $positionOfDecimalSeparator = strrpos($numberToParse, (string) $localizedSymbols['decimal'], $positionOfFirstDigit);
         if ($positionOfDecimalSeparator === false) {
             $integerPart = substr($numberToParse, $positionOfFirstDigit, $positionOfLastDigit - $positionOfFirstDigit + 1);
             $decimalPart = false;

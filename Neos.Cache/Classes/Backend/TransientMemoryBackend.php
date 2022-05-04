@@ -115,9 +115,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
     {
         if (isset($this->tagsAndEntries[$tag])) {
             return array_map(
-                static function ($value) {
-                    return (string)$value;
-                },
+                static fn($value) => (string)$value,
                 array_keys($this->tagsAndEntries[$tag])
             );
         }

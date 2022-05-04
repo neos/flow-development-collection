@@ -237,7 +237,7 @@ class PluralsReader
             return [self::RULE_OTHER];
         }
 
-        return array_merge(array_keys($ruleset), [self::RULE_OTHER]);
+        return [...array_keys($ruleset), ...[self::RULE_OTHER]];
     }
 
     /**

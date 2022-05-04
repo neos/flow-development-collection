@@ -779,9 +779,7 @@ class PackageManager
      */
     protected function collectPackageManifestData(array $packageStates): array
     {
-        return array_map(function ($packageState) {
-            return ComposerUtility::getComposerManifest(Files::getNormalizedPath(Files::concatenatePaths([$this->packagesBasePath, $packageState['packagePath']])));
-        }, $packageStates['packages']);
+        return array_map(fn($packageState) => ComposerUtility::getComposerManifest(Files::getNormalizedPath(Files::concatenatePaths([$this->packagesBasePath, $packageState['packagePath']]))), $packageStates['packages']);
     }
 
     /**

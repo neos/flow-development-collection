@@ -203,7 +203,7 @@ class RequestBuilder
 
         $decidedToUseNamedArguments = false;
         $decidedToUseUnnamedArguments = false;
-        while ((is_array($rawCommandLineArguments) || $rawCommandLineArguments instanceof \Countable ? count($rawCommandLineArguments) : 0) > 0) {
+        while ((is_countable($rawCommandLineArguments) ? count($rawCommandLineArguments) : 0) > 0) {
             $rawArgument = array_shift($rawCommandLineArguments);
 
             if ($rawArgument !== '' && $rawArgument[0] === '-') {

@@ -161,9 +161,7 @@ class GenericPackage implements PackageInterface, PackageKeyAwareInterface
      */
     public function getAutoloadPaths()
     {
-        return array_map(function ($configuration) {
-            return $configuration['classPath'];
-        }, $this->getFlattenedAutoloadConfiguration());
+        return array_map(fn($configuration) => $configuration['classPath'], $this->getFlattenedAutoloadConfiguration());
     }
 
     /**

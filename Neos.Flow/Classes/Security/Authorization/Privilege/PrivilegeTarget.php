@@ -156,9 +156,7 @@ class PrivilegeTarget
      */
     protected function createParameterMapper(array $parameters): \Closure
     {
-        return function (PrivilegeParameterDefinition $parameterDefinition) use ($parameters) {
-            return $this->createParameter($parameterDefinition, $parameters);
-        };
+        return fn(PrivilegeParameterDefinition $parameterDefinition) => $this->createParameter($parameterDefinition, $parameters);
     }
 
     /**

@@ -528,7 +528,7 @@ class Route
             unset($routeValues['@format']);
         }
 
-        if ((is_array($routeValues) || $routeValues instanceof \Countable ? count($routeValues) : 0) > 0) {
+        if ((is_countable($routeValues) ? count($routeValues) : 0) > 0) {
             $routeValues = Arrays::removeEmptyElementsRecursively($routeValues);
             $routeValues = $this->persistenceManager->convertObjectsToIdentityArrays($routeValues);
             if (!$this->appendExceedingArguments) {

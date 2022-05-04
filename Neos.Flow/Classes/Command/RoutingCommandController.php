@@ -268,7 +268,7 @@ class RoutingCommandController extends CommandController
      */
     public function matchCommand(string $uri, string $method = null, string $parameters = null): void
     {
-        $method = $method ?? 'GET';
+        $method ??= 'GET';
         $requestUri = new Uri($uri);
         if (isset($requestUri->getPath()[0]) && $requestUri->getPath()[0] !== '/') {
             $this->outputLine('<error>The URI "%s" is not valid. The path has to start with a "/"</error>', [$requestUri]);

@@ -276,9 +276,7 @@ class Scripts
         /** @var ThrowableStorageInterface $throwableStorage */
         $throwableStorage = $storageClassName::createWithOptions($storageOptions);
 
-        $throwableStorage->setBacktraceRenderer(static function ($backtrace) {
-            return Debugger::getBacktraceCode($backtrace, false, true);
-        });
+        $throwableStorage->setBacktraceRenderer(static fn($backtrace) => Debugger::getBacktraceCode($backtrace, false, true));
 
         $throwableStorage->setRequestInformationRenderer(function () use ($renderRequestInformation) {
             // The following lines duplicate FileStorage::__construct(), which is intended to provide a renderer
@@ -682,7 +680,7 @@ class Scripts
         $command .= ' 2>&1';
         exec($command, $output, $result);
         if ($result !== 0) {
-            if ((is_array($output) || $output instanceof \Countable ? count($output) : 0) > 0) {
+            if ((is_countable($output) ? count($output) : 0) > 0) {
                 $exceptionMessage = implode(PHP_EOL, $output);
             } else {
                 $exceptionMessage = sprintf('Execution of subprocess failed with exit code %d without any further output. (Please check your PHP error log for possible Fatal errors)', $result);

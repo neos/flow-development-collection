@@ -79,8 +79,6 @@ class IfAuthenticatedViewHelper extends AbstractConditionViewHelper
             return false;
         }
 
-        return array_reduce($securityContext->getAuthenticationTokens(), function (bool $isAuthenticated, TokenInterface $token) {
-            return $isAuthenticated || $token->isAuthenticated();
-        }, false);
+        return array_reduce($securityContext->getAuthenticationTokens(), fn(bool $isAuthenticated, TokenInterface $token) => $isAuthenticated || $token->isAuthenticated(), false);
     }
 }

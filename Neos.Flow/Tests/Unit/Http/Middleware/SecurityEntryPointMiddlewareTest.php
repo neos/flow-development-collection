@@ -173,14 +173,10 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
 
         /** @var EntryPointInterface|MockObject $mockEntryPoint1 */
         $mockEntryPoint1 = $mockAuthenticationToken1->getAuthenticationEntryPoint();
-        $mockEntryPoint1->method('startAuthentication')->willReturnCallback(static function (ServerRequestInterface $_, ResponseInterface $response) {
-            return $response->withAddedHeader('X-Entry-Point', '1');
-        });
+        $mockEntryPoint1->method('startAuthentication')->willReturnCallback(static fn(ServerRequestInterface $_, ResponseInterface $response) => $response->withAddedHeader('X-Entry-Point', '1'));
         /** @var EntryPointInterface|MockObject $mockEntryPoint2 */
         $mockEntryPoint2 = $mockAuthenticationToken2->getAuthenticationEntryPoint();
-        $mockEntryPoint2->method('startAuthentication')->willReturnCallback(static function (ServerRequestInterface $_, ResponseInterface $response) {
-            return $response->withAddedHeader('X-Entry-Point', '2');
-        });
+        $mockEntryPoint2->method('startAuthentication')->willReturnCallback(static fn(ServerRequestInterface $_, ResponseInterface $response) => $response->withAddedHeader('X-Entry-Point', '2'));
 
         $entryPointResponse = $this->securityEntryPointMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
         self::assertEquals(['1', '2'], $entryPointResponse->getHeader('X-Entry-Point'));

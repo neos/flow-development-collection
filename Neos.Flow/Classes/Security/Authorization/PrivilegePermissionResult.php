@@ -66,9 +66,7 @@ class PrivilegePermissionResult
             $newResult->abstains++;
         }
 
-        $parameterStrings = array_map(function (PrivilegeParameterInterface $parameter) {
-            return sprintf('%s: "%s"', $parameter->getName(), $parameter->getValue());
-        }, $privilege->getParameters());
+        $parameterStrings = array_map(fn(PrivilegeParameterInterface $parameter) => sprintf('%s: "%s"', $parameter->getName(), $parameter->getValue()), $privilege->getParameters());
 
         $privilegeName = $privilege->getPrivilegeTargetIdentifier() . ($parameterStrings !== [] ? ' (with parameters: ' . implode(', ', $parameterStrings) . ')' : '');
         $newResult->effectivePrivilegeIdentifiersWithPermission[] = sprintf('"%s": %s', $privilegeName, strtoupper($privilege->getPermission()));

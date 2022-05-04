@@ -1805,9 +1805,7 @@ class ReflectionService
             throw new InvalidValueObjectException('A value object must have a constructor, "' . $className . '" does not have one.', 1268740874);
         }
 
-        $setterMethods = array_filter($methods, function ($method) {
-            return strpos($method, 'set') === 0;
-        });
+        $setterMethods = array_filter($methods, fn($method) => strpos($method, 'set') === 0);
 
         if ($setterMethods !== []) {
             throw new InvalidValueObjectException('A value object must not have setters, "' . $className . '" does.', 1268740878);
@@ -2095,10 +2093,8 @@ class ReflectionService
         $reflectionData['classSchemata'] = $this->filterArrayByClassesInPackageNamespace($reflectionData['classSchemata'], $packageKey);
         $reflectionData['annotatedClasses'] = $this->filterArrayByClassesInPackageNamespace($reflectionData['annotatedClasses'], $packageKey);
 
-        $reflectionData['classesByMethodAnnotations'] = $reflectionData['classesByMethodAnnotations'] ?? [];
-        $methodAnnotationsFilters = function ($className) use ($packageKey) {
-            return (isset($this->availableClassNames[$packageKey]) && in_array($className, $this->availableClassNames[$packageKey]));
-        };
+        $reflectionData['classesByMethodAnnotations'] ??= [];
+        $methodAnnotationsFilters = fn($className) => isset($this->availableClassNames[$packageKey]) && in_array($className, $this->availableClassNames[$packageKey]);
 
         foreach ($reflectionData['classesByMethodAnnotations'] as $annotationClassName => $classNames) {
             $reflectionData['classesByMethodAnnotations'][$annotationClassName] = array_filter($classNames, $methodAnnotationsFilters);
@@ -2121,9 +2117,7 @@ class ReflectionService
      */
     protected function filterArrayByClassesInPackageNamespace(array $array, $packageKey)
     {
-        return array_filter($array, function ($className) use ($packageKey) {
-            return (isset($this->availableClassNames[$packageKey]) && in_array($className, $this->availableClassNames[$packageKey]));
-        }, ARRAY_FILTER_USE_KEY);
+        return array_filter($array, fn($className) => isset($this->availableClassNames[$packageKey]) && in_array($className, $this->availableClassNames[$packageKey]), ARRAY_FILTER_USE_KEY);
     }
 
     /**

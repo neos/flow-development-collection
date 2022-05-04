@@ -84,16 +84,14 @@ class ObjectManagerTest extends FunctionalTestCase
         $slots = $dispatcher->getSlots(Bootstrap::class, 'bootstrapShuttingDown');
 
         $slotClassNames = array_column($slots, 'class');
-        $relevantSlots = array_filter($slotClassNames, function (string $className) {
-            return in_array(
-                $className,
-                [
-                    ObjectManagerInterface::class,
-                    ConfigurationManager::class
-                ],
-                true
-            );
-        });
+        $relevantSlots = array_filter($slotClassNames, fn(string $className) => in_array(
+            $className,
+            [
+                ObjectManagerInterface::class,
+                ConfigurationManager::class
+            ],
+            true
+        ));
 
         $first = reset($relevantSlots);
         $last = end($relevantSlots);

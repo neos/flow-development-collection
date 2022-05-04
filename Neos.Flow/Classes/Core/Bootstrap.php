@@ -85,7 +85,7 @@ class Bootstrap
     public function __construct(string $context, \Composer\Autoload\ClassLoader $composerAutoloader = null)
     {
         // Load the composer autoloader first if not provided
-        $composerAutoloader = $composerAutoloader ?? require(__DIR__ . '/../../../../Libraries/autoload.php');
+        $composerAutoloader ??= (require(__DIR__ . '/../../../../Libraries/autoload.php'));
 
         $this->context = new ApplicationContext($context);
         $this->earlyInstances[self::class] = $this;

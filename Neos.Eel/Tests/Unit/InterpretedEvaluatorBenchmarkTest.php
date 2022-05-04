@@ -35,9 +35,7 @@ class InterpretedEvaluatorBenchmarkTest extends \Neos\Flow\Tests\UnitTestCase
                 'bar' => 'Test1',
                 'baz' => 'Test2'
             ],
-            'reverse' => function ($array) {
-                return array_reverse($array, true);
-            }
+            'reverse' => fn($array) => array_reverse($array, true)
         ]);
         for ($i = 0; $i < 10000; $i++) {
             $evaluator->evaluate($expression, $context);

@@ -339,9 +339,7 @@ class CompilingEelParser extends EelParser
         foreach ($self['args'] as $arg) {
             $contextScope .= '$context->push($' . $arg . ',"' . $arg . '");';
         }
-        $self['code'] = 'function(' . implode(',', array_map(function ($arg) {
-            return '$' . $arg;
-        }, $self['args'])) . ') use ($context) {
+        $self['code'] = 'function(' . implode(',', array_map(fn($arg) => '$' . $arg, $self['args'])) . ') use ($context) {
             $context = clone $context;
             ' . $contextScope . '
             return ' . $self['exp'] . ';

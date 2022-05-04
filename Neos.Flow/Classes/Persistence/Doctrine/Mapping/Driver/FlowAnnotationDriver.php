@@ -556,10 +556,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                     $joinColumnName = $this->buildJoinTableColumnName($className);
                 }
                 if (count($idProperties) === 0) {
-                    $joinColumn['name'] = $joinColumn['name'] ?? $joinColumnName;
+                    $joinColumn['name'] ??= $joinColumnName;
                     $joinColumn['referencedColumnName'] = strtolower('Persistence_Object_Identifier');
                 } elseif (count($idProperties) === 1) {
-                    $joinColumn['name'] = $joinColumn['name'] ?? $joinColumnName;
+                    $joinColumn['name'] ??= $joinColumnName;
                     $joinColumn['referencedColumnName'] = strtolower(current($idProperties));
                 }
             }
@@ -1153,10 +1153,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         );
         $this->classNames = array_filter(
             $this->classNames,
-            function ($className) {
-                return !interface_exists($className, false)
-                        && strpos($className, Compiler::ORIGINAL_CLASSNAME_SUFFIX) === false;
-            }
+            fn($className) => !interface_exists($className, false)
+                    && strpos($className, (string) Compiler::ORIGINAL_CLASSNAME_SUFFIX) === false
         );
 
         return $this->classNames;

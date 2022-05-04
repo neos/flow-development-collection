@@ -418,9 +418,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     {
         $mockPersistenceManager = $this->createMock(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnCallBack(
-            function ($object) {
-                return $object->getId();
-            }
+            fn($object) => $object->getId()
         ));
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
@@ -742,9 +740,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
 
         $mockTranslator = $this->createMock(\Neos\Flow\I18n\Translator::class);
         if ($by === 'label') {
-            $mockTranslator->expects(self::once())->method('translateByOriginalLabel')->will(self::returnCallBack(function ($label) use ($translatedLabel) {
-                return $translatedLabel ?? $label;
-            }));
+            $mockTranslator->expects(self::once())->method('translateByOriginalLabel')->will(self::returnCallBack(fn($label) => $translatedLabel ?? $label));
         } else {
             $mockTranslator->expects(self::once())->method('translateById')->will(self::returnValue($translatedId));
         }

@@ -91,9 +91,7 @@ class FilterFirewall implements FirewallInterface
      */
     public function blockIllegalRequests(ActionRequest $request)
     {
-        $filterMatched = array_reduce($this->filters, function (bool $filterMatched, RequestFilter $filter) use ($request) {
-            return ($filter->filterRequest($request) ? true : $filterMatched);
-        }, false);
+        $filterMatched = array_reduce($this->filters, fn(bool $filterMatched, RequestFilter $filter) => $filter->filterRequest($request) ? true : $filterMatched, false);
 
         if ($this->rejectAll && !$filterMatched) {
             throw new AccessDeniedException('The request was blocked, because no request filter explicitly allowed it.', 1216923741);

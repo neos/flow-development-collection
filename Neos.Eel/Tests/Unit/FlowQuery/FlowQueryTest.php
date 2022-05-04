@@ -455,7 +455,7 @@ class FlowQueryTest extends UnitTestCase
     public function isCanFilterObjects($sourceObjects, $filterString, $expectedResultArray)
     {
         $query = $this->createFlowQuery($sourceObjects);
-        self::assertSame((is_array($expectedResultArray) || $expectedResultArray instanceof \Countable ? count($expectedResultArray) : 0) > 0, $query->is($filterString));
+        self::assertSame((is_countable($expectedResultArray) ? count($expectedResultArray) : 0) > 0, $query->is($filterString));
     }
 
     /**
@@ -465,9 +465,9 @@ class FlowQueryTest extends UnitTestCase
     public function countReturnsCorrectNumber($sourceObjects, $filterString, $expectedResultArray)
     {
         $query = $this->createFlowQuery($sourceObjects);
-        self::assertSame(is_array($expectedResultArray) || $expectedResultArray instanceof \Countable ? count($expectedResultArray) : 0, $query->filter($filterString)->count());
-        self::assertSame(is_array($sourceObjects) || $sourceObjects instanceof \Countable ? count($sourceObjects) : 0, $query->count());
-        self::assertSame(is_array($sourceObjects) || $sourceObjects instanceof \Countable ? count($sourceObjects) : 0, count($query));
+        self::assertSame(is_countable($expectedResultArray) ? count($expectedResultArray) : 0, $query->filter($filterString)->count());
+        self::assertSame(is_countable($sourceObjects) ? count($sourceObjects) : 0, $query->count());
+        self::assertSame(is_countable($sourceObjects) ? count($sourceObjects) : 0, count($query));
     }
 
     /**

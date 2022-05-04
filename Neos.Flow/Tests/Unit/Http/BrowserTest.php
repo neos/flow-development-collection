@@ -110,13 +110,9 @@ class BrowserTest extends UnitTestCase
         $requestEngine
             ->method('sendRequest')
             ->withConsecutive([
-                self::callback(function (ServerRequestInterface $request) use ($initialUri) {
-                    return (string)$request->getUri() === (string)$initialUri;
-                })
+                self::callback(fn(ServerRequestInterface $request) => (string)$request->getUri() === (string)$initialUri)
             ], [
-                self::callback(function (ServerRequestInterface $request) use ($redirectUri) {
-                    return (string)$request->getUri() === (string)$redirectUri;
-                })
+                self::callback(fn(ServerRequestInterface $request) => (string)$request->getUri() === (string)$redirectUri)
             ])->willReturnOnConsecutiveCalls($firstResponse, $secondResponse);
 
         $this->browser->setRequestEngine($requestEngine);

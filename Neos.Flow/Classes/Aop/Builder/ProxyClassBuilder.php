@@ -422,7 +422,7 @@ class ProxyClassBuilder
         $this->addAdvicedMethodsToInterceptedMethods($interceptedMethods, array_merge($methodsFromTargetClass, $methodsFromIntroducedInterfaces), $targetClassName, $aspectContainers);
         $this->addIntroducedMethodsToInterceptedMethods($interceptedMethods, $methodsFromIntroducedInterfaces);
 
-        if ((is_array($interceptedMethods) || $interceptedMethods instanceof \Countable ? count($interceptedMethods) : 0) < 1 && count($introducedInterfaces) < 1 && count($introducedTraits) < 1 && count($propertyIntroductions) < 1) {
+        if ((is_countable($interceptedMethods) ? count($interceptedMethods) : 0) < 1 && count($introducedInterfaces) < 1 && count($introducedTraits) < 1 && count($propertyIntroductions) < 1) {
             return false;
         }
 

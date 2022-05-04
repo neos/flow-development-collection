@@ -129,7 +129,7 @@ class PointcutExpressionParser
         $pointcutFilterComposite = new PointcutFilterComposite();
         $pointcutExpressionParts = preg_split(self::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-        $count = is_array($pointcutExpressionParts) || $pointcutExpressionParts instanceof \Countable ? count($pointcutExpressionParts) : 0;
+        $count = is_countable($pointcutExpressionParts) ? count($pointcutExpressionParts) : 0;
         for ($partIndex = 0; $partIndex < $count; $partIndex += 2) {
             $operator = ($partIndex > 0) ? trim($pointcutExpressionParts[$partIndex - 1]) : '&&';
             $expression = trim($pointcutExpressionParts[$partIndex]);

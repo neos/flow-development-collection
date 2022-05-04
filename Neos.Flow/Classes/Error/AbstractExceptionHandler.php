@@ -151,9 +151,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
         $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $viewClassName = $renderingOptions['viewClassName'];
-        $viewOptions = array_filter($renderingOptions['viewOptions'], static function ($optionValue) {
-            return $optionValue !== null;
-        });
+        $viewOptions = array_filter($renderingOptions['viewOptions'], static fn($optionValue) => $optionValue !== null);
         /** @var ViewInterface $view */
         $view = $viewClassName::createWithOptions($viewOptions);
 

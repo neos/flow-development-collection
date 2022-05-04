@@ -425,11 +425,11 @@ class DatetimeParser
                         // no break
                     case 'a':
                         $dayPeriods = $localizedLiterals['dayPeriods']['format']['wide'];
-                        $positionOfDayPeriod = strpos($datetimeToParse, $dayPeriods['am']);
+                        $positionOfDayPeriod = strpos($datetimeToParse, (string) $dayPeriods['am']);
                         if ($positionOfDayPeriod !== false) {
                             $numberOfCharactersToRemove = $positionOfDayPeriod + strlen($dayPeriods['am']);
                         } else {
-                            $positionOfDayPeriod = strpos($datetimeToParse, $dayPeriods['pm']);
+                            $positionOfDayPeriod = strpos($datetimeToParse, (string) $dayPeriods['pm']);
                             if ($positionOfDayPeriod !== false) {
                                 $numberOfCharactersToRemove = $positionOfDayPeriod + strlen($dayPeriods['pm']);
                                 $timeIsPm = true;
@@ -480,7 +480,7 @@ class DatetimeParser
                                 }
                             case 3:
                                 foreach ($localizedLiterals['months'][$typeOfLiteral]['abbreviated'] as $monthId => $monthName) {
-                                    $positionOfMonthName = strpos($datetimeToParse, $monthName);
+                                    $positionOfMonthName = strpos($datetimeToParse, (string) $monthName);
                                     if ($positionOfMonthName !== false) {
                                         $numberOfCharactersToRemove = $positionOfMonthName + strlen($monthName);
                                         $datetimeElements['month'] = (int)$monthId;
@@ -494,7 +494,7 @@ class DatetimeParser
                                 // no break
                             case 4:
                                 foreach ($localizedLiterals['months'][$typeOfLiteral]['wide'] as $monthId => $monthName) {
-                                    $positionOfMonthName = strpos($datetimeToParse, $monthName);
+                                    $positionOfMonthName = strpos($datetimeToParse, (string) $monthName);
                                     if ($positionOfMonthName !== false) {
                                         $numberOfCharactersToRemove = $positionOfMonthName + strlen($monthName);
                                         $datetimeElements['month'] = (int)$monthId;
@@ -534,7 +534,7 @@ class DatetimeParser
                         }
 
                         $timezone = $matches[0];
-                        $numberOfCharactersToRemove = strpos($datetimeToParse, $timezone) + strlen($timezone);
+                        $numberOfCharactersToRemove = strpos($datetimeToParse, (string) $timezone) + strlen($timezone);
                         $datetimeElements['timezone'] = $matches[0];
                         break;
                     case 'D':

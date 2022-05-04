@@ -36,9 +36,7 @@ class StandardController extends ActionController
     public function targetAction()
     {
         $flashMessages = $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush();
-        return json_encode(array_map(static function (Message $message) {
-            return $message->getMessage();
-        }, $flashMessages));
+        return json_encode(array_map(static fn(Message $message) => $message->getMessage(), $flashMessages));
     }
 
     /**
