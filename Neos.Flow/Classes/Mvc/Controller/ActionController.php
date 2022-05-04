@@ -472,7 +472,7 @@ class ActionController extends AbstractController
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
                 $validateAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, Flow\Validate::class);
-                $result[$methodName] = array_map(fn($validateAnnotation) => [
+                $result[$methodName] = array_map(fn ($validateAnnotation) => [
                     'type' => $validateAnnotation->type,
                     'options' => $validateAnnotation->options,
                     'argumentName' => $validateAnnotation->argumentName,

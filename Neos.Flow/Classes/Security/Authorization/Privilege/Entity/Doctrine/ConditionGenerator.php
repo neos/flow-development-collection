@@ -53,7 +53,7 @@ class ConditionGenerator
     public function conjunction()
     {
         $expressions = func_get_args();
-        return new ConjunctionGenerator(array_filter($expressions, fn($expression) => $expression instanceof SqlGeneratorInterface));
+        return new ConjunctionGenerator(array_filter($expressions, fn ($expression) => $expression instanceof SqlGeneratorInterface));
     }
 
     /**
@@ -62,7 +62,7 @@ class ConditionGenerator
     public function disjunction()
     {
         $expressions = func_get_args();
-        return new DisjunctionGenerator(array_filter($expressions, fn($expression) => $expression instanceof SqlGeneratorInterface));
+        return new DisjunctionGenerator(array_filter($expressions, fn ($expression) => $expression instanceof SqlGeneratorInterface));
     }
 
     /**

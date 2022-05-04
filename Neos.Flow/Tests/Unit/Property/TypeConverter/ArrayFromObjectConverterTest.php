@@ -70,7 +70,7 @@ class ArrayFromObjectConverterTest extends UnitTestCase
             $source = json_decode(json_encode($source), false);
         }
 
-        $convertedChildProperties = array_map(fn($value) => $this->converter->convertFrom($value, 'array', [], null), $this->converter->getSourceChildPropertiesToBeConverted($source));
+        $convertedChildProperties = array_map(fn ($value) => $this->converter->convertFrom($value, 'array', [], null), $this->converter->getSourceChildPropertiesToBeConverted($source));
         self::assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', $convertedChildProperties, null));
     }
 }

@@ -110,7 +110,7 @@ class PackageStorage extends FileSystemStorage
         if (isset($pathInfo['dirname'])) {
             $object->setRelativePublicationPath($this->prepareRelativePublicationPath($pathInfo['dirname'], $resourcePackage->getPackageKey(), $resourcePackage->getResourcesPath()));
         }
-        $object->setStream(fn() => fopen($resourcePathAndFilename, 'r'));
+        $object->setStream(fn () => fopen($resourcePathAndFilename, 'r'));
 
         return $object;
     }

@@ -71,7 +71,7 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
         // merge with default values
         $this->options = array_merge(
             array_map(
-                fn($value) => $value[0],
+                fn ($value) => $value[0],
                 $this->supportedOptions
             ),
             $options

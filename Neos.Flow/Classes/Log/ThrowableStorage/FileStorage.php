@@ -80,7 +80,7 @@ class FileStorage implements ThrowableStorageInterface
             return $output;
         };
 
-        $this->backtraceRenderer = static fn($backtrace) => Debugger::getBacktraceCode($backtrace, false, true);
+        $this->backtraceRenderer = static fn ($backtrace) => Debugger::getBacktraceCode($backtrace, false, true);
     }
 
     /**

@@ -276,14 +276,14 @@ class Service
      */
     private function getSortedVersions(AvailableMigrationsList $availableMigrations, ExecutedMigrationsList $executedMigrations): array
     {
-        $availableVersions = array_map(static fn(AvailableMigration $availableMigration): Version => $availableMigration->getVersion(), $availableMigrations->getItems());
+        $availableVersions = array_map(static fn (AvailableMigration $availableMigration): Version => $availableMigration->getVersion(), $availableMigrations->getItems());
 
-        $executedVersions = array_map(static fn(ExecutedMigration $executedMigration): Version => $executedMigration->getVersion(), $executedMigrations->getItems());
+        $executedVersions = array_map(static fn (ExecutedMigration $executedMigration): Version => $executedMigration->getVersion(), $executedMigrations->getItems());
 
         $versions = array_unique(array_merge($availableVersions, $executedVersions));
 
         $comparator = $this->getDependencyFactory()->getVersionComparator();
-        uasort($versions, static fn(Version $a, Version $b): int => $comparator->compare($a, $b));
+        uasort($versions, static fn (Version $a, Version $b): int => $comparator->compare($a, $b));
 
         return $versions;
     }
@@ -702,7 +702,7 @@ class Service
                         );
                     }
 
-                    $identifierConstructorCallback = static fn($columnName) => new Identifier($columnName);
+                    $identifierConstructorCallback = static fn ($columnName) => new Identifier($columnName);
                     $localColumns = array_map($identifierConstructorCallback, $localColumns);
                     $foreignColumns = array_map($identifierConstructorCallback, $foreignColumns);
 

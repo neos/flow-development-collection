@@ -48,7 +48,7 @@ class RemoveOperation extends AbstractOperation
         }
         $filteredContext = array_filter(
             $flowQuery->getContext(),
-            fn($item) => in_array($item, $valuesToRemove, true) === false
+            fn ($item) => in_array($item, $valuesToRemove, true) === false
         );
         $flowQuery->setContext($filteredContext);
     }

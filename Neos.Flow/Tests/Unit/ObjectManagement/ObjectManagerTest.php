@@ -50,7 +50,7 @@ class ObjectManagerTest extends UnitTestCase
             ->disableOriginalConstructor()
             ->setMethods(['buildObjectByFactory'])->getMock();
         $objectManager->expects(self::exactly($factoryCalls))
-            ->method('buildObjectByFactory')->will(self::returnCallBack(fn() => new BasicClass()));
+            ->method('buildObjectByFactory')->will(self::returnCallBack(fn () => new BasicClass()));
 
         $objects = [
             BasicClass::class => [

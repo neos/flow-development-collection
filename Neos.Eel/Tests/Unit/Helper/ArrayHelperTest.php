@@ -631,22 +631,22 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         return [
             'map squares' => [
                 [1, 2, 3, 4],
-                fn($x) => $x * $x,
+                fn ($x) => $x * $x,
                 [1, 4, 9, 16],
             ],
             'preserve keys' => [
                 ['a' => 1, 'b' => 2],
-                fn($x) => $x * 2,
+                fn ($x) => $x * 2,
                 ['a' => 2, 'b' => 4],
             ],
             'with keys' => [
                 [1, 2, 3, 4],
-                fn($x, $index) => $x * $index,
+                fn ($x, $index) => $x * $index,
                 [0, 2, 6, 12],
             ],
             'traversable' => [
                 TestArrayIterator::fromArray([1, 2, 3, 4]),
-                fn($x) => $x * $x,
+                fn ($x) => $x * $x,
                 [1, 4, 9, 16],
             ],
         ];
@@ -668,37 +668,37 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         return [
             'sum with initial value' => [
                 [1, 2, 3, 4],
-                fn($sum, $x) => $sum + $x,
+                fn ($sum, $x) => $sum + $x,
                 0,
                 10,
             ],
             'sum without initial value' => [
                 [1, 2, 3, 4],
-                fn($sum, $x) => $sum + $x,
+                fn ($sum, $x) => $sum + $x,
                 null,
                 10,
             ],
             'sum with empty array and initial value' => [
                 [],
-                fn($sum, $x) => $sum + $x,
+                fn ($sum, $x) => $sum + $x,
                 0,
                 0,
             ],
             'sum with empty array and without initial value' => [
                 [],
-                fn($sum, $x) => $sum + $x,
+                fn ($sum, $x) => $sum + $x,
                 null,
                 null,
             ],
             'traversable' => [
                 TestArrayIterator::fromArray([1, 2, 3, 4]),
-                fn($sum, $x) => $sum + $x,
+                fn ($sum, $x) => $sum + $x,
                 0,
                 10,
             ],
             'traversable without initial value' => [
                 TestArrayIterator::fromArray([1, 2, 3, 4]),
-                fn($sum, $x) => $sum + $x,
+                fn ($sum, $x) => $sum + $x,
                 null,
                 10,
             ],
@@ -721,7 +721,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
         return [
             'test by value' => [
                 range(0, 5),
-                fn($x) => $x % 2 === 0,
+                fn ($x) => $x % 2 === 0,
                 [
                     0 => 0,
                     2 => 2,
@@ -730,7 +730,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             ],
             'test element by index' => [
                 ['a', 'b', 'c', 'd'],
-                fn($x, $index) => $index % 2 === 0,
+                fn ($x, $index) => $index % 2 === 0,
                 [
                     0 => 'a',
                     2 => 'c',
@@ -747,7 +747,7 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
             ],
             'traversable' => [
                 TestArrayIterator::fromArray([0, 1, 2, 3, 4, 5]),
-                fn($x) => $x % 2 === 0,
+                fn ($x) => $x % 2 === 0,
                 [
                     0 => 0,
                     2 => 2,
@@ -770,8 +770,8 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
     public function someExamples()
     {
-        $isLongWord = fn($x) => strlen($x) >= 8;
-        $isFiveApples = fn($x, $key) => $key === 'apple' && $x > 5;
+        $isLongWord = fn ($x) => strlen($x) >= 8;
+        $isFiveApples = fn ($x, $key) => $key === 'apple' && $x > 5;
         return [
             'test by value: success' => [
                 ['brown', 'elephant', 'dung'],
@@ -814,8 +814,8 @@ class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
 
     public function everyExamples()
     {
-        $isMediumWord = fn($x) => strlen($x) >= 4;
-        $isValueEqualIndex = fn($x, $key) => $key === $x;
+        $isMediumWord = fn ($x) => strlen($x) >= 4;
+        $isValueEqualIndex = fn ($x, $key) => $key === $x;
         return [
             'test by value: success' => [
                 ['brown', 'elephant', 'dung'],

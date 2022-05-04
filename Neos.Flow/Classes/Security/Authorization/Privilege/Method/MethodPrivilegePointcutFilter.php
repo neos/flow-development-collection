@@ -166,7 +166,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      */
     protected function getFilterEvaluator($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): \Closure
     {
-        return fn(PointcutFilterComposite $filter) => $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
+        return fn (PointcutFilterComposite $filter) => $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
     }
 
     /**

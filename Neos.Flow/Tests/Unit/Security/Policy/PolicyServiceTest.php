@@ -55,7 +55,7 @@ class PolicyServiceTest extends UnitTestCase
         $this->policyService = new PolicyService();
 
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
-        $this->mockConfigurationManager->expects(self::any())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will(self::returnCallBack(fn() => $this->mockPolicyConfiguration));
+        $this->mockConfigurationManager->expects(self::any())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will(self::returnCallBack(fn () => $this->mockPolicyConfiguration));
         $this->inject($this->policyService, 'configurationManager', $this->mockConfigurationManager);
 
         $this->mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();

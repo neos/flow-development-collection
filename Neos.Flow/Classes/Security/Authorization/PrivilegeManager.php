@@ -129,7 +129,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
      */
     public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = [])
     {
-        $privilegeMapper = fn(Role $role) => $role->getPrivilegeForTarget($privilegeTargetIdentifier, $privilegeParameters);
+        $privilegeMapper = fn (Role $role) => $role->getPrivilegeForTarget($privilegeTargetIdentifier, $privilegeParameters);
 
         $privileges = array_map($privilegeMapper, $roles);
         /** @var PrivilegePermissionResult $result */
@@ -163,7 +163,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
      */
     protected function getPrivilegeByTypeReducer(string $privilegeType): \Closure
     {
-        return fn(array $availablePrivileges, Role $role) => array_merge($availablePrivileges, $role->getPrivilegesByType($privilegeType));
+        return fn (array $availablePrivileges, Role $role) => array_merge($availablePrivileges, $role->getPrivilegesByType($privilegeType));
     }
 
     /**
@@ -172,6 +172,6 @@ class PrivilegeManager implements PrivilegeManagerInterface
      */
     protected function getPrivilegeSubjectFilter($subject): \Closure
     {
-        return fn(PrivilegeInterface $privilege) => $privilege->matchesSubject($subject);
+        return fn (PrivilegeInterface $privilege) => $privilege->matchesSubject($subject);
     }
 }

@@ -434,7 +434,7 @@ class Result
         if ($messageTypeFilter === null) {
             return $messages;
         }
-        return array_filter($messages, fn(Message $message) => $message instanceof $messageTypeFilter);
+        return array_filter($messages, fn (Message $message) => $message instanceof $messageTypeFilter);
     }
 
     /**

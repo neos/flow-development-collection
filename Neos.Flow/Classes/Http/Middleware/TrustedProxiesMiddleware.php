@@ -118,7 +118,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
      */
     protected function unquoteArray($array): array
     {
-        return array_map(fn($value) => trim($value, '"'), array_values(array_filter($array)));
+        return array_map(fn ($value) => trim($value, '"'), array_values(array_filter($array)));
     }
 
     /**

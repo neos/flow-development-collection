@@ -224,7 +224,7 @@ class CheckboxViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\F
 
         /** @var PersistenceManagerInterface|\PHPUnit\Framework\MockObject\MockObject $mockPersistenceManager */
         $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->willReturnCallback(fn(UserDomainClass $user) => (string)$user->getId());
+        $mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->willReturnCallback(fn (UserDomainClass $user) => (string)$user->getId());
         $this->viewHelper->injectPersistenceManager($mockPersistenceManager);
 
         $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));

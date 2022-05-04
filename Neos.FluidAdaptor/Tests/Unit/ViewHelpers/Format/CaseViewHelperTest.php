@@ -63,7 +63,7 @@ class CaseViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperRendersChildrenIfGivenValueIsNull()
     {
         $testString = 'child was here';
-        $this->viewHelper->setRenderChildrenClosure(fn() => $testString);
+        $this->viewHelper->setRenderChildrenClosure(fn () => $testString);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $result = $this->viewHelper->render();
         self::assertEquals(strtoupper($testString), $result);

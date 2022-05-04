@@ -407,7 +407,7 @@ class Context
 
         $this->roles = ['Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody')];
 
-        $authenticatedTokens = array_filter($this->getAuthenticationTokens(), static fn(TokenInterface $token) => $token->isAuthenticated());
+        $authenticatedTokens = array_filter($this->getAuthenticationTokens(), static fn (TokenInterface $token) => $token->isAuthenticated());
 
         if (empty($authenticatedTokens)) {
             $this->roles['Neos.Flow:Anonymous'] = $this->policyService->getRole('Neos.Flow:Anonymous');
@@ -736,7 +736,7 @@ class Context
      */
     protected function findBestMatchingToken(TokenInterface $managerToken, array $sessionTokens): TokenInterface
     {
-        $matchingSessionTokens = array_filter($sessionTokens, fn(TokenInterface $sessionToken) => $sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName());
+        $matchingSessionTokens = array_filter($sessionTokens, fn (TokenInterface $sessionToken) => $sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName());
 
         if (empty($matchingSessionTokens)) {
             return $managerToken;
@@ -779,7 +779,7 @@ class Context
             $token->updateCredentials($this->request);
         }
 
-        $tokensForSession = array_filter(array_merge($this->inactiveTokens, $this->activeTokens), static fn(TokenInterface $token) => !$token instanceof SessionlessTokenInterface);
+        $tokensForSession = array_filter(array_merge($this->inactiveTokens, $this->activeTokens), static fn (TokenInterface $token) => !$token instanceof SessionlessTokenInterface);
         $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
         $sessionDataContainer->setSecurityTokens($tokensForSession);
     }

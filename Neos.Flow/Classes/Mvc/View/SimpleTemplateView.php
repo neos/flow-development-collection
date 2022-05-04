@@ -42,6 +42,6 @@ class SimpleTemplateView extends AbstractView
             $source = file_get_contents($templatePathAndFilename);
         }
 
-        return preg_replace_callback('/\{([a-zA-Z0-9\-_.]+)\}/', fn($matches) => ObjectAccess::getPropertyPath($this->variables, $matches[1]), $source);
+        return preg_replace_callback('/\{([a-zA-Z0-9\-_.]+)\}/', fn ($matches) => ObjectAccess::getPropertyPath($this->variables, $matches[1]), $source);
     }
 }

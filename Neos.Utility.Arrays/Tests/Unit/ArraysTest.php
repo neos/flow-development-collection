@@ -531,7 +531,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
             'k3' => 'v3'
         ];
 
-        $actual = Arrays::arrayMergeRecursiveOverruleWithCallback($inputArray1, $inputArray2, fn($simpleType) => ['__convertedValue' => $simpleType]);
+        $actual = Arrays::arrayMergeRecursiveOverruleWithCallback($inputArray1, $inputArray2, fn ($simpleType) => ['__convertedValue' => $simpleType]);
         self::assertSame($expected, $actual);
     }
 
@@ -599,8 +599,8 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $actual = Arrays::arrayMergeRecursiveOverruleWithCallback(
             $inputArray1,
             $inputArray2,
-            fn($simpleType) => ['__convertedValue' => $simpleType],
-            fn($value) => true
+            fn ($simpleType) => ['__convertedValue' => $simpleType],
+            fn ($value) => true
         );
 
         self::assertSame($expected, $actual);

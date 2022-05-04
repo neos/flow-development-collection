@@ -1153,7 +1153,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         );
         $this->classNames = array_filter(
             $this->classNames,
-            fn($className) => !interface_exists($className, false)
+            fn ($className) => !interface_exists($className, false)
                     && strpos($className, (string) Compiler::ORIGINAL_CLASSNAME_SUFFIX) === false
         );
 

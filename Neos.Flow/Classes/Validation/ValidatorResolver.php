@@ -191,7 +191,7 @@ class ValidatorResolver
 
         if ($methodValidateAnnotations === null) {
             $validateAnnotations = $this->reflectionService->getMethodAnnotations($className, $methodName, Flow\Validate::class);
-            $methodValidateAnnotations = array_map(fn($validateAnnotation) => [
+            $methodValidateAnnotations = array_map(fn ($validateAnnotation) => [
                 'type' => $validateAnnotation->type,
                 'options' => $validateAnnotation->options,
                 'argumentName' => $validateAnnotation->argumentName,

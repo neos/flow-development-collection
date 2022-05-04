@@ -69,7 +69,7 @@ class Utility
     private static function createClosureFromConfiguration(string $objectConfiguration): callable
     {
         [$className, $methodName] = explode('::', $objectConfiguration, 2);
-        return fn(...$arguments) => call_user_func_array(
+        return fn (...$arguments) => call_user_func_array(
             [$className, $methodName],
             $arguments
         );

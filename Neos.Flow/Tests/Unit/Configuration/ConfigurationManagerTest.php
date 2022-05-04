@@ -1289,7 +1289,7 @@ EOD;
 
         $configurationManager = $this->getAccessibleConfigurationManager([]);
 
-        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, fn(array $packages, ApplicationContext $context) => []);
+        $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, fn (array $packages, ApplicationContext $context) => []);
 
         $mockRoutesLoader = $this->getAccessibleMock(RoutesLoader::class, [], [$mockYamlSource, $configurationManager], '', true, true, true, false, true);
 

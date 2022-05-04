@@ -276,7 +276,7 @@ class Scripts
         /** @var ThrowableStorageInterface $throwableStorage */
         $throwableStorage = $storageClassName::createWithOptions($storageOptions);
 
-        $throwableStorage->setBacktraceRenderer(static fn($backtrace) => Debugger::getBacktraceCode($backtrace, false, true));
+        $throwableStorage->setBacktraceRenderer(static fn ($backtrace) => Debugger::getBacktraceCode($backtrace, false, true));
 
         $throwableStorage->setRequestInformationRenderer(function () use ($renderRequestInformation) {
             // The following lines duplicate FileStorage::__construct(), which is intended to provide a renderer
