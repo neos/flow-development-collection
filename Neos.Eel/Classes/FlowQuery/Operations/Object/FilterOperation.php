@@ -274,7 +274,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strpos((string)$value, (string)$operand) === 0;
+                    return str_starts_with((string)$value, (string)$operand);
                 }
             // no break
             case '^=~':

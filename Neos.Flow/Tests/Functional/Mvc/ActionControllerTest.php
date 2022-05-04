@@ -475,7 +475,7 @@ class ActionControllerTest extends FunctionalTestCase
         } else {
             $expectedResult = 'Uncaught Exception in Flow Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestBController_Original::requiredDateAction(): Argument #1 ($argument) must be of type DateTime, null given';
         }
-        self::assertTrue(strpos(trim($response->getBody()->getContents()), (string)$expectedResult) === 0, sprintf('The resulting string did not start with the expected string. Expected: "%s", Actual: "%s"', $expectedResult, $response->getBody()->getContents()));
+        self::assertTrue(str_starts_with(trim($response->getBody()->getContents()), (string)$expectedResult), sprintf('The resulting string did not start with the expected string. Expected: "%s", Actual: "%s"', $expectedResult, $response->getBody()->getContents()));
     }
 
     /**

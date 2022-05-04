@@ -258,7 +258,7 @@ final class UriConstraints
             $pathPrefix = $append ? $newConstraints[self::CONSTRAINT_PATH_PREFIX] . $pathPrefix : $pathPrefix . $newConstraints[self::CONSTRAINT_PATH_PREFIX];
         }
 
-        if (strncmp($pathPrefix, '/', 1) === 0) {
+        if (str_starts_with($pathPrefix, '/')) {
             throw new \InvalidArgumentException('path prefix is not allowed to start with "/". The passed-in path prefix was "' . $pathPrefix . '", and the computed path prefix (including previously set path prefixes) is "' . $pathPrefix . '". The computed path prefix may never start with "/".', 1570187341);
         }
 
@@ -431,7 +431,7 @@ final class UriConstraints
      */
     private function stringStartsWith(string $string, string $prefix): bool
     {
-        return strpos($string, $prefix) === 0;
+        return str_starts_with($string, $prefix);
     }
 
     /**
@@ -443,6 +443,6 @@ final class UriConstraints
      */
     private function stringEndsWith(string $string, string $suffix): bool
     {
-        return substr($string, -strlen($suffix)) === $suffix;
+        return str_ends_with($string, $suffix);
     }
 }

@@ -545,7 +545,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
             return false;
         } elseif ($expression === null) {
             return null;
-        } elseif (strpos($expression, 'context.') === 0) {
+        } elseif (str_starts_with($expression, 'context.')) {
             $objectAccess = explode('.', $expression, 3);
             $globalObjectsRegisteredClassName = $this->globalObjects[$objectAccess[1]];
             $globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);

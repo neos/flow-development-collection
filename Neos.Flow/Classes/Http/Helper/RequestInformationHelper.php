@@ -170,7 +170,7 @@ abstract class RequestInformationHelper
         }
 
         foreach ($server as $name => $value) {
-            if (strpos($name, 'HTTP_') === 0) {
+            if (str_starts_with($name, 'HTTP_')) {
                 $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
                 $headerFields[$name] = $value;
             } elseif ($name == 'REDIRECT_REMOTE_AUTHORIZATION' && !isset($headerFields['Authorization'])) {

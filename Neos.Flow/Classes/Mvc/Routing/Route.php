@@ -597,12 +597,12 @@ class Route
     {
         $internalArguments = [];
         foreach ($arguments as $argumentKey => &$argumentValue) {
-            if (substr($argumentKey, 0, 2) === '__') {
+            if (str_starts_with($argumentKey, '__')) {
                 $internalArguments[$argumentKey] = $argumentValue;
                 unset($arguments[$argumentKey]);
                 continue;
             }
-            if (substr($argumentKey, 0, 2) === '--' && is_array($argumentValue)) {
+            if (str_starts_with($argumentKey, '--') && is_array($argumentValue)) {
                 $internalArguments[$argumentKey] = $this->extractInternalArguments($argumentValue);
                 if ($internalArguments[$argumentKey] === []) {
                     unset($internalArguments[$argumentKey]);
@@ -651,7 +651,7 @@ class Route
         }
         $this->routeParts = [];
         $currentRoutePartIsOptional = false;
-        if (substr($this->uriPattern, -1) === '/') {
+        if (str_ends_with($this->uriPattern, '/')) {
             throw new InvalidUriPatternException('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" ends with a slash, which is not allowed. You can put the trailing slash in brackets to make it optional.', 1234782997);
         }
         if ($this->uriPattern[0] === '/') {

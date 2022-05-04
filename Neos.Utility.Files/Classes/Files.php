@@ -121,7 +121,7 @@ abstract class Files
                     $pathAndFilename = self::concatenatePaths([$currentDirectory, $filename]);
                     if (is_dir($pathAndFilename)) {
                         array_push($directories, self::getNormalizedPath($pathAndFilename));
-                    } elseif ($suffix === null || strpos(strrev($filename), strrev($suffix)) === 0) {
+                    } elseif ($suffix === null || str_starts_with(strrev($filename), strrev($suffix))) {
                         yield static::getUnixStylePath(($returnRealPath === true) ? realpath($pathAndFilename) : $pathAndFilename);
                     }
                 }
@@ -181,7 +181,7 @@ abstract class Files
     {
         if ($basePath !== null) {
             $basePath = rtrim($basePath, '/');
-            if (strpos($path, $basePath) !== 0) {
+            if (!str_starts_with($path, $basePath)) {
                 throw new FilesException(sprintf('Could not remove empty directories on path because the given base path "%s" is not a parent path of "%s".', $basePath, $path), 1323962907);
             }
         }
@@ -249,7 +249,7 @@ abstract class Files
      */
     public static function createDirectoryRecursively(string $path)
     {
-        if (substr($path, -2) === '/.') {
+        if (str_ends_with($path, '/.')) {
             $path = substr($path, 0, -1);
         }
         if ($path === '') {

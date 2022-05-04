@@ -201,7 +201,7 @@ class Arguments extends \ArrayObject
      */
     public function __call($methodName, array $arguments)
     {
-        if (substr($methodName, 0, 3) !== 'set') {
+        if (!str_starts_with($methodName, 'set')) {
             throw new \LogicException('Unknown method "' . $methodName . '".', 1210858451);
         }
         $firstLowerCaseArgumentName = $this->validateArgumentExistence(strtolower($methodName[3]) . substr($methodName, 4));

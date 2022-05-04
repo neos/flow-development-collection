@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Rector\CodeQuality\Rector\ClassMethod\OptionalParametersAfterRequiredRector;
 use Rector\Config\RectorConfig;
-use Rector\Php52\Rector\Switch_\ContinueToBreakInSwitchRector;
 use Rector\Php55\Rector\String_\StringClassNameToClassConstantRector;
 use Rector\Php71\Rector\FuncCall\RemoveExtraParametersRector;
 use Rector\Php73\Rector\FuncCall\ArrayKeyFirstLastRector;
@@ -22,6 +21,13 @@ use Rector\Php80\Rector\NotIdentical\StrContainsRector;
 use Rector\Php80\Rector\Switch_\ChangeSwitchToMatchRector;
 use Rector\Set\ValueObject\LevelSetList;
 
+/**
+ * To execute the configured rector rules run
+ * `rector process` in the Framework folder
+ * after installing `rector/rector` via composer.
+ *
+ * For dryrun add `-n` to only show the adjustments
+ */
 return static function (RectorConfig $rectorConfig): void
 {
     $rectorConfig->parallel();
@@ -44,8 +50,6 @@ return static function (RectorConfig $rectorConfig): void
         TokenGetAllToObjectRector::class,
         ClassOnObjectRector::class,
         ChangeSwitchToMatchRector::class,
-        StrStartsWithRector::class,
-        StrEndsWithRector::class,
         StrContainsRector::class,
         OptionalParametersAfterRequiredRector::class,
 

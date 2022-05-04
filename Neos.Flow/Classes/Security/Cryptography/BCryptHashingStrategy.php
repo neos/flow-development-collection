@@ -65,7 +65,7 @@ class BCryptHashingStrategy implements PasswordHashingStrategyInterface
      */
     public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = null)
     {
-        if (strlen($hashedPasswordAndSalt) < 29 || strpos($hashedPasswordAndSalt, '$2a$') !== 0) {
+        if (strlen($hashedPasswordAndSalt) < 29 || !str_starts_with($hashedPasswordAndSalt, '$2a$')) {
             return false;
         }
 

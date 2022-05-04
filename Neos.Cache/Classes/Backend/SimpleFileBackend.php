@@ -412,7 +412,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
             $this->cacheFilesIterator = new \DirectoryIterator($this->cacheDirectory);
         }
         $this->cacheFilesIterator->rewind();
-        while (substr($this->cacheFilesIterator->getFilename(), 0, 1) === '.' && $this->cacheFilesIterator->valid()) {
+        while (str_starts_with($this->cacheFilesIterator->getFilename(), '.') && $this->cacheFilesIterator->valid()) {
             $this->cacheFilesIterator->next();
         }
     }

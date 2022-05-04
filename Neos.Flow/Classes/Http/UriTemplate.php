@@ -158,7 +158,7 @@ class UriTemplate
                 $configuration['value'] = substr($expressionPart, 0, $colonPosition);
                 $configuration['modifier'] = ':';
                 $configuration['position'] = (int)substr($expressionPart, $colonPosition + 1);
-            } elseif (substr($expressionPart, -1) === '*') {
+            } elseif (str_ends_with($expressionPart, '*')) {
                 $configuration['modifier'] = '*';
                 $configuration['value'] = substr($expressionPart, 0, -1);
             } else {

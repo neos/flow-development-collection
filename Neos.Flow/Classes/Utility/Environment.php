@@ -126,7 +126,7 @@ class Environment
     public static function composeTemporaryDirectoryName(string $temporaryDirectoryBase, ApplicationContext $context): string
     {
         $temporaryDirectoryBase = Files::getUnixStylePath($temporaryDirectoryBase);
-        if (substr($temporaryDirectoryBase, -1, 1) !== '/') {
+        if (!str_ends_with($temporaryDirectoryBase, '/')) {
             $temporaryDirectoryBase .= '/';
         }
         return $temporaryDirectoryBase . str_replace('/', '/SubContext', (string)$context) . '/';

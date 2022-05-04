@@ -522,7 +522,7 @@ class ConfigurationBuilder
                 }
             }
             foreach ($classMethodNames as $methodName) {
-                if (isset($methodName[6]) && strpos($methodName, 'inject') === 0 && $methodName[6] === strtoupper($methodName[6])) {
+                if (isset($methodName[6]) && str_starts_with($methodName, 'inject') && $methodName[6] === strtoupper($methodName[6])) {
                     $propertyName = lcfirst(substr($methodName, 6));
 
                     $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, $methodName, Flow\Autowiring::class);

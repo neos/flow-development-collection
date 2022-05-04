@@ -221,13 +221,13 @@ abstract class Repository implements RepositoryInterface
         $caseSensitive = isset($arguments[1]) ? (boolean)$arguments[1] : true;
         $cacheResult = isset($arguments[2]) ? (boolean)$arguments[2] : false;
 
-        if (isset($method[10]) && strpos($method, 'findOneBy') === 0) {
+        if (isset($method[10]) && str_starts_with($method, 'findOneBy')) {
             $propertyName = lcfirst(substr($method, 9));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult)->getFirst();
-        } elseif (isset($method[8]) && strpos($method, 'countBy') === 0) {
+        } elseif (isset($method[8]) && str_starts_with($method, 'countBy')) {
             $propertyName = lcfirst(substr($method, 7));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->count();
-        } elseif (isset($method[7]) && strpos($method, 'findBy') === 0) {
+        } elseif (isset($method[7]) && str_starts_with($method, 'findBy')) {
             $propertyName = lcfirst(substr($method, 6));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult);
         }

@@ -77,7 +77,7 @@ class SchemaValidator
         $result = new ErrorResult();
         if (is_array($schema)) {
             foreach ($schema as $possibleTypeKey => $possibleTypeSchema) {
-                if (substr($possibleTypeKey, 0, 1) === '@') {
+                if (str_starts_with($possibleTypeKey, '@')) {
                     if (array_key_exists($possibleTypeKey, $types)) {
                         $result->addError($this->createError('CustomType "' . $possibleTypeKey . '" is already defined'));
                         continue;
@@ -189,7 +189,7 @@ class SchemaValidator
                     $result->merge($this->validateAnyType($value, $schema));
                     break;
                 default:
-                    if (is_string($type) && substr($type, 0, 1) === '@') {
+                    if (is_string($type) && str_starts_with($type, '@')) {
                         if (array_key_exists($type, $types)) {
                             $result->merge($this->validate($value, $types[$type], $types));
                             break;

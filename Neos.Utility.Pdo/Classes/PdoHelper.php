@@ -53,7 +53,7 @@ abstract class PdoHelper
         $statement = '';
         foreach ($sql as $line) {
             $statement .= ' ' . trim($line);
-            if (substr($statement, -1) === ';') {
+            if (str_ends_with($statement, ';')) {
                 $databaseHandle->exec($statement);
                 $statement = '';
             }

@@ -222,7 +222,7 @@ class CompileTimeObjectManager extends ObjectManager
             $packageType = (string)$package->getComposerManifest('type');
             if (ComposerUtility::isFlowPackageType($packageType) || isset($includeClassesConfiguration[$packageKey])) {
                 foreach ($package->getClassFiles() as $fullClassName => $path) {
-                    if (substr($fullClassName, -9, 9) !== 'Exception') {
+                    if (!str_ends_with($fullClassName, 'Exception')) {
                         $availableClassNames[$packageKey][] = $fullClassName;
                     }
                 }
@@ -234,7 +234,7 @@ class CompileTimeObjectManager extends ObjectManager
                         if (version_compare(PHP_VERSION, '8.1', '<=') && strpos($fullClassName, '\\PHP81\\') !== false) {
                             continue;
                         }
-                        if (substr($fullClassName, -9, 9) !== 'Exception') {
+                        if (!str_ends_with($fullClassName, 'Exception')) {
                             $availableClassNames[$packageKey][] = $fullClassName;
                         }
                     }

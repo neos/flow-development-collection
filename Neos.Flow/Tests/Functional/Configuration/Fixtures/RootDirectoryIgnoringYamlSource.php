@@ -28,7 +28,7 @@ class RootDirectoryIgnoringYamlSource extends \Neos\Flow\Configuration\Source\Ya
 
     public function load(string $pathAndFilename, bool $allowSplitSource = false): array
     {
-        if (strpos($pathAndFilename, (string) FLOW_PATH_CONFIGURATION) === 0) {
+        if (str_starts_with($pathAndFilename, (string) FLOW_PATH_CONFIGURATION)) {
             return [];
         } else {
             return parent::load($pathAndFilename, $allowSplitSource);

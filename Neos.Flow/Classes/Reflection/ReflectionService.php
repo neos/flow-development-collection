@@ -1264,7 +1264,7 @@ class ReflectionService
         $this->log(sprintf('Reflecting class %s', $className), LogLevel::DEBUG);
 
         $className = $this->cleanClassName($className);
-        if (strpos($className, 'Neos\Flow\Persistence\Doctrine\Proxies') === 0 && in_array(DoctrineProxy::class, class_implements($className))) {
+        if (str_starts_with($className, 'Neos\Flow\Persistence\Doctrine\Proxies') && in_array(DoctrineProxy::class, class_implements($className))) {
             // Somebody tried to reflect a doctrine proxy, which will have severe side effects.
             // see bug http://forge.typo3.org/issues/29449 for details.
             throw new Exception\InvalidClassException('The class with name "' . $className . '" is a Doctrine proxy. It is not supported to reflect doctrine proxy classes.', 1314944681);
@@ -1521,7 +1521,7 @@ class ReflectionService
         }
 
         // expand SomeElementType[]" to "array<\ElementTypeNamespace\SomeElementType>"
-        if (substr_compare($typeWithoutNull, '[]', -2, 2) === 0) {
+        if (str_ends_with($typeWithoutNull, '[]')) {
             $elementType = substr($typeWithoutNull, 0, -2);
             return 'array<' . $this->expandType($class, $elementType) . '>' . ($isNullable ? '|null' : '');
         }
@@ -1805,7 +1805,7 @@ class ReflectionService
             throw new InvalidValueObjectException('A value object must have a constructor, "' . $className . '" does not have one.', 1268740874);
         }
 
-        $setterMethods = array_filter($methods, fn ($method) => strpos($method, 'set') === 0);
+        $setterMethods = array_filter($methods, fn ($method) => str_starts_with($method, 'set'));
 
         if ($setterMethods !== []) {
             throw new InvalidValueObjectException('A value object must not have setters, "' . $className . '" does.', 1268740878);
@@ -1918,7 +1918,7 @@ class ReflectionService
         foreach ($frozenNamespaces as $namespace) {
             $namespace .= '\\';
             foreach ($classNames as $index => $className) {
-                if (strpos($className, $namespace) === 0) {
+                if (str_starts_with($className, $namespace)) {
                     unset($classNames[$index]);
                 }
             }

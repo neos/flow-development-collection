@@ -107,7 +107,7 @@ class Dispatcher
         $class = null;
         $object = null;
 
-        if (strpos($signalName, 'emit') === 0) {
+        if (str_starts_with($signalName, 'emit')) {
             $possibleSignalName = lcfirst(substr($signalName, strlen('emit')));
             throw new \InvalidArgumentException('The signal should not be connected with the method name ("' . $signalName . '"). Try "' . $possibleSignalName . '" for the signal name.', 1314016630);
         }
@@ -152,7 +152,7 @@ class Dispatcher
             $finalSignalArguments = array_values($signalArguments);
             if (isset($slotInformation['object'])) {
                 $object = $slotInformation['object'];
-            } elseif (strpos($slotInformation['method'], '::') === 0) {
+            } elseif (str_starts_with($slotInformation['method'], '::')) {
                 if (!isset($this->objectManager)) {
                     if (is_callable($slotInformation['class'] . $slotInformation['method'])) {
                         $object = $slotInformation['class'];

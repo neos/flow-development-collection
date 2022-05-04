@@ -553,7 +553,7 @@ class GeneratorService
             \Neos\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
         }
 
-        if (substr($targetPathAndFilename, 0, 11) === 'resource://') {
+        if (str_starts_with($targetPathAndFilename, 'resource://')) {
             [$packageKey, $resourcePath] = explode('/', substr($targetPathAndFilename, 11), 2);
             $relativeTargetPathAndFilename = $packageKey . '/Resources/' . $resourcePath;
         } elseif (strpos($targetPathAndFilename, 'Tests') !== false) {

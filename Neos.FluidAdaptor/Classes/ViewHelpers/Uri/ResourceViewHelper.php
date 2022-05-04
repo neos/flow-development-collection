@@ -131,7 +131,7 @@ class ResourceViewHelper extends AbstractViewHelper
             $controllerContext = $renderingContext->getControllerContext();
             $package = $controllerContext->getRequest()->getControllerPackageKey();
         }
-        if (strpos($path, 'resource://') === 0) {
+        if (str_starts_with($path, 'resource://')) {
             try {
                 [$package, $path] = $resourceManager->getPackageAndPathByPublicPath($path);
             } catch (Exception) {

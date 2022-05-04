@@ -144,7 +144,7 @@ class CurlEngine implements RequestEngineInterface
 
         try {
             $responseBody = $response->getBody()->getContents();
-            while (strpos($responseBody, 'HTTP/') === 0 || $response->getStatusCode() === 100) {
+            while (str_starts_with($responseBody, 'HTTP/') || $response->getStatusCode() === 100) {
                 $response = Message::parseResponse($responseBody);
                 $responseBody = $response->getBody()->getContents();
             }

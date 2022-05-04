@@ -162,7 +162,7 @@ class LoggingAspect
     {
         $className = $joinPoint->getClassName();
         $sessionNamespace = substr(SessionInterface::class, 0, -strrpos(SessionInterface::class, '\\') + 1);
-        if (strpos($className, $sessionNamespace) === 0) {
+        if (str_starts_with($className, $sessionNamespace)) {
             $className = substr($className, strlen($sessionNamespace));
         }
         return $className;

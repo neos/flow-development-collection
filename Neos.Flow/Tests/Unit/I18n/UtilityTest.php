@@ -86,6 +86,7 @@ class UtilityTest extends UnitTestCase
             ['foo', 'bar', 'none'],
             ['baz', '', 'none'],
             ['foo', 'foo', 'both'],
+            ['foobarfoo', 'foo', 'both'],
             ['foobaz', 'baz', 'ending'],
         ];
     }

@@ -335,7 +335,7 @@ class PackageManager
                 foreach ($composerManifestRepositories as $repository) {
                     if (is_array($repository) &&
                         isset($repository['type']) && $repository['type'] === 'path' &&
-                        isset($repository['url']) && substr($repository['url'], 0, 2) === './' && substr($repository['url'], -2) === '/*'
+                        isset($repository['url']) && str_starts_with($repository['url'], './') && str_ends_with($repository['url'], '/*')
                     ) {
                         $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([FLOW_PATH_ROOT, substr($repository['url'], 0, -2)]));
                         $runComposerRequireForTheCreatedPackage = true;
@@ -576,7 +576,7 @@ class PackageManager
                 throw new InvalidConfigurationException(sprintf('A package composer.json was found at "%s" that contained no "name".', $packagePath), 1445933572);
             }
 
-            if (strpos($packagePath, Files::concatenatePaths([$this->packagesBasePath, 'Inactive'])) === 0) {
+            if (str_starts_with($packagePath, Files::concatenatePaths([$this->packagesBasePath, 'Inactive']))) {
                 // Skip packages in legacy "Inactive" folder.
                 continue;
             }
@@ -618,7 +618,7 @@ class PackageManager
             $currentDirectory = array_pop($directories);
             if ($handle = opendir($currentDirectory)) {
                 while (false !== ($filename = readdir($handle))) {
-                    if (strpos($filename, '.') === 0) {
+                    if (str_starts_with($filename, '.')) {
                         continue;
                     }
                     $pathAndFilename = $currentDirectory . $filename;

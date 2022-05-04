@@ -140,14 +140,14 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
         $elseViewHelperEncountered = false;
         foreach ($this->childNodes as $childNode) {
             if ($childNode instanceof ViewHelperNode
-                && substr($childNode->getViewHelperClassName(), -14) === 'ThenViewHelper'
+                && str_ends_with($childNode->getViewHelperClassName(), 'ThenViewHelper')
             ) {
                 $data = $childNode->evaluate($this->renderingContext);
 
                 return $data;
             }
             if ($childNode instanceof ViewHelperNode
-                && substr($childNode->getViewHelperClassName(), -14) === 'ElseViewHelper'
+                && str_ends_with($childNode->getViewHelperClassName(), 'ElseViewHelper')
             ) {
                 $elseViewHelperEncountered = true;
             }
@@ -178,7 +178,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
         $elseNode = null;
         foreach ($this->childNodes as $childNode) {
             if ($childNode instanceof ViewHelperNode
-                && substr($childNode->getViewHelperClassName(), -14) === 'ElseViewHelper'
+                && str_ends_with($childNode->getViewHelperClassName(), 'ElseViewHelper')
             ) {
                 $arguments = $childNode->getArguments();
                 if (isset($arguments['if']) && $arguments['if']->evaluate($this->renderingContext)) {
@@ -209,11 +209,11 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
         foreach ($node->getChildNodes() as $childNode) {
             if ($childNode instanceof ViewHelperNode) {
                 $viewHelperClassName = $childNode->getViewHelperClassName();
-                if (substr($viewHelperClassName, -14) === 'ThenViewHelper') {
+                if (str_ends_with($viewHelperClassName, 'ThenViewHelper')) {
                     $thenViewHelperEncountered = true;
                     $childNodesAsClosure = $compiler->wrapChildNodesInClosure($childNode);
                     $initializationPhpCode .= sprintf('%s[\'__thenClosure\'] = %s;', $argumentsName, $childNodesAsClosure) . chr(10);
-                } elseif (substr($viewHelperClassName, -14) === 'ElseViewHelper') {
+                } elseif (str_ends_with($viewHelperClassName, 'ElseViewHelper')) {
                     $elseViewHelperEncountered = true;
                     $childNodesAsClosure = $compiler->wrapChildNodesInClosure($childNode);
                     $initializationPhpCode .= sprintf('%s[\'__elseClosures\'][] = %s;', $argumentsName, $childNodesAsClosure) . chr(10);

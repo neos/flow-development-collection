@@ -163,7 +163,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
     {
         $unassigned = [];
         foreach ($arguments as $argumentName => $argumentValue) {
-            if (strpos($argumentName, 'data-') === 0) {
+            if (str_starts_with($argumentName, 'data-')) {
                 $this->tag->addAttribute($argumentName, $argumentValue);
             } else {
                 $unassigned[$argumentName] = $argumentValue;

@@ -242,7 +242,7 @@ class Bootstrap
             for ($offset = 0; $offset < $packageKeyPartsCount; $offset++) {
                 $possibleCommandControllerIdentifier = implode('.', array_slice($packageKeyParts, $offset)) . ':' . $controllerName;
 
-                if (substr($fullControllerIdentifier, -2, 2) === ':*') {
+                if (str_ends_with($fullControllerIdentifier, ':*')) {
                     if ($possibleCommandControllerIdentifier === $shortControllerIdentifier) {
                         return true;
                     }

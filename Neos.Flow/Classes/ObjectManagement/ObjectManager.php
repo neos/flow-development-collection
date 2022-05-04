@@ -169,7 +169,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function registerShutdownObject($object, $shutdownLifecycleMethodName)
     {
-        if (strpos(get_class($object), 'Neos\Flow\\') === 0) {
+        if (str_starts_with(get_class($object), 'Neos\Flow\\')) {
             $this->internalShutdownObjects[$object] = $shutdownLifecycleMethodName;
         } else {
             $this->shutdownObjects[$object] = $shutdownLifecycleMethodName;

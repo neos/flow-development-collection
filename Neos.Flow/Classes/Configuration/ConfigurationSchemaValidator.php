@@ -121,7 +121,7 @@ class ConfigurationSchemaValidator
                     $schemaType = $schemaNameParts[0];
                     $schemaPath = $schemaNameParts[1] ?? null;
 
-                    if ($schemaType === $configurationType && ($path === null || strpos($schemaPath, $path) === 0)) {
+                    if ($schemaType === $configurationType && ($path === null || str_starts_with($schemaPath, $path))) {
                         $schemaFileInfos[] = [
                             'file' => $schemaFile,
                             'name' => $schemaName,

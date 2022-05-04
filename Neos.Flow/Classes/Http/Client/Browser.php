@@ -174,7 +174,7 @@ class Browser implements ClientInterface
         $location = $response->getHeaderLine('Location');
         if ($this->followRedirects && !empty($location) && $response->getStatusCode() >= 300 && $response->getStatusCode() <= 399) {
             $location = urldecode($location);
-            if (strpos($location, '/') === 0) {
+            if (str_starts_with($location, '/')) {
                 // Location header is a host-absolute URL; so we need to prepend the hostname to create a full URL.
                 $location = (string)RequestInformationHelper::generateBaseUri($request) . ltrim($location, '/');
             }

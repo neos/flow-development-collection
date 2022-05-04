@@ -89,7 +89,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
         $hostHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_HOST, $trustedRequest);
         $portFromHost = null;
         if ($hostHeader !== null) {
-            if (strpos($hostHeader, '[') === 0 && strrpos($hostHeader, ']') !== false) {
+            if (str_starts_with($hostHeader, '[') && strrpos($hostHeader, ']') !== false) {
                 $portSeparatorIndex = strrpos($hostHeader, ':', -strrpos($hostHeader, ']'));
             } else {
                 $portSeparatorIndex = strrpos($hostHeader, ':');

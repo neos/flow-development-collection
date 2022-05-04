@@ -117,7 +117,7 @@ class ComposerUtility
     public static function isFlowPackageType(string $packageType): bool
     {
         foreach (['typo3-flow-', 'neos-'] as $allowedPackageTypePrefix) {
-            if (strpos($packageType, $allowedPackageTypePrefix) === 0) {
+            if (str_starts_with($packageType, $allowedPackageTypePrefix)) {
                 return true;
             }
         }

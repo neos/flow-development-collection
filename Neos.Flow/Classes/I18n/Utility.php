@@ -139,7 +139,7 @@ class Utility
      */
     public static function stringBeginsWith($haystack, $needle)
     {
-        if (!empty($needle) && strncmp($haystack, $needle, strlen($needle)) === 0) {
+        if (!empty($needle) && str_starts_with($haystack, $needle)) {
             return true;
         }
 
@@ -155,7 +155,7 @@ class Utility
      */
     public static function stringEndsWith($haystack, $needle)
     {
-        if (substr($haystack, - strlen($needle)) === $needle) {
+        if (!empty($needle) && str_ends_with($haystack, $needle)) {
             return true;
         }
 

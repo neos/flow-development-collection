@@ -38,7 +38,7 @@ class XsdGenerator extends AbstractGenerator
      */
     public function generateXsd($viewHelperNamespace, $xsdNamespace)
     {
-        if (substr($viewHelperNamespace, -1) !== '\\') {
+        if (!str_ends_with($viewHelperNamespace, '\\')) {
             $viewHelperNamespace .= '\\';
         }
 

@@ -71,7 +71,7 @@ abstract class UriHelper
     {
         $baseUriString = (string)$baseUri;
         $uriString = (string)$uri;
-        if (empty($baseUriString) || strpos($uriString, $baseUriString) !== 0) {
+        if (empty($baseUriString) || !str_starts_with($uriString, $baseUriString)) {
             return '';
         }
 

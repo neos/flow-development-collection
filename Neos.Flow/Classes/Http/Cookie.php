@@ -222,7 +222,7 @@ class Cookie implements \Stringable
                         }
                     break;
                     case 'PATH':
-                        if ($attributeValue === '' || substr($attributeValue, 0, 1) !== '/') {
+                        if ($attributeValue === '' || !str_starts_with($attributeValue, '/')) {
                             $pathAttribute = '/';
                         } else {
                             $pathAttribute = $attributeValue;

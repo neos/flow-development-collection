@@ -121,7 +121,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
             $host = $server;
             $port = 0;
 
-            if (strpos($server, 'tcp://') === 0) {
+            if (str_starts_with($server, 'tcp://')) {
                 $port = $defaultPort;
                 $server = substr($server, 6);
             }
@@ -266,7 +266,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     public function get(string $entryIdentifier)
     {
         $value = $this->memcache->get($this->getPrefixedIdentifier($entryIdentifier));
-        if (is_string($value) && strpos($value, 'Flow*chunked:') === 0) {
+        if (is_string($value) && str_starts_with($value, 'Flow*chunked:')) {
             [, $chunkCount] = explode(':', $value);
             $value = '';
             for ($chunkNumber = 1; $chunkNumber < $chunkCount; $chunkNumber++) {

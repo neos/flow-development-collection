@@ -110,11 +110,11 @@ class DateTimeRangeValidator extends AbstractValidator
             return new \DateTime($referenceDateParts[0]);
         }
         // check if the period (the interval) is the first or second item:
-        if (strpos($referenceDateParts[0], 'P') === 0) {
+        if (str_starts_with($referenceDateParts[0], 'P')) {
             $interval = new \DateInterval($referenceDateParts[0]);
             $date = new \DateTime($referenceDateParts[1]);
             return $date->sub($interval);
-        } elseif (strpos($referenceDateParts[1], 'P') === 0) {
+        } elseif (str_starts_with($referenceDateParts[1], 'P')) {
             $interval = new \DateInterval($referenceDateParts[1]);
             $date = new \DateTime($referenceDateParts[0]);
             return $date->add($interval);

@@ -380,7 +380,7 @@ class Service
                 $versionAlias,
                 (string)$version
             );
-        } elseif (in_array($versionAlias, ['next', 'prev'], true) || strpos($versionAlias, 'current') === 0) {
+        } elseif (in_array($versionAlias, ['next', 'prev'], true) || str_starts_with($versionAlias, 'current')) {
             $message = sprintf(
                 'The version "%s" couldn\'t be reached, you are at version "%s"',
                 $versionAlias,

@@ -32,7 +32,7 @@ class UsernamePasswordHttpBasic extends UsernamePassword implements SessionlessT
         $this->authenticationStatus = self::NO_CREDENTIALS_GIVEN;
 
         $authorizationHeader = $actionRequest->getHttpRequest()->getHeaderLine('Authorization');
-        if (strpos($authorizationHeader, 'Basic ') !== 0) {
+        if (!str_starts_with($authorizationHeader, 'Basic ')) {
             return;
         }
 

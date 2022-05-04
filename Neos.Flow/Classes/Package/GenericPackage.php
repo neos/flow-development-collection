@@ -270,7 +270,7 @@ class GenericPackage implements PackageInterface, PackageKeyAwareInterface
                         $directories[] = $currentRelativeDirectory . $filename . '/';
                         continue;
                     }
-                    if (strpos(strrev($filename), 'php.') === 0) {
+                    if (str_starts_with(strrev($filename), 'php.')) {
                         $potentialClassNamespace = $autoloadNamespace . str_replace('/', '\\', $currentRelativeDirectory) . basename($filename, '.php');
                         yield $potentialClassNamespace => $pathAndFilename;
                     }

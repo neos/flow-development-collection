@@ -67,7 +67,7 @@ trait IsolatedBehatStepsTrait
      */
     protected function callStepInSubProcess($stepMethodName, $encodedStepArguments = '', $withoutSecurityChecks = false)
     {
-        if (strpos($stepMethodName, '::') !== 0) {
+        if (!str_starts_with($stepMethodName, '::')) {
             $stepMethodName = substr($stepMethodName, strpos($stepMethodName, '::') + 2);
         }
         $withoutSecurityChecks = ($withoutSecurityChecks === true ? '--without-security-checks ' : '');

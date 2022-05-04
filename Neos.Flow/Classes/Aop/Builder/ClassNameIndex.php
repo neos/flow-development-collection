@@ -169,7 +169,7 @@ class ClassNameIndex
                 break;
             }
             $currentPosition = $left + (int)floor(($right - $left) / 2);
-            if (strpos($pointcuts[$currentPosition], $prefixFilter) === 0) {
+            if (str_starts_with($pointcuts[$currentPosition], $prefixFilter)) {
                 $found = true;
                 break;
             } else {
@@ -184,12 +184,12 @@ class ClassNameIndex
 
         if ($found === true) {
             $startIndex = $currentPosition;
-            while ($startIndex >= 0 && strpos($pointcuts[$startIndex], $prefixFilter) === 0) {
+            while ($startIndex >= 0 && str_starts_with($pointcuts[$startIndex], $prefixFilter)) {
                 $startIndex--;
             }
             $startIndex++;
             $endIndex = $currentPosition;
-            while ($endIndex < count($pointcuts) && strpos($pointcuts[$endIndex], $prefixFilter) === 0) {
+            while ($endIndex < count($pointcuts) && str_starts_with($pointcuts[$endIndex], $prefixFilter)) {
                 $endIndex++;
             }
 

@@ -511,7 +511,7 @@ class ActionRequest implements RequestInterface
             throw new Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
         }
 
-        if (strpos($argumentName, '__') === 0) {
+        if (str_starts_with($argumentName, '__')) {
             $this->internalArguments[$argumentName] = $value;
             return;
         }
@@ -521,7 +521,7 @@ class ActionRequest implements RequestInterface
             throw new Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
         }
 
-        if (strpos($argumentName, '--') === 0) {
+        if (str_starts_with($argumentName, '--')) {
             $this->pluginArguments[substr($argumentName, 2)] = $value;
             return;
         }

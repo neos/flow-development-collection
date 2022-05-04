@@ -209,7 +209,7 @@ abstract class AbstractController implements ControllerInterface
 
         $regularArguments = [];
         foreach ($arguments as $argumentName => $argumentValue) {
-            if (substr($argumentName, 0, 2) === '__') {
+            if (str_starts_with($argumentName, '__')) {
                 $nextRequest->setArgument($argumentName, $argumentValue);
             } else {
                 $regularArguments[$argumentName] = $argumentValue;

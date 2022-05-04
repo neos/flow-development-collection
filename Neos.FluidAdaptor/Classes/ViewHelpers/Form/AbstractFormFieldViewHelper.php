@@ -289,7 +289,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
         }
 
         $fieldName = $this->getName();
-        if (substr($fieldName, -2) === '[]') {
+        if (str_ends_with($fieldName, '[]')) {
             $fieldName = substr($fieldName, 0, -2);
         }
         if (!isset($emptyHiddenFieldNames[$fieldName])) {
