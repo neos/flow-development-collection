@@ -452,22 +452,22 @@ class FlowQueryTest extends UnitTestCase
      * @dataProvider dataProviderForFilter
      * @test
      */
-    public function isCanFilterObjects($sourceObjects, $filterString, $expectedResultArray)
+    public function isCanFilterObjects(array $sourceObjects, string $filterString, array $expectedResultArray)
     {
         $query = $this->createFlowQuery($sourceObjects);
-        self::assertSame((is_countable($expectedResultArray) ? count($expectedResultArray) : 0) > 0, $query->is($filterString));
+        self::assertSame(count($expectedResultArray) > 0, $query->is($filterString));
     }
 
     /**
      * @dataProvider dataProviderForFilter
      * @test
      */
-    public function countReturnsCorrectNumber($sourceObjects, $filterString, $expectedResultArray)
+    public function countReturnsCorrectNumber(array $sourceObjects, string $filterString, array $expectedResultArray)
     {
         $query = $this->createFlowQuery($sourceObjects);
-        self::assertSame(is_countable($expectedResultArray) ? count($expectedResultArray) : 0, $query->filter($filterString)->count());
-        self::assertSame(is_countable($sourceObjects) ? count($sourceObjects) : 0, $query->count());
-        self::assertSame(is_countable($sourceObjects) ? count($sourceObjects) : 0, count($query));
+        self::assertSame(count($expectedResultArray), $query->filter($filterString)->count());
+        self::assertSame(count($sourceObjects), $query->count());
+        self::assertSame(count($sourceObjects), count($query));
     }
 
     /**

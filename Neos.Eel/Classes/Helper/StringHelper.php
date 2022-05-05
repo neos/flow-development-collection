@@ -706,8 +706,8 @@ class StringHelper implements ProtectedContextAwareInterface
         $unicodeString = (string)$unicodeString;
 
         $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString);
-
-        return is_array(preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY)) || preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY) instanceof \Countable ? count(preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY)) : 0;
+        $unicodeWords = preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY);
+        return is_array($unicodeWords) ? count($unicodeWords) : 0;
     }
 
     /**
