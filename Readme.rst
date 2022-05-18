@@ -69,12 +69,14 @@ To commit changes to the framework switch into the Framework directory (``cd Pac
 
 In the root directory of the development distribution, you can do the following things:
 
-To run tests, run ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.xml`` for unit or ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/FunctionalTests.xml`` for functional/integration tests. If you are on 6.0 or later, you can
-also run ``./bin/psalm --config=Packages/Framework/psalm.xml`` to run static analysis tools.
+To run tests, run ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.xml`` for unit or ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/FunctionalTests.xml`` for functional/integration tests. If you are on 6.0 or later, you can also run ``./bin/psalm --config=Packages/Framework/psalm.xml``
+to run static analysis tools.
 
 To switch the branch you intend to work on:
-``git checkout 5.3 && composer update``
+``git checkout 6.3 && composer update``
 
-.. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 5.3 currently), or master for new features.
+.. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that
+contains the issue (typically the second last LTS release, check the diagram on
+https://www.neos.io/features/release-process.html), or master for new features.
 
 For more detailed information, see https://discuss.neos.io/t/development-setup/504 and https://discuss.neos.io/t/creating-a-pull-request/506
