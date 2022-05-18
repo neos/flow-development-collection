@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Functional\Aop\Fixtures;
+namespace Neos\Flow\Tests\Unit\Mvc\Routing\Fixtures;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -11,19 +11,12 @@ namespace Neos\Flow\Tests\Functional\Aop\Fixtures;
  * source code.
  */
 
-
-/**
- * A sub class of the abstract class
- *
- */
-class SubClassOfAbstractClass extends AbstractClass
+class UriArgumentObjectWithToString
 {
-    /**
-     * @param string $foo
-     * @return string
-     */
-    public function abstractMethod($foo)
+    protected $identifier = 'String To Identify Object';
+
+    public function __toString(): string
     {
-        return 'foo: ' . $foo;
+        return $this->identifier;
     }
 }

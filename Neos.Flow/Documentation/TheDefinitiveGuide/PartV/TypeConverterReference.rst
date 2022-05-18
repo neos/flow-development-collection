@@ -3,7 +3,7 @@
 Flow TypeConverter Reference
 ============================
 
-This reference was automatically generated from code on 2022-01-21
+This reference was automatically generated from code on 2022-05-18
 
 
 .. _`Flow TypeConverter Reference: ArrayConverter`:
@@ -42,6 +42,21 @@ TypeConverter which converts generic objects to arrays by converting and returni
 :Priority: 1
 :Target type: array
 :Source type: object
+
+
+
+
+
+.. _`Flow TypeConverter Reference: ArrayObjectConverter`:
+
+ArrayObjectConverter
+--------------------
+
+Converter which transforms ArrayObjects to arrays.
+
+:Priority: 1
+:Target type: array
+:Source type: ArrayObject
 
 
 

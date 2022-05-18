@@ -179,7 +179,7 @@ class DateTimeConverter extends AbstractTypeConverter
 
     /**
      * Returns whether date information (day, month, year) are present as keys in $source.
-     * @param $source
+     * @param array $source
      * @return bool
      */
     protected function isDatePartKeysProvided(array $source)

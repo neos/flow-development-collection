@@ -5,9 +5,9 @@ Flow 6.2
 This minor release of Flow brings a few bigger features and a lot of
 modernisation of the existing code base.
 
-====================
+********************
 Upgrade Instructions
-====================
+********************
 
 This section contains instructions for upgrading your Flow 6.1
 based applications to Flow 6.2.
@@ -74,16 +74,17 @@ the generated commits is the migration data in ``composer.json``. It is
 used to detect if a migration has been applied already, so if you drop
 it, things might get out of hands in the future.
 
-================
+****************
 What has changed
-================
+****************
 
 FEATURE: Configurable UsernamePassword fields and UsernamePasswordTokeninterface
-================================================================================
+--------------------------------------------------------------------------------
 Allows to configure the argument names for username and password to make interoperability with other services easier.
 The new options can be set for a specific provider with the following configuration:
 
-.. code-block: yaml
+.. code-block:: yaml
+
   Neos:
     Flow:
       security:
@@ -95,17 +96,18 @@ The new options can be set for a specific provider with the following configurat
                   usernamePostField: 'some.argument'
                   passwordPostField: 'some.other.argument'
 
+
 FEATURE: Array Debugger tolerates iterables
-===========================================
+-------------------------------------------
 This change lets the debug-array-renderer use the pseudo type iterable (Array or Traversable) instead of array. That way all foreachachble objects are rendered as an array.
-This replaces the previous exceptions for ArrayObjects and DoctrineCollections and will also enable to properly debug other Traversable objects aswell.
+This replaces the previous exceptions for ArrayObjects and DoctrineCollections and will also enable to properly debug other Traversable objects as well.
 
 FEATURE: Improve 304 response handling
-=======================================
-For responses that match the following conditions an 304 status is returned:
+--------------------------------------
+For responses that match the following conditions a 304 status is returned:
 - The request method is GET or HEAD.
 - The response status is 200 status.
-- The response has has ETag header that matches one of the If-None-Match headers of the request.
+- The response has ETag header that matches one of the If-None-Match headers of the request.
 
 !!! The generation of the Etag header is not part of this change and is the job of the application.
 
@@ -114,13 +116,14 @@ Other changes:
 - Only GET and HEAD Requests will receive 304 status based on ETag and Last-Modified headers
 
 FEATURE: Virtual Object Configuration
-=====================================
+-------------------------------------
 The Flow Object Management has been built with the idea of virtual "object names".
 But so far it was not possible to have an object configuration with a name that is not equal to the class name.
 With this feature it is possible to create configurations for "virtual objects" within the `Objects.yaml`:
 
 
-.. code-block: yaml
+.. code-block:: yaml
+
   # the colon ":" makes this a virtual object
   'Some.Package:SystemLogger':
     className: Psr\\Log\\LoggerInterface
@@ -143,7 +146,8 @@ With this feature it is possible to create configurations for "virtual objects" 
 
 ..and to inject them:
 
-.. code-block: php
+.. code-block:: PHP
+
   /**
   * @Flow\\Inject(name="Some.Package:SystemLogger")
   * @var LoggerInterface
@@ -158,42 +162,45 @@ With this feature it is possible to create configurations for "virtual objects" 
 
 Or configure them in factories:
 
-.. code-block: yaml
+.. code-block:: yaml
+
 Some:
   Package:
     someLoggerClassName: 'Some.Package:SystemLogger'
 
 
 FEATURE: Add EEL Helper File.exists(filename)
-==============================================
+---------------------------------------------
 The EEL helper determines if a file exists. This is eg helpful, if file like templates are generated,
 and should only be rendered, if the template file exists, for example for generated favicon templates like this:
 
-.. code-block: fusion
+.. code-block:: fusion
+
   prototype(Neos.Neos:Page) {
-  head.favicons = Neos.Fusion:Template {
-              resource = ${'resource://' + site.context.currentSite.siteResourcesPackageKey + '/Private/Templates/Page/Favicon.html'}
-              templatePath = ${this.resource}
-              @if.fileExists = ${File.exists(this.resource)}
-          }
+    head.favicons = Neos.Fusion:Template {
+      resource = ${'resource://' + site.context.currentSite.siteResourcesPackageKey + '/Private/Templates/Page/Favicon.html'}
+       templatePath = ${this.resource}
+       @if.fileExists = ${File.exists(this.resource)}
+   }
 
 FEATURE: Allow configuring static factory methods in Objects.yaml
-=================================================================
+-----------------------------------------------------------------
 This change allows to configure static factory methods in `Objects.yaml` by only specifying a `factoryMethodName` and leaving out `factoryObjectName`.
 
 Example:
 
-.. code-block: yaml
+.. code-block:: yaml
+
   Acme\\My\\Class:
     factoryMethodName: Acme\\My\\Class::fromStatic
     arguments:
       1:
         setting: Acme.My.Class.ConfigurableValue
 
-Before this would have required to create a non-static factory method inside a dedicated factory class (to avoid cyclic instanciation).
+Before this would have required to create of a non-static factory method inside a dedicated factory class (to avoid cyclic instantiation).
 
 FEATURE: Run garbage collection of configured caches
-====================================================
+----------------------------------------------------
 In order to run garbage collection the following command
 has been introduced
 
@@ -209,7 +216,7 @@ by definined the cache identifier
 
 
 FEATURE: Resolve authentication token by simple name
-====================================================
+----------------------------------------------------
 The documentation has long been showing that you can define
 a security token by it's simple name, if in the Neos.Flow
 package.
@@ -223,7 +230,7 @@ provider.
 
 
 FEATURE: Emit a signal when view is resolved
-============================================
+--------------------------------------------
 In order for a package to interact with the rendering views available variables
 a signal is being emitted upon resolving of the view.
 
