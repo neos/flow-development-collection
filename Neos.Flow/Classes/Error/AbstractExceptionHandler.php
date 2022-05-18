@@ -106,15 +106,16 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
         $this->renderingOptions = $this->resolveCustomRenderingOptions($exception);
 
+        $exceptionWasLogged = false;
         if ($this->throwableStorage instanceof ThrowableStorageInterface && isset($this->renderingOptions['logException']) && $this->renderingOptions['logException']) {
             $message = $this->throwableStorage->logThrowable($exception);
             $this->logger->critical($message);
+            $exceptionWasLogged = true;
         }
 
         switch (PHP_SAPI) {
             case 'cli':
-                $this->echoExceptionCli($exception);
-                break;
+                $this->echoExceptionCli($exception, $exceptionWasLogged);
             default:
                 $this->echoExceptionWeb($exception);
         }
@@ -249,9 +250,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      * Formats and echoes the exception and its previous exceptions (if any) for the command line
      *
      * @param \Throwable $exception
+     * @param bool $exceptionWasLogged
      * @return void
      */
-    protected function echoExceptionCli(\Throwable $exception)
+    protected function echoExceptionCli(\Throwable $exception, bool $exceptionWasLogged)
     {
         $response = new Response();
 
@@ -259,7 +261,11 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $exceptionMessage = $this->renderNestedExceptonsCli($exception, $exceptionMessage);
 
         if ($exception instanceof FlowException) {
-            $exceptionMessage .= PHP_EOL . 'Open <b>Data/Logs/Exceptions/' . $exception->getReferenceCode() . '.txt</b> for a full stack trace.' . PHP_EOL;
+            if ($exceptionWasLogged) {
+                $exceptionMessage .= PHP_EOL . 'Open <b>Data/Logs/Exceptions/' . $exception->getReferenceCode() . '.txt</b> for a full stack trace.' . PHP_EOL;
+            } else {
+                $exceptionMessage .= PHP_EOL . 'The exception stacktrace was not logged, because "logException" is turned off.' . PHP_EOL;
+            }
         }
 
         $response->setContent($exceptionMessage);
