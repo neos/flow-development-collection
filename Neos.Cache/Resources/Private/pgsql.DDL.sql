@@ -4,9 +4,9 @@ CREATE TABLE "cache" (
   "identifier" VARCHAR(250) NOT NULL,
   "cache" VARCHAR(250) NOT NULL,
   "context" VARCHAR(150) NOT NULL,
-  "created" INTEGER UNSIGNED NOT NULL,
-  "lifetime" INTEGER UNSIGNED DEFAULT '0' NOT NULL,
-  "content" TEXT,
+  "created" INTEGER NOT NULL,
+  "lifetime" INTEGER DEFAULT '0' NOT NULL,
+  "content" BYTEA,
   PRIMARY KEY ("identifier", "cache", "context")
 );
 

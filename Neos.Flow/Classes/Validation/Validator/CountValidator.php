@@ -41,8 +41,8 @@ class CountValidator extends AbstractValidator
             return;
         }
 
-        $minimum = intval($this->options['minimum']);
-        $maximum = intval($this->options['maximum']);
+        $minimum = (int)$this->options['minimum'];
+        $maximum = (int)$this->options['maximum'];
         if (count($value) < $minimum || count($value) > $maximum) {
             $this->addError('The count must be between %1$d and %2$d.', 1253718831, [$minimum, $maximum]);
         }
