@@ -310,7 +310,6 @@ class ValidatorResolver
                     /** @var \ReflectionNamedType $type */
                     $type = $propertyReflection->getType();
                     $classPropertyTagsValues['var'][] = $type->getName();
-
                 }
                 try {
                     $parsedType = TypeHandling::parseType(trim(implode('', $classPropertyTagsValues['var']), ' \\'));
