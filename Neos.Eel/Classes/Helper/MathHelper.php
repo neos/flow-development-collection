@@ -398,7 +398,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * The precision defines the number of digits after the decimal point.
      * Negative values are also supported (-1 rounds to full 10ths).
      *
-     * @param float $subject The value to round
+     * @param mixed $subject The value to round
      * @param integer $precision The precision (digits after decimal point) to use, defaults to 0
      * @return float The rounded value
      */

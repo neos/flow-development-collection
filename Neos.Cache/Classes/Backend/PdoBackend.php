@@ -175,18 +175,19 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $lifetime = ($lifetime === null) ? $this->defaultLifetime : $lifetime;
 
-        // Convert binary data into hexadecimal representation,
-        // because it is not allowed to store null bytes in PostgreSQL.
-        if ($this->pdoDriver === 'pgsql') {
-            $data = bin2hex($data);
-        }
 
         $this->databaseHandle->beginTransaction();
         try {
             $this->removeWithoutTransaction($entryIdentifier);
 
             $statementHandle = $this->databaseHandle->prepare('INSERT INTO "' . $this->cacheTableName . '" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
-            $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, time(), $lifetime, $data]);
+            $statementHandle->bindValue(1, $entryIdentifier);
+            $statementHandle->bindValue(2, $this->context());
+            $statementHandle->bindValue(3, $this->cacheIdentifier);
+            $statementHandle->bindValue(4, time(), \PDO::PARAM_INT);
+            $statementHandle->bindValue(5, $lifetime, \PDO::PARAM_INT);
+            $statementHandle->bindValue(6, $data, \PDO::PARAM_LOB);
+            $result = $statementHandle->execute();
             if ($result === false) {
                 throw new Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
             }
@@ -221,16 +222,13 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
         $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
-        /** @var false|string|null $fetchedColumn */
-        $fetchedColumn = $statementHandle->fetchColumn();
+        $statementHandle->bindColumn(1, $content, \PDO::PARAM_LOB);
+        $statementHandle->fetch(\PDO::FETCH_BOUND);
 
-        // Convert hexadecimal data into binary string,
-        // because it is not allowed to store null bytes in PostgreSQL.
-        if ($this->pdoDriver === 'pgsql' && is_string($fetchedColumn)) {
-            $fetchedColumn = hex2bin($fetchedColumn);
+        if ($content === null) {
+            return false;
         }
-
-        return $fetchedColumn;
+        return is_resource($content) ? stream_get_contents($content) : $content;
     }
 
     /**
