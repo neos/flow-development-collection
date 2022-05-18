@@ -66,6 +66,8 @@ trait ObjectSerializationTrait
                 } else {
                     if (isset($propertyVarTags[$propertyName])) {
                         $className = trim($propertyVarTags[$propertyName], '\\');
+                    } else {
+                        $className = $reflectionProperty->getType()->getName();
                     }
                     if (Bootstrap::$staticObjectManager->isRegistered($className) === false) {
                         $className = Bootstrap::$staticObjectManager->getObjectNameByClassName(get_class($this->$propertyName));
