@@ -213,7 +213,7 @@ class Cookie
                     break;
                     case 'MAX-AGE':
                         if (preg_match(self::PATTERN_MAX_AGE, $attributeValue) === 1) {
-                            $maxAgeAttribute = intval($attributeValue);
+                            $maxAgeAttribute = (int)$attributeValue;
                         }
                     break;
                     case 'DOMAIN':
