@@ -307,7 +307,10 @@ class ValidatorResolver
                     if (!$propertyReflection->hasType()) {
                         throw new \InvalidArgumentException(sprintf('Failed building base validator conjunction for property %s in class %s because there is no @var annotation and no type declaration.', $classPropertyName, $targetClassName), 1363778104);
                     }
-                    $classPropertyTagsValues['var'][] = $propertyReflection->getType()->getName();
+                    /** @var \ReflectionNamedType $type */
+                    $type = $propertyReflection->getType();
+                    $classPropertyTagsValues['var'][] = $type->getName();
+
                 }
                 try {
                     $parsedType = TypeHandling::parseType(trim(implode('', $classPropertyTagsValues['var']), ' \\'));
