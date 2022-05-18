@@ -18,6 +18,7 @@ use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Utility\Exception\PropertyNotAccessibleException;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 
@@ -33,8 +34,9 @@ trait ObjectSerializationTrait
      * @param array $transientProperties
      * @param array $propertyVarTags
      * @return array
+     * @throws PropertyNotAccessibleException
      */
-    private function Flow_serializeRelatedEntities(array $transientProperties, array $propertyVarTags)
+    private function Flow_serializeRelatedEntities(array $transientProperties, array $propertyVarTags): array
     {
         $reflectedClass = new \ReflectionClass(__CLASS__);
         $allReflectedProperties = $reflectedClass->getProperties();
@@ -107,9 +109,9 @@ trait ObjectSerializationTrait
      * @param string $originalPropertyName
      * @return void
      */
-    private function Flow_searchForEntitiesAndStoreIdentifierArray($path, $propertyValue, $originalPropertyName)
+    private function Flow_searchForEntitiesAndStoreIdentifierArray(string $path, mixed $propertyValue, string $originalPropertyName)
     {
-        if (is_array($propertyValue) || (is_object($propertyValue) && ($propertyValue instanceof \ArrayObject || $propertyValue instanceof \SplObjectStorage))) {
+        if (is_array($propertyValue) || ($propertyValue instanceof \ArrayObject || $propertyValue instanceof \SplObjectStorage)) {
             foreach ($propertyValue as $key => $value) {
                 $this->Flow_searchForEntitiesAndStoreIdentifierArray($path . '.' . $key, $value, $originalPropertyName);
             }
@@ -138,11 +140,8 @@ trait ObjectSerializationTrait
     }
 
     /**
-     * Reconstitues related entities to an unserialized object in __wakeup.
+     * Reconstitutes related entities to an unserialized object in __wakeup.
      * Used in __wakeup methods of proxy classes.
-     *
-     * Note: This method adds code which ignores objects of type Neos\Flow\ResourceManagement\ResourcePointer in order to provide
-     * backwards compatibility data generated with Flow 2.2.x which still provided that class.
      *
      * @return void
      */
