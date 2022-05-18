@@ -149,7 +149,7 @@ class PositionalArraySorter
             if (!is_numeric($position)) {
                 continue;
             }
-            $this->middleKeys[intval($position)][] = $key;
+            $this->middleKeys[(int)$position][] = $key;
             unset($arrayKeysWithPosition[$key]);
         }
         ksort($this->middleKeys, SORT_NUMERIC);
@@ -171,7 +171,7 @@ class PositionalArraySorter
                 continue;
             }
             if (isset($matches[1])) {
-                $this->startKeys[intval($matches[1])][] = $key;
+                $this->startKeys[(int)$matches[1]][] = $key;
             } else {
                 $this->startKeys[0][] = $key;
             }
@@ -196,7 +196,7 @@ class PositionalArraySorter
                 continue;
             }
             if (isset($matches[1])) {
-                $this->endKeys[intval($matches[1])][] = $key;
+                $this->endKeys[(int)$matches[1]][] = $key;
             } else {
                 $this->endKeys[0][] = $key;
             }
