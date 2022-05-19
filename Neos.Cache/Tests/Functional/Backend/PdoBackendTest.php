@@ -80,8 +80,8 @@ class PdoBackendTest extends BaseTestCase
             $backend->setCache($this->cache);
             $backend->flush();
             $this->backends['sqlite'] = [$backend];
-        } catch (\Exception $e) {
-            $this->addWarning('SQLite DB is not reachable: ' . $e->getMessage());
+        } catch (\Throwable $t) {
+            $this->addWarning('SQLite DB is not reachable: ' . $t->getMessage());
         }
 
         try {
@@ -98,8 +98,8 @@ class PdoBackendTest extends BaseTestCase
             $backend->setCache($this->cache);
             $backend->flush();
             $this->backends['mysql'] = [$backend];
-        } catch (\Exception $e) {
-            $this->addWarning('MySQL DB server is not reachable: ' . $e->getMessage());
+        } catch (\Throwable $t) {
+            $this->addWarning('MySQL DB server is not reachable: ' . $t->getMessage());
         }
 
         try {
@@ -116,8 +116,8 @@ class PdoBackendTest extends BaseTestCase
             $backend->setCache($this->cache);
             $backend->flush();
             $this->backends['pgsql'] = [$backend];
-        } catch (\Exception $e) {
-            $this->addWarning('PostgreSQL DB server is not reachable: ' . $e->getMessage());
+        } catch (\Throwable $t) {
+            $this->addWarning('PostgreSQL DB server is not reachable: ' . $t->getMessage());
         }
     }
 }
