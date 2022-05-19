@@ -126,12 +126,11 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
             $exceptionWasLogged = true;
         }
 
-        switch (PHP_SAPI) {
-            case 'cli':
-                $this->echoExceptionCli($exception, $exceptionWasLogged);
-            default:
-                $this->echoExceptionWeb($exception);
+        if (PHP_SAPI === 'cli') {
+            $this->echoExceptionCli($exception, $exceptionWasLogged);
         }
+
+        $this->echoExceptionWeb($exception);
     }
 
     /**
