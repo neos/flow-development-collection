@@ -41,6 +41,15 @@ jobs:
         image: memcached:alpine
         ports:
           - "11211:11211"
+      postgres:
+        image: postgres:${{ matrix.postgresql-versions }}
+        env:
+          POSTGRES_USER: neos
+          POSTGRES_PASSWORD: neos
+          POSTGRES_DB: flow_functional_testing
+        ports:
+          - "5432:5432"
+        options:  --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
 
     env:
       FLOW_CONTEXT: Testing
@@ -69,14 +78,6 @@ jobs:
           coverage: xdebug #optional
           ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
 
-      - name: Setup PostgreSQL
-        uses: harmon758/postgresql-action@v1
-        with:
-          postgresql version: ${{ matrix.postgresql-versions }}
-          postgresql db: flow_functional_testing
-          postgresql user: neos
-          postgresql password: neos
-
       - name: Checkout development distribution
         uses: actions/checkout@v2
         with:
@@ -85,7 +86,12 @@ jobs:
           path: ${{ env.FLOW_DIST_FOLDER }}
 
       - name: Set alias branch name
-        run: if [ "${FLOW_TARGET_VERSION}" == "master" ]; then echo "FLOW_BRANCH_ALIAS=dev-master"; else echo "FLOW_BRANCH_ALIAS=${FLOW_TARGET_VERSION}.x-dev"; fi >> $GITHUB_ENV
+        run: |
+            if [ "${{ env.FLOW_TARGET_VERSION }}" == "master" ]; then
+                echo "FLOW_BRANCH_ALIAS=dev-master";
+            else
+                echo "FLOW_BRANCH_ALIAS=${{ env.FLOW_TARGET_VERSION }}.x-dev";
+            fi >> $GITHUB_ENV
 
       - name: Update composer.json
         run: |
