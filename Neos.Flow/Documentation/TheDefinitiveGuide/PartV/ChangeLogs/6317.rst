@@ -1,0 +1,206 @@
+`6.3.17 (2022-04-04) <https://github.com/neos/flow-development-collection/releases/tag/6.3.17>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Use env var for FLOW_LOCK_HOLDING_PAGE <https://github.com/neos/flow-development-collection/pull/2803>`_
+-----------------------------------------------------------------------------------------------------------------
+
+The lock holding page was supposed to be customizable through
+an environment variable, but that never worked…
+
+Now it does, using the new variable name `FLOW_LOCK_HOLDING_PAGE`
+as well as the (now deprecated) old name `FLOW_LOCKHOLDINGPAGE`.
+
+* Fixes: `#2798 <https://github.com/neos/flow-development-collection/issues/2798>`_
+* Packages: ``Flow``
+
+`BUGFIX: Show origin of yaml parse errors <https://github.com/neos/flow-development-collection/pull/2794>`_
+-----------------------------------------------------------------------------------------------------------
+
+Previously this was only done when pecl yaml parse was used which made it quite hard to find the
+defect yaml file when the Symfony yaml parser was used.
+
+The change added the information about the currently parsed file to the exception message of symfony.
+
+* Packages: ``Flow``
+
+`BUGFIX: Add behat @BeforeSuite and @AfterSuite to ignored annotation tags <https://github.com/neos/flow-development-collection/pull/2726>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+This adds the missing behat annotations to ignored tags, so behat tests using those hooks can be reflected.
+
+**How to verify it**
+This is an example of the error that occurs currently when `@BeforeSuite` or `@AfterSuite` is used in any Behat Step class.
+!`image <https://user-images.githubusercontent.com/16836464/157476691-c5da169d-32d9-497f-b5ef-4806369a6600.png>`_
+see also https://github.com/sandstorm/Sandstorm.E2ETestTools/pull/6
+This can also be avoided when classes containing those annotations are *not reflected*, meaning if they are outside the psr classes directory.
+When they are *inside* psr class directories, an error is thrown (see screenshot)
+
+`BUGFIX: ArrayObjects are mapped correctly without PHP internal properties <https://github.com/neos/flow-development-collection/pull/2783>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Until now, `ArrayObject`s would be mapped to array with a structure like this:
+```
+array(4) {
+  ["arrayCopy"]=>
+  array(1) {
+    ["foo"]=>
+    string(3) "bar"
+  }
+  ["flags"]=>
+  int(0)
+  ["iterator"]=>
+  object(ArrayIterator)#10459 (1) {
+    ["storage":"ArrayIterator":private]=>
+    object(ArrayObject)#10460 (1) {
+      ["storage":"ArrayObject":private]=>
+      array(1) {
+        ["foo"]=>
+        string(3) "bar"
+      }
+    }
+  }
+  ["iteratorClass"]=>
+  string(13) "ArrayIterator"
+}
+```
+This is because `getGettablePropertyNames()` would return the internal properties which have matching public `get*` methods on the `ArrayObject` PHP class https://www.php.net/manual/en/class.arrayobject.php#arrayobject.synopsis
+
+This adds an ArrayObjectConverter that allows to convert to a plain
+array containing only the intended custom properties. It uses `getArrayCopy()` to get the job done.
+
+* Fixes: `#2041 <https://github.com/neos/flow-development-collection/issues/2041>`_
+* Packages: ``Flow``
+
+`BUGFIX: ObjectAccess with direct access on private properties of proxied classes <https://github.com/neos/flow-development-collection/pull/2389>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+With this classes with private properties do react as expected to
+ObjectAccess::getProperty() and ObjectAccess::setProperty() with
+$forceDirectAccess enabled, even when they have been subclassed by the
+proxy building of Flow.
+
+* Fixes: `#2388 <https://github.com/neos/flow-development-collection/issues/2388>`_
+* Packages: ``ObjectHandling``
+
+`BUGFIX: Prevent flush force error in production context <https://github.com/neos/flow-development-collection/pull/2716>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+The `flow:cache:flush --force` command run's `Files::emptyDirectoryRecursively($environment->getPathToTemporaryDirectory());` which removes the lock file in the temporary directory too. The call to unlockSite() then causes a php warning because of the missing lock file
+```
+Warning: unlink(/var/www/Data/Temporary/Production/SubContextDevelopment/cbe856ff790c9ba5208811309bdf168b_Flow.lock): No such file or directory in /var/www/Packages/Framework/Neos.Flow/Classes/Core/LockManager.php line 145
+```
+
+This PR just add's a bit of error handling to the corresponding unlink of the lock file.
+
+**How to verify it**
+
+Run `./flow flow:cache:flush --force` command in `Production` context.
+
+**Question**
+
+Since this is a bugfix, I used branch 6.3. In case of FLOW 7, some php8 compatiblity was added which would change the PR to 
+
+```
+            try {
+                @unlink($this->lockPathAndFilename);
+            } catch (\\Throwable $e) {
+                // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
+            }
+```
+
+Should I create another PR if this one is merged to get PHP 8 compatibility?
+
+* Packages: ``Flow``
+
+`BUGFIX: Don't use transactions to change db character set <https://github.com/neos/flow-development-collection/pull/2725>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2724 <https://github.com/neos/flow-development-collection/issues/2724>`_
+
+`BUGFIX: Fix PhpAnalyzer to support PHP 8 <https://github.com/neos/flow-development-collection/pull/2640>`_
+-----------------------------------------------------------------------------------------------------------
+
+When running composer with PHP 8, the PhpAnalyzer did not work properly.
+
+* Fixes: `#2639 <https://github.com/neos/flow-development-collection/issues/2639>`_
+
+
+`BUGFIX: Make Array.push accept \`null\` for array type casting <https://github.com/neos/flow-development-collection/pull/2760>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+related: https://github.com/neos/neos-development-collection/pull/3658
+fixes: https://github.com/neos/neos-development-collection/issues/3657
+
+* Packages: ``Eel``
+
+`BUGFIX: Avoid race condition on symlink publishing <https://github.com/neos/flow-development-collection/pull/2669>`_
+---------------------------------------------------------------------------------------------------------------------
+
+If the symlink could not be created but exists, check if it points to
+the expected target and ignore the error in that case.
+
+* Fixes: `#2667 <https://github.com/neos/flow-development-collection/issues/2667>`_
+
+`BUGFIX: Use configured pdo cache tables during flush and garbage collection <https://github.com/neos/flow-development-collection/pull/2719>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Without this patch using custom table names for the PDO cache backend would cause problems
+as some queries didn’t respect the given table names but used the defaults during DELETE
+operations. This has been adjusted.
+
+**How I did it**
+
+Use the configured table names as in all the other queries.
+
+**How to verify it**
+
+Use the backend with custom table names and try to flush them. Without the change an error would occur if the default tables have never been used and setup.
+
+`TASK: Return 400 response if required argument is missing <https://github.com/neos/flow-development-collection/pull/2686>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+When a required argument is missing request processing, the controller
+will return a response with a status code of 400, as that is caused
+by a bad request. The exception is logged with a notice to the log,
+to aid in debugging errors.
+
+Previously the uncaught exception would cause a status 500 response
+and log a critical error.
+
+* Fixes: `#2682 <https://github.com/neos/flow-development-collection/issues/2682>`_
+
+`BUGFIX: Eel Helper \`Array.push()\` auto cast string to array. #2710 <https://github.com/neos/flow-development-collection/pull/2733>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+fixes #2710
+
+same lose behaviour exists already for `Array.concat()`
+
+* Packages: ``Eel``
+
+`BUGFIX: Properly encode error message in internal request header <https://github.com/neos/flow-development-collection/pull/2756>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+According to the HTTP spec, characters like line breaks and some other are not allowed within a request header. Exception messages typically include those. Since guzzlehttp/psr7 1.8.4 it validates headers to this spec and makes our builds fail. This fixes that by base64 encoding the exception message we transfer via the `X-Flow-ExceptionMessage` header. Currently there is no code in the core that uses this header, but if you read this header at some obscure place, you need to `base64_decode()` the value first.
+
+See https://github.com/guzzle/psr7/pull/486/files#diff-`fb174524a7bba27ce140bc6ccd1c30811a6abeed <https://github.com/neos/flow-development-collection/commit/fb174524a7bba27ce140bc6ccd1c30811a6abeed>`_9328e783b326189551ba7ed4R253
+
+* Packages: ``Flow``
+
+`BUGFIX: Custom error view: skip 'viewOptions' that are 'null' #2738 <https://github.com/neos/flow-development-collection/pull/2739>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+fixes #2738
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.3.16...6.3.17>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
