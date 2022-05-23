@@ -1158,8 +1158,8 @@ The following Policy expresses the exact same functionality as above:
 
     'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
 
-      'Acme.MyPackage:InvoiceService.ApproveInvoice':
-        matcher: 'method(Acme\MyPackage\Controller\InvoiceService->approve(invoice.amount > {amount}))'
+      'Acme.MyPackage:InvoiceService.ApproveInvoice':kage\Controller\InvoiceService->approve(invoice.amount > {parameters.amount}))'
+        matcher: 'method(Acme\MyPac
         parameters:
           amount:
             className: 'Neos\Flow\Security\Authorization\Privilege\Parameter\StringPrivilegeParameter'
