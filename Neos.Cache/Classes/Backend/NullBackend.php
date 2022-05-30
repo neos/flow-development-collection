@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -23,6 +25,18 @@ use Neos\Cache\Backend\AbstractBackend as AbstractCacheBackend;
 class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInterface, TaggableBackendInterface
 {
     /**
+     * Successfully ignore every configured property
+     *
+     * @param string $propertyName
+     * @param mixed $propertyValue
+     * @return boolean TRUE
+     */
+    protected function setProperty(string $propertyName, $propertyValue) : bool
+    {
+        return true;
+    }
+
+    /**
      * Acts as if it would save data
      *
      * @param string $entryIdentifier ignored
@@ -32,7 +46,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return void
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
     }
 
@@ -76,7 +90,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Returns an empty array
      *
      * @param string $tag ignored
-     * @return array An empty array
+     * @return string[] An empty array
      * @api
      */
     public function findIdentifiersByTag(string $tag): array
@@ -90,7 +104,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return void
      * @api
      */
-    public function flush()
+    public function flush(): void
     {
     }
 
@@ -112,7 +126,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return void
      * @api
      */
-    public function collectGarbage()
+    public function collectGarbage(): void
     {
     }
 

@@ -17,7 +17,6 @@ use Neos\Flow\Core\RequestHandlerInterface;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Mvc\Dispatcher;
 use Psr\Log\LoggerInterface;
 
 /**

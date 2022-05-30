@@ -119,9 +119,11 @@ class Translator
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
      * @return string Translated $originalLabel or $originalLabel itself on failure
+     * @throws Exception\IndexOutOfBoundsException
+     * @throws Exception\InvalidFormatPlaceholderException
      * @api
      */
-    public function translateByOriginalLabel($originalLabel, array $arguments = [], $quantity = null, Locale $locale = null, $sourceName = 'Main', $packageKey = 'Neos.Flow')
+    public function translateByOriginalLabel($originalLabel, array $arguments = [], $quantity = null, Locale $locale = null, string $sourceName = 'Main', string $packageKey = 'Neos.Flow')
     {
         if ($locale === null) {
             $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
@@ -173,7 +175,9 @@ class Translator
      * @param Locale $locale Locale to use (NULL for default one)
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
      * @param string $packageKey Key of the package containing the source file
-     * @return string Translated message or NULL on failure
+     * @return string|null Translated message or NULL on failure
+     * @throws Exception\IndexOutOfBoundsException
+     * @throws Exception\InvalidFormatPlaceholderException
      * @api
      * @see Translator::translateByOriginalLabel()
      */
@@ -217,7 +221,7 @@ class Translator
      *
      * @param mixed $quantity
      * @param Locale $locale
-     * @return string
+     * @return string|null
      */
     protected function getPluralForm($quantity, Locale $locale)
     {

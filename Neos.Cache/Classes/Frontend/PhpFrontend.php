@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Frontend;
 
 /*
@@ -68,7 +70,7 @@ class PhpFrontend extends StringFrontend
      * @return string
      * @throws \InvalidArgumentException
      */
-    public function getWrapped(string $entryIdentifier): string
+    public function getWrapped(string $entryIdentifier)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057752);

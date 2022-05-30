@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\I18n\Cldr\Reader;
 
 /*
@@ -234,6 +236,7 @@ class DatesReader
      * Shutdowns the object, saving parsed format strings to the cache.
      *
      * @return void
+     * @throws \Neos\Cache\Exception
      */
     public function shutdownObject()
     {
@@ -253,10 +256,13 @@ class DatesReader
      * @param string $formatType A type of format (one of constant values)
      * @param string $formatLength A length of format (one of constant values)
      * @return array An array representing parsed format
+     * @throws Exception\InvalidDateTimeFormatException
+     * @throws Exception\InvalidFormatLengthException
+     * @throws Exception\InvalidFormatTypeException
      * @throws Exception\UnableToFindFormatException When there is no proper format string in CLDR
      * @todo make default format reading nicer
      */
-    public function parseFormatFromCldr(Locale $locale, $formatType, $formatLength)
+    public function parseFormatFromCldr(Locale $locale, string $formatType, string $formatLength): array
     {
         self::validateFormatType($formatType);
         self::validateFormatLength($formatLength);
@@ -303,8 +309,9 @@ class DatesReader
      *
      * @param string $format Format string to parse
      * @return array An array representing parsed format
+     * @throws Exception\InvalidDateTimeFormatException
      */
-    public function parseCustomFormat($format)
+    public function parseCustomFormat(string $format): array
     {
         if (isset($this->parsedFormats[$format])) {
             return $this->parsedFormats[$format];
@@ -321,7 +328,7 @@ class DatesReader
      * @param Locale $locale
      * @return array An array with localized literals
      */
-    public function getLocalizedLiteralsForLocale(Locale $locale)
+    public function getLocalizedLiteralsForLocale(Locale $locale): array
     {
         if (isset($this->localizedLiterals[(string)$locale])) {
             return $this->localizedLiterals[(string)$locale];
@@ -346,7 +353,7 @@ class DatesReader
      * @return void
      * @throws Exception\InvalidFormatTypeException When value is unallowed
      */
-    public static function validateFormatType($formatType)
+    public static function validateFormatType(string $formatType): void
     {
         if (!in_array($formatType, [self::FORMAT_TYPE_DATE, self::FORMAT_TYPE_TIME, self::FORMAT_TYPE_DATETIME])) {
             throw new Exception\InvalidFormatTypeException('Provided formatType, "' . $formatType . '", is not one of allowed values.', 1281442590);
@@ -361,7 +368,7 @@ class DatesReader
      * @return void
      * @throws Exception\InvalidFormatLengthException When value is not allowed
      */
-    public static function validateFormatLength($formatLength)
+    public static function validateFormatLength(string $formatLength): void
     {
         if (!in_array($formatLength, [self::FORMAT_LENGTH_DEFAULT, self::FORMAT_LENGTH_FULL, self::FORMAT_LENGTH_LONG, self::FORMAT_LENGTH_MEDIUM, self::FORMAT_LENGTH_SHORT])) {
             throw new Exception\InvalidFormatLengthException('Provided formatLength, "' . $formatLength . '", is not one of allowed values.', 1281442591);
@@ -379,7 +386,7 @@ class DatesReader
      * @throws Exception\InvalidDateTimeFormatException When subformat is longer than maximal value defined in $maxLengthOfSubformats property
      * @see DatesReader::$parsedFormats
      */
-    protected function parseFormat($format)
+    protected function parseFormat(string $format): array
     {
         $parsedFormat = [];
         $formatLengthOfFormat = strlen($format);
@@ -451,23 +458,23 @@ class DatesReader
      * @return array An array with localized literals for given type
      * @todo the two array checks should go away - but that needs clean input data
      */
-    protected function parseLocalizedLiterals(CldrModel $model, $literalType)
+    protected function parseLocalizedLiterals(CldrModel $model, string $literalType): array
     {
         $data = [];
         $context = $model->getRawArray('dates/calendars/calendar[@type="gregorian"]/' . $literalType . 's');
 
         foreach ($context as $contextNodeString => $literalsWidths) {
-            $contextType = $model->getAttributeValue($contextNodeString, 'type');
+            $contextType = CldrModel::getAttributeValue($contextNodeString, 'type');
             if (!is_array($literalsWidths)) {
                 continue;
             }
             foreach ($literalsWidths as $widthNodeString => $literals) {
-                $widthType = $model->getAttributeValue($widthNodeString, 'type');
+                $widthType = CldrModel::getAttributeValue($widthNodeString, 'type');
                 if (!is_array($literals)) {
                     continue;
                 }
                 foreach ($literals as $literalNodeString => $literalValue) {
-                    $literalName = $model->getAttributeValue($literalNodeString, 'type');
+                    $literalName = CldrModel::getAttributeValue($literalNodeString, 'type');
 
                     $data[$contextType][$widthType][$literalName] = $literalValue;
                 }
@@ -483,7 +490,7 @@ class DatesReader
      * @param CldrModel $model CldrModel to read data from
      * @return array An array with localized literals for "eras" node
      */
-    protected function parseLocalizedEras(CldrModel $model)
+    protected function parseLocalizedEras(CldrModel $model): array
     {
         $data = [];
         foreach ($model->getRawArray('dates/calendars/calendar[@type="gregorian"]/eras') as $widthType => $eras) {
@@ -509,8 +516,12 @@ class DatesReader
      * @param Locale $locale Locale to use
      * @param string $formatLength A length of format (full, long, medium, short) or 'default' to use default one from CLDR
      * @return array Merged formats of date and time
+     * @throws Exception\InvalidDateTimeFormatException
+     * @throws Exception\InvalidFormatLengthException
+     * @throws Exception\InvalidFormatTypeException
+     * @throws Exception\UnableToFindFormatException
      */
-    protected function prepareDateAndTimeFormat($format, Locale $locale, $formatLength)
+    protected function prepareDateAndTimeFormat(string $format, Locale $locale, string $formatLength): array
     {
         $parsedFormatForDate = $this->parseFormatFromCldr($locale, 'date', $formatLength);
         $parsedFormatForTime = $this->parseFormatFromCldr($locale, 'time', $formatLength);

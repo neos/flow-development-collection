@@ -9,6 +9,10 @@ the persistence based on the *Doctrine* 2 ORM first. There is another mechanism 
 called *Generic* persistence, which can be used to add your own persistence backends to
 Flow. It is explained separately later in the chapter.
 
+.. note::
+
+  The *Generic* persistence is deprecated as of Flow 6.0 and will be dropped in Flow 7.0.
+
 .. tip::
 
 	If you have experience with Doctrine 2 already, your knowledge can
@@ -572,7 +576,7 @@ Filter System.
   the filter instance from `$entityManager->getFilters()->getEnabledFilters()` and call `setParameter()` then.
 
   Alternatively, you can register a global context object in `Neos.Flow.aop.globalObjects` and use it to provide additional
-  identifiers for the caching by letting these global objects implement `CacheAwareInterface`; effectively seggregating the
+  identifiers for the caching by letting these global objects implement `CacheAwareInterface`; effectively segregating the
   Doctrine cache some more.
 
 
@@ -602,10 +606,24 @@ functions.
 
 .. [#doctrineDqlFunctions] http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html#adding-your-own-functions-to-the-dql-language
 
+Metadata and Query Cache
+------------------------
+
+Flow automatically configures a cache for the Doctrine metadata, the used cache
+is the ``Flow_Persistence_Doctrine`` cache. The result cache is configured as well,
+the used cache is ``Flow_Persistence_Doctrine_Results``.
+
+This happens in ``\Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration::applyCacheConfiguration(…)``
+
+The use of the result cache can be enabled globally using the ``Neos.Flow.persistence.cacheAllQueryResults``
+setting or on a per-query level by using the ``$cacheResult`` parameter of the ``Query::execute()`` method.
+
+See https://www.doctrine-project.org/projects/doctrine-dbal/en/2.13/reference/caching.html for more information.
+
 Using Doctrine's Second Level Cache
 -----------------------------------
 
-Since 2.5, Doctrine provides a second level cache that further improves performance of relation queries
+Doctrine provides a second level cache that further improves performance of relation queries
 beyond the result query cache.
 
 See the Doctrine documentation ([#doctrineSecondLevelCache]_) for more information on the second level cache.
@@ -626,16 +644,18 @@ Flow allows you to enable and configure the second level cache through the confi
             regions:
               'my_entity_region': 7200
 
-.. [#doctrineSecondLevelCache] http://docs.doctrine-project.org/en/latest/reference/second-level-cache.html
+.. [#doctrineSecondLevelCache] https://www.doctrine-project.org/projects/doctrine-orm/en/2.10/reference/second-level-cache.html
 
 Customizing Doctrine EntityManager
 ----------------------------------
 
 For any cases that are not covered with the above options, Flow provides two convenient signals
 to hook into the setup of the doctrine EntityManager.
+
 The `beforeDoctrineEntityManagerCreation` signal provides you with the DBAL connection, the
 doctrine configuration and EventManager classes, that you can change before the actual
-EntityManager is instanciated.
+EntityManager is instantiated.
+
 The `afterDoctrineEntityManagerCreation` signal provides the doctrine configuration and
 EntityManager instance, in order to to further set options.
 
@@ -1138,12 +1158,12 @@ Doctrine tries to keep existing data as far as possible, avoiding lossy actions.
 	``flow:doctrine:migrationversion --version all --add`` to avoid migration
 	errors later.
 
-Doctrine Connection Wrappers - Master/Slave Connections
+Doctrine Connection Wrappers - Primary/Replica Connections
 -------------------------------------------------------
 
 Doctrine 2 allows to create Connection wrapper classes, that change the way Doctrine connects
-to your database. A common use case is a master/slave replication setup, with one master server
-and several slaves that share the load for all reading queries.
+to your database. A common use case is a primary/replica setup, with one primary server
+and several read replicas that share the load for all reading queries.
 Doctrine already provides a wrapper for such a connection and you can configure Flow to use
 that connection wrapper by setting the following options in your packages ``Settings.yaml``:
 
@@ -1153,28 +1173,31 @@ that connection wrapper by setting the following options in your packages ``Sett
      Flow:
        persistence:
          backendOptions:
-           wrapperClass: 'Doctrine\DBAL\Connections\MasterSlaveConnection'
-           master:
+           wrapperClass: 'Doctrine\DBAL\Connections\PrimaryReadReplicaConnection'
+           primary:
              host: '127.0.0.1'      # adjust to your master database host
              dbname: 'master'       # adjust to your database name
              user: 'user'           # adjust to your database user
              password: 'pass'       # adjust to your database password
-           slaves:
-             slave1:
+           replicas:
+             replica1:
                host: '127.0.0.1'        # adjust to your slave database host
-               dbname: 'slave1'         # adjust to your database name
+               dbname: 'replica1'       # adjust to your database name
                user: 'user'             # adjust to your database user
                password: 'pass'         # adjust to your database password
 
-With this setup, Doctrine will use one of the slave connections picked once per request randomly
+.. note::
+	In doctrine/dbal versions lower then 2.11 the wrapper class was named `MasterSlaveConnection`, so you need to adjust to that if you are such a version.
+
+With this setup, Doctrine will use one of the replica connections picked once per request randomly
 for all queries until the first writing query (e.g. insert or update) is executed. From that point
-on the master server will be used solely. This is to solve the problems of replication lag and
+on the primary server will be used solely. This is to solve the problems of replication lag and
 possibly inconsistent query results.
 
 .. tip::
 
-	You can also setup the master database as a slave, if you want to also use it for load-balancing
-	reading queries. However, this might lead to higher load on the master database and should be
+	You can also setup the primary database as a replica, if you want to also use it for load-balancing
+	reading queries. However, this might lead to higher load on the primary database and should be
 	well observed.
 
 Known issues
@@ -1200,6 +1223,10 @@ What is now called *Generic* Persistence, used to be the only persistence layer 
 Back in those days there was no ORM available that fit our needs. That being said, with
 the advent of Doctrine 2, your best bet as a PHP developer is to use that instead of any
 home-brewn ORM.
+
+.. note::
+
+  The *Generic* persistence is deprecated as of Flow 6.0 and will be dropped in Flow 7.0.
 
 When your target is not a relational database, things look slightly different, which is
 why the "old" code is still available for use, primarily by alternative backends like the

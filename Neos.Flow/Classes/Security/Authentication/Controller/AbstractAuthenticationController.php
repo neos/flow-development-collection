@@ -120,7 +120,7 @@ abstract class AbstractAuthenticationController extends ActionController
      */
     protected function onAuthenticationFailure(AuthenticationRequiredException $exception = null)
     {
-        $this->flashMessageContainer->addMessage(new Error('Authentication failed!', ($exception === null ? 1347016771 : $exception->getCode())));
+        $this->controllerContext->getFlashMessageContainer()->addMessage(new Error('Authentication failed!', ($exception === null ? 1347016771 : $exception->getCode())));
     }
 
     /**

@@ -11,8 +11,12 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * source code.
  */
 
+use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
+use Neos\Flow\ObjectManagement\Proxy\ProxyClass;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Reflection\ClassReflection;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterfaceWithConstructor;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -29,9 +33,9 @@ class ProxyCompilerTest extends FunctionalTestCase
         $class = new ClassReflection(Fixtures\PrototypeClassA::class);
         $method = $class->getMethod('setSomeProperty');
 
-        $this->assertTrue($class->implementsInterface(ProxyInterface::class));
-        $this->assertTrue($class->isTaggedWith('scope'));
-        $this->assertTrue($method->isTaggedWith('session'));
+        self::assertTrue($class->implementsInterface(ProxyInterface::class));
+        self::assertTrue($class->isTaggedWith('scope'));
+        self::assertTrue($method->isTaggedWith('session'));
     }
 
     /**
@@ -43,7 +47,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         $expectedResult = 'This is a example doc comment which should be copied' . chr(10) . 'to the proxy class.';
         $actualResult = $class->getDescription();
 
-        $this->assertSame($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
     /**
@@ -54,7 +58,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         $class = new ClassReflection(Fixtures\PrototypeClassA::class);
         $method = $class->getMethod('getSingletonA');
 
-        $this->assertEquals(['SingletonClassA The singleton class A'], $method->getTagValues('return'));
+        self::assertEquals(['SingletonClassA The singleton class A'], $method->getTagValues('return'));
     }
 
     /**
@@ -65,7 +69,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         $class = new ClassReflection(Fixtures\PrototypeClassA::class);
         $method = $class->getMethod('setSomeProperty');
 
-        $this->assertEquals(['string $someProperty The property value'], $method->getTagValues('param'));
+        self::assertEquals(['string $someProperty The property value'], $method->getTagValues('param'));
     }
 
     /**
@@ -76,7 +80,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         $class = new ClassReflection(Fixtures\PrototypeClassA::class);
         $method = $class->getMethod('setSomeProperty');
 
-        $this->assertEquals(['autoStart=true'], $method->getTagValues('session'));
+        self::assertEquals(['autoStart=true'], $method->getTagValues('session'));
     }
 
     /**
@@ -94,14 +98,14 @@ class ProxyCompilerTest extends FunctionalTestCase
     public function setInstanceOfSubClassDoesNotOverrideParentClass()
     {
         $singletonE = $this->objectManager->get(Fixtures\SingletonClassE::class);
-        $this->assertEquals(Fixtures\SingletonClassE::class, get_class($singletonE));
+        self::assertEquals(Fixtures\SingletonClassE::class, get_class($singletonE));
 
         $singletonEsub = $this->objectManager->get(Fixtures\SingletonClassEsub::class);
-        $this->assertEquals(Fixtures\SingletonClassEsub::class, get_class($singletonEsub));
+        self::assertEquals(Fixtures\SingletonClassEsub::class, get_class($singletonEsub));
 
         $singletonE2 = $this->objectManager->get(Fixtures\SingletonClassE::class);
-        $this->assertEquals(Fixtures\SingletonClassE::class, get_class($singletonE2));
-        $this->assertSame($singletonE, $singletonE2);
+        self::assertEquals(Fixtures\SingletonClassE::class, get_class($singletonE2));
+        self::assertSame($singletonE, $singletonE2);
     }
 
     /**
@@ -117,8 +121,8 @@ class ProxyCompilerTest extends FunctionalTestCase
         $prototypeF = null;
 
         $prototypeF = unserialize($serializedObject);
-        $this->assertSame($prototypeF->getNonTransientProperty(), 'bar');
-        $this->assertSame($prototypeF->getTransientProperty(), null);
+        self::assertSame($prototypeF->getNonTransientProperty(), 'bar');
+        self::assertSame($prototypeF->getTransientProperty(), null);
     }
 
     /**
@@ -127,6 +131,20 @@ class ProxyCompilerTest extends FunctionalTestCase
     public function proxiedFinalClassesAreStillFinal()
     {
         $reflectionClass = new ClassReflection(Fixtures\FinalClassWithDependencies::class);
-        $this->assertTrue($reflectionClass->isFinal());
+        self::assertTrue($reflectionClass->isFinal());
+    }
+
+
+    /**
+     * @test
+     * @see https://github.com/neos/flow-development-collection/issues/2554
+     */
+    public function proxyingClassImplementingInterfacesWithParametrizedConstructorsLeadsToException()
+    {
+        $this->expectException(CannotBuildObjectException::class);
+        $proxyClass = new ProxyClass(ClassImplementingInterfaceWithConstructor::class);
+        $proxyClass->injectReflectionService($this->objectManager->get(ReflectionService::class));
+        $proxyClass->getConstructor()->addPreParentCallCode('// some code');
+        $proxyClass->render();
     }
 }

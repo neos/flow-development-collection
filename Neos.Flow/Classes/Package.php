@@ -58,8 +58,12 @@ class Package extends BasePackage
         $bootstrap->registerCompiletimeCommand('neos.flow:package:rescan');
 
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
+
         $dispatcher->connect(Mvc\Dispatcher::class, 'afterControllerInvocation', function ($request) use ($bootstrap) {
-            if ($bootstrap->getObjectManager()->has(Persistence\PersistenceManagerInterface::class)) {
+            // No auto-persistence if there is no PersistenceManager registered
+            if (
+                $bootstrap->getObjectManager()->has(Persistence\PersistenceManagerInterface::class)
+            ) {
                 if (!$request instanceof Mvc\ActionRequest || SecurityHelper::hasSafeMethod($request->getHttpRequest()) !== true) {
                     $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();
                 } elseif (SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
@@ -67,7 +71,7 @@ class Package extends BasePackage
                 }
             }
         });
-        $dispatcher->connect(Cli\SlaveRequestHandler::class, 'dispatchedCommandLineSlaveRequest', Persistence\PersistenceManagerInterface::class, 'persistAll');
+        $dispatcher->connect(Cli\SlaveRequestHandler::class, 'dispatchedCommandLineSlaveRequest', Persistence\PersistenceManagerInterface::class, 'persistAll', false);
 
         if (!$context->isProduction()) {
             $dispatcher->connect(Core\Booting\Sequence::class, 'afterInvokeStep', function (Step $step) use ($bootstrap, $dispatcher) {

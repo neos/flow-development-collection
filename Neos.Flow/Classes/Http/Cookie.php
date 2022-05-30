@@ -130,10 +130,10 @@ class Cookie
         if ($expires instanceof \Datetime) {
             $expires = $expires->getTimestamp();
         }
-        if (!is_integer($expires)) {
+        if (!is_int($expires)) {
             throw new \InvalidArgumentException('The parameter "expires" passed to the Cookie constructor must be a unix timestamp or a DateTime object.', 1345108785);
         }
-        if ($maximumAge !== null && !is_integer($maximumAge)) {
+        if ($maximumAge !== null && !is_int($maximumAge)) {
             throw new \InvalidArgumentException('The parameter "maximumAge" passed to the Cookie constructor must be an integer value.', 1345108786);
         }
         if ($domain !== null && preg_match(self::PATTERN_DOMAIN, $domain) !== 1) {
@@ -211,7 +211,7 @@ class Cookie
                     break;
                     case 'MAX-AGE':
                         if (preg_match(self::PATTERN_MAX_AGE, $attributeValue) === 1) {
-                            $maxAgeAttribute = intval($attributeValue);
+                            $maxAgeAttribute = (int)$attributeValue;
                         }
                     break;
                     case 'DOMAIN':

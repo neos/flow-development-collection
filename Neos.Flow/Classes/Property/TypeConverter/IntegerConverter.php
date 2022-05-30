@@ -45,10 +45,10 @@ class IntegerConverter extends AbstractTypeConverter
     /**
      * Actually convert from $source to $targetType, in fact a noop here.
      *
-     * @param mixed $source
+     * @param int|string|\DateTimeInterface|null $source
      * @param string $targetType
      * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
+     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return integer|Error
      * @api
      */
@@ -58,7 +58,7 @@ class IntegerConverter extends AbstractTypeConverter
             return $source->format('U');
         }
 
-        if ($source === null || strlen($source) === 0) {
+        if ($source === null || $source === '') {
             return null;
         }
 

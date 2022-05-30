@@ -32,6 +32,10 @@ class AroundAdvice extends AbstractAdvice implements AdviceInterface
 
         $adviceObject = $this->objectManager->get($this->aspectObjectName);
         $methodName = $this->adviceMethodName;
-        return $adviceObject->$methodName($joinPoint);
+        $result = $adviceObject->$methodName($joinPoint);
+
+        $this->emitAdviceInvoked($adviceObject, $methodName, $joinPoint);
+
+        return $result;
     }
 }

@@ -12,9 +12,9 @@ namespace Neos\Flow\Mvc\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Request;
+use Neos\Flow\Http\BaseUriProvider;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Utility\Arrays;
 
@@ -36,6 +36,12 @@ class UriBuilder
      * @var \Neos\Flow\Utility\Environment
      */
     protected $environment;
+
+    /**
+     * @Flow\Inject
+     * @var BaseUriProvider
+     */
+    protected $baseUriProvider;
 
     /**
      * @var ActionRequest
@@ -135,7 +141,7 @@ class UriBuilder
      */
     public function setSection($section)
     {
-        $this->section = $section;
+        $this->section = (string)$section;
         return $this;
     }
 
@@ -279,29 +285,30 @@ class UriBuilder
      * @api
      * @see build()
      * @throws Exception\MissingActionNameException if $actionName parameter is empty
+     * @throws \Neos\Flow\Http\Exception
      */
-    public function uriFor($actionName, $controllerArguments = [], $controllerName = null, $packageKey = null, $subPackageKey = null)
+    public function uriFor(string $actionName, array $controllerArguments = [], string $controllerName = null, string $packageKey = null, string $subPackageKey = null)
     {
-        if ($actionName === null || $actionName === '') {
+        if (empty($actionName)) {
             throw new Exception\MissingActionNameException('The URI Builder could not build a URI linking to an action controller because no action name was specified. Please check the stack trace to see which code or template was requesting the link and check the arguments passed to the URI Builder.', 1354629891);
         }
-        $controllerArguments['@action'] = strtolower($actionName);
-        if ($controllerName !== null) {
-            $controllerArguments['@controller'] = strtolower($controllerName);
-        } else {
-            $controllerArguments['@controller'] = strtolower($this->request->getControllerName());
+        if (empty($controllerName)) {
+            $controllerName = $this->request->getControllerName();
         }
-        if ($packageKey === null && $subPackageKey === null) {
+        if (empty($packageKey) && empty($subPackageKey)) {
             $subPackageKey = $this->request->getControllerSubpackageKey();
         }
-        if ($packageKey === null) {
+        if (empty($packageKey)) {
             $packageKey = $this->request->getControllerPackageKey();
         }
+
+        $controllerArguments['@action'] = strtolower($actionName);
+        $controllerArguments['@controller'] = strtolower($controllerName);
         $controllerArguments['@package'] = strtolower($packageKey);
         if ($subPackageKey !== null) {
             $controllerArguments['@subpackage'] = strtolower($subPackageKey);
         }
-        if ($this->format !== null && $this->format !== '') {
+        if (!empty($this->format)) {
             $controllerArguments['@format'] = $this->format;
         }
 
@@ -320,12 +327,12 @@ class UriBuilder
      * )
      *
      * @param array $arguments arguments
-     * @param RequestInterface $currentRequest
+     * @param ActionRequest $currentRequest
      * @return array arguments with namespace
      */
-    protected function addNamespaceToArguments(array $arguments, RequestInterface $currentRequest)
+    protected function addNamespaceToArguments(array $arguments, ActionRequest $currentRequest)
     {
-        while (!$currentRequest->isMainRequest()) {
+        while ($currentRequest instanceof ActionRequest && !$currentRequest->isMainRequest()) {
             $argumentNamespace = $currentRequest->getArgumentNamespace();
             if ($argumentNamespace !== '') {
                 $arguments = [$argumentNamespace => $arguments];
@@ -340,6 +347,7 @@ class UriBuilder
      *
      * @param array $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
      * @return string the (absolute or relative) URI as string
+     * @throws \Neos\Flow\Http\Exception
      * @api
      */
     public function build(array $arguments = [])
@@ -350,8 +358,10 @@ class UriBuilder
         $httpRequest = $this->request->getHttpRequest();
 
         $uriPathPrefix = $this->environment->isRewriteEnabled() ? '' : 'index.php/';
-        $uriPathPrefix = $httpRequest->getScriptRequestPath() . $uriPathPrefix;
-        $resolveContext = new ResolveContext($httpRequest->getBaseUri(), $arguments, $this->createAbsoluteUri, $uriPathPrefix);
+        $uriPathPrefix = RequestInformationHelper::getScriptRequestPath($httpRequest) . $uriPathPrefix;
+        $uriPathPrefix = ltrim($uriPathPrefix, '/');
+
+        $resolveContext = new ResolveContext($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($httpRequest), $arguments, $this->createAbsoluteUri, $uriPathPrefix);
         $resolvedUri = $this->router->resolve($resolveContext);
         if ($this->section !== '') {
             $resolvedUri = $resolvedUri->withFragment($this->section);
@@ -457,12 +467,14 @@ class UriBuilder
      * @param ActionRequest $request
      * @return string
      */
-    protected function getRequestNamespacePath($request)
+    protected function getRequestNamespacePath(ActionRequest $request): string
     {
-        if (!$request instanceof Request) {
-            $parentPath = $this->getRequestNamespacePath($request->getParentRequest());
-            return $parentPath . ($parentPath !== '' && $request->getArgumentNamespace() !== '' ? '.' : '') . $request->getArgumentNamespace();
+        $namespaceParts = [];
+        while ($request !== null && $request->isMainRequest() === false) {
+            $namespaceParts[] = $request->getArgumentNamespace();
+            $request = $request->getParentRequest();
         }
-        return '';
+
+        return implode('.', array_reverse($namespaceParts));
     }
 }

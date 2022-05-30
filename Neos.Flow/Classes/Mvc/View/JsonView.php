@@ -29,7 +29,8 @@ class JsonView extends AbstractView
      * @var array
      */
     protected $supportedOptions = [
-        'jsonEncodingOptions' => [0, 'Bitmask of supported Encoding options. See http://php.net/manual/en/json.constants.php', 'integer']
+        'jsonEncodingOptions' => [0, 'Bitmask of supported Encoding options. See https://php.net/manual/en/json.constants.php', 'integer'],
+        'datetimeFormat' => [\DateTime::ISO8601, 'The datetime format to use for all DateTime objects. See https://www.php.net/manual/en/class.datetime.php#datetime.synopsis', 'string']
     ];
 
     /**
@@ -198,7 +199,7 @@ class JsonView extends AbstractView
      */
     public function render()
     {
-        $this->controllerContext->getResponse()->setHeader('Content-Type', 'application/json');
+        $this->controllerContext->getResponse()->setContentType('application/json');
         $propertiesToRender = $this->renderArray();
         $options = $this->getOption('jsonEncodingOptions');
         return json_encode($propertiesToRender, $options);
@@ -208,7 +209,7 @@ class JsonView extends AbstractView
      * Loads the configuration and transforms the value to a serializable
      * array.
      *
-     * @return array An array containing the values, ready to be JSON encoded
+     * @return array|string|int|float|null An array containing the values, ready to be JSON encoded
      * @api
      */
     protected function renderArray()
@@ -233,7 +234,7 @@ class JsonView extends AbstractView
      *
      * @param mixed $value The value to transform
      * @param array $configuration Configuration for transforming the value
-     * @return array The transformed value
+     * @return array|string|int|float|null The transformed value
      */
     protected function transformValue($value, array $configuration)
     {
@@ -268,12 +269,12 @@ class JsonView extends AbstractView
      *
      * @param object $object Object to traverse
      * @param array $configuration Configuration for transforming the given object or NULL
-     * @return array Object structure as an array
+     * @return array|string Object structure as an array
      */
     protected function transformObject($object, array $configuration)
     {
         if ($object instanceof \DateTimeInterface) {
-            return $object->format(\DateTime::ISO8601);
+            return $object->format($this->getOption('datetimeFormat'));
         } else {
             $propertyNames = ObjectAccess::getGettablePropertyNames($object);
 

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Utility;
 
 /*
@@ -35,7 +37,7 @@ class PhpAnalyzer
     /**
      * @param string $phpCode
      */
-    public function __construct($phpCode)
+    public function __construct(string $phpCode)
     {
         $this->phpCode = $phpCode;
     }
@@ -43,9 +45,9 @@ class PhpAnalyzer
     /**
      * Extracts the Fully Qualified Class name from the given PHP code
      *
-     * @return string FQN in the format "Some\Fully\Qualified\ClassName" or NULL if no class was detected
+     * @return string|null FQN in the format "Some\Fully\Qualified\ClassName" or NULL if no class was detected
      */
-    public function extractFullyQualifiedClassName()
+    public function extractFullyQualifiedClassName(): ?string
     {
         $fullyQualifiedClassName = $this->extractClassName();
         if ($fullyQualifiedClassName === null) {
@@ -55,15 +57,16 @@ class PhpAnalyzer
         if ($namespace !== null) {
             $fullyQualifiedClassName = $namespace . '\\' . $fullyQualifiedClassName;
         }
+
         return $fullyQualifiedClassName;
     }
 
     /**
      * Extracts the PHP namespace from the given PHP code
      *
-     * @return string the PHP namespace in the form "Some\Namespace" (w/o leading backslash) - or NULL if no namespace modifier was found
+     * @return string|null the PHP namespace in the form "Some\Namespace" (w/o leading backslash) - or NULL if no namespace modifier was found
      */
-    public function extractNamespace()
+    public function extractNamespace(): ?string
     {
         $namespaceParts = [];
         $tokens = token_get_all($this->phpCode);
@@ -79,8 +82,14 @@ class PhpAnalyzer
                     break;
                 }
                 list($type, $value) = $token;
+                if (defined('T_NAME_QUALIFIED') && $type === T_NAME_QUALIFIED) {
+                    return $value;
+                }
+                if (defined('T_NAME_FULLY_QUALIFIED') && $type === T_NAME_FULLY_QUALIFIED) {
+                    return ltrim($value, '\\');
+                }
                 if ($type === T_STRING) {
-                    $namespaceParts[] = $value;
+                    $namespaceParts[] = ltrim($value, '\\');
                     continue;
                 }
                 if ($type !== T_NS_SEPARATOR && $type !== T_WHITESPACE) {
@@ -99,9 +108,9 @@ class PhpAnalyzer
      * Extracts the className of the given PHP code
      * Note: This only returns the class name without namespace, @see extractFullyQualifiedClassName()
      *
-     * @return string
+     * @return string|null
      */
-    public function extractClassName()
+    public function extractClassName(): ?string
     {
         $tokens = token_get_all($this->phpCode);
         $numberOfTokens = count($tokens);

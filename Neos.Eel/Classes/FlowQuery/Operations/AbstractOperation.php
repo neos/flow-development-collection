@@ -28,7 +28,7 @@ abstract class AbstractOperation implements OperationInterface
      * @var string
      * @api
      */
-    protected static $shortName = null;
+    protected static $shortName = '';
 
     /**
      * The priority of operations. higher numbers override lower ones.
@@ -71,7 +71,7 @@ abstract class AbstractOperation implements OperationInterface
      */
     public static function getShortName()
     {
-        if (!is_string(static::$shortName)) {
+        if (static::$shortName === '') {
             throw new FlowQueryException('Short name in class ' . __CLASS__ . ' is empty.', 1332488549);
         }
         return static::$shortName;

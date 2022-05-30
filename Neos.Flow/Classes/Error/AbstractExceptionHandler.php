@@ -11,12 +11,11 @@ namespace Neos\Flow\Error;
  * source code.
  */
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cli\Response as CliResponse;
+use Neos\Flow\Cli\Response;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
-use Neos\Flow\Http\Request;
-use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -34,13 +33,6 @@ use Psr\Log\LoggerInterface;
 abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 {
     /**
-     * @var SystemLoggerInterface
-     * @deprecated Use the PSR logger
-     * @see logger
-     */
-    protected $systemLogger;
-
-    /**
      * @var LoggerInterface
      */
     protected $logger;
@@ -56,20 +48,22 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     protected $options = [];
 
     /**
-     * @var array
+     * Merged custom error view options from defaultRenderingOptions and of the first matching renderingGroup
+     *
+     * @var array{
+     *      viewClassName: string,
+     *      viewOptions: array,
+     *      renderTechnicalDetails: bool,
+     *      logException: bool,
+     *      renderingGroup?: string,
+     *      variables?: array,
+     *      templatePathAndFilename?: string,
+     *      layoutRootPath?: string,
+     *      partialRootPath?: string,
+     *      format?: string
+     * }
      */
     protected $renderingOptions;
-
-    /**
-     * Injects the system logger
-     *
-     * @param SystemLoggerInterface $systemLogger
-     * @return void
-     */
-    public function injectSystemLogger(SystemLoggerInterface $systemLogger)
-    {
-        $this->systemLogger = $systemLogger;
-    }
 
     /**
      * @param LoggerInterface $logger
@@ -162,12 +156,15 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
         $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $viewClassName = $renderingOptions['viewClassName'];
+        $viewOptions = array_filter($renderingOptions['viewOptions'], static function ($optionValue) {
+            return $optionValue !== null;
+        });
         /** @var ViewInterface $view */
-        $view = $viewClassName::createWithOptions($renderingOptions['viewOptions']);
+        $view = $viewClassName::createWithOptions($viewOptions);
         $view = $this->applyLegacyViewOptions($view, $renderingOptions);
 
-        $httpRequest = Request::createFromEnvironment();
-        $request = new ActionRequest($httpRequest);
+        $httpRequest = ServerRequest::fromGlobals();
+        $request = ActionRequest::fromHttpRequest($httpRequest);
         $request->setControllerPackageKey('Neos.Flow');
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
@@ -265,6 +262,23 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     }
 
     /**
+     * If a renderingGroup was successfully resolved via @see resolveRenderingGroup
+     * We will use a custom error view.
+     *
+     * Also check for legacy 'templatePathAndFilename'
+     *
+     */
+    protected function useCustomErrorView(): bool
+    {
+        // for legacy reasons 'templatePathAndFilename' was enough to use the view,
+        // so it could theoretically be used without a 'renderingGroup' (will be deprecated!)
+        if (isset($this->renderingOptions['templatePathAndFilename'])) {
+            return true;
+        }
+        return isset($this->renderingOptions['renderingGroup']);
+    }
+
+    /**
      * Formats and echoes the exception and its previous exceptions (if any) for the command line
      *
      * @param \Throwable $exception
@@ -272,7 +286,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      */
     protected function echoExceptionCli(\Throwable $exception)
     {
-        $response = new CliResponse();
+        $response = new Response();
 
         $exceptionMessage = $this->renderSingleExceptionCli($exception);
         $exceptionMessage = $this->renderNestedExceptonsCli($exception, $exceptionMessage);

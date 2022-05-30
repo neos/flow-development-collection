@@ -78,6 +78,13 @@ class ExtendedTypesEntity
     protected $dateTimeImmutable;
 
     /**
+     * This is possible for b/c - see #1673
+     * @var \DateTimeInterface
+     * @ORM\Column(nullable=true)
+     */
+    protected $dateTimeInterface;
+
+    /**
      * @param \DateTime $time
      * @return $this
      */
@@ -165,6 +172,24 @@ class ExtendedTypesEntity
     public function getDateTimeImmutable()
     {
         return $this->dateTimeImmutable;
+    }
+
+    /**
+     * @param \DateTimeInterface $dateTime
+     * @return $this
+     */
+    public function setDateTimeInterface(\DateTimeInterface $dateTime = null)
+    {
+        $this->dateTimeInterface = $dateTime;
+        return $this;
+    }
+
+    /**
+     * @return \DateTimeInterface
+     */
+    public function getDateTimeInterface()
+    {
+        return $this->dateTimeInterface;
     }
 
     /**

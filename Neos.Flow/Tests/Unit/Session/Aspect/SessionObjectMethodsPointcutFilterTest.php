@@ -38,7 +38,7 @@ class SessionObjectMethodsPointcutFilterTest extends UnitTestCase
         $availableClassNamesIndex->setClassNames($availableClassNames);
 
         $mockCompileTimeObjectManager = $this->getMockBuilder(CompileTimeObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockCompileTimeObjectManager->expects($this->any())->method('getClassNamesByScope')->with(Configuration::SCOPE_SESSION)->will($this->returnValue(['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
+        $mockCompileTimeObjectManager->expects(self::any())->method('getClassNamesByScope')->with(Configuration::SCOPE_SESSION)->will(self::returnValue(['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
 
         $sessionObjectMethodsPointcutFilter = new SessionObjectMethodsPointcutFilter();
         $sessionObjectMethodsPointcutFilter->injectObjectManager($mockCompileTimeObjectManager);
@@ -53,6 +53,6 @@ class SessionObjectMethodsPointcutFilterTest extends UnitTestCase
 
         $result = $sessionObjectMethodsPointcutFilter->reduceTargetClassNames($availableClassNamesIndex);
 
-        $this->assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
+        self::assertEquals($expectedClassNamesIndex, $result, 'The wrong class names have been filtered');
     }
 }

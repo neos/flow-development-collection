@@ -16,6 +16,7 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
  * A lazy loading variant of \SplObjectStorage
  *
  * @api
+ * @deprecated since Flow 6.0
  */
 class LazySplObjectStorage extends \SplObjectStorage
 {
@@ -57,7 +58,10 @@ class LazySplObjectStorage extends \SplObjectStorage
         if (is_array($this->objectIdentifiers)) {
             foreach ($this->objectIdentifiers as $identifier) {
                 try {
-                    parent::attach($this->persistenceManager->getObjectByIdentifier($identifier));
+                    $object = $this->persistenceManager->getObjectByIdentifier($identifier);
+                    if ($object !== null) {
+                        parent::attach($object);
+                    }
                 } catch (Exception\InvalidObjectDataException $exception) {
                     // when security query rewriting holds back an object here, we skip it...
                 }

@@ -11,8 +11,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
@@ -35,7 +34,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     protected $persistenceManager;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -170,7 +169,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Finds an object matching the given identifier.
      *
      * @param mixed $identifier The identifier of the object to find
-     * @return object The matching object if found, otherwise NULL
+     * @return object|null The matching object if found, otherwise NULL
      * @api
      */
     public function findByIdentifier($identifier)

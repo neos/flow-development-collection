@@ -39,7 +39,7 @@ Installing Flow
 Setting up Flow is pretty straight-forward. As a minimum requirement you will need:
 
 * A web server (we recommend Apache with the *mod_rewrite* module enabled)
-* PHP 7.1.0 or later
+* PHP 7.2.0 or later
 * A database supported by Doctrine DBAL, such as MySQL
 * Command line access
 

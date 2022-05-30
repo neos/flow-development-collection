@@ -11,9 +11,11 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Exception\ForwardException;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
-use Neos\Flow\Mvc\RequestInterface;
-use Neos\Flow\Mvc\ResponseInterface;
 
 /**
  * Generic interface for controllers
@@ -31,11 +33,13 @@ interface ControllerInterface
     /**
      * Processes a general request. The result can be returned by altering the given response.
      *
-     * @param RequestInterface $request The request object
-     * @param ResponseInterface $response The response, modified by the controller
+     * @param ActionRequest $request The request object
+     * @param ActionResponse $response The response, modified by the controller
      * @return void
      * @throws UnsupportedRequestTypeException if the controller doesn't support the current request type
+     * @throws StopActionException
+     * @throws ForwardException
      * @api
      */
-    public function processRequest(RequestInterface $request, ResponseInterface $response);
+    public function processRequest(ActionRequest $request, ActionResponse $response);
 }

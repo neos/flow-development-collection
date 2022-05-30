@@ -16,6 +16,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\ParseErrorException;
 use Neos\Flow\Error\Exception;
 use Neos\Utility\Arrays;
+use Symfony\Component\Yaml\Exception\ParseException as YamlParseException;
 
 /**
  * Configuration source based on YAML files
@@ -111,12 +112,12 @@ class YamlSource
         }
 
         if ($allowSplitSource === true) {
-            $wrongSplitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yml') ?? [];
+            $wrongSplitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yml') ?: [];
             $wrongPathsAndFileNames = array_merge($wrongPathsAndFileNames, $wrongSplitSourcePathsAndFileNames);
         }
 
         if ($wrongPathsAndFileNames !== []) {
-            throw new \Neos\Flow\Configuration\Exception(sprintf('The files "%s" exist with "yml" extension, but that is not supported by Flow. Please use "yaml" as file extension for configuration files.', implode(', ', $wrongPathsAndFileNames)), 1516893322579);
+            throw new \Neos\Flow\Configuration\Exception(sprintf('The files "%s" exist with "yml" extension, but that is not supported by Flow. Please use "yaml" as file extension for configuration files.', implode(', ', $wrongPathsAndFileNames)), 1516893322);
         }
     }
 
@@ -142,7 +143,11 @@ class YamlSource
                     throw new ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '".', 1391894094);
                 }
             } else {
-                $loadedConfiguration = Yaml::parse($yaml);
+                try {
+                    $loadedConfiguration = Yaml::parse($yaml);
+                } catch (YamlParseException $e) {
+                    throw new ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '". ' . $e->getMessage(), 1391894094);
+                }
             }
             unset($yaml);
 
