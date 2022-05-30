@@ -36,13 +36,23 @@ class DatesReaderTest extends FunctionalTestCase
      */
     public function parseFormatFromCldrCachesDateTimePatternsForEachLanguageIndependently(): void
     {
+        $convertFormatToString = function (array $formatArray) {
+            $format = '';
+            array_walk_recursive($formatArray, function ($element) use (&$format) {
+                $format .= $element;
+            });
+            return $format;
+        };
+
         // Warms the cache with parsed formats for en_US and de
         $this->datesReader->parseFormatFromCldr(new Locale('en_US'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
         $this->datesReader->parseFormatFromCldr(new Locale('de'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
 
         // Reads two different cache entries
         $enUSFormat = $this->datesReader->parseFormatFromCldr(new Locale('en_US'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
+        self::assertEquals('M/d/yy h:mm a', $convertFormatToString($enUSFormat));
+
         $deFormat = $this->datesReader->parseFormatFromCldr(new Locale('de'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
-        self::assertNotEquals($enUSFormat, $deFormat);
+        self::assertEquals('dd.MM.yy HH:mm', $convertFormatToString($deFormat));
     }
 }
