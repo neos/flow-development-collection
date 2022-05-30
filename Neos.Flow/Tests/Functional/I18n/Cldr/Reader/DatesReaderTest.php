@@ -14,8 +14,8 @@ namespace Neos\Flow\Tests\Functional\I18n\Cldr\Reader;
  */
 
 use Neos\Flow\I18n\Cldr\Reader\DatesReader;
+use Neos\Flow\I18n\Locale;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\I18n;
 
 class DatesReaderTest extends FunctionalTestCase
 {
@@ -25,41 +25,34 @@ class DatesReaderTest extends FunctionalTestCase
      */
     protected $datesReader;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
-
         $this->datesReader = $this->objectManager->get(DatesReader::class);
     }
 
     /**
-     * Data provider with valid format strings and expected results.
-     *
-     * @return array
-     */
-    public function formatStringsAndParsedFormats(): array
-    {
-        return [
-            ['de',  ['dd', ['.'], 'MM', ['.'], 'y']],
-            ['en',  ['MMM', [' '], 'd', [','], [' '], 'y']],
-        ];
-    }
-
-    /**
      * @test
-     * @dataProvider formatStringsAndParsedFormats
-     * @param string $localeIdentifier
-     * @param array $expectedResult
-     * @throws I18n\Cldr\Reader\Exception\InvalidDateTimeFormatException
-     * @throws I18n\Cldr\Reader\Exception\InvalidFormatLengthException
-     * @throws I18n\Cldr\Reader\Exception\InvalidFormatTypeException
-     * @throws I18n\Cldr\Reader\Exception\UnableToFindFormatException
-     * @throws I18n\Exception\InvalidLocaleIdentifierException
      */
-    public function formatStringsAreParsedCorrectly(string $localeIdentifier, array $expectedResult): void
+    public function parseFormatFromCldrCachesDateTimePatternsForEachLanguageIndependently(): void
     {
-        $locale = new I18n\Locale($localeIdentifier);
-        $result = $this->datesReader->parseFormatFromCldr($locale, DatesReader::FORMAT_TYPE_DATE, DatesReader::FORMAT_LENGTH_DEFAULT);
-        self::assertEquals($expectedResult, $result);
+        $convertFormatToString = function (array $formatArray) {
+            $format = '';
+            array_walk_recursive($formatArray, function ($element) use (&$format) {
+                $format .= $element;
+            });
+            return $format;
+        };
+
+        // Warms the cache with parsed formats for en_US and de
+        $this->datesReader->parseFormatFromCldr(new Locale('en_US'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
+        $this->datesReader->parseFormatFromCldr(new Locale('de'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
+
+        // Reads two different cache entries
+        $enUSFormat = $this->datesReader->parseFormatFromCldr(new Locale('en_US'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
+        self::assertEquals('M/d/yy h:mm a', $convertFormatToString($enUSFormat));
+
+        $deFormat = $this->datesReader->parseFormatFromCldr(new Locale('de'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
+        self::assertEquals('dd.MM.yy HH:mm', $convertFormatToString($deFormat));
     }
 }
