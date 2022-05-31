@@ -53,6 +53,6 @@ class DatesReaderTest extends FunctionalTestCase
         self::assertEquals('M/d/yy, h:mm a', $convertFormatToString($enUSFormat));
 
         $deFormat = $this->datesReader->parseFormatFromCldr(new Locale('de'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
-        self::assertEquals('dd.MM.yy HH:mm', $convertFormatToString($deFormat));
+        self::assertEquals('dd.MM.yy, HH:mm', $convertFormatToString($deFormat));
     }
 }
