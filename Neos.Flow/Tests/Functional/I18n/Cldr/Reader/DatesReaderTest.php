@@ -50,7 +50,7 @@ class DatesReaderTest extends FunctionalTestCase
 
         // Reads two different cache entries
         $enUSFormat = $this->datesReader->parseFormatFromCldr(new Locale('en_US'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
-        self::assertEquals('M/d/yy h:mm a', $convertFormatToString($enUSFormat));
+        self::assertEquals('M/d/yy, h:mm a', $convertFormatToString($enUSFormat));
 
         $deFormat = $this->datesReader->parseFormatFromCldr(new Locale('de'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
         self::assertEquals('dd.MM.yy HH:mm', $convertFormatToString($deFormat));
