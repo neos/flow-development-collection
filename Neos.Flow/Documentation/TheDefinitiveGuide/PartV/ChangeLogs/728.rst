@@ -1,0 +1,17 @@
+`7.2.8 (2022-06-01) <https://github.com/neos/flow-development-collection/releases/tag/7.2.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Use expanded pattern as cache key for dateTime format <https://github.com/neos/flow-development-collection/pull/2850>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Closes: `#2849 <https://github.com/neos/flow-development-collection/issues/2849>`_
+
+The cache key for a dateTime format is now the expanded format pattern instead of ``{0} {1}``.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/7.2.7...7.2.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
