@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Security;
  * source code.
  */
 
-use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -79,8 +78,22 @@ class IfAuthenticatedViewHelper extends AbstractConditionViewHelper
             return false;
         }
 
-        return array_reduce($securityContext->getAuthenticationTokens(), function (bool $isAuthenticated, TokenInterface $token) {
-            return $isAuthenticated || $token->isAuthenticated();
-        }, false);
+        $tokenCounter = count($securityContext->getAuthenticationTokens());
+        if ($tokenCounter === 0) {
+            return false;
+        }
+
+        $authenticatedTokenCounter = 0;
+        foreach ($securityContext->getAuthenticationTokens() as $authenticationToken) {
+            if ($authenticationToken->isAuthenticated()) {
+                $authenticatedTokenCounter++;
+            }
+        }
+
+        if ($securityContext->getAuthenticationStrategy() === Context::AUTHENTICATE_ALL_TOKENS) {
+            return $tokenCounter === $authenticatedTokenCounter;
+        }
+
+        return $authenticatedTokenCounter > 0;
     }
 }
