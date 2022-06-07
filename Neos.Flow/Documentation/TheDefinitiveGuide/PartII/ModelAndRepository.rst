@@ -277,6 +277,16 @@ be associated with many ``Post`` instances, but those in turn may only belong to
 ``Blog``. Furthermore the ``mappedBy`` attribute says the association is bidirectional and
 refers to the property ``$blog`` in the ``Post`` class.
 
+.. note::
+
+	In Doctrine 2 the *many* side of a OneToMany relation is always considered the
+	``owning side`` of the relation, meaning that for any changes to the relation,
+	this side has to be passed to the persistence for update.
+	This is especially problematic if your many side is not an Aggregate root, in
+	which case it is recommended to map the relation as a ManyToMany with a unique
+	constraint instead, where you can define the ``owning side`` freely.
+  In this case, the Post is an Aggregate root, so it is not an issue.
+
 The ``OrderBy`` annotation is regular Doctrine 2 functionality and makes sure the
 posts are always ordered by their date property when the collection is loaded.
 
@@ -688,7 +698,7 @@ Then adjust the post model code as follows:
 
 	use Neos\Flow\Annotations as Flow;
 	use Doctrine\ORM\Mapping as ORM;
-  use Doctrine\Common\Collections;
+	use Doctrine\Common\Collections;
 
 	/**
 	 * @Flow\Entity
@@ -730,6 +740,7 @@ Then adjust the post model code as follows:
 		public function __construct() {
 			$this->date = new \DateTime();
 			$this->comments = new ArrayCollection();
+			$this->tags = new ArrayCollection();
 		}
 
 		...
@@ -751,8 +762,8 @@ Then adjust the post model code as follows:
 		/**
 		 * @param Comment $comment
 		 */
-		public function deleteComment(Comment $comment) {
-			$this->comments->remove($comment);
+		public function removeComment(Comment $comment) {
+			$this->comments->removeElement($comment);
 		}
 
 		/**
@@ -773,7 +784,7 @@ Then adjust the post model code as follows:
 		 * @param Tag $comment
 		 */
 		public function removeTag(Tag $tag) {
-			$this->tags->remove($tag);
+			$this->tags->removeElement($tag);
 		}
 
 The ``@ORM\JoinTable`` annotation tells doctrine to enforce that each comment can only be referenced by one post. You might
@@ -781,6 +792,17 @@ wonder why we have the ``orphanRemoval=true`` only on the comments, but not on t
 to delete an entity, when the relation to it is unset, i.e. when the collections ``remove()`` method is invoked. Of course
 we do not want to delete a tag from the database completely, when we just untag a single post, since another post might still
 have this tag.
+
+.. note::
+
+  Maybe you noticed that the entity does not contain a ``setComments($comments)`` or ``setTags($tags)`` method.
+  This is because overwriting a doctrine collection with orphanRemoval will lead to all related entities to be deleted,
+  even if they are included in the overwriting collection since ORM 2.6.
+  Flow will solve this issue for you, if you provide methods to add and remove single elements of your collection and not
+  have a setter. It will then invoke e.g. ``addComment($comment)`` and ``removeComment($comment)`` methods when property
+  mapping such a collection, instead of simply replacing it with a naive setter implementation.
+  Since this also works for relations without orphanRemoval and allows to better model behaviour around a collection relation,
+  this is the recommended implementation.
 
 -----
 
