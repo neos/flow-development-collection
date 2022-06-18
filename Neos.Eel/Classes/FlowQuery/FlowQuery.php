@@ -11,6 +11,7 @@ namespace Neos\Eel\FlowQuery;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Eel\Exception;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
@@ -69,6 +70,34 @@ use Neos\Flow\Annotations as Flow;
  * ----------------
  *
  * If an operation is final, it should return the resulting value directly.
+ *
+ * @method int cacheLifetime()
+ * @method self children(?string $filter = null)
+ * @method self closest(?string $filter = null)
+ * @method self context(array $properties)
+ * @method self filter(string $filter)
+ * @method self find(string $filter)
+ * @method self has($argument)
+ * @method self nextAll(string $filter)
+ * @method self next(?string $filter = null)
+ * @method self nextUntil(?string $filter = null)
+ * @method self parent(?string $filter = null)
+ * @method self parents(?string $filter = null)
+ * @method self parentsUntil(?string $filter = null)
+ * @method self prevAll(?string $filter = null)
+ * @method self prev(?string $filter = null)
+ * @method self prevUntil(?string $filter = null)
+ * @method self property(?string $filter = null)
+ * @method self siblings(?string $filter = null)
+ * @method void add($argument)
+ * @method NodeInterface first()
+ * @method self|NodeInterface get(?int $index = null)
+ * @method NodeInterface is(array $arguments)
+ * @method NodeInterface last()
+ * @method NodeInterface remove($argument)
+ * @method NodeInterface search(?string $term = null, ?string $filterNodeTypeName = null)
+ * @method NodeInterface slice($context = null)
+ * @method NodeInterface sort(string $nodeProperty, string $direction)
  */
 class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \Countable
 {
