@@ -77,6 +77,7 @@ class EmailAddressValidatorTest extends AbstractValidatorTestcase
             ['mailhost!username@example.org'], // (bangified host route used for uucp mailers)
             ['user%example.com@example.org'], // (% escaped mail route to user@example.com via example.org)
             ['hellö@neos.io'], // umlaut in local part
+            ['hello@neös.io'], // umlaut in domain part
             ['1500111@профи-инвест.рф'], // unicode
             ['user@localhost.localdomain'], // "new" domain name
             ['info@guggenheim.museum'], // "new" domain name
