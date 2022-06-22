@@ -6,7 +6,7 @@ CREATE TABLE "cache" (
   "context" VARCHAR(150) NOT NULL,
   "created" INTEGER UNSIGNED NOT NULL,
   "lifetime" INTEGER UNSIGNED DEFAULT '0' NOT NULL,
-  "content" MEDIUMTEXT,
+  "content" MEDIUMBLOB,
   PRIMARY KEY ("identifier", "cache", "context")
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

@@ -170,6 +170,6 @@ class InternalRequestEngine implements RequestEngineInterface
             ->withStatus($statusCode)
             ->withBody($this->contentFactory->createStream($content))
             ->withHeader('X-Flow-ExceptionCode', $exception->getCode())
-            ->withHeader('X-Flow-ExceptionMessage', $exception->getMessage());
+            ->withHeader('X-Flow-ExceptionMessage', base64_encode($exception->getMessage()));
     }
 }

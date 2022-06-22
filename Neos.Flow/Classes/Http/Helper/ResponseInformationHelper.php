@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Http\Helper;
 
 /*
@@ -11,11 +13,11 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Response;
-use function GuzzleHttp\Psr7\parse_response;
-use function GuzzleHttp\Psr7\stream_for;
+use Neos\Flow\Http\CacheControlDirectives;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use function GuzzleHttp\Psr7\parse_response;
+use function GuzzleHttp\Psr7\stream_for;
 
 /**
  * Helper to extract various information from PSR-7 responses.
@@ -27,8 +29,8 @@ abstract class ResponseInformationHelper
      *
      * @param string $rawResponse
      *
-     * @throws \InvalidArgumentException
      * @return ResponseInterface
+     * @throws \InvalidArgumentException
      */
     public static function createFromRaw(string $rawResponse): ResponseInterface
     {
@@ -47,70 +49,76 @@ abstract class ResponseInformationHelper
             100 => 'Continue',
             101 => 'Switching Protocols',
             102 => 'Processing', // RFC 2518
+            103 => 'Early Hints', // RFC 8297
+
             200 => 'OK',
             201 => 'Created',
             202 => 'Accepted',
             203 => 'Non-Authoritative Information',
             204 => 'No Content',
             205 => 'Reset Content',
-            206 => 'Partial Content',
-            207 => 'Multi-Status',
-            208 => 'Already Reported',
-            226 => 'IM Used',
+            206 => 'Partial Content', // RFC 7233
+            207 => 'Multi-Status', // WebDAV; RFC 4918
+            208 => 'Already Reported', // WebDAV; RFC 5842
+            226 => 'IM Used', // RFC 3229
+
             300 => 'Multiple Choices',
             301 => 'Moved Permanently',
             302 => 'Found',
             303 => 'See Other',
-            304 => 'Not Modified',
+            304 => 'Not Modified', // RFC 7232
             305 => 'Use Proxy',
             307 => 'Temporary Redirect',
-            308 => 'Permanent Redirect',
+            308 => 'Permanent Redirect', // RFC 7538
+
             400 => 'Bad Request',
-            401 => 'Unauthorized',
+            401 => 'Unauthorized', // RFC 7235
             402 => 'Payment Required',
             403 => 'Forbidden',
             404 => 'Not Found',
             405 => 'Method Not Allowed',
             406 => 'Not Acceptable',
-            407 => 'Proxy Authentication Required',
+            407 => 'Proxy Authentication Required', // RFC 7235
             408 => 'Request Timeout',
             409 => 'Conflict',
             410 => 'Gone',
             411 => 'Length Required',
-            412 => 'Precondition Failed',
-            413 => 'Payload Too Large',
-            414 => 'Request-URI Too Long',
-            415 => 'Unsupported Media Type',
-            416 => 'Requested Range Not Satisfiable',
+            412 => 'Precondition Failed', // RFC 7232
+            413 => 'Payload Too Large', // RFC 7231
+            414 => 'URI Too Long', // RFC 7231
+            415 => 'Unsupported Media Type', // RFC 7231
+            416 => 'Range Not Satisfiable', // RFC 7233
             417 => 'Expectation Failed',
-            418 => 'Sono Vibiemme', // 'I'm a teapot'
-            421 => 'Misdirected Request',
-            422 => 'Unprocessable Entity',
-            423 => 'Locked',
-            424 => 'Failed Dependency',
+            418 => 'Sono Vibiemme', // 'I'm a teapot', RFC 2324, RFC 7168
+            421 => 'Misdirected Request', // RFC 7540
+            422 => 'Unprocessable Entity', // WebDAV; RFC 4918
+            423 => 'Locked', // WebDAV; RFC 4918
+            424 => 'Failed Dependency', // WebDAV; RFC 4918
+            425 => 'Too Early', // RFC 8470
             426 => 'Upgrade Required',
-            428 => 'Precondition Required',
-            429 => 'Too Many Requests',
-            431 => 'Request Header Fields Too Large',
-            444 => 'Connection Closed Without Response',
-            451 => 'Unavailable For Legal Reasons',
-            499 => 'Client Closed Request',
+            428 => 'Precondition Required', // RFC 6585
+            429 => 'Too Many Requests', // RFC 6585
+            431 => 'Request Header Fields Too Large', // RFC 6585
+            444 => 'No Response', // nginx
+            451 => 'Unavailable For Legal Reasons', // RFC 7725
+            499 => 'Client Closed Request', // nginx
+
             500 => 'Internal Server Error',
             501 => 'Not Implemented',
             502 => 'Bad Gateway',
             503 => 'Service Unavailable',
             504 => 'Gateway Timeout',
             505 => 'HTTP Version Not Supported',
-            506 => 'Variant Also Negotiates',
-            507 => 'Insufficient Storage',
-            508 => 'Loop Detected',
-            509 => 'Bandwidth Limit Exceeded',
-            510 => 'Not Extended',
-            511 => 'Network Authentication Required',
+            506 => 'Variant Also Negotiates', // RFC 2295
+            507 => 'Insufficient Storage', // WebDAV; RFC 4918
+            508 => 'Loop Detected', // WebDAV; RFC 5842
+            509 => 'Bandwidth Limit Exceeded', // Apache Web Server/cPanel
+            510 => 'Not Extended', // RFC 2774
+            511 => 'Network Authentication Required', // RFC 6585
             599 => 'Network Connect Timeout Error',
         ];
 
-        return isset($statusMessages[$statusCode]) ? $statusMessages[$statusCode] : 'Unknown Status';
+        return $statusMessages[$statusCode] ?? 'Unknown Status';
     }
 
     /**
@@ -169,43 +177,55 @@ abstract class ResponseInformationHelper
     public static function makeStandardsCompliant(ResponseInterface $response, RequestInterface $request): ResponseInterface
     {
         $statusCode = $response->getStatusCode();
-        if ($request->hasHeader('If-None-Match') && in_array($request->getMethod(), ['HEAD', 'GET'])
-            && $response->hasHeader('ETag') && $statusCode === 200) {
-            $ifNoneMatchHeaders = $request->getHeader('If-None-Match');
-            $eTagHeader = $response->getHeader('ETag')[0];
-            foreach ($ifNoneMatchHeaders as $ifNoneMatchHeader) {
-                if (ltrim($ifNoneMatchHeader, 'W/') == ltrim($eTagHeader, 'W/')) {
-                    $response = $response
-                        ->withStatus(304)
-                        ->withBody(stream_for(''));
-                    break;
+        if ($statusCode === 200 && in_array($request->getMethod(), ['HEAD', 'GET'])) {
+            if ($request->hasHeader('If-None-Match') && $response->hasHeader('ETag')) {
+                $ifNoneMatchHeaders = $request->getHeader('If-None-Match');
+                $eTagHeader = $response->getHeader('ETag')[0];
+                foreach ($ifNoneMatchHeaders as $ifNoneMatchHeader) {
+                    if (ltrim($ifNoneMatchHeader, 'W/') === ltrim($eTagHeader, 'W/')) {
+                        $response = $response
+                            ->withStatus(304);
+                        break;
+                    }
                 }
-            }
-        } elseif ($request->hasHeader('If-Modified-Since') && in_array($request->getMethod(), ['HEAD', 'GET'])
-            && $response->hasHeader('Last-Modified') && $statusCode === 200) {
-            $ifModifiedSince = $request->getHeader('If-Modified-Since')[0];
-            $ifModifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifModifiedSince);
-            $lastModified = $response->getHeader('Last-Modified')[0];
-            $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
-            if ($lastModifiedDate <= $ifModifiedSinceDate) {
-                $response = $response
-                    ->withStatus(304)
-                    ->withBody(stream_for(''));
+            } elseif ($response->hasHeader('Last-Modified')) {
+                if ($request->hasHeader('If-Modified-Since')) {
+                    $ifModifiedSince = $request->getHeaderLine('If-Modified-Since');
+                    $ifModifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifModifiedSince);
+                    $lastModified = $response->getHeaderLine('Last-Modified');
+                    $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
+                    if ($lastModifiedDate <= $ifModifiedSinceDate) {
+                        $response = $response
+                            ->withStatus(304);
+                    }
+                } elseif ($request->hasHeader('If-Unmodified-Since')) {
+                    $ifUnmodifiedSince = $request->getHeaderLine('If-Unmodified-Since');
+                    $ifUnmodifiedSinceDate = \DateTime::createFromFormat(DATE_RFC2822, $ifUnmodifiedSince);
+                    $lastModified = $response->getHeaderLine('Last-Modified');
+                    $lastModifiedDate = \DateTime::createFromFormat(DATE_RFC2822, $lastModified);
+                    if ($lastModifiedDate > $ifUnmodifiedSinceDate) {
+                        $response = $response->withStatus(412);
+                    }
+                }
             }
         }
 
         if (in_array($response->getStatusCode(), [100, 101, 204, 304])) {
-            $response = $response->withBody(stream_for(''));
+            $response = $response->withBody(stream_for());
         }
 
-        $cacheControlHeaderLine = $response->getHeaderLine('Cache-Control');
-
-        if ((!empty($cacheControlHeaderLine) && strpos('no-cache', $cacheControlHeaderLine) !== false)
-            || $response->hasHeader('Expires')) {
-            $cacheControlHeaderValue = trim(substr($cacheControlHeaderLine, 14));
-            $cacheControlHeaderValue = str_replace('max-age', '', $cacheControlHeaderValue);
-            $cacheControlHeaderValue = trim($cacheControlHeaderValue, ' ,');
-            $response = $response->withHeader('Cache-Control', $cacheControlHeaderValue);
+        if ($response->hasHeader('Cache-Control')) {
+            $cacheControlHeaderValue = $response->getHeaderLine('Cache-Control');
+            $cacheControlDirectives = CacheControlDirectives::fromRawHeader($cacheControlHeaderValue);
+            if ($cacheControlDirectives->getDirective('no-cache') !== null || $response->hasHeader('Expires')) {
+                $cacheControlDirectives->removeDirective('max-age');
+            }
+            $cacheControlHeaderValue = $cacheControlDirectives->getCacheControlHeaderValue();
+            if ($cacheControlHeaderValue === null) {
+                $response = $response->withoutHeader('Cache-Control');
+            } else {
+                $response = $response->withHeader('Cache-Control', $cacheControlHeaderValue);
+            }
         }
 
         if (!$response->hasHeader('Content-Length')) {
@@ -213,7 +233,7 @@ abstract class ResponseInformationHelper
         }
 
         if ($request->getMethod() === 'HEAD') {
-            $response = $response->withBody(stream_for(''));
+            $response = $response->withBody(stream_for());
         }
 
         if ($response->hasHeader('Transfer-Encoding')) {
