@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -30,7 +32,7 @@ trait RequireOnceFromValueTrait
      */
     public function requireOnce(string $entryIdentifier)
     {
-        $value = trim($this->get($entryIdentifier));
+        $value = trim((string)$this->get($entryIdentifier));
         if ($value === '') {
             return false;
         }

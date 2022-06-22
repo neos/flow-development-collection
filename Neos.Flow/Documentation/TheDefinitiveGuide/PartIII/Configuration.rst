@@ -7,7 +7,7 @@ Configuration
 Configuration is an important aspect of versatile applications. Flow provides you with
 configuration mechanisms which have a small footprint and are convenient to use and
 powerful at the same time. Hub for all configuration is the configuration manager which
-handles alls configuration tasks like reading configuration, configuration cascading, and
+handles all configuration tasks like reading configuration, configuration cascading, and
 (later) also writing configuration.
 
 File Locations
@@ -65,11 +65,11 @@ defined in their own dedicated file:
 ``Objects.yaml``
   Contains object configuration, i.e. options which configure objects and the
   combination of those on a lower level. See the :ref:`ch-object-management` chapter for more
-  information.
+  information. Objects have `Split configuration sources`_ enabled.
 
 ``Policy.yaml``
   Contains the configuration of the security policies of the system. See the :ref:`ch-security`
-  chapter for details.
+  chapter for details. Policy has `Split configuration sources`_ enabled.
 
 ``PackageStates.php``
   Contains a list of packages and their current state, for  example if they are active
@@ -81,6 +81,7 @@ defined in their own dedicated file:
   configuration file are registered in an early stage of the boot process and profit
   from mechanisms such as automatic flushing by the File Monitor. See the chapter about
   the :ref:`ch-caching` for details.
+  Caches have `Split configuration sources`_ enabled.
 
 ``Views.yaml``
   Contains configurations for Views, for example the lookup paths for templates.
@@ -104,7 +105,7 @@ which come with the Flow distribution for getting more examples.
 .. code-block:: yaml
 
     #                                                                        #
-    # Settings Configuration for the Neos.Viewhelpertest Package            #
+    # Settings Configuration for the Neos.Viewhelpertest Package             #
     #                                                                        #
 
     Neos:
@@ -129,7 +130,7 @@ Constants and Environment
 Sometimes it is necessary to use values in your configuration files which are defined as
 PHP constants or are environment variables. These values can be included by special markers
 which are replaced by the actual value during parse time. The format is ``%<CONSTANT_NAME>%``
-where ``<CONSTANT_NAME>`` is the name of a constant or ``%env:<ENVIRONMENT_VARIABLE>``.
+where ``<CONSTANT_NAME>`` is the name of a constant or ``%env:<ENVIRONMENT_VARIABLE>%``.
 Note that the constant or environment variable name must be all uppercase.
 
 Some examples:
@@ -177,11 +178,11 @@ This will allow to use the new configuration type ``Views`` in the same way as t
 supported by Flow natively, as soon as you have a file named ``Views.yaml`` in your configuration
 folder(s). See `Working with other configuration`_ for details.
 
-If you want to use a specific configuration processing type, you can pass it when registering
-the configuration. The supported types are defined as ``CONFIGURATION_PROCESSING_TYPE_*``
-constants in ``ConfigurationManager``.
+If you want to use a custom configuration processing loader, you can pass an implementation of
+``\Neos\Flow\Configuration\Loader\LoaderInterface`` when registering the configuration or use one of the implementations
+found in ``Configuration\Loader``.
 
-**Example: Register a custom configuration type**
+**Example: Register a custom configuration type and loader**
 
 .. code-block:: php
 
@@ -190,7 +191,13 @@ constants in ``ConfigurationManager``.
         function ($configurationManager) {
             $configurationManager->registerConfigurationType(
                 'CustomObjects',
-                ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_OBJECTS
+                new class implements LoaderInterface {
+                    public function load(array $packages, ApplicationContext $context) : array {
+                        // load your configuration into an array $customObjectsConfiguration
+                        $customObjectsConfiguration = ...
+                        return $customObjectsConfiguration;
+                    }
+                }
             );
         }
     );
@@ -211,8 +218,7 @@ configuration filenames.
         function (ConfigurationManager $configurationManager) {
             $configurationManager->registerConfigurationType(
                 'Models',
-                ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_DEFAULT,
-                TRUE
+                new MergeLoader(new YamlSource(), 'Models')
             );
         }
     );
@@ -229,8 +235,8 @@ configuration of type ``Models`` is requested:
         Models.Quux.yaml
 
 .. note::
-    Split configuration is only supported for the ``CONFIGURATION_PROCESSING_TYPE_DEFAULT`` and
-    ``CONFIGURATION_PROCESSING_TYPE_SETTINGS`` processing types.
+    Split configuration is supported for all configuration loader except ``RouteLoader()``.
+    This is because Routing uses a custom include semantic that shares the naming convention with split sources.
 
 Accessing Settings
 ==================
@@ -324,7 +330,8 @@ The annotation provides three optional attributes related to configuration injec
 
     use Neos\Flow\Annotations as Flow;
 
-    class SomeClass {
+    class SomeClass
+    {
 
       /**
        * @Flow\InjectConfiguration(path="administrator.name")
@@ -346,21 +353,17 @@ The annotation provides three optional attributes related to configuration injec
 
       /**
        * Overrides the name
-       *
-       * @param string $name
-       * @return void
        */
-      public function setName($name) {
+      public function setName($name): void
+      {
         $this->name = $name;
       }
 
       /**
        * Overrides the email
-       *
-       * @param string $email
-       * @return void
        */
-      public function setEmail($email) {
+      public function setEmail($email): void
+      {
         $this->email = $email;
       }
     }
@@ -454,10 +457,10 @@ Here is an example of a schema, from *Neos.Flow.core.schema.yaml*:
 .. code-block:: yaml
 
  type: dictionary
- additionalProperties: FALSE
+ additionalProperties: false
  properties:
-   'context': { type: string, required: TRUE }
-   'phpBinaryPathAndFilename': { type: string, required: TRUE }
+   'context': { type: string, required: true }
+   'phpBinaryPathAndFilename': { type: string, required: true }
 
 It declares the constraints for the *Neos.Flow.core* setting:
 

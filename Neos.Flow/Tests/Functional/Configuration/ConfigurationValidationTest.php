@@ -11,13 +11,15 @@ namespace Neos\Flow\Tests\Functional\Configuration;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
+use Neos\Flow\Configuration\Loader\RoutesLoader;
+use Neos\Flow\Configuration\Loader\SettingsLoader;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
+use Neos\Flow\Tests\Functional\Configuration\Fixtures\RootDirectoryIgnoringYamlSource;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\FunctionalTestCase;
 
@@ -66,7 +68,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -93,11 +95,12 @@ class ConfigurationValidationTest extends FunctionalTestCase
         //
         $this->originalConfigurationManager = $this->objectManager->get(ConfigurationManager::class);
 
-        $yamlConfigurationSource = $this->objectManager->get(\Neos\Flow\Tests\Functional\Configuration\Fixtures\RootDirectoryIgnoringYamlSource::class);
+        $rootDirectoryIgnoringYamlSource = $this->objectManager->get(RootDirectoryIgnoringYamlSource::class);
 
-        $this->mockConfigurationManager = clone ($this->originalConfigurationManager);
+        $this->mockConfigurationManager = clone $this->originalConfigurationManager;
         $this->mockConfigurationManager->setPackages($configurationPackages);
-        $this->inject($this->mockConfigurationManager, 'configurationSource', $yamlConfigurationSource);
+        $this->mockConfigurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, new SettingsLoader($rootDirectoryIgnoringYamlSource));
+        $this->mockConfigurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, new RoutesLoader($rootDirectoryIgnoringYamlSource, $this->mockConfigurationManager));
 
         $this->objectManager->setInstance(ConfigurationManager::class, $this->mockConfigurationManager);
 
@@ -112,7 +115,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->objectManager->setInstance(ConfigurationManager::class, $this->originalConfigurationManager);
         $this->injectApplicationContextIntoConfigurationManager($this->objectManager->getContext());
@@ -134,14 +137,8 @@ class ConfigurationValidationTest extends FunctionalTestCase
         ObjectAccess::setProperty($this->mockConfigurationManager, 'context', $context, true);
         ObjectAccess::setProperty(
             $this->mockConfigurationManager,
-            'orderedListOfContextNames',
-            [(string)$context],
-            true
-        );
-        ObjectAccess::setProperty(
-            $this->mockConfigurationManager,
             'includeCachedConfigurationsPathAndFilename',
-            FLOW_PATH_CONFIGURATION . (string)$context . '/IncludeCachedConfigurations.php',
+            FLOW_PATH_CONFIGURATION . $context . '/IncludeCachedConfigurations.php',
             true
         );
     }
@@ -191,7 +188,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
             }
             $this->fail($output);
         }
-        $this->assertFalse($validationResult->hasErrors());
+        self::assertFalse($validationResult->hasErrors());
     }
 
     /**

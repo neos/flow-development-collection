@@ -1,12 +1,15 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\DataTypes;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\JsonArrayType as DoctrineJsonArrayType;
+use Doctrine\ORM\Mapping\Entity as ORMEntity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Property\TypeConverter\DenormalizingObjectConverter;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
 
@@ -59,7 +62,7 @@ class JsonArrayType extends DoctrineJsonArrayType
      * Use jsonb for PostgreSQL, this means we require PostgreSQL 9.4
      *
      * @param array $fieldDeclaration The field declaration
-     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform The currently used database platform
+     * @param AbstractPlatform $platform The currently used database platform
      * @return string
      */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
@@ -114,7 +117,7 @@ class JsonArrayType extends DoctrineJsonArrayType
      * Converts a value from its PHP representation to its database representation
      * of this type.
      *
-     * @param array $array The value to convert.
+     * @param mixed $array The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
      * @return mixed The database representation of the value.
      */
@@ -122,6 +125,10 @@ class JsonArrayType extends DoctrineJsonArrayType
     {
         if ($array === null) {
             return null;
+        }
+
+        if (!is_array($array)) {
+            throw new \InvalidArgumentException(sprintf('The JsonArrayType only converts arrays, %s given', gettype($array)), 1569944963);
         }
 
         $this->initializeDependencies();
@@ -159,12 +166,34 @@ class JsonArrayType extends DoctrineJsonArrayType
                 continue;
             }
 
-            if (isset($value['__flow_object_type'])) {
+            if (isset($value['__value_object_value']) && isset($value['__value_object_type'])) {
+                $value = self::deserializeValueObject($value);
+            } elseif (isset($value['__flow_object_type'])) {
                 $value = $this->persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type'], true);
             } else {
                 $this->decodeObjectReferences($value);
             }
         }
+    }
+
+    /**
+     * @param array<mixed> $serializedValueObject
+     * @return \JsonSerializable
+     * @throws \InvalidArgumentException
+     */
+    public static function deserializeValueObject(array $serializedValueObject): \JsonSerializable
+    {
+        if (isset($serializedValueObject['__value_object_value']) && isset($serializedValueObject['__value_object_type'])) {
+            return DenormalizingObjectConverter::convertFromSource(
+                $serializedValueObject['__value_object_value'],
+                $serializedValueObject['__value_object_type']
+            );
+        }
+
+        throw new \InvalidArgumentException(
+            '$serializedValueObject must contain keys "__value_object_value" and "__value_object_type"',
+            1621332088
+        );
     }
 
     /**
@@ -185,6 +214,7 @@ class JsonArrayType extends DoctrineJsonArrayType
                 continue;
             }
 
+
             $propertyClassName = TypeHandling::getTypeForValue($value);
 
             if ($value instanceof \DateTimeInterface) {
@@ -195,7 +225,7 @@ class JsonArrayType extends DoctrineJsonArrayType
                 ];
             } elseif ($value instanceof \SplObjectStorage) {
                 throw new \RuntimeException('SplObjectStorage in array properties is not supported', 1375196580);
-            } elseif ($value instanceof \Doctrine\Common\Collections\Collection) {
+            } elseif ($value instanceof Collection) {
                 throw new \RuntimeException('Collection in array properties is not supported', 1375196581);
             } elseif ($value instanceof \ArrayObject) {
                 throw new \RuntimeException('ArrayObject in array properties is not supported', 1375196582);
@@ -203,15 +233,43 @@ class JsonArrayType extends DoctrineJsonArrayType
                 && (
                     $this->reflectionService->isClassAnnotatedWith($propertyClassName, Flow\Entity::class)
                     || $this->reflectionService->isClassAnnotatedWith($propertyClassName, Flow\ValueObject::class)
-                    || $this->reflectionService->isClassAnnotatedWith($propertyClassName, \Doctrine\ORM\Mapping\Entity::class)
+                    || $this->reflectionService->isClassAnnotatedWith($propertyClassName, ORMEntity::class)
                 )
             ) {
                 $value = [
                     '__flow_object_type' => $propertyClassName,
                     '__identifier' => $this->persistenceManager->getIdentifierByObject($value)
                 ];
+            } elseif ($value instanceof \JsonSerializable
+                && DenormalizingObjectConverter::isDenormalizable(get_class($value))
+            ) {
+                $value = self::serializeValueObject($value);
             }
         }
+    }
+
+    /**
+     * @param \JsonSerializable $valueObject
+     * @return array<mixed>
+     * @throws \RuntimeException
+     */
+    public static function serializeValueObject(\JsonSerializable $valueObject): array
+    {
+        if ($json = json_encode($valueObject)) {
+            return [
+                '__value_object_type' => get_class($valueObject),
+                '__value_object_value' =>
+                    json_decode($json, true)
+            ];
+        }
+
+        throw new \RuntimeException(
+            sprintf(
+                'Could not serialize $valueObject due to: %s',
+                json_last_error_msg()
+            ),
+            1621333154
+        );
     }
 
     /**

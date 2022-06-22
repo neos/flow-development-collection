@@ -43,9 +43,15 @@ class DebugExceptionHandler extends AbstractExceptionHandler
     <body>
         %s
         <br />
-        %s
+        <details class="Flow-Debug-Exception-Backtrace-Code">
+            <summary>Toggle backtrace code</summary>
+            %s
+        </details>
         <br />
         %s
+        <script>
+        %s
+        </script>
     </body>
 </html>
 EOD;
@@ -64,7 +70,7 @@ EOD;
             header(sprintf('HTTP/1.1 %s %s', $statusCode, $statusMessage));
         }
 
-        if (!isset($this->renderingOptions['templatePathAndFilename'])) {
+        if ($this->useCustomErrorView() === false) {
             $this->renderStatically($statusCode, $exception);
             return;
         }
@@ -142,7 +148,8 @@ EOD;
             file_get_contents(__DIR__ . '/../../Resources/Public/Error/Exception.css'),
             $exceptionHeader,
             $backtraceCode,
-            $footer
+            $footer,
+            file_get_contents(__DIR__ . '/../../Resources/Public/Error/Exception.js')
         );
     }
 }

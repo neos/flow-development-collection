@@ -190,9 +190,18 @@ abstract class Files
                 break;
             }
             if (file_exists($path . '/.DS_Store')) {
-                @unlink($path . '/.DS_Store');
+                try {
+                    @unlink($path . '/.DS_Store');
+                } catch (\Throwable $e) {
+                    // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
+                }
             }
-            if (@rmdir($path) === false) {
+            try {
+                if (@rmdir($path) === false) {
+                    throw new FilesException(sprintf('Could not remove directory "%s".', $path), 1634928640);
+                }
+            } catch (\Throwable $e) {
+                // PHP 8 throws for rmdir even with a shutup operator set. To ensure the loop gets correctly ended in PHP 8 and below, an additional FilesException is used.
                 break;
             }
             $path = substr($path, 0, -(strlen($currentSegment) + 1));
@@ -243,10 +252,14 @@ abstract class Files
         if (substr($path, -2) === '/.') {
             $path = substr($path, 0, -1);
         }
+        if ($path === '') {
+            return;
+        }
+        clearstatcache(true, $path);
         if (is_file($path)) {
             throw new FilesException('Could not create directory "' . $path . '", because a file with that name exists!', 1349340620);
         }
-        if (!is_link($path) && !is_dir($path) && $path !== '') {
+        if (!is_link($path) && !is_dir($path)) {
             $oldMask = umask(000);
             mkdir($path, 0777, true);
             umask($oldMask);

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -27,7 +29,7 @@ interface BackendInterface
      * @return void
      * @api
      */
-    public function setCache(FrontendInterface $cache);
+    public function setCache(FrontendInterface $cache): void;
 
     /**
      * Returns the internally used, prefixed entry identifier for the given public
@@ -55,7 +57,7 @@ interface BackendInterface
      * @throws \InvalidArgumentException if the identifier is not valid
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null);
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void;
 
     /**
      * Loads data from the cache.
@@ -92,7 +94,7 @@ interface BackendInterface
      * @return void
      * @api
      */
-    public function flush();
+    public function flush(): void;
 
     /**
      * Does garbage collection
@@ -100,5 +102,5 @@ interface BackendInterface
      * @return void
      * @api
      */
-    public function collectGarbage();
+    public function collectGarbage(): void;
 }

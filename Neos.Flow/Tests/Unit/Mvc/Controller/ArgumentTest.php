@@ -16,7 +16,7 @@ use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Mvc;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
-use Neos\Error\Messages as FLowError;
+use Neos\Error\Messages as FlowError;
 
 /**
  * Testcase for the MVC Controller Argument
@@ -39,12 +39,13 @@ class ArgumentTest extends UnitTestCase
 
     /**
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->simpleValueArgument = new Mvc\Controller\Argument('someName', 'string');
         $this->objectArgument = new Mvc\Controller\Argument('someName', 'DateTime');
 
         $this->mockPropertyMapper = $this->createMock(PropertyMapper::class);
+        $this->mockPropertyMapper->method('getMessages')->willReturn(new FlowError\Result());
         $this->inject($this->simpleValueArgument, 'propertyMapper', $this->mockPropertyMapper);
         $this->inject($this->objectArgument, 'propertyMapper', $this->mockPropertyMapper);
 
@@ -56,19 +57,19 @@ class ArgumentTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function constructingArgumentWithoutNameThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Mvc\Controller\Argument('', 'Text');
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function constructingArgumentWithInvalidNameThrowsException()
     {
+        $this->expectException(\TypeError::class);
         new Mvc\Controller\Argument(new \ArrayObject(), 'Text');
     }
 
@@ -77,8 +78,8 @@ class ArgumentTest extends UnitTestCase
      */
     public function passingDataTypeToConstructorReallySetsTheDataType()
     {
-        $this->assertEquals('string', $this->simpleValueArgument->getDataType(), 'The specified data type has not been set correctly.');
-        $this->assertEquals('someName', $this->simpleValueArgument->getName(), 'The specified name has not been set correctly.');
+        self::assertEquals('string', $this->simpleValueArgument->getDataType(), 'The specified data type has not been set correctly.');
+        self::assertEquals('someName', $this->simpleValueArgument->getName(), 'The specified name has not been set correctly.');
     }
 
     /**
@@ -87,8 +88,8 @@ class ArgumentTest extends UnitTestCase
     public function setRequiredShouldProvideFluentInterfaceAndReallySetRequiredState()
     {
         $returnedArgument = $this->simpleValueArgument->setRequired(true);
-        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-        $this->assertTrue($this->simpleValueArgument->isRequired());
+        self::assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+        self::assertTrue($this->simpleValueArgument->isRequired());
     }
 
     /**
@@ -97,8 +98,8 @@ class ArgumentTest extends UnitTestCase
     public function setDefaultValueShouldProvideFluentInterfaceAndReallySetDefaultValue()
     {
         $returnedArgument = $this->simpleValueArgument->setDefaultValue('default');
-        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-        $this->assertSame('default', $this->simpleValueArgument->getDefaultValue());
+        self::assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+        self::assertSame('default', $this->simpleValueArgument->getDefaultValue());
     }
 
     /**
@@ -108,8 +109,8 @@ class ArgumentTest extends UnitTestCase
     {
         $mockValidator = $this->createMock(ValidatorInterface::class);
         $returnedArgument = $this->simpleValueArgument->setValidator($mockValidator);
-        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
-        $this->assertSame($mockValidator, $this->simpleValueArgument->getValidator());
+        self::assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+        self::assertSame($mockValidator, $this->simpleValueArgument->getValidator());
     }
 
     /**
@@ -118,7 +119,7 @@ class ArgumentTest extends UnitTestCase
     public function setValueProvidesFluentInterface()
     {
         $returnedArgument = $this->simpleValueArgument->setValue(null);
-        $this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+        self::assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
     }
 
 
@@ -129,7 +130,7 @@ class ArgumentTest extends UnitTestCase
     {
         $this->simpleValueArgument = new Mvc\Controller\Argument('dummy', 'string');
         $this->simpleValueArgument->setValue(null);
-        $this->assertNull($this->simpleValueArgument->getValue());
+        self::assertNull($this->simpleValueArgument->getValue());
     }
 
     /**
@@ -137,14 +138,13 @@ class ArgumentTest extends UnitTestCase
      */
     public function setValueUsesMatchingInstanceAsIs()
     {
-        $this->mockPropertyMapper->expects($this->never())->method('convert');
+        $this->mockPropertyMapper->expects(self::never())->method('convert');
         $this->objectArgument->setValue(new \DateTime());
     }
 
     protected function setupPropertyMapperAndSetValue()
     {
-        $this->mockPropertyMapper->expects($this->once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->will($this->returnValue('convertedValue'));
-        $this->mockPropertyMapper->expects($this->once())->method('getMessages')->will($this->returnValue(new FLowError\Result()));
+        $this->mockPropertyMapper->expects(self::once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->willReturn('convertedValue');
         return $this->simpleValueArgument->setValue('someRawValue');
     }
 
@@ -154,7 +154,7 @@ class ArgumentTest extends UnitTestCase
     public function setValueShouldCallPropertyMapperCorrectlyAndStoreResultInValue()
     {
         $this->setupPropertyMapperAndSetValue();
-        $this->assertSame('convertedValue', $this->simpleValueArgument->getValue());
+        self::assertSame('convertedValue', $this->simpleValueArgument->getValue());
     }
 
     /**
@@ -162,24 +162,41 @@ class ArgumentTest extends UnitTestCase
      */
     public function setValueShouldBeFluentInterface()
     {
-        $this->assertSame($this->simpleValueArgument, $this->setupPropertyMapperAndSetValue());
+        self::assertSame($this->simpleValueArgument, $this->setupPropertyMapperAndSetValue());
     }
-
+    
     /**
      * @test
      */
     public function setValueShouldSetValidationErrorsIfValidatorIsSetAndValidationFailed()
     {
-        $error = new FLowError\Error('Some Error', 1234);
+        $error = new FlowError\Error('Some Error', 1234);
 
         $mockValidator = $this->createMock(ValidatorInterface::class);
-        $validationMessages = new FLowError\Result();
+        $validationMessages = new FlowError\Result();
         $validationMessages->addError($error);
-        $mockValidator->expects($this->once())->method('validate')->with('convertedValue')->will($this->returnValue($validationMessages));
+        $mockValidator->expects(self::once())->method('validate')->with('convertedValue')->willReturn($validationMessages);
 
         $this->simpleValueArgument->setValidator($mockValidator);
         $this->setupPropertyMapperAndSetValue();
-        $this->assertEquals([$error], $this->simpleValueArgument->getValidationResults()->getErrors());
+        self::assertEquals([$error], $this->simpleValueArgument->getValidationResults()->getErrors());
+    }
+
+    /**
+     * @test
+     */
+    public function setValidatorShouldSetValidationErrorsIfValidationFailed()
+    {
+        $error = new FlowError\Error('Some Error', 1234);
+
+        $mockValidator = $this->createMock(ValidatorInterface::class);
+        $validationMessages = new FlowError\Result();
+        $validationMessages->addError($error);
+        $mockValidator->expects(self::once())->method('validate')->with('convertedValue')->willReturn($validationMessages);
+
+        $this->setupPropertyMapperAndSetValue();
+        $this->simpleValueArgument->setValidator($mockValidator);
+        self::assertEquals([$error], $this->simpleValueArgument->getValidationResults()->getErrors());
     }
 
     /**
@@ -187,7 +204,7 @@ class ArgumentTest extends UnitTestCase
      */
     public function defaultPropertyMappingConfigurationDoesNotAllowCreationOrModificationOfObjects()
     {
-        $this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-        $this->assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+        self::assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        self::assertNull($this->simpleValueArgument->getPropertyMappingConfiguration()->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
     }
 }

@@ -89,7 +89,8 @@ the hierarchy is shallow and the Action Request is just a direct sub request of
 the HTTP Request. In the context of a controller, it is easy to get a hold of the
 parent request::
 
-	public function fooAction() {
+	public function fooAction(): void
+	{
 		$parentRequest = $this->request->getParentRequest();
 		$httpRequest = $this->request->getHttpRequest();
 		// in case of a shallow hierarchy, $parentRequest == $httpRequest
@@ -110,7 +111,8 @@ constructor of the new Action Request::
 The top level Action Request (just below the HTTP Request) is referred to as the
 *Main Request*::
 
-	public function fooAction() {
+	public function fooAction(): void
+	{
 		$parentRequest = $this->request->getParentRequest();
 		$httpRequest = $this->request->getHttpRequest();
 		$mainRequest = $this->request->getMainRequest();
@@ -169,14 +171,14 @@ declare an action method and return a plain string as the response::
 	namespace Acme\Demo\Controller;
 	use Neos\Flow\Mvc\Controller\ActionController;
 
-	class HelloWorldController extends ActionController {
+	class HelloWorldController extends ActionController
+	{
 
 		/**
 		 * The default action of this controller.
-		 *
-		 * @return string
 		 */
-		public function indexAction() {
+		public function indexAction(): string
+		{
 			return 'Hello world.';
 		}
 
@@ -191,8 +193,22 @@ requested. An action method name must be camelCased and always end with the suff
 "Action". In the Action Request and other parts of the routing system, it is
 referred to simply by its *action name*, in this case ``index``.
 
-If an action returns a string or an object which can be cast to a string, it will
-be set as the content of the response automatically.
+If an action returns a string or an object which can be cast to a string, a PHP resource stream
+like an opened file or a PSR7 stream, it will be set as the content of the response automatically::
+
+	/**
+	 * Stream a file content to the browser
+	 */
+	public function exportAction(): resource
+	{
+		$this->response->setContentType('text/csv');
+		return fopen('/path/fo/file', 'r');
+	}
+
+.. note::
+
+   This also works for large files, in which case the file content will be streamed to the browser.
+
 
 Defining Arguments
 ~~~~~~~~~~~~~~~~~~
@@ -209,10 +225,10 @@ Declaring arguments in an action controller is very simple::
 	 * Says hello to someone.
 	 *
 	 * @param string $name Name of the someone
-	 * @param boolean $formal If the message should be formal (or casual)
-	 * @return string
+	 * @param bool $formal If the message should be formal (or casual)
 	 */
-	public function sayHelloAction($name, $formal = TRUE) {
+	public function sayHelloAction(string $name, bool $formal = true): string
+	{
 		$message = ($formal ? 'Greetings, Mr. ' : 'Hello, ') . $name;
 		return $message
 	}
@@ -222,7 +238,7 @@ a hint of the expected type, in this case a string.
 
 The second argument ``$boolean`` is optional because a default value has been
 defined. The ``@param`` annotation declares this argument to be a boolean, so you
-can expect that ``$formal`` will be, in any case, either ``TRUE`` or ``FALSE``.
+can expect that ``$formal`` will be, in any case, either ``true`` or ``false``.
 
 A simple way to pass an argument to the action is through the query parameters in
 a URL::
@@ -260,9 +276,9 @@ Besides simple types, also special object types, like ``DateTime`` are supported
 
 	/**
 	 * @param \DateTime $date Some date
-	 * @return string
 	 */
-	public function barAction(\DateTime $date) {
+	public function barAction(\DateTime $date): string
+	{
 		# …
 	}
 
@@ -275,7 +291,8 @@ syntax. The property mapper creates a new object by default::
 	 * @param Acme\Demo\Domain\Model\Customer $customer A new customer
 	 * @return string
 	 */
-	public function createAction(\Acme\Demo\Domain\Model\Customer $customer) {
+	public function createAction(\Acme\Demo\Domain\Model\Customer $customer): string
+	{
 		return 'Hello, new customer: ' . $customer->getName();
 	}
 
@@ -287,9 +304,9 @@ that type::
 	/**
 	 * @param Acme\Demo\Domain\Model\Customer $customer An existing customer
 	 * @param string $name The name to set
-	 * @return string
 	 */
-	public function updateAction(\Acme\Demo\Domain\Model\Customer $customer, $name) {
+	public function updateAction(\Acme\Demo\Domain\Model\Customer $customer, string $name): void
+	{
 		$customer->setName($name);
 		$this->customerRepository->update($customer);
 	}
@@ -310,6 +327,12 @@ later sources replace earlier ones
 * query string (derived from $_GET)
 * body (typically from POST or PUT requests)
 * file uploads (derived from $_FILES)
+
+.. hint::
+
+	Sometimes you might need to map a whole request body into a single action argument.
+	In that case you can use an annotation ``@Flow\MapRequestBody("$argumentName")`` on
+	your action. Please refer to the :doc:`PropertyMapping` chapter for more details.
 
 Internal Arguments
 ~~~~~~~~~~~~~~~~~~
@@ -389,14 +412,15 @@ by default, ``text/html``. In order to support a different or more than one medi
 type, the controller needs override the default simply by declaring a class property
 like in the following example::
 
-	class FooController extends ActionController {
+	class FooController extends ActionController
+	{
 
 		/**
 		 * A list of IANA media types which are supported by this controller
 		 *
 		 * @var array
 		 */
-		protected $supportedMediaTypes = array('application/json', 'text/html');
+		protected $supportedMediaTypes = ['application/json', 'text/html'];
 
 		# …
 	}
@@ -452,7 +476,7 @@ assigning template variables::
 
 	$this->view->assign('products', $this->productRepository->findAll());
 
-If an action does not return a result (that is, the result is ``NULL``), an
+If an action does not return a result (that is, the result is ``null``), an
 Action Controller automatically calls the ``render()`` method of the current view.
 That means, apart from assigning variables to the template (if any), there is rarely
 a need to deal further with a Fluid Template View.
@@ -469,7 +493,8 @@ View, a specialized view does a much better job in a more convenient way.
 The JSON View provided by Flow can be used by declaring it as the default view
 in the concrete Action Controller implementation::
 
-	class FooController extends ActionController {
+	class FooController extends ActionController
+	{
 
 		/**
 		 * @var string
@@ -482,22 +507,23 @@ in the concrete Action Controller implementation::
 Alternatively, if more than only the JSON format should be supported, the format
 to view mapping feature can be used::
 
-	class FooController extends ActionController {
+	class FooController extends ActionController
+	{
 
 		/**
 		 * @var string
 		 */
-		protected $viewFormatToObjectNameMap = array(
+		protected $viewFormatToObjectNameMap = [
 			'html' => \Neos\FluidAdaptor\View\TemplateView::class,
 			'json' => \Neos\Flow\Mvc\View\JsonView::class
-		);
+		];
 
 		/**
 		 * A list of IANA media types which are supported by this controller
 		 *
 		 * @var array
 		 */
-		protected $supportedMediaTypes = array('application/json', 'text/html');
+		protected $supportedMediaTypes = ['application/json', 'text/html'];
 
 		# …
 	}
@@ -507,11 +533,8 @@ the media type ``application/json``. In order to return something useful, the da
 which should be rendered as JSON must be set through the ``assign()`` method. By
 default JSON View uses the variable named "value"::
 
-	/**
-	 * @param \Acme\Demo\Model\Product $product
-	 * @return void
-	 */
-	public function showAction(Product $product) {
+	public function showAction(Product $product): void
+	{
 		$this->view->assign('value', $product);
 	}
 
@@ -530,57 +553,54 @@ Furthermore, the JSON view can be configured to determine which variables of the
 should be included in the output. For that, a configuration array needs to be provided
 with ``setConfiguration()``::
 
-	/**
-	 * @param \Acme\Demo\Model\Product $product
-	 * @return void
-	 */
-	public function showAction(Product $product) {
+	public function showAction(Product $product): void
+	{
 		$this->view->assign('value', $product);
 		$this->view->setConfiguration(/* configuration follows here */);
 	}
 
 The configuration is an array which is structured like in the following example::
 
-	array(
-		'value' => array(
+	[
+		'value' => [
 
 				// only render the "name" property of value
-			'_only' => array('name')
+			'_only' => ['name']
 		),
-		'anothervalue' => array(
+		'anothervalue' => [
 
 				// render every property except the "password"
 				// property of anothervalue
-			'_exclude' => array('password')
+			'_exclude' => ['password']
 
 				// we also want to include the sub-object
 				// "address" as nested JSON object
-			'_descend' => array(
-				'address' => array(
+			'_descend' => [
+				'address' => [
 					// here, you can again configure
 					// _only, _exclude and _descend if needed
-				)
-			)
-		),
-		'arrayvalue' => array(
+				]
+			]
+		],
+		'arrayvalue' => [
 
 				// descend into all array elements
-			'_descendAll' => array(
+			'_descendAll' => [
 				// here, you can again configure _only,
 				// _exclude and _descend for each element
-			)
-		),
-		'valueWithObjectIdentifier' => array(
+			]
+		],
+		'valueWithObjectIdentifier' => [
 
 				// by default, the object identifier is not
 				// included in the output, but you can enable it
-			'_exposeObjectIdentifier' => TRUE,
+			'_exposeObjectIdentifier' => true,
 
 				// the object identifier should not be rendered
 				// as "__identity", but as "guid"
 			'_exposedObjectIdentifierKey' => 'guid'
-		)
-	)
+		]
+	]
 
 To sum it up, the JSON view has the following configuration options to control
 the output structure:
@@ -591,7 +611,7 @@ the output structure:
 * ``_descend`` (associative array): Descend into the specified sub-objects
 * ``_descendAll`` (array): Descend into all array elements and generate a
   numeric array
-* ``_exposeObjectIdentifier`` (boolean): if TRUE, the object identifier is
+* ``_exposeObjectIdentifier`` (boolean): if true, the object identifier is
   displayed inside ``__identifier``
 * ``_exposeObjectIdentifierKey`` (string): the JSON field name inside which
   the object identifier should be displayed
@@ -714,10 +734,10 @@ an example, an email address maybe optional in a Customer model, but it may be
 required when a customer entity is passed to a ``signUpAction()`` method::
 
 		/**
-		 * @param \Acme\Demo\Domain\Model\Customer $customer
 		 * @Flow\Validate(argumentName="emailAddress", type="EmailAddress")
 		 */
-		public function signUpAction(Customer $customer) {
+		public function signUpAction(Customer $customer): void
+		{
 			# …
 		}
 
@@ -726,10 +746,10 @@ does the opposite: any base validation rules declared for the specified argument
 will be ignored::
 
 		/**
-		 * @param \Acme\Demo\Domain\Model\Customer $customer
 		 * @Flow\IgnoreValidation("$customer")
 		 */
-		public function signUpAction(Customer $customer) {
+		public function signUpAction(Customer $customer): void
+		{
 			# …
 		}
 
@@ -831,10 +851,11 @@ publicly callable controllers.
 
 This example demonstrates the usage of ``redirect()``::
 
-	public function createAction(Product $product) {
+	public function createAction(Product $product): void
+	{
 			// TODO: store the product somewhere
 
-		$this->redirect('show', NULL, NULL, array('product' => $product));
+		$this->redirect('show', null, null, array('product' => $product));
 
 			// This line is never executed, as redirect() and
 			// forward() immediately stop execution of this method.
@@ -892,6 +913,29 @@ Creating a Flash Messages is a matter of a single line of code::
 The flash messages can be rendered inside the template using the ``<f:flashMessages />``
 ViewHelper. Please consult the ViewHelper for a full reference.
 
+Since Flash Messages need to possibly survive over requests until they get displayed, they need
+to be persisted somehow.
+Flash Messages can be stored in different ways, the Framework default is to store them in the session.
+The storage can be configured in Settings.yaml via the following options::
+
+	Neos:
+	  Flow:
+	    mvc:
+	      flashMessages:
+	        containers:
+	          'customFlashMessages':
+	            storage: 'Neos\Flow\Mvc\FlashMessage\Storage\FlashMessageCookieStorage'
+	            storageOptions:
+	              cookieName: 'Neos_Flow_FlashMessages_My_Custom'
+	            requestPatterns:
+	              'SomeControllers':
+	                pattern: 'ControllerObjectName'
+	                patternOptions:
+	                  'controllerObjectNamePattern': 'Some\Package\Controller\.*'
+
+With this you can specify to store the Flash Messages in an own cookie, and even separate them by
+request patterns. New storages can be created by implementing the ``FlashMessageStorageInterface`` and
+specifying the storage class in the settings.
 
 .. _IANA Media Type: http://www.iana.org/assignments/media-types/index.html
 

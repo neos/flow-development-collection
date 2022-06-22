@@ -11,6 +11,7 @@ namespace Neos\Flow\Configuration;
  * source code.
  */
 
+use Neos\Flow\I18n\Translator;
 use Symfony\Component\Yaml\Yaml;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Notice;
@@ -55,6 +56,12 @@ class ConfigurationSchemaValidator
     protected $schemaValidator;
 
     /**
+     * @Flow\Inject
+     * @var Translator
+     */
+    protected $translator;
+
+    /**
      * Validate the given $configurationType and $path
      *
      * @param string $configurationType (optional) the configuration type to validate. if NULL, validates all configuration.
@@ -92,7 +99,11 @@ class ConfigurationSchemaValidator
     {
         $availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
         if (in_array($configurationType, $availableConfigurationTypes) === false) {
-            throw new Exception\SchemaValidationException('The configuration type "' . $configurationType . '" was not found. Only the following configuration types are supported: "' . implode('", "', $availableConfigurationTypes) . '"', 1364984886);
+            $message = (string)$this->translator->translateById('configuration.anErrorOccurredDuringValidationOfTheConfiguration.body', [$configurationType,implode('", "', $availableConfigurationTypes)], null, null, 'Main', 'Neos.Flow');
+            throw new Exception\SchemaValidationException(
+                $message,
+                1364984886
+            );
         }
 
         $configuration = $this->configurationManager->getConfiguration($configurationType);

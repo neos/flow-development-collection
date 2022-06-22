@@ -42,8 +42,8 @@ abstract class Functions
      * Unicode variant of substr()
      *
      * @param string $string The string to crop
-     * @param integer $start Position of the left boundary
-     * @param integer $length (optional) Length of the returned string
+     * @param int $start Position of the left boundary
+     * @param int|null $length (optional) Length of the returned string
      * @return string The processed string
      * @api
      */
@@ -196,7 +196,7 @@ abstract class Functions
         }
 
         foreach ($components as &$currentComponent) {
-            $currentComponent = urldecode($currentComponent);
+            $currentComponent = urldecode((string)$currentComponent);
         }
 
         // the host and port must be used as is, to allow IPv6 syntax, e.g.: [3b00:f59:1008::212:183:20]:8080
@@ -213,21 +213,21 @@ abstract class Functions
             case -1:
                 return $components;
             case PHP_URL_SCHEME:
-                return $components['scheme'];
+                return $components['scheme'] ?? null;
             case PHP_URL_HOST:
-                return $components['host'];
+                return $components['host'] ?? null;
             case PHP_URL_PORT:
-                return $components['port'];
+                return $components['port'] ?? null;
             case PHP_URL_USER:
-                return $components['user'];
+                return $components['user'] ?? null;
             case PHP_URL_PASS:
-                return $components['pass'];
+                return $components['pass'] ?? null;
             case PHP_URL_PATH:
-                return $components['path'];
+                return $components['path'] ?? null;
             case PHP_URL_QUERY:
-                return $components['query'];
+                return $components['query'] ?? null;
             case PHP_URL_FRAGMENT:
-                return $components['fragment'];
+                return $components['fragment'] ?? null;
             default:
                 throw new \InvalidArgumentException('Invalid component requested for URL parsing.', 1406280743);
         }

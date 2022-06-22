@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -36,6 +38,12 @@ abstract class AbstractBackend implements BackendInterface
     protected $cacheIdentifier;
 
     /**
+     * A prefix to seperate stored by appliaction context and cache
+     * @var string
+     */
+    protected $identifierPrefix;
+
+    /**
      * Default lifetime of a cache entry in seconds
      * @var integer
      */
@@ -68,7 +76,7 @@ abstract class AbstractBackend implements BackendInterface
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function setProperties(array $properties, bool $throwExceptionIfPropertyNotSettable = true)
+    protected function setProperties(array $properties, bool $throwExceptionIfPropertyNotSettable = true): void
     {
         foreach ($properties as $propertyName => $propertyValue) {
             $propertyWasSet = $this->setProperty($propertyName, $propertyValue);
@@ -105,47 +113,28 @@ abstract class AbstractBackend implements BackendInterface
      * @return void
      * @api
      */
-    public function setCache(FrontendInterface $cache)
+    public function setCache(FrontendInterface $cache): void
     {
         $this->cache = $cache;
         $this->cacheIdentifier = $this->cache->getIdentifier();
-    }
-
-    /**
-     * Returns the internally used, prefixed entry identifier for the given public
-     * entry identifier.
-     *
-     * While Flow applications will mostly refer to the simple entry identifier, it
-     * may be necessary to know the actual identifier used by the cache backend
-     * in order to share cache entries with other applications. This method allows
-     * for retrieving it.
-     *
-     * Note that, in case of the AbstractBackend, this method is returns just the
-     * given entry identifier.
-     *
-     * @param string $entryIdentifier The short entry identifier, for example "NumberOfPostedArticles"
-     * @return string The prefixed identifier, for example "Flow694a5c7a43a4_NumberOfPostedArticles"
-     * @api
-     */
-    public function getPrefixedIdentifier(string $entryIdentifier): string
-    {
-        return $entryIdentifier;
+        $applicationIdentifier = $this->environmentConfiguration instanceof EnvironmentConfiguration ? $this->environmentConfiguration->getApplicationIdentifier() : '';
+        $this->identifierPrefix = md5($applicationIdentifier) . ':' . $this->cacheIdentifier . ':';
     }
 
     /**
      * Sets the default lifetime for this cache backend
      *
-     * @param integer $defaultLifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param integer|string $defaultLifetime Default lifetime of this cache backend in seconds. 0 means unlimited lifetime.
      * @return void
      * @throws \InvalidArgumentException
      * @api
      */
-    public function setDefaultLifetime(int $defaultLifetime)
+    public function setDefaultLifetime($defaultLifetime): void
     {
-        if ($defaultLifetime < 0) {
-            throw new \InvalidArgumentException('The default lifetime must be given as a positive integer.', 1233072774);
+        if ((int)$defaultLifetime < 0) {
+            throw new \InvalidArgumentException('The default lifetime must be given as a positive integer', 1233072774);
         }
-        $this->defaultLifetime = $defaultLifetime;
+        $this->defaultLifetime = (int)$defaultLifetime;
     }
 
     /**
@@ -165,5 +154,26 @@ abstract class AbstractBackend implements BackendInterface
             $lifetime = $this->defaultLifetime;
         }
         return new \DateTime('now +' . $lifetime . ' seconds', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * Returns the internally used, prefixed entry identifier for the given public
+     * entry identifier.
+     *
+     * While Flow applications will mostly refer to the simple entry identifier, it
+     * may be necessary to know the actual identifier used by the cache backend
+     * in order to share cache entries with other applications. This method allows
+     * for retrieving it.
+     *
+     * Note that, in case of the AbstractBackend, this method is returns just the
+     * given entry identifier.
+     *
+     * @param string $entryIdentifier The short entry identifier, for example "NumberOfPostedArticles"
+     * @return string The prefixed identifier, for example "d59b7012de96aecf8171f8760323fe0a:Flow_Fusion_Content:NumberOfPostedArticles:"
+     * @api
+     */
+    public function getPrefixedIdentifier(string $entryIdentifier): string
+    {
+        return $this->identifierPrefix . $entryIdentifier;
     }
 }

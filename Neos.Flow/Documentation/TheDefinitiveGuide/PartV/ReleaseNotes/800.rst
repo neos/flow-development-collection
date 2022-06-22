@@ -1,0 +1,293 @@
+========
+Flow 8.0
+========
+
+This release of Flow comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+
+As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+
+Flow 8.0 also increases the minimal required PHP version to **8.0**.
+
+************
+New Features
+************
+
+!!! FEATURE: Introduce flushByTags to taggable cache backends
+-------------------------------------------------------------
+
+This change introduces the ``flushByTags`` method to taggable cache backends. This allows each backend to be further optimised in the future to find the best way to flush multiple tags from its storage.
+
+
+
+The ``TaggableBackendInterface`` and ``FrontendInterface`` were extended with the method ``flushByTags`` and each provided backend in the core got a simple implementation for it to fulfil the interface.
+
+Related issue: `#2717 <https://github.com/neos/flow-development-collection/issues/2717>`_
+
+!!! FEATURE: Implement Psr-18 HTTP\Client
+-----------------------------------------
+
+The ``Neos\\Flow\\Http\\Client\\Browser`` now implements the ``Psr\\Http\\Client\\ClientInterface`` and works with dependency injection by default.
+
+The signature of the method sendRequest is relaxed slightly from ServerRequestInterface to RequestInterface and the curl requestEngine is injected by default. That way any browser is ready for use from the start.
+
+Internally the request engines now also use the RequestInterface instead of ServerRequestInterface.
+This should be almost non breaky because changes ServerRequestInterface is still allowed as it extends the RequestInterface. The InternalRequestEngide will upcast the RequestInterfaces to ServerRequestInterface when needed.
+
+!!!The PR removes the @api annotation from the requestEngines to allow us to remove or alter those in the future.
+
+
+
+
+Related issue: `#2691 <https://github.com/neos/flow-development-collection/issues/2691>`_
+
+FEATURE: Type declaration support for property injection
+--------------------------------------------------------
+
+This change introduces basic support for PHP 7.4 class property types
+for property injection.
+
+It allows for using types as follows:
+
+```php
+/**
+ * @Flow\\Inject
+ **/
+protected LoggerInterface $logger;
+```
+
+In order to allow this syntax, Lazy Property Injection is disabled
+when a type is declared. To still use Lazy Property Injection, don't
+use a PHP type declaration but a ``@var`` annotation:
+
+```php
+/**
+ * @Flow\\Inject
+ * @var LoggerInterface
+ **/
+protected $logger;
+```
+
+If using both (type declaration _and_ ``@var``), it is handled non-lazily.
+
+Lazy Property Injection on properties with type declarations may
+be re-implemented as part of a future release.
+
+`#2114 <https://github.com/neos/flow-development-collection/issues/2114>`_
+
+FEATURE: Extend DenormalizingObjectConverter to support fromBoolean and fromInteger
+-----------------------------------------------------------------------------------
+
+...in addition to their short version (``fromBool()`` and ``fromInt()``).
+This also adds a short documentation about Value Object property mapping.
+
+
+
+FEATURE: Optimised Redis cache backend
+--------------------------------------
+
+With this change the ``flushByTags`` is optimised to run flush operations in batches.
+The maximum batch size can and should be configured based on the used data source.
+
+This change relies on the interface changes in `#2718 <https://github.com/neos/flow-development-collection/issues/2718>`_
+
+Additionally all optimisations from https://github.com/sandstorm/OptimizedRedisCacheBackend were added.
+
+Instead of uploading the flush Lua script and only flushing the entries for one tag.
+The same is now done for batches of tags reducing the calls to Redis and the
+evaluation time Redis needs to parse the script.
+
+`#2718 <https://github.com/neos/flow-development-collection/issues/2718>`_includes updated tests for the Redis backend that will also check this method.
+
+
+FEATURE: Create ValueObjects from simple types by calling `from$TYPE` for objects and JsonArray properties
+----------------------------------------------------------------------------------------------------------
+
+When converting from simple types the denormalizer now checks wether the target class has a method ``from$TYPE`` and uses this to create the object.  Supported method names are ``fromArray``, ``fromString``, ``fromBool``, ``fromInt`` and ``fromFloat``.
+
+For example the following controller action would use the methods ``BirthDate::fromString`` or ``BirthDate::fromArray`` (depending on submitted data) to instantiate the $birthDate argument.
+```
+public function indexAction(BirthDate $birthDate)
+```
+
+In addition the JsonArray Type is extended to support this aswell. The serialization as flow entities takes precedence over the serialization as value object flow objects that implement \\JsonSerializable are still serialized as Flow Objects in JsonArray properties. While beeing a Flow feature this allows to store and restore ValueObjects in Neos Node properties aswell.
+
+Note: This is a rebased version of https://github.com/neos/flow-development-collection/pull/2703 from @nezaniel
+
+
+Replaces:  `#2703 <https://github.com/neos/flow-development-collection/issues/2703>`_
+
+
+Related issue: `#2763 <https://github.com/neos/flow-development-collection/issues/2763>`_
+
+FEATURE: Implement `flushByTags` for the PDO cache backend
+----------------------------------------------------------
+
+With this change the ``flushByTags`` is optimised to run in batches.
+The maximum batch size can and should be configured based on the used data source.
+
+This change relies on the interface changes in `#2718 <https://github.com/neos/flow-development-collection/issues/2718>`_
+
+Instead of querying identifiers for each tag separately, they are now queried in batches
+for a number of tags and then deleted.
+
+Configure PDO backend for the Neos content cache and force a flush by publishing something.
+
+
+FEATURE: `flushByTags` for the file based cache backend
+-------------------------------------------------------
+
+With this change the ``flushByTags`` is optimised by only reading the list of cache files once for all entries to be flushed instead of reading it for each entry.
+
+This can yield a huge speedup in situations where a single file based cache contains many entries, especially on older (non-ssd) storages.
+
+This change relies on the interface changes in #2717
+
+FEATURE: Add methods getSimpleCache PSR-16 and getCacheItemPool PSR-6 to the cacheManager
+-----------------------------------------------------------------------------------------
+
+The methods create PSR Frontends for the cache with the given identifier. This allows to configure psr caches via
+objects and caches yaml. This is an improvement as the included factories are not that easy to use.
+
+The following settings in Objects.yaml allow to inject PSR Caches into Flow Classes:
+```
+Vendor\\Site\\Service:
+
+  properties:
+    simpleCacheProperty:
+      object:
+        factoryObjectName: Neos\\Flow\\Cache\\CacheManager
+        factoryMethodName: getSimpleCache
+        arguments:
+          1:
+            value: Cache_Identifier_1
+
+    cachePoolProperty:
+      object:
+        factoryObjectName: Neos\\Flow\\Cache\\CacheManager
+        factoryMethodName: getCacheItemPool
+        arguments:
+          1:
+            value: Cache_Identifier_2
+```
+
+!!! While possible it is not advisible to access the same cache with multiple Interfaces as the storage formats may differ. !!!
+
+
+
+
+Related issue: `#2690 <https://github.com/neos/flow-development-collection/issues/2690>`_
+
+********************
+Upgrade Instructions
+********************
+
+This section contains instructions for upgrading your Flow **7.3**
+based applications to Flow **8.0**.
+
+In general just make sure to run the following commands:
+
+To clear all file caches::
+
+ ./flow flow:cache:flush --force
+
+If you have additional cache backends configured, make sure to flush them too.
+
+To apply core migrations::
+
+  ./flow flow:core:migrate <Package-Key>
+
+For every package you have control over (see `Upgrading existing code`_ below).
+
+To validate/fix the database encoding, apply pending migrations and to (re)publish file resources::
+
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+If you are upgrading from a lower version than 7.3, be sure to read the
+upgrade instructions from the previous Release Notes first.
+
+Upgrading your Packages
+=======================
+
+Upgrading existing code
+-----------------------
+
+There have been major API changes in Flow 8.0 which require your code to be adjusted. As with earlier changes to Flow
+that required code changes on the user side we provide a code migration tool.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate Acme.Demo
+
+This will adjust the package code automatically and/or output further information.
+Read the output carefully and manually adjust the code if needed.
+
+To see all the other helpful options this command provides, make sure to run::
+
+ ./flow help core:migrate
+
+Also make sure to read about the `Potentially breaking changes`_ below.
+
+Inside core:migrate
+^^^^^^^^^^^^^^^^^^^
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from the specified package
+* For each migration
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.
+
+
+****************************
+Potentially breaking changes
+****************************
+
+Flow 8.0 comes with some breaking changes and removes several deprecated
+functionalities, be sure to read the following changes and adjust
+your code respectively. For a full list of changes please refer
+to the change log.
+
+!!! FEATURE: Introduce flushByTags to taggable cache backends
+-------------------------------------------------------------
+
+This change introduces the ``flushByTags`` method to taggable cache backends. This allows each backend to be further optimised in the future to find the best way to flush multiple tags from its storage.
+
+
+
+The ``TaggableBackendInterface`` and ``FrontendInterface`` were extended with the method ``flushByTags`` and each provided backend in the core got a simple implementation for it to fulfil the interface.
+
+Related issue: `#2717 <https://github.com/neos/flow-development-collection/issues/2717>`_
+
+!!! FEATURE: Implement Psr-18 HTTP\Client
+-----------------------------------------
+
+The ``Neos\\Flow\\Http\\Client\\Browser`` now implements the ``Psr\\Http\\Client\\ClientInterface`` and works with dependency injection by default.
+
+The signature of the method sendRequest is relaxed slightly from ServerRequestInterface to RequestInterface and the curl requestEngine is injected by default. That way any browser is ready for use from the start.
+
+Internally the request engines now also use the RequestInterface instead of ServerRequestInterface.
+This should be almost non breaky because changes ServerRequestInterface is still allowed as it extends the RequestInterface. The InternalRequestEngide will upcast the RequestInterfaces to ServerRequestInterface when needed.
+
+!!!The PR removes the @api annotation from the requestEngines to allow us to remove or alter those in the future.
+
+
+
+
+Related issue: `#2691 <https://github.com/neos/flow-development-collection/issues/2691>`_

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Backend;
 
 /*
@@ -77,7 +79,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @param FrontendInterface $cache
      * @return void
      */
-    public function setCache(FrontendInterface $cache)
+    public function setCache(FrontendInterface $cache): void
     {
         parent::setCache($cache);
 
@@ -115,7 +117,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @throws \InvalidArgumentException if the identifier is not valid
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null)
+    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1232986818);
@@ -124,7 +126,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         $tags[] = '%APCUBE%' . $this->cacheIdentifier;
         $expiration = $lifetime !== null ? $lifetime : $this->defaultLifetime;
 
-        $success = apcu_store($this->identifierPrefix . 'entry_' . $entryIdentifier, $data, $expiration);
+        $success = apcu_store($this->getPrefixedIdentifier($entryIdentifier), $data, $expiration);
         if ($success === true) {
             $this->removeIdentifierFromAllTags($entryIdentifier);
             $this->addIdentifierToTags($entryIdentifier, $tags);
@@ -143,7 +145,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     public function get(string $entryIdentifier)
     {
         $success = false;
-        $value = apcu_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
+        $value = apcu_fetch($this->getPrefixedIdentifier($entryIdentifier), $success);
         return ($success ? $value : $success);
     }
 
@@ -157,7 +159,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     public function has(string $entryIdentifier): bool
     {
         $success = false;
-        apcu_fetch($this->identifierPrefix . 'entry_' . $entryIdentifier, $success);
+        apcu_fetch($this->getPrefixedIdentifier($entryIdentifier), $success);
         return $success;
     }
 
@@ -173,7 +175,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     public function remove(string $entryIdentifier): bool
     {
         $this->removeIdentifierFromAllTags($entryIdentifier);
-        return apcu_delete($this->identifierPrefix . 'entry_' . $entryIdentifier);
+        return apcu_delete($this->getPrefixedIdentifier($entryIdentifier));
     }
 
     /**
@@ -181,7 +183,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * specified tag.
      *
      * @param string $tag The tag to search for
-     * @return array An array with identifiers of all matching entries. An empty array if no entries matched
+     * @return string[] An array with identifiers of all matching entries. An empty array if no entries matched
      * @api
      */
     public function findIdentifiersByTag(string $tag): array
@@ -191,7 +193,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         if ($success === false) {
             return [];
         }
-        return (array) $identifiers;
+        return (array)$identifiers;
     }
 
     /**
@@ -199,7 +201,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * index to search for tags.
      *
      * @param string $identifier Identifier to find tags by
-     * @return array Array with tags
+     * @return string[] Array with tags
      */
     protected function findTagsByIdentifier(string $identifier): array
     {
@@ -215,7 +217,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @throws Exception
      * @api
      */
-    public function flush()
+    public function flush(): void
     {
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('Yet no cache frontend has been set via setCache().', 1232986971);
@@ -237,6 +239,20 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
             $this->remove($identifier);
         }
         return count($identifiers);
+    }
+
+    /**
+     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     *
+     * @api
+     */
+    public function flushByTags(array $tags): int
+    {
+        $flushed = 0;
+        foreach ($tags as $tag) {
+            $flushed += $this->flushByTag($tag);
+        }
+        return $flushed;
     }
 
     /**
@@ -302,7 +318,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return void
      * @api
      */
-    public function collectGarbage()
+    public function collectGarbage(): void
     {
     }
 
@@ -347,7 +363,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
         }
-        return substr($this->cacheEntriesIterator->key(), strlen($this->identifierPrefix . 'entry_'));
+        return substr((string)$this->cacheEntriesIterator->key(), strlen($this->identifierPrefix . 'entry_'));
     }
 
     /**

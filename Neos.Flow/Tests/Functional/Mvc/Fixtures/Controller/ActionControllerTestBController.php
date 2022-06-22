@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Property\TypeConverter\ObjectConverter;
 
 /**
  * An action controller test fixture
@@ -21,6 +22,8 @@ use Neos\Flow\Mvc\Controller\ActionController;
  */
 class ActionControllerTestBController extends ActionController
 {
+    protected $enableDynamicTypeValidation = true;
+
     public function initializeAction()
     {
         /* @var $propertyMappingConfiguration \Neos\Flow\Property\PropertyMappingConfiguration */
@@ -112,6 +115,60 @@ class ActionControllerTestBController extends ActionController
     public function validatedGroupCollectionAction(TestObjectArgument $argument)
     {
         return $argument->getCollection()->get(0)->getEmailAddress();
+    }
+
+    protected function initializeDynamicTypeAction()
+    {
+        $propertyMappingConfiguration = $this->arguments['argument']->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
+    }
+
+    /**
+     * @param TestObjectInterface $argument
+     * @return string
+     */
+    public function dynamicTypeAction(TestObjectInterface $argument)
+    {
+        return $argument->getEmailAddress();
+    }
+
+    protected function initializeDynamicConfiguredTypeAction()
+    {
+        $propertyMappingConfiguration = $this->arguments['argument']->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_TARGET_TYPE, TestObjectArgument::class);
+    }
+
+    /**
+     * @param TestObjectInterface $argument
+     * @return string
+     */
+    public function dynamicConfiguredTypeAction(TestObjectInterface $argument)
+    {
+        return $argument->getEmailAddress();
+    }
+
+    /**
+     * @param TestObjectArgument $argument
+     * @Flow\MapRequestBody("$argument")
+     * @return string
+     */
+    public function mappedRequestBodyAction(TestObjectArgument $argument)
+    {
+        return $argument->getName() . '-' . $argument->getEmailAddress();
+    }
+
+    protected function initializeMappedRequestBodyWithoutAnnotationAction()
+    {
+        $this->arguments['argument']->setMapRequestBody(true);
+    }
+
+    /**
+     * @param TestObjectArgument $argument
+     * @return string
+     */
+    public function mappedRequestBodyWithoutAnnotationAction(TestObjectArgument $argument)
+    {
+        return $argument->getName() . '-' . $argument->getEmailAddress();
     }
 
     /**

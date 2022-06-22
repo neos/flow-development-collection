@@ -143,6 +143,9 @@ class CacheFactory extends \Neos\Cache\CacheFactory
         ) {
             $backendOptions['baseDirectory'] = FLOW_PATH_DATA . 'Persistent/';
         }
+        if ($persistent) {
+            $backendOptions['defaultLifetime'] = 0;
+        }
 
         return parent::instantiateBackend($backendObjectName, $backendOptions, $environmentConfiguration);
     }

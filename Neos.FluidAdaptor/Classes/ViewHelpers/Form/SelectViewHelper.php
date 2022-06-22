@@ -12,6 +12,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Form;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
+use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;
@@ -217,7 +219,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
             $options = ['' => ''];
         }
         foreach ($options as $value => $label) {
-            $output .= $this->renderOptionTag($value, $label) . chr(10);
+            $output .= $this->renderOptionTag($value, (string)$label) . chr(10);
         }
         return $output;
     }
@@ -362,13 +364,13 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
     /**
      * Render one option tag
      *
-     * @param string $value value attribute of the option tag (will be escaped)
+     * @param mixed $value value attribute of the option tag (will be escaped)
      * @param string $label content of the option tag (will be escaped)
      * @return string the rendered option tag
      */
-    protected function renderOptionTag($value, $label)
+    protected function renderOptionTag(mixed $value, string $label)
     {
-        $output = '<option value="' . htmlspecialchars($value) . '"';
+        $output = '<option value="' . htmlspecialchars((string)$value) . '"';
         if ($this->isSelected($value)) {
             $output .= ' selected="selected"';
         }
@@ -385,7 +387,8 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
      * @param string $label option tag label
      * @return string
      * @throws ViewHelper\Exception
-     * @throws FluidAdaptor\Exception
+     * @throws IndexOutOfBoundsException
+     * @throws InvalidFormatPlaceholderException
      */
     protected function getTranslatedLabel($value, $label)
     {
@@ -394,7 +397,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         $translateBy = isset($translationConfiguration['by']) ? $translationConfiguration['by'] : 'id';
         $sourceName = isset($translationConfiguration['source']) ? $translationConfiguration['source'] : 'Main';
         $request = $this->controllerContext->getRequest();
-        $packageKey = null;
+        $packageKey = 'Neos.Flow';
         if (isset($translationConfiguration['package'])) {
             $packageKey = $translationConfiguration['package'];
         } elseif ($request instanceof ActionRequest) {

@@ -40,6 +40,7 @@ class MessageCollector
     protected $messages;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -66,12 +67,12 @@ class MessageCollector
     /**
      * @param string $message The message to log
      * @param string $severity An integer value, one of the Error::SEVERITY_* constants
-     * @param integer $code A unique error code
+     * @param integer|null $code A unique error code
      * @return void
      * @throws Exception
      * @api
      */
-    public function append($message, $severity = Error::SEVERITY_ERROR, $code = null)
+    public function append(string $message, string $severity = Error::SEVERITY_ERROR, ?int $code = null): void
     {
         switch ($severity) {
             case Error::SEVERITY_ERROR:
@@ -96,7 +97,7 @@ class MessageCollector
      * @return boolean
      * @api
      */
-    public function hasMessages()
+    public function hasMessages(): bool
     {
         return $this->messages->count() > 0;
     }
@@ -106,7 +107,7 @@ class MessageCollector
      * @return void
      * @api
      */
-    public function flush(callable $callback = null)
+    public function flush(callable $callback = null): void
     {
         foreach ($this->messages as $message) {
             /** @var Message $message */

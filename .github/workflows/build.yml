@@ -11,56 +11,40 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
     name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} (deps: ${{ matrix.dependencies }})"
 
-    continue-on-error: ${{ matrix.experimental }}
+    continue-on-error: ${{ matrix.experimental == 'true' || matrix.experimental == true }}
 
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['7.1', '7.2', '7.3', '7.4']
+        php-versions: ['8.0', '8.1']
+        # see https://mariadb.com/kb/en/mariadb-server-release-dates/
+        # this should be a current release, e.g. the LTS version
+        mariadb-versions: ['10.6']
+        # see https://www.postgresql.org/support/versioning/
+        # this should be a current release
+        postgresql-versions: ['14-alpine']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         static-analysis: ['no']
         experimental: [false]
-        #include:
-          #- php-versions: '7.3'
-          #  static-analysis: 'psalm'
-          #  experimental: false
-          #  dependencies: 'highest'
+        include:
+          - php-versions: '8.0'
+            mariadb-versions: '' # skip mariadb setup
+            postgresql-versions: '' # skip postgresql setup
+            static-analysis: 'psalm'
+            experimental: true
+            dependencies: 'highest'
 
-          # Experimental build for PHP 8
-          #- php-versions: '8.0'
-          #  composer-arguments: '--ignore-platform-reqs'
-          #  static-analysis: 'no'
-          #  experimental: true
-          #  dependencies: 'highest'
-
-          # Build for minimum dependencies. Fails right now, hence deactivated.
-          #- php-versions: '7.1'
-          #  static-analysis: 'no'
-          #  experimental: false
-          #  dependencies: 'lowest'
+          # Build for minimum dependencies.
+          - php-versions: '8.0'
+            mariadb-versions: '10.2'
+            postgresql-versions: '10-alpine'
+            static-analysis: 'no'
+            experimental: false
+            dependencies: 'lowest'
 
     runs-on: ubuntu-latest
     services:
-      mariadb:
-        image: mariadb:10.2
-        env:
-          MYSQL_USER: neos
-          MYSQL_PASSWORD: neos
-          MYSQL_DATABASE: flow_functional_testing
-          MYSQL_ROOT_PASSWORD: neos
-        ports:
-          - "3306:3306"
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-      postgres:
-        image: postgres:9.5-alpine
-        env:
-          POSTGRES_USER: neos
-          POSTGRES_PASSWORD: neos
-          POSTGRES_DB: flow_functional_testing
-        ports:
-          - "5432:5432"
-        options:  --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
       redis:
         image: redis:alpine
         ports:
@@ -91,13 +75,31 @@ jobs:
         with:
           path: ${{ env.FLOW_FOLDER }}
 
-      - name: Setup PHP
+      - name: Setup PHP ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, apcu
+          extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, memcache, apcu
           coverage: xdebug #optional
           ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
+
+      - name: Setup PostgreSQL ${{ matrix.postgresql-versions }}
+        if: ${{ matrix.postgresql-versions != '' }}
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql version: ${{ matrix.postgresql-versions }}
+          postgresql db: 'flow_functional_testing'
+          postgresql user: 'neos'
+          postgresql password: 'neos'
+
+      - name: Setup MariaDB ${{ matrix.mariadb-versions }}
+        if: ${{ matrix.mariadb-versions != '' }}
+        uses: getong/mariadb-action@v1.1
+        with:
+          mariadb version: ${{ matrix.mariadb-versions }}
+          collation server: 'utf8mb4_unicode_ci'
+          mysql database: 'flow_functional_testing'
+          mysql root password: 'neos'
 
       - name: Checkout development distribution
         uses: actions/checkout@v2
@@ -143,7 +145,7 @@ jobs:
                 backendOptions:
                   host: '127.0.0.1'
                   driver: pdo_mysql
-                  user: 'neos'
+                  user: 'root'
                   password: 'neos'
                   dbname: 'flow_functional_testing'
               mvc:
@@ -154,9 +156,18 @@ jobs:
           ./flow configuration:show
           ./flow routing:list
 
-      #- name: Static analysis
-      #  if: matrix.static-analysis == 'psalm'
-      #  run: composer test-static
+      - name: Static analysis
+        if: matrix.static-analysis == 'psalm'
+        run: composer test-static
+
+      - name: Update psalm baseline
+        if: ${{ failure() && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+        run: |
+          composer psalm-baseline-update
+          cd ./Packages/Framework
+          git add psalm-baseline.xml
+          git -c user.name='gh-action' -c user.email='gh-action@noreply.github.com' commit -m "TASK: Update psalm-baseline"
+          git push -f origin HEAD:${FLOW_TARGET_VERSION}
 
       - name: Run unit tests
         if: matrix.static-analysis == 'no'
@@ -167,10 +178,10 @@ jobs:
         run: composer test-func -- --verbose
 
       - name: Run behat tests
-        if: matrix.static-analysis == 'no'
+        if: ${{ matrix.static-analysis == 'no' && matrix.dependencies != 'lowest' }}
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
           bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
 
       - name: Setup Flow configuration (PGSQL)
@@ -204,10 +215,10 @@ jobs:
         run: composer test-func -- --verbose
 
       - name: Run behat tests (PGSQL)
-        if: matrix.static-analysis == 'no'
+        if: ${{ matrix.static-analysis == 'no' && matrix.dependencies != 'lowest' }}
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
           bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
 
   buildall:

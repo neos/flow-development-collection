@@ -3,7 +3,7 @@
 Flow TypeConverter Reference
 ============================
 
-This reference was automatically generated from code on 2021-03-06
+This reference was automatically generated from code on 2022-06-01
 
 
 .. _`Flow TypeConverter Reference: ArrayConverter`:
@@ -42,6 +42,21 @@ TypeConverter which converts generic objects to arrays by converting and returni
 :Priority: 1
 :Target type: array
 :Source type: object
+
+
+
+
+
+.. _`Flow TypeConverter Reference: ArrayObjectConverter`:
+
+ArrayObjectConverter
+--------------------
+
+Converter which transforms ArrayObjects to arrays.
+
+:Priority: 1
+:Target type: array
+:Source type: ArrayObject
 
 
 
@@ -517,7 +532,7 @@ A type converter for converting URI strings to Http Uri objects.
 This converter simply creates a Neos\Flow\Http\Uri instance from the source string.
 
 :Priority: 1
-:Target type: Neos\Flow\Http\Uri
+:Target type: Psr\Http\Message\UriInterface
 :Source type: string
 
 

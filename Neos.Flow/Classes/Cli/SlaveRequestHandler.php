@@ -17,7 +17,6 @@ use Neos\Flow\Core\RequestHandlerInterface;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Mvc\Dispatcher;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -26,6 +25,8 @@ use Psr\Log\LoggerInterface;
  *
  * @Flow\Proxy(false)
  * @Flow\Scope("singleton")
+ *
+ * @deprecated  This will probably move to a separate package and be renamed in a future version, you should not rely on it.
  */
 class SlaveRequestHandler implements RequestHandlerInterface
 {

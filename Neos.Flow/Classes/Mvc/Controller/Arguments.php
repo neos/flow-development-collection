@@ -18,6 +18,7 @@ use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
  * A composite of controller arguments
  *
  * @api
+ * @extends \ArrayObject<Argument>
  */
 class Arguments extends \ArrayObject
 {
@@ -25,7 +26,7 @@ class Arguments extends \ArrayObject
      * Names of the arguments contained by this object
      * @var array
      */
-    protected $argumentNames = [];
+    protected array $argumentNames = [];
 
     /**
      * Adds or replaces the argument specified by $value. The argument's name is taken from the
@@ -37,7 +38,7 @@ class Arguments extends \ArrayObject
      * @throws \InvalidArgumentException if the argument is not a valid Controller Argument object
      * @api
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (!$value instanceof Argument) {
             throw new \InvalidArgumentException(sprintf('Controller arguments must be valid %s objects.', Argument::class), 1187953786);
@@ -56,7 +57,7 @@ class Arguments extends \ArrayObject
      * @throws \InvalidArgumentException if the argument is not a valid Controller Argument object
      * @api
      */
-    public function append($value)
+    public function append($value): void
     {
         if (!$value instanceof Argument) {
             throw new \InvalidArgumentException(sprintf('Controller arguments must be valid %s objects.', Argument::class), 1187953786);
@@ -71,7 +72,7 @@ class Arguments extends \ArrayObject
      * @return void
      * @api
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $translatedOffset = $this->validateArgumentExistence($offset);
         parent::offsetUnset($translatedOffset);
@@ -89,7 +90,7 @@ class Arguments extends \ArrayObject
      * @return boolean
      * @api
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         $translatedOffset = $this->validateArgumentExistence($offset);
         return parent::offsetExists($translatedOffset);
@@ -103,7 +104,7 @@ class Arguments extends \ArrayObject
      * @throws NoSuchArgumentException if the argument does not exist
      * @api
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         $translatedOffset = $this->validateArgumentExistence($offset);
         if ($translatedOffset === false) {
@@ -121,14 +122,16 @@ class Arguments extends \ArrayObject
      * @param string $dataType Name of one of the built-in data types
      * @param boolean $isRequired true if this argument should be marked as required
      * @param mixed $defaultValue Default value of the argument. Only makes sense if $isRequired==false
+     * @param bool $mapRequestBody If the request body should be mapped into this argument
      * @return Argument The new argument
      * @api
      */
-    public function addNewArgument($name, $dataType = 'string', $isRequired = true, $defaultValue = null)
+    public function addNewArgument($name, $dataType = 'string', $isRequired = true, $defaultValue = null, $mapRequestBody = false)
     {
         $argument = new Argument($name, $dataType);
         $argument->setRequired($isRequired);
         $argument->setDefaultValue($defaultValue);
+        $argument->setMapRequestBody($mapRequestBody);
 
         $this->addArgument($argument);
         return $argument;
@@ -254,6 +257,7 @@ class Arguments extends \ArrayObject
     {
         $results = new Result();
 
+        /* @var $argument Argument */
         foreach ($this as $argument) {
             $argumentValidationResults = $argument->getValidationResults();
             if ($argumentValidationResults === null) {

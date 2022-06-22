@@ -95,17 +95,17 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
      * @param RenderingContextInterface $renderingContext
      * @return boolean
      */
-    protected static function evaluateCondition($arguments = null, RenderingContextInterface $renderingContext)
+    protected static function evaluateCondition($arguments, RenderingContextInterface $renderingContext)
     {
         $objectManager = $renderingContext->getObjectManager();
         /** @var Context $securityContext */
         $securityContext = $objectManager->get(Context::class);
 
-        if ($securityContext != null && !$securityContext->canBeInitialized()) {
+        if ($securityContext !== null && !$securityContext->canBeInitialized()) {
             return false;
         }
         $privilegeManager = static::getPrivilegeManager($renderingContext);
-        return $privilegeManager->isPrivilegeTargetGranted($arguments['privilegeTarget'], $arguments['parameters']);
+        return $privilegeManager->isPrivilegeTargetGranted($arguments['privilegeTarget'], $arguments['parameters'] ?? []);
     }
 
     /**

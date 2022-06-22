@@ -27,17 +27,15 @@ class ClassReflection extends \ReflectionClass
     public function __construct($classNameOrObject)
     {
         $throwExceptionOnUnloadedClasses =
-            function ($className) {
-                throw new Exception\ClassLoadingForReflectionFailedException(sprintf('Required class "%s" could not be loaded properly for reflection.%2$s%2$sPossible reasons are:%2$s%2$s * Requiring non-existent classes%2$s * Using non-supported annotations%2$s * Class-/filename missmatch.%2$s%2$sThe "Neos.Flow.object.excludeClasses" setting can be used to skip classes from being reflected.', $className, chr(10)));
+            static function ($className) use ($classNameOrObject) {
+                throw Exception\ClassLoadingForReflectionFailedException::forClassName($className, $classNameOrObject);
             };
         spl_autoload_register($throwExceptionOnUnloadedClasses);
         try {
             parent::__construct($classNameOrObject);
-        } catch (Exception\ClassLoadingForReflectionFailedException $exception) {
+        } finally {
             spl_autoload_unregister($throwExceptionOnUnloadedClasses);
-            throw $exception;
         }
-        spl_autoload_unregister($throwExceptionOnUnloadedClasses);
     }
 
     /**
@@ -52,7 +50,7 @@ class ClassReflection extends \ReflectionClass
      *
      * @return MethodReflection Method reflection object of the constructor method
      */
-    public function getConstructor()
+    public function getConstructor(): MethodReflection
     {
         $parentConstructor = parent::getConstructor();
         return (!is_object($parentConstructor)) ? $parentConstructor : new MethodReflection($this->getName(), $parentConstructor->getName());
@@ -65,7 +63,7 @@ class ClassReflection extends \ReflectionClass
      *
      * @return array<ClassReflection> Class reflection objects of the properties in this class
      */
-    public function getInterfaces()
+    public function getInterfaces(): array
     {
         $extendedInterfaces = [];
         $interfaces = parent::getInterfaces();
@@ -83,7 +81,7 @@ class ClassReflection extends \ReflectionClass
      * @param string $name
      * @return MethodReflection Method reflection object of the named method
      */
-    public function getMethod($name)
+    public function getMethod($name): MethodReflection
     {
         return new MethodReflection($this->getName(), $name);
     }
@@ -93,10 +91,10 @@ class ClassReflection extends \ReflectionClass
      * that MethodReflection objects are returned instead of the
      * original ReflectionMethod instances.
      *
-     * @param integer $filter A filter mask
+     * @param integer|null $filter A filter mask
      * @return array<MethodReflection> Method reflection objects of the methods in this class
      */
-    public function getMethods($filter = null)
+    public function getMethods($filter = null): array
     {
         $extendedMethods = [];
 
@@ -112,9 +110,10 @@ class ClassReflection extends \ReflectionClass
      * that a ClassReflection object is returned instead of the
      * orginal ReflectionClass instance.
      *
-     * @return ClassReflection Reflection of the parent class - if any
+     * @return ClassReflection|false Reflection of the parent class - if any
      */
-    public function getParentClass()
+    #[\ReturnTypeWillChange]
+    public function getParentClass(): ClassReflection|false
     {
         $parentClass = parent::getParentClass();
         return ($parentClass === false) ? false : new ClassReflection($parentClass->getName());
@@ -128,7 +127,7 @@ class ClassReflection extends \ReflectionClass
      * @param integer $filter A filter mask
      * @return array<PropertyReflection> Property reflection objects of the properties in this class
      */
-    public function getProperties($filter = null)
+    public function getProperties($filter = null): array
     {
         $extendedProperties = [];
         $properties = ($filter === null ? parent::getProperties() : parent::getProperties($filter));
@@ -146,7 +145,7 @@ class ClassReflection extends \ReflectionClass
      * @param string $name Name of the property
      * @return PropertyReflection Property reflection object of the specified property in this class
      */
-    public function getProperty($name)
+    public function getProperty($name): PropertyReflection
     {
         return new PropertyReflection($this->getName(), $name);
     }
@@ -202,7 +201,7 @@ class ClassReflection extends \ReflectionClass
      * @see https://github.com/doctrine/doctrine2/commit/530c01b5e3ed7345cde564bd511794ac72f49b65
      * @return object
      */
-    public function newInstanceWithoutConstructor()
+    public function newInstanceWithoutConstructor(): object
     {
         $instance = parent::newInstanceWithoutConstructor();
 

@@ -62,13 +62,6 @@ class StorageObject implements ResourceMetaDataInterface
     protected $sha1;
 
     /**
-     * MD5 hash identifying this object's data
-     *
-     * @var string
-     */
-    protected $md5;
-
-    /**
      * A stream (or, before it is used the first time, a Closure which returns a stream) which can deliver the data of this Object
      *
      * @var \Closure|resource
@@ -181,27 +174,6 @@ class StorageObject implements ResourceMetaDataInterface
     public function getSha1()
     {
         return $this->sha1;
-    }
-
-    /**
-     * Returns the md5 hash of the content of this storage object
-     *
-     * @return string The MD5 hash
-     */
-    public function getMd5()
-    {
-        return $this->md5;
-    }
-
-    /**
-     * Sets the md5 hash of the content of this storage object
-     *
-     * @param string $md5 The MD5 hash
-     * @return void
-     */
-    public function setMd5($md5)
-    {
-        $this->md5 = $md5;
     }
 
     /**

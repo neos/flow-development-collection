@@ -34,7 +34,7 @@ class XliffFileProviderTest extends FunctionalTestCase
     /**
      * Initialize dependencies
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $cacheManager = $this->objectManager->get(CacheManager::class);
@@ -51,9 +51,9 @@ class XliffFileProviderTest extends FunctionalTestCase
         $mockPackageManager = $this->getMockBuilder(PackageManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $mockPackageManager->expects($this->any())
+        $mockPackageManager->expects(self::any())
             ->method('getFlowPackages')
-            ->will($this->returnValue($packages));
+            ->will(self::returnValue($packages));
         $this->inject($this->fileProvider, 'packageManager', $mockPackageManager);
     }
 
@@ -69,6 +69,7 @@ class XliffFileProviderTest extends FunctionalTestCase
             'de/BasePackage.Main.xlf' => 'Resources/Private/Translations/de/Main.xlf',
             'de/BasePackage.DependentMain.xlf' => 'Resources/Private/Translations/de/DependentMain.xlf',
             'de/BasePackage.GlobalOverride.xlf' => 'Resources/Private/Translations/de/GlobalOverride.xlf',
+            'de/BasePackage.MultipleFileItems.xlf' => 'Resources/Private/Translations/de/MultipleFileItems.xlf',
             'en/BasePackage.GlobalOverride.Global.xlf' => 'Resources/Private/GlobalTranslations/en/BasePackage.GlobalOverride.xlf'
         ]);
         $packages[$basePackage->getPackageKey()] = $basePackage;
@@ -115,7 +116,7 @@ class XliffFileProviderTest extends FunctionalTestCase
     public function fileProviderReturnsUnchangedContentForFileWithoutOverride()
     {
         $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:Unmerged', new Locale('de'));
-        $this->assertSame([
+        self::assertSame([
             'key1' => [
                 [
                     'source' => 'Source string',
@@ -131,7 +132,7 @@ class XliffFileProviderTest extends FunctionalTestCase
     public function fileProviderMergesOverrideFromLaterLoadedPackageDeclaredByOriginalAndProductName()
     {
         $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:Main', new Locale('de'));
-        $this->assertSame([
+        self::assertSame([
             'key1' => [
                 [
                     'source' => 'Source string',
@@ -147,7 +148,7 @@ class XliffFileProviderTest extends FunctionalTestCase
     public function fileProviderReturnsLaterLoadedPackageDeclarationByOriginalAndProductNameIfNoOriginalPresent()
     {
         $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:WithoutBase', new Locale('de'));
-        $this->assertSame([
+        self::assertSame([
             'key1' => [
                 [
                     'source' => 'Additional source string',
@@ -163,7 +164,7 @@ class XliffFileProviderTest extends FunctionalTestCase
     public function fileProviderDoesNotMergeOverrideFromEarlierLoadedPackageDeclaredByOriginalAndProductName()
     {
         $fileData = $this->fileProvider->getMergedFileData('Vendor.DependentPackage:Main', new Locale('de'));
-        $this->assertSame([
+        self::assertSame([
             'key1' => [
                 [
                     'source' => 'Source string',
@@ -180,7 +181,7 @@ class XliffFileProviderTest extends FunctionalTestCase
     {
         $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:GlobalOverride', new Locale('en'));
 
-        $this->assertSame([
+        self::assertSame([
             'key1' => [
                 [
                     'source' => 'Source string',
@@ -197,11 +198,28 @@ class XliffFileProviderTest extends FunctionalTestCase
     {
         $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:GlobalOverride', new Locale('de'));
 
-        $this->assertSame([
+        self::assertSame([
             'key1' => [
                 [
                     'source' => 'Source string',
                     'target' => 'Übersetzte Zeichenkette'
+                ]
+            ]
+        ], $fileData['translationUnits']);
+    }
+
+    /**
+     * @test
+     */
+    public function fileProviderMergesTranslationWithMultipleFileItems()
+    {
+        $fileData = $this->fileProvider->getMergedFileData('Vendor.BasePackage:MultipleFileItems', new Locale('de'));
+
+        self::assertSame([
+            'key3' => [
+                [
+                    'source' => 'Source string 3',
+                    'target' => 'Übersetzte Zeichenkette 3'
                 ]
             ]
         ], $fileData['translationUnits']);

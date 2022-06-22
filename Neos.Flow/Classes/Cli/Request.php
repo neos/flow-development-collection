@@ -13,14 +13,13 @@ namespace Neos\Flow\Cli;
 
 use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
-use Neos\Flow\Mvc\RequestInterface;
 
 /**
  * Represents a CLI request.
  *
  * @api
  */
-class Request implements RequestInterface
+class Request
 {
     /**
      * @var string
@@ -53,12 +52,6 @@ class Request implements RequestInterface
      * @var boolean
      */
     protected $dispatched = false;
-
-    /**
-     *
-     * @var array
-     */
-    protected $commandLineArguments;
 
     /**
      * Sets the dispatched flag
@@ -108,28 +101,6 @@ class Request implements RequestInterface
     }
 
     /**
-     * Returns the this request, as CLI request nesting is not supported.
-     *
-     * @return Request
-     * @api
-     */
-    public function getMainRequest(): Request
-    {
-        return $this;
-    }
-
-    /**
-     * Returns true, as CLI request nesting is not supported.
-     *
-     * @return boolean
-     * @api
-     */
-    public function isMainRequest(): bool
-    {
-        return true;
-    }
-
-    /**
      * Sets the name of the command contained in this request.
      *
      * Note that the command name must start with a lower case letter and is case sensitive.
@@ -174,7 +145,7 @@ class Request implements RequestInterface
      * @return void
      * @throws InvalidArgumentNameException
      */
-    public function setArgument(string $argumentName, $value)
+    public function setArgument(string $argumentName, $value): void
     {
         if ($argumentName === '') {
             throw new InvalidArgumentNameException('Invalid argument name.', 1300893885);

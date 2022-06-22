@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Annotations;
 
 /*
@@ -19,6 +21,7 @@ namespace Neos\Flow\Annotations;
  * @Annotation
  * @Target("METHOD")
  */
+#[\Attribute(\Attribute::TARGET_METHOD)]
 final class Signal
 {
 }

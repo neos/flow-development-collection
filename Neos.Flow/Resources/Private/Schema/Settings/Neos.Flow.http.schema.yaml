@@ -5,7 +5,7 @@ properties:
   'baseUri':
     type: [string, 'null']
     required: true
-  'chain':
+  'middlewares':
     type: dictionary
     required: true
     additionalProperties:
@@ -16,22 +16,7 @@ properties:
         additionalProperties: false
         properties:
           'position': [string, number]
-          'component': { type: string, format: class-name }
-          'componentOptions': { type: dictionary }
-          'chain':
-            -
-              type: 'null'
-            -
-              type: dictionary
-              additionalProperties:
-                type: dictionary
-                additionalProperties: false
-                properties:
-                  'position': [string, number]
-                  'component': { type: string, format: class-name }
-                  'componentOptions': { type: dictionary }
-                  'chain':
-                    type: dictionary
+          'middleware': { type: string, format: class-name }
   'trustedProxies':
     type: dictionary
     required: true
@@ -42,6 +27,9 @@ properties:
          type:
            -
              type: 'string'
+           -
+             # in case an env var is used but not set this will be false
+             type: 'boolean'
            -
              type: dictionary
              additionalProperties:
@@ -59,3 +47,17 @@ properties:
               'host': { type: string, required: true }
               'port': { type: string, required: true }
               'proto': { type: string, required: true }
+  'serverRequestDefaults':
+    type: dictionary
+    required: true
+    additionalProperties: false
+    properties:
+      'userAgent':
+        required: true
+        type: string
+      'scriptPath':
+        required: true
+        type: string
+      'protocolVersion':
+        required: true
+        type: string

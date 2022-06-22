@@ -30,7 +30,7 @@ class QueryTest extends FunctionalTestCase
     /**
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
@@ -68,8 +68,8 @@ class QueryTest extends FunctionalTestCase
         $serializedQuery = serialize($query);
         $unserializedQuery = unserialize($serializedQuery);
 
-        $this->assertEquals(1, $unserializedQuery->execute()->count());
-        $this->assertEquals([$testEntity1], $unserializedQuery->execute()->toArray());
+        self::assertEquals(1, $unserializedQuery->execute()->count());
+        self::assertEquals([$testEntity1], $unserializedQuery->execute()->toArray());
     }
 
     /**
@@ -109,8 +109,8 @@ class QueryTest extends FunctionalTestCase
 
         $serializedQuery = serialize($query);
         $unserializedQuery = unserialize($serializedQuery);
-        $this->assertEquals(1, $unserializedQuery->execute()->count());
-        $this->assertEquals([$testEntity1], $unserializedQuery->execute()->toArray());
+        self::assertEquals(1, $unserializedQuery->execute()->count());
+        self::assertEquals([$testEntity1], $unserializedQuery->execute()->toArray());
     }
 
     /**
@@ -137,7 +137,7 @@ class QueryTest extends FunctionalTestCase
 
         $query = new Query(Fixtures\TestEntity::class);
 
-        $this->assertEquals(3, $query->execute()->count());
+        self::assertEquals(3, $query->execute()->count());
     }
 
     /**
@@ -164,7 +164,7 @@ class QueryTest extends FunctionalTestCase
 
         $query = new Query(Fixtures\TestEntity::class);
 
-        $this->assertEquals(2, $query->setLimit(2)->execute()->count());
+        self::assertEquals(2, $query->setLimit(2)->execute()->count());
     }
 
     /**
@@ -191,7 +191,7 @@ class QueryTest extends FunctionalTestCase
 
         $query = new Query(Fixtures\TestEntity::class);
 
-        $this->assertEquals(1, $query->setOffset(2)->execute()->count());
+        self::assertEquals(1, $query->setOffset(2)->execute()->count());
     }
 
     /**
@@ -235,7 +235,7 @@ class QueryTest extends FunctionalTestCase
         $query = new Query(Fixtures\TestEntity::class);
         $entities = $query->matching($query->equals('subEntities.content', 'value'))->setDistinct()->setLimit(2)->execute()->toArray();
 
-        $this->assertEquals(2, count($entities));
+        self::assertEquals(2, count($entities));
     }
 
     /**
@@ -285,7 +285,7 @@ class QueryTest extends FunctionalTestCase
         $constraint = $query->logicalAnd($query->equals('subEntities.content', 'foo'), $query->equals('subEntities.someProperty', 'yup'));
         $entities = $query->matching($constraint)->execute()->toArray();
 
-        $this->assertEquals(1, count($entities));
+        self::assertEquals(1, count($entities));
     }
 
     /**
@@ -349,15 +349,15 @@ class QueryTest extends FunctionalTestCase
 
         $serializedQuery = serialize($query);
         $unserializedQuery = unserialize($serializedQuery);
-        $this->assertEquals(1, $unserializedQuery->execute()->count());
-        $this->assertEquals([$testEntity2], $unserializedQuery->execute()->toArray());
+        self::assertEquals(1, $unserializedQuery->execute()->count());
+        self::assertEquals([$testEntity2], $unserializedQuery->execute()->toArray());
     }
 
     protected function assertQueryEquals(Query $expected, Query $actual)
     {
-        $this->assertEquals($expected->getConstraint(), $actual->getConstraint());
-        $this->assertEquals($expected->getOrderings(), $actual->getOrderings());
-        $this->assertEquals($expected->getOffset(), $actual->getOffset());
-        $this->assertEquals($expected->getLimit(), $actual->getLimit());
+        self::assertEquals($expected->getConstraint(), $actual->getConstraint());
+        self::assertEquals($expected->getOrderings(), $actual->getOrderings());
+        self::assertEquals($expected->getOffset(), $actual->getOffset());
+        self::assertEquals($expected->getLimit(), $actual->getLimit());
     }
 }

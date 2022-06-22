@@ -31,7 +31,7 @@ class AmbiguousCommandIdentifierException extends CommandException
      * @param array<\Neos\Flow\Cli\Command> $matchingCommands Commands that matched the command identifier
      * @see \Exception
      */
-    public function __construct($message = '', $code = 0, \Exception $previousException = null, array $matchingCommands)
+    public function __construct($message, $code, ?\Exception $previousException, array $matchingCommands)
     {
         $this->matchingCommands = $matchingCommands;
         parent::__construct($message, $code, $previousException);

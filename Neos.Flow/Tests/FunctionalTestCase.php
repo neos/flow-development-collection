@@ -14,8 +14,10 @@ namespace Neos\Flow\Tests;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\ComponentContext;
-use Neos\Flow\Http\Request;
+use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
+use Neos\Http\Factories\ServerRequestFactory;
+use Neos\Http\Factories\UriFactory;
+use Psr\Http\Message\ServerRequestInterface as HttpRequest;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
@@ -110,6 +112,11 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     protected $policyService;
 
     /**
+     * @var TokenAndProviderFactory
+     */
+    protected $tokenAndProviderFactory;
+
+    /**
      * @var \Neos\Flow\Security\Authentication\Provider\TestingProvider
      */
     protected $testingProvider;
@@ -119,7 +126,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      *
      * @return void
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$bootstrap = \Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Core\Bootstrap::class);
         self::setupSuperGlobals();
@@ -133,7 +140,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = self::$bootstrap->getObjectManager();
 
@@ -144,6 +151,9 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
         }
 
+        $privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
+        $privilegeManager->reset();
+
         if ($this->testableSecurityEnabled === true || static::$testablePersistenceEnabled === true) {
             if (is_callable([self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class), 'compile'])) {
                 $result = self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->compile();
@@ -153,7 +163,6 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             }
             $this->persistenceManager = $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
         } else {
-            $privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
             $privilegeManager->setOverrideDecision(true);
         }
 
@@ -187,10 +196,10 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
 
             $this->authenticationManager = $this->objectManager->get(\Neos\Flow\Security\Authentication\AuthenticationProviderManager::class);
 
-            $this->testingProvider = $this->objectManager->get(\Neos\Flow\Security\Authentication\Provider\TestingProvider::class);
-            $this->testingProvider->setName('TestingProvider');
+            $this->tokenAndProviderFactory = $this->objectManager->get(TokenAndProviderFactory::class);
+            $this->testingProvider = $this->tokenAndProviderFactory->getProviders()['TestingProvider'];
 
-            $this->registerRoute('functionaltestroute', 'typo3/flow/test', [
+            $this->registerRoute('functionaltestroute', 'neos/flow/test', [
                 '@package' => 'Neos.Flow',
                 '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
                 '@controller' => 'Standard',
@@ -209,12 +218,12 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     }
 
     /**
-     * @param Request $httpRequest
+     * @param HttpRequest $httpRequest
      * @return ActionRequest
      */
-    protected function route(Request $httpRequest)
+    protected function route(HttpRequest $httpRequest)
     {
-        $actionRequest = new ActionRequest($httpRequest);
+        $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $matchResults = $this->router->route(new RouteContext($httpRequest, RouteParameters::createEmpty()));
         if ($matchResults !== null) {
             $requestArguments = $actionRequest->getArguments();
@@ -234,7 +243,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      *
      * @return void
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->tearDownSecurity();
 
@@ -377,10 +386,8 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $_FILES = [];
         $_SERVER = [
             'REDIRECT_FLOW_CONTEXT' => 'Development',
-            'REDIRECT_FLOW_REWRITEURLS' => '1',
             'REDIRECT_STATUS' => '200',
             'FLOW_CONTEXT' => 'Testing',
-            'FLOW_REWRITEURLS' => '1',
             'HTTP_HOST' => 'localhost',
             'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/534.52.7 (KHTML, like Gecko) Version/5.1.2 Safari/534.52.7',
             'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -407,7 +414,8 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             'REQUEST_URI' => '',
             'SCRIPT_NAME' => '/index.php',
             'PHP_SELF' => '/index.php',
-            'REQUEST_TIME' => 1326472534,
+            'REQUEST_TIME' => $_SERVER['REQUEST_TIME'] ?? null,
+            'REQUEST_TIME_FLOAT' => $_SERVER['REQUEST_TIME_FLOAT'] ?? null,
         ];
     }
 
@@ -424,10 +432,12 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $this->router = $this->browser->getRequestEngine()->getRouter();
         $this->router->setRoutesConfiguration(null);
 
-        $requestHandler = self::$bootstrap->getActiveRequestHandler();
-        $request = Request::create(new \Neos\Flow\Http\Uri('http://localhost/typo3/flow/test'));
-        $componentContext = new ComponentContext($request, new \Neos\Flow\Http\Response());
-        $requestHandler->setComponentContext($componentContext);
+        $serverRequestFactory = new ServerRequestFactory(new UriFactory());
+        $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost/neos/flow/test');
+
+        /** @var FunctionalTestRequestHandler $activeRequestHandler */
+        $activeRequestHandler = self::$bootstrap->getActiveRequestHandler();
+        $activeRequestHandler->setHttpRequest($request);
     }
 
     /**

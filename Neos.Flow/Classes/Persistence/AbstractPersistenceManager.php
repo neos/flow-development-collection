@@ -11,8 +11,8 @@ namespace Neos\Flow\Persistence;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Utility\ObjectAccess;
-use Neos\Flow\Persistence\Exception as PersistenceException;
 
 /**
  * The Flow Persistence Manager base class
@@ -37,17 +37,10 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
     protected $hasUnpersistedChanges = false;
 
     /**
-     * @var \SplObjectStorage
+     * @Flow\Inject
+     * @var AllowedObjectsContainer
      */
     protected $allowedObjects;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->allowedObjects = new \SplObjectStorage();
-    }
 
     /**
      * Injects the Flow settings, the persistence part is kept
@@ -56,7 +49,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * @param array $settings
      * @return void
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings['persistence'];
     }
@@ -66,7 +59,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      *
      * @return void
      */
-    public function clearState()
+    public function clearState(): void
     {
         $this->newObjects = [];
     }
@@ -84,24 +77,10 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * @param Aspect\PersistenceMagicInterface $object The new object to register
      * @return void
      */
-    public function registerNewObject(Aspect\PersistenceMagicInterface $object)
+    public function registerNewObject(Aspect\PersistenceMagicInterface $object): void
     {
         $identifier = ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
         $this->newObjects[$identifier] = $object;
-    }
-
-    /**
-     * Adds the given object to a list of allowed objects which may be persisted even if the current HTTP request
-     * is considered a "safe" request.
-     *
-     * @param object $object The object
-     * @return void
-     * @api
-     * @deprecated Use allowObject() instead. See https://github.com/neos/flow-development-collection/pull/2024
-     */
-    public function whitelistObject($object)
-    {
-        $this->allowObject($object);
     }
 
     /**
@@ -118,33 +97,13 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
     }
 
     /**
-     * Checks if the given object is allowed and if not, throws an exception
-     *
-     * @param object $object
-     * @return void
-     * @throws \Neos\Flow\Persistence\Exception
-     */
-    protected function throwExceptionIfObjectIsNotAllowed($object)
-    {
-        if (!$this->allowedObjects->contains($object)) {
-            $message = 'Detected modified or new objects (' . get_class($object) . ', uuid:' . $this->getIdentifierByObject($object) . ') to be persisted which is not allowed for "safe requests"' . chr(10) .
-                    'According to the HTTP 1.1 specification, so called "safe request" (usually GET or HEAD requests)' . chr(10) .
-                    'should not change your data on the server side and should be considered read-only. If you need to add,' . chr(10) .
-                    'modify or remove data, you should use the respective request methods (POST, PUT, DELETE and PATCH).' . chr(10) . chr(10) .
-                    'If you need to store some data during a safe request (for example, logging some data for your analytics),' . chr(10) .
-                    'you are still free to call PersistenceManager->persistAll() manually.';
-            throw new PersistenceException($message, 1377788621);
-        }
-    }
-
-    /**
      * Converts the given object into an array containing the identity of the domain object.
      *
      * @param object $object The object to be converted
      * @return array The identity array in the format array('__identity' => '...')
      * @throws Exception\UnknownObjectException if the given object is not known to the Persistence Manager
      */
-    public function convertObjectToIdentityArray($object)
+    public function convertObjectToIdentityArray($object): array
     {
         $identifier = $this->getIdentifierByObject($object);
         if ($identifier === null) {
@@ -161,7 +120,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * @return array The modified array without objects
      * @throws Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
      */
-    public function convertObjectsToIdentityArrays(array $array)
+    public function convertObjectsToIdentityArrays(array $array): array
     {
         foreach ($array as $key => $value) {
             if (is_array($value)) {
@@ -183,7 +142,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      *
      * @return boolean
      */
-    public function hasUnpersistedChanges()
+    public function hasUnpersistedChanges(): bool
     {
         return $this->hasUnpersistedChanges;
     }

@@ -25,12 +25,13 @@ use Psr\Log\LoggerInterface;
 class LoggingAspect
 {
     /**
+     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
      * @var LoggerInterface
      */
     protected $logger;
 
     /**
-     * Injects the (system) logger based on PSR-3.
+     * Injects the (security) logger based on PSR-3.
      *
      * @param LoggerInterface $logger
      * @return void
@@ -76,11 +77,11 @@ class LoggingAspect
             } elseif ($inactivityInSeconds < 120) {
                 $inactivityMessage = sprintf('%s seconds', $inactivityInSeconds);
             } elseif ($inactivityInSeconds < 3600) {
-                $inactivityMessage = sprintf('%s minutes', intval($inactivityInSeconds / 60));
+                $inactivityMessage = sprintf('%s minutes', (int)($inactivityInSeconds / 60));
             } elseif ($inactivityInSeconds < 7200) {
                 $inactivityMessage = 'more than an hour';
             } else {
-                $inactivityMessage = sprintf('more than %s hours', intval($inactivityInSeconds / 3600));
+                $inactivityMessage = sprintf('more than %s hours', (int)($inactivityInSeconds / 3600));
             }
             $this->logger->debug(sprintf('%s: Resumed session with id %s which was inactive for %s. (%ss)', $this->getClassName($joinPoint), $joinPoint->getProxy()->getId(), $inactivityMessage, $inactivityInSeconds));
         }

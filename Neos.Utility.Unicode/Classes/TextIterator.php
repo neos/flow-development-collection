@@ -118,7 +118,7 @@ class TextIterator implements \Iterator
      *
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         $this->previousElement = $this->getCurrentElement();
         $this->iteratorCacheIterator->next();
@@ -130,7 +130,7 @@ class TextIterator implements \Iterator
      *
      * @return mixed Key (number) of the current element
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->iteratorCacheIterator->key();
     }
@@ -153,7 +153,7 @@ class TextIterator implements \Iterator
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->iteratorCacheIterator->rewind();
     }
@@ -336,7 +336,7 @@ class TextIterator implements \Iterator
      * Helper function to do the splitting by character
      *
      */
-    private function parseSubjectByCharacter()
+    private function parseSubjectByCharacter(): void
     {
         $i = 0;
         foreach (preg_split('//u', $this->subject) as $currentCharacter) {

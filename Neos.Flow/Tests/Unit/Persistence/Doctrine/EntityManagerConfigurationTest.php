@@ -25,8 +25,8 @@ class EntityManagerConfigurationTest extends UnitTestCase
     {
         $configuration = $this->buildAndPrepareDqlCustomStringConfiguration();
 
-        $this->assertEquals('Some\Foo\StringClass', $configuration->getCustomStringFunction('FOOSTRING'));
-        $this->assertEquals('Some\Bar\StringClass', $configuration->getCustomStringFunction('BARSTRING'));
+        self::assertEquals('Some\Foo\StringClass', $configuration->getCustomStringFunction('FOOSTRING'));
+        self::assertEquals('Some\Bar\StringClass', $configuration->getCustomStringFunction('BARSTRING'));
     }
 
     /**
@@ -36,8 +36,8 @@ class EntityManagerConfigurationTest extends UnitTestCase
     {
         $configuration = $this->buildAndPrepareDqlCustomStringConfiguration();
 
-        $this->assertEquals('Some\Foo\NumericClass', $configuration->getCustomNumericFunction('FOONUMERIC'));
-        $this->assertEquals('Some\Bar\NumericClass', $configuration->getCustomNumericFunction('BARNUMERIC'));
+        self::assertEquals('Some\Foo\NumericClass', $configuration->getCustomNumericFunction('FOONUMERIC'));
+        self::assertEquals('Some\Bar\NumericClass', $configuration->getCustomNumericFunction('BARNUMERIC'));
     }
 
     /**
@@ -47,8 +47,8 @@ class EntityManagerConfigurationTest extends UnitTestCase
     {
         $configuration = $this->buildAndPrepareDqlCustomStringConfiguration();
 
-        $this->assertEquals('Some\Foo\DateTimeClass', $configuration->getCustomDatetimeFunction('FOODATETIME'));
-        $this->assertEquals('Some\Bar\DateTimeClass', $configuration->getCustomDatetimeFunction('BARDATETIME'));
+        self::assertEquals('Some\Foo\DateTimeClass', $configuration->getCustomDatetimeFunction('FOODATETIME'));
+        self::assertEquals('Some\Bar\DateTimeClass', $configuration->getCustomDatetimeFunction('BARDATETIME'));
     }
 
     /**

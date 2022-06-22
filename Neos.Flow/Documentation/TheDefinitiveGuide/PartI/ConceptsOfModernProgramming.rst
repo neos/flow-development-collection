@@ -148,7 +148,7 @@ identity property. In an internet forum, the e-mail address is often
 used as identity property for people, while when implementing an
 e-government application, one might use the passport ID to uniquely
 identify citizens (which nobody would use in the web forum because
-its data is too sensible).
+its data is too sensitive).
 
 In case the developer does not specify an identity property,
 the framework assigns a universally unique identifier (UUID) to the

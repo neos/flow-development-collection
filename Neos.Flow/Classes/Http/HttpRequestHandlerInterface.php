@@ -12,6 +12,7 @@ namespace Neos\Flow\Http;
  */
 
 use Neos\Flow\Core\RequestHandlerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * The interface for a request handler which handles and works with HTTP requests
@@ -23,16 +24,7 @@ interface HttpRequestHandlerInterface extends RequestHandlerInterface
     /**
      * Returns the currently processed HTTP request
      *
-     * @return Request
-     * @api
+     * @return ServerRequestInterface
      */
     public function getHttpRequest();
-
-    /**
-     * Returns the HTTP response corresponding to the currently handled request
-     *
-     * @return Response
-     * @api
-     */
-    public function getHttpResponse();
 }

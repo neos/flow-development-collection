@@ -18,7 +18,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * An object argument with validation
  */
-class TestObjectArgument
+class TestObjectArgument implements TestObjectInterface
 {
     /**
      * @var string
@@ -44,9 +44,16 @@ class TestObjectArgument
      */
     protected $related;
 
+    /**
+     * @var NestedObject
+     * @Flow\IgnoreValidation
+     */
+    protected $nested;
+
     public function __construct()
     {
         $this->collection = new ArrayCollection();
+        $this->nested = new NestedObject();
     }
 
     /**

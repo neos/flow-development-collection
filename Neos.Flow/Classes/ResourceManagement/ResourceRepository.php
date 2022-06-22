@@ -72,7 +72,7 @@ class ResourceRepository extends Repository
      * @param object $object
      * @throws IllegalObjectTypeException
      */
-    public function add($object)
+    public function add($object): void
     {
         $this->persistenceManager->allowObject($object);
         if ($this->removedResources->contains($object)) {
@@ -90,7 +90,7 @@ class ResourceRepository extends Repository
      * @param object $object
      * @return void
      */
-    public function remove($object)
+    public function remove($object): void
     {
         // Intercept a second call for the same PersistentResource object because it might cause an endless loop caused by
         // the ResourceManager's deleteResource() method which also calls this remove() function:

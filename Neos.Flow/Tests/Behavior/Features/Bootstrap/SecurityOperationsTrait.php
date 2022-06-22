@@ -1,9 +1,7 @@
 <?php
 namespace Neos\Flow\Tests\Behavior\Features\Bootstrap;
 
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Exception;
-use Neos\Flow\Http\Request;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -19,6 +17,7 @@ use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController;
 use Neos\Utility\Arrays;
 use PHPUnit\Framework\Assert;
+use Psr\Http\Message\ServerRequestFactoryInterface;
 
 /**
  * A trait with shared step definitions for testing compile time security privilege types
@@ -52,6 +51,11 @@ trait SecurityOperationsTrait
      * @var AuthenticationProviderManager
      */
     protected $authenticationManager;
+
+    /**
+     * @var Security\Authentication\TokenAndProviderFactoryInterface
+     */
+    protected $tokenAndProviderFactory;
 
     /**
      * @var PolicyService
@@ -90,11 +94,6 @@ trait SecurityOperationsTrait
         self::$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy.yaml';
         file_put_contents(self::$testingPolicyPathAndFilename, $string->getRaw());
 
-        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
-        $configurations = ObjectAccess::getProperty($configurationManager, 'configurations', true);
-        unset($configurations[ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_POLICY]);
-        ObjectAccess::setProperty($configurationManager, 'configurations', $configurations, true);
-
         $policyService = $this->objectManager->get(PolicyService::class);
         ObjectAccess::setProperty($policyService, 'initialized', false, true);
     }
@@ -105,7 +104,7 @@ trait SecurityOperationsTrait
      */
     public static function cleanUpSecurity()
     {
-        if (file_exists(self::$testingPolicyPathAndFilename)) {
+        if (self::$testingPolicyPathAndFilename !== null && file_exists(self::$testingPolicyPathAndFilename)) {
             unlink(self::$testingPolicyPathAndFilename);
         }
     }
@@ -210,17 +209,17 @@ trait SecurityOperationsTrait
         $this->policyService = $this->objectManager->get(PolicyService::class);
         $this->accountRepository = $this->objectManager->get(Security\AccountRepository::class);
         $this->authenticationManager = $this->objectManager->get(AuthenticationProviderManager::class);
+        $this->tokenAndProviderFactory = $this->objectManager->get(Security\Authentication\TokenAndProviderFactoryInterface::class);
 
         // Making sure providers and tokens were actually build, so the singleton TestingProvider exists.
-        $this->authenticationManager->getProviders();
+        $this->tokenAndProviderFactory->getProviders();
 
-        $this->testingProvider = $this->objectManager->get(TestingProvider::class);
-        $this->testingProvider->setName('TestingProvider');
+        $this->testingProvider = $this->tokenAndProviderFactory->getProviders()['TestingProvider'];
 
         $this->securityContext = $this->objectManager->get(Security\Context::class);
         $this->securityContext->clearContext();
-        $httpRequest = Request::createFromEnvironment();
-        $this->mockActionRequest = new ActionRequest($httpRequest);
+        $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost/');
+        $this->mockActionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $this->mockActionRequest->setControllerObjectName(AuthenticationController::class);
         $this->securityContext->setRequest($this->mockActionRequest);
 

@@ -23,11 +23,10 @@ use Psr\Log\LoggerInterface;
 class XliffReader
 {
     /**
-     * @Flow\Inject
+     * @Flow\Inject(name="Neos.Flow:I18nLogger")
      * @var LoggerInterface
      */
     protected $i18nLogger;
-
 
     /**
      * @param string $sourcePath
@@ -50,9 +49,9 @@ class XliffReader
             $iterator($reader, $offset, $version);
             while ($reader->next()) {
                 if ($this->isFileNode($reader)) {
+                    $offset++;
                     $iterator($reader, $offset, $version);
                 }
-                $offset++;
             }
         } else {
             $this->i18nLogger->info('Given source "' . $sourcePath . '" is not a valid XLIFF file', LogEnvironment::fromMethodName(__METHOD__));

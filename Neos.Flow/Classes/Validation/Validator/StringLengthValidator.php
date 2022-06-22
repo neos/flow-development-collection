@@ -26,7 +26,8 @@ class StringLengthValidator extends AbstractValidator
      */
     protected $supportedOptions = [
         'minimum' => [0, 'Minimum length for a valid string', 'integer'],
-        'maximum' => [PHP_INT_MAX, 'Maximum length for a valid string', 'integer']
+        'maximum' => [PHP_INT_MAX, 'Maximum length for a valid string', 'integer'],
+        'ignoreHtml' => [false, 'If true, HTML tags will be stripped before counting the characters', 'boolean'],
     ];
 
     /**
@@ -50,11 +51,15 @@ class StringLengthValidator extends AbstractValidator
                 $this->addError('The given object could not be converted to a string.', 1238110957);
                 return;
             }
+            $value = $value->__toString();
         } elseif (!is_string($value)) {
             $this->addError('The given value was not a valid string.', 1269883975);
             return;
         }
 
+        if (isset($this->options['ignoreHtml']) && $this->options['ignoreHtml'] === true) {
+            $value = strip_tags($value);
+        }
         $stringLength = Unicode\Functions::strlen($value);
         $isValid = true;
         if ($stringLength < $this->options['minimum']) {

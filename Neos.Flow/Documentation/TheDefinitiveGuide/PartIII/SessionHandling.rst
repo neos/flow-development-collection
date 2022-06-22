@@ -32,7 +32,7 @@ As an example, when building a shopping basket, the class could look as follows:
 		/**
 		 * @param string $item
 		 * @return void
-		 * @Flow\Session(autoStart = TRUE)
+		 * @Flow\Session(autoStart = true)
 		 */
 		public function addItem($item) {
 			$this->items[] = $item;
@@ -52,7 +52,7 @@ In the above example
   singleton*. This ``ShoppingBasket`` can now be injected where it is needed using *Dependency
   Injection*.
 * We only want to start a session when the first element is added to the shopping basket.
-  For this the addItem() method needs to be annotated with ``@Flow\Session(autoStart = TRUE)``.
+  For this the addItem() method needs to be annotated with ``@Flow\Session(autoStart = true)``.
 
 When a user browses the website, the following then happens:
 
@@ -61,7 +61,7 @@ When a user browses the website, the following then happens:
   newly initialized.
 
 * As soon as the user adds something to the shopping basket, ``addItem()`` is called.
-  Because this is annotated with ``@Flow\Session(autoStart = TRUE)``, a new PHP session
+  Because this is annotated with ``@Flow\Session(autoStart = true)``, a new PHP session
   is started, and the ShoppingBasket is placed into the session.
 
 * As the user continues to browse the website, the ``ShoppingBasket`` is being fetched
@@ -69,7 +69,7 @@ When a user browses the website, the following then happens:
   from the session.
 
 
-.. admonition:: Why is ``@Flow\Session(autoStart = TRUE)`` necessary?
+.. admonition:: Why is ``@Flow\Session(autoStart = true)`` necessary?
 
 	If Flow did not have this annotation, there would be no way for it to determine
 	when a session must be started. Thus, every user browsing the website would

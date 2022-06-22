@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  */
 
 use Neos\Flow\Reflection\ClassSchema;
+use Neos\Flow\Reflection\Exception\ClassSchemaConstraintViolationException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -31,9 +32,9 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('a', 'string');
         $classSchema->addProperty('b', 'integer');
 
-        $this->assertTrue($classSchema->hasProperty('a'));
-        $this->assertTrue($classSchema->hasProperty('b'));
-        $this->assertFalse($classSchema->hasProperty('c'));
+        self::assertTrue($classSchema->hasProperty('a'));
+        self::assertTrue($classSchema->hasProperty('b'));
+        self::assertFalse($classSchema->hasProperty('c'));
     }
 
     /**
@@ -42,9 +43,9 @@ class ClassSchemaTest extends UnitTestCase
     public function getPropertiesReturnsAddedProperties()
     {
         $expectedProperties = [
-            'a' => ['type' => 'string', 'elementType' => null, 'lazy' => false, 'transient' => false],
-            'b' => ['type' => 'Neos\Flow\SomeObject', 'elementType' => null, 'lazy' => true, 'transient' => false],
-            'c' => ['type' => 'Neos\Flow\SomeOtherObject', 'elementType' => null, 'lazy' => true, 'transient' => true]
+            'a' => ['type' => 'string', 'elementType' => null, 'nullable' => false, 'lazy' => false, 'transient' => false],
+            'b' => ['type' => 'Neos\Flow\SomeObject', 'elementType' => null, 'nullable' => false, 'lazy' => true, 'transient' => false],
+            'c' => ['type' => 'Neos\Flow\SomeOtherObject', 'elementType' => null, 'nullable' => false, 'lazy' => true, 'transient' => true]
         ];
 
         $classSchema = new ClassSchema('SomeClass');
@@ -52,7 +53,7 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('b', 'Neos\Flow\SomeObject', true);
         $classSchema->addProperty('c', 'Neos\Flow\SomeOtherObject', true, true);
 
-        $this->assertSame($expectedProperties, $classSchema->getProperties());
+        self::assertSame($expectedProperties, $classSchema->getProperties());
     }
 
     /**
@@ -64,8 +65,8 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('a', 'Neos\Flow\SomeObject');
         $classSchema->addProperty('b', 'Neos\Flow\SomeObject', true);
 
-        $this->assertFalse($classSchema->isPropertyLazy('a'));
-        $this->assertTrue($classSchema->isPropertyLazy('b'));
+        self::assertFalse($classSchema->isPropertyLazy('a'));
+        self::assertTrue($classSchema->isPropertyLazy('b'));
     }
 
     /**
@@ -77,16 +78,16 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('a', 'Neos\Flow\SomeObject');
         $classSchema->addProperty('b', 'Neos\Flow\SomeObject', false, true);
 
-        $this->assertFalse($classSchema->isPropertyTransient('a'));
-        $this->assertTrue($classSchema->isPropertyTransient('b'));
+        self::assertFalse($classSchema->isPropertyTransient('a'));
+        self::assertTrue($classSchema->isPropertyTransient('b'));
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function markAsIdentityPropertyRejectsUnknownProperties()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $classSchema = new ClassSchema('SomeClass');
 
         $classSchema->markAsIdentityProperty('unknownProperty');
@@ -94,10 +95,10 @@ class ClassSchemaTest extends UnitTestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function markAsIdentityPropertyRejectsLazyLoadedProperties()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $classSchema = new ClassSchema('SomeClass');
         $classSchema->addProperty('lazyProperty', 'Neos\Flow\SomeObject', true);
 
@@ -115,7 +116,7 @@ class ClassSchemaTest extends UnitTestCase
 
         $classSchema->markAsIdentityProperty('a');
 
-        $this->assertSame(['a' => 'string'], $classSchema->getIdentityProperties());
+        self::assertSame(['a' => 'string'], $classSchema->getIdentityProperties());
     }
 
     /**
@@ -139,7 +140,14 @@ class ClassSchemaTest extends UnitTestCase
             ['\Some\Object'],
             ['SomeObject'],
             ['array<string>'],
-            ['array<Neos\Flow\Baz>']
+            ['array<Neos\Flow\Baz>'],
+            ['?string'],
+            ['null|string'],
+            ['string|null'],
+            ['?\Some\Object'],
+            ['\Some\Object|null'],
+            ['?array<Neos\Flow\Baz>'],
+            ['null|array<Neos\Flow\Baz>']
         ];
     }
 
@@ -168,10 +176,10 @@ class ClassSchemaTest extends UnitTestCase
     /**
      * @dataProvider invalidPropertyTypes()
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function addPropertyRejectsInvalidPropertyTypes($propertyType)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $classSchema = new ClassSchema('SomeClass');
         $classSchema->addProperty('a', $propertyType);
     }
@@ -187,16 +195,16 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('a', 'array<\Neos\Flow\Foo>');
 
         $properties = $classSchema->getProperties();
-        $this->assertEquals('array', $properties['a']['type']);
-        $this->assertEquals('Neos\Flow\Foo', $properties['a']['elementType']);
+        self::assertEquals('array', $properties['a']['type']);
+        self::assertEquals('Neos\Flow\Foo', $properties['a']['elementType']);
     }
 
     /**
      * @test
-     * @expectedException \Neos\Flow\Reflection\Exception\ClassSchemaConstraintViolationException
      */
     public function markAsIdentityPropertyThrowsExceptionForValueObjects()
     {
+        $this->expectException(ClassSchemaConstraintViolationException::class);
         $classSchema = new ClassSchema('SomeClass');
         $classSchema->setModelType(ClassSchema::MODELTYPE_VALUEOBJECT);
         $classSchema->markAsIdentityProperty('foo');
@@ -213,12 +221,12 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->addProperty('bar', 'string');
         $classSchema->markAsIdentityProperty('bar');
         $classSchema->setRepositoryClassName('Some\Repository');
-        $this->assertSame(['bar' => 'string'], $classSchema->getIdentityProperties());
+        self::assertSame(['bar' => 'string'], $classSchema->getIdentityProperties());
 
         $classSchema->setModelType(ClassSchema::MODELTYPE_VALUEOBJECT);
 
-        $this->assertSame([], $classSchema->getIdentityProperties());
-        $this->assertFalse($classSchema->isAggregateRoot());
+        self::assertSame([], $classSchema->getIdentityProperties());
+        self::assertFalse($classSchema->isAggregateRoot());
     }
 
     /**
@@ -243,6 +251,31 @@ class ClassSchemaTest extends UnitTestCase
     {
         $classSchema = new ClassSchema('SomeClass');
         $classSchema->addProperty('testProperty', $type);
-        $this->assertTrue($classSchema->isMultiValuedProperty('testProperty'));
+        self::assertTrue($classSchema->isMultiValuedProperty('testProperty'));
+    }
+
+    /**
+     * @return array
+     */
+    public function nullableTypes()
+    {
+        return [
+            ['?string'],
+            ['integer|null'],
+            ['null|array'],
+            ['Doctrine\Common\Collections\ArrayCollection|null']
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider nullableTypes
+     * @param string $type
+     */
+    public function correctlyReturnsNullabilityForProperties($type)
+    {
+        $classSchema = new ClassSchema('SomeClass');
+        $classSchema->addProperty('testProperty', $type);
+        self::assertTrue($classSchema->isPropertyNullable('testProperty'));
     }
 }

@@ -15,7 +15,7 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Psr\Http\Message\UploadedFileInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error as FlowError;
-use Neos\Flow\Http\FlowUploadedFile;
+use Neos\Http\Factories\FlowUploadedFile;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
@@ -113,6 +113,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected $persistenceManager;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -228,7 +229,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected function handleHashAndData(array $source, PropertyMappingConfigurationInterface $configuration = null)
     {
         $hash = null;
-        $resource = false;
+        $resource = null;
         $givenResourceIdentity = null;
         if (isset($source['__identity'])) {
             $givenResourceIdentity = $source['__identity'];
@@ -252,7 +253,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
         }
         if ($resource === null) {
             $collectionName = $source['collectionName'] ?? $this->getCollectionName($source, $configuration);
-            if (isset($source['data'])) {
+            if (isset($source['data']) && isset($source['filename'])) {
                 $resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
             } elseif ($hash !== null) {
                 $resource = $this->resourceManager->importResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
@@ -281,7 +282,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     {
         if ($source instanceof FlowUploadedFile && $source->getError() === UPLOAD_ERR_NO_FILE && $source->getOriginallySubmittedResource() !== null) {
             $identifier = is_array($source->getOriginallySubmittedResource()) ? $source->getOriginallySubmittedResource()['__identity'] : $source->getOriginallySubmittedResource();
-            /* @var $resource PersistentResource|null */
+            /** @var PersistentResource|null $resource */
             $resource = $this->persistenceManager->getObjectByIdentifier($identifier, PersistentResource::class);
             return $resource;
         }
