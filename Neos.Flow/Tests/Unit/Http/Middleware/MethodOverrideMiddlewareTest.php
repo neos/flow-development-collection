@@ -68,12 +68,12 @@ class MethodOverrideMiddlewareTest extends UnitTestCase
     {
         $this->mockRequest->method('getMethod')->willReturn($method);
         $this->mockRequest->method('getParsedBody')->willReturn($parsedBody);
-        $this->mockRequest->method('hasHeader')->willReturnCallback(fn($header) => isset($headers[$header]));
-        $this->mockRequest->method('getHeaderLine')->willReturnCallback(fn($header) => $headers[$header]);
+        $this->mockRequest->method('hasHeader')->willReturnCallback(fn ($header) => isset($headers[$header]));
+        $this->mockRequest->method('getHeaderLine')->willReturnCallback(fn ($header) => $headers[$header]);
 
         $mockAlteredRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockRequest->expects(self::once())->method('withMethod')->with($expectedMethod)->willReturn($mockAlteredRequest);
-        $this->mockRequestHandler->expects(self::once())->method('handle')->willReturnCallback(function($request) use ($mockAlteredRequest) {
+        $this->mockRequestHandler->expects(self::once())->method('handle')->willReturnCallback(function ($request) use ($mockAlteredRequest) {
             self::assertSame($request, $mockAlteredRequest);
             return $this->mockResponse;
         });
@@ -96,11 +96,11 @@ class MethodOverrideMiddlewareTest extends UnitTestCase
     {
         $this->mockRequest->method('getMethod')->willReturn($method);
         $this->mockRequest->method('getParsedBody')->willReturn($parsedBody);
-        $this->mockRequest->method('hasHeader')->willReturnCallback(fn($header) => isset($headers[$header]));
-        $this->mockRequest->method('getHeaderLine')->willReturnCallback(fn($header) => $headers[$header]);
+        $this->mockRequest->method('hasHeader')->willReturnCallback(fn ($header) => isset($headers[$header]));
+        $this->mockRequest->method('getHeaderLine')->willReturnCallback(fn ($header) => $headers[$header]);
 
         $this->mockRequest->expects(self::never())->method('withMethod');
-        $this->mockRequestHandler->expects(self::once())->method('handle')->willReturnCallback(function($request) {
+        $this->mockRequestHandler->expects(self::once())->method('handle')->willReturnCallback(function ($request) {
             self::assertSame($request, $this->mockRequest);
             return $this->mockResponse;
         });

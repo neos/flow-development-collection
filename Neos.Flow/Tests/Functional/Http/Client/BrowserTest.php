@@ -97,5 +97,4 @@ class BrowserTest extends FunctionalTestCase
         $response = $this->browser->request('http://localhost/test/http/request/method', 'POST', ['__method' => 'DELETE']);
         self::assertSame('DELETE', $response->getBody()->getContents());
     }
-
 }
