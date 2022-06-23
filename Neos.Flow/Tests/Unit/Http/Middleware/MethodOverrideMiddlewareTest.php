@@ -21,7 +21,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 class MethodOverrideMiddlewareTest extends UnitTestCase
 {
 
-    private MethodOverrideMiddleware $middleware;
+    /**
+     * @var MethodOverrideMiddleware
+     */
+    private $middleware;
 
     /**
      * @var ServerRequestInterface|MockObject
