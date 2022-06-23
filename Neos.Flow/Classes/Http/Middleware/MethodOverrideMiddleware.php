@@ -35,5 +35,4 @@ class MethodOverrideMiddleware implements MiddlewareInterface
         }
         return $next->handle($request);
     }
-
 }
