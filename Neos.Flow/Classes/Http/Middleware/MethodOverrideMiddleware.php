@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Http\Middleware;
 
-use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -35,5 +34,4 @@ class MethodOverrideMiddleware implements MiddlewareInterface
         }
         return $next->handle($request);
     }
-
 }
