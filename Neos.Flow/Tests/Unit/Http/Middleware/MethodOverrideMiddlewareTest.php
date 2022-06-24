@@ -27,11 +27,6 @@ class MethodOverrideMiddlewareTest extends UnitTestCase
     private $middleware;
 
     /**
-     * @var ServerRequestInterface|MockObject
-     */
-    private $mockRequest;
-
-    /**
      * @var RequestHandlerInterface|MockObject
      */
     private $mockRequestHandler;
@@ -45,12 +40,11 @@ class MethodOverrideMiddlewareTest extends UnitTestCase
     {
         $this->middleware = new MethodOverrideMiddleware();
 
-        $this->mockRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
         $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
         $this->mockResponse = $this->getMockBuilder(ResponseInterface::class)->getMock();
     }
 
-    public function process_matchingRequests_dataProvider(): \Traversable
+    public function matchingRequests_dataProvider(): \Traversable
     {
         yield 'parsedBody (__method)' => ['method' => 'POST', 'headers' => [], 'parsedBody' => ['__method' => 'PUT'], 'expectedMethod' => 'PUT'];
         yield 'header (X-Http-Method-Override)' => ['method' => 'POST', 'headers' => ['X-Http-Method-Override' => 'PATCH'], 'parsedBody' => [], 'expectedMethod' => 'PATCH'];
@@ -62,30 +56,22 @@ class MethodOverrideMiddlewareTest extends UnitTestCase
 
     /**
      * @test
-     * @dataProvider process_matchingRequests_dataProvider
+     * @dataProvider matchingRequests_dataProvider
      */
-    public function process_matchingRequests(string $method, array $headers, $parsedBody, string $expectedMethod): void
+    public function process_matchingRequests(string $method, array $headers, array $parsedBody, string $expectedMethod): void
     {
-        $this->mockRequest->method('getMethod')->willReturn($method);
-        $this->mockRequest->method('getParsedBody')->willReturn($parsedBody);
-        $this->mockRequest->method('hasHeader')->willReturnCallback(function ($header) use ($headers) {
-            return isset($headers[$header]);
-        });
-        $this->mockRequest->method('getHeaderLine')->willReturnCallback(function ($header) use ($headers) {
-            return $headers[$header];
-        });
-
+        $mockRequest = $this->prepareMockRequest($method, $headers, $parsedBody);
         $mockAlteredRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockRequest->expects(self::once())->method('withMethod')->with($expectedMethod)->willReturn($mockAlteredRequest);
+        $mockRequest->expects(self::once())->method('withMethod')->with($expectedMethod)->willReturn($mockAlteredRequest);
         $this->mockRequestHandler->expects(self::once())->method('handle')->willReturnCallback(function ($request) use ($mockAlteredRequest) {
             self::assertSame($request, $mockAlteredRequest);
             return $this->mockResponse;
         });
 
-        $this->middleware->process($this->mockRequest, $this->mockRequestHandler);
+        $this->middleware->process($mockRequest, $this->mockRequestHandler);
     }
 
-    public function process_nonMatchingRequests_dataProvider2(): \Traversable
+    public function nonMatchingRequests_dataProvider(): \Traversable
     {
         yield 'POST request' => ['method' => 'POST', 'headers' => [], 'parsedBody' => ['foo' => 'bar']];
         yield 'GET request with X-Http-Method-Override and X-Http-Method header' => ['method' => 'GET', 'headers' => ['X-Http-Method-Override' => 'PATCH', 'X-Http-Method' => 'DELETE'], 'parsedBody' => []];
@@ -94,25 +80,40 @@ class MethodOverrideMiddlewareTest extends UnitTestCase
 
     /**
      * @test
-     * @dataProvider process_nonMatchingRequests_dataProvider2
+     * @dataProvider nonMatchingRequests_dataProvider
      */
-    public function process_nonMatchingRequests(string $method, array $headers, $parsedBody): void
+    public function process_nonMatchingRequests(string $method, array $headers, array $parsedBody): void
     {
-        $this->mockRequest->method('getMethod')->willReturn($method);
-        $this->mockRequest->method('getParsedBody')->willReturn($parsedBody);
-        $this->mockRequest->method('hasHeader')->willReturnCallback(function ($header) use ($headers) {
-            return isset($headers[$header]);
-        });
-        $this->mockRequest->method('getHeaderLine')->willReturnCallback(function ($header) use ($headers) {
-            return $headers[$header];
-        });
-
-        $this->mockRequest->expects(self::never())->method('withMethod');
-        $this->mockRequestHandler->expects(self::once())->method('handle')->willReturnCallback(function ($request) {
-            self::assertSame($request, $this->mockRequest);
+        $mockRequest = $this->prepareMockRequest($method, $headers, $parsedBody);
+        $mockRequest->expects(self::never())->method('withMethod');
+        $this->mockRequestHandler->expects(self::once())->method('handle')->willReturnCallback(function ($request) use ($mockRequest) {
+            self::assertSame($request, $mockRequest);
             return $this->mockResponse;
         });
 
-        $this->middleware->process($this->mockRequest, $this->mockRequestHandler);
+        $this->middleware->process($mockRequest, $this->mockRequestHandler);
+    }
+
+
+    /** ------------------ */
+
+    /**
+     * @param string $method
+     * @param array $headers
+     * @param array $parsedBody
+     * @return ServerRequestInterface|MockObject
+     */
+    private function prepareMockRequest(string $method, array $headers, array $parsedBody)
+    {
+        $mockRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
+        $mockRequest->method('getMethod')->willReturn($method);
+        $mockRequest->method('getParsedBody')->willReturn($parsedBody);
+        $mockRequest->method('hasHeader')->willReturnCallback(function ($header) use ($headers) {
+            return isset($headers[$header]);
+        });
+        $mockRequest->method('getHeaderLine')->willReturnCallback(function ($header) use ($headers) {
+            return $headers[$header];
+        });
+        return $mockRequest;
     }
 }
