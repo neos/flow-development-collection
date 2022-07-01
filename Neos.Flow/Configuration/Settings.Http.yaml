@@ -56,6 +56,11 @@ Neos:
           position: 'end 100'
           middleware: 'Neos\Flow\Mvc\DispatchMiddleware'
 
+        # Middleware that renders 4xx states with default to 404
+        'notFound':
+          position: 'end 200'
+          middleware: 'Neos\Flow\Http\Middleware\NotFoundMiddleware'
+
       trustedProxies:
 
         # Defines Proxy servers which are trusted for setting request headers
@@ -79,6 +84,16 @@ Neos:
           host: 'X-Forwarded-Host'
           port: 'X-Forwarded-Port'
           proto: 'X-Forwarded-Proto'
+
+      notFound:
+        viewClassName: 'Neos\Flow\Mvc\View\SimpleTemplateView'
+        viewOptions:
+          templatePathAndFilename: 'resource://Neos.Flow/Private/Templates/Error/Default.html'
+        default:
+          description: 'Sorry, the page you requested was not found.'
+          statusCode: 404
+        renderingOptions:
+          renderTechnicalDetails: false
 
       serverRequestDefaults:
         userAgent: 'Flow/%FLOW_VERSION_BRANCH%.x'
