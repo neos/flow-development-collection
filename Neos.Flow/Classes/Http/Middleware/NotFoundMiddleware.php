@@ -13,10 +13,7 @@ namespace Neos\Flow\Http\Middleware;
  * source code.
  */
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Error\WithHttpStatusInterface;
-use Neos\Flow\Error\WithReferenceCodeInterface;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;

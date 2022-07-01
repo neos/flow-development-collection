@@ -47,7 +47,7 @@ class DispatchMiddleware implements MiddlewareInterface
         /** @var ActionRequest $actionRequest */
         $actionRequest = $request->getAttribute(ServerRequestAttributes::ACTION_REQUEST);
         if ($actionRequest === null) {
-             return $next->handle(
+            return $next->handle(
                 $request
                     ->withAttribute(NotFoundMiddleware::DETAILS, 'No ActionRequest was created before the DispatchMiddleware. Make sure you have the SecurityEntryPointMiddleware configured before dispatch.')
                     ->withAttribute(NotFoundMiddleware::REFERENCE_CODE, 1605091292)
