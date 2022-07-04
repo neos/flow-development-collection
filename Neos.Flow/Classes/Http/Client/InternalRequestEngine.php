@@ -140,6 +140,9 @@ class InternalRequestEngine implements RequestEngineInterface
          * @var Http\Middleware\MiddlewaresChain $middlewaresChain
          */
         $middlewaresChain = $objectManager->get(Http\Middleware\MiddlewaresChain::class);
+        $middlewaresChain->onStep(function (ServerRequestInterface $request) use ($requestHandler) {
+            $requestHandler->setHttpRequest($request);
+        });
 
         try {
             $response = $middlewaresChain->handle($httpRequest);

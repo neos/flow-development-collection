@@ -287,10 +287,10 @@ class ProxyMethod
                             $defaultValue = ' = NULL';
                         } elseif (is_bool($rawDefaultValue)) {
                             $defaultValue = ($rawDefaultValue ? ' = true' : ' = false');
-                        } elseif (is_numeric($rawDefaultValue)) {
-                            $defaultValue = ' = ' . $rawDefaultValue;
                         } elseif (is_string($rawDefaultValue)) {
                             $defaultValue = " = '" . $rawDefaultValue . "'";
+                        } elseif (is_numeric($rawDefaultValue)) {
+                            $defaultValue = ' = ' . $rawDefaultValue;
                         } elseif (is_array($rawDefaultValue)) {
                             $defaultValue = ' = ' . $this->buildArraySetupCode($rawDefaultValue);
                         }
@@ -343,10 +343,10 @@ class ProxyMethod
                 $code .= 'NULL';
             } elseif (is_bool($value)) {
                 $code .= ($value ? 'true' : 'false');
-            } elseif (is_numeric($value)) {
-                $code .= $value;
             } elseif (is_string($value)) {
                 $code .= "'" . $value . "'";
+            } elseif (is_numeric($value)) {
+                $code .= $value;
             }
             $code .= ', ';
         }
