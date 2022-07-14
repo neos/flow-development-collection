@@ -513,8 +513,12 @@ class ConfigurationManager
             $replacement .= ($constantDoesNotStartAsBeginning ? $matchGroup['startString'] . "' . " : '=> ');
 
             if (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'env') {
-                if ($matchGroup['type'] !== '') {
-                    $replacement .= '(' . $matchGroup['type'] . ')';
+                if ($matchGroup['type'] === 'bool') {
+                    $replacement .= "!in_array(strtolower(getenv('" . $matchGroup['name'] . "')), ['', '0', 'false'], true)";
+                } elseif ($matchGroup['type'] !== '') {
+                    $replacement .= "(" . $matchGroup['type'] . ")getenv('" . $matchGroup['name'] . "')";
+                } else {
+                    $replacement .= "getenv('" . $matchGroup['name'] . "')";
                 }
                 $replacement .= "getenv('" . $matchGroup['name'] . "')";
             } elseif (isset($matchGroup['expression'])) {
