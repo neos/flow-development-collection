@@ -520,7 +520,6 @@ class ConfigurationManager
                 } else {
                     $replacement .= "getenv('" . $matchGroup['name'] . "')";
                 }
-                $replacement .= "getenv('" . $matchGroup['name'] . "')";
             } elseif (isset($matchGroup['expression'])) {
                 $replacement .= "(defined('" . $matchGroup['expression'] . "') ? constant('" . $matchGroup['expression'] . "') : null)";
             }
