@@ -75,7 +75,7 @@
         "neos/party": "To make use of basic user handling",
         "php-uuid": "For fast generation of UUIDs used in the persistence.",
         "neos/fluid-adaptor": "For rendering templates with TYPO3.Fluid",
-        "ext-igbinary": "The igbinary extension is a replacement for the standard php serializer"
+        "ext-igbinary": "The igbinary extension is a replacement for the standard PHP serializer"
     },
     "autoload": {
         "psr-4": {
