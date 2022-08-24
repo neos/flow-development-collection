@@ -58,7 +58,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     protected $identifierPrefix;
 
     /**
-     * @var \APCUIterator
+     * @var \APCUIterator|null
      */
     protected $cacheEntriesIterator;
 
@@ -111,7 +111,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
      * @param array $tags Tags to associate with this cache entry
-     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param int|null $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid

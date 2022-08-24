@@ -73,7 +73,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     protected $useIgBinary = false;
 
     /**
-     * @var \DirectoryIterator
+     * @var \DirectoryIterator|null
      */
     protected $cacheFilesIterator;
 
@@ -99,7 +99,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Sets a reference to the cache frontend which uses this backend and
      * initializes the default cache directory.
      *
-     * @param \Neos\Cache\Frontend\FrontendInterface $cache The cache frontend
+     * @param FrontendInterface $cache The cache frontend
      * @return void
      * @throws Exception
      */
@@ -139,7 +139,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
      * @param array $tags Ignored in this type of cache backend
-     * @param integer $lifetime Ignored in this type of cache backend
+     * @param int|null $lifetime Ignored in this type of cache backend
      * @return void
      * @throws Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
      * @throws \InvalidArgumentException
