@@ -33,7 +33,7 @@
         "composer/composer": "^1.10.22 || ^2.0.13",
         "egulias/email-validator": "^2.1.17 || ^3.0",
         "typo3fluid/fluid": "~2.5.11 || ~2.6.10",
-        "guzzlehttp/psr7": "^1.7, !=1.8.0",
+        "guzzlehttp/psr7": "^1.8.4",
         "ext-mbstring": "*"
     },
     "replace": {
@@ -121,7 +121,7 @@
     "require-dev": {
         "mikey179/vfsstream": "^1.6.1",
         "phpunit/phpunit": "~9.1",
-        "vimeo/psalm": "~4.9.3"
+        "vimeo/psalm": "~4.22.0"
     },
     "autoload-dev": {
         "psr-4": {
