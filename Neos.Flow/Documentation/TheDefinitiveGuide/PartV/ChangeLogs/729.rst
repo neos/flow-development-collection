@@ -1,0 +1,111 @@
+`7.2.9 (2022-08-29) <https://github.com/neos/flow-development-collection/releases/tag/7.2.9>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Reimplement request method override via middleware <https://github.com/neos/flow-development-collection/pull/2860>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The documented feature to override the request method with the POST argument ``__method`` or one of the HTTP headers X-Http-Method-Override or X-Http-Method was accidentally removed in the transition towards PSR-7. This adds it back in by adding a middleware that does the same logic that was removed with the previous Http\\Request class.
+
+* Resolves: `#2856 <https://github.com/neos/flow-development-collection/issues/2856>`_
+
+`BUGFIX: Don't convert numeric strings to numbers in proxy method argument defaults <https://github.com/neos/flow-development-collection/pull/2865>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+The check ``is_numeric`` evaluates to true for strings like ``"1"`` therefore the generated code would be missing the quotes
+necessary to keep the default argument a string. This causes type errors in the proxy class when the arguments type is ``string``.
+Therefore the check whether an argument value is a string should be done first.
+
+This change could be breaking if no type is used and a method somehow relies on the proxy class turning the argument default into a number.
+
+* Resolves: `#2864 <https://github.com/neos/flow-development-collection/issues/2864>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: InternalRequestEngine should behave like HttpRequestEngine <https://github.com/neos/flow-development-collection/pull/2854>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+The ``HttpRequestEngine`` holds a reference to the "current" http request in each step of the middleware chain.
+The internal request engine does not, making it hard to write tests, that predict system behavior.
+
+With this patch you can fetch the current request (and not only the outer most) even in ``InternalRequestEngine``
+
+See ``\\Neos\\Flow\\Http\\RequestHandler::handleRequest()``
+
+
+* Packages: ``Flow``
+
+`TASK: Raise guzzlehttp/psr7 to ^1.8.4 (security fix) <https://github.com/neos/flow-development-collection/pull/2880>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This makes sure ``guzzlehttp/psr7`` is will not be used in version with a known
+security issue.
+
+
+* Packages: ``Http.Factories``
+
+`TASK: Update .phpstorm.meta.php syntax <https://github.com/neos/flow-development-collection/pull/2846>`_
+---------------------------------------------------------------------------------------------------------
+
+The old .phpstorm.meta.php syntax is deprecated, see
+https://www.jetbrains.com/help/phpstorm/ide-advanced-metadata.html#legacy-metadata-format-deprecated
+
+**Review instructions**
+
+Code completion in PhpStorm should still "know" about these:
+
+```php
+// $environment is Environment|obect
+$environment = $bootstrap->getEarlyInstance(Environment::class);
+
+// $environment is Environment|obect
+$environment = $objectManager->get(Environment::class);
+```
+
+
+* Packages: ``Flow``
+
+`TASK: Remove noise from session LoggingAspect <https://github.com/neos/flow-development-collection/pull/2857>`_
+----------------------------------------------------------------------------------------------------------------
+
+This cleans up the log messages of the ``LoggingAspect`` for
+``SessionInterface``, to reduce log volume.
+
+Before:
+
+    22-06-21 14:35:46 70133      INFO                           Session: Started session with id ixadt08m586zKtcJmUTZend6ykWvP9fM.
+        [array] =>
+            packageKey:
+            [string] => Neos.Flow
+            className:
+            [string] => Neos\\Flow\\Session\\Session
+            methodName:
+            [string] => start
+
+After:
+
+    22-06-21 14:35:46 70133      INFO                           Session: Started session with id ixadt08m586zKtcJmUTZend6ykWvP9fM.
+
+No information is lost: The ``Session`` prefix to the log message is the class
+name and will already be fully qualified if not within ``Neos\\Flow\\Session``,
+the package key was hardcoded and the method name is always what the
+advice targets.
+
+**Upgrade instructions**
+
+If you for some reason relied on the log messages having that exact
+format, you will need to adjust whatever you need to adjust.
+
+**Review instructions**
+
+The session activity should be logged as before, just less noisy.
+
+I did not create this against 5.3, because, … well. But we could, if you like.
+
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/7.2.8...7.2.9>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
