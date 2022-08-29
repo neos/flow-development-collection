@@ -33,6 +33,9 @@ Neos:
         'trustedProxies':
           position: 'start 50'
           middleware: 'Neos\Flow\Http\Middleware\TrustedProxiesMiddleware'
+        'methodOverride':
+          position: 'start 30'
+          middleware: 'Neos\Flow\Http\Middleware\MethodOverrideMiddleware'
         'session':
           position: 'start 10'
           middleware: 'Neos\Flow\Http\Middleware\SessionMiddleware'
