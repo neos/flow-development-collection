@@ -1,0 +1,319 @@
+`8.1.0 (2022-08-29) <https://github.com/neos/flow-development-collection/releases/tag/8.1.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Add method `askQuestion` to console output that accepts a `Question` object <https://github.com/neos/flow-development-collection/pull/2874>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The other question methods take arrays or strings as arguments which is easy and convenient however the underlying symfony console offers more flexibility.
+This pr adds the method ``askQestion`` that accepts a smfony console question object and thus allows the full flexibility at the price of complexity.
+
+In addition the method ``getQuestionHelper`` is made public to make this as accessible as the ``getProgressBar`` method.
+
+**Review instructions**
+
+I chose not to allow Question objects in the ``ask`` method because this method has a default argument that only makes sense when the question is passed as array or string.
+
+
+* Packages: ``Flow``
+
+`FEATURE: typed env variable replacements in Settings <https://github.com/neos/flow-development-collection/pull/2873>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+With this change, the type of environment variables can be specified in Configuration files:
+
+```yaml
+someSetting: %env(int):SOME_ENVIRONMENT_VARIABLE%`
+```
+
+This will cast the corresponding value to the specified type (and to the base value of the type when referring to undefined environment variables).
+
+Supported types and their base value are:
+
+* ``int``: 0
+* ``bool``: false
+* ``float``: 0.0
+* ``string``: "" (empty string)
+
+* Resolves: `#2872 <https://github.com/neos/flow-development-collection/issues/2872>`_
+
+* Packages: ``Flow``
+
+`FEATURE: Support object serialization without var annotation <https://github.com/neos/flow-development-collection/pull/2844>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This change introduces support for PHP 7.4 style class property
+type declarations for objects to be serialized by Flow. Previously,
+a ``@var`` annotation had to be specified for each class property, in
+order to communicate the type to Flow's serialization mechanism.
+
+* Resolves: `#2843 <https://github.com/neos/flow-development-collection/issues/2843>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Reimplement request method override via middleware <https://github.com/neos/flow-development-collection/pull/2860>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The documented feature to override the request method with the POST argument ``__method`` or one of the HTTP headers X-Http-Method-Override or X-Http-Method was accidentally removed in the transition towards PSR-7. This adds it back in by adding a middleware that does the same logic that was removed with the previous Http\\Request class.
+
+* Resolves: `#2856 <https://github.com/neos/flow-development-collection/issues/2856>`_
+
+`BUGFIX: Don't convert numeric strings to numbers in proxy method argument defaults <https://github.com/neos/flow-development-collection/pull/2865>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+The check ``is_numeric`` evaluates to true for strings like ``"1"`` therefore the generated code would be missing the quotes
+necessary to keep the default argument a string. This causes type errors in the proxy class when the arguments type is ``string``.
+Therefore the check whether an argument value is a string should be done first.
+
+This change could be breaking if no type is used and a method somehow relies on the proxy class turning the argument default into a number.
+
+* Resolves: `#2864 <https://github.com/neos/flow-development-collection/issues/2864>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: InternalRequestEngine should behave like HttpRequestEngine <https://github.com/neos/flow-development-collection/pull/2854>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+The ``HttpRequestEngine`` holds a reference to the "current" http request in each step of the middleware chain.
+The internal request engine does not, making it hard to write tests, that predict system behavior.
+
+With this patch you can fetch the current request (and not only the outer most) even in ``InternalRequestEngine``
+
+See ``\\Neos\\Flow\\Http\\RequestHandler::handleRequest()``
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Use expanded pattern as cache key for dateTime format <https://github.com/neos/flow-development-collection/pull/2850>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Closes: `#2849 <https://github.com/neos/flow-development-collection/issues/2849>`_
+
+The cache key for a dateTime format is now the expanded format pattern instead of ``{0} {1}``.
+
+* Packages: ``Flow``
+
+`BUGFIX: Store cache content in BLOB field with PdoBackend <https://github.com/neos/flow-development-collection/pull/2838>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The cache ``PdoBackend`` used a ``MEDIUMTEXT`` column for the content, with
+some special handling for PostgreSQL to fix null bytes in the content.
+
+When using igbinary, even with MariadDB problems can occur, since the
+written content is garbled when fetched back and cannot be unserialized
+anymore, leading to cache misses / read errors.
+
+This change fixes it by using a ``MEDIUMBLOB`` (``BYTEA`` on PostgreSQL)
+field for the content.
+
+* See: `#2830 <https://github.com/neos/flow-development-collection/issues/2830>`_
+
+**Upgrade instructions**
+
+To make use of the new field, drop the ``cache`` table and run the cache setup again.
+
+Another option is to switch the column type manually using a DB management tool
+of your choice.
+
+If you keep the old DB structure, aside from not having the fixed bug fixed:
+
+- MariaDB doesn't care at all, the new code with the old DB structure works just fine.
+- PostgreSQL will "work" but need a cache flush, as previously cached content shows wrong.
+
+**Review instructions**
+
+Hard to say, but you definitely need igbinary to run into the issue. Probably also a
+specific kind of data that cannot be stored in MariaDB ``MEDIUMTEXT``.
+
+For PostgreSQL some code that used to do bin2hex/hex2bin on the data has been
+removed, so if things still work as before, this is good.
+
+
+* Packages: ``Cache``
+
+`BUGFIX: Respect RouteParameters in ResolveCache <https://github.com/neos/flow-development-collection/pull/2816>`_
+------------------------------------------------------------------------------------------------------------------
+
+Adjusts ``RouterCachingService`` such that it includes the specified
+``RouteParameters`` into the generated ``resolveCacheIdentifier``.
+
+* Fixes: `#2815 <https://github.com/neos/flow-development-collection/issues/2815>`_
+
+`!!! TASK: Add `persistAllowedObjects()` and deprecate flag argument for `persistAll()` in PersistenceManager <https://github.com/neos/flow-development-collection/pull/2585>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+If you ever used ``persistAll(true)`` you should replace those invocations with ``persistAllowedObjects()``.
+
+* Packages: ``Flow``
+
+`TASK: Raise guzzlehttp/psr7 to ^1.8.4 (security fix) <https://github.com/neos/flow-development-collection/pull/2880>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This makes sure ``guzzlehttp/psr7`` is will not be used in version with a known
+security issue.
+
+
+* Packages: ``Http.Factories``
+
+`TASK: Make configuration example match the text <https://github.com/neos/flow-development-collection/pull/2881>`_
+------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: Support promoted properties in validator <https://github.com/neos/flow-development-collection/pull/2841>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This change adds logic to the ValidatorResolver to accept properties which were promoted in a constructor (PHP 8.1 promoted properties) and thus do not have a @var annoation in a doc comment.
+
+At the same time, @var annotations are not necessary anymore if a type declaration was provided.
+
+Note that there was already `a PR for 5.3 <https://github.com/neos/flow-development-collection/pull/2836>`_ but since that is a stale branch, which won't be upmerged anymore, this PR now targets 8.0. Flow versions earlier than 8.0 are not supported, because this PR requires PHP 7.4 or higher.
+
+Resolves https://github.com/neos/flow-development-collection/issues/2835
+
+* Packages: ``Flow``
+
+`TASK: Update .phpstorm.meta.php syntax <https://github.com/neos/flow-development-collection/pull/2846>`_
+---------------------------------------------------------------------------------------------------------
+
+The old .phpstorm.meta.php syntax is deprecated, see
+https://www.jetbrains.com/help/phpstorm/ide-advanced-metadata.html#legacy-metadata-format-deprecated
+
+**Review instructions**
+
+Code completion in PhpStorm should still "know" about these:
+
+```php
+// $environment is Environment|obect
+$environment = $bootstrap->getEarlyInstance(Environment::class);
+
+// $environment is Environment|obect
+$environment = $objectManager->get(Environment::class);
+```
+
+
+* Packages: ``Flow``
+
+`TASK: Remove noise from session LoggingAspect <https://github.com/neos/flow-development-collection/pull/2857>`_
+----------------------------------------------------------------------------------------------------------------
+
+This cleans up the log messages of the ``LoggingAspect`` for
+``SessionInterface``, to reduce log volume.
+
+Before:
+
+    22-06-21 14:35:46 70133      INFO                           Session: Started session with id ixadt08m586zKtcJmUTZend6ykWvP9fM.
+        [array] =>
+            packageKey:
+            [string] => Neos.Flow
+            className:
+            [string] => Neos\\Flow\\Session\\Session
+            methodName:
+            [string] => start
+
+After:
+
+    22-06-21 14:35:46 70133      INFO                           Session: Started session with id ixadt08m586zKtcJmUTZend6ykWvP9fM.
+
+No information is lost: The ``Session`` prefix to the log message is the class
+name and will already be fully qualified if not within ``Neos\\Flow\\Session``,
+the package key was hardcoded and the method name is always what the
+advice targets.
+
+**Upgrade instructions**
+
+If you for some reason relied on the log messages having that exact
+format, you will need to adjust whatever you need to adjust.
+
+**Review instructions**
+
+The session activity should be logged as before, just less noisy.
+
+I did not create this against 5.3, because, … well. But we could, if you like.
+
+
+* Packages: ``Flow``
+
+`TASK: Fix setup error handling in PdoBackendTest <https://github.com/neos/flow-development-collection/pull/2847>`_
+-------------------------------------------------------------------------------------------------------------------
+
+If the database setup fails, catching a ``Throwable`` is needed to skip
+correctly.
+
+**Review instructions**
+
+The tests should pass, as opposed to https://github.com/neos/flow-development-collection/actions/runs/2346671349
+
+See https://github.com/neos/flow-development-collection/pull/2838 for the "source" of this.
+
+* Packages: ``Cache`` ``Eel`` ``Flow``
+
+`TASK: Delete apigen.yml <https://github.com/neos/flow-development-collection/pull/2845>`_
+------------------------------------------------------------------------------------------
+
+The API documentation is discontinued, the tooling is outdated and
+no one cares for static documentation anymore.
+
+
+`TASK: Adjust issue and pr templates <https://github.com/neos/flow-development-collection/pull/2837>`_
+------------------------------------------------------------------------------------------------------
+
+the templates now mention that the texts are used in change logs and explain the informations we need during review
+
+Should be merged together with:
+- https://github.com/neos/BuildEssentials/pull/61
+- https://github.com/neos/neos-development-collection/pull/3708
+
+* Packages: ``Flow`` ``.github``
+
+`TASK: Use type casting instead of intval/floatval <https://github.com/neos/flow-development-collection/pull/2833>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Use type casting instead of slower function calls.
+
+* Packages: ``Eel`` ``Flow`` ``Utility.Arrays``
+
+`TASK: Allow installing psr/log 3.0 and provide implementation for it <https://github.com/neos/flow-development-collection/pull/2827>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+The change in https://github.com/neos/flow-development-collection/pull/2792 did only allow for psr/log 2.0 while already adding the return type hints that are only part of 3.0. This change allows installing both 2.0 || 3.0 like we do for the other psr interfaces and provides implementations for both versions. Thanks @jonnitto for bringing this up
+See also https://github.com/neos/flow-development-collection/pull/2805
+
+* Packages: ``Flow.Log`` ``Flow`` ``FluidAdaptor``
+
+`TASK: Add release notes <https://github.com/neos/flow-development-collection/pull/2826>`_
+------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: Run tests against current database versions <https://github.com/neos/flow-development-collection/pull/2825>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This runs the various tests in the build matrix against MariaDB 10.6 and PostgreSQL 14. The "lowest dependencies" job is run against MariaDB 10.2 and PostgreSQL 10.
+
+* See: `#2824 <https://github.com/neos/flow-development-collection/issues/2824>`_
+
+* Packages: ``Flow``
+
+`TASK: Enable PHP nightly build <https://github.com/neos/flow-development-collection/pull/2524>`_
+-------------------------------------------------------------------------------------------------
+
+This enables the experimental php-nightly build. Right now this failing will make the whole build to fail, which is not intended.
+
+* Packages: ``.github``
+
+`TASK: Merge master into php-nightly <https://github.com/neos/flow-development-collection/pull/2583>`_
+------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``.github``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.0.0...8.1.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
