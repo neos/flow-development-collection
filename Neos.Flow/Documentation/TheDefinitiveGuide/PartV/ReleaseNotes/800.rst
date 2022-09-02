@@ -49,24 +49,24 @@ for property injection.
 
 It allows for using types as follows:
 
-```php
-/**
- * @Flow\\Inject
- **/
-protected LoggerInterface $logger;
-```
+.. code-block:: php
+
+  /**
+   * @Flow\\Inject
+   **/
+  protected LoggerInterface $logger;
 
 In order to allow this syntax, Lazy Property Injection is disabled
 when a type is declared. To still use Lazy Property Injection, don't
 use a PHP type declaration but a ``@var`` annotation:
 
-```php
-/**
- * @Flow\\Inject
- * @var LoggerInterface
- **/
-protected $logger;
-```
+.. code-block:: php
+
+  /**
+   * @Flow\\Inject
+   * @var LoggerInterface
+   **/
+  protected $logger;
 
 If using both (type declaration _and_ ``@var``), it is handled non-lazily.
 
@@ -97,7 +97,7 @@ Instead of uploading the flush Lua script and only flushing the entries for one 
 The same is now done for batches of tags reducing the calls to Redis and the
 evaluation time Redis needs to parse the script.
 
-`#2718 <https://github.com/neos/flow-development-collection/issues/2718>`_includes updated tests for the Redis backend that will also check this method.
+`#2718 <https://github.com/neos/flow-development-collection/issues/2718>`_ includes updated tests for the Redis backend that will also check this method.
 
 
 FEATURE: Create ValueObjects from simple types by calling `from$TYPE` for objects and JsonArray properties
@@ -105,10 +105,9 @@ FEATURE: Create ValueObjects from simple types by calling `from$TYPE` for object
 
 When converting from simple types the denormalizer now checks wether the target class has a method ``from$TYPE`` and uses this to create the object.  Supported method names are ``fromArray``, ``fromString``, ``fromBool``, ``fromInt`` and ``fromFloat``.
 
-For example the following controller action would use the methods ``BirthDate::fromString`` or ``BirthDate::fromArray`` (depending on submitted data) to instantiate the $birthDate argument.
-```
-public function indexAction(BirthDate $birthDate)
-```
+For example the following controller action would use the methods ``BirthDate::fromString`` or ``BirthDate::fromArray`` (depending on submitted data) to instantiate the $birthDate argument::
+
+  public function indexAction(BirthDate $birthDate)
 
 In addition the JsonArray Type is extended to support this aswell. The serialization as flow entities takes precedence over the serialization as value object flow objects that implement \\JsonSerializable are still serialized as Flow Objects in JsonArray properties. While beeing a Flow feature this allows to store and restore ValueObjects in Neos Node properties aswell.
 
@@ -150,26 +149,27 @@ The methods create PSR Frontends for the cache with the given identifier. This a
 objects and caches yaml. This is an improvement as the included factories are not that easy to use.
 
 The following settings in Objects.yaml allow to inject PSR Caches into Flow Classes:
-```
-Vendor\\Site\\Service:
 
-  properties:
-    simpleCacheProperty:
-      object:
-        factoryObjectName: Neos\\Flow\\Cache\\CacheManager
-        factoryMethodName: getSimpleCache
-        arguments:
-          1:
-            value: Cache_Identifier_1
+.. code-block:: yaml
 
-    cachePoolProperty:
-      object:
-        factoryObjectName: Neos\\Flow\\Cache\\CacheManager
-        factoryMethodName: getCacheItemPool
-        arguments:
-          1:
-            value: Cache_Identifier_2
-```
+  Vendor\\Site\\Service:
+
+    properties:
+      simpleCacheProperty:
+        object:
+          factoryObjectName: Neos\\Flow\\Cache\\CacheManager
+          factoryMethodName: getSimpleCache
+          arguments:
+            1:
+              value: Cache_Identifier_1
+
+      cachePoolProperty:
+        object:
+          factoryObjectName: Neos\\Flow\\Cache\\CacheManager
+          factoryMethodName: getCacheItemPool
+          arguments:
+            1:
+              value: Cache_Identifier_2
 
 !!! While possible it is not advisible to access the same cache with multiple Interfaces as the storage formats may differ. !!!
 

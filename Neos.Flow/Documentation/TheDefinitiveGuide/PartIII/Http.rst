@@ -38,6 +38,7 @@ The basic walk through a Flow-based web application is as follows:
   :abbr:`HTTP Middlewares chain (\\Neos\\Flow\\Http\\Middleware\\MiddlewaresChain)`, which is a PSR-15 RequestHandler
   implementation wrapping a configurable list of `PSR-15 Middlewares`_.
   The `Middlewares Chain`_ is fully configurable, but by default it consists of the following steps:
+
     * the ``standardsCompliance`` middleware tries to make the HTTP Response standards compliant by adding required HTTP
       headers and setting the correct status code (if not already the case)
     * the ``trustedProxies`` middleware verifies headers that override request information, like the host, port or client IP address to
@@ -67,10 +68,10 @@ In practice, there are a few more intermediate steps being carried out, but in
 essence, this is the path a request is taking.
 
 .. figure:: Images/Http_ApplicationFlow.png
-	:alt: Simplified application flow
-	:class: screenshot-fullsize
+  :alt: Simplified application flow
+  :class: screenshot-fullsize
 
-	Simplified application flow
+  Simplified application flow
 
 The Response is modified within the HTTP Middlewares Chain, visualized by the highlighted "loop" block above. The
 chain is configurable. If no middleware were registered every request would result in a blank HTTP Response.

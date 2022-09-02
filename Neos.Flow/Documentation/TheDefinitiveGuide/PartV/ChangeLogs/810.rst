@@ -187,13 +187,13 @@ https://www.jetbrains.com/help/phpstorm/ide-advanced-metadata.html#legacy-metada
 
 Code completion in PhpStorm should still "know" about these:
 
-```php
-// $environment is Environment|obect
-$environment = $bootstrap->getEarlyInstance(Environment::class);
+.. code-block:: php
 
-// $environment is Environment|obect
-$environment = $objectManager->get(Environment::class);
-```
+  // $environment is Environment|obect
+  $environment = $bootstrap->getEarlyInstance(Environment::class);
+
+  // $environment is Environment|obect
+  $environment = $objectManager->get(Environment::class);
 
 
 * Packages: ``Flow``

@@ -77,11 +77,13 @@ FEATURE: Introduce ability to add Fluid namespaces via configuration
 Added the ability to add Fluid namespaces via configuration.
 
 By adding a new configuration option:
-```
-Neos:
-  FluidAdaptor:
-    namespaces:
-```
+
+.. code-block:: yaml
+
+  Neos:
+    FluidAdaptor:
+      namespaces:
+
 This configuration is used, to add namespaces inside the ViewHelperResolver.
 
 Add a default namespace in Settings.yaml and try to use its view helpers in any template, without including the namespace there.
