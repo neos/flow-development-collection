@@ -5,21 +5,21 @@ Neos:
     collections:
       'Flow':
         commandReferences:
-          - 'Flow:FlowCommands'
+          'Flow:FlowCommands': true
         references:
-          - 'Flow:FlowValidators'
-          - 'Flow:FlowSignals'
-          - 'Flow:FlowTypeConverters'
-          - 'Flow:FlowAnnotations'
+          'Flow:FlowValidators': true
+          'Flow:FlowSignals': true
+          'Flow:FlowTypeConverters': true
+          'Flow:FlowAnnotations': true
 
     commandReferences:
       'Flow:FlowCommands':
         title: 'Flow Command Reference'
         packageKeys:
-          - 'Neos.Flow'
-          - 'Neos.Party'
-          - 'Neos.Kickstart'
-          - 'Neos.Welcome'
+          'Neos.Flow': true
+          'Neos.Party': true
+          'Neos.Kickstart': true
+          'Neos.Welcome': true
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/CommandReference.rst'
 
     references:
