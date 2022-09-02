@@ -29,6 +29,7 @@ Neos:
       'TYPO3Fluid:ViewHelpers':
         title: 'TYPO3 Fluid ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/TYPO3FluidViewHelperReference.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
         affectedClasses:
           parentClassName: TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
           classNamePattern: '/^TYPO3Fluid\\Fluid\\ViewHelpers\\.*$/i'
@@ -40,6 +41,7 @@ Neos:
       'Flow:FluidAdaptorViewHelpers':
         title: 'FluidAdaptor ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/FluidAdaptorViewHelperReference.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
         affectedClasses:
           parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^Neos\\FluidAdaptor\\ViewHelpers\\.*$/i'
