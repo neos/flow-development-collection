@@ -174,7 +174,7 @@ FEATURE: Add EEL Helper File.exists(filename)
 The EEL helper determines if a file exists. This is eg helpful, if file like templates are generated,
 and should only be rendered, if the template file exists, for example for generated favicon templates like this:
 
-.. code-block:: fusion
+.. code-block::
 
   prototype(Neos.Neos:Page) {
     head.favicons = Neos.Fusion:Template {
