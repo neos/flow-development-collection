@@ -25,7 +25,7 @@ activate URL rewriting.
 
 This could be a breaking change in case you relied on the previous behavior.
 For example: Using the ``UriBuilder`` in CLI previously created URLs in the format ``/index.php/some/path``. Now it will lead to ``/some/path`` by default.
-To re-establish the former behavior, the ``FLOW_REWRITEURLS`` can be set to 0 explicitly, for example via ``putenv('FLOW_REWRITEURLS=1');``.
+To re-establish the former behavior, the ``FLOW_REWRITEURLS`` can be set to 0 explicitly, for example via ``putenv('FLOW_REWRITEURLS=0');``.
 
 
 FEATURE: Allow flushing caches by compiled classes
