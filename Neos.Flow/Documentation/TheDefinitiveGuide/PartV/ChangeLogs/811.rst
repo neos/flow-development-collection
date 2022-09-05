@@ -1,0 +1,35 @@
+`8.1.1 (2022-09-05) <https://github.com/neos/flow-development-collection/releases/tag/8.1.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Avoid errors when `./flow help` is shown for an action without doc-block <https://github.com/neos/flow-development-collection/pull/2883>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+The ``./flow help`` command currently throws errors when rendering details for command that has no doc-block.
+Since modern php and flow need those doc-blocks less and less this should be supported aswell.
+
+This change will return the argument name as description when no @param annotation is found for a parameter.
+This is not as helpful as a description but shows the parameter and avoids an unnecessary error.
+
+**Review instructions**
+
+Remove the doc comments from a cli-command and run ``./flow help command:name`` ... without this change the code will end throwing an exception.
+
+
+* Fixes: `#2886 <https://github.com/neos/flow-development-collection/issues/2886>`_
+
+
+* Packages: ``Flow``
+
+`TASK: Adjust Neos.DocTools settings <https://github.com/neos/flow-development-collection/pull/2885>`_
+------------------------------------------------------------------------------------------------------
+
+See https://github.com/neos/doctools/pull/4
+
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.1.0...8.1.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
