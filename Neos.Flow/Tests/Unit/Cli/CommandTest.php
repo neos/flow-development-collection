@@ -121,4 +121,25 @@ class CommandTest extends UnitTestCase
         $actualResult = $this->command->getArgumentDefinitions();
         self::assertEquals($expectedResult, $actualResult);
     }
+
+    /**
+     * @test
+     */
+    public function getArgumentDefinitionsReturnsArrayOfArgumentDefinitionIfCommandExpectsArgumentsEvenWhenDocblocksAreMissing()
+    {
+        $parameterReflection = $this->createMock(ParameterReflection::class, [], [[__CLASS__, 'dummyMethod'], 'arg']);
+        $mockReflectionService = $this->createMock(ReflectionService::class);
+        $mockMethodParameters = ['argument1' => ['optional' => false], 'argument2' => ['optional' => true]];
+        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue($mockMethodParameters));
+        $this->command->injectReflectionService($mockReflectionService);
+        $this->methodReflection->expects(self::atLeastOnce())->method('getParameters')->will(self::returnValue([$parameterReflection]));
+        $this->methodReflection->expects(self::atLeastOnce())->method('getTagsValues')->will(self::returnValue([]));
+
+        $expectedResult = [
+            new Cli\CommandArgumentDefinition('argument1', true, 'argument1'),
+            new Cli\CommandArgumentDefinition('argument2', false, 'argument2')
+        ];
+        $actualResult = $this->command->getArgumentDefinitions();
+        self::assertEquals($expectedResult, $actualResult);
+    }
 }
