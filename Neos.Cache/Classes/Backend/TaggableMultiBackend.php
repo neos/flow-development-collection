@@ -13,6 +13,7 @@ namespace Neos\Cache\Backend;
  * source code.
  */
 
+use Neos\Cache\Exception;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Throwable;
 
@@ -27,6 +28,10 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
     {
         if (!is_subclass_of($backendClassName, TaggableBackendInterface::class)) {
+            $message = sprintf('Failed building sub backend %s for %s because it does not implement %s', $backendClassName, get_class($this), TaggableBackendInterface::class);
+            $throwable = new Exception($message);
+            $this->logger?->error(($this->throwableStorage ? $this->throwableStorage->logThrowable($throwable) : $message), LogEnvironment::fromMethodName(__METHOD__));
+            $this->handleError($throwable);
             return null;
         }
         return parent::buildSubBackend($backendClassName, $backendOptions);
