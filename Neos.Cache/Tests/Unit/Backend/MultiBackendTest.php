@@ -10,7 +10,6 @@ use Neos\Cache\Backend\NullBackend;
 use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class MultiBackendTest extends BaseTestCase
 {
@@ -126,9 +125,9 @@ class MultiBackendTest extends BaseTestCase
     }
 
     /**
-     * @return EnvironmentConfiguration|MockObject
+     * @return EnvironmentConfiguration
      */
-    public function getEnvironmentConfiguration(): EnvironmentConfiguration|MockObject
+    public function getEnvironmentConfiguration(): EnvironmentConfiguration
     {
         return new EnvironmentConfiguration(
             __DIR__ . '~Testing',
