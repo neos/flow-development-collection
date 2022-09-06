@@ -45,7 +45,6 @@ class IterableMultiBackend extends TaggableMultiBackend implements IterableBacke
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                 return $backend->current();
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed retrieving current cache entry using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
@@ -64,7 +63,6 @@ class IterableMultiBackend extends TaggableMultiBackend implements IterableBacke
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                 $backend->next();
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed retrieving next cache entry using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
@@ -82,7 +80,6 @@ class IterableMultiBackend extends TaggableMultiBackend implements IterableBacke
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                 return $backend->key();
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed retrieving cache entry key using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
@@ -101,7 +98,6 @@ class IterableMultiBackend extends TaggableMultiBackend implements IterableBacke
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                 return $backend->valid();
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed checking if current cache entry is valid using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
@@ -120,7 +116,6 @@ class IterableMultiBackend extends TaggableMultiBackend implements IterableBacke
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                 $backend->rewind();
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed rewinding cache entries using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
