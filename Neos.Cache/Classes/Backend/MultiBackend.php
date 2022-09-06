@@ -14,6 +14,12 @@ namespace Neos\Cache\Backend;
  */
 
 use Neos\Cache\BackendInstantiationTrait;
+use Neos\Cache\EnvironmentConfiguration;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
@@ -28,6 +34,20 @@ class MultiBackend extends AbstractBackend
     protected bool $setInAllBackends = true;
     protected bool $debug = false;
     protected bool $initialized = false;
+
+    protected ?LoggerInterface $logger = null;
+    protected ?ThrowableStorageInterface $throwableStorage = null;
+
+    public function __construct(EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
+    {
+        parent::__construct($environmentConfiguration, $options);
+
+        /** @noinspection ClassConstantCanBeUsedInspection */
+        if (class_exists('Neos\Flow\Core\Bootstrap') && Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
+            $this->logger = Bootstrap::$staticObjectManager->get(LoggerInterface::class);
+            $this->throwableStorage = Bootstrap::$staticObjectManager->get(ThrowableStorageInterface::class);
+        }
+    }
 
     /**
      * @throws Throwable
@@ -55,8 +75,9 @@ class MultiBackend extends AbstractBackend
         try {
             $backend = $this->instantiateBackend($backendClassName, $backendOptions, $this->environmentConfiguration);
             $backend->setCache($this->cache);
-        } catch (Throwable $t) {
-            $this->handleError($t);
+        } catch (Throwable $throwable) {
+            $this->logger && $this->logger->error(sprintf('Failed creating sub backend %s for %s: %s', $backendClassName, get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
+            $this->handleError($throwable);
             $backend = null;
         }
         return $backend;
@@ -71,8 +92,9 @@ class MultiBackend extends AbstractBackend
         foreach ($this->backends as $backend) {
             try {
                 $backend->set($entryIdentifier, $data, $tags, $lifetime);
-            } catch (Throwable $t) {
-                $this->handleError($t);
+            } catch (Throwable $throwable) {
+                $this->logger && $this->logger->error(sprintf('Failed setting cache entry using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
+                $this->handleError($throwable);
                 if (!$this->setInAllBackends) {
                     return;
                 }
@@ -89,8 +111,9 @@ class MultiBackend extends AbstractBackend
         foreach ($this->backends as $backend) {
             try {
                 return $backend->get($entryIdentifier);
-            } catch (Throwable $t) {
-                $this->handleError($t);
+            } catch (Throwable $throwable) {
+                $this->logger && $this->logger->error(sprintf('Failed retrieving cache entry using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
+                $this->handleError($throwable);
             }
         }
         return false;
@@ -105,8 +128,9 @@ class MultiBackend extends AbstractBackend
         foreach ($this->backends as $backend) {
             try {
                 return $backend->has($entryIdentifier);
-            } catch (Throwable $t) {
-                $this->handleError($t);
+            } catch (Throwable $throwable) {
+                $this->logger && $this->logger->error(sprintf('Failed checking if cache entry exists using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
+                $this->handleError($throwable);
             }
         }
         return false;
@@ -123,6 +147,7 @@ class MultiBackend extends AbstractBackend
             try {
                 $result = $result || $backend->remove($entryIdentifier);
             } catch (Throwable $t) {
+                $this->logger && $this->logger->error(sprintf('Failed removing cache entry using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($t);
             }
         }
@@ -139,6 +164,7 @@ class MultiBackend extends AbstractBackend
             try {
                 $backend->flush();
             } catch (Throwable $t) {
+                $this->logger && $this->logger->error(sprintf('Failed flushing cache using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($t);
             }
         }
@@ -154,6 +180,7 @@ class MultiBackend extends AbstractBackend
             try {
                 $backend->collectGarbage();
             } catch (Throwable $t) {
+                $this->logger && $this->logger->error(sprintf('Failed collecting garbage using cache backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($t);
             }
         }

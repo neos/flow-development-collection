@@ -13,6 +13,7 @@ namespace Neos\Cache\Backend;
  * source code.
  */
 
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Throwable;
 
 /**
@@ -28,16 +29,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
         if (!is_subclass_of($backendClassName, TaggableBackendInterface::class)) {
             return null;
         }
-
-        try {
-            $backend = $this->instantiateBackend($backendClassName, $backendOptions, $this->environmentConfiguration);
-            $backend->setCache($this->cache);
-        } catch (Throwable $t) {
-            $this->handleError($t);
-            return null;
-        }
-
-        return $backend;
+        return parent::buildSubBackend($backendClassName, $backendOptions);
     }
 
     /**
@@ -50,11 +42,11 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
         foreach ($this->backends as $backend) {
             try {
                 $count |= $backend->flushByTag($tag);
-            } catch (Throwable $t) {
-                $this->handleError($t);
+            } catch (Throwable $throwable) {
+                $this->logger && $this->logger->error(sprintf('Failed flushing cache by tag using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
+                $this->handleError($throwable);
             }
         }
-
         return $count;
     }
 
@@ -81,7 +73,9 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
         foreach ($this->backends as $backend) {
             try {
                 $identifiers[] = $backend->findIdentifiersByTag($tag);
-            } catch (Throwable $t) {
+            } catch (Throwable $throwable) {
+                $this->logger && $this->logger->error(sprintf('Failed finding identifiers by tag using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
+                $this->handleError($throwable);
             }
         }
         // avoid array_merge in the loop, this trades memory for speed
