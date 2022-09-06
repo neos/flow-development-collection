@@ -14,7 +14,6 @@ namespace Neos\Cache\Backend;
  */
 
 use Neos\Cache\BackendInstantiationTrait;
-use Neos\Cache\Exception as CacheException;
 use Throwable;
 
 /**
@@ -71,7 +70,7 @@ class MultiBackend extends AbstractBackend
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                $this->setInBackend($backend, $entryIdentifier, $data, $tags, $lifetime);
+                $backend->set($entryIdentifier, $data, $tags, $lifetime);
             } catch (Throwable $t) {
                 $this->handleError($t);
                 if (!$this->setInAllBackends) {
@@ -89,7 +88,7 @@ class MultiBackend extends AbstractBackend
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                return $this->getFromBackend($backend, $entryIdentifier);
+                return $backend->get($entryIdentifier);
             } catch (Throwable $t) {
                 $this->handleError($t);
             }
@@ -105,7 +104,7 @@ class MultiBackend extends AbstractBackend
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                return $this->backendHas($backend, $entryIdentifier);
+                return $backend->has($entryIdentifier);
             } catch (Throwable $t) {
                 $this->handleError($t);
             }
@@ -122,7 +121,7 @@ class MultiBackend extends AbstractBackend
         $result = false;
         foreach ($this->backends as $backend) {
             try {
-                $result = $result || $this->removeFromBackend($backend, $entryIdentifier);
+                $result = $result || $backend->remove($entryIdentifier);
             } catch (Throwable $t) {
                 $this->handleError($t);
             }
@@ -138,7 +137,7 @@ class MultiBackend extends AbstractBackend
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                $this->flushBackend($backend);
+                $backend->flush();
             } catch (Throwable $t) {
                 $this->handleError($t);
             }
@@ -182,34 +181,6 @@ class MultiBackend extends AbstractBackend
     protected function setDebug(bool $debug): void
     {
         $this->debug = $debug;
-    }
-
-    /**
-     * @throws CacheException
-     */
-    protected function setInBackend(BackendInterface $backend, string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
-    {
-        $backend->set($entryIdentifier, $data, $tags, $lifetime);
-    }
-
-    protected function getFromBackend(BackendInterface $backend, string $entryIdentifier): mixed
-    {
-        return $backend->get($entryIdentifier);
-    }
-
-    protected function backendHas(BackendInterface $backend, string $entryIdentifier): bool
-    {
-        return $backend->has($entryIdentifier);
-    }
-
-    protected function removeFromBackend(BackendInterface $backend, string $entryIdentifier): bool
-    {
-        return $backend->remove($entryIdentifier);
-    }
-
-    protected function flushBackend(BackendInterface $backend): void
-    {
-        $backend->flush();
     }
 
     /**
