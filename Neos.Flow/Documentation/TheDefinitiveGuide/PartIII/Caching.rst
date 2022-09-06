@@ -752,48 +752,61 @@ The null backend has no options.
 Neos\\Cache\\Backend\\MultiBackend
 ----------------------------------
 
-This backend accepts several backend configurations
-to be used in order of appareance as a fallback mechanismn
-shoudl one of them not be available.
-If `backendConfigurations` is an empty array this will act
-just like the NullBackend.
+This backend accepts several backend configurations to be used in order of appearance as a
+fallback mechanism should one of them not be available. For example, you might want to
+configure the first backend be a `RedisBackend` and, as a fallback, configure a second
+cache backend based on the `FileBackend`, which steps in if Redis is unavailable.
+
+If `backendConfigurations` is an empty array this will act just like the NullBackend.
 
 .. warning::
 
-   Due to the nature of this backend as fallback it will swallow all
-   errors on creating and using the sub backends. So configuration
-   errors won't show up. See `debug` option.
+   Due to the nature of this backend as fallback it will swallow all errors on creating
+   and using the sub backends. So configuration errors won't show up. See `debug` option.
+
+Whenever an error occurs while using a configured backend, the error will be caught,
+logged, and the backend is flagged as "unhealthy" for the remainder of the request.
+The next operation (for example, a "get()" or "set()" call) will use the next healthy
+backend. If there is only one backend left and it causes an error, MultiBackend will
+still try to use it on the next operation.
+
+You can disable the the removal of unhealthy backends with a backend option.
 
 Options
 ~~~~~~~
 
 :title:`Multi cache backend options`
 
-+-----------------------+------------------------------------------+-----------+---------+---------+
-| Option                | Description                              | Mandatory | Type    | Default |
-+=======================+==========================================+===========+=========+=========+
-| setInAllBackends      | Should values given to the backend be    | No        | bool    | true    |
-|                       | replicated into all configured and       |           |         |         |
-|                       | available backends?                      |           |         |         |
-|                       | Generally that is desirable for          |           |         |         |
-|                       | fallback purposes, but to avoid too much |           |         |         |
-|                       | duplication at the cost of performance on|           |         |         |
-|                       | fallbacks this can be disabled.          |           |         |         |
-|                       |                                          |           |         |         |
-+-----------------------+------------------------------------------+-----------+---------+---------+
-| backendConfigurations | A list of backends to be used in order   | Yes       | array   | []      |
-|                       | of appearance. Each entry in that list   |           |         |         |
-|                       | should have the keys "backend" and       |           |         |         |
-|                       | "backendOptions" just as a top level     |           |         |         |
-|                       | backend configuration.                   |           |         |         |
-|                       |                                          |           |         |         |
-+-----------------------+------------------------------------------+-----------+---------+---------+
-| debug                 | Switch on debug mode which will throw    | No        | bool    | false   |
-|                       | any errors happening in sub backends.    |           |         |         |
-|                       | Use this in development to make sure     |           |         |         |
-|                       | everything works as expected.            |           |         |         |
-|                       |                                          |           |         |         |
-+-----------------------+------------------------------------------+-----------+---------+---------+
++-------------------------+------------------------------------------+-----------+---------+---------+
+| Option                  | Description                              | Mandatory | Type    | Default |
++=========================+==========================================+===========+=========+=========+
+| setInAllBackends        | Should values given to the backend be    | No        | bool    | true    |
+|                         | replicated into all configured and       |           |         |         |
+|                         | available backends?                      |           |         |         |
+|                         | Generally that is desirable for          |           |         |         |
+|                         | fallback purposes, but to avoid too much |           |         |         |
+|                         | duplication at the cost of performance on|           |         |         |
+|                         | fallbacks this can be disabled.          |           |         |         |
+|                         |                                          |           |         |         |
++-------------------------+------------------------------------------+-----------+---------+---------+
+| backendConfigurations   | A list of backends to be used in order   | Yes       | array   | []      |
+|                         | of appearance. Each entry in that list   |           |         |         |
+|                         | should have the keys "backend" and       |           |         |         |
+|                         | "backendOptions" just as a top level     |           |         |         |
+|                         | backend configuration.                   |           |         |         |
+|                         |                                          |           |         |         |
++-------------------------+------------------------------------------+-----------+---------+---------+
+| debug                   | Switch on debug mode which will throw    | No        | bool    | false   |
+|                         | any errors happening in sub backends.    |           |         |         |
+|                         | Use this in development to make sure     |           |         |         |
+|                         | everything works as expected.            |           |         |         |
+|                         |                                          |           |         |         |
++-------------------------+------------------------------------------+-----------+---------+---------+
+| removeUnhealthyBackends | Automatically remove a sub backend from  | No        | bool    | true    |
+|                         | the list of cache backends, in case it   |           |         |         |
+|                         | any errors. The sub backend will be used |           |         |         |
+|                         | again at the next CLI / web request.     |           |         |         |
++-------------------------+------------------------------------------+-----------+---------+---------+
 
 
 Neos\\Cache\\Backend\\TaggableMultiBackend

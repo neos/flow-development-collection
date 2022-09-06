@@ -33,6 +33,7 @@ class MultiBackend extends AbstractBackend
     protected array $backends = [];
     protected bool $setInAllBackends = true;
     protected bool $debug = false;
+    protected bool $removeUnhealthyBackends = true;
     protected bool $initialized = false;
 
     protected ?LoggerInterface $logger = null;
@@ -95,6 +96,7 @@ class MultiBackend extends AbstractBackend
             } catch (Throwable $throwable) {
                 $this->logger && $this->logger->error(sprintf('Failed setting cache entry using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
+                $this->removeUnhealthyBackend($backend);
                 if (!$this->setInAllBackends) {
                     return;
                 }
@@ -114,6 +116,7 @@ class MultiBackend extends AbstractBackend
             } catch (Throwable $throwable) {
                 $this->logger && $this->logger->error(sprintf('Failed retrieving cache entry using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
+                $this->removeUnhealthyBackend($backend);
             }
         }
         return false;
@@ -131,6 +134,7 @@ class MultiBackend extends AbstractBackend
             } catch (Throwable $throwable) {
                 $this->logger && $this->logger->error(sprintf('Failed checking if cache entry exists using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
+                $this->removeUnhealthyBackend($backend);
             }
         }
         return false;
@@ -149,6 +153,7 @@ class MultiBackend extends AbstractBackend
             } catch (Throwable $t) {
                 $this->logger && $this->logger->error(sprintf('Failed removing cache entry using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($t);
+                $this->removeUnhealthyBackend($backend);
             }
         }
         return $result;
@@ -166,6 +171,7 @@ class MultiBackend extends AbstractBackend
             } catch (Throwable $t) {
                 $this->logger && $this->logger->error(sprintf('Failed flushing cache using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($t);
+                $this->removeUnhealthyBackend($backend);
             }
         }
     }
@@ -182,6 +188,7 @@ class MultiBackend extends AbstractBackend
             } catch (Throwable $t) {
                 $this->logger && $this->logger->error(sprintf('Failed collecting garbage using cache backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($t);
+                $this->removeUnhealthyBackend($backend);
             }
         }
     }
@@ -211,12 +218,34 @@ class MultiBackend extends AbstractBackend
     }
 
     /**
+     * This setter is used by AbstractBackend::setProperties()
+     */
+    public function setRemoveUnhealthyBackends(bool $removeUnhealthyBackends): void
+    {
+        $this->removeUnhealthyBackends = $removeUnhealthyBackends;
+    }
+
+    /**
      * @throws Throwable
      */
     protected function handleError(Throwable $throwable): void
     {
         if ($this->debug) {
             throw $throwable;
+        }
+    }
+
+    protected function removeUnhealthyBackend(BackendInterface $unhealthyBackend): void
+    {
+        if ($this->removeUnhealthyBackends === false || count($this->backends) <= 1) {
+            return;
+        }
+        foreach ($this->backends as $i => $backend) {
+            if ($backend === $unhealthyBackend) {
+                unset($this->backends[$i]);
+                $this->logger && $this->logger->warning(sprintf('Removing unhealthy cache backend %s from backends used by %s', get_class($unhealthyBackend), get_class($this)), LogEnvironment::fromMethodName(__METHOD__));
+                return;
+            }
         }
     }
 }

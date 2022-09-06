@@ -45,6 +45,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
             } catch (Throwable $throwable) {
                 $this->logger && $this->logger->error(sprintf('Failed flushing cache by tag using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
+                $this->removeUnhealthyBackend($backend);
             }
         }
         return $count;
@@ -76,6 +77,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
             } catch (Throwable $throwable) {
                 $this->logger && $this->logger->error(sprintf('Failed finding identifiers by tag using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
+                $this->removeUnhealthyBackend($backend);
             }
         }
         // avoid array_merge in the loop, this trades memory for speed
