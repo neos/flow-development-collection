@@ -253,12 +253,10 @@ class MultiBackend extends AbstractBackend
         if ($this->removeUnhealthyBackends === false || count($this->backends) <= 1) {
             return;
         }
-        foreach ($this->backends as $i => $backend) {
-            if ($backend === $unhealthyBackend) {
-                unset($this->backends[$i]);
-                $this->logger && $this->throwableStorage && $this->logger->warning(sprintf('Removing unhealthy cache backend %s from backends used by %s', get_class($unhealthyBackend), get_class($this)), LogEnvironment::fromMethodName(__METHOD__));
-                return;
-            }
+        $i = array_search($unhealthyBackend, $this->backends, true);
+        if ($i !== false) {
+            unset($this->backends[$i]);
+            $this->logger && $this->throwableStorage && $this->logger->warning(sprintf('Removing unhealthy cache backend %s from backends used by %s', get_class($unhealthyBackend), get_class($this)), LogEnvironment::fromMethodName(__METHOD__));
         }
     }
 }
