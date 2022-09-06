@@ -13,44 +13,35 @@ namespace Neos\Cache\Backend;
  * source code.
  */
 
+use Throwable;
+
 /**
  * A taggable multi backend, falling back to multiple backends if errors occur.
  */
 class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterface
 {
     /**
-     * @var TaggableBackendInterface[]
-     */
-    protected $backends = [];
-
-    /**
-     * @param string $backendClassName
-     * @param array $backendOptions
-     * @return BackendInterface
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
     {
-        $backend = null;
         if (!is_subclass_of($backendClassName, TaggableBackendInterface::class)) {
-            return $backend;
+            return null;
         }
 
         try {
             $backend = $this->instantiateBackend($backendClassName, $backendOptions, $this->environmentConfiguration);
             $backend->setCache($this->cache);
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             $this->handleError($t);
-            $backend = null;
+            return null;
         }
 
         return $backend;
     }
 
     /**
-     * @param string $tag
-     * @return int the maximum number flushed entries returned by the backends
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function flushByTag(string $tag): int
     {
@@ -59,7 +50,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
         foreach ($this->backends as $backend) {
             try {
                 $count |= $backend->flushByTag($tag);
-            } catch (\Throwable $t) {
+            } catch (Throwable $t) {
                 $this->handleError($t);
             }
         }
@@ -68,10 +59,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
     }
 
     /**
-     * Removes all cache entries of this cache which are tagged by any of the specified tags.
-     *
-     * @throws \Throwable
-     * @api
+     * @throws Throwable
      */
     public function flushByTags(array $tags): int
     {
@@ -83,8 +71,8 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
     }
 
     /**
-     * @param string $tag
      * @return string[]
+     * @throws Throwable
      */
     public function findIdentifiersByTag(string $tag): array
     {
@@ -93,7 +81,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
         foreach ($this->backends as $backend) {
             try {
                 $identifiers[] = $backend->findIdentifiersByTag($tag);
-            } catch (\Throwable $t) {
+            } catch (Throwable $t) {
             }
         }
         // avoid array_merge in the loop, this trades memory for speed

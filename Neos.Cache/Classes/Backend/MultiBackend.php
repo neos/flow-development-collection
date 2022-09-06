@@ -14,58 +14,24 @@ namespace Neos\Cache\Backend;
  */
 
 use Neos\Cache\BackendInstantiationTrait;
-use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Exception as CacheException;
+use Throwable;
 
 /**
  * A multi backend, falling back to multiple backends if errors occur.
  */
-class MultiBackend extends AbstractBackend implements BackendInterface
+class MultiBackend extends AbstractBackend
 {
     use BackendInstantiationTrait;
 
-    /**
-     * Configuration for all sub backends (each with the keys "backend" and "backendOptions")
-     *
-     * @var array
-     */
-    protected $backendConfigurations = [];
+    protected array $backendConfigurations = [];
+    protected array $backends = [];
+    protected bool $setInAllBackends = true;
+    protected bool $debug = false;
+    protected bool $initialized = false;
 
     /**
-     * @var BackendInterface[]
-     */
-    protected $backends = [];
-
-    /**
-     * @var bool
-     */
-    protected $setInAllBackends = true;
-
-    /**
-     * @var bool
-     */
-    protected $debug = false;
-
-    /**
-     * Are the backends initialized
-     *
-     * @var bool
-     */
-    protected $initialized = false;
-
-    /**
-     * Constructs this backend
-     *
-     * @param EnvironmentConfiguration $environmentConfiguration
-     * @param array $options Configuration options - depends on the actual backend
-     */
-    public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
-    {
-        parent::__construct($environmentConfiguration, $options);
-    }
-
-    /**
-     * @return void
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function prepareBackends(): void
     {
@@ -83,31 +49,22 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     }
 
     /**
-     * @param string $backendClassName
-     * @param array $backendOptions
-     * @return BackendInterface
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
     {
-        $backend = null;
         try {
             $backend = $this->instantiateBackend($backendClassName, $backendOptions, $this->environmentConfiguration);
             $backend->setCache($this->cache);
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             $this->handleError($t);
             $backend = null;
         }
-
         return $backend;
     }
 
     /**
-     * @param string $entryIdentifier
-     * @param string $data
-     * @param array $tags
-     * @param int|null $lifetime
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
@@ -115,7 +72,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
         foreach ($this->backends as $backend) {
             try {
                 $this->setInBackend($backend, $entryIdentifier, $data, $tags, $lifetime);
-            } catch (\Throwable $t) {
+            } catch (Throwable $t) {
                 $this->handleError($t);
                 if (!$this->setInAllBackends) {
                     return;
@@ -125,55 +82,39 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     }
 
     /**
-     * @param string $entryIdentifier
-     * @return bool|mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function get(string $entryIdentifier)
     {
         $this->prepareBackends();
-        $result = false;
         foreach ($this->backends as $backend) {
             try {
-                $result = $this->getFromBackend($backend, $entryIdentifier);
-
-                return $result;
-            } catch (\Throwable $t) {
+                return $this->getFromBackend($backend, $entryIdentifier);
+            } catch (Throwable $t) {
                 $this->handleError($t);
-                $result = false;
             }
         }
-
-        return $result;
+        return false;
     }
 
     /**
-     * @param string $entryIdentifier
-     * @return bool
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function has(string $entryIdentifier): bool
     {
         $this->prepareBackends();
-        $result = false;
         foreach ($this->backends as $backend) {
             try {
-                $result = $this->backendHas($backend, $entryIdentifier);
-
-                return $result;
-            } catch (\Throwable $t) {
+                return $this->backendHas($backend, $entryIdentifier);
+            } catch (Throwable $t) {
                 $this->handleError($t);
-                $result = false;
             }
         }
-
-        return $result;
+        return false;
     }
 
     /**
-     * @param string $entryIdentifier
-     * @return bool
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function remove(string $entryIdentifier): bool
     {
@@ -182,17 +123,15 @@ class MultiBackend extends AbstractBackend implements BackendInterface
         foreach ($this->backends as $backend) {
             try {
                 $result = $result || $this->removeFromBackend($backend, $entryIdentifier);
-            } catch (\Throwable $t) {
+            } catch (Throwable $t) {
                 $this->handleError($t);
             }
         }
-
         return $result;
     }
 
     /**
-     * @return void
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function flush(): void
     {
@@ -200,15 +139,14 @@ class MultiBackend extends AbstractBackend implements BackendInterface
         foreach ($this->backends as $backend) {
             try {
                 $this->flushBackend($backend);
-            } catch (\Throwable $t) {
+            } catch (Throwable $t) {
                 $this->handleError($t);
             }
         }
     }
 
     /**
-     * @return void
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function collectGarbage(): void
     {
@@ -216,15 +154,14 @@ class MultiBackend extends AbstractBackend implements BackendInterface
         foreach ($this->backends as $backend) {
             try {
                 $backend->collectGarbage();
-            } catch (\Throwable $t) {
+            } catch (Throwable $t) {
                 $this->handleError($t);
             }
         }
     }
 
     /**
-     * @param array $backendConfigurations
-     * @return void
+     * This setter is used by AbstractBackend::setProperties()
      */
     protected function setBackendConfigurations(array $backendConfigurations): void
     {
@@ -232,8 +169,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     }
 
     /**
-     * @param bool $setInAllBackends
-     * @return void
+     * This setter is used by AbstractBackend::setProperties()
      */
     protected function setSetInAllBackends(bool $setInAllBackends): void
     {
@@ -241,8 +177,7 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     }
 
     /**
-     * @param bool $debug
-     * @return void
+     * This setter is used by AbstractBackend::setProperties()
      */
     protected function setDebug(bool $debug): void
     {
@@ -250,62 +185,37 @@ class MultiBackend extends AbstractBackend implements BackendInterface
     }
 
     /**
-     * @param BackendInterface $backend
-     * @param string $entryIdentifier
-     * @param string $data
-     * @param array $tags
-     * @param int|null $lifetime
-     * @return void
-     * @throws \Neos\Cache\Exception
+     * @throws CacheException
      */
     protected function setInBackend(BackendInterface $backend, string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
         $backend->set($entryIdentifier, $data, $tags, $lifetime);
     }
 
-    /**
-     * @param BackendInterface $backend
-     * @param string $entryIdentifier
-     * @return mixed
-     */
-    protected function getFromBackend(BackendInterface $backend, string $entryIdentifier)
+    protected function getFromBackend(BackendInterface $backend, string $entryIdentifier): mixed
     {
         return $backend->get($entryIdentifier);
     }
 
-    /**
-     * @param BackendInterface $backend
-     * @param string $entryIdentifier
-     * @return bool
-     */
     protected function backendHas(BackendInterface $backend, string $entryIdentifier): bool
     {
         return $backend->has($entryIdentifier);
     }
 
-    /**
-     * @param BackendInterface $backend
-     * @param string $entryIdentifier
-     * @return bool
-     */
     protected function removeFromBackend(BackendInterface $backend, string $entryIdentifier): bool
     {
         return $backend->remove($entryIdentifier);
     }
 
-    /**
-     * @param BackendInterface $backend
-     */
     protected function flushBackend(BackendInterface $backend): void
     {
         $backend->flush();
     }
 
     /**
-     * @param \Throwable $throwable
-     * @throws \Throwable
+     * @throws Throwable
      */
-    protected function handleError(\Throwable $throwable): void
+    protected function handleError(Throwable $throwable): void
     {
         if ($this->debug) {
             throw $throwable;
