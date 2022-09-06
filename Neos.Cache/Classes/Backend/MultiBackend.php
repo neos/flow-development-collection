@@ -44,8 +44,7 @@ class MultiBackend extends AbstractBackend
     {
         parent::__construct($environmentConfiguration, $options);
 
-        /** @noinspection ClassConstantCanBeUsedInspection */
-        if ($this->logErrors && class_exists('Neos\Flow\Core\Bootstrap') && Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
+        if ($this->logErrors && class_exists(Bootstrap::class) && Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
             $logger = Bootstrap::$staticObjectManager->get(LoggerInterface::class);
             assert($logger instanceof LoggerInterface);
             $this->logger = $logger;
