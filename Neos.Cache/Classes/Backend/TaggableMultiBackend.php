@@ -43,7 +43,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
             try {
                 $count |= $backend->flushByTag($tag);
             } catch (Throwable $throwable) {
-                $this->logger && $this->throwableStorage && $this->logger->error(sprintf('Failed flushing cache by tag using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
+                $this->logger?->error('Failed flushing cache by tag using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
                 $this->removeUnhealthyBackend($backend);
             }
@@ -55,6 +55,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
      * @param array<string> $tags The tags the entries must have
      * @return integer The number of entries which have been affected by this flush
      * @throws Throwable
+     * @psalm-suppress MethodSignatureMismatch
      */
     public function flushByTags(array $tags): int
     {
@@ -77,7 +78,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
             try {
                 $identifiers[] = $backend->findIdentifiersByTag($tag);
             } catch (Throwable $throwable) {
-                $this->logger && $this->throwableStorage && $this->logger->error(sprintf('Failed finding identifiers by tag using backend %s in %s: %s', get_class($backend), get_class($this), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
+                $this->logger?->error('Failed finding identifiers by tag using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
                 $this->removeUnhealthyBackend($backend);
             }
