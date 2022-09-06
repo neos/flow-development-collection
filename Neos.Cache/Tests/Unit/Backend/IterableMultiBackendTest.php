@@ -9,7 +9,6 @@ use Neos\Cache\Backend\IterableMultiBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Cache\Tests\BaseTestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class IterableMultiBackendTest extends BaseTestCase
 {
@@ -51,10 +50,7 @@ class IterableMultiBackendTest extends BaseTestCase
         self::assertSame('bar2', $iterator->current());
     }
 
-    /**
-     * @return EnvironmentConfiguration|MockObject
-     */
-    public function getEnvironmentConfiguration(): EnvironmentConfiguration|MockObject
+    public function getEnvironmentConfiguration(): EnvironmentConfiguration
     {
         return new EnvironmentConfiguration(
             __DIR__ . '~Testing',
