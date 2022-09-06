@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
@@ -76,7 +78,7 @@ class MultiBackendTest extends BaseTestCase
         $this->inject($multiBackend, 'backends', [$firstNullBackendMock, $secondNullBackendMock]);
         $this->inject($multiBackend, 'initialized', true);
 
-        $multiBackend->set('foo', 1);
+        $multiBackend->set('foo', 'data');
     }
 
     /**
