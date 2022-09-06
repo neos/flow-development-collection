@@ -823,6 +823,16 @@ so supports tagging.
 Options are the same as for the MultiBackend.
 
 
+Neos\\Cache\\Backend\\IterableMultiBackend
+------------------------------------------
+
+The IterableMultiBackend is an extension of the TaggableMultiBackend and additionally implements the
+IterableBackendInterface. Backends of this type can be used for caches which require iteration support,
+such as the Flow session cache.
+
+Options are the same as for the MultiBackend.
+
+
 How to Use the Caching Framework
 ================================
 
