@@ -33,6 +33,7 @@ class MultiBackend extends AbstractBackend
     protected array $backends = [];
     protected bool $setInAllBackends = true;
     protected bool $debug = false;
+    protected bool $logErrors = true;
     protected bool $removeUnhealthyBackends = true;
     protected bool $initialized = false;
 
@@ -44,7 +45,7 @@ class MultiBackend extends AbstractBackend
         parent::__construct($environmentConfiguration, $options);
 
         /** @noinspection ClassConstantCanBeUsedInspection */
-        if (class_exists('Neos\Flow\Core\Bootstrap') && Bootstrap::$staticObjectManager instanceof ObjectManagerInterface && class_exists('Neos\Flow\Log\ThrowableStorageInterface')) {
+        if ($this->logErrors && class_exists('Neos\Flow\Core\Bootstrap') && Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
             $logger = Bootstrap::$staticObjectManager->get(LoggerInterface::class);
             assert($logger instanceof LoggerInterface);
             $this->logger = $logger;
@@ -227,6 +228,14 @@ class MultiBackend extends AbstractBackend
     public function setRemoveUnhealthyBackends(bool $removeUnhealthyBackends): void
     {
         $this->removeUnhealthyBackends = $removeUnhealthyBackends;
+    }
+
+    /**
+     * This setter is used by AbstractBackend::setProperties()
+     */
+    public function setLogErrors(bool $logErrors): void
+    {
+        $this->logErrors = $logErrors;
     }
 
     /**

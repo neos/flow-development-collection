@@ -802,6 +802,11 @@ Options
 |                         | everything works as expected.            |           |         |         |
 |                         |                                          |           |         |         |
 +-------------------------+------------------------------------------+-----------+---------+---------+
+| logErrors               | Log errors reported by the individual    | No        | bool    | true    |
+|                         | sub backends and when a backend is       |           |         |         |
+|                         | flagged as unhealthy.                    |           |         |         |
+|                         |                                          |           |         |         |
++-------------------------+------------------------------------------+-----------+---------+---------+
 | removeUnhealthyBackends | Automatically remove a sub backend from  | No        | bool    | true    |
 |                         | the list of cache backends, in case it   |           |         |         |
 |                         | any errors. The sub backend will be used |           |         |         |
