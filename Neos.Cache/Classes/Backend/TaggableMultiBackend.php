@@ -13,44 +13,27 @@ namespace Neos\Cache\Backend;
  * source code.
  */
 
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Throwable;
+
 /**
  * A taggable multi backend, falling back to multiple backends if errors occur.
  */
 class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterface
 {
     /**
-     * @var TaggableBackendInterface[]
-     */
-    protected $backends = [];
-
-    /**
-     * @param string $backendClassName
-     * @param array $backendOptions
-     * @return BackendInterface
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
     {
-        $backend = null;
         if (!is_subclass_of($backendClassName, TaggableBackendInterface::class)) {
-            return $backend;
+            return null;
         }
-
-        try {
-            $backend = $this->instantiateBackend($backendClassName, $backendOptions, $this->environmentConfiguration);
-            $backend->setCache($this->cache);
-        } catch (\Throwable $t) {
-            $this->handleError($t);
-            $backend = null;
-        }
-
-        return $backend;
+        return parent::buildSubBackend($backendClassName, $backendOptions);
     }
 
     /**
-     * @param string $tag
-     * @return int the maximum number flushed entries returned by the backends
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function flushByTag(string $tag): int
     {
@@ -59,19 +42,20 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
         foreach ($this->backends as $backend) {
             try {
                 $count |= $backend->flushByTag($tag);
-            } catch (\Throwable $t) {
-                $this->handleError($t);
+            } catch (Throwable $throwable) {
+                $this->logger?->error('Failed flushing cache by tag using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
+                $this->handleError($throwable);
+                $this->removeUnhealthyBackend($backend);
             }
         }
-
         return $count;
     }
 
     /**
-     * Removes all cache entries of this cache which are tagged by any of the specified tags.
-     *
-     * @throws \Throwable
-     * @api
+     * @param array<string> $tags The tags the entries must have
+     * @return integer The number of entries which have been affected by this flush
+     * @throws Throwable
+     * @psalm-suppress MethodSignatureMismatch
      */
     public function flushByTags(array $tags): int
     {
@@ -83,8 +67,8 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
     }
 
     /**
-     * @param string $tag
      * @return string[]
+     * @throws Throwable
      */
     public function findIdentifiersByTag(string $tag): array
     {
@@ -93,11 +77,13 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
         foreach ($this->backends as $backend) {
             try {
                 $identifiers[] = $backend->findIdentifiersByTag($tag);
-            } catch (\Throwable $t) {
+            } catch (Throwable $throwable) {
+                $this->logger?->error('Failed finding identifiers by tag using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
+                $this->handleError($throwable);
+                $this->removeUnhealthyBackend($backend);
             }
         }
         // avoid array_merge in the loop, this trades memory for speed
-        // the empty array covers cases when no loops were made
-        return array_values(array_unique(array_merge([], ...$identifiers)));
+        return array_values(array_unique(array_merge(...$identifiers)));
     }
 }

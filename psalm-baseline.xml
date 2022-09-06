@@ -41,11 +41,6 @@
       <code>'-'</code>
     </RedundantPropertyInitializationCheck>
   </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Backend/TaggableMultiBackend.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$backends</code>
-    </NonInvariantDocblockPropertyType>
-  </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Frontend/PhpFrontend.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string|bool</code>
@@ -61,14 +56,6 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$string</code>
     </MoreSpecificImplementedParamType>
-  </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Psr/Cache/CacheFactory.php">
-    <InvalidArgument occurrences="1">
-      <code>$backend</code>
-    </InvalidArgument>
-    <UndefinedDocblockClass occurrences="1">
-      <code>BackendInterface</code>
-    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Psr/Cache/CacheItem.php">
     <PropertyTypeCoercion occurrences="1">
@@ -203,8 +190,7 @@
       <code>$x</code>
       <code>$x</code>
     </InvalidScalarArgument>
-    <RedundantCastGivenDocblockType occurrences="23">
-      <code>(float)$subject</code>
+    <RedundantCastGivenDocblockType occurrences="22">
       <code>(float)$x</code>
       <code>(float)$x</code>
       <code>(float)$x</code>
@@ -529,30 +515,6 @@
       <code>FLOW_PATH_ROOT</code>
     </UndefinedConstant>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Command/CoreCommandController.php">
-    <FalsableReturnStatement occurrences="1">
-      <code>($subProcessStatus['running'] === true) ? [$subProcess, $pipes] : false</code>
-    </FalsableReturnStatement>
-    <InvalidFalsableReturnType occurrences="1">
-      <code>array</code>
-    </InvalidFalsableReturnType>
-    <MissingDocblockType occurrences="1">
-      <code>$command</code>
-    </MissingDocblockType>
-    <PossiblyFalseOperand occurrences="1">
-      <code>getenv('HOME')</code>
-    </PossiblyFalseOperand>
-    <TypeDoesNotContainType occurrences="2">
-      <code>$command-&gt;getCommandIdentifier() === false</code>
-      <code>$request === false</code>
-    </TypeDoesNotContainType>
-    <UndefinedConstant occurrences="4">
-      <code>FLOW_PATH_FLOW</code>
-      <code>FLOW_PATH_ROOT</code>
-      <code>FLOW_PATH_ROOT</code>
-      <code>FLOW_PATH_TEMPORARY_BASE</code>
-    </UndefinedConstant>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/DoctrineCommandController.php">
     <PossiblyInvalidArrayOffset occurrences="1">
       <code>$packages[$selectedPackage]</code>
@@ -742,9 +704,6 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Core/Bootstrap.php">
-    <NullableReturnStatement occurrences="1">
-      <code>null</code>
-    </NullableReturnStatement>
     <PossiblyUndefinedVariable occurrences="1">
       <code>$suitableRequestHandlers</code>
     </PossiblyUndefinedVariable>
@@ -1547,9 +1506,6 @@
     </PossiblyNullReference>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/CountWalker.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>void</code>
-    </ImplementedReturnTypeMismatch>
     <PossiblyNullArgument occurrences="1">
       <code>$parentName</code>
     </PossiblyNullArgument>
@@ -1559,6 +1515,10 @@
     <PossiblyNullReference occurrences="1">
       <code>getSingleIdentifierFieldName</code>
     </PossiblyNullReference>
+    <PossiblyUndefinedArrayOffset occurrences="2">
+      <code>$parent['metadata']</code>
+      <code>$qComp['parent']</code>
+    </PossiblyUndefinedArrayOffset>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/DataTypes/JsonArrayType.php">
     <LessSpecificImplementedReturnType occurrences="1">
@@ -1648,6 +1608,12 @@
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>$this-&gt;queryBuilder-&gt;getParameters()</code>
     </InvalidPropertyAssignmentValue>
+    <InvalidReturnStatement occurrences="1">
+      <code>$this-&gt;queryBuilder-&gt;getQuery()-&gt;getSQL()</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>array</code>
+    </InvalidReturnType>
     <InvalidScalarArgument occurrences="3">
       <code>$pdoException-&gt;getCode()</code>
       <code>$pdoException-&gt;getCode()</code>
@@ -2455,23 +2421,6 @@
       <code>$sourceTypes</code>
     </NonInvariantDocblockPropertyType>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Session/Aspect/LoggingAspect.php">
-    <InvalidReturnType occurrences="3">
-      <code>mixed</code>
-      <code>mixed</code>
-      <code>mixed</code>
-    </InvalidReturnType>
-    <UndefinedInterfaceMethod occurrences="8">
-      <code>getId</code>
-      <code>getId</code>
-      <code>getId</code>
-      <code>getId</code>
-      <code>isStarted</code>
-      <code>isStarted</code>
-      <code>isStarted</code>
-      <code>isStarted</code>
-    </UndefinedInterfaceMethod>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Session/Session.php">
     <FalsableReturnStatement occurrences="1">
       <code>false</code>
@@ -2526,9 +2475,6 @@
       <code>null</code>
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
-    <RedundantCastGivenDocblockType occurrences="1">
-      <code>(string)Bootstrap::getEnvironmentConfigurationSetting('FLOW_REWRITEURLS')</code>
-    </RedundantCastGivenDocblockType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Utility/Ip.php">
     <PossiblyInvalidOperand occurrences="2">
@@ -2639,12 +2585,6 @@
     </PossiblyFalseArgument>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/Core/Cache/CacheAdaptor.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>bool|void</code>
-    </ImplementedReturnTypeMismatch>
-    <InvalidReturnStatement occurrences="1">
-      <code>$this-&gt;flowCache-&gt;set($name, substr($value, strpos($value, "\n") + 1))</code>
-    </InvalidReturnStatement>
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$value</code>
     </MoreSpecificImplementedParamType>
