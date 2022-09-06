@@ -84,7 +84,6 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
             }
         }
         // avoid array_merge in the loop, this trades memory for speed
-        // the empty array covers cases when no loops were made
-        return array_values(array_unique(array_merge([], ...$identifiers)));
+        return array_values(array_unique(array_merge(...$identifiers)));
     }
 }
