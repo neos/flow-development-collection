@@ -328,13 +328,12 @@ class KickstartCommandController extends CommandController
     /**
      *  Kickstart a node migration
      *
-     * Creates a new node migration with the given $nodeMigrationName, and $packageKey
+     * Creates a new node migration for the given $packageKey
      *
      * @param string $packageKey The packageKey for the given package
-     * @param string $nodeMigrationName The name for the created node migration, with the current timeStamp in YmdHis format
      * @return void
      */
-    public function nodeMigrationCommand(string $packageKey, string $nodeMigrationName)
+    public function nodeMigrationCommand(string $packageKey)
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -342,7 +341,7 @@ class KickstartCommandController extends CommandController
             exit(2);
         }
 
-        $generatedFiles = $this->generatorService->generateNodeMigration($packageKey, $nodeMigrationName);
+        $generatedFiles = $this->generatorService->generateNodeMigration($packageKey);
         $this->outputLine(implode(PHP_EOL, $generatedFiles));
         $this->outputLine('Your node migration has been created successfully.');
     }
