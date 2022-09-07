@@ -332,7 +332,7 @@ class KickstartCommandController extends CommandController
      *
      * @param string $packageKey The packageKey for the given package
      * @param string $nodeMigrationName The name for the created node migration, with the current timeStamp in YmdHis format
-     * @return string
+     * @return void
      */
     public function nodeMigrationCommand(string $packageKey, string $nodeMigrationName)
     {
