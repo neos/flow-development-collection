@@ -514,6 +514,35 @@ class GeneratorService
     }
 
     /**
+     * Generate a node migration for the given $packageKey
+     *
+     * @param string $packageKey the package key
+     * @param string $nodeMigrationName the node migration name
+     * @return array
+     */
+    public function generateNodeMigration(string $packageKey, string $nodeMigrationName): array
+    {
+        $nodeMigrationName = ucfirst($nodeMigrationName);
+
+        $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Migrations/ContentRepository/NodeMigrationTemplate.yaml.tmpl';
+        $nodeMigrationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Migrations/ContentRepository']) . '/';
+
+        $contextVariables = [];
+        $contextVariables['packageKey'] = $packageKey;
+        $contextVariables['nodeMigrationName'] = $nodeMigrationName;
+
+        $timeStamp = (new \DateTimeImmutable())->format('YmdHis');
+
+        $nodeMigrationFileName = $nodeMigrationName . $timeStamp . '.yaml';
+        $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+
+        $targetPathAndFilename = $nodeMigrationPath . $nodeMigrationFileName;
+        $this->generateFile($targetPathAndFilename, $fileContent);
+
+        return $this->generatedFiles;
+    }
+
+    /**
      * Normalize types and prefix types with namespaces
      *
      * @param array $fieldDefinitions The field definitions
