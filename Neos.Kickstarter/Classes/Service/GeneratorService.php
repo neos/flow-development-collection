@@ -582,13 +582,8 @@ class GeneratorService
             \Neos\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
         }
 
-        if (substr($targetPathAndFilename, 0, 11) === 'resource://') {
-            list($packageKey, $resourcePath) = explode('/', substr($targetPathAndFilename, 11), 2);
-            $relativeTargetPathAndFilename = $packageKey . '/Resources/' . $resourcePath;
-        } elseif (strpos($targetPathAndFilename, 'Tests') !== false) {
-            $relativeTargetPathAndFilename = substr($targetPathAndFilename, strrpos(substr($targetPathAndFilename, 0, strpos($targetPathAndFilename, 'Tests/') - 1), '/') + 1);
-        } else {
-            $relativeTargetPathAndFilename = substr($targetPathAndFilename, strrpos(substr($targetPathAndFilename, 0, strpos($targetPathAndFilename, 'Classes/') - 1), '/') + 1);
+        if (strpos($targetPathAndFilename, FLOW_PATH_PACKAGES) === 0) {
+            $relativeTargetPathAndFilename = substr($targetPathAndFilename, strlen(FLOW_PATH_PACKAGES));
         }
 
         if (!file_exists($targetPathAndFilename) || $force === true) {
