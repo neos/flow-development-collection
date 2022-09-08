@@ -18,6 +18,7 @@ use Neos\Cache\EnvironmentConfiguration;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -45,12 +46,16 @@ class MultiBackend extends AbstractBackend
         parent::__construct($environmentConfiguration, $options);
 
         if ($this->logErrors && class_exists(Bootstrap::class) && Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
-            $logger = Bootstrap::$staticObjectManager->get(LoggerInterface::class);
-            assert($logger instanceof LoggerInterface);
-            $this->logger = $logger;
-            $throwableStorage = Bootstrap::$staticObjectManager->get(ThrowableStorageInterface::class);
-            assert($throwableStorage instanceof ThrowableStorageInterface);
-            $this->throwableStorage = $throwableStorage;
+            try {
+                $logger = Bootstrap::$staticObjectManager->get(LoggerInterface::class);
+                assert($logger instanceof LoggerInterface);
+                $this->logger = $logger;
+                $throwableStorage = Bootstrap::$staticObjectManager->get(ThrowableStorageInterface::class);
+                assert($throwableStorage instanceof ThrowableStorageInterface);
+                $this->throwableStorage = $throwableStorage;
+            } catch (UnknownObjectException) {
+                // Logging might not be available during compile time
+            }
         }
     }
 
