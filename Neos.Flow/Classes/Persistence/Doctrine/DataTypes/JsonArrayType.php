@@ -94,7 +94,7 @@ class JsonArrayType extends JsonType
      * @return string|bool|null The database representation of the value.
      * @throws \JsonException
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): string|bool|null
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if ($value === null) {
             return null;
