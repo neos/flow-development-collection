@@ -40,7 +40,7 @@ use Psr\Http\Message\UriInterface;
 abstract class AbstractController implements ControllerInterface
 {
     /**
-     * @deprecated with Flow 8.0 - use $this->actionUriBuilder instead
+     * @deprecated with Flow 8.2 - use $this->actionUriBuilder instead
      * @var UriBuilder
      */
     protected $uriBuilder;
