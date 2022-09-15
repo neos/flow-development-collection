@@ -21,7 +21,8 @@ final class ActionUriSpecification
         private readonly Action $action,
         private readonly array $additionalArguments,
         private readonly string $format,
-    ) {}
+    ) {
+    }
 
     public static function for(Action $action): self
     {

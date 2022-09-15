@@ -24,7 +24,8 @@ final class Action
         public readonly string $packageKey,
         /** @deprecated with Flow 8.2 - The use of subpackage keys is discouraged and only supported for backwards compatibility */
         public readonly ?string $subpackageKey,
-    ) {}
+    ) {
+    }
 
     public static function create(string $packageKey, string $controllerName, string $actionName): self
     {

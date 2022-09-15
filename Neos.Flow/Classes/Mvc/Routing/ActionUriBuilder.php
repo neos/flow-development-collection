@@ -14,7 +14,6 @@ namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Flow\Mvc\Routing\Dto\Action;
 use Neos\Flow\Mvc\Routing\Dto\ActionUriSpecification;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -27,7 +26,8 @@ final class ActionUriBuilder
         private readonly RouterInterface $router,
         private readonly UriInterface $baseUri,
         private readonly RouteParameters $routeParameters,
-    ) {}
+    ) {
+    }
 
     public static function fromRouterAndBaseUriAndRouteParameters(RouterInterface $router, UriInterface $baseUri, RouteParameters $routeParameters): self
     {
