@@ -15,19 +15,21 @@ namespace Neos\Flow\Mvc\Routing;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\Action;
-use Neos\Flow\Mvc\Routing\Dto\ActionUriSpecification;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Psr\Http\Message\UriInterface;
 
-#[Flow\Proxy(false)]
+/**
+ * @Flow\Proxy(false)
+ */
 final class ActionUriBuilder
 {
     private function __construct(
-        private readonly RouterInterface $router,
-        private readonly UriInterface $baseUri,
-        private readonly RouteParameters $routeParameters,
-    ) {}
+        private RouterInterface $router,
+        private UriInterface $baseUri,
+        private RouteParameters $routeParameters,
+    ) {
+    }
 
     public static function fromRouterAndBaseUriAndRouteParameters(RouterInterface $router, UriInterface $baseUri, RouteParameters $routeParameters): self
     {
@@ -46,16 +48,16 @@ final class ActionUriBuilder
     /**
      * @throws NoMatchingRouteException
      */
-    public function uriFor(ActionUriSpecification $actionUriSpecification): UriInterface
+    public function uriFor(Action $action): UriInterface
     {
-        return $this->router->resolve(new ResolveContext($this->baseUri, $actionUriSpecification->toRouteValues(), false, ltrim($this->baseUri->getPath(), '\/'), $this->routeParameters));
+        return $this->router->resolve(new ResolveContext($this->baseUri, $action->toRouteValues(), false, ltrim($this->baseUri->getPath(), '\/'), $this->routeParameters));
     }
 
     /**
      * @throws NoMatchingRouteException
      */
-    public function absoluteUriFor(ActionUriSpecification $actionUriSpecification): UriInterface
+    public function absoluteUriFor(Action $action): UriInterface
     {
-        return $this->router->resolve(new ResolveContext($this->baseUri, $actionUriSpecification->toRouteValues(), true, ltrim($this->baseUri->getPath(), '\/'), $this->routeParameters));
+        return $this->router->resolve(new ResolveContext($this->baseUri, $action->toRouteValues(), true, ltrim($this->baseUri->getPath(), '\/'), $this->routeParameters));
     }
 }

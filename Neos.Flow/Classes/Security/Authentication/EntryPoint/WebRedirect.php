@@ -16,7 +16,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\ActionUriBuilderFactory;
 use Neos\Flow\Mvc\Routing\Dto\Action;
-use Neos\Flow\Mvc\Routing\Dto\ActionUriSpecification;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -80,7 +79,7 @@ class WebRedirect extends AbstractEntryPoint
         $controllerName = $this->extractRouteValue($routeValues, '@controller');
         $packageKey = $this->extractRouteValue($routeValues, '@package');
         $uriBuilder = $this->actionUriBuilderFactory->createFromHttpRequest($request);
-        return (string)$uriBuilder->absoluteUriFor(ActionUriSpecification::for(Action::create($packageKey, $controllerName, $actionName))->withAdditionalArguments($routeValues));
+        return (string)$uriBuilder->absoluteUriFor(Action::create($packageKey, $controllerName, $actionName)->withAdditionalArguments($routeValues));
     }
 
     /**
