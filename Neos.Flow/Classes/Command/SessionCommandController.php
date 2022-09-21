@@ -14,6 +14,7 @@ namespace Neos\Flow\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Session\SessionManagerInterface;
 
 /**
  * Command controller for managing sessions
@@ -30,12 +31,26 @@ class SessionCommandController extends CommandController
     protected $cacheManager;
 
     /**
+     * @var SessionManagerInterface
+     */
+    protected $sessionManager;
+
+    /**
      * @param CacheManager $cacheManager
      * @return void
      */
     public function injectCacheManager(CacheManager $cacheManager)
     {
         $this->cacheManager = $cacheManager;
+    }
+
+    /**
+     * @param SessionManagerInterface $sessionManager
+     * @return void
+     */
+    public function injectSessionManager(SessionManagerInterface $sessionManager)
+    {
+        $this->sessionManager = $sessionManager;
     }
 
     /**
@@ -54,6 +69,26 @@ class SessionCommandController extends CommandController
         $this->cacheManager->getCache('Flow_Session_Storage')->flush();
         $this->cacheManager->getCache('Flow_Session_MetaData')->flush();
         $this->outputLine('Destroyed all sessions.');
+        $this->sendAndExit(0);
+    }
+
+    /**
+     * Run garbage collection for sesions.
+     * This command will remove session-data and -metadate of outdated sessions
+     * identified by lastActivityTimestamp being older than inactivityTimeout
+     *
+     * !!! This is usually done automatically after shutdown for the percentage
+     * of requests specified in the setting `Neos.Flow.session.garbageCollection.probability`
+     *
+     * Use this command if you need more direct control over the cleanup intervals.
+     *
+     * @return void
+     * @since 8.2
+     */
+    public function collectGarbageCommand()
+    {
+        $this->sessionManager->collectGarbage();
+        $this->outputLine('Collected session Garbage');
         $this->sendAndExit(0);
     }
 }

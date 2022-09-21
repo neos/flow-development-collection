@@ -1046,109 +1046,17 @@ class SessionTest extends UnitTestCase
     }
 
     /**
-     * @test for #1674
+     * @test
+     * @deprecated remove with Flow 9
      */
-    public function garbageCollectionWorksCorrectlyWithInvalidMetadataEntry()
+    public function collectGarbageIsForwardedToTheSessionManager()
     {
-        $settings = $this->settings;
-
-        $metaDataCache = $this->createCache('Meta');
-        $metaDataCache->set('foo', null);
-        $storageCache = $this->createCache('Storage');
+        $mockSessionManager = $this->createMock(SessionManager::class);
+        $mockSessionManager->expects(self::once())->method('collectGarbage')->will(self::returnValue(5));
 
         $session = new Session();
-        $this->inject($session, 'objectManager', $this->mockObjectManager);
-        $this->inject($session, 'metaDataCache', $metaDataCache);
-        $this->inject($session, 'storageCache', $storageCache);
-        $this->inject($session, 'logger', $this->createMock(LoggerInterface::class));
-        $session->injectSettings($settings);
-        $session->initializeObject();
-
-        $this->assertSame(0, $session->collectGarbage());
-    }
-
-    /**
-     * @test
-     */
-    public function garbageCollectionIsOmittedIfInactivityTimeoutIsSetToZero()
-    {
-        $settings = $this->settings;
-        $settings['session']['inactivityTimeout'] = 0;
-
-        $metaDataCache = $this->createCache('Meta');
-        $storageCache = $this->createCache('Storage');
-
-        $session = new Session();
-        $this->inject($session, 'objectManager', $this->mockObjectManager);
-        $this->inject($session, 'metaDataCache', $metaDataCache);
-        $this->inject($session, 'storageCache', $storageCache);
-        $session->injectSettings($settings);
-        $session->initializeObject();
-
-        self::assertSame(0, $session->collectGarbage());
-    }
-
-    /**
-     * @test
-     */
-    public function garbageCollectionIsOmittedIfAnotherProcessIsAlreadyRunning()
-    {
-        $settings = $this->settings;
-        $settings['session']['inactivityTimeout'] = 5000;
-        $settings['session']['garbageCollection']['probability'] = 100;
-
-        $metaDataCache = $this->createCache('Meta');
-        $storageCache = $this->createCache('Storage');
-
-        $session = new Session();
-        $this->inject($session, 'objectManager', $this->mockObjectManager);
-        $this->inject($session, 'metaDataCache', $metaDataCache);
-        $this->inject($session, 'storageCache', $storageCache);
-        $session->injectSettings($settings);
-        $session->initializeObject();
-
-        // No sessions need to be removed:
-        self::assertSame(0, $session->collectGarbage());
-
-        $metaDataCache->set('_garbage-collection-running', true, [], 120);
-
-        // Session garbage collection is omitted:
-        self::assertFalse($session->collectGarbage());
-    }
-
-    /**
-     * @test
-     */
-    public function garbageCollectionOnlyRemovesTheDefinedMaximumNumberOfSessions()
-    {
-        $settings = $this->settings;
-        $settings['session']['inactivityTimeout'] = 1000;
-        $settings['session']['garbageCollection']['probability'] = 0;
-        $settings['session']['garbageCollection']['maximumPerRun'] = 5;
-
-        $metaDataCache = $this->createCache('Meta');
-        $storageCache = $this->createCache('Storage');
-
-        for ($i = 0; $i < 9; $i++) {
-            $session = new Session();
-            $this->inject($session, 'objectManager', $this->mockObjectManager);
-            $this->inject($session, 'metaDataCache', $metaDataCache);
-            $this->inject($session, 'storageCache', $storageCache);
-            $session->injectSettings($settings);
-            $this->inject($session, 'logger', $this->createMock(LoggerInterface::class));
-            $session->initializeObject();
-
-            $session->start();
-            $sessionIdentifier = $session->getId();
-            $session->putData('foo', 'bar');
-            $session->close();
-
-            $sessionInfo = $metaDataCache->get($sessionIdentifier);
-            $sessionInfo['lastActivityTimestamp'] = time() - 4000;
-            $metaDataCache->set($sessionIdentifier, $sessionInfo, ['session'], 0);
-        }
-
-        self::assertLessThanOrEqual(5, $session->collectGarbage());
+        $this->inject($session, 'sessionManager', $mockSessionManager);
+        $this->assertEquals(5, $session->collectGarbage());
     }
 
     /**
