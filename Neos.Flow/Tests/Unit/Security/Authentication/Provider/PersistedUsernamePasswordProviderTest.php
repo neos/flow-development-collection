@@ -57,9 +57,9 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     protected $persistedUsernamePasswordProvider;
 
     /**
-     * @var Security\Cryptography\TimingAttack
+     * @var Security\Cryptography\PrecomposedHashProvider
      */
-    protected $mockTimingAttack;
+    protected $mockPrecomposedHashProvider;
 
     protected function setUp(): void
     {
@@ -68,8 +68,8 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $this->mockAccountRepository = $this->getMockBuilder(Security\AccountRepository::class)->disableOriginalConstructor()->getMock();
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $this->mockToken = $this->getMockBuilder(Security\Authentication\Token\UsernamePassword::class)->disableOriginalConstructor()->getMock();
-        $this->mockTimingAttack = $this->createMock(Security\Cryptography\TimingAttack::class);
-        $this->mockTimingAttack->method('getCryptographyDuration')->willReturn(0.2);
+        $this->mockPrecomposedHashProvider = $this->createMock(Security\Cryptography\PrecomposedHashProvider::class);
+        $this->mockPrecomposedHashProvider->method('getPrecomposedHash')->willReturn('bcrypt=>$2a$14$mYqRRlg5V2yUDy1bd9vt3Oq8Fa9d508WWazFWE5tcpTGn3G145RAm');
 
         $this->mockSecurityContext = $this->createMock(Security\Context::class);
         $this->mockSecurityContext->expects(self::any())->method('withoutAuthorizationChecks')->will(self::returnCallBack(function ($callback) {
@@ -83,7 +83,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $this->persistedUsernamePasswordProvider->_set('accountRepository', $this->mockAccountRepository);
         $this->persistedUsernamePasswordProvider->_set('persistenceManager', $this->mockPersistenceManager);
         $this->persistedUsernamePasswordProvider->_set('securityContext', $this->mockSecurityContext);
-        $this->persistedUsernamePasswordProvider->_set('timingAttack', $this->mockTimingAttack);
+        $this->persistedUsernamePasswordProvider->_set('precomposedHashProvider', $this->mockPrecomposedHashProvider);
     }
 
     /**
@@ -132,7 +132,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $this->inject($persistedUsernamePasswordProvider, 'accountRepository', $this->mockAccountRepository);
         $this->inject($persistedUsernamePasswordProvider, 'persistenceManager', $this->mockPersistenceManager);
         $this->inject($persistedUsernamePasswordProvider, 'securityContext', $this->mockSecurityContext);
-        $this->inject($persistedUsernamePasswordProvider, 'timingAttack', $this->mockTimingAttack);
+        $this->inject($persistedUsernamePasswordProvider, 'precomposedHashProvider', $this->mockPrecomposedHashProvider);
 
         $persistedUsernamePasswordProvider->authenticate($this->mockToken);
     }

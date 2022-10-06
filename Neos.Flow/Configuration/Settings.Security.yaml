@@ -97,13 +97,6 @@ Neos:
         csrfStrategy: onePerSession
 
       cryptography:
-        timingAttack:
-          # Small buffer in seconds added to the required hashing time
-          buffer: 0.1
-
-          # Precision in seconds the needed time will be ceiled up to
-          # e.g. 0.25 will ceil 0.6 to 0.75
-          precision: 0.25
 
         hashingStrategies:
 

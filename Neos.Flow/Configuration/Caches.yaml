@@ -121,8 +121,8 @@ Flow_Security_Cryptography_HashService:
   persistent: true
   backendOptions:
     defaultLifetime: 0
-Flow_Security_Cryptography_TimingAttack:
-  frontend: Neos\Cache\Frontend\VariableFrontend
+Flow_Security_Cryptography_PrecomposedHashProvider:
+  frontend: Neos\Cache\Frontend\StringFrontend
   backend: Neos\Cache\Backend\SimpleFileBackend
 
 
