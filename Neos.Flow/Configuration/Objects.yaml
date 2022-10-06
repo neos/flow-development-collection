@@ -534,6 +534,17 @@ Neos\Flow\Security\Cryptography\BCryptHashingStrategy:
     1:
       setting: Neos.Flow.security.cryptography.BCryptHashingStrategy.cost
 
+Neos\Flow\Security\Cryptography\TimingAttack:
+  scope: singleton
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Security_Cryptography_TimingAttack
+
 Neos\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser:
   scope: singleton
 

@@ -56,6 +56,10 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
      */
     protected $persistedUsernamePasswordProvider;
 
+    /**
+     * @var Security\Cryptography\TimingAttack
+     */
+    protected $mockTimingAttack;
 
     protected function setUp(): void
     {
@@ -64,6 +68,8 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $this->mockAccountRepository = $this->getMockBuilder(Security\AccountRepository::class)->disableOriginalConstructor()->getMock();
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $this->mockToken = $this->getMockBuilder(Security\Authentication\Token\UsernamePassword::class)->disableOriginalConstructor()->getMock();
+        $this->mockTimingAttack = $this->createMock(Security\Cryptography\TimingAttack::class);
+        $this->mockTimingAttack->method('getCryptographyDuration')->willReturn(0.2);
 
         $this->mockSecurityContext = $this->createMock(Security\Context::class);
         $this->mockSecurityContext->expects(self::any())->method('withoutAuthorizationChecks')->will(self::returnCallBack(function ($callback) {
@@ -77,6 +83,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $this->persistedUsernamePasswordProvider->_set('accountRepository', $this->mockAccountRepository);
         $this->persistedUsernamePasswordProvider->_set('persistenceManager', $this->mockPersistenceManager);
         $this->persistedUsernamePasswordProvider->_set('securityContext', $this->mockSecurityContext);
+        $this->persistedUsernamePasswordProvider->_set('timingAttack', $this->mockTimingAttack);
     }
 
     /**
@@ -125,6 +132,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $this->inject($persistedUsernamePasswordProvider, 'accountRepository', $this->mockAccountRepository);
         $this->inject($persistedUsernamePasswordProvider, 'persistenceManager', $this->mockPersistenceManager);
         $this->inject($persistedUsernamePasswordProvider, 'securityContext', $this->mockSecurityContext);
+        $this->inject($persistedUsernamePasswordProvider, 'timingAttack', $this->mockTimingAttack);
 
         $persistedUsernamePasswordProvider->authenticate($this->mockToken);
     }

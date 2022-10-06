@@ -12,11 +12,13 @@ namespace Neos\Flow\Security\Authentication\Provider;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Exception;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\Authentication\Token\UsernamePasswordTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Cryptography\TimingAttack;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 
@@ -50,6 +52,12 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
      * @Flow\Inject
      */
     protected $persistenceManager;
+
+    /**
+     * @var TimingAttack
+     * @Flow\Inject
+     */
+    protected $timingAttack;
 
     /**
      * Returns the class names of the tokens this provider can authenticate.
@@ -98,9 +106,9 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
 
         $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
 
+        $startTime = microtime(true);
         if ($account === null) {
-            // validate the account anyways (with a dummy salt) in order to prevent timing attacks on this provider
-            $this->hashService->validatePassword($password, 'bcrypt=>$2a$16$RW.NZM/uP3mC8rsXKJGuN.2pG52thRp5w39NFO.ShmYWV7mJQp0rC');
+            $this->sleepUntilCryptographyDuration($startTime);
             return;
         }
 
@@ -113,5 +121,20 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
         }
         $this->accountRepository->update($account);
         $this->persistenceManager->whitelistObject($account);
+
+        $this->sleepUntilCryptographyDuration($startTime);
+    }
+
+    protected function sleepUntilCryptographyDuration(float $start)
+    {
+        $targetTime = $start + $this->timingAttack->getCryptographyDuration();
+
+        try {
+            if ($targetTime > microtime(true)) {
+                time_sleep_until($targetTime);
+            }
+        } catch (Exception $exception) {
+            // we can simply ignore this
+        }
     }
 }
