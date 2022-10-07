@@ -1569,9 +1569,10 @@
     </ArgumentTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Mapping/Driver/FlowAnnotationDriver.php">
-    <ArgumentTypeCoercion occurrences="3">
+    <ArgumentTypeCoercion occurrences="4">
       <code>$className</code>
       <code>$classSchema-&gt;getRepositoryClassName()</code>
+      <code>$discriminatorColumn</code>
     </ArgumentTypeCoercion>
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>new IndexedReader(new AnnotationReader())</code>
