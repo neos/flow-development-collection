@@ -35,7 +35,6 @@ use Neos\Flow\Security\Account;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Unit tests for the Flow Session implementation

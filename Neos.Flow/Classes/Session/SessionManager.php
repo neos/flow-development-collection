@@ -16,7 +16,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Security\Context;
 use Neos\Flow\Utility\Algorithms;
 use Psr\Log\LoggerInterface;
 
