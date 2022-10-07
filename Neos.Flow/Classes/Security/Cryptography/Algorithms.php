@@ -16,17 +16,12 @@ namespace Neos\Flow\Security\Cryptography;
  *
  * Right now this class provides a PHP based PBKDF2 implementation.
  *
+ * @deprecated since 8.2, use PHPs `hash_pbkdf2`
  */
 class Algorithms
 {
     /**
      * Compute a derived key from a password based on PBKDF2
-     *
-     * See PKCS #5 v2.0 http://tools.ietf.org/html/rfc2898 for implementation details.
-     * The implementation is tested with test vectors from http://tools.ietf.org/html/rfc6070 .
-     *
-     * If https://wiki.php.net/rfc/hash_pbkdf2 is ever part of PHP we should check for the
-     * existence of hash_pbkdf2() and use it if available.
      *
      * @param string $password Input string / password
      * @param string $salt The salt
@@ -37,21 +32,6 @@ class Algorithms
      */
     public static function pbkdf2($password, $salt, $iterationCount, $derivedKeyLength, $algorithm = 'sha256')
     {
-        $hashLength = strlen(hash($algorithm, '', true));
-        $keyBlocksToCompute = ceil($derivedKeyLength / $hashLength);
-        $derivedKey = '';
-
-        for ($block = 1; $block <= $keyBlocksToCompute; $block++) {
-            $iteratedBlock = hash_hmac($algorithm, $salt . pack('N', $block), $password, true);
-
-            for ($iteration = 1, $iteratedHash = $iteratedBlock; $iteration < $iterationCount; $iteration++) {
-                $iteratedHash = hash_hmac($algorithm, $iteratedHash, $password, true);
-                $iteratedBlock ^= $iteratedHash;
-            }
-
-            $derivedKey .= $iteratedBlock;
-        }
-
-        return substr($derivedKey, 0, $derivedKeyLength);
+        return hash_pbkdf2($algorithm, $password, $salt, $iterationCount, $derivedKeyLength, true);
     }
 }
