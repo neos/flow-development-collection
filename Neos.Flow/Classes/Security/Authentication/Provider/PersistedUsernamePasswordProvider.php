@@ -53,8 +53,10 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
     protected $persistenceManager;
 
     /**
+     * The PrecomposedHashProvider have to be injected non-lazy to prevent timing differences
+     *
      * @var PrecomposedHashProvider
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      */
     protected $precomposedHashProvider;
 

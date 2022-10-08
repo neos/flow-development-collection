@@ -29,8 +29,10 @@ class PrecomposedHashProvider
     protected $hashService;
 
     /**
+     * The Cache have to be injected non-lazy to prevent timing differences
+     *
      * @var StringFrontend
-     * @Flow\Inject
+     * @Flow\Inject(lazy=false)
      */
     protected $cache;
 
