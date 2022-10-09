@@ -449,6 +449,27 @@ this. To use this feature, just pass the resource hash:
 You are encouraged to use this stream wrapper wherever you need to access a static or
 persistent resource in your PHP code.
 
+Package Stream Wrapper
+======================
+
+Packages often rely on files from other packages and in some cases those might not be resources.
+Typical use cases are NodeTypes, Tests, YAML or other data files.
+Similar to the resources it not advisible to build pathes using the ``FLOW_PATH_*`` constants or
+include files via relative pathes from your package. The package stream wrapper offers a more
+convenient and safe way to achieve this.
+
+The following example reads the content of the file
+``Acme.Demo/NodeTypes/Document.yaml`` into a variable:
+
+*Example: Accessing package resources* ::
+
+	$template = file_get_contents(
+		'package://Acme.Demo/NodeTypes/Document.yaml'
+	);
+
+You are encouraged to use this stream wrapper wherever you need to access a a file from another
+package that is not located in the package resources.
+
 Publishing to a Content Delivery Network (CDN)
 ==============================================
 
