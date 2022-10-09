@@ -2018,6 +2018,28 @@
       <code>$pathInfo['filename']</code>
     </PossiblyInvalidArrayOffset>
   </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/ResourceManagement/Streams/PackageStreamWrapper.php">
+    <FalsableReturnStatement occurrences="2">
+      <code>false</code>
+      <code>false</code>
+    </FalsableReturnStatement>
+    <ImplementedReturnTypeMismatch occurrences="2">
+      <code>void</code>
+      <code>void</code>
+    </ImplementedReturnTypeMismatch>
+    <InvalidArgument occurrences="1">
+      <code>$options&amp;STREAM_MKDIR_RECURSIVE</code>
+    </InvalidArgument>
+    <InvalidFalsableReturnType occurrences="1">
+      <code>resource</code>
+    </InvalidFalsableReturnType>
+    <InvalidPropertyAssignmentValue occurrences="1">
+      <code>$this-&gt;handle</code>
+    </InvalidPropertyAssignmentValue>
+    <TypeDoesNotContainType occurrences="1">
+      <code>false</code>
+    </TypeDoesNotContainType>
+  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/ResourceManagement/Streams/ResourceStreamWrapper.php">
     <FalsableReturnStatement occurrences="1">
       <code>false</code>

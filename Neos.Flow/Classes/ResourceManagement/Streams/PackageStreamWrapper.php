@@ -470,7 +470,11 @@ class PackageStreamWrapper implements StreamWrapperInterface
      */
     public function pathStat($path, $flags)
     {
-        return @stat($this->evaluatePackagePath($path));
+        $evaluatedPath = $this->evaluatePackagePath($path);
+        if ($evaluatedPath === false) {
+            return false;
+        }
+        return @stat($evaluatedPath);
     }
 
     /**
@@ -493,7 +497,7 @@ class PackageStreamWrapper implements StreamWrapperInterface
             return false;
         }
 
-        if (preg_match('/(^|\/)\\.\\.($|\/)/us', $requestPathParts[1])) {
+        if (preg_match('/(^|\/)\\.\\.\//us', $requestPathParts[1])) {
             throw new \InvalidArgumentException('The ' . __CLASS__ . ' in the \'' . self::SCHEME . '\' scheme. Does not allow going upwards in pathes.', 1665317583);
         }
 

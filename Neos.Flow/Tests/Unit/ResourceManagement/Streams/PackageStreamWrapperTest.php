@@ -53,24 +53,34 @@ class PackageStreamWrapperTest extends UnitTestCase
         $this->packageStreamWrapper->open('invalid-scheme://foo/bar', 'r', 0, $openedPathAndFilename);
     }
 
-    public function providePathesWithForbiddenUpwardsTraversel(): array
+    public function providePathesToCheckForForbiddenUpwardsTraversal(): array
     {
         return [
-            ['package://Some.Package/../bar'],
-            ['package://Some.Package/bar/..'],
-            ['package://Some.Package/foo/../bar']
+            // upwards traversal in the middle of the path is not allowed
+            ['package://Some.Package/../bar', true],
+            ['package://Some.Package/foo/../bar', true],
+            ['package://Some.Package/../../..', true],
+            // `..` is only allowed at the end of the path because it is part of directory listing in unix
+            ['package://Some.Package/bar/..', false],
+            ['package://Some.Package/..', false],
+            // other pathes are fine aswell
+            ['package://Some.Package/test.txt', false],
+            ['package://Some.Package/foo/bar/baz.txt', false]
         ];
     }
 
     /**
      * @test
-     * @dataProvider providePathesWithForbiddenUpwardsTraversel
+     * @dataProvider providePathesToCheckForForbiddenUpwardsTraversal
      */
-    public function openThrowsExceptionForPathesThatTryToTraverseUpwards(string $forbiddenPath)
+    public function openThrowsExceptionForPathesThatTryToTraverseUpwards(string $forbiddenPath, bool $expectException)
     {
-        $this->expectException(\InvalidArgumentException::class);
+        if ($expectException) {
+            $this->expectException(\InvalidArgumentException::class);
+        }
         $openedPathAndFilename = '';
-        $this->packageStreamWrapper->open($forbiddenPath, 'r', 0, $openedPathAndFilename);
+        $result = $this->packageStreamWrapper->open($forbiddenPath, 'r', 0, $openedPathAndFilename);
+        $this->assertFalse($result);
     }
 
     /**
