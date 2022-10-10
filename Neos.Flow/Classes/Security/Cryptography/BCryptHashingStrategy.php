@@ -45,7 +45,7 @@ class BCryptHashingStrategy implements PasswordHashingStrategyInterface
      * @param string|null $staticSalt Not used with this strategy
      * @return string The hashed password
      */
-    public function hashPassword($password, $staticSalt = null)
+    public function hashPassword(string $password, string $staticSalt = null): string
     {
         return password_hash($password, PASSWORD_BCRYPT, ['cost' => $this->cost]);
     }
@@ -61,7 +61,7 @@ class BCryptHashingStrategy implements PasswordHashingStrategyInterface
      * @param string|null $staticSalt Not used with this strategy
      * @return boolean true if the given password matches the hashed password
      */
-    public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = null)
+    public function validatePassword(string $password, string $hashedPasswordAndSalt, string $staticSalt = null): bool
     {
         return password_verify($password, $hashedPasswordAndSalt);
     }

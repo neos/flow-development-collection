@@ -26,7 +26,7 @@ interface PasswordHashingStrategyInterface
      * @param string|null $staticSalt Optional static salt that will not be stored in the hashed password
      * @return string The hashed password with dynamic salt (if used)
      */
-    public function hashPassword($password, $staticSalt = null);
+    public function hashPassword(string $password, string $staticSalt = null): string;
 
     /**
      * Validate a hashed password against a cleartext password
@@ -36,5 +36,5 @@ interface PasswordHashingStrategyInterface
      * @param string|null $staticSalt Optional static salt that will not be stored in the hashed password
      * @return bool true if the given cleartext password matched the hashed password
      */
-    public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = null);
+    public function validatePassword(string $password, string $hashedPasswordAndSalt, string $staticSalt = null): bool;
 }
