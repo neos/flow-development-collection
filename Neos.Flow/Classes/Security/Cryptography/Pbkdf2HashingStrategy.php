@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Security\Cryptography;
 
 /*
@@ -21,27 +23,23 @@ class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
 {
     /**
      * Length of the dynamic random salt to generate in bytes
-     * @var integer
      */
-    protected $dynamicSaltLength;
+    protected int $dynamicSaltLength;
 
     /**
      * Hash iteration count, high counts (>10.000) make brute-force attacks unfeasible
-     * @var integer
      */
-    protected $iterationCount;
+    protected int $iterationCount;
 
     /**
      * Derived key length
-     * @var integer
      */
-    protected $derivedKeyLength;
+    protected int $derivedKeyLength;
 
     /**
      * Hash algorithm to use, see hash_algos()
-     * @var string
      */
-    protected $algorithm;
+    protected string $algorithm;
 
     /**
      * Construct a PBKDF2 hashing strategy with the given parameters
@@ -51,7 +49,7 @@ class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
      * @param integer $derivedKeyLength Derived key length
      * @param string $algorithm Hash algorithm to use, see hash_algos()
      */
-    public function __construct($dynamicSaltLength, $iterationCount, $derivedKeyLength, $algorithm)
+    public function __construct(int $dynamicSaltLength, int $iterationCount, int $derivedKeyLength, string $algorithm)
     {
         $this->dynamicSaltLength = $dynamicSaltLength;
         $this->iterationCount = $iterationCount;
@@ -64,7 +62,7 @@ class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
      * Will use a combination of a random dynamic salt and the given static salt.
      *
      * @param string $password Cleartext password that should be hashed
-     * @param string $staticSalt Static salt that will be appended to the random dynamic salt
+     * @param string|null $staticSalt Static salt that will be appended to the random dynamic salt
      * @return string A Base64 encoded string with the derived key (hashed password) and dynamic salt
      */
     public function hashPassword($password, $staticSalt = null)
@@ -80,8 +78,8 @@ class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
      *
      * @param string $password The cleartext password
      * @param string $hashedPasswordAndSalt The derived key and salt in Base64 encoding as returned by hashPassword for verification
-     * @param string $staticSalt Static salt that will be appended to the dynamic salt
-     * @return boolean true if the given password matches the hashed password
+     * @param string|null $staticSalt Static salt that will be appended to the dynamic salt
+     * @return bool true if the given password matches the hashed password
      * @throws \InvalidArgumentException
      */
     public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = null)
