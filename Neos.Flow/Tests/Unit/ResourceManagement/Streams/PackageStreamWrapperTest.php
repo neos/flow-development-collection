@@ -115,6 +115,7 @@ class PackageStreamWrapperTest extends UnitTestCase
     }
 
     /**
+     * This makes sure the code does not see a 40-charatcer package key as a resource hash.
      * @test
      */
     public function openResolves40CharacterLongPackageKeysUsingThePackageManager()
