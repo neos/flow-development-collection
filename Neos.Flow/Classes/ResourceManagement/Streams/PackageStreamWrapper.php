@@ -497,10 +497,6 @@ class PackageStreamWrapper implements StreamWrapperInterface
             return false;
         }
 
-        if (preg_match('/(^|\/)\\.\\.\//us', $requestPathParts[1])) {
-            throw new \InvalidArgumentException('The ' . __CLASS__ . ' in the \'' . self::SCHEME . '\' scheme. Does not allow going upwards in pathes.', 1665317583);
-        }
-
         $resourceUriWithoutScheme = $requestPathParts[1];
 
         list($packageName, $path) = explode('/', $resourceUriWithoutScheme, 2);
@@ -515,6 +511,10 @@ class PackageStreamWrapper implements StreamWrapperInterface
             return false;
         }
 
+        if (!$this->pathRespectsTraversalBoundaries($path)) {
+            throw new \InvalidArgumentException('The ' . __CLASS__ . ' in the \'' . self::SCHEME . '\' scheme. Does not allow to traverse out of the package.', 1665317583);
+        }
+
         $resourceUri = Files::concatenatePaths([$package->getPackagePath(), $path]);
 
         if ($checkForExistence === false || file_exists($resourceUri)) {
@@ -522,5 +522,26 @@ class PackageStreamWrapper implements StreamWrapperInterface
         }
 
         return false;
+    }
+
+    private function pathRespectsTraversalBoundaries(string $path): bool
+    {
+        $path = Files::getUnixStylePath($path);
+        $pathSegments = explode('/', $path);
+        $resultingPathSegments = [];
+        foreach ($pathSegments as $index => $pathSegment) {
+            if ($pathSegment === '..') {
+                if (count($resultingPathSegments) > 0) {
+                    array_pop($resultingPathSegments);
+                } else {
+                    return false;
+                }
+            } elseif ($pathSegment === '' || $pathSegment === '.') {
+                // ignore empty and dot segments
+            } else {
+                $resultingPathSegments[] = $pathSegment;
+            }
+        }
+        return true;
     }
 }

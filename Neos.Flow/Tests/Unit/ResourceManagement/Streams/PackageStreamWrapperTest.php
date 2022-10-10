@@ -53,17 +53,18 @@ class PackageStreamWrapperTest extends UnitTestCase
         $this->packageStreamWrapper->open('invalid-scheme://foo/bar', 'r', 0, $openedPathAndFilename);
     }
 
-    public function providePathesToCheckForForbiddenUpwardsTraversal(): array
+    public function providePathesToCheckForForbiddenTraversalOutOfPath(): array
     {
         return [
-            // upwards traversal in the middle of the path is not allowed
+            // pathes that traverse out of package scope
+            ['package://Some.Package/../', true],
+            ['package://Some.Package/..', true],
             ['package://Some.Package/../bar', true],
-            ['package://Some.Package/foo/../bar', true],
-            ['package://Some.Package/../../..', true],
-            // `..` is only allowed at the end of the path because it is part of directory listing in unix
+            ['package://Some.Package/foo/../../bar/..', true],
+            // traversal inside package is allowed
+            ['package://Some.Package/foo/../bar', false],
             ['package://Some.Package/bar/..', false],
-            ['package://Some.Package/..', false],
-            // other pathes are fine aswell
+            // no traversal
             ['package://Some.Package/test.txt', false],
             ['package://Some.Package/foo/bar/baz.txt', false]
         ];
@@ -71,14 +72,18 @@ class PackageStreamWrapperTest extends UnitTestCase
 
     /**
      * @test
-     * @dataProvider providePathesToCheckForForbiddenUpwardsTraversal
+     * @dataProvider providePathesToCheckForForbiddenTraversalOutOfPath
      */
     public function openThrowsExceptionForPathesThatTryToTraverseUpwards(string $forbiddenPath, bool $expectException)
     {
         if ($expectException) {
             $this->expectException(\InvalidArgumentException::class);
         }
-        $openedPathAndFilename = '';
+
+        $mockPackage = $this->createMock(FlowPackageInterface::class);
+        $mockPackage->expects(self::any())->method('getPackagePath')->will(self::returnValue('vfs://Packages/Application/Some.Package'));
+        $this->mockPackageManager->expects(self::once())->method('getPackage')->with('Some.Package')->will(self::returnValue($mockPackage));
+
         $result = $this->packageStreamWrapper->open($forbiddenPath, 'r', 0, $openedPathAndFilename);
         $this->assertFalse($result);
     }
