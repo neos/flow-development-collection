@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Security\Cryptography;
 
 /*
@@ -36,10 +38,7 @@ class PrecomposedHashProvider
      */
     protected $cache;
 
-    /**
-     * @return float
-     */
-    public function getPrecomposedHash()
+    public function getPrecomposedHash(): string
     {
         $hash = $this->cache->get('precomposed_hash');
         if (!$hash) {
@@ -49,10 +48,7 @@ class PrecomposedHashProvider
         return $hash;
     }
 
-    /**
-     * @return string
-     */
-    public function precomposeHash()
+    public function precomposeHash(): string
     {
         $randomPassword = UtilityAlgorithms::generateRandomString(16, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./');
         $hash = $this->hashService->hashPassword($randomPassword);

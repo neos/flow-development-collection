@@ -53,7 +53,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
     protected $persistenceManager;
 
     /**
-     * The PrecomposedHashProvider have to be injected non-lazy to prevent timing differences
+     * The PrecomposedHashProvider has to be injected non-lazy to prevent timing differences
      *
      * @var PrecomposedHashProvider
      * @Flow\Inject(lazy=false)
@@ -108,7 +108,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
         $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
 
         if ($account === null) {
-            // validate anyways (with a precomposed salt) in order to prevent timing attacks on this provider
+            // validate anyways (with a precomposed hash) in order to prevent timing attacks on this provider
             $this->hashService->validatePassword($password, $this->precomposedHashProvider->getPrecomposedHash());
             return;
         }
