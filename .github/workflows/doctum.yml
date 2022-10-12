@@ -27,9 +27,9 @@ jobs:
 
       - name: Move rendered docs to site
         run: |
-          rm -rf docs-site/${{ github.ref_name }}
-          mkdir -p docs-site/${{ github.ref_name }}
-          mv build/* docs-site/${{ github.ref_name }}/
+          rm -rf docs-site/flow/${{ github.ref_name }}
+          mkdir -p docs-site/flow/${{ github.ref_name }}
+          mv build/* docs-site/flow/${{ github.ref_name }}/
 
       - name: Commit update
         run: |
