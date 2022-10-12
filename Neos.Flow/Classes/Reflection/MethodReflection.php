@@ -21,7 +21,7 @@ use Neos\Flow\Annotations as Flow;
 class MethodReflection extends \ReflectionMethod
 {
     /**
-     * @var DocCommentParser: An instance of the doc comment parser
+     * @var DocCommentParser An instance of the doc comment parser
      */
     protected $docCommentParser;
 
