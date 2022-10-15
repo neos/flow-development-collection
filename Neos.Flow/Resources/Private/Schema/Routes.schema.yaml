@@ -40,6 +40,15 @@ items:
     'toLowerCase': {type: boolean}
     'httpMethods':
       type: array
+    'cache':
+      type: dictionary
+      additionalProperties: false
+      properties:
+        'lifetime': {type: ['null', integer]}
+        'tags':
+          type: array
+          items:
+            type: string
 
     # subRoutes do not exist here
     # as they are expanded by the configuration manager

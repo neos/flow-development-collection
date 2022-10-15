@@ -43,15 +43,23 @@ final class ResolveResult
     private $tags;
 
     /**
+     * RouteLifetime to be associated with the result, or NULL
+     *
+     * @var RouteLifetime|null
+     */
+    private $lifetime;
+
+    /**
      * @param string $resolvedValue
      * @param UriConstraints $uriConstraints
      * @param RouteTags $tags
      */
-    public function __construct(string $resolvedValue, UriConstraints $uriConstraints = null, RouteTags $tags = null)
+    public function __construct(string $resolvedValue, UriConstraints $uriConstraints = null, RouteTags $tags = null, RouteLifetime $lifetime = null)
     {
         $this->resolvedValue = $resolvedValue;
         $this->uriConstraints = $uriConstraints;
         $this->tags = $tags;
+        $this->lifetime = $lifetime;
     }
 
     /**
@@ -92,5 +100,26 @@ final class ResolveResult
     public function getTags()
     {
         return $this->tags;
+    }
+
+    /**
+     * Whether this result has a lifetime
+     *
+     * @return bool
+     * @psalm-assert-if-true RouteLifetime $this->getLifetime()
+     */
+    public function hasLifetime(): bool
+    {
+        return $this->lifetime !== null;
+    }
+
+    /**
+     * RouteLifetime to be associated with the MatchResult, or NULL
+     *
+     * @return RouteLifetime|null
+     */
+    public function getLifetime(): ?RouteLifetime
+    {
+        return $this->lifetime;
     }
 }
