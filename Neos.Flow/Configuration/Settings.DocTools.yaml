@@ -5,30 +5,31 @@ Neos:
     collections:
       'Flow':
         commandReferences:
-          - 'Flow:FlowCommands'
+          'Flow:FlowCommands': true
         references:
-          - 'TYPO3Fluid:ViewHelpers'
-          - 'Flow:FluidAdaptorViewHelpers'
-          - 'Flow:FlowValidators'
-          - 'Flow:FlowSignals'
-          - 'Flow:FlowTypeConverters'
-          - 'Flow:FlowAnnotations'
+          'TYPO3Fluid:ViewHelpers': true
+          'Flow:FluidAdaptorViewHelpers': true
+          'Flow:FlowValidators': true
+          'Flow:FlowSignals': true
+          'Flow:FlowTypeConverters': true
+          'Flow:FlowAnnotations': true
 
     commandReferences:
       'Flow:FlowCommands':
         title: 'Flow Command Reference'
         packageKeys:
-          - 'Neos.Flow'
-          - 'Neos.Party'
-          - 'Neos.FluidAdaptor'
-          - 'Neos.Kickstart'
-          - 'Neos.Welcome'
+          'Neos.Flow': true
+          'Neos.Party': true
+          'Neos.FluidAdaptor': true
+          'Neos.Kickstart': true
+          'Neos.Welcome': true
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/CommandReference.rst'
 
     references:
       'TYPO3Fluid:ViewHelpers':
         title: 'TYPO3 Fluid ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/TYPO3FluidViewHelperReference.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
         affectedClasses:
           parentClassName: TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
           classNamePattern: '/^TYPO3Fluid\\Fluid\\ViewHelpers\\.*$/i'
@@ -40,6 +41,7 @@ Neos:
       'Flow:FluidAdaptorViewHelpers':
         title: 'FluidAdaptor ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Framework/Neos.Flow/Documentation/TheDefinitiveGuide/PartV/FluidAdaptorViewHelperReference.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
         affectedClasses:
           parentClassName: 'Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper'
           classNamePattern: '/^Neos\\FluidAdaptor\\ViewHelpers\\.*$/i'

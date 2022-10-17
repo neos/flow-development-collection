@@ -1,0 +1,48 @@
+`6.3.20 (2022-08-29) <https://github.com/neos/flow-development-collection/releases/tag/6.3.20>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Raise guzzlehttp/psr7 to ^1.8.4 (security fix) <https://github.com/neos/flow-development-collection/pull/2880>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+This makes sure `guzzlehttp/psr7` is will not be used in version with a known
+security issue.
+
+* Packages: ``Factories``
+
+`TASK: Update .phpstorm.meta.php syntax <https://github.com/neos/flow-development-collection/pull/2846>`_
+---------------------------------------------------------------------------------------------------------
+
+The old .phpstorm.meta.php syntax is deprecated, see
+https://www.jetbrains.com/help/phpstorm/ide-advanced-metadata.html#legacy-metadata-format-deprecated
+
+**Review instructions**
+
+Code completion in PhpStorm should still "know" about these:
+
+```php
+// $environment is Environment|obect
+$environment = $bootstrap->getEarlyInstance(Environment::class);
+
+// $environment is Environment|obect
+$environment = $objectManager->get(Environment::class);
+```
+
+* Packages: ``Flow``
+
+`BUGFIX: Don't convert numeric strings to numbers in proxy method argument defaults <https://github.com/neos/flow-development-collection/pull/2865>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+The check `is_numeric` evaluates to true for strings like `"1"` therefore the generated code would be missing the quotes
+necessary to keep the default argument a string. This causes type errors in the proxy class when the arguments type is `string`.
+Therefore the check whether an argument value is a string should be done first.
+
+This change could be breaking if no type is used and a method somehow relies on the proxy class turning the argument default into a number.
+
+* Resolves: `#2864 <https://github.com/neos/flow-development-collection/issues/2864>`_
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/6.3.19...6.3.20>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
