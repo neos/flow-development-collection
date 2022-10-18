@@ -25,7 +25,18 @@ class ValueObjectTest extends FunctionalTestCase
         }
     }
 
-    public function testValueObjectDeduplication()
+    /**
+     * This test is here to beware us from regressing again.
+     *
+     * If you update an object, which holds a relation to ValueObjects the deduplication listener breaks Doctrines
+     * internal state of the UnitOfWork so one cannot persist again, depending on prior actions in the same request.
+     *
+     * The exception thrown is an ORMInvalidArgumentException with message:
+     * "A managed+dirty entity test can not be scheduled for insertion."
+     *
+     * @test
+     */
+    public function valueObjectsGetDeduplicatedAndCanBePersisted()
     {
         for ($i = 0; $i < 2; $i++) {
             $testEntity = new TestEntity();
@@ -36,6 +47,6 @@ class ValueObjectTest extends FunctionalTestCase
             $this->persistenceManager->persistAll();
         }
         $query = new Query(TestEntity::class);
-        self::assertEquals(2, $query->count());
+        self::assertEquals(2, $query->count(), 'It should be exactly two TestEntities');
     }
 }
