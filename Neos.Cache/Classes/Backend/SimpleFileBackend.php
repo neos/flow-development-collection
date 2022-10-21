@@ -486,11 +486,11 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Reads the cache data from the given cache file, using locking.
      *
      * @param string $cacheEntryPathAndFilename
-     * @param int|null $offset
+     * @param int $offset
      * @param int|null $maxlen
      * @return boolean|string The contents of the cache file or false on error
      */
-    protected function readCacheFile(string $cacheEntryPathAndFilename, int $offset = null, int $maxlen = null)
+    protected function readCacheFile(string $cacheEntryPathAndFilename, int $offset = 0, int $maxlen = null)
     {
         for ($i = 0; $i < 3; $i++) {
             $data = false;
@@ -500,10 +500,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     continue;
                 }
                 if (flock($file, LOCK_SH) !== false) {
-                    if ($offset !== null) {
-                        fseek($file, $offset);
-                    }
-                    $data = fread($file, $maxlen !== null ? $maxlen : filesize($cacheEntryPathAndFilename) - (int)$offset);
+                    $data = file_get_contents($cacheEntryPathAndFilename, false, null, $offset, $maxlen);
                     flock($file, LOCK_UN);
                 }
                 fclose($file);

@@ -68,17 +68,11 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             throw new \RuntimeException(sprintf('The cache "%s" is already frozen.', $this->cacheIdentifier), 1323353176);
         }
 
-        $cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
-
         for ($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
             if ($directoryIterator->isDot()) {
                 continue;
             }
-            if ($cacheEntryFileExtensionLength > 0) {
-                $entryIdentifier = substr($directoryIterator->getFilename(), 0, -$cacheEntryFileExtensionLength);
-            } else {
-                $entryIdentifier = $directoryIterator->getFilename();
-            }
+            $entryIdentifier = $this->getEntryIdentifierFromFilename($directoryIterator->getFilename());
             $this->cacheEntryIdentifiers[$entryIdentifier] = true;
 
             $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
@@ -159,11 +153,10 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         }
 
         $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-        $lifetime = $lifetime === null ? $this->defaultLifetime : $lifetime;
+        $lifetime = $lifetime ?? $this->defaultLifetime;
         $expiryTime = ($lifetime === 0) ? 0 : (time() + $lifetime);
-        $metaData = implode(' ', $tags) . str_pad((string)$expiryTime, self::EXPIRYTIME_LENGTH) . str_pad((string)strlen($data), self::DATASIZE_DIGITS);
-
-        $result = $this->writeCacheFile($cacheEntryPathAndFilename, $data . $metaData);
+        $entry = new FileBackendDataDto($data, $tags, $expiryTime);
+        $result = $this->writeCacheFile($cacheEntryPathAndFilename, (string)$entry);
         if ($result !== false) {
             if ($this->cacheEntryFileExtension === '.php') {
                 OpcodeCacheHelper::clearAllActive($cacheEntryPathAndFilename);
@@ -237,35 +230,27 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     public function findIdentifiersByTag(string $searchedTag): array
     {
         $entryIdentifiers = [];
-        $now = $_SERVER['REQUEST_TIME'];
-        $cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
         for ($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
             if ($directoryIterator->isDot()) {
                 continue;
             }
 
             $cacheEntryPathAndFilename = $directoryIterator->getPathname();
-            $fileSize = filesize($cacheEntryPathAndFilename);
-            $index = (integer)$this->readCacheFile($cacheEntryPathAndFilename, $fileSize - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
-            $metaData = $this->readCacheFile($cacheEntryPathAndFilename, $index, $fileSize - $index - self::DATASIZE_DIGITS);
-            if ($metaData === false) {
+            $allData = $this->readCacheFile($cacheEntryPathAndFilename);
+            if ($allData === false) {
                 continue;
             }
-            $expiryTime = (integer)substr((string)$metaData, -self::EXPIRYTIME_LENGTH, self::EXPIRYTIME_LENGTH);
-            if ($expiryTime !== 0 && $expiryTime < $now) {
-                continue;
-            }
-
-            $extractedTags = substr((string)$metaData, 0, -self::EXPIRYTIME_LENGTH);
-            if ($extractedTags === false || !in_array($searchedTag, explode(' ', $extractedTags))) {
+            $entry = FileBackendDataDto::parseFromCacheData($allData);
+            if ($this->isEntryExpired($entry)) {
                 continue;
             }
 
-            if ($cacheEntryFileExtensionLength > 0) {
-                $entryIdentifiers[] = substr($directoryIterator->getFilename(), 0, -$cacheEntryFileExtensionLength);
-            } else {
-                $entryIdentifiers[] = $directoryIterator->getFilename();
+
+            if (empty($entry->getTags()) || !array_intersect($tags, $entry->getTags())) {
+                continue;
             }
+
+            $entryIdentifiers[] = $this->getEntryIdentifierFromFilename($directoryIterator->getFilename());
         }
         return $entryIdentifiers;
     }
@@ -325,14 +310,17 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             return true;
         }
 
-        $expiryTimeOffset = filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS - self::EXPIRYTIME_LENGTH;
-        if ($acquireLock) {
-            $expiryTime = (integer)$this->readCacheFile($cacheEntryPathAndFilename, $expiryTimeOffset, self::EXPIRYTIME_LENGTH);
-        } else {
-            $expiryTime = (integer)file_get_contents($cacheEntryPathAndFilename, false, null, $expiryTimeOffset, self::EXPIRYTIME_LENGTH);
+        $allData = $this->readCacheFile($cacheEntryPathAndFilename);
+        if ($allData === false) {
+            return true;
         }
+        $entry = FileBackendDataDto::parseFromCacheData($allData);
+        return $this->isEntryExpired($entry);
+    }
 
-        return ($expiryTime !== 0 && $expiryTime < time());
+    protected function isEntryExpired(FileBackendDataDto $entry): bool
+    {
+        return ($entry->getExpiryTime() !== 0 && $entry->getExpiryTime() < time());
     }
 
     /**
@@ -428,19 +416,28 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             return $result;
         }
 
-        if ($this->isCacheFileExpired($pathAndFilename, $acquireLock)) {
-            return false;
-        }
-
-        $cacheData = '';
         if ($acquireLock) {
             $cacheData = $this->readCacheFile($pathAndFilename);
         } else {
             $cacheData = file_get_contents($pathAndFilename);
         }
 
-        $dataSize = (integer)substr((string)$cacheData, -(self::DATASIZE_DIGITS));
+        if ($cacheData === false) {
+            return false;
+        }
 
-        return substr((string)$cacheData, 0, $dataSize);
+        $entry = FileBackendDataDto::parseFromCacheData($cacheData);
+        if ($this->isEntryExpired($entry)) {
+            return false;
+        }
+
+        return $entry->getData();
+    }
+
+    protected function getEntryIdentifierFromFilename(string $filename): string
+    {
+        $cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
+
+        return $cacheEntryFileExtensionLength === 0 ? $filename : substr($filename, 0, - strlen($this->cacheEntryFileExtension));
     }
 }
