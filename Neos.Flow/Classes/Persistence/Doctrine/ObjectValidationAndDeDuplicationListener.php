@@ -18,6 +18,7 @@ use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
+use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
 
 /**
@@ -89,20 +90,21 @@ class ObjectValidationAndDeDuplicationListener
         $entityInsertions = $unitOfWork->getScheduledEntityInsertions();
 
         $knownValueObjects = [];
-        foreach ($entityInsertions as $entity) {
+        foreach ($entityInsertions as $oid => $entity) {
             $className = TypeHandling::getTypeForValue($entity);
             $classSchema = $this->reflectionService->getClassSchema($className);
             if ($classSchema !== null && $classSchema->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
                 $identifier = $this->persistenceManager->getIdentifierByObject($entity);
 
                 if (isset($knownValueObjects[$className][$identifier]) || $unitOfWork->getEntityPersister($className)->exists($entity)) {
-                    $unitOfWork->scheduleForDelete($entity);
+                    unset($entityInsertions[$oid]);
                     continue;
                 }
 
                 $knownValueObjects[$className][$identifier] = true;
             }
         }
+        ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, true);
     }
 
     /**
