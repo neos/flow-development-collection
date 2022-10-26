@@ -25,6 +25,7 @@ use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Cryptography\PrecomposedHashProvider;
 
 /**
  * The Flow Package
@@ -76,6 +77,8 @@ class Package extends BasePackage
             }
         });
         $dispatcher->connect(Cli\SlaveRequestHandler::class, 'dispatchedCommandLineSlaveRequest', Persistence\PersistenceManagerInterface::class, 'persistAll', false);
+
+        $dispatcher->connect(Command\CacheCommandController::class, 'warmupCaches', PrecomposedHashProvider::class, 'precomposeHash');
 
         if (!$context->isProduction()) {
             $dispatcher->connect(Core\Booting\Sequence::class, 'afterInvokeStep', function (Step $step) use ($bootstrap, $dispatcher) {

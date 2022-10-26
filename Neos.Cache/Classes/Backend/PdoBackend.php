@@ -175,7 +175,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $lifetime = ($lifetime === null) ? $this->defaultLifetime : $lifetime;
 
-
         $this->databaseHandle->beginTransaction();
         try {
             $this->removeWithoutTransaction($entryIdentifier);
@@ -610,16 +609,11 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "content" FROM "' . $this->cacheTableName . '" WHERE "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
         $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
-        $fetchedColumns = $statementHandle->fetchAll();
+        $statementHandle->bindColumn(1, $identifier);
+        $statementHandle->bindColumn(2, $content, \PDO::PARAM_LOB);
 
-        foreach ($fetchedColumns as $fetchedColumn) {
-            // Convert hexadecimal data into binary string,
-            // because it is not allowed to store null bytes in PostgreSQL.
-            if ($this->pdoDriver === 'pgsql') {
-                $fetchedColumn['content'] = hex2bin($fetchedColumn['content']);
-            }
-
-            $cacheEntries[$fetchedColumn['identifier']] = $fetchedColumn['content'];
+        while ($statementHandle->fetch(\PDO::FETCH_BOUND)) {
+            $cacheEntries[$identifier] = is_resource($content) ? stream_get_contents($content) : $content;
         }
 
         $this->cacheEntriesIterator = new \ArrayIterator($cacheEntries);
