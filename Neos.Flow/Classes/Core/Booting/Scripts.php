@@ -814,7 +814,7 @@ class Scripts
      * Compares the realpath of the configured PHP binary (if any) with the one flow was called with in a CLI request.
      * This avoids config errors where users forget to set Neos.Flow.core.phpBinaryPathAndFilename in CLI.
      *
-     * @param string phpBinaryPathAndFilename
+     * @param string $phpBinaryPathAndFilename
      * @throws FlowException
      */
     protected static function ensureCLISubrequestsUseCurrentlyRunningPhpBinary($phpBinaryPathAndFilename)

@@ -13,6 +13,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 
+use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Backend\PdoBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
@@ -58,12 +59,37 @@ class PdoBackendTest extends BaseTestCase
      * @test
      * @dataProvider backendsToTest
      */
-    public function setAddsCacheEntry($backend)
+    public function setAddsCacheEntry(BackendInterface $backend): void
     {
+        $backend->flush();
+
         // use data that contains binary junk
         $data = random_bytes(2048);
         $backend->set('some_entry', $data);
         self::assertEquals($data, $backend->get('some_entry'));
+    }
+
+    /**
+     * @test
+     * @dataProvider backendsToTest
+     */
+    public function cacheEntriesCanBeIterated(BackendInterface $backend): void
+    {
+        $backend->flush();
+
+        // use data that contains binary junk
+        $data = random_bytes(128);
+        $backend->set('first_entry', $data);
+        $backend->set('second_entry', $data);
+        $backend->set('third_entry', $data);
+
+        $entries = 0;
+        foreach ($backend as $entry) {
+            self::assertEquals($data, $entry);
+            $entries++;
+        }
+
+        self::assertEquals(3, $entries);
     }
 
     private function setupBackends(): void
