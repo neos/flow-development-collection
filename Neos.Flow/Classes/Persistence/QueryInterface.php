@@ -160,7 +160,7 @@ interface QueryInterface
     /**
      * Returns the maximum size of the result set to limit.
      *
-     * @return integer
+     * @return integer|null
      * @api
      */
     public function getLimit(): ?int;
