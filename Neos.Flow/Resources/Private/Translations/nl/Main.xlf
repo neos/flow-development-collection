@@ -4,31 +4,40 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
 				<source>Authentication required</source>
-			<target state="final">Verificatie vereist</target></trans-unit>
+        <target state="final">Verificatie vereist</target>
+      </trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
 				<source>Username</source>
-			<target state="final">Gebruikersnaam</target></trans-unit>
+        <target state="final">Gebruikersnaam</target>
+      </trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
 				<source>Password</source>
-			<target state="final">Wachtwoord</target></trans-unit>
+        <target state="final">Wachtwoord</target>
+      </trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve" approved="yes">
 				<source>New password</source>
-			<target state="final">Nieuw wachtwoord</target></trans-unit>
+        <target state="final">Nieuw wachtwoord</target>
+      </trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
 				<source>Login</source>
-			<target state="final">Login</target></trans-unit>
+        <target state="final">Login</target>
+      </trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
 				<source>Logout</source>
-			<target state="final">Log uit</target></trans-unit>
+        <target state="final">Log uit</target>
+      </trans-unit>
       <trans-unit id="update" xml:space="preserve" approved="yes">
 				<source>Update</source>
-			<target state="final">Bijwerken</target></trans-unit>
+        <target state="final">Bijwerken</target>
+      </trans-unit>
       <trans-unit id="submit" xml:space="preserve" approved="yes">
 				<source>Submit</source>
-			<target state="final">Verstuur</target></trans-unit>
+        <target state="final">Verstuur</target>
+      </trans-unit>
       <trans-unit id="configurationSchemaValidator.anErrorOccurredDuringValidationOfTheConfiguration.body" xml:space="preserve">
 				<source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
-			<target state="needs-translation">The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</target></trans-unit>
+        <target state="translated">Het configuratietype "{0}" is niet gevonden. Alleen de volgende configuratietypes worden ondersteund: "{1}"</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
