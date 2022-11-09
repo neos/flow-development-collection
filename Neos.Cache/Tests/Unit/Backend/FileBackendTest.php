@@ -14,6 +14,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  */
 
 use Neos\Cache\Backend\FileBackend;
+use Neos\Cache\Backend\FileBackendEntryDto;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
 use Neos\Cache\Tests\BaseTestCase;
@@ -21,6 +22,7 @@ use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Frontend\AbstractFrontend;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test case for the cache to file backend
@@ -292,35 +294,38 @@ class FileBackendTest extends BaseTestCase
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects(self::atLeastOnce())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
 
-        $backend = $this->prepareDefaultBackend(['isCacheFileExpired'], [
+        $backend = $this->prepareDefaultBackend(['dummy'], [
             __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ]);
 
-        $backend->expects(self::once())->method('isCacheFileExpired')->with('vfs://Foo/Cache/Data/UnitTestCache/ExpiredEntry')->will(self::returnValue(true));
+        $entryIdentifier = 'ExpiredEntry';
+        $pathAndFilename = 'vfs://Foo/Cache/Data/UnitTestCache/' . $entryIdentifier;
+        $entryDto = new FileBackendEntryDto('data', [], time() - 1);
         $backend->setCache($mockCache);
+        file_put_contents($pathAndFilename, (string)$entryDto);
 
-        self::assertFalse($backend->get('ExpiredEntry'));
+        self::assertFalse($backend->get($entryIdentifier));
     }
 
     /**
      * @test
      */
-    public function getDoesNotCheckIfAnEntryIsExpiredIfTheCacheIsFrozen()
+    public function getDoesUseInternalGetIfTheCacheIsFrozen()
     {
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects(self::atLeastOnce())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
-
-        $backend = $this->prepareDefaultBackend(['isCacheFileExpired'], [
+        /** @var MockObject $backend */
+        $backend = $this->prepareDefaultBackend(['internalGet'], [
             __DIR__ . '~Testing',
             'vfs://Foo/',
             255
         ]);
 
+        // used in freeze()
+        $backend->expects(self::once())->method('internalGet')->willReturn('some data');
         $backend->setCache($mockCache);
-        $backend->expects(self::once())->method('isCacheFileExpired');
-
         $backend->set('foo', 'some data');
         $backend->freeze();
         self::assertEquals('some data', $backend->get('foo'));
@@ -374,7 +379,7 @@ class FileBackendTest extends BaseTestCase
         ]);
         $backend->setCache($mockCache);
 
-        $backend->expects(self::once())->method('isCacheFileExpired'); // Indirectly called by freeze() -> get()
+        $backend->expects(self::never())->method('isCacheFileExpired');
 
         $backend->set('foo', 'some data');
         $backend->freeze();
@@ -531,7 +536,7 @@ class FileBackendTest extends BaseTestCase
         $backend = $this->prepareDefaultBackend(['isCacheFileExpired']);
         $backend->setCache($mockCache);
 
-        $backend->expects(self::once())->method('isCacheFileExpired'); // Indirectly called by freeze() -> get()
+        $backend->expects(self::never())->method('isCacheFileExpired'); // Indirectly called by freeze() -> get()
 
         $data = '<?php return "foo"; ?>';
         $backend->set('FooEntry', $data);

@@ -28,8 +28,15 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     const SEPARATOR = '^';
 
     const EXPIRYTIME_FORMAT = 'YmdHis';
+
+    /**
+     * @deprecated will be removed in Neos 9.0
+     */
     const EXPIRYTIME_LENGTH = 14;
 
+    /**
+     * @deprecated will be removed in Neos 9.0
+     */
     const DATASIZE_DIGITS = 10;
 
     /**
@@ -155,7 +162,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
         $lifetime = $lifetime ?? $this->defaultLifetime;
         $expiryTime = ($lifetime === 0) ? 0 : (time() + $lifetime);
-        $entry = new FileBackendDataDto($data, $tags, $expiryTime);
+        $entry = new FileBackendEntryDto($data, $tags, $expiryTime);
         $result = $this->writeCacheFile($cacheEntryPathAndFilename, (string)$entry);
         if ($result !== false) {
             if ($this->cacheEntryFileExtension === '.php') {
@@ -178,7 +185,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      */
     public function get(string $entryIdentifier)
     {
-        return $this->internalGet($entryIdentifier);
+        return $this->frozen ? $this->internalGetWhileFrozen($entryIdentifier) : $this->internalGet($entryIdentifier);
     }
 
     /**
@@ -240,13 +247,12 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             if ($allData === false) {
                 continue;
             }
-            $entry = FileBackendDataDto::parseFromCacheData($allData);
-            if ($this->isEntryExpired($entry)) {
+            $entry = FileBackendEntryDto::fromString($allData);
+            if ($entry->isExpired()) {
                 continue;
             }
 
-
-            if (empty($entry->getTags()) || !array_intersect($tags, $entry->getTags())) {
+            if (!$entry->isTaggedWith($searchedTag)) {
                 continue;
             }
 
@@ -314,13 +320,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         if ($allData === false) {
             return true;
         }
-        $entry = FileBackendDataDto::parseFromCacheData($allData);
-        return $this->isEntryExpired($entry);
-    }
-
-    protected function isEntryExpired(FileBackendDataDto $entry): bool
-    {
-        return ($entry->getExpiryTime() !== 0 && $entry->getExpiryTime() < time());
+        return FileBackendEntryDto::fromString($allData)->isExpired();
     }
 
     /**
@@ -374,14 +374,16 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      */
     public function requireOnce(string $entryIdentifier)
     {
+        $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
+
         if ($this->frozen === true) {
             if (isset($this->cacheEntryIdentifiers[$entryIdentifier])) {
-                return require_once($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension);
+                return require_once($pathAndFilename);
             }
             return false;
         }
 
-        $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
+
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier (' . $entryIdentifier . ') must not contain a path segment.', 1282073036);
         }
@@ -403,18 +405,6 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         }
 
         $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-        if ($this->frozen === true) {
-            $result = false;
-            if (isset($this->cacheEntryIdentifiers[$entryIdentifier])) {
-                if ($acquireLock) {
-                    $result = $this->readCacheFile($pathAndFilename);
-                } else {
-                    $result = file_get_contents($pathAndFilename);
-                }
-            }
-
-            return $result;
-        }
 
         if ($acquireLock) {
             $cacheData = $this->readCacheFile($pathAndFilename);
@@ -426,12 +416,33 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             return false;
         }
 
-        $entry = FileBackendDataDto::parseFromCacheData($cacheData);
-        if ($this->isEntryExpired($entry)) {
+        $entry = FileBackendEntryDto::fromString($cacheData);
+        if ($entry->isExpired()) {
             return false;
         }
 
         return $entry->getData();
+    }
+
+    /**
+     * Internal get method in case the cache is frozen, this will not check expiry times!
+     *
+     * @param string $entryIdentifier
+     * @return bool|string
+     * @throws \InvalidArgumentException
+     */
+    protected function internalGetWhileFrozen(string $entryIdentifier)
+    {
+        if ($entryIdentifier !== basename($entryIdentifier)) {
+            throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1667977180);
+        }
+
+        $pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
+        if (!isset($this->cacheEntryIdentifiers[$entryIdentifier])) {
+            return false;
+        }
+
+        return $this->readCacheFile($pathAndFilename);
     }
 
     protected function getEntryIdentifierFromFilename(string $filename): string
