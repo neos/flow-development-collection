@@ -37,7 +37,7 @@ class FileBackendEntryDto
         $dataSize = (int)substr($cacheData, -(static::DATASIZE_DIGITS));
         $expiryTime = (int)substr($cacheData, -(static::DATASIZE_DIGITS + static::EXPIRYTIME_LENGTH), static::EXPIRYTIME_LENGTH);
         $tagString = substr($cacheData, $dataSize, $entrySize - $dataSize - static::EXPIRYTIME_LENGTH - static::DATASIZE_DIGITS);
-        $tags = explode(' ', $tagString);
+        $tags = empty($tagString) ? [] : explode(' ', $tagString);
         return new static(substr($cacheData, 0, $dataSize), $tags, $expiryTime);
     }
 

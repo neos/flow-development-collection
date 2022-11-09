@@ -488,7 +488,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param string $cacheEntryPathAndFilename
      * @param int $offset
      * @param int|null $maxlen
-     * @return boolean|string The contents of the cache file or false on error
+     * @return string|false The contents of the cache file or false on error
      */
     protected function readCacheFile(string $cacheEntryPathAndFilename, int $offset = 0, int $maxlen = null)
     {
