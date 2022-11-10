@@ -503,7 +503,16 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     if ($offset !== null) {
                         fseek($file, $offset);
                     }
-                    $data = fread($file, $maxlen !== null ? $maxlen : filesize($cacheEntryPathAndFilename) - (int)$offset);
+
+                    $length = $maxlen !== null ? $maxlen : filesize($cacheEntryPathAndFilename) - (int)$offset;
+
+                    // fread requires a positive length. If the file is empty, we just return an empty string.
+                    if ($length === 0) {
+                        $data = '';
+                    } else {
+                        $data = fread($file, $length);
+                    }
+
                     flock($file, LOCK_UN);
                 }
                 fclose($file);
