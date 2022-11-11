@@ -16,6 +16,7 @@ use Neos\Flow\Cache\Backend\FileBackend;
 use Neos\Cache\Exception\DuplicateIdentifierException;
 use Neos\Cache\Exception\NoSuchCacheException;
 use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\FlowCacheFrontendInterface;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -345,7 +346,13 @@ class CacheManager
      */
     protected function flushClassCachesByChangedFiles(array $changedFiles): void
     {
+        /**
+         * @var FlowCacheFrontendInterface $objectClassesCache
+         */
         $objectClassesCache = $this->getCache('Flow_Object_Classes');
+        /**
+         * @var FlowCacheFrontendInterface $objectConfigurationCache
+         */
         $objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
         $modifiedAspectClassNamesWithUnderscores = [];
         $modifiedClassNamesWithUnderscores = [];
@@ -373,6 +380,9 @@ class CacheManager
         $flushDoctrineProxyCache = false;
         $flushPolicyCache = false;
         if (count($modifiedClassNamesWithUnderscores) > 0) {
+            /**
+             * @var FlowCacheFrontendInterface $reflectionStatusCache
+             */
             $reflectionStatusCache = $this->getCache('Flow_Reflection_Status');
             foreach (array_keys($modifiedClassNamesWithUnderscores) as $classNameWithUnderscores) {
                 $reflectionStatusCache->remove($classNameWithUnderscores);
@@ -414,7 +424,13 @@ class CacheManager
         $aopProxyClassRebuildIsNeeded = false;
         $aopProxyClassInfluencers = '/(?:Policy|Objects|Settings)(?:\..*)*\.yaml/';
 
+        /**
+         * @var FlowCacheFrontendInterface $objectConfigurationCache
+         */
         $objectClassesCache = $this->getCache('Flow_Object_Classes');
+        /**
+         * @var FlowCacheFrontendInterface $objectConfigurationCache
+         */
         $objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
         $caches = [
             '/Policy\.yaml/' => ['Flow_Security_Authorization_Privilege_Method', 'Flow_Persistence_Doctrine', 'Flow_Persistence_Doctrine_Results', 'Flow_Aop_RuntimeExpressions'],

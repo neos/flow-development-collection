@@ -11,6 +11,7 @@ namespace Neos\Flow\Security\Authorization\Privilege\Method;
  * source code.
  */
 
+use Neos\Cache\Frontend\FlowCacheFrontendInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\Pointcut\PointcutFilter;
 use Neos\Flow\Aop\Pointcut\PointcutFilterComposite;
@@ -74,7 +75,11 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
         if (static::$methodPermissions !== null) {
             return;
         }
-        static::$methodPermissions = $cacheManager->getCache('Flow_Security_Authorization_Privilege_Method')->get('methodPermission');
+        /**
+         * @var FlowCacheFrontendInterface $cache
+         */
+        $cache = $cacheManager->getCache('Flow_Security_Authorization_Privilege_Method');
+        static::$methodPermissions = $cache->get('methodPermission');
     }
 
     /**

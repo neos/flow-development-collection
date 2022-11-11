@@ -66,11 +66,11 @@ class CacheManagerTest extends UnitTestCase
      * Creates a mock cache with the given $cacheIdentifier and registers it with the cache manager
      *
      * @param $cacheIdentifier
-     * @return Cache\Frontend\FrontendInterface
+     * @return Cache\Frontend\FlowCacheFrontendInterface
      */
     protected function registerCache($cacheIdentifier)
     {
-        $cache = $this->createMock(Cache\Frontend\FrontendInterface::class);
+        $cache = $this->createMock(Cache\Frontend\FlowCacheFrontendInterface::class);
         $cache->expects(self::any())->method('getIdentifier')->will(self::returnValue($cacheIdentifier));
         $this->cacheManager->registerCache($cache);
 

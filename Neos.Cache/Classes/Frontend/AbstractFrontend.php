@@ -21,7 +21,7 @@ use Neos\Cache\Backend\TaggableBackendInterface;
  *
  * @api
  */
-abstract class AbstractFrontend implements FrontendInterface
+abstract class AbstractFrontend implements FlowCacheFrontendInterface
 {
     /**
      * Identifies this cache
