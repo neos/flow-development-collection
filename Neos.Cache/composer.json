@@ -39,6 +39,7 @@
     "suggest": {
         "ext-memcache": "If you have a memcache server and want to use it for caching.",
         "ext-memcached": "Alternative, if you have a memcache server and want to use it for caching.",
-        "ext-redis": "If you have a redis server and want to use it for caching."
+        "ext-redis": "If you have a redis server and want to use it for caching.",
+        "ext-igbinary": "The igbinary extension is a replacement for the standard PHP serializer"
     }
 }
