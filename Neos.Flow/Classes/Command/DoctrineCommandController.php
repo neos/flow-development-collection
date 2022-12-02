@@ -524,17 +524,22 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrate
      * @return void
      */
-    public function rollbackCommand(): void
+    public function rollbackCommand(bool $dryRun = false): void
     {
         $executedMigrations = $this->doctrineService->getExecutedMigrations()->getItems();
         uasort($executedMigrations, function (ExecutedMigration $a, ExecutedMigration $b) {
-            return $a->getExecutedAt() > $b->getExecutedAt();
+            return ($a->getExecutedAt() === $b->getExecutedAt()) ? 0 : (($a->getExecutedAt() > $b->getExecutedAt()) ? 1 : -1);
         });
 
         $last = end($executedMigrations);
         if (!$last) {
             $this->outputLine('No migration to rollback');
             $this->quit(1);
+        }
+
+        if ($dryRun) {
+            $this->outputLine('DRY RUN: Rollback migration "%s"', [(string) $last->getVersion()]);
+            $this->quit();
         }
 
         try {
