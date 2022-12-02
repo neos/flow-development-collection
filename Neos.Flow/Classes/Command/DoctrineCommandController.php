@@ -527,7 +527,7 @@ class DoctrineCommandController extends CommandController
     public function rollbackCommand(): void
     {
         $executedMigrations = $this->doctrineService->getExecutedMigrations()->getItems();
-        uasort($executedMigrations, function(ExecutedMigration $a, ExecutedMigration $b) {
+        uasort($executedMigrations, function (ExecutedMigration $a, ExecutedMigration $b) {
             return $a->getExecutedAt() > $b->getExecutedAt();
         });
 
