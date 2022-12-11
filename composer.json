@@ -125,7 +125,8 @@
     "require-dev": {
         "mikey179/vfsstream": "^1.6.10",
         "phpunit/phpunit": "~9.1",
-        "vimeo/psalm": "~4.22.0"
+        "vimeo/psalm": "~4.22.0",
+        "phpstan/phpstan": "^1.9"
     },
     "autoload-dev": {
         "psr-4": {

@@ -27,8 +27,8 @@ interface CookieEnabledInterface extends SessionInterface
      * @param Cookie $sessionCookie
      * @param string $storageIdentifier
      * @param int $lastActivityTimestamp
-     * @param array $tags
+     * @param array<string> $tags
      * @return CookieEnabledInterface|SessionInterface
      */
-    public static function createFromCookieAndSessionInformation(Cookie $sessionCookie, string $storageIdentifier, int $lastActivityTimestamp, array $tags = []);
+    public static function createFromCookieAndSessionInformation(Cookie $sessionCookie, string $storageIdentifier, int $lastActivityTimestamp, array $tags = []): CookieEnabledInterface|SessionInterface;
 }

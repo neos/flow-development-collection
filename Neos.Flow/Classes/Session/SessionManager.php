@@ -29,7 +29,7 @@ class SessionManager implements SessionManagerInterface
     protected $currentSession;
 
     /**
-     * @var array
+     * @var array<SessionInterface>
      */
     protected $remoteSessions;
 
@@ -48,7 +48,7 @@ class SessionManager implements SessionManagerInterface
      * @return SessionInterface
      * @api
      */
-    public function getCurrentSession()
+    public function getCurrentSession(): SessionInterface
     {
         if ($this->currentSession === null) {
             $this->currentSession = new Session();
@@ -60,13 +60,20 @@ class SessionManager implements SessionManagerInterface
      * @param Cookie $cookie
      * @return bool
      */
-    public function initializeCurrentSessionFromCookie(Cookie $cookie)
+    public function initializeCurrentSessionFromCookie(Cookie $cookie): bool
     {
         if ($this->currentSession !== null && $this->currentSession->isStarted()) {
             return false;
         }
 
+        /**
+         * @var string $sessionIdentifier
+         */
         $sessionIdentifier = $cookie->getValue();
+
+        /**
+         * @var array{'storageIdentifier':string, 'lastActivityTimestamp': int, 'tags':array<string>}|false $sessionInfo
+         */
         $sessionInfo = $this->metaDataCache->get($sessionIdentifier);
 
         if (!$sessionInfo) {
@@ -81,7 +88,7 @@ class SessionManager implements SessionManagerInterface
      * @param Cookie $cookie
      * @return bool
      */
-    public function createCurrentSessionFromCookie(Cookie $cookie)
+    public function createCurrentSessionFromCookie(Cookie $cookie): bool
     {
         if ($this->currentSession !== null && $this->currentSession->isStarted()) {
             return false;
@@ -97,10 +104,10 @@ class SessionManager implements SessionManagerInterface
      * NULL is returned.
      *
      * @param string $sessionIdentifier The session identifier
-     * @return SessionInterface
+     * @return SessionInterface|null
      * @api
      */
-    public function getSession($sessionIdentifier)
+    public function getSession(string $sessionIdentifier): ?SessionInterface
     {
         if ($this->currentSession !== null && $this->currentSession->isStarted() && $this->currentSession->getId() === $sessionIdentifier) {
             return $this->currentSession;
@@ -109,10 +116,14 @@ class SessionManager implements SessionManagerInterface
             return $this->remoteSessions[$sessionIdentifier];
         }
         if ($this->metaDataCache->has($sessionIdentifier)) {
+            /**
+             * @var array{'storageIdentifier':string, 'lastActivityTimestamp': int, 'tags':array<string>} $sessionInfo
+             */
             $sessionInfo = $this->metaDataCache->get($sessionIdentifier);
             $this->remoteSessions[$sessionIdentifier] = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
             return $this->remoteSessions[$sessionIdentifier];
         }
+        return null;
     }
 
     /**
@@ -121,7 +132,7 @@ class SessionManager implements SessionManagerInterface
      * @return array<SessionInterface>
      * @api
      */
-    public function getActiveSessions()
+    public function getActiveSessions(): array
     {
         $activeSessions = [];
         foreach ($this->metaDataCache->getByTag('session') as $sessionIdentifier => $sessionInfo) {
@@ -135,10 +146,10 @@ class SessionManager implements SessionManagerInterface
      * Returns all sessions which are tagged by the specified tag.
      *
      * @param string $tag A valid Cache Frontend tag
-     * @return array A collection of Session objects or an empty array if tag did not match
+     * @return array<SessionInterface> A collection of Session objects or an empty array if tag did not match
      * @api
      */
-    public function getSessionsByTag($tag)
+    public function getSessionsByTag(string $tag): array
     {
         $taggedSessions = [];
         foreach ($this->metaDataCache->getByTag(Session::TAG_PREFIX . $tag) as $sessionIdentifier => $sessionInfo) {
@@ -155,7 +166,7 @@ class SessionManager implements SessionManagerInterface
      * @param string $reason A reason to mention in log output for why the sessions have been destroyed. For example: "The corresponding account was deleted"
      * @return integer Number of sessions which have been destroyed
      */
-    public function destroySessionsByTag($tag, $reason = '')
+    public function destroySessionsByTag(string $tag, string $reason = ''): int
     {
         $sessions = $this->getSessionsByTag($tag);
         foreach ($sessions as $session) {

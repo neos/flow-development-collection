@@ -36,7 +36,7 @@ class LoggingAspect
      * @param LoggerInterface $logger
      * @return void
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -48,7 +48,7 @@ class LoggingAspect
      * @param JoinPointInterface $joinPoint The current joinpoint
      * @return void
      */
-    public function logStart(JoinPointInterface $joinPoint)
+    public function logStart(JoinPointInterface $joinPoint): void
     {
         /** @var SessionInterface $session */
         $session = $joinPoint->getProxy();
@@ -64,11 +64,14 @@ class LoggingAspect
      * @param JoinPointInterface $joinPoint The current joinpoint
      * @return void
      */
-    public function logResume(JoinPointInterface $joinPoint)
+    public function logResume(JoinPointInterface $joinPoint): void
     {
         /** @var SessionInterface $session */
         $session = $joinPoint->getProxy();
         if ($session->isStarted()) {
+            /**
+             * @var int|null $inactivityInSeconds
+             */
             $inactivityInSeconds = $joinPoint->getResult();
             if ($inactivityInSeconds === 1) {
                 $inactivityMessage = '1 second';
@@ -92,11 +95,14 @@ class LoggingAspect
      * @param JoinPointInterface $joinPoint The current joinpoint
      * @return void
      */
-    public function logDestroy(JoinPointInterface $joinPoint)
+    public function logDestroy(JoinPointInterface $joinPoint): void
     {
         /** @var SessionInterface $session */
         $session = $joinPoint->getProxy();
         if ($session->isStarted()) {
+            /**
+             * @var string $reason
+             */
             $reason = $joinPoint->isMethodArgument('reason') ? $joinPoint->getMethodArgument('reason') : 'no reason given';
             $this->logger->debug(sprintf('%s: Destroyed session with id %s: %s', $this->getClassName($joinPoint), $session->getId(), $reason));
         }
@@ -109,11 +115,14 @@ class LoggingAspect
      * @param JoinPointInterface $joinPoint The current joinpoint
      * @return mixed The result of the target method if it has not been intercepted
      */
-    public function logRenewId(JoinPointInterface $joinPoint)
+    public function logRenewId(JoinPointInterface $joinPoint): mixed
     {
         /** @var SessionInterface $session */
         $session = $joinPoint->getProxy();
         $oldId = $session->getId();
+        /**
+         * @var string $newId
+         */
         $newId = $joinPoint->getAdviceChain()->proceed($joinPoint);
         if ($session->isStarted()) {
             $this->logger->info(sprintf('%s: Changed session id from %s to %s', $this->getClassName($joinPoint), $oldId, $newId));
@@ -128,14 +137,17 @@ class LoggingAspect
      * @param JoinPointInterface $joinPoint The current joinpoint
      * @return void
      */
-    public function logCollectGarbage(JoinPointInterface $joinPoint)
+    public function logCollectGarbage(JoinPointInterface $joinPoint): void
     {
+        /**
+         * @var int|null $sessionRemovalCount
+         */
         $sessionRemovalCount = $joinPoint->getResult();
         if ($sessionRemovalCount > 0) {
             $this->logger->info(sprintf('%s: Triggered garbage collection and removed %s expired sessions.', $this->getClassName($joinPoint), $sessionRemovalCount));
         } elseif ($sessionRemovalCount === 0) {
             $this->logger->info(sprintf('%s: Triggered garbage collection but no sessions needed to be removed.', $this->getClassName($joinPoint)));
-        } elseif ($sessionRemovalCount === false) {
+        } elseif ($sessionRemovalCount === null) {
             $this->logger->warning(sprintf('%s: Ommitting garbage collection because another process is already running. Consider lowering the GC propability if these messages appear a lot.', $this->getClassName($joinPoint)));
         }
     }
@@ -146,7 +158,7 @@ class LoggingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    protected function getClassName(JoinPointInterface $joinPoint)
+    protected function getClassName(JoinPointInterface $joinPoint): string
     {
         $className = $joinPoint->getClassName();
         $sessionNamespace = substr(SessionInterface::class, 0, -strrpos(SessionInterface::class, '\\') + 1);

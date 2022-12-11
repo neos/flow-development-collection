@@ -14,6 +14,7 @@ namespace Neos\Flow\Session\Aspect;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -44,7 +45,7 @@ class LazyLoadingAspect
     protected $logger;
 
     /**
-     * @var array
+     * @var array<string, object>
      */
     protected $sessionOriginalInstances = [];
 
@@ -67,7 +68,7 @@ class LazyLoadingAspect
      * @return void
      * @see \Neos\Flow\ObjectManagement\ObjectManager
      */
-    public function registerSessionInstance($objectName, $object)
+    public function registerSessionInstance(string $objectName, object $object)
     {
         $this->sessionOriginalInstances[$objectName] = $object;
     }

@@ -34,7 +34,7 @@ class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
      * @param CompileTimeObjectManager $objectManager
      * @return void
      */
-    public function injectObjectManager(CompileTimeObjectManager $objectManager)
+    public function injectObjectManager(CompileTimeObjectManager $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
@@ -48,12 +48,8 @@ class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean true if the class / method match, otherwise false
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
-        if ($methodName === null) {
-            return false;
-        }
-
         $objectName = $this->objectManager->getObjectNameByClassName($className);
         if (empty($objectName)) {
             return false;
@@ -80,7 +76,7 @@ class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
      *
      * @return boolean true if this filter has runtime evaluations
      */
-    public function hasRuntimeEvaluationsDefinition()
+    public function hasRuntimeEvaluationsDefinition(): bool
     {
         return false;
     }
@@ -88,9 +84,9 @@ class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
     /**
      * Returns runtime evaluations for a previously matched pointcut
      *
-     * @return array Runtime evaluations
+     * @return array<mixed> Runtime evaluations
      */
-    public function getRuntimeEvaluationsDefinition()
+    public function getRuntimeEvaluationsDefinition(): array
     {
         return [];
     }
@@ -101,7 +97,7 @@ class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
      * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         $sessionClasses = new ClassNameIndex();
         $sessionClasses->setClassNames($this->objectManager->getClassNamesByScope(ObjectConfiguration::SCOPE_SESSION));
