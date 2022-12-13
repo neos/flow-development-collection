@@ -302,4 +302,13 @@ class ReflectionServiceTest extends FunctionalTestCase
         $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithArrayTypeHintAndAnnotation');
         self::assertEquals('array<string>', $methodWithTypeHintsParameters['array']['type']);
     }
+
+    /**
+     * @test
+     */
+    public function unionReturnTypesWorkCorrectly()
+    {
+        $returnType = $this->reflectionService->getMethodDeclaredReturnType(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithUnionReturnType');
+        self::assertEquals('string|false', $returnType);
+    }
 }

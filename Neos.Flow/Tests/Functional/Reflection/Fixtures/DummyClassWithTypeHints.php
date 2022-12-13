@@ -31,4 +31,8 @@ class DummyClassWithTypeHints
     public function methodWithArrayTypeHintAndAnnotation(array $array)
     {
     }
+
+    public function methodWithUnionReturnType(): string|false
+    {
+    }
 }
