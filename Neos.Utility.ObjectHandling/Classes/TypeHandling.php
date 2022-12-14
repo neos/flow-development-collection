@@ -122,7 +122,7 @@ abstract class TypeHandling
      */
     public static function isLiteralType(string $type): bool
     {
-        return in_array(self::normalizeType($type), ['false', 'true'], true);
+        return in_array($type, ['false', 'true'], true);
     }
 
     /**
