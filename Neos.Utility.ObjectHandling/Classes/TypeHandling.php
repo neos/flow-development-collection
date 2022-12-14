@@ -115,6 +115,17 @@ abstract class TypeHandling
     }
 
     /**
+     * Returns true if the $type is a literal type.
+     *
+     * @param string $type
+     * @return boolean
+     */
+    public static function isLiteralType(string $type): bool
+    {
+        return in_array(self::normalizeType($type), ['false', 'true'], true);
+    }
+
+    /**
      * Returns true if the $type is a collection type.
      *
      * @param string $type
@@ -135,6 +146,28 @@ abstract class TypeHandling
         }
 
         return false;
+    }
+
+    /**
+     * Returns true if the $type is a union type.
+     *
+     * @param string $type
+     * @return boolean
+     */
+    public static function isUnionType(string $type): bool
+    {
+        return str_contains($type, '|');
+    }
+
+    /**
+     * Returns true if the $type is an intersection type.
+     *
+     * @param string $type
+     * @return boolean
+     */
+    public static function isIntersectionType(string $type): bool
+    {
+        return str_contains($type, '&');
     }
 
     /**
