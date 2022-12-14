@@ -111,7 +111,7 @@ abstract class TypeHandling
      */
     public static function isSimpleType(string $type): bool
     {
-        return in_array(self::normalizeType($type), ['array', 'string', 'float', 'integer', 'boolean'], true);
+        return in_array(self::normalizeType($type), ['array', 'string', 'float', 'integer', 'boolean', 'null'], true);
     }
 
     /**

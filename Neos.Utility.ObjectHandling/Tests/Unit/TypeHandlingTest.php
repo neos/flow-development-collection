@@ -43,6 +43,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     public function types()
     {
         return [
+            ['null', ['type' => 'null', 'elementType' => null, 'nullable' => true]],
             ['int', ['type' => 'integer', 'elementType' => null, 'nullable' => false]],
             ['string', ['type' => 'string', 'elementType' => null, 'nullable' => false]],
             ['DateTime', ['type' => 'DateTime', 'elementType' => null, 'nullable' => false]],
@@ -142,6 +143,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     public function nonLiteralTypes()
     {
         return [
+            ['null'],
             ['DateTime'],
             ['\Foo\Bar'],
             ['array'],
@@ -190,6 +192,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     public function simpleTypes()
     {
         return [
+            ['null', true],
             ['integer', true],
             ['int', true],
             ['float', true],
@@ -225,6 +228,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     public function literalTypes()
     {
         return [
+            ['null', false],
             ['integer', false],
             ['int', false],
             ['float', false],
@@ -260,6 +264,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     public function collectionTypes()
     {
         return [
+            ['null', false],
             ['integer', false],
             ['int', false],
             ['float', false],
@@ -295,6 +300,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     public function unionAndIntersectionTypes()
     {
         return [
+            ['null', false, false],
             ['integer', false, false],
             ['int', false, false],
             ['float', false, false],
