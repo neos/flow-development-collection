@@ -1410,12 +1410,27 @@ class ReflectionService
             $this->classesByMethodAnnotations[$annotationClassName][$className][] = $methodName;
         }
 
-        $returnType = $method->getDeclaredReturnType();
-        if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void', 'iterable', 'object', 'mixed']) && !TypeHandling::isSimpleType($returnType)) {
-            $returnType = '\\' . $returnType;
-        }
-        if ($method->isDeclaredReturnTypeNullable()) {
-            $returnType = '?' . $returnType;
+        $returnType= $method->getDeclaredReturnType();
+        $applyLeadingSlashIfNeeded = function (string $type) {
+            if (!in_array($type, ['self', 'null', 'callable', 'void', 'iterable', 'object', 'mixed'])
+                && !TypeHandling::isSimpleType($type)
+                && !TypeHandling::isLiteralType($type)
+            ) {
+                return '\\' . $type;
+            }
+            return $type;
+        };
+        if ($returnType !== null) {
+            if (TypeHandling::isUnionType($returnType)) {
+                $returnType = implode('|', array_map($applyLeadingSlashIfNeeded, explode('|', $returnType)));
+            } elseif (TypeHandling::isIntersectionType($returnType)) {
+                $returnType = implode('&', array_map($applyLeadingSlashIfNeeded, explode('&', $returnType)));
+            } else {
+                $returnType = $applyLeadingSlashIfNeeded($returnType);
+                if ($method->isDeclaredReturnTypeNullable()) {
+                    $returnType = '?' . $returnType;
+                }
+            }
         }
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
 

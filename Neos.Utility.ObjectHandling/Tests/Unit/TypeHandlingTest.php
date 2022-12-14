@@ -323,7 +323,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider unionAndIntersectionTypes
      */
-    public function isIntersectionTypeReturnsTrueForIntersectionTypes(string $type,  bool $expectUnionType, bool $expectIntersectionType)
+    public function isIntersectionTypeReturnsTrueForIntersectionTypes(string $type, bool $expectUnionType, bool $expectIntersectionType)
     {
         self::assertSame($expectIntersectionType, TypeHandling::isIntersectionType($type), 'Failed for ' . $type);
     }
