@@ -1411,7 +1411,7 @@ class ReflectionService
         }
 
         $returnType= $method->getDeclaredReturnType();
-        $applyLeadingSlashIfNeeded = function (string $type) {
+        $applyLeadingSlashIfNeeded = function (string $type): string {
             if (!in_array($type, ['self', 'null', 'callable', 'void', 'iterable', 'object', 'mixed'])
                 && !TypeHandling::isSimpleType($type)
                 && !TypeHandling::isLiteralType($type)

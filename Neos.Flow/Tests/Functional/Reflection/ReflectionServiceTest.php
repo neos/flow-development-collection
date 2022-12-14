@@ -308,7 +308,15 @@ class ReflectionServiceTest extends FunctionalTestCase
      */
     public function unionReturnTypesWorkCorrectly()
     {
-        $returnType = $this->reflectionService->getMethodDeclaredReturnType(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithUnionReturnType');
-        self::assertEquals('string|false', $returnType);
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with UnionTypes');
+        }
+        $returnTypeA = $this->reflectionService->getMethodDeclaredReturnType(Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class, 'methodWithUnionReturnTypeA');
+        $returnTypeB = $this->reflectionService->getMethodDeclaredReturnType(Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class, 'methodWithUnionReturnTypesB');
+        $returnTypeC = $this->reflectionService->getMethodDeclaredReturnType(Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class, 'methodWithUnionReturnTypesC');
+
+        self::assertEquals('string|false', $returnTypeA);
+        self::assertEquals('\Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints|false', $returnTypeB);
+        self::assertEquals('?\Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints', $returnTypeC);
     }
 }

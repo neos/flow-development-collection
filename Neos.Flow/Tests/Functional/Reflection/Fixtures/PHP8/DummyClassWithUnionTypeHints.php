@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Functional\Reflection\Fixtures;
+namespace Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -15,20 +15,17 @@ namespace Neos\Flow\Tests\Functional\Reflection\Fixtures;
  * Dummy class for the Reflection tests
  *
  */
-class DummyClassWithTypeHints
+class DummyClassWithUnionTypeHints
 {
-    public function methodWithScalarTypeHints(int $integer, string $string)
+    public function methodWithUnionReturnTypeA(): string|false
     {
     }
 
-    public function methodWithArrayTypeHint(array $array)
+    public function methodWithUnionReturnTypesB(): false|DummyClassWithUnionTypeHints
     {
     }
 
-    /**
-     * @param string[] $array
-     */
-    public function methodWithArrayTypeHintAndAnnotation(array $array)
+    public function methodWithUnionReturnTypesC(): null|DummyClassWithUnionTypeHints
     {
     }
 }
