@@ -207,6 +207,36 @@ class SimpleFileBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function setDoesNotOverwriteIfLockNotAcquired()
+    {
+        $this->mockCacheFrontend->expects(self::any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
+
+        $data1 = uniqid('some data');
+        $data2 = uniqid('some other data');
+        $entryIdentifier = 'SimpleFileBackendTest';
+        $pathAndFilename = 'vfs://Temporary/Directory/Cache/Data/UnitTestCache/' . $entryIdentifier;
+
+        $simpleFileBackend = $this->getSimpleFileBackend();
+        $simpleFileBackend->set($entryIdentifier, $data1);
+
+        $file = fopen($pathAndFilename, 'rb');
+
+        flock($file, LOCK_EX);
+        try {
+            $simpleFileBackend->set($entryIdentifier, $data2);
+        } catch (Exception $e) {
+        }
+        flock($file, LOCK_UN);
+        fclose($file);
+
+        self::assertFileExists($pathAndFilename);
+        $retrievedData = file_get_contents($pathAndFilename);
+        self::assertEquals($data1, $retrievedData);
+    }
+
+    /**
+     * @test
+     */
     public function getReturnsContentOfTheCorrectCacheFile()
     {
         $this->mockCacheFrontend->expects(self::any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
