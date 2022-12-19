@@ -209,7 +209,13 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
             ['Doctrine\Common\Collections\Collection', false],
             ['Doctrine\Common\Collections\ArrayCollection', false],
             ['IteratorAggregate', false],
-            ['Iterator', false]
+            ['Iterator', false],
+            ['resource', false],
+            ['parent', false],
+            ['static', false],
+            ['self', false],
+            ['void', false],
+            ['never', false]
         ];
     }
 
