@@ -111,18 +111,7 @@ abstract class TypeHandling
      */
     public static function isSimpleType(string $type): bool
     {
-        return in_array(self::normalizeType($type), ['array', 'string', 'float', 'integer', 'boolean', 'null'], true);
-    }
-
-    /**
-     * Returns true if the $type is a literal type.
-     *
-     * @param string $type
-     * @return boolean
-     */
-    public static function isLiteralType(string $type): bool
-    {
-        return in_array($type, ['false', 'true'], true);
+        return in_array(self::normalizeType($type), ['array', 'string', 'float', 'integer', 'boolean', 'null', 'false', 'true'], true);
     }
 
     /**

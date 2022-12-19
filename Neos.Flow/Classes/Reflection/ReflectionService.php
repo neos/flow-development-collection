@@ -1414,7 +1414,6 @@ class ReflectionService
         $applyLeadingSlashIfNeeded = function (string $type): string {
             if (!in_array($type, ['self', 'null', 'callable', 'void', 'iterable', 'object', 'mixed'])
                 && !TypeHandling::isSimpleType($type)
-                && !TypeHandling::isLiteralType($type)
             ) {
                 return '\\' . $type;
             }

@@ -200,8 +200,8 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
             ['boolean', true],
             ['bool', true],
             ['string', true],
-            ['true', false],
-            ['false', false],
+            ['true', true],
+            ['false', true],
             ['SomeClassThatIsUnknownToPhpAtThisPoint', false],
             ['array', true],
             ['ArrayObject', false],
@@ -220,42 +220,6 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     public function isSimpleTypeReturnsTrueForSimpleType(string $type, bool $expected)
     {
         self::assertSame($expected, TypeHandling::isSimpleType($type), 'Failed for ' . $type);
-    }
-
-    /**
-     * data provider for isLitaralTypeReturnsTrueForSimpleType
-     */
-    public function literalTypes()
-    {
-        return [
-            ['null', false],
-            ['integer', false],
-            ['int', false],
-            ['float', false],
-            ['double', false],
-            ['boolean', false],
-            ['bool', false],
-            ['string', false],
-            ['true', true],
-            ['false', true],
-            ['SomeClassThatIsUnknownToPhpAtThisPoint', false],
-            ['array', false],
-            ['ArrayObject', false],
-            ['SplObjectStorage', false],
-            ['Doctrine\Common\Collections\Collection', false],
-            ['Doctrine\Common\Collections\ArrayCollection', false],
-            ['IteratorAggregate', false],
-            ['Iterator', false]
-        ];
-    }
-
-    /**
-     * @test
-     * @dataProvider literalTypes
-     */
-    public function isLiteralTypeReturnsTrueForLiteralType(string $type, bool $expected)
-    {
-        self::assertSame($expected, TypeHandling::isLiteralType($type), 'Failed for ' . $type);
     }
 
     /**
