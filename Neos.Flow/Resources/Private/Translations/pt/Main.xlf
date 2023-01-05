@@ -4,28 +4,36 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-			<target state="needs-translation">Authentication required</target></trans-unit>
+        <target state="needs-translation">Authentication required</target>
+      </trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
-			<target state="translated">Nome de Usuário</target></trans-unit>
+        <target state="translated">Nome de Usuário</target>
+      </trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
 				<source>Password</source>
-			<target state="translated">Senha</target></trans-unit>
+        <target state="translated">Senha</target>
+      </trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-			<target state="needs-translation">New password</target></trans-unit>
+        <target state="needs-translation">New password</target>
+      </trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
-			<target state="needs-translation">Login</target></trans-unit>
+        <target state="needs-translation">Login</target>
+      </trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-			<target state="needs-translation">Logout</target></trans-unit>
+        <target state="needs-translation">Logout</target>
+      </trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-			<target state="needs-translation">Update</target></trans-unit>
+        <target state="translated">Atualizar</target>
+      </trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-			<target state="needs-translation">Submit</target></trans-unit>
+        <target state="needs-translation">Submit</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
