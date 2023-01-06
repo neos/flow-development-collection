@@ -24,7 +24,7 @@ class OneToOneEntity
     /**
      * Self-referencing
      */
-    #[ORM\OneToOne(targetEntity: OneToOneEntity::class,)]
+    #[ORM\OneToOne(targetEntity: OneToOneEntity::class)]
     protected OneToOneEntity $selfReferencing;
 
     /**

@@ -19,7 +19,6 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\ValueObject(embedded: true)]
 class TestEmbeddedValueObject
 {
-
     public function __construct(protected string $value = '')
     {
     }

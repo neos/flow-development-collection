@@ -48,5 +48,4 @@ class CompositeKeyTestEntity
     {
         $this->relatedEntity = $relatedEntity;
     }
-
 }
