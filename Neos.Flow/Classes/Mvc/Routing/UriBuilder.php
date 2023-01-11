@@ -19,6 +19,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Utility\Arrays;
+use Psr\Http\Message\UriInterface;
 
 /**
  * An URI Builder
@@ -276,20 +277,20 @@ class UriBuilder
     }
 
     /**
-     * Creates an URI used for linking to an Controller action.
+     * Creates an UriInterface used for linking to an Controller action.
      *
      * @param string $actionName Name of the action to be called
      * @param array $controllerArguments Additional query parameters. Will be merged with $this->arguments.
      * @param string $controllerName Name of the target controller. If not set, current ControllerName is used.
      * @param string $packageKey Name of the target package. If not set, current Package is used.
      * @param string $subPackageKey Name of the target SubPackage. If not set, current SubPackage is used.
-     * @return string the rendered URI
+     * @return UriInterface the rendered URI
      * @api
      * @see build()
      * @throws Exception\MissingActionNameException if $actionName parameter is empty
      * @throws \Neos\Flow\Http\Exception
      */
-    public function uriFor(string $actionName, array $controllerArguments = [], string $controllerName = null, string $packageKey = null, string $subPackageKey = null)
+    public function uriInterfaceFor(string $actionName, array $controllerArguments = [], string $controllerName = null, string $packageKey = null, string $subPackageKey = null): UriInterface
     {
         if (empty($actionName)) {
             throw new Exception\MissingActionNameException('The URI Builder could not build a URI linking to an action controller because no action name was specified. Please check the stack trace to see which code or template was requesting the link and check the arguments passed to the URI Builder.', 1354629891);
@@ -315,7 +316,26 @@ class UriBuilder
         }
 
         $controllerArguments = $this->addNamespaceToArguments($controllerArguments, $this->request);
-        return $this->build($controllerArguments);
+        return $this->buildUriInterface($controllerArguments);
+    }
+
+    /**
+     * Creates a URI-String used for linking to an Controller action.
+     *
+     * @param string $actionName Name of the action to be called
+     * @param array $controllerArguments Additional query parameters. Will be merged with $this->arguments.
+     * @param string $controllerName Name of the target controller. If not set, current ControllerName is used.
+     * @param string $packageKey Name of the target package. If not set, current Package is used.
+     * @param string $subPackageKey Name of the target SubPackage. If not set, current SubPackage is used.
+     * @return string the rendered URI
+     * @api
+     * @see build()
+     * @throws Exception\MissingActionNameException if $actionName parameter is empty
+     * @throws \Neos\Flow\Http\Exception
+     */
+    public function uriFor(string $actionName, array $controllerArguments = [], string $controllerName = null, string $packageKey = null, string $subPackageKey = null)
+    {
+        return (string)$this->uriInterfaceFor($actionName, $controllerArguments, $controllerName, $packageKey, $subPackageKey);
     }
 
     /**
@@ -345,14 +365,14 @@ class UriBuilder
     }
 
     /**
-     * Builds the URI
+     * Builds the UriInterface
      *
      * @param array $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
-     * @return string the (absolute or relative) URI as string
+     * @return UriInterface the (absolute or relative) URI
      * @throws \Neos\Flow\Http\Exception
      * @api
      */
-    public function build(array $arguments = [])
+    public function buildUriInterface(array $arguments = []): UriInterface
     {
         $arguments = Arrays::arrayMergeRecursiveOverrule($this->arguments, $arguments);
         $arguments = $this->mergeArgumentsWithRequestArguments($arguments);
@@ -371,7 +391,20 @@ class UriBuilder
         }
 
         $this->lastArguments = $arguments;
-        return (string)$resolvedUri;
+        return $resolvedUri;
+    }
+
+    /**
+     * Builds the URI-string
+     *
+     * @param array $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
+     * @return string the (absolute or relative) URI as string
+     * @throws \Neos\Flow\Http\Exception
+     * @api
+     */
+    public function build(array $arguments = [])
+    {
+        return (string)$this->buildUriInterface($arguments);
     }
 
     /**
