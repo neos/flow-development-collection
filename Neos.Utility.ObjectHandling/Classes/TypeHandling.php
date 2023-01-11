@@ -111,7 +111,7 @@ abstract class TypeHandling
      */
     public static function isSimpleType(string $type): bool
     {
-        return in_array(self::normalizeType($type), ['array', 'string', 'float', 'integer', 'boolean'], true);
+        return in_array(self::normalizeType($type), ['array', 'string', 'float', 'integer', 'boolean', 'null', 'false', 'true'], true);
     }
 
     /**
@@ -135,6 +135,28 @@ abstract class TypeHandling
         }
 
         return false;
+    }
+
+    /**
+     * Returns true if the $type is a union type.
+     *
+     * @param string $type
+     * @return boolean
+     */
+    public static function isUnionType(string $type): bool
+    {
+        return str_contains($type, '|');
+    }
+
+    /**
+     * Returns true if the $type is an intersection type.
+     *
+     * @param string $type
+     * @return boolean
+     */
+    public static function isIntersectionType(string $type): bool
+    {
+        return str_contains($type, '&');
     }
 
     /**
