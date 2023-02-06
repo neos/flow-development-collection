@@ -26,7 +26,7 @@ use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\Route;
-use Neos\Flow\Mvc\Routing\Router;
+use Neos\Flow\Mvc\Routing\RouterInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Utility\Arrays;
@@ -46,7 +46,7 @@ class RoutingCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var Router
+     * @var RouterInterface
      */
     protected $router;
 
