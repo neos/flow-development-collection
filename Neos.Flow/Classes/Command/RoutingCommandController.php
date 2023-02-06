@@ -22,7 +22,7 @@ use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Route;
-use Neos\Flow\Mvc\Routing\Router;
+use Neos\Flow\Mvc\Routing\RouterInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Http\Factories\ServerRequestFactory;
 
@@ -41,7 +41,7 @@ class RoutingCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var Router
+     * @var RouterInterface
      */
     protected $router;
 
