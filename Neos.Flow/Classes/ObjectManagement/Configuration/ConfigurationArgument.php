@@ -78,7 +78,7 @@ class ConfigurationArgument
     /**
      * Returns the index (position) of the argument
      *
-     * @return string Index of the argument
+     * @return int Index of the argument
      */
     public function getIndex(): int
     {
