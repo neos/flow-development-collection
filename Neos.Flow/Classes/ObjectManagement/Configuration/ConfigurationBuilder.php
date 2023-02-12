@@ -166,7 +166,7 @@ class ConfigurationBuilder
                 }
 
                 $objectConfigurations[$objectName] = $newObjectConfiguration;
-                if ($objectConfigurations[$objectName]->getPackageKey() === null) {
+                if ($objectConfigurations[$objectName]->getPackageKey() === '') {
                     $objectConfigurations[$objectName]->setPackageKey($packageKey);
                 }
             }
@@ -220,7 +220,7 @@ class ConfigurationBuilder
      * @return Configuration The object configuration object
      * @throws InvalidObjectConfigurationException if errors occurred during parsing
      */
-    protected function parseConfigurationArray($objectName, array $rawConfigurationOptions, $configurationSourceHint = '', $existingObjectConfiguration = null)
+    protected function parseConfigurationArray(string $objectName, array $rawConfigurationOptions, string $configurationSourceHint = '', $existingObjectConfiguration = null): Configuration
     {
         $className = $rawConfigurationOptions['className'] ?? $objectName;
         $objectConfiguration = ($existingObjectConfiguration instanceof Configuration) ? $existingObjectConfiguration : new Configuration($objectName, $className);
@@ -353,7 +353,7 @@ class ConfigurationBuilder
                     $objectName = $annotations[0];
                 }
             }
-            $objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $parentObjectConfiguration->getConfigurationSourceHint() . ', property "' . $propertyName . '"');
+            $objectConfiguration = $this->parseConfigurationArray((string)$objectName, $objectNameOrConfiguration, $parentObjectConfiguration->getConfigurationSourceHint() . ', property "' . $propertyName . '"');
             $property = new ConfigurationProperty($propertyName, $objectConfiguration, ConfigurationProperty::PROPERTY_TYPES_OBJECT);
         } else {
             $property = new ConfigurationProperty($propertyName, $objectNameOrConfiguration, ConfigurationProperty::PROPERTY_TYPES_OBJECT);
@@ -383,7 +383,7 @@ class ConfigurationBuilder
                     throw new InvalidObjectConfigurationException('Object configuration for argument "' . $argumentName . '" contains neither object name nor factory object or method name in ' . $configurationSourceHint, 1417431742);
                 }
             }
-            $objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ', argument "' . $argumentName . '"');
+            $objectConfiguration = $this->parseConfigurationArray((string)$objectName, $objectNameOrConfiguration, $configurationSourceHint . ', argument "' . $argumentName . '"');
             $argument = new ConfigurationArgument($argumentName, $objectConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
         } else {
             $argument = new ConfigurationArgument($argumentName, $objectNameOrConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
@@ -431,9 +431,6 @@ class ConfigurationBuilder
                 }
                 $argumentObjectName = $objectConfiguration->getObjectName() . ':argument:' . $index;
                 $argumentValue->setObjectName($argumentObjectName);
-                if ($argumentValue->getClassName() === null) {
-                    $argumentValue->setClassName('');
-                }
                 $objectConfigurations[$argumentObjectName] = $argument->getValue();
                 $argument->set((int)$argument->getIndex(), $argumentObjectName, $argument->getType());
             }

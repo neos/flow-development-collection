@@ -20,40 +20,42 @@ use Neos\Flow\Annotations as Flow;
  */
 class ConfigurationArgument
 {
-    const ARGUMENT_TYPES_STRAIGHTVALUE = 0;
-    const ARGUMENT_TYPES_OBJECT = 1;
-    const ARGUMENT_TYPES_SETTING = 2;
+    public const ARGUMENT_TYPES_STRAIGHTVALUE = 0;
+
+    public const ARGUMENT_TYPES_OBJECT = 1;
+
+    public const ARGUMENT_TYPES_SETTING = 2;
 
     /**
      * The position of the constructor argument. Counting starts at "1".
      * @var integer
      */
-    protected $index;
+    protected int $index;
 
     /**
      * @var mixed The argument's value
      */
-    protected $value;
+    protected mixed $value;
 
     /**
      * Argument type, one of the ARGUMENT_TYPES_* constants
      * @var integer
      */
-    protected $type;
+    protected int $type;
 
     /**
      * @var integer
      */
-    protected $autowiring = Configuration::AUTOWIRING_MODE_ON;
+    protected int $autowiring = Configuration::AUTOWIRING_MODE_ON;
 
     /**
      * Constructor - sets the index, value and type of the argument
      *
-     * @param string $index Index of the argument
+     * @param int $index Index of the argument
      * @param mixed $value Value of the argument
      * @param integer $type Type of the argument - one of the argument_TYPE_* constants
      */
-    public function __construct($index, $value, $type = self::ARGUMENT_TYPES_STRAIGHTVALUE)
+    public function __construct(int $index, mixed $value, int $type = self::ARGUMENT_TYPES_STRAIGHTVALUE)
     {
         $this->set($index, $value, $type);
     }
@@ -66,7 +68,7 @@ class ConfigurationArgument
      * @param integer $type Type of the argument - one of the ARGUMENT_TYPE_* constants
      * @return void
      */
-    public function set($index, $value, $type = self::ARGUMENT_TYPES_STRAIGHTVALUE)
+    public function set(int $index, mixed $value, int $type = self::ARGUMENT_TYPES_STRAIGHTVALUE): void
     {
         $this->index = $index;
         $this->value = $value;
@@ -78,7 +80,7 @@ class ConfigurationArgument
      *
      * @return string Index of the argument
      */
-    public function getIndex()
+    public function getIndex(): int
     {
         return $this->index;
     }
@@ -88,7 +90,7 @@ class ConfigurationArgument
      *
      * @return mixed Value of the argument
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
@@ -98,7 +100,7 @@ class ConfigurationArgument
      *
      * @return integer Type of the argument - one of the ARGUMENT_TYPES_* constants
      */
-    public function getType()
+    public function getType(): int
     {
         return $this->type;
     }
@@ -109,7 +111,7 @@ class ConfigurationArgument
      * @param integer $autowiring One of the Configuration::AUTOWIRING_MODE_* constants
      * @return void
      */
-    public function setAutowiring($autowiring)
+    public function setAutowiring(int $autowiring): void
     {
         $this->autowiring = $autowiring;
     }
@@ -119,7 +121,7 @@ class ConfigurationArgument
      *
      * @return integer Value of one of the Configuration::AUTOWIRING_MODE_* constants
      */
-    public function getAutowiring()
+    public function getAutowiring(): int
     {
         return $this->autowiring;
     }
