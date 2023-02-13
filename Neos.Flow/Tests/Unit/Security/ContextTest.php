@@ -14,9 +14,8 @@ namespace Neos\Flow\Tests\Unit\Security;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Account;
-use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
+use Neos\Flow\Security\Authentication\Token\TestingToken;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -234,7 +233,7 @@ class ContextTest extends UnitTestCase
         $activeToken->method('getAuthenticationProviderName')->willReturn('activeTokenProvider');
         $activeToken->method('getAuthenticationStatus')->willReturn(TokenInterface::AUTHENTICATION_NEEDED);
 
-        $sessionlessToken = $this->createMock([TokenInterface::class, SessionlessTokenInterface::class]);
+        $sessionlessToken = $this->createMock(TestingToken::class);
         $sessionlessToken->expects(self::once())->method('hasRequestPatterns')->willReturn(false);
         $sessionlessToken->method('getAuthenticationProviderName')->willReturn('sessionlessTokenProvider');
         $sessionlessToken->method('getAuthenticationStatus')->willReturn(TokenInterface::AUTHENTICATION_NEEDED);
@@ -716,7 +715,7 @@ class ContextTest extends UnitTestCase
     /**
      * @test
      */
-    public function getRolesReturnsTheAuthenticatedUserRoleIfATokenIsAuthenticated()
+    public function getRolesReturnsTheAuthenticatedUserRoleIfATokenIsAuthenticated(): void
     {
         $mockToken = $this->getMockBuilder(TokenInterface::class)->getMock();
         $mockToken->expects(self::any())->method('isAuthenticated')->willReturn(true);
@@ -724,8 +723,9 @@ class ContextTest extends UnitTestCase
         $everybodyRole = new Policy\Role('Neos.Flow:Everybody');
         $authenticatedUserRole = new Policy\Role('Neos.Flow:AuthenticatedUser');
         $mockPolicyService = $this->getAccessibleMock(Policy\PolicyService::class, ['getRole']);
-        $mockPolicyService->expects(self::any())->method('getRole')->will($this->returnValueMap([['Neos.Flow:AuthenticatedUser', $authenticatedUserRole], ['Everybody', $everybodyRole]]));
+        $mockPolicyService->expects(self::any())->method('getRole')->willReturnMap([['Neos.Flow:AuthenticatedUser', $authenticatedUserRole], ['Neos.Flow:Everybody', $everybodyRole]]);
 
+        /** @var Context $securityContext */
         $securityContext = $this->getAccessibleMock(Context::class, ['initialize', 'getAuthenticationTokens']);
         $securityContext->expects(self::any())->method('getAuthenticationTokens')->willReturn([$mockToken]);
         $securityContext->_set('policyService', $mockPolicyService);
@@ -756,16 +756,17 @@ class ContextTest extends UnitTestCase
     /**
      * @test
      */
-    public function hasRoleReturnsTrueForAnonymousRoleIfNotAuthenticated()
+    public function hasRoleReturnsTrueForAnonymousRoleIfNotAuthenticated(): void
     {
         $mockToken = $this->getMockBuilder(TokenInterface::class)->getMock();
         $mockToken->expects(self::any())->method('isAuthenticated')->willReturn(false);
 
+        $everybodyRole = new Policy\Role('Neos.Flow:Everybody');
         $anonymousRole = new Policy\Role('Neos.Flow:Anonymous');
         $mockPolicyService = $this->getAccessibleMock(Policy\PolicyService::class, ['getRole']);
-        $mockPolicyService->expects(self::any())->method('getRole')->will($this->returnValueMap([
-            ['Neos.Flow:Anonymous', $anonymousRole]
-        ]));
+        $mockPolicyService->expects(self::any())->method('getRole')->willReturnMap([
+            ['Neos.Flow:Anonymous', $anonymousRole], ['Neos.Flow:Everybody', $everybodyRole]
+        ]);
 
         $securityContext = $this->getAccessibleMock(Context::class, ['initialize', 'getAuthenticationTokens']);
         $securityContext->expects(self::any())->method('getAuthenticationTokens')->willReturn([$mockToken]);
@@ -778,17 +779,20 @@ class ContextTest extends UnitTestCase
     /**
      * @test
      */
-    public function hasRoleReturnsFalseForAnonymousRoleIfAuthenticated()
+    public function hasRoleReturnsFalseForAnonymousRoleIfAuthenticated(): void
     {
         $mockToken = $this->getMockBuilder(TokenInterface::class)->getMock();
         $mockToken->expects(self::any())->method('isAuthenticated')->willReturn(true);
 
+        $authenticatedUserRole = new Policy\Role('Neos.Flow:AuthenticatedUser');
+        $everybodyRole = new Policy\Role('Neos.Flow:Everybody');
         $anonymousRole = new Policy\Role('Neos.Flow:Anonymous');
         $mockPolicyService = $this->getAccessibleMock(Policy\PolicyService::class, ['getRole']);
-        $mockPolicyService->expects(self::any())->method('getRole')->will($this->returnValueMap([
-            ['Anonymous', $anonymousRole]
-        ]));
+        $mockPolicyService->expects(self::any())->method('getRole')->willReturnMap([
+            ['Neos.Flow:Anonymous', $anonymousRole], ['Neos.Flow:Everybody', $everybodyRole], ['Neos.Flow:AuthenticatedUser', $authenticatedUserRole]
+        ]);
 
+        /** @var Context $securityContext */
         $securityContext = $this->getAccessibleMock(Context::class, ['initialize', 'getAuthenticationTokens']);
         $securityContext->expects(self::any())->method('getAuthenticationTokens')->willReturn([$mockToken]);
         $this->inject($securityContext, 'objectManager', $this->mockObjectManager);
@@ -800,20 +804,17 @@ class ContextTest extends UnitTestCase
     /**
      * @test
      */
-    public function hasRoleWorks()
+    public function hasRoleWorks(): void
     {
-        $everybodyRole = new Policy\Role('Neos.Flow:Everybody');
         $testRole = new Policy\Role('Acme.Demo:TestRole');
 
-        $mockPolicyService = $this->getAccessibleMock(Policy\PolicyService::class, ['getRole', 'initializeRolesFromPolicy']);
-        $mockPolicyService->expects(self::atLeastOnce())->method('getRole')->will(self::returnCallBack(
-            function ($roleIdentifier) use ($everybodyRole) {
-                switch ($roleIdentifier) {
-                    case 'Neos.Flow:Everybody':
-                        return $everybodyRole;
-                }
-            }
-        ));
+        $authenticatedUserRole = new Policy\Role('Neos.Flow:AuthenticatedUser');
+        $everybodyRole = new Policy\Role('Neos.Flow:Everybody');
+        $anonymousRole = new Policy\Role('Neos.Flow:Anonymous');
+        $mockPolicyService = $this->getAccessibleMock(Policy\PolicyService::class, ['getRole']);
+        $mockPolicyService->expects(self::atLeastOnce())->method('getRole')->willReturnMap([
+            ['Neos.Flow:Anonymous', $anonymousRole], ['Neos.Flow:Everybody', $everybodyRole], ['Neos.Flow:AuthenticatedUser', $authenticatedUserRole]
+        ]);
 
         $account = $this->getAccessibleMock(Account::class, ['dummy']);
         $account->_set('policyService', $mockPolicyService);
@@ -841,10 +842,11 @@ class ContextTest extends UnitTestCase
         $everybodyRole = $this->getAccessibleMock(Policy\Role::class, ['dummy'], ['Neos.Flow:Everybody']);
         $testRole1 = $this->getAccessibleMock(Policy\Role::class, ['dummy'], ['Acme.Demo:TestRole1']);
         $testRole2 = $this->getAccessibleMock(Policy\Role::class, ['dummy'], ['Acme.Demo:TestRole2']);
+        $authenticatedUserRole = new Policy\Role('Neos.Flow:AuthenticatedUser');
 
         $mockPolicyService = $this->getAccessibleMock(Policy\PolicyService::class, ['getRole', 'initializeRolesFromPolicy']);
         $mockPolicyService->expects(self::atLeastOnce())->method('getRole')->will(self::returnCallBack(
-            function ($roleIdentifier) use ($everybodyRole, $testRole1, $testRole2) {
+            function ($roleIdentifier) use ($everybodyRole, $testRole1, $testRole2, $authenticatedUserRole) {
                 switch ($roleIdentifier) {
                     case 'Neos.Flow:Everybody':
                         return $everybodyRole;
@@ -852,6 +854,8 @@ class ContextTest extends UnitTestCase
                         return $testRole1;
                     case 'Acme.Demo:TestRole2':
                         return $testRole2;
+                    case 'Neos.Flow:AuthenticatedUser':
+                        return $authenticatedUserRole;
                 }
             }
         ));
@@ -1091,6 +1095,49 @@ class ContextTest extends UnitTestCase
     /**
      * @test
      */
+    public function withoutAuthorizationChecksKeepsAuthorizationCheckCorrectlyWhenCalledNestedAndExceptionFromInnerClosureIsCaught()
+    {
+        /** @var Context $securityContext */
+        $securityContext = $this->getAccessibleMock(Context::class, ['initialize']);
+        $self = $this;
+        $securityContext->withoutAuthorizationChecks(function () use ($securityContext, $self) {
+            try {
+                $securityContext->withoutAuthorizationChecks(function () use ($securityContext, $self) {
+                    $self->assertTrue($securityContext->areAuthorizationChecksDisabled());
+                    throw new \Exception('Some exception');
+                });
+            } catch (\Exception $exception) {
+            }
+            $self->assertTrue($securityContext->areAuthorizationChecksDisabled());
+        });
+        self::assertFalse($securityContext->areAuthorizationChecksDisabled());
+    }
+
+    /**
+     * @test
+     */
+    public function withoutAuthorizationChecksKeepsAuthorizationCheckCorrectlyWhenCalledNestedAndExceptionFromOuterClosureIsCaught()
+    {
+        /** @var Context $securityContext */
+        $securityContext = $this->getAccessibleMock(Context::class, ['initialize']);
+        $self = $this;
+        $securityContext->withoutAuthorizationChecks(function () use ($securityContext, $self) {
+            try {
+                $securityContext->withoutAuthorizationChecks(function () use ($securityContext, $self) {
+                    $self->assertTrue($securityContext->areAuthorizationChecksDisabled());
+                });
+
+                throw new \Exception('Some exception');
+            } catch (\Exception $exception) {
+            }
+            $self->assertTrue($securityContext->areAuthorizationChecksDisabled());
+        });
+        self::assertFalse($securityContext->areAuthorizationChecksDisabled());
+    }
+
+    /**
+     * @test
+     */
     public function getContextHashReturnsStaticStringIfAuthorizationChecksAreDisabled()
     {
         $self = $this;
@@ -1106,9 +1153,9 @@ class ContextTest extends UnitTestCase
     {
         /** @var Context|\PHPUnit\Framework\MockObject\MockObject $securityContext */
         $securityContext = $this->getAccessibleMock(Context::class, ['initialize', 'canBeInitialized', 'getRoles']);
-        $securityContext->expects(self::at(0))->method('canBeInitialized')->will(self::returnValue(true));
-        $securityContext->expects(self::at(1))->method('initialize');
-        $securityContext->expects(self::any())->method('getRoles')->will(self::returnValue([]));
+        $securityContext->expects(self::atLeastOnce())->method('canBeInitialized')->willReturn(true);
+        $securityContext->expects(self::once())->method('initialize');
+        $securityContext->expects(self::any())->method('getRoles')->willReturn([]);
 
         $securityContext->getContextHash();
     }

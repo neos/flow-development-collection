@@ -16,7 +16,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A model fixture which is used for testing the class schema building
  *
- * @Flow\ValueObject
+ * @Flow\ValueObject(embedded=false)
  */
 class ValueObject
 {

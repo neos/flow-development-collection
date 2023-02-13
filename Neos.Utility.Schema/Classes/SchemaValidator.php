@@ -232,7 +232,8 @@ class SchemaValidator
                     $possibleTypes[] = $type['type'];
                 }
             }
-            $error = $this->createError(sprintf('None of the given schemas %s matched %s',
+            $error = $this->createError(sprintf(
+                'None of the given schemas %s matched %s',
                 implode(',', $possibleTypes),
                 is_scalar($value) ? (string)$value : gettype($value)
             ));
@@ -531,7 +532,7 @@ class SchemaValidator
                     // YYYY-MM-DDThh:mm:ssZ ISO8601
                     \DateTime::createFromFormat(\DateTime::ISO8601, $value);
                     $parseErrors = \DateTime::getLastErrors();
-                    if ($parseErrors['error_count'] > 0) {
+                    if ($parseErrors && $parseErrors['error_count'] > 0) {
                         $result->addError($this->createError('format=datetime', $value));
                     }
                     break;
@@ -539,7 +540,7 @@ class SchemaValidator
                     // YYYY-MM-DD
                     \DateTime::createFromFormat('Y-m-d', $value);
                     $parseErrors = \DateTime::getLastErrors();
-                    if ($parseErrors['error_count'] > 0) {
+                    if ($parseErrors && $parseErrors['error_count'] > 0) {
                         $result->addError($this->createError('format=date', $value));
                     }
                     break;
@@ -547,7 +548,7 @@ class SchemaValidator
                     // hh:mm:ss
                     \DateTime::createFromFormat('H:i:s', $value);
                     $parseErrors = \DateTime::getLastErrors();
-                    if ($parseErrors['error_count'] > 0) {
+                    if ($parseErrors && $parseErrors['error_count'] > 0) {
                         $result->addError($this->createError('format=time', $value));
                     }
                     break;
@@ -648,8 +649,12 @@ class SchemaValidator
     protected function createError(string $expectation, $value = null): Error
     {
         if ($value !== null) {
-            $error = new Error('expected: %s found: %s', 1328557141, [$expectation, $this->renderValue($value)],
-                'Validation Error');
+            $error = new Error(
+                'expected: %s found: %s',
+                1328557141,
+                [$expectation, $this->renderValue($value)],
+                'Validation Error'
+            );
         } else {
             $error = new Error($expectation, 1328557141, [], 'Validation Error');
         }

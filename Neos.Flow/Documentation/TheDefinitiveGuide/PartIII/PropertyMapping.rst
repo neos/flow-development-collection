@@ -222,7 +222,7 @@ the path syntax supports an asterisk as a placeholder::
 		->setTypeConverterOption(
 			\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class,
 			\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
-			TRUE
+			true
 		);
 
 This also allows to easily configure TypeConverter options, like for the DateTimeConverter, for subproperties
@@ -257,7 +257,7 @@ of the controller, as in the following example:
       ->setTypeConverterOption(
       \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class,
       \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
-      TRUE
+      true
     );
   }
 
@@ -282,6 +282,37 @@ of the controller, as in the following example:
 
   Since the ``getArgument()`` method is explicitly annotated, common IDEs will recognize the type
   and there is no break in the type hinting chain.
+
+Mapping classes dynamically
+---------------------------
+
+Technically your controller actions can accept interfaces (or abstract classes) as arguments. In order to be able to map
+those and correctly validate the input the implementing class needs to be specified though. Since Flow 7.2 it is possible
+to enable a "dynamic validation" mode by setting the controller property ``$enableDynamicTypeValidation = true;``.
+With this enabled, you can do either of this, to tell Flow the implementation class for the controller argument at runtime:
+
+.. code-block:: php
+
+  protected $enableDynamicTypeValidation = true;
+
+  /**
+   * @param \My\Package\Domain\MyInterface $target
+   */
+  public function myDynamicAction(MyInterface $target)
+  {
+    ...
+  }
+
+  protected function initializeMyDynamicAction()
+  {
+    $propertyMappingConfiguration = $this->arguments['target']->getPropertyMappingConfiguration();
+    // Do this, but decide on the actual class depending on some runtime decision
+    $propertyMappingConfiguration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_TARGET_TYPE, \My\Package\Domain\MyImplementation::class);
+    // OR submit '_type' => '\My\Package\Domain\MyImplementation' to make the decision client-side with
+    $propertyMappingConfiguration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
+  }
+
+All validation annotations of your ``MyImplementation`` class will then be used to validate the input.
 
 Mapping whole request body
 --------------------------
@@ -323,6 +354,58 @@ body is empty.
   achieve the same without an annotation, by calling ``$this->arguments['comment']->setMapRequestBody(true)`` inside the
   ``initializeCreateAction()`` method.
 
+Mapping Value Objects
+---------------------
+
+Value objects are immutable classes that represent one or more values.
+
+Starting with version 8, Flow can map simple types to the corresponding Value Object if they follow some basic rules:
+
+* They have a *public static* method named ``from<Type>`` that expects exactly one parameter of the given simple type
+  and returns an instance of the class itself
+* They have a private default constructor (this is not required, but encouraged)
+
+Supported simple types and their corresponding named constructor signature:
+
+* ``array`` => ``public static function fromArray(array $array): self``
+* ``boolean`` => ``public static function fromBool(bool $value): self`` (or ``public static function fromBoolean(bool $value): self``)
+* ``double``/``float`` => ``public static function fromFloat(double $value): self``
+* ``integer`` => ``public static function fromInt(int $value): self`` (or ``public static function fromInteger(int $value): self``)
+* ``string`` => ``public static function fromString(string $value): self``
+
+Example Value Object representing an email address::
+
+	/**
+	 * @Flow\Proxy(false)
+	 */
+	final class EmailAddress
+	{
+	    private function __construct(
+	        public readonly string $value,
+	    ) {
+	        if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
+	            throw new \InvalidArgumentException(sprintf('"%s" is not a valid email address', $this->value));
+	        }
+	    }
+
+	    public static function fromString(string $value): self
+	    {
+	        return new self($value);
+	    }
+	}
+
+.. note::
+
+  It's encouraged to add a ``@Flow\Proxy(false)`` annotation to Value Objects because private constructors can't be used
+  and ``new self()`` can't be used otherwise.
+
+With the example above, a corresponding Command- or ActionController can work with the ``EmailAddress`` Value Object directly::
+
+  public function someCommand(EmailAddress $email): void
+  {
+      // $email->value is a valid email address at this point!
+  }
+
 Security Considerations
 -----------------------
 
@@ -331,25 +414,25 @@ show: Suppose there is a REST API where a person can create a new account, and a
 a role to this account (from a pre-defined list). This role controls the access
 permissions the user has. The data which is sent to the server might look like this::
 
-	array(
-	  'username' => 'mynewuser',
-	  'role' => '5bc42c89-a418-457f-8095-062ace6d22fd'
-	);
+  array(
+    'username' => 'mynewuser',
+    'role' => '5bc42c89-a418-457f-8095-062ace6d22fd'
+  );
 
 Here, the ``username`` field contains the name of the user, and the ``role`` field points
 to the role the user has selected. Now, an attacker could modify the data, and submit the
 following::
 
-	array(
-	  'username' => 'mynewuser',
-	  'role' => array(
-	    'name' => 'superuser',
-	    'admin' => 1
-	  )
-	);
+  array(
+    'username' => 'mynewuser',
+    'role' => array(
+      'name' => 'superuser',
+      'admin' => 1
+    )
+  );
 
 As the property mapper works recursively, it would create a new ``Role`` object with the
-admin flag set to ``TRUE``, which might compromise the security in the system.
+admin flag set to ``true``, which might compromise the security in the system.
 
 That's why two parts need to be configured for enabling the recursive behavior: First, you need
 to specify the allowed properties using one of the ``allowProperties(), allowAllProperties()``
@@ -367,7 +450,7 @@ but does not create new ones or modifies existing ones.
 	as this makes sense as of their nature. If you have a use case where the user may not
 	create new Value Objects, for example because he may only choose from a fixed list, you can
 	however explicitly disallow creation by setting the appropriate property's
-	``CONFIGURATION_CREATION_ALLOWED`` option to ``FALSE``.
+	``CONFIGURATION_CREATION_ALLOWED`` option to ``false``.
 
 
 Default Configuration
@@ -483,7 +566,7 @@ When a type converter has to be found, the following algorithm is applied:
 
 If a type converter is found according to the above algorithm, ``canConvertFrom`` is
 called on the type converter, so he can perform additional runtime checks. In case
-the ``TypeConverter`` returns ``FALSE``, the search is continued at the position
+the ``TypeConverter`` returns ``false``, the search is continued at the position
 where it left off in the above algorithm.
 
 For simple target types, the steps 2 and 3 are omitted.
@@ -511,13 +594,13 @@ possibilities what can be returned in ``convertFrom()``:
   detected security breaches, exceptions should be thrown.
 
 * If at run-time the type converter does not wish to participate in the results,
-  ``NULL`` should be returned. For example, if a file upload is expected, but there
-  was no file uploaded, returning ``NULL`` would be the appropriate way to handling
+  ``null`` should be returned. For example, if a file upload is expected, but there
+  was no file uploaded, returning ``null`` would be the appropriate way to handling
   this.
 
 * If the error is recoverable, and the user should re-submit his data, return a
   ``Neos\Error\Messages\Error`` object (or a subclass thereof), containing information
-  about the error. In this case, the property is not mapped at all (``NULL`` is
+  about the error. In this case, the property is not mapped at all (``null`` is
   returned, like above).
 
   If the Property Mapping occurs in the context of the MVC stack (as it will be the

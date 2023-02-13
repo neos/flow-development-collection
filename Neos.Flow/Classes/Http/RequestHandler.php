@@ -14,8 +14,6 @@ namespace Neos\Flow\Http;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Http\Component\ComponentChain;
-use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,14 +31,19 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected $bootstrap;
 
     /**
-     * @var Component\ComponentChain
+     * @var Middleware\MiddlewaresChain
      */
-    protected $baseComponentChain;
+    protected $middlewaresChain;
 
     /**
-     * @var Component\ComponentContext
+     * @var ServerRequestInterface
      */
-    protected $componentContext;
+    protected $httpRequest;
+
+    /**
+     * @var ResponseInterface
+     */
+    protected $httpResponse;
 
     /**
      * Make exit() a closure so it can be manipulated during tests
@@ -91,26 +94,19 @@ class RequestHandler implements HttpRequestHandlerInterface
     public function handleRequest()
     {
         // Create the request very early so the ResourceManagement has a chance to grab it:
-        $request = ServerRequest::fromGlobals();
-        $response = new \GuzzleHttp\Psr7\Response();
-        $this->componentContext = new ComponentContext($request, $response);
+        $this->httpRequest = ServerRequest::fromGlobals();
 
         $this->boot();
         $this->resolveDependencies();
 
-        $this->baseComponentChain->handle($this->componentContext);
+        $this->middlewaresChain->onStep(function (ServerRequestInterface $request) {
+            $this->httpRequest = $request;
+        });
+        $this->httpResponse = $this->middlewaresChain->handle($this->httpRequest);
 
-        $this->sendResponse();
+        $this->sendResponse($this->httpResponse);
         $this->bootstrap->shutdown(Bootstrap::RUNLEVEL_RUNTIME);
         $this->exit->__invoke();
-    }
-
-    /**
-     * @return ComponentContext
-     */
-    public function getComponentContext(): ComponentContext
-    {
-        return $this->componentContext;
     }
 
     /**
@@ -121,18 +117,18 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public function getHttpRequest()
     {
-        return $this->componentContext->getHttpRequest();
+        return $this->httpRequest;
     }
 
     /**
      * Returns the HTTP response corresponding to the currently handled request
      *
-     * @return ResponseInterface
-     * @api
+     * @return ResponseInterface|null
+     * @deprecated since 6.0. Don't depend on this method. The HTTP response only exists after the innermost middleware (dispatch) is done. For that stage use a middleware instead.
      */
     public function getHttpResponse()
     {
-        return $this->componentContext->getHttpResponse();
+        throw new \BadMethodCallException(sprintf('The method %s was removed with Flow version 7.0 since its behavior is unreliable. To get hold of the response a middleware should be used instead.', __METHOD__), 1606467754);
     }
 
     /**
@@ -156,15 +152,15 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected function resolveDependencies()
     {
         $objectManager = $this->bootstrap->getObjectManager();
-        $this->baseComponentChain = $objectManager->get(ComponentChain::class);
+        $this->middlewaresChain = $objectManager->get(Middleware\MiddlewaresChain::class);
     }
 
     /**
      * Send the HttpResponse of the component context to the browser and flush all output buffers.
+     * @param ResponseInterface $response
      */
-    protected function sendResponse()
+    protected function sendResponse(ResponseInterface $response)
     {
-        $response = $this->componentContext->getHttpResponse();
         ob_implicit_flush(1);
         foreach (ResponseInformationHelper::prepareHeaders($response) as $prepareHeader) {
             header($prepareHeader, false);

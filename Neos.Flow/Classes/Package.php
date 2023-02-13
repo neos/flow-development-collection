@@ -11,9 +11,12 @@ namespace Neos\Flow;
  * source code.
  */
 
+use Neos\Flow\Cache\AnnotationsCacheFlusher;
+use Neos\Flow\Configuration\Loader\AppendLoader;
+use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Booting\Step;
 use Neos\Flow\Http\Helper\SecurityHelper;
-use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
+use Neos\Flow\ObjectManagement\Proxy;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -22,6 +25,7 @@ use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Cryptography\PrecomposedHashProvider;
 
 /**
  * The Flow Package
@@ -61,19 +65,20 @@ class Package extends BasePackage
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
         $dispatcher->connect(Mvc\Dispatcher::class, 'afterControllerInvocation', function ($request) use ($bootstrap) {
-            // No auto-persistence if there is no PersistenceManager registered or during compile time
+            // No auto-persistence if there is no PersistenceManager registered
             if (
                 $bootstrap->getObjectManager()->has(Persistence\PersistenceManagerInterface::class)
-                && !($bootstrap->getObjectManager() instanceof CompileTimeObjectManager)
             ) {
                 if (!$request instanceof Mvc\ActionRequest || SecurityHelper::hasSafeMethod($request->getHttpRequest()) !== true) {
                     $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();
                 } elseif (SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
-                    $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll(true);
+                    $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAllowedObjects();
                 }
             }
         });
-        $dispatcher->connect(Cli\SlaveRequestHandler::class, 'dispatchedCommandLineSlaveRequest', Persistence\PersistenceManagerInterface::class, 'persistAll');
+        $dispatcher->connect(Cli\SlaveRequestHandler::class, 'dispatchedCommandLineSlaveRequest', Persistence\PersistenceManagerInterface::class, 'persistAll', false);
+
+        $dispatcher->connect(Command\CacheCommandController::class, 'warmupCaches', PrecomposedHashProvider::class, 'precomposeHash');
 
         if (!$context->isProduction()) {
             $dispatcher->connect(Core\Booting\Sequence::class, 'afterInvokeStep', function (Step $step) use ($bootstrap, $dispatcher) {
@@ -110,8 +115,9 @@ class Package extends BasePackage
             $dispatcher->connect(Monitor\FileMonitor::class, 'filesHaveChanged', Cache\CacheManager::class, 'flushSystemCachesByChangedFiles');
         }
 
-        $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Configuration\ConfigurationManager::class, 'shutdown');
+        // The ObjectManager has to be shutdown before the ConfigurationManager, see https://github.com/neos/flow-development-collection/issues/2183
         $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', ObjectManagement\ObjectManagerInterface::class, 'shutdown');
+        $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Configuration\ConfigurationManager::class, 'shutdown');
 
         $dispatcher->connect(Core\Bootstrap::class, 'bootstrapShuttingDown', Reflection\ReflectionService::class, 'saveToCache');
 
@@ -127,7 +133,7 @@ class Package extends BasePackage
         $dispatcher->connect(Tests\FunctionalTestCase::class, 'functionalTestTearDown', Mvc\Routing\RouterCachingService::class, 'flushCaches');
 
         $dispatcher->connect(Configuration\ConfigurationManager::class, 'configurationManagerReady', function (Configuration\ConfigurationManager $configurationManager) {
-            $configurationManager->registerConfigurationType('Views', Configuration\ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_APPEND);
+            $configurationManager->registerConfigurationType('Views', new AppendLoader(new YamlSource(), 'Views'));
         });
         $dispatcher->connect(Command\CacheCommandController::class, 'warmupCaches', Configuration\ConfigurationManager::class, 'warmup');
 
@@ -141,9 +147,13 @@ class Package extends BasePackage
         $dispatcher->connect(Persistence\Doctrine\EntityManagerFactory::class, 'afterDoctrineEntityManagerCreation', Persistence\Doctrine\EntityManagerConfiguration::class, 'enhanceEntityManager');
 
         $dispatcher->connect(Persistence\Doctrine\PersistenceManager::class, 'allObjectsPersisted', ResourceRepository::class, 'resetAfterPersistingChanges');
-        $dispatcher->connect(Persistence\Generic\PersistenceManager::class, 'allObjectsPersisted', ResourceRepository::class, 'resetAfterPersistingChanges');
 
         $dispatcher->connect(AuthenticationProviderManager::class, 'successfullyAuthenticated', Context::class, 'refreshRoles');
         $dispatcher->connect(AuthenticationProviderManager::class, 'loggedOut', Context::class, 'refreshTokens');
+
+        $dispatcher->connect(Proxy\Compiler::class, 'compiledClasses', function (array $classNames) use ($bootstrap) {
+            $annotationsCacheFlusher = $bootstrap->getObjectManager()->get(AnnotationsCacheFlusher::class);
+            $annotationsCacheFlusher->flushConfigurationCachesByCompiledClass($classNames);
+        });
     }
 }

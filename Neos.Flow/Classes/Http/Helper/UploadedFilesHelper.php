@@ -10,11 +10,12 @@ namespace Neos\Flow\Http\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Flow\Http\UploadedFile;
 use Neos\Http\Factories\FlowUploadedFile;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\UploadedFileInterface;
-use function GuzzleHttp\Psr7\stream_for;
+use GuzzleHttp\Psr7\Utils;
 
 /**
  * Helper to re-organize uploaded file data for requests.
@@ -70,7 +71,7 @@ abstract class UploadedFilesHelper
     protected static function upcastUploadedFile(UploadedFileInterface $uploadedFile, $originallySubmittedResource = null, string $collectionName = null): FlowUploadedFile
     {
         // If upload failed, just accessing the stream will throwin guzzle
-        $stream = $uploadedFile->getError() === UPLOAD_ERR_OK ? $uploadedFile->getStream() : stream_for(null);
+        $stream = $uploadedFile->getError() === UPLOAD_ERR_OK ? $uploadedFile->getStream() : Utils::streamFor(null);
         $flowUploadedFile = new FlowUploadedFile($stream, ($uploadedFile->getSize() ?: 0), $uploadedFile->getError(), $uploadedFile->getClientFilename(), $uploadedFile->getClientMediaType());
         if ($originallySubmittedResource) {
             $flowUploadedFile->setOriginallySubmittedResource($originallySubmittedResource);

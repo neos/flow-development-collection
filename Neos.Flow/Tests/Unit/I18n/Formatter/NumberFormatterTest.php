@@ -92,8 +92,8 @@ class NumberFormatterTest extends UnitTestCase
         $sampleNumber = 123.456;
 
         $formatter = $this->getAccessibleMock(I18n\Formatter\NumberFormatter::class, ['formatDecimalNumber', 'formatPercentNumber']);
-        $formatter->expects(self::at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, NumbersReader::FORMAT_LENGTH_DEFAULT)->will(self::returnValue('bar1'));
-        $formatter->expects(self::at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, NumbersReader::FORMAT_LENGTH_DEFAULT)->will(self::returnValue('bar2'));
+        $formatter->expects(self::once())->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, NumbersReader::FORMAT_LENGTH_DEFAULT)->willReturn('bar1');
+        $formatter->expects(self::once())->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, NumbersReader::FORMAT_LENGTH_DEFAULT)->willReturn('bar2');
 
         $result = $formatter->format($sampleNumber, $this->sampleLocale);
         self::assertEquals('bar1', $result);

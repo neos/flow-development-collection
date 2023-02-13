@@ -21,7 +21,7 @@ use Neos\Flow\Annotations as Flow;
 class PropertyReflection extends \ReflectionProperty
 {
     /**
-     * @var DocCommentParser: An instance of the doc comment parser
+     * @var DocCommentParser An instance of the doc comment parser
      */
     protected $docCommentParser;
 
@@ -50,7 +50,7 @@ class PropertyReflection extends \ReflectionProperty
      *
      * @return ClassReflection The declaring class
      */
-    public function getDeclaringClass()
+    public function getDeclaringClass(): ClassReflection
     {
         return new ClassReflection(parent::getDeclaringClass()->getName());
     }
@@ -93,7 +93,7 @@ class PropertyReflection extends \ReflectionProperty
      * @return mixed Value of the property
      * @throws Exception
      */
-    public function getValue($object = null)
+    public function getValue($object = null): mixed
     {
         if (!is_object($object)) {
             throw new Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
@@ -114,7 +114,7 @@ class PropertyReflection extends \ReflectionProperty
      * @return void
      * @throws Exception
      */
-    public function setValue($object = null, $value = null)
+    public function setValue($object = null, $value = null): void
     {
         if (!is_object($object)) {
             throw new Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);

@@ -46,7 +46,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
                 $argument = [$argument];
             }
         }
-        return call_user_func_array('array_merge', $arguments);
+        return array_merge(...$arguments);
     }
 
     /**
@@ -112,6 +112,20 @@ class ArrayHelper implements ProtectedContextAwareInterface
             $array = iterator_to_array($array);
         }
         return array_keys($array);
+    }
+
+    /**
+     * Get the array values
+     *
+     * @param iterable $array The array
+     * @return array
+     */
+    public function values(iterable $array): array
+    {
+        if ($array instanceof \Traversable) {
+            $array = iterator_to_array($array);
+        }
+        return array_values($array);
     }
 
     /**
@@ -192,6 +206,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
             $array = array_slice($array, $fromIndex, null, true);
         }
         $result = array_search($searchElement, $array, true);
+        if (is_string($result)) {
+            return array_search($result, array_keys($array), true) + (int)$fromIndex;
+        }
         if ($result === false) {
             return -1;
         }
@@ -339,14 +356,23 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      *     Array.push(array, e1, e2)
      *
-     * @param iterable $array
+     * @param iterable|scalar|null $array
      * @param mixed $element
      * @return array The array with the inserted elements
      */
-    public function push(iterable $array, $element): array
+    public function push($array, $element): array
     {
         if ($array instanceof \Traversable) {
             $array = iterator_to_array($array);
+        }
+        if (is_scalar($array)) {
+            $array = [$array];
+        }
+        if ($array === null) {
+            $array = [];
+        }
+        if (is_array($array) === false) {
+            throw new \InvalidArgumentException('$array must be of type iterable|scalar|null got: ' . gettype($array), 1647595715);
         }
         $elements = func_get_args();
         array_shift($elements);
@@ -542,7 +568,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
         if ($array instanceof \Traversable) {
             $array = iterator_to_array($array);
         }
-        return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
+        if (is_null($callback)) {
+            return array_filter($array);
+        } else {
+            return array_filter($array, $callback, ARRAY_FILTER_USE_BOTH);
+        }
     }
 
     /**

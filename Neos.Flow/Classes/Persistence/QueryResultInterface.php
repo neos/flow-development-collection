@@ -24,12 +24,12 @@ interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess
      * @return QueryInterface
      * @api
      */
-    public function getQuery();
+    public function getQuery(): QueryInterface;
 
     /**
      * Returns the first object in the result set
      *
-     * @return object
+     * @return object|null
      * @api
      */
     public function getFirst();
@@ -40,5 +40,5 @@ interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess
      * @return array
      * @api
      */
-    public function toArray();
+    public function toArray(): array;
 }

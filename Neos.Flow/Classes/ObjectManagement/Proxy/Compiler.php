@@ -55,7 +55,7 @@ class Compiler
      * Hardcoded list of Flow sub packages which must be immune proxying for security, technical or conceptual reasons.
      * @var array
      */
-    protected $blacklistedSubPackages = ['Neos\Flow\Aop', 'Neos\Flow\Cor', 'Neos\Flow\Obj', 'Neos\Flow\Pac', 'Neos\Flow\Ref', 'Neos\Flow\Uti'];
+    protected $excludedSubPackages = ['Neos\Flow\Aop', 'Neos\Flow\Cor', 'Neos\Flow\Obj', 'Neos\Flow\Pac', 'Neos\Flow\Ref', 'Neos\Flow\Uti'];
 
     /**
      * Length of the prefix that will be checked for exclusion of proxy building.
@@ -63,7 +63,7 @@ class Compiler
      *
      * @var integer
      */
-    protected $blacklistedSubPackagesLength;
+    protected $excludedSubPackagesLength;
 
     /**
      * The final map of proxy classes that end up in the cache.
@@ -77,7 +77,7 @@ class Compiler
      */
     public function __construct()
     {
-        $this->blacklistedSubPackagesLength = strlen('Neos\Flow') + 4;
+        $this->excludedSubPackagesLength = strlen('Neos\Flow') + 4;
     }
 
     /**
@@ -116,12 +116,13 @@ class Compiler
      * If no such proxy class has been created yet by this renderer,
      * this function will create one and register it for later use.
      *
-     * If the class is not proxable, false will be returned
+     * If the class is not proxyable, or is not a real class at all,
+     * false will be returned
      *
      * @param string $fullClassName Name of the original class
      * @return ProxyClass|boolean
      */
-    public function getProxyClass($fullClassName)
+    public function getProxyClass(string $fullClassName)
     {
         if (interface_exists($fullClassName) || in_array(BaseTestCase::class, class_parents($fullClassName))) {
             return false;
@@ -136,12 +137,16 @@ class Compiler
             return false;
         }
 
+        if (method_exists($classReflection, 'isEnum') && $classReflection->isEnum()) {
+            return false;
+        }
+
         $proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, Flow\Proxy::class);
         if ($proxyAnnotation !== null && $proxyAnnotation->enabled === false) {
             return false;
         }
 
-        if (in_array(substr($fullClassName, 0, $this->blacklistedSubPackagesLength), $this->blacklistedSubPackages)) {
+        if (in_array(substr($fullClassName, 0, $this->excludedSubPackagesLength), $this->excludedSubPackages)) {
             return false;
         }
         // Annotation classes (like \Neos\Flow\Annotations\Entity) must never be proxied because that would break the Doctrine AnnotationParser
@@ -180,7 +185,7 @@ class Compiler
      */
     public function compile()
     {
-        $classCount = 0;
+        $compiledClasses = [];
         foreach ($this->objectManager->getRegisteredClassNames() as $fullOriginalClassNames) {
             foreach ($fullOriginalClassNames as $fullOriginalClassName) {
                 if (isset($this->proxyClasses[$fullOriginalClassName])) {
@@ -190,7 +195,7 @@ class Compiler
                         $classPathAndFilename = $class->getFileName();
                         $this->cacheOriginalClassFileAndProxyCode($fullOriginalClassName, $classPathAndFilename, $proxyClassCode);
                         $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
-                        $classCount++;
+                        $compiledClasses[] = $fullOriginalClassName;
                     }
                 } else {
                     if ($this->classesCache->has(str_replace('\\', '_', $fullOriginalClassName))) {
@@ -199,7 +204,16 @@ class Compiler
                 }
             }
         }
-        return $classCount;
+        $this->emitCompiledClasses($compiledClasses);
+        return count($compiledClasses);
+    }
+
+    /**
+     * @param array<string> $classNames
+     * @Flow\Signal
+     */
+    public function emitCompiledClasses(array $classNames)
+    {
     }
 
     /**
@@ -234,7 +248,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
         $classCode = $this->stripOpeningPhpTag($classCode);
 
         $classNameSuffix = self::ORIGINAL_CLASSNAME_SUFFIX;
-        $classCode = preg_replace_callback('/^([a-z\s]*?)(final\s+)?(interface|class)\s+([a-zA-Z0-9_]+)/m', function ($matches) use ($pathAndFilename, $classNameSuffix, $proxyClassCode) {
+        $classCode = preg_replace_callback('/^([a-z\s]*?)(final\s+)?(interface|class)\s+([a-zA-Z0-9_]+)/m', static function ($matches) use ($pathAndFilename, $classNameSuffix, $proxyClassCode) {
             $classNameAccordingToFileName = basename($pathAndFilename, '.php');
             if ($matches[4] !== $classNameAccordingToFileName) {
                 throw new Exception('The name of the class "' . $matches[4] . '" is not the same as the filename which is "' . basename($pathAndFilename) . '". Path: ' . $pathAndFilename, 1398356897);
@@ -244,7 +258,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
         // comment out "final" keyword, if the method is final and if it is advised (= part of the $proxyClassCode)
         // Note: Method name regex according to http://php.net/manual/en/language.oop5.basic.php
-        $classCode = preg_replace_callback('/^(\s*)((public|protected)\s+)?final(\s+(public|protected))?(\s+function\s+)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]+\s*\()/m', function ($matches) use ($pathAndFilename, $classNameSuffix, $proxyClassCode) {
+        $classCode = preg_replace_callback('/^(\s*)((public|protected)\s+)?final(\s+(public|protected))?(\s+function\s+)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]+\s*\()/m', static function ($matches) use ($proxyClassCode) {
             // the method is not advised => don't remove the final keyword
             if (strpos($proxyClassCode, $matches[0]) === false) {
                 return $matches[0];
@@ -254,7 +268,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
         $classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
 
-        $proxyClassCode .= "\n" . '# PathAndFilename: ' . $pathAndFilename;
+        $proxyClassCode .= PHP_EOL . '# PathAndFilename: ' . $pathAndFilename;
 
         $separator =
             PHP_EOL . '#' .
@@ -277,6 +291,29 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
 
     /**
+     * Render the source (string) form of a PHP Attribute.
+     * @param \ReflectionAttribute $attribute
+     * @return string
+     */
+    public static function renderAttribute($attribute): string
+    {
+        $attributeAsString = '\\' . $attribute->getName();
+        if (count($attribute->getArguments()) > 0) {
+            $argumentsAsString = [];
+            foreach ($attribute->getArguments() as $argumentName => $argumentValue) {
+                $renderedArgumentValue = var_export($argumentValue, true);
+                if (is_numeric($argumentName)) {
+                    $argumentsAsString[] = $renderedArgumentValue;
+                } else {
+                    $argumentsAsString[] = "$argumentName: $renderedArgumentValue";
+                }
+            }
+            $attributeAsString .= '(' . implode(', ', $argumentsAsString) . ')';
+        }
+        return "#[$attributeAsString]";
+    }
+
+    /**
      * Render the source (string) form of an Annotation instance.
      *
      * @param \Doctrine\Common\Annotations\Annotation $annotation
@@ -286,14 +323,18 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     {
         $annotationAsString = '@\\' . get_class($annotation);
 
-        $optionNames = get_class_vars(get_class($annotation));
+        $optionDefaults = get_class_vars(get_class($annotation));
+        $optionValues = get_object_vars($annotation);
         $optionsAsStrings = [];
-        foreach ($optionNames as $optionName => $optionDefault) {
-            $optionValue = $annotation->$optionName;
+        foreach ($optionValues as $optionName => $optionValue) {
+            // FIXME: This is a workaround for https://github.com/neos/flow-development-collection/issues/2387
+            if ($optionName[0] === '_') {
+                continue;
+            }
             $optionValueAsString = '';
             if (is_object($optionValue)) {
                 $optionValueAsString = self::renderAnnotation($optionValue);
-            } elseif (is_scalar($optionValue) && is_string($optionValue)) {
+            } elseif (is_string($optionValue)) {
                 $optionValueAsString = '"' . $optionValue . '"';
             } elseif (is_bool($optionValue)) {
                 $optionValueAsString = $optionValue ? 'true' : 'false';
@@ -307,7 +348,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
                     $optionsAsStrings[] = $optionValueAsString;
                     break;
                 default:
-                    if ($optionValue === $optionDefault) {
+                    if ($optionValue === $optionDefaults[$optionName]) {
                         break;
                     }
                     $optionsAsStrings[] = $optionName . '=' . $optionValueAsString;
@@ -334,7 +375,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
                 $value .= self::renderAnnotation($v);
             } elseif (is_array($v)) {
                 $value .= self::renderOptionArrayValueAsString($v);
-            } elseif (is_scalar($v) && is_string($v)) {
+            } elseif (is_string($v)) {
                 $value .= '"' . $v . '"';
             } elseif (is_bool($v)) {
                 $value .= $v ? 'true' : 'false';

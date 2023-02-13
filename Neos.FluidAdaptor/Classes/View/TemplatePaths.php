@@ -539,13 +539,14 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * <PackageKey>_<SubPackageKey>_<ControllerName>_<prefix>_<SHA1>
      * The SH1 hash is a checksum that is based on the file path and last modification date
      *
-     * @param string $pathAndFilename
+     * @param string|null $pathAndFilename
      * @param string $prefix
      * @return string
      * @throws InvalidTemplateResourceException
      */
     protected function createIdentifierForFile($pathAndFilename, $prefix)
     {
+        $pathAndFilename = (string)$pathAndFilename;
         $templateModifiedTimestamp = 0;
         $isStandardInput = $pathAndFilename === 'php://stdin';
         $isFile = is_file($pathAndFilename);

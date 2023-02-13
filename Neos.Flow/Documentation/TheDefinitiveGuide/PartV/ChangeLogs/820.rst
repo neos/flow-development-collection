@@ -1,0 +1,208 @@
+`8.2.0 (2022-11-30) <https://github.com/neos/flow-development-collection/releases/tag/8.2.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Iterable multi cache backend <https://github.com/neos/flow-development-collection/pull/2895>`_
+--------------------------------------------------------------------------------------------------------
+
+This introduces a new cache backend, based on the ``TaggableMultiBackend``, which can also be used for caches which require iteration support.
+
+* Resolves: `#2894 <https://github.com/neos/flow-development-collection/issues/2894>`_
+
+* Packages: ``Flow``
+
+`FEATURE: Produce static functions in CompilingEvaluator <https://github.com/neos/flow-development-collection/pull/2907>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2906 <https://github.com/neos/flow-development-collection/issues/2906>`_
+
+**Review instructions**
+
+Code in Data/Temporary/…/Cache/Data/Eel_Expression_Code/expression_* should have static fucntions…
+
+
+* Packages: ``Flow`` ``Eel``
+
+`FEATURE: Skip unhealthy cache backends in MultiBackend <https://github.com/neos/flow-development-collection/pull/2891>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This introduces a new feature for the MultiBackend and the TaggableMultiBackend which automatically removes unhealthy sub backends from the list of backends for the remainder of a request.
+
+If a sub backend throws any error, the error will be caught, logged and the backend removed from the list of sub backends. If the sub backend causing trouble is the last one configured for the MultiBackend, it will not be removed.
+
+The feature can be disabled by setting the option ``removeUnhealthyBackends`` to ``false``.
+
+* Resolves: `#2890 <https://github.com/neos/flow-development-collection/issues/2890>`_
+
+`BUGFIX: Allow updating of entities related to value objects after persisting <https://github.com/neos/flow-development-collection/pull/2871>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2870 <https://github.com/neos/flow-development-collection/issues/2870>`_
+
+**Upgrade instructions**
+
+
+`BUGFIX: disable invisible composer interaction in `./flow package:create` <https://github.com/neos/flow-development-collection/pull/2926>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+closes `#2757 <https://github.com/neos/flow-development-collection/issues/2757>`_
+
+with `#2571 <https://github.com/neos/flow-development-collection/issues/2571>``_was introduced, that the composer subcommand used by ``./flow package:create`` hides its output. But using the ``new NullOutput()` doesn't prevent any interaction initiated by composer such as the infamous:
+
+> neos/composer-plugin contains a Composer plugin which is currently not in your allow-plugins config. See https://getcomposer.org/allow-plugins
+> Do you trust "neos/composer-plugin" to execute code and wish to enable it now? (writes "allow-plugins" to composer.json) [y,n,d,?]
+
+the current problem is that composer asks this question but shows not output. So one has to blind input ``y`` without even knowing the question. This is perceived as bug but clearly a feature see #2757.
+
+With this bugfix we use the official supported cli flag ``--quiet`` to archive the same as the NullOutput and furthermore disable any invisible requested interactivity.
+
+in the above case instead of a question - an error will be thrown, which is understandable and fixable by the user:
+
+> In PluginManager.php line 768:
+> neos/composer-plugin contains a Composer plugin which is blocked by your allow-plugins config. You may add it to the list if you consider it safe.
+> ...
+> The installation was not successful.
+> Composer returned the error code: 1
+>
+>  Type: Neos\\Flow\\Package\\Exception
+>  Code: 1572187932
+>  File: Packages/Framework/Neos.Flow/Classes/Package/PackageManager.php
+>  Line: 391
+>
+> Open Data/Logs/Exceptions/202210221257240bfbde.txt for a full stack trace.
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Make PdoBackend.rewind() on PostgreSQL work <https://github.com/neos/flow-development-collection/pull/2924>`_
+----------------------------------------------------------------------------------------------------------------------
+
+* See: `#2838 <https://github.com/neos/flow-development-collection/issues/2838>`_
+
+
+`BUGFIX: Fix logging in multibackend during compile time <https://github.com/neos/flow-development-collection/pull/2898>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Added an additional safeguard in MultiBackend to make sure that logging is disabled when no logger can be created yet.
+
+During compile time, ``LoggerInterface`` might not be available yet. However, the MultiBackend may already be invoked at that point and try to log.
+
+
+* Packages: ``Flow`` ``Cache``
+
+`BUGFIX: Avoid errors when `./flow help` is shown for an action without doc-block <https://github.com/neos/flow-development-collection/pull/2883>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+The ``./flow help`` command currently throws errors when rendering details for command that has no doc-block.
+Since modern php and flow need those doc-blocks less and less this should be supported aswell.
+
+This change will return the argument name as description when no @param annotation is found for a parameter.
+This is not as helpful as a description but shows the parameter and avoids an unnecessary error.
+
+**Review instructions**
+
+Remove the doc comments from a cli-command and run ``./flow help command:name`` ... without this change the code will end throwing an exception.
+
+
+* Fixes: `#2886 <https://github.com/neos/flow-development-collection/issues/2886>`_
+
+
+* Packages: ``Flow``
+
+`TASK: suggest igbinary extension in neos/cache and neos/flow package <https://github.com/neos/flow-development-collection/pull/2868>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Related information:
+
+- https://github.com/neos/neos-development-collection/issues/3765
+- https://github.com/neos/neos-development-collection/pull/3808
+
+
+* Packages: ``Flow``
+
+`TASK: Adjust to Neos team specifics <https://github.com/neos/flow-development-collection/pull/2927>`_
+------------------------------------------------------------------------------------------------------
+
+Avoid "community leaders" term, adjust contact method.
+
+
+* Packages: ``Flow``
+
+`TASK: Render API docs (again) <https://github.com/neos/flow-development-collection/pull/2921>`_
+------------------------------------------------------------------------------------------------
+
+This renders API docs (again), using Doctum via GH Actions.
+
+The results are pushed to https://neos.github.io for consumption.
+
+**Review instructions**
+
+A test run result can be seen at https://neos.github.io/flow/8.2/index.html already. The workflow run is visible at https://github.com/kdambekalns/flow-development-collection/actions/runs/3233003582/jobs/5294292366
+
+See also `#1 <https://github.com/kdambekalns/apigenerator.org/issues/1>`_
+
+**TODO**
+
+- [x] Links to GitHub are wrong (``workspace`` must go and branch is wrong)
+- [ ] Maybe add a theme to make it look more Neos-y?
+
+
+* Packages: ``.github``
+
+`TASK: precompose hash to prevent timing attacks <https://github.com/neos/flow-development-collection/pull/2915>`_
+------------------------------------------------------------------------------------------------------------------
+
+Precomposing a hash on cache warmup will make sure that the used hash to prevent timing attack always reflects the current configuration.
+
+Previously there was a bcrypt password with the cost of 16 hard coded in but the configuration was set to 14 as default.
+
+Fixes `#3908 <https://github.com/neos/neos-development-collection/issues/3908>`_ reported by @Benjamin-K
+
+
+* Packages: ``Flow``
+
+`TASK: use PHPs hash_pbkdf2 <https://github.com/neos/flow-development-collection/pull/2917>`_
+---------------------------------------------------------------------------------------------
+
+Use ``hash_pbkdf2`` provided by PHP (since 5.5) instead of own generation logic.
+
+* Fixes: `#2916 <https://github.com/neos/flow-development-collection/issues/2916>`_
+
+
+* Packages: ``Flow``
+
+`TASK: Update psalm baseline <https://github.com/neos/flow-development-collection/pull/2918>`_
+----------------------------------------------------------------------------------------------
+
+for reasons
+
+`TASK: Update code of conduct <https://github.com/neos/flow-development-collection/pull/2912>`_
+-----------------------------------------------------------------------------------------------
+
+Removes the rST version (based on v1.4 of Contributor Covenant) and updates the markdown version to 2.1 of Contributor Covenant.
+
+`TASK: Improve command documentation <https://github.com/neos/flow-development-collection/pull/2910>`_
+------------------------------------------------------------------------------------------------------
+
+Update the cli command example in the documentation to follow best practices.
+In commands, when showing a progress bar, using ->progressFinish() does not output a newline. This is intended, as it allows adding further text in the same line. However, the full command output - unless empty - should end with a newline.
+
+See https://github.com/neos/neos-development-collection/issues/3894
+
+
+* Packages: ``Flow``
+
+`TASK: Adjust Neos.DocTools settings <https://github.com/neos/flow-development-collection/pull/2885>`_
+------------------------------------------------------------------------------------------------------
+
+See https://github.com/neos/doctools/pull/4
+
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.1.0...8.2.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

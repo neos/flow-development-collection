@@ -80,6 +80,16 @@ pre {
     padding-right: 20px;
 }
 
+.Flow-Debug-Exception-Backtrace-Code {
+    background: #fff;
+    color: #656a71;
+    padding: 5px;
+}
+
+.Flow-Debug-Exception-Backtrace-Code summary{
+    cursor: pointer;
+}
+
 .Flow-Debug-Backtrace {
     padding: 0;
     color: #34363C;

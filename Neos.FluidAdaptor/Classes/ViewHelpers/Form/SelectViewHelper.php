@@ -18,9 +18,9 @@ use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Utility\ObjectAccess;
 use Neos\FluidAdaptor;
 use Neos\FluidAdaptor\Core\ViewHelper;
+use Neos\Utility\ObjectAccess;
 
 /**
  * This ViewHelper generates a <select> dropdown list for the use with a form.
@@ -219,7 +219,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
             $options = ['' => ''];
         }
         foreach ($options as $value => $label) {
-            $output .= $this->renderOptionTag($value, $label) . chr(10);
+            $output .= $this->renderOptionTag($value, (string)$label) . chr(10);
         }
         return $output;
     }
@@ -237,16 +237,28 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         }
         $options = [];
         foreach ($this->arguments['options'] as $key => $value) {
-            if (is_object($value)) {
+            if (is_object($value) || is_array($value)) {
                 if ($this->hasArgument('optionValueField')) {
                     $key = ObjectAccess::getPropertyPath($value, $this->arguments['optionValueField']);
                     if (is_object($key)) {
                         if (method_exists($key, '__toString')) {
                             $key = (string)$key;
                         } else {
-                            throw new ViewHelper\Exception('Identifying value for object of class "' . get_class($value) . '" was an object.', 1247827428);
+                            throw new ViewHelper\Exception(
+                                sprintf(
+                                    'Identifying value at path "%s" for %s was an object.',
+                                    $this->arguments['optionValueField'],
+                                    is_object($value) ? 'object of class "' . get_class($value) . '"' : 'array'
+                                ),
+                                1247827428
+                            );
                         }
                     }
+                } elseif (is_array($value)) {
+                    throw new ViewHelper\Exception(
+                        '$optionValueField must be provided for array $options',
+                        1602432325183
+                    );
                 } elseif ($this->persistenceManager->getIdentifierByObject($value) !== null) {
                     $key = $this->persistenceManager->getIdentifierByObject($value);
                 } elseif (method_exists($value, '__toString')) {
@@ -264,6 +276,11 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
                             throw new ViewHelper\Exception('Label value for object of class "' . get_class($value) . '" was an object without a __toString() method.', 1247827553);
                         }
                     }
+                } elseif (is_array($value)) {
+                    throw new ViewHelper\Exception(
+                        '$optionLabelField must be provided for array $options',
+                        1602432476053
+                    );
                 } elseif (method_exists($value, '__toString')) {
                     $value = (string)$value;
                 } elseif ($this->persistenceManager->getIdentifierByObject($value) !== null) {
@@ -347,13 +364,13 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
     /**
      * Render one option tag
      *
-     * @param string $value value attribute of the option tag (will be escaped)
+     * @param mixed $value value attribute of the option tag (will be escaped)
      * @param string $label content of the option tag (will be escaped)
      * @return string the rendered option tag
      */
-    protected function renderOptionTag($value, $label)
+    protected function renderOptionTag(mixed $value, string $label)
     {
-        $output = '<option value="' . htmlspecialchars($value) . '"';
+        $output = '<option value="' . htmlspecialchars((string)$value) . '"';
         if ($this->isSelected($value)) {
             $output .= ' selected="selected"';
         }

@@ -108,6 +108,6 @@ class CompilingEvaluator implements EelEvaluatorInterface
             throw new ParserException(sprintf('Parser error, no code in result %s ', json_encode($result)), 1334491498);
         }
 
-        return 'return function ($context) {return ' . $result['code'] . ';};';
+        return 'return static function ($context) {return ' . $result['code'] . ';};';
     }
 }

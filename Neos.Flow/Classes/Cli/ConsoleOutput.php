@@ -138,12 +138,16 @@ class ConsoleOutput
      *
      * @param array $rows
      * @param array $headers
+     * @param string $headerTitle
      */
-    public function outputTable(array $rows, array $headers = null): void
+    public function outputTable(array $rows, array $headers = null, string $headerTitle = null): void
     {
         $table = $this->getTable();
         if ($headers !== null) {
             $table->setHeaders($headers);
+        }
+        if ($headerTitle !== null) {
+            $table->setHeaderTitle($headerTitle);
         }
         $table->setRows($rows);
         $table->render();
@@ -183,6 +187,18 @@ class ConsoleOutput
     {
         $question = new Question($this->combineQuestion($question), $default);
 
+        return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
+    }
+
+    /**
+     * Asks a question to the user
+     *
+     * @param Question $question The question to ask as an Object.
+     * @return mixed The user answer
+     * @throws \RuntimeException If there is no data to read in the input stream
+     */
+    public function askQuestion(Question $question)
+    {
         return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
     }
 
@@ -355,7 +371,7 @@ class ConsoleOutput
      *
      * @return QuestionHelper
      */
-    protected function getQuestionHelper(): QuestionHelper
+    public function getQuestionHelper(): QuestionHelper
     {
         if ($this->questionHelper === null) {
             $this->questionHelper = new QuestionHelper();
@@ -385,7 +401,7 @@ class ConsoleOutput
      *
      * @return ProgressBar
      */
-    protected function getProgressBar(): ProgressBar
+    public function getProgressBar(): ProgressBar
     {
         if ($this->progressBar === null) {
             $this->progressBar = new ProgressBar($this->output);

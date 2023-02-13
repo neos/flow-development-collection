@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Composer;
 
 /*
@@ -29,8 +31,11 @@ class InstallerScripts
      *
      * @param Event $event
      * @return void
+     * @throws Exception\InvalidConfigurationException
+     * @throws \Neos\Flow\Package\Exception
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    public static function postUpdateAndInstall(Event $event)
+    public static function postUpdateAndInstall(Event $event): void
     {
         if (!defined('FLOW_PATH_ROOT')) {
             define('FLOW_PATH_ROOT', Files::getUnixStylePath(getcwd()) . '/');
@@ -63,47 +68,32 @@ class InstallerScripts
      *
      * @param PackageEvent $event
      * @return void
+     * @throws Exception\InvalidConfigurationException
      * @throws Exception\UnexpectedOperationException
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    public static function postPackageUpdateAndInstall(PackageEvent $event)
+    public static function postPackageUpdateAndInstall(PackageEvent $event): void
     {
         $operation = $event->getOperation();
         if (!$operation instanceof InstallOperation && !$operation instanceof UpdateOperation) {
-            throw new Exception\UnexpectedOperationException('Handling of operation with type "' . $operation->getJobType() . '" not supported', 1348750840);
+            throw new Exception\UnexpectedOperationException('Handling of operation of type "' . get_class($operation) . '" not supported', 1348750840);
         }
-        $package = ($operation->getJobType() === 'install') ? $operation->getPackage() : $operation->getTargetPackage();
+        $package = ($operation instanceof InstallOperation) ? $operation->getPackage() : $operation->getTargetPackage();
         $packageExtraConfig = $package->getExtra();
         $installPath = $event->getComposer()->getInstallationManager()->getInstallPath($package);
 
-        $evaluatedInstallerResources = false;
         if (isset($packageExtraConfig['neos']['installer-resource-folders'])) {
             foreach ($packageExtraConfig['neos']['installer-resource-folders'] as $installerResourceDirectory) {
                 static::copyDistributionFiles($installPath . $installerResourceDirectory);
             }
-            $evaluatedInstallerResources = true;
         }
 
-        if ($operation->getJobType() === 'install') {
-            if (isset($packageExtraConfig['typo3/flow']['post-install'])) {
-                self::runPackageScripts($packageExtraConfig['typo3/flow']['post-install']);
-            }
-            if (isset($packageExtraConfig['neos/flow']['post-install'])) {
-                self::runPackageScripts($packageExtraConfig['neos/flow']['post-install']);
-            }
+        if ($operation instanceof InstallOperation && isset($packageExtraConfig['neos/flow']['post-install'])) {
+            self::runPackageScripts($packageExtraConfig['neos/flow']['post-install']);
         }
 
-        if ($operation->getJobType() === 'update') {
-            if (isset($packageExtraConfig['typo3/flow']['post-update'])) {
-                self::runPackageScripts($packageExtraConfig['typo3/flow']['post-update']);
-            }
-            if (isset($packageExtraConfig['neos/flow']['post-update'])) {
-                self::runPackageScripts($packageExtraConfig['neos/flow']['post-update']);
-            }
-        }
-
-        // TODO: Deprecated from Flow 3.1 remove three versions after.
-        if (!$evaluatedInstallerResources && isset($packageExtraConfig['typo3/flow']['manage-resources']) && $packageExtraConfig['typo3/flow']['manage-resources'] === true) {
-            static::copyDistributionFiles($installPath . 'Resources/Private/Installer/');
+        if ($operation instanceof UpdateOperation && isset($packageExtraConfig['neos/flow']['post-update'])) {
+            self::runPackageScripts($packageExtraConfig['neos/flow']['post-update']);
         }
     }
 
@@ -112,8 +102,9 @@ class InstallerScripts
      *
      * @param string $installerResourcesDirectory Path to the installer directory that contains the Distribution/Essentials and/or Distribution/Defaults directories.
      * @return void
+     * @throws \Neos\Utility\Exception\FilesException
      */
-    protected static function copyDistributionFiles(string $installerResourcesDirectory)
+    protected static function copyDistributionFiles(string $installerResourcesDirectory): void
     {
         $essentialsPath = $installerResourcesDirectory . 'Distribution/Essentials';
         if (is_dir($essentialsPath)) {
@@ -133,7 +124,7 @@ class InstallerScripts
      * @return void
      * @throws Exception\InvalidConfigurationException
      */
-    protected static function runPackageScripts(string $staticMethodReference)
+    protected static function runPackageScripts(string $staticMethodReference): void
     {
         $className = substr($staticMethodReference, 0, strpos($staticMethodReference, '::'));
         $methodName = substr($staticMethodReference, strpos($staticMethodReference, '::') + 2);

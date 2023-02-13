@@ -1,0 +1,236 @@
+name: build
+
+on:
+  push:
+    branches: [ master, '[0-9]+.[0-9]' ]
+  pull_request:
+    branches: [ master, '[0-9]+.[0-9]' ]
+
+permissions: {}
+jobs:
+  build:
+    permissions:
+      contents: read # to fetch code (actions/checkout)
+
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
+    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} (deps: ${{ matrix.dependencies }})"
+
+    continue-on-error: ${{ matrix.experimental == 'true' || matrix.experimental == true }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['8.0', '8.1', '8.2']
+        # see https://mariadb.com/kb/en/mariadb-server-release-dates/
+        # this should be a current release, e.g. the LTS version
+        mariadb-versions: ['10.6']
+        # see https://www.postgresql.org/support/versioning/
+        # this should be a current release
+        postgresql-versions: ['14-alpine']
+        dependencies: ['highest']
+        composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
+        static-analysis: ['no']
+        experimental: [false]
+        include:
+          - php-versions: '8.0'
+            mariadb-versions: '' # skip mariadb setup
+            postgresql-versions: '' # skip postgresql setup
+            static-analysis: 'psalm'
+            experimental: true
+            dependencies: 'highest'
+
+          # Build for minimum dependencies.
+          - php-versions: '8.0'
+            mariadb-versions: '10.2'
+            postgresql-versions: '10-alpine'
+            static-analysis: 'no'
+            experimental: false
+            dependencies: 'lowest'
+
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:alpine
+        ports:
+          - "6379:6379"
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+      memcached:
+        image: memcached:alpine
+        ports:
+          - "11211:11211"
+        # options: --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    env:
+      FLOW_CONTEXT: Testing
+      FLOW_DIST_FOLDER: flow-development-distribution
+      FLOW_FOLDER: flow-development-collection
+
+    defaults:
+      run:
+        working-directory: ${{ env.FLOW_DIST_FOLDER }}
+
+    steps:
+      - name: Set Flow target branch name
+        run: echo "FLOW_TARGET_VERSION=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
+        working-directory: .
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.FLOW_FOLDER }}
+
+      - name: Setup PHP ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, memcache, apcu
+          coverage: xdebug #optional
+          ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
+
+      - name: Setup PostgreSQL ${{ matrix.postgresql-versions }}
+        if: ${{ matrix.postgresql-versions != '' }}
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql version: ${{ matrix.postgresql-versions }}
+          postgresql db: 'flow_functional_testing'
+          postgresql user: 'neos'
+          postgresql password: 'neos'
+
+      - name: Setup MariaDB ${{ matrix.mariadb-versions }}
+        if: ${{ matrix.mariadb-versions != '' }}
+        uses: getong/mariadb-action@v1.1
+        with:
+          mariadb version: ${{ matrix.mariadb-versions }}
+          collation server: 'utf8mb4_unicode_ci'
+          mysql database: 'flow_functional_testing'
+          mysql root password: 'neos'
+
+      - name: Checkout development distribution
+        uses: actions/checkout@v2
+        with:
+          repository: neos/flow-development-distribution
+          ref: ${{ env.FLOW_TARGET_VERSION }}
+          path: ${{ env.FLOW_DIST_FOLDER }}
+
+      - name: Set alias branch name
+        run: if [ "${FLOW_TARGET_VERSION}" == "master" ]; then echo "FLOW_BRANCH_ALIAS=dev-master"; else echo "FLOW_BRANCH_ALIAS=${FLOW_TARGET_VERSION}.x-dev"; fi >> $GITHUB_ENV
+
+      - name: Update composer.json
+        run: |
+          git -C ../${{ env.FLOW_FOLDER }} checkout -b build
+          composer config repositories.flow '{ "type": "path", "url": "../${{ env.FLOW_FOLDER }}", "options": { "symlink": false } }'
+          composer require --no-update neos/flow-development-collection:"dev-build as ${{ env.FLOW_BRANCH_ALIAS }}"
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/composer
+            ${{ env.FLOW_DIST_FOLDER }}/Packages
+          key: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}${{ hashFiles('**/composer.json') }}
+          restore-keys: php-${{ matrix.php-versions }}-${{ matrix.dependencies }}
+
+      - name: Install dependencies
+        run: |
+          composer ${{ matrix.dependencies == 'locked' && 'install' || 'update' }} --no-progress --no-interaction ${{ matrix.dependencies == 'lowest' && '--prefer-lowest' || '' }} ${{ matrix.composer-arguments }}
+
+      - name: Set Flow Context
+        run: echo "FLOW_CONTEXT=${{ env.FLOW_CONTEXT }}" >> $GITHUB_ENV
+
+      - name: Setup Flow configuration
+        run: |
+          rm -f Configuration/Routes.yaml
+          rm -f Configuration/Testing/Settings.yaml
+          cat <<EOF >> Configuration/Testing/Settings.yaml
+          Neos:
+            Flow:
+              persistence:
+                backendOptions:
+                  host: '127.0.0.1'
+                  driver: pdo_mysql
+                  user: 'root'
+                  password: 'neos'
+                  dbname: 'flow_functional_testing'
+              mvc:
+                routes:
+                  'Neos.Flow': TRUE
+          EOF
+          echo "Running in context '$FLOW_CONTEXT'"
+          ./flow configuration:show
+          ./flow routing:list
+
+      - name: Static analysis
+        if: matrix.static-analysis == 'psalm'
+        run: composer test-static
+
+      - name: Update psalm baseline
+        if: ${{ failure() && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+        run: |
+          composer psalm-baseline-update
+          cd ./Packages/Framework
+          git add psalm-baseline.xml
+          git -c user.name='gh-action' -c user.email='gh-action@noreply.github.com' commit -m "TASK: Update psalm-baseline"
+          git push -f origin HEAD:${FLOW_TARGET_VERSION}
+
+      - name: Run unit tests
+        if: matrix.static-analysis == 'no'
+        run: composer test-unit -- --verbose
+
+      - name: Run functional tests
+        if: matrix.static-analysis == 'no'
+        run: composer test-func -- --verbose
+
+      - name: Run behat tests
+        if: ${{ matrix.static-analysis == 'no' && matrix.dependencies != 'lowest' }}
+        #if: env.BEHAT == true
+        run: |
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
+          bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
+
+      - name: Setup Flow configuration (PGSQL)
+        run: |
+          rm -f Configuration/Testing/Settings.yaml
+          cat <<EOF >> Configuration/Testing/Settings.yaml
+          Neos:
+            Flow:
+              persistence:
+                backendOptions:
+                  host: '127.0.0.1'
+                  port: 5432
+                  driver: pdo_pgsql
+                  user: 'neos'
+                  password: 'neos'
+                  dbname: 'flow_functional_testing'
+                  charset: 'utf8'
+                  defaultTableOptions:
+                    charset: 'utf8'
+              mvc:
+                routes:
+                  'Neos.Flow': TRUE
+          EOF
+
+      - name: Run unit tests (PGSQL)
+        if: matrix.static-analysis == 'no'
+        run: composer test-unit -- --verbose
+
+      - name: Run functional tests (PGSQL)
+        if: matrix.static-analysis == 'no'
+        run: composer test-func -- --verbose
+
+      - name: Run behat tests (PGSQL)
+        if: ${{ matrix.static-analysis == 'no' && matrix.dependencies != 'lowest' }}
+        #if: env.BEHAT == true
+        run: |
+          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
+          bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
+
+  buildall:
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
+    runs-on: ubuntu-latest
+    name: CI build (matrix)
+    needs: build
+    steps:
+      - name: Check build matrix status
+        if: ${{ needs.build.result != 'success' }}
+        run: exit 1

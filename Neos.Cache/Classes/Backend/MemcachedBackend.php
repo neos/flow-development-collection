@@ -93,6 +93,9 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
             throw new Exception('The PHP extension "memcache" or "memcached" must be installed and loaded in order to use the Memcache backend.', 1213987706);
         }
         parent::__construct($environmentConfiguration, $options);
+        if (!count($this->servers)) {
+            throw new Exception('No servers were given to Memcache', 1213115903);
+        }
     }
 
     /**
@@ -112,7 +115,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
         }
 
         $this->memcache = extension_loaded('memcached') ? new \MemCached() : new \Memcache();
-        $defaultPort = ini_get('memcache.default_port') ?: 11211;
+        $defaultPort = (int)ini_get('memcache.default_port') ?: 11211;
 
         foreach ($this->servers as $server) {
             $host = $server;
@@ -121,10 +124,11 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
             if (strpos($server, 'tcp://') === 0) {
                 $port = $defaultPort;
                 $server = substr($server, 6);
+            }
 
-                if (strpos($server, ':') !== false) {
-                    list($host, $port) = explode(':', $server, 2);
-                }
+            if (strpos($server, ':') !== false) {
+                [$host, $portValue] = explode(':', $server, 2);
+                $port = (int)$portValue;
             }
 
             $this->memcache->addServer($host, $port);
@@ -197,8 +201,8 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
-        if (strlen($this->identifierPrefix . $entryIdentifier) > 250) {
-            throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->identifierPrefix . $entryIdentifier . ').', 1232969508);
+        if (strlen($this->getPrefixedIdentifier($entryIdentifier)) > 250) {
+            throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->getPrefixedIdentifier($entryIdentifier) . ').', 1232969508);
         }
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1207149215);
@@ -218,12 +222,12 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
                 $success = true;
                 $chunkNumber = 1;
                 foreach ($data as $chunk) {
-                    $success = $success && $this->setItem($this->identifierPrefix . $entryIdentifier . '_chunk_' . $chunkNumber, $chunk, $expiration);
+                    $success = $success && $this->setItem($this->getPrefixedIdentifier($entryIdentifier) . '_chunk_' . $chunkNumber, $chunk, $expiration);
                     $chunkNumber++;
                 }
-                $success = $success && $this->setItem($this->identifierPrefix . $entryIdentifier, 'Flow*chunked:' . $chunkNumber, $expiration);
+                $success = $success && $this->setItem($this->getPrefixedIdentifier($entryIdentifier), 'Flow*chunked:' . $chunkNumber, $expiration);
             } else {
-                $success = $this->setItem($this->identifierPrefix . $entryIdentifier, $data, $expiration);
+                $success = $this->setItem($this->getPrefixedIdentifier($entryIdentifier), $data, $expiration);
             }
             if ($success === true) {
                 $this->removeIdentifierFromAllTags($entryIdentifier);
@@ -261,12 +265,12 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      */
     public function get(string $entryIdentifier)
     {
-        $value = $this->memcache->get($this->identifierPrefix . $entryIdentifier);
-        if (substr($value, 0, 13) === 'Flow*chunked:') {
-            list(, $chunkCount) = explode(':', $value);
+        $value = $this->memcache->get($this->getPrefixedIdentifier($entryIdentifier));
+        if (is_string($value) && strpos($value, 'Flow*chunked:') === 0) {
+            [, $chunkCount] = explode(':', $value);
             $value = '';
             for ($chunkNumber = 1; $chunkNumber < $chunkCount; $chunkNumber++) {
-                $value .= $this->memcache->get($this->identifierPrefix . $entryIdentifier . '_chunk_' . $chunkNumber);
+                $value .= $this->memcache->get($this->getPrefixedIdentifier($entryIdentifier) . '_chunk_' . $chunkNumber);
             }
         }
         return $value;
@@ -281,7 +285,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      */
     public function has(string $entryIdentifier): bool
     {
-        return $this->memcache->get($this->identifierPrefix . $entryIdentifier) !== false;
+        return $this->memcache->get($this->getPrefixedIdentifier($entryIdentifier)) !== false;
     }
 
     /**
@@ -296,7 +300,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     public function remove(string $entryIdentifier): bool
     {
         $this->removeIdentifierFromAllTags($entryIdentifier);
-        return $this->memcache->delete($this->identifierPrefix . $entryIdentifier);
+        return $this->memcache->delete($this->getPrefixedIdentifier($entryIdentifier));
     }
 
     /**
@@ -359,6 +363,20 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
             $this->remove($identifier);
         }
         return count($identifiers);
+    }
+
+    /**
+     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     *
+     * @api
+     */
+    public function flushByTags(array $tags): int
+    {
+        $flushed = 0;
+        foreach ($tags as $tag) {
+            $flushed += $this->flushByTag($tag);
+        }
+        return $flushed;
     }
 
     /**

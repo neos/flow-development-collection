@@ -95,6 +95,133 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     /**
      * @test
      */
+    public function selectCreatesExpectedOptionsWithArraysAndOptionValueFieldAndOptionLabelFieldSet()
+    {
+        $this->tagBuilder
+            ->expects(static::once())
+            ->method('setContent')
+            ->with(
+                '<option value="2"></option>' . chr(10)
+                    . '<option value="-1">Bar</option>' . chr(10)
+                    . '<option value="">Baz</option>' . chr(10)
+                    . '<option value="1">Foo</option>' . chr(10)
+            )
+        ;
+
+        $this->arguments['optionValueField'] = 'uid';
+        $this->arguments['optionLabelField'] = 'title';
+        $this->arguments['sortByOptionLabel'] = true;
+        $this->arguments['options'] = [
+            [
+                'uid' => 1,
+                'title' => 'Foo',
+            ],
+            [
+                'uid' => -1,
+                'title' => 'Bar',
+            ],
+            [
+                'title' => 'Baz',
+            ],
+            [
+                'uid' => '2',
+            ],
+        ];
+
+        $this->injectDependenciesIntoViewHelper($this->viewHelper);
+
+        $this->viewHelper->initialize();
+        $this->viewHelper->render();
+    }
+
+    /**
+     * @test
+     */
+    public function selectCreatesExpectedOptionsWithStdClassesAndOptionValueFieldAndOptionLabelFieldSet()
+    {
+        $this->tagBuilder
+            ->expects(static::once())
+            ->method('setContent')
+            ->with(
+                '<option value="2"></option>' . chr(10)
+                    . '<option value="-1">Bar</option>' . chr(10)
+                    . '<option value="">Baz</option>' . chr(10)
+                    . '<option value="1">Foo</option>' . chr(10)
+            )
+        ;
+
+        $obj1 = new \stdClass();
+        $obj1->uid = 1;
+        $obj1->title = 'Foo';
+
+        $obj2 = new \stdClass();
+        $obj2->uid = -1;
+        $obj2->title = 'Bar';
+
+        $obj3 = new \stdClass();
+        $obj3->title = 'Baz';
+
+        $obj4 = new \stdClass();
+        $obj4->uid = 2;
+
+        $this->arguments['optionValueField'] = 'uid';
+        $this->arguments['optionLabelField'] = 'title';
+        $this->arguments['sortByOptionLabel'] = true;
+        $this->arguments['options'] = [$obj1, $obj2, $obj3, $obj4];
+
+        $this->injectDependenciesIntoViewHelper($this->viewHelper);
+
+        $this->viewHelper->initialize();
+        $this->viewHelper->render();
+    }
+
+    /**
+     * @test
+     */
+    public function selectCreatesExpectedOptionsWithArrayObjectsAndOptionValueFieldAndOptionLabelFieldSet()
+    {
+        $this->tagBuilder
+            ->expects(static::once())
+            ->method('setContent')
+            ->with(
+                '<option value="2"></option>' . chr(10)
+                    . '<option value="-1">Bar</option>' . chr(10)
+                    . '<option value="">Baz</option>' . chr(10)
+                    . '<option value="1">Foo</option>' . chr(10)
+            )
+        ;
+
+        $this->arguments['optionValueField'] = 'uid';
+        $this->arguments['optionLabelField'] = 'title';
+        $this->arguments['sortByOptionLabel'] = true;
+        $this->arguments['options'] = new \ArrayObject(
+            [
+                [
+                    'uid' => 1,
+                    'title' => 'Foo',
+                ],
+                [
+                    'uid' => -1,
+                    'title' => 'Bar',
+                ],
+                [
+                    'title' => 'Baz',
+                ],
+                [
+                    'uid' => '2',
+                ],
+            ]
+        );
+
+        $this->injectDependenciesIntoViewHelper($this->viewHelper);
+
+        $this->viewHelper->initialize();
+        $this->viewHelper->render();
+    }
+
+    /**
+     * @test
+     */
     public function orderOfOptionsIsNotAlteredByDefault()
     {
         $this->tagBuilder->expects(self::once())->method('addAttribute')->with('name', 'myName');
@@ -685,7 +812,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $this->arguments['translate'] = ['by' => 'id', 'using' => 'label'];
 
         $mockTranslator = $this->createMock(\Neos\Flow\I18n\Translator::class);
-        $mockTranslator->expects(self::at(0))->method('translateById')->with('select', [], null, null, 'Main', '')->will(self::returnValue('translated label'));
+        $mockTranslator->expects(self::once())->method('translateById')->with('select', [], null, null, 'Main', '')->will(self::returnValue('translated label'));
         $this->viewHelper->_set('translator', $mockTranslator);
 
         $this->injectDependenciesIntoViewHelper($this->viewHelper);

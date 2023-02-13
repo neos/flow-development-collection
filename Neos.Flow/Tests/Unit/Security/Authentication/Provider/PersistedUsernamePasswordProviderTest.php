@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Provider;
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security;
+use Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -55,6 +56,10 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
      */
     protected $persistedUsernamePasswordProvider;
 
+    /**
+     * @var Security\Cryptography\PrecomposedHashProvider
+     */
+    protected $mockPrecomposedHashProvider;
 
     protected function setUp(): void
     {
@@ -63,6 +68,8 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $this->mockAccountRepository = $this->getMockBuilder(Security\AccountRepository::class)->disableOriginalConstructor()->getMock();
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $this->mockToken = $this->getMockBuilder(Security\Authentication\Token\UsernamePassword::class)->disableOriginalConstructor()->getMock();
+        $this->mockPrecomposedHashProvider = $this->createMock(Security\Cryptography\PrecomposedHashProvider::class);
+        $this->mockPrecomposedHashProvider->method('getPrecomposedHash')->willReturn('bcrypt=>$2a$14$mYqRRlg5V2yUDy1bd9vt3Oq8Fa9d508WWazFWE5tcpTGn3G145RAm');
 
         $this->mockSecurityContext = $this->createMock(Security\Context::class);
         $this->mockSecurityContext->expects(self::any())->method('withoutAuthorizationChecks')->will(self::returnCallBack(function ($callback) {
@@ -76,6 +83,7 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $this->persistedUsernamePasswordProvider->_set('accountRepository', $this->mockAccountRepository);
         $this->persistedUsernamePasswordProvider->_set('persistenceManager', $this->mockPersistenceManager);
         $this->persistedUsernamePasswordProvider->_set('securityContext', $this->mockSecurityContext);
+        $this->persistedUsernamePasswordProvider->_set('precomposedHashProvider', $this->mockPrecomposedHashProvider);
     }
 
     /**
@@ -101,6 +109,32 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
 
         $this->persistedUsernamePasswordProvider->authenticate($this->mockToken);
         self::assertSame(\Neos\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL, $lastAuthenticationStatus);
+    }
+
+    /**
+     * @test
+     */
+    public function authenticatingAndUsernamePasswordTokenRespectsTheConfiguredLookupProviderName()
+    {
+        $this->mockHashService->expects(self::once())->method('validatePassword')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will(self::returnValue(true));
+
+        $this->mockAccount->expects(self::once())->method('getCredentialsSource')->will(self::returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
+
+        $this->mockAccountRepository->expects(self::once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'customLookupName')->will(self::returnValue($this->mockAccount));
+
+        $this->mockToken->expects(self::atLeastOnce())->method('getUsername')->will(self::returnValue('admin'));
+        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue('password'));
+
+        $this->mockToken->expects(self::once())->method('setAccount')->with($this->mockAccount);
+
+        $persistedUsernamePasswordProvider = PersistedUsernamePasswordProvider::create('providerName', ['lookupProviderName' => 'customLookupName']);
+        $this->inject($persistedUsernamePasswordProvider, 'hashService', $this->mockHashService);
+        $this->inject($persistedUsernamePasswordProvider, 'accountRepository', $this->mockAccountRepository);
+        $this->inject($persistedUsernamePasswordProvider, 'persistenceManager', $this->mockPersistenceManager);
+        $this->inject($persistedUsernamePasswordProvider, 'securityContext', $this->mockSecurityContext);
+        $this->inject($persistedUsernamePasswordProvider, 'precomposedHashProvider', $this->mockPrecomposedHashProvider);
+
+        $persistedUsernamePasswordProvider->authenticate($this->mockToken);
     }
 
     /**

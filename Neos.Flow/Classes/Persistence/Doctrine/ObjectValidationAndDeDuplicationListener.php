@@ -90,21 +90,20 @@ class ObjectValidationAndDeDuplicationListener
         $entityInsertions = $unitOfWork->getScheduledEntityInsertions();
 
         $knownValueObjects = [];
-        foreach ($entityInsertions as $entity) {
+        foreach ($entityInsertions as $oid => $entity) {
             $className = TypeHandling::getTypeForValue($entity);
             $classSchema = $this->reflectionService->getClassSchema($className);
             if ($classSchema !== null && $classSchema->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
                 $identifier = $this->persistenceManager->getIdentifierByObject($entity);
 
                 if (isset($knownValueObjects[$className][$identifier]) || $unitOfWork->getEntityPersister($className)->exists($entity)) {
-                    unset($entityInsertions[spl_object_hash($entity)]);
+                    unset($entityInsertions[$oid]);
                     continue;
                 }
 
                 $knownValueObjects[$className][$identifier] = true;
             }
         }
-
         ObjectAccess::setProperty($unitOfWork, 'entityInsertions', $entityInsertions, true);
     }
 

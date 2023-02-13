@@ -82,8 +82,14 @@ class PhpAnalyzer
                     break;
                 }
                 list($type, $value) = $token;
+                if (defined('T_NAME_QUALIFIED') && $type === T_NAME_QUALIFIED) {
+                    return $value;
+                }
+                if (defined('T_NAME_FULLY_QUALIFIED') && $type === T_NAME_FULLY_QUALIFIED) {
+                    return ltrim($value, '\\');
+                }
                 if ($type === T_STRING) {
-                    $namespaceParts[] = $value;
+                    $namespaceParts[] = ltrim($value, '\\');
                     continue;
                 }
                 if ($type !== T_NS_SEPARATOR && $type !== T_WHITESPACE) {

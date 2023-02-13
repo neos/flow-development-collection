@@ -80,7 +80,7 @@ annotations.
 
 .. note::
     Per convention, every validator allows (passes) empty values, i.e. empty strings or
-    NULL values. This is for achieving fields which are not mandatory, but if filled in,
+    null values. This is for achieving fields which are not mandatory, but if filled in,
     must satisfy a given validation. Consider an email address field for example which
     is not mandatory, but has to match an email pattern as soon as filled in.
 
@@ -88,8 +88,8 @@ annotations.
     like in the example above.
 
     The technical background is the ``acceptsEmptyValues`` property of the AbstractValidator,
-    being ``TRUE`` per default. When writing customized validators, it's basically possible
-    to set this field to ``FALSE``, however this is not generally recommended due to the convention
+    being ``true`` per default. When writing customized validators, it's basically possible
+    to set this field to ``false``, however this is not generally recommended due to the convention
     that every validator could principally be empty.
 
 .. tip::
@@ -213,10 +213,9 @@ additional annotation the whole mechanism works as expected:
      * Displays a single post
      *
      * @Flow\IgnoreValidation("$post")
-     * @param Post $post
-     * @return void
      */
-    public function showAction(Post $post) {
+    public function showAction(Post $post): void
+    {
         $this->view->assignMultiple([
             'post' => $post,
             'nextPost' => $this->postRepository->findNext($post),

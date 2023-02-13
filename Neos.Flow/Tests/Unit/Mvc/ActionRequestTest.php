@@ -136,7 +136,7 @@ class ActionRequestTest extends UnitTestCase
         $mockPackageManager->expects(self::any())->method('getCaseSensitivePackageKey')->with('somepackage')->will(self::returnValue('SomePackage'));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::at(0))->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
+        $mockObjectManager->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
             ->will(self::returnValue('SomePackage\Some\SubPackage\Controller\SomeControllerController'));
 
         $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
@@ -155,7 +155,7 @@ class ActionRequestTest extends UnitTestCase
     public function getControllerObjectNameReturnsAnEmptyStringIfTheResolvedControllerDoesNotExist()
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::at(0))->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
+        $mockObjectManager->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
             ->will(self::returnValue(null));
 
         $mockPackageManager = $this->createMock(PackageManager::class);

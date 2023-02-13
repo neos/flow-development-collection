@@ -391,9 +391,16 @@ class IdentityRoutePartTest extends UnitTestCase
         $existingObjectPathMapping->setIdentifier('AnotherIdentifier');
 
         $this->identityRoutePart->expects(self::once())->method('createPathSegmentForObject')->with($object)->will(self::returnValue('The/Path/Segment'));
-        $this->mockObjectPathMappingRepository->expects(self::at(1))->method('findOneByObjectTypeUriPatternAndPathSegment')->with('stdClass', 'SomeUriPattern', 'The/Path/Segment', false)->will(self::returnValue($existingObjectPathMapping));
-        $this->mockObjectPathMappingRepository->expects(self::at(2))->method('findOneByObjectTypeUriPatternAndPathSegment')->with('stdClass', 'SomeUriPattern', 'The/Path/Segment-1', false)->will(self::returnValue($existingObjectPathMapping));
-        $this->mockObjectPathMappingRepository->expects(self::at(3))->method('findOneByObjectTypeUriPatternAndPathSegment')->with('stdClass', 'SomeUriPattern', 'The/Path/Segment-2', false)->will(self::returnValue(null));
+        $this->mockObjectPathMappingRepository->expects(self::exactly(3))->method('findOneByObjectTypeUriPatternAndPathSegment')
+            ->withConsecutive(
+                ['stdClass', 'SomeUriPattern', 'The/Path/Segment', false],
+                ['stdClass', 'SomeUriPattern', 'The/Path/Segment-1', false],
+                ['stdClass', 'SomeUriPattern', 'The/Path/Segment-2', false]
+            )->willReturnOnConsecutiveCalls(
+                $existingObjectPathMapping,
+                $existingObjectPathMapping,
+                null
+            );
 
         $expectedObjectPathMapping = new ObjectPathMapping();
         $expectedObjectPathMapping->setObjectType('stdClass');
@@ -426,8 +433,11 @@ class IdentityRoutePartTest extends UnitTestCase
         $existingObjectPathMapping->setIdentifier('AnotherIdentifier');
 
         $this->identityRoutePart->expects(self::once())->method('createPathSegmentForObject')->with($object)->will(self::returnValue('The/Path/Segment'));
-        $this->mockObjectPathMappingRepository->expects(self::at(1))->method('findOneByObjectTypeUriPatternAndPathSegment')->with('stdClass', 'SomeUriPattern', 'The/Path/Segment', true)->will(self::returnValue($existingObjectPathMapping));
-        $this->mockObjectPathMappingRepository->expects(self::at(2))->method('findOneByObjectTypeUriPatternAndPathSegment')->with('stdClass', 'SomeUriPattern', 'The/Path/Segment-1', true)->will(self::returnValue(null));
+        $this->mockObjectPathMappingRepository->expects(self::exactly(2))->method('findOneByObjectTypeUriPatternAndPathSegment')
+            ->withConsecutive(
+                ['stdClass', 'SomeUriPattern', 'The/Path/Segment', true],
+                ['stdClass', 'SomeUriPattern', 'The/Path/Segment-1', true]
+            )->willReturnOnConsecutiveCalls($existingObjectPathMapping, null);
 
         $expectedObjectPathMapping = new ObjectPathMapping();
         $expectedObjectPathMapping->setObjectType('stdClass');

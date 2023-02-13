@@ -48,8 +48,8 @@ class RedisBackendTest extends BaseTestCase
     protected function setUp(): void
     {
         $phpredisVersion = phpversion('redis');
-        if (version_compare($phpredisVersion, '1.2.0', '<')) {
-            $this->markTestSkipped(sprintf('phpredis extension version %s is not supported. Please update to verson 1.2.0+.', $phpredisVersion));
+        if (version_compare($phpredisVersion, '5.0.0', '<')) {
+            $this->markTestSkipped(sprintf('phpredis extension version %s is not supported. Please update to version 5.0.0+.', $phpredisVersion));
         }
 
         $this->redis = $this->getMockBuilder(\Redis::class)->disableOriginalConstructor()->getMock();
@@ -80,10 +80,10 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->redis->expects(self::once())
             ->method('sMembers')
-            ->with('Foo_Cache:tag:some_tag')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:tag:some_tag')
             ->will(self::returnValue(['entry_1', 'entry_2']));
 
-        self::assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
+        $this->assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
     }
 
     /**
@@ -92,8 +92,7 @@ class RedisBackendTest extends BaseTestCase
     public function freezeInvokesRedis()
     {
         $this->redis->expects(self::once())
-            ->method('lRange')
-            ->with('Foo_Cache:entries', 0, -1)
+            ->method('keys')
             ->will(self::returnValue(['entry_1', 'entry_2']));
 
         $this->redis->expects(self::exactly(2))
@@ -101,7 +100,7 @@ class RedisBackendTest extends BaseTestCase
 
         $this->redis->expects(self::once())
             ->method('set')
-            ->with('Foo_Cache:frozen', true);
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen', true);
 
         $this->backend->freeze();
     }
@@ -159,7 +158,7 @@ class RedisBackendTest extends BaseTestCase
 
         $this->redis->expects(self::once())
             ->method('set')
-            ->with('Foo_Cache:entry:entry_1', 'foo')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:entry_1', 'foo')
             ->willReturn($this->redis);
 
         $this->backend->set('entry_1', 'foo');
@@ -172,7 +171,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->redis->expects(self::once())
             ->method('get')
-            ->with('Foo_Cache:entry:foo')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo')
             ->will(self::returnValue('bar'));
 
         self::assertEquals('bar', $this->backend->get('foo'));
@@ -185,7 +184,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->redis->expects(self::once())
             ->method('exists')
-            ->with('Foo_Cache:entry:foo')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo')
             ->will(self::returnValue(true));
 
         self::assertEquals(true, $this->backend->has('foo'));
@@ -202,10 +201,27 @@ class RedisBackendTest extends BaseTestCase
         $this->inject($this->backend, 'frozen', null);
         $this->redis->expects(self::once())
             ->method('exists')
-            ->with('Foo_Cache:frozen')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen')
             ->will(self::returnValue(true));
 
         $this->backend->$method('foo', 'bar');
+    }
+
+    /**
+     * @test
+     * @dataProvider batchWritingOperationsProvider
+     * @param string $method
+     */
+    public function batchWritingOperationsThrowAnExceptionIfCacheIsFrozen($method)
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->inject($this->backend, 'frozen', null);
+        $this->redis->expects(self::once())
+            ->method('exists')
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen')
+            ->will(self::returnValue(true));
+
+        $this->backend->$method(['foo', 'bar']);
     }
 
     /**
@@ -218,6 +234,16 @@ class RedisBackendTest extends BaseTestCase
             ['remove'],
             ['flushByTag'],
             ['freeze']
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function batchWritingOperationsProvider()
+    {
+        return [
+            ['flushByTags'],
         ];
     }
 }

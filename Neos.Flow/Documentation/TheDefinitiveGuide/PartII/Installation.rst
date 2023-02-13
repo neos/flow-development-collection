@@ -52,17 +52,23 @@ Directory Structure
 
 Let's take a look at the directory structure of a Flow application:
 
-======================	===================================================================================
-Directory				Description
-======================	===================================================================================
-Configuration/			Application specific configuration, grouped by contexts
-Data/					Persistent and temporary data, including caches, logs, resources and the database
-Packages/				Contains sub directories which in turn contain package directories
-Packages/Framework/		Packages which are part of the official Flow distribution
-Packages/Application/	Application specific packages
-Packages/Libraries/		3rd party libraries
-Web/					Public web root
-======================	===================================================================================
++-------------------------+-----------------------------------------------------------------------------------+
+| Directory               | Description                                                                       |
++=========================+===================================================================================+
+| *Configuration/*        | Application specific configuration, grouped by contexts                           |
++-------------------------+-----------------------------------------------------------------------------------+
+| *Data/*                 | Persistent and temporary data, including caches, logs, resources and the database |
++-------------------------+-----------------------------------------------------------------------------------+
+| *Packages/*             | Contains sub directories which in turn contain package directories                |
++-------------------------+-----------------------------------------------------------------------------------+
+| *Packages/Framework/*   | Packages which are part of the official Flow distribution                         |
++-------------------------+-----------------------------------------------------------------------------------+
+| *Packages/Application/* | Application specific packages                                                     |
++-------------------------+-----------------------------------------------------------------------------------+
+| *Packages/Libraries/*   | 3rd party libraries                                                               |
++-------------------------+-----------------------------------------------------------------------------------+
+| *Web/*                  | Public web root                                                                   |
++-------------------------+-----------------------------------------------------------------------------------+
 
 A Flow application usually consists of the above directories. As you see, most
 of them contain data which is specific to your application, therefore upgrading
@@ -96,10 +102,10 @@ to see the "Welcome" page later.
 	        driver: 'pdo_mysql'  # use pdo_pgsql for PostgreSQL
 	        charset: 'utf8mb4'   # change to utf8 when using PostgreSQL
 	        host: '127.0.0.1'    # adjust to your database host
-	
+
 	    mvc:
 	      routes:
-	        'Neos.Flow': TRUE
+	        'Neos.Flow': true
 
 Also, if you are trying this on Windows by chance, you need to uncomment the lines
 about the ``phpBinaryPathAndFilename`` and adjust the path to the ``php.exe``.
@@ -130,9 +136,9 @@ and calling the following command (this command must be called as super user):
 
 .. note::
 
-	Setting file permissions is not necessary and not possible on Windows machines.
-	For Apache to be able to create symlinks, you need to use Windows Vista (or
-	newer) and Apache needs to be started with Administrator privileges. Alternatively
+  Setting file permissions is not necessary and not possible on Windows machines.
+  For Apache to be able to create symlinks, you need to use Windows Vista (or
+  newer) and Apache needs to be started with Administrator privileges. Alternatively
   you can run the command ``flow flow:cache:warmup`` once from an Administrator
   elevated command line inside your installation folder. You then also need to
   repeat this step, whenever you install new packages.
@@ -143,13 +149,13 @@ be done by typing:
 
 .. code-block:: sh
 
-	sudo usermod -a -G www-data john
+  sudo usermod -a -G www-data john
 
 On a Mac you can add a user to the web group with the following command:
 
 .. code-block:: sh
 
-	sudo dscl . -append /Groups/_www GroupMembership johndoe
+  sudo dscl . -append /Groups/_www GroupMembership johndoe
 
 You will have to exit your shell / terminal window and open it again for the
 new group membership to take effect.

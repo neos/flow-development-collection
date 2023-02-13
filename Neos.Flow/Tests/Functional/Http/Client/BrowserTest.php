@@ -40,6 +40,26 @@ class BrowserTest extends FunctionalTestCase
                 '@format' => 'html'
             ]
         );
+        $this->registerRoute(
+            'Functional Test - Http::Client::BrowserTest',
+            'test/http/request(/{@action})',
+            [
+                '@package' => 'Neos.Flow',
+                '@subpackage' => 'Tests\Functional\Http\Fixtures',
+                '@controller' => 'Request',
+                '@action' => 'index',
+                '@format' => 'html'
+            ]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function argumentsAreSentAsRequestBodyEvenInGetRequest()
+    {
+        $response = $this->browser->request('http://localhost/test/http/request/body', 'GET', ['foo' => 'bar']);
+        self::assertEquals(json_encode(['foo' => 'bar']), $response->getBody()->getContents());
     }
 
     /**
@@ -65,5 +85,16 @@ class BrowserTest extends FunctionalTestCase
         self::assertStringNotContainsString('arrived.', $response->getBody()->getContents());
         self::assertEquals(303, $response->getStatusCode());
         self::assertEquals('http://localhost/test/http/redirecting/tohere', $response->getHeaderLine('Location'));
+    }
+
+    /**
+     * Check if request method can be overridden (@see https://github.com/neos/flow-development-collection/issues/2856)
+     *
+     * @test
+     */
+    public function methodCanBeOverriddenInPostRequests(): void
+    {
+        $response = $this->browser->request('http://localhost/test/http/request/method', 'POST', ['__method' => 'DELETE']);
+        self::assertSame('DELETE', $response->getBody()->getContents());
     }
 }

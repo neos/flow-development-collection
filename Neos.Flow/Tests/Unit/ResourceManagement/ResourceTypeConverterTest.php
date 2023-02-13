@@ -94,6 +94,21 @@ class ResourceTypeConverterTest extends UnitTestCase
         $source = ['error' => \UPLOAD_ERR_NO_FILE];
         self::assertNull($this->resourceTypeConverter->convertFrom($source, PersistentResource::class));
     }
+    
+    /**
+     * @test
+     */
+    public function convertFromReturnsTrueIfSourceIsAnArrayWithDataAndFilename()
+    {
+        $source = [
+            'data' => 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
+            'filename' => 'test.png'
+        ];
+
+        $this->mockResourceManager->expects(self::once())->method('importResourceFromContent')->will(self::returnValue(new PersistentResource()));
+
+        $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
+    }
 
     /**
      * @test
@@ -170,7 +185,7 @@ class ResourceTypeConverterTest extends UnitTestCase
 
         $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->getMock();
         $mockSystemLogger->expects(self::once())->method('error');
-        $this->resourceTypeConverter->injectLogger($mockSystemLogger);
+        $this->inject($this->resourceTypeConverter, 'logger', $mockSystemLogger);
 
         $this->resourceTypeConverter->convertFrom($source, PersistentResource::class);
     }
@@ -196,7 +211,7 @@ class ResourceTypeConverterTest extends UnitTestCase
      */
     public function convertFromReturnsAnErrorIfTheUploadedFileCantBeImported()
     {
-        $this->resourceTypeConverter->injectLogger($this->createMock(LoggerInterface::class));
+        $this->inject($this->resourceTypeConverter, 'logger', $this->createMock(LoggerInterface::class));
 
         $source = [
             'tmp_name' => 'SomeFilename',

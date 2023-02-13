@@ -183,4 +183,17 @@ class WidgetTest extends FunctionalTestCase
         self::assertSame(500, $response->getStatusCode());
         self::assertSame('1380284579', $response->getHeaderLine('X-Flow-ExceptionCode'));
     }
+
+    /**
+     * @test
+     */
+    public function aCustomViewResponseIsRespectedInAjaxContext(): void
+    {
+        $response = $this->browser->request('http://localhost/test/widget/ajaxtest');
+        [,, $ajaxWidgetUri] = explode(chr(10), $response->getBody()->getContents());
+
+        $response = $this->browser->request('http://localhost/' . $ajaxWidgetUri . '&@format=custom');
+        self::assertSame(418, $response->getStatusCode());
+        self::assertSame('Hello World!', $response->getBody()->getContents());
+    }
 }

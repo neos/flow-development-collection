@@ -692,7 +692,7 @@ calling ``_activateDependency()`` will fail.
 		 * A dependency, injected eagerly
 		 *
 		 * @var \MyCompany\MyPackage\BarInterface
-		 * @Flow\Inject(lazy = FALSE)
+		 * @Flow\Inject(lazy = false)
 		 */
 		protected $bar;
 
@@ -856,7 +856,7 @@ stick to Flow's general rules for YAML-based configuration.
 	    1:
 	      object: 'MyCompany\MyPackage\Baz'
 	    2:
-	      value: "some string"
+	      value: "some string"
 	    3:
 	      value: false
 	  properties:
@@ -1075,7 +1075,7 @@ definition of setter injection:
 
 		protected $bar;
 		protected $identifier = 'Untitled';
-		protected $enableCache = FALSE;
+		protected $enableCache = false;
 
 		public function injectBar(\MyCompany\MyPackage\BarInterface $bar) {
 			$this->bar = $bar;
@@ -1189,9 +1189,9 @@ the object configuration:
 .. code-block:: yaml
 
 	MyCompany\MyPackage\MyObject:
-	  autowiring: off
+	  autowiring: false
 
-Autowiring can also be switched off through the ``@autowiring off`` annotation - either
+Autowiring can also be switched off through the ``@Flow\Autowiring(false)`` annotation - either
 in the documentation block of a whole class or of a single method. For the latter the
 annotation only has an effect when used in comment blocks of a constructor or of a method
 whose name starts with ``inject``.

@@ -11,7 +11,7 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity;
  * source code.
  */
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 
@@ -26,7 +26,7 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 interface EntityPrivilegeInterface extends PrivilegeInterface
 {
     /**
-     * @param $entityType
+     * @param string $entityType
      * @return bool
      */
     public function matchesEntityType($entityType);

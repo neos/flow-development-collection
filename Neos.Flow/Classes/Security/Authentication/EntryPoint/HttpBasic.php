@@ -11,7 +11,7 @@ namespace Neos\Flow\Security\Authentication\EntryPoint;
  * source code.
  */
 
-use function GuzzleHttp\Psr7\stream_for;
+use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -31,6 +31,6 @@ class HttpBasic extends AbstractEntryPoint
     {
         return $response->withStatus(401)
             ->withHeader('WWW-Authenticate', 'Basic realm="' . ($this->options['realm'] ?? sha1(FLOW_PATH_ROOT)) . '"')
-            ->withBody(stream_for('Authorization required'));
+            ->withBody(Utils::streamFor('Authorization required'));
     }
 }

@@ -55,9 +55,9 @@ class ResultsViewHelperTest extends ViewHelperBaseTestcase
     {
         $mockValidationResults = $this->getMockBuilder(\Neos\Error\Messages\Result::class)->getMock();
         $this->request->expects(self::atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will(self::returnValue($mockValidationResults));
-        $this->templateVariableContainer->expects(self::at(0))->method('add')->with('validationResults', $mockValidationResults);
+        $this->templateVariableContainer->expects(self::once())->method('add')->with('validationResults', $mockValidationResults);
         $this->viewHelper->expects(self::once())->method('renderChildren');
-        $this->templateVariableContainer->expects(self::at(1))->method('remove')->with('validationResults');
+        $this->templateVariableContainer->expects(self::once())->method('remove')->with('validationResults');
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
@@ -70,9 +70,9 @@ class ResultsViewHelperTest extends ViewHelperBaseTestcase
     {
         $mockValidationResults = $this->getMockBuilder(\Neos\Error\Messages\Result::class)->getMock();
         $this->request->expects(self::atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will(self::returnValue($mockValidationResults));
-        $this->templateVariableContainer->expects(self::at(0))->method('add')->with('customName', $mockValidationResults);
+        $this->templateVariableContainer->expects(self::once())->method('add')->with('customName', $mockValidationResults);
         $this->viewHelper->expects(self::once())->method('renderChildren');
-        $this->templateVariableContainer->expects(self::at(1))->method('remove')->with('customName');
+        $this->templateVariableContainer->expects(self::once())->method('remove')->with('customName');
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['for' => '', 'as' => 'customName']);
         $this->viewHelper->render();
@@ -87,9 +87,9 @@ class ResultsViewHelperTest extends ViewHelperBaseTestcase
         $mockValidationResults = $this->getMockBuilder(\Neos\Error\Messages\Result::class)->getMock();
         $mockValidationResults->expects(self::once())->method('forProperty')->with('somePropertyName')->will(self::returnValue($mockPropertyValidationResults));
         $this->request->expects(self::atLeastOnce())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will(self::returnValue($mockValidationResults));
-        $this->templateVariableContainer->expects(self::at(0))->method('add')->with('validationResults', $mockPropertyValidationResults);
+        $this->templateVariableContainer->expects(self::once())->method('add')->with('validationResults', $mockPropertyValidationResults);
         $this->viewHelper->expects(self::once())->method('renderChildren');
-        $this->templateVariableContainer->expects(self::at(1))->method('remove')->with('validationResults');
+        $this->templateVariableContainer->expects(self::once())->method('remove')->with('validationResults');
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['for' => 'somePropertyName']);
         $this->viewHelper->render();

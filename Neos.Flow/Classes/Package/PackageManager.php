@@ -109,12 +109,15 @@ class PackageManager
     protected $flowPackages = [];
 
     /**
+     * Inject settings into the package manager. Has to be called explicitly on object initialization as
+     * the package manager subpackage is excluded from proxy class building.
+     *
      * @param array $settings
      * @return void
      */
     public function injectSettings(array $settings): void
     {
-        $this->settings = $settings['package'];
+        $this->settings = $settings['package'] ?? [];
     }
 
     /**
@@ -205,7 +208,7 @@ class PackageManager
             throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available. Please check if the package exists and that the package key is correct (package keys are case sensitive).', 1166546734);
         }
 
-        return $this->packages[$packageKey];
+        return $this->packages[$this->getCaseSensitivePackageKey($packageKey)];
     }
 
     /**
@@ -249,14 +252,13 @@ class PackageManager
      * the given package state, path, and type filters. All three filters must match, if given.
      *
      * @param string $packageState defaults to available
-     * @param string $packagePath DEPRECATED since Flow 5.0
      * @param string $packageType
      *
      * @return array<PackageInterface>
      * @throws Exception\InvalidPackageStateException
      * @api
      */
-    public function getFilteredPackages($packageState = 'available', $packagePath = null, $packageType = null): array
+    public function getFilteredPackages($packageState = 'available', $packageType = null): array
     {
         switch (strtolower($packageState)) {
             case 'available':
@@ -269,37 +271,11 @@ class PackageManager
                 throw new Exception\InvalidPackageStateException('The package state "' . $packageState . '" is invalid', 1372458274);
         }
 
-        if ($packagePath !== null) {
-            $packages = $this->filterPackagesByPath($packages, $packagePath);
-        }
         if ($packageType !== null) {
             $packages = $this->filterPackagesByType($packages, $packageType);
         }
 
         return $packages;
-    }
-
-    /**
-     * Returns an array of PackageInterface objects in the given array of packages
-     * that are in the specified Package Path
-     *
-     * @param array $packages Array of PackageInterface to be filtered
-     * @param string $filterPath Filter out anything that's not in this path
-     * @return array<PackageInterface>
-     */
-    protected function filterPackagesByPath($packages, $filterPath): array
-    {
-        $filteredPackages = [];
-        /** @var $package Package */
-        foreach ($packages as $package) {
-            $packagePath = substr($package->getPackagePath(), strlen($this->packagesBasePath));
-            $packageGroup = substr($packagePath, 0, strpos($packagePath, '/'));
-            if ($packageGroup === $filterPath) {
-                $filteredPackages[$package->getPackageKey()] = $package;
-            }
-        }
-
-        return $filteredPackages;
     }
 
     /**
@@ -397,7 +373,8 @@ class PackageManager
             $composerRequireArguments = new ArrayInput([
                 'command' => 'require',
                 'packages' => [$manifest['name'] . ' @dev'],
-                '--working-dir' => FLOW_PATH_ROOT
+                '--working-dir' => FLOW_PATH_ROOT,
+                '--quiet'
             ]);
 
             $composerApplication = new ComposerApplication();
@@ -610,10 +587,12 @@ class PackageManager
             $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest);
             if (isset($newPackageStatesConfiguration['packages'][$composerManifest['name']])) {
                 throw new PackageException(
-                    sprintf('The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
+                    sprintf(
+                        'The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
                         $composerManifest['name'],
                         $packageConfiguration['packagePath'],
-                        $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']),
+                        $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']
+                    ),
                     1493030262
                 );
             }
@@ -762,7 +741,11 @@ class PackageManager
         // Clean legacy file TODO: Remove at some point
         $legacyPackageStatesPath = FLOW_PATH_CONFIGURATION . 'PackageStates.php';
         if (is_file($legacyPackageStatesPath)) {
-            @unlink($legacyPackageStatesPath);
+            try {
+                @unlink($legacyPackageStatesPath);
+            } catch (\Throwable $e) {
+                // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
+            }
         }
         OpcodeCacheHelper::clearAllActive($this->packageInformationCacheFilePath);
 

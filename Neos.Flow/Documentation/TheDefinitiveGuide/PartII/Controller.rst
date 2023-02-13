@@ -34,11 +34,10 @@ The kickstarter created a very basic command controller containing only one comm
 	 *                                                                        */
 
 	use Neos\Flow\Annotations as Flow;
+	use Neos\Flow\Cli\CommandController;
 
-	/**
-	 * @Flow\Scope("singleton")
-	 */
-	class BlogCommandController extends \Neos\Flow\Cli\CommandController {
+	class BlogCommandController extends CommandController
+	{
 
 		/**
 		 * An example command
@@ -52,9 +51,9 @@ The kickstarter created a very basic command controller containing only one comm
 		 *
 		 * @param string $requiredArgument This argument is required
 		 * @param string $optionalArgument This argument is optional
-		 * @return void
 		 */
-		public function exampleCommand($requiredArgument, $optionalArgument = NULL) {
+		public function exampleCommand(string $requiredArgument, string $optionalArgument = null): void
+		{
 			$this->outputLine('You called the example command and passed "%s" as the first argument.', array($requiredArgument));
 		}
 
@@ -82,10 +81,8 @@ Let's replace the example with a ``setupCommand`` that can be used to create the
 	use Neos\Flow\Annotations as Flow;
 	use Neos\Flow\Cli\CommandController;
 
-	/**
-	 * @Flow\Scope("singleton")
-	 */
-	class BlogCommandController extends CommandController {
+	class BlogCommandController extends CommandController
+	{
 
 		/**
 		 * @Flow\Inject
@@ -105,10 +102,10 @@ Let's replace the example with a ``setupCommand`` that can be used to create the
 		 * With this command you can kickstart a new blog.
 		 *
 		 * @param string $blogTitle the name of the blog to create
-		 * @param boolean $reset set this flag to remove all previously created blogs and posts
-		 * @return void
+		 * @param bool $reset set this flag to remove all previously created blogs and posts
 		 */
-		public function setupCommand($blogTitle, $reset = FALSE) {
+		public function setupCommand(string $blogTitle, bool $reset = false): void
+		{
 			if ($reset) {
 				$this->blogRepository->removeAll();
 				$this->postRepository->removeAll();
@@ -196,20 +193,29 @@ to apply. In this case the migration should look like this:
 	<?php
 	namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-	use Doctrine\DBAL\Migrations\AbstractMigration,
+	use Doctrine\Migrations\AbstractMigration,
 		Doctrine\DBAL\Schema\Schema;
 
 	/**
 	 * Initial migration, creating tables for the "Blog" and "Post" domain models
 	 */
-	class Version20150714161019 extends AbstractMigration {
+	class Version20150714161019 extends AbstractMigration
+	{
+		/**
+		 * @return string
+		 */
+		public function getDescription(): string
+		{
+			return 'Initial migration, creating tables for the "Blog" and "Post" domain models';
+		}
 
 		/**
 		 * @param Schema $schema
 		 * @return void
 		 */
-		public function up(Schema $schema) {
-			$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+		public function up(Schema $schema): void
+		{
+			$this->abortIf($this->connection->getDatabasePlatform()->getName() !== "mysql");
 
 			$this->addSql("CREATE TABLE acme_blog_domain_model_blog (persistence_object_identifier VARCHAR(40) NOT NULL, title VARCHAR(80) NOT NULL, description VARCHAR(150) NOT NULL, PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
 			$this->addSql("CREATE TABLE acme_blog_domain_model_post (persistence_object_identifier VARCHAR(40) NOT NULL, blog VARCHAR(40) DEFAULT NULL, subject VARCHAR(255) NOT NULL, date DATETIME NOT NULL, author VARCHAR(255) NOT NULL, content LONGTEXT NOT NULL, INDEX IDX_EF2000AAC0155143 (blog), PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
@@ -220,8 +226,9 @@ to apply. In this case the migration should look like this:
 		 * @param Schema $schema
 		 * @return void
 		 */
-		public function down(Schema $schema) {
-			$this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+		public function down(Schema $schema): void
+		{
+			$this->abortIf($this->connection->getDatabasePlatform()->getName() !== "mysql");
 
 			$this->addSql("ALTER TABLE acme_blog_domain_model_post DROP FOREIGN KEY FK_EF2000AAC0155143");
 			$this->addSql("DROP TABLE acme_blog_domain_model_blog");
@@ -271,7 +278,8 @@ Now let us add some more code to *.../Classes/Acme/Blog/Controller/PostControlle
 	use Neos\Flow\Mvc\Controller\ActionController;
 	use Acme\Blog\Domain\Model\Post;
 
-	class PostController extends ActionController {
+	class PostController extends ActionController
+	{
 
 		/**
 		 * @Flow\Inject
@@ -290,7 +298,8 @@ Now let us add some more code to *.../Classes/Acme/Blog/Controller/PostControlle
 		 *
 		 * @return string HTML code
 		 */
-		public function indexAction() {
+		public function indexAction(): string
+		{
 			$blog = $this->blogRepository->findActive();
 			$output = '
 				<h1>Posts of "' . $blog->getTitle() . '"</h1>
@@ -340,7 +349,8 @@ the new post as an argument to a ``createAction`` in the ``PostController``:
 	 * @param Post $newPost
 	 * @return void
 	 */
-	public function createAction(Post $newPost) {
+	public function createAction(Post $newPost)
+	{
 		$this->postRepository->add($newPost);
 		$this->addFlashMessage('Created a new post.');
 		$this->redirect('index');

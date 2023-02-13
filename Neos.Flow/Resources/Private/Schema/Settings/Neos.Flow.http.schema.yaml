@@ -5,7 +5,7 @@ properties:
   'baseUri':
     type: [string, 'null']
     required: true
-  'chain':
+  'middlewares':
     type: dictionary
     required: true
     additionalProperties:
@@ -16,22 +16,7 @@ properties:
         additionalProperties: false
         properties:
           'position': [string, number]
-          'component': { type: string, format: class-name }
-          'componentOptions': { type: dictionary }
-          'chain':
-            -
-              type: 'null'
-            -
-              type: dictionary
-              additionalProperties:
-                type: dictionary
-                additionalProperties: false
-                properties:
-                  'position': [string, number]
-                  'component': { type: string, format: class-name }
-                  'componentOptions': { type: dictionary }
-                  'chain':
-                    type: dictionary
+          'middleware': { type: string, format: class-name }
   'trustedProxies':
     type: dictionary
     required: true

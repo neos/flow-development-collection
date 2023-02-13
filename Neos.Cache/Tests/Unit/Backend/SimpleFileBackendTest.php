@@ -20,8 +20,6 @@ use Neos\Cache\Tests\BaseTestCase;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\PhpFrontend;
-use PHPUnit\Framework\Error\Notice;
-use PHPUnit\Framework\Error\Warning;
 
 /**
  * Test case for the SimpleFileBackend
@@ -227,6 +225,22 @@ class SimpleFileBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function getSupportsEmptyData()
+    {
+        $this->mockCacheFrontend->expects(self::any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
+
+        $data = '';
+        $entryIdentifier = 'SimpleFileBackendTest';
+
+        $simpleFileBackend = $this->getSimpleFileBackend();
+        $simpleFileBackend->set($entryIdentifier, $data);
+
+        self::assertSame($data, $simpleFileBackend->get($entryIdentifier));
+    }
+
+    /**
+     * @test
+     */
     public function getReturnsFalseForDeletedFiles()
     {
         $this->mockCacheFrontend->expects(self::any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
@@ -284,7 +298,7 @@ class SimpleFileBackendTest extends BaseTestCase
 
         $simpleFileBackend->remove($entryIdentifier);
 
-        self::assertFileNotExists($pathAndFilename);
+        self::assertFileDoesNotExist($pathAndFilename);
         self::assertFalse($simpleFileBackend->has($entryIdentifier));
     }
 
@@ -403,11 +417,11 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function requireOnceDoesNotSwallowPhpWarningsOfTheIncludedFile()
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $entryIdentifier = 'SomePhpEntryWithPhpWarning';
 
         $simpleFileBackend = $this->getSimpleFileBackend();
-        $simpleFileBackend->set($entryIdentifier, '<?php trigger_error("Warning!", E_WARNING); ?>');
+        $simpleFileBackend->set($entryIdentifier, '<?php trigger_error("Warning!", E_USER_WARNING); ?>');
         $simpleFileBackend->requireOnce($entryIdentifier);
     }
 
@@ -416,11 +430,11 @@ class SimpleFileBackendTest extends BaseTestCase
      */
     public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile()
     {
-        $this->expectException(Notice::class);
+        $this->expectNotice();
         $entryIdentifier = 'SomePhpEntryWithPhpNotice';
 
         $simpleFileBackend = $this->getSimpleFileBackend();
-        $simpleFileBackend->set($entryIdentifier, '<?php $undefined ++; ?>');
+        $simpleFileBackend->set($entryIdentifier, '<?php trigger_error("Notice!", E_USER_NOTICE); ?>');
         $simpleFileBackend->requireOnce($entryIdentifier);
     }
 
@@ -447,9 +461,9 @@ class SimpleFileBackendTest extends BaseTestCase
 
         $simpleFileBackend->flush();
 
-        self::assertFileNotExists($pathAndFilename1);
+        self::assertFileDoesNotExist($pathAndFilename1);
         self::assertFalse($simpleFileBackend->has($entryIdentifier1));
-        self::assertFileNotExists($pathAndFilename2);
+        self::assertFileDoesNotExist($pathAndFilename2);
         self::assertFalse($simpleFileBackend->has($entryIdentifier2));
     }
 

@@ -44,22 +44,21 @@ Let's imagine you want to log a message inside methods of your domain model:
 *Example: Logging without AOP*::
 
 	namespace Examples\Forum\Domain\Model;
+	use Examples\Forum\Logger\ApplicationLoggerInterface;
 
 	class Forum {
 
 		/**
 		 * @Flow\Inject
-		 * @var \Examples\Forum\Logger\ApplicationLoggerInterface
+		 * @var ApplicationLoggerInterface
 		 */
 		protected $applicationLogger;
 
 		/**
 		 * Delete a forum post and log operation
-		 *
-		 * @param \Examples\Forum\Domain\Model\Post $post
-		 * @return void
 		 */
-		public function deletePost(Post $post) {
+		public function deletePost(Post $post): void
+		{
 			$this->applicationLogger->log('Removing post ' . $post->getTitle(), LOG_INFO);
 			$this->posts->remove($post);
 		}
@@ -82,11 +81,9 @@ just concentrate on the business logic.
 
 		/**
 		 * Delete a forum post
-		 *
-		 * @param \Examples\Forum\Domain\Model\Post $post
-		 * @return void
 		 */
-		public function deletePost(Post $post) {
+		public function deletePost(Post $post): void
+		{
 			$this->posts->remove($post);
 		}
 
@@ -101,6 +98,8 @@ and has many possibilities, even for complex scenarios.
 *Example: Logging with AOP (aspect)*::
 
 	namespace Examples\Forum\Logging;
+	use Examples\Forum\Logger\ApplicationLoggerInterface;
+	use Neos\Flow\AOP\JoinPointInterface;
 
 	/**
 	 * @Flow\Aspect
@@ -109,18 +108,17 @@ and has many possibilities, even for complex scenarios.
 
 		/**
 		 * @Flow\Inject
-		 * @var \Examples\Forum\Logger\ApplicationLoggerInterface
+		 * @var ApplicationLoggerInterface
 		 */
 		protected $applicationLogger;
 
 		/**
 		 * Log a message if a post is deleted
 		 *
-		 * @param \Neos\Flow\AOP\JoinPointInterface $joinPoint
 		 * @Flow\Before("method(Examples\Forum\Domain\Model\Forum->deletePost())")
-		 * @return void
 		 */
-		public function logDeletePost(\Neos\Flow\AOP\JoinPointInterface $joinPoint) {
+		public function logDeletePost(JoinPointInterface $joinPoint): void
+		{
 			$post = $joinPoint->getMethodArgument('post');
 			$this->applicationLogger->log('Removing post ' . $post->getTitle(), LOG_INFO);
 		}
@@ -295,7 +293,7 @@ aspect.
 	advice, introduction or pointcut has been defined.
 
 .. Note::
-	With Flow 4.0+ classes that are marked ``final`` can now be targeted by AOP advices
+	With Flow classes that are marked ``final`` can be targeted by AOP advices
 	by default.
 	This can be explicitly disabled with a ``@Flow\Proxy(false)`` annotation on the
 	class in question.
@@ -331,8 +329,8 @@ Pointcut expressions
 
 As already mentioned, the pointcut expression configures the filters which are
 used to match against join points. It is comparable to an if condition in PHP:
-Only if the whole condition evaluates to TRUE, the statement is executed -
-otherwise it will be just ignored. If a pointcut expression evaluates to TRUE,
+Only if the whole condition evaluates to true, the statement is executed -
+otherwise it will be just ignored. If a pointcut expression evaluates to true,
 the pointcut matches and advices which refer to this pointcut become active.
 
 .. Note::
@@ -403,7 +401,7 @@ give you an idea how this works:
 
 -----
 
-``method(Example\MyPackage\MyClass->update(title == "Flow", override == TRUE))``
+``method(Example\MyPackage\MyClass->update(title == "Flow", override == true))``
 
 -----
 
@@ -515,7 +513,7 @@ setting()
 ^^^^^^^^^
 
 The setting() designator matches if the given configuration option is set to
-TRUE, or if an optional given comparison value equals to its configured value.
+true, or if an optional given comparison value equals to its configured value.
 This is helpful to make advices configurable and switch them off in a
 specific Flow context or just for testing. You can use this designator
 as follows:
@@ -524,7 +522,7 @@ as follows:
 
 -----
 
-Matches if "my.configuration.option" is set to TRUE in the current execution
+Matches if "my.configuration.option" is set to true in the current execution
 context:
 
 ``setting(my.configuration.option)``
@@ -563,9 +561,9 @@ name of the currently authenticated user:
 ``evaluate(this.someObject.someProperty == current.userService.currentUser.name)``
 
 Matches if the property someProperty of the current object is equal to one of
-the values TRUE, "someString" or the address of the currently authenticated user:
+the values true, "someString" or the address of the currently authenticated user:
 
-``evaluate(this.someProperty in (TRUE, "someString", current.userService.currentUser.address))``
+``evaluate(this.someProperty in (true, "someString", current.userService.currentUser.address))``
 
 Matches if the accounts array in the current party object contains the account
 stored in the myAccount property of the current object:
@@ -583,7 +581,7 @@ Matches if at least one of the entries in the first array exists in the second o
 .. tip::
 	If you like you can enter more than one constraint in a single evaluate
 	pointcut designator by separating them with a comma. The evaluate
-	designator will only match, if all its conditions evaluated to TRUE.
+	designator will only match, if all its conditions evaluated to true.
 
 .. note::
 	It is possible to register arbitrary singletons to be available as global
@@ -632,7 +630,8 @@ conveniently in advice declarations:
 	 *
 	 * @Flow\Aspect
 	 */
-	class PointcutTestingAspect {
+	class PointcutTestingAspect
+	{
 
 		/**
 		 * Pointcut which includes all method executions in
@@ -641,7 +640,7 @@ conveniently in advice declarations:
 		 *
 		 * @Flow\Pointcut("method(Example\TestPackage\PointcutTestingTargetClass.*->.*()) && !method(Example\TestPackage\PointcutTestingTargetClass3->.*())")
 		 */
-		public function pointcutTestingTargetClasses() {}
+		public function pointcutTestingTargetClasses(): void {}
 
 		/**
 		 * Pointcut which consists of only the
@@ -649,21 +648,21 @@ conveniently in advice declarations:
 		 *
 		 * @Flow\Pointcut("method(Example\TestPackage\OtherPointcutTestingTargetClass->.*())")
 		 */
-		public function otherPointcutTestingTargetClass() {}
+		public function otherPointcutTestingTargetClass(): void {}
 
 		/**
 		 * A combination of both above pointcuts
 		 *
 		 * @Flow\Pointcut("Example\TestPackage\PointcutTestingAspect->pointcutTestingTargetClasses || Example\TestPackage\PointcutTestingAspect->otherPointcutTestingTargetClass")
 		 */
-		public function bothPointcuts() {}
+		public function bothPointcuts(): void {}
 
 		/**
 		 * A pointcut which matches all classes from the service layer
 		 *
 		 * @Flow\Pointcut("within(Example\Flow\ServiceLayerInterface)")
 		 */
-		public function serviceLayerClasses() {}
+		public function serviceLayerClasses(): void {}
 
 		/**
 		 * A pointcut which matches any method from the BasicClass and all classes
@@ -671,7 +670,7 @@ conveniently in advice declarations:
 		 *
 		 * @Flow\Pointcut("method(Example\TestPackage\Basic.*->.*()) || within(Neos\Flow\Service.*)")
 		 */
-		public function basicClassOrServiceLayerClasses() {}
+		public function basicClassOrServiceLayerClasses(): void {}
 	}
 
 Declaring advice
@@ -704,7 +703,8 @@ can it take influence on other before advices at the same join point.
 	 *
 	 * @Flow\Before("class(Example\News\.*->.*())")
 	 */
-	public function myBeforeAdvice(\Neos\Flow\AOP\JoinPointInterface $joinPoint) {
+	public function myBeforeAdvice(\Neos\Flow\AOP\JoinPointInterface $joinPoint): void
+	{
 	}
 
 
@@ -722,7 +722,8 @@ advices may read the result of the target method, but can't modify it.
 	 *
 	 * @Flow\AfterReturning("method(public Example\News\FeedAgregator->[import|update].*()) || Example\MyPackage\MyAspect->someOtherPointcut")
 	 */
-	public function myAfterReturningAdvice(\Neos\Flow\AOP\JoinPointInterface $joinPoint) {
+	public function myAfterReturningAdvice(\Neos\Flow\AOP\JoinPointInterface $joinPoint): void
+	{
 	}
 
 
@@ -739,7 +740,8 @@ after method execution, but only if an exception was thrown.
 	 *
 	 * @Flow\AfterThrowing("within(Example\News\ImportantLayer)")
 	 */
-	public function myAfterThrowingAdvice(\Neos\Flow\AOP\JoinPointInterface $joinPoint) {
+	public function myAfterThrowingAdvice(\Neos\Flow\AOP\JoinPointInterface $joinPoint): void
+	{
 	}
 
 
@@ -757,7 +759,8 @@ was thrown or not.
 	 *
 	 * @Flow\After("Example\MyPackage\MyAspect->justAPointcut")
 	 */
-	public function myAfterAdvice(\Neos\Flow\AOP\JoinPointInterface $joinPoint) {
+	public function myAfterAdvice(\Neos\Flow\AOP\JoinPointInterface $joinPoint): void
+	{
 	}
 
 
@@ -778,7 +781,8 @@ You might already guess how an around advice is declared:
 	 *
 	 * @Flow\Around("Example\MyPackage\MyAspect->justAPointcut")
 	 */
-	public function myAroundAdvice(\Neos\Flow\AOP\JoinPointInterface $joinPoint) {
+	public function myAroundAdvice(\Neos\Flow\AOP\JoinPointInterface $joinPoint): void
+	{
 	}
 
 
@@ -827,38 +831,38 @@ code will just do that:
 *Example: Simple logging with aspects*::
 
 	namespace Example\MyPackage;
+	use Neos\Flow\AOP\JoinPointInterface;
+	use Psr\Log\LoggerInterface;
 
 	/**
 	 * A logging aspect
 	 *
 	 * @Flow\Aspect
 	 */
-	class LoggingAspect {
+	class LoggingAspect
+	{
 
 		/**
-		 * @var \Psr\Log\LoggerInterface A logger implementation
+		 * @var LoggerInterface A logger implementation
 		 */
 		protected $logger;
 
 		/**
 		 * For logging we need a logger, which we will get injected automatically by
 		 * the Object Manager
-		 *
-		 * @param \Neos\Flow\Log\PsrSystemLoggerInterface $logger The System Logger
-		 * @return void
 		 */
-		public function injectLogger(\Neos\Flow\Log\PsrSystemLoggerInterface $logger) {
+		public function injectLogger(LoggerInterface $logger): void
+		{
 			$this->logger = $logger;
 		}
 
 		/**
 		 * Before advice, logs all access to public methods of our package
 		 *
-		 * @param  \Neos\Flow\AOP\JoinPointInterface $joinPoint: The current join point
-		 * @return void
 		 * @Flow\Before("method(public Example\MyPackage\.*->.*())")
 		 */
-		public function logMethodExecution(\Neos\Flow\AOP\JoinPointInterface $joinPoint) {
+		public function logMethodExecution(JoinPointInterface $joinPoint): void
+		{
 			$logMessage = 'The method ' . $joinPoint->getMethodName() . ' in class ' .
 				$joinPoint->getClassName() . ' has been called.';
 			$this->logger->info($logMessage);
@@ -880,29 +884,31 @@ place but refer to a named pointcut.
 *Example: Implementation of an around advice*::
 
 	namespace Example\Guestbook;
+	use Neos\Flow\AOP\JoinPointInterface;
 
 	/**
 	 * A lastname rejection aspect
 	 *
 	 * @Flow\Aspect
 	 */
-	class LastNameRejectionAspect {
+	class LastNameRejectionAspect
+	{
 
 		/**
 		 * A pointcut which matches all guestbook submission method invocations
 		 *
 		 * @Flow\Pointcut("method(Example\Guestbook\SubmissionHandlingThingy->submit())")
 		 */
-		public function guestbookSubmissionPointcut() {}
+		public function guestbookSubmissionPointcut(): void {}
 
 		/**
 		 * Around advice, rejects the last name "Sarkosh"
 		 *
-		 * @param  \Neos\Flow\AOP\JoinPointInterface $joinPoint The current join point
 		 * @return mixed Result of the target method
 		 * @Flow\Around("Example\Guestbook\LastNameRejectionAspect->guestbookSubmissionPointcut")
 		 */
-		public function rejectLastName(\Neos\Flow\AOP\JoinPointInterface $joinPoint) {
+		public function rejectLastName(JoinPointInterface $joinPoint)
+		{
 			if ($joinPoint->getMethodArgument('lastName') === 'Sarkosh') {
 				throw new \Exception('Sarkosh is not a valid last name - should be Skårhøj!');
 			}
@@ -946,36 +952,36 @@ The following example introduces a new interface ``NewInterface`` to the class
 
 *Example: Interface introduction*::
 
-	namespace Example\MyPackage;
+    namespace Example\MyPackage;
+    use Neos\Flow\AOP\JoinPointInterface;
 
-	/**
-	 * An aspect for demonstrating introductions
-	 *
-	 * Introduces Example\MyPackage\NewInterface to the class Example\MyPackage\OldClass:
-	 *
-	 * @Flow\Introduce("class(Example\MyPackage\OldClass)", interfaceName="Example\MyPackage\NewInterface")
-	 * @Flow\Aspect
-	 */
-	class IntroductionAspect {
+    /**
+     * An aspect for demonstrating introductions
+     *
+     * Introduces Example\MyPackage\NewInterface to the class Example\MyPackage\OldClass:
+     *
+     * @Flow\Introduce("class(Example\MyPackage\OldClass)", interfaceName="Example\MyPackage\NewInterface")
+     * @Flow\Aspect
+     */
+    class IntroductionAspect
+    {
+        /**
+         * Around advice, implements the new method "newMethod" of the
+         * "NewInterface" interface
+         *
+         * @Flow\Around("method(Example\MyPackage\OldClass->newMethod())")
+         */
+        public function newMethodImplementation(JoinPointInterface $joinPoint): int
+        {
+                // We call the advice chain, in case any other advice is declared for
+                // this method, but we don't care about the result.
+            $someResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
-		/**
-		 * Around advice, implements the new method "newMethod" of the
-		 * "NewInterface" interface
-		 *
-		 * @param  \Neos\Flow\AOP\JoinPointInterface $joinPoint The current join point
-		 * @return void
-		 * @Flow\Around("method(Example\MyPackage\OldClass->newMethod())")
-		 */
-		public function newMethodImplementation(\Neos\Flow\AOP\JoinPointInterface $joinPoint) {
-				// We call the advice chain, in case any other advice is declared for
-				// this method, but we don't care about the result.
-			$someResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
-
-			$a = $joinPoint->getMethodArgument('a');
-			$b = $joinPoint->getMethodArgument('b');
-			return $a + $b;
-		}
-	}
+            $a = $joinPoint->getMethodArgument('a');
+            $b = $joinPoint->getMethodArgument('b');
+            return $a + $b;
+        }
+    }
 
 Trait introduction
 -------------------
@@ -992,18 +998,21 @@ The following example introduces a trait ``SomeTrait`` to the class ``MyClass``.
 
 *Example: Trait introduction*::
 
-	namespace Example\MyPackage;
+    namespace Example\MyPackage;
 
-	/**
-	 * An aspect for demonstrating trait introduction
-	 *
-	 * Introduces Example\MyPackage\SomeTrait to the class Example\MyPackage\MyClass:
-	 *
-	 * @Flow\Introduce("class(Example\MyPackage\MyClass)", traitName="Example\MyPackage\SomeTrait")
-	 * @Flow\Aspect
-	 */
-	class TraitIntroductionAspect {
-	}
+    use Neos\Flow\Annotations as Flow;
+
+    /**
+     * An aspect for demonstrating trait introduction
+     *
+     * Introduces Example\MyPackage\SomeTrait to the class Example\MyPackage\MyClass:
+     *
+     * @Flow\Introduce("class(Example\MyPackage\MyClass)", traitName="Example\MyPackage\SomeTrait")
+     * @Flow\Aspect
+     */
+    class TraitIntroductionAspect
+    {
+    }
 
 Property introduction
 -----------------------
@@ -1012,11 +1021,11 @@ The declaration of a property introduction anchors to a property inside an aspec
 
 Form of the declaration::
 
-	/**
-	 * @var type
-	 * @Flow\Introduce("PointcutExpression")
-	 */
-	protected $propertyName;
+    /**
+     * @var type
+     * @Flow\Introduce("PointcutExpression")
+     */
+    protected $propertyName;
 
 The declared property will be added to the target classes matched by the pointcut.
 
@@ -1025,23 +1034,30 @@ The following example introduces a new property "subtitle" to the class
 
 *Example: Property introduction*::
 
-	namespace Example\MyPackage;
+    namespace Example\MyPackage;
 
-	/**
-	 * An aspect for demonstrating property introductions
-	 *
-	 * @Flow\Aspect
-	 */
-	class PropertyIntroductionAspect {
+    use Neos\Flow\Annotations as Flow;
 
-		/**
-		 * @var string
-		 * @Column(length=40)
-		 * @Flow\Introduce("class(Example\Blog\Domain\Model\Post)")
-		 */
-		protected $subtitle;
+    /**
+     * An aspect for demonstrating property introductions
+     *
+     * @Flow\Aspect
+     */
+    class PropertyIntroductionAspect
+    {
 
-	}
+        /**
+         * @var string
+         * @Doctrine\ORM\Mapping\Column(length=40)
+         * @Flow\Introduce("class(Example\Blog\Domain\Model\Post)")
+         */
+        protected $subtitle;
+    }
+
+.. note::
+    Any annotation on the introduced property (except the actual ``Introduce``)
+    **must use the fully qualified class name** for Flow to build working proxy
+    class code.
 
 Implementation details
 ======================

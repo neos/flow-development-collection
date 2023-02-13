@@ -8,12 +8,15 @@
     "bin-dir": "bin"
   },
   "require": {
-    "php": "^7.2",
+    "php": "^8.0",
     "ext-mbstring": "*"
   },
   "require-dev": {
-    "mikey179/vfsstream": "~1.6",
-    "phpunit/phpunit": "~8.1"
+    "mikey179/vfsstream": "^1.6.10",
+    "phpunit/phpunit": "~9.1"
+  },
+  "replace": {
+    "symfony/polyfill-mbstring": "*"
   },
   "autoload": {
     "psr-4": {
