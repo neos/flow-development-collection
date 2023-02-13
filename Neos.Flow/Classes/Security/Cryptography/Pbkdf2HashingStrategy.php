@@ -65,7 +65,7 @@ class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
      * @param string|null $staticSalt Static salt that will be appended to the random dynamic salt
      * @return string A Base64 encoded string with the derived key (hashed password) and dynamic salt
      */
-    public function hashPassword(string $password, string $staticSalt = null): string
+    public function hashPassword($password, $staticSalt = null)
     {
         $dynamicSalt = UtilityAlgorithms::generateRandomBytes($this->dynamicSaltLength);
         $result = hash_pbkdf2($this->algorithm, $password, $dynamicSalt . $staticSalt, $this->iterationCount, $this->derivedKeyLength, true);
@@ -82,7 +82,7 @@ class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
      * @return bool true if the given password matches the hashed password
      * @throws \InvalidArgumentException
      */
-    public function validatePassword(string $password, string $hashedPasswordAndSalt, string $staticSalt = null): bool
+    public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = null)
     {
         $parts = explode(',', $hashedPasswordAndSalt);
         if (count($parts) !== 2) {

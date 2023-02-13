@@ -22,7 +22,7 @@ class TestHashingStrategy implements PasswordHashingStrategyInterface
      * @param string|null $staticSalt Optional static salt that will not be stored in the hashed password
      * @return string The hashed password with dynamic salt (if used)
      */
-    public function hashPassword(string $password, string $staticSalt = null): string
+    public function hashPassword($password, $staticSalt = null)
     {
         return 'hashed' . $password . $staticSalt;
     }
@@ -33,7 +33,7 @@ class TestHashingStrategy implements PasswordHashingStrategyInterface
      * @param string|null $staticSalt Optional static salt that will not be stored in the hashed password
      * @return boolean true if the given cleartext password matched the hashed password
      */
-    public function validatePassword(string $password, string $hashedPasswordAndSalt, string $staticSalt = null): bool
+    public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = null)
     {
         return false;
     }
