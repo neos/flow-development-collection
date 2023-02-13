@@ -304,10 +304,10 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     /**
      * Exports the private key string from the KeyResource
      *
-     * @param resource $keyResource The key resource
+     * @param \OpenSSLAsymmetricKey $keyResource The key resource
      * @return string The private key string
      */
-    private function getPrivateKeyString($keyResource)
+    private function getPrivateKeyString(\OpenSSLAsymmetricKey $keyResource)
     {
         openssl_pkey_export($keyResource, $privateKeyString, null, $this->openSSLConfiguration);
         return $privateKeyString;
@@ -316,10 +316,10 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     /**
      * Exports the public key string from the KeyResource
      *
-     * @param resource $keyResource The key resource
+     * @param \OpenSSLAsymmetricKey $keyResource The key resource
      * @return string The public key string
      */
-    private function getPublicKeyString($keyResource)
+    private function getPublicKeyString(\OpenSSLAsymmetricKey $keyResource)
     {
         $keyDetails = openssl_pkey_get_details($keyResource);
 
@@ -329,10 +329,10 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     /**
      * Exports the public modulus HEX string from the KeyResource
      *
-     * @param resource $keyResource The key resource
+     * @param \OpenSSLAsymmetricKey $keyResource The key resource
      * @return string The HEX public modulus string
      */
-    private function getModulus($keyResource)
+    private function getModulus(\OpenSSLAsymmetricKey $keyResource)
     {
         $keyDetails = openssl_pkey_get_details($keyResource);
         return strtoupper(bin2hex($keyDetails['rsa']['n']));

@@ -24,18 +24,20 @@ abstract class RequestInformationHelper
      * Returns the relative path (i.e. relative to the web root) and name of the
      * script as it was accessed through the web server.
      *
-     * @param ServerRequestInterface $request The request in question
+     * @param RequestInterface $request The request in question
      * @return string Relative path and name of the PHP script as accessed through the web
      * @api
      */
-    public static function getScriptRequestPathAndFilename(ServerRequestInterface $request): string
+    public static function getScriptRequestPathAndFilename(RequestInterface $request): string
     {
-        $server = $request->getServerParams();
-        if (isset($server['SCRIPT_NAME'])) {
-            return $server['SCRIPT_NAME'];
-        }
-        if (isset($server['ORIG_SCRIPT_NAME'])) {
-            return $server['ORIG_SCRIPT_NAME'];
+        if ($request instanceof ServerRequestInterface) {
+            $server = $request->getServerParams();
+            if (isset($server['SCRIPT_NAME'])) {
+                return $server['SCRIPT_NAME'];
+            }
+            if (isset($server['ORIG_SCRIPT_NAME'])) {
+                return $server['ORIG_SCRIPT_NAME'];
+            }
         }
 
         return '';
@@ -45,11 +47,11 @@ abstract class RequestInformationHelper
      * Returns the relative path (i.e. relative to the web root) to the script as
      * it was accessed through the web server.
      *
-     * @param ServerRequestInterface $request The request in question
+     * @param RequestInterface $request The request in question
      * @return string Relative path to the PHP script as accessed through the web
      * @api
      */
-    public static function getScriptRequestPath(ServerRequestInterface $request): string
+    public static function getScriptRequestPath(RequestInterface $request): string
     {
         // This is not a simple `dirname()` because on Windows it will end up with backslashes in the URL
         $requestPathSegments = explode('/', self::getScriptRequestPathAndFilename($request));
@@ -61,10 +63,10 @@ abstract class RequestInformationHelper
      * Constructs a relative path for this request,
      * that is the path segments left after removing the baseUri.
      *
-     * @param ServerRequestInterface $request
+     * @param RequestInterface $request
      * @return string
      */
-    public static function getRelativeRequestPath(ServerRequestInterface $request): string
+    public static function getRelativeRequestPath(RequestInterface $request): string
     {
         $baseUri = self::generateBaseUri($request);
         return UriHelper::getRelativePath($baseUri, $request->getUri());
@@ -73,10 +75,10 @@ abstract class RequestInformationHelper
     /**
      * Tries to detect the base URI of request.
      *
-     * @param ServerRequestInterface $request
+     * @param RequestInterface $request
      * @return UriInterface
      */
-    public static function generateBaseUri(ServerRequestInterface $request): UriInterface
+    public static function generateBaseUri(RequestInterface $request): UriInterface
     {
         $baseUri = clone $request->getUri();
         $baseUri = $baseUri->withQuery('');

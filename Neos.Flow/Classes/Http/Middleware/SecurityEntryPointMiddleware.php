@@ -72,7 +72,7 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
                 }
 
                 $entryPoint = $token->getAuthenticationEntryPoint();
-                $this->securityLogger->info(sprintf('Starting authentication with entry point of type "%s"', \get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
+                $this->securityLogger->debug(sprintf('Starting authentication with entry point of type "%s"', \get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
 
                 // Only store the intercepted request if it is a GET request (otherwise it can't be resumed properly)
                 // We also don't store the request for "sessionless authentications" because that would implicitly start a session

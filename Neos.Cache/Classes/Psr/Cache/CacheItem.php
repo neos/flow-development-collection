@@ -63,7 +63,7 @@ class CacheItem implements CacheItemInterface
     /**
      * @return string
      */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
@@ -71,7 +71,7 @@ class CacheItem implements CacheItemInterface
     /**
      * @return mixed
      */
-    public function get()
+    public function get(): mixed
     {
         return $this->value;
     }
@@ -79,26 +79,26 @@ class CacheItem implements CacheItemInterface
     /**
      * @return bool
      */
-    public function isHit()
+    public function isHit(): bool
     {
         return $this->hit;
     }
 
     /**
      * @param mixed $value
-     * @return CacheItem|static
+     * @return static
      */
-    public function set($value)
+    public function set(mixed $value): static
     {
         $this->value = $value;
         return $this;
     }
 
     /**
-     * @param \DateTimeInterface|null $expiration
-     * @return CacheItem|static
+     * @param ?\DateTimeInterface $expiration
+     * @return static
      */
-    public function expiresAt($expiration)
+    public function expiresAt(?\DateTimeInterface $expiration): static
     {
         $this->expirationDate = null;
         if ($expiration instanceof \DateTimeInterface) {
@@ -112,7 +112,7 @@ class CacheItem implements CacheItemInterface
      * @param \DateInterval|int|null $time
      * @return CacheItem|static
      */
-    public function expiresAfter($time)
+    public function expiresAfter(int|\DateInterval|null $time): static
     {
         $expiresAt = null;
         if ($time instanceof \DateInterval) {

@@ -28,14 +28,13 @@ Related issue: `#2367 <https://github.com/neos/flow-development-collection/issue
 FEATURE: Add case-insensitive filter operators for FlowQuery
 ------------------------------------------------------------
 
-I added case-insensitive filter operators for FlowQuery
-````
-ExactMatchInsensitive: =~
-NotEqualMatchInsensitive: !=~
-SuffixMatchInsensitive: $=~
-PrefixMatchInsensitive: ^=~
-SubstringMatchInsensitive: *=~
-````
+I added case-insensitive filter operators for FlowQuery::
+
+  ExactMatchInsensitive: =~
+  NotEqualMatchInsensitive: !=~
+  SuffixMatchInsensitive: $=~
+  PrefixMatchInsensitive: ^=~
+  SubstringMatchInsensitive: *=~
 
 I extended the FilterOperation Class. Also I extended the Fizzle.peg.inc and compiled the FizzleParser.php with generateEelParser.sh.
 
@@ -47,69 +46,65 @@ FEATURE: CLI command to list all connected signals with their slots
 
 The CLI command lists all signals with their slots. As parameter it accepts the class name and method name of the signal to filter the output.
 
-Help output:
-```
-Lists all connected signals with their slots.
+Help output::
 
-COMMAND:
-  neos.flow:signal:listconnected
+  Lists all connected signals with their slots.
 
-USAGE:
-  ./flow signal:listconnected [<options>]
+  COMMAND:
+    neos.flow:signal:listconnected
 
-OPTIONS:
-  --class-name
-  --method-name
-```
+  USAGE:
+    ./flow signal:listconnected [<options>]
 
-Example output:
-```
-$ ./flow signal:listconnected 
-Connected signals with their slots.
+  OPTIONS:
+    --class-name
+    --method-name
+  ```
 
-Neos\\Flow\\Mvc\\Dispatcher
-  afterControllerInvocation
-    [0] Closure
+  Example output:
+  ```
+  $ ./flow signal:listconnected
+  Connected signals with their slots.
 
-Neos\\Flow\\Cli\\SlaveRequestHandler
-  dispatchedCommandLineSlaveRequest
-    [0] Neos\\Flow\\Persistence\\PersistenceManagerInterface::persistAll
+  Neos\\Flow\\Mvc\\Dispatcher
+    afterControllerInvocation
+      [0] Closure
 
-Neos\\Flow\\Core\\Booting\\Sequence
-  afterInvokeStep
-    [0] Closure
-    [1] Closure
-    [2] Closure
-    [3] Closure
+  Neos\\Flow\\Cli\\SlaveRequestHandler
+    dispatchedCommandLineSlaveRequest
+      [0] Neos\\Flow\\Persistence\\PersistenceManagerInterface::persistAll
 
-Neos\\Flow\\Monitor\\FileMonitor
-  filesHaveChanged
-    [0] Closure
-    [1] Neos\\Flow\\Cache\\CacheManager::flushSystemCachesByChangedFiles
-    [2] Closure
-    [3] Closure
-    [4] Closure
-    [5] Closure
+  Neos\\Flow\\Core\\Booting\\Sequence
+    afterInvokeStep
+      [0] Closure
+      [1] Closure
+      [2] Closure
+      [3] Closure
 
-Neos\\Flow\\Core\\Bootstrap
-  bootstrapShuttingDown
-    [0] Neos\\Flow\\ObjectManagement\\ObjectManagerInterface::shutdown
-    [1] Neos\\Flow\\Configuration\\ConfigurationManager::shutdown
-    [2] Neos\\Flow\\Reflection\\ReflectionService::saveToCache
+  Neos\\Flow\\Monitor\\FileMonitor
+    filesHaveChanged
+      [0] Closure
+      [1] Neos\\Flow\\Cache\\CacheManager::flushSystemCachesByChangedFiles
+      [2] Closure
+      [3] Closure
+      [4] Closure
+      [5] Closure
 
-...
-```
+  Neos\\Flow\\Core\\Bootstrap
+    bootstrapShuttingDown
+      [0] Neos\\Flow\\ObjectManagement\\ObjectManagerInterface::shutdown
+      [1] Neos\\Flow\\Configuration\\ConfigurationManager::shutdown
+      [2] Neos\\Flow\\Reflection\\ReflectionService::saveToCache
 
-```
-$ ./flow signal:listconnected --class-name "Neos\\Media\\Domain\\Service\\AssetService" --method-name assetRemoved
-Connected signals with their slots.
+  ...
 
-Neos\\Media\\Domain\\Service\\AssetService
-  assetRemoved
-    [0] Neos\\Media\\Domain\\Model\\ImportedAssetManager::registerRemovedAsset
-```
+  $ ./flow signal:listconnected --class-name "Neos\\Media\\Domain\\Service\\AssetService" --method-name assetRemoved
+  Connected signals with their slots.
 
- 
+  Neos\\Media\\Domain\\Service\\AssetService
+    assetRemoved
+      [0] Neos\\Media\\Domain\\Model\\ImportedAssetManager::registerRemovedAsset
+
 
 Related issue: `#535 <https://github.com/neos/flow-development-collection/issues/535>`_
 

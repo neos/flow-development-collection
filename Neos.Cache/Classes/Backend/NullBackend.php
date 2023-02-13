@@ -123,6 +123,18 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
     /**
      * Does nothing
      *
+     * @param array<string> $tags ignored
+     * @return integer
+     * @api
+     */
+    public function flushByTags(array $tags): int
+    {
+        return 0;
+    }
+
+    /**
+     * Does nothing
+     *
      * @return void
      * @api
      */

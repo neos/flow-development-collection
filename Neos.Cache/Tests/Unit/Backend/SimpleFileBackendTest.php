@@ -225,6 +225,22 @@ class SimpleFileBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function getSupportsEmptyData()
+    {
+        $this->mockCacheFrontend->expects(self::any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
+
+        $data = '';
+        $entryIdentifier = 'SimpleFileBackendTest';
+
+        $simpleFileBackend = $this->getSimpleFileBackend();
+        $simpleFileBackend->set($entryIdentifier, $data);
+
+        self::assertSame($data, $simpleFileBackend->get($entryIdentifier));
+    }
+
+    /**
+     * @test
+     */
     public function getReturnsFalseForDeletedFiles()
     {
         $this->mockCacheFrontend->expects(self::any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));

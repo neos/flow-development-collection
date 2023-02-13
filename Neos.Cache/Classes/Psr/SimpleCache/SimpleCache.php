@@ -56,22 +56,27 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * Saves the value of a PHP variable in the cache. Note that the variable
-     * will be serialized if necessary.
+     * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
      *
      * @param string $key An identifier used for this cache entry
-     * @param mixed $variable The variable to cache
-     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param mixed $value The variable to cache
+     * @param null|int|\DateInterval $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return bool
      *
      * @throws Exception
      * @throws InvalidArgumentException
      */
-    public function set($key, $variable, $lifetime = null)
+    public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
         $this->ensureValidEntryIdentifier($key);
+
         try {
-            $this->backend->set($key, serialize($variable), [], $lifetime);
+            if ($ttl instanceof \DateInterval) {
+                $lifetime = $this->calculateLifetimeFromDateInterval($ttl);
+            } else {
+                $lifetime = $ttl;
+            }
+            $this->backend->set($key, serialize($value), [], $lifetime);
         } catch (\Throwable $throwable) {
             throw new Exception('An exception was thrown in retrieving the key from the cache backend.', 1515193492062, $throwable);
         }
@@ -82,12 +87,12 @@ class SimpleCache implements CacheInterface
      * Finds and returns a variable value from the cache.
      *
      * @param string $key Identifier of the cache entry to fetch
-     * @param mixed $defaultValue
+     * @param mixed $default
      * @return mixed The value or the defaultValue if entry was not found
      * @throws Exception
      * @throws InvalidArgumentException
      */
-    public function get($key, $defaultValue = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $this->ensureValidEntryIdentifier($key);
         try {
@@ -96,7 +101,7 @@ class SimpleCache implements CacheInterface
             throw new Exception('An exception was thrown in retrieving the key from the cache backend.', 1515193339722, $throwable);
         }
         if ($rawResult === false) {
-            return $defaultValue;
+            return $default;
         }
 
         return unserialize((string)$rawResult);
@@ -108,7 +113,7 @@ class SimpleCache implements CacheInterface
      * @throws Exception
      * @throws InvalidArgumentException
      */
-    public function delete($key)
+    public function delete(string $key): bool
     {
         $this->ensureValidEntryIdentifier($key);
         try {
@@ -121,7 +126,7 @@ class SimpleCache implements CacheInterface
     /**
      * @return bool
      */
-    public function clear()
+    public function clear(): bool
     {
         $this->backend->flush();
         return true;
@@ -130,11 +135,11 @@ class SimpleCache implements CacheInterface
     /**
      * @param iterable $keys
      * @param mixed $default
-     * @return iterable
+     * @return iterable<string, mixed>
      * @throws InvalidArgumentException
      * @throws Exception
      */
-    public function getMultiple($keys, $default = null)
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         $result = [];
         foreach ($keys as $key) {
@@ -145,16 +150,21 @@ class SimpleCache implements CacheInterface
 
     /**
      * @param iterable $values
-     * @param integer $ttl
+     * @param null|int|\DateInterval $ttl
      * @return bool
      * @throws Exception
      * @throws InvalidArgumentException
      */
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
     {
         $allSet = true;
+        if ($ttl instanceof \DateInterval) {
+            $lifetime = $this->calculateLifetimeFromDateInterval($ttl);
+        } else {
+            $lifetime = $ttl;
+        }
         foreach ($values as $key => $value) {
-            $allSet = $this->set($key, $value, $ttl) && $allSet;
+            $allSet = $this->set($key, $value, $lifetime) && $allSet;
         }
 
         return $allSet;
@@ -166,7 +176,7 @@ class SimpleCache implements CacheInterface
      * @throws InvalidArgumentException
      * @throws Exception
      */
-    public function deleteMultiple($keys)
+    public function deleteMultiple(iterable $keys): bool
     {
         foreach ($keys as $key) {
             $this->delete($key);
@@ -180,7 +190,7 @@ class SimpleCache implements CacheInterface
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function has($key)
+    public function has(string $key): bool
     {
         $this->ensureValidEntryIdentifier($key);
         return $this->backend->has($key);
@@ -205,5 +215,20 @@ class SimpleCache implements CacheInterface
         if ($this->isValidEntryIdentifier($key) === false) {
             throw new InvalidArgumentException('"' . $key . '" is not a valid cache key.', 1515192768083);
         }
+    }
+
+    /**
+     * @param \DateInterval $ttl
+     * @return int
+     */
+    protected function calculateLifetimeFromDateInterval(\DateInterval $ttl): int
+    {
+        $lifetime = (int)(
+            ((int)$ttl->format('a')) * 86400
+            + $ttl->h * 3600
+            + $ttl->m * 60
+            + $ttl->s
+        );
+        return $lifetime;
     }
 }

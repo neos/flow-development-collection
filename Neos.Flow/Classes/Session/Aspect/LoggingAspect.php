@@ -25,13 +25,13 @@ use Psr\Log\LoggerInterface;
 class LoggingAspect
 {
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
+     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
      * @var LoggerInterface
      */
     protected $logger;
 
     /**
-     * Injects the (system) logger based on PSR-3.
+     * Injects the (security) logger based on PSR-3.
      *
      * @param LoggerInterface $logger
      * @return void

@@ -244,6 +244,9 @@ with these methods.
 ``flushByTag()``
 	Flush all cache entries which are tagged with the given tag.
 
+``flushByTags()``
+	Flush all cache entries which are tagged with any of the given tags.
+
 ``collectGarbage()``
 	Call the garbage collection method of the backend. This is important for backends
 	which are unable to do this internally.
@@ -289,6 +292,24 @@ which can be stored using a specific frontend.
 .. note::
 	The PHP frontend can only be used to cache PHP files, it does not work with strings,
 	arrays or objects.
+
+PSR Cache Interfaces
+====================
+
+The implementations of the PSR Cache Interfaces allow to provide caches for external
+libraries that do not know the flow cache interfaces.
+
+PSR-6 Caching Interface
+-----------------------
+
+The classes ``\Neos\Cache\Psr\Cache\CachePool`` and ``\Neos\Cache\Psr\Cache\CacheItem``
+implement the Caching Interface as specified in https://www.php-fig.org/psr/psr-6/
+
+PSR-16 Simple Cache Interface
+-----------------------------
+
+The class ``\Neos\Cache\Psr\SimpleCache\SimpleCache`` implements the SimpleCacheInterface
+that is specified in https://www.php-fig.org/psr/psr-16/
 
 Cache Backends
 ==============
@@ -458,9 +479,21 @@ Options
 |                | * sqlite:/path/to/sqlite.db                        |           |        |         |
 |                | * sqlite::memory:                                  |           |        |         |
 +----------------+----------------------------------------------------+-----------+--------+---------+
-| username       | Username to use for the database connection        | No        |        |         |
+| username       | Username to use for the database connection.       | No        |        |         |
 +----------------+----------------------------------------------------+-----------+--------+---------+
 | password       | Password to use for the database connection.       | No        |        |         |
++----------------+----------------------------------------------------+-----------+--------+---------+
+| cacheTableName | Table name to store cache entries                  | No        | string | cache   |
++----------------+----------------------------------------------------+-----------+--------+---------+
+| tagsTableName  | Table name to store cache tags                     | No        | string | tags    |
++----------------+----------------------------------------------------+-----------+--------+---------+
+| batchSize      | Maximum number of parameters per query for         | No        | int    | 999     |
+|                | batch operations.                                  |           |        |         |
+|                |                                                    |           |        |         |
+|                | This value should be adjusted based on type of     |           |        |         |
+|                | the data source to increase performance.           |           |        |         |
+|                | E.g. Postgres supports up to 65535 parameters,     |           |        |         |
+|                | but SQLite only 999 for older versions.            |           |        |         |
 +----------------+----------------------------------------------------+-----------+--------+---------+
 
 Neos\\Cache\\Backend\\RedisBackend
@@ -543,6 +576,15 @@ Options
 +------------------+---------------------------------+-----------+-----------+-----------+
 | compressionLevel | Set gzip compression level to a | No        | integer   | 0         |
 |                  | specific value.                 |           | (0 to 9)  |           |
++------------------+---------------------------------+-----------+-----------+-----------+
+| batchSize        | Maximum number of parameters    | No        | int       | 100000    |
+|                  | per query for batch operations. |           |           |           |
+|                  |                                 |           |           |           |
+|                  | Redis supports up to            |           |           |           |
+|                  | 1.048.576 parameters, but a     |           |           |           |
+|                  | lower batch size allows other   |           |           |           |
+|                  | calls to Redis to be processed  |           |           |           |
+|                  | between each batch.             |           |           |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
 
 Neos\\Cache\\Backend\\MemcachedBackend
@@ -710,48 +752,66 @@ The null backend has no options.
 Neos\\Cache\\Backend\\MultiBackend
 ----------------------------------
 
-This backend accepts several backend configurations
-to be used in order of appareance as a fallback mechanismn
-shoudl one of them not be available.
-If `backendConfigurations` is an empty array this will act
-just like the NullBackend.
+This backend accepts several backend configurations to be used in order of appearance as a
+fallback mechanism should one of them not be available. For example, you might want to
+configure the first backend be a `RedisBackend` and, as a fallback, configure a second
+cache backend based on the `FileBackend`, which steps in if Redis is unavailable.
+
+If `backendConfigurations` is an empty array this will act just like the NullBackend.
 
 .. warning::
 
-   Due to the nature of this backend as fallback it will swallow all
-   errors on creating and using the sub backends. So configuration
-   errors won't show up. See `debug` option.
+   Due to the nature of this backend as fallback it will swallow all errors on creating
+   and using the sub backends. So configuration errors won't show up. See `debug` option.
+
+Whenever an error occurs while using a configured backend, the error will be caught,
+logged, and the backend is flagged as "unhealthy" for the remainder of the request.
+The next operation (for example, a "get()" or "set()" call) will use the next healthy
+backend. If there is only one backend left and it causes an error, MultiBackend will
+still try to use it on the next operation.
+
+You can disable the the removal of unhealthy backends with a backend option.
 
 Options
 ~~~~~~~
 
 :title:`Multi cache backend options`
 
-+-----------------------+------------------------------------------+-----------+---------+---------+
-| Option                | Description                              | Mandatory | Type    | Default |
-+=======================+==========================================+===========+=========+=========+
-| setInAllBackends      | Should values given to the backend be    | No        | bool    | true    |
-|                       | replicated into all configured and       |           |         |         |
-|                       | available backends?                      |           |         |         |
-|                       | Generally that is desirable for          |           |         |         |
-|                       | fallback purposes, but to avoid too much |           |         |         |
-|                       | duplication at the cost of performance on|           |         |         |
-|                       | fallbacks this can be disabled.          |           |         |         |
-|                       |                                          |           |         |         |
-+-----------------------+------------------------------------------+-----------+---------+---------+
-| backendConfigurations | A list of backends to be used in order   | Yes       | array   | []      |
-|                       | of appearance. Each entry in that list   |           |         |         |
-|                       | should have the keys "backend" and       |           |         |         |
-|                       | "backendOptions" just as a top level     |           |         |         |
-|                       | backend configuration.                   |           |         |         |
-|                       |                                          |           |         |         |
-+-----------------------+------------------------------------------+-----------+---------+---------+
-| debug                 | Switch on debug mode which will throw    | No        | bool    | false   |
-|                       | any errors happening in sub backends.    |           |         |         |
-|                       | Use this in development to make sure     |           |         |         |
-|                       | everything works as expected.            |           |         |         |
-|                       |                                          |           |         |         |
-+-----------------------+------------------------------------------+-----------+---------+---------+
++-------------------------+------------------------------------------+-----------+---------+---------+
+| Option                  | Description                              | Mandatory | Type    | Default |
++=========================+==========================================+===========+=========+=========+
+| setInAllBackends        | Should values given to the backend be    | No        | bool    | true    |
+|                         | replicated into all configured and       |           |         |         |
+|                         | available backends?                      |           |         |         |
+|                         | Generally that is desirable for          |           |         |         |
+|                         | fallback purposes, but to avoid too much |           |         |         |
+|                         | duplication at the cost of performance on|           |         |         |
+|                         | fallbacks this can be disabled.          |           |         |         |
+|                         |                                          |           |         |         |
++-------------------------+------------------------------------------+-----------+---------+---------+
+| backendConfigurations   | A list of backends to be used in order   | Yes       | array   | []      |
+|                         | of appearance. Each entry in that list   |           |         |         |
+|                         | should have the keys "backend" and       |           |         |         |
+|                         | "backendOptions" just as a top level     |           |         |         |
+|                         | backend configuration.                   |           |         |         |
+|                         |                                          |           |         |         |
++-------------------------+------------------------------------------+-----------+---------+---------+
+| debug                   | Switch on debug mode which will throw    | No        | bool    | false   |
+|                         | any errors happening in sub backends.    |           |         |         |
+|                         | Use this in development to make sure     |           |         |         |
+|                         | everything works as expected.            |           |         |         |
+|                         |                                          |           |         |         |
++-------------------------+------------------------------------------+-----------+---------+---------+
+| logErrors               | Log errors reported by the individual    | No        | bool    | true    |
+|                         | sub backends and when a backend is       |           |         |         |
+|                         | flagged as unhealthy.                    |           |         |         |
+|                         |                                          |           |         |         |
++-------------------------+------------------------------------------+-----------+---------+---------+
+| removeUnhealthyBackends | Automatically remove a sub backend from  | No        | bool    | true    |
+|                         | the list of cache backends, in case it   |           |         |         |
+|                         | any errors. The sub backend will be used |           |         |         |
+|                         | again at the next CLI / web request.     |           |         |         |
++-------------------------+------------------------------------------+-----------+---------+---------+
 
 
 Neos\\Cache\\Backend\\TaggableMultiBackend
@@ -759,6 +819,16 @@ Neos\\Cache\\Backend\\TaggableMultiBackend
 
 Technically all the same as the MultiBackend above but implements the TaggableBackendInterface and
 so supports tagging.
+
+Options are the same as for the MultiBackend.
+
+
+Neos\\Cache\\Backend\\IterableMultiBackend
+------------------------------------------
+
+The IterableMultiBackend is an extension of the TaggableMultiBackend and additionally implements the
+IterableBackendInterface. Backends of this type can be used for caches which require iteration support,
+such as the Flow session cache.
 
 Options are the same as for the MultiBackend.
 
@@ -818,9 +888,52 @@ This configures what will be injected into the following setter::
 		$this->fooCache = $cache;
 	}
 
+or injected class property::
+
+  /**
+   * @Flow\Inject
+   * @var \Neos\Cache\Frontend\StringFrontend $cache
+   */
+  protected $cache;
+
 To make it even simpler you could omit the setter method and annotate the member with the
 ``Inject`` annotations. The injected cache is fully initialized, all available frontend
 operations like ``get()``, ``set()`` and ``flushByTag()`` can be executed on ``$this->fooCache``.
+
+For configuring PSR Caches the factoryMethods used in the Objects.yaml have to be adjusted::
+
+	MyCompany\MyPackage\SomeClass:
+	  properties:
+	    # PSR-6
+	    cacheItemPool:
+	      object:
+	        factoryObjectName: Neos\Flow\Cache\CacheManager
+	        factoryMethodName: getCacheItemPool
+	        arguments:
+	          1:
+	            value: MyPackage_CacheItemPool
+	    # PSR-16
+	    simpleCache:
+	      object:
+	        factoryObjectName: Neos\Flow\Cache\CacheManager
+	        factoryMethodName: getSimpleCache
+	        arguments:
+	          1:
+	            value: MyPackage_SimpleCache
+
+This configures what will be injected into the following properties::
+
+  /**
+   * @Flow\Inject
+   * @var \Psr\Cache\CacheItemPoolInterface $cache
+   */
+  protected $cacheItemPool:
+
+  /**
+   * @Flow\Inject
+   * @var \Psr\SimpleCache\CacheInterface $cache
+   */
+  protected $simpleCache;
 
 Using the CacheFactory
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -836,3 +949,12 @@ convenience) for a cache::
 .. _PHP memcache bug 16927:      https://bugs.php.net/bug.php?id=58943
 .. _APCu:                        http://php.net/manual/en/book.apcu.php
 .. _PHP warning:                 https://bugs.php.net/bug.php?id=58982
+
+To retrieve PSR Cache implementations the cache manager provides methods to get
+PSR-6 CacheItemPool PSR-16 SimpleCache implementations for a given cache identifier::
+
+	$this->simpleCache = $this->cacheManager->getSimpleCache('MyPackage_SimpleCache');
+	$this->cacheItemPool = $this->cacheManager->getCacheItemPool('MyPackage_CacheItemPool');
+
+.. warning::
+   While possible it is not advisible to access the same cache with different interfaces as the storage formats may differ!

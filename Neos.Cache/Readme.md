@@ -51,7 +51,7 @@ Install latest version via composer:
 The first argument given to either factory is a unique identifier for the specific cache instance.
 If you need different caches you should give them separate identifiers.
 
-## Documenatation
+## Documentation
 
 Both the PSR-6 CachePool and the PSR-16 SimpleCache are separate implementations with their respective factories,
 but both use the existing [backends](https://flowframework.readthedocs.io/en/stable/TheDefinitiveGuide/PartIII/Caching.html#cache-backends)

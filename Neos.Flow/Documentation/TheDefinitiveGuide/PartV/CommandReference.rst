@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2022-11-03
+The following reference was automatically generated from code on 2023-01-31
 
 
 .. _`Flow Command Reference: NEOS.FLOW`:
@@ -445,23 +445,6 @@ Arguments
   User name of the webserver, for example "www-data
 ``--webserver-group``
   Group name of the webserver, for example "www-data
-
-
-
-
-
-
-
-.. _`Flow Command Reference: NEOS.FLOW neos.flow:core:shell`:
-
-``neos.flow:core:shell``
-************************
-
-**Run the interactive Shell**
-
-The shell command runs Flow's interactive shell. This shell allows for
-entering commands like through the regular command line interface but
-additionally supports autocompletion and a user-based command history.
 
 
 

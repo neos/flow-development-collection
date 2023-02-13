@@ -26,14 +26,16 @@ Neos:
             matchingStatusCodes: [404, 410]
             options:
               logException: false
-              templatePathAndFilename: 'resource://Neos.Flow/Private/Templates/Error/Default.html'
+              viewOptions:
+                templatePathAndFilename: 'resource://Neos.Flow/Private/Templates/Error/Default.html'
               variables:
                 errorDescription: 'Sorry, the page you requested was not found.'
 
           databaseConnectionExceptions:
             matchingExceptionClassNames: ['Neos\Flow\Persistence\Doctrine\Exception\DatabaseException']
             options:
-              templatePathAndFilename: 'resource://Neos.Flow/Private/Templates/Error/Default.html'
+              viewOptions:
+                templatePathAndFilename: 'resource://Neos.Flow/Private/Templates/Error/Default.html'
               variables:
                 errorDescription: 'Sorry, the database connection couldn''t be established.'
 

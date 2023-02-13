@@ -176,22 +176,6 @@ key names, their actual naming has no further implications.
     ``viewOptions``:
         an array of options handed to the view. See ``$supportedOptions`` of the used view
 
-    ``templatePathAndFilename``:
-        **@deprecated** (use ``viewOptions.templatePathAndFilename: 'file'``)
-        a resource string to the filename to use
-
-    ``layoutRootPath``:
-        **@deprecated** (use ``viewOptions.layoutRootPaths: ['path']``)
-        a resource string to the layout root path
-
-    ``partialRootPath``:
-        **@deprecated** (use ``viewOptions.partialRootPaths: ['path']``)
-        a resource string to the partial root path
-
-    ``format``:
-        **@deprecated**
-        the format to use, for example ``html`` or ``json``, if appropriate
-
     ``variables``
         an array of additional, arbitrary variables which can be accessed in the template
 

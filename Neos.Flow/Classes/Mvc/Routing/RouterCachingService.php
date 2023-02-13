@@ -207,6 +207,17 @@ class RouterCachingService
     }
 
     /**
+     * Flushes 'findMatchResults' and 'resolve' caches for the given $tags
+     *
+     * @param array<string> $tags
+     */
+    public function flushCachesByTags(array $tags): void
+    {
+        $this->routeCache->flushByTags($tags);
+        $this->resolveCache->flushByTags($tags);
+    }
+
+    /**
      * Flushes 'findMatchResults' caches that are tagged with the given $uriPath
      *
      * @param string $uriPath

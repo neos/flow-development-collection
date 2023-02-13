@@ -31,7 +31,7 @@ class JsonView extends AbstractView
      */
     protected $supportedOptions = [
         'jsonEncodingOptions' => [0, 'Bitmask of supported Encoding options. See https://php.net/manual/en/json.constants.php', 'integer'],
-        'datetimeFormat' => [\DateTime::ISO8601, 'The datetime format to use for all DateTime objects. See https://www.php.net/manual/en/class.datetime.php#datetime.synopsis', 'string']
+        'datetimeFormat' => [\DateTime::ATOM, 'The datetime format to use for all DateTime objects. See https://www.php.net/manual/en/class.datetime.php#datetime.synopsis', 'string']
     ];
 
     /**

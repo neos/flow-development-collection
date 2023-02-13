@@ -191,6 +191,18 @@ class ConsoleOutput
     }
 
     /**
+     * Asks a question to the user
+     *
+     * @param Question $question The question to ask as an Object.
+     * @return mixed The user answer
+     * @throws \RuntimeException If there is no data to read in the input stream
+     */
+    public function askQuestion(Question $question)
+    {
+        return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
+    }
+
+    /**
      * Asks a confirmation to the user.
      *
      * The question will be asked until the user answers by nothing, yes, or no.
@@ -359,7 +371,7 @@ class ConsoleOutput
      *
      * @return QuestionHelper
      */
-    protected function getQuestionHelper(): QuestionHelper
+    public function getQuestionHelper(): QuestionHelper
     {
         if ($this->questionHelper === null) {
             $this->questionHelper = new QuestionHelper();

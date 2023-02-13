@@ -9,6 +9,8 @@ use Neos\Flow\Core\ApplicationContext;
  * Usage:
  *  $subProcess = new SubProcess($applicationContext);
  *  $subProcessResponse = $subProcess->execute('some:flow:command');
+ *
+ * @deprecated This will probably move to a separate package in a future version, you should not rely on it.
  */
 class SubProcess
 {
@@ -53,7 +55,7 @@ class SubProcess
             }
         };
         if (!is_resource($this->subProcess)) {
-            list($this->subProcess, $this->pipes) = $this->launchSubProcess();
+            [$this->subProcess, $this->pipes] = $this->launchSubProcess();
             if ($this->subProcess === false || !is_array($this->pipes)) {
                 throw new \Exception('Failed launching the shell sub process');
             }

@@ -151,7 +151,7 @@ class LoggingAspect
         $subjectJoinPoint = $joinPoint->getMethodArgument('subject');
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';
         $message = sprintf('Decided "%s" on method call %s::%s().', $decision, $subjectJoinPoint->getClassName(), $subjectJoinPoint->getMethodName());
-        $this->securityLogger->info($message, $this->getLogEnvironmentFromJoinPoint($joinPoint));
+        $this->securityLogger->debug($message, $this->getLogEnvironmentFromJoinPoint($joinPoint));
     }
 
     /**
@@ -165,7 +165,7 @@ class LoggingAspect
     {
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';
         $message = sprintf('Decided "%s" on privilege "%s".', $decision, $joinPoint->getMethodArgument('privilegeTargetIdentifier'));
-        $this->securityLogger->info($message, $this->getLogEnvironmentFromJoinPoint($joinPoint));
+        $this->securityLogger->debug($message, $this->getLogEnvironmentFromJoinPoint($joinPoint));
     }
 
     /**

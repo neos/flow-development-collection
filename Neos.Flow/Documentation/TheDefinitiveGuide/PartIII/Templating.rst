@@ -402,7 +402,9 @@ general data, that you want to be available without having to assign it in each 
 Once the view is resolved inside the ``ActionController``, the signal ``viewResolved``
 is being emitted and you can add data.
 
-This is possible with the Signal/Slot dispatcher from your ``Package.php`` file::
+This is possible with the Signal/Slot dispatcher from your ``Package.php`` file:
+
+.. code-block:: php
 
     <?php
     namespace Vendor\Namespace;
@@ -722,7 +724,7 @@ AbstractConditionViewHelper
 
 To create a custom condition ViewHelper, you need to subclass the ``AbstractConditionViewHelper`` class, and implement your own static evaluateCondition() method that should return a boolean.
 The given RenderingContext can provide you with an object manager to get anything you might need to evaluate the condition together with the given arguments.
- Depending on the result of this method either the then or the else part is rendered.
+Depending on the result of this method either the then or the else part is rendered.
 
 @see \Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper::evaluateCondition for a simple usage example.
 

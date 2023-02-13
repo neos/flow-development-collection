@@ -153,6 +153,20 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
     }
 
     /**
+     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     *
+     * @api
+     */
+    public function flushByTags(array $tags): int
+    {
+        $flushed = 0;
+        foreach ($tags as $tag) {
+            $flushed += $this->flushByTag($tag);
+        }
+        return $flushed;
+    }
+
+    /**
      * Does nothing
      *
      * @return void

@@ -32,7 +32,7 @@ final class AllowedObjectsContainer extends \SplObjectStorage
      *
      * @param bool $checkNext
      */
-    public function checkNext($checkNext = true)
+    public function checkNext(bool $checkNext = true): void
     {
         $this->checkNext = $checkNext;
     }

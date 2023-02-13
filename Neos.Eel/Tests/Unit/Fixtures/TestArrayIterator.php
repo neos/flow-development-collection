@@ -14,11 +14,7 @@ namespace Neos\Eel\Tests\Unit\Fixtures;
 
 class TestArrayIterator implements \Iterator
 {
-
-    /**
-     * @var array
-     */
-    private $array;
+    private array $array;
 
     public function __construct(array $array)
     {
@@ -30,27 +26,27 @@ class TestArrayIterator implements \Iterator
         return new self($array);
     }
 
-    public function current()
+    public function current(): mixed
     {
         return current($this->array);
     }
 
-    public function next()
+    public function next(): void
     {
         next($this->array);
     }
 
-    public function key()
+    public function key(): mixed
     {
         return key($this->array);
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return current($this->array) !== false;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->array);
     }

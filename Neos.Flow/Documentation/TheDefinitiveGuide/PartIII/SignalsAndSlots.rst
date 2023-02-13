@@ -120,19 +120,21 @@ the ``connect()`` and ``wire()`` methods, depending on the slot you want to use:
 - ``connect()`` can be used with arbitrary methods as slots
 - ``wire()`` is expecting a dedicated slot accepting a ``SignalInformation`` parameter
 
-	/**
-	 * Boot the package. We connect a signal to a slot here.
-	 *
-	 * @param \Neos\Flow\Core\Bootstrap $bootstrap The current bootstrap
-	 * @return void
-	 */
-	public function boot(\Neos\Flow\Core\Bootstrap $bootstrap) {
-		$dispatcher = $bootstrap->getSignalSlotDispatcher();
-		$dispatcher->connect(
-			\Some\Package\Controller\CommentController::class, 'commentCreated',
-			\Some\Package\Service\Notification::class, 'sendNewCommentNotification'
-		);
-	}
+.. code-block:: php
+
+  /**
+   * Boot the package. We connect a signal to a slot here.
+   *
+   * @param \Neos\Flow\Core\Bootstrap $bootstrap The current bootstrap
+   * @return void
+   */
+  public function boot(\Neos\Flow\Core\Bootstrap $bootstrap) {
+    $dispatcher = $bootstrap->getSignalSlotDispatcher();
+    $dispatcher->connect(
+      \Some\Package\Controller\CommentController::class, 'commentCreated',
+      \Some\Package\Service\Notification::class, 'sendNewCommentNotification'
+    );
+  }
 
 The first pair of parameters given to ``connect()`` and ``wire()`` identifies the signal,
 the second pair of parameters identifies the slot.

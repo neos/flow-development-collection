@@ -153,6 +153,27 @@ abstract class AbstractFrontend implements FrontendInterface
     }
 
     /**
+     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     *
+     * @param array<string> $tags The tags the entries must have
+     * @return integer The number of entries which have been affected by this flush
+     * @throws \InvalidArgumentException
+     * @api
+     */
+    public function flushByTags(array $tags): int
+    {
+        foreach ($tags as $tag) {
+            if (!$this->isValidTag($tag)) {
+                throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1646209443);
+            }
+        }
+        if ($this->backend instanceof TaggableBackendInterface) {
+            return $this->backend->flushByTags($tags);
+        }
+        return 0;
+    }
+
+    /**
      * Does garbage collection
      *
      * @return void

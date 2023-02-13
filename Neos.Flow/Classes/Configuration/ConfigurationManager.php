@@ -493,17 +493,18 @@ class ConfigurationManager
     protected function replaceVariablesInPhpString(string $phpString): string
     {
         $phpString = preg_replace_callback('/
-            (?<startString>=>\s\'.*?)?         # optionally assignment operator and starting a string
-            (?P<fullMatch>%                    # an expression is indicated by %
+            (?<startString>=>\s\'.*?)?             # optionally assignment operator and starting a string
+            (?P<fullMatch>%                        # an expression is indicated by %
             (?P<expression>
-            (?:(?:\\\?[\d\w_\\\]+\:\:)         # either a class name followed by ::
-            |                                  # or
-            (?:(?P<prefix>[a-z]+)\:)           # a prefix followed by : (like "env:" or "file:")
-            )?
-            (?P<name>[A-Za-z_0-9\/]+))         # the actual variable name or path to a file
-            %)                                 # concluded by %
-            (?<endString>[^%]*?(?:\',\n)?)?    # optionally concluding a string
-        /mx', function ($matchGroup) {
+            (?:(?:\\\?[\d\w_\\\]+\:\:)             # either a class name followed by ::
+            |                                      # or
+            (?:(?P<prefix>[a-z]+)                  # a prefix (like "env")
+            (\((?P<type>int|bool|float|string)\))? # optional type (like "(int)")
+            \:))?                                  # followed by ":"
+            (?P<name>[A-Za-z_0-9\/]+))             # the actual variable name in all upper
+            %)                                     # concluded by %
+            (?<endString>[^%]*?(?:\',\n)?)?        # optionally concluding a string
+        /mx', static function ($matchGroup) {
             $replacement = "";
             $constantDoesNotStartAsBeginning = false;
             if ($matchGroup['startString'] !== "=> '") {
@@ -513,6 +514,13 @@ class ConfigurationManager
 
             if (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'env') {
                 $replacement .= "getenv('" . $matchGroup['name'] . "')";
+                if ($matchGroup['type'] === 'bool') {
+                    $replacement .= "!in_array(strtolower(getenv('" . $matchGroup['name'] . "')), ['', '0', 'false'], true)";
+                } elseif ($matchGroup['type'] !== '') {
+                    $replacement .= "(" . $matchGroup['type'] . ")getenv('" . $matchGroup['name'] . "')";
+                } else {
+                    $replacement .= "getenv('" . $matchGroup['name'] . "')";
+                }
             } elseif (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'file') {
                 $replacement .= "trim(file_get_contents('" . $matchGroup['name'] . "'))";
             } elseif (isset($matchGroup['expression'])) {

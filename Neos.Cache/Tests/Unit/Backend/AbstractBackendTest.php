@@ -43,6 +43,7 @@ class AbstractBackendTest extends BaseTestCase
                 public function remove(string $entryIdentifier): bool {}
                 public function flush(): void {}
                 public function flushByTag(string $tag): int {}
+                public function flushByTags(array $tags): int {}
                 public function findIdentifiersByTag(string $tag): array {}
                 public function collectGarbage(): void {}
                 public function setSomeOption($value) {

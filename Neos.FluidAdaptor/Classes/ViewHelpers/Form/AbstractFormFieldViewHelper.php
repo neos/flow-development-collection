@@ -204,7 +204,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
         }
         $formObject = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'formObject');
         $propertyNameOrPath = $this->arguments['property'];
-        return ObjectAccess::getPropertyPath($formObject, $propertyNameOrPath);
+        return $propertyNameOrPath === null ? null : ObjectAccess::getPropertyPath($formObject, $propertyNameOrPath);
     }
 
     /**

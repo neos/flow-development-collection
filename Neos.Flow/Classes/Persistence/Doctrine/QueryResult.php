@@ -95,7 +95,7 @@ class QueryResult implements QueryResultInterface
      * @return integer The number of matching objects
      * @api
      */
-    public function count()
+    public function count(): int
     {
         if ($this->numberOfRows === null) {
             if (is_array($this->rows)) {
@@ -126,7 +126,7 @@ class QueryResult implements QueryResultInterface
      * @param mixed $offset
      * @return boolean
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         $this->initialize();
         return isset($this->rows[$offset]);
@@ -136,7 +136,7 @@ class QueryResult implements QueryResultInterface
      * @param mixed $offset
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         $this->initialize();
         return isset($this->rows[$offset]) ? $this->rows[$offset] : null;
@@ -149,7 +149,7 @@ class QueryResult implements QueryResultInterface
      * @param mixed $value
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->initialize();
         $this->rows[$offset] = $value;
@@ -161,7 +161,7 @@ class QueryResult implements QueryResultInterface
      * @param mixed $offset
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->initialize();
         unset($this->rows[$offset]);
@@ -170,7 +170,7 @@ class QueryResult implements QueryResultInterface
     /**
      * @return mixed
      */
-    public function current()
+    public function current(): mixed
     {
         $this->initialize();
         return current($this->rows);
@@ -179,7 +179,7 @@ class QueryResult implements QueryResultInterface
     /**
      * @return mixed
      */
-    public function key()
+    public function key(): mixed
     {
         $this->initialize();
         return key($this->rows);
@@ -188,7 +188,7 @@ class QueryResult implements QueryResultInterface
     /**
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         $this->initialize();
         next($this->rows);
@@ -197,7 +197,7 @@ class QueryResult implements QueryResultInterface
     /**
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->initialize();
         reset($this->rows);
@@ -206,7 +206,7 @@ class QueryResult implements QueryResultInterface
     /**
      * @return boolean
      */
-    public function valid()
+    public function valid(): bool
     {
         $this->initialize();
         return current($this->rows) !== false;

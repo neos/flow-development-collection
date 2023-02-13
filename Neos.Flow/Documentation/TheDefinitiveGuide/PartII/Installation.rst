@@ -136,9 +136,9 @@ and calling the following command (this command must be called as super user):
 
 .. note::
 
-	Setting file permissions is not necessary and not possible on Windows machines.
-	For Apache to be able to create symlinks, you need to use Windows Vista (or
-	newer) and Apache needs to be started with Administrator privileges. Alternatively
+  Setting file permissions is not necessary and not possible on Windows machines.
+  For Apache to be able to create symlinks, you need to use Windows Vista (or
+  newer) and Apache needs to be started with Administrator privileges. Alternatively
   you can run the command ``flow flow:cache:warmup`` once from an Administrator
   elevated command line inside your installation folder. You then also need to
   repeat this step, whenever you install new packages.
@@ -149,13 +149,13 @@ be done by typing:
 
 .. code-block:: sh
 
-	sudo usermod -a -G www-data john
+  sudo usermod -a -G www-data john
 
 On a Mac you can add a user to the web group with the following command:
 
 .. code-block:: sh
 
-	sudo dscl . -append /Groups/_www GroupMembership johndoe
+  sudo dscl . -append /Groups/_www GroupMembership johndoe
 
 You will have to exit your shell / terminal window and open it again for the
 new group membership to take effect.

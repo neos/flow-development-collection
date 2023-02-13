@@ -22,7 +22,11 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
 use Neos\Flow\Utility\PhpAnalyzer;
+use Neos\Cache\Psr\Cache\CachePool;
+use Neos\Cache\Psr\SimpleCache\SimpleCache;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * The Cache Manager
@@ -53,9 +57,19 @@ class CacheManager
     protected $environment;
 
     /**
-     * @var array
+     * @var FrontendInterface[]
      */
     protected $caches = [];
+
+    /**
+     * @var CacheInterface[]
+     */
+    protected $simpleCaches = [];
+
+    /**
+     * @var CacheItemPoolInterface[]
+     */
+    protected $cacheItemPools = [];
 
     /**
      * @var array
@@ -178,6 +192,42 @@ class CacheManager
         }
 
         return $this->caches[$identifier];
+    }
+
+    /**
+     * Return a SimpleCache frontend for the cache specified by $identifier
+     *
+     * @param string $identifier
+     * @return CacheInterface
+     */
+    public function getSimpleCache(string $identifier): CacheInterface
+    {
+        if (isset($this->simpleCaches[$identifier])) {
+            return $this->simpleCaches[$identifier];
+        }
+
+        $cache = $this->getCache($identifier);
+        $simpleCache = new SimpleCache($identifier, $cache->getBackend());
+        $this->simpleCaches[$identifier] = $simpleCache;
+        return $simpleCache;
+    }
+
+    /**
+     * Return a SimpleCache frontend for the cache specified by $identifier
+     *
+     * @param string $identifier
+     * @return CacheItemPoolInterface
+     */
+    public function getCacheItemPool(string $identifier): CacheItemPoolInterface
+    {
+        if (isset($this->cacheItemPools[$identifier])) {
+            return $this->cacheItemPools[$identifier];
+        }
+
+        $cache = $this->getCache($identifier);
+        $cacheItemPool = new CachePool($identifier, $cache->getBackend());
+        $this->cacheItemPools[$identifier] = $cacheItemPool;
+        return $cacheItemPool;
     }
 
     /**

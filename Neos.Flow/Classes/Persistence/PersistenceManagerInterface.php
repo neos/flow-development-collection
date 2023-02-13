@@ -162,25 +162,14 @@ interface PersistenceManagerInterface
     public function update($object): void;
 
     /**
-     * Adds the given object to a list of allowed objects which may be persisted when persistAll() is called with the
-     * $onlyAllowedObjects flag. This is the case if "safe" HTTP request methods are used.
-     *
-     * @param object $object The object
-     * @return void
-     * @api
-     * @deprecated Use allowObject() instead. See https://github.com/neos/flow-development-collection/pull/2024
-     */
-    public function whitelistObject($object): void;
-
-    /**
-     * Adds the given object to a list of allowed objects which may be persisted when persistAll() is called with the
-     * $onlyAllowedObjects flag. This is the case if "safe" HTTP request methods are used.
+     * Adds the given object to a list of allowed objects which may be persisted when persistAllowedObjects() is called.
+     * This is the case if "safe" HTTP request methods are used.
      *
      * @param object $object The object
      * @return void
      * @api
      */
-    //public function allowObject($object): void;
+    public function allowObject($object);
 
     /**
      * Returns true, if an active connection to the persistence

@@ -44,11 +44,11 @@ interface ObjectManagerInterface extends ContainerInterface
      * Dependency Injection.
      *
      * @param string $objectName The name of the object to return an instance of
-     * @param mixed[] ...$arguments Any number of arguments that should be passed to the constructor of the object
+     * @param mixed[] ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
      * @return object The object instance
      * @api
      */
-    public function get($objectName);
+    public function get($objectName, ...$constructorArguments);
 
     /**
      * This is the PSR-11 ContainerInterface equivalent to `isRegistered`.

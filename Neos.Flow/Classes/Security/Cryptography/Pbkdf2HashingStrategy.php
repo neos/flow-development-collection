@@ -12,7 +12,6 @@ namespace Neos\Flow\Security\Cryptography;
  */
 
 use Neos\Flow\Utility\Algorithms as UtilityAlgorithms;
-use Neos\Flow\Security\Cryptography\Algorithms as CryptographyAlgorithms;
 
 /**
  * A PBKDF2 based password hashing strategy
@@ -71,7 +70,7 @@ class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
     public function hashPassword($password, $staticSalt = null)
     {
         $dynamicSalt = UtilityAlgorithms::generateRandomBytes($this->dynamicSaltLength);
-        $result = CryptographyAlgorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $this->derivedKeyLength, $this->algorithm);
+        $result = hash_pbkdf2($this->algorithm, $password, $dynamicSalt . $staticSalt, $this->iterationCount, $this->derivedKeyLength, true);
         return base64_encode($dynamicSalt) . ',' . base64_encode($result);
     }
 
@@ -94,6 +93,6 @@ class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
         $dynamicSalt = base64_decode($parts[0]);
         $derivedKey = base64_decode($parts[1]);
         $derivedKeyLength = strlen($derivedKey);
-        return $derivedKey === CryptographyAlgorithms::pbkdf2($password, $dynamicSalt . $staticSalt, $this->iterationCount, $derivedKeyLength, $this->algorithm);
+        return $derivedKey === hash_pbkdf2($this->algorithm, $password, $dynamicSalt . $staticSalt, $this->iterationCount, $derivedKeyLength, true);
     }
 }

@@ -52,7 +52,7 @@ class CacheEntryIterator implements \Iterator
      * @return mixed
      * @api
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->frontend->get((string) $this->backend->key());
     }
@@ -63,7 +63,7 @@ class CacheEntryIterator implements \Iterator
      * @return void
      * @api
      */
-    public function next()
+    public function next(): void
     {
         $this->backend->next();
     }
@@ -97,7 +97,7 @@ class CacheEntryIterator implements \Iterator
      * @return void
      * @api
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->backend->rewind();
     }

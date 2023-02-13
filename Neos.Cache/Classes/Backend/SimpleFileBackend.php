@@ -344,7 +344,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return mixed
      * @api
      */
-    public function current()
+    public function current(): mixed
     {
         if ($this->cacheFilesIterator === null) {
             $this->rewind();
@@ -360,7 +360,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
-    public function next()
+    public function next(): void
     {
         if ($this->cacheFilesIterator === null) {
             $this->rewind();
@@ -406,7 +406,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->cacheFilesIterator === null) {
             $this->cacheFilesIterator = new \DirectoryIterator($this->cacheDirectory);
@@ -503,7 +503,16 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     if ($offset !== null) {
                         fseek($file, $offset);
                     }
-                    $data = fread($file, $maxlen !== null ? $maxlen : filesize($cacheEntryPathAndFilename) - (int)$offset);
+
+                    $length = $maxlen !== null ? $maxlen : filesize($cacheEntryPathAndFilename) - (int)$offset;
+
+                    // fread requires a positive length. If the file is empty, we just return an empty string.
+                    if ($length === 0) {
+                        $data = '';
+                    } else {
+                        $data = fread($file, $length);
+                    }
+
                     flock($file, LOCK_UN);
                 }
                 fclose($file);

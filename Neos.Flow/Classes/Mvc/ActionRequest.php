@@ -113,16 +113,16 @@ class ActionRequest implements RequestInterface
     protected $dispatched = false;
 
     /**
-     * The parent request – either another ActionRequest or Http Request
-     * @var ActionRequest
+     * The parent request – either another sub ActionRequest a main ActionRequest or null
+     * @var ?ActionRequest
      */
     protected $parentRequest;
 
     /**
-     * Cached pointer to the root request (usually an HTTP request)
+     * Cached pointer to the http request
      * @var HttpRequestInterface
      */
-    protected $rootRequest;
+    protected $httpRequest;
 
     /**
      * Cached pointer to a request referring to this one (if any)
@@ -132,26 +132,11 @@ class ActionRequest implements RequestInterface
 
     /**
      * Constructs this action request
-     *
-     * @param ActionRequest|HttpRequestInterface $parentRequest Either an HTTP request or another ActionRequest
-     * @throws \InvalidArgumentException
-     * @api
+     * @see fromHttpRequest
+     * @see createSubRequest
      */
-    protected function __construct($parentRequest)
+    protected function __construct()
     {
-        if (!$parentRequest instanceof HttpRequestInterface && !$parentRequest instanceof ActionRequest) {
-            throw new \InvalidArgumentException('The parent request passed to ActionRequest::__construct() must be either an HTTP request or another ActionRequest', 1327846149);
-        }
-
-
-        // TODO: Cleaner constructor now that it is protected
-        if ($parentRequest instanceof HttpRequestInterface) {
-            $this->rootRequest = $parentRequest;
-        }
-
-        if ($parentRequest instanceof ActionRequest) {
-            $this->parentRequest = $parentRequest;
-        }
     }
 
     /**
@@ -160,7 +145,9 @@ class ActionRequest implements RequestInterface
      */
     public static function fromHttpRequest(HttpRequestInterface $request): ActionRequest
     {
-        return new ActionRequest($request);
+        $mainActionRequest = new ActionRequest();
+        $mainActionRequest->httpRequest = $request;
+        return $mainActionRequest;
     }
 
     /**
@@ -170,7 +157,9 @@ class ActionRequest implements RequestInterface
      */
     public function createSubRequest(): ActionRequest
     {
-        return new ActionRequest($this);
+        $subActionRequest = new ActionRequest();
+        $subActionRequest->parentRequest = $this;
+        return $subActionRequest;
     }
 
     /**
@@ -196,11 +185,11 @@ class ActionRequest implements RequestInterface
      */
     public function getHttpRequest(): HttpRequestInterface
     {
-        if ($this->rootRequest === null && $this->isMainRequest() === false) {
-            $this->rootRequest = $this->getMainRequest()->getHttpRequest();
+        if ($this->httpRequest === null && $this->isMainRequest() === false) {
+            $this->httpRequest = $this->getMainRequest()->getHttpRequest();
         }
 
-        return $this->rootRequest;
+        return $this->httpRequest;
     }
 
     /**

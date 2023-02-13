@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
@@ -9,15 +11,12 @@ use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
 
-/**
- *
- */
 class MultiBackendTest extends BaseTestCase
 {
     /**
      * @test
      */
-    public function noExceptionIsThrownIfBackendFailsToBeCreated()
+    public function noExceptionIsThrownIfBackendFailsToBeCreated(): void
     {
         $backendOptions = [
             'backendConfigurations' => [
@@ -40,7 +39,7 @@ class MultiBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function debugModeWillBubbleExceptions()
+    public function debugModeWillBubbleExceptions(): void
     {
         $this->expectException(\Throwable::class);
         $backendOptions = [
@@ -65,7 +64,7 @@ class MultiBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function writesToAllBackends()
+    public function writesToAllBackends(): void
     {
         $mockBuilder = $this->getMockBuilder(NullBackend::class);
         $firstNullBackendMock = $mockBuilder->getMock();
@@ -78,13 +77,13 @@ class MultiBackendTest extends BaseTestCase
         $this->inject($multiBackend, 'backends', [$firstNullBackendMock, $secondNullBackendMock]);
         $this->inject($multiBackend, 'initialized', true);
 
-        $multiBackend->set('foo', 1);
+        $multiBackend->set('foo', 'data');
     }
 
     /**
      * @test
      */
-    public function fallsBackToSecondaryBackend()
+    public function fallsBackToSecondaryBackend(): void
     {
         $mockBuilder = $this->getMockBuilder(NullBackend::class);
         $firstNullBackendMock = $mockBuilder->getMock();
@@ -102,9 +101,33 @@ class MultiBackendTest extends BaseTestCase
     }
 
     /**
-     * @return EnvironmentConfiguration|\PHPUnit\Framework\MockObject\MockObject
+     * @test
      */
-    public function getEnvironmentConfiguration()
+    public function removesUnhealthyBackend(): void
+    {
+        $mockBuilder = $this->getMockBuilder(NullBackend::class);
+        $firstNullBackendMock = $mockBuilder->getMock();
+        $secondNullBackendMock = $mockBuilder->getMock();
+
+        $firstNullBackendMock->expects(self::once())->method('get')->with('foo')->willThrowException(new \Exception('Backend failure'));
+        $secondNullBackendMock->expects(self::exactly(2))->method('get')->with('foo')->willReturn(5);
+
+        $multiBackend = new MultiBackend($this->getEnvironmentConfiguration(), []);
+        $multiBackend->setRemoveUnhealthyBackends(true);
+
+        $this->inject($multiBackend, 'backends', [$firstNullBackendMock, $secondNullBackendMock]);
+        $this->inject($multiBackend, 'initialized', true);
+
+        $result = $multiBackend->get('foo');
+        self::assertSame(5, $result);
+        $result = $multiBackend->get('foo');
+        self::assertSame(5, $result);
+    }
+
+    /**
+     * @return EnvironmentConfiguration
+     */
+    public function getEnvironmentConfiguration(): EnvironmentConfiguration
     {
         return new EnvironmentConfiguration(
             __DIR__ . '~Testing',

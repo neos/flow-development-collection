@@ -30,7 +30,7 @@ class ParameterReflection extends \ReflectionParameter
      *
      * @return ClassReflection The declaring class
      */
-    public function getDeclaringClass()
+    public function getDeclaringClass(): ClassReflection
     {
         return new ClassReflection(parent::getDeclaringClass()->getName());
     }
@@ -40,7 +40,7 @@ class ParameterReflection extends \ReflectionParameter
      *
      * @return ClassReflection|null The parameter class
      */
-    public function getClass()
+    public function getClass(): ?ClassReflection
     {
         try {
             $class = parent::getType();

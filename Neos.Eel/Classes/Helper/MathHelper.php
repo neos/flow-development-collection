@@ -99,7 +99,7 @@ class MathHelper implements ProtectedContextAwareInterface
         if (!is_numeric($x) && $x !== null) {
             return NAN;
         }
-        return abs($x);
+        return abs((float)$x);
     }
 
     /**
@@ -108,7 +108,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function acos($x)
     {
-        return acos($x);
+        return acos((float)$x);
     }
 
     /**
@@ -117,7 +117,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function acosh($x)
     {
-        return acosh($x);
+        return acosh((float)$x);
     }
 
     /**
@@ -126,7 +126,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function asin($x)
     {
-        return asin($x);
+        return asin((float)$x);
     }
 
     /**
@@ -135,7 +135,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function asinh($x)
     {
-        return asinh($x);
+        return asinh((float)$x);
     }
 
     /**
@@ -144,7 +144,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function atan($x)
     {
-        return atan($x);
+        return atan((float)$x);
     }
 
     /**
@@ -163,7 +163,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function atan2($y, $x)
     {
-        return atan2($y, $x);
+        return atan2((float)$y, (float)$x);
     }
 
     /**
@@ -182,7 +182,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function ceil($x)
     {
-        return ceil($x);
+        return ceil((float)$x);
     }
 
     /**
@@ -191,7 +191,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function cos($x)
     {
-        return cos($x);
+        return cos((float)$x);
     }
 
     /**
@@ -200,7 +200,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function cosh($x)
     {
-        return cosh($x);
+        return cosh((float)$x);
     }
 
     /**
@@ -209,7 +209,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function exp($x)
     {
-        return exp($x);
+        return exp((float)$x);
     }
 
     /**
@@ -218,7 +218,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function expm1($x)
     {
-        return expm1($x);
+        return expm1((float)$x);
     }
 
     /**
@@ -227,7 +227,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function floor($x)
     {
-        return floor($x);
+        return floor((float)$x);
     }
 
     /**
@@ -293,7 +293,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function log($x)
     {
-        return log($x);
+        return log((float)$x);
     }
 
     /**
@@ -302,7 +302,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function log1p($x)
     {
-        return log1p($x);
+        return log1p((float)$x);
     }
 
     /**
@@ -311,7 +311,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function log10($x)
     {
-        return log10($x);
+        return log10((float)$x);
     }
 
     /**
@@ -320,7 +320,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function log2($x)
     {
-        return log($x, 2);
+        return log((float)$x, 2);
     }
 
     /**
@@ -408,10 +408,10 @@ class MathHelper implements ProtectedContextAwareInterface
             return NAN;
         }
         $subject = (float)$subject;
-        if ($precision != null && !is_int($precision)) {
+        if ($precision !== null && !is_int($precision)) {
             return NAN;
         }
-        return round($subject, $precision);
+        return round($subject, (int)$precision);
     }
 
     /**
@@ -439,7 +439,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function sin($x)
     {
-        return sin($x);
+        return sin((float)$x);
     }
 
     /**
@@ -457,7 +457,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function sqrt($x)
     {
-        return sqrt($x);
+        return sqrt((float)$x);
     }
 
     /**
@@ -466,7 +466,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function tan($x)
     {
-        return tan($x);
+        return tan((float)$x);
     }
 
     /**
@@ -485,7 +485,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * on the sign of the number.
      *
      * @param float $x A number
-     * @return integer The integral part of the given number
+     * @return int|float The integral part of the given number or NAN if the given value was not numeric
      */
     public function trunc($x)
     {

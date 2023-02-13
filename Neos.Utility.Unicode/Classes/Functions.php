@@ -42,8 +42,8 @@ abstract class Functions
      * Unicode variant of substr()
      *
      * @param string $string The string to crop
-     * @param integer $start Position of the left boundary
-     * @param integer $length (optional) Length of the returned string
+     * @param int $start Position of the left boundary
+     * @param int|null $length (optional) Length of the returned string
      * @return string The processed string
      * @api
      */
