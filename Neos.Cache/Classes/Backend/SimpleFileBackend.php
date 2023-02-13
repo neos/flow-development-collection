@@ -501,10 +501,10 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                 }
                 if (flock($file, LOCK_SH) !== false) {
                     $data = '';
-                    if ($length !== 0) {
+                    if ($maxlen !== 0) {
                         $data = $maxlen !== null ? file_get_contents($cacheEntryPathAndFilename, false, null, $offset, $maxlen) : file_get_contents($cacheEntryPathAndFilename, false, null, $offset);
                     }
-                    
+
                     flock($file, LOCK_UN);
                 }
                 fclose($file);

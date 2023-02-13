@@ -267,7 +267,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
             }
 
             $extractedTags = $entry->getTags();
-            if ($extractedTags === [] || !array_intersect($tags, explode(' ', $extractedTags))) {
+            if ($extractedTags === [] || !array_intersect($tags, $extractedTags)) {
                 continue;
             }
 
