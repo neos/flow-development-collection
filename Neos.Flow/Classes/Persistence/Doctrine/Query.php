@@ -11,12 +11,16 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\Expr\Comparison;
+use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Persistence\Exception\InvalidQueryException;
-use Neos\Flow\Persistence\Generic\Qom\Constraint;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
@@ -35,6 +39,7 @@ class Query implements QueryInterface
     protected $entityClassName;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -46,12 +51,12 @@ class Query implements QueryInterface
     protected $throwableStorage;
 
     /**
-     * @var \Doctrine\ORM\QueryBuilder
+     * @var QueryBuilder
      */
     protected $queryBuilder;
 
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     protected $entityManager;
 
@@ -68,10 +73,10 @@ class Query implements QueryInterface
     /**
      * @var array
      */
-    protected $orderings;
+    protected $orderings = [];
 
     /**
-     * @var integer
+     * @var int|null
      */
     protected $limit;
 
@@ -81,7 +86,7 @@ class Query implements QueryInterface
     protected $distinct = false;
 
     /**
-     * @var integer
+     * @var int|null
      */
     protected $offset;
 
@@ -154,7 +159,7 @@ class Query implements QueryInterface
      * @return string
      * @api
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->entityClassName;
     }
@@ -166,7 +171,7 @@ class Query implements QueryInterface
      * @return QueryResultInterface The query result
      * @api
      */
-    public function execute($cacheResult = false)
+    public function execute(bool $cacheResult = false): QueryResultInterface
     {
         $this->cacheResult = $cacheResult;
         return new QueryResult($this);
@@ -191,11 +196,11 @@ class Query implements QueryInterface
                 $query->useResultCache(true);
             }
             return $query->getResult();
-        } catch (\Doctrine\ORM\ORMException $ormException) {
+        } catch (ORMException $ormException) {
             $message = $this->throwableStorage->logThrowable($ormException);
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return [];
-        } catch (\Doctrine\DBAL\DBALException $dbalException) {
+        } catch (DBALException $dbalException) {
             $message = $this->throwableStorage->logThrowable($dbalException);
             $this->logger->debug($message);
 
@@ -239,7 +244,7 @@ class Query implements QueryInterface
      * @throws Exception\DatabaseConnectionException
      * @api
      */
-    public function count()
+    public function count(): int
     {
         try {
             $originalQuery = $this->queryBuilder->getQuery();
@@ -259,7 +264,7 @@ class Query implements QueryInterface
                 $numberOfResults = min($numberOfResults, $limit);
             }
             return $numberOfResults;
-        } catch (\Doctrine\ORM\ORMException $ormException) {
+        } catch (ORMException $ormException) {
             $message = $this->throwableStorage->logThrowable($ormException);
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return 0;
@@ -279,7 +284,7 @@ class Query implements QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function setOrderings(array $orderings)
+    public function setOrderings(array $orderings): QueryInterface
     {
         $this->orderings = $orderings;
         $this->queryBuilder->resetDQLPart('orderBy');
@@ -299,7 +304,7 @@ class Query implements QueryInterface
      * @return array
      * @api
      */
-    public function getOrderings()
+    public function getOrderings(): array
     {
         return $this->orderings;
     }
@@ -308,11 +313,11 @@ class Query implements QueryInterface
      * Sets the maximum size of the result set to limit. Returns $this to allow
      * for chaining (fluid interface)
      *
-     * @param integer $limit
+     * @param integer|null $limit
      * @return QueryInterface
      * @api
      */
-    public function setLimit($limit)
+    public function setLimit(?int $limit): QueryInterface
     {
         $this->limit = $limit;
         $this->queryBuilder->setMaxResults($limit);
@@ -325,7 +330,7 @@ class Query implements QueryInterface
      * @return integer
      * @api
      */
-    public function getLimit()
+    public function getLimit(): ?int
     {
         return $this->limit;
     }
@@ -337,7 +342,7 @@ class Query implements QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function setDistinct($distinct = true)
+    public function setDistinct(bool $distinct = true): QueryInterface
     {
         $this->distinct = $distinct;
         $this->queryBuilder->distinct($distinct);
@@ -350,7 +355,7 @@ class Query implements QueryInterface
      * @return boolean
      * @api
      */
-    public function isDistinct()
+    public function isDistinct(): bool
     {
         return $this->distinct;
     }
@@ -359,11 +364,11 @@ class Query implements QueryInterface
      * Sets the start offset of the result set to offset. Returns $this to
      * allow for chaining (fluid interface)
      *
-     * @param integer $offset
+     * @param integer|null $offset
      * @return QueryInterface
      * @api
      */
-    public function setOffset($offset)
+    public function setOffset(?int $offset): QueryInterface
     {
         $this->offset = $offset;
         $this->queryBuilder->setFirstResult($offset);
@@ -376,7 +381,7 @@ class Query implements QueryInterface
      * @return integer
      * @api
      */
-    public function getOffset()
+    public function getOffset(): ?int
     {
         return $this->offset;
     }
@@ -389,7 +394,7 @@ class Query implements QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function matching($constraint)
+    public function matching($constraint): QueryInterface
     {
         $this->constraint = $constraint;
         $this->queryBuilder->where($constraint);
@@ -399,7 +404,7 @@ class Query implements QueryInterface
     /**
      * Gets the constraint for this query.
      *
-     * @return Constraint the constraint, or null if none
+     * @return object the constraint, or null if none
      * @api
     */
     public function getConstraint()
@@ -472,10 +477,10 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @param boolean $caseSensitive Whether the equality test should be done case-sensitive for strings
-     * @return object
+     * @return Comparison|string
      * @api
      */
-    public function equals($propertyName, $operand, $caseSensitive = true)
+    public function equals(string $propertyName, $operand, bool $caseSensitive = true)
     {
         $aliasedPropertyName = $this->getPropertyNameWithAlias($propertyName);
         if ($operand === null) {
@@ -498,10 +503,9 @@ class Query implements QueryInterface
      * @param string $operand The value to compare with
      * @param boolean $caseSensitive Whether the matching should be done case-sensitive
      * @return object
-     * @throws InvalidQueryException if used on a non-string property
      * @api
      */
-    public function like($propertyName, $operand, $caseSensitive = true)
+    public function like(string $propertyName, string $operand, bool $caseSensitive = true)
     {
         $aliasedPropertyName = $this->getPropertyNameWithAlias($propertyName);
         if ($caseSensitive === true) {
@@ -519,11 +523,10 @@ class Query implements QueryInterface
      *
      * @param string $propertyName The name of the multivalued property to compare against
      * @param mixed $operand The value to compare with
-     * @return object
-     * @throws InvalidQueryException if used on a single-valued property
+     * @return string
      * @api
      */
-    public function contains($propertyName, $operand)
+    public function contains(string $propertyName, $operand)
     {
         return '(' . $this->getParamNeedle($operand) . ' MEMBER OF ' . $this->getPropertyNameWithAlias($propertyName) . ')';
     }
@@ -533,11 +536,10 @@ class Query implements QueryInterface
      * It matches if the multivalued property contains no values or is NULL.
      *
      * @param string $propertyName The name of the multivalued property to compare against
-     * @return boolean
-     * @throws InvalidQueryException if used on a single-valued property
+     * @return string
      * @api
      */
-    public function isEmpty($propertyName)
+    public function isEmpty(string $propertyName)
     {
         return '(' . $this->getPropertyNameWithAlias($propertyName) . ' IS EMPTY)';
     }
@@ -549,10 +551,9 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with, multivalued
      * @return object
-     * @throws InvalidQueryException if used on a multi-valued property
      * @api
      */
-    public function in($propertyName, $operand)
+    public function in(string $propertyName, $operand)
     {
         // Take care: In cannot be needled at the moment! DQL escapes it, but only as literals, making caching a bit harder.
         // This is a todo for Doctrine 2.1
@@ -565,10 +566,9 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function lessThan($propertyName, $operand)
+    public function lessThan(string $propertyName, $operand)
     {
         return $this->queryBuilder->expr()->lt($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
     }
@@ -579,10 +579,9 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function lessThanOrEqual($propertyName, $operand)
+    public function lessThanOrEqual(string $propertyName, $operand)
     {
         return $this->queryBuilder->expr()->lte($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
     }
@@ -593,10 +592,9 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function greaterThan($propertyName, $operand)
+    public function greaterThan(string $propertyName, $operand)
     {
         return $this->queryBuilder->expr()->gt($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
     }
@@ -607,10 +605,9 @@ class Query implements QueryInterface
      * @param string $propertyName The name of the property to compare against
      * @param mixed $operand The value to compare with
      * @return object
-     * @throws InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function greaterThanOrEqual($propertyName, $operand)
+    public function greaterThanOrEqual(string $propertyName, $operand)
     {
         return $this->queryBuilder->expr()->gte($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
     }
@@ -632,7 +629,7 @@ class Query implements QueryInterface
     /**
      * Gets all defined query parameters for the query being constructed.
      *
-     * @return array
+     * @return ArrayCollection
      */
     public function getParameters()
     {
@@ -745,7 +742,7 @@ class Query implements QueryInterface
     }
 
     /**
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return QueryBuilder
      */
     public function getQueryBuilder()
     {

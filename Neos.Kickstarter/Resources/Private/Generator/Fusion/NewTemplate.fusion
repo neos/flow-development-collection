@@ -1,0 +1,33 @@
+{namespace k=Neos\Kickstarter\ViewHelpers}
+{packageKey}{f:if(condition:isInSubpackage, then:".{subpackage}")}.{controllerName}Controller.{viewName -> k:inflect.humanizeCamelCase(lowercase: true)} = {packageKey}:Default {
+
+    head <![CDATA[{]]>
+        titleTag.content = 'New {modelName -> k:inflect.humanizeCamelCase(lowercase: true)}'
+    <![CDATA[}
+
+    body {]]>
+
+        renderer = afx`
+            <h1>New {modelName -> k:inflect.humanizeCamelCase(lowercase: true)}</h1>
+
+            <p>Just fill out the following form to create a new {modelName -> k:inflect.humanizeCamelCase(lowercase: true)}:</p>
+
+            <![CDATA[<Neos.Fusion.Form:Form form.target.action="create"]]>>
+                <ol><f:for each="{properties}" as="property" key="propertyName">
+                    <li>
+                        <label for="{propertyName}">{propertyName -> k:inflect.humanizeCamelCase()}</label>
+                        <f:if condition="{0: property.type} == {0: 'DateTime'}">
+                            <f:then><![CDATA[<Neos.Fusion.Form:Input attributes.type="datetime-local" attributes.value={Date.format('now', 'Y-m-d\TH:i:sP')}]]> field.name="new{modelName -> k:format.ucfirst()}[{propertyName}]" attributes.id="{propertyName}" /></f:then>
+                            <f:else><![CDATA[<Neos.Fusion.Form:Textfield]]> field.name="new{modelName -> k:format.ucfirst()}[{propertyName}]" attributes.id="{propertyName}" /></f:else>
+                        </f:if>
+                    </li>
+                </f:for>
+                    <li>
+                        <![CDATA[<Neos.Fusion.Form:Submit attributes.value="Create" />
+                    </li>
+                </ol>
+            </Neos.Fusion.Form:Form>]]>
+        `
+    }
+
+}

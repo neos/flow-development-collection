@@ -87,9 +87,10 @@ class CldrParser extends AbstractXmlParser
 
             $parsedChild = $this->parseNode($child);
 
-            if (count($child->attributes()) > 0) {
+            $childAttributes = $child->attributes();
+            if ($childAttributes !== null && count($childAttributes) > 0) {
                 $parsedAttributes = '';
-                foreach ($child->attributes() as $attributeName => $attributeValue) {
+                foreach ($childAttributes as $attributeName => $attributeValue) {
                     if ($this->isDistinguishingAttribute((string)$attributeName)) {
                         $parsedAttributes .= '[@' . $attributeName . '="' . $attributeValue . '"]';
                     }
@@ -131,6 +132,9 @@ class CldrParser extends AbstractXmlParser
 
         // we need this one for datetime parsing (default[@choice] nodes)
         $distinguishingAttributes[] = 'choice';
+
+        // these are needed for numberParsing
+        $distinguishingAttributes[] = 'numberSystem';
 
         return in_array($attributeName, $distinguishingAttributes);
     }

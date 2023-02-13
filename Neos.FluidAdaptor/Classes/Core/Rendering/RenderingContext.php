@@ -30,7 +30,6 @@ use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\MathExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\TernaryExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\TemplateProcessor\PassthroughSourceModifierTemplateProcessor;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContext as FluidRenderingContext;
-use TYPO3Fluid\Fluid\View\ViewInterface;
 
 /**
  * A Fluid rendering context specifically to be used in conjunction with Flow.
@@ -82,12 +81,11 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     /**
      * RenderingContext constructor.
      *
-     * @param ViewInterface $view
      * @param array $options
      */
-    public function __construct(ViewInterface $view, array $options = [])
+    public function __construct(array $options = [])
     {
-        parent::__construct($view);
+        parent::__construct();
         $this->setTemplateParser(new TemplateParser());
         $this->setViewHelperResolver(new ViewHelperResolver());
         $this->setTemplateProcessors([

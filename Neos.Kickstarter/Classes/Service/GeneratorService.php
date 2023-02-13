@@ -61,10 +61,11 @@ class GeneratorService
      * @param string $packageKey The package key of the controller's package
      * @param string $subpackage An optional subpackage name
      * @param string $controllerName The name of the new controller
+     * @param boolean $fusionView If the controller should default to a FusionView
      * @param boolean $overwrite Overwrite any existing files?
      * @return array An array of generated filenames
      */
-    public function generateActionController($packageKey, $subpackage, $controllerName, $overwrite = false)
+    public function generateActionController($packageKey, $subpackage, $controllerName, $fusionView = false, $overwrite = false)
     {
         list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $controllerName = ucfirst($controllerName);
@@ -79,6 +80,7 @@ class GeneratorService
         $contextVariables['isInSubpackage'] = ($subpackage != '');
         $contextVariables['controllerClassName'] = $controllerClassName;
         $contextVariables['controllerName'] = $controllerName;
+        $contextVariables['defaultView'] = $fusionView ? '\Neos\Fusion\View\FusionView' : '';
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
@@ -98,10 +100,11 @@ class GeneratorService
      * @param string $packageKey The package key of the controller's package
      * @param string $subpackage An optional subpackage name
      * @param string $controllerName The name of the new controller
+     * @param boolean $fusionView If the controller should default to a FusionView
      * @param boolean $overwrite Overwrite any existing files?
      * @return array An array of generated filenames
      */
-    public function generateCrudController($packageKey, $subpackage, $controllerName, $overwrite = false)
+    public function generateCrudController($packageKey, $subpackage, $controllerName, $fusionView = false, $overwrite = false)
     {
         list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $controllerName = ucfirst($controllerName);
@@ -120,6 +123,7 @@ class GeneratorService
         $contextVariables['repositoryClassName'] = '\\' . trim($baseNamespace, '\\') . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Repository\\' . $controllerName . 'Repository';
         $contextVariables['modelFullClassName'] = '\\' . trim($baseNamespace, '\\') . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Model\\' . $controllerName;
         $contextVariables['modelClassName'] = ucfirst($contextVariables['modelName']);
+        $contextVariables['defaultView'] = $fusionView ? '\Neos\Fusion\View\FusionView' : '';
 
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
@@ -244,6 +248,90 @@ class GeneratorService
 
         $this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
 
+        return $this->generatedFiles;
+    }
+
+
+    /**
+     * Generate a Fusion with the given name for the given package and controller
+     *
+     * @param string $packageKey The package key of the controller's package
+     * @param string $subpackage An optional subpackage name
+     * @param string $controllerName The name of the new controller
+     * @param string $viewName The name of the view
+     * @param string $templateName The name of the view
+     * @param boolean $overwrite Overwrite any existing files?
+     * @return array An array of generated filenames
+     */
+    public function generateFusion(string $packageKey, string $subpackage, string $controllerName, string $viewName, string $templateName, bool $overwrite = false): array
+    {
+        [$baseNamespace] = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
+        $viewName = ucfirst($viewName);
+
+        $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Fusion/' . $templateName . 'Template.fusion';
+
+        $contextVariables = [];
+        $contextVariables['packageKey'] = $packageKey;
+        $contextVariables['subpackage'] = $subpackage;
+        $contextVariables['isInSubpackage'] = ($subpackage != '');
+        $contextVariables['controllerName'] = $controllerName;
+        $contextVariables['viewName'] = $viewName;
+        $contextVariables['modelName'] = strtolower($controllerName[0]) . substr($controllerName, 1);
+        $contextVariables['repositoryClassName'] = '\\' . trim($baseNamespace, '\\') . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Repository\\' . $controllerName . 'Repository';
+        $contextVariables['modelFullClassName'] = '\\' . trim($baseNamespace, '\\') . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Model\\' . $controllerName;
+        $contextVariables['modelClassName'] = ucfirst($contextVariables['modelName']);
+
+        $modelClassSchema = $this->reflectionService->getClassSchema($contextVariables['modelFullClassName']);
+        if ($modelClassSchema !== null) {
+            $contextVariables['properties'] = $modelClassSchema->getProperties();
+            if (isset($contextVariables['properties']['Persistence_Object_Identifier'])) {
+                unset($contextVariables['properties']['Persistence_Object_Identifier']);
+            }
+        }
+
+        if (!isset($contextVariables['properties']) || $contextVariables['properties'] === []) {
+            $contextVariables['properties'] = ['name' => ['type' => 'string']];
+        }
+
+        $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+
+        $subpackagePath = $subpackage !== '' ? $subpackage . '/' : '';
+        $viewFilename = $viewName . '.fusion';
+        $viewPath = 'resource://' . $packageKey . '/Private/Fusion/' . $subpackagePath . $controllerName . '/';
+        $targetPathAndFilename = $viewPath . $viewFilename;
+
+        $this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
+
+        return $this->generatedFiles;
+    }
+
+    /**
+     * Generate a default page prototype
+     *
+     * @param string $packageKey The package key of the controller's package
+     * @param string $layoutName The name of the layout
+     * @param boolean $overwrite Overwrite any existing files?
+     * @return array An array of generated filenames
+     */
+    public function generatePrototype(string $packageKey, string $layoutName, bool $overwrite = false): array
+    {
+        $layoutName = ucfirst($layoutName);
+
+        $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Fusion/' . $layoutName . 'Prototype.fusion';
+
+        $contextVariables = [];
+        $contextVariables['packageKey'] = $packageKey;
+        $contextVariables['prototypeName'] = $layoutName;
+
+        $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+
+        $layoutFilename = $layoutName . '.fusion';
+        $viewPath = 'resource://' . $packageKey . '/Private/Fusion/Prototypes/';
+        $targetPathAndFilename = $viewPath . $layoutFilename;
+
+        $this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
+
+        $this->generateFile('resource://' . $packageKey . '/Private/Fusion/Root.fusion', "include: resource://Neos.Fusion/Private/Fusion/Root.fusion\ninclude: resource://Neos.Fusion.Form/Private/Fusion/Root.fusion\ninclude: **/*.fusion\n", $overwrite);
         return $this->generatedFiles;
     }
 
@@ -435,9 +523,9 @@ class GeneratorService
     protected function normalizeFieldDefinitions(array $fieldDefinitions, $namespace = '')
     {
         foreach ($fieldDefinitions as &$fieldDefinition) {
-            if ($fieldDefinition['type'] == 'bool') {
+            if ($fieldDefinition['type'] === 'bool') {
                 $fieldDefinition['type'] = 'boolean';
-            } elseif ($fieldDefinition['type'] == 'int') {
+            } elseif ($fieldDefinition['type'] === 'int') {
                 $fieldDefinition['type'] = 'integer';
             } elseif (preg_match('/^[A-Z]/', $fieldDefinition['type'])) {
                 if (class_exists($fieldDefinition['type'])) {

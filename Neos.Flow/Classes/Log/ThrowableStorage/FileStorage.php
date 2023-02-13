@@ -11,7 +11,6 @@ use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Files;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * Stores detailed information about throwables into files.
@@ -60,7 +59,7 @@ class FileStorage implements ThrowableStorageInterface
 
         $this->requestInformationRenderer = static function () {
             // The following lines duplicate Scripts::initializeExceptionStorage(), which is a fallback to handle
-            // exceptions that may occure before Scripts::initializeExceptionStorage() has finished.
+            // exceptions that may occur before Scripts::initializeExceptionStorage() has finished.
 
             $output = '';
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
@@ -74,17 +73,14 @@ class FileStorage implements ThrowableStorageInterface
                 return $output;
             }
 
-            $request = $requestHandler->getComponentContext()->getHttpRequest();
-            $response = $requestHandler->getComponentContext()->getHttpResponse();
-            // TODO: Sensible error output
+            $request = $requestHandler->getHttpRequest();
             $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestInformation($request) : '[request was empty]') . PHP_EOL;
-            $output .= PHP_EOL . 'HTTP RESPONSE:' . PHP_EOL . ($response instanceof ResponseInterface ? $response->getStatusCode() : '[response was empty]') . PHP_EOL;
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;
         };
 
-        $this->backtraceRenderer = function ($backtrace) {
+        $this->backtraceRenderer = static function ($backtrace) {
             return Debugger::getBacktraceCode($backtrace, false, true);
         };
     }

@@ -11,7 +11,6 @@ namespace Neos\Flow\Security\Authentication\EntryPoint;
  * source code.
  */
 
-use function GuzzleHttp\Psr7\stream_for;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Mvc\ActionRequest;
@@ -19,6 +18,7 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use GuzzleHttp\Psr7\Utils;
 
 /**
  * An authentication entry point, that redirects to another webpage.
@@ -69,7 +69,7 @@ class WebRedirect extends AbstractEntryPoint
         }
 
         return $response
-            ->withBody(stream_for(sprintf('<html><head><meta http-equiv="refresh" content="0;url=%s"/></head></html>', htmlentities($uri, ENT_QUOTES, 'utf-8'))))
+            ->withBody(Utils::streamFor(sprintf('<html><head><meta http-equiv="refresh" content="0;url=%s"/></head></html>', htmlentities($uri, ENT_QUOTES, 'utf-8'))))
             ->withStatus(303)
             ->withHeader('Location', $uri);
     }

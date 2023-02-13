@@ -26,61 +26,38 @@ Neos:
 
       # Defines the PSR-15 middlewares that a request goes through in a flow
       middlewares:
+        # The following middleware components are executed first since they influence the incoming request or outgoing response
+        'standardsCompliance':
+          position: 'start 100'
+          middleware: 'Neos\Flow\Http\Middleware\StandardsComplianceMiddleware'
+        'trustedProxies':
+          position: 'start 50'
+          middleware: 'Neos\Flow\Http\Middleware\TrustedProxiesMiddleware'
+        'methodOverride':
+          position: 'start 30'
+          middleware: 'Neos\Flow\Http\Middleware\MethodOverrideMiddleware'
+        'session':
+          position: 'start 10'
+          middleware: 'Neos\Flow\Http\Middleware\SessionMiddleware'
+
+        # The execution order of the following middleware components is deliberately not specified.
+        # To run a middleware before or after an existing one, you can use "position: before <name>" or "position: after <name>"
+        'routing':
+          middleware: 'Neos\Flow\Mvc\Routing\RoutingMiddleware'
+        'poweredByHeader':
+          middleware: 'Neos\Flow\Http\Middleware\PoweredByMiddleware'
+        'flashMessages':
+          middleware: 'Neos\Flow\Mvc\FlashMessage\FlashMessageMiddleware'
+        'parseBody':
+          middleware: 'Neos\Flow\Http\Middleware\RequestBodyParsingMiddleware'
+        'securityEntryPoint':
+          middleware: 'Neos\Flow\Http\Middleware\SecurityEntryPointMiddleware'
+
+        # The dispatch middleware component is usually executed at the end of the chain since it creates the Response instance
+        # that is then passed back through the chain
         'dispatch':
-          position: 'end'
-          middleware: 'Neos\Flow\Http\Middleware\ComponentChainMiddleware'
-
-      # Defines the workflow of one request from bootstrap to the HTTP response
-      #
-      # By default this workflow is divided in three sub-chains "preprocess", "process" and "postprocess" but the chain can be restructured as needed
-      #
-      chain:
-
-        'preprocess':
-          position: 'before process'
-          chain:
-            'trustedProxies':
-              position: 'start'
-              component: 'Neos\Flow\Http\Component\TrustedProxiesComponent'
-            'getSessionCookieFromRequest':
-              position: 'after trustedProxies'
-              component: 'Neos\Flow\Session\Http\SessionRequestComponent'
-        'process':
-          chain:
-            'routing':
-              position: 'start'
-              component: 'Neos\Flow\Mvc\Routing\RoutingComponent'
-            'parseBody':
-              position: 'before dispatching'
-              component: 'Neos\Flow\Http\Component\RequestBodyParsingComponent'
-            'prepareActionRequest':
-              position: 'after parseBody'
-              component: 'Neos\Flow\Mvc\PrepareMvcRequestComponent'
-            'dispatching':
-              component: 'Neos\Flow\Mvc\DispatchComponent'
-            'replaceHttpResponse':
-              position: 'after dispatching'
-              component: 'Neos\Flow\Http\Component\ReplaceHttpResponseComponent'
-            'setHeader':
-              position: 'after dispatching'
-              component: 'Neos\Flow\Http\Component\SetHeaderComponent'
-            'securityEntryPoint':
-              position: 'after setHeaders'
-              component: 'Neos\Flow\Http\Component\SecurityEntryPointComponent'
-
-        'postprocess':
-          chain:
-            'setSessionCookie':
-              position: 'start'
-              component: 'Neos\Flow\Session\Http\SessionResponseComponent'
-            'flashMessages':
-              position: 'before setSessionCookie'
-              component: 'Neos\Flow\Mvc\FlashMessage\FlashMessageComponent'
-            'poweredByHeader':
-              component: 'Neos\Flow\Http\Component\PoweredByComponent'
-            'standardsCompliance':
-              position: 'end'
-              component: 'Neos\Flow\Http\Component\StandardsComplianceComponent'
+          position: 'end 100'
+          middleware: 'Neos\Flow\Mvc\DispatchMiddleware'
 
       trustedProxies:
 

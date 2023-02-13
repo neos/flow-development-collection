@@ -1,0 +1,168 @@
+`7.3.0 (2021-12-07) <https://github.com/neos/flow-development-collection/releases/tag/7.3.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Make backtrace code expandable with HTML5 <summary> element <https://github.com/neos/flow-development-collection/pull/2368>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+The backtrace code is printed when the DebugExceptionHandler is active (in "Development" context).
+
+This can be queit a mouthful for new users and developers. The backtrace go all the way back to the Flow Bootstrapping - things that are interesting when you get more into Flow.
+
+This is changed, by using the HTML5 element ``<summary>`` element that support collapsing without any extra libraries or code
+
+* Resolves: `#2367 <https://github.com/neos/flow-development-collection/issues/2367>`_
+
+* Packages: ``Flow``
+
+`FEATURE: Add case-insensitive filter operators for FlowQuery <https://github.com/neos/flow-development-collection/pull/2600>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+I added case-insensitive filter operators for FlowQuery
+````
+ExactMatchInsensitive: =~
+NotEqualMatchInsensitive: !=~
+SuffixMatchInsensitive: $=~
+PrefixMatchInsensitive: ^=~
+SubstringMatchInsensitive: *=~
+````
+
+**How I did it**
+I extended the FilterOperation Class. Also i extended the Fizzle.peg.inc and compiled the FizzleParser.php with generateEelParser.sh.
+
+**How to verify it**
+I extended the related tests for FizzleParser and FlowQuery. And run the test. Both have passed.
+
+
+* Packages: ``Flow`` ``Eel``
+
+`FEATURE: CLI command to list all connected signals with their slots <https://github.com/neos/flow-development-collection/pull/2599>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+The CLI command lists all signals with their slots. As parameter it accepts the class name and method name of the signal to filter the output.
+
+Help output:
+```
+Lists all connected signals with their slots.
+
+COMMAND:
+  neos.flow:signal:listconnected
+
+USAGE:
+  ./flow signal:listconnected [<options>]
+
+OPTIONS:
+  --class-name
+  --method-name
+```
+
+Example output:
+```
+$ ./flow signal:listconnected 
+Connected signals with their slots.
+
+Neos\\Flow\\Mvc\\Dispatcher
+  afterControllerInvocation
+    [0] Closure
+
+Neos\\Flow\\Cli\\SlaveRequestHandler
+  dispatchedCommandLineSlaveRequest
+    [0] Neos\\Flow\\Persistence\\PersistenceManagerInterface::persistAll
+
+Neos\\Flow\\Core\\Booting\\Sequence
+  afterInvokeStep
+    [0] Closure
+    [1] Closure
+    [2] Closure
+    [3] Closure
+
+Neos\\Flow\\Monitor\\FileMonitor
+  filesHaveChanged
+    [0] Closure
+    [1] Neos\\Flow\\Cache\\CacheManager::flushSystemCachesByChangedFiles
+    [2] Closure
+    [3] Closure
+    [4] Closure
+    [5] Closure
+
+Neos\\Flow\\Core\\Bootstrap
+  bootstrapShuttingDown
+    [0] Neos\\Flow\\ObjectManagement\\ObjectManagerInterface::shutdown
+    [1] Neos\\Flow\\Configuration\\ConfigurationManager::shutdown
+    [2] Neos\\Flow\\Reflection\\ReflectionService::saveToCache
+
+...
+```
+
+```
+$ ./flow signal:listconnected --class-name "Neos\\Media\\Domain\\Service\\AssetService" --method-name assetRemoved
+Connected signals with their slots.
+
+Neos\\Media\\Domain\\Service\\AssetService
+  assetRemoved
+    [0] Neos\\Media\\Domain\\Model\\ImportedAssetManager::registerRemovedAsset
+```
+
+* Fixes: `#535 <https://github.com/neos/flow-development-collection/issues/535>`_ 
+
+* Packages: ``Flow``
+
+`BUGFIX: Ignore missing PDOBackend tables during flush <https://github.com/neos/flow-development-collection/pull/2635>`_
+------------------------------------------------------------------------------------------------------------------------
+
+This prevents errors for cache setup with PDOBackends for caches that are flushed early on eg. due to file monitors.
+
+* Fixes: `#2634 <https://github.com/neos/flow-development-collection/issues/2634>`_
+
+* Packages: ``Cache``
+
+`BUGFIX: Catch Warning for rmdir in PHP 8.0 <https://github.com/neos/flow-development-collection/pull/2613>`_
+-------------------------------------------------------------------------------------------------------------
+
+When a resource is deleted the method ``removeEmptyDirectoriesOnPath`` is used, which cause an E_WARNING with PHP 8.0. Even if the shutup operator is used. This bugfix catch the E_WARNING to break the foreach at the right time.
+
+* Packages: ``Flow`` ``Utility.Files``
+
+`TASK: Add release notes for 7.3 [skip ci] <https://github.com/neos/flow-development-collection/pull/2645>`_
+------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: Adjust docblock typehint to TYPO3Fluid change <https://github.com/neos/flow-development-collection/pull/2633>`_
+----------------------------------------------------------------------------------------------------------------------
+
+The $pathAndFilename argument has been declared nullable in upstream 2.7.1+ and psalm was notifying about this.
+
+See https://github.com/TYPO3/Fluid/commit/`2d28324f02b384bb4e1983cbd72813d31e8493c7 <https://github.com/neos/flow-development-collection/commit/2d28324f02b384bb4e1983cbd72813d31e8493c7>`_
+
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`TASK: Avoid composer output during package creation <https://github.com/neos/flow-development-collection/pull/2571>`_
+----------------------------------------------------------------------------------------------------------------------
+
+When a new package is created internally composer is used to require it immediately. During that composer outputs content to the console which is often confusing. The change passes a NullOutput to composer to avoid this behavior.
+
+* Packages: ``Flow``
+
+`TASK: Remove duplicate cli command for validation of schemas <https://github.com/neos/flow-development-collection/pull/2594>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Removal of the duplicate cli command ``schema:validateSchema`` of ``schema:validate`` as they are almost equal.
+
+* Packages: ``Flow``
+
+`TASK: Replace TYPO3 occurrences with Neos <https://github.com/neos/flow-development-collection/pull/2598>`_
+------------------------------------------------------------------------------------------------------------
+
+Replaces some left over "Typo3"'s with "Neos"
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/7.2.2...7.3.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

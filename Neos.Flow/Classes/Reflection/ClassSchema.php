@@ -126,6 +126,7 @@ class ClassSchema
         $this->properties[$name] = [
             'type' => $type['type'],
             'elementType' => $type['elementType'],
+            'nullable' => $type['nullable'],
             'lazy' => $lazy,
             'transient' => $transient
         ];
@@ -258,6 +259,17 @@ class ClassSchema
     public function isPropertyTransient($propertyName)
     {
         return $this->properties[$propertyName]['transient'];
+    }
+
+    /**
+     * If a certain class schema property is nullable
+     *
+     * @param string $propertyName
+     * @return boolean
+     */
+    public function isPropertyNullable($propertyName)
+    {
+        return $this->properties[$propertyName]['nullable'];
     }
 
     /**

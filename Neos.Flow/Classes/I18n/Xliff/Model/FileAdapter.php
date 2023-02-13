@@ -33,11 +33,10 @@ use Psr\Log\LoggerInterface;
 class FileAdapter
 {
     /**
-     * @Flow\Inject
+     * @Flow\Inject(name="Neos.Flow:I18nLogger")
      * @var LoggerInterface
      */
     protected $i18nLogger;
-
 
     /**
      * @var array

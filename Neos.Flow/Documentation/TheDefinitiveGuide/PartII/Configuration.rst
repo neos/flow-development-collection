@@ -54,13 +54,15 @@ The configuration for each context is located in directories of the same name:
 
 **Context Configurations**
 
-============================	==================================================
-Directory						Description
-============================	==================================================
-*Configuration/*				Global configuration, for all contexts
-*Configuration/Development/*	Configuration for the ``Development`` context
-*Configuration/Production/*		Configuration for the ``Production`` context
-============================	==================================================
++------------------------------+-----------------------------------------------+
+| Directory                    | Description                                   |
++==============================+===============================================+
+| *Configuration/*             | Global configuration, for all contexts        |
++------------------------------+-----------------------------------------------+
+| *Configuration/Development/* | Configuration for the ``Development`` context |
++------------------------------+-----------------------------------------------+
+| *Configuration/Production/*  | Configuration for the ``Production`` context  |
++------------------------------+-----------------------------------------------+
 
 .. note::
 	Setting Up Context with Virtual Host and change Context from «Development» to «Production» is explained in the previous chapter «Installation».
@@ -178,9 +180,9 @@ table structure needed by Flow:
 .. note::
   If you run into problems with the migrations, e.g. because the database does not allow dropping primary keys,
   there is another method to setup the database newly:
-  
+
     ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
-  
+
   This should only be used for initial creation of the database, as it is a destructive operation though! Also note
   that this will not solve the issue for future migrations.
 
@@ -190,16 +192,22 @@ Environment Variables
 
 Some specific flow behaviour can also be configured with a couple of environment variables.
 
-============================	==================================================
-Variable						Description
-============================	==================================================
-FLOW_ROOTPATH					Can be used to override the path to the Flow root.
-FLOW_CONTEXT					Use to set the flow context (see above).
-FLOW_PATH_TEMPORARY_BASE		Can be used to set a path for temporary data.
-FLOW_LOCKHOLDINGPAGE			Use to specify the html page shown when the site is locked.
-								This is relative to the Packages directory.
-FLOW_ONLY_COMPOSER_LOADER		Set to true (1) to only use composer autoloader.
-============================	==================================================
++-------------------------------+------------------------------------------------------------+
+| Variable                      | Description                                                |
++===========================+================================================================+
+| ``FLOW_ROOTPATH``             | Can be used to override the path to the Flow root          |
++-------------------------------+------------------------------------------------------------+
+| ``FLOW_CONTEXT``              | Use to set the flow context (see above)                    |
++-------------------------------+------------------------------------------------------------+
+| ``FLOW_PATH_TEMPORARY_BASE``  | Can be used to set a path for temporary data               |
++-------------------------------+------------------------------------------------------------+
+| ``FLOW_LOCK_HOLDING_PAGE``    | Use to specify the html page shown when the site is        |
+|                               | locked. This is relative to the Packages directory.        |
+|                               | Can be given as ``FLOW_LOCKHOLDINGPAGE``, too.             |
++-------------------------------+------------------------------------------------------------+
+| ``FLOW_ONLY_COMPOSER_LOADER`` | Set to false (0) to use the custom ClassLoader on top of   |
+|                               | the regular mechanism provided by composer (deprecated)    |
++-------------------------------+------------------------------------------------------------+
 
 
 -----

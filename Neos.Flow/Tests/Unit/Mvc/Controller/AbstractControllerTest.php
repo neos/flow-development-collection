@@ -456,10 +456,8 @@ class AbstractControllerTest extends UnitTestCase
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $controller->_set('arguments', $controllerArguments);
 
-        $this->mockActionRequest->expects(self::at(0))->method('hasArgument')->with('foo')->willReturn(true);
-        $this->mockActionRequest->expects(self::at(1))->method('getArgument')->with('foo')->willReturn('bar');
-        $this->mockActionRequest->expects(self::at(2))->method('hasArgument')->with('baz')->willReturn(true);
-        $this->mockActionRequest->expects(self::at(3))->method('getArgument')->with('baz')->willReturn('quux');
+        $this->mockActionRequest->expects(self::atLeast(2))->method('hasArgument')->withConsecutive(['foo'], ['baz'])->willReturn(true);
+        $this->mockActionRequest->expects(self::atLeast(2))->method('getArgument')->withConsecutive(['foo'], ['baz'])->willReturnOnConsecutiveCalls('bar', 'quux');
 
         $controller->_call('mapRequestArgumentsToControllerArguments');
         self::assertEquals('bar', $controllerArguments['foo']->getValue());
@@ -487,9 +485,8 @@ class AbstractControllerTest extends UnitTestCase
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $controller->_set('arguments', $controllerArguments);
 
-        $this->mockActionRequest->expects(self::at(0))->method('hasArgument')->with('foo')->willReturn(true);
-        $this->mockActionRequest->expects(self::at(1))->method('getArgument')->with('foo')->willReturn('bar');
-        $this->mockActionRequest->expects(self::at(2))->method('hasArgument')->with('baz')->willReturn(false);
+        $this->mockActionRequest->expects(self::exactly(2))->method('hasArgument')->withConsecutive(['foo'], ['baz'])->willReturnOnConsecutiveCalls(true, false);
+        $this->mockActionRequest->expects(self::once())->method('getArgument')->with('foo')->willReturn('bar');
 
         $controller->_call('mapRequestArgumentsToControllerArguments');
     }

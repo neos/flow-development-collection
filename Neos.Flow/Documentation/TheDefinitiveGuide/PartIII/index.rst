@@ -24,6 +24,7 @@ Part III: Manual
 	Security
 	Internationalization
 	ErrorAndExceptionHandling
+	Logging
 	SignalsAndSlots
 	Reflection
 	Eel

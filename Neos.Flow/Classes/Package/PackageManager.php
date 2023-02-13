@@ -400,7 +400,8 @@ class PackageManager
             $composerRequireArguments = new ArrayInput([
                 'command' => 'require',
                 'packages' => [$manifest['name'] . ' @dev'],
-                '--working-dir' => FLOW_PATH_ROOT
+                '--working-dir' => FLOW_PATH_ROOT,
+                '--quiet'
             ]);
 
             $composerApplication = new ComposerApplication();
@@ -767,7 +768,11 @@ class PackageManager
         // Clean legacy file TODO: Remove at some point
         $legacyPackageStatesPath = FLOW_PATH_CONFIGURATION . 'PackageStates.php';
         if (is_file($legacyPackageStatesPath)) {
-            @unlink($legacyPackageStatesPath);
+            try {
+                @unlink($legacyPackageStatesPath);
+            } catch (\Throwable $e) {
+                // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
+            }
         }
         OpcodeCacheHelper::clearAllActive($this->packageInformationCacheFilePath);
 

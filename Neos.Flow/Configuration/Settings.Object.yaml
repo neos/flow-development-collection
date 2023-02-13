@@ -22,5 +22,4 @@ Neos:
       # reflected by default. You can however exclude specific (or all) classes from Flow packages
       # by specifying corresponding regular expressions that don't match classes to exclude.
       #
-      includeClasses:
-        'typo3fluid.fluid': ['.*']
+      includeClasses: []

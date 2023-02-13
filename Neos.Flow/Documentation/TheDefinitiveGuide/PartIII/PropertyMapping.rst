@@ -222,7 +222,7 @@ the path syntax supports an asterisk as a placeholder::
 		->setTypeConverterOption(
 			\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class,
 			\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
-			TRUE
+			true
 		);
 
 This also allows to easily configure TypeConverter options, like for the DateTimeConverter, for subproperties
@@ -257,7 +257,7 @@ of the controller, as in the following example:
       ->setTypeConverterOption(
       \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class,
       \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
-      TRUE
+      true
     );
   }
 
@@ -282,6 +282,37 @@ of the controller, as in the following example:
 
   Since the ``getArgument()`` method is explicitly annotated, common IDEs will recognize the type
   and there is no break in the type hinting chain.
+
+Mapping classes dynamically
+---------------------------
+
+Technically your controller actions can accept interfaces (or abstract classes) as arguments. In order to be able to map
+those and correctly validate the input the implementing class needs to be specified though. Since Flow 7.2 it is possible
+to enable a "dynamic validation" mode by setting the controller property ``$enableDynamicTypeValidation = true;``.
+With this enabled, you can do either of this, to tell Flow the implementation class for the controller argument at runtime:
+
+.. code-block:: php
+
+  protected $enableDynamicTypeValidation = true;
+
+  /**
+   * @param \My\Package\Domain\MyInterface $target
+   */
+  public function myDynamicAction(MyInterface $target)
+  {
+    ...
+  }
+
+  protected function initializeMyDynamicAction()
+  {
+    $propertyMappingConfiguration = $this->arguments['target']->getPropertyMappingConfiguration();
+    // Do this, but decide on the actual class depending on some runtime decision
+    $propertyMappingConfiguration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_TARGET_TYPE, \My\Package\Domain\MyImplementation::class);
+    // OR submit '_type' => '\My\Package\Domain\MyImplementation' to make the decision client-side with
+    $propertyMappingConfiguration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
+  }
+
+All validation annotations of your ``MyImplementation`` class will then be used to validate the input.
 
 Mapping whole request body
 --------------------------
@@ -349,7 +380,7 @@ following::
 	);
 
 As the property mapper works recursively, it would create a new ``Role`` object with the
-admin flag set to ``TRUE``, which might compromise the security in the system.
+admin flag set to ``true``, which might compromise the security in the system.
 
 That's why two parts need to be configured for enabling the recursive behavior: First, you need
 to specify the allowed properties using one of the ``allowProperties(), allowAllProperties()``
@@ -367,7 +398,7 @@ but does not create new ones or modifies existing ones.
 	as this makes sense as of their nature. If you have a use case where the user may not
 	create new Value Objects, for example because he may only choose from a fixed list, you can
 	however explicitly disallow creation by setting the appropriate property's
-	``CONFIGURATION_CREATION_ALLOWED`` option to ``FALSE``.
+	``CONFIGURATION_CREATION_ALLOWED`` option to ``false``.
 
 
 Default Configuration
@@ -483,7 +514,7 @@ When a type converter has to be found, the following algorithm is applied:
 
 If a type converter is found according to the above algorithm, ``canConvertFrom`` is
 called on the type converter, so he can perform additional runtime checks. In case
-the ``TypeConverter`` returns ``FALSE``, the search is continued at the position
+the ``TypeConverter`` returns ``false``, the search is continued at the position
 where it left off in the above algorithm.
 
 For simple target types, the steps 2 and 3 are omitted.
@@ -511,13 +542,13 @@ possibilities what can be returned in ``convertFrom()``:
   detected security breaches, exceptions should be thrown.
 
 * If at run-time the type converter does not wish to participate in the results,
-  ``NULL`` should be returned. For example, if a file upload is expected, but there
-  was no file uploaded, returning ``NULL`` would be the appropriate way to handling
+  ``null`` should be returned. For example, if a file upload is expected, but there
+  was no file uploaded, returning ``null`` would be the appropriate way to handling
   this.
 
 * If the error is recoverable, and the user should re-submit his data, return a
   ``Neos\Error\Messages\Error`` object (or a subclass thereof), containing information
-  about the error. In this case, the property is not mapped at all (``NULL`` is
+  about the error. In this case, the property is not mapped at all (``null`` is
   returned, like above).
 
   If the Property Mapping occurs in the context of the MVC stack (as it will be the

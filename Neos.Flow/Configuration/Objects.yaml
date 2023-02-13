@@ -75,24 +75,6 @@ Neos\Flow\I18n\Xliff\Service\XliffFileProvider:
         arguments:
           1:
             value: Flow_I18n_XmlModelCache
-Neos\Flow\I18n\Xliff\Service\XliffReader:
-  properties:
-    i18nLogger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: i18nLogger
-Neos\Flow\I18n\Xliff\Model\FileAdapter:
-  properties:
-    i18nLogger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: i18nLogger
 Neos\Flow\I18n\Cldr\Reader\DatesReader:
   properties:
     cache:
@@ -151,9 +133,8 @@ Neos\Flow\Log\PsrLoggerFactory:
 Neos\Flow\Log\PsrLoggerFactoryInterface:
   className: Neos\Flow\Log\PsrLoggerFactory
 
-# Deprecated as of Flow 6.0, you should inject Psr\Log\LoggerInterface
-# or use the factory to get the "systemLogger"
-Neos\Flow\Log\PsrSystemLoggerInterface:
+'Neos.Flow:SystemLogger':
+  className: Psr\Log\LoggerInterface
   scope: singleton
   factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
   factoryMethodName: get
@@ -161,14 +142,32 @@ Neos\Flow\Log\PsrSystemLoggerInterface:
     1:
       value: systemLogger
 
-# Deprecated as of Flow 6.0, use the factory to get the "securityLogger" instead
-Neos\Flow\Log\PsrSecurityLoggerInterface:
+'Neos.Flow:SecurityLogger':
+  className: Psr\Log\LoggerInterface
   scope: singleton
   factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
   factoryMethodName: get
   arguments:
     1:
       value: securityLogger
+
+'Neos.Flow:SqlLogger':
+  className: Psr\Log\LoggerInterface
+  scope: singleton
+  factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
+  factoryMethodName: get
+  arguments:
+    1:
+      value: sqlLogger
+
+'Neos.Flow:I18nLogger':
+  className: Psr\Log\LoggerInterface
+  scope: singleton
+  factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
+  factoryMethodName: get
+  arguments:
+    1:
+      value: i18nLogger
 
 # The default PSR-3 logger
 Psr\Log\LoggerInterface:
@@ -178,16 +177,6 @@ Psr\Log\LoggerInterface:
   arguments:
     1:
       value: systemLogger
-
-Neos\Flow\Session\Aspect\LoggingAspect:
-  properties:
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
 
 #                                                                          #
 # Monitor                                                                  #
@@ -251,61 +240,17 @@ Psr\Http\Message\UploadedFileFactoryInterface:
 Psr\Http\Message\UriFactoryInterface:
   className: Neos\Http\Factories\UriFactory
 
-Neos\Flow\Http\Component\ComponentContext:
-  arguments:
-    1:
-      object:
-        factoryMethodName: GuzzleHttp\Psr7\ServerRequest::fromGlobals
-    2:
-      object: GuzzleHttp\Psr7\Response
-
-Neos\Flow\Http\Component\ComponentChain:
-  factoryObjectName: Neos\Flow\Http\Component\ComponentChainFactory
-  arguments:
-    1:
-      setting: Neos.Flow.http.chain
-
 Neos\Flow\Http\Middleware\MiddlewaresChain:
   factoryObjectName: Neos\Flow\Http\Middleware\MiddlewaresChainFactory
   arguments:
     1:
       setting: Neos.Flow.http.middlewares
 
-Neos\Flow\Http\ContentStream:
-  properties:
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
-
-Neos\Flow\Http\Component\SecurityEntryPointComponent:
-  properties:
-    securityLogger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: securityLogger
-
 #                                                                          #
 # MVC                                                                      #
 #                                                                          #
 Neos\Flow\Mvc\Routing\RouterInterface:
   className: Neos\Flow\Mvc\Routing\Router
-
-Neos\Flow\Mvc\Routing\Router:
-  properties:
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
 
 Neos\Flow\Mvc\Routing\RouterCachingService:
   properties:
@@ -323,13 +268,6 @@ Neos\Flow\Mvc\Routing\RouterCachingService:
         arguments:
           1:
             value: Flow_Mvc_Routing_Resolve
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
 
 Neos\Flow\Mvc\ViewConfigurationManager:
   properties:
@@ -363,6 +301,10 @@ Doctrine\ORM\EntityManagerInterface:
   scope: singleton
   factoryObjectName: Neos\Flow\Persistence\Doctrine\EntityManagerFactory
 
+Doctrine\DBAL\Connection:
+  scope: singleton
+  factoryObjectName: Neos\Flow\Persistence\Doctrine\ConnectionFactory
+
 Neos\Flow\Persistence\PersistenceManagerInterface:
   className: Neos\Flow\Persistence\Doctrine\PersistenceManager
 
@@ -375,36 +317,6 @@ Neos\Flow\Persistence\Doctrine\Logging\SqlLogger:
         arguments:
           1:
             value: sqlLogger
-
-Neos\Flow\Command\DoctrineCommandController:
-  properties:
-    systemLogger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
-
-Neos\Flow\Persistence\Doctrine\PersistenceManager:
-  properties:
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
-
-Neos\Flow\Persistence\Doctrine\Query:
-  properties:
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
 
 #
 # Property
@@ -433,16 +345,6 @@ Neos\Flow\Reflection\ReflectionService:
 # ResourceManagement                                                       #
 #                                                                          #
 
-Neos\Flow\ResourceManagement\ResourceTypeConverter:
-  properties:
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
-
 Neos\Flow\ResourceManagement\ResourceManager:
   properties:
     statusCache:
@@ -452,33 +354,6 @@ Neos\Flow\ResourceManagement\ResourceManager:
         arguments:
           1:
             value: Flow_Resource_Status
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
-
-Neos\Flow\ResourceManagement\Target\FileSystemTarget:
-  properties:
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
-
-Neos\Flow\ResourceManagement\Publishing\MessageCollector:
-  properties:
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
 
 #                                                                          #
 # Security                                                                 #
@@ -534,6 +409,17 @@ Neos\Flow\Security\Cryptography\BCryptHashingStrategy:
     1:
       setting: Neos.Flow.security.cryptography.BCryptHashingStrategy.cost
 
+Neos\Flow\Security\Cryptography\PrecomposedHashProvider:
+  scope: singleton
+  properties:
+    cache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Security_Cryptography_PrecomposedHashProvider
+
 Neos\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser:
   scope: singleton
 
@@ -552,16 +438,6 @@ Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpres
         arguments:
           1:
             value: Eel_Expression_Code
-
-Neos\Flow\Security\RequestPattern\CsrfProtection:
-  properties:
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
 
 Neos\Flow\Security\Authentication\Provider\TestingProvider:
   arguments:
@@ -598,13 +474,6 @@ Neos\Flow\Session\Session:
         arguments:
           1:
             value: Flow_Session_Storage
-    logger:
-      object:
-        factoryObjectName: Neos\Flow\Log\PsrLoggerFactoryInterface
-        factoryMethodName: get
-        arguments:
-          1:
-            value: systemLogger
 
 Neos\Flow\Session\SessionManagerInterface:
   className: Neos\Flow\Session\SessionManager

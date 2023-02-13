@@ -56,6 +56,7 @@ class IdentityRoutePart extends DynamicRoutePart
      * The object type (class name) of the entity this route part belongs to
      *
      * @var string
+     * @psalm-var class-string
      */
     protected $objectType;
 
@@ -68,6 +69,7 @@ class IdentityRoutePart extends DynamicRoutePart
 
     /**
      * @param string $objectType
+     * @psalm-param class-string $objectType
      * @return void
      */
     public function setObjectType($objectType)
@@ -77,6 +79,7 @@ class IdentityRoutePart extends DynamicRoutePart
 
     /**
      * @return string
+     * @psalm-return class-string
      */
     public function getObjectType()
     {

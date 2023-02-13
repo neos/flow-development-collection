@@ -1,4 +1,3 @@
-
 ============
 Command Line
 ============
@@ -178,11 +177,11 @@ Alternatively the boolean value can be specified explicitly:
 
 .. code-block:: bash
 
-	./flow foo:bar --force TRUE
-	./flow foo:bar --force FALSE
+	./flow foo:bar --force true
+	./flow foo:bar --force false
 
-Possible values equivalent to *TRUE* are: *on*, *1*, *y*, *yes*, *true*.
-Possible values equivalent to *FALSE* are: *off*, *0*, *n*, *no*, *false*.
+Possible values equivalent to *true* are: *on*, *1*, *y*, *yes*, *true*.
+Possible values equivalent to *false* are: *off*, *0*, *n*, *no*, *false*.
 
 Arguments
 ~~~~~~~~~
@@ -240,11 +239,10 @@ command:
 
 	namespace Acme\Demo\Command;
 	use Neos\Flow\Annotations as Flow;
+	use Neos\Flow\Cli\CommandController;
 
-	/**
-	 * @Flow\Scope("singleton")
-	 */
-	class CoffeeCommandController extends \Neos\Flow\Cli\CommandController {
+	class CoffeeCommandController extends CommandController
+	{
 
 		/**
 		 * Brew some coffee
@@ -258,9 +256,9 @@ command:
 		 * @param string $type The type of coffee
 		 * @param integer $shots The number of shots
 		 * @param boolean $ristretto Make this coffee a ristretto
-		 * @return string
 		 */
-		public function brewCommand($type, $shots=1, $ristretto=FALSE) {
+		public function brewCommand(string $type, int $shots = 1, bool $ristretto = false): void
+		{
 			# implementation
 		}
 	}
@@ -354,7 +352,8 @@ to other commands. This information is triggered by specifying one or more
 	 * @return string
 	 * @see acme.demo:drink:coffee
 	 */
-	public function juiceCommand() {
+	public function juiceCommand(): string
+	{
 		...
 	}
 
@@ -374,7 +373,8 @@ message additionally suggests to use the command mentioned there.
 	 * @deprecated since 2.8.18
 	 * @see acme.demo:drink:coffee
 	 */
-	public function teaCommand() {
+	public function teaCommand(): string
+	{
 		...
 	}
 
@@ -382,53 +382,28 @@ message additionally suggests to use the command mentioned there.
 Generating Styled Output
 ------------------------
 
-The output sent to the user can be processed in three different ways,
-each denoted by a PHP constant:
+A limited number of tags are supported for brushing up the output. They have the following meaning:
 
-* OUTPUTFORMAT_RAW sends the output as is
-* OUTPUTFORMAT_PLAIN tries to convert the output into plain text by
-  stripping possible tags
-* OUTPUTFORMAT_STYLED sends the output as is but converts certain tags
-  into ANSI codes
-
-The output format can be set by calling the *setOutputFormat()* method
-on the command controller's *Response* object:
-
-.. code-block:: php
-
-	/**
-	 * Example Command
-	 *
-	 * @return string
-	 */
-	public function exampleCommand() {
-		$this->response->setOutputFormat(Response::OUTPUTFORMAT_RAW);
-		$this->response->appendContent(...);
-	}
-
-A limited number of tags are supported for brushing up the output in
-OUTPUTFORMAT_STYLED mode. They have the following meaning:
-
-+------------------------+---------------------------------------------------------------------------+
-| Tag                    | Meaning                                                                   |
-+========================+===========================================================================+
-| ``<b>…</b>``           | Render the text in a bold / bright style                                  |
-+------------------------+---------------------------------------------------------------------------+
-| ``<i>…</i>``           | Render the text in a italics                                              |
-+------------------------+---------------------------------------------------------------------------+
-| ``<u>…</u>``           | Underline the given text                                                  |
-+------------------------+---------------------------------------------------------------------------+
-| ``<em>…</em>``         | Emphasize the text, usually by inverting foreground and background colors |
-+------------------------+---------------------------------------------------------------------------+
-| ``<strike>…</strike>`` | Display the text struck through                                           |
-+------------------------+---------------------------------------------------------------------------+
++--------------------------+---------------------------------------------------------------------------+
+| Tag                      | Meaning                                                                   |
++==========================+===========================================================================+
+| ``<b>…</b>``             | Render the text in a bold / bright style                                  |
++--------------------------+---------------------------------------------------------------------------+
+| ``<i>…</i>``             | Render the text in a italics                                              |
++--------------------------+---------------------------------------------------------------------------+
+| ``<u>…</u>``             | Underline the given text                                                  |
++--------------------------+---------------------------------------------------------------------------+
+| ``<em>…</em>``           | Emphasize the text, usually by inverting foreground and background colors |
++--------------------------+---------------------------------------------------------------------------+
+| ``<strike>…</strike>``   | Display the text struck through                                           |
++--------------------------+---------------------------------------------------------------------------+
+| ``<error>…</error>``     | Display an error message, usually in red color                            |
++--------------------------+---------------------------------------------------------------------------+
+| ``<success>…</success>`` | Display a success message, usually in green color                         |
++--------------------------+---------------------------------------------------------------------------+
 
 The respective styles are only rendered correctly if the console
-supports ANSI styles. You can check ANSI support by calling the
-response's *hasColorSupport()* method. Contrary to what that method
-name suggests, at the time of this writing colored output is not
-directly supported by Flow. However, such a feature is planned
-for the future.
+supports ANSI styles.
 
 .. tip::
 
@@ -445,23 +420,23 @@ provides various methods directly from the CommandController's ``output`` member
 
 * TableHelper
 
-	* outputTable($rows, $headers = NULL)
+	* outputTable(array $rows, array $headers = null): void
 
 * DialogHelper
 
-	* select($question, $choices, $default = NULL, $multiSelect = false, $attempts = FALSE)
-	* ask($question, $default = NULL, array $autocomplete = array())
-	* askConfirmation($question, $default = TRUE)
-	* askHiddenResponse($question, $fallback = TRUE)
-	* askAndValidate($question, $validator, $attempts = FALSE, $default = NULL, array $autocomplete = NULL)
-	* askHiddenResponseAndValidate($question, $validator, $attempts = FALSE, $fallback = TRUE)
+	* select($question, array $choices, $default = null, bool $multiSelect = false, int $attempts = null)
+	* ask($question, string $default = null)
+	* askConfirmation($question, bool $default = true): bool
+	* askHiddenResponse($question, bool $fallback = true)
+	* askAndValidate($question, callable $validator, int $attempts = null, string $default = null)
+	* askHiddenResponseAndValidate($question, callable $validator, int $attempts = null, bool $fallback = true)
 
 * ProgressHelper
 
-	* progressStart($max = NULL)
-	* progressSet($current)
-	* progressAdvance($step = 1)
-	* progressFinish()
+	* progressStart(int $max = null): void
+	* progressSet(int $current): void
+	* progressAdvance(int $step = 1): void
+	* progressFinish(): void
 
 Here's an example showing of some of those functions:
 
@@ -472,30 +447,24 @@ Here's an example showing of some of those functions:
 	use Neos\Flow\Annotations as Flow;
 	use Neos\Flow\Cli\CommandController;
 
-	/**
-	 * @Flow\Scope("singleton")
-	 */
 	class MyCommandController extends CommandController {
 
-		/**
-		 * @return string
-		 */
-		public function myCommand() {
+		public function myCommand(): void
+		{
 			// render a table
-			$this->output->outputTable(array(
-				array('Bob', 34, 'm'),
-				array('Sally', 21, 'f'),
-				array('Blake', 56, 'm')
-			),
-			array('Name', 'Age', 'Gender'));
+			$this->output->outputTable([
+					['Bob', 34, 'm'],
+					['Sally', 21, 'f'],
+					['Blake', 56, 'm']
+				], ['Name', 'Age', 'Gender']
+			);
 
 			// select
-			$colors = array('red', 'blue', 'yellow');
-			$selectedColorIndex = $this->output->select('Please select one color', $colors, 'red');
-			$this->outputLine('You choose the color %s.', array($colors[$selectedColorIndex]));
+			$selectedColor = $this->output->select('Please select one color', ['red', 'blue', 'yellow'], 'red');
+			$this->outputLine('You choose the color %s.', [$selectedColor]);
 
 			// ask
-			$name = $this->output->ask('What is your name?' . PHP_EOL, 'Bob', array('Bob', 'Sally', 'Blake'));
+			$name = $this->output->ask('What is your name?' . PHP_EOL, 'Bob');
 			$this->outputLine('Hello %s.', array($name));
 
 			// prompt
@@ -511,7 +480,7 @@ Here's an example showing of some of those functions:
 				usleep(5000);
 			}
 			$this->output->progressFinish();
-
+			$this->output->outputLine();
 		}
 	}
 
@@ -547,20 +516,23 @@ in the *boot()* method of your package's *Package* class:
 .. code-block:: php
 
 	namespace Acme\Foo;
+	use Neos\Flow\Core\Bootstrap;
 	use Neos\Flow\Package\Package as BasePackage;
 
 	/**
 	 * Acme.Foo Package
 	 */
-	class Package extends BasePackage {
+	class Package extends BasePackage
+	{
 
 		/**
 		 * Invokes custom PHP code directly after the package manager has been initialized.
 		 *
-		 * @param \Neos\Flow\Core\Bootstrap $bootstrap The current bootstrap
+		 * @param Bootstrap $bootstrap The current bootstrap
 		 * @return void
 		 */
-		public function boot(\Neos\Flow\Core\Bootstrap $bootstrap) {
+		public function boot(Bootstrap $bootstrap): void
+		{
 			$bootstrap->registerRequestHandler(new \Acme\Foo\Command\MyCommandController($bootstrap));
 		}
 	}
@@ -622,8 +594,8 @@ Flow's bootstrap perform a clean shutdown of the framework. The base
 *CommandController* provides two API methods for initiating a shutdown
 and optionally passing an exit code to the console:
 
-* *quit($exitCode)* stops execution right after this command, performs a clean shutdown of Flow.
-* *sendAndExit($exitCode)* sends any output buffered in the *Response* object and exits immediately,
+* ``$this->quit($exitCode)`` stops execution right after this command, performs a clean shutdown of Flow.
+* ``$this->sendAndExit($exitCode)`` sends any output buffered in the *Response* object and exits immediately,
   without shutting down Flow.
 
 The *quit()* method is the recommended way to exit Flow. The other

@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2021-05-31
+The following reference was automatically generated from code on 2023-01-15
 
 
 .. _`Flow Command Reference: NEOS.FLOW`:
@@ -765,8 +765,6 @@ Options
 
 ``--show-migrations``
   Output a list of all migrations and their status
-``--show-descriptions``
-  Show descriptions for the migrations (enables versions display)
 
 
 
@@ -902,6 +900,21 @@ Options
 
 ``--command-identifier``
   Identifier of a command for more details
+
+
+
+
+
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:middleware:list`:
+
+``neos.flow:middleware:list``
+*****************************
+
+**Lists all configured middleware components in the order they will be executed**
+
+
+
+
 
 
 
@@ -1166,40 +1179,6 @@ Options
 
 
 
-.. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:getpath`:
-
-``neos.flow:routing:getpath``
-*****************************
-
-**Generate a route path**
-
-This command takes package, controller and action and displays the
-generated route path and the selected route:
-
-./flow routing:getPath --format json Acme.Demo\\Sub\\Package
-
-Arguments
-^^^^^^^^^
-
-``--package``
-  Package key and subpackage, subpackage parts are separated with backslashes
-
-
-
-Options
-^^^^^^^
-
-``--controller``
-  Controller name, default is 'Standard'
-``--action``
-  Action name, default is 'index'
-``--format``
-  Requested Format name default is 'html'
-
-
-
-
-
 .. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:list`:
 
 ``neos.flow:routing:list``
@@ -1215,21 +1194,23 @@ This command displays a list of all currently registered routes.
 
 
 
-.. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:routepath`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:match`:
 
-``neos.flow:routing:routepath``
-*******************************
+``neos.flow:routing:match``
+***************************
 
-**Route the given route path**
+**Match the given URI to a corresponding route**
 
-This command takes a given path and displays the detected route and
-the selected package, controller and action.
+This command takes an incoming URI and displays the
+matched Route and the mapped routing values (if any):
+
+./flow routing:match "/de" --parameters="{\"requestUriHost\": \"localhost\"}"
 
 Arguments
 ^^^^^^^^^
 
-``--path``
-  The route path to resolve
+``--uri``
+  The incoming route, absolute or relative
 
 
 
@@ -1237,7 +1218,53 @@ Options
 ^^^^^^^
 
 ``--method``
-  The request method (GET, POST, PUT, DELETE, ...) to simulate
+  The HTTP method to simulate (default is 'GET')
+``--parameters``
+  Route parameters as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
+
+
+
+
+
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:routing:resolve`:
+
+``neos.flow:routing:resolve``
+*****************************
+
+**Build an URI for the given parameters**
+
+This command takes package, controller and action and displays the
+resolved URI and which route matched (if any):
+
+./flow routing:resolve Some.Package --controller SomeController --additional-arguments="{\"some-argument\": \"some-value\"}"
+
+Arguments
+^^^^^^^^^
+
+``--package``
+  Package key (according to "@package" route value)
+
+
+
+Options
+^^^^^^^
+
+``--controller``
+  Controller name (according to "@controller" route value), default is 'Standard'
+``--action``
+  Action name (according to "@action" route value), default is 'index'
+``--format``
+  Requested Format name (according to "@format" route value), default is 'html'
+``--subpackage``
+  SubPackage name (according to "@subpackage" route value)
+``--additional-arguments``
+  Additional route values as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
+``--parameters``
+  Route parameters as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
+``--base-uri``
+  Base URI of the simulated request, default ist 'http://localhost'
+``--force-absolute-uri``
+  Whether or not to force the creation of an absolute URI
 
 
 
@@ -1289,30 +1316,22 @@ Options
 
 
 
-.. _`Flow Command Reference: NEOS.FLOW neos.flow:schema:validateschema`:
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:security:describerole`:
 
-``neos.flow:schema:validateschema``
+``neos.flow:security:describerole``
 ***********************************
 
-**Validate the given configurationfile againt a schema file**
+**Show details of a specified role**
 
 
 
 Arguments
 ^^^^^^^^^
 
-``--configuration-file``
-  path to the validated configuration file
+``--role``
+  identifier of the role to describe (for example "Neos.Flow:Everybody")
 
 
-
-Options
-^^^^^^^
-
-``--schema-file``
-  path to the schema file
-``--verbose``
-  if true, output more verbose information on the schema files which were used
 
 
 
@@ -1409,6 +1428,27 @@ Related commands
 
 ``neos.flow:security:importprivatekey``
   Import a private key
+
+
+
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:security:listroles`:
+
+``neos.flow:security:listroles``
+********************************
+
+**List all configured roles**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--include-abstract``
+  Set this flag to include abstract roles
+
+
 
 
 
@@ -1523,6 +1563,29 @@ This is functionally equivalent to
 
 
 
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:signal:listconnected`:
+
+``neos.flow:signal:listconnected``
+**********************************
+
+**Lists all connected signals with their slots.**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--class-name``
+  if specified, only signals matching the given fully qualified class name will be shown. Note: escape namespace separators or wrap the value in quotes, e.g. "--class-name Neos\\Flow\\Core\\Bootstrap".
+``--method-name``
+  if specified, only signals matching the given method name will be shown. This is only useful in conjunction with the "--class-name" option.
+
+
+
+
+
 .. _`Flow Command Reference: NEOS.FLOW neos.flow:typeconverter:list`:
 
 ``neos.flow:typeconverter:list``
@@ -1542,47 +1605,6 @@ Options
   Filter by source
 ``--target``
   Filter by target type
-
-
-
-
-
-.. _`Flow Command Reference: NEOS.FLUIDADAPTOR`:
-
-Package *NEOS.FLUIDADAPTOR*
----------------------------
-
-
-.. _`Flow Command Reference: NEOS.FLUIDADAPTOR neos.fluidadaptor:documentation:generatexsd`:
-
-``neos.fluidadaptor:documentation:generatexsd``
-***********************************************
-
-**Generate Fluid ViewHelper XSD Schema**
-
-Generates Schema documentation (XSD) for your ViewHelpers, preparing the
-file to be placed online and used by any XSD-aware editor.
-After creating the XSD file, reference it in your IDE and import the namespace
-in your Fluid template by adding the xmlns:* attribute(s):
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="https://neos.io/ns/Neos/Neos/ViewHelpers" ...>
-
-Arguments
-^^^^^^^^^
-
-``--php-namespace``
-  Namespace of the Fluid ViewHelpers without leading backslash (for example 'Neos\FluidAdaptor\ViewHelpers'). NOTE: Quote and/or escape this argument as needed to avoid backslashes from being interpreted!
-
-
-
-Options
-^^^^^^^
-
-``--xsd-namespace``
-  Unique target namespace used in the XSD schema (for example "http://yourdomain.org/ns/viewhelpers"). Defaults to "https://neos.io/ns/<php namespace>".
-``--target-file``
-  File path and name of the generated XSD schema. If not specified the schema will be output to standard output.
-``--xsd-domain``
-  Domain used in the XSD schema (for example "http://yourdomain.org"). Defaults to "https://neos.io".
 
 
 

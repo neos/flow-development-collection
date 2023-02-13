@@ -12,6 +12,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 
 /**
@@ -64,7 +65,7 @@ class QueryResult implements QueryResultInterface
      * @return Query
      * @api
      */
-    public function getQuery()
+    public function getQuery(): QueryInterface
     {
         return clone $this->query;
     }
@@ -112,7 +113,7 @@ class QueryResult implements QueryResultInterface
      * @return array
      * @api
      */
-    public function toArray()
+    public function toArray(): array
     {
         $this->initialize();
         return $this->rows;

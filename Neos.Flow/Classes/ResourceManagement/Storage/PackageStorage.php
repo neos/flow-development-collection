@@ -106,7 +106,6 @@ class PackageStorage extends FileSystemStorage
         $object = new StorageObject();
         $object->setFilename($pathInfo['basename']);
         $object->setSha1(sha1_file($resourcePathAndFilename));
-        $object->setMd5(md5_file($resourcePathAndFilename));
         $object->setFileSize(filesize($resourcePathAndFilename));
         if (isset($pathInfo['dirname'])) {
             $object->setRelativePublicationPath($this->prepareRelativePublicationPath($pathInfo['dirname'], $resourcePackage->getPackageKey(), $resourcePackage->getResourcesPath()));

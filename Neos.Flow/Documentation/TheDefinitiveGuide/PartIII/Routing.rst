@@ -4,8 +4,6 @@
 Routing
 =======
 
-.. sectionauthor:: Bastian Waidelich <bastian@neos.io>
-
 As explained in the Model View Controller chapter, in Flow the dispatcher passes the
 request to a controller which then calls the respective action. But how to tell, what
 controller of what package is the right one for the current request? This is were the
@@ -255,7 +253,7 @@ configurable regular expressions:
 		 * Checks whether the current URI section matches the configured RegEx pattern.
 		 *
 		 * @param string $requestPath value to match, the string to be checked
-		 * @return boolean TRUE if value could be matched successfully, otherwise FALSE.
+		 * @return boolean true if value could be matched successfully, otherwise false.
 		 */
 		protected function matchValue($requestPath) {
 			if (!preg_match($this->options['pattern'], $requestPath, $matches)) {
@@ -269,7 +267,7 @@ configurable regular expressions:
 		 * Checks whether the route part matches the configured RegEx pattern.
 		 *
 		 * @param string $value The route part (must be a string)
-		 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
+		 * @return boolean true if value could be resolved successfully, otherwise false.
 		 */
 		protected function resolveValue($value) {
 			if (!is_string($value) || !preg_match($this->options['pattern'], $value, $matches)) {
@@ -543,8 +541,8 @@ This will load the SubRoutes from a file ``Routes.Foo.yaml`` in the ``My.Demo`` 
 With that feature you can include multiple Routes with your package (for example providing different URI styles).
 Furthermore you can nest routes in order to minimize duplication in your configuration. You nest SubRoutes by including
 different SubRoutes from within a SubRoute, using the same syntax as before.
-Additionally you can specify a set of ``variables`` that will be replaced in ``name``, ``uriPattern`` and ``defaults``
-of merged routes:
+Additionally you can specify a set of ``variables`` that will be replaced in ``name``, ``uriPattern``, ``defaults`` and
+``handler options`` of merged routes:
 
 Imagine the following setup:
 
@@ -679,7 +677,7 @@ Settings.yaml (``Configuration/Settings.yaml``):
 	  Flow:
 	    mvc:
 	      routes:
-	        'Some.Package': TRUE
+	        'Some.Package': true
 
 This will include all routes from the main ``Routes.yaml`` file of the ``Some.Package`` (and all its nested SubRoutes
 if it defines any).
@@ -733,23 +731,7 @@ specify placeholders in the SubRoutes (see `Nested Subroutes`_).
 
 .. tip::
 
-	You can use the ``flow:routing:list`` command to list all routes which are currently active:
-
-	.. code-block:: bash
-
-		$ ./flow routing:list
-
-		Currently registered routes:
-		neos/login(/{@action}.{@format})         Neos :: Authentication
-		neos/logout                              Neos :: Logout
-		neos/setup(/{@action})                   Neos :: Setup
-		neos                                     Neos :: Backend Overview
-		neos/content/{@action}                   Neos :: Backend - Content Module
-		{node}.html/{type}                       Neos :: Frontend content with format and type
-		{node}.html                              Neos :: Frontend content with (HTML) format
-		({node})                                 Neos :: Frontend content without a specified format
-		                                         Neos :: Fallback rule – for when no site has been defined yet
-
+	You can use the ``flow:routing:list`` command to list all routes which are currently active, see `CLI`_
 
 Route Loading Order and the Flow Application Context
 ====================================================
@@ -793,13 +775,13 @@ Custom route part handlers can register additional tags to be associated with a 
 	class SomePartHandler extends DynamicRoutePart {
 
 		protected function matchValue($requestPath) {
-			// custom logic, returning FALSE if the $requestPath doesn't match
+			// custom logic, returning false if the $requestPath doesn't match
 			$this->value = $matchedValue;
 			return true;
 		}
 
 		protected function resolveValue($value) {
-			// custom logic, returning FALSE if the $value doesn't resolve
+			// custom logic, returning false if the $value doesn't resolve
 			$this->value = $resolvedPathSegment;
 			return true;
 		}
@@ -816,12 +798,12 @@ Custom route part handlers can register additional tags to be associated with a 
 	class SomePartHandler extends DynamicRoutePart {
 
 		protected function matchValue($requestPath) {
-			// custom logic, returning FALSE if the $requestPath doesn't match, as before
+			// custom logic, returning false if the $requestPath doesn't match, as before
 			return new MatchResult($matchedValue, RouteTags::createFromTag('some-tag'));
 		}
 
 		protected function resolveValue($value) {
-			// custom logic, returning FALSE if the $value doesn't resolve, as before
+			// custom logic, returning false if the $value doesn't resolve, as before
 			return new ResolveResult($resolvedPathSegment, null, RouteTags::createFromTag('some-tag'));
 		}
 
@@ -888,12 +870,12 @@ All URIs pointing to the respective action will be forced to be `https://` URIs.
 
 As you can see, in this example the route part handler doesn't affect the URI path at all, so with the configured route
 this will always point to the homepage. But of course route parts can specify a path (segment) *and* UriConstraints at the
-same time.
+same time. They can also be used to resolve URIs across domains.
 
 Routing Parameters
 ==================
 
-The last example only carse about URI *resolving*. What if a route should react to conditions that are not extractable
+The last example only care about URI *resolving*. What if a route should react to conditions that are not extractable
 from the request URI path? For example the counter-part to the example above, matching only `https://` URIs?
 
 .. warning:: One could be tempted to access the current request from within the route part handler using Dependency
@@ -901,28 +883,31 @@ from the request URI path? For example the counter-part to the example above, ma
    corresponding cache entry exists.
 
 For route part handlers to safely access values that are not encoded in the URI path, those values have to be registered
-as `Routing Parameters`, usually via a HTTP Component (see respective chapter about :doc:`Http`).
+as `Routing Parameters`, usually via a HTTP middleware (see respective chapter about :doc:`Http`).
 
-A HTTP Component that registers the current request scheme as Routing Parameter could look like this:
+A HTTP middleware that registers the current request scheme as Routing Parameter could look like this:
 
-*Example: HttpsRoutePart.php* ::
+*Example: SchemeRoutingParameterMiddleware.php* ::
 
-	use Neos\Flow\Http\Component\ComponentContext;
-	use Neos\Flow\Http\Component\ComponentInterface;
 	use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
-	use Neos\Flow\Mvc\Routing\RoutingComponent;
+	use Neos\Flow\Http\ServerRequestAttributes;
+	use Psr\Http\Message\ResponseInterface;
+	use Psr\Http\Message\ServerRequestInterface;
+	use Psr\Http\Server\MiddlewareInterface;
+	use Psr\Http\Server\RequestHandlerInterface;
 
-	class SchemeRoutingParameterComponent implements ComponentInterface
+	class SchemeRoutingParameterMiddleware implements MiddlewareInterface
 	{
 
-	    public function handle(ComponentContext $componentContext)
+	    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
 	    {
-	        $existingParameters = $componentContext->getParameter(RoutingComponent::class, 'parameters');
+	        $existingParameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS);
 	        if ($existingParameters === null) {
 	            $existingParameters = RouteParameters::createEmpty();
 	        }
-	        $parameters = $existingParameters->withParameter('scheme', $componentContext->getHttpRequest()->getUri()->getScheme());
-	        $componentContext->setParameter(RoutingComponent::class, 'parameters', $parameters);
+	        $parameters = $existingParameters->withParameter('scheme', $request->getUri()->getScheme());
+	        $request = $request->withAttribute(ServerRequestAttributes::ROUTING_PARAMETERS, $parameters);
+	        return $next->handle($request);
 	    }
 	}
 
@@ -956,3 +941,165 @@ Now we can extend the ``HttpRoutePart`` to only match `https://` requests:
 	For route part handlers to be able to access the `Routing Parameters` they have to implement the ``ParameterAwareRoutePartInterface``
 	and its ``matchWithParameters()`` method. The ``DynamicRoutePart`` already implements the interface and makes parameters
 	available in the ``parameters`` field.
+
+CLI
+===
+
+Flow provides the following four commands that allow you to test and debug the routing setup.
+Run ``./flow help <command>`` to get more information about a command and its options.
+
+routing:list
+------------
+
+To list all active routes in the order they will be evaluated:
+
+.. code-block:: bash
+
+    $ ./flow routing:list
+
+    Currently registered routes:
+    +----+---------------------------------------------------------------------------+----------------+-----------------------------------+
+    | #  | Uri Pattern                                                               | HTTP Method(s) | Name                              |
+    +----+---------------------------------------------------------------------------+----------------+-----------------------------------+
+    | 1  | some/route(/{@action}).{@format}                                          | GET, POST      | Some.Package :: Some route        |
+    | 2  | some/other/{route}                                                        | POST           | Some.Package :: Other route       |
+    | 3  | fallback                                                                  | any            | Some.Package :: Fallback          |
+    +----+---------------------------------------------------------------------------+----------------+-----------------------------------+
+
+    Run ./flow routing:show <index> to show details for a route
+
+routing:show
+------------
+
+To display details for a specific route:
+
+.. code-block:: bash
+
+    $ ./flow routing:show 1
+
+    Information for route #1:
+
+    Name: Some.Package :: Some route
+    URI Pattern: some/route(/{@action}).{@format}
+    HTTP method(s): GET, Post
+    Defaults:
+      @package: Some.Package
+      @action: show
+      @controller: SomeController
+
+      Exceeding arguments will be appended as query string
+
+routing:resolve
+---------------
+
+To build URLs for the given route values:
+
+.. code-block:: bash
+
+    $ ./flow routing:resolve Neos.Welcome --controller Standard
+
+    Resolving:
+      Values:
+        @package: Neos.Welcome
+        @controller: Standard
+        @action: index
+        @format: html
+      Base URI: http://localhost
+      Force absolute URI: no
+
+      => Controller: Neos\Welcome\Controller\StandardController
+
+    Route resolved!
+    Name: Neos.Welcome :: Welcome screen
+    Pattern: flow/welcome
+
+    Resolved URI: /flow/welcome
+
+
+    Run ./flow routing:show 1 to show details about this route
+
+Apart from route values, this command allows you to specify route `parameters`, for example in order to
+test URLs for the Neos frontend:
+
+.. code-block:: bash
+
+    $ ./flow routing:resolve Neos.Neos --controller Frontend\\Node --action show --additional-arguments="{\"node\": \"/sites/neosdemo/the-book@live;language=en_US\"}" --parameters="{\"requestUriHost\": \"localhost\"}"
+
+    Resolving:
+      Values:
+        @package: Neos.Neos
+        @controller: Frontend\Node
+        @action: show
+        @format: html
+        node: /sites/neosdemo/the-book@live;language=en_US
+      Base URI: http://localhost
+      Force absolute URI: no
+      Parameters:
+        requestUriHost: localhost
+
+      => Controller: Neos\Neos\Controller\Frontend\NodeController
+
+    Route resolved!
+    Name: Neos.Neos :: Frontend :: Default Frontend
+    Pattern: {node}
+
+    Resolved URI: /en/the-book/i-down-the-rabbit-hole.html
+
+routing:match
+-------------
+
+To test the routing for incoming URLs:
+
+.. code-block:: bash
+
+    $ ./flow routing:match /flow/welcome
+
+    Matching:
+      URI: /flow/welcome
+      Path: flow/welcome
+      HTTP Method: GET
+
+    Route matched!
+    Name: Neos.Welcome :: Welcome screen
+    Pattern: flow/welcome
+
+    Results:
+      @package: Neos.Welcome
+      @controller: Standard
+      @action: index
+      @format: html
+
+    Matched Controller: Neos\Welcome\Controller\StandardController
+
+
+    Run ./flow routing:show 1 to show details about this route
+
+Like ``routing:resolve`` this command allows you to specify route `parameters` too, for example to test
+routing for the Neos frontend:
+
+.. code-block:: bash
+
+    $ ./flow routing:match /en/the-book/i-down-the-rabbit-hole.html --parameters="{\"requestUriHost\": \"localhost\"}"
+
+    Matching:
+      URI: /en/the-book/i-down-the-rabbit-hole.html
+      Path: en/the-book/i-down-the-rabbit-hole.html
+      HTTP Method: GET
+      Parameters:
+        requestUriHost: localhost
+
+    Route matched!
+    Name: Neos.Neos :: Frontend :: Default Frontend
+    Pattern: {node}
+
+    Results:
+      @package: Neos.Neos
+      @controller: Frontend\Node
+      @action: show
+      @format: html
+      node: /sites/neosdemo/the-book/i-down-the-rabbit-hole@live;language=en_US
+
+    Matched Controller: Neos\Neos\Controller\Frontend\NodeController
+
+
+    Run ./flow routing:show 75 to show details about this route

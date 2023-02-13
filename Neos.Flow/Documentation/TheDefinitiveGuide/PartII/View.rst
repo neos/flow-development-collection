@@ -273,7 +273,7 @@ To fully understand the above code you need to know two facts:
 
 -   ``$this->view`` is automatically set by the action controller and
     points to a Fluid template view.
--   if an action method returns ``NULL``, the controller will automatically
+-   if an action method returns ``null``, the controller will automatically
     call ``$this->view->render()`` after executing the action.
 
 But soon you'll see that we need the current Blog in all of our actions, so how to assign it
@@ -284,19 +284,14 @@ With ease: We just assign it as soon as the view is initialized::
 
 .. code-block:: php
 
-    /**
-     * @param ViewInterface $view
-     * @return void
-     */
-    protected function initializeView(ViewInterface $view) {
+    protected function initializeView(ViewInterface $view): void
+    {
         $blog = $this->blogRepository->findActive();
         $this->view->assign('blog', $blog);
     }
 
-    /**
-     * @return void
-     */
-    public function indexAction() {
+    public function indexAction(): void
+    {
     }
 
 The ``initializeView`` method is called before each action, so it provides a good opportunity
@@ -362,7 +357,8 @@ displaying the form:
      *
      * @return void
      */
-    public function newAction() {
+    public function newAction(): void
+    {
     }
 
 No code? What will happen is this: the action controller selects the
@@ -419,7 +415,7 @@ Let's look at the ``createAction`` again:
 
     Mind that ``newPost`` is not assigned to the view in this example. Assigning
     this object is only needed if you have set default values to your model
-    properties. So if you for example have a ``protected $hidden = TRUE``
+    properties. So if you for example have a ``protected $hidden = true``
     definition in your model, a ``<f:form.checkbox property="hidden" />`` will not
     be checked by default, unless you instantiate ``$newPost`` in your index
     action and assign it to the view.
@@ -430,11 +426,9 @@ Let's look at the ``createAction`` again:
 
     /**
      * Creates a new post
-     *
-     * @param Post $newPost
-     * @return void
      */
-    public function createAction(Post $newPost) {
+    public function createAction(Post $newPost): void
+    {
         $this->postRepository->add($newPost);
         $this->addFlashMessage('Created a new post.');
         $this->redirect('index');
@@ -547,11 +541,9 @@ What's missing now is a small adjustment to the PHP code displaying the edit for
 
     /**
      * Displays the "Edit Post" form
-     *
-     * @param Post $post
-     * @return void
      */
-    public function editAction(Post $post) {
+    public function editAction(Post $post): void
+    {
         $this->view->assign('post', $post);
     }
 
@@ -572,11 +564,9 @@ When you submit the form you call the ``updateAction``:
 
     /**
      * Updates a post
-     *
-     * @param Post $post
-     * @return void
      */
-    public function updateAction(Post $post) {
+    public function updateAction(Post $post): void
+    {
         $this->postRepository->update($post);
         $this->addFlashMessage('Updated the post.');
         $this->redirect('index');

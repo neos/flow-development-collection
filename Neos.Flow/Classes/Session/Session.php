@@ -55,6 +55,7 @@ class Session implements CookieEnabledInterface
     protected $objectManager;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -304,7 +305,6 @@ class Session implements CookieEnabledInterface
      *
      * @return void
      * @throws \Exception
-     * @deprecated This method is not deprecated, but be aware that from next major a cookie will no longer be auto generated.
      * @see CookieEnabledInterface
      * @api
      */

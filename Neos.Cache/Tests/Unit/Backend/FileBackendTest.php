@@ -21,8 +21,6 @@ use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Frontend\AbstractFrontend;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
-use PHPUnit\Framework\Error\Notice;
-use PHPUnit\Framework\Error\Warning;
 
 /**
  * Test case for the cache to file backend
@@ -404,7 +402,7 @@ class FileBackendTest extends BaseTestCase
         self::assertFileExists($pathAndFilename);
 
         $backend->remove($entryIdentifier);
-        self::assertFileNotExists($pathAndFilename);
+        self::assertFileDoesNotExist($pathAndFilename);
     }
 
     /**
@@ -566,7 +564,7 @@ class FileBackendTest extends BaseTestCase
      */
     public function requireOnceDoesNotSwallowPhpWarningsOfTheIncludedFile()
     {
-        $this->expectException(Warning::class);
+        $this->expectWarning();
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects(self::atLeastOnce())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
 
@@ -574,7 +572,7 @@ class FileBackendTest extends BaseTestCase
         $backend->setCache($mockCache);
 
         $entryIdentifier = 'SomePhpEntryWithPhpWarning';
-        $backend->set($entryIdentifier, '<?php trigger_error("Warning!", E_WARNING); ?>');
+        $backend->set($entryIdentifier, '<?php trigger_error("Warning!", E_USER_WARNING); ?>');
         $backend->requireOnce($entryIdentifier);
     }
 
@@ -583,7 +581,7 @@ class FileBackendTest extends BaseTestCase
      */
     public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile()
     {
-        $this->expectException(Notice::class);
+        $this->expectNotice();
         $mockCache = $this->createMock(AbstractFrontend::class);
         $mockCache->expects(self::atLeastOnce())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
 
@@ -591,7 +589,7 @@ class FileBackendTest extends BaseTestCase
         $backend->setCache($mockCache);
 
         $entryIdentifier = 'SomePhpEntryWithPhpNotice';
-        $backend->set($entryIdentifier, '<?php $undefined ++; ?>');
+        $backend->set($entryIdentifier, '<?php trigger_error("Notice!", E_USER_NOTICE); ?>');
         $backend->requireOnce($entryIdentifier);
     }
 
@@ -659,8 +657,8 @@ class FileBackendTest extends BaseTestCase
 
         $backend->flush();
 
-        self::assertFileNotExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
-        self::assertFileNotExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
+        self::assertFileDoesNotExist('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
+        self::assertFileDoesNotExist('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
     }
 
     /**
@@ -671,9 +669,7 @@ class FileBackendTest extends BaseTestCase
         $backend = $this->prepareDefaultBackend(['findIdentifiersByTag', 'remove']);
 
         $backend->expects(self::once())->method('findIdentifiersByTag')->with('UnitTestTag%special')->will(self::returnValue(['foo', 'bar', 'baz']));
-        $backend->expects(self::at(1))->method('remove')->with('foo');
-        $backend->expects(self::at(2))->method('remove')->with('bar');
-        $backend->expects(self::at(3))->method('remove')->with('baz');
+        $backend->expects(self::atLeast(3))->method('remove')->withConsecutive(['foo'], ['bar'], ['baz']);
 
         $backend->flushByTag('UnitTestTag%special');
     }
@@ -698,7 +694,7 @@ class FileBackendTest extends BaseTestCase
         self::assertFileExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
 
         $backend->collectGarbage();
-        self::assertFileNotExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
+        self::assertFileDoesNotExist('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
         self::assertFileExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
     }
 

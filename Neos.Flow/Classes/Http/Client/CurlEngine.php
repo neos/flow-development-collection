@@ -11,11 +11,12 @@ namespace Neos\Flow\Http\Client;
  * source code.
  */
 
-use function GuzzleHttp\Psr7\parse_response;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
+use Neos\Flow\Http\InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use GuzzleHttp\Psr7\Message;
 
 /**
  * A Request Engine which uses cURL in order to send requests to external
@@ -37,12 +38,17 @@ class CurlEngine implements RequestEngineInterface
 
     /**
      * Sets an option to be used by cURL.
+     * Setting headers is not allowed, please use request object.
      *
      * @param integer $optionName One of the CURLOPT_* constants
      * @param mixed $value The value to set
+     * @throws \InvalidArgumentException
      */
     public function setOption($optionName, $value)
     {
+        if ($optionName === CURLOPT_HTTPHEADER) {
+            throw new InvalidArgumentException("Setting CURL headers is only possible via the request object and not by using the setOption method.", 1633334307);
+        }
         $this->options[$optionName] = $value;
     }
 
@@ -135,12 +141,12 @@ class CurlEngine implements RequestEngineInterface
 
         curl_close($curlHandle);
 
-        $response = parse_response($curlResult);
+        $response = Message::parseResponse($curlResult);
 
         try {
             $responseBody = $response->getBody()->getContents();
             while (strpos($responseBody, 'HTTP/') === 0 || $response->getStatusCode() === 100) {
-                $response = parse_response($responseBody);
+                $response = Message::parseResponse($responseBody);
                 $responseBody = $response->getBody()->getContents();
             }
         } catch (\InvalidArgumentException $e) {

@@ -51,17 +51,24 @@ final class ResolveContext
     private $uriPathPrefix;
 
     /**
+     * @var RouteParameters
+     */
+    private $parameters;
+
+    /**
      * @param UriInterface $baseUri The base URI, retrieved from the current request URI or from configuration, if specified. Required to fill in parts of the result when resolving absolute URIs
      * @param array $routeValues Route values to build the URI, for example ['@action' => 'index', 'someArgument' => 'foo', ...]
      * @param bool $forceAbsoluteUri Whether or not an absolute URI is to be returned
      * @param string $uriPathPrefix A prefix to be prepended to any resolved URI. Not allowed to start with "/".
+     * @param RouteParameters $parameters
      */
-    public function __construct(UriInterface $baseUri, array $routeValues, bool $forceAbsoluteUri, string $uriPathPrefix = '')
+    public function __construct(UriInterface $baseUri, array $routeValues, bool $forceAbsoluteUri, string $uriPathPrefix, RouteParameters $parameters)
     {
         $this->baseUri = $baseUri;
         $this->routeValues = $routeValues;
         $this->forceAbsoluteUri = $forceAbsoluteUri;
         $this->uriPathPrefix = $uriPathPrefix;
+        $this->parameters = $parameters;
 
         if (strpos($this->uriPathPrefix, '/') === 0) {
             throw new \InvalidArgumentException('UriPathPrefix "' . $uriPathPrefix . '" is not allowed to start with "/".', 1570187176);
@@ -98,5 +105,13 @@ final class ResolveContext
     public function getUriPathPrefix(): string
     {
         return $this->uriPathPrefix;
+    }
+
+    /**
+     * @return RouteParameters
+     */
+    public function getParameters(): RouteParameters
+    {
+        return $this->parameters;
     }
 }

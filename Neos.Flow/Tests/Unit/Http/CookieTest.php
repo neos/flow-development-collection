@@ -258,15 +258,6 @@ class CookieTest extends UnitTestCase
     /**
      * @test
      */
-    public function SameSiteReturnsNull()
-    {
-        $cookie = new Cookie('foo', 'bar');
-        $this->assertNull($cookie->getSameSite());
-    }
-
-    /**
-     * @test
-     */
     public function SameSiteReturnsNone()
     {
         $cookie = new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true, false, Cookie::SAMESITE_NONE);
@@ -335,25 +326,25 @@ class CookieTest extends UnitTestCase
         $expiredCookie->expire();
 
         return [
-            [new Cookie('foo', 'bar'), 'foo=bar; Path=/; HttpOnly'],
-            [new Cookie('MyFoo25', 'bar'), 'MyFoo25=bar; Path=/; HttpOnly'],
-            [new Cookie('MyFoo25', true), 'MyFoo25=1; Path=/; HttpOnly'],
-            [new Cookie('MyFoo25', false), 'MyFoo25=0; Path=/; HttpOnly'],
-            [new Cookie('foo', 'bar', 0), 'foo=bar; Path=/; HttpOnly'],
-            [new Cookie('MyFoo25'), 'MyFoo25=; Path=/; HttpOnly'],
-            [new Cookie('foo', 'It\'s raining cats and dogs.'), 'foo=It%27s+raining+cats+and+dogs.; Path=/; HttpOnly'],
-            [new Cookie('foo', 'Some characters, like "double quotes" must be escaped.'), 'foo=Some+characters%2C+like+%22double+quotes%22+must+be+escaped.; Path=/; HttpOnly'],
-            [new Cookie('foo', 'bar', 1345108546), 'foo=bar; Expires=Thu, 16-Aug-2012 09:15:46 GMT; Path=/; HttpOnly'],
-            [new Cookie('foo', 'bar', \DateTime::createFromFormat('U', 1345108546)), 'foo=bar; Expires=Thu, 16-Aug-2012 09:15:46 GMT; Path=/; HttpOnly'],
-            [new Cookie('foo', 'bar', 0, null, 'flow.neos.io'), 'foo=bar; Domain=flow.neos.io; Path=/; HttpOnly'],
-            [new Cookie('foo', 'bar', 0, null, 'flow.neos.io', '/about'), 'foo=bar; Domain=flow.neos.io; Path=/about; HttpOnly'],
-            [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true), 'foo=bar; Domain=neos.io; Path=/; Secure; HttpOnly'],
-            [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true, false), 'foo=bar; Domain=neos.io; Path=/; Secure'],
+            [new Cookie('foo', 'bar'), 'foo=bar; Path=/; HttpOnly; SameSite=lax'],
+            [new Cookie('MyFoo25', 'bar'), 'MyFoo25=bar; Path=/; HttpOnly; SameSite=lax'],
+            [new Cookie('MyFoo25', true), 'MyFoo25=1; Path=/; HttpOnly; SameSite=lax'],
+            [new Cookie('MyFoo25', false), 'MyFoo25=0; Path=/; HttpOnly; SameSite=lax'],
+            [new Cookie('foo', 'bar', 0), 'foo=bar; Path=/; HttpOnly; SameSite=lax'],
+            [new Cookie('MyFoo25'), 'MyFoo25=; Path=/; HttpOnly; SameSite=lax'],
+            [new Cookie('foo', 'It\'s raining cats and dogs.'), 'foo=It%27s+raining+cats+and+dogs.; Path=/; HttpOnly; SameSite=lax'],
+            [new Cookie('foo', 'Some characters, like "double quotes" must be escaped.'), 'foo=Some+characters%2C+like+%22double+quotes%22+must+be+escaped.; Path=/; HttpOnly; SameSite=lax'],
+            [new Cookie('foo', 'bar', 1345108546), 'foo=bar; Expires=Thu, 16-Aug-2012 09:15:46 GMT; Path=/; HttpOnly; SameSite=lax'],
+            [new Cookie('foo', 'bar', \DateTime::createFromFormat('U', 1345108546)), 'foo=bar; Expires=Thu, 16-Aug-2012 09:15:46 GMT; Path=/; HttpOnly; SameSite=lax'],
+            [new Cookie('foo', 'bar', 0, null, 'flow.neos.io'), 'foo=bar; Domain=flow.neos.io; Path=/; HttpOnly; SameSite=lax'],
+            [new Cookie('foo', 'bar', 0, null, 'flow.neos.io', '/about'), 'foo=bar; Domain=flow.neos.io; Path=/about; HttpOnly; SameSite=lax'],
+            [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true), 'foo=bar; Domain=neos.io; Path=/; Secure; HttpOnly; SameSite=lax'],
+            [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true, false), 'foo=bar; Domain=neos.io; Path=/; Secure; SameSite=lax'],
             [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true, true, Cookie::SAMESITE_NONE), 'foo=bar; Domain=neos.io; Path=/; Secure; HttpOnly; SameSite=none'],
             [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true, true, Cookie::SAMESITE_STRICT), 'foo=bar; Domain=neos.io; Path=/; Secure; HttpOnly; SameSite=strict'],
             [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true, true, Cookie::SAMESITE_LAX), 'foo=bar; Domain=neos.io; Path=/; Secure; HttpOnly; SameSite=lax'],
-            [new Cookie('foo', 'bar', 0, 3600), 'foo=bar; Max-Age=3600; Path=/; HttpOnly'],
-            [$expiredCookie, 'foo=bar; Expires=Thu, 27-May-1976 12:00:00 GMT; Path=/; HttpOnly']
+            [new Cookie('foo', 'bar', 0, 3600), 'foo=bar; Max-Age=3600; Path=/; HttpOnly; SameSite=lax'],
+            [$expiredCookie, 'foo=bar; Expires=Thu, 27-May-1976 12:00:00 GMT; Path=/; HttpOnly; SameSite=lax']
         ];
     }
 
@@ -496,7 +487,7 @@ class CookieTest extends UnitTestCase
     public function createCookieFromRawIgnoresSameSiteAttributeIfValueIsEmpty()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; SameSite=; more=nothing');
-        $this->assertNull($cookie->getSameSite());
+        $this->assertSame(Cookie::SAMESITE_LAX, $cookie->getSameSite());
     }
 
     /**

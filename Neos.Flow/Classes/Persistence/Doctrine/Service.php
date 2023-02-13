@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -11,28 +13,49 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Migrations\Configuration\Configuration;
-use Doctrine\DBAL\Migrations\Migration;
-use Doctrine\DBAL\Migrations\MigrationException;
-use Doctrine\DBAL\Migrations\OutputWriter;
-use Doctrine\DBAL\Migrations\Version;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
+use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
+use Doctrine\Migrations\DependencyFactory;
+use Doctrine\Migrations\Exception\MigrationClassNotFound;
+use Doctrine\Migrations\Exception\MigrationException;
+use Doctrine\Migrations\Exception\NoMigrationsFoundWithCriteria;
+use Doctrine\Migrations\Exception\NoMigrationsToExecute;
+use Doctrine\Migrations\Exception\UnknownMigrationVersion;
+use Doctrine\Migrations\Finder\MigrationFinder as MigrationFinderInterface;
+use Doctrine\Migrations\Generator\Exception\NoChangesDetected;
+use Doctrine\Migrations\Metadata\AvailableMigration;
+use Doctrine\Migrations\Metadata\AvailableMigrationsList;
+use Doctrine\Migrations\Metadata\ExecutedMigration;
+use Doctrine\Migrations\Metadata\ExecutedMigrationsList;
+use Doctrine\Migrations\MigratorConfiguration;
+use Doctrine\Migrations\Tools\Console\ConsoleLogger;
+use Doctrine\Migrations\Tools\Console\Exception\InvalidOptionUsage;
+use Doctrine\Migrations\Tools\Console\Exception\VersionAlreadyExists;
+use Doctrine\Migrations\Tools\Console\Exception\VersionDoesNotExist;
+use Doctrine\Migrations\Version\Direction;
+use Doctrine\Migrations\Version\ExecutionResult;
+use Doctrine\Migrations\Version\Version;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\SchemaValidator;
 use Doctrine\ORM\Tools\ToolsException;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Reflection\DocCommentParser;
-use Neos\Utility\Exception\FilesException;
-use Neos\Utility\ObjectAccess;
+use Neos\Flow\Utility\Environment;
 use Neos\Flow\Utility\Exception;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
+use Neos\Utility\ObjectAccess;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Service class for tasks related to Doctrine
@@ -41,12 +64,9 @@ use Neos\Utility\Files;
  */
 class Service
 {
-    const DOCTRINE_MIGRATIONSTABLENAME = 'flow_doctrine_migrationstatus';
+    public const DOCTRINE_MIGRATIONSTABLENAME = 'flow_doctrine_migrationstatus';
 
-    /**
-     * @var array
-     */
-    public $output = [];
+    public const DOCTRINE_MIGRATIONSNAMESPACE = 'Neos\Flow\Persistence\Doctrine\Migrations';
 
     /**
      * @Flow\Inject(lazy = false)
@@ -62,9 +82,14 @@ class Service
 
     /**
      * @Flow\Inject
-     * @var \Neos\Flow\Utility\Environment
+     * @var Environment
      */
     protected $environment;
+
+    /**
+     * @var BufferedOutput
+     */
+    protected $logMessages;
 
     /**
      * Validates the metadata mapping for Doctrine, using the SchemaValidator
@@ -72,7 +97,7 @@ class Service
      *
      * @return array
      */
-    public function validateMapping()
+    public function validateMapping(): array
     {
         try {
             $validator = new SchemaValidator($this->entityManager);
@@ -87,10 +112,10 @@ class Service
      * exist, this will throw an exception.
      *
      * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
-     * @return string
+     * @return void
      * @throws ToolsException
      */
-    public function createSchema($outputPathAndFilename = null)
+    public function createSchema($outputPathAndFilename = null): void
     {
         $schemaTool = new SchemaTool($this->entityManager);
         $allMetaData = $this->entityManager->getMetadataFactory()->getAllMetadata();
@@ -108,9 +133,9 @@ class Service
      *
      * @param boolean $safeMode
      * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
-     * @return string
+     * @return void
      */
-    public function updateSchema($safeMode = true, $outputPathAndFilename = null)
+    public function updateSchema($safeMode = true, $outputPathAndFilename = null): void
     {
         $schemaTool = new SchemaTool($this->entityManager);
         $allMetaData = $this->entityManager->getMetadataFactory()->getAllMetadata();
@@ -127,11 +152,11 @@ class Service
      *
      * @return void
      * @throws FilesException
+     * @throws Exception
      */
-    public function compileProxies()
+    public function compileProxies(): void
     {
         Files::emptyDirectoryRecursively(Files::concatenatePaths([$this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies']));
-        /** @var \Doctrine\ORM\Proxy\ProxyFactory $proxyFactory */
         $proxyFactory = $this->entityManager->getProxyFactory();
         $proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
     }
@@ -141,10 +166,14 @@ class Service
      * mapping information contains errors or not.
      *
      * @return array
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
-    public function getEntityStatus()
+    public function getEntityStatus(): array
     {
+        if ($this->entityManager->getConfiguration()->getMetadataDriverImpl() === null) {
+            throw new \RuntimeException('No metadata driver implementation configured', 1604919550);
+        }
+
         $info = [];
         $entityClassNames = $this->entityManager->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
         foreach ($entityClassNames as $entityClassName) {
@@ -163,13 +192,12 @@ class Service
      *
      * @param string $dql
      * @param integer $hydrationMode
-     * @param integer $firstResult
-     * @param integer $maxResult
+     * @param int|null $firstResult
+     * @param int|null $maxResult
      * @return mixed
      */
-    public function runDql($dql, $hydrationMode = \Doctrine\ORM\Query::HYDRATE_OBJECT, $firstResult = null, $maxResult = null)
+    public function runDql(string $dql, int $hydrationMode = \Doctrine\ORM\Query::HYDRATE_OBJECT, int $firstResult = null, int $maxResult = null)
     {
-        /** @var \Doctrine\ORM\Query $query */
         $query = $this->entityManager->createQuery($dql);
         if ($firstResult !== null) {
             $query->setFirstResult($firstResult);
@@ -184,227 +212,86 @@ class Service
     /**
      * Return the configuration needed for Migrations.
      *
-     * @return Configuration
-     * @throws DBALException
+     * @return DependencyFactory
+     * @throws DBALException|FilesException
      */
-    protected function getMigrationConfiguration()
+    protected function getDependencyFactory(): DependencyFactory
     {
-        $this->output = [];
-        $that = $this;
-        $outputWriter = new OutputWriter(
-            function ($message) use ($that) {
-                $that->output[] = $message;
-            }
-        );
-
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = $this->entityManager->getConnection();
-        $schemaManager = $connection->getSchemaManager();
-        if ($schemaManager->tablesExist(['flow3_doctrine_migrationstatus']) === true) {
-            $schemaManager->renameTable('flow3_doctrine_migrationstatus', self::DOCTRINE_MIGRATIONSTABLENAME);
+        $migrationsPath = Files::concatenatePaths([FLOW_PATH_TEMPORARY, 'DoctrineMigrations']);
+        if (!is_dir($migrationsPath)) {
+            Files::createDirectoryRecursively($migrationsPath);
         }
+        $configurationLoader = new ConfigurationArray([
+            'table_storage' => [
+                'table_name' => self::DOCTRINE_MIGRATIONSTABLENAME,
+                'version_column_length' => 255,
+            ],
+            'migrations_paths' => [
+                self::DOCTRINE_MIGRATIONSNAMESPACE => $migrationsPath
+            ],
+        ]);
+        $entityManagerLoader = new ExistingEntityManager($this->entityManager);
+        $this->logMessages = new BufferedOutput(null, true);
+        $logger = new ConsoleLogger($this->logMessages);
 
-        $configuration = new Configuration($connection, $outputWriter);
-        $configuration->setMigrationsNamespace('Neos\Flow\Persistence\Doctrine\Migrations');
-        $configuration->setMigrationsDirectory(Files::concatenatePaths([FLOW_PATH_DATA, 'DoctrineMigrations']));
-        $configuration->setMigrationsTableName(self::DOCTRINE_MIGRATIONSTABLENAME);
+        $dependencyFactory = DependencyFactory::fromEntityManager($configurationLoader, $entityManagerLoader);
+        $dependencyFactory->setService(MigrationFinderInterface::class, new MigrationFinder($this->getDatabasePlatformName()));
+        $dependencyFactory->setService(LoggerInterface::class, $logger);
 
-        $configuration->createMigrationTable();
-
-        $databasePlatformName = $this->getDatabasePlatformName();
-        /** @var PackageInterface $package */
-        foreach ($this->packageManager->getAvailablePackages() as $package) {
-            $path = Files::concatenatePaths([
-                $package->getPackagePath(),
-                'Migrations',
-                $databasePlatformName
-            ]);
-            if (is_dir($path)) {
-                $configuration->registerMigrationsFromDirectory($path);
-            }
-        }
-
-        return $configuration;
-    }
-
-    /**
-     * Returns the current migration status as an array.
-     *
-     * @return array
-     * @throws DBALException
-     */
-    public function getMigrationStatus()
-    {
-        $configuration = $this->getMigrationConfiguration();
-
-        $executedMigrations = $configuration->getMigratedVersions();
-        $availableMigrations = $configuration->getAvailableVersions();
-        $executedUnavailableMigrations = array_diff($executedMigrations, $availableMigrations);
-
-        $numExecutedUnavailableMigrations = count($executedUnavailableMigrations);
-        $numNewMigrations = count(array_diff($availableMigrations, $executedMigrations));
-
-        return [
-            'Name' => $configuration->getName() ? $configuration->getName() : 'Doctrine Database Migrations',
-            'Database Driver' => $configuration->getConnection()->getDriver()->getName(),
-            'Database Name' => $configuration->getConnection()->getDatabase(),
-            'Configuration Source' => 'manually configured',
-            'Version Table Name' => $configuration->getMigrationsTableName(),
-            'Version Column Name' => $configuration->getMigrationsColumnName(),
-            'Migrations Namespace' => $configuration->getMigrationsNamespace(),
-            'Migrations Target Directory' => $configuration->getMigrationsDirectory(),
-            'Previous Version' => $this->getFormattedVersionAlias('prev', $configuration),
-            'Current Version' => $this->getFormattedVersionAlias('current', $configuration),
-            'Next Version' => $this->getFormattedVersionAlias('next', $configuration),
-            'Latest Version' => $this->getFormattedVersionAlias('latest', $configuration),
-            'Executed Migrations' => count($executedMigrations),
-            'Executed Unavailable Migrations' => $numExecutedUnavailableMigrations,
-            'Available Migrations' => count($availableMigrations),
-            'New Migrations' => $numNewMigrations,
-        ];
+        return $dependencyFactory;
     }
 
     /**
      * Returns a formatted string of current database migration status.
      *
      * @param boolean $showMigrations
-     * @param boolean $showDescriptions
      * @return string
-     * @throws \ReflectionException
      * @throws DBALException
      */
-    public function getFormattedMigrationStatus($showMigrations = false, $showDescriptions = false)
+    public function getFormattedMigrationStatus($showMigrations = false): string
     {
-        $statusInformation = $this->getMigrationStatus();
-        $output = PHP_EOL . '<info>==</info> Configuration' . PHP_EOL;
+        $this->initializeMetadataStorage();
 
-        foreach ($statusInformation as $name => $value) {
-            if ($name == 'New Migrations') {
-                $value = $value > 0 ? '<question>' . $value . '</question>' : 0;
-            }
-            if ($name == 'Executed Unavailable Migrations') {
-                $value = $value > 0 ? '<error>' . $value . '</error>' : 0;
-            }
-            $output .= '   <comment>></comment> ' . $name . ': ' . str_repeat(' ', 35 - strlen($name)) . $value . PHP_EOL;
-        }
+        $infosHelper = $this->getDependencyFactory()->getMigrationStatusInfosHelper();
+        $infosHelper->showMigrationsInfo($this->logMessages);
 
         if ($showMigrations) {
-            $configuration = $this->getMigrationConfiguration();
+            $versions = $this->getSortedVersions(
+                $this->getDependencyFactory()->getMigrationPlanCalculator()->getMigrations(), // available migrations
+                $this->getDependencyFactory()->getMetadataStorage()->getExecutedMigrations() // executed migrations
+            );
 
-            $executedMigrations = $configuration->getMigratedVersions();
-            $availableMigrations = $configuration->getAvailableVersions();
-            $executedUnavailableMigrations = array_diff($executedMigrations, $availableMigrations);
-            if ($migrations = $configuration->getMigrations()) {
-                $docCommentParser = new DocCommentParser();
-
-                $output .= PHP_EOL . ' <info>==</info> Available Migration Versions' . PHP_EOL;
-
-                /** @var Version $version */
-                foreach ($migrations as $version) {
-                    $packageKey = $this->getPackageKeyFromMigrationVersion($version);
-                    $croppedPackageKey = strlen($packageKey) < 30 ? $packageKey : substr($packageKey, 0, 29) . '~';
-                    $packageKeyColumn = ' ' . str_pad($croppedPackageKey, 30, ' ');
-                    $isMigrated = in_array($version->getVersion(), $executedMigrations);
-                    $status = $isMigrated ? '<info>migrated</info>' : '<error>not migrated</error>';
-                    $migrationDescription = '';
-                    if ($showDescriptions) {
-                        $migrationDescription = str_repeat(' ', 2) . $this->getMigrationDescription($version, $docCommentParser);
-                    }
-                    $formattedVersion = $configuration->getDateTime($version->getVersion());
-
-                    $output .= '    <comment>></comment> ' . $formattedVersion .
-                        ' (<comment>' . $version->getVersion() . '</comment>)' . $packageKeyColumn .
-                        str_repeat(' ', 2) . $status . $migrationDescription . PHP_EOL;
-                }
-            }
-
-            if (count($executedUnavailableMigrations)) {
-                $output .= PHP_EOL . ' <info>==</info> Previously Executed Unavailable Migration Versions' . PHP_EOL;
-                foreach ($executedUnavailableMigrations as $executedUnavailableMigration) {
-                    $output .= '    <comment>></comment> ' . $configuration->getDateTime($executedUnavailableMigration) .
-                        ' (<comment>' . $executedUnavailableMigration . '</comment>)' . PHP_EOL;
-                }
-            }
+            $this->logMessages->writeln('');
+            $this->getDependencyFactory()->getMigrationStatusInfosHelper()->listVersions($versions, $this->logMessages);
         }
 
-        return $output;
+        return $this->logMessages->fetch();
     }
 
     /**
-     * Tries to find out a package key which the Version belongs to. If no
-     * package could be found, an empty string is returned.
-     *
-     * @param Version $version
-     * @return string
-     * @throws \ReflectionException
+     * @param AvailableMigrationsList $availableMigrations
+     * @param ExecutedMigrationsList $executedMigrations
+     * @return Version[]
+     * @throws DBALException
      */
-    protected function getPackageKeyFromMigrationVersion(Version $version)
+    private function getSortedVersions(AvailableMigrationsList $availableMigrations, ExecutedMigrationsList $executedMigrations): array
     {
-        $sortedAvailablePackages = $this->packageManager->getAvailablePackages();
-        usort($sortedAvailablePackages, function (PackageInterface $packageOne, PackageInterface $packageTwo) {
-            return strlen($packageTwo->getPackagePath()) - strlen($packageOne->getPackagePath());
+        $availableVersions = array_map(static function (AvailableMigration $availableMigration): Version {
+            return $availableMigration->getVersion();
+        }, $availableMigrations->getItems());
+
+        $executedVersions = array_map(static function (ExecutedMigration $executedMigration): Version {
+            return $executedMigration->getVersion();
+        }, $executedMigrations->getItems());
+
+        $versions = array_unique(array_merge($availableVersions, $executedVersions));
+
+        $comparator = $this->getDependencyFactory()->getVersionComparator();
+        uasort($versions, static function (Version $a, Version $b) use ($comparator): int {
+            return $comparator->compare($a, $b);
         });
 
-        $reflectedClass = new \ReflectionClass($version->getMigration());
-        $classPathAndFilename = Files::getUnixStylePath($reflectedClass->getFileName());
-
-        /** @var $package PackageInterface */
-        foreach ($sortedAvailablePackages as $package) {
-            $packagePath = Files::getUnixStylePath($package->getPackagePath());
-            if (strpos($classPathAndFilename, $packagePath) === 0) {
-                return $package->getPackageKey();
-            }
-        }
-
-        return '';
-    }
-
-    /**
-     * Returns a formatted version string for the alias.
-     *
-     * @param string $alias
-     * @param Configuration $configuration
-     * @return string
-     */
-    protected function getFormattedVersionAlias($alias, Configuration $configuration)
-    {
-        $version = $configuration->resolveVersionAlias($alias);
-
-        if ($version === null) {
-            if ($alias == 'next') {
-                return 'Already at latest version';
-            } elseif ($alias == 'prev') {
-                return 'Already at first version';
-            }
-        }
-
-        if ($version === '0') {
-            return '<comment>0</comment>';
-        }
-
-        return $configuration->getDateTime($version) . ' (<comment>' . $version . '</comment>)';
-    }
-
-    /**
-     * Returns the description of a migration.
-     *
-     * If available it is fetched from the getDescription() method, if that returns an empty value
-     * the class docblock is used instead.
-     *
-     * @param Version $version
-     * @param DocCommentParser $parser
-     * @return string
-     * @throws \ReflectionException
-     */
-    protected function getMigrationDescription(Version $version, DocCommentParser $parser)
-    {
-        if ($version->getMigration()->getDescription()) {
-            return $version->getMigration()->getDescription();
-        } else {
-            $reflectedClass = new \ReflectionClass($version->getMigration());
-            $parser->parseDocComment($reflectedClass->getDocComment());
-            return str_replace([chr(10), chr(13)], ' ', $parser->getDescription());
-        }
+        return $versions;
     }
 
     /**
@@ -413,36 +300,106 @@ class Service
      * If $outputPathAndFilename is given, the SQL statements will be written to the given file instead of executed.
      *
      * @param string $version The version to migrate to
-     * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
+     * @param string|null $outputPathAndFilename A file to write SQL to, instead of executing it - implicitly enables dry-run
      * @param boolean $dryRun Whether to do a dry run or not
      * @param boolean $quiet Whether to do a quiet run or not
      * @return string
-     * @throws MigrationException
      * @throws DBALException
      */
-    public function executeMigrations($version = null, $outputPathAndFilename = null, $dryRun = false, $quiet = false)
+    public function executeMigrations(string $version = 'latest', string $outputPathAndFilename = null, $dryRun = false, $quiet = false): string
     {
-        $configuration = $this->getMigrationConfiguration();
-        $migration = new Migration($configuration);
+        $this->initializeMetadataStorage();
 
-        if ($outputPathAndFilename !== null) {
-            $migration->writeSqlFile($outputPathAndFilename, $version);
-        } else {
-            $migration->migrate($version, $dryRun);
+        $migrationRepository = $this->getDependencyFactory()->getMigrationRepository();
+        if (count($migrationRepository->getMigrations()) === 0) {
+            return sprintf(
+                'The version "%s" can\'t be reached, there are no registered migrations.',
+                $version
+            );
         }
 
-        if ($quiet === true) {
+        try {
+            $resolvedVersion = $this->getDependencyFactory()->getVersionAliasResolver()->resolveVersionAlias($version);
+        } catch (UnknownMigrationVersion $e) {
+            return sprintf(
+                'Unknown version: %s',
+                OutputFormatter::escape($version)
+            );
+        } catch (NoMigrationsToExecute | NoMigrationsFoundWithCriteria $e) {
+            return ($quiet === false ? $this->exitMessageForAlias($version) : '');
+        }
+
+        $planCalculator = $this->getDependencyFactory()->getMigrationPlanCalculator();
+        $plan = $planCalculator->getPlanUntilVersion($resolvedVersion);
+        if (count($plan) === 0) {
+            return ($quiet === false ? $this->exitMessageForAlias($version) : '');
+        }
+
+        if ($quiet === false) {
+            $output = sprintf(
+                'Migrating%s %s to %s',
+                $dryRun ? ' (dry-run)' : '',
+                $plan->getDirection(),
+                (string)$resolvedVersion
+            );
+        } else {
             $output = '';
-            foreach ($this->output as $line) {
-                $line = strip_tags($line);
-                if (strpos($line, '  ++ migrating ') !== false || strpos($line, '  -- reverting ') !== false) {
-                    $output .= substr($line, -15);
+        }
+
+        $migratorConfiguration = new MigratorConfiguration();
+        $migratorConfiguration->setDryRun($dryRun || $outputPathAndFilename !== null);
+
+        $migrator = $this->getDependencyFactory()->getMigrator();
+        $sql = $migrator->migrate($plan, $migratorConfiguration);
+
+        if ($quiet === false) {
+            $output .= PHP_EOL;
+            foreach ($sql as $item) {
+                $output .= PHP_EOL;
+                foreach ($item as $inner) {
+                    $output .= '     -> ' . $inner->getStatement() . PHP_EOL;
                 }
             }
-            return $output;
-        } else {
-            return implode(PHP_EOL, $this->output);
+            $output .= PHP_EOL;
+            $output .= $this->logMessages->fetch();
         }
+
+        if (is_string($outputPathAndFilename)) {
+            $writer = $this->getDependencyFactory()->getQueryWriter();
+            $writer->write($outputPathAndFilename, $plan->getDirection(), $sql);
+            if ($quiet === false) {
+                $output .= PHP_EOL . sprintf('SQL written to %s', $outputPathAndFilename);
+            }
+        }
+
+        return $output;
+    }
+
+    private function exitMessageForAlias(string $versionAlias): string
+    {
+        $version = $this->getDependencyFactory()->getVersionAliasResolver()->resolveVersionAlias('current');
+
+        // Allow meaningful message when latest version already reached.
+        if (in_array($versionAlias, ['current', 'latest', 'first'], true)) {
+            $message = sprintf(
+                'Already at the %s version ("%s")',
+                $versionAlias,
+                (string)$version
+            );
+        } elseif (in_array($versionAlias, ['next', 'prev'], true) || strpos($versionAlias, 'current') === 0) {
+            $message = sprintf(
+                'The version "%s" couldn\'t be reached, you are at version "%s"',
+                $versionAlias,
+                (string)$version
+            );
+        } else {
+            $message = sprintf(
+                'You are already at version "%s"',
+                (string)$version
+            );
+        }
+
+        return $message;
     }
 
     /**
@@ -451,22 +408,52 @@ class Service
      *
      * @param string $version The version to migrate to
      * @param string $direction
-     * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
+     * @param string|null $outputPathAndFilename A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
      * @return string
-     * @throws MigrationException
      * @throws DBALException
      */
-    public function executeMigration($version, $direction = 'up', $outputPathAndFilename = null, $dryRun = false)
+    public function executeMigration(string $version, string $direction = 'up', string $outputPathAndFilename = null, bool $dryRun = false): string
     {
-        $version = $this->getMigrationConfiguration()->getVersion($version);
+        $this->initializeMetadataStorage();
+
+        $migrationRepository = $this->getDependencyFactory()->getMigrationRepository();
+        if (!$migrationRepository->hasMigration($version)) {
+            return sprintf('Version %s is not available', $version);
+        }
+
+        $migratorConfiguration = new MigratorConfiguration();
+        $migratorConfiguration->setDryRun($dryRun || $outputPathAndFilename !== null);
+
+        $planCalculator = $this->getDependencyFactory()->getMigrationPlanCalculator();
+        $plan = $planCalculator->getPlanForVersions([new Version($version)], $direction);
+
+        $output = sprintf(
+            'Migrating%s %s to %s',
+            $dryRun ? ' (dry-run)' : '',
+            $plan->getDirection(),
+            $version
+        );
+
+        $migrator = $this->getDependencyFactory()->getMigrator();
+        $sql = $migrator->migrate($plan, $migratorConfiguration);
+
+        $output .= PHP_EOL;
+        foreach ($sql as $item) {
+            $output .= PHP_EOL;
+            foreach ($item as $inner) {
+                $output .= '     -> ' . $inner->getStatement() . PHP_EOL;
+            }
+        }
+        $output .= PHP_EOL;
+        $output .= $this->logMessages->fetch();
 
         if ($outputPathAndFilename !== null) {
-            $version->writeSqlFile($outputPathAndFilename, $direction);
-        } else {
-            $version->execute($direction, $dryRun);
+            $writer = $this->getDependencyFactory()->getQueryWriter();
+            $writer->write($outputPathAndFilename, $direction, $sql);
         }
-        return strip_tags(implode(PHP_EOL, $this->output));
+
+        return $output;
     }
 
     /**
@@ -482,37 +469,124 @@ class Service
      * @throws \LogicException
      * @throws DBALException
      */
-    public function markAsMigrated($version, $markAsMigrated)
+    public function markAsMigrated(string $version, bool $markAsMigrated): void
     {
-        $configuration = $this->getMigrationConfiguration();
+        $this->initializeMetadataStorage();
 
+        $output = new BufferedOutput();
+
+        $executedMigrations = $this->getDependencyFactory()->getMetadataStorage()->getExecutedMigrations();
+        $availableVersions = $this->getDependencyFactory()->getMigrationPlanCalculator()->getMigrations();
         if ($version === 'all') {
-            foreach ($configuration->getMigrations() as $version) {
-                if ($markAsMigrated === true && $configuration->hasVersionMigrated($version) === false) {
-                    $version->markMigrated();
-                } elseif ($markAsMigrated === false && $configuration->hasVersionMigrated($version) === true) {
-                    $version->markNotMigrated();
+            if ($markAsMigrated === false) {
+                foreach ($executedMigrations->getItems() as $availableMigration) {
+                    $this->mark($output, $availableMigration->getVersion(), false, $executedMigrations, !$markAsMigrated);
                 }
             }
+
+            foreach ($availableVersions->getItems() as $availableMigration) {
+                $this->mark($output, $availableMigration->getVersion(), true, $executedMigrations, !$markAsMigrated);
+            }
+        } elseif ($version !== null) {
+            $this->mark($output, new Version($version), false, $executedMigrations, !$markAsMigrated);
         } else {
-            if ($configuration->hasVersion($version) === false) {
-                throw MigrationException::unknownMigrationVersion($version);
-            }
-
-            $version = $configuration->getVersion($version);
-
-            if ($markAsMigrated === true) {
-                if ($configuration->hasVersionMigrated($version) === true) {
-                    throw new MigrationException(sprintf('The version "%s" is already marked as executed.', $version));
-                }
-                $version->markMigrated();
-            } else {
-                if ($configuration->hasVersionMigrated($version) === false) {
-                    throw new MigrationException(sprintf('The version "%s" is already marked as not executed.', $version));
-                }
-                $version->markNotMigrated();
-            }
+            throw InvalidOptionUsage::new('You must specify the version or use the --all argument.');
         }
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param Version $version
+     * @param bool $all
+     * @param ExecutedMigrationsList $executedMigrations
+     * @param bool $delete
+     * @throws DBALException
+     */
+    private function mark(OutputInterface $output, Version $version, bool $all, ExecutedMigrationsList $executedMigrations, bool $delete): void
+    {
+        try {
+            $availableMigration = $this->getDependencyFactory()->getMigrationRepository()->getMigration($version);
+        } catch (MigrationClassNotFound $e) {
+            $availableMigration = null;
+        }
+
+        $storage = $this->getDependencyFactory()->getMetadataStorage();
+        if ($availableMigration === null) {
+            if ($delete === false) {
+                throw UnknownMigrationVersion::new((string)$version);
+            }
+
+            $migrationResult = new ExecutionResult($version, Direction::DOWN);
+            $storage->complete($migrationResult);
+            $output->writeln(sprintf(
+                "<info>%s</info> deleted from the version table.\n",
+                (string)$version
+            ));
+
+            return;
+        }
+
+        $marked = false;
+
+        if ($delete === false && $executedMigrations->hasMigration($version)) {
+            if (!$all) {
+                throw VersionAlreadyExists::new($version);
+            }
+
+            $marked = true;
+        }
+
+        if ($delete && !$executedMigrations->hasMigration($version)) {
+            if (!$all) {
+                throw VersionDoesNotExist::new($version);
+            }
+
+            $marked = true;
+        }
+
+        if ($marked === true) {
+            return;
+        }
+
+        if ($delete) {
+            $migrationResult = new ExecutionResult($version, Direction::DOWN);
+            $storage->complete($migrationResult);
+
+            $output->writeln(sprintf(
+                "<info>%s</info> deleted from the version table.\n",
+                (string)$version
+            ));
+        } else {
+            $migrationResult = new ExecutionResult($version, Direction::UP);
+            $storage->complete($migrationResult);
+
+            $output->writeln(sprintf(
+                "<info>%s</info> added to the version table.\n",
+                (string)$version
+            ));
+        }
+    }
+
+    /**
+     * Returns the current migration status as an array.
+     *
+     * @return array
+     * @return DependencyFactory
+     * @throws DBALException
+     */
+    public function getMigrationStatus(): array
+    {
+        $executedMigrations = $this->getDependencyFactory()->getMetadataStorage()->getExecutedMigrations();
+        $availableMigrations = $this->getDependencyFactory()->getMigrationPlanCalculator()->getMigrations();
+        $executedUnavailableMigrations = $this->getDependencyFactory()->getMigrationStatusCalculator()->getExecutedUnavailableMigrations();
+        $newMigrations = $this->getDependencyFactory()->getMigrationStatusCalculator()->getNewMigrations();
+
+        return [
+            'executed' => count($executedMigrations),
+            'unavailable' => count($executedUnavailableMigrations),
+            'available' => count($availableMigrations),
+            'new' => count($newMigrations)
+        ];
     }
 
     /**
@@ -527,184 +601,29 @@ class Service
      * Otherwise an empty migration skeleton is generated.
      *
      * @param boolean $diffAgainstCurrent
-     * @param string $filterExpression
+     * @param string|null $filterExpression
      * @return array Path to the new file
      * @throws DBALException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws FilesException
      */
-    public function generateMigration($diffAgainstCurrent = true, $filterExpression = null)
+    public function generateMigration(bool $diffAgainstCurrent = true, string $filterExpression = null): array
     {
-        $configuration = $this->getMigrationConfiguration();
-        $up = null;
-        $down = null;
+        $fqcn = $this->getDependencyFactory()->getClassNameGenerator()->generateClassName(self::DOCTRINE_MIGRATIONSNAMESPACE);
 
-        if ($diffAgainstCurrent === true) {
-            /** @var \Doctrine\DBAL\Connection $connection */
-            $connection = $this->entityManager->getConnection();
+        if ($diffAgainstCurrent === false) {
+            $migrationGenerator = $this->getDependencyFactory()->getMigrationGenerator();
+            $path = $migrationGenerator->generateMigration($fqcn);
 
-            if ($filterExpression) {
-                $connection->getConfiguration()->setFilterSchemaAssetsExpression($filterExpression);
-            }
-
-            $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
-
-            if (empty($metadata)) {
-                return ['No mapping information to process.', null];
-            }
-
-            $tool = new SchemaTool($this->entityManager);
-
-            $fromSchema = $connection->getSchemaManager()->createSchema();
-            $toSchema = $tool->getSchemaFromMetadata($metadata);
-
-            if ($filterExpression) {
-                foreach ($toSchema->getTables() as $table) {
-                    $tableName = $table->getName();
-                    if (!preg_match($filterExpression, $this->resolveTableName($tableName))) {
-                        $toSchema->dropTable($tableName);
-                    }
-                }
-
-                foreach ($toSchema->getSequences() as $sequence) {
-                    $sequenceName = $sequence->getName();
-                    if (!preg_match($filterExpression, $this->resolveTableName($sequenceName))) {
-                        $toSchema->dropSequence($sequenceName);
-                    }
-                }
-            }
-
-            $platform = $connection->getDatabasePlatform();
-            $up = $this->buildCodeFromSql($configuration, $fromSchema->getMigrateToSql($toSchema, $platform));
-            $down = $this->buildCodeFromSql($configuration, $fromSchema->getMigrateFromSql($toSchema, $platform));
-
-            if (!$up && !$down) {
-                return ['No changes detected in your mapping information.', null];
-            }
+            return ['Generated new migration class!', $path];
         }
 
-        return ['Generated new migration class!', $this->writeMigrationClassToFile($configuration, $up, $down)];
-    }
-
-    /**
-     * Resolve a table name from its fully qualified name. The `$name` argument
-     * comes from Doctrine\DBAL\Schema\Table#getName which can sometimes return
-     * a namespaced name with the form `{namespace}.{tableName}`. This extracts
-     * the table name from that.
-     *
-     * @param string $name
-     * @return string
-     */
-    private function resolveTableName(string $name): string
-    {
-        $pos = strpos($name, '.');
-
-        return false === $pos ? $name : substr($name, $pos + 1);
-    }
-
-    /**
-     * @param Configuration $configuration
-     * @param string $up
-     * @param string $down
-     * @return string
-     * @throws \RuntimeException
-     * @throws FilesException
-     */
-    protected function writeMigrationClassToFile(Configuration $configuration, ?string $up, ?string $down): string
-    {
-        $namespace = $configuration->getMigrationsNamespace();
-        $className = 'Version' . date('YmdHis');
-        $up = $up === null ? '' : "\n        " . implode("\n        ", explode("\n", $up));
-        $down = $down === null ? '' : "\n        " . implode("\n        ", explode("\n", $down));
-
-        $path = Files::concatenatePaths([$configuration->getMigrationsDirectory(), $className . '.php']);
+        $diffGenerator = $this->getDependencyFactory()->getDiffGenerator();
         try {
-            Files::createDirectoryRecursively(dirname($path));
-        } catch (Exception $exception) {
-            throw new \RuntimeException(sprintf('Migration target directory "%s" does not exist.', dirname($path)), 1303298536, $exception);
+            $path = $diffGenerator->generate($fqcn, $filterExpression);
+        } catch (NoChangesDetected $exception) {
+            return ['No changes detected', false];
         }
 
-        $code = <<<EOT
-<?php
-namespace $namespace;
-
-use Doctrine\Migrations\AbstractMigration;
-use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Migrations\AbortMigrationException;
-
-/**
- * Auto-generated Migration: Please modify to your needs! This block will be used as the migration description if getDescription() is not used.
- */
-class $className extends AbstractMigration
-{
-
-    /**
-     * @return string
-     */
-    public function getDescription(): string
-    {
-        return '';
-    }
-
-    /**
-     * @param Schema \$schema
-     * @return void
-     * @throws AbortMigrationException
-     */
-    public function up(Schema \$schema): void
-    {
-        // this up() migration is autogenerated, please modify it to your needs$up
-    }
-
-    /**
-     * @param Schema \$schema
-     * @return void
-     * @throws AbortMigrationException
-     */
-    public function down(Schema \$schema): void
-    {
-        // this down() migration is autogenerated, please modify it to your needs$down
-    }
-}
-EOT;
-        file_put_contents($path, $code);
-
-        return $path;
-    }
-
-    /**
-     * Returns PHP code for a migration file that "executes" the given
-     * array of SQL statements.
-     *
-     * @param Configuration $configuration
-     * @param array $sql
-     * @return string
-     * @throws DBALException
-     */
-    protected function buildCodeFromSql(Configuration $configuration, array $sql): string
-    {
-        $currentPlatform = $configuration->getConnection()->getDatabasePlatform()->getName();
-        $code = [];
-        foreach ($sql as $query) {
-            if (stripos($query, $configuration->getMigrationsTableName()) !== false) {
-                continue;
-            }
-            $code[] = sprintf('$this->addSql(%s);', var_export($query, true));
-        }
-
-        if (!empty($code)) {
-            array_unshift(
-                $code,
-                sprintf(
-                    '$this->abortIf($this->connection->getDatabasePlatform()->getName() !== %s, %s);',
-                    var_export($currentPlatform, true),
-                    var_export(sprintf('Migration can only be executed safely on "%s".', $currentPlatform), true)
-                ),
-                ''
-            );
-        }
-
-        return implode(chr(10), $code);
+        return ['Generated new migration class!', $path];
     }
 
     /**
@@ -713,7 +632,7 @@ EOT;
      * @return string
      * @throws DBALException
      */
-    public function getDatabasePlatformName()
+    public function getDatabasePlatformName(): string
     {
         return ucfirst($this->entityManager->getConnection()->getDatabasePlatform()->getName());
     }
@@ -754,34 +673,34 @@ EOT;
      * @param string $replace
      * @return array
      */
-    public static function getForeignKeyHandlingSql(Schema $schema, AbstractPlatform $platform, $tableNames, $search, $replace)
+    public static function getForeignKeyHandlingSql(Schema $schema, AbstractPlatform $platform, array $tableNames, string $search, string $replace): array
     {
         $foreignKeyHandlingSql = ['drop' => [], 'add' => []];
         $tables = $schema->getTables();
         foreach ($tables as $table) {
             $foreignKeys = $table->getForeignKeys();
             foreach ($foreignKeys as $foreignKey) {
-                if (!in_array($table->getName(), $tableNames) && !in_array($foreignKey->getForeignTableName(), $tableNames)) {
+                if (!in_array($table->getName(), $tableNames, true) && !in_array($foreignKey->getForeignTableName(), $tableNames, true)) {
                     continue;
                 }
 
                 $localColumns = $foreignKey->getLocalColumns();
                 $foreignColumns = $foreignKey->getForeignColumns();
                 if (in_array($search, $foreignColumns) || in_array($search, $localColumns)) {
-                    if (in_array($foreignKey->getLocalTableName(), $tableNames)) {
+                    if (in_array($foreignKey->getLocalTableName(), $tableNames, true)) {
                         array_walk(
                             $localColumns,
-                            function (&$value) use ($search, $replace) {
+                            static function (&$value) use ($search, $replace) {
                                 if ($value === $search) {
                                     $value = $replace;
                                 }
                             }
                         );
                     }
-                    if (in_array($foreignKey->getForeignTableName(), $tableNames)) {
+                    if (in_array($foreignKey->getForeignTableName(), $tableNames, true)) {
                         array_walk(
                             $foreignColumns,
-                            function (&$value) use ($search, $replace) {
+                            static function (&$value) use ($search, $replace) {
                                 if ($value === $search) {
                                     $value = $replace;
                                 }
@@ -789,7 +708,7 @@ EOT;
                         );
                     }
 
-                    $identifierConstructorCallback = function ($columnName) {
+                    $identifierConstructorCallback = static function ($columnName) {
                         return new Identifier($columnName);
                     };
                     $localColumns = array_map($identifierConstructorCallback, $localColumns);
@@ -805,5 +724,17 @@ EOT;
         }
 
         return $foreignKeyHandlingSql;
+    }
+
+    /**
+     * Calls `ensureInitialized()` on the Metadata Storage and applies pending changes
+     * @see MetadataStorage::ensureInitialized()
+     *
+     * @throws DBALException | FilesException
+     */
+    private function initializeMetadataStorage(): void
+    {
+        $this->getDependencyFactory()->getMetadataStorage()->ensureInitialized();
+        $this->entityManager->flush();
     }
 }

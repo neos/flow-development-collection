@@ -4,9 +4,9 @@
     "description": "A simple generator for controller and views.",
     "license": "MIT",
     "require": {
-        "php": "^7.2",
-        "neos/flow": "~6.3.0",
-        "neos/fluid-adaptor": "*",
+        "php": "^7.3 || ^8.0",
+        "neos/flow": "~7.3.0",
+        "neos/fluid-adaptor": "~7.3.0",
         "neos/utility-arrays": "*"
     },
     "autoload": {

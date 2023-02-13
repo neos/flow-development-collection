@@ -29,73 +29,73 @@ interface QueryInterface
      * The '=' comparison operator.
      * @api
     */
-    const OPERATOR_EQUAL_TO = 1;
+    public const OPERATOR_EQUAL_TO = 1;
 
     /**
      * The '!=' comparison operator.
      * @api
     */
-    const OPERATOR_NOT_EQUAL_TO = 2;
+    public const OPERATOR_NOT_EQUAL_TO = 2;
 
     /**
      * The '<' comparison operator.
      * @api
     */
-    const OPERATOR_LESS_THAN = 3;
+    public const OPERATOR_LESS_THAN = 3;
 
     /**
      * The '<=' comparison operator.
      * @api
     */
-    const OPERATOR_LESS_THAN_OR_EQUAL_TO = 4;
+    public const OPERATOR_LESS_THAN_OR_EQUAL_TO = 4;
 
     /**
      * The '>' comparison operator.
      * @api
     */
-    const OPERATOR_GREATER_THAN = 5;
+    public const OPERATOR_GREATER_THAN = 5;
 
     /**
      * The '>=' comparison operator.
      * @api
     */
-    const OPERATOR_GREATER_THAN_OR_EQUAL_TO = 6;
+    public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = 6;
 
     /**
      * The 'like' comparison operator.
      * @api
     */
-    const OPERATOR_LIKE = 7;
+    public const OPERATOR_LIKE = 7;
 
     /**
      * The 'contains' comparison operator for collections.
      * @api
     */
-    const OPERATOR_CONTAINS = 8;
+    public const OPERATOR_CONTAINS = 8;
 
     /**
      * The 'in' comparison operator.
      * @api
     */
-    const OPERATOR_IN = 9;
+    public const OPERATOR_IN = 9;
 
     /**
      * The 'is NULL' comparison operator.
      * @api
     */
-    const OPERATOR_IS_NULL = 10;
+    public const OPERATOR_IS_NULL = 10;
 
     /**
      * The 'is empty' comparison operator for collections.
      * @api
     */
-    const OPERATOR_IS_EMPTY = 11;
+    public const OPERATOR_IS_EMPTY = 11;
 
     /**
      * Constants representing the direction when ordering result sets.
      */
-    const ORDER_ASCENDING = 'ASC';
-    const ORDER_DESCENDING = 'DESC';
+    public const ORDER_ASCENDING = 'ASC';
+    public const ORDER_DESCENDING = 'DESC';
 
     /**
      * Returns the type this query cares for.
@@ -103,7 +103,7 @@ interface QueryInterface
      * @return string
      * @api
      */
-    public function getType();
+    public function getType(): string;
 
     /**
      * Executes the query and returns the result.
@@ -112,7 +112,7 @@ interface QueryInterface
      * @return QueryResultInterface The query result
      * @api
      */
-    public function execute($cacheResult = false);
+    public function execute(bool $cacheResult = false): QueryResultInterface;
 
     /**
      * Returns the query result count.
@@ -120,7 +120,7 @@ interface QueryInterface
      * @return integer The query result count
      * @api
      */
-    public function count();
+    public function count(): int;
 
     /**
      * Sets the property names to order the result by. Expected like this:
@@ -133,7 +133,7 @@ interface QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function setOrderings(array $orderings);
+    public function setOrderings(array $orderings): QueryInterface;
 
     /**
      * Gets the property names to order the result by, like this:
@@ -145,25 +145,25 @@ interface QueryInterface
      * @return array
      * @api
      */
-    public function getOrderings();
+    public function getOrderings(): array;
 
     /**
      * Sets the maximum size of the result set to limit. Returns $this to allow
      * for chaining (fluid interface).
      *
-     * @param integer $limit
+     * @param integer|null $limit
      * @return QueryInterface
      * @api
      */
-    public function setLimit($limit);
+    public function setLimit(?int $limit): QueryInterface;
 
     /**
      * Returns the maximum size of the result set to limit.
      *
-     * @param integer
+     * @return integer|null
      * @api
      */
-    public function getLimit();
+    public function getLimit(): ?int;
 
     /**
      * Sets the DISTINCT flag for this query.
@@ -172,7 +172,7 @@ interface QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function setDistinct($distinct = true);
+    public function setDistinct(bool $distinct = true): QueryInterface;
 
     /**
      * Returns the DISTINCT flag for this query.
@@ -180,17 +180,17 @@ interface QueryInterface
      * @return boolean
      * @api
      */
-    public function isDistinct();
+    public function isDistinct(): bool;
 
     /**
      * Sets the start offset of the result set to offset. Returns $this to
      * allow for chaining (fluid interface).
      *
-     * @param integer $offset
+     * @param integer|null $offset
      * @return QueryInterface
      * @api
      */
-    public function setOffset($offset);
+    public function setOffset(?int $offset): QueryInterface;
 
     /**
      * Returns the start offset of the result set.
@@ -198,7 +198,7 @@ interface QueryInterface
      * @return integer
      * @api
      */
-    public function getOffset();
+    public function getOffset(): ?int;
 
     /**
      * The constraint used to limit the result set. Returns $this to allow
@@ -208,7 +208,7 @@ interface QueryInterface
      * @return QueryInterface
      * @api
      */
-    public function matching($constraint);
+    public function matching($constraint): QueryInterface;
 
     /**
      * Gets the constraint for this query.
@@ -263,7 +263,7 @@ interface QueryInterface
      * @todo Decide what to do about equality on multi-valued properties
      * @api
      */
-    public function equals($propertyName, $operand, $caseSensitive = true);
+    public function equals(string $propertyName, $operand, bool $caseSensitive = true);
 
     /**
      * Returns a like criterion used for matching objects against a query.
@@ -277,7 +277,7 @@ interface QueryInterface
      * @throws Exception\InvalidQueryException if used on a non-string property
      * @api
      */
-    public function like($propertyName, $operand, $caseSensitive = true);
+    public function like(string $propertyName, string $operand, bool $caseSensitive = true);
 
     /**
      * Returns a "contains" criterion used for matching objects against a query.
@@ -287,22 +287,22 @@ interface QueryInterface
      *
      * @param string $propertyName The name of the multivalued property to compare against
      * @param mixed $operand The value to compare with
-     * @return object
+     * @return mixed
      * @throws Exception\InvalidQueryException if used on a single-valued property
      * @api
      */
-    public function contains($propertyName, $operand);
+    public function contains(string $propertyName, $operand);
 
     /**
      * Returns an "isEmpty" criterion used for matching objects against a query.
      * It matches if the multivalued property contains no values or is NULL.
      *
      * @param string $propertyName The name of the multivalued property to compare against
-     * @return boolean
+     * @return mixed
      * @throws Exception\InvalidQueryException if used on a single-valued property
      * @api
      */
-    public function isEmpty($propertyName);
+    public function isEmpty(string $propertyName);
 
     /**
      * Returns an "in" criterion used for matching objects against a query. It
@@ -314,7 +314,7 @@ interface QueryInterface
      * @throws Exception\InvalidQueryException if used on a multi-valued property
      * @api
      */
-    public function in($propertyName, $operand);
+    public function in(string $propertyName, $operand);
 
     /**
      * Returns a less than criterion used for matching objects against a query
@@ -325,7 +325,7 @@ interface QueryInterface
      * @throws Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function lessThan($propertyName, $operand);
+    public function lessThan(string $propertyName, $operand);
 
     /**
      * Returns a less or equal than criterion used for matching objects against a query
@@ -336,7 +336,7 @@ interface QueryInterface
      * @throws Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function lessThanOrEqual($propertyName, $operand);
+    public function lessThanOrEqual(string $propertyName, $operand);
 
     /**
      * Returns a greater than criterion used for matching objects against a query
@@ -347,7 +347,7 @@ interface QueryInterface
      * @throws Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function greaterThan($propertyName, $operand);
+    public function greaterThan(string $propertyName, $operand);
 
     /**
      * Returns a greater than or equal criterion used for matching objects against a query
@@ -358,5 +358,5 @@ interface QueryInterface
      * @throws Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
      * @api
      */
-    public function greaterThanOrEqual($propertyName, $operand);
+    public function greaterThanOrEqual(string $propertyName, $operand);
 }

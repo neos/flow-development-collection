@@ -11,20 +11,24 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
+use Doctrine\ORM\Tools\ToolsException;
+use Doctrine\ORM\UnitOfWork;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\AbstractPersistenceManager;
-use Neos\Flow\Persistence\Exception\KnownObjectException;
 use Neos\Flow\Persistence\Exception as PersistenceException;
+use Neos\Flow\Persistence\Exception\KnownObjectException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
+use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
+use Neos\Utility\Exception\PropertyNotAccessibleException;
+use Neos\Utility\ObjectAccess;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -36,6 +40,7 @@ use Psr\Log\LoggerInterface;
 class PersistenceManager extends AbstractPersistenceManager
 {
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -70,7 +75,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @param LoggerInterface $logger
      * @return void
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -84,7 +89,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @throws PersistenceException
      * @api
      */
-    public function persistAll($onlyAllowedObjects = false)
+    public function persistAll(bool $onlyAllowedObjects = false): void
     {
         if (!$this->entityManager->isOpen()) {
             $this->logger->error('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.', LogEnvironment::fromMethodName(__METHOD__));
@@ -104,7 +109,7 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @return void
      */
-    public function clearState()
+    public function clearState(): void
     {
         parent::clearState();
         $this->entityManager->clear();
@@ -117,9 +122,9 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return boolean true if the object is new, false if the object exists in the repository
      * @api
      */
-    public function isNewObject($object)
+    public function isNewObject($object): bool
     {
-        return ($this->entityManager->getUnitOfWork()->getEntityState($object) === \Doctrine\ORM\UnitOfWork::STATE_NEW);
+        return ($this->entityManager->getUnitOfWork()->getEntityState($object) === UnitOfWork::STATE_NEW);
     }
 
     /**
@@ -132,8 +137,9 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @param object $object
      * @return mixed The identifier for the object if it is known, or NULL
-     * @api
+     * @throws PropertyNotAccessibleException
      * @todo improve try/catch block
+     * @api
      */
     public function getIdentifierByObject($object)
     {
@@ -146,7 +152,7 @@ class PersistenceManager extends AbstractPersistenceManager
         if ($this->entityManager->contains($object)) {
             try {
                 return current($this->entityManager->getUnitOfWork()->getEntityIdentifier($object));
-            } catch (\Doctrine\ORM\ORMException $exception) {
+            } catch (ORMException $exception) {
             }
         }
         return null;
@@ -157,13 +163,15 @@ class PersistenceManager extends AbstractPersistenceManager
      * backend. Otherwise NULL is returned.
      *
      * @param mixed $identifier
-     * @param string $objectType
+     * @param string|null $objectType
+     * @psalm-param class-string|null $objectType
      * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
      * @return object|null The object for the identifier if it is known, or NULL
      * @throws \RuntimeException
+     * @throws ORMException
      * @api
      */
-    public function getObjectByIdentifier($identifier, $objectType = null, $useLazyLoading = false)
+    public function getObjectByIdentifier($identifier, string $objectType = null, bool $useLazyLoading = false)
     {
         if ($objectType === null) {
             throw new \RuntimeException('Using only the identifier is not supported by Doctrine 2. Give classname as well or use repository to query identifier.', 1296646103);
@@ -173,9 +181,9 @@ class PersistenceManager extends AbstractPersistenceManager
         }
         if ($useLazyLoading === true) {
             return $this->entityManager->getReference($objectType, $identifier);
-        } else {
-            return $this->entityManager->find($objectType, $identifier);
         }
+
+        return $this->entityManager->find($objectType, $identifier);
     }
 
     /**
@@ -184,7 +192,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @param string $type
      * @return Query
      */
-    public function createQueryForType($type)
+    public function createQueryForType(string $type): QueryInterface
     {
         return new Query($type);
     }
@@ -196,18 +204,19 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return void
      * @throws KnownObjectException if the given $object is not new
      * @throws PersistenceException if another error occurs
+     * @throws PropertyNotAccessibleException
      * @api
      */
-    public function add($object)
+    public function add($object): void
     {
         if (!$this->isNewObject($object)) {
             throw new KnownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
-        } else {
-            try {
-                $this->entityManager->persist($object);
-            } catch (\Exception $exception) {
-                throw new PersistenceException('Could not add object of type "' . get_class($object) . '"', 1337934455, $exception);
-            }
+        }
+
+        try {
+            $this->entityManager->persist($object);
+        } catch (\Exception $exception) {
+            throw new PersistenceException('Could not add object of type "' . get_class($object) . '"', 1337934455, $exception);
         }
     }
 
@@ -218,7 +227,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return void
      * @api
      */
-    public function remove($object)
+    public function remove($object): void
     {
         $this->entityManager->remove($object);
     }
@@ -230,9 +239,10 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return void
      * @throws UnknownObjectException if the given $object is new
      * @throws PersistenceException if another error occurs
+     * @throws PropertyNotAccessibleException
      * @api
      */
-    public function update($object)
+    public function update($object): void
     {
         if ($this->isNewObject($object)) {
             throw new UnknownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->update() is not a previously persisted object. Check the code which updates this entity and make sure that only objects are updated which were persisted before. Alternatively use add() for persisting new objects."', 1313663277);
@@ -251,7 +261,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @return boolean true, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
-    public function isConnected()
+    public function isConnected(): bool
     {
         return $this->entityManager->getConnection()->isConnected();
     }
@@ -260,8 +270,9 @@ class PersistenceManager extends AbstractPersistenceManager
      * Called from functional tests, creates/updates database tables and compiles proxies.
      *
      * @return boolean
+     * @throws ToolsException
      */
-    public function compile()
+    public function compile(): bool
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no path is set, skip this step, assuming no DB is needed
@@ -281,10 +292,10 @@ class PersistenceManager extends AbstractPersistenceManager
 
             $this->logger->info('Doctrine 2 setup finished', LogEnvironment::fromMethodName(__METHOD__));
             return true;
-        } else {
-            $this->logger->notice('Doctrine 2 setup skipped, driver and path backend options not set!');
-            return false;
         }
+
+        $this->logger->notice('Doctrine 2 setup skipped, driver and path backend options not set!');
+        return false;
     }
 
     /**
@@ -292,7 +303,7 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no path is set, skip this step, assuming no DB is needed
@@ -313,7 +324,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @Flow\Signal
      * @return void
      */
-    protected function emitAllObjectsPersisted()
+    protected function emitAllObjectsPersisted(): void
     {
     }
 
@@ -325,20 +336,15 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * @return boolean
      */
-    public function hasUnpersistedChanges()
+    public function hasUnpersistedChanges(): bool
     {
         $unitOfWork = $this->entityManager->getUnitOfWork();
         $unitOfWork->computeChangeSets();
 
-        if ($unitOfWork->getScheduledEntityInsertions() !== []
+        return $unitOfWork->getScheduledEntityInsertions() !== []
             || $unitOfWork->getScheduledEntityUpdates() !== []
             || $unitOfWork->getScheduledEntityDeletions() !== []
             || $unitOfWork->getScheduledCollectionDeletions() !== []
-            || $unitOfWork->getScheduledCollectionUpdates() !== []
-        ) {
-            return true;
-        }
-
-        return false;
+            || $unitOfWork->getScheduledCollectionUpdates() !== [];
     }
 }

@@ -1,0 +1,23 @@
+{namespace k=Neos\Kickstarter\ViewHelpers}
+{packageKey}{f:if(condition:isInSubpackage, then:".{subpackage}")}.{controllerName}Controller.{viewName -> k:inflect.humanizeCamelCase(lowercase: true)} = {packageKey}:Default<![CDATA[ {
+
+    head {
+        titleTag.content = '{viewName} view of {controllerName} controller'
+    }
+
+    body {
+
+        renderer = afx`
+            <h1>A freshly created Fluid template!</h1>
+            <p>Some data set by the controller:</p>
+            <ul>
+                <Neos.Fusion:Loop items={foos} itemName="foo">
+                    <li>{foo}</li>
+                </Neos.Fusion:Loop>
+            </ul>
+        `
+
+    }
+
+}
+]]>

@@ -11,14 +11,13 @@ namespace Neos\Flow\Http\Client;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Exception as FlowException;
-use Neos\Flow\Http\Component\ComponentContext;
 use Neos\Flow\Http;
-use Neos\Flow\Http\Middleware\MiddlewaresChainFactory;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\Routing\RouterInterface;
@@ -111,21 +110,20 @@ class InternalRequestEngine implements RequestEngineInterface
             throw new Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
         }
 
+        $requestHandler->setHttpRequest($httpRequest);
         $this->securityContext->clearContext();
         $this->validatorResolver->reset();
 
-        $response = $this->responseFactory->createResponse();
-        $componentContext = new ComponentContext($httpRequest, $response);
-        $requestHandler->setComponentContext($componentContext);
-
         $objectManager = $this->bootstrap->getObjectManager();
-        $objectManager->setInstance(ComponentContext::class, $componentContext);
         $middlewaresChain = $objectManager->get(Http\Middleware\MiddlewaresChain::class);
+        $middlewaresChain->onStep(function (ServerRequestInterface $request) use ($requestHandler) {
+            $requestHandler->setHttpRequest($request);
+        });
 
         try {
             $response = $middlewaresChain->handle($httpRequest);
         } catch (\Throwable $throwable) {
-            $response = $this->prepareErrorResponse($throwable, $componentContext->getHttpResponse());
+            $response = $this->prepareErrorResponse($throwable, new Response());
         }
         $session = $objectManager->get(SessionInterface::class);
         if ($session->isStarted()) {
@@ -134,8 +132,6 @@ class InternalRequestEngine implements RequestEngineInterface
         // FIXME: ObjectManager should forget all instances created during the request
         $objectManager->forgetInstance(SessionManager::class);
         $objectManager->forgetInstance(FlashMessageService::class);
-        // Necessary to forget the ComponentContext injection
-        $objectManager->forgetInstance(MiddlewaresChainFactory::class);
         $this->persistenceManager->clearState();
         return $response;
     }

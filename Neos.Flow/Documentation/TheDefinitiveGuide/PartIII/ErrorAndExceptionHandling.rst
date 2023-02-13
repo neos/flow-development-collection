@@ -167,7 +167,7 @@ key names, their actual naming has no further implications.
 
     ``renderTechnicalDetails``:
         a boolean passed to the error template during rendering and used in the default error
-        template to include more details on the error at hand. Defaults to FALSE but is set to TRUE
+        template to include more details on the error at hand. Defaults to false but is set to true
         for development context.
 
     ``viewClassName``:

@@ -62,14 +62,6 @@
       <code>$string</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Psr/Cache/CacheFactory.php">
-    <InvalidArgument occurrences="1">
-      <code>$backend</code>
-    </InvalidArgument>
-    <UndefinedDocblockClass occurrences="1">
-      <code>BackendInterface</code>
-    </UndefinedDocblockClass>
-  </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Psr/Cache/CacheItem.php">
     <PropertyTypeCoercion occurrences="1">
       <code>$expiration</code>
@@ -212,6 +204,10 @@
     <PossiblyNullArgument occurrences="1">
       <code>$x</code>
     </PossiblyNullArgument>
+    <RedundantCastGivenDocblockType occurrences="2">
+      <code>(float)$x</code>
+      <code>(float)$x</code>
+    </RedundantCastGivenDocblockType>
   </file>
   <file src="Packages/Framework/Neos.Eel/Classes/Helper/StringHelper.php">
     <InvalidNullableReturnType occurrences="3">
@@ -517,10 +513,6 @@
     </PropertyTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/ConfigurationCommandController.php">
-    <PossiblyNullArgument occurrences="2">
-      <code>$configuration</code>
-      <code>$data</code>
-    </PossiblyNullArgument>
     <UndefinedConstant occurrences="1">
       <code>FLOW_PATH_ROOT</code>
     </UndefinedConstant>
@@ -554,7 +546,7 @@
       <code>$packages[$selectedPackage]</code>
     </PossiblyInvalidArrayOffset>
     <UndefinedConstant occurrences="1">
-      <code>FLOW_PATH_PACKAGES</code>
+      <code>FLOW_PATH_ROOT</code>
     </UndefinedConstant>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/PackageCommandController.php">
@@ -593,15 +585,12 @@
     </UndefinedClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/RoutingCommandController.php">
+    <InvalidArgument occurrences="1">
+      <code>[str_replace('.', '\\', $package), $subpackage, $controller, '\\']</code>
+    </InvalidArgument>
     <InvalidOperand occurrences="1">
       <code>$index</code>
     </InvalidOperand>
-    <MissingDocblockType occurrences="1">
-      <code>$route</code>
-    </MissingDocblockType>
-    <PossiblyNullArgument occurrences="1">
-      <code>$subPackageKey</code>
-    </PossiblyNullArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Command/SchemaCommandController.php">
     <UndefinedConstant occurrences="1">
@@ -612,6 +601,9 @@
     <PossiblyNullIterator occurrences="1">
       <code>$methodNames</code>
     </PossiblyNullIterator>
+    <PossiblyNullReference occurrences="1">
+      <code>createPrivilege</code>
+    </PossiblyNullReference>
     <PropertyTypeCoercion occurrences="1">
       <code>$cacheManager-&gt;getCache('Flow_Security_Authorization_Privilege_Method')</code>
     </PropertyTypeCoercion>
@@ -642,47 +634,61 @@
       <code>strpos($staticMethodReference, '::')</code>
     </PossiblyFalseOperand>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationManager.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$settings</code>
-    </PossiblyInvalidArgument>
-    <ReferenceConstraintViolation occurrences="1">
-      <code>$settings</code>
-    </ReferenceConstraintViolation>
-    <TypeDoesNotContainType occurrences="1">
-      <code>$this-&gt;configurations[$configurationType] !== []</code>
-    </TypeDoesNotContainType>
-    <UndefinedConstant occurrences="12">
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-      <code>FLOW_PATH_CONFIGURATION</code>
-    </UndefinedConstant>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Configuration/ConfigurationSchemaValidator.php">
-    <PossiblyNullArgument occurrences="2">
-      <code>$configuration</code>
+    <PossiblyNullArgument occurrences="1">
       <code>$schemaPath</code>
     </PossiblyNullArgument>
     <UndefinedConstant occurrences="1">
       <code>FLOW_PATH_ROOT</code>
     </UndefinedConstant>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/RouteConfigurationProcessor.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>array</code>
-    </InvalidNullableReturnType>
-    <MissingDocblockType occurrences="1">
-      <code>$package</code>
-    </MissingDocblockType>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/AppendLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/MergeLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/ObjectsLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/PolicyLoader.php">
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/RoutesLoader.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$this-&gt;replacePlaceholders($routeConfiguration['uriPattern'], [$subRouteKey =&gt; ''])</code>
+    </PossiblyInvalidArgument>
+    <PossiblyInvalidOperand occurrences="1">
+      <code>$mergedSubRouteConfiguration['name']</code>
+    </PossiblyInvalidOperand>
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Configuration/Loader/SettingsLoader.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$settings</code>
+    </PossiblyInvalidArgument>
+    <ReferenceConstraintViolation occurrences="1">
+      <code>$settings</code>
+    </ReferenceConstraintViolation>
+    <UndefinedConstant occurrences="2">
+      <code>FLOW_PATH_CONFIGURATION</code>
+      <code>FLOW_PATH_CONFIGURATION</code>
+    </UndefinedConstant>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Core/Booting/Scripts.php">
     <ArgumentTypeCoercion occurrences="3">
@@ -699,9 +705,6 @@
     <PossiblyFalseOperand occurrences="1">
       <code>date('YmdHis', $_SERVER['REQUEST_TIME'])</code>
     </PossiblyFalseOperand>
-    <PossiblyNullArgument occurrences="1">
-      <code>$configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES)</code>
-    </PossiblyNullArgument>
     <UndefinedConstant occurrences="19">
       <code>FLOW_ONLY_COMPOSER_LOADER</code>
       <code>FLOW_PATH_CONFIGURATION</code>
@@ -728,9 +731,6 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Core/Bootstrap.php">
-    <NullableReturnStatement occurrences="1">
-      <code>null</code>
-    </NullableReturnStatement>
     <PossiblyUndefinedVariable occurrences="1">
       <code>$suitableRequestHandlers</code>
     </PossiblyUndefinedVariable>
@@ -745,18 +745,14 @@
       <code>$this-&gt;lockResource</code>
       <code>$this-&gt;lockResource</code>
     </InvalidPropertyAssignmentValue>
-    <UndefinedConstant occurrences="4">
+    <UndefinedConstant occurrences="6">
+      <code>FLOW_PATH_FLOW</code>
+      <code>FLOW_PATH_PACKAGES</code>
       <code>FLOW_PATH_ROOT</code>
       <code>FLOW_PATH_ROOT</code>
       <code>FLOW_PATH_TEMPORARY</code>
       <code>FLOW_SAPITYPE</code>
     </UndefinedConstant>
-    <UndefinedThisPropertyAssignment occurrences="1">
-      <code>$this-&gt;lockHoldingPage</code>
-    </UndefinedThisPropertyAssignment>
-    <UndefinedThisPropertyFetch occurrences="1">
-      <code>$this-&gt;lockHoldingPage</code>
-    </UndefinedThisPropertyFetch>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Core/ProxyClassLoader.php">
     <UndefinedConstant occurrences="1">
@@ -840,27 +836,6 @@
       <code>FunctionalTestRequestHandler</code>
     </UndefinedClass>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Http/Component/ComponentChainFactory.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>ComponentChain</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="1">
-      <code>null</code>
-    </NullableReturnStatement>
-    <TooManyArguments occurrences="1">
-      <code>get</code>
-    </TooManyArguments>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Http/Component/RequestBodyParsingComponent.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$parsedBody</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Http/Component/TrustedProxiesComponent.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$portFromHost</code>
-    </InvalidScalarArgument>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/ContentStream.php">
     <PossiblyNullArgument occurrences="1">
       <code>$resource</code>
@@ -886,27 +861,19 @@
     <PossiblyNullArgument occurrences="1">
       <code>$pathAttribute</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyAssignmentValue occurrences="3">
+    <PossiblyNullPropertyAssignmentValue occurrences="2">
       <code>$domain</code>
       <code>$maximumAge</code>
-      <code>$sameSite</code>
     </PossiblyNullPropertyAssignmentValue>
     <UnsafeInstantiation occurrences="1"/>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/Headers.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>string</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="3">
-      <code>$cacheControl === '' ? null : $cacheControl</code>
+    <NullableReturnStatement occurrences="2">
       <code>isset($this-&gt;cookies[$name]) ? $this-&gt;cookies[$name] : null</code>
       <code>null</code>
     </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/Helper/ResponseInformationHelper.php">
-    <InvalidLiteralArgument occurrences="1">
-      <code>'no-cache'</code>
-    </InvalidLiteralArgument>
     <InvalidScalarArgument occurrences="1">
       <code>$response-&gt;getBody()-&gt;getSize()</code>
     </InvalidScalarArgument>
@@ -918,6 +885,11 @@
     <InvalidReturnType occurrences="1">
       <code>array</code>
     </InvalidReturnType>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Http/Middleware/RequestBodyParsingMiddleware.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$parsedBody</code>
+    </PossiblyInvalidArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/RequestHandler.php">
     <PropertyTypeCoercion occurrences="1">
@@ -982,9 +954,8 @@
       <code>$positionOfSecondPlaceholder</code>
       <code>$positionOfSecondPlaceholder</code>
     </PossiblyFalseOperand>
-    <PossiblyUndefinedVariable occurrences="2">
+    <PossiblyUndefinedVariable occurrences="1">
       <code>$localizedLiterals</code>
-      <code>$realFormatLength</code>
     </PossiblyUndefinedVariable>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/I18n/Cldr/Reader/NumbersReader.php">
@@ -1187,14 +1158,16 @@
     </RedundantCastGivenDocblockType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/ActionResponse.php">
-    <PropertyTypeCoercion occurrences="2">
-      <code>$content</code>
-      <code>stream_for()</code>
-    </PropertyTypeCoercion>
     <RedundantPropertyInitializationCheck occurrences="2">
       <code>$this-&gt;contentType</code>
       <code>''</code>
     </RedundantPropertyInitializationCheck>
+    <UndefinedClass occurrences="4">
+      <code>ReplaceHttpResponseComponent</code>
+      <code>ReplaceHttpResponseComponent</code>
+      <code>SetHeaderComponent</code>
+      <code>SetHeaderComponent</code>
+    </UndefinedClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/AbstractController.php">
     <RedundantCastGivenDocblockType occurrences="1">
@@ -1208,6 +1181,10 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Controller/Argument.php">
+    <InvalidScalarArgument occurrences="2">
+      <code>ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED</code>
+      <code>ObjectConverter::CONFIGURATION_TARGET_TYPE</code>
+    </InvalidScalarArgument>
     <PossiblyNullPropertyAssignmentValue occurrences="4">
       <code>null</code>
       <code>null</code>
@@ -1219,9 +1196,24 @@
     <FalsableReturnStatement occurrences="1">
       <code>false</code>
     </FalsableReturnStatement>
+    <ImplementedReturnTypeMismatch occurrences="1">
+      <code>Argument</code>
+    </ImplementedReturnTypeMismatch>
+    <InvalidArgument occurrences="7">
+      <code>$argumentName</code>
+      <code>$argumentName</code>
+      <code>$firstLowerCaseArgumentName</code>
+      <code>$firstUpperCaseArgumentName</code>
+      <code>$translatedOffset</code>
+      <code>$translatedOffset</code>
+      <code>$translatedOffset</code>
+    </InvalidArgument>
     <InvalidFalsableReturnType occurrences="1">
       <code>string</code>
     </InvalidFalsableReturnType>
+    <MissingTemplateParam occurrences="1">
+      <code>Arguments</code>
+    </MissingTemplateParam>
     <UndefinedThisPropertyFetch occurrences="1">
       <code>$this-&gt;argumentShortNames</code>
     </UndefinedThisPropertyFetch>
@@ -1320,9 +1312,6 @@
       <code>$routePart</code>
       <code>$routePart</code>
     </MissingDocblockType>
-    <NullArgument occurrences="1">
-      <code>null</code>
-    </NullArgument>
     <PossiblyInvalidArgument occurrences="1">
       <code>$matchResults</code>
     </PossiblyInvalidArgument>
@@ -1359,9 +1348,8 @@
     <PossiblyInvalidMethodCall occurrences="1">
       <code>applyTo</code>
     </PossiblyInvalidMethodCall>
-    <PossiblyNullPropertyAssignmentValue occurrences="5">
+    <PossiblyNullPropertyAssignmentValue occurrences="4">
       <code>$routesConfiguration</code>
-      <code>$this-&gt;configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES)</code>
       <code>null</code>
       <code>null</code>
       <code>null</code>
@@ -1378,9 +1366,6 @@
       <code>null</code>
       <code>null</code>
     </NullableReturnStatement>
-    <PossiblyNullArgument occurrences="1">
-      <code>$uriConstraints-&gt;getPathConstraint()</code>
-    </PossiblyNullArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Mvc/Routing/UriBuilder.php">
     <PossiblyNullPropertyAssignmentValue occurrences="2">
@@ -1400,16 +1385,6 @@
     <UnsafeInstantiation occurrences="1">
       <code>new static($options)</code>
     </UnsafeInstantiation>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Mvc/ViewConfigurationManager.php">
-    <PossiblyNullIterator occurrences="1">
-      <code>$configurations</code>
-    </PossiblyNullIterator>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/ObjectManagement/CompileTimeObjectManager.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$rawCustomObjectConfigurations</code>
-    </PossiblyNullArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/ObjectManagement/Configuration/Configuration.php">
     <InvalidPropertyAssignmentValue occurrences="2">
@@ -1513,11 +1488,11 @@
     <UndefinedClass occurrences="1">
       <code>BaseTestCase</code>
     </UndefinedClass>
+    <UndefinedDocblockClass occurrences="1">
+      <code>\ReflectionAttribute</code>
+    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/ObjectManagement/Proxy/ProxyClass.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$annotation</code>
-    </ArgumentTypeCoercion>
     <PossiblyFalseArgument occurrences="1">
       <code>strrpos($fullOriginalClassName, '\\')</code>
     </PossiblyFalseArgument>
@@ -1526,11 +1501,14 @@
       <code>isset($this-&gt;constructor)</code>
       <code>isset($this-&gt;constructor)</code>
     </RedundantPropertyInitializationCheck>
+    <UndefinedMethod occurrences="1">
+      <code>getAttributes</code>
+    </UndefinedMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/ObjectManagement/Proxy/ProxyMethod.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$annotation</code>
-    </ArgumentTypeCoercion>
+    <UndefinedMethod occurrences="1">
+      <code>getAttributes</code>
+    </UndefinedMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Package.php">
     <UndefinedClass occurrences="2">
@@ -1597,9 +1575,6 @@
     </PossiblyNullReference>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/CountWalker.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>void</code>
-    </ImplementedReturnTypeMismatch>
     <PossiblyNullArgument occurrences="1">
       <code>$parentName</code>
     </PossiblyNullArgument>
@@ -1609,6 +1584,13 @@
     <PossiblyNullReference occurrences="1">
       <code>getSingleIdentifierFieldName</code>
     </PossiblyNullReference>
+    <PossiblyUndefinedArrayOffset occurrences="2">
+      <code>$parent['metadata']</code>
+      <code>$qComp['parent']</code>
+    </PossiblyUndefinedArrayOffset>
+    <UndefinedDocblockClass occurrences="1">
+      <code>$this-&gt;_getQueryComponents()</code>
+    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/DataTypes/JsonArrayType.php">
     <LessSpecificImplementedReturnType occurrences="1">
@@ -1626,6 +1608,9 @@
     </PropertyTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/EntityManagerConfiguration.php">
+    <InvalidArgument occurrences="1">
+      <code>$cache</code>
+    </InvalidArgument>
     <PossiblyNullReference occurrences="2">
       <code>getRegionsConfiguration</code>
       <code>setCacheFactory</code>
@@ -1643,12 +1628,26 @@
     <MoreSpecificReturnType occurrences="1">
       <code>ClassReflection</code>
     </MoreSpecificReturnType>
+    <NullableReturnStatement occurrences="1">
+      <code>$this-&gt;reflClass</code>
+    </NullableReturnStatement>
+    <PropertyTypeCoercion occurrences="1">
+      <code>$this-&gt;rootEntityName = $this-&gt;reflClass-&gt;getName()</code>
+    </PropertyTypeCoercion>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Mapping/ClassMetadataFactory.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$className</code>
+    </ArgumentTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Mapping/Driver/FlowAnnotationDriver.php">
-    <ArgumentTypeCoercion occurrences="2">
+    <ArgumentTypeCoercion occurrences="5">
+      <code>$className</code>
       <code>$className</code>
       <code>$classSchema-&gt;getRepositoryClassName()</code>
+      <code>$discriminatorColumn</code>
     </ArgumentTypeCoercion>
+    <InvalidArgument occurrences="1"/>
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>new IndexedReader(new AnnotationReader())</code>
     </InvalidPropertyAssignmentValue>
@@ -1669,24 +1668,26 @@
       <code>$primaryTable['name']</code>
     </PossiblyUndefinedArrayOffset>
   </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/ObjectValidationAndDeDuplicationListener.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$className</code>
+    </ArgumentTypeCoercion>
+  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Query.php">
+    <ImplementedReturnTypeMismatch occurrences="1">
+      <code>Comparison|string</code>
+    </ImplementedReturnTypeMismatch>
     <ImplicitToStringCast occurrences="1">
       <code>$this-&gt;queryBuilder-&gt;expr()-&gt;lower($aliasedPropertyName)</code>
     </ImplicitToStringCast>
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>$this-&gt;queryBuilder-&gt;getParameters()</code>
     </InvalidPropertyAssignmentValue>
-    <InvalidReturnStatement occurrences="4">
-      <code>$this-&gt;queryBuilder-&gt;expr()-&gt;isNull($aliasedPropertyName)</code>
-      <code>$this-&gt;queryBuilder-&gt;getParameters()</code>
-      <code>'(' . $this-&gt;getParamNeedle($operand) . ' MEMBER OF ' . $this-&gt;getPropertyNameWithAlias($propertyName) . ')'</code>
-      <code>'(' . $this-&gt;getPropertyNameWithAlias($propertyName) . ' IS EMPTY)'</code>
+    <InvalidReturnStatement occurrences="1">
+      <code>$this-&gt;queryBuilder-&gt;getQuery()-&gt;getSQL()</code>
     </InvalidReturnStatement>
-    <InvalidReturnType occurrences="4">
+    <InvalidReturnType occurrences="1">
       <code>array</code>
-      <code>boolean</code>
-      <code>object</code>
-      <code>object</code>
     </InvalidReturnType>
     <InvalidScalarArgument occurrences="3">
       <code>$pdoException-&gt;getCode()</code>
@@ -1705,34 +1706,24 @@
       <code>$classMetadata</code>
     </ArgumentTypeCoercion>
     <ImplementedReturnTypeMismatch occurrences="1">
-      <code>\Neos\Flow\Persistence\QueryResultInterface</code>
+      <code>QueryResultInterface</code>
     </ImplementedReturnTypeMismatch>
+    <PossiblyInvalidArgument occurrences="3">
+      <code>$query-&gt;equals($propertyName, $arguments[0], $caseSensitive)</code>
+      <code>$query-&gt;equals($propertyName, $arguments[0], $caseSensitive)</code>
+      <code>$query-&gt;equals($propertyName, $arguments[0], $caseSensitive)</code>
+    </PossiblyInvalidArgument>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Service.php">
-    <ImplicitToStringCast occurrences="3">
-      <code>$executedUnavailableMigration</code>
-      <code>$version</code>
-      <code>$version</code>
-    </ImplicitToStringCast>
-    <InvalidReturnType occurrences="2">
-      <code>string</code>
-      <code>string</code>
-    </InvalidReturnType>
-    <MissingDocblockType occurrences="1">
-      <code>$package</code>
-    </MissingDocblockType>
-    <PossiblyNullArgument occurrences="1">
-      <code>$version</code>
-    </PossiblyNullArgument>
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$hydrationMode</code>
+    </ArgumentTypeCoercion>
     <PossiblyNullReference occurrences="1">
       <code>getAllClassNames</code>
     </PossiblyNullReference>
     <UndefinedConstant occurrences="1">
-      <code>FLOW_PATH_DATA</code>
+      <code>FLOW_PATH_TEMPORARY</code>
     </UndefinedConstant>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>getPackageKey</code>
-    </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/EmptyQueryResult.php">
     <InvalidNullableReturnType occurrences="2">
@@ -1743,138 +1734,6 @@
       <code>null</code>
       <code>null</code>
     </NullableReturnStatement>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/Aspect/LazyLoadingObjectAspect.php">
-    <NoInterfaceProperties occurrences="1">
-      <code>$proxy-&gt;Flow_Persistence_LazyLoadingObject_thawProperties</code>
-    </NoInterfaceProperties>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/Backend/AbstractBackend.php">
-    <ArgumentTypeCoercion occurrences="2">
-      <code>$object</code>
-      <code>$value</code>
-    </ArgumentTypeCoercion>
-    <InvalidArgument occurrences="1">
-      <code>$entity</code>
-    </InvalidArgument>
-    <InvalidNullableReturnType occurrences="3">
-      <code>array</code>
-      <code>array</code>
-      <code>integer</code>
-    </InvalidNullableReturnType>
-    <NullArgument occurrences="2">
-      <code>null</code>
-      <code>null</code>
-    </NullArgument>
-    <NullableReturnStatement occurrences="3">
-      <code>null</code>
-      <code>null</code>
-      <code>null</code>
-    </NullableReturnStatement>
-    <PossiblyNullArrayAccess occurrences="1">
-      <code>$array[$item['index']]</code>
-    </PossiblyNullArrayAccess>
-    <PossiblyUndefinedVariable occurrences="1">
-      <code>$errors</code>
-    </PossiblyUndefinedVariable>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/DataMapper.php">
-    <InvalidArgument occurrences="1">
-      <code>$this-&gt;mapToObject($arrayValue['value'])</code>
-    </InvalidArgument>
-    <RedundantCastGivenDocblockType occurrences="1">
-      <code>(integer) $timestamp</code>
-    </RedundantCastGivenDocblockType>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>getObjectDataByIdentifier</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/LazySplObjectStorage.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>null</code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/PersistenceManager.php">
-    <InvalidReturnStatement occurrences="1">
-      <code>$this-&gt;backend-&gt;getObjectDataByIdentifier($identifier, $objectType)</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>object</code>
-    </InvalidReturnType>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/Qom/QueryObjectModelFactory.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$operator</code>
-    </InvalidScalarArgument>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/Query.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$constraint</code>
-    </ArgumentTypeCoercion>
-    <InvalidReturnStatement occurrences="1"/>
-    <InvalidReturnType occurrences="1">
-      <code>boolean</code>
-    </InvalidReturnType>
-    <InvalidScalarArgument occurrences="12">
-      <code>QueryInterface::OPERATOR_CONTAINS</code>
-      <code>QueryInterface::OPERATOR_EQUAL_TO</code>
-      <code>QueryInterface::OPERATOR_EQUAL_TO</code>
-      <code>QueryInterface::OPERATOR_GREATER_THAN</code>
-      <code>QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO</code>
-      <code>QueryInterface::OPERATOR_IN</code>
-      <code>QueryInterface::OPERATOR_IS_EMPTY</code>
-      <code>QueryInterface::OPERATOR_IS_NULL</code>
-      <code>QueryInterface::OPERATOR_LESS_THAN</code>
-      <code>QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO</code>
-      <code>QueryInterface::OPERATOR_LIKE</code>
-      <code>QueryInterface::OPERATOR_LIKE</code>
-    </InvalidScalarArgument>
-    <MoreSpecificImplementedParamType occurrences="2">
-      <code>$constraint</code>
-      <code>$constraint1</code>
-    </MoreSpecificImplementedParamType>
-    <TooManyArguments occurrences="1">
-      <code>new QueryResult($this, $cacheResult)</code>
-    </TooManyArguments>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/QueryFactory.php">
-    <TooFewArguments occurrences="1">
-      <code>new Query($className)</code>
-    </TooFewArguments>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/QueryResult.php">
-    <InvalidPropertyAssignmentValue occurrences="1">
-      <code>count($this-&gt;queryResult)</code>
-    </InvalidPropertyAssignmentValue>
-    <InvalidReturnStatement occurrences="1">
-      <code>$this-&gt;numberOfResults</code>
-    </InvalidReturnStatement>
-    <LessSpecificImplementedReturnType occurrences="1">
-      <code>mixed</code>
-    </LessSpecificImplementedReturnType>
-    <UndefinedInterfaceMethod occurrences="3">
-      <code>getObjectCountByQuery</code>
-      <code>getObjectDataByQuery</code>
-      <code>getObjectDataByQuery</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Generic/Session.php">
-    <ArgumentTypeCoercion occurrences="2">
-      <code>$currentValue</code>
-      <code>$currentValue</code>
-    </ArgumentTypeCoercion>
-    <InvalidArgument occurrences="2">
-      <code>$object</code>
-      <code>$object</code>
-    </InvalidArgument>
-    <NullableReturnStatement occurrences="1">
-      <code>null</code>
-    </NullableReturnStatement>
-    <UndefinedInterfaceMethod occurrences="3">
-      <code>$currentValue</code>
-      <code>$currentValue</code>
-      <code>$currentValue</code>
-    </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Repository.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -1949,6 +1808,10 @@
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$sourceTypes</code>
     </NonInvariantDocblockPropertyType>
+    <PossiblyUndefinedVariable occurrences="2">
+      <code>$entityLoaderValue</code>
+      <code>$entityLoaderValue</code>
+    </PossiblyUndefinedVariable>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Property/TypeConverter/ObjectConverter.php">
     <ArgumentTypeCoercion occurrences="2">
@@ -2021,12 +1884,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Reflection/ClassReflection.php">
-    <FalsableReturnStatement occurrences="1">
-      <code>($parentClass === false) ? false : new ClassReflection($parentClass-&gt;getName())</code>
-    </FalsableReturnStatement>
-    <InvalidFalsableReturnType occurrences="1">
-      <code>ClassReflection</code>
-    </InvalidFalsableReturnType>
     <InvalidNullableReturnType occurrences="1">
       <code>MethodReflection</code>
     </InvalidNullableReturnType>
@@ -2052,50 +1909,28 @@
       <code>strpos($line, '@')</code>
     </PossiblyFalseArgument>
   </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Reflection/Exception/ClassLoadingForReflectionFailedException.php">
+    <UndefinedClass occurrences="1">
+      <code>\Neos\Flow\Http\Component\ComponentInterface</code>
+    </UndefinedClass>
+  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Reflection/MethodReflection.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>string</code>
-    </InvalidNullableReturnType>
     <LessSpecificImplementedReturnType occurrences="1">
       <code>array&lt;ParameterReflection&gt;</code>
     </LessSpecificImplementedReturnType>
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$this-&gt;docCommentParser</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>DocCommentParser</code>
-    </MoreSpecificReturnType>
-    <NullableReturnStatement occurrences="2">
-      <code>$type !== null ? (string)$type : null</code>
-      <code>null</code>
-    </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Reflection/ParameterReflection.php">
-    <InvalidNullableReturnType occurrences="2">
-      <code>ClassReflection</code>
-      <code>string</code>
-    </InvalidNullableReturnType>
     <MissingImmutableAnnotation occurrences="3">
       <code>\ReflectionParameter</code>
       <code>public function getClass()</code>
       <code>public function getDeclaringClass()</code>
     </MissingImmutableAnnotation>
-    <NullableReturnStatement occurrences="3">
-      <code>is_object($class) ? new ClassReflection($class-&gt;getName()) : null</code>
-      <code>null</code>
-      <code>null</code>
-    </NullableReturnStatement>
     <PossiblyNullReference occurrences="1">
       <code>getName</code>
     </PossiblyNullReference>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Reflection/PropertyReflection.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$this-&gt;docCommentParser</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>DocCommentParser</code>
-    </MoreSpecificReturnType>
+    <UndefinedMethod occurrences="1">
+      <code>getName</code>
+    </UndefinedMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Reflection/ReflectionService.php">
     <ArgumentTypeCoercion occurrences="3">
@@ -2133,6 +1968,11 @@
       <code>freeze</code>
       <code>isFrozen</code>
     </UndefinedInterfaceMethod>
+    <UndefinedMethod occurrences="3">
+      <code>getAttributes</code>
+      <code>getAttributes</code>
+      <code>getAttributes</code>
+    </UndefinedMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Reflection/ReflectionServiceFactory.php">
     <ArgumentTypeCoercion occurrences="2">
@@ -2380,26 +2220,6 @@
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/Token/PasswordToken.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>void</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/Token/TestingToken.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>void</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/Token/UsernamePassword.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>void</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/Token/UsernamePasswordHttpBasic.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>void</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Security/Authentication/TokenAndProviderFactory.php">
     <ArgumentTypeCoercion occurrences="1">
       <code>$entryPoint</code>
@@ -2511,8 +2331,9 @@
     <PossiblyFalseArgument occurrences="1">
       <code>strpos($this-&gt;path, '.')</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidArgument occurrences="1">
+    <PossiblyInvalidArgument occurrences="2">
       <code>$operandDefinition</code>
+      <code>$subselectQuery-&gt;equals($propertyName, $this-&gt;operand)</code>
     </PossiblyInvalidArgument>
     <PossiblyInvalidOperand occurrences="3">
       <code>$subQuerySql</code>
@@ -2688,54 +2509,10 @@
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Policy/PolicyService.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>PrivilegeTarget</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="1">
-      <code>isset($this-&gt;privilegeTargets[$privilegeTargetIdentifier]) ? $this-&gt;privilegeTargets[$privilegeTargetIdentifier] : null</code>
-    </NullableReturnStatement>
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;policyConfiguration</code>
-    </PossiblyNullArgument>
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>$this-&gt;configurationManager-&gt;getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_POLICY)</code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Policy/Role.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>PrivilegeInterface</code>
-    </InvalidNullableReturnType>
-    <NullableReturnStatement occurrences="1">
-      <code>null</code>
-    </NullableReturnStatement>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Security/Policy/RoleConverter.php">
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$sourceTypes</code>
     </NonInvariantDocblockPropertyType>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Session/Aspect/LoggingAspect.php">
-    <InvalidReturnType occurrences="3">
-      <code>mixed</code>
-      <code>mixed</code>
-      <code>mixed</code>
-    </InvalidReturnType>
-    <UndefinedInterfaceMethod occurrences="8">
-      <code>getId</code>
-      <code>getId</code>
-      <code>getId</code>
-      <code>getId</code>
-      <code>isStarted</code>
-      <code>isStarted</code>
-      <code>isStarted</code>
-      <code>isStarted</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Session/Http/SessionResponseComponent.php">
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>getSessionCookie</code>
-    </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Session/Session.php">
     <FalsableReturnStatement occurrences="1">
@@ -2901,12 +2678,6 @@
     </PossiblyFalseArgument>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/Core/Cache/CacheAdaptor.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>bool|void</code>
-    </ImplementedReturnTypeMismatch>
-    <InvalidReturnStatement occurrences="1">
-      <code>$this-&gt;flowCache-&gt;set($name, substr($value, strpos($value, "\n") + 1))</code>
-    </InvalidReturnStatement>
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$value</code>
     </MoreSpecificImplementedParamType>
@@ -3353,10 +3124,7 @@
     </NullableReturnStatement>
   </file>
   <file src="Packages/Framework/Neos.Utility.ObjectHandling/Classes/ObjectAccess.php">
-    <InvalidScalarArgument occurrences="4">
-      <code>$propertyName</code>
-      <code>$propertyName</code>
-      <code>$propertyName</code>
+    <InvalidScalarArgument occurrences="1">
       <code>$propertyName</code>
     </InvalidScalarArgument>
   </file>

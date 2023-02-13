@@ -101,68 +101,49 @@ The resulting code should look like this:
 		 */
 		protected $posts;
 
-		/**
-		 * @param string $title
-		 */
-		public function __construct($title) {
+		public function __construct(string $title)
+		{
 			$this->posts = new ArrayCollection();
 			$this->title = $title;
 		}
 
-		/**
-		 * @return string
-		 */
-		public function getTitle() {
+		public function getTitle(): string
+		{
 			return $this->title;
 		}
 
-		/**
-		 * @param string $title
-		 * @return void
-		 */
-		public function setTitle($title) {
+		public function setTitle(string $title): void
+		{
 			$this->title = $title;
 		}
 
-		/**
-		 * @return string
-		 */
-		public function getDescription() {
+		public function getDescription(): string
+		{
 			return $this->description;
 		}
 
-		/**
-		 * @param string $description
-		 * @return void
-		 */
-		public function setDescription($description) {
+		public function setDescription(string $description): void {
 			$this->description = $description;
 		}
 
-		/**
-		 * @return Collection
-		 */
-		public function getPosts() {
+		public function getPosts(): Collection
+		{
 			return $this->posts;
 		}
 
 		/**
 		 * Adds a post to this blog
-		 *
-		 * @param Post $post
-		 * @return void
 		 */
-		public function addPost(Post $post) {
+		public function addPost(Post $post): void
+		{
 			$this->posts->add($post);
 		}
 
 		/**
 		 * Removes a post from this blog
-		 *
-		 * @param Post $post
-		 * @return void
 		 */
-		public function removePost(Post $post) {
+		public function removePost(Post $post): void
+		{
 			$this->posts->removeElement($post);
 		}
 
@@ -363,83 +344,62 @@ Adjust the generated code as follows:
 		/**
 		 * Constructs this post
 		 */
-		public function __construct() {
+		public function __construct()
+		{
 			$this->date = new \DateTime();
 		}
 
 		/**
 		 * @return Blog
 		 */
-		public function getBlog() {
+		public function getBlog(): ?Blog
+		{
 			return $this->blog;
 		}
 
-		/**
-		 * @param Blog $blog
-		 * @return void
-		 */
-		public function setBlog(Blog $blog) {
+		public function setBlog(Blog $blog): void
+		{
 			$this->blog = $blog;
 			$this->blog->addPost($this);
 		}
 
-		/**
-		 * @return string
-		 */
-		public function getSubject() {
+		public function getSubject(): string
+		{
 			return $this->subject;
 		}
 
-		/**
-		 * @param string $subject
-		 * @return void
-		 */
-		public function setSubject($subject) {
+		public function setSubject(string $subject): void
+		{
 			$this->subject = $subject;
 		}
 
-		/**
-		 * @return \DateTime
-		 */
-		public function getDate() {
+		public function getDate(): \DateTimeInterface
+		{
 			return $this->date;
 		}
 
-		/**
-		 * @param \DateTime $date
-		 * @return void
-		 */
-		public function setDate(\DateTime $date) {
+		public function setDate(\DateTime $date): void
+		{
 			$this->date = $date;
 		}
 
-		/**
-		 * @return string
-		 */
-		public function getAuthor() {
+		public function getAuthor(): string
+		{
 			return $this->author;
 		}
 
-		/**
-		 * @param string $author
-		 * @return void
-		 */
-		public function setAuthor($author) {
+		public function setAuthor(string $author): void
+		{
 			$this->author = $author;
 		}
 
-		/**
-		 * @return string
-		 */
-		public function getContent() {
+		public function getContent(): string
+		{
 			return $this->content;
 		}
 
-		/**
-		 * @param string $content
-		 * @return void
-		 */
-		public function setContent($content) {
+		public function setContent(string $content): void
+		{
 			$this->content = $content;
 		}
 
@@ -488,7 +448,8 @@ This will generate a vanilla repository for blogs containing this code:
 	/**
 	 * @Flow\Scope("singleton")
 	 */
-	class BlogRepository extends Repository {
+	class BlogRepository extends Repository
+	{
 
 		// add customized methods here
 
@@ -516,7 +477,8 @@ add a ``findActive()`` method that - for now - just returns the first blog in th
 	/**
 	 * @Flow\Scope("singleton")
 	 */
-	class BlogRepository extends Repository {
+	class BlogRepository extends Repository
+	{
 
 		/**
 		 * Finds the active blog.
@@ -524,9 +486,10 @@ add a ``findActive()`` method that - for now - just returns the first blog in th
 		 * For now, only one Blog is supported anyway so we just assume that only one
 		 * Blog object resides in the Blog Repository.
 		 *
-		 * @return Blog The active blog or FALSE if none exists
+		 * @return Blog|null The active blog or null if none exists
 		 */
-		public function findActive() {
+		public function findActive(): ?Blog
+		{
 			$query = $this->createQuery();
 			return $query->execute()->getFirst();
 		}
@@ -570,7 +533,8 @@ The resulting code should look like:
 	/**
 	 * @Flow\Scope("singleton")
 	 */
-	class PostRepository extends Repository {
+	class PostRepository extends Repository
+	{
 
 		/**
 		 * Finds posts by the specified blog
@@ -578,7 +542,8 @@ The resulting code should look like:
 		 * @param Blog $blog The blog the post must refer to
 		 * @return QueryResultInterface The posts
 		 */
-		public function findByBlog(Blog $blog) {
+		public function findByBlog(Blog $blog): QueryResultInterface
+		{
 			$query = $this->createQuery();
 			return
 				$query->matching(
@@ -592,9 +557,10 @@ The resulting code should look like:
 		 * Finds the previous of the given post
 		 *
 		 * @param Post $post The reference post
-		 * @return Post
+		 * @return Post|null The previous post or null if the given $post is the first one
 		 */
-		public function findPrevious(Post $post) {
+		public function findPrevious(Post $post): ?Post
+		{
 			$query = $this->createQuery();
 			return
 				$query->matching(
@@ -612,9 +578,10 @@ The resulting code should look like:
 		 * Finds the post next to the given post
 		 *
 		 * @param Post $post The reference post
-		 * @return Post
+		 * @return Post|null The next post or null if the given $post is the last one
 		 */
-		public function findNext(Post $post) {
+		public function findNext(Post $post): ?Post
+		{
 			$query = $this->createQuery();
 			return
 				$query->matching(
@@ -651,15 +618,13 @@ Remember how we found that the comments and tags are parts of the ``Post Aggrega
 This means, that we should not have any means to directly access tags or comments outside of a post. Therefore they
 should not have a repository. Also, since we never directly access either one, there is no reason we need to reach the
 post they belong to. The access path is always in one direction starting from the post.
-In the terms of data modelling, we have a unidirectional one-to-many relation. To encode those in our domain model properly,
-unfortunately we have to go a non-obvious route.
-As we learned earlier, Doctrine provides a ``OneToMany`` annotation. This would seem like the right choice, but it isn't.
-``OneToMany`` relations in Doctrine are always bidirectional and, even worse, the many side is the so called "owning side" [#]_ of
-the relation. This means, that to update the relation in any way, the owning side entity needs to be persisted. This is not
-matching our domain model, where the post is the ``Aggregate Root`` and hence the entity we persist from. To make Doctrine work
-as we intend our domain model, we need to annotate the relation as a ``ManyToMany`` and add a unique constraint on the "one" side [#]_.
-In ``ManyToMany`` relations we can define the "owning side" freely and the additional constraint will prevent us from accidentally
-having more than one post referring to a specific comment.
+In the terms of data modelling, we have a unidirectional one-to-many relation.
+As we learned earlier, Doctrine provides a ``OneToMany`` annotation. ``OneToMany`` relations in Doctrine are always bidirectional
+and, even worse, the many side is the so called "owning side" [#]_ of the relation. This means, that to update the relation in any
+way, the owning side entity needs to be persisted. This is not matching our domain model, where the post is the ``Aggregate Root``
+and hence the entity we persist from. To make Doctrine work as we intend our domain model, we'd need to annotate the relation as a
+``ManyToMany`` and add a unique constraint on the "one" side [#]_. Since this is not intuitive, Flow 7+ will translate a ``OneToMany``
+relation without a specified ``mappedBy`` attribute to an according ``ManyToMany`` relation, so this modelling mismatch becomes transparent.
 
 First, let's add models for the comment and tag:
 
@@ -713,8 +678,7 @@ Then adjust the post model code as follows:
 		protected $content;
 
 		/**
-		 * @ORM\ManyToMany(orphanRemoval=true)
-		 * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(unique=true)})
+		 * @ORM\OneToMany
 		 * @var Collection<Comment>
 		 */
 		protected $comments;
@@ -728,7 +692,8 @@ Then adjust the post model code as follows:
 		/**
 		 * Constructs this post
 		 */
-		public function __construct() {
+		public function __construct()
+		{
 			$this->date = new \DateTime();
 			$this->comments = new ArrayCollection();
 			$this->tags = new ArrayCollection();
@@ -739,47 +704,40 @@ Then adjust the post model code as follows:
 		/**
 		 * @return Collection<Comment>
 		 */
-		public function getComments() {
+		public function getComments(): Collection
+		{
 			return $this->comments;
 		}
 
-		/**
-		 * @param Comment $comment
-		 */
-		public function addComment(Comment $comment) {
+		public function addComment(Comment $comment): void
+		{
 			$this->comments->add($comment);
 		}
 
-		/**
-		 * @param Comment $comment
-		 */
-		public function deleteComment(Comment $comment) {
+		public function deleteComment(Comment $comment): void
+		{
 			$this->comments->remove($comment);
 		}
 
 		/**
 		 * @return Collection<Tag>
 		 */
-		public function getTags() {
+		public function getTags(): Collection
+		{
 			return $this->tags;
 		}
 
-		/**
-		 * @param Tag $tag
-		 */
-		public function addTag(Tag $tag) {
+		public function addTag(Tag $tag): void
+		{
 			$this->tags->add($tag);
 		}
 
-		/**
-		 * @param Tag $comment
-		 */
-		public function removeTag(Tag $tag) {
+		public function removeTag(Tag $tag): void
+		{
 			$this->tags->remove($tag);
 		}
 
-The ``@ORM\JoinTable`` annotation tells doctrine to enforce that each comment can only be referenced by one post. You might
-wonder why we have the ``orphanRemoval=true`` only on the comments, but not on the tags. ``Orphan removal`` tells doctrine
+We dot not have a ``orphanRemoval=true`` on the tags relations. ``Orphan removal`` tells doctrine
 to delete an entity, when the relation to it is unset, i.e. when the collections ``remove()`` method is invoked. Of course
 we do not want to delete a tag from the database completely, when we just untag a single post, since another post might still
 have this tag.

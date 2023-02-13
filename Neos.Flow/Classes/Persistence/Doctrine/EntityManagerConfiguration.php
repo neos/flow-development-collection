@@ -15,9 +15,12 @@ namespace Neos\Flow\Persistence\Doctrine;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\Cache\DefaultCacheFactory;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
+use Neos\Cache\Exception\NoSuchCacheException;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -51,7 +54,7 @@ class EntityManagerConfiguration
      * @return void
      * @throws InvalidConfigurationException
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings['persistence'];
         if (!is_array($this->settings['doctrine'])) {
@@ -68,7 +71,7 @@ class EntityManagerConfiguration
      * @throws InvalidConfigurationException
      * @throws IllegalObjectTypeException
      */
-    public function configureEntityManager(Connection $connection, Configuration $config, EventManager $eventManager)
+    public function configureEntityManager(Connection $connection, Configuration $config, EventManager $eventManager): void
     {
         if (isset($this->settings['doctrine']['sqlLogger']) && is_string($this->settings['doctrine']['sqlLogger']) && class_exists($this->settings['doctrine']['sqlLogger'])) {
             $this->enableSqlLogger($this->settings['doctrine']['sqlLogger'], $config);
@@ -98,7 +101,7 @@ class EntityManagerConfiguration
      * @param Configuration $doctrineConfiguration
      * @throws InvalidConfigurationException
      */
-    protected function enableSqlLogger(string $configuredSqlLogger, Configuration $doctrineConfiguration)
+    protected function enableSqlLogger(string $configuredSqlLogger, Configuration $doctrineConfiguration): void
     {
         $sqlLoggerInstance = new $configuredSqlLogger();
         if ($sqlLoggerInstance instanceof SQLLogger) {
@@ -113,7 +116,7 @@ class EntityManagerConfiguration
      * @param EventManager $eventManager
      * @throws IllegalObjectTypeException
      */
-    protected function registerEventSubscribers(array $configuredSubscribers, EventManager $eventManager)
+    protected function registerEventSubscribers(array $configuredSubscribers, EventManager $eventManager): void
     {
         foreach ($configuredSubscribers as $subscriberClassName) {
             $subscriber = $this->objectManager->get($subscriberClassName);
@@ -128,7 +131,7 @@ class EntityManagerConfiguration
      * @param array $configuredListeners
      * @param EventManager $eventManager
      */
-    protected function registerEventListeners(array $configuredListeners, EventManager $eventManager)
+    protected function registerEventListeners(array $configuredListeners, EventManager $eventManager): void
     {
         foreach ($configuredListeners as $listenerOptions) {
             $listener = $this->objectManager->get($listenerOptions['listener']);
@@ -144,7 +147,7 @@ class EntityManagerConfiguration
      * @param Configuration $doctrineConfiguration
      * @return void
      */
-    protected function applyDqlSettingsToConfiguration(array $configuredSettings, Configuration $doctrineConfiguration)
+    protected function applyDqlSettingsToConfiguration(array $configuredSettings, Configuration $doctrineConfiguration): void
     {
         if (isset($configuredSettings['customStringFunctions'])) {
             $doctrineConfiguration->setCustomStringFunctions($configuredSettings['customStringFunctions']);
@@ -161,8 +164,9 @@ class EntityManagerConfiguration
      * Apply basic cache configuration for the metadata, query and result caches.
      *
      * @param Configuration $config
+     * @throws NoSuchCacheException
      */
-    protected function applyCacheConfiguration(Configuration $config)
+    protected function applyCacheConfiguration(Configuration $config): void
     {
         $cache = new CacheAdapter();
         // must use ObjectManager in compile phase...
@@ -182,8 +186,9 @@ class EntityManagerConfiguration
      * @param array $configuredSettings
      * @param Configuration $doctrineConfiguration
      * @return void
+     * @throws NoSuchCacheException
      */
-    protected function applySecondLevelCacheSettingsToConfiguration(array $configuredSettings, Configuration $doctrineConfiguration)
+    protected function applySecondLevelCacheSettingsToConfiguration(array $configuredSettings, Configuration $doctrineConfiguration): void
     {
         if (!isset($configuredSettings['enable']) || $configuredSettings['enable'] !== true) {
             return;
@@ -208,7 +213,7 @@ class EntityManagerConfiguration
         // must use ObjectManager in compile phase...
         $cache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine_SecondLevel'));
 
-        $factory = new \Doctrine\ORM\Cache\DefaultCacheFactory($regionsConfiguration, $cache);
+        $factory = new DefaultCacheFactory($regionsConfiguration, $cache);
         $doctrineConfiguration->getSecondLevelCacheConfiguration()->setCacheFactory($factory);
     }
 
@@ -217,9 +222,9 @@ class EntityManagerConfiguration
      *
      * @param Configuration $config
      * @param EntityManager $entityManager
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
-    public function enhanceEntityManager(Configuration $config, EntityManager $entityManager)
+    public function enhanceEntityManager(Configuration $config, EntityManager $entityManager): void
     {
         if (isset($this->settings['doctrine']['dbal']['mappingTypes']) && is_array($this->settings['doctrine']['dbal']['mappingTypes'])) {
             foreach ($this->settings['doctrine']['dbal']['mappingTypes'] as $typeName => $typeConfiguration) {

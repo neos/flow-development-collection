@@ -11,18 +11,21 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\Debug;
-use Doctrine\DBAL\Migrations\MigrationException;
+use Doctrine\Migrations\Exception\MigrationException;
+use Doctrine\ORM\Tools\ToolsException;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\Doctrine\Service as DoctrineService;
+use Neos\Flow\Utility\Exception as UtilityException;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 use Psr\Log\LoggerInterface;
 
@@ -57,6 +60,7 @@ class DoctrineCommandController extends CommandController
     protected $throwableStorage;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;
@@ -67,7 +71,7 @@ class DoctrineCommandController extends CommandController
      * @param array $settings
      * @return void
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings['persistence'];
     }
@@ -75,7 +79,7 @@ class DoctrineCommandController extends CommandController
     /**
      * @param LoggerInterface $logger
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -84,9 +88,11 @@ class DoctrineCommandController extends CommandController
      * Compile the Doctrine proxy classes
      *
      * @return void
+     * @throws UtilityException
+     * @throws FilesException
      * @Flow\Internal
      */
-    public function compileProxiesCommand()
+    public function compileProxiesCommand(): void
     {
         $this->doctrineService->compileProxies();
     }
@@ -102,10 +108,10 @@ class DoctrineCommandController extends CommandController
      * any way.
      *
      * @return void
+     * @throws StopCommandException
      * @see neos.flow:doctrine:entitystatus
-     * @throws StopActionException
      */
-    public function validateCommand()
+    public function validateCommand(): void
     {
         $this->outputLine();
         $classesAndErrors = $this->doctrineService->validateMapping();
@@ -131,13 +137,14 @@ class DoctrineCommandController extends CommandController
      * It expects the database to be empty, if tables that are to be created already
      * exist, this will lead to errors.
      *
-     * @param string $output A file to write SQL to, instead of executing it
+     * @param string|null $output A file to write SQL to, instead of executing it
      * @return void
+     * @throws ToolsException
+     * @throws StopCommandException
      * @see neos.flow:doctrine:update
      * @see neos.flow:doctrine:migrate
-     * @throws StopActionException
      */
-    public function createCommand(string $output = null)
+    public function createCommand(string $output = null): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Database schema creation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -160,13 +167,13 @@ class DoctrineCommandController extends CommandController
      * It will not drop foreign keys, sequences and tables, unless <u>--unsafe-mode</u> is set.
      *
      * @param boolean $unsafeMode If set, foreign keys, sequences and tables can potentially be dropped.
-     * @param string $output A file to write SQL to, instead of executing the update directly
+     * @param string|null $output A file to write SQL to, instead of executing the update directly
      * @return void
+     * @throws StopCommandException
      * @see neos.flow:doctrine:create
      * @see neos.flow:doctrine:migrate
-     * @throws StopActionException
      */
-    public function updateCommand(bool $unsafeMode = false, string $output = null)
+    public function updateCommand(bool $unsafeMode = false, string $output = null): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Database schema update has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -190,11 +197,12 @@ class DoctrineCommandController extends CommandController
      * To run a full validation, use the validate command.
      *
      * @param boolean $dumpMappingData If set, the mapping data will be output
-     * @param string $entityClassName If given, the mapping data for just this class will be output
+     * @param string|null $entityClassName If given, the mapping data for just this class will be output
      * @return void
+     * @throws \Doctrine\ORM\ORMException
      * @see neos.flow:doctrine:validate
      */
-    public function entityStatusCommand(bool $dumpMappingData = false, string $entityClassName = null)
+    public function entityStatusCommand(bool $dumpMappingData = false, string $entityClassName = null): void
     {
         $info = $this->doctrineService->getEntityStatus();
 
@@ -218,19 +226,17 @@ class DoctrineCommandController extends CommandController
                         $this->outputLine();
                     }
                 }
-            } else {
-                if (array_key_exists($entityClassName, $info) && $info[$entityClassName] instanceof ClassMetadata) {
-                    $entityStatus = $info[$entityClassName];
-                    $this->outputLine('<success>[OK]</success>   %s', [$entityClassName]);
-                    if ($dumpMappingData) {
-                        Debugger::clearState();
-                        $this->outputLine(Debugger::renderDump($entityStatus, 0, true, true));
-                    }
-                } else {
-                    $this->outputLine('<info>[FAIL]</info> %s', [$entityClassName]);
-                    $this->outputLine('Class not found.');
-                    $this->outputLine();
+            } elseif (array_key_exists($entityClassName, $info) && $info[$entityClassName] instanceof ClassMetadata) {
+                $entityStatus = $info[$entityClassName];
+                $this->outputLine('<success>[OK]</success>   %s', [$entityClassName]);
+                if ($dumpMappingData) {
+                    Debugger::clearState();
+                    $this->outputLine(Debugger::renderDump($entityStatus, 0, true, true));
                 }
+            } else {
+                $this->outputLine('<info>[FAIL]</info> %s', [$entityClassName]);
+                $this->outputLine('Class not found.');
+                $this->outputLine();
             }
         }
     }
@@ -244,13 +250,12 @@ class DoctrineCommandController extends CommandController
      *
      * @param integer $depth How many levels deep the result should be dumped
      * @param string $hydrationMode One of: object, array, scalar, single-scalar, simpleobject
-     * @param integer $offset Offset the result by this number
-     * @param integer $limit Limit the result to this number
+     * @param integer|null $offset Offset the result by this number
+     * @param integer|null $limit Limit the result to this number
      * @return void
-     * @throws \InvalidArgumentException
-     * @throws StopActionException
+     * @throws StopCommandException
      */
-    public function dqlCommand(int $depth = 3, string $hydrationMode = 'array', int $offset = null, int $limit = null)
+    public function dqlCommand(int $depth = 3, string $hydrationMode = 'array', int $offset = null, int $limit = null): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('DQL query is not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -276,26 +281,22 @@ class DoctrineCommandController extends CommandController
      * available, executed and pending migrations.
      *
      * @param boolean $showMigrations Output a list of all migrations and their status
-     * @param boolean $showDescriptions Show descriptions for the migrations (enables versions display)
      * @return void
+     * @throws StopCommandException
+     * @throws \Doctrine\DBAL\DBALException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
-     * @throws StopActionException
      */
-    public function migrationStatusCommand(bool $showMigrations = false, bool $showDescriptions = false)
+    public function migrationStatusCommand(bool $showMigrations = false): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration status not available, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
         }
 
-        if ($showDescriptions) {
-            $showMigrations = true;
-        }
-
-        $this->outputLine($this->doctrineService->getFormattedMigrationStatus($showMigrations, $showDescriptions));
+        $this->outputLine($this->doctrineService->getFormattedMigrationStatus($showMigrations));
     }
 
     /**
@@ -305,35 +306,31 @@ class DoctrineCommandController extends CommandController
      * migrations provided by currently active packages.
      *
      * @param string $version The version to migrate to
-     * @param string $output A file to write SQL to, instead of executing it
+     * @param string|null $output A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
      * @param boolean $quiet If set, only the executed migration versions will be output, one per line
      * @return void
+     * @throws StopCommandException
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
-     * @throws StopActionException
      */
-    public function migrateCommand(string $version = null, string $output = null, bool $dryRun = false, bool $quiet = false)
+    public function migrateCommand(string $version = 'latest', string $output = null, bool $dryRun = false, bool $quiet = false): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
         }
 
+        if (is_string($output) && !is_writable(dirname($output))) {
+            $this->outputLine(sprintf('The path "%s" is not writeable!', dirname($output)));
+        }
+
         try {
-            $result = $this->doctrineService->executeMigrations($version, $output, $dryRun, $quiet);
-            if ($result === '') {
-                if (!$quiet) {
-                    $this->outputLine('No migration was necessary.');
-                }
-            } elseif ($output === null) {
+            $result = $this->doctrineService->executeMigrations($this->normalizeVersion($version), $output, $dryRun, $quiet);
+            if ($result !== '' && $quiet === false) {
                 $this->outputLine($result);
-            } else {
-                if (!$quiet) {
-                    $this->outputLine('Wrote migration SQL to file "' . $output . '".');
-                }
             }
 
             $this->emitAfterDatabaseMigration();
@@ -346,7 +343,7 @@ class DoctrineCommandController extends CommandController
      * @return void
      * @Flow\Signal
      */
-    protected function emitAfterDatabaseMigration()
+    protected function emitAfterDatabaseMigration(): void
     {
     }
 
@@ -357,24 +354,28 @@ class DoctrineCommandController extends CommandController
      *
      * @param string $version The migration to execute
      * @param string $direction Whether to execute the migration up (default) or down
-     * @param string $output A file to write SQL to, instead of executing it
+     * @param string|null $output A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
      * @return void
+     * @throws StopCommandException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
-     * @throws StopActionException
      */
-    public function migrationExecuteCommand(string $version, string $direction = 'up', string $output = null, bool $dryRun = false)
+    public function migrationExecuteCommand(string $version, string $direction = 'up', string $output = null, bool $dryRun = false): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
         }
 
+        if (is_string($output) && !is_writable(dirname($output))) {
+            $this->outputLine(sprintf('The path "%s" is not writeable!', dirname($output)));
+        }
+
         try {
-            $this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
+            $this->outputLine($this->doctrineService->executeMigration($this->normalizeVersion($version), $direction, $output, $dryRun));
         } catch (\Exception $exception) {
             $this->handleException($exception);
         }
@@ -390,14 +391,14 @@ class DoctrineCommandController extends CommandController
      * @param boolean $add The migration to mark as migrated
      * @param boolean $delete The migration to mark as not migrated
      * @return void
-     * @throws \InvalidArgumentException
-     * @throws StopActionException
+     * @throws StopCommandException
+     * @throws \Doctrine\DBAL\Exception
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationgenerate
      */
-    public function migrationVersionCommand(string $version, bool $add = false, bool $delete = false)
+    public function migrationVersionCommand(string $version, bool $add = false, bool $delete = false): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -407,8 +408,9 @@ class DoctrineCommandController extends CommandController
         if ($add === false && $delete === false) {
             throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
         }
+
         try {
-            $this->doctrineService->markAsMigrated($version, $add ?: false);
+            $this->doctrineService->markAsMigrated($this->normalizeVersion($version), $add ?: false);
         } catch (MigrationException $exception) {
             $this->outputLine($exception->getMessage());
             $this->quit(1);
@@ -435,29 +437,32 @@ class DoctrineCommandController extends CommandController
      * Neos.Flow.persistence.doctrine.migrations.ignoredTables setting
      *
      * @param boolean $diffAgainstCurrent Whether to base the migration on the current schema structure
-     * @param string $filterExpression Only include tables/sequences matching the filter expression regexp
+     * @param string|null $filterExpression Only include tables/sequences matching the filter expression regexp
      * @param boolean $force Generate migrations even if there are migrations left to execute
      * @return void
-     * @throws StopActionException
-     * @throws \Neos\Utility\Exception\FilesException
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws StopCommandException
+     * @throws FilesException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrationGenerateCommand(bool $diffAgainstCurrent = true, string $filterExpression = null, bool $force = false)
+    public function migrationGenerateCommand(bool $diffAgainstCurrent = true, string $filterExpression = null, bool $force = false): void
     {
-        // "driver" is used only for Doctrine, thus we (mis-)use it here
-        // additionally, when no host is set, skip this step, assuming no DB is needed
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
         }
 
         $migrationStatus = $this->doctrineService->getMigrationStatus();
-        if ($migrationStatus['New Migrations'] > 0 && $force === false) {
-            $this->outputLine('There are new migrations available. To avoid duplication those should be executed via `doctrine:migrate` before creating additional migrations.');
+        if ($force === false && $migrationStatus['new'] !== 0) {
+            $this->outputLine('There are %d new migrations available. To avoid duplication those should be executed via `doctrine:migrate` before creating additional migrations.', [$migrationStatus['new']]);
             $this->quit(1);
+        }
+
+        if ($migrationStatus['unavailable'] !== 0) {
+            $this->outputLine('You have %d previously executed migrations in the database that are not registered migrations.', [$migrationStatus['unavailable']]);
         }
 
         // use default filter expression from settings
@@ -468,7 +473,7 @@ class DoctrineCommandController extends CommandController
             }
         }
 
-        list($status, $migrationClassPathAndFilename) = $this->doctrineService->generateMigration($diffAgainstCurrent, $filterExpression);
+        [$status, $migrationClassPathAndFilename] = $this->doctrineService->generateMigration($diffAgainstCurrent, $filterExpression);
 
         $this->outputLine('<info>%s</info>', [$status]);
         $this->outputLine();
@@ -495,7 +500,7 @@ class DoctrineCommandController extends CommandController
                 $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)]);
                 Files::createDirectoryRecursively(dirname($targetPathAndFilename));
                 rename($migrationClassPathAndFilename, $targetPathAndFilename);
-                $this->outputLine('The migration was moved to: <comment>%s</comment>', [substr($targetPathAndFilename, strlen(FLOW_PATH_PACKAGES))]);
+                $this->outputLine('The migration was moved to: <comment>%s</comment>', [substr($targetPathAndFilename, strlen(FLOW_PATH_ROOT))]);
                 $this->outputLine();
                 $this->outputLine('Next Steps:');
             } else {
@@ -512,9 +517,9 @@ class DoctrineCommandController extends CommandController
      *
      * @param \Exception $exception
      * @return void
-     * @throws StopActionException
+     * @throws StopCommandException
      */
-    protected function handleException(\Exception $exception)
+    protected function handleException(\Exception $exception): void
     {
         $this->outputLine('<error>%s</error>', [$exception->getMessage()]);
         $this->outputLine();
@@ -525,13 +530,23 @@ class DoctrineCommandController extends CommandController
         $this->quit(1);
     }
 
-    protected function isDatabaseConfigured()
+    protected function isDatabaseConfigured(): bool
     {
         // "driver" is used only for Doctrine, thus we (mis-)use it here
-        if ($this->settings['backendOptions']['driver'] === null) {
-            return false;
-        }
+        return !($this->settings['backendOptions']['driver'] === null);
+    }
 
-        return true;
+    /**
+     * Migrates a numeric version like "12345678901234" to a fully qualified version "Neos\Flow\Persistence\Doctrine\Migrations\Version12345678901234"
+     *
+     * @param string $version
+     * @return string To fully qualified version including PHP namespace
+     */
+    private function normalizeVersion(string $version): string
+    {
+        if (!is_numeric($version)) {
+            return $version;
+        }
+        return sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
     }
 }

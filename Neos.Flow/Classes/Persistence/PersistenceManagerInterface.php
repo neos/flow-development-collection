@@ -26,7 +26,7 @@ interface PersistenceManagerInterface
      * @return void
      * @api
      */
-    public function injectSettings(array $settings);
+    public function injectSettings(array $settings): void;
 
     /**
      * Commits new objects and changes to objects in the current persistence session into the backend.
@@ -39,7 +39,7 @@ interface PersistenceManagerInterface
      * @return void
      * @api
      */
-    public function persistAll($onlyAllowedObjects = false);
+    public function persistAll(bool $onlyAllowedObjects = false): void;
 
     /**
      * Clears the in-memory state of the persistence.
@@ -49,7 +49,7 @@ interface PersistenceManagerInterface
      *
      * @return void
      */
-    public function clearState();
+    public function clearState(): void;
 
     /**
      * Checks if the given object has ever been persisted.
@@ -58,7 +58,7 @@ interface PersistenceManagerInterface
      * @return boolean true if the object is new, false if the object exists in the repository
      * @api
      */
-    public function isNewObject($object);
+    public function isNewObject($object): bool;
 
     /**
      * Registers an object which has been created or cloned during this request.
@@ -73,7 +73,7 @@ interface PersistenceManagerInterface
      * @param Aspect\PersistenceMagicInterface $object The new object to register
      * @return void
      */
-    public function registerNewObject(Aspect\PersistenceMagicInterface $object);
+    public function registerNewObject(Aspect\PersistenceMagicInterface $object): void;
 
     /**
      * Returns the (internal) identifier for the object, if it is known to the
@@ -94,12 +94,13 @@ interface PersistenceManagerInterface
      * backend. Otherwise NULL is returned.
      *
      * @param mixed $identifier
-     * @param string $objectType
+     * @param string|null $objectType
+     * @psalm-param class-string|null $objectType
      * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
      * @return object|null The object for the identifier if it is known, or NULL
      * @api
      */
-    public function getObjectByIdentifier($identifier, $objectType = null, $useLazyLoading = false);
+    public function getObjectByIdentifier($identifier, string $objectType = null, bool $useLazyLoading = false);
 
     /**
      * Converts the given object into an array containing the identity of the domain object.
@@ -109,7 +110,7 @@ interface PersistenceManagerInterface
      * @throws UnknownObjectException if the given object is not known to the Persistence Manager
      * @api
      */
-    public function convertObjectToIdentityArray($object);
+    public function convertObjectToIdentityArray($object): array;
 
     /**
      * Recursively iterates through the given array and turns objects
@@ -121,7 +122,7 @@ interface PersistenceManagerInterface
      * @api
      * @see convertObjectToIdentityArray()
      */
-    public function convertObjectsToIdentityArrays(array $array);
+    public function convertObjectsToIdentityArrays(array $array): array;
 
     /**
      * Return a query object for the given type.
@@ -130,7 +131,7 @@ interface PersistenceManagerInterface
      * @return QueryInterface
      * @api
      */
-    public function createQueryForType($type);
+    public function createQueryForType(string $type): QueryInterface;
 
     /**
      * Adds an object to the persistence.
@@ -139,7 +140,7 @@ interface PersistenceManagerInterface
      * @return void
      * @api
      */
-    public function add($object);
+    public function add($object): void;
 
     /**
      * Removes an object to the persistence.
@@ -148,7 +149,7 @@ interface PersistenceManagerInterface
      * @return void
      * @api
      */
-    public function remove($object);
+    public function remove($object): void;
 
     /**
      * Update an object in the persistence.
@@ -158,7 +159,7 @@ interface PersistenceManagerInterface
      * @throws UnknownObjectException
      * @api
      */
-    public function update($object);
+    public function update($object): void;
 
     /**
      * Adds the given object to a list of allowed objects which may be persisted when persistAll() is called with the
@@ -169,7 +170,7 @@ interface PersistenceManagerInterface
      * @api
      * @deprecated Use allowObject() instead. See https://github.com/neos/flow-development-collection/pull/2024
      */
-    public function whitelistObject($object);
+    public function whitelistObject($object): void;
 
     /**
      * Adds the given object to a list of allowed objects which may be persisted when persistAll() is called with the
@@ -179,7 +180,7 @@ interface PersistenceManagerInterface
      * @return void
      * @api
      */
-    //public function allowObject($object);
+    //public function allowObject($object): void;
 
     /**
      * Returns true, if an active connection to the persistence
@@ -188,7 +189,7 @@ interface PersistenceManagerInterface
      * @return boolean true, if an connection has been established, false if add object will not be persisted by the backend
      * @api
      */
-    public function isConnected();
+    public function isConnected(): bool;
 
     /**
      * Gives feedback if the persistence Manager has unpersisted changes.
@@ -198,5 +199,5 @@ interface PersistenceManagerInterface
      *
      * @return boolean
      */
-    public function hasUnpersistedChanges();
+    public function hasUnpersistedChanges(): bool;
 }

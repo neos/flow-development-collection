@@ -45,7 +45,7 @@ abstract class AbstractXmlParser
     }
 
     /**
-     * @param $sourcePath
+     * @param string $sourcePath
      * @return \SimpleXMLElement
      * @throws Exception\InvalidXmlFileException
      */

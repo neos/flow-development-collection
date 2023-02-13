@@ -70,18 +70,20 @@ AttributeFilter:
           ( Operator:( 'instanceof' | '!instanceof' ) S ( Operand:StringLiteral | Operand:UnquotedOperand ) S )
           | ( :PropertyPath S
               (
-                  Operator:( 'instanceof' | '!instanceof' | PrefixMatch | SuffixMatch | SubstringMatch | ExactMatch | NotEqualMatch | LessThanOrEqualMatch | LessThanMatch | GreaterThanOrEqualMatch | GreaterThanMatch )
+                  Operator:( 'instanceof' | '!instanceof' | PrefixMatchInsensitive | PrefixMatch | SuffixMatchInsensitive | SuffixMatch | SubstringMatchInsensitivee | SubstringMatch | ExactMatchInsensitive | ExactMatch | NotEqualMatchInsensitive | NotEqualMatch | LessThanOrEqualMatch | LessThanMatch | GreaterThanOrEqualMatch | GreaterThanMatch )
                   S ( Operand:StringLiteral | Operand:NumberLiteral | Operand:BooleanLiteral | Operand:UnquotedOperand ) S
               )?
           )
        )
   S ']'
 	function __construct(&$result) {
-		$result['Operator'] = NULL;
-		$result['PropertyPath'] = NULL;
+	  $result['Operator'] = NULL;
+	  $result['PropertyPath'] = NULL;
+	  $result['Identifier'] = NULL;
 	}
 	function PropertyPath(&$result, $sub) {
-		$result['PropertyPath'] = $sub['text'];
+	  $result['PropertyPath'] = $sub['text'];
+	  $result['Identifier'] = $result['PropertyPath'];
 	}
 	function Operator(&$result, $sub) {
 		$result['Operator'] = $sub['text'];
@@ -95,10 +97,15 @@ UnquotedOperand: / [^"'\[\]\s]+ /
 		$self['val'] = $self['text'];
 	}
 
+PrefixMatchInsensitive: '^=~'
 PrefixMatch: '^='
+SuffixMatchInsensitive: '$=~'
 SuffixMatch: '$='
+SubstringMatchInsensitivee: '*=~'
 SubstringMatch: '*='
+ExactMatchInsensitive: '=~'
 ExactMatch: '='
+NotEqualMatchInsensitive: '!=~'
 NotEqualMatch: '!='
 LessThanOrEqualMatch: '<='
 LessThanMatch: '<'

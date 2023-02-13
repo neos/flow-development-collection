@@ -21,7 +21,7 @@ use Neos\Flow\Annotations as Flow;
 class MethodReflection extends \ReflectionMethod
 {
     /**
-     * @var DocCommentParser: An instance of the doc comment parser
+     * @var DocCommentParser An instance of the doc comment parser
      */
     protected $docCommentParser;
 
@@ -95,7 +95,7 @@ class MethodReflection extends \ReflectionMethod
     }
 
     /**
-     * @return string The name of a type (e.g. string, \stdClass) if it was declared as a return type, null otherwise
+     * @return string|null The name of a type (e.g. string, \stdClass) if it was declared as a return type, null otherwise
      */
     public function getDeclaredReturnType()
     {
@@ -103,7 +103,7 @@ class MethodReflection extends \ReflectionMethod
             return null;
         }
         $type = $this->getReturnType();
-        return $type !== null ? (string)$type : null;
+        return $type !== null ? ltrim((string)$type, '?') : null;
     }
 
     /**

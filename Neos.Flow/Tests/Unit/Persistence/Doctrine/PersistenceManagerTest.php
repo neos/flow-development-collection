@@ -77,7 +77,7 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockEntityManager->expects(self::any())->method('getConnection')->willReturn($this->mockConnection);
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
-        $this->persistenceManager->injectLogger($this->mockSystemLogger);
+        $this->inject($this->persistenceManager, 'logger', $this->mockSystemLogger);
 
         $mockThrowableStorage = $this->getMockBuilder(ThrowableStorageInterface::class)->getMock();
         $this->inject($this->persistenceManager, 'throwableStorage', $mockThrowableStorage);
@@ -177,8 +177,8 @@ class PersistenceManagerTest extends UnitTestCase
     {
         $this->mockPing->willReturn(false);
 
-        $this->mockConnection->expects(self::at(0))->method('close');
-        $this->mockConnection->expects(self::at(1))->method('connect');
+        $this->mockConnection->expects(self::once())->method('close');
+        $this->mockConnection->expects(self::once())->method('connect');
 
         $this->persistenceManager->persistAll();
     }

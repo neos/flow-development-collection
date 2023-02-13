@@ -22,20 +22,14 @@ use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 class ProxyConstructor extends ProxyMethod
 {
     /**
-     * Name of the original method
-     *
-     * @var string
-     */
-    protected $methodName = '__construct';
-
-    /**
      *
      *
      * @param string $fullOriginalClassName The fully qualified class name of the original class
+     * @psalm-param class-string $fullOriginalClassName
      */
     public function __construct($fullOriginalClassName)
     {
-        $this->fullOriginalClassName = $fullOriginalClassName;
+        parent::__construct($fullOriginalClassName, '__construct');
     }
 
     /**

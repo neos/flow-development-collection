@@ -5,33 +5,6 @@ properties:
   'baseUri':
     type: [string, 'null']
     required: true
-  'chain':
-    type: dictionary
-    required: true
-    additionalProperties:
-      -
-        type: 'null'
-      -
-        type: dictionary
-        additionalProperties: false
-        properties:
-          'position': [string, number]
-          'component': { type: string, format: class-name }
-          'componentOptions': { type: dictionary }
-          'chain':
-            -
-              type: 'null'
-            -
-              type: dictionary
-              additionalProperties:
-                type: dictionary
-                additionalProperties: false
-                properties:
-                  'position': [string, number]
-                  'component': { type: string, format: class-name }
-                  'componentOptions': { type: dictionary }
-                  'chain':
-                    type: dictionary
   'middlewares':
     type: dictionary
     required: true

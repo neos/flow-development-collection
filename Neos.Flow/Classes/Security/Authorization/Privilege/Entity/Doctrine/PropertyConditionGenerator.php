@@ -210,7 +210,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param $operandDefinition
+     * @param mixed $operandDefinition
      * @return $this
      * @throws InvalidPolicyException
      */
@@ -301,7 +301,11 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
 
             $subQuerySql = 'SELECT ' . $reverseColumn . ' FROM ' . $associationMapping['joinTable']['name'] . ' WHERE ' . $joinColumn . ' = ' . $parameterValue;
         } else {
-            $subselectQuery = new Query($targetEntity->getAssociationTargetClass($targetEntityPropertyName));
+            $associationTargetClass = $targetEntity->getAssociationTargetClass($targetEntityPropertyName);
+            if ($associationTargetClass === null) {
+                throw new \InvalidArgumentException("Association name expected, '" . $targetEntityPropertyName . "' is not an association.", 1629871077);
+            }
+            $subselectQuery = new Query($associationTargetClass);
             $rootAliases = $subselectQuery->getQueryBuilder()->getRootAliases();
             $primaryRootAlias = reset($rootAliases);
 
@@ -426,7 +430,11 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
      */
     protected function getSubselectQuery(ClassMetadata $targetEntity, $targetEntityPropertyName)
     {
-        $subselectQuery = new Query($targetEntity->getAssociationTargetClass($targetEntityPropertyName));
+        $associationTargetClass = $targetEntity->getAssociationTargetClass($targetEntityPropertyName);
+        if ($associationTargetClass === null) {
+            throw new \InvalidArgumentException("Association name expected, '" . $targetEntityPropertyName . "' is not an association.", 1629871136);
+        }
+        $subselectQuery = new Query($associationTargetClass);
         $propertyName = str_replace($targetEntityPropertyName . '.', '', $this->path);
 
         switch ($this->operator) {

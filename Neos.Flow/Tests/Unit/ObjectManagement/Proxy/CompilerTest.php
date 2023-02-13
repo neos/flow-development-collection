@@ -45,11 +45,11 @@ class CompilerTest extends UnitTestCase
         $sessionWithAutoStart->autoStart = true;
         return [
             [
-                new Signal([]),
+                new Signal(),
                 '@\Neos\Flow\Annotations\Signal'
             ],
             [
-                new Scope(['value' => 'singleton']),
+                new Scope('singleton'),
                 '@\Neos\Flow\Annotations\Scope("singleton")'
             ],
             [
@@ -69,27 +69,27 @@ class CompilerTest extends UnitTestCase
                 '@\Neos\Flow\Annotations\Session'
             ],
             [
-                new Validate(['value' => 'foo1', 'type' => 'bar1']),
+                new Validate('foo1', 'bar1'),
                 '@\Neos\Flow\Annotations\Validate(type="bar1", argumentName="foo1")'
             ],
             [
-                new Validate(['type' => 'bar1', 'options' => ['minimum' => 2]]),
+                new Validate(null, 'bar1', ['minimum' => 2]),
                 '@\Neos\Flow\Annotations\Validate(type="bar1", options={ "minimum"=2 })'
             ],
             [
-                new Validate(['type' => 'bar1', 'options' => ['foo' => ['bar' => 'baz']]]),
+                new Validate(null, 'bar1', ['foo' => ['bar' => 'baz']]),
                 '@\Neos\Flow\Annotations\Validate(type="bar1", options={ "foo"={ "bar"="baz" } })'
             ],
             [
-                new Validate(['type' => 'bar1', 'options' => ['foo' => 'hubbabubba', 'bar' => true]]),
+                new Validate(null, 'bar1', ['foo' => 'hubbabubba', 'bar' => true]),
                 '@\Neos\Flow\Annotations\Validate(type="bar1", options={ "foo"="hubbabubba", "bar"=true })'
             ],
             [
-                new Validate(['type' => 'bar1', 'options' => [new Inject([])]]),
+                new Validate(null, 'bar1', [new Inject()]),
                 '@\Neos\Flow\Annotations\Validate(type="bar1", options={ @\Neos\Flow\Annotations\Inject })'
             ],
             [
-                new Validate(['type' => 'bar1', 'options' => [new Validate(['type' => 'bar1', 'options' => ['foo' => 'hubbabubba']])]]),
+                new Validate(null, 'bar1', [new Validate(null, 'bar1', ['foo' => 'hubbabubba'])]),
                 '@\Neos\Flow\Annotations\Validate(type="bar1", options={ @\Neos\Flow\Annotations\Validate(type="bar1", options={ "foo"="hubbabubba" }) })'
             ],
         ];

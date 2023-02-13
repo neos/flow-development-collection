@@ -161,6 +161,7 @@ class PersistentObjectConverter extends ObjectConverter
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
+        /** @psalm-var class-string $targetType */
         if (is_array($source)) {
             if ($this->reflectionService->isClassAnnotatedWith($targetType, ValueObject::class)) {
                 if (isset($source['__identity']) && (count($source) > 1)) {
@@ -224,6 +225,7 @@ class PersistentObjectConverter extends ObjectConverter
      *
      * @param array $source
      * @param string $targetType
+     * @psalm-param class-string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object|TargetNotFoundError
@@ -280,6 +282,7 @@ class PersistentObjectConverter extends ObjectConverter
      *
      * @param mixed $identity
      * @param string $targetType
+     * @psalm-param class-string $targetType
      * @return object|null
      * @throws InvalidSourceException|DuplicateObjectException
      */

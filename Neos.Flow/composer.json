@@ -6,7 +6,7 @@
     "license": ["MIT"],
 
     "require": {
-        "php": "^7.2",
+        "php": "^7.3 || ^8.0",
 
         "ext-zlib": "*",
         "ext-SPL": "*",
@@ -14,19 +14,18 @@
         "ext-reflection": "*",
         "ext-xml": "*",
 
-        "neos/cache": "~6.3.0",
-        "neos/eel": "~6.3.0",
-        "neos/error-messages": "~6.3.0",
-        "neos/utility-arrays": "~6.3.0",
-        "neos/utility-files": "~6.3.0",
-        "neos/utility-mediatypes": "~6.3.0",
-        "neos/utility-objecthandling": "~6.3.0",
-        "neos/utility-opcodecache": "~6.3.0",
-        "neos/utility-schema": "~6.3.0",
-        "neos/utility-unicode": "~6.3.0",
-        "neos/fluid-adaptor": "~6.3.0",
-        "neos/flow-log": "~6.3.0",
-        "neos/http-factories": "~6.3.0",
+        "neos/cache": "~7.3.0",
+        "neos/eel": "~7.3.0",
+        "neos/error-messages": "~7.3.0",
+        "neos/utility-arrays": "~7.3.0",
+        "neos/utility-files": "~7.3.0",
+        "neos/utility-mediatypes": "~7.3.0",
+        "neos/utility-objecthandling": "~7.3.0",
+        "neos/utility-opcodecache": "~7.3.0",
+        "neos/utility-schema": "~7.3.0",
+        "neos/utility-unicode": "~7.3.0",
+        "neos/flow-log": "~7.3.0",
+        "neos/http-factories": "~7.3.0",
 
         "psr/http-message": "^1.0",
         "psr/http-factory": "^1.0",
@@ -37,35 +36,40 @@
 
         "ramsey/uuid": "^3.0 || ^4.0",
 
-        "doctrine/orm": "^2.6",
-        "doctrine/migrations": "^1.8.1",
-        "doctrine/dbal": "^2.9",
-        "doctrine/common": "^2.4",
-        "doctrine/persistence": "^1.3",
+        "doctrine/orm": "^2.9.3",
+        "doctrine/migrations": "^3.0",
+        "doctrine/dbal": "^2.13",
+        "doctrine/common": "^3.0.3",
+        "doctrine/annotations": "^1.12",
 
-        "symfony/yaml": "^4.2",
-        "symfony/dom-crawler": "^4.2",
-        "symfony/console": "^4.2",
+        "symfony/yaml": "^5.1",
+        "symfony/dom-crawler": "^5.1",
+        "symfony/console": "^5.1",
 
         "neos/composer-plugin": "^2.0",
-        "neos/utility-pdo": "~6.3.0",
+        "neos/utility-pdo": "~7.3.0",
 
-        "composer/composer": "^1.10.22 || ^2.0.13"
+        "composer/composer": "^1.10.22 || ^2.0.13",
+
+        "egulias/email-validator": "^2.1.17 || ^3.0"
     },
     "require-dev": {
         "vimeo/psalm": "~4.22.0",
         "mikey179/vfsstream": "^1.6.1",
-        "phpunit/phpunit": "~8.5"
+        "phpunit/phpunit": "~9.1"
     },
     "replace": {
         "symfony/polyfill-php70": "*",
-        "symfony/polyfill-php71": "*"
+        "symfony/polyfill-php71": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*"
     },
     "suggest": {
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
         "neos/party": "To make use of basic user handling",
-        "php-uuid": "For fast generation of UUIDs used in the persistence."
+        "php-uuid": "For fast generation of UUIDs used in the persistence.",
+        "neos/fluid-adaptor": "For rendering templates with TYPO3.Fluid"
     },
     "autoload": {
         "psr-4": {
@@ -83,7 +87,8 @@
             "package-key": "Neos.Flow"
         },
         "applied-flow-migrations": [
-            "Neos.Media-20161124233100"
+            "Neos.Media-20161124233100",
+            "Neos.Flow-20201003165200"
         ]
     }
 }

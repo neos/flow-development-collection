@@ -138,12 +138,16 @@ class ConsoleOutput
      *
      * @param array $rows
      * @param array $headers
+     * @param string $headerTitle
      */
-    public function outputTable(array $rows, array $headers = null): void
+    public function outputTable(array $rows, array $headers = null, string $headerTitle = null): void
     {
         $table = $this->getTable();
         if ($headers !== null) {
             $table->setHeaders($headers);
+        }
+        if ($headerTitle !== null) {
+            $table->setHeaderTitle($headerTitle);
         }
         $table->setRows($rows);
         $table->render();
@@ -385,7 +389,7 @@ class ConsoleOutput
      *
      * @return ProgressBar
      */
-    protected function getProgressBar(): ProgressBar
+    public function getProgressBar(): ProgressBar
     {
         if ($this->progressBar === null) {
             $this->progressBar = new ProgressBar($this->output);

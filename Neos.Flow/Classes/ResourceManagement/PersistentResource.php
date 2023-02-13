@@ -78,14 +78,6 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     protected $sha1;
 
     /**
-     * MD5 hash identifying the content attached to this resource
-     *
-     * @var string
-     * @ORM\Column(length=32)
-     */
-    protected $md5;
-
-    /**
      * As soon as the PersistentResource has been published, modifying this object is not allowed
      *
      * @Flow\Transient
@@ -313,30 +305,6 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
             throw new \InvalidArgumentException('Specified invalid hash to setSha1()', 1362564220);
         }
         $this->sha1 = strtolower($sha1);
-    }
-
-    /**
-     * Returns the MD5 hash of the content of this resource
-     *
-     * @return string The MD5 hash
-     * @deprecated since 6.3, will be removed with 7.0 – use getSha1() instead or md5(stream_get_contents($resource->getStream())) if you need an MD5 hash
-     */
-    public function getMd5()
-    {
-        return $this->md5;
-    }
-
-    /**
-     * Sets the MD5 hash of the content of this resource
-     *
-     * @param string $md5 The MD5 hash
-     * @return void
-     * @deprecated since 6.3, will be removed with 7.0 – @see getMd5()
-     */
-    public function setMd5($md5)
-    {
-        $this->throwExceptionIfProtected();
-        $this->md5 = $md5;
     }
 
     /**

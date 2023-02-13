@@ -12,8 +12,8 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr\Reader;
  */
 
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
+use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -45,15 +45,9 @@ class DatesReaderTest extends UnitTestCase
      */
     public function createCacheExpectations(MockObject $mockCache)
     {
-        $mockCache->expects(self::at(0))->method('has')->with('parsedFormats')->will(self::returnValue(true));
-        $mockCache->expects(self::at(1))->method('has')->with('parsedFormatsIndices')->will(self::returnValue(true));
-        $mockCache->expects(self::at(2))->method('has')->with('localizedLiterals')->will(self::returnValue(true));
-        $mockCache->expects(self::at(3))->method('get')->with('parsedFormats')->will(self::returnValue([]));
-        $mockCache->expects(self::at(4))->method('get')->with('parsedFormatsIndices')->will(self::returnValue([]));
-        $mockCache->expects(self::at(5))->method('get')->with('localizedLiterals')->will(self::returnValue([]));
-        $mockCache->expects(self::at(6))->method('set')->with('parsedFormats');
-        $mockCache->expects(self::at(7))->method('set')->with('parsedFormatsIndices');
-        $mockCache->expects(self::at(8))->method('set')->with('localizedLiterals');
+        $mockCache->expects(self::atLeast(3))->method('has')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedLiterals'])->willReturn(true);
+        $mockCache->expects(self::atLeast(3))->method('get')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedLiterals'])->willReturn([]);
+        $mockCache->expects(self::atLeast(3))->method('set')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedLiterals']);
     }
 
     /**
@@ -62,7 +56,6 @@ class DatesReaderTest extends UnitTestCase
     public function formatIsCorrectlyReadFromCldr()
     {
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getRawArray', 'getElement'], [[]]);
-        $mockModel->expects(self::once())->method('getRawArray')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats')->will(self::returnValue(['default[@choice="medium"]' => '']));
         $mockModel->expects(self::once())->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="medium"]/dateFormat/pattern')->will(self::returnValue('mockFormatString'));
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
@@ -89,9 +82,17 @@ class DatesReaderTest extends UnitTestCase
     public function dateTimeFormatIsParsedCorrectly()
     {
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getElement'], [[]]);
-        $mockModel->expects(self::at(0))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateTimeFormats/dateTimeFormatLength[@type="full"]/dateTimeFormat/pattern')->will(self::returnValue('foo {0} {1} bar'));
-        $mockModel->expects(self::at(1))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern')->will(self::returnValue('dMy'));
-        $mockModel->expects(self::at(2))->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/timeFormats/timeFormatLength[@type="full"]/timeFormat/pattern')->will(self::returnValue('hms'));
+        $mockModel->expects(
+            self::exactly(3)
+        )->method('getElement')->withConsecutive(
+            ['dates/calendars/calendar[@type="gregorian"]/dateTimeFormats/dateTimeFormatLength[@type="full"]/dateTimeFormat/pattern'],
+            ['dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern'],
+            ['dates/calendars/calendar[@type="gregorian"]/timeFormats/timeFormatLength[@type="full"]/timeFormat/pattern']
+        )->willReturnOnConsecutiveCalls(
+            'foo {0} {1} bar',
+            'dMy',
+            'hms'
+        );
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
         $mockRepository->expects(self::exactly(3))->method('getModelForLocale')->with($this->sampleLocale)->will(self::returnValue($mockModel));

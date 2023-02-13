@@ -113,6 +113,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected $persistenceManager;
 
     /**
+     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
     protected $logger;

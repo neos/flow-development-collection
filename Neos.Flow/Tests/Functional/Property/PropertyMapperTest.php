@@ -92,7 +92,7 @@ class PropertyMapperTest extends FunctionalTestCase
         $result = $this->propertyMapper->convert($source, Fixtures\TestClass::class);
         self::assertSame('Christopher', $result->getName());
         self::assertSame(187, $result->getSize());
-        self::assertSame(true, $result->getSignedCla());
+        self::assertTrue($result->getSignedCla());
     }
 
     /**
@@ -243,7 +243,7 @@ class PropertyMapperTest extends FunctionalTestCase
         $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class);
         self::assertSame('Egon Olsen', $result->getName());
         self::assertSame(42, $result->getAge());
-        self::assertSame(null, $result->getAverageNumberOfKids());
+        self::assertNull($result->getAverageNumberOfKids());
     }
 
     /**
@@ -422,7 +422,7 @@ class PropertyMapperTest extends FunctionalTestCase
         $account = $this->propertyMapper->convert($source, Account::class, $configuration);
 
         self::assertInstanceOf(Account::class, $account);
-        self::assertEquals(2, count($account->getRoles()));
+        self::assertCount(2, $account->getRoles());
         self::assertEquals($expectedRoleIdentifiers, array_keys($account->getRoles()));
     }
 
@@ -476,14 +476,13 @@ class PropertyMapperTest extends FunctionalTestCase
      */
     public function collectionPropertyWithMissingElementTypeThrowsHelpfulException()
     {
-        $this->expectExceptionMessage('missing an element type');
-
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessageMatches('/The annotated collection property "0" is missing an element type/');
+        $source = [
+            'values' => ['foo']
+        ];
         $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->forProperty('values.*')->allowProperties();
-
-        $source = [
-            'values' => ['quux']
-        ];
         $this->propertyMapper->convert($source, TestClassWithMissingCollectionElementType::class, $configuration);
     }
 }

@@ -24,7 +24,7 @@ abstract class TypeHandling
     /**
      * A property type parse pattern.
      */
-    const PARSE_TYPE_PATTERN = '/^(?:null\|)?\\\\?(?P<type>[a-zA-Z0-9\\\\_]+)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\_]+)>)?(?:\|null)?(?:\s|$)/';
+    const PARSE_TYPE_PATTERN = '/^\??(?:null\|)?\\\\?(?P<type>[a-zA-Z0-9\\\\_]+)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\_]+)>)?(?:\|null)?(?:\s|$)/';
 
     /**
      * A type pattern to detect literal types.
@@ -34,7 +34,7 @@ abstract class TypeHandling
     /**
      * @var array
      */
-    protected static $collectionTypes = ['array', \ArrayObject::class, \SplObjectStorage::class, Collection::class];
+    protected static $collectionTypes = ['array', \Traversable::class];
 
     /**
      * Returns an array with type information, including element type for
@@ -51,9 +51,9 @@ abstract class TypeHandling
             throw new InvalidTypeException('Found an invalid element type declaration. A type "' . var_export($type, true) . '" does not exist.', 1264093630);
         }
 
-        $typeWithoutNull = self::stripNullableType($matches['type']);
-        $isNullable = $typeWithoutNull !== $matches['type'];
-        $type = self::normalizeType($typeWithoutNull);
+        $typeWithoutNull = self::stripNullableType($type);
+        $isNullable = $typeWithoutNull !== $type || $type === 'null';
+        $type = self::normalizeType($matches['type']);
         $elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : null;
 
         if ($elementType !== null && !self::isCollectionType($type)) {
@@ -62,7 +62,8 @@ abstract class TypeHandling
 
         return [
             'type' => $type,
-            'elementType' => $elementType
+            'elementType' => $elementType,
+            'nullable' => $isNullable
         ];
     }
 
@@ -110,7 +111,7 @@ abstract class TypeHandling
      */
     public static function isSimpleType(string $type): bool
     {
-        return in_array(self::normalizeType($type), ['array', 'string', 'float', 'integer', 'boolean'], true);
+        return in_array(self::normalizeType($type), ['array', 'string', 'float', 'integer', 'boolean', 'null', 'false', 'true'], true);
     }
 
     /**
@@ -137,6 +138,28 @@ abstract class TypeHandling
     }
 
     /**
+     * Returns true if the $type is a union type.
+     *
+     * @param string $type
+     * @return boolean
+     */
+    public static function isUnionType(string $type): bool
+    {
+        return str_contains($type, '|');
+    }
+
+    /**
+     * Returns true if the $type is an intersection type.
+     *
+     * @param string $type
+     * @return boolean
+     */
+    public static function isIntersectionType(string $type): bool
+    {
+        return str_contains($type, '&');
+    }
+
+    /**
      * Parses a composite type like "\Foo\Collection<\Bar\Entity>" into "\Foo\Collection"
      * Note: If the given type does not specify an element type it is not changed
      *
@@ -157,6 +180,9 @@ abstract class TypeHandling
      */
     public static function stripNullableType($type)
     {
+        if ($type[0] === '?') {
+            $type = substr($type, 1);
+        }
         if (stripos($type, 'null') === false) {
             return $type;
         }

@@ -49,7 +49,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * @param array $settings
      * @return void
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings['persistence'];
     }
@@ -59,7 +59,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      *
      * @return void
      */
-    public function clearState()
+    public function clearState(): void
     {
         $this->newObjects = [];
     }
@@ -77,7 +77,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * @param Aspect\PersistenceMagicInterface $object The new object to register
      * @return void
      */
-    public function registerNewObject(Aspect\PersistenceMagicInterface $object)
+    public function registerNewObject(Aspect\PersistenceMagicInterface $object): void
     {
         $identifier = ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
         $this->newObjects[$identifier] = $object;
@@ -92,7 +92,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * @api
      * @deprecated Use allowObject() instead. See https://github.com/neos/flow-development-collection/pull/2024
      */
-    public function whitelistObject($object)
+    public function whitelistObject($object): void
     {
         $this->allowObject($object);
     }
@@ -117,7 +117,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * @return array The identity array in the format array('__identity' => '...')
      * @throws Exception\UnknownObjectException if the given object is not known to the Persistence Manager
      */
-    public function convertObjectToIdentityArray($object)
+    public function convertObjectToIdentityArray($object): array
     {
         $identifier = $this->getIdentifierByObject($object);
         if ($identifier === null) {
@@ -134,7 +134,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * @return array The modified array without objects
      * @throws Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
      */
-    public function convertObjectsToIdentityArrays(array $array)
+    public function convertObjectsToIdentityArrays(array $array): array
     {
         foreach ($array as $key => $value) {
             if (is_array($value)) {
@@ -156,7 +156,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      *
      * @return boolean
      */
-    public function hasUnpersistedChanges()
+    public function hasUnpersistedChanges(): bool
     {
         return $this->hasUnpersistedChanges;
     }

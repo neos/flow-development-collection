@@ -158,10 +158,10 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
     }
 
     /**
-     * @param $className
-     * @param $methodName
-     * @param $methodDeclaringClassName
-     * @param $pointcutQueryIdentifier
+     * @param string $className
+     * @param string $methodName
+     * @param string $methodDeclaringClassName
+     * @param mixed $pointcutQueryIdentifier
      * @return \Closure
      */
     protected function getFilterEvaluator($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): \Closure

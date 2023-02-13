@@ -503,7 +503,16 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     if ($offset !== null) {
                         fseek($file, $offset);
                     }
-                    $data = fread($file, $maxlen !== null ? $maxlen : filesize($cacheEntryPathAndFilename) - (int)$offset);
+
+                    $length = $maxlen !== null ? $maxlen : filesize($cacheEntryPathAndFilename) - (int)$offset;
+
+                    // fread requires a positive length. If the file is empty, we just return an empty string.
+                    if ($length === 0) {
+                        $data = '';
+                    } else {
+                        $data = fread($file, $length);
+                    }
+
                     flock($file, LOCK_UN);
                 }
                 fclose($file);
@@ -535,11 +544,16 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         for ($i = 0; $i < 3; $i++) {
             $result = false;
             try {
-                $file = fopen($cacheEntryPathAndFilename, 'wb');
+                // It's important that we use the 'c' flag below, as `fopen` will otherwise truncate the file
+                // if it already exists. If we used 'w' and then didn't get the lock, the file would end up empty.
+                // https://www.php.net/manual/en/function.fopen.php#refsect1-function.fopen-parameters
+                $file = fopen($cacheEntryPathAndFilename, 'cb');
                 if ($file === false) {
                     continue;
                 }
                 if (flock($file, LOCK_EX) !== false) {
+                    // We need to truncate the file in case it was already present
+                    ftruncate($file, 0);
                     $result = !(fwrite($file, $data) === false);
                     flock($file, LOCK_UN);
                 }
