@@ -424,7 +424,7 @@ Options
 | maxLockWaitMicroseconds | Maximum time to wait for getting a     | No        | int    | 1000    |
 |                         | file lock for read/write operations in |           |        |         |
 |                         | microseconds. This should be increased |           |        |         |
-|                         | for lower latency storages.            |           |        |         |
+|                         | for higher latency storages.           |           |        |         |
 +-------------------------+----------------------------------------+-----------+--------+---------+
 
 Neos\\Cache\\Backend\\PdoBackend
