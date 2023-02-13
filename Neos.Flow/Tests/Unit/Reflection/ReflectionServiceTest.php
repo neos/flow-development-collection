@@ -83,6 +83,64 @@ class ReflectionServiceTest extends UnitTestCase
     /**
      * @test
      */
+    public function getMethodParametersReturnsCorrectTypeForObjectType()
+    {
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithBuiltinTypes::class);
+        $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithBuiltinTypes::class, 'doCoolStuffWithObject');
+        $this->assertEquals('object', $parameters['firstArgument']['type']);
+        $this->assertTrue($parameters['firstArgument']['scalarDeclaration']);
+    }
+
+    /**
+     * @test
+     */
+    public function getMethodParametersReturnsCorrectTypeForIterableType()
+    {
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithBuiltinTypes::class);
+        $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithBuiltinTypes::class, 'doCoolStuffWithIterable');
+        $this->assertEquals('iterable', $parameters['firstArgument']['type']);
+        $this->assertTrue($parameters['firstArgument']['scalarDeclaration']);
+    }
+
+    /**
+     * @test
+     */
+    public function getMethodParametersReturnsCorrectTypeForClassType()
+    {
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithBuiltinTypes::class);
+        $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithBuiltinTypes::class, 'doCoolStuffWithClass');
+        $this->assertEquals('stdClass', $parameters['firstArgument']['class']);
+        $this->assertFalse($parameters['firstArgument']['scalarDeclaration']);
+    }
+
+    /**
+     * @test
+     */
+    public function getMethodParametersReturnsCorrectTypeForStringType()
+    {
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithBuiltinTypes::class);
+        $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithBuiltinTypes::class, 'doCoolStuffWithString');
+        $this->assertEquals('string', $parameters['firstArgument']['type']);
+        $this->assertFalse($parameters['firstArgument']['scalarDeclaration']);
+        $this->assertFalse($parameters['firstArgument']['allowsNull']);
+    }
+
+    /**
+     * @test
+     */
+    public function getMethodParametersReturnsCorrectTypeForNullableStringType()
+    {
+        $this->reflectionService->_call('reflectClass', Fixture\ClassWithBuiltinTypes::class);
+        $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithBuiltinTypes::class, 'doCoolStuffWithNullableString');
+        $this->assertEquals('string', $parameters['firstArgument']['type']);
+        $this->assertFalse($parameters['firstArgument']['scalarDeclaration']);
+        $this->assertFalse($parameters['firstArgument']['optional']);
+        $this->assertTrue($parameters['firstArgument']['allowsNull']);
+    }
+
+    /**
+     * @test
+     */
     public function isTagIgnoredReturnsTrueForIgnoredTags()
     {
         $settings = ['reflection' => ['ignoredTags' => ['ignored' => true]]];

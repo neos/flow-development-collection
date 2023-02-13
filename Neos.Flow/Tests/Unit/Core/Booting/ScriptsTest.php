@@ -98,7 +98,7 @@ class ScriptsTest extends UnitTestCase
     public function initializeConfigurationInjectsSettingsToPackageManager()
     {
         $mockSignalSlotDispatcher = $this->createMock(Dispatcher::class);
-        $mockPackageManager = $this->createMock(PackageManager::class, ['injectSettings'], [], '', false, true);
+        $mockPackageManager = $this->createMock(PackageManager::class);
 
         $bootstrap = new Bootstrap('Testing');
         $bootstrap->setEarlyInstance(Dispatcher::class, $mockSignalSlotDispatcher);

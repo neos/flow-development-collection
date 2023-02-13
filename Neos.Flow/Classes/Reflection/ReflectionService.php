@@ -1381,7 +1381,7 @@ class ReflectionService
         }
 
         $returnType = $method->getDeclaredReturnType();
-        if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void', 'iterable', 'object', 'mixed']) && !TypeHandling::isSimpleType($returnType)) {
+        if ($returnType !== null && !in_array($returnType, ['self', 'static', 'parent']) && $method->getReturnType() !== null && !$method->getReturnType()->isBuiltin()) {
             $returnType = '\\' . $returnType;
         }
         if ($method->isDeclaredReturnTypeNullable()) {
@@ -1801,15 +1801,17 @@ class ReflectionService
             // TODO: This needs to handle ReflectionUnionType
             $parameterType = ($parameterType instanceof \ReflectionNamedType) ? $parameterType->getName() : $parameterType->__toString();
         }
-        if ($parameterType !== null && !TypeHandling::isSimpleType($parameterType)) {
+        $builtinType = $parameter->getBuiltinType();
+        if ($parameterType !== null && $builtinType === null) {
             // We use parameter type here to make class_alias usage work and return the hinted class name instead of the alias
             $parameterInformation[self::DATA_PARAMETER_CLASS] = $parameterType;
         } elseif ($parameterType === 'array') {
             $parameterInformation[self::DATA_PARAMETER_ARRAY] = true;
         } else {
-            $builtinType = $parameter->getBuiltinType();
-            if ($builtinType !== null) {
-                $parameterInformation[self::DATA_PARAMETER_TYPE] = $builtinType;
+            $parameterInformation[self::DATA_PARAMETER_TYPE] = $builtinType;
+            // The isSimpleType() check is needed to avoid a problem with AOP proxy building, see
+            // https://github.com/neos/flow-development-collection/pull/2786#issuecomment-1084450139
+            if ($parameterType !== null && !TypeHandling::isSimpleType($parameterType)) {
                 $parameterInformation[self::DATA_PARAMETER_SCALAR_DECLARATION] = true;
             }
         }

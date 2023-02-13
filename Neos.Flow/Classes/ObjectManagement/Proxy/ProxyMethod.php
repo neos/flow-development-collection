@@ -224,7 +224,7 @@ class ProxyMethod
             $methodTags = $this->reflectionService->getMethodTagsValues($className, $methodName);
             $allowedTags = ['param', 'return', 'throws'];
             foreach ($methodTags as $tag => $values) {
-                if (in_array($tag, $allowedTags)) {
+                if (in_array($tag, $allowedTags, true)) {
                     if (count($values) === 0) {
                         $methodDocumentation .= '     * @' . $tag . "\n";
                     } else {
@@ -285,7 +285,7 @@ class ProxyMethod
                     if ($methodParameterInfo['optional'] === true) {
                         $rawDefaultValue = $methodParameterInfo['defaultValue'] ?? null;
                         if ($rawDefaultValue === null) {
-                            $defaultValue = ' = NULL';
+                            $defaultValue = ' = null';
                         } elseif (is_bool($rawDefaultValue)) {
                             $defaultValue = ($rawDefaultValue ? ' = true' : ' = false');
                         } elseif (is_string($rawDefaultValue)) {
@@ -341,7 +341,7 @@ class ProxyMethod
             $code .= (is_string($key)) ? "'" . $key . "'" : $key;
             $code .= ' => ';
             if ($value === null) {
-                $code .= 'NULL';
+                $code .= 'null';
             } elseif (is_bool($value)) {
                 $code .= ($value ? 'true' : 'false');
             } elseif (is_string($value)) {
@@ -368,7 +368,8 @@ class ProxyMethod
         }
         if ($this->reflectionService->isMethodProtected($this->fullOriginalClassName, $this->methodName)) {
             return 'protected';
-        } elseif ($this->reflectionService->isMethodPrivate($this->fullOriginalClassName, $this->methodName)) {
+        }
+        if ($this->reflectionService->isMethodPrivate($this->fullOriginalClassName, $this->methodName)) {
             return 'private';
         }
         return 'public';
