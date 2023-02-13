@@ -492,7 +492,13 @@ Neos\Flow\Session\SessionManager:
         arguments:
           1:
             value: Flow_Session_MetaData
-
+    storageCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Session_Storage
 #
 # Utility
 #
