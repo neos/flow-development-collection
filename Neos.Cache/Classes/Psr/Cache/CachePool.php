@@ -71,7 +71,7 @@ class CachePool implements CacheItemPoolInterface
      * @return CacheItemInterface
      * @throws InvalidArgumentException
      */
-    public function getItem($key)
+    public function getItem(string $key): CacheItemInterface
     {
         if (!$this->isValidEntryIdentifier($key)) {
             throw new InvalidArgumentException('"' . $key . '" is not a valid cache entry identifier.', 1514738649629);
@@ -93,7 +93,7 @@ class CachePool implements CacheItemPoolInterface
      * @return array
      * @throws InvalidArgumentException
      */
-    public function getItems(array $keys = [])
+    public function getItems(array $keys = []): iterable
     {
         return array_map(function ($key) {
             return $this->getItem($key);
@@ -107,7 +107,7 @@ class CachePool implements CacheItemPoolInterface
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function hasItem($key)
+    public function hasItem(string $key): bool
     {
         if (!$this->isValidEntryIdentifier($key)) {
             throw new InvalidArgumentException('"' . $key . '" is not a valid cache entry identifier.', 1514738924982);
@@ -121,7 +121,7 @@ class CachePool implements CacheItemPoolInterface
      *
      * @return bool
      */
-    public function clear()
+    public function clear(): bool
     {
         $this->backend->flush();
         return true;
@@ -134,7 +134,7 @@ class CachePool implements CacheItemPoolInterface
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function deleteItem($key)
+    public function deleteItem(string $key): bool
     {
         if (!$this->isValidEntryIdentifier($key)) {
             throw new InvalidArgumentException('"' . $key . '" is not a valid cache entry identifier.', 1514741469583);
@@ -150,7 +150,7 @@ class CachePool implements CacheItemPoolInterface
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function deleteItems(array $keys)
+    public function deleteItems(array $keys): bool
     {
         $deleted = true;
         foreach ($keys as $key) {
@@ -167,7 +167,7 @@ class CachePool implements CacheItemPoolInterface
      * @return bool
      * @throws \Neos\Cache\Exception
      */
-    public function save(CacheItemInterface $item)
+    public function save(CacheItemInterface $item): bool
     {
         $lifetime = null;
         $expiresAt = null;
@@ -189,7 +189,7 @@ class CachePool implements CacheItemPoolInterface
      * @param CacheItemInterface $item
      * @return bool
      */
-    public function saveDeferred(CacheItemInterface $item)
+    public function saveDeferred(CacheItemInterface $item): bool
     {
         $this->deferredItems[] = $item;
         return true;
@@ -201,7 +201,7 @@ class CachePool implements CacheItemPoolInterface
      * @return bool
      * @throws \Neos\Cache\Exception
      */
-    public function commit()
+    public function commit(): bool
     {
         foreach ($this->deferredItems as $item) {
             $this->save($item);

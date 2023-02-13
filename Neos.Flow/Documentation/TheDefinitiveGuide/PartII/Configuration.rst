@@ -205,9 +205,6 @@ Some specific flow behaviour can also be configured with a couple of environment
 |                               | locked. This is relative to the Packages directory.        |
 |                               | Can be given as ``FLOW_LOCKHOLDINGPAGE``, too.             |
 +-------------------------------+------------------------------------------------------------+
-| ``FLOW_ONLY_COMPOSER_LOADER`` | Set to false (0) to use the custom ClassLoader on top of   |
-|                               | the regular mechanism provided by composer (deprecated)    |
-+-------------------------------+------------------------------------------------------------+
 
 
 -----

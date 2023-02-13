@@ -15,6 +15,7 @@ namespace Neos\Cache\Backend;
 
 use Neos\Cache\Exception;
 use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
 
@@ -236,6 +237,19 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      */
     public function findIdentifiersByTag(string $searchedTag): array
     {
+        return $this->findIdentifiersByTags([$searchedTag]);
+    }
+
+    /**
+     * Finds and returns all cache entry identifiers which are tagged by the
+     * specified tags.
+     *
+     * @param string[] $tags The tags to search for
+     * @return string[] An array with identifiers of all matching entries. An empty array if no entries matched
+     * @api
+     */
+    public function findIdentifiersByTags(array $tags): array
+    {
         $entryIdentifiers = [];
         for ($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
             if ($directoryIterator->isDot()) {
@@ -252,7 +266,8 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
                 continue;
             }
 
-            if (!$entry->isTaggedWith($searchedTag)) {
+            $extractedTags = $entry->getTags();
+            if ($extractedTags === [] || !array_intersect($tags, explode(' ', $extractedTags))) {
                 continue;
             }
 
@@ -265,7 +280,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Removes all cache entries of this cache and sets the frozen flag to false.
      *
      * @return void
-     * @throws \Neos\Utility\Exception\FilesException
+     * @throws FilesException
      * @api
      */
     public function flush(): void
@@ -290,14 +305,22 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      */
     public function flushByTag(string $tag): int
     {
-        $identifiers = $this->findIdentifiersByTag($tag);
-        if (count($identifiers) === 0) {
-            return 0;
-        }
+        return $this->flushByTags([$tag]);
+    }
+
+    /**
+     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     *
+     * @api
+     */
+    public function flushByTags(array $tags): int
+    {
+        $identifiers = $this->findIdentifiersByTags($tags);
 
         foreach ($identifiers as $entryIdentifier) {
             $this->remove($entryIdentifier);
         }
+
         return count($identifiers);
     }
 

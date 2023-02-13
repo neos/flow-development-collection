@@ -1,0 +1,123 @@
+========
+Flow 8.2
+========
+
+This release of Flow comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+
+As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+
+
+************
+New Features
+************
+
+FEATURE: Iterable multi cache backend
+-------------------------------------
+
+This introduces a new cache backend, based on the ``TaggableMultiBackend``, which can also be used for caches which require iteration support.
+
+
+
+Related issue: `#2894 <https://github.com/neos/flow-development-collection/issues/2894>`_
+
+FEATURE: Produce static functions in CompilingEvaluator
+-------------------------------------------------------
+
+
+
+**Review instructions**
+
+Code in Data/Temporary/…/Cache/Data/Eel_Expression_Code/expression_* should have static fucntions…
+
+
+Related issue: `#2906 <https://github.com/neos/flow-development-collection/issues/2906>`_
+
+FEATURE: Skip unhealthy cache backends in MultiBackend
+------------------------------------------------------
+
+This introduces a new feature for the MultiBackend and the TaggableMultiBackend which automatically removes unhealthy sub backends from the list of backends for the remainder of a request.
+
+If a sub backend throws any error, the error will be caught, logged and the backend removed from the list of sub backends. If the sub backend causing trouble is the last one configured for the MultiBackend, it will not be removed.
+
+The feature can be disabled by setting the option ``removeUnhealthyBackends`` to ``false``.
+
+
+
+Related issue: `#2890 <https://github.com/neos/flow-development-collection/issues/2890>`_
+
+********************
+Upgrade Instructions
+********************
+
+This section contains instructions for upgrading your Flow **8.1**
+based applications to Flow **8.2**.
+
+In general just make sure to run the following commands:
+
+To clear all file caches::
+
+ ./flow flow:cache:flush --force
+
+If you have additional cache backends configured, make sure to flush them too.
+
+To apply core migrations::
+
+  ./flow flow:core:migrate <Package-Key>
+
+For every package you have control over (see `Upgrading existing code`_ below).
+
+To validate/fix the database encoding, apply pending migrations and to (re)publish file resources::
+
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+If you are upgrading from a lower version than 8.1, be sure to read the
+upgrade instructions from the previous Release Notes first.
+
+Upgrading your Packages
+=======================
+
+Upgrading existing code
+-----------------------
+
+There have been major API changes in Flow 8.2 which require your code to be adjusted. As with earlier changes to Flow
+that required code changes on the user side we provide a code migration tool.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate Acme.Demo
+
+This will adjust the package code automatically and/or output further information.
+Read the output carefully and manually adjust the code if needed.
+
+To see all the other helpful options this command provides, make sure to run::
+
+ ./flow help core:migrate
+
+Also make sure to read about the `Potentially breaking changes`_ below.
+
+Inside core:migrate
+^^^^^^^^^^^^^^^^^^^
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from the specified package
+* For each migration
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.

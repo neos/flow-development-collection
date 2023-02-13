@@ -446,7 +446,7 @@ class ProxyClassBuilder
         if (!isset($this->objectConfigurations[$propertyObjectName])) {
             $configurationSource = $objectConfiguration->getConfigurationSourceHint();
             if (!isset($propertyObjectName[0])) {
-                throw new ObjectException\UnknownObjectException('Malformed DocComent block for a property in class "' . $className . '".', 1360171313);
+                throw new ObjectException\UnknownObjectException(sprintf('Malformed DocComment block for property %s in class %s.', $propertyName, $className), 1360171313);
             }
             if ($propertyObjectName[0] === '\\') {
                 throw new ObjectException\UnknownObjectException('The object name "' . $propertyObjectName . '" which was specified as a property in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ') starts with a leading backslash.', 1277827579);
@@ -466,6 +466,7 @@ class ProxyClassBuilder
             return $result;
         }
 
+        # Disable lazy property injection, see https://github.com/neos/flow-development-collection/issues/2114
         if ($propertyConfiguration->isLazyLoading() && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
             return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
         } else {
@@ -561,7 +562,7 @@ class ProxyClassBuilder
         if ($cause === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
             $code .= "\n" . '        $classParents = class_parents($this);';
             $code .= "\n" . '        $classImplements = class_implements($this);';
-            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== false && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== false;' . "\n";
+            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== false && array_search(\'Doctrine\Persistence\Proxy\', $classImplements) !== false;' . "\n";
             $code .= "\n" . '        if ($isSameClass || $isClassProxy) {' . "\n";
         } else {
             $code .= "\n" . '        if ($isSameClass) {' . "\n";
@@ -589,7 +590,7 @@ class ProxyClassBuilder
         if ($cause === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
             $code .= "\n" . '        $classParents = class_parents($this);';
             $code .= "\n" . '        $classImplements = class_implements($this);';
-            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== false && array_search(\'Doctrine\ORM\Proxy\Proxy\', $classImplements) !== false;' . "\n";
+            $code .= "\n" . '        $isClassProxy = array_search(\'' . $className . '\', $classParents) !== false && array_search(\'Doctrine\Persistence\Proxy\', $classImplements) !== false;' . "\n";
             $code .= "\n" . '        if ($isSameClass || $isClassProxy) {' . "\n";
         } else {
             $code .= "\n" . '        if ($isSameClass) {' . "\n";

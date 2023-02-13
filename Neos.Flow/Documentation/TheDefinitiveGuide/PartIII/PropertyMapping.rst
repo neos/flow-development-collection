@@ -354,6 +354,58 @@ body is empty.
   achieve the same without an annotation, by calling ``$this->arguments['comment']->setMapRequestBody(true)`` inside the
   ``initializeCreateAction()`` method.
 
+Mapping Value Objects
+---------------------
+
+Value objects are immutable classes that represent one or more values.
+
+Starting with version 8, Flow can map simple types to the corresponding Value Object if they follow some basic rules:
+
+* They have a *public static* method named ``from<Type>`` that expects exactly one parameter of the given simple type
+  and returns an instance of the class itself
+* They have a private default constructor (this is not required, but encouraged)
+
+Supported simple types and their corresponding named constructor signature:
+
+* ``array`` => ``public static function fromArray(array $array): self``
+* ``boolean`` => ``public static function fromBool(bool $value): self`` (or ``public static function fromBoolean(bool $value): self``)
+* ``double``/``float`` => ``public static function fromFloat(double $value): self``
+* ``integer`` => ``public static function fromInt(int $value): self`` (or ``public static function fromInteger(int $value): self``)
+* ``string`` => ``public static function fromString(string $value): self``
+
+Example Value Object representing an email address::
+
+	/**
+	 * @Flow\Proxy(false)
+	 */
+	final class EmailAddress
+	{
+	    private function __construct(
+	        public readonly string $value,
+	    ) {
+	        if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
+	            throw new \InvalidArgumentException(sprintf('"%s" is not a valid email address', $this->value));
+	        }
+	    }
+
+	    public static function fromString(string $value): self
+	    {
+	        return new self($value);
+	    }
+	}
+
+.. note::
+
+  It's encouraged to add a ``@Flow\Proxy(false)`` annotation to Value Objects because private constructors can't be used
+  and ``new self()`` can't be used otherwise.
+
+With the example above, a corresponding Command- or ActionController can work with the ``EmailAddress`` Value Object directly::
+
+  public function someCommand(EmailAddress $email): void
+  {
+      // $email->value is a valid email address at this point!
+  }
+
 Security Considerations
 -----------------------
 
@@ -362,22 +414,22 @@ show: Suppose there is a REST API where a person can create a new account, and a
 a role to this account (from a pre-defined list). This role controls the access
 permissions the user has. The data which is sent to the server might look like this::
 
-	array(
-	  'username' => 'mynewuser',
-	  'role' => '5bc42c89-a418-457f-8095-062ace6d22fd'
-	);
+  array(
+    'username' => 'mynewuser',
+    'role' => '5bc42c89-a418-457f-8095-062ace6d22fd'
+  );
 
 Here, the ``username`` field contains the name of the user, and the ``role`` field points
 to the role the user has selected. Now, an attacker could modify the data, and submit the
 following::
 
-	array(
-	  'username' => 'mynewuser',
-	  'role' => array(
-	    'name' => 'superuser',
-	    'admin' => 1
-	  )
-	);
+  array(
+    'username' => 'mynewuser',
+    'role' => array(
+      'name' => 'superuser',
+      'admin' => 1
+    )
+  );
 
 As the property mapper works recursively, it would create a new ``Role`` object with the
 admin flag set to ``true``, which might compromise the security in the system.

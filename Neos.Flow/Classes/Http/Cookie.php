@@ -418,10 +418,10 @@ class Cookie
         if ($this->value === false) {
             $value = 0;
         } else {
-            $value = $this->value;
+            $value = urlencode((string)$this->value);
         }
 
-        $cookiePair = sprintf('%s=%s', $this->name, urlencode($value));
+        $cookiePair = sprintf('%s=%s', $this->name, $value);
         $attributes = '';
 
         if ($this->expiresTimestamp !== 0) {

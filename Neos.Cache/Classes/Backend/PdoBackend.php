@@ -73,6 +73,11 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected $tagsTableName = 'tags';
 
     /**
+     * @var integer
+     */
+    protected $batchSize = 999;
+
+    /**
      * @var \ArrayIterator
      */
     protected $cacheEntriesIterator = null;
@@ -135,6 +140,16 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected function setTagsTableName(string $tagsTableName): void
     {
         $this->tagsTableName = $tagsTableName;
+    }
+
+    /**
+     * Sets the maximum number of items for batch operations
+     *
+     * @api
+     */
+    protected function setBatchSize(int $batchSize): void
+    {
+        $this->batchSize = $batchSize;
     }
 
     /**
@@ -346,6 +361,64 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     }
 
     /**
+     * Removes all cache entries of this cache which are tagged by any of the specified tags.
+     *
+     * @throws Exception
+     * @api
+     */
+    public function flushByTags(array $tags): int
+    {
+        $this->connect();
+        $this->databaseHandle->beginTransaction();
+        $flushed = 0;
+
+        // All queries need to be run in batches as every backend has a parameter limit.
+        try {
+            // Reduce batch size by 2 as we also pass the context and cache identifier parameters.
+            $batchSize = max(1, $this->batchSize - 2);
+
+            // Step 1: Collect all identifiers to be flushed for the given tags
+            $identifiers = [];
+            for ($i = 0, $iMax = count($tags); $i < $iMax; $i += $batchSize) {
+                $tagList = array_slice($tags, $i, $batchSize);
+                $tagPlaceholders = implode(',', array_fill(0, count($tagList), '?'));
+                $statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "' . $this->tagsTableName . '" WHERE "context"=? AND "cache"=? AND "tag" IN (' . $tagPlaceholders . ')');
+                $statementHandle->execute(array_merge([$this->context(), $this->cacheIdentifier], $tagList));
+                $result = $statementHandle->fetchAll();
+                $identifiers[]= array_column($result, 'identifier');
+            }
+            $identifiers = array_merge([], ...$identifiers);
+
+            // Step 2: Flush all collected identifiers
+            for ($i = 0, $iMax = count($identifiers); $i < $iMax; $i += $batchSize) {
+                $identifierList = array_slice($identifiers, $i, $batchSize);
+                $identifierPlaceholders = implode(',', array_fill(0, count($identifierList), '?'));
+                $statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $this->cacheTableName . '" WHERE "context"=? AND "cache"=? AND "identifier" IN (' . $identifierPlaceholders . ')');
+                $statementHandle->execute(array_merge([$this->context(), $this->cacheIdentifier], $identifierList));
+
+                // Update the flushed counter
+                $flushed += $statementHandle->rowCount();
+            }
+
+            // Step 3: Remove all given tags
+            for ($i = 0, $iMax = count($tags); $i < $iMax; $i += $batchSize) {
+                $tagList = array_slice($tags, $i, $batchSize);
+                $tagPlaceholders = implode(',', array_fill(0, count($tagList), '?'));
+                $statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $this->tagsTableName . '" WHERE "context"=? AND "cache"=? AND "tag" IN (' . $tagPlaceholders . ')');
+                $statementHandle->execute(array_merge([$this->context(), $this->cacheIdentifier], $tagList));
+            }
+
+            $this->databaseHandle->commit();
+        } catch (\Exception $exception) {
+            $this->databaseHandle->rollBack();
+
+            throw $exception;
+        }
+
+        return $flushed;
+    }
+
+    /**
      * Finds and returns all cache entry identifiers which are tagged by the
      * specified tag.
      *
@@ -461,7 +534,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return mixed
      * @api
      */
-    public function current()
+    public function current(): mixed
     {
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
@@ -475,7 +548,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function next()
+    public function next(): void
     {
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
@@ -519,7 +592,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function rewind()
+    public function rewind(): void
     {
         try {
             $this->connect();

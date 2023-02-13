@@ -81,23 +81,18 @@ class Scripts
                 'namespace' => 'Neos\\Flow\\',
                 'classPath' => FLOW_PATH_FLOW . 'Classes/',
                 'mappingType' => ClassLoader::MAPPING_TYPE_PSR4
-            ]
-        ];
-
-        if ($bootstrap->getContext()->isTesting()) {
-            $initialClassLoaderMappings[] = [
+            ],
+            [
                 'namespace' => 'Neos\\Flow\\Tests\\',
                 'classPath' => FLOW_PATH_FLOW . 'Tests/',
                 'mappingType' => ClassLoader::MAPPING_TYPE_PSR4
-            ];
-        }
+            ]
+        ];
 
         $classLoader = new ClassLoader($initialClassLoaderMappings);
         spl_autoload_register([$classLoader, 'loadClass'], true);
         $bootstrap->setEarlyInstance(ClassLoader::class, $classLoader);
-        if ($bootstrap->getContext()->isTesting()) {
-            $classLoader->setConsiderTestsNamespace(true);
-        }
+        $classLoader->setConsiderTestsNamespace(true);
     }
 
     /**
@@ -902,15 +897,13 @@ class Scripts
     /**
      * Check if the old fallback classloader should be used.
      *
-     * The old class loader is used only in the cases:
-     * * the environment variable "FLOW_ONLY_COMPOSER_LOADER" is not set or false
-     * * in a testing context
+     * The old class loader is used only in a testing context.
      *
      * @param Bootstrap $bootstrap
      * @return bool
      */
     protected static function useClassLoader(Bootstrap $bootstrap)
     {
-        return !FLOW_ONLY_COMPOSER_LOADER;
+        return $bootstrap->getContext()->isTesting();
     }
 }

@@ -212,6 +212,11 @@ Neos\Flow\Monitor\FileMonitor:
 #                                                                          #
 # HTTP                                                                     #
 #                                                                          #
+Psr\Http\Client\ClientInterface:
+  className: Neos\Flow\Http\Client\Browser
+
+Neos\Flow\Http\Client\RequestEngineInterface:
+  className: Neos\Flow\Http\Client\CurlEngine
 
 Psr\Http\Message\ServerRequestFactoryInterface:
   className: Neos\Http\Factories\ServerRequestFactory

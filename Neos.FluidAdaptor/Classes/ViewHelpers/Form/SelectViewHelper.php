@@ -219,7 +219,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
             $options = ['' => ''];
         }
         foreach ($options as $value => $label) {
-            $output .= $this->renderOptionTag($value, $label) . chr(10);
+            $output .= $this->renderOptionTag($value, (string)$label) . chr(10);
         }
         return $output;
     }
@@ -364,13 +364,13 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
     /**
      * Render one option tag
      *
-     * @param string $value value attribute of the option tag (will be escaped)
+     * @param mixed $value value attribute of the option tag (will be escaped)
      * @param string $label content of the option tag (will be escaped)
      * @return string the rendered option tag
      */
-    protected function renderOptionTag($value, $label)
+    protected function renderOptionTag(mixed $value, string $label)
     {
-        $output = '<option value="' . htmlspecialchars($value) . '"';
+        $output = '<option value="' . htmlspecialchars((string)$value) . '"';
         if ($this->isSelected($value)) {
             $output .= ' selected="selected"';
         }
