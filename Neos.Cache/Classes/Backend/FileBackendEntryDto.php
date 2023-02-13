@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\Cache\Backend;
 
-class FileBackendEntryDto
+final class FileBackendEntryDto
 {
     private const EXPIRYTIME_LENGTH = 14;
     private const DATASIZE_DIGITS = 10;
