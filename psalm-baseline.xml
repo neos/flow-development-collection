@@ -1963,6 +1963,9 @@
     <TooManyArguments occurrences="1">
       <code>getPropertyAnnotations</code>
     </TooManyArguments>
+    <UndefinedClass occurrences="1">
+      <code>\ReflectionUnionType</code>
+    </UndefinedClass>
     <UndefinedInterfaceMethod occurrences="3">
       <code>freeze</code>
       <code>freeze</code>
