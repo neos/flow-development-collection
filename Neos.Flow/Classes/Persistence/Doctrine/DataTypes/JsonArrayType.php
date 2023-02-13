@@ -76,7 +76,7 @@ class JsonArrayType extends JsonType
         $value = parent::convertToPHPValue($value, $platform);
 
         if (!is_array($value)) {
-            throw new \InvalidArgumentException(sprintf('The JsonArrayType only converts arrays, %s given', gettype($value)), 1663056939);
+            throw new \InvalidArgumentException(sprintf('The JsonArrayType only converts arrays, %s given', get_debug_type($value)), 1663056939);
         }
 
         $this->initializeDependencies();
