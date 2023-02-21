@@ -3035,7 +3035,7 @@
       <code>FLOW_VERSION_BRANCH</code>
     </UndefinedConstant>
   </file>
-  <file src="Packages/Framework/Neos.Http.Factories/Classes/HttpFactory.php">
+  <file src="Packages/Framework/Neos.Http.Factories/Classes/HttpObjectFactory.php">
     <UndefinedConstant occurrences="1">
       <code>FLOW_VERSION_BRANCH</code>
     </UndefinedConstant>
