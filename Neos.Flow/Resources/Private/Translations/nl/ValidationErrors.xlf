@@ -150,22 +150,18 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} character</source>
-          <target state="translated">Dit veld moet ten minste {0,number} karakters bevatten</target>
-        </trans-unit>
+          <target state="translated">Dit veld moet ten minste {0,number} karakters bevatten</target> </trans-unit>
         <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} characters</source>
-          <target state="translated">Dit veld moet op zijn minst {0,number} karakters bevatten</target>
-        </trans-unit>
+          <target state="translated">Dit veld moet op zijn minst {0,number} karakters bevatten</target> </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} character</source>
-          <target state="translated">Deze tekst mag niet langer zijn dan {0,number} karakters</target>
-        </trans-unit>
+          <target state="translated">Deze tekst mag niet langer zijn dan {0,number} karakters</target> </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} characters</source>
-          <target state="translated">Deze tekst mag niet langer zijn dan {0,number} karakters</target>
-        </trans-unit>
+          <target state="translated">Deze tekst mag niet langer zijn dan {0,number} karakters</target> </trans-unit>
       </group>
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve" approved="yes">

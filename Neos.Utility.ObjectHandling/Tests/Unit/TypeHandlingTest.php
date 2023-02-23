@@ -43,6 +43,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     public function types()
     {
         return [
+            ['null', ['type' => 'null', 'elementType' => null, 'nullable' => true]],
             ['int', ['type' => 'integer', 'elementType' => null, 'nullable' => false]],
             ['string', ['type' => 'string', 'elementType' => null, 'nullable' => false]],
             ['DateTime', ['type' => 'DateTime', 'elementType' => null, 'nullable' => false]],
@@ -142,6 +143,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     public function nonLiteralTypes()
     {
         return [
+            ['null'],
             ['DateTime'],
             ['\Foo\Bar'],
             ['array'],
@@ -160,9 +162,9 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * data provider for isLiteralReturnsTrueForLiteralType
+     * data provider for isLiteralReturnsTrueForLiterals
      */
-    public function literalTypes()
+    public function literals()
     {
         return [
             ['integer'],
@@ -177,11 +179,53 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @test
-     * @dataProvider literalTypes
+     * @dataProvider literals
      */
-    public function isLiteralReturnsTrueForLiteralType(string $type)
+    public function isLiteralReturnsTrueForLiterals(string $type)
     {
         self::assertTrue(TypeHandling::isLiteral($type), 'Failed for ' . $type);
+    }
+
+    /**
+     * data provider for isSimpleTypeReturnsTrueForSimpleType
+     */
+    public function simpleTypes()
+    {
+        return [
+            ['null', true],
+            ['integer', true],
+            ['int', true],
+            ['float', true],
+            ['double', true],
+            ['boolean', true],
+            ['bool', true],
+            ['string', true],
+            ['true', true],
+            ['false', true],
+            ['SomeClassThatIsUnknownToPhpAtThisPoint', false],
+            ['array', true],
+            ['ArrayObject', false],
+            ['SplObjectStorage', false],
+            ['Doctrine\Common\Collections\Collection', false],
+            ['Doctrine\Common\Collections\ArrayCollection', false],
+            ['IteratorAggregate', false],
+            ['Iterator', false],
+            ['resource', false],
+            ['parent', false],
+            ['static', false],
+            ['self', false],
+            ['void', false],
+            ['never', false]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider simpleTypes
+     */
+    public function isSimpleTypeReturnsTrueForSimpleType(string $type, bool $expected)
+    {
+        self::assertSame($expected, TypeHandling::isSimpleType($type), 'Failed for ' . $type);
     }
 
     /**
@@ -190,6 +234,7 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     public function collectionTypes()
     {
         return [
+            ['null', false],
             ['integer', false],
             ['int', false],
             ['float', false],
@@ -197,6 +242,8 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
             ['boolean', false],
             ['bool', false],
             ['string', false],
+            ['true', false],
+            ['false', false],
             ['SomeClassThatIsUnknownToPhpAtThisPoint', false],
             ['array', true],
             ['ArrayObject', true],
@@ -215,6 +262,46 @@ class TypeHandlingTest extends \PHPUnit\Framework\TestCase
     public function isCollectionTypeReturnsTrueForCollectionType(string $type, bool $expected)
     {
         self::assertSame($expected, TypeHandling::isCollectionType($type), 'Failed for ' . $type);
+    }
+
+    /**
+     * data provider for isUnionTypeReturnsTrueForUnionType
+     */
+    public function unionAndIntersectionTypes()
+    {
+        return [
+            ['null', false, false],
+            ['integer', false, false],
+            ['int', false, false],
+            ['float', false, false],
+            ['double', false, false],
+            ['boolean', false, false],
+            ['integer|null', true, false],
+            ['integer|string', true, false],
+            ['integer|false', true, false],
+            ['SomeClassThatIsUnknownToPhpAtThisPoint|false', true, false],
+            ['SomeClassThatIsUnknownToPhpAtThisPoint', false, false],
+            ['ArrayObject', false, false],
+            ['Iterator&Traversable', false, true]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider unionAndIntersectionTypes
+     */
+    public function isUnionTypeReturnsTrueForUnionType(string $type, bool $expectUnionType, bool $expectIntersectionType)
+    {
+        self::assertSame($expectUnionType, TypeHandling::isUnionType($type), 'Failed for ' . $type);
+    }
+
+    /**
+     * @test
+     * @dataProvider unionAndIntersectionTypes
+     */
+    public function isIntersectionTypeReturnsTrueForIntersectionTypes(string $type, bool $expectUnionType, bool $expectIntersectionType)
+    {
+        self::assertSame($expectIntersectionType, TypeHandling::isIntersectionType($type), 'Failed for ' . $type);
     }
 
     /**
