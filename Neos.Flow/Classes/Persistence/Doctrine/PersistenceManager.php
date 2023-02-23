@@ -20,6 +20,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\AbstractPersistenceManager;
+use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\Exception as PersistenceException;
 use Neos\Flow\Persistence\Exception\KnownObjectException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
@@ -124,7 +125,11 @@ class PersistenceManager extends AbstractPersistenceManager
      */
     public function isNewObject($object): bool
     {
-        return ($this->entityManager->getUnitOfWork()->getEntityState($object, UnitOfWork::STATE_NEW) === UnitOfWork::STATE_NEW);
+        if (!$object instanceof PersistenceMagicInterface) {
+            return true;
+        }
+
+        return ($this->entityManager->getUnitOfWork()->getEntityState($object) === UnitOfWork::STATE_NEW);
     }
 
     /**
