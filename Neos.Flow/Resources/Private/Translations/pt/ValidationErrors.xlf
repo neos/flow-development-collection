@@ -47,7 +47,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-        <target state="translated">The "locale" option can be only set to string identifier, or Locale object</target>
+        <target state="translated">A opção "locale" só pode ser definida como identificador de cadeia de caracteres ou objeto Locale</target>
       </trans-unit>
       <trans-unit id="1281454830" xml:space="preserve">
 				<source>A valid time is expected</source>
@@ -120,7 +120,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       <!-- NumberValidator -->
       <trans-unit id="1281286579" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>
-        <target state="translated">The "locale" option can be only set to string identifier, or Locale object</target>
+        <target state="translated">A opção "locale" só pode ser definida como identificador de cadeia ou objeto Locale</target>
       </trans-unit>
       <trans-unit id="1281452093" xml:space="preserve">
 				<source>A valid percent number is expected</source>
@@ -138,11 +138,11 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve">
 				<source>The given object could not be converted to a string</source>
-        <target state="translated">The given object could not be converted to a string</target>
+        <target state="translated">O objeto dado não pôde ser convertido numa cadeia de caracteres</target>
       </trans-unit>
       <trans-unit id="1269883975" xml:space="preserve">
 				<source>The given value is not a valid string</source>
-        <target state="translated">The given value is not a valid string</target>
+        <target state="translated">O valor fornecido não é uma cadeia de caracteres válida</target>
       </trans-unit>
       <trans-unit id="1238108067" xml:space="preserve">
 				<source>The length of this text must be between {0,number} and {1,number} characters</source>
@@ -171,7 +171,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve">
 				<source>A valid string is expected</source>
-        <target state="translated">A valid string is expected</target>
+        <target state="translated">Espera-se uma cadeia de caracteres válida</target>
       </trans-unit>
       <!-- TextValidator -->
       <trans-unit id="1221565786" xml:space="preserve">
