@@ -27,7 +27,7 @@ use Neos\Utility\TypeHandling;
  */
 class JsonArrayType extends JsonType
 {
-    protected const FLOW_JSON_ARRAY = 'flow_json_array';
+    public const FLOW_JSON_ARRAY = 'flow_json_array';
     protected ?PersistenceManagerInterface $persistenceManager = null;
     protected ReflectionService $reflectionService;
 
