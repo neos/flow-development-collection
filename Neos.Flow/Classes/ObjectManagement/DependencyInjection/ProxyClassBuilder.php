@@ -11,7 +11,6 @@ namespace Neos\Flow\ObjectManagement\DependencyInjection;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\Operations\AddOperation;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
