@@ -199,7 +199,7 @@ abstract class Arrays
      * @return mixed The value found, NULL if the path didn't exist (note there is no way to distinguish between a found NULL value and "path not found")
      * @throws \InvalidArgumentException
      */
-    public static function getValueByPath(array &$array, $path)
+    public static function getValueByPath(array $array, $path)
     {
         if (is_string($path)) {
             $path = explode('.', $path);

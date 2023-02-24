@@ -648,7 +648,7 @@ class ProxyClassBuilder
             foreach ($aspectContainer->getAdvisors() as $advisor) {
                 $pointcut = $advisor->getPointcut();
                 foreach ($methods as $method) {
-                    list($methodDeclaringClassName, $methodName) = $method;
+                    [$methodDeclaringClassName, $methodName] = $method;
 
                     if ($this->reflectionService->isMethodStatic($targetClassName, $methodName)) {
                         continue;
@@ -679,7 +679,7 @@ class ProxyClassBuilder
     protected function addIntroducedMethodsToInterceptedMethods(array &$interceptedMethods, array $methodsFromIntroducedInterfaces): void
     {
         foreach ($methodsFromIntroducedInterfaces as $interfaceAndMethodName) {
-            list($interfaceName, $methodName) = $interfaceAndMethodName;
+            [$interfaceName, $methodName] = $interfaceAndMethodName;
             if (!isset($interceptedMethods[$methodName])) {
                 $interceptedMethods[$methodName]['groupedAdvices'] = [];
                 $interceptedMethods[$methodName]['declaringClassName'] = $interfaceName;
@@ -703,10 +703,10 @@ class ProxyClassBuilder
                 continue;
             }
             foreach ($aspectContainer->getInterfaceIntroductions() as $introduction) {
-                $pointcut = $introduction->getPointcut();
-                if ($pointcut->matches($targetClassName, null, null, Algorithms::generateRandomString(13))) {
-                    $introductions[] = $introduction;
-                }
+                $introductions = [
+                    ...$introductions,
+                    ...$this->addIntroduction($targetClassName, $introduction)
+                ];
             }
         }
         return $introductions;
@@ -716,7 +716,7 @@ class ProxyClassBuilder
      * Traverses all aspect containers and returns an array of property
      * introductions which match the target class.
      *
-     * @param array &$aspectContainers All aspects to take into consideration
+     * @param AspectContainer[] &$aspectContainers All aspects to take into consideration
      * @param string $targetClassName Name of the class the pointcut should match with
      * @return array|PropertyIntroduction[] array of property introductions
      */
@@ -728,10 +728,10 @@ class ProxyClassBuilder
                 continue;
             }
             foreach ($aspectContainer->getPropertyIntroductions() as $introduction) {
-                $pointcut = $introduction->getPointcut();
-                if ($pointcut->matches($targetClassName, null, null, Algorithms::generateRandomString(13))) {
-                    $introductions[] = $introduction;
-                }
+                $introductions = [
+                    ...$introductions,
+                    ...$this->addIntroduction($targetClassName, $introduction)
+                ];
             }
         }
         return $introductions;
@@ -753,16 +753,25 @@ class ProxyClassBuilder
             if (!$aspectContainer->getCachedTargetClassNameCandidates()->hasClassName($targetClassName)) {
                 continue;
             }
-            /** @var TraitIntroduction $introduction */
             foreach ($aspectContainer->getTraitIntroductions() as $introduction) {
-                $pointcut = $introduction->getPointcut();
-                if ($pointcut->matches($targetClassName, null, null, Algorithms::generateRandomString(13))) {
-                    $introductions[] = '\\' . $introduction->getTraitName();
-                }
+                $introductions = [
+                    ...$introductions,
+                    ...$this->addIntroduction($targetClassName, $introduction, '\\' . $introduction->getTraitName())
+                ];
             }
         }
 
         return $introductions;
+    }
+
+    protected function addIntroduction(string $targetClassName, TraitIntroduction|PropertyIntroduction|Aop\InterfaceIntroduction $introduction, string $traitName = null): array
+    {
+        $pointcut = $introduction->getPointcut();
+        if ($pointcut->matches($targetClassName, null, null, Algorithms::generateRandomString(13))) {
+            return [$traitName ?? $introduction];
+        }
+
+        return [];
     }
 
     /**
@@ -794,14 +803,16 @@ class ProxyClassBuilder
         foreach ($interfaceIntroductions as $introduction) {
             $interfaceName = $introduction->getInterfaceName();
             $methodNames = get_class_methods($interfaceName);
-            if (is_array($methodNames)) {
-                foreach ($methodNames as $newMethodName) {
-                    if (isset($methodsAndIntroductions[$newMethodName])) {
-                        throw new Aop\Exception('Method name conflict! Method "' . $newMethodName . '" introduced by "' . $introduction->getInterfaceName() . '" declared in aspect "' . $introduction->getDeclaringAspectClassName() . '" has already been introduced by "' . $methodsAndIntroductions[$newMethodName]->getInterfaceName() . '" declared in aspect "' . $methodsAndIntroductions[$newMethodName]->getDeclaringAspectClassName() . '".', 1173020942);
-                    }
-                    $methods[] = [$interfaceName, $newMethodName];
-                    $methodsAndIntroductions[$newMethodName] = $introduction;
+            if (!is_array($methodNames)) {
+                continue;
+            }
+
+            foreach ($methodNames as $newMethodName) {
+                if (isset($methodsAndIntroductions[$newMethodName])) {
+                    throw new Aop\Exception('Method name conflict! Method "' . $newMethodName . '" introduced by "' . $introduction->getInterfaceName() . '" declared in aspect "' . $introduction->getDeclaringAspectClassName() . '" has already been introduced by "' . $methodsAndIntroductions[$newMethodName]->getInterfaceName() . '" declared in aspect "' . $methodsAndIntroductions[$newMethodName]->getDeclaringAspectClassName() . '".', 1173020942);
                 }
+                $methods[] = [$interfaceName, $newMethodName];
+                $methodsAndIntroductions[$newMethodName] = $introduction;
             }
         }
         return $methods;

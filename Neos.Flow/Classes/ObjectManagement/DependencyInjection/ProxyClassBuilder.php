@@ -11,6 +11,7 @@ namespace Neos\Flow\ObjectManagement\DependencyInjection;
  * source code.
  */
 
+use Neos\Eel\FlowQuery\Operations\AddOperation;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
@@ -25,6 +26,7 @@ use Neos\Flow\ObjectManagement\Proxy\ProxyClass;
 use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\Arrays;
+use Neos\Utility\TypeHandling;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -144,27 +146,33 @@ class ProxyClassBuilder
             $constructorPreCode .= $this->buildSetInstanceCode($objectConfiguration);
             $constructorPreCode .= $this->buildConstructorInjectionCode($objectConfiguration);
 
-            $setRelatedEntitiesCode = '';
-            if (!$this->reflectionService->hasMethod($className, '__sleep')) {
-                $proxyClass->addTraits(['\\' . ObjectSerializationTrait::class]);
-                $sleepMethod = $proxyClass->getMethod('__sleep');
-                $sleepMethod->addPostParentCallCode($this->buildSerializeRelatedEntitiesCode($objectConfiguration));
+            $injectPropertiesCode = $this->buildPropertyInjectionCode($objectConfiguration);
 
-                $setRelatedEntitiesCode = "\n        " . '$this->Flow_setRelatedEntities();' . "\n";
+            $wakeupMethod = null;
+            if ($this->skipSerializationProxyCode($className, ($injectPropertiesCode !== '' || $constructorPreCode !== '')) === false) {
+                $setRelatedEntitiesCode = '';
+                if (!$this->reflectionService->hasMethod($className, '__sleep')) {
+                    $proxyClass->addTraits(['\\' . ObjectSerializationTrait::class]);
+                    $sleepMethod = $proxyClass->getMethod('__sleep');
+                    $sleepMethod->addPostParentCallCode($this->buildSerializeRelatedEntitiesCode($objectConfiguration));
+
+                    $setRelatedEntitiesCode = "\n        " . '$this->Flow_setRelatedEntities();' . "\n";
+                }
+
+                $wakeupMethod = $proxyClass->getMethod('__wakeup');
+                $wakeupMethod->addPreParentCallCode($this->buildSetInstanceCode($objectConfiguration));
+                $wakeupMethod->addPreParentCallCode($setRelatedEntitiesCode);
+                $wakeupMethod->addPostParentCallCode($this->buildLifecycleInitializationCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED));
+                $wakeupMethod->addPostParentCallCode($this->buildLifecycleShutdownCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED));
             }
 
-            $wakeupMethod = $proxyClass->getMethod('__wakeup');
-            $wakeupMethod->addPreParentCallCode($this->buildSetInstanceCode($objectConfiguration));
-            $wakeupMethod->addPreParentCallCode($setRelatedEntitiesCode);
-            $wakeupMethod->addPostParentCallCode($this->buildLifecycleInitializationCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED));
-            $wakeupMethod->addPostParentCallCode($this->buildLifecycleShutdownCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED));
-
-            $injectPropertiesCode = $this->buildPropertyInjectionCode($objectConfiguration);
             if ($injectPropertiesCode !== '') {
                 $proxyClass->addTraits(['\\' . PropertyInjectionTrait::class]);
                 $proxyClass->getMethod('Flow_Proxy_injectProperties')->addPreParentCallCode($injectPropertiesCode);
                 $proxyClass->getMethod('Flow_Proxy_injectProperties')->overrideMethodVisibility('private');
-                $wakeupMethod->addPreParentCallCode("        \$this->Flow_Proxy_injectProperties();\n");
+                if ($wakeupMethod) {
+                    $wakeupMethod->addPreParentCallCode("        \$this->Flow_Proxy_injectProperties();\n");
+                }
 
                 $constructorPostCode .= '        if (\'' . $className . '\' === get_class($this)) {' . "\n";
                 $constructorPostCode .= '            $this->Flow_Proxy_injectProperties();' . "\n";
@@ -182,6 +190,38 @@ class ProxyClassBuilder
                 $this->compileStaticMethods($className, $proxyClass);
             }
         }
+    }
+
+    private function skipSerializationProxyCode(string $className, bool $hasInjections): bool
+    {
+        $optimizationLevel = $this->objectManager->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.object.proxyOptimizationLevel') ?? 0;
+        $onlySimpleTypeProperties = $this->classHasOnlySimpleTypeProperties($className);
+        if ($optimizationLevel === 1 && $onlySimpleTypeProperties && $hasInjections === false) {
+            return true;
+        }
+
+        if ($optimizationLevel > 1 && $onlySimpleTypeProperties) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function classHasOnlySimpleTypeProperties(string $className): bool
+    {
+        foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
+            $propertyTypeHint = $this->reflectionService->getPropertyType($className, $propertyName);
+            if ($propertyTypeHint && !TypeHandling::isSimpleType($propertyTypeHint)) {
+                return false;
+            }
+            $varTagValues = $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var');
+            foreach ($varTagValues as $varTagValue) {
+                if ($varTagValue && !TypeHandling::isSimpleType($varTagValue)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

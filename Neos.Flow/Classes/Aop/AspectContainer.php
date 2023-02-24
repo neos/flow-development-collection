@@ -12,6 +12,7 @@ namespace Neos\Flow\Aop;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Aop\Builder\ClassNameIndex;
 use Neos\Flow\Aop\Pointcut\Pointcut;
 
 /**
@@ -40,42 +41,42 @@ class AspectContainer
     /**
      * @var string
      */
-    protected $className;
+    protected string $className;
 
     /**
      * An array of \Neos\Flow\Aop\Advisor objects
      * @var array
      */
-    protected $advisors = [];
+    protected array $advisors = [];
 
     /**
      * An array of \Neos\Flow\Aop\InterfaceIntroduction objects
      * @var array
      */
-    protected $interfaceIntroductions = [];
+    protected array $interfaceIntroductions = [];
 
     /**
      * An array of \Neos\Flow\Aop\PropertyIntroduction objects
      * @var array
      */
-    protected $propertyIntroductions = [];
+    protected array $propertyIntroductions = [];
 
     /**
      * An array of \Neos\Flow\Aop\TraitIntroduction objects
      * @var array
      */
-    protected $traitIntroductions = [];
+    protected array $traitIntroductions = [];
 
     /**
      * An array of explicitly declared \Neos\Flow\Pointcut objects
      * @var array
      */
-    protected $pointcuts = [];
+    protected array $pointcuts = [];
 
     /**
      * @var Builder\ClassNameIndex
      */
-    protected $cachedTargetClassNameCandidates;
+    protected ClassNameIndex $cachedTargetClassNameCandidates;
 
     /**
      * The constructor
@@ -100,7 +101,7 @@ class AspectContainer
     /**
      * Returns the advisors which were defined in the aspect
      *
-     * @return array Array of \Neos\Flow\Aop\Advisor objects
+     * @return Advisor[] Array of \Neos\Flow\Aop\Advisor objects
      */
     public function getAdvisors(): array
     {
@@ -110,7 +111,7 @@ class AspectContainer
     /**
      * Returns the interface introductions which were defined in the aspect
      *
-     * @return array Array of \Neos\Flow\Aop\InterfaceIntroduction objects
+     * @return InterfaceIntroduction[] Array of \Neos\Flow\Aop\InterfaceIntroduction objects
      */
     public function getInterfaceIntroductions(): array
     {
@@ -120,7 +121,7 @@ class AspectContainer
     /**
      * Returns the property introductions which were defined in the aspect
      *
-     * @return array Array of \Neos\Flow\Aop\PropertyIntroduction objects
+     * @return PropertyIntroduction[] Array of \Neos\Flow\Aop\PropertyIntroduction objects
      */
     public function getPropertyIntroductions(): array
     {
@@ -130,7 +131,7 @@ class AspectContainer
     /**
      * Returns the trait introductions which were defined in the aspect
      *
-     * @return array Array of \Neos\Flow\Aop\TraitIntroduction objects
+     * @return TraitIntroduction[] Array of \Neos\Flow\Aop\TraitIntroduction objects
      */
     public function getTraitIntroductions(): array
     {
@@ -142,7 +143,7 @@ class AspectContainer
      * does not contain the pointcuts which were made out of the pointcut
      * expressions for the advisors!
      *
-     * @return array Array of \Neos\Flow\Aop\Pointcut\Pointcut objects
+     * @return Pointcut[] Array of \Neos\Flow\Aop\Pointcut\Pointcut objects
      */
     public function getPointcuts(): array
     {

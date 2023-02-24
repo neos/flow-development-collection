@@ -23,3 +23,8 @@ Neos:
       # by specifying corresponding regular expressions that don't match classes to exclude.
       #
       includeClasses: []
+
+      # 0 means no optimizations get enabled, the higher the number the more optimizations but the more it _could_ be breaking in special use cases.
+      # 1 excludes object serialization helpers for classes that only have simple type properties and have no injections, should be very safe
+      # 2 excludes object serialization helpers for classes that only have simple type properties (but still injections, so configuration injections will get serialized)
+      proxyOptimizationLevel: 1
