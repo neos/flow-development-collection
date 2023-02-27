@@ -8,27 +8,12 @@ final class FileBackendEntryDto
     private const EXPIRYTIME_LENGTH = 14;
     private const DATASIZE_DIGITS = 10;
 
-    /**
-     * @var string
-     */
-    private $data;
-
-    /**
-     * @var string[]
-     */
-    private $tags;
-
-    /**
-     * @var int
-     */
-    private $expiryTime;
-
-
-    public function __construct(string $data, array $tags, int $expiryTime)
-    {
-        $this->data = $data;
-        $this->tags = $tags;
-        $this->expiryTime = $expiryTime;
+    public function __construct(
+        private string $data,
+        /** @var string[] */
+        private array $tags,
+        private int $expiryTime
+    ) {
     }
 
     public static function fromString(string $cacheData): FileBackendEntryDto
