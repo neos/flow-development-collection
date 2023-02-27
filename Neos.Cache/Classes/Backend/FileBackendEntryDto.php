@@ -46,7 +46,7 @@ final class FileBackendEntryDto
 
     public function isExpired(): bool
     {
-        return ($this->getExpiryTime() !== 0 && $this->getExpiryTime() < time());
+        return ($this->getExpiryTime() !== 0 && $this->getExpiryTime() < $_SERVER['REQUEST_TIME']);
     }
 
     public function isTaggedWith(string $tag): bool
