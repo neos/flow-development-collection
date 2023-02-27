@@ -279,7 +279,7 @@ class ProxyMethod
                     } else {
                         $methodParameterTypeName = '';
                     }
-                    if (if (\PHP_MAJOR_VERSION >= 7 && \PHP_MINOR_VERSION >= 1) {) {
+                    if (\PHP_MAJOR_VERSION >= 7 && \PHP_MINOR_VERSION >= 1) {
                         $nullableSign = $methodParameterInfo['allowsNull'] ? '?' : '';
                     }
                     if ($methodParameterInfo['optional'] === true) {
