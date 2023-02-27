@@ -151,6 +151,50 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
     /**
      * @test
      */
+    public function buildMethodParametersCodeRendersParametersCodeWithCorrectTypeHintAndDefaultValueWhenClassIsGiven()
+    {
+        if ((\PHP_MAJOR_VERSION >= 8 && \PHP_MINOR_VERSION < 1)) {
+            $this->markTestSkipped('Only testing on PHP 8.1');
+        }
+
+        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        eval('
+            /**
+             * @param Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass $arg1 Arg1
+             */
+            class ' . $className . ' {
+                public function foo(\Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass $arg1 = new \Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass()) {}
+            }
+        ');
+        $methodParameters = [
+            'arg1' => [
+                'position' => 0,
+                'byReference' => false,
+                'array' => false,
+                'optional' => true,
+                'allowsNull' => false,
+                'class' => BasicClass::class,
+                'defaultValue' => new BasicClass(),
+                'scalarDeclaration' => false
+            ],
+        ];
+
+        $mockReflectionService = $this->createMock(ReflectionService::class);
+        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue($methodParameters));
+
+        $expectedCode = '\Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass $arg1 = new Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass()';
+
+        $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
+        $builder->injectReflectionService($mockReflectionService);
+
+        $actualCode = $builder->buildMethodParametersCode($className, 'foo', true);
+        self::assertSame($expectedCode, $actualCode);
+
+    }
+
+    /**
+     * @test
+     */
     public function buildMethodParametersCodeOmitsTypeHintsAndDefaultValuesIfToldSo()
     {
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
