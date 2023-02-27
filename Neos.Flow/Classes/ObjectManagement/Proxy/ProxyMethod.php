@@ -294,6 +294,8 @@ class ProxyMethod
                             $defaultValue = ' = ' . $rawDefaultValue;
                         } elseif (is_array($rawDefaultValue)) {
                             $defaultValue = ' = ' . $this->buildArraySetupCode($rawDefaultValue);
+                        }  elseif (is_object($rawDefaultValue)) {
+                            $defaultValue = ' = new ' . get_class($rawDefaultValue) . '()';
                         }
                     }
                     $byReferenceSign = ($methodParameterInfo['byReference'] ? '&' : '');
