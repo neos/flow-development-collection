@@ -279,7 +279,7 @@ class ProxyMethod
                     } else {
                         $methodParameterTypeName = '';
                     }
-                    if (\PHP_MAJOR_VERSION >= 7 && \PHP_MINOR_VERSION >= 1) {
+                    if (if (\PHP_MAJOR_VERSION >= 7 && \PHP_MINOR_VERSION >= 1) {) {
                         $nullableSign = $methodParameterInfo['allowsNull'] ? '?' : '';
                     }
                     if ($methodParameterInfo['optional'] === true) {
@@ -294,7 +294,7 @@ class ProxyMethod
                             $defaultValue = ' = ' . $rawDefaultValue;
                         } elseif (is_array($rawDefaultValue)) {
                             $defaultValue = ' = ' . $this->buildArraySetupCode($rawDefaultValue);
-                        }  elseif (is_object($rawDefaultValue)) {
+                        } elseif (\PHP_MAJOR_VERSION >= 8 && \PHP_MINOR_VERSION >= 1 && is_object($rawDefaultValue)) {
                             $defaultValue = ' = new ' . get_class($rawDefaultValue) . '()';
                         }
                     }
