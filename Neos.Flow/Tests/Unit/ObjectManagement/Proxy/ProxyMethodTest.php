@@ -143,8 +143,8 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function buildMethodParametersCodeRendersParametersCodeWithCorrectTypeHintAndDefaultValueWhenClassIsGiven()
     {
-        if ((\PHP_MAJOR_VERSION >= 8 && \PHP_MINOR_VERSION < 1)) {
-            $this->markTestSkipped('Only testing on PHP 8.1');
+        if ((\PHP_MAJOR_VERSION >= 8 && \PHP_MINOR_VERSION >= 1) === false) {
+            $this->markTestSkipped('Only testing on minimum PHP 8.1');
         }
 
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
