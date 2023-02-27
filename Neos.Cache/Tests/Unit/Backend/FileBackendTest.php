@@ -536,7 +536,7 @@ class FileBackendTest extends BaseTestCase
         $backend = $this->prepareDefaultBackend(['isCacheFileExpired']);
         $backend->setCache($mockCache);
 
-        $backend->expects(self::never())->method('isCacheFileExpired'); // Indirectly called by freeze() -> get()
+        $backend->expects(self::never())->method('isCacheFileExpired');
 
         $data = '<?php return "foo"; ?>';
         $backend->set('FooEntry', $data);
