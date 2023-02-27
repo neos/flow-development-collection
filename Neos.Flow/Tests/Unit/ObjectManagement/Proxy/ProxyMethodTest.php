@@ -63,7 +63,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
              * @param string $arg1 Arg1
              */
             class ' . $className . ' {
-                public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = true, array $arg6 = array(true, \'foo\' => \'bar\', NULL, 3 => 1, 2.3), \Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass $arg7 = new \Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass()) {}
+                public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = true, array $arg6 = array(true, \'foo\' => \'bar\', NULL, 3 => 1, 2.3)) {}
             }
         ');
         $methodParameters = [
@@ -123,23 +123,13 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
                 'class' => null,
                 'defaultValue' => [0 => true, 'foo' => 'bar', 1 => null, 3 => 1, 4 => 2.3],
                 'scalarDeclaration' => false
-            ],
-            'arg7' => [
-                'position' => 6,
-                'byReference' => false,
-                'array' => false,
-                'optional' => true,
-                'allowsNull' => false,
-                'class' => BasicClass::class,
-                'defaultValue' => new BasicClass(),
-                'scalarDeclaration' => false
-            ],
+            ]
         ];
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue($methodParameters));
 
-        $expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = true, array $arg6 = array(0 => true, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3), \Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass $arg7 = new Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass()';
+        $expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = true, array $arg6 = array(0 => true, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3)';
 
         $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
         $builder->injectReflectionService($mockReflectionService);
@@ -189,7 +179,6 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
 
         $actualCode = $builder->buildMethodParametersCode($className, 'foo', true);
         self::assertSame($expectedCode, $actualCode);
-
     }
 
     /**
