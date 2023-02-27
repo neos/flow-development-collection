@@ -19,6 +19,7 @@ use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Utility\Environment;
+use Neos\Utility\Arrays;
 
 /**
  * Builds a CLI request object from the raw command call
@@ -225,24 +226,12 @@ class RequestBuilder
                     $optionalArguments,
                     $requiredArguments
                 );
-                $pathAsArray = [];
-                $matches = [];
-                // if a command controller parameter name with type array is found, parse the dot syntax
-                if (!empty($parameterNameForArrayType) &&
-                    0 < \preg_match_all('/([^\."\']+)|"([^"]*)"|\'([^\']*)\'/', $argumentName, $matches)
-                ) {
+
+                $fullArrayArgumentName = $argumentName;
+                // if a command controller parameter name with type array was found
+                if (!empty($parameterNameForArrayType)) {
                     // replace the associative argument name with the real controller parameter name
                     $argumentName = $parameterNameForArrayType;
-                    // generate the path into the associative array
-                    $pathAsArray = $matches[1];
-                    foreach ($pathAsArray as $k => $v) {
-                        if (empty($v)) {
-                            $pathAsArray[$k] = $matches[2][$k];
-                        }
-                    }
-
-                    // remove the actual command line controller parameter name
-                    \array_shift($pathAsArray);
                 }
 
                 if (isset($optionalArguments[$argumentName])) {
@@ -254,9 +243,8 @@ class RequestBuilder
                     if ($optionalArguments[$argumentName]['type'] === 'array') {
                         $this->setCommandLineArrayArgument(
                             $commandLineArguments,
-                            $optionalArguments[$argumentName],
-                            $argumentValue,
-                            $pathAsArray
+                            $fullArrayArgumentName,
+                            $argumentValue
                         );
                     } else {
                         $commandLineArguments[$optionalArguments[$argumentName]['parameterName']] = $argumentValue;
@@ -274,9 +262,8 @@ class RequestBuilder
                     if ($requiredArguments[$argumentName]['type'] === 'array') {
                         $this->setCommandLineArrayArgument(
                             $commandLineArguments,
-                            $requiredArguments[$argumentName],
-                            $argumentValue,
-                            $pathAsArray
+                            $fullArrayArgumentName,
+                            $argumentValue
                         );
                     } else {
                         $commandLineArguments[$requiredArguments[$argumentName]['parameterName']] = $argumentValue;
@@ -316,10 +303,11 @@ class RequestBuilder
             $filteredArguments = \array_filter(
                 $arguments,
                 static function ($parameterValue, $parameterName) use (&$argumentName) {
-                    return
-                        \str_starts_with($argumentName, $parameterName . '.') &&
-                        $parameterValue['type'] === 'array'
-                        ;
+                    if ($parameterValue['type'] !== 'array') {
+                        return false;
+                    }
+                    $cliArgumentNameMatchingCommandParameterName = \array_keys(Arrays::setValueByPath([], $argumentName, true))[0];
+                    return $cliArgumentNameMatchingCommandParameterName == $parameterName;
                 },
                 ARRAY_FILTER_USE_BOTH
             );
@@ -340,42 +328,26 @@ class RequestBuilder
      * Set command line argument array value for optional path
      *
      * @param array $commandLineArguments The command line arguments that will be passed to the command controller
-     * @param array $argument An argument configuration
+     * @param array $fullArrayArgumentName The command line given full qualified parameter name
      * @param $argumentValue The argument value
-     * @param array $pathAsArray Optional path to set the associative array value
      *
      * @return void
      */
     protected function setCommandLineArrayArgument(
         array &$commandLineArguments,
-        array $argument,
-        $argumentValue,
-        array $pathAsArray = []
+        string $fullArrayArgumentName,
+        $argumentValue
     ) : void {
-        $setArrayValueByPath = static function ($array, array $path, $value) {
-            $element = &$array;
-            foreach ($path as $key) {
-                if (!isset($element[$key])) {
-                    $element[$key] = [];
-                }
-                $element = &$element[$key];
-            }
-            $element = $value;
-            return $array;
-        };
-
-        if (!isset($commandLineArguments[$argument['parameterName']])) {
-            $commandLineArguments[$argument['parameterName']] = [];
-        }
-
-        if (!empty($pathAsArray)) {
-            $commandLineArguments[$argument['parameterName']] = $setArrayValueByPath(
-                $commandLineArguments[$argument['parameterName']],
-                $pathAsArray,
-                $argumentValue
-            );
+        // parse the command line parametername into a multidimensional array
+        $array = Arrays::setValueByPath([], $fullArrayArgumentName, $argumentValue);
+        $firstKeyName = \array_keys($array)[0];
+        if (!\is_array($array[$firstKeyName])) {
+            // if there is only a simple one dimensional array, then only the command argument name
+            // was given and since this is shall be an array we just append the value
+            $commandLineArguments[$firstKeyName][] = $array[$firstKeyName];
         } else {
-            $commandLineArguments[$argument['parameterName']][] = $argumentValue;
+            // if a multidimensional array was given use
+            $commandLineArguments = Arrays::arrayMergeRecursiveOverrule($commandLineArguments, $array);
         }
     }
 
