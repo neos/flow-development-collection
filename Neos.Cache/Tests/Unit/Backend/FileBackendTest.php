@@ -302,7 +302,7 @@ class FileBackendTest extends BaseTestCase
 
         $entryIdentifier = 'ExpiredEntry';
         $pathAndFilename = 'vfs://Foo/Cache/Data/UnitTestCache/' . $entryIdentifier;
-        $entryDto = new FileBackendEntryDto('data', [], time() - 1);
+        $entryDto = new FileBackendEntryDto('data', [], time() - 5);
         $backend->setCache($mockCache);
         file_put_contents($pathAndFilename, (string)$entryDto);
 
