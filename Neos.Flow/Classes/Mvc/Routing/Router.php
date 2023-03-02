@@ -55,7 +55,8 @@ class Router implements RouterInterface
 
     public function __construct(
         private readonly Routes $routes
-    ) {}
+    ) {
+    }
 
     /**
      * Injects the (system) logger based on PSR-3.

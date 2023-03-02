@@ -38,7 +38,8 @@ final class RouteConfiguration
 
     public function __construct(
         private readonly ConfigurationManager $configurationManager
-    ) {}
+    ) {
+    }
 
     /**
      * Returns a list of configured routes

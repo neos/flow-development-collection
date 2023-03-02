@@ -17,7 +17,7 @@ final class Routes implements \IteratorAggregate
 
     private function __construct(
         Route ...$routes
-    ){
+    ) {
         $this->routes = $routes;
     }
 
