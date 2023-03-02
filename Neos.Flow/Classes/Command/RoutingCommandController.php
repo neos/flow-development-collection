@@ -17,12 +17,12 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
-use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Route;
-use Neos\Flow\Mvc\Routing\RouterInterface;
+use Neos\Flow\Mvc\Routing\RouteConfiguration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Http\Factories\ServerRequestFactory;
 
@@ -35,15 +35,9 @@ class RoutingCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var ConfigurationManager
+     * @var RouteConfiguration
      */
-    protected $configurationManager;
-
-    /**
-     * @Flow\Inject
-     * @var RouterInterface
-     */
-    protected $router;
+    protected $routeConfiguration;
 
     /**
      * @Flow\Inject
@@ -68,9 +62,14 @@ class RoutingCommandController extends CommandController
     {
         $this->outputLine('Currently registered routes:');
         /** @var Route $route */
-        foreach ($this->router->getRoutes() as $index => $route) {
-            $uriPattern = $route->getUriPattern();
-            $this->outputLine(str_pad(($index + 1) . '. ' . $uriPattern, 80) . $route->getName());
+        foreach ($this->routeConfiguration->getRoutes() as $index => $route) {
+            $routeNumber = $index + 1;
+            $rows[] = [
+                '#' => $routeNumber,
+                'uriPattern' => $route->getUriPattern(),
+                'httpMethods' => $route->hasHttpMethodConstraints() ? implode(', ', $route->getHttpMethods()) : '<i>any</i>',
+                'name' => $route->getName(),
+            ];
         }
     }
 
@@ -84,10 +83,15 @@ class RoutingCommandController extends CommandController
      */
     public function showCommand(int $index): void
     {
-        $routes = $this->router->getRoutes();
-        if (isset($routes[$index - 1])) {
-            /** @var Route $route */
-            $route = $routes[$index - 1];
+        /** @var Route[] $routes */
+        $routes = $this->routeConfiguration->getRoutes();
+        if (!isset($routes[$index - 1])) {
+            $this->outputLine('<error>Route %d was not found!</error>', [$index]);
+            $this->outputLine('Run <i>./flow routing:list</i> to show all registered routes');
+            $this->quit(1);
+            return;
+        }
+        $route = $routes[$index - 1];
 
             $this->outputLine('<b>Information for route ' . $index . ':</b>');
             $this->outputLine('  Name: ' . $route->getName());
@@ -137,6 +141,7 @@ class RoutingCommandController extends CommandController
         $this->outputLine('  Action: ' . $routeValues['@action']);
         $this->outputLine('  Format: ' . $routeValues['@format']);
 
+<<<<<<< HEAD
         $controllerObjectName = null;
         /** @var $route Route */
         foreach ($this->router->getRoutes() as $route) {
@@ -163,6 +168,18 @@ class RoutingCommandController extends CommandController
                     $this->outputLine('  !!! Controller Object was not found !!!');
                 }
                 return;
+=======
+        /** @var Route|null $resolvedRoute */
+        $resolvedRoute = null;
+        $resolvedRouteNumber = 0;
+        /** @var int $index */
+        foreach ($this->routeConfiguration->getRoutes() as $index => $route) {
+            /** @var Route $route */
+            if ($route->resolves($resolveContext) === true) {
+                $resolvedRoute = $route;
+                $resolvedRouteNumber = $index + 1;
+                break;
+>>>>>>> f8d23a99a (Change implementation in commandcontroller)
             }
         }
         $this->outputLine('<b>No Matching Controller found</b>');
@@ -185,8 +202,53 @@ class RoutingCommandController extends CommandController
         $httpRequest = $this->serverRequestFactory->createServerRequest($method, (new Uri('http://localhost/'))->withPath($path));
         $routeContext = new RouteContext($httpRequest, RouteParameters::createEmpty());
 
+<<<<<<< HEAD
         /** @var Route $route */
         foreach ($this->router->getRoutes() as $route) {
+=======
+    /**
+     * Match the given URI to a corresponding route
+     *
+     * This command takes an incoming URI and displays the
+     * matched Route and the mapped routing values (if any):
+     *
+     * ./flow routing:match "/de" --parameters="{\"requestUriHost\": \"localhost\"}"
+     *
+     * @param string $uri The incoming route, absolute or relative
+     * @param string|null $method The HTTP method to simulate (default is 'GET')
+     * @param string|null $parameters Route parameters as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
+     * @throws InvalidRoutePartValueException | StopCommandException
+     */
+    public function matchCommand(string $uri, string $method = null, string $parameters = null): void
+    {
+        $method = $method ?? 'GET';
+        $requestUri = new Uri($uri);
+        if (isset($requestUri->getPath()[0]) && $requestUri->getPath()[0] !== '/') {
+            $this->outputLine('<error>The URI "%s" is not valid. The path has to start with a "/"</error>', [$requestUri]);
+            $this->quit(1);
+            return;
+        }
+        $httpRequest = $this->serverRequestFactory->createServerRequest($method, $requestUri);
+        $routeParameters = $this->createRouteParametersFromJson($parameters);
+        $routeContext = new RouteContext($httpRequest, $routeParameters);
+
+        $this->outputLine('<b>Matching:</b>');
+        $this->outputLine('  <b>URI:</b> %s', [$httpRequest->getUri()]);
+        $this->outputLine('  <b>Path:</b> %s', [RequestInformationHelper::getRelativeRequestPath($httpRequest)]);
+        $this->outputLine('  <b>HTTP Method:</b> %s', [$method]);
+        if (!$routeContext->getParameters()->isEmpty()) {
+            $this->outputLine('  <b>Parameters:</b>');
+            $this->outputArray($routeContext->getParameters()->toArray(), 4);
+        }
+        $this->outputLine();
+
+        /** @var Route|null $matchedRoute */
+        $matchedRoute = null;
+        $matchedRouteNumber = 0;
+        /** @var int $index */
+        foreach ($this->routeConfiguration->getRoutes() as $index => $route) {
+            /** @var Route $route */
+>>>>>>> f8d23a99a (Change implementation in commandcontroller)
             if ($route->matches($routeContext) === true) {
                 $routeValues = $route->getMatchResults();
 
