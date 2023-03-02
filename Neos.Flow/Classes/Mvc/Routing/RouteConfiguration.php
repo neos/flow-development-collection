@@ -19,38 +19,37 @@ use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
  * The default router configuration
  *
  * @Flow\Scope("singleton")
- * @api
  */
-class RouteConfiguration
+final class RouteConfiguration
 {
-    /**
-     * @Flow\Inject
-     * @var ConfigurationManager
-     */
-    protected $configurationManager;
-
     /**
      * Array of routes to match against
      *
      * @var Routes
      */
-    protected $routes;
+    private Routes $routes;
 
     /**
      * true if route object have been created, otherwise false
      *
      * @var boolean
      */
-    protected $routesCreated = false;
+    private bool $routesCreated = false;
+
+    public function __construct(
+        private readonly ConfigurationManager $configurationManager
+    ) {}
 
     /**
      * Returns a list of configured routes
      *
      * @return Routes
      */
-    public function getRoutes()
+    public function getRoutes(): Routes
     {
-        $this->createRoutesFromConfiguration();
+        if ($this->routesCreated === false) {
+            $this->createRoutesFromConfiguration();
+        }
         return $this->routes;
     }
 
@@ -61,15 +60,12 @@ class RouteConfiguration
      * @return void
      * @throws InvalidRouteSetupException
      */
-    protected function createRoutesFromConfiguration()
+    protected function createRoutesFromConfiguration(): void
     {
-        if ($this->routesCreated === true) {
-            return;
-        }
-        $this->initializeRoutesConfiguration();
+        $routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
         $routes = [];
         $routesWithHttpMethodConstraints = [];
-        foreach ($this->routesConfiguration as $routeConfiguration) {
+        foreach ($routesConfiguration as $routeConfiguration) {
             $route = new Route();
             if (isset($routeConfiguration['name'])) {
                 $route->setName($routeConfiguration['name']);
@@ -103,18 +99,21 @@ class RouteConfiguration
             $routes = $route;
         }
         $this->routes = Routes::fromArray($routes);
+
+        $this->emitRoutesCreated($this->routes);
+
         $this->routesCreated = true;
     }
 
+
     /**
-     * Checks if a routes configuration was set and otherwise loads the configuration from the configuration manager.
+     * Signals that all Routes.yaml routes have been configured
      *
+     * @Flow\Signal
+     * @param Routes $routes
      * @return void
      */
-    protected function initializeRoutesConfiguration()
+    protected function emitRoutesCreated(Routes $routes): void
     {
-        if ($this->routesConfiguration === null) {
-            $this->routesConfiguration = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
-        }
     }
 }
