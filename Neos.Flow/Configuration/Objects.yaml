@@ -256,6 +256,11 @@ Neos\Flow\Http\Middleware\MiddlewaresChain:
 #                                                                          #
 Neos\Flow\Mvc\Routing\RouterInterface:
   className: Neos\Flow\Mvc\Routing\Router
+  properties:
+    routes:
+      object:
+        factoryObjectName: Neos\Flow\Mvc\Routing\RouteConfiguration
+        factoryMethodName: getRoutes
 
 Neos\Flow\Mvc\Routing\RouterCachingService:
   properties:

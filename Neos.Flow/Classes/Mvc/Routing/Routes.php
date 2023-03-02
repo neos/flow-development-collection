@@ -31,6 +31,20 @@ final class Routes implements \IteratorAggregate
         return new self(...[]);
     }
 
+    public function prepend(Route $route): self
+    {
+        $routes = $this->routes;
+        array_unshift($routes, $route);
+        return self::fromArray($routes);
+    }
+
+    public function append(Route $route): self
+    {
+        $routes = $this->routes;
+        $routes[] = $route;
+        return self::fromArray($routes);
+    }
+
     public function getIterator(): Traversable
     {
         return new \ArrayIterator($this->routes);

@@ -44,13 +44,6 @@ class Router implements RouterInterface
     protected $routerCachingService;
 
     /**
-     * Array of routes to match against
-     *
-     * @var array
-     */
-    protected $routes = [];
-
-    /**
      * @var Route
      */
     protected $lastMatchedRoute;
@@ -59,6 +52,10 @@ class Router implements RouterInterface
      * @var Route
      */
     protected $lastResolvedRoute;
+
+    public function __construct(
+        private readonly Routes $routes
+    ) {}
 
     /**
      * Injects the (system) logger based on PSR-3.
@@ -89,7 +86,7 @@ class Router implements RouterInterface
         if ($cachedRouteResult !== false) {
             return $cachedRouteResult;
         }
-        $this->createRoutesFromConfiguration();
+
         $httpRequest = $routeContext->getHttpRequest();
 
         /** @var $route Route */
