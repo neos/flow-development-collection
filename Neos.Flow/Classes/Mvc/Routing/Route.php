@@ -143,6 +143,30 @@ class Route
      */
     protected $persistenceManager;
 
+    public static function fromConfiguration(array $configuration): self
+    {
+        $route = new static();
+        if (isset($configuration['name'])) {
+            $route->setName($configuration['name']);
+        }
+        $uriPattern = $configuration['uriPattern'];
+        $route->setUriPattern($uriPattern);
+        if (isset($configuration['defaults'])) {
+            $route->setDefaults($configuration['defaults']);
+        }
+        if (isset($configuration['routeParts'])) {
+            $route->setRoutePartsConfiguration($configuration['routeParts']);
+        }
+        if (isset($configuration['toLowerCase'])) {
+            $route->setLowerCase($configuration['toLowerCase']);
+        }
+        if (isset($configuration['appendExceedingArguments'])) {
+            $route->setAppendExceedingArguments($configuration['appendExceedingArguments']);
+        }
+
+        return $route;
+    }
+
     /**
      * Sets Route name.
      *

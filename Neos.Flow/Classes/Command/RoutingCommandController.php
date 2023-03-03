@@ -17,6 +17,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
@@ -25,7 +26,7 @@ use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\Route;
-use Neos\Flow\Mvc\Routing\RouteConfiguration;
+use Neos\Flow\Mvc\Routing\Routes;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Utility\Arrays;
@@ -39,9 +40,9 @@ class RoutingCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var RouteConfiguration
+     * @var ConfigurationManager
      */
-    protected $routeConfiguration;
+    protected $configurationManager;
 
     /**
      * @Flow\Inject
@@ -66,8 +67,9 @@ class RoutingCommandController extends CommandController
     {
         $this->outputLine('<b>Currently registered routes:</b>');
         $rows = [];
+        $routes = Routes::fromConfiguration($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES));
         /** @var Route $route */
-        foreach ($this->routeConfiguration->getRoutes() as $index => $route) {
+        foreach ($routes as $index => $route) {
             $routeNumber = $index + 1;
             $rows[] = [
                 '#' => $routeNumber,
@@ -93,7 +95,7 @@ class RoutingCommandController extends CommandController
     public function showCommand(int $index): void
     {
         /** @var Route[] $routes */
-        $routes = $this->routeConfiguration->getRoutes();
+        $routes = Routes::fromConfiguration($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES));
         if (!isset($routes[$index - 1])) {
             $this->outputLine('<error>Route %d was not found!</error>', [$index]);
             $this->outputLine('Run <i>./flow routing:list</i> to show all registered routes');
@@ -196,8 +198,10 @@ class RoutingCommandController extends CommandController
         /** @var Route|null $resolvedRoute */
         $resolvedRoute = null;
         $resolvedRouteNumber = 0;
+
+        $routes = Routes::fromConfiguration($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES));
         /** @var int $index */
-        foreach ($this->routeConfiguration->getRoutes() as $index => $route) {
+        foreach ($routes as $index => $route) {
             /** @var Route $route */
             if ($route->resolves($resolveContext) === true) {
                 $resolvedRoute = $route;
@@ -285,8 +289,9 @@ class RoutingCommandController extends CommandController
         /** @var Route|null $matchedRoute */
         $matchedRoute = null;
         $matchedRouteNumber = 0;
+        $routes = Routes::fromConfiguration($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES));
         /** @var int $index */
-        foreach ($this->routeConfiguration->getRoutes() as $index => $route) {
+        foreach ($routes as $index => $route) {
             /** @var Route $route */
             if ($route->matches($routeContext) === true) {
                 $matchedRoute = $route;

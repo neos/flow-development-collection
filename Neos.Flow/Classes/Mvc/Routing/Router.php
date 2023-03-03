@@ -12,6 +12,7 @@ namespace Neos\Flow\Mvc\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -31,6 +32,12 @@ use Psr\Log\LoggerInterface;
  */
 class Router implements RouterInterface
 {
+    /**
+     * @Flow\Inject
+     * @var ConfigurationManager
+     */
+    protected $configurationManager;
+
     /**
      * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
@@ -52,11 +59,6 @@ class Router implements RouterInterface
      * @var Route
      */
     protected $lastResolvedRoute;
-
-    public function __construct(
-        private readonly Routes $routes
-    ) {
-    }
 
     /**
      * Injects the (system) logger based on PSR-3.
@@ -90,8 +92,9 @@ class Router implements RouterInterface
 
         $httpRequest = $routeContext->getHttpRequest();
 
+        $routes = Routes::fromConfiguration($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES));
         /** @var $route Route */
-        foreach ($this->routes as $route) {
+        foreach ($routes as $route) {
             if ($route->matches($routeContext) === true) {
                 $this->lastMatchedRoute = $route;
                 $matchResults = $route->getMatchResults();
@@ -134,10 +137,10 @@ class Router implements RouterInterface
             return $cachedResolvedUriConstraints->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri());
         }
 
-        $this->createRoutesFromConfiguration();
+        $routes = Routes::fromConfiguration($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES));
 
         /** @var $route Route */
-        foreach ($this->routes as $route) {
+        foreach ($routes as $route) {
             if ($route->resolves($resolveContext) === true) {
                 $uriConstraints = $route->getResolvedUriConstraints()->withPathPrefix($resolveContext->getUriPathPrefix());
                 $resolvedUri = $uriConstraints->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri());
