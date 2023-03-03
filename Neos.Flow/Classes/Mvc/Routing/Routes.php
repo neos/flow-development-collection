@@ -44,7 +44,7 @@ final class Routes implements \IteratorAggregate
                 }
                 $routesWithHttpMethodConstraints[$uriPattern] = false;
             }
-            $routes->append($route);
+            $routes = $routes->append($route);
         }
     }
 
