@@ -70,7 +70,7 @@ class RouterTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->router = $this->getMockBuilder(Router::class)->setConstructorArgs([Routes::empty()]);
+        $this->router = $this->getMockBuilder(Router::class)->setConstructorArgs([Routes::empty()])->getMock();
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
         $this->inject($this->router, 'logger', $this->mockSystemLogger);

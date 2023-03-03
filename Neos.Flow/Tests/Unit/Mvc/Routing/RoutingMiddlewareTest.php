@@ -16,6 +16,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\RouteConfiguration;
 use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
 use Neos\Flow\Tests\UnitTestCase;
@@ -66,9 +67,11 @@ class RoutingMiddlewareTest extends UnitTestCase
     {
         $this->routingMiddleware = new RoutingMiddleware();
 
-        $this->mockRouter = $this->getMockBuilder(Router::class)->getMock();
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
-        $this->inject($this->mockRouter, 'configurationManager', $this->mockConfigurationManager);
+
+        $routeConfiguration = new RouteConfiguration($this->mockConfigurationManager);
+        $routes = $routeConfiguration->getRoutes();
+        $this->mockRouter = $this->getMockBuilder(Router::class)->setConstructorArgs([$routes])->getMock();
 
         $this->inject($this->routingMiddleware, 'router', $this->mockRouter);
 
