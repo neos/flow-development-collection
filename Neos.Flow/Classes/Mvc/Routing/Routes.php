@@ -16,14 +16,14 @@ final class Routes implements \IteratorAggregate
     private readonly array $routes;
 
     private function __construct(
-        Route ...$routes
+        array $routes
     ) {
         $this->routes = $routes;
     }
 
-    public static function fromArray($routes): self
+    public static function fromArray(array $routes): self
     {
-        return new self(...$routes);
+        return new self($routes);
     }
 
     public static function empty(): self

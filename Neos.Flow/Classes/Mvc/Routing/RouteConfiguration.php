@@ -97,7 +97,7 @@ final class RouteConfiguration
                 }
                 $routesWithHttpMethodConstraints[$uriPattern] = false;
             }
-            $routes = $route;
+            $routes[] = $route;
         }
         $this->routes = Routes::fromArray($routes);
 
