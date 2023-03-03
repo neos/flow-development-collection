@@ -28,7 +28,7 @@ final class Routes implements \IteratorAggregate
 
     public static function empty(): self
     {
-        return new self(...[]);
+        return new self([]);
     }
 
     public function prepend(Route $route): self
