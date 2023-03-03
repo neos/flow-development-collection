@@ -68,6 +68,7 @@ class RoutingMiddlewareTest extends UnitTestCase
         $this->routingMiddleware = new RoutingMiddleware();
 
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
+        $this->mockConfigurationManager->expects(self::atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, 'package')->will(self::returnValue([]));
 
         $routeConfiguration = new RouteConfiguration($this->mockConfigurationManager);
         $routes = $routeConfiguration->getRoutes();
