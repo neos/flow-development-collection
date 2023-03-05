@@ -11,6 +11,7 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
+use Neos\Utility\ArrayIndexParser;
 use Symfony\Component\Yaml\Yaml;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -72,7 +73,7 @@ class ConfigurationCommandController extends CommandController
         if (in_array($type, $availableConfigurationTypes)) {
             $configuration = $this->configurationManager->getConfiguration($type);
             if ($path !== null) {
-                $configuration = Arrays::getValueByPath($configuration, $path);
+                $configuration = Arrays::getValueByPath($configuration, ArrayIndexParser::parseFromString($path));
             }
             $typeAndPath = $type . ($path ? ': ' . $path : '');
             if ($configuration === null) {
