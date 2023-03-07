@@ -19,7 +19,6 @@ class ClassWithConstructorInjectedConfiguration
     public function __construct(
         #[Flow\InjectConfiguration(path: "tests.functional.settingInjection.someSetting")]
         public ?string $someSetting = null
-    )
-    {
+    ) {
     }
 }
