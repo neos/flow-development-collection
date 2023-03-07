@@ -293,6 +293,18 @@ class DependencyInjectionTest extends FunctionalTestCase
     }
 
     /**
+     * @test
+     */
+    public function injectionOfSingleSettingsViaConstructorPropertyPromotion()
+    {
+        if (\PHP_MAJOR_VERSION >= 8 === false) {
+            $this->markTestSkipped('Only testing on minimum PHP 8.0');
+        }
+        $classWithInjectedConfiguration = new Fixtures\PHP8\ClassWithConstructorInjectedConfiguration();
+        self::assertSame('injected setting', $classWithInjectedConfiguration->someSetting);
+    }
+
+    /**
      * This test verifies the behaviour described in FLOW-175.
      *
      * Please note that this issue occurs ONLY when creating an object
