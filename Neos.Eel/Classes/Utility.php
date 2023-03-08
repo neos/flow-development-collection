@@ -39,42 +39,25 @@ class Utility
     {
         $defaultContextVariables = [];
         foreach ($configuration as $variableName => $objectType) {
-            $currentPathBase = & $defaultContextVariables;
+            $currentPathBase = &$defaultContextVariables;
             $variablePathNames = explode('.', $variableName);
             foreach ($variablePathNames as $pathName) {
                 if (!isset($currentPathBase[$pathName])) {
                     $currentPathBase[$pathName] = [];
                 }
-                $currentPathBase = & $currentPathBase[$pathName];
+                $currentPathBase = &$currentPathBase[$pathName];
             }
 
-            if (strpos($objectType, '::') !== false) {
-                if (strpos($variableName, '.') !== false) {
+            if (str_contains($objectType, '::')) {
+                if (str_contains($variableName, '.')) {
                     throw new Exception(sprintf('Function helpers are only allowed on root level, "%s" was given?', $variableName), 1557911015);
                 }
-                $currentPathBase = self::createClosureFromConfiguration($objectType);
+                $currentPathBase = \Closure::fromCallable($objectType);
             } else {
                 $currentPathBase = new $objectType();
             }
         }
         return $defaultContextVariables;
-    }
-
-    /**
-     * Create a closure to be used as Helper for eel.
-     *
-     * @param string $objectConfiguration className followed by two colone and the method name
-     * @return callable
-     */
-    private static function createClosureFromConfiguration(string $objectConfiguration): callable
-    {
-        list($className, $methodName) = explode('::', $objectConfiguration, 2);
-        return function (...$arguments) use ($className, $methodName) {
-            return call_user_func_array(
-                [$className, $methodName],
-                $arguments
-            );
-        };
     }
 
     /**
