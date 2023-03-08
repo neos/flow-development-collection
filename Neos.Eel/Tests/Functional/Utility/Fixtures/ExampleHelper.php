@@ -1,0 +1,11 @@
+<?php
+
+namespace Neos\Eel\Tests\Functional\Utility\Fixtures;
+
+class ExampleHelper
+{
+    public function exampleFunction($argumentOne, $argumentTwo): string
+    {
+        return json_encode(['ExampleHelper::exampleFunction' => [$argumentOne, $argumentTwo]]);
+    }
+}

@@ -8,7 +8,7 @@ class ExampleProtectedContextAwareHelper implements ProtectedContextAwareInterfa
 {
     public function exampleFunction($argumentOne, $argumentTwo): string
     {
-        return json_encode(['exampleFunction' => [$argumentOne, $argumentTwo]]);
+        return json_encode(['ExampleProtectedContextAwareHelper::exampleFunction' => [$argumentOne, $argumentTwo]]);
     }
 
     public function allowsCallOfMethod($methodName): bool

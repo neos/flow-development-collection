@@ -12,6 +12,7 @@ namespace Neos\Eel;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\Arrays;
 
 /**
  * A protected evaluation context
@@ -27,6 +28,25 @@ class ProtectedContext extends Context
      * @var array
      */
     protected $allowedMethods = [];
+
+    /**
+     * Union recursive with another (protected)context
+     * Only available, if both context hold arrays and not other primitives/objects
+     *
+     * The allowedMethods will also be merged with the other context
+     */
+    public function union(Context $other): self
+    {
+        $union = parent::union($other);
+
+        $allowedMethods = $this->allowedMethods;
+        if ($other instanceof ProtectedContext) {
+            $allowedMethods = Arrays::arrayMergeRecursiveOverrule($allowedMethods, $other->allowedMethods);
+        }
+        $union->allowedMethods = $allowedMethods;
+
+        return $union;
+    }
 
     /**
      * Call a method if it is allowed

@@ -4,6 +4,7 @@ namespace Neos\Eel\Tests\Functional\Utility;
 
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Eel\CompilingEvaluator;
+use Neos\Eel\Tests\Functional\Utility\Fixtures\ExampleHelper;
 use Neos\Eel\Tests\Functional\Utility\Fixtures\ExampleProtectedContextAwareHelper;
 use Neos\Eel\Tests\Functional\Utility\Fixtures\ExampleStaticFactoryFunction;
 use Neos\Eel\Utility;
@@ -87,7 +88,7 @@ class UtilityTest extends FunctionalTestCase
      */
     public function protectedContext(array $defaultContextConfiguration, array $expectedResult): void
     {
-        $defaultContext = Utility::getDefaultContextVariables($defaultContextConfiguration);
+        $defaultContext = Utility::createDefaultProtectedContextFromConfiguration($defaultContextConfiguration)->unwrap();
 
         self::assertEquals($expectedResult, $defaultContext);
     }
@@ -97,7 +98,7 @@ class UtilityTest extends FunctionalTestCase
     {
         $defaultContextConfiguration = ['example' => ExampleStaticFactoryFunction::class . '::exampleStaticFunction'];
 
-        $defaultContext = Utility::getDefaultContextVariables($defaultContextConfiguration);
+        $defaultContext = Utility::createDefaultProtectedContextFromConfiguration($defaultContextConfiguration)->unwrap();
 
         self::assertEquals(['example'], array_keys($defaultContext));
         self::assertIsCallable($defaultContext['example']);
@@ -110,7 +111,42 @@ class UtilityTest extends FunctionalTestCase
         $defaultContextConfiguration = ['Foo.example' => ExampleStaticFactoryFunction::class . '::exampleStaticFunction'];
 
         $this->expectException(\Neos\Eel\Exception::class);
-        $this->expectExceptionMessage('Function helpers are only allowed on root level, "Foo.example" was given?');
-        Utility::getDefaultContextVariables($defaultContextConfiguration);
+        $this->expectExceptionMessage('Function helpers are only allowed on root level, "Foo.example" was given');
+        Utility::createDefaultProtectedContextFromConfiguration($defaultContextConfiguration);
+    }
+
+
+    public function defaultContextConfigurationProvider(): iterable
+    {
+
+        yield 'Nested configuration with className and allowedMethods' => [
+            'expression' => '${Example.exampleFunction("foo", 42)}',
+            'contextVariables' => [],
+            'expectedResult' => '{"ExampleHelper::exampleFunction":["foo",42]}',
+            'defaultContext' => [
+                "Example" => [
+                    "className" => ExampleHelper::class,
+                    "allowedMethods" => "*"
+                ]
+            ],
+
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider defaultContextConfigurationProvider
+     */
+    public function defaultContextConfiguration(string $expression, array $contextVariables, mixed $expectedResult, array $defaultContext): void
+    {
+        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
+        $stringFrontendMock->method('has')->willReturn(false);
+
+        $compilingEvaluate = new CompilingEvaluator();
+        $compilingEvaluate->injectExpressionCache($stringFrontendMock);
+
+        $return = Utility::evaluateEelExpression($expression, $compilingEvaluate, $contextVariables, $defaultContext);
+
+        self::assertSame($expectedResult, $return);
     }
 }
