@@ -11,6 +11,9 @@ namespace Neos\Eel;
  * source code.
  */
 
+use Neos\Eel\Utility\DefaultContextConfiguration;
+use Neos\Utility\Arrays;
+
 /**
  * Utility to reduce boilerplate code needed to set default context variables and evaluate a string that possibly is an EEL expression.
  *
@@ -38,8 +41,19 @@ class Utility
      */
     public static function getDefaultContextVariables(array $configuration)
     {
+        $flattenedLegacyConfig = $configuration;
+
+        if (isset($configuration["__internalLegacyConfig"])) {
+            unset($configuration["__internalLegacyConfig"]);
+            $flattenedLegacyConfig = array_merge($configuration, $flattenedLegacyConfig["__internalLegacyConfig"]);
+        }
+
         $defaultContextVariables = [];
-        foreach ($configuration as $variableName => $objectType) {
+        foreach ($flattenedLegacyConfig as $variableName => $objectType) {
+            if (is_array($objectType)) {
+                // silent pass new syntax see createDefaultProtectedContextFromConfiguration
+                continue;
+            }
             $currentPathBase = &$defaultContextVariables;
             $variablePathNames = explode('.', $variableName);
             foreach ($variablePathNames as $pathName) {
@@ -65,49 +79,28 @@ class Utility
      * Create default ProtectedContext from configuration
      * For example Eel helpers are made available by this.
      *
-     * @param array{string: class-string|string|array{"className": class-string, "allowedMethods"?: string}} $configuration
+     * @param array{string: class-string|string|array{"className": class-string, "allowedMethods"?: string}} $rawConfiguration
      * @return ProtectedContext with an array of default context variable objects.
      * @throws Exception
      */
-    public static function createDefaultProtectedContextFromConfiguration(array $configuration): ProtectedContext
+    public static function createDefaultProtectedContextFromConfiguration(array $rawConfiguration): ProtectedContext
     {
         $allowed = [];
         $defaultContextVariables = [];
 
-        foreach ($configuration as $variableName => $objectType) {
-            $currentPathBase = &$defaultContextVariables;
-            $variablePathNames = explode('.', $variableName);
-            foreach ($variablePathNames as $pathName) {
-                if (!isset($currentPathBase[$pathName])) {
-                    $currentPathBase[$pathName] = [];
-                }
-                $currentPathBase = &$currentPathBase[$pathName];
-            }
+        $defaultContextConfiguration = DefaultContextConfiguration::fromConfiguration($rawConfiguration);
 
-            if (is_array($objectType)) {
-                $className = $objectType["className"];
-                if (isset($objectType["allowedMethods"])) {
-                    $allowed[] = $variableName . '.' . $objectType["allowedMethods"];
-                }
-                $currentPathBase = new $className();
-            } elseif (str_contains($objectType, '::')) {
-                // Allow functions on the uppermost context level to allow calling them without
-                // implementing ProtectedContextAwareInterface which is impossible for functions
-                $allowed[] = $variableName;
-                if (str_contains($variableName, '.')) {
-                    throw new Exception(sprintf('Function helpers are only allowed on root level, "%s" was given', $variableName), 1557911015);
-                }
-                $currentPathBase = \Closure::fromCallable($objectType);
-            } else {
-                $currentPathBase = new $objectType();
-            }
+        foreach ($defaultContextConfiguration->toDefaultContextEntries() as $defaultContextEntry) {
+            $allowed = [...$allowed, ...$defaultContextEntry->getAllowedMethods()];
+            $defaultContextVariables = Arrays::setValueByPath(
+                $defaultContextVariables,
+                $defaultContextEntry->paths,
+                $defaultContextEntry->toContextValue()
+            );
         }
 
         $defaultContext = new ProtectedContext($defaultContextVariables);
-
-        foreach ($allowed as $allow) {
-            $defaultContext->allow($allow);
-        }
+        $defaultContext->allow($allowed);
 
         return $defaultContext;
     }
@@ -115,25 +108,40 @@ class Utility
     /**
      * Evaluate an Eel expression.
      *
-     * @param string $expression
-     * @param EelEvaluatorInterface $eelEvaluator
-     * @param array $contextVariables
-     * @param array $defaultContextConfiguration
-     * @return mixed
      * @throws Exception
      */
-    public static function evaluateEelExpression($expression, EelEvaluatorInterface $eelEvaluator, array $contextVariables, array $defaultContextConfiguration = [])
-    {
+    public static function evaluateEelExpression(
+        string $expression,
+        EelEvaluatorInterface $eelEvaluator,
+        ProtectedContext|array $contextVariables,
+        array $defaultContextConfiguration = []
+    ): mixed {
         $eelExpression = self::parseEelExpression($expression);
         if ($eelExpression === null) {
-            throw new Exception('The EEL expression "' . $expression . '" was not a valid EEL expression. Perhaps you forgot to wrap it in ${...}?', 1410441849);
+            throw new Exception(
+                'The EEL expression "' . $expression . '" was not a valid EEL expression. Perhaps you forgot to wrap it in ${...}?',
+                1410441849
+            );
         }
 
         $defaultContextVariables = self::createDefaultProtectedContextFromConfiguration($defaultContextConfiguration);
 
         $context = $defaultContextVariables->union(
-            new ProtectedContext($contextVariables)
+            $contextVariables instanceof ProtectedContext
+                ? $contextVariables
+                : new ProtectedContext($contextVariables)
         );
+
+        if (is_array($contextVariables)) {
+            // legacy, when $contextVariables is array
+            // allow functions on the uppermost context level to allow calling them without
+            // implementing ProtectedContextAwareInterface which is impossible for functions
+            foreach ($contextVariables as $key => $value) {
+                if (is_callable($value)) {
+                    $context->allow($key);
+                }
+            }
+        }
 
         return $eelEvaluator->evaluate($eelExpression, $context);
     }

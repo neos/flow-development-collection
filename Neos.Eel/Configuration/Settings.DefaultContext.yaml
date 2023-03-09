@@ -1,16 +1,28 @@
 Neos:
   Eel:
     defaultContext:
-      String: Neos\Eel\Helper\StringHelper
-      Array: Neos\Eel\Helper\ArrayHelper
-      Date: Neos\Eel\Helper\DateHelper
-      Configuration: Neos\Eel\Helper\ConfigurationHelper
-      Math: Neos\Eel\Helper\MathHelper
-      Json: Neos\Eel\Helper\JsonHelper
-      Security: Neos\Eel\Helper\SecurityHelper
-      Translation: Neos\Flow\I18n\EelHelper\TranslationHelper
-      StaticResource: Neos\Flow\ResourceManagement\EelHelper\StaticResourceHelper
-      Type: Neos\Eel\Helper\TypeHelper
-      I18n: Neos\Flow\I18n\EelHelper\TranslationHelper
-      File: Neos\Eel\Helper\FileHelper
+      String:
+        className: Neos\Eel\Helper\StringHelper
+      Array:
+        className: Neos\Eel\Helper\ArrayHelper
+      Date:
+        className: Neos\Eel\Helper\DateHelper
+      Configuration:
+        className: Neos\Eel\Helper\ConfigurationHelper
+      Math:
+        className: Neos\Eel\Helper\MathHelper
+      Json:
+        className: Neos\Eel\Helper\JsonHelper
+      Security:
+        className: Neos\Eel\Helper\SecurityHelper
+      Translation:
+        className: Neos\Flow\I18n\EelHelper\TranslationHelper
+      StaticResource:
+        className: Neos\Flow\ResourceManagement\EelHelper\StaticResourceHelper
+      Type:
+        className: Neos\Eel\Helper\TypeHelper
+      I18n:
+        className: Neos\Flow\I18n\EelHelper\TranslationHelper
+      File:
+        className: Neos\Eel\Helper\FileHelper
       q: Neos\Eel\FlowQuery\FlowQuery::q

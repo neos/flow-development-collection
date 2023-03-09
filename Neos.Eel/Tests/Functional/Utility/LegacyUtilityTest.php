@@ -4,10 +4,9 @@ namespace Neos\Eel\Tests\Functional\Utility;
 
 use Neos\Eel\Tests\Unit\UncachedTestingEvaluatorTrait;
 use Neos\Eel\Utility;
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\FunctionalTestCase;
 
-class UtilityTest extends FunctionalTestCase
+class LegacyUtilityTest extends FunctionalTestCase
 {
     use UncachedTestingEvaluatorTrait;
 
@@ -32,12 +31,40 @@ class UtilityTest extends FunctionalTestCase
      */
     public function evaluateEelExpressions(string $expression, array $contextVariables, mixed $expectedResult): void
     {
-        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
-        $defaultContext = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Eel.defaultContext');
+        $defaultContext = [
+            "String" => "Neos\\Eel\\Helper\\StringHelper",
+            "q" => "Neos\\Eel\\FlowQuery\\FlowQuery::q"
+        ];
 
         $compilingEvaluate = $this->createTestingEelEvaluator();
 
         $return = Utility::evaluateEelExpression($expression, $compilingEvaluate, $contextVariables, $defaultContext);
+
+        self::assertSame($expectedResult, $return);
+    }
+
+    /**
+     * @test
+     * @dataProvider eelProvider
+     */
+    public function evaluateEelExpressionsManualMerge(
+        string $expression,
+        array $contextVariables,
+        mixed $expectedResult
+    ): void {
+        $defaultContext = [
+            "String" => "Neos\\Eel\\Helper\\StringHelper",
+            "q" => "Neos\\Eel\\FlowQuery\\FlowQuery::q"
+        ];
+
+        $compilingEvaluate = $this->createTestingEelEvaluator();
+
+        $ctx = array_merge(
+            Utility::getDefaultContextVariables($defaultContext),
+            $contextVariables
+        );
+
+        $return = Utility::evaluateEelExpression($expression, $compilingEvaluate, $ctx);
 
         self::assertSame($expectedResult, $return);
     }

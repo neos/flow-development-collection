@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\Eel\Tests\Functional\Utility\Fixtures;
+namespace Neos\Eel\Tests\Unit\Utility\Fixtures;
 
 class ExampleHelper
 {
