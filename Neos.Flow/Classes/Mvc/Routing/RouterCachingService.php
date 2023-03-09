@@ -17,6 +17,7 @@ use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteLifetime;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -110,9 +111,10 @@ class RouterCachingService
      * @param RouteContext $routeContext
      * @param array $matchResults
      * @param RouteTags|null $matchedTags
+     * @param RouteLifetime|null $matchedLifetime
      * @return void
      */
-    public function storeMatchResults(RouteContext $routeContext, array $matchResults, RouteTags $matchedTags = null)
+    public function storeMatchResults(RouteContext $routeContext, array $matchResults, RouteTags $matchedTags = null, RouteLifetime $matchedLifetime = null)
     {
         if ($this->containsObject($matchResults)) {
             return;
@@ -122,7 +124,8 @@ class RouterCachingService
         if ($matchedTags !== null) {
             $tags = array_unique(array_merge($matchedTags->getTags(), $tags));
         }
-        $this->routeCache->set($routeContext->getCacheEntryIdentifier(), $matchResults, $tags);
+        $lifetime = $matchedLifetime ? $matchedLifetime ->getValue() : null;
+        $this->routeCache->set($routeContext->getCacheEntryIdentifier(), $matchResults, $tags, $lifetime);
     }
 
     /**
@@ -146,9 +149,10 @@ class RouterCachingService
      * @param ResolveContext $resolveContext
      * @param UriConstraints $uriConstraints
      * @param RouteTags|null $resolvedTags
+     * @param RouteLifetime|null $resolvedLifetime
      * @return void
      */
-    public function storeResolvedUriConstraints(ResolveContext $resolveContext, UriConstraints $uriConstraints, RouteTags $resolvedTags = null)
+    public function storeResolvedUriConstraints(ResolveContext $resolveContext, UriConstraints $uriConstraints, RouteTags $resolvedTags = null, RouteLifetime $resolvedLifetime = null)
     {
         $routeValues = $this->convertObjectsToHashes($resolveContext->getRouteValues());
         if ($routeValues === null) {
@@ -160,7 +164,8 @@ class RouterCachingService
         if ($resolvedTags !== null) {
             $tags = array_unique(array_merge($resolvedTags->getTags(), $tags));
         }
-        $this->resolveCache->set($cacheIdentifier, $uriConstraints, $tags);
+        $lifetime = $resolvedLifetime ? $resolvedLifetime->getValue() : null;
+        $this->resolveCache->set($cacheIdentifier, $uriConstraints, $tags, $lifetime);
     }
 
     /**
