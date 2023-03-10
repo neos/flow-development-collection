@@ -29,7 +29,12 @@ class DefaultContextConfiguration
     public static function fromConfiguration(array $configuration)
     {
         unset($configuration["__internalLegacyConfig"]);
-        return new self($configuration);
+        return new self(self::normalizeFirstLevelDotPathsIntoNestedConfig($configuration));
+    }
+
+    public function getConfiguration(): array
+    {
+        return $this->configuration;
     }
 
     /**
@@ -37,45 +42,20 @@ class DefaultContextConfiguration
      */
     public function toDefaultContextEntries(): \Iterator
     {
-        $existingKeysWithEntry = [];
-        foreach (self::createDefaultContextEntries([], $this->configuration) as $defaultContextEntry) {
-            $dotPath = join(".", $defaultContextEntry->paths);
-            foreach ($existingKeysWithEntry as $existingKey) {
-                if ($existingKey === $dotPath) {
-                    // we allow overriding another path with another syntax
-                    continue;
-                }
-                if (str_starts_with($dotPath, $existingKey)) {
-                    throw new \DomainException("Cannot use namespace '$existingKey' as helper with nested helpers.");
-                }
-            }
-            $existingKeysWithEntry[] = $dotPath;
-            yield $defaultContextEntry;
-        };
+        return self::createDefaultContextEntries([], $this->configuration);
     }
 
-    /**
+    /**s
+     * @param string[] $paths
      * @return \Iterator<EelHelperDefaultContextEntry|EelFunctionDefaultContextEntry>
      */
     private static function createDefaultContextEntries(array $paths, array|string $configuration): \Iterator
     {
         switch (true) {
-            case $paths === []:
-                // on root level, we allow dots inside the Namespace
-                assert(is_array($configuration));
-                foreach ($configuration as $subPath => $value) {
-                    if (str_contains($subPath, ".")) {
-                        $subPath = explode('.', $subPath);
-                        yield from self::createDefaultContextEntries($subPath, $value);
-                        continue;
-                    }
-                    yield from self::createDefaultContextEntries([$subPath], $value);
-                }
-                break;
-
             case is_array($configuration) && isset($configuration["className"]):
                 yield EelHelperDefaultContextEntry::fromConfiguration(
-                    $paths, $configuration
+                    $paths,
+                    $configuration
                 );
                 break;
 
@@ -94,5 +74,25 @@ class DefaultContextConfiguration
                     $paths, $configuration, []
                 );
         }
+    }
+
+    /**
+     * ["Foo.Bar" => Helper::class] becomes ["Foo" => ["Bar" => Helper::class]]
+     */
+    public static function normalizeFirstLevelDotPathsIntoNestedConfig(array $config): array
+    {
+        $result = [];
+        foreach ($config as $key => $value) {
+            $parts = is_string($key) ? explode('.', $key) : [$key];
+            $ref = &$result;
+            foreach ($parts as $part) {
+                if (!isset($ref[$part])) {
+                    $ref[$part] = [];
+                }
+                $ref = &$ref[$part];
+            }
+            $ref = $value;
+        }
+        return $result;
     }
 }
