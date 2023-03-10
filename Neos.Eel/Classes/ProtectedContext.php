@@ -35,7 +35,7 @@ class ProtectedContext extends Context
      *
      * The allowedMethods will also be merged with the other context
      */
-    public function union(Context $other): self
+    public function union(Context $other): static
     {
         $union = parent::union($other);
 

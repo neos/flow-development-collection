@@ -23,6 +23,7 @@ use Neos\Utility\ObjectAccess;
  * for safe access without warnings (on missing properties).
  *
  * @Flow\Proxy(false)
+ * @psalm-consistent-constructor
  */
 class Context
 {
@@ -45,7 +46,7 @@ class Context
      *
      * @throws \DomainException only arrays can be united
      */
-    public function union(Context $other): self
+    public function union(Context $other): static
     {
         if (!is_array($this->value) || !is_array($other->value)) {
             throw new \DomainException("Can only union context with arrays.", 1678295473807);

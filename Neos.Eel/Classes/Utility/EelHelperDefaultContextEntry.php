@@ -22,8 +22,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class EelHelperDefaultContextEntry
 {
-    private object $instance;
-
     /**
      * @param array $paths like ["Vendor", "Array"] or just ["Array"]
      * @param class-string $className the EEL helper className
@@ -33,12 +31,11 @@ class EelHelperDefaultContextEntry
         /** @psalm-readonly */
         public array $paths,
         /** @psalm-readonly */
-        string $className,
+        private string $className,
         /** @psalm-readonly */
         private array $allowedMethods
     ) {
-        $this->instance = new $className;
-        $isHelperContextAware = $this->instance instanceof ProtectedContextAwareInterface;
+        $isHelperContextAware = array_search(ProtectedContextAwareInterface::class, class_implements($className), true);
         if ($isHelperContextAware && $allowedMethods !== []) {
             throw new \DomainException(
                 "EEL Helper '$className' should not implement ProtectedContextAwareInterface and have allowedMethods configured.",
@@ -89,7 +86,7 @@ class EelHelperDefaultContextEntry
 
     public function toContextValue(): object
     {
-        return $this->instance;
+        return new $this->className();
     }
 
     public function getAllowedMethods(): array
