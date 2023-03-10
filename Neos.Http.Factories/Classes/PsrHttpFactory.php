@@ -10,7 +10,8 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
 
-class HttpObjectFactory implements ServerRequestFactoryInterface, RequestFactoryInterface, ResponseFactoryInterface, UriFactoryInterface, StreamFactoryInterface, UploadedFileFactoryInterface
+class PsrHttpFactory implements ServerRequestFactoryInterface, RequestFactoryInterface, ResponseFactoryInterface,
+                                UriFactoryInterface, StreamFactoryInterface, UploadedFileFactoryInterface
 {
     use ServerRequestFactoryTrait;
     use RequestFactoryTrait;
