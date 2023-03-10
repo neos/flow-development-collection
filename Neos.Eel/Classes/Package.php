@@ -21,22 +21,24 @@ use Neos\Flow\Annotations as Flow;
  */
 class Package extends BasePackage
 {
-    const EelExpressionRecognizer = '/
-			^\${(?P<exp>
-				(?:
-					{ (?P>exp) }			# match object literal expression recursively
-					|[^{}"\']+				# simple eel expression without quoted strings
-					|"[^"\\\\]*				# double quoted strings with possibly escaped double quotes
-						(?:
-							\\\\.			# escaped character (quote)
-							[^"\\\\]*		# unrolled loop following Jeffrey E.F. Friedl
-						)*"
-					|\'[^\'\\\\]*			# single quoted strings with possibly escaped single quotes
-						(?:
-							\\\\.			# escaped character (quote)
-							[^\'\\\\]*		# unrolled loop following Jeffrey E.F. Friedl
-						)*\'
-				)*
-			)}
-			$/x';
+    public const EelExpressionRecognizer = <<<'REGEX'
+    /
+      ^\${(?P<exp>
+        (?>
+          { (?P>exp) }          # match object literal expression recursively
+          |[^{}"']+	            # simple eel expression without quoted strings
+          |"[^"\\]*			    # double quoted strings with possibly escaped double quotes
+            (?:
+              \\.			# escaped character (quote)
+              [^"\\]*		# unrolled loop following Jeffrey E.F. Friedl
+            )*"
+          |'[^'\\]*			# single quoted strings with possibly escaped single quotes
+            (?:
+              \\.			# escaped character (quote)
+              [^'\\]*		# unrolled loop following Jeffrey E.F. Friedl
+            )*'
+        )*
+      )}$
+    /x
+    REGEX;
 }

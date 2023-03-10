@@ -12,6 +12,7 @@ namespace Neos\Eel\Tests\Unit;
  * source code.
  */
 
+use Neos\Eel\Package;
 use Neos\Eel\Utility;
 
 class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
@@ -69,6 +70,14 @@ class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
             '${"foo + bar}',
         ];
 
+        yield "space on start" => [
+            '   ${foo + bar}',
+        ];
+
+        yield "space on end" => [
+            '${foo + bar}   ',
+        ];
+
         yield "unwrapped" => [
             'foo + bar',
         ];
@@ -83,5 +92,14 @@ class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertNull(
             Utility::parseEelExpression($expression)
         );
+    }
+
+    /** @test */
+    public function leftOpenEelDoesntResultInCatastrophicBacktracking()
+    {
+        $malformedExpression = '${abc abc abc abc abc abc abc abc abc abc abc ...';
+        $return = preg_match(Package::EelExpressionRecognizer, $malformedExpression);
+        self::assertNotSame(false, $return, "Regex not efficient");
+        self::assertEquals($return, 0, "Regex should not match");
     }
 }
