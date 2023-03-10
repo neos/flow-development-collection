@@ -59,7 +59,7 @@ class FileStorage implements ThrowableStorageInterface
 
         $this->requestInformationRenderer = static function () {
             // The following lines duplicate Scripts::initializeExceptionStorage(), which is a fallback to handle
-            // exceptions that may occure before Scripts::initializeExceptionStorage() has finished.
+            // exceptions that may occur before Scripts::initializeExceptionStorage() has finished.
 
             $output = '';
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {

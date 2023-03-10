@@ -774,6 +774,17 @@ class ReflectionService
     }
 
     /**
+     * Tells if a specific PHP attribute is to be ignored for reflection
+     */
+    public function isAttributeIgnored(string $attributeName): bool
+    {
+        if (in_array($attributeName, ['ReturnTypeWillChange']) && !class_exists($attributeName)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Tells if the specified method has the given annotation
      *
      * @param string $className Name of the class
@@ -812,6 +823,9 @@ class ReflectionService
             $methodAnnotations = $this->annotationReader->getMethodAnnotations($method);
             if (PHP_MAJOR_VERSION >= 8) {
                 foreach ($method->getAttributes() as $attribute) {
+                    if ($this->isAttributeIgnored($attribute->getName())) {
+                        continue;
+                    }
                     $methodAnnotations[] = $attribute->newInstance();
                 }
             }
@@ -1286,6 +1300,9 @@ class ReflectionService
         if (PHP_MAJOR_VERSION >= 8) {
             foreach ($class->getAttributes() as $attribute) {
                 $annotationClassName = $attribute->getName();
+                if ($this->isAttributeIgnored($annotationClassName)) {
+                    continue;
+                }
                 $this->annotatedClasses[$annotationClassName][$className] = true;
                 $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $attribute->newInstance();
             }
@@ -1336,6 +1353,9 @@ class ReflectionService
         }
         if (PHP_MAJOR_VERSION >= 8) {
             foreach ($property->getAttributes() as $attribute) {
+                if ($this->isAttributeIgnored($attribute->getName())) {
+                    continue;
+                }
                 $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attribute->newInstance();
             }
         }
@@ -1427,12 +1447,26 @@ class ReflectionService
             $this->classesByMethodAnnotations[$annotationClassName][$className][] = $methodName;
         }
 
-        $returnType = $method->getDeclaredReturnType();
-        if ($returnType !== null && !in_array($returnType, ['self', 'null', 'callable', 'void', 'iterable', 'object', 'mixed']) && !TypeHandling::isSimpleType($returnType)) {
-            $returnType = '\\' . $returnType;
-        }
-        if ($method->isDeclaredReturnTypeNullable()) {
-            $returnType = '?' . $returnType;
+        $returnType= $method->getDeclaredReturnType();
+        $applyLeadingSlashIfNeeded = function (string $type): string {
+            if (!in_array($type, ['self', 'parent', 'static', 'null', 'callable', 'void', 'never', 'iterable', 'object', 'resource', 'mixed'])
+                && !TypeHandling::isSimpleType($type)
+            ) {
+                return '\\' . $type;
+            }
+            return $type;
+        };
+        if ($returnType !== null) {
+            if (TypeHandling::isUnionType($returnType)) {
+                $returnType = implode('|', array_map($applyLeadingSlashIfNeeded, explode('|', $returnType)));
+            } elseif (TypeHandling::isIntersectionType($returnType)) {
+                $returnType = implode('&', array_map($applyLeadingSlashIfNeeded, explode('&', $returnType)));
+            } else {
+                $returnType = $applyLeadingSlashIfNeeded($returnType);
+                if ($method->isDeclaredReturnTypeNullable()) {
+                    $returnType = '?' . $returnType;
+                }
+            }
         }
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
 
@@ -1845,8 +1879,26 @@ class ReflectionService
 
         $parameterType = $parameter->getType();
         if ($parameterType !== null) {
-            // TODO: This needs to handle ReflectionUnionType
-            $parameterType = ($parameterType instanceof \ReflectionNamedType) ? $parameterType->getName() : $parameterType->__toString();
+            if ($parameterType instanceof \ReflectionUnionType) {
+                // ReflectionUnionType as of PHP 8
+                $parameterType = implode('|', array_map(
+                    static function (\ReflectionNamedType $type) {
+                        return $type->getName();
+                    },
+                    $parameterType->getTypes()
+                ));
+            } elseif ($parameterType instanceof \ReflectionIntersectionType) {
+                // ReflectionIntersectionType as of PHP 8.1
+                $parameterType = implode('&', array_map(
+                    static function (\ReflectionNamedType $type) {
+                        return $type->getName();
+                    },
+                    $parameterType->getTypes()
+                ));
+            } else {
+                // ReflectionNamedType as of PHP 7.1
+                $parameterType = $parameterType->getName();
+            }
         }
         if ($parameterType !== null && !TypeHandling::isSimpleType($parameterType)) {
             // We use parameter type here to make class_alias usage work and return the hinted class name instead of the alias

@@ -1,9 +1,14 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Persistence\Doctrine\DataTypes;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\DBAL\Types;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\ORM\Mapping\Entity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
@@ -20,113 +25,74 @@ use Neos\Utility\TypeHandling;
  */
 class ObjectArray extends Types\ArrayType
 {
-    /**
-     * @var string
-     */
-    const OBJECTARRAY = 'objectarray';
+    private const OBJECTARRAY = 'objectarray';
+    protected ?PersistenceManagerInterface $persistenceManager = null;
+    protected ReflectionService $reflectionService;
 
-    /**
-     * @var PersistenceManagerInterface
-     */
-    protected $persistenceManager;
-
-    /**
-     * @var ReflectionService
-     */
-    protected $reflectionService;
-
-    /**
-     * Gets the name of this type.
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return self::OBJECTARRAY;
     }
 
     /**
-     * Gets the SQL declaration snippet for a field of this type.
-     *
-     * @param array $fieldDeclaration
-     * @param AbstractPlatform $platform
-     * @return string
+     * Use a BLOB instead of CLOB
      */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getBlobTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getBlobTypeDeclarationSQL($column);
     }
 
     /**
-     * Gets the (preferred) binding type for values of this type that
-     * can be used when binding parameters to prepared statements.
-     *
-     * @return integer
+     * Use LARGE_OBJECT instead of STRING
      */
-    public function getBindingType()
+    public function getBindingType(): int
     {
-        return \PDO::PARAM_LOB;
+        return ParameterType::LARGE_OBJECT;
     }
 
     /**
-     * Converts a value from its database representation to its PHP representation
-     * of this type.
-     *
-     * @param mixed $value The value to convert.
-     * @param AbstractPlatform $platform The currently used database platform.
-     * @return array The PHP representation of the value.
+     * @throws ConversionException
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): array
     {
         $this->initializeDependencies();
 
-        switch ($platform->getName()) {
-            case 'postgresql':
-                $value = (is_resource($value)) ? stream_get_contents($value) : $value;
-                $array = parent::convertToPHPValue(hex2bin($value), $platform);
-            break;
-            default:
-                $array = parent::convertToPHPValue($value, $platform);
+        if ($platform instanceof PostgreSQL94Platform) {
+            $value = hex2bin((is_resource($value)) ? stream_get_contents($value) : $value);
         }
-        $this->decodeObjectReferences($array);
 
-        return $array;
+        $value = parent::convertToPHPValue($value, $platform);
+        $this->decodeObjectReferences($value);
+
+        return $value;
     }
 
     /**
      * Converts a value from its PHP representation to its database representation
      * of this type.
-     *
-     * @param mixed $array The value to convert.
-     * @param AbstractPlatform $platform The currently used database platform.
-     * @return mixed The database representation of the value.
      */
-    public function convertToDatabaseValue($array, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
-        if (!is_array($array)) {
-            throw new \InvalidArgumentException(sprintf('The ObjectArray type only converts arrays, %s given', gettype($array)), 1569945649);
+        if (!is_array($value)) {
+            throw new \InvalidArgumentException(sprintf('The ObjectArray type only converts arrays, %s given', gettype($value)), 1569945649);
         }
 
         $this->initializeDependencies();
+        $this->encodeObjectReferences($value);
 
-        $this->encodeObjectReferences($array);
-
-        switch ($platform->getName()) {
-            case 'postgresql':
-                return bin2hex(parent::convertToDatabaseValue($array, $platform));
-            default:
-                return parent::convertToDatabaseValue($array, $platform);
+        if ($platform instanceof PostgreSQL94Platform) {
+            return bin2hex(parent::convertToDatabaseValue($value, $platform));
         }
+
+        return parent::convertToDatabaseValue($value, $platform);
     }
 
     /**
      * Fetches dependencies from the static object manager.
      *
      * Injection cannot be used, since __construct on Types\Type is final.
-     *
-     * @return void
      */
-    protected function initializeDependencies()
+    protected function initializeDependencies(): void
     {
         if ($this->persistenceManager === null) {
             $this->persistenceManager = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class);
@@ -137,12 +103,11 @@ class ObjectArray extends Types\ArrayType
     /**
      * Traverses the $array and replaces known persisted objects (tuples of
      * type and identifier) with actual instances.
-     *
-     * @param array $array
-     * @return void
      */
-    protected function decodeObjectReferences(array &$array)
+    protected function decodeObjectReferences(array &$array): void
     {
+        assert($this->persistenceManager instanceof PersistenceManagerInterface);
+
         foreach ($array as &$value) {
             if (!is_array($value)) {
                 continue;
@@ -160,17 +125,17 @@ class ObjectArray extends Types\ArrayType
      * Traverses the $array and replaces known persisted objects with a tuple of
      * type and identifier.
      *
-     * @param array $array
-     * @return void
      * @throws \RuntimeException
      */
-    protected function encodeObjectReferences(array &$array)
+    protected function encodeObjectReferences(array &$array): void
     {
+        assert($this->persistenceManager instanceof PersistenceManagerInterface);
+
         foreach ($array as &$value) {
             if (is_array($value)) {
                 $this->encodeObjectReferences($value);
             }
-            if (!is_object($value) || (is_object($value) && $value instanceof DependencyProxy)) {
+            if (!is_object($value) || ($value instanceof DependencyProxy)) {
                 continue;
             }
 

@@ -856,7 +856,7 @@ stick to Flow's general rules for YAML-based configuration.
 	    1:
 	      object: 'MyCompany\MyPackage\Baz'
 	    2:
-	      value: "some string"
+	      value: "some string"
 	    3:
 	      value: false
 	  properties:

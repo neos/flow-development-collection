@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Security\Cryptography;
 
 /*
@@ -11,8 +13,6 @@ namespace Neos\Flow\Security\Cryptography;
  * source code.
  */
 
-use Neos\Flow\Utility\Algorithms as UtilityAlgorithms;
-
 /**
  * Hashing passwords using BCrypt
  */
@@ -20,36 +20,34 @@ class BCryptHashingStrategy implements PasswordHashingStrategyInterface
 {
     /**
      * Number of rounds to use with BCrypt for hashing passwords, must be between 4 and 31
-     * @var integer
      */
-    protected $cost;
+    protected int $cost;
 
     /**
-     * Construct a PBKDF2 hashing strategy with the given parameters
+     * Construct a BCrypt hashing strategy with the given parameters
      *
-     * @param integer $cost
+     * @param int $cost
      * @throws \InvalidArgumentException
      */
-    public function __construct($cost)
+    public function __construct(int $cost)
     {
         if ($cost < 4 || $cost > 31) {
             throw new \InvalidArgumentException('BCrypt cost must be between 4 and 31.', 1318447710);
         }
 
-        $this->cost = sprintf('%02d', $cost);
+        $this->cost = $cost;
     }
 
     /**
      * Creates a BCrypt hash
      *
-     * @param string $password   The plaintext password to hash
-     * @param string $staticSalt Optional static salt that will not be stored in the hashed password
-     * @return string the result of the crypt() call
+     * @param string $password The plaintext password to hash
+     * @param string|null $staticSalt Not used with this strategy
+     * @return string The hashed password
      */
     public function hashPassword($password, $staticSalt = null)
     {
-        $dynamicSalt = UtilityAlgorithms::generateRandomString(22, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./');
-        return crypt($password, '$2a$' . $this->cost . '$' . $dynamicSalt);
+        return password_hash($password, PASSWORD_BCRYPT, ['cost' => $this->cost]);
     }
 
     /**
@@ -59,17 +57,12 @@ class BCryptHashingStrategy implements PasswordHashingStrategyInterface
      * hashed password and salt.
      *
      * @param string $password The cleartext password
-     * @param string $hashedPasswordAndSalt The derived key and salt in as returned by crypt() for verification
-     * @param string $staticSalt Optional static salt that will be appended to the dynamic salt
+     * @param string $hashedPasswordAndSalt The derived key and salt in as returned by hashPassword() for verification
+     * @param string|null $staticSalt Not used with this strategy
      * @return boolean true if the given password matches the hashed password
      */
     public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = null)
     {
-        if (strlen($hashedPasswordAndSalt) < 29 || strpos($hashedPasswordAndSalt, '$2a$') !== 0) {
-            return false;
-        }
-
-        $cryptSalt = '$2a$' . substr($hashedPasswordAndSalt, 4, 26);
-        return crypt($password, $cryptSalt) === $hashedPasswordAndSalt;
+        return password_verify($password, $hashedPasswordAndSalt);
     }
 }

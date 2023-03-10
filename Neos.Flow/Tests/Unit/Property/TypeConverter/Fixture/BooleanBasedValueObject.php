@@ -46,7 +46,7 @@ final class BooleanBasedValueObject implements \JsonSerializable
     /**
      * @return boolean
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->value;
     }

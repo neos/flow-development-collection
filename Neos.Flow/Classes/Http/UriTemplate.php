@@ -182,7 +182,7 @@ class UriTemplate
      * @param array $value
      * @param string $operator
      * @param string $separator
-     * @param $useQueryString
+     * @param bool $useQueryString
      * @return string
      */
     protected static function encodeArrayVariable(array $variable, array $value, $operator, $separator, &$useQueryString)

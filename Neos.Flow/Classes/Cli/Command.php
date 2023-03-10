@@ -184,10 +184,14 @@ class Command
         $commandParameters = $this->reflectionService->getMethodParameters($this->controllerClassName, $this->controllerCommandName . 'Command');
         $i = 0;
         foreach ($commandParameters as $commandParameterName => $commandParameterDefinition) {
-            $explodedAnnotation = explode(' ', $annotations['param'][$i]);
-            array_shift($explodedAnnotation);
-            array_shift($explodedAnnotation);
-            $description = implode(' ', $explodedAnnotation);
+            if (isset($annotations['param'][$i])) {
+                $explodedAnnotation = explode(' ', $annotations['param'][$i]);
+                array_shift($explodedAnnotation);
+                array_shift($explodedAnnotation);
+                $description = implode(' ', $explodedAnnotation);
+            } else {
+                $description = $commandParameterName;
+            }
             $required = $commandParameterDefinition['optional'] !== true;
             $commandArgumentDefinitions[] = new CommandArgumentDefinition($commandParameterName, $required, $description);
             $i ++;

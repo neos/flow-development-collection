@@ -78,9 +78,9 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected $batchSize = 999;
 
     /**
-     * @var \ArrayIterator
+     * @var \ArrayIterator|null
      */
-    protected $cacheEntriesIterator = null;
+    protected $cacheEntriesIterator;
 
     /**
      * Sets the DSN to use
@@ -158,7 +158,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
      * @param array $tags Tags to associate with this cache entry
-     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param int|null $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
@@ -175,18 +175,18 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $lifetime = ($lifetime === null) ? $this->defaultLifetime : $lifetime;
 
-        // Convert binary data into hexadecimal representation,
-        // because it is not allowed to store null bytes in PostgreSQL.
-        if ($this->pdoDriver === 'pgsql') {
-            $data = bin2hex($data);
-        }
-
         $this->databaseHandle->beginTransaction();
         try {
             $this->removeWithoutTransaction($entryIdentifier);
 
             $statementHandle = $this->databaseHandle->prepare('INSERT INTO "' . $this->cacheTableName . '" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
-            $result = $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier, time(), $lifetime, $data]);
+            $statementHandle->bindValue(1, $entryIdentifier);
+            $statementHandle->bindValue(2, $this->context());
+            $statementHandle->bindValue(3, $this->cacheIdentifier);
+            $statementHandle->bindValue(4, time(), \PDO::PARAM_INT);
+            $statementHandle->bindValue(5, $lifetime, \PDO::PARAM_INT);
+            $statementHandle->bindValue(6, $data, \PDO::PARAM_LOB);
+            $result = $statementHandle->execute();
             if ($result === false) {
                 throw new Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
             }
@@ -200,6 +200,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             }
 
             $this->databaseHandle->commit();
+            $this->cacheEntriesIterator = null;
         } catch (\Exception $exception) {
             $this->databaseHandle->rollBack();
 
@@ -221,16 +222,13 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
         $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
-        /** @var false|string|null $fetchedColumn */
-        $fetchedColumn = $statementHandle->fetchColumn();
+        $statementHandle->bindColumn(1, $content, \PDO::PARAM_LOB);
+        $statementHandle->fetch(\PDO::FETCH_BOUND);
 
-        // Convert hexadecimal data into binary string,
-        // because it is not allowed to store null bytes in PostgreSQL.
-        if ($this->pdoDriver === 'pgsql' && is_string($fetchedColumn)) {
-            $fetchedColumn = hex2bin($fetchedColumn);
+        if ($content === null) {
+            return false;
         }
-
-        return $fetchedColumn;
+        return is_resource($content) ? stream_get_contents($content) : $content;
     }
 
     /**
@@ -257,7 +255,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
      * @return boolean true if (at least) one entry could be removed or false if no entry was found
-     * @throws Exception
+     * @throws \Exception
      * @api
      */
     public function remove(string $entryIdentifier): bool
@@ -268,6 +266,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         try {
             $rowsWereDeleted = $this->removeWithoutTransaction($entryIdentifier);
             $this->databaseHandle->commit();
+            $this->cacheEntriesIterator = null;
 
             return $rowsWereDeleted;
         } catch (\Exception $exception) {
@@ -303,7 +302,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * Removes all cache entries of this cache.
      *
      * @return void
-     * @throws Exception
+     * @throws \Exception
      * @api
      */
     public function flush(): void
@@ -324,6 +323,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
 
             $this->databaseHandle->commit();
+            $this->cacheEntriesIterator = null;
         } catch (\Exception $exception) {
             $this->databaseHandle->rollBack();
 
@@ -336,7 +336,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @param string $tag The tag the entries must have
      * @return integer
-     * @throws Exception
+     * @throws \Exception
      * @api
      */
     public function flushByTag(string $tag): int
@@ -354,13 +354,14 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $statementHandle->execute([$this->context(), $this->cacheIdentifier, $tag]);
 
             $this->databaseHandle->commit();
+            $this->cacheEntriesIterator = null;
+
+            return $flushed;
         } catch (\Exception $exception) {
             $this->databaseHandle->rollBack();
 
             throw $exception;
         }
-
-        return $flushed;
     }
 
     /**
@@ -464,6 +465,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
             throw $exception;
         }
+        $this->cacheEntriesIterator = null;
     }
 
     /**
@@ -537,7 +539,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return mixed
      * @api
      */
-    public function current()
+    public function current(): mixed
     {
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
@@ -551,7 +553,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function next()
+    public function next(): void
     {
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
@@ -595,7 +597,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
-    public function rewind()
+    public function rewind(): void
     {
         try {
             $this->connect();
@@ -612,16 +614,11 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
         $statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "content" FROM "' . $this->cacheTableName . '" WHERE "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
         $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
-        $fetchedColumns = $statementHandle->fetchAll();
+        $statementHandle->bindColumn(1, $identifier);
+        $statementHandle->bindColumn(2, $content, \PDO::PARAM_LOB);
 
-        foreach ($fetchedColumns as $fetchedColumn) {
-            // Convert hexadecimal data into binary string,
-            // because it is not allowed to store null bytes in PostgreSQL.
-            if ($this->pdoDriver === 'pgsql') {
-                $fetchedColumn['content'] = hex2bin($fetchedColumn['content']);
-            }
-
-            $cacheEntries[$fetchedColumn['identifier']] = $fetchedColumn['content'];
+        while ($statementHandle->fetch(\PDO::FETCH_BOUND)) {
+            $cacheEntries[$identifier] = is_resource($content) ? stream_get_contents($content) : $content;
         }
 
         $this->cacheEntriesIterator = new \ArrayIterator($cacheEntries);

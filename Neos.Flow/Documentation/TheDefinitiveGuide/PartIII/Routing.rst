@@ -753,6 +753,24 @@ You can do so by using the following configuration in your `Caches.yaml`:
 	Flow_Mvc_Routing_Resolve:
 	  backend: Neos\Cache\Backend\NullBackend
 
+By defaults all cache items in the routing caches use the lifetime specified by the route parts wich commonly is
+null (never expire). Route parts should set this value if items are known to not exist forever.
+
+In addition the `cache` section of the routing configuration allows to specify a `lifetime` (int|null) and tags (string[])
+that once set are merged with the respective values from the routing result parts.
+
+.. code-block:: yaml
+
+  -
+    uriPattern: 'some/path'
+    ...
+    cache:
+      # lifetime for the cache items if no route part specifies a lower value
+      lifetime: 86400
+      # cache tags for the cache items that are merged with the tags from the route parts
+      tags: ['special']
+
+
 Also it can be handy to be able to flush caches for certain routes programmatically so that they can be
 regenerated. This is useful for example to update all related routes when an entity was renamed.
 The ``RouterCachingService`` allows flushing of all route caches via the ``flushCaches()`` method.

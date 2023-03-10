@@ -20,6 +20,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Persistence\AbstractPersistenceManager;
+use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\Exception as PersistenceException;
 use Neos\Flow\Persistence\Exception\KnownObjectException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
@@ -84,11 +85,37 @@ class PersistenceManager extends AbstractPersistenceManager
      * Commits new objects and changes to objects in the current persistence
      * session into the backend
      *
-     * @param boolean $onlyAllowedObjects If true an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "allowed" (see AbstractPersistenceManager::allowObject())
+     * @param boolean $onlyAllowedObjects If true an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "allowed" (see AbstractPersistenceManager::allowObject()). Deprecated: Use `persistAllowedObjects()` instead.
      * @return void
      * @api
      */
     public function persistAll(bool $onlyAllowedObjects = false): void
+    {
+        if ($onlyAllowedObjects === true) {
+            $this->persistAllowedObjects();
+            return;
+        }
+        if (!$this->entityManager->isOpen()) {
+            $this->logger->error('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error message.', LogEnvironment::fromMethodName(__METHOD__));
+            return;
+        }
+
+        $this->allowedObjects->checkNext(false);
+        $this->entityManager->flush();
+        $this->emitAllObjectsPersisted();
+    }
+
+    /**
+     * Commits new objects and changes to objects in the current persistence
+     * session into the backend.
+     * An exception will be thrown if there are scheduled updates/deletes or
+     * insertions for objects that are not "allowed" (see AbstractPersistenceManager::allowObject())
+     *
+     * @return void
+     * @throws PersistenceException
+     * @api
+     */
+    public function persistAllowedObjects(): void
     {
         if (!$this->entityManager->isOpen()) {
             $message = $this->throwableStorage->logThrowable(new PersistenceException('persistAll() skipped flushing data, the Doctrine EntityManager is closed. Check the logs for error messages.', 1643015626));
@@ -96,7 +123,7 @@ class PersistenceManager extends AbstractPersistenceManager
             return;
         }
 
-        $this->allowedObjects->checkNext($onlyAllowedObjects);
+        $this->allowedObjects->checkNext(true);
         $this->entityManager->flush();
         $this->emitAllObjectsPersisted();
     }
@@ -124,7 +151,11 @@ class PersistenceManager extends AbstractPersistenceManager
      */
     public function isNewObject($object): bool
     {
-        return ($this->entityManager->getUnitOfWork()->getEntityState($object, UnitOfWork::STATE_NEW) === UnitOfWork::STATE_NEW);
+        if (!$object instanceof PersistenceMagicInterface) {
+            return true;
+        }
+
+        return ($this->entityManager->getUnitOfWork()->getEntityState($object) === UnitOfWork::STATE_NEW);
     }
 
     /**

@@ -532,7 +532,7 @@ class SchemaValidator
                     // YYYY-MM-DDThh:mm:ssZ ISO8601
                     \DateTime::createFromFormat(\DateTime::ISO8601, $value);
                     $parseErrors = \DateTime::getLastErrors();
-                    if ($parseErrors['error_count'] > 0) {
+                    if ($parseErrors && $parseErrors['error_count'] > 0) {
                         $result->addError($this->createError('format=datetime', $value));
                     }
                     break;
@@ -540,7 +540,7 @@ class SchemaValidator
                     // YYYY-MM-DD
                     \DateTime::createFromFormat('Y-m-d', $value);
                     $parseErrors = \DateTime::getLastErrors();
-                    if ($parseErrors['error_count'] > 0) {
+                    if ($parseErrors && $parseErrors['error_count'] > 0) {
                         $result->addError($this->createError('format=date', $value));
                     }
                     break;
@@ -548,7 +548,7 @@ class SchemaValidator
                     // hh:mm:ss
                     \DateTime::createFromFormat('H:i:s', $value);
                     $parseErrors = \DateTime::getLastErrors();
-                    if ($parseErrors['error_count'] > 0) {
+                    if ($parseErrors && $parseErrors['error_count'] > 0) {
                         $result->addError($this->createError('format=time', $value));
                     }
                     break;

@@ -74,6 +74,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
         $this->hashService = $this->createMock(\Neos\Flow\Security\Cryptography\HashService::class);
         $this->inject($viewHelper, 'hashService', $this->hashService);
         $this->mvcPropertyMappingConfigurationService = $this->createMock(\Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService::class);
+        $this->mvcPropertyMappingConfigurationService->method('generateTrustedPropertiesToken')->willReturn('some-token');
         $this->inject($viewHelper, 'mvcPropertyMappingConfigurationService', $this->mvcPropertyMappingConfigurationService);
         $this->securityContext = $this->createMock(\Neos\Flow\Security\Context::class);
         $this->inject($viewHelper, 'securityContext', $this->securityContext);
@@ -206,7 +207,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
             '<input type="hidden" name="__referrer[@controller]" value="" />' . chr(10) .
             '<input type="hidden" name="__referrer[@action]" value="" />' . chr(10) .
             '<input type="hidden" name="__referrer[arguments]" value="" />' . chr(10) .
-            '<input type="hidden" name="__trustedProperties" value="" />' . chr(10) .
+            '<input type="hidden" name="__trustedProperties" value="some-token" />' . chr(10) .
             '</div>' . chr(10) .
             'formContent';
         $this->tagBuilder->expects(self::once())->method('setContent')->with($expectedResult);
@@ -265,7 +266,7 @@ class FormViewHelperTest extends ViewHelperBaseTestcase
             '<input type="hidden" name="__referrer[@controller]" value="" />' . chr(10) .
             '<input type="hidden" name="__referrer[@action]" value="" />' . chr(10) .
             '<input type="hidden" name="__referrer[arguments]" value="" />' . chr(10) .
-            '<input type="hidden" name="__trustedProperties" value="" />' . chr(10) .
+            '<input type="hidden" name="__trustedProperties" value="some-token" />' . chr(10) .
             '</div>' . chr(10) .
             'formContent';
         $this->tagBuilder->expects(self::once())->method('setContent')->with($expectedResult);

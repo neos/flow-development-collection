@@ -230,8 +230,8 @@ class FileSystemTarget implements TargetInterface
     /**
      * Handle missing data notification
      *
-     * @param CollectionInterface $collection
      * @param ResourceMetaDataInterface $resource
+     * @param CollectionInterface $collection
      */
     protected function handleMissingData(ResourceMetaDataInterface $resource, CollectionInterface $collection)
     {

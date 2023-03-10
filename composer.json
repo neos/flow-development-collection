@@ -7,9 +7,9 @@
     "type": "neos-package-collection",
     "require": {
         "php": "^8.0",
-        "psr/simple-cache": "^1.0",
-        "psr/cache": "~1.0",
-        "psr/log": "^1.0",
+        "psr/simple-cache": "^2.0 || ^3.0",
+        "psr/cache": "^2.0 || ^3.0",
+        "psr/log": "^2.0 || ^3.0",
         "ext-zlib": "*",
         "ext-SPL": "*",
         "ext-json": "*",
@@ -34,7 +34,7 @@
         "composer/composer": "^1.10.22 || ^2.0.13",
         "egulias/email-validator": "^2.1.17 || ^3.0",
         "typo3fluid/fluid": "^2.7.0",
-        "guzzlehttp/psr7": "^1.7, !=1.8.0",
+        "guzzlehttp/psr7": "^1.8.4 || ^2.1.1",
         "ext-mbstring": "*"
     },
     "replace": {
@@ -42,6 +42,8 @@
         "symfony/polyfill-php71": "*",
         "symfony/polyfill-php72": "*",
         "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
         "symfony/polyfill-mbstring": "*",
         "neos/cache": "self.version",
         "neos/eel": "self.version",
@@ -64,6 +66,7 @@
         "ext-memcache": "If you have a memcache server and want to use it for caching.",
         "ext-memcached": "Alternative, if you have a memcache server and want to use it for caching.",
         "ext-redis": "If you have a redis server and want to use it for caching.",
+        "ext-igbinary": "The igbinary extension is a replacement for the standard PHP serializer",
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
         "doctrine/data-fixtures": "To manage and execute the loading of data fixtures for the Doctrine ORM or ODM",
         "neos/party": "To make use of basic user handling",
@@ -120,9 +123,9 @@
         }
     },
     "require-dev": {
-        "mikey179/vfsstream": "^1.6.1",
+        "mikey179/vfsstream": "^1.6.10",
         "phpunit/phpunit": "~9.1",
-        "vimeo/psalm": "~4.9.3"
+        "vimeo/psalm": "~4.22.0"
     },
     "autoload-dev": {
         "psr-4": {

@@ -207,6 +207,36 @@ class SimpleFileBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function setDoesNotOverwriteIfLockNotAcquired()
+    {
+        $this->mockCacheFrontend->expects(self::any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
+
+        $data1 = uniqid('some data');
+        $data2 = uniqid('some other data');
+        $entryIdentifier = 'SimpleFileBackendTest';
+        $pathAndFilename = 'vfs://Temporary/Directory/Cache/Data/UnitTestCache/' . $entryIdentifier;
+
+        $simpleFileBackend = $this->getSimpleFileBackend();
+        $simpleFileBackend->set($entryIdentifier, $data1);
+
+        $file = fopen($pathAndFilename, 'rb');
+
+        flock($file, LOCK_EX);
+        try {
+            $simpleFileBackend->set($entryIdentifier, $data2);
+        } catch (Exception $e) {
+        }
+        flock($file, LOCK_UN);
+        fclose($file);
+
+        self::assertFileExists($pathAndFilename);
+        $retrievedData = file_get_contents($pathAndFilename);
+        self::assertEquals($data1, $retrievedData);
+    }
+
+    /**
+     * @test
+     */
     public function getReturnsContentOfTheCorrectCacheFile()
     {
         $this->mockCacheFrontend->expects(self::any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
@@ -220,6 +250,22 @@ class SimpleFileBackendTest extends BaseTestCase
         $simpleFileBackend->set($entryIdentifier, $data2);
 
         self::assertSame($data2, $simpleFileBackend->get($entryIdentifier));
+    }
+
+    /**
+     * @test
+     */
+    public function getSupportsEmptyData()
+    {
+        $this->mockCacheFrontend->expects(self::any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
+
+        $data = '';
+        $entryIdentifier = 'SimpleFileBackendTest';
+
+        $simpleFileBackend = $this->getSimpleFileBackend();
+        $simpleFileBackend->set($entryIdentifier, $data);
+
+        self::assertSame($data, $simpleFileBackend->get($entryIdentifier));
     }
 
     /**
@@ -476,5 +522,84 @@ class SimpleFileBackendTest extends BaseTestCase
             $i++;
         }
         self::assertEquals(100, $i);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationOverEmptyCacheYieldsNoData()
+    {
+        $backend = $this->getSimpleFileBackend();
+        $data = \iterator_to_array($backend);
+        self::assertEmpty($data);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationOverNotEmptyCacheYieldsData()
+    {
+        $backend = $this->getSimpleFileBackend();
+
+        $backend->set('first', 'firstData');
+        $backend->set('second', 'secondData');
+
+        $data = \iterator_to_array($backend);
+        self::assertEquals(
+            ['first' => 'firstData', 'second' => 'secondData'],
+            $data
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function iterationResetsWhenDataIsSet()
+    {
+        $backend = $this->getSimpleFileBackend();
+
+        $backend->set('first', 'firstData');
+        $backend->set('second', 'secondData');
+        \iterator_to_array($backend);
+
+        $backend->set('third', 'thirdData');
+
+        $data = \iterator_to_array($backend);
+        self::assertEquals(
+            ['first' => 'firstData', 'second' => 'secondData', 'third' => 'thirdData'],
+            $data
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function iterationResetsWhenDataGetsRemoved()
+    {
+        $backend = $this->getSimpleFileBackend();
+
+        $backend->set('first', 'firstData');
+        \iterator_to_array($backend);
+
+        $backend->remove('first');
+
+        $data = \iterator_to_array($backend);
+        self::assertEmpty($data);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationResetsWhenDataFlushed()
+    {
+        $backend = $this->getSimpleFileBackend();
+
+        $backend->set('first', 'firstData');
+        \iterator_to_array($backend);
+
+        $backend->flush();
+
+        $data = \iterator_to_array($backend);
+        self::assertEmpty($data);
     }
 }
