@@ -28,17 +28,26 @@ final class ActionUriSpecification
         private ?string $subpackageKey,
         private string $format,
         private array $routingArguments,
+        private array $queryParameters,
     ) {
     }
 
     public static function create(string $packageKey, string $controllerName, string $actionName): self
     {
-        return new self($actionName, $controllerName, $packageKey, null, '', []);
+        return new self($actionName, $controllerName, $packageKey, null, '', [], []);
     }
 
     public static function fromActionRequest(ActionRequest $request): self
     {
-        return new self($request->getControllerActionName(), $request->getControllerName(), $request->getControllerPackageKey(), $request->getControllerSubpackageKey(), $request->getFormat(), []);
+        return new self(
+            $request->getControllerActionName(),
+            $request->getControllerName(),
+            $request->getControllerPackageKey(),
+            $request->getControllerSubpackageKey(),
+            $request->getFormat(),
+            [],
+            []
+        );
     }
 
     /**
@@ -55,7 +64,8 @@ final class ActionUriSpecification
             $this->packageKey,
             $subpackageKey,
             $this->format,
-            $this->routingArguments
+            $this->routingArguments,
+            $this->queryParameters
         );
     }
 
@@ -70,7 +80,24 @@ final class ActionUriSpecification
             $this->packageKey,
             $this->subpackageKey,
             $this->format,
-            $routingArguments
+            $routingArguments,
+            $this->queryParameters
+        );
+    }
+
+    public function withQueryParameters(array $queryParameters): self
+    {
+        if ($queryParameters === $this->queryParameters) {
+            return $this;
+        }
+        return new self(
+            $this->actionName,
+            $this->controllerName,
+            $this->packageKey,
+            $this->subpackageKey,
+            $this->format,
+            $this->routingArguments,
+            $queryParameters
         );
     }
 
@@ -85,7 +112,8 @@ final class ActionUriSpecification
             $this->packageKey,
             $this->subpackageKey,
             $this->format,
-            $this->routingArguments
+            $this->routingArguments,
+            $this->queryParameters
         );
     }
 
@@ -101,7 +129,8 @@ final class ActionUriSpecification
             $this->packageKey,
             $this->subpackageKey,
             $format,
-            $this->routingArguments
+            $this->routingArguments,
+            $this->queryParameters
         );
     }
 
