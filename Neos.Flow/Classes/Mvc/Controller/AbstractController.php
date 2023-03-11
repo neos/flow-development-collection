@@ -25,7 +25,7 @@ use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\Routing\ActionUriBuilder;
 use Neos\Flow\Mvc\Routing\ActionUriBuilderFactory;
-use Neos\Flow\Mvc\Routing\Dto\Action;
+use Neos\Flow\Mvc\Routing\Dto\ActionUriSpecification;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Validation\ValidatorResolver;
@@ -290,14 +290,22 @@ abstract class AbstractController implements ControllerInterface
             $subpackageKey = null;
         }
 
-        $targetAction = Action::create($packageKey ?? $this->request->getControllerPackageKey(), $controllerName ?? $this->request->getControllerName(), $actionName)
+        $targetActionUriSpecification = ActionUriSpecification::create(
+            $packageKey ?? $this->request->getControllerPackageKey(),
+            $controllerName ?? $this->request->getControllerName(),
+            $actionName
+        )
             ->withFormat($format ?? $this->request->getFormat())
             ->withAdditionalArguments($arguments);
         if ($subpackageKey !== null) {
-            $targetAction = $targetAction->withSubpackageKey($subpackageKey);
+            $targetActionUriSpecification = $targetActionUriSpecification->withSubpackageKey($subpackageKey);
         }
 
-        $this->redirectToUri($this->actionUriBuilder->absoluteUriFor($targetAction), $delay, $statusCode);
+        $this->redirectToUri(
+            $this->actionUriBuilder->absoluteUriFor($targetActionUriSpecification),
+            $delay,
+            $statusCode
+        );
     }
 
     /**

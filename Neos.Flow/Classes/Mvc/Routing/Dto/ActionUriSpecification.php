@@ -18,7 +18,7 @@ use Neos\Flow\Mvc\ActionRequest;
 /**
  * @Flow\Proxy(false)
  */
-final class Action
+final class ActionUriSpecification
 {
     private function __construct(
         private string $actionName,
