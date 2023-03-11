@@ -50,13 +50,15 @@ final class ActionUriBuilder
      */
     public function uriFor(ActionUriSpecification $specification): UriInterface
     {
-        return $this->router->resolve(
-            new ResolveContext(
-                $this->baseUri,
-                $specification->toRouteValues(),
-                false,
-                ltrim($this->baseUri->getPath(), '\/'),
-                $this->routeParameters
+        return $specification->mergeQueryParametersIntoUri(
+            $this->router->resolve(
+                new ResolveContext(
+                    $this->baseUri,
+                    $specification->toRouteValues(),
+                    false,
+                    ltrim($this->baseUri->getPath(), '\/'),
+                    $this->routeParameters
+                )
             )
         );
     }
@@ -66,13 +68,15 @@ final class ActionUriBuilder
      */
     public function absoluteUriFor(ActionUriSpecification $specification): UriInterface
     {
-        return $this->router->resolve(
-            new ResolveContext(
-                $this->baseUri,
-                $specification->toRouteValues(),
-                true,
-                ltrim($this->baseUri->getPath(), '\/'),
-                $this->routeParameters
+        return $specification->mergeQueryParametersIntoUri(
+            $this->router->resolve(
+                new ResolveContext(
+                    $this->baseUri,
+                    $specification->toRouteValues(),
+                    true,
+                    ltrim($this->baseUri->getPath(), '\/'),
+                    $this->routeParameters
+                )
             )
         );
     }

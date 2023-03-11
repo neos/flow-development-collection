@@ -14,6 +14,8 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Utility\Arrays;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @Flow\Proxy(false)
@@ -134,6 +136,22 @@ final class ActionUriSpecification
         );
     }
 
+    /** @internal */
+    public function mergeQueryParametersIntoUri(UriInterface $uri): UriInterface
+    {
+        if ($this->queryParameters === []) {
+            return $uri;
+        }
+        if ($uri->getQuery() === "") {
+            $mergedQuery = $this->queryParameters;
+        } else {
+            parse_str($uri->getQuery(), $queryParametersFromUri);
+            $mergedQuery = Arrays::arrayMergeRecursiveOverrule($queryParametersFromUri, $this->queryParameters);
+        }
+        return $uri->withQuery(http_build_query($mergedQuery, '', '&'));
+    }
+
+    /** @internal */
     public function toRouteValues(): array
     {
         $routeValues = $this->routingArguments;
