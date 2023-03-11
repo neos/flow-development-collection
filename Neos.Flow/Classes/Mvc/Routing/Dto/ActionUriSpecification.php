@@ -24,7 +24,7 @@ final class ActionUriSpecification
         private string $actionName,
         private string $controllerName,
         private string $packageKey,
-        /** @deprecated with Flow 8.2 - The use of subpackage keys is discouraged and only supported for backwards compatibility */
+        /** @deprecated with Flow 8.3 - The use of subpackage keys is discouraged and only supported for backwards compatibility */
         private ?string $subpackageKey,
         private string $format,
         private array $routingArguments,
@@ -42,7 +42,7 @@ final class ActionUriSpecification
     }
 
     /**
-     * @deprecated with Flow 8.2 - The use of subpackage keys is discouraged and only supported for backwards compatibility
+     * @deprecated with Flow 8.3 - The use of subpackage keys is discouraged and only supported for backwards compatibility
      */
     public function withSubpackageKey(string $subpackageKey): self
     {

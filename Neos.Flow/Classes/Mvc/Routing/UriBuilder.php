@@ -23,7 +23,7 @@ use Neos\Utility\Arrays;
 /**
  * An URI Builder
  *
- * @deprecated with Flow 8.2 - use the new ActionUriBuilder instead
+ * @deprecated with Flow 8.3 - use the new ActionUriBuilder instead
  */
 class UriBuilder
 {
