@@ -79,20 +79,23 @@ class DefaultContextConfiguration
     /**
      * ["Foo.Bar" => Helper::class] becomes ["Foo" => ["Bar" => Helper::class]]
      */
-    public static function normalizeFirstLevelDotPathsIntoNestedConfig(array $config): array
+    public static function normalizeFirstLevelDotPathsIntoNestedConfig(array $configuration): array
     {
-        $result = [];
-        foreach ($config as $key => $value) {
-            $parts = is_string($key) ? explode('.', $key) : [$key];
-            $ref = &$result;
-            foreach ($parts as $part) {
-                if (!isset($ref[$part])) {
-                    $ref[$part] = [];
-                }
-                $ref = &$ref[$part];
+        foreach ($configuration as $path => $pathConfiguration) {
+            if (str_contains($path, ".") === false) {
+                continue;
             }
-            $ref = $value;
+            $currentPathBase = &$configuration;
+            $pathSegments = explode('.', $path);
+            unset($configuration[$path]);
+            foreach ($pathSegments as $pathSegment) {
+                if (!isset($currentPathBase[$pathSegment])) {
+                    $currentPathBase[$pathSegment] = [];
+                }
+                $currentPathBase = &$currentPathBase[$pathSegment];
+            }
+            $currentPathBase = $pathConfiguration;
         }
-        return $result;
+        return $configuration;
     }
 }
