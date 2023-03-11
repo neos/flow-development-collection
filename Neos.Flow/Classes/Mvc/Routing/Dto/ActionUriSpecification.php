@@ -27,7 +27,7 @@ final class ActionUriSpecification
         /** @deprecated with Flow 8.2 - The use of subpackage keys is discouraged and only supported for backwards compatibility */
         private ?string $subpackageKey,
         private string $format,
-        private array $additionalArguments,
+        private array $routingArguments,
     ) {
     }
 
@@ -49,15 +49,29 @@ final class ActionUriSpecification
         if ($subpackageKey === $this->subpackageKey) {
             return $this;
         }
-        return new self($this->actionName, $this->controllerName, $this->packageKey, $subpackageKey, $this->format, $this->additionalArguments);
+        return new self(
+            $this->actionName,
+            $this->controllerName,
+            $this->packageKey,
+            $subpackageKey,
+            $this->format,
+            $this->routingArguments
+        );
     }
 
-    public function withAdditionalArguments(array $additionalArguments): self
+    public function withRoutingArguments(array $routingArguments): self
     {
-        if ($additionalArguments === $this->additionalArguments) {
+        if ($routingArguments === $this->routingArguments) {
             return $this;
         }
-        return new self($this->actionName, $this->controllerName, $this->packageKey, $this->subpackageKey, $this->format, $additionalArguments);
+        return new self(
+            $this->actionName,
+            $this->controllerName,
+            $this->packageKey,
+            $this->subpackageKey,
+            $this->format,
+            $routingArguments
+        );
     }
 
     public function withActionName(string $actionName): self
@@ -65,7 +79,14 @@ final class ActionUriSpecification
         if ($actionName === $this->actionName) {
             return $this;
         }
-        return new self($actionName, $this->controllerName, $this->packageKey, $this->subpackageKey, $this->format, $this->additionalArguments);
+        return new self(
+            $actionName,
+            $this->controllerName,
+            $this->packageKey,
+            $this->subpackageKey,
+            $this->format,
+            $this->routingArguments
+        );
     }
 
 
@@ -74,12 +95,19 @@ final class ActionUriSpecification
         if ($format === $this->format) {
             return $this;
         }
-        return new self($this->actionName, $this->controllerName, $this->packageKey, $this->subpackageKey, $format, $this->additionalArguments);
+        return new self(
+            $this->actionName,
+            $this->controllerName,
+            $this->packageKey,
+            $this->subpackageKey,
+            $format,
+            $this->routingArguments
+        );
     }
 
     public function toRouteValues(): array
     {
-        $routeValues = $this->additionalArguments;
+        $routeValues = $this->routingArguments;
         $routeValues['@action'] = strtolower($this->actionName);
         $routeValues['@controller'] = strtolower($this->controllerName);
         $routeValues['@package'] = strtolower($this->packageKey);

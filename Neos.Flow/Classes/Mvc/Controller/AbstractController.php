@@ -296,7 +296,7 @@ abstract class AbstractController implements ControllerInterface
             $actionName
         )
             ->withFormat($format ?? $this->request->getFormat())
-            ->withAdditionalArguments($arguments);
+            ->withRoutingArguments($arguments);
         if ($subpackageKey !== null) {
             $targetActionUriSpecification = $targetActionUriSpecification->withSubpackageKey($subpackageKey);
         }

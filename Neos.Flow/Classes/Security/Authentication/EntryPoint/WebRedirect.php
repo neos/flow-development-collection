@@ -80,7 +80,7 @@ class WebRedirect extends AbstractEntryPoint
         $packageKey = $this->extractRouteValue($routeValues, '@package');
         $uriBuilder = $this->actionUriBuilderFactory->createFromHttpRequest($request);
         return (string)$uriBuilder->absoluteUriFor(
-            ActionUriSpecification::create($packageKey, $controllerName, $actionName)->withAdditionalArguments(
+            ActionUriSpecification::create($packageKey, $controllerName, $actionName)->withRoutingArguments(
                 $routeValues
             )
         );
