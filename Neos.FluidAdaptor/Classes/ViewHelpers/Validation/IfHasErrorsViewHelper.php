@@ -42,7 +42,6 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  */
 class IfHasErrorsViewHelper extends AbstractConditionViewHelper
 {
-
     /**
      * @return void
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception

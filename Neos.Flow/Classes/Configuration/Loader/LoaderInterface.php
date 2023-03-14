@@ -20,7 +20,6 @@ use Neos\Flow\Core\ApplicationContext;
  */
 interface LoaderInterface
 {
-
     /**
      * Read configuration resources and return the final configuration array for the given configurationType
      *

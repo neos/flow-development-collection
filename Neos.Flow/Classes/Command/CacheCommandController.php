@@ -146,7 +146,6 @@ class CacheCommandController extends CommandController
      */
     public function flushCommand(bool $force = false)
     {
-
         // Internal note: the $force option is evaluated early in the Flow
         // bootstrap in order to reliably flush the temporary data before any
         // other code can cause fatal errors.
