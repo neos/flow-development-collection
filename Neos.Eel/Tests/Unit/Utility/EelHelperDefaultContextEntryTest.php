@@ -20,7 +20,7 @@ use Neos\Flow\Tests\UnitTestCase;
 class EelHelperDefaultContextEntryTest extends UnitTestCase
 {
     /** @test */
-    public function lol()
+    public function eelHelperDefaultContextEntry()
     {
         $ctx = new EelHelperDefaultContextEntry(
             ["Example"],
@@ -30,7 +30,7 @@ class EelHelperDefaultContextEntryTest extends UnitTestCase
 
         self::assertEquals(["Example"], $ctx->paths);
         self::assertEquals(new ExampleHelper(), $ctx->toContextValue());
-        self::assertEquals(["Example.*"], $ctx->getAllowedMethods());
+        self::assertEquals([["Example", "*"]], $ctx->getAllowedMethods());
     }
 
     /** @test */

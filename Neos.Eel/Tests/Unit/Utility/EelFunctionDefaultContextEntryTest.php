@@ -33,7 +33,7 @@ class EelFunctionDefaultContextEntryTest extends UnitTestCase
         self::assertEquals(["exampleFunction"], $ctx->paths);
         self::assertInstanceOf(\Closure::class, $contextValue);
         self::assertEquals(json_encode(['exampleStaticFunction' => ['arg1', 2]]), $contextValue('arg1', 2));
-        self::assertEquals(["exampleFunction"], $ctx->getAllowedMethods());
+        self::assertEquals([["exampleFunction"]], $ctx->getAllowedMethods());
     }
 
     /** @test */

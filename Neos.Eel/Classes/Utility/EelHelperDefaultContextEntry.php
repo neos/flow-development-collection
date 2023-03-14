@@ -67,20 +67,12 @@ class EelHelperDefaultContextEntry
 
     public static function fromConfiguration(array $paths, array $configuration): self
     {
-        assert($configuration["className"]);
-        $configuration["allowedMethods"] ??= [];
-        if (\count($configuration) !== 2) {
-            throw new \DomainException(sprintf("Cannot use namespace '%s' as helper with nested helpers.", join(".", $paths)));
-        }
-
-        $allowedMethods = $configuration["allowedMethods"];
-        if (is_string($allowedMethods)) {
-            $allowedMethods = [$allowedMethods];
-        }
         return new self(
             $paths,
             $configuration["className"],
-            $allowedMethods
+            is_array($configuration["allowedMethods"])
+                ? $configuration["allowedMethods"]
+                : [$configuration["allowedMethods"]]
         );
     }
 
@@ -92,7 +84,7 @@ class EelHelperDefaultContextEntry
     public function getAllowedMethods(): array
     {
         return array_map(
-            fn(string $allowedMethod) => join(".", [...$this->paths, $allowedMethod]),
+            fn(string $allowedMethod) => [...$this->paths, $allowedMethod],
             $this->allowedMethods
         );
     }

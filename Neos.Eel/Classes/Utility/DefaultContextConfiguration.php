@@ -14,6 +14,7 @@ namespace Neos\Eel\Utility;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\Arrays;
 
 /**
  * @internal
@@ -26,10 +27,23 @@ class DefaultContextConfiguration
     ) {
     }
 
+    /**
+     * @param array{string: class-string|string|array{"className": class-string, "allowedMethods"?: string}} $configuration
+     */
     public static function fromConfiguration(array $configuration)
     {
         unset($configuration["__internalLegacyConfig"]);
         return new self(self::normalizeFirstLevelDotPathsIntoNestedConfig($configuration));
+    }
+
+    public function union(DefaultContextConfiguration $other): self
+    {
+        return new self(
+            Arrays::arrayMergeRecursiveOverrule(
+                $this->configuration,
+                $other->configuration
+            )
+        );
     }
 
     public function getConfiguration(): array
@@ -53,6 +67,12 @@ class DefaultContextConfiguration
     {
         switch (true) {
             case is_array($configuration) && isset($configuration["className"]):
+                $configuration["allowedMethods"] ??= [];
+                if (\count($configuration) !== 2) {
+                    throw new \DomainException(
+                        sprintf("Cannot use namespace '%s' as helper with nested helpers.", join(".", $paths))
+                    );
+                }
                 yield EelHelperDefaultContextEntry::fromConfiguration(
                     $paths,
                     $configuration

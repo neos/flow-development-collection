@@ -51,6 +51,6 @@ class EelFunctionDefaultContextEntry
 
     public function getAllowedMethods(): array
     {
-        return [join(".", $this->paths)];
+        return [$this->paths];
     }
 }

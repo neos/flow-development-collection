@@ -12,7 +12,6 @@ namespace Neos\Eel;
  */
 
 use Neos\Eel\Utility\DefaultContextConfiguration;
-use Neos\Utility\Arrays;
 
 /**
  * Utility to reduce boilerplate code needed to set default context variables and evaluate a string that possibly is an EEL expression.
@@ -79,30 +78,14 @@ class Utility
      * Create default ProtectedContext from configuration
      * For example Eel helpers are made available by this.
      *
-     * @param array{string: class-string|string|array{"className": class-string, "allowedMethods"?: string}} $rawConfiguration
+     * @param array{string: class-string|string|array{"className": class-string, "allowedMethods"?: string}} $configuration
      * @return ProtectedContext with an array of default context variable objects.
-     * @throws Exception
      */
-    public static function createDefaultProtectedContextFromConfiguration(array $rawConfiguration): ProtectedContext
+    public static function createDefaultProtectedContextFromConfiguration(array $configuration): ProtectedContext
     {
-        $allowed = [];
-        $defaultContextVariables = [];
-
-        $defaultContextConfiguration = DefaultContextConfiguration::fromConfiguration($rawConfiguration);
-
-        foreach ($defaultContextConfiguration->toDefaultContextEntries() as $defaultContextEntry) {
-            $allowed = [...$allowed, ...$defaultContextEntry->getAllowedMethods()];
-            $defaultContextVariables = Arrays::setValueByPath(
-                $defaultContextVariables,
-                $defaultContextEntry->paths,
-                $defaultContextEntry->toContextValue()
-            );
-        }
-
-        $defaultContext = new ProtectedContext($defaultContextVariables);
-        $defaultContext->allow($allowed);
-
-        return $defaultContext;
+        return ProtectedContext::fromDefaultContextConfiguration(
+            DefaultContextConfiguration::fromConfiguration($configuration)
+        );
     }
 
     /**
