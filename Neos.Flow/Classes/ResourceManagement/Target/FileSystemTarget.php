@@ -435,7 +435,7 @@ class FileSystemTarget implements TargetInterface
             case 'excludedExtensions':
                 $this->$key = $value;
                 break;
-            // Only for b/c - remove with next major
+                // Only for b/c - remove with next major
             case 'extensionBlacklist':
                 $this->excludedExtensions = $value;
                 break;

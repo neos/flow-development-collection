@@ -78,21 +78,21 @@ class CacheControlDirectives
         switch ($name) {
             case 'public':
                 $this->cacheDirectives['visibility'] = 'public';
-            break;
+                break;
             case 'private':
             case 'no-cache':
                 $this->cacheDirectives['visibility'] = $name . (!empty($value) ? '="' . $value . '"' : '');
-            break;
+                break;
             case 'no-store':
             case 'no-transform':
             case 'must-revalidate':
             case 'proxy-revalidate':
                 $this->cacheDirectives[$name] = $name;
-            break;
+                break;
             case 'max-age':
             case 's-maxage':
                 $this->cacheDirectives[$name] = $name . '=' . $value;
-            break;
+                break;
         }
     }
 
@@ -109,7 +109,7 @@ class CacheControlDirectives
             case 'private':
             case 'no-cache':
                 $this->cacheDirectives['visibility'] = '';
-            break;
+                break;
             case 'no-store':
             case 'max-age':
             case 's-maxage':
@@ -117,7 +117,7 @@ class CacheControlDirectives
             case 'must-revalidate':
             case 'proxy-revalidate':
                 $this->cacheDirectives[$name] = '';
-            break;
+                break;
         }
     }
 
@@ -139,7 +139,7 @@ class CacheControlDirectives
         switch ($name) {
             case 'public':
                 $value = ($this->cacheDirectives['visibility'] === 'public' ? true : null);
-            break;
+                break;
             case 'private':
             case 'no-cache':
                 preg_match('/^(' . $name . ')(?:="([^"]+)")?$/', $this->cacheDirectives['visibility'], $matches);
@@ -148,13 +148,13 @@ class CacheControlDirectives
                 } else {
                     $value = ($matches[2] ?? true);
                 }
-            break;
+                break;
             case 'no-store':
             case 'no-transform':
             case 'must-revalidate':
             case 'proxy-revalidate':
                 $value = ($this->cacheDirectives[$name] !== '' ? true : null);
-            break;
+                break;
             case 'max-age':
             case 's-maxage':
                 preg_match('/^(' . $name . ')=(.+)$/', $this->cacheDirectives[$name], $matches);
@@ -163,7 +163,7 @@ class CacheControlDirectives
                 } else {
                     $value = (isset($matches[2]) ? (int)$matches[2] : true);
                 }
-            break;
+                break;
         }
 
         return $value;
