@@ -59,22 +59,22 @@ class RestController extends ActionController
                 case 'HEAD':
                 case 'GET':
                     $actionName = ($this->request->hasArgument($this->resourceArgumentName)) ? 'show' : 'list';
-                break;
+                    break;
                 case 'POST':
                     $actionName = 'create';
-                break;
+                    break;
                 case 'PUT':
                     if (!$this->request->hasArgument($this->resourceArgumentName)) {
                         $this->throwStatus(400, null, 'No resource specified');
                     }
                     $actionName = 'update';
-                break;
+                    break;
                 case 'DELETE':
                     if (!$this->request->hasArgument($this->resourceArgumentName)) {
                         $this->throwStatus(400, null, 'No resource specified');
                     }
                     $actionName = 'delete';
-                break;
+                    break;
             }
             if ($this->request->getControllerActionName() !== $actionName) {
                 // Clone the request, because it should not be mutated to prevent unexpected routing behavior

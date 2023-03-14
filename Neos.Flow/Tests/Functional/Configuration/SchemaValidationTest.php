@@ -25,7 +25,6 @@ use Symfony\Component\Yaml\Yaml;
  */
 class SchemaValidationTest extends FunctionalTestCase
 {
-
     /**
      * @var array<string>
      */

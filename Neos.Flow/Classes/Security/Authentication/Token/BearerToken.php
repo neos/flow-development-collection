@@ -28,7 +28,6 @@ use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
  */
 class BearerToken extends AbstractToken implements SessionlessTokenInterface
 {
-
     /**
      * The password credentials
      * @var array

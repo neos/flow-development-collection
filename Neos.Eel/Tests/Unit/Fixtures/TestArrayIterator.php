@@ -14,7 +14,6 @@ namespace Neos\Eel\Tests\Unit\Fixtures;
 
 class TestArrayIterator implements \Iterator
 {
-
     /**
      * @var array
      */
