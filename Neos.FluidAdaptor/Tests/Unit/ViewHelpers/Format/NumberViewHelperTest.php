@@ -19,7 +19,6 @@ use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
  */
 class NumberViewHelperTest extends ViewHelperBaseTestcase
 {
-
     /**
      * @var \Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper
      */

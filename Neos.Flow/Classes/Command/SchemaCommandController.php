@@ -28,7 +28,6 @@ use Neos\Utility\Files;
  */
 class SchemaCommandController extends CommandController
 {
-
     /**
      * @Flow\Inject(lazy = false)
      * @var SchemaValidator
