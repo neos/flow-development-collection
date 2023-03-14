@@ -28,7 +28,7 @@ class EelHelperDefaultContextEntryTest extends UnitTestCase
             ["*"]
         );
 
-        self::assertEquals(["Example"], $ctx->paths);
+        self::assertEquals(["Example"], $ctx->getPath());
         self::assertEquals(new ExampleHelper(), $ctx->toContextValue());
         self::assertEquals([["Example", "*"]], $ctx->getAllowedMethods());
     }

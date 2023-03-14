@@ -52,7 +52,7 @@ class DefaultContextConfiguration
     }
 
     /**
-     * @return \Iterator<EelHelperDefaultContextEntry|EelFunctionDefaultContextEntry>
+     * @return \Iterator<DefaultContextEntry>|DefaultContextEntry[]
      */
     public function toDefaultContextEntries(): \Iterator
     {
@@ -60,39 +60,37 @@ class DefaultContextConfiguration
     }
 
     /**s
-     * @param string[] $paths
-     * @return \Iterator<EelHelperDefaultContextEntry|EelFunctionDefaultContextEntry>
+     * @param string[] $path
+     * @return \Iterator<DefaultContextEntry>|DefaultContextEntry[]
      */
-    private static function createDefaultContextEntries(array $paths, array|string $configuration): \Iterator
+    private static function createDefaultContextEntries(array $path, array|string $configuration): \Iterator
     {
         switch (true) {
             case is_array($configuration) && isset($configuration["className"]):
                 $configuration["allowedMethods"] ??= [];
                 if (\count($configuration) !== 2) {
                     throw new \DomainException(
-                        sprintf("Cannot use namespace '%s' as helper with nested helpers.", join(".", $paths))
+                        sprintf("Cannot use namespace '%s' as helper with nested helpers.", join(".", $path))
                     );
                 }
                 yield EelHelperDefaultContextEntry::fromConfiguration(
-                    $paths,
+                    $path,
                     $configuration
                 );
                 break;
 
             case is_array($configuration):
                 foreach ($configuration as $subPath => $value) {
-                    yield from self::createDefaultContextEntries([...$paths, $subPath], $value);
+                    yield from self::createDefaultContextEntries([...$path, $subPath], $value);
                 }
                 break;
 
             case str_contains($configuration, '::'):
-                yield new EelFunctionDefaultContextEntry($paths, $configuration);
+                yield new EelFunctionDefaultContextEntry($path, $configuration);
                 break;
 
             default:
-                yield new EelHelperDefaultContextEntry(
-                    $paths, $configuration, []
-                );
+                yield new EelHelperDefaultContextEntry($path, $configuration, []);
         }
     }
 

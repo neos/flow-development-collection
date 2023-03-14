@@ -71,7 +71,6 @@ class UtilityTest extends UnitTestCase
         self::assertEquals(json_encode(['exampleStaticFunction' => ['arg1', 2]]), $defaultContext['example']('arg1', 2));
     }
 
-
     public function defaultContextConfigurationProvider(): iterable
     {
 

@@ -35,7 +35,7 @@ class Utility
      * For example Eel helpers are made available by this.
      *
      * @param array $configuration An one dimensional associative array of context variable paths mapping to object names
-     * @return array Array with default context variable objects.#
+     * @return array Array with default context variable objects.
      * @deprecated with Neos8.3 use {@see createDefaultProtectedContextFromConfiguration} instead
      */
     public static function getDefaultContextVariables(array $configuration)
@@ -50,7 +50,8 @@ class Utility
         $defaultContextVariables = [];
         foreach ($flattenedLegacyConfig as $variableName => $objectType) {
             if (is_array($objectType)) {
-                // silent pass new syntax see createDefaultProtectedContextFromConfiguration
+                // silently pass new structure where $objectType is an array with "className" as key or where $objectType might hold further nested helpers as array
+                // see DefaultContextConfiguration::fromConfiguration($configuration)
                 continue;
             }
             $currentPathBase = &$defaultContextVariables;
@@ -116,9 +117,12 @@ class Utility
         );
 
         if (is_array($contextVariables)) {
-            // legacy, when $contextVariables is array
+            // legacy
             // allow functions on the uppermost context level to allow calling them without
             // implementing ProtectedContextAwareInterface which is impossible for functions
+            // this legacy case will happen, if one used the legacy getDefaultContextVariables() method
+            // instead of $defaultContextConfiguration and passed the $contextVariables as array,
+            // which only returns a simple array without information about allowed methods
             foreach ($contextVariables as $key => $value) {
                 if (is_callable($value)) {
                     $context->allow($key);

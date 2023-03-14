@@ -12,11 +12,8 @@ namespace Neos\Eel\Tests\Unit\Utility;
  * source code.
  */
 
-use Neos\Eel\Tests\Unit\Utility\Fixtures\ExampleHelper;
-use Neos\Eel\Tests\Unit\Utility\Fixtures\ExampleProtectedContextAwareHelper;
 use Neos\Eel\Tests\Unit\Utility\Fixtures\ExampleStaticFactoryFunction;
 use Neos\Eel\Utility\EelFunctionDefaultContextEntry;
-use Neos\Eel\Utility\EelHelperDefaultContextEntry;
 use Neos\Flow\Tests\UnitTestCase;
 
 class EelFunctionDefaultContextEntryTest extends UnitTestCase
@@ -30,7 +27,7 @@ class EelFunctionDefaultContextEntryTest extends UnitTestCase
         );
 
         $contextValue = $ctx->toContextValue();
-        self::assertEquals(["exampleFunction"], $ctx->paths);
+        self::assertEquals(["exampleFunction"], $ctx->getPath());
         self::assertInstanceOf(\Closure::class, $contextValue);
         self::assertEquals(json_encode(['exampleStaticFunction' => ['arg1', 2]]), $contextValue('arg1', 2));
         self::assertEquals([["exampleFunction"]], $ctx->getAllowedMethods());

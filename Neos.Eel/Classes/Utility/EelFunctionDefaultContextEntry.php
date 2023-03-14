@@ -19,24 +19,22 @@ use Neos\Flow\Annotations as Flow;
  * @internal
  * @Flow\Proxy(false)
  */
-class EelFunctionDefaultContextEntry
+class EelFunctionDefaultContextEntry implements DefaultContextEntry
 {
     public function __construct(
-        /** @psalm-readonly */
-        public array $paths,
-        /** @psalm-readonly */
+        private array $path,
         private string $classNameAndStaticFactory
     ) {
         assert(is_callable($classNameAndStaticFactory));
         // Allow functions on the uppermost context level to allow calling them without
         // implementing ProtectedContextAwareInterface which is impossible for functions
-        if (\count($paths) !== 1) {
+        if (\count($path) !== 1) {
             throw new \DomainException(
-                sprintf('Function helpers are only allowed on root level, "%s" was given', join(".", $paths)),
+                sprintf('Function helpers are only allowed on root level, "%s" was given', join(".", $path)),
                 1557911015
             );
         }
-        foreach ($paths as $path) {
+        foreach ($path as $path) {
             // currently check is not in use but in case we remove the count above wed need it
             if (str_contains($path, ".")) {
                 throw new \DomainException("Path should not contain dots", 1678365547490);
@@ -51,6 +49,11 @@ class EelFunctionDefaultContextEntry
 
     public function getAllowedMethods(): array
     {
-        return [$this->paths];
+        return [$this->path];
+    }
+
+    public function getPath(): array
+    {
+        return $this->path;
     }
 }

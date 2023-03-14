@@ -20,19 +20,16 @@ use Neos\Flow\Annotations as Flow;
  * @internal
  * @Flow\Proxy(false)
  */
-class EelHelperDefaultContextEntry
+class EelHelperDefaultContextEntry implements DefaultContextEntry
 {
     /**
-     * @param array $paths like ["Vendor", "Array"] or just ["Array"]
+     * @param array $path like ["Vendor", "Array"] or just ["Array"]
      * @param class-string $className the EEL helper className
      * @param array $allowedMethods configuration which methods of the Helper are allowed, if ProtectedContextAwareInterface is not used like "*" or "join"
      */
     public function __construct(
-        /** @psalm-readonly */
-        public array $paths,
-        /** @psalm-readonly */
+        private array $path,
         private string $className,
-        /** @psalm-readonly */
         private array $allowedMethods
     ) {
         $isHelperContextAware = array_search(ProtectedContextAwareInterface::class, class_implements($className), true);
@@ -48,7 +45,7 @@ class EelHelperDefaultContextEntry
                 1678353436756
             );
         }
-        foreach ($paths as $path) {
+        foreach ($path as $path) {
             if (str_contains($path, ".")) {
                 throw new \DomainException("Path should not contain dots", 1678365574434);
             }
@@ -65,10 +62,10 @@ class EelHelperDefaultContextEntry
         }
     }
 
-    public static function fromConfiguration(array $paths, array $configuration): self
+    public static function fromConfiguration(array $path, array $configuration): self
     {
         return new self(
-            $paths,
+            $path,
             $configuration["className"],
             is_array($configuration["allowedMethods"])
                 ? $configuration["allowedMethods"]
@@ -84,8 +81,13 @@ class EelHelperDefaultContextEntry
     public function getAllowedMethods(): array
     {
         return array_map(
-            fn(string $allowedMethod) => [...$this->paths, $allowedMethod],
+            fn(string $allowedMethod) => [...$this->path, $allowedMethod],
             $this->allowedMethods
         );
+    }
+
+    public function getPath(): array
+    {
+        return $this->path;
     }
 }

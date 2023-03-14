@@ -36,7 +36,7 @@ class ProtectedContext extends Context
             $allowedMethods = [...$allowedMethods, ...$defaultContextEntry->getAllowedMethods()];
             $defaultContextVariables = Arrays::setValueByPath(
                 $defaultContextVariables,
-                $defaultContextEntry->paths,
+                $defaultContextEntry->getPath(),
                 $defaultContextEntry->toContextValue()
             );
         }
