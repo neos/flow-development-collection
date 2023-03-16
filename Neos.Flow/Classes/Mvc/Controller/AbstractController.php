@@ -170,7 +170,7 @@ abstract class AbstractController implements ControllerInterface
                 break;
             default:
                 $message = new Error\Message($messageBody, $messageCode, $messageArguments, $messageTitle);
-            break;
+                break;
         }
         $this->controllerContext->getFlashMessageContainer()->addMessage($message);
     }

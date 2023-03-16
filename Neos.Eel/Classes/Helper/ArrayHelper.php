@@ -27,7 +27,6 @@ use Neos\Eel\ProtectedContextAwareInterface;
  */
 class ArrayHelper implements ProtectedContextAwareInterface
 {
-
     /**
      * Concatenate arrays or values to a new array
      *

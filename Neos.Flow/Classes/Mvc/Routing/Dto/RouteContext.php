@@ -23,7 +23,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 final class RouteContext implements CacheAwareInterface
 {
-
     /**
      * The current HTTP request
      *

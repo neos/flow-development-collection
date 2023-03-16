@@ -20,7 +20,6 @@ use Neos\Flow\Mvc\Routing\DynamicRoutePart;
  */
 class MockRoutePartHandler extends DynamicRoutePart
 {
-
     /**
      * @var \Closure|null
      */
