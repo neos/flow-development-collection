@@ -503,13 +503,13 @@ class ObjectManager implements ObjectManagerInterface
             switch ($argumentInformation['t']) {
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING:
                     $factoryMethodArguments[$index] = $this->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $argumentInformation['v']);
-                break;
+                    break;
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                     $factoryMethodArguments[$index] = $argumentInformation['v'];
-                break;
+                    break;
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_OBJECT:
                     $factoryMethodArguments[$index] = $this->get($argumentInformation['v']);
-                break;
+                    break;
             }
         }
 

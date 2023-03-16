@@ -66,7 +66,6 @@ class ArrayConverterTest extends UnitTestCase
      */
     public function canConvertFromStringToArray($source, $expectedResult, $mappingConfiguration)
     {
-
         // Create a map of arguments to return values.
         $configurationValueMap = [];
         foreach ($mappingConfiguration as $setting => $value) {

@@ -102,7 +102,6 @@ class FileBackendTest extends BaseTestCase
      */
     public function aDedicatedCacheDirectoryIsUsedForCodeCaches()
     {
-
         // We need to create the directory here because vfs doesn't support touch() which is used by
         // createDirectoryRecursively() in the setCache method.
         mkdir('vfs://Foo/Cache');
