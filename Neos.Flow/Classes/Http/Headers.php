@@ -119,16 +119,16 @@ class Headers implements \Iterator
                 // Ensure Host is the first header.
                 // See: http://tools.ietf.org/html/rfc7230#section-5.4
                 $this->fields = ['Host' => $values] + $this->fields;
-            break;
+                break;
             case 'Cache-Control':
                 $this->setCacheControlDirectivesFromRawHeader(implode(', ', $values));
-            break;
+                break;
             case 'Cookie':
                 if (count($values) !== 1) {
                     throw new \InvalidArgumentException('The "Cookie" header must be unique and thus only one field value may be specified.', 1345127727);
                 }
                 $this->setCookiesFromRawHeader(array_pop($values));
-            break;
+                break;
             default:
                 if ($replaceExistingHeader === true || !isset($this->fields[$name])) {
                     $this->fields[$name] = $values;
@@ -341,21 +341,21 @@ class Headers implements \Iterator
         switch ($name) {
             case 'public':
                 $this->cacheDirectives['visibility'] = 'public';
-            break;
+                break;
             case 'private':
             case 'no-cache':
                 $this->cacheDirectives['visibility'] = $name . (!empty($value) ? '="' . $value . '"' : '');
-            break;
+                break;
             case 'no-store':
             case 'no-transform':
             case 'must-revalidate':
             case 'proxy-revalidate':
                 $this->cacheDirectives[$name] = $name;
-            break;
+                break;
             case 'max-age':
             case 's-maxage':
                 $this->cacheDirectives[$name] = $name . '=' . $value;
-            break;
+                break;
         }
     }
 
@@ -372,7 +372,7 @@ class Headers implements \Iterator
             case 'private':
             case 'no-cache':
                 $this->cacheDirectives['visibility'] = '';
-            break;
+                break;
             case 'no-store':
             case 'max-age':
             case 's-maxage':
@@ -380,7 +380,7 @@ class Headers implements \Iterator
             case 'must-revalidate':
             case 'proxy-revalidate':
                 $this->cacheDirectives[$name] = '';
-            break;
+                break;
         }
     }
 
@@ -402,7 +402,7 @@ class Headers implements \Iterator
         switch ($name) {
             case 'public':
                 $value = ($this->cacheDirectives['visibility'] === 'public' ? true : null);
-            break;
+                break;
             case 'private':
             case 'no-cache':
                 preg_match('/^(' . $name . ')(?:="([^"]+)")?$/', $this->cacheDirectives['visibility'], $matches);
@@ -411,13 +411,13 @@ class Headers implements \Iterator
                 } else {
                     $value = (isset($matches[2]) ? $matches[2] : true);
                 }
-            break;
+                break;
             case 'no-store':
             case 'no-transform':
             case 'must-revalidate':
             case 'proxy-revalidate':
                 $value = ($this->cacheDirectives[$name] !== '' ? true : null);
-            break;
+                break;
             case 'max-age':
             case 's-maxage':
                 preg_match('/^(' . $name . ')=(.+)$/', $this->cacheDirectives[$name], $matches);
@@ -426,7 +426,7 @@ class Headers implements \Iterator
                 } else {
                     $value = (isset($matches[2]) ? (int)$matches[2] : true);
                 }
-            break;
+                break;
         }
 
         return $value;

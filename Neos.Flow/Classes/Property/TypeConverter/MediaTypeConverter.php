@@ -90,7 +90,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
                 if ($result === null) {
                     return [];
                 }
-            break;
+                break;
             case 'xml':
                 $entityLoaderValue = libxml_disable_entity_loader(true);
                 try {
@@ -101,11 +101,11 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
                     return [];
                 }
                 $result = Arrays::convertObjectToArray($xmlElement);
-            break;
+                break;
             case 'x-www-form-urlencoded':
             default:
                 parse_str($requestBody, $result);
-            break;
+                break;
         }
         return $result;
     }

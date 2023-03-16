@@ -231,32 +231,32 @@ class Session
                 if ($currentValue === (int) $previousValue) {
                     return false;
                 }
-            break;
+                break;
             case 'float':
                 if ($currentValue === (float) $previousValue) {
                     return false;
                 }
-            break;
+                break;
             case 'boolean':
                 if ($currentValue === (boolean) $previousValue) {
                     return false;
                 }
-            break;
+                break;
             case 'string':
                 if ($currentValue === (string) $previousValue) {
                     return false;
                 }
-            break;
+                break;
             case 'DateTime':
                 if ($currentValue instanceof \DateTimeInterface && $currentValue->getTimestamp() === (int) $previousValue) {
                     return false;
                 }
-            break;
+                break;
             default:
                 if (is_object($currentValue) && $this->getIdentifierByObject($currentValue) === $previousValue['identifier']) {
                     return false;
                 }
-            break;
+                break;
         }
         return true;
     }

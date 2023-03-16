@@ -27,7 +27,6 @@ use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
  */
 class FlashMessageService
 {
-
     /**
      * @Flow\Inject
      * @var ObjectManagerInterface

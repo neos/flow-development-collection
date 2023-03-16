@@ -69,7 +69,7 @@ class FileSystemStorage implements StorageInterface
             switch ($key) {
                 case 'path':
                     $this->$key = $value;
-                break;
+                    break;
                 default:
                     if ($value !== null) {
                         throw new Exception(sprintf('An unknown option "%s" was specified in the configuration of a resource FileSystemStorage. Please check your settings.', $key), 1361533187);

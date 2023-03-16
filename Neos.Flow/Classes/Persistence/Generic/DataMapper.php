@@ -170,35 +170,35 @@ class DataMapper
                 switch ($propertyData['type']) {
                     case 'integer':
                         $propertyValue = (int) $propertyData['value'];
-                    break;
+                        break;
                     case 'float':
                         $propertyValue = (float) $propertyData['value'];
-                    break;
+                        break;
                     case 'boolean':
                         $propertyValue = (boolean) $propertyData['value'];
-                    break;
+                        break;
                     case 'string':
                         $propertyValue = (string) $propertyData['value'];
-                    break;
+                        break;
                     case 'array':
                         $propertyValue = $this->mapArray($propertyData['value']);
-                    break;
+                        break;
                     case 'Doctrine\Common\Collections\Collection':
                     case 'Doctrine\Common\Collections\ArrayCollection':
                         $propertyValue = new ArrayCollection($this->mapArray($propertyData['value']));
-                    break;
+                        break;
                     case 'SplObjectStorage':
                         $propertyValue = $this->mapSplObjectStorage($propertyData['value'], $classSchema->isPropertyLazy($propertyName));
-                    break;
+                        break;
                     case 'DateTime':
                         $propertyValue = $this->mapDateTime($propertyData['value']);
-                    break;
+                        break;
                     default:
                         if ($propertyData['value'] === false) {
                             throw new UnknownObjectException('An expected object was not found by the backend. It was expected for ' . $objectData['classname'] . '::' . $propertyName, 1289509867);
                         }
                         $propertyValue = $this->mapToObject($propertyData['value']);
-                    break;
+                        break;
                 }
             } else {
                 switch ($propertyData['type']) {
@@ -206,14 +206,14 @@ class DataMapper
                         break;
                     case 'array':
                         $propertyValue = $this->mapArray(null);
-                    break;
+                        break;
                     case Collection::class:
                     case ArrayCollection::class:
                         $propertyValue = new ArrayCollection();
-                    break;
+                        break;
                     case 'SplObjectStorage':
                         $propertyValue = $this->mapSplObjectStorage(null);
-                    break;
+                        break;
                 }
             }
 
@@ -261,28 +261,28 @@ class DataMapper
                 switch ($arrayValue['type']) {
                     case 'integer':
                         $array[$arrayValue['index']] = (int) $arrayValue['value'];
-                    break;
+                        break;
                     case 'float':
                         $array[$arrayValue['index']] = (float) $arrayValue['value'];
-                    break;
+                        break;
                     case 'boolean':
                         $array[$arrayValue['index']] = (boolean) $arrayValue['value'];
-                    break;
+                        break;
                     case 'string':
                         $array[$arrayValue['index']] = (string) $arrayValue['value'];
-                    break;
+                        break;
                     case 'DateTime':
                         $array[$arrayValue['index']] = $this->mapDateTime($arrayValue['value']);
-                    break;
+                        break;
                     case 'array':
                         $array[$arrayValue['index']] = $this->mapArray($arrayValue['value']);
-                    break;
+                        break;
                     case 'SplObjectStorage':
                         $array[$arrayValue['index']] = $this->mapSplObjectStorage($arrayValue['value']);
-                    break;
+                        break;
                     default:
                         $array[$arrayValue['index']] = $this->mapToObject($arrayValue['value']);
-                    break;
+                        break;
                 }
             }
         }

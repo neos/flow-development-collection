@@ -53,7 +53,6 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  */
 class IfAccessViewHelper extends AbstractConditionViewHelper
 {
-
     /**
      * Initializes the "then" and "else" arguments
      */
