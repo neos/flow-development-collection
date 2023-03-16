@@ -86,12 +86,12 @@ class CurlEngine implements RequestEngineInterface
                     curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, 'GET');
                     curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $content);
                 }
-            break;
+                break;
             case 'POST':
                 curl_setopt($curlHandle, CURLOPT_POST, true);
                 $body = $content !== '' ? $content : $request->getUri()->getQuery();
                 curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
-            break;
+                break;
             case 'PUT':
                 curl_setopt($curlHandle, CURLOPT_PUT, true);
                 if ($content !== '') {
@@ -103,12 +103,12 @@ class CurlEngine implements RequestEngineInterface
                         CURLOPT_INFILESIZE => strlen($content),
                     ]);
                 }
-            break;
+                break;
             case 'HEAD':
                 $body = $content !== '' ? $content : $request->getUri()->getQuery();
                 curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
                 curl_setopt($curlHandle, CURLOPT_NOBODY, true);
-            break;
+                break;
             default:
                 $body = $content !== '' ? $content : $request->getUri()->getQuery();
                 curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);

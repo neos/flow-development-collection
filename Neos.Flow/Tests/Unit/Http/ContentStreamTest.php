@@ -19,7 +19,6 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class ContentStreamTest extends UnitTestCase
 {
-
     /**
      * @test
      */
