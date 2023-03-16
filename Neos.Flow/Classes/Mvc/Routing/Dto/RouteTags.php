@@ -23,7 +23,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class RouteTags
 {
-
     /**
      * Pattern a tag must match. @see \Neos\Cache\Frontend\FrontendInterface::PATTERN_TAG
      */
