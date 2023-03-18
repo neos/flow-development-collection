@@ -230,26 +230,18 @@ abstract class ObjectAccess
      *   on it without checking if it existed.
      * - else, return false
      *
-     * @param mixed $subject The target object or array
+     * @param object|array $subject The target object or array
      * @param string|integer $propertyName Name or index of the property to set
      * @param mixed $propertyValue Value of the property
      * @param boolean $forceDirectAccess directly access property using reflection(!)
      * @return boolean true if the property could be set, false otherwise
      * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
      */
-    public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
+    public static function setProperty(object|array &$subject, string|int $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
     {
-        if (!is_string($propertyName) && !is_int($propertyName)) {
-            throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
-        }
-
-        if (is_array($subject)) {
+        if (is_array($subject) || $subject instanceof \ArrayAccess) {
             $subject[$propertyName] = $propertyValue;
             return true;
-        }
-
-        if (!is_object($subject)) {
-            throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject) . ' given.', 1237301368);
         }
 
         if ($forceDirectAccess === true) {
@@ -270,8 +262,6 @@ abstract class ObjectAccess
             }
         } elseif (is_callable([$subject, $setterMethodName = self::buildSetterMethodName((string)$propertyName)])) {
             $subject->$setterMethodName($propertyValue);
-        } elseif ($subject instanceof \ArrayAccess) {
-            $subject[$propertyName] = $propertyValue;
         } elseif (array_key_exists($propertyName, get_object_vars($subject))) {
             $subject->$propertyName = $propertyValue;
         } else {
