@@ -58,22 +58,15 @@ abstract class ObjectAccess
      * - if public property exists, return the value of it.
      * - else, throw exception
      *
-     * @param mixed $subject Object or array to get the property from
+     * @param object|array $subject Object or array to get the property from
      * @param string|integer $propertyName Name or index of the property to retrieve
      * @param boolean $forceDirectAccess Directly access property using reflection(!)
      * @return mixed Value of the property
-     * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
+     * @throws \TypeError in case $subject was not an object or array, or $propertyName was not a string or int
      * @throws PropertyNotAccessibleException if the property was not accessible
      */
-    public static function getProperty($subject, $propertyName, bool $forceDirectAccess = false)
+    public static function getProperty(object|array $subject, string|int $propertyName, bool $forceDirectAccess = false)
     {
-        if (!is_object($subject) && !is_array($subject)) {
-            throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject) . ' given.', 1237301367);
-        }
-        if (!is_string($propertyName) && !is_int($propertyName)) {
-            throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178303);
-        }
-
         $propertyExists = false;
         $propertyValue = self::getPropertyInternal($subject, $propertyName, $forceDirectAccess, $propertyExists);
         if ($propertyExists === true) {
@@ -90,15 +83,16 @@ abstract class ObjectAccess
      * If you can't make sure that $subject is either of type array or object and $propertyName
      * of type string you should use getProperty() instead.
      *
-     * @param mixed $subject Object or array to get the property from
+     * @param object|array $subject Object or array to get the property from
      * @param string $propertyName name of the property to retrieve
      * @param boolean $forceDirectAccess directly access property using reflection(!)
      * @param boolean $propertyExists (by reference) will be set to true if the specified property exists and is gettable
      * @return mixed Value of the property
+     * @throws \TypeError in case $subject was not an object or array or $propertyName was not a string
      * @throws PropertyNotAccessibleException
      * @see getProperty()
      */
-    protected static function getPropertyInternal($subject, string $propertyName, bool $forceDirectAccess, bool &$propertyExists)
+    protected static function getPropertyInternal(object|array $subject, string $propertyName, bool $forceDirectAccess, bool &$propertyExists)
     {
         if ($subject === null) {
             return null;
@@ -198,11 +192,12 @@ abstract class ObjectAccess
      *
      * For arrays the keys are checked likewise.
      *
-     * @param mixed $subject An object or array
+     * @param object|array $subject An object or array
      * @param string $propertyPath
      * @return mixed Value of the property
+     * @throws \TypeError in case $object was not an object or array
      */
-    public static function getPropertyPath($subject, string $propertyPath)
+    public static function getPropertyPath(object|array $subject, string $propertyPath)
     {
         $propertyPathSegments = explode('.', $propertyPath);
         foreach ($propertyPathSegments as $pathSegment) {
