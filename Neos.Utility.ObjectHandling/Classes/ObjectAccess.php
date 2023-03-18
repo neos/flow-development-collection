@@ -235,7 +235,7 @@ abstract class ObjectAccess
      * @param mixed $propertyValue Value of the property
      * @param boolean $forceDirectAccess directly access property using reflection(!)
      * @return boolean true if the property could be set, false otherwise
-     * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
+     * @throws \TypeError in case $object was not an object or $propertyName was not a string
      */
     public static function setProperty(object|array &$subject, string|int $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
     {
