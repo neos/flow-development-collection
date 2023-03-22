@@ -20,7 +20,6 @@ use Neos\Eel\CompilingEvaluator;
  */
 class CompilingEvaluatorTest extends AbstractEvaluatorTest
 {
-
     /**
      * @return array
      */
