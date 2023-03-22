@@ -17,9 +17,7 @@ Neos:
         # default options for all rendering groups (see below). Options can be overridden in the respective rendering group
         defaultRenderingOptions:
           viewClassName: Neos\FluidAdaptor\View\StandaloneView
-    object:
-      includeClasses:
-        'typo3fluid.fluid': ['.*']
+
   # DocTools is a tool used by Flow Developers to help with a variety of documentation tasks.
   # These settings are only used in generating Documentation.
   DocTools:
