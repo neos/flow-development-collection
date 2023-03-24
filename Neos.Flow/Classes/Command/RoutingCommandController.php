@@ -25,7 +25,6 @@ use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\Route;
-use Neos\Flow\Mvc\Routing\Routes;
 use Neos\Flow\Mvc\Routing\RoutesProviderInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Http\Factories\ServerRequestFactory;
