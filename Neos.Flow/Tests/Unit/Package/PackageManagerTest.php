@@ -164,17 +164,69 @@ class PackageManagerTest extends UnitTestCase
             file_put_contents($packagePath . 'composer.json', '{"name": "' . $packageKey . '", "type": "flow-test"}');
         }
 
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['emitPackageStatesUpdated'], ['vfs://Test/Configuration/PackageStates.php', 'vfs://Test/Packages/']);
+        $packageManager = $this->getMockBuilder(PackageManager::class)
+            ->onlyMethods(['emitPackageStatesUpdated'])
+            ->setConstructorArgs(['vfs://Test/Configuration/PackageStates.php', 'vfs://Test/Packages/'])
+            ->getMock();
 
-        $packageFactory = new PackageFactory($packageManager);
-        $this->inject($packageManager, 'packageFactory', $packageFactory);
+        // TODO is currently not required - as the packageFactory is instantiated in the constructor
+        $this->inject($packageManager, 'packageFactory', new PackageFactory());
+        $this->inject($packageManager, 'packages', []);
 
-        $packageManager->_set('packages', []);
         $packageManager->rescanPackages();
 
         $packageStates = require('vfs://Test/Configuration/PackageStates.php');
         $actualPackageKeys = array_keys($packageStates['packages']);
-        self::assertEquals(sort($expectedPackageKeys), sort($actualPackageKeys));
+        self::assertSame($expectedPackageKeys, $actualPackageKeys);
+    }
+
+    /**
+     * @test
+     */
+    public function scanAvailablePackagesTraversesThePackagesDirectoryAndRespectsPackageCollectionsAndRegistersPackagesItFinds()
+    {
+        $expectedPackageKeys = [
+            'neos/flow-test',
+            'neos/flow',
+            'neos/yetanothertestpackage'
+        ];
+
+        $packages = [
+            'Packages' => [
+                'Application' => [
+                    'Neos.Flow.Test' => [
+                        'composer.json' => '{"name": "neos/flow-test", "type": "flow-test"}'
+                    ],
+                    'FrameworkCollection' => [
+                        'composer.json' => '{"name": "neos/flow-development-collection", "type": "neos-package-collection"}',
+                        'Neos.Flow' => [
+                            'composer.json' => '{"name": "neos/flow", "type": "neos-package"}'
+                        ],
+                        'Neos.YetAnotherTestPackage' => [
+                            'composer.json' => '{"name": "neos/yetanothertestpackage", "type": "neos-package"}'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        vfsStream::setup('Test', 0770, $packages);
+
+        $packageManager = $this->getMockBuilder(PackageManager::class)
+            ->onlyMethods(['emitPackageStatesUpdated'])
+            ->setConstructorArgs(['vfs://Test/Configuration/PackageStates.php', 'vfs://Test/Packages/'])
+            ->getMock();
+
+        // TODO is currently not required - as the packageFactory is instantiated in the constructor
+        $this->inject($packageManager, 'packageFactory', new PackageFactory());
+        $this->inject($packageManager, 'packages', []);
+
+        $packageManager->rescanPackages();
+
+        $packageStates = require('vfs://Test/Configuration/PackageStates.php');
+        $actualPackageKeys = array_keys($packageStates['packages']);
+
+        self::assertSame($expectedPackageKeys, $actualPackageKeys);
     }
 
     /**

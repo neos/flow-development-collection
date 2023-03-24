@@ -20,6 +20,8 @@ use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteLifetime;
+use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -97,7 +99,7 @@ class Router implements RouterInterface
             if ($route->matches($routeContext) === true) {
                 $this->lastMatchedRoute = $route;
                 $matchResults = $route->getMatchResults();
-                $this->routerCachingService->storeMatchResults($routeContext, $matchResults, $route->getMatchedTags());
+                $this->routerCachingService->storeMatchResults($routeContext, $matchResults, $route->getMatchedTags(), $route->getMatchedLifetime());
                 $this->logger->debug(sprintf('Router route(): Route "%s" matched the request "%s (%s)".', $route->getName(), $httpRequest->getUri(), $httpRequest->getMethod()));
                 return $matchResults;
             }
@@ -143,7 +145,7 @@ class Router implements RouterInterface
             if ($route->resolves($resolveContext) === true) {
                 $uriConstraints = $route->getResolvedUriConstraints()->withPathPrefix($resolveContext->getUriPathPrefix());
                 $resolvedUri = $uriConstraints->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri());
-                $this->routerCachingService->storeResolvedUriConstraints($resolveContext, $uriConstraints, $route->getResolvedTags());
+                $this->routerCachingService->storeResolvedUriConstraints($resolveContext, $uriConstraints, $route->getResolvedTags(), $route->getResolvedLifetime());
                 $this->lastResolvedRoute = $route;
                 return $resolvedUri;
             }
