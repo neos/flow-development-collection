@@ -12,7 +12,6 @@ namespace Neos\Flow\Mvc\Routing;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -34,9 +33,9 @@ class Router implements RouterInterface
 {
     /**
      * @Flow\Inject
-     * @var ConfigurationManager
+     * @var RoutesProviderInterface
      */
-    protected $configurationManager;
+    protected $routesProvider;
 
     /**
      * @Flow\Inject(name="Neos.Flow:SystemLogger")
@@ -92,7 +91,7 @@ class Router implements RouterInterface
 
         $httpRequest = $routeContext->getHttpRequest();
 
-        $routes = Routes::fromConfiguration($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES));
+        $routes = $this->routesProvider->getRoutes();
         /** @var $route Route */
         foreach ($routes as $route) {
             if ($route->matches($routeContext) === true) {
@@ -137,7 +136,7 @@ class Router implements RouterInterface
             return $cachedResolvedUriConstraints->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri());
         }
 
-        $routes = Routes::fromConfiguration($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_ROUTES));
+        $routes = $this->routesProvider->getRoutes();
 
         /** @var $route Route */
         foreach ($routes as $route) {
