@@ -13,11 +13,13 @@ namespace Neos\Flow\Mvc;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\NoSuchOptionException;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Controller\Exception\InvalidControllerException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
@@ -96,6 +98,9 @@ class Dispatcher
      */
     public function dispatch(ActionRequest $request, ActionResponse $response)
     {
+        if ($request->getHttpRequest()->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS) === null) {
+            throw new NoMatchingRouteException();
+        }
         try {
             if ($this->securityContext->areAuthorizationChecksDisabled() !== true) {
                 $this->firewall->blockIllegalRequests($request);
@@ -184,21 +189,7 @@ class Dispatcher
      */
     protected function resolveController(ActionRequest $request)
     {
-        /** @var ActionRequest $request */
-        $controllerObjectName = $request->getControllerObjectName();
-        if ($controllerObjectName === '') {
-            $exceptionMessage = 'No controller could be resolved which would match your request';
-            if ($request instanceof ActionRequest) {
-                $exceptionMessage .= sprintf('. Package key: "%s", controller name: "%s"', $request->getControllerPackageKey(), $request->getControllerName());
-                if ($request->getControllerSubpackageKey() !== null) {
-                    $exceptionMessage .= sprintf(', SubPackage key: "%s"', (string)$request->getControllerSubpackageKey());
-                }
-                $exceptionMessage .= sprintf('. (%s %s)', $request->getHttpRequest()->getMethod(), $request->getHttpRequest()->getUri());
-            }
-            throw new Controller\Exception\InvalidControllerException($exceptionMessage, 1303209195, null, $request);
-        }
-
-        $controller = $this->objectManager->get($controllerObjectName);
+        $controller = $this->objectManager->get($request->getControllerObjectName());
         if (!$controller instanceof ControllerInterface) {
             throw new Controller\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619, null, $request);
         }
