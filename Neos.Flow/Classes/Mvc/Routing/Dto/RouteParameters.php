@@ -26,7 +26,6 @@ use Neos\Utility\TypeHandling;
  */
 final class RouteParameters implements CacheAwareInterface
 {
-
     /**
      * The parameters as simple key/value pair in the format ['<parameter1Key>' => <parameter1Value>, ...]
      *
