@@ -20,7 +20,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class MethodOverrideMiddlewareTest extends UnitTestCase
 {
-
     /**
      * @var MethodOverrideMiddleware
      */

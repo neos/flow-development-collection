@@ -22,7 +22,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class CompositeKeyTestEntity
 {
-
     /**
      * @var string
      * @ORM\Id

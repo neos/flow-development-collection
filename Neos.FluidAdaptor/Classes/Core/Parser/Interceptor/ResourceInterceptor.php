@@ -35,7 +35,6 @@ use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\TextNode;
  */
 class ResourceInterceptor implements InterceptorInterface
 {
-
     /**
      * Split a text at what seems to be a package resource URI.
      *

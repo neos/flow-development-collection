@@ -24,7 +24,6 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
  */
 class UriBuilderTest extends FunctionalTestCase
 {
-
     /**
      * @var ServerRequestFactoryInterface
      */
