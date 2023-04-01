@@ -150,22 +150,18 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]">
           <source>This field must contain at least {0,number} character</source>
-          <target state="translated">Este campo debe contener al menos {0,number} carácter</target>
-        </trans-unit>
+          <target state="translated">Este campo debe contener al menos {0,number} carácter</target> </trans-unit>
         <trans-unit id="1238108068[1]">
           <source>This field must contain at least {0,number} characters</source>
-          <target state="translated">Este campo debe contener al menos {0,number} caracteres</target>
-        </trans-unit>
+          <target state="translated">Este campo debe contener al menos {0,number} caracteres</target> </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]">
           <source>This text may not exceed {0,number} character</source>
-          <target state="translated">Este texto no puede exceder {0,number} carácter</target>
-        </trans-unit>
+          <target state="translated">Este texto no puede exceder {0,number} carácter</target> </trans-unit>
         <trans-unit id="1238108069[1]">
           <source>This text may not exceed {0,number} characters</source>
-          <target state="translated">Este texto no puede exceder {0,number} caracteres</target>
-        </trans-unit>
+          <target state="translated">Este texto no puede exceder {0,number} caracteres</target> </trans-unit>
       </group>
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve">

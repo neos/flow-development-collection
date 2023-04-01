@@ -18,7 +18,6 @@ use Neos\Flow\Security\Authentication\TokenInterface;
  */
 interface PasswordTokenInterface extends TokenInterface
 {
-
     /**
      * @return string The password this token represents
      */

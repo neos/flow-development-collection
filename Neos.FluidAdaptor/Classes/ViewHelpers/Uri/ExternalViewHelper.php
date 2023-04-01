@@ -37,7 +37,6 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  */
 class ExternalViewHelper extends AbstractViewHelper
 {
-
     /**
      * Arguments initialization
      *

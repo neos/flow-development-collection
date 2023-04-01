@@ -21,7 +21,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class TestEmbeddedValueObject
 {
-
     /**
      * @var string
      * @ORM\Column(nullable=true)

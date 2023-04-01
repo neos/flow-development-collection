@@ -16,7 +16,6 @@ use Neos\Flow\Tests\FunctionalTestCase;
 
 class LogEnvironmentTest extends FunctionalTestCase
 {
-
     /**
      * @return array
      */

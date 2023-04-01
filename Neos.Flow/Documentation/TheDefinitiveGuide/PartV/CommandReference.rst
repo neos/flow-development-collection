@@ -452,6 +452,23 @@ Arguments
 
 
 
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:core:shell`:
+
+``neos.flow:core:shell``
+************************
+
+**Run the interactive Shell**
+
+The shell command runs Flow's interactive shell. This shell allows for
+entering commands like through the regular command line interface but
+additionally supports autocompletion and a user-based command history.
+
+
+
+
+
+
+
 .. _`Flow Command Reference: NEOS.FLOW neos.flow:database:setcharset`:
 
 ``neos.flow:database:setcharset``

@@ -18,7 +18,6 @@ use Neos\Flow\Core\ApplicationContext;
 
 class AppendLoader implements LoaderInterface
 {
-
     /**
      * @var YamlSource
      */
