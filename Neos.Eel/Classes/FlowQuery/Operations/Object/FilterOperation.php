@@ -256,7 +256,7 @@ class FilterOperation extends AbstractOperation
                 } else {
                     return strrpos((string)$value, (string)$operand) === strlen((string)$value) - strlen((string)$operand);
                 }
-            // no break
+                // no break
             case '$=~':
                 if (is_array($value)) {
                     if ($this->evaluateOperator(end($value), '=~', $operand)) {
@@ -266,7 +266,7 @@ class FilterOperation extends AbstractOperation
                 } else {
                     return strripos($value, (string)$operand) === strlen($value) - strlen($operand);
                 }
-            // no break
+                // no break
             case '^=':
                 if (is_array($value)) {
                     if ($this->evaluateOperator(reset($value), '=', $operand)) {
@@ -276,7 +276,7 @@ class FilterOperation extends AbstractOperation
                 } else {
                     return strpos((string)$value, (string)$operand) === 0;
                 }
-            // no break
+                // no break
             case '^=~':
                 if (is_array($value)) {
                     if ($this->evaluateOperator(reset($value), '=~', $operand)) {
@@ -286,7 +286,7 @@ class FilterOperation extends AbstractOperation
                 } else {
                     return stripos((string)$value, (string)$operand) === 0;
                 }
-            // no break
+                // no break
             case '*=':
                 if (is_array($value)) {
                     foreach ($value as $item) {
@@ -298,7 +298,7 @@ class FilterOperation extends AbstractOperation
                 } else {
                     return strpos((string)$value, (string)$operand) !== false;
                 }
-            // no break
+                // no break
             case '*=~':
                 if (is_array($value)) {
                     foreach ($value as $item) {
@@ -310,21 +310,21 @@ class FilterOperation extends AbstractOperation
                 } else {
                     return stripos((string)$value, (string)$operand) !== false;
                 }
-            // no break
+                // no break
             case 'instanceof':
                 if ($this->operandIsSimpleType($operand)) {
                     return $this->handleSimpleTypeOperand($operand, $value);
                 } else {
                     return ($value instanceof $operand);
                 }
-            // no break
+                // no break
             case '!instanceof':
                 if ($this->operandIsSimpleType($operand)) {
                     return !$this->handleSimpleTypeOperand($operand, $value);
                 } else {
                     return !($value instanceof $operand);
                 }
-            // no break
+                // no break
             default:
                 return ($value !== null);
         }

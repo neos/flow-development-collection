@@ -173,7 +173,6 @@ class ArrayConverter extends AbstractTypeConverter
                     ];
                 default:
                     throw new InvalidPropertyMappingConfigurationException(sprintf('Conversion from PersistentResource to array failed due to invalid resource export type setting "%s"', $exportType), 1404903210);
-
             }
         }
 
