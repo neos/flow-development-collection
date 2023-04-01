@@ -18,6 +18,7 @@ class BaseUriProvider
     /**
      * THe possibly configured Flow base URI.
      *
+     * @deprecated with Flow 8.3 - use the FLOW_BASE_URI env or HTTP request instead
      * @Flow\InjectConfiguration(package="Neos.Flow", path="http.baseUri")
      * @var string|null
      */
@@ -32,7 +33,7 @@ class BaseUriProvider
     /**
      * Get the configured framework base URI.
      *
-     * @return Uri|null
+     * @deprecated with Flow 8.3 - use the FLOW_BASE_URI env or HTTP request instead
      */
     private function getConfiguredBaseUri(): ?UriInterface
     {
@@ -64,7 +65,8 @@ class BaseUriProvider
 
     /**
      * Gives the best possible base URI with the following priority:
-     * - configured base URI
+     * - environment variable FLOW_BASE_URI
+     * - configured base URI (deprecated with Neos 8.3)
      * - generated base URI from currently active server request
      * - generated base URI from specified $fallbackRequest
      *
@@ -77,6 +79,11 @@ class BaseUriProvider
      */
     public function getConfiguredBaseUriOrFallbackToCurrentRequest(ServerRequestInterface $fallbackRequest = null): UriInterface
     {
+        $baseUri = getenv("FLOW_BASE_URI");
+        if (!empty($baseUri) && is_string($baseUri)) {
+            return new Uri($baseUri);
+        }
+
         $baseUri = $this->getConfiguredBaseUri();
         if ($baseUri instanceof UriInterface) {
             return $baseUri;
