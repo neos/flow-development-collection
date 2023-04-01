@@ -25,7 +25,6 @@ use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\Routing\ActionUriBuilder;
 use Neos\Flow\Mvc\Routing\ActionUriBuilderFactory;
-use Neos\Flow\Mvc\Routing\Dto\ActionUriSpecification;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Validation\ValidatorResolver;
@@ -185,7 +184,7 @@ abstract class AbstractController implements ControllerInterface
                 break;
             default:
                 $message = new Error\Message($messageBody, $messageCode, $messageArguments, $messageTitle);
-            break;
+                break;
         }
         $this->controllerContext->getFlashMessageContainer()->addMessage($message);
     }
