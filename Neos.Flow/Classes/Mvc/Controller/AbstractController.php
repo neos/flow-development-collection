@@ -281,31 +281,20 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function redirect($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $delay = 0, $statusCode = 303, $format = null)
     {
-        if ($packageKey === null) {
-            $packageKey = $this->request->getControllerPackageKey();
-            $subpackageKey = $this->request->getControllerSubpackageKey();
-        } elseif (str_contains($packageKey, '\\')) {
-            [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
+        if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
+            list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
         } else {
             $subpackageKey = null;
         }
-
-        $targetActionUriSpecification = ActionUriSpecification::create(
-            $packageKey ?? $this->request->getControllerPackageKey(),
-            $controllerName ?? $this->request->getControllerName(),
-            $actionName
-        )
-            ->withFormat($format ?? $this->request->getFormat())
-            ->withRoutingArguments($arguments);
-        if ($subpackageKey !== null) {
-            $targetActionUriSpecification = $targetActionUriSpecification->withSubpackageKey($subpackageKey);
+        $this->uriBuilder->reset();
+        if ($format === null) {
+            $this->uriBuilder->setFormat($this->request->getFormat());
+        } else {
+            $this->uriBuilder->setFormat($format);
         }
 
-        $this->redirectToUri(
-            $this->actionUriBuilder->absoluteUriFor($targetActionUriSpecification),
-            $delay,
-            $statusCode
-        );
+        $uri = $this->uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
+        $this->redirectToUri($uri, $delay, $statusCode);
     }
 
     /**
