@@ -281,20 +281,53 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function redirect($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $delay = 0, $statusCode = 303, $format = null)
     {
-        if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
-            list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
+        // The namespaced request arguments are not yet handled by the new ActionUriSpecification (see below), so we are
+        // going to use the legacy implementation for any case, where we would need namespaces, which is always true,
+        // if the current request is a "sub request"
+        // Note: You need to compare request with request->getMainRequest, because action requests are NEVER main
+        // requests
+        if ($this->request !== $this->request->getMainRequest()) {
+            if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
+                list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
+            } else {
+                $subpackageKey = null;
+            }
+            $this->uriBuilder->reset();
+            if ($format === null) {
+                $this->uriBuilder->setFormat($this->request->getFormat());
+            } else {
+                $this->uriBuilder->setFormat($format);
+            }
+
+            $uri = $this->uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
+            $this->redirectToUri($uri, $delay, $statusCode);
+        }
+
+        if ($packageKey === null) {
+            $packageKey = $this->request->getControllerPackageKey();
+            $subpackageKey = $this->request->getControllerSubpackageKey();
+        } elseif (str_contains($packageKey, '\\')) {
+            [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
         } else {
             $subpackageKey = null;
         }
-        $this->uriBuilder->reset();
-        if ($format === null) {
-            $this->uriBuilder->setFormat($this->request->getFormat());
-        } else {
-            $this->uriBuilder->setFormat($format);
+
+        $targetActionUriSpecification = ActionUriSpecification::create(
+            $packageKey ?? $this->request->getControllerPackageKey(),
+            $controllerName ?? $this->request->getControllerName(),
+            $actionName
+        )
+            ->withFormat($format ?? $this->request->getFormat())
+            ->withRoutingArguments($arguments);
+        if ($subpackageKey !== null) {
+            $targetActionUriSpecification = $targetActionUriSpecification->withSubpackageKey($subpackageKey);
         }
 
-        $uri = $this->uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
-        $this->redirectToUri($uri, $delay, $statusCode);
+        $this->redirectToUri(
+            $this->actionUriBuilder->absoluteUriFor($targetActionUriSpecification),
+            $delay,
+            $statusCode
+        );
     }
 
     /**
