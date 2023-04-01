@@ -19,7 +19,6 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class RouteLifetimeTest extends UnitTestCase
 {
-
     /**
      * @test
      */

@@ -17,7 +17,6 @@ namespace Neos\Flow\Tests\Functional\Property\Fixtures;
  */
 class TestClassWithThirdPartyClassConstructorInjection
 {
-
     /**
      * @param \Some\UnknownClass $someDependency
      */

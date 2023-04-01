@@ -24,7 +24,6 @@ use Neos\Eel\CompilingEvaluator;
  */
 class ViewConfigurationManagerTest extends \Neos\Flow\Tests\UnitTestCase
 {
-
     /**
      * @var ViewConfigurationManager
      */

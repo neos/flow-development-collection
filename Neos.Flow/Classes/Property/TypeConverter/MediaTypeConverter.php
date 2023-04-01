@@ -90,7 +90,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
                 if ($result === null) {
                     return [];
                 }
-            break;
+                break;
             case 'xml':
                 // TODO: Remove those lines once the minimum PHP version is 8.0
                 if (PHP_MAJOR_VERSION < 8) {
@@ -108,11 +108,11 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
                     return [];
                 }
                 $result = Arrays::convertObjectToArray($xmlElement);
-            break;
+                break;
             case 'x-www-form-urlencoded':
             default:
                 parse_str($requestBody, $result);
-            break;
+                break;
         }
         return $result;
     }

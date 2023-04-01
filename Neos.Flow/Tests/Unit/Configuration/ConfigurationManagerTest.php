@@ -919,7 +919,6 @@ EOD;
      */
     public function packageRoutesCallback($filenameAndPath)
     {
-
         // The routes from the innermost context should be added FIRST, such that
         // they take precedence over more generic contexts
         $packageSubContextRoutes = [

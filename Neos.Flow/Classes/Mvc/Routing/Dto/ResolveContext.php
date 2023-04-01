@@ -21,7 +21,6 @@ use Psr\Http\Message\UriInterface;
  */
 final class ResolveContext
 {
-
     /**
      * The currently requested URI, required to fill in parts of the result when resolving absolute URIs
      *
