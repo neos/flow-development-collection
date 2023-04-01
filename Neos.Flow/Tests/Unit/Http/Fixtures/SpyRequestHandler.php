@@ -8,7 +8,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class SpyRequestHandler implements RequestHandlerInterface
 {
-
     /**
      * @var ServerRequestInterface
      */

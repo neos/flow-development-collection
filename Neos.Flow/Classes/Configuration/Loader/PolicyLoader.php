@@ -20,7 +20,6 @@ use Neos\Utility\Arrays;
 
 class PolicyLoader implements LoaderInterface
 {
-
     /**
      * @var YamlSource
      */

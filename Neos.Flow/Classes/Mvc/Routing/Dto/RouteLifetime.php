@@ -23,7 +23,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class RouteLifetime
 {
-
     /**
      * Lifetime value null = undefined, 0 = infinite, other values lifetime in s
      * @var int|null
