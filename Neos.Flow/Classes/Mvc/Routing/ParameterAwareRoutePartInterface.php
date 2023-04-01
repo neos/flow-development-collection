@@ -24,7 +24,6 @@ use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
  */
 interface ParameterAwareRoutePartInterface extends RoutePartInterface
 {
-
     /**
      * @param string &$routePath The request path to be matched - without query parameters, host and fragment.
      * @param RouteParameters $parameters The Routing RouteParameters that can be registered via HTTP middleware
