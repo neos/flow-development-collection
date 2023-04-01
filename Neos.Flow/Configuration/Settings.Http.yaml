@@ -16,7 +16,6 @@ Neos:
       #
       applicationToken: 'MinorVersion'
 
-      # Deprecated with Flow 8.3
       baseUri: null
 
       # Defines the PSR-15 middlewares that a request goes through in a flow
