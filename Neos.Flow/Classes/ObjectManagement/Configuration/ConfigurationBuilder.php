@@ -216,7 +216,7 @@ class ConfigurationBuilder
             switch ($optionName) {
                 case 'scope':
                     $objectConfiguration->setScope($this->parseScope($optionValue));
-                break;
+                    break;
                 case 'properties':
                     if (is_array($optionValue)) {
                         foreach ($optionValue as $propertyName => $propertyValue) {
@@ -232,7 +232,7 @@ class ConfigurationBuilder
                             $objectConfiguration->setProperty($property);
                         }
                     }
-                break;
+                    break;
                 case 'arguments':
                     if (is_array($optionValue)) {
                         foreach ($optionValue as $argumentName => $argumentValue) {
@@ -252,7 +252,7 @@ class ConfigurationBuilder
                             }
                         }
                     }
-                break;
+                    break;
                 case 'className':
                 case 'factoryObjectName':
                 case 'factoryMethodName':
@@ -260,10 +260,10 @@ class ConfigurationBuilder
                 case 'lifecycleShutdownMethodName':
                     $methodName = 'set' . ucfirst($optionName);
                     $objectConfiguration->$methodName(trim($optionValue));
-                break;
+                    break;
                 case 'autowiring':
                     $objectConfiguration->setAutowiring($this->parseAutowiring($optionValue));
-                break;
+                    break;
                 default:
                     throw new InvalidObjectConfigurationException('Invalid configuration option "' . $optionName . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1167574981);
             }
