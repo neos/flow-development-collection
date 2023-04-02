@@ -72,6 +72,7 @@ class AbstractControllerTest extends UnitTestCase
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockActionRequest->method('getMainRequest')->willReturnSelf();
 
         $this->mockRouter = $this->getMockBuilder(RouterInterface::class)->getMock();
         $this->mockActionUriBuilderFactory = new ActionUriBuilderFactory($this->mockRouter);
