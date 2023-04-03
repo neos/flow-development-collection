@@ -25,7 +25,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class SessionRequestComponentTest extends UnitTestCase
 {
-
     /**
      * @var SessionRequestComponent
      */

@@ -19,7 +19,6 @@ use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceA;
  */
 class TestClassWithSingletonConstructorInjection
 {
-
     /**
      * @var InterfaceA
      */

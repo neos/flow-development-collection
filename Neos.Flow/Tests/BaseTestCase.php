@@ -21,7 +21,6 @@ namespace Neos\Flow\Tests;
  */
 abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
 {
-
     /**
      * @var array
      */

@@ -20,7 +20,6 @@ use Neos\Flow\Http\Component\ComponentInterface;
  */
 class FlashMessageComponent implements ComponentInterface
 {
-
     /**
      * @Flow\Inject
      * @var FlashMessageService

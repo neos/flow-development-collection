@@ -19,7 +19,6 @@ namespace Neos\Utility\Unicode;
  */
 abstract class Functions
 {
-
     /**
      * Converts the first character of each word to uppercase and all remaining characters
      * to lowercase.

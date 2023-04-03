@@ -470,7 +470,7 @@ abstract class AbstractBackend implements BackendInterface
                         'multivalue' => false,
                         'value' => $this->processDateTime($propertyValue)
                     ];
-                break;
+                    break;
                 case Collection::class:
                 case ArrayCollection::class:
                     $propertyValue = $propertyValue === null ? [] : $propertyValue->toArray();
@@ -480,13 +480,13 @@ abstract class AbstractBackend implements BackendInterface
                         'multivalue' => true,
                         'value' => $this->processArray($propertyValue, $identifier, $this->persistenceSession->getCleanStateOfProperty($object, $propertyName))
                     ];
-                break;
+                    break;
                 case 'SplObjectStorage':
                     $propertyData[$propertyName] = [
                         'multivalue' => true,
                         'value' => $this->processSplObjectStorage($propertyValue, $identifier, $this->persistenceSession->getCleanStateOfProperty($object, $propertyName))
                     ];
-                break;
+                    break;
                 default:
                     if ($propertyValue === null && !TypeHandling::isSimpleType($propertyMetaData['type'])) {
                         $this->removeDeletedReference($object, $propertyName, $propertyMetaData);
@@ -495,7 +495,7 @@ abstract class AbstractBackend implements BackendInterface
                         'multivalue' => false,
                         'value' => $propertyValue
                     ];
-                break;
+                    break;
             }
             $propertyData[$propertyName]['type'] = $propertyMetaData['type'];
         }
