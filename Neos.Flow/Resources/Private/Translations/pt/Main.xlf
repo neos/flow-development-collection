@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
 				<source>Authentication required</source>
-        <target state="needs-translation">Authentication required</target>
+        <target state="translated">Autenticação necessária</target>
       </trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
 				<source>Username</source>
@@ -16,7 +16,7 @@
       </trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
 				<source>New password</source>
-        <target state="needs-translation">New password</target>
+        <target state="translated">Nova palavra-passe</target>
       </trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
 				<source>Login</source>
@@ -32,11 +32,11 @@
       </trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
-        <target state="needs-translation">Submit</target>
+        <target state="translated">Enviar</target>
       </trans-unit>
       <trans-unit id="configurationSchemaValidator.anErrorOccurredDuringValidationOfTheConfiguration.body" xml:space="preserve">
 				<source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
-        <target state="needs-translation">The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</target>
+        <target state="translated">O tipo de configuração "{0}" não foi encontrado. Apenas os seguintes tipos de configuração são suportados: "{1}"</target>
       </trans-unit>
     </body>
   </file>
