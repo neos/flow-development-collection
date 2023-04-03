@@ -40,7 +40,6 @@ use Neos\FluidAdaptor\Core\ViewHelper;
  */
 class ActionViewHelper extends AbstractViewHelper
 {
-
     /**
      * Initialize arguments
      *
