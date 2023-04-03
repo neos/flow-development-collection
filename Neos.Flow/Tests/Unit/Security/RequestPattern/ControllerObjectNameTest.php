@@ -20,7 +20,6 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class ControllerObjectNameTest extends UnitTestCase
 {
-
     /**
      * @test
      */

@@ -22,7 +22,6 @@ use Neos\Flow\Annotations as Flow;
 
 abstract class LogEnvironment
 {
-
     /**
      * @var array
      */
