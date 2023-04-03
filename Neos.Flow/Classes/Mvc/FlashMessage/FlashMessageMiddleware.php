@@ -24,7 +24,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class FlashMessageMiddleware implements MiddlewareInterface
 {
-
     /**
      * @Flow\Inject
      * @var FlashMessageService

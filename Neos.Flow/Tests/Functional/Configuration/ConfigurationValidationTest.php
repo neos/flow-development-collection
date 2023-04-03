@@ -26,7 +26,6 @@ use Neos\Flow\Tests\FunctionalTestCase;
  */
 class ConfigurationValidationTest extends FunctionalTestCase
 {
-
     /**
      * @var array<string>
      */

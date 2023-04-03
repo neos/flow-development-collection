@@ -22,7 +22,6 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class SessionDataContainerTest extends UnitTestCase
 {
-
     /**
      * @var SessionDataContainer
      */
