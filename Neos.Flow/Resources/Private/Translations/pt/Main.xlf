@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
 				<source>Logout</source>
-        <target state="needs-translation">Logout</target>
+        <target state="needs-translation">Sair</target>
       </trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
