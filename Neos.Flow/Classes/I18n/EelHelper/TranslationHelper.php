@@ -19,7 +19,7 @@ use Neos\Eel\ProtectedContextAwareInterface;
  */
 class TranslationHelper implements ProtectedContextAwareInterface
 {
-    const I18N_LABEL_ID_PATTERN = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+:[a-z0-9.]+:.+$/i';
+    const I18N_LABEL_ID_PATTERN = '/[a-z\d.]+:[a-z\d.]+:[a-z\d.]+/i';
 
     /**
      * Get the translated value for an id or original label
@@ -39,9 +39,10 @@ class TranslationHelper implements ProtectedContextAwareInterface
      * @param string $package Target package key. If not set, the current package key will be used
      * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
      * @param string $locale An identifier of locale to use (NULL for use the default locale)
+     * @param string $fallbackLocale An identifier of locale to use as fallback (NULL to disable fallback)
      * @return string|null Translated label or source label / ID key
      */
-    public function translate($id, $originalLabel = null, array $arguments = [], $source = 'Main', $package = null, $quantity = null, $locale = null)
+    public function translate($id, $originalLabel = null, array $arguments = [], $source = 'Main', $package = null, $quantity = null, $locale = null, $fallbackLocale = null)
     {
         if (
             $originalLabel === null &&
@@ -51,7 +52,7 @@ class TranslationHelper implements ProtectedContextAwareInterface
             $quantity === null &&
             $locale === null
         ) {
-            return preg_match(self::I18N_LABEL_ID_PATTERN, $id) === 1 ? $this->translateByShortHandString($id) : $id;
+            return preg_match(self::I18N_LABEL_ID_PATTERN, $id) >= 1 ? $this->translateByShortHandString($id, $locale, $fallbackLocale) : $id;
         }
 
         return $this->translateByExplicitlyPassedOrderedArguments($id, $originalLabel, $arguments, $source, $package, $quantity, $locale);
@@ -128,19 +129,39 @@ class TranslationHelper implements ProtectedContextAwareInterface
      * Translate by shorthand string
      *
      * @param string $shortHandString (PackageKey:Source:trans-unit-id)
+     * @param string|null $locale locale
+     * @param string|null $fallbackLocale fallback locale
      * @return string|null Translated label or source label / ID key
      * @throws \InvalidArgumentException
      */
-    protected function translateByShortHandString($shortHandString)
+    protected function translateByShortHandString(string $shortHandString, $locale = null, $fallbackLocale = null)
     {
-        $shortHandStringParts = explode(':', $shortHandString);
-        if (count($shortHandStringParts) === 3) {
-            list($package, $source, $id) = $shortHandStringParts;
-            return $this->createTranslationParameterToken($id)
-                ->package($package)
-                ->source(str_replace('.', '/', $source))
-                ->translate();
-        }
+        return preg_replace_callback(self::I18N_LABEL_ID_PATTERN, function ($matches) use ($locale, $fallbackLocale){
+
+            $shortHandStringParts = explode(':', $matches[0]);
+            if (count($shortHandStringParts) === 3) {
+                list($package, $source, $id) = $shortHandStringParts;
+                $translationToken = $this->createTranslationParameterToken($id)
+                    ->package($package)
+                    ->source(str_replace('.', '/', $source));
+                if ($locale) {
+                    $translationToken = $translationToken->locale($locale);
+                }
+                $translation = $translationToken->translate();
+
+                if ($translation === $matches[0] && $fallbackLocale) {
+                    $this->createTranslationParameterToken($id)
+                        ->package($package)
+                        ->source(str_replace('.', '/', $source))
+                        ->locale($fallbackLocale)
+                        ->translate();
+                }
+
+                return $translation;
+            }
+
+            return $matches[0];
+        }, $shortHandString);
 
         throw new \InvalidArgumentException(sprintf('The translation shorthand string "%s" has the wrong format', $shortHandString), 1436865829);
     }
