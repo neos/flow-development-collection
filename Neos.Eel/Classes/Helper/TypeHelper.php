@@ -60,6 +60,17 @@ class TypeHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Get the classname for objects or type for other values
+     *
+     * @param mixed $variable
+     * @return string
+     */
+    public function debugType($variable)
+    {
+        return get_debug_type($variable);
+    }
+
+    /**
      * Is the given variable an array.
      *
      * @param mixed $variable
