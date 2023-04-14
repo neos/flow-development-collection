@@ -136,8 +136,7 @@ class TranslationHelper implements ProtectedContextAwareInterface
      */
     protected function translateByShortHandString(string $shortHandString, $locale = null, $fallbackLocale = null)
     {
-        return preg_replace_callback(self::I18N_LABEL_ID_PATTERN, function ($matches) use ($locale, $fallbackLocale){
-
+        return preg_replace_callback(self::I18N_LABEL_ID_PATTERN, function ($matches) use ($locale, $fallbackLocale) {
             $shortHandStringParts = explode(':', $matches[0]);
             if (count($shortHandStringParts) === 3) {
                 list($package, $source, $id) = $shortHandStringParts;
