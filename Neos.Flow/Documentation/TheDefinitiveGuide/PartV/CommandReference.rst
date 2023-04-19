@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2023-04-18
+The following reference was automatically generated from code on 2023-04-19
 
 
 .. _`Flow Command Reference: NEOS.FLOW`:
@@ -170,7 +170,7 @@ Arguments
 ^^^^^^^^^
 
 ``--cache-identifier``
-
+  
 
 
 
@@ -445,23 +445,6 @@ Arguments
   User name of the webserver, for example "www-data
 ``--webserver-group``
   Group name of the webserver, for example "www-data
-
-
-
-
-
-
-
-.. _`Flow Command Reference: NEOS.FLOW neos.flow:core:shell`:
-
-``neos.flow:core:shell``
-************************
-
-**Run the interactive Shell**
-
-The shell command runs Flow's interactive shell. This shell allows for
-entering commands like through the regular command line interface but
-additionally supports autocompletion and a user-based command history.
 
 
 
@@ -1539,6 +1522,27 @@ Options
   The host name or IP address for the server to listen on
 ``--port``
   The server port to listen on
+
+
+
+
+
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:session:collectgarbage`:
+
+``neos.flow:session:collectgarbage``
+************************************
+
+**Run garbage collection for sesions.**
+
+This command will remove session-data and -metadate of outdated sessions
+identified by lastActivityTimestamp being older than inactivityTimeout
+
+!!! This is usually done automatically after shutdown for the percentage
+of requests specified in the setting `Neos.Flow.session.garbageCollection.probability`
+
+Use this command if you need more direct control over the cleanup intervals.
+
+
 
 
 
