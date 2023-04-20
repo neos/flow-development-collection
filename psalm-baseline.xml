@@ -15,17 +15,9 @@
       <code>next</code>
       <code>valid</code>
     </PossiblyNullReference>
-    <UndefinedClass occurrences="1">
-      <code>\APCUIterator</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="6">
-      <code>$this-&gt;cacheEntriesIterator</code>
-      <code>$this-&gt;cacheEntriesIterator</code>
-      <code>$this-&gt;cacheEntriesIterator</code>
-      <code>$this-&gt;cacheEntriesIterator</code>
-      <code>$this-&gt;cacheEntriesIterator</code>
-      <code>\APCUIterator|null</code>
-    </UndefinedDocblockClass>
+    <RedundantCastGivenDocblockType occurrences="1">
+      <code>(string)$this-&gt;cacheEntriesIterator-&gt;key()</code>
+    </RedundantCastGivenDocblockType>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/FileBackend.php">
     <NonInvariantDocblockPropertyType occurrences="1">
@@ -36,15 +28,25 @@
     </PossiblyUndefinedArrayOffset>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/MemcachedBackend.php">
-    <UndefinedClass occurrences="2">
-      <code>\Memcached</code>
-      <code>\Memcached</code>
+    <InvalidClass occurrences="1">
+      <code>\MemCached</code>
+    </InvalidClass>
+    <PossiblyInvalidOperand occurrences="1">
+      <code>~MEMCACHE_COMPRESSED</code>
+    </PossiblyInvalidOperand>
+    <UndefinedClass occurrences="6">
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>\Memcache</code>
     </UndefinedClass>
-    <UndefinedDocblockClass occurrences="12">
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
+    <UndefinedConstant occurrences="2">
+      <code>MEMCACHE_COMPRESSED</code>
+      <code>MEMCACHE_COMPRESSED</code>
+    </UndefinedConstant>
+    <UndefinedDocblockClass occurrences="8">
       <code>$this-&gt;memcache</code>
       <code>$this-&gt;memcache</code>
       <code>$this-&gt;memcache</code>
@@ -64,45 +66,17 @@
     </PossiblyNullReference>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/RedisBackend.php">
-    <UndefinedClass occurrences="3">
-      <code>\Redis</code>
-      <code>\Redis</code>
-      <code>\Redis</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="32">
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>$this-&gt;redis</code>
-      <code>\Redis</code>
-    </UndefinedDocblockClass>
+    <InvalidArgument occurrences="2">
+      <code>$entryIdentifier</code>
+      <code>1</code>
+    </InvalidArgument>
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$this-&gt;redis-&gt;get($this-&gt;getPrefixedIdentifier('entry:' . $entryIdentifier))</code>
+    </PossiblyInvalidArgument>
+    <ReservedWord occurrences="2">
+      <code>$entries</code>
+      <code>$tags</code>
+    </ReservedWord>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/SimpleFileBackend.php">
     <PossiblyNullReference occurrences="4">
