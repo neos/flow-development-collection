@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.22.0@fc2c6ab4d5fa5d644d8617089f012f3bb84b8703">
+<files psalm-version="4.30.0@d0bc6e25d89f649e4f36a534f330f8bb4643dd69">
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/AbstractBackend.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$options</code>
@@ -9,33 +9,108 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/ApcuBackend.php">
-    <RedundantCast occurrences="1">
-      <code>(string)$this-&gt;cacheEntriesIterator-&gt;key()</code>
-    </RedundantCast>
+    <PossiblyNullReference occurrences="4">
+      <code>current</code>
+      <code>key</code>
+      <code>next</code>
+      <code>valid</code>
+    </PossiblyNullReference>
+    <UndefinedClass occurrences="1">
+      <code>\APCUIterator</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="6">
+      <code>$this-&gt;cacheEntriesIterator</code>
+      <code>$this-&gt;cacheEntriesIterator</code>
+      <code>$this-&gt;cacheEntriesIterator</code>
+      <code>$this-&gt;cacheEntriesIterator</code>
+      <code>$this-&gt;cacheEntriesIterator</code>
+      <code>\APCUIterator|null</code>
+    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/FileBackend.php">
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$cacheEntryIdentifiers</code>
     </NonInvariantDocblockPropertyType>
+    <PossiblyUndefinedArrayOffset occurrences="1">
+      <code>$_SERVER['REQUEST_TIME']</code>
+    </PossiblyUndefinedArrayOffset>
+  </file>
+  <file src="Packages/Framework/Neos.Cache/Classes/Backend/MemcachedBackend.php">
+    <UndefinedClass occurrences="2">
+      <code>\Memcached</code>
+      <code>\Memcached</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="12">
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>$this-&gt;memcache</code>
+      <code>\Memcache|\Memcached</code>
+    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/PdoBackend.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>null</code>
-    </PossiblyNullPropertyAssignmentValue>
+    <PossiblyNullReference occurrences="4">
+      <code>current</code>
+      <code>key</code>
+      <code>next</code>
+      <code>valid</code>
+    </PossiblyNullReference>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/RedisBackend.php">
-    <InvalidArgument occurrences="1">
-      <code>$entryIdentifier</code>
-    </InvalidArgument>
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$this-&gt;redis-&gt;get($this-&gt;getPrefixedIdentifier('entry:' . $entryIdentifier))</code>
-    </PossiblyInvalidArgument>
-    <ReservedWord occurrences="2">
-      <code>$entries</code>
-      <code>$tags</code>
-    </ReservedWord>
+    <UndefinedClass occurrences="3">
+      <code>\Redis</code>
+      <code>\Redis</code>
+      <code>\Redis</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="32">
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>$this-&gt;redis</code>
+      <code>\Redis</code>
+    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/SimpleFileBackend.php">
+    <PossiblyNullReference occurrences="4">
+      <code>getBasename</code>
+      <code>getPathname</code>
+      <code>next</code>
+      <code>valid</code>
+    </PossiblyNullReference>
     <RedundantPropertyInitializationCheck occurrences="2">
       <code>$this-&gt;baseDirectory</code>
       <code>'-'</code>
@@ -74,6 +149,11 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="Packages/Framework/Neos.Eel/Classes/CompilingEvaluator.php">
+    <InvalidClass occurrences="3">
+      <code>\closure</code>
+      <code>\closure[]</code>
+      <code>protected $evaluatedExpressions = [];</code>
+    </InvalidClass>
     <UndefinedPropertyFetch occurrences="1">
       <code>$parser-&gt;pos</code>
     </UndefinedPropertyFetch>
@@ -138,6 +218,9 @@
     <ArgumentTypeCoercion occurrences="1">
       <code>$context</code>
     </ArgumentTypeCoercion>
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$context</code>
+    </PossiblyInvalidArgument>
   </file>
   <file src="Packages/Framework/Neos.Eel/Classes/FlowQuery/Operations/Object/ChildrenOperation.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -702,9 +785,9 @@
     <InvalidScalarArgument occurrences="1">
       <code>rand()</code>
     </InvalidScalarArgument>
-    <PossiblyFalseOperand occurrences="1">
-      <code>date('YmdHis', $_SERVER['REQUEST_TIME'])</code>
-    </PossiblyFalseOperand>
+    <PossiblyUndefinedArrayOffset occurrences="1">
+      <code>$_SERVER['REQUEST_TIME']</code>
+    </PossiblyUndefinedArrayOffset>
     <UndefinedConstant occurrences="19">
       <code>FLOW_ONLY_COMPOSER_LOADER</code>
       <code>FLOW_PATH_CONFIGURATION</code>
@@ -731,6 +814,17 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Core/Bootstrap.php">
+    <InvalidReturnStatement occurrences="2">
+      <code>$_SERVER[$variableName]</code>
+      <code>$_SERVER['REDIRECT_' . $variableName]</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>string|null</code>
+    </InvalidReturnType>
+    <PossiblyUndefinedArrayOffset occurrences="2">
+      <code>$_SERVER['SCRIPT_FILENAME']</code>
+      <code>$_SERVER['SCRIPT_FILENAME']</code>
+    </PossiblyUndefinedArrayOffset>
     <PossiblyUndefinedVariable occurrences="1">
       <code>$suitableRequestHandlers</code>
     </PossiblyUndefinedVariable>
@@ -814,9 +908,9 @@
     <InvalidScalarArgument occurrences="1">
       <code>rand()</code>
     </InvalidScalarArgument>
-    <PossiblyFalseOperand occurrences="1">
-      <code>date('YmdHis', $_SERVER['REQUEST_TIME'])</code>
-    </PossiblyFalseOperand>
+    <PossiblyUndefinedArrayOffset occurrences="1">
+      <code>$_SERVER['REQUEST_TIME']</code>
+    </PossiblyUndefinedArrayOffset>
     <RedundantPropertyInitializationCheck occurrences="1">
       <code>isset($this-&gt;referenceCode)</code>
     </RedundantPropertyInitializationCheck>
@@ -848,6 +942,9 @@
     </UnsafeInstantiation>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/Cookie.php">
+    <InvalidClass occurrences="1">
+      <code>\Datetime</code>
+    </InvalidClass>
     <InvalidNullableReturnType occurrences="1">
       <code>Cookie</code>
     </InvalidNullableReturnType>
@@ -910,9 +1007,9 @@
     </UndefinedConstant>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Http/UriTemplate.php">
-    <RedundantCast occurrences="1">
+    <RedundantCastGivenDocblockType occurrences="1">
       <code>(string)$expressionPart</code>
-    </RedundantCast>
+    </RedundantCastGivenDocblockType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/I18n/Cldr/CldrModel.php">
     <PossiblyFalseOperand occurrences="1">
@@ -1116,6 +1213,9 @@
     <PossiblyNullArgument occurrences="1">
       <code>$error</code>
     </PossiblyNullArgument>
+    <PossiblyUndefinedArrayOffset occurrences="1">
+      <code>$backTrace[0]['file']</code>
+    </PossiblyUndefinedArrayOffset>
     <UndefinedConstant occurrences="1">
       <code>FLOW_PATH_DATA</code>
     </UndefinedConstant>
@@ -2679,6 +2779,15 @@
       <code>getenv('FLOW_ROOTPATH')</code>
       <code>getenv('FLOW_ROOTPATH')</code>
     </PossiblyFalseArgument>
+    <PossiblyUndefinedArrayOffset occurrences="2">
+      <code>$_SERVER['PHP_SELF']</code>
+      <code>$_SERVER['REQUEST_URI']</code>
+    </PossiblyUndefinedArrayOffset>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Scripts/flow.php">
+    <PossiblyUndefinedArrayOffset occurrences="1">
+      <code>$_SERVER['PHP_SELF']</code>
+    </PossiblyUndefinedArrayOffset>
   </file>
   <file src="Packages/Framework/Neos.FluidAdaptor/Classes/Core/Cache/CacheAdaptor.php">
     <MoreSpecificImplementedParamType occurrences="1">
