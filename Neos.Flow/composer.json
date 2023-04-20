@@ -6,7 +6,7 @@
     "license": ["MIT"],
 
     "require": {
-        "php": "^8.0",
+        "php": "^7.3 || ^8.0",
 
         "ext-zlib": "*",
         "ext-SPL": "*",
@@ -14,28 +14,25 @@
         "ext-reflection": "*",
         "ext-xml": "*",
 
-        "neos/cache": "~8.0.0",
-        "neos/eel": "~8.0.0",
-        "neos/error-messages": "~8.0.0",
-        "neos/utility-arrays": "~8.0.0",
-        "neos/utility-files": "~8.0.0",
-        "neos/utility-mediatypes": "~8.0.0",
-        "neos/utility-objecthandling": "~8.0.0",
-        "neos/utility-opcodecache": "~8.0.0",
-        "neos/utility-schema": "~8.0.0",
-        "neos/utility-unicode": "~8.0.0",
-        "neos/flow-log": "~8.0.0",
-        "neos/http-factories": "~8.0.0",
+        "neos/cache": "~7.3.0",
+        "neos/eel": "~7.3.0",
+        "neos/error-messages": "~7.3.0",
+        "neos/utility-arrays": "~7.3.0",
+        "neos/utility-files": "~7.3.0",
+        "neos/utility-mediatypes": "~7.3.0",
+        "neos/utility-objecthandling": "~7.3.0",
+        "neos/utility-opcodecache": "~7.3.0",
+        "neos/utility-schema": "~7.3.0",
+        "neos/utility-unicode": "~7.3.0",
+        "neos/flow-log": "~7.3.0",
+        "neos/http-factories": "~7.3.0",
 
         "psr/http-message": "^1.0",
         "psr/http-factory": "^1.0",
         "psr/container": "^1.0",
-        "psr/log": "^2.0 || ^3.0",
+        "psr/log": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "psr/http-server-handler": "^1.0",
-        "psr/http-client": "^1.0",
-        "psr/simple-cache": "^2.0 || ^3.0",
-        "psr/cache": "^2.0 || ^3.0",
 
         "ramsey/uuid": "^3.0 || ^4.0",
 
@@ -50,14 +47,14 @@
         "symfony/console": "^5.1",
 
         "neos/composer-plugin": "^2.0",
-        "neos/utility-pdo": "~8.0.0",
+        "neos/utility-pdo": "~7.3.0",
 
         "composer/composer": "^1.10.22 || ^2.0.13",
 
         "egulias/email-validator": "^2.1.17 || ^3.0"
     },
     "require-dev": {
-        "vimeo/psalm": "~4.22.0",
+        "vimeo/psalm": "~4.30.0",
         "mikey179/vfsstream": "^1.6.10",
         "phpunit/phpunit": "~9.1"
     },
@@ -65,9 +62,7 @@
         "symfony/polyfill-php70": "*",
         "symfony/polyfill-php71": "*",
         "symfony/polyfill-php72": "*",
-        "symfony/polyfill-php73": "*",
-        "symfony/polyfill-php74": "*",
-        "symfony/polyfill-php80": "*"
+        "symfony/polyfill-php73": "*"
     },
     "suggest": {
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
