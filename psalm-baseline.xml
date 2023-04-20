@@ -23,6 +23,8 @@
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$cacheEntryIdentifiers</code>
     </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="Packages/Framework/Neos.Cache/Classes/Backend/FileBackendEntryDto.php">
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$_SERVER['REQUEST_TIME']</code>
     </PossiblyUndefinedArrayOffset>
@@ -87,11 +89,6 @@
       <code>$this-&gt;baseDirectory</code>
       <code>'-'</code>
     </RedundantPropertyInitializationCheck>
-  </file>
-  <file src="Packages/Framework/Neos.Cache/Classes/Backend/TaggableMultiBackend.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$backends</code>
-    </NonInvariantDocblockPropertyType>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Frontend/PhpFrontend.php">
     <ImplementedReturnTypeMismatch occurrences="1">
@@ -1555,9 +1552,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$packagePath</code>
     </PossiblyNullArgument>
-    <PossiblyNullIterator occurrences="1">
-      <code>$this-&gt;findComposerPackagesInPath($this-&gt;packagesBasePath)</code>
-    </PossiblyNullIterator>
     <PossiblyUndefinedMethod occurrences="3">
       <code>getPackageKey</code>
       <code>getPackageKey</code>
@@ -1573,6 +1567,9 @@
       <code>FLOW_PATH_ROOT</code>
       <code>FLOW_PATH_TEMPORARY_BASE</code>
     </UndefinedConstant>
+    <UndefinedMethod occurrences="1">
+      <code>isDot</code>
+    </UndefinedMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Aspect/PersistenceMagicAspect.php">
     <MissingDocblockType occurrences="1">
@@ -1606,9 +1603,9 @@
     </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/DataTypes/JsonArrayType.php">
-    <LessSpecificImplementedReturnType occurrences="1">
-      <code>array</code>
-    </LessSpecificImplementedReturnType>
+    <MismatchingDocblockReturnType occurrences="1">
+      <code>string|bool|null</code>
+    </MismatchingDocblockReturnType>
     <PropertyTypeCoercion occurrences="2">
       <code>Bootstrap::$staticObjectManager-&gt;get(PersistenceManagerInterface::class)</code>
       <code>Bootstrap::$staticObjectManager-&gt;get(ReflectionService::class)</code>
@@ -2447,11 +2444,6 @@
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Security/Cryptography/BCryptHashingStrategy.php">
-    <InvalidPropertyAssignmentValue occurrences="1">
-      <code>sprintf('%02d', $cost)</code>
-    </InvalidPropertyAssignmentValue>
-  </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Security/Cryptography/FileBasedSimpleKeyService.php">
     <UndefinedConstant occurrences="1">
       <code>FLOW_PATH_DATA</code>
@@ -2500,21 +2492,12 @@
     </NonInvariantDocblockPropertyType>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Session/Session.php">
-    <FalsableReturnStatement occurrences="1">
-      <code>false</code>
-    </FalsableReturnStatement>
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>integer</code>
     </ImplementedReturnTypeMismatch>
-    <InvalidFalsableReturnType occurrences="1">
-      <code>integer</code>
-    </InvalidFalsableReturnType>
     <InvalidNullableReturnType occurrences="1">
       <code>integer</code>
     </InvalidNullableReturnType>
-    <InvalidScalarArgument occurrences="1">
-      <code>$this-&gt;garbageCollectionProbability</code>
-    </InvalidScalarArgument>
     <LessSpecificImplementedReturnType occurrences="1">
       <code>mixed</code>
     </LessSpecificImplementedReturnType>
@@ -2522,9 +2505,6 @@
       <code>null</code>
       <code>null</code>
     </PossiblyNullPropertyAssignmentValue>
-    <RedundantCastGivenDocblockType occurrences="1">
-      <code>(integer)strlen(strrchr($this-&gt;garbageCollectionProbability, '.'))</code>
-    </RedundantCastGivenDocblockType>
     <UndefinedThisPropertyAssignment occurrences="1">
       <code>$this-&gt;request</code>
     </UndefinedThisPropertyAssignment>
@@ -3037,7 +3017,7 @@
       <code>null</code>
     </NullArgument>
   </file>
-  <file src="Packages/Framework/Neos.Http.Factories/Classes/ServerRequestFactory.php">
+  <file src="Packages/Framework/Neos.Http.Factories/Classes/ServerRequestFactoryTrait.php">
     <UndefinedConstant occurrences="1">
       <code>FLOW_VERSION_BRANCH</code>
     </UndefinedConstant>
