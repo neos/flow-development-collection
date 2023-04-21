@@ -33,31 +33,6 @@
     <InvalidClass occurrences="1">
       <code>\MemCached</code>
     </InvalidClass>
-    <PossiblyInvalidOperand occurrences="1">
-      <code>~MEMCACHE_COMPRESSED</code>
-    </PossiblyInvalidOperand>
-    <UndefinedClass occurrences="6">
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>\Memcache</code>
-    </UndefinedClass>
-    <UndefinedConstant occurrences="2">
-      <code>MEMCACHE_COMPRESSED</code>
-      <code>MEMCACHE_COMPRESSED</code>
-    </UndefinedConstant>
-    <UndefinedDocblockClass occurrences="8">
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>$this-&gt;memcache</code>
-      <code>\Memcache|\Memcached</code>
-    </UndefinedDocblockClass>
   </file>
   <file src="Packages/Framework/Neos.Cache/Classes/Backend/PdoBackend.php">
     <PossiblyNullReference occurrences="4">
@@ -1606,12 +1581,19 @@
     <MismatchingDocblockReturnType occurrences="1">
       <code>string|bool|null</code>
     </MismatchingDocblockReturnType>
+    <MissingDependency occurrences="1">
+      <code>PostgreSQL94Platform</code>
+    </MissingDependency>
     <PropertyTypeCoercion occurrences="2">
       <code>Bootstrap::$staticObjectManager-&gt;get(PersistenceManagerInterface::class)</code>
       <code>Bootstrap::$staticObjectManager-&gt;get(ReflectionService::class)</code>
     </PropertyTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/DataTypes/ObjectArray.php">
+    <MissingDependency occurrences="2">
+      <code>PostgreSQL94Platform</code>
+      <code>PostgreSQL94Platform</code>
+    </MissingDependency>
     <PropertyTypeCoercion occurrences="2">
       <code>Bootstrap::$staticObjectManager-&gt;get(PersistenceManagerInterface::class)</code>
       <code>Bootstrap::$staticObjectManager-&gt;get(ReflectionService::class)</code>
