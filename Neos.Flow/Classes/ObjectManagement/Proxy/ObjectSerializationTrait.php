@@ -27,6 +27,10 @@ use Neos\Utility\Arrays;
  */
 trait ObjectSerializationTrait
 {
+    protected array $Flow_Object_PropertiesToSerialize = [];
+
+    protected ?array $Flow_Persistence_RelatedEntities = null;
+
     /**
      * Code to find and serialize entities on sleep
      *
@@ -43,11 +47,14 @@ trait ObjectSerializationTrait
             if (in_array($propertyName, [
                 'Flow_Aop_Proxy_targetMethodsAndGroupedAdvices',
                 'Flow_Aop_Proxy_groupedAdviceChains',
-                'Flow_Aop_Proxy_methodIsInAdviceMode'
+                'Flow_Aop_Proxy_methodIsInAdviceMode',
+                'Flow_Persistence_RelatedEntities',
+                'Flow_Object_PropertiesToSerialize',
+                'Flow_Injected_Properties',
             ])) {
                 continue;
             }
-            if (isset($this->Flow_Injected_Properties) && is_array($this->Flow_Injected_Properties) && in_array($propertyName, $this->Flow_Injected_Properties)) {
+            if (property_exists($this, 'Flow_Injected_Properties') && is_array($this->Flow_Injected_Properties) && in_array($propertyName, $this->Flow_Injected_Properties)) {
                 continue;
             }
             if ($reflectionProperty->isStatic() || in_array($propertyName, $transientProperties)) {
@@ -72,7 +79,7 @@ trait ObjectSerializationTrait
                     }
                 }
                 if ($this->$propertyName instanceof PersistenceMagicInterface && !Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->isNewObject($this->$propertyName) || $this->$propertyName instanceof OrmProxy) {
-                    if (!property_exists($this, 'Flow_Persistence_RelatedEntities') || !is_array($this->Flow_Persistence_RelatedEntities)) {
+                    if (!isset($this->Flow_Persistence_RelatedEntities)) {
                         $this->Flow_Persistence_RelatedEntities = [];
                         $this->Flow_Object_PropertiesToSerialize[] = 'Flow_Persistence_RelatedEntities';
                     }
@@ -112,7 +119,7 @@ trait ObjectSerializationTrait
                 $this->Flow_searchForEntitiesAndStoreIdentifierArray($path . '.' . $key, $value, $originalPropertyName);
             }
         } elseif ($propertyValue instanceof PersistenceMagicInterface && !Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->isNewObject($propertyValue) || $propertyValue instanceof OrmProxy) {
-            if (!property_exists($this, 'Flow_Persistence_RelatedEntities') || !is_array($this->Flow_Persistence_RelatedEntities)) {
+            if (!isset($this->Flow_Persistence_RelatedEntities)) {
                 $this->Flow_Persistence_RelatedEntities = [];
                 $this->Flow_Object_PropertiesToSerialize[] = 'Flow_Persistence_RelatedEntities';
             }
@@ -146,7 +153,7 @@ trait ObjectSerializationTrait
      */
     private function Flow_setRelatedEntities()
     {
-        if (property_exists($this, 'Flow_Persistence_RelatedEntities') && is_array($this->Flow_Persistence_RelatedEntities)) {
+        if (isset($this->Flow_Persistence_RelatedEntities)) {
             $persistenceManager = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class);
             foreach ($this->Flow_Persistence_RelatedEntities as $entityInformation) {
                 $entity = $persistenceManager->getObjectByIdentifier($entityInformation['identifier'], $entityInformation['entityType'], true);
