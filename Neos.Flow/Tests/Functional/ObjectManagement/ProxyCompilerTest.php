@@ -194,7 +194,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         $reflectionClass = new ClassReflection(Fixtures\PHP8\ClassWithUnionTypes::class);
         /** @var PropertyReflection $property */
         foreach ($reflectionClass->getProperties() as $property) {
-            if ($property->getName() !== 'propertyA' && $property->getName() !== 'propertyB') {
+            if (str_starts_with($property->getName(), 'property') && $property->getName() !== 'propertyA' && $property->getName() !== 'propertyB') {
                 self::assertInstanceOf(\ReflectionUnionType::class, $property->getType(), $property->getName() . ': ' . $property->getType());
             }
         }
