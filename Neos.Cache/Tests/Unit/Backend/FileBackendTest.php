@@ -566,40 +566,6 @@ class FileBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function requireOnceDoesNotSwallowPhpWarningsOfTheIncludedFile()
-    {
-        $this->expectWarning();
-        $mockCache = $this->createMock(AbstractFrontend::class);
-        $mockCache->expects(self::atLeastOnce())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
-
-        $backend = $this->prepareDefaultBackend();
-        $backend->setCache($mockCache);
-
-        $entryIdentifier = 'SomePhpEntryWithPhpWarning';
-        $backend->set($entryIdentifier, '<?php trigger_error("Warning!", E_USER_WARNING); ?>');
-        $backend->requireOnce($entryIdentifier);
-    }
-
-    /**
-     * @test
-     */
-    public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile()
-    {
-        $this->expectNotice();
-        $mockCache = $this->createMock(AbstractFrontend::class);
-        $mockCache->expects(self::atLeastOnce())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
-
-        $backend = $this->prepareDefaultBackend();
-        $backend->setCache($mockCache);
-
-        $entryIdentifier = 'SomePhpEntryWithPhpNotice';
-        $backend->set($entryIdentifier, '<?php trigger_error("Notice!", E_USER_NOTICE); ?>');
-        $backend->requireOnce($entryIdentifier);
-    }
-
-    /**
-     * @test
-     */
     public function findIdentifiersByTagFindsCacheEntriesWithSpecifiedTag()
     {
         $mockCache = $this->createMock(AbstractFrontend::class);

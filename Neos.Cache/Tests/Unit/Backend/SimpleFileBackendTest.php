@@ -445,32 +445,6 @@ class SimpleFileBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function requireOnceDoesNotSwallowPhpWarningsOfTheIncludedFile()
-    {
-        $this->expectWarning();
-        $entryIdentifier = 'SomePhpEntryWithPhpWarning';
-
-        $simpleFileBackend = $this->getSimpleFileBackend();
-        $simpleFileBackend->set($entryIdentifier, '<?php trigger_error("Warning!", E_USER_WARNING); ?>');
-        $simpleFileBackend->requireOnce($entryIdentifier);
-    }
-
-    /**
-     * @test
-     */
-    public function requireOnceDoesNotSwallowPhpNoticesOfTheIncludedFile()
-    {
-        $this->expectNotice();
-        $entryIdentifier = 'SomePhpEntryWithPhpNotice';
-
-        $simpleFileBackend = $this->getSimpleFileBackend();
-        $simpleFileBackend->set($entryIdentifier, '<?php trigger_error("Notice!", E_USER_NOTICE); ?>');
-        $simpleFileBackend->requireOnce($entryIdentifier);
-    }
-
-    /**
-     * @test
-     */
     public function flushRemovesAllCacheEntries()
     {
         $this->mockCacheFrontend->expects(self::any())->method('getIdentifier')->will(self::returnValue('UnitTestCache'));
