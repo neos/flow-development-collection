@@ -56,13 +56,13 @@ trait ObjectSerializationTrait
             ])) {
                 continue;
             }
-            if (property_exists($this, 'Flow_Injected_Properties') && is_array($this->Flow_Injected_Properties) && in_array($propertyName, $this->Flow_Injected_Properties)) {
+            if (property_exists($this, 'Flow_Injected_Properties') && is_array($this->Flow_Injected_Properties) && in_array($propertyName, $this->Flow_Injected_Properties, true)) {
                 continue;
             }
-            if ($reflectionProperty->isStatic() || in_array($propertyName, $transientProperties)) {
+            if ($reflectionProperty->isStatic() || in_array($propertyName, $transientProperties, true)) {
                 continue;
             }
-            if (is_array($this->$propertyName) || (is_object($this->$propertyName) && ($this->$propertyName instanceof \ArrayObject || $this->$propertyName instanceof \SplObjectStorage || $this->$propertyName instanceof Collection))) {
+            if (is_array($this->$propertyName) || ($this->$propertyName instanceof \ArrayObject || $this->$propertyName instanceof \SplObjectStorage || $this->$propertyName instanceof Collection)) {
                 if (count($this->$propertyName) > 0) {
                     foreach ($this->$propertyName as $key => $value) {
                         $this->Flow_searchForEntitiesAndStoreIdentifierArray((string)$key, $value, $propertyName);
@@ -76,13 +76,13 @@ trait ObjectSerializationTrait
                     if (isset($propertyVarTags[$propertyName])) {
                         $className = trim($propertyVarTags[$propertyName], '\\');
                     } else {
-                        $className = $reflectionProperty->getType()->getName();
+                        $className = $reflectionProperty->getType()?->getName();
                     }
                     if (Bootstrap::$staticObjectManager->isRegistered($className) === false) {
                         $className = Bootstrap::$staticObjectManager->getObjectNameByClassName(get_class($this->$propertyName));
                     }
                 }
-                if ($this->$propertyName instanceof PersistenceMagicInterface && !Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->isNewObject($this->$propertyName) || $this->$propertyName instanceof DoctrineProxy) {
+                if ($this->$propertyName instanceof DoctrineProxy || ($this->$propertyName instanceof PersistenceMagicInterface && !Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->isNewObject($this->$propertyName))) {
                     if (!isset($this->Flow_Persistence_RelatedEntities) || !is_array($this->Flow_Persistence_RelatedEntities)) {
                         $this->Flow_Persistence_RelatedEntities = [];
                         $this->Flow_Object_PropertiesToSerialize[] = 'Flow_Persistence_RelatedEntities';
@@ -116,13 +116,13 @@ trait ObjectSerializationTrait
      * @param string $originalPropertyName
      * @return void
      */
-    private function Flow_searchForEntitiesAndStoreIdentifierArray(string $path, mixed $propertyValue, string $originalPropertyName)
+    private function Flow_searchForEntitiesAndStoreIdentifierArray(string $path, mixed $propertyValue, string $originalPropertyName): void
     {
         if (is_array($propertyValue) || ($propertyValue instanceof \ArrayObject || $propertyValue instanceof \SplObjectStorage)) {
             foreach ($propertyValue as $key => $value) {
                 $this->Flow_searchForEntitiesAndStoreIdentifierArray($path . '.' . $key, $value, $originalPropertyName);
             }
-        } elseif ($propertyValue instanceof PersistenceMagicInterface && !Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->isNewObject($propertyValue) || $propertyValue instanceof DoctrineProxy) {
+        } elseif ($propertyValue instanceof DoctrineProxy || ($propertyValue instanceof PersistenceMagicInterface && !Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->isNewObject($propertyValue))) {
             if (!isset($this->Flow_Persistence_RelatedEntities) || !is_array($this->Flow_Persistence_RelatedEntities)) {
                 $this->Flow_Persistence_RelatedEntities = [];
                 $this->Flow_Object_PropertiesToSerialize[] = 'Flow_Persistence_RelatedEntities';
@@ -150,12 +150,9 @@ trait ObjectSerializationTrait
      * Reconstitutes related entities to an unserialized object in __wakeup.
      * Used in __wakeup methods of proxy classes.
      *
-     * Note: This method adds code which ignores objects of type Neos\Flow\ResourceManagement\ResourcePointer in order to provide
-     * backwards compatibility data generated with Flow 2.2.x which still provided that class.
-     *
      * @return void
      */
-    private function Flow_setRelatedEntities()
+    private function Flow_setRelatedEntities(): void
     {
         if (isset($this->Flow_Persistence_RelatedEntities)) {
             $persistenceManager = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class);
