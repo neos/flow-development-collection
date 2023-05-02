@@ -91,7 +91,7 @@ class JsonArrayType extends JsonType
      *
      * @param mixed $value The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
-     * @return string|bool|null The database representation of the value.
+     * @return string|null The database representation of the value.
      * @throws \JsonException
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string

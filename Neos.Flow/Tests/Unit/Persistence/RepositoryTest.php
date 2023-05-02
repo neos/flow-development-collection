@@ -237,10 +237,10 @@ class RepositoryTest extends UnitTestCase
     /**
      * @test
      */
-    public function magicCallMethodTriggersAnErrorIfUnknownMethodsAreCalled()
+    public function magicCallMethodTriggersAnErrorIfUnknownMethodsAreCalled(): void
     {
-        $this->expectError();
-        $repository = $this->getMockBuilder(Persistence\Repository::class)->setMethods(['createQuery'])->getMock();
+        $this->expectExceptionMessage('Call to undefined method');
+        $repository = $this->getMockBuilder(Persistence\Repository::class)->onlyMethods(['createQuery'])->getMock();
         $repository->__call('foo', []);
     }
 
