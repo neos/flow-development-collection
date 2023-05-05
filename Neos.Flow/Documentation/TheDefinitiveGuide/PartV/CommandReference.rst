@@ -1527,6 +1527,27 @@ Options
 
 
 
+.. _`Flow Command Reference: NEOS.FLOW neos.flow:session:collectgarbage`:
+
+``neos.flow:session:collectgarbage``
+************************************
+
+**Run garbage collection for sesions.**
+
+This command will remove session-data and -metadate of outdated sessions
+identified by lastActivityTimestamp being older than inactivityTimeout
+
+!!! This is usually done automatically after shutdown for the percentage
+of requests specified in the setting `Neos.Flow.session.garbageCollection.probability`
+
+Use this command if you need more direct control over the cleanup intervals.
+
+
+
+
+
+
+
 .. _`Flow Command Reference: NEOS.FLOW neos.flow:session:destroyall`:
 
 ``neos.flow:session:destroyall``
