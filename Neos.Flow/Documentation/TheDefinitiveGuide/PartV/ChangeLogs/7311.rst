@@ -1,0 +1,54 @@
+`7.3.11 (2023-04-21) <https://github.com/neos/flow-development-collection/releases/tag/7.3.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Adjust psalm baseline <https://github.com/neos/flow-development-collection/pull/3020>`_
+------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: Upgrade psalm to version 4.30.0 <https://github.com/neos/flow-development-collection/pull/3019>`_
+--------------------------------------------------------------------------------------------------------
+
+Upgrades psalm to version 4.30.0 to prevent issues.
+
+* Packages: ``.github`` ``Flow``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/2985>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/N4xEny>`_.
+
+* Packages: ``Flow`` ``Cache`` ``Eel`` ``FluidAdaptor`` ``Utility.ObjectHandling`` ``Utility.Unicode``
+
+`TASK: Fix `ProtectedContext` tests <https://github.com/neos/flow-development-collection/pull/2977>`_
+-----------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+**Review instructions**
+
+Only using ``Array`` doesn`t work as allow path and we need to use the glob star.
+This was previously not noticed because expectException is set to early
+
+
+* Packages: ``Flow`` ``Eel``
+
+`TASK: extending phpstorm autocomplete information, focused on attributes <https://github.com/neos/flow-development-collection/pull/2961>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+This only adds some autocomplete hints to PHP-Storm, especially the Validate and Scope - Attributes.
+
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/7.3.10...7.3.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -3,7 +3,7 @@
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2023-05-02
+This reference was automatically generated from code on 2023-05-05
 
 
 .. _`Flow Annotation Reference: After`:
@@ -290,16 +290,16 @@ Arguments
 
 * ``path`` (string|null): Path of a configuration which should be injected into the property.
   Can be specified as anonymous argument: InjectConfiguration("some.path")
-  
+
   For type "Settings" this refers to the relative path (excluding the package key)
-  
+
   Example: session.name
 
 * ``package`` (string|null): Defines the package key to be used for retrieving settings. If no package key is specified, we'll assume the
   package to be the same which contains the class where the InjectConfiguration annotation is used.
-  
+
   Note: This property is only supported for type "Settings"
-  
+
   Example: Neos.Flow
 
 * ``type`` (string one of the ConfigurationManager::CONFIGURATION_TYPE_* constants): Type of Configuration (defaults to "Settings").
