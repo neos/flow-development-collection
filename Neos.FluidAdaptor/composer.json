@@ -6,7 +6,7 @@
     "MIT"
   ],
   "require": {
-    "php": "^8.0",
+    "php": "^8.2",
     "neos/flow": "~9.0.0",
     "neos/cache": "*",
     "neos/utility-files": "*",
