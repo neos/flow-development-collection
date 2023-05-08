@@ -17,7 +17,6 @@ use Doctrine\Common\Annotations\PhpParser;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Persistence\Proxy as DoctrineProxy;
-use InvalidArgumentException;
 use Neos\Cache\Exception;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
@@ -188,7 +187,7 @@ class ReflectionService
     {
         $this->statusCache = $cache;
         $backend = $this->statusCache->getBackend();
-        if (is_callable(['initializeObject', $backend])) {
+        if (is_callable([$backend, 'initializeObject'])) {
             $backend->initializeObject();
         }
     }
@@ -336,7 +335,7 @@ class ReflectionService
         $interfaceName = $this->cleanClassName($interfaceName);
 
         if (interface_exists($interfaceName) === false) {
-            throw new InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769559);
+            throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769559);
         }
         $this->loadOrReflectClassIfNecessary($interfaceName);
 
@@ -374,7 +373,7 @@ class ReflectionService
         $interfaceName = $this->cleanClassName($interfaceName);
 
         if (interface_exists($interfaceName) === false) {
-            throw new InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769560);
+            throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769560);
         }
         $this->loadOrReflectClassIfNecessary($interfaceName);
 
@@ -397,7 +396,7 @@ class ReflectionService
         $className = $this->cleanClassName($className);
 
         if (class_exists($className) === false) {
-            throw new InvalidArgumentException('"' . $className . '" does not exist or is not the name of a class.', 1257168042);
+            throw new \InvalidArgumentException('"' . $className . '" does not exist or is not the name of a class.', 1257168042);
         }
         $this->loadOrReflectClassIfNecessary($className);
 
@@ -1438,7 +1437,7 @@ class ReflectionService
 
     /**
      * @throws InvalidPropertyTypeException
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @throws ClassSchemaConstraintViolationException
      */
     protected function evaluateClassPropertyAnnotationsForSchema(ClassSchema $classSchema, string $propertyName): bool
