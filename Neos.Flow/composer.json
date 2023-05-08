@@ -39,7 +39,7 @@
 
         "ramsey/uuid": "^3.0 || ^4.0",
 
-        "doctrine/orm": "^2.9.3",
+        "doctrine/orm": "^2.12.0",
         "doctrine/migrations": "^3.0",
         "doctrine/dbal": "^2.13",
         "doctrine/common": "^3.0.3",
