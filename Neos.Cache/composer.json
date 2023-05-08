@@ -5,7 +5,7 @@
     "homepage": "http://flow.neos.io",
     "license": ["MIT"],
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "psr/simple-cache": "^2.0 || ^3.0",
         "psr/cache": "^2.0 || ^3.0",
         "psr/log": "^2.0 || ^3.0",

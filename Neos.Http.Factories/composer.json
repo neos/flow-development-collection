@@ -7,7 +7,7 @@
         "MIT"
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "psr/http-factory": "^1.0",
         "guzzlehttp/psr7": "^1.8.4 || ^2.1.1"
     },

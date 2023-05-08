@@ -4,7 +4,7 @@
     "license": ["MIT"],
     "description": "The Embedded Expression Language (Eel) is a building block for creating Domain Specific Languages",
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "neos/flow": "~9.0.0",
         "neos/cache": "*",
         "neos/utility-unicode": "*",

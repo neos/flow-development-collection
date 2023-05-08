@@ -5,7 +5,7 @@
   "homepage": "http://flow.neos.io",
   "license": "MIT",
   "require": {
-    "php": "^8.0",
+    "php": "^8.2",
     "neos/error-messages": "*"
   },
   "require-dev": {
