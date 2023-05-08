@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Fixtures\ClassWithSetters;
 use Neos\Flow\Fixtures\ClassWithSettersAndConstructor;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -26,7 +27,6 @@ use Neos\Flow\Property\TypeConverterInterface;
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Annotations as Flow;
 
 require_once(__DIR__ . '/../../Fixtures/ClassWithSetters.php');
 require_once(__DIR__ . '/../../Fixtures/ClassWithSettersAndConstructor.php');
@@ -93,18 +93,21 @@ class PersistentObjectConverterTest extends UnitTestCase
 
     /**
      * @test
-     * @param boolean $isEntity
-     * @param boolean $isValueObject
-     * @param boolean $expected
      * @dataProvider dataProviderForCanConvert
      */
-    public function canConvertFromReturnsTrueIfClassIsTaggedWithEntityOrValueObject($isEntity, $isValueObject, $expected)
+    public function canConvertFromReturnsTrueIfClassIsTaggedWithEntityOrValueObject(bool $isEntity, bool $isValueObject, bool $expected): void
     {
-        if ($isEntity) {
-            $this->mockReflectionService->expects(self::once())->method('isClassAnnotatedWith')->with('TheTargetType', Flow\Entity::class)->will(self::returnValue($isEntity));
-        } else {
-            $this->mockReflectionService->expects(self::atLeast(2))->method('isClassAnnotatedWith')->withConsecutive(['TheTargetType', Flow\Entity::class], ['TheTargetType', Flow\ValueObject::class])->willReturnOnConsecutiveCalls($isEntity, $isValueObject);
-        }
+        $this->mockReflectionService->method('isClassAnnotatedWith')->willReturnCallback(
+            function ($source, $targetType) use ($isEntity, $isValueObject): bool {
+                if ($targetType === Flow\Entity::class) {
+                    return $isEntity;
+                }
+                if ($targetType === Flow\ValueObject::class) {
+                    return $isValueObject;
+                }
+                return false;
+            }
+        );
 
         self::assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));
     }
