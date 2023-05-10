@@ -30,6 +30,10 @@ class AjaxTestController extends ActionController
     {
     }
 
+    public function forIndexAction()
+    {
+    }
+
     /**
      * Renders and returns the URI pointing to the widget for an AJAX call.
      *
