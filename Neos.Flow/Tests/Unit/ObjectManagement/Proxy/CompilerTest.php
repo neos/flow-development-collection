@@ -20,6 +20,7 @@ use Neos\Flow\Annotations\Signal;
 use Neos\Flow\Annotations\Validate;
 use Neos\Flow\ObjectManagement\Proxy\Compiler;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test cases for the Proxy Compiler
@@ -27,7 +28,7 @@ use Neos\Flow\Tests\UnitTestCase;
 class CompilerTest extends UnitTestCase
 {
     /**
-     * @var Compiler|\PHPUnit\Framework\MockObject\MockObject
+     * @var Compiler|MockObject
      */
     protected $compiler;
 
@@ -36,10 +37,7 @@ class CompilerTest extends UnitTestCase
         $this->compiler = $this->getAccessibleMock(Compiler::class, null);
     }
 
-    /**
-     * @return array
-     */
-    public function annotationsAndStrings()
+    public function annotationsAndStrings(): array
     {
         $sessionWithAutoStart = new Session();
         $sessionWithAutoStart->autoStart = true;
@@ -96,30 +94,27 @@ class CompilerTest extends UnitTestCase
     }
 
     /**
-     * @dataProvider annotationsAndStrings
+     * @dataProvider annotationsAndStrings()
      * @test
      */
-    public function renderAnnotationRendersCorrectly($annotation, $expectedString)
+    public function renderAnnotationRendersCorrectly($annotation, $expectedString): void
     {
         self::assertEquals($expectedString, Compiler::renderAnnotation($annotation));
     }
 
-    /**
-     * @return array
-     */
-    public function stripOpeningPhpTagCorrectlyStripsPhpTagDataProvider()
+    public function stripOpeningPhpTagCorrectlyStripsPhpTagDataProvider(): array
     {
         return [
-                // no (valid) php file
+            // no (valid) php file
             ['classCode' => "", 'expectedResult' => ""],
             ['classCode' => "Not\nPHP code\n", 'expectedResult' => "Not\nPHP code\n"],
 
-                // PHP files with only one line
+            // PHP files with only one line
             ['classCode' => "<?php just one line", 'expectedResult' => " just one line"],
             ['classCode' => "<?php another <?php tag", 'expectedResult' => " another <?php tag"],
             ['classCode' => "  <?php  space before and after tag", 'expectedResult' => "  space before and after tag"],
 
-                // PHP files with more lines
+            // PHP files with more lines
             ['classCode' => "<?php\nsecond line", 'expectedResult' => "\nsecond line"],
             ['classCode' => "  <?php\nsecond line", 'expectedResult' => "\nsecond line"],
             ['classCode' => "<?php  first line\nsecond line", 'expectedResult' => "  first line\nsecond line"],
@@ -130,14 +125,119 @@ class CompilerTest extends UnitTestCase
     }
 
     /**
-     * @param string $classCode
-     * @param string $expectedResult
      * @test
-     * @dataProvider stripOpeningPhpTagCorrectlyStripsPhpTagDataProvider
+     * @dataProvider stripOpeningPhpTagCorrectlyStripsPhpTagDataProvider()
      */
-    public function stripOpeningPhpTagCorrectlyStripsPhpTagTests($classCode, $expectedResult)
+    public function stripOpeningPhpTagCorrectlyStripsPhpTagTests($classCode, $expectedResult): void
     {
         $actualResult = $this->compiler->_call('stripOpeningPhpTag', $classCode);
         self::assertSame($expectedResult, $actualResult);
+    }
+
+    public function classCodeExamples(): array
+    {
+        return [
+            [
+                <<<PHP
+                <?php
+                class EasyClassName extends \ArrayIterator
+                {
+                }
+                PHP,
+                <<<PHP
+                <?php
+                class EasyClassName_Original extends \ArrayIterator
+                {
+                }
+                PHP,
+                '/Some/Path/Classes/EasyClassName.php'
+            ],
+            [
+                <<<PHP
+                <?php
+                /*
+                class foo
+                */
+                /*
+                class bar */class /* oddly placed comment for class */ ClassWithKeywordsInClassBody //class quux
+                {
+                    public function doSomething()
+                    {
+                    }
+                }
+                PHP,
+                <<<PHP
+                <?php
+                /*
+                class foo
+                */
+                /*
+                class bar */class /* oddly placed comment for class */ ClassWithKeywordsInClassBody_Original //class quux
+                {
+                    public function doSomething()
+                    {
+                    }
+                }
+                PHP,
+                '/Some/Path/Classes/ClassWithKeywordsInClassBody.php'
+            ],
+            [
+                <<<PHP
+                <?php
+                class /* oddly placed comment for class */
+                ClassWithClassNameOnNextLine //class quux
+                {
+                }
+                PHP,
+                <<<PHP
+                <?php
+                class /* oddly placed comment for class */
+                ClassWithClassNameOnNextLine_Original //class quux
+                {
+                }
+                PHP,
+                '/Some/Path/Classes/ClassWithClassNameOnNextLine.php'
+            ],
+            [
+                <<<PHP
+                <?php
+                final class SomeFinalClass // this is final, is it?
+                {
+                }
+                PHP,
+                <<<PHP
+                <?php
+                class SomeFinalClass_Original // this is final, is it?
+                {
+                }
+                PHP,
+                '/Some/Path/Classes/SomeFinalClass.php'
+            ],
+            [
+                <<<PHP
+                <?php
+                class ClassImplementingInterfaceWithSameName implements ClassImplementingInterfaceWithSameNameInterface
+                {
+                }
+                PHP,
+                <<<PHP
+                <?php
+                class ClassImplementingInterfaceWithSameName_Original implements ClassImplementingInterfaceWithSameNameInterface
+                {
+                }
+                PHP,
+                '/Some/Path/Classes/ClassImplementingInterfaceWithSameName.php'
+            ]
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider classCodeExamples()
+     */
+    public function replaceClassNameAppendsSuffixToOriginalClassName(string $originalClassCode, string $expectedClassCode, string $pathAndFilename): void
+    {
+        $actualClassCode = $this->compiler->_call('replaceClassName', $originalClassCode, $pathAndFilename);
+        self::assertSame($expectedClassCode, $actualClassCode);
     }
 }
