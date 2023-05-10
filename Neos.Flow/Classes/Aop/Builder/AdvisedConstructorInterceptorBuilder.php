@@ -39,28 +39,25 @@ class AdvisedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuil
 
         $declaringClassName = $methodMetaInformation[$methodName]['declaringClassName'];
         $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getConstructor();
-        if ($declaringClassName !== $targetClassName) {
-            $proxyMethod->setMethodParametersCode($proxyMethod->buildMethodParametersCode($declaringClassName, $methodName, true));
-        }
 
         $groupedAdvices = $methodMetaInformation[$methodName]['groupedAdvices'];
         $advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName, $declaringClassName);
 
-        $proxyMethod->addPreParentCallCode('
-        if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
-');
-        $proxyMethod->addPostParentCallCode('
+        $proxyMethod->addPreParentCallCode(<<<PHP
+        if (isset(\$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}'])) {
+        PHP);
+        $proxyMethod->addPostParentCallCode(<<<PHP
         } else {
-            $this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = true;
+            \$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}'] = true;
             try {
-            ' . $advicesCode . '
-            } catch (\Exception $exception) {
-                unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
-                throw $exception;
+            {$advicesCode}
+            } catch (\Exception \$exception) {
+                unset(\$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}']);
+                throw \$exception;
             }
-            unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
+            unset(\$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}']);
             return;
         }
-');
+        PHP);
     }
 }

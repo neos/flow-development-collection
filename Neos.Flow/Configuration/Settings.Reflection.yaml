@@ -8,6 +8,7 @@ Neos:
       # A list of tags to be ignored during reflection
       ignoredTags:
         'const': true
+        'configkey': true
         'scope': true
         'test': true
         'expectedException': true

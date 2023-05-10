@@ -106,6 +106,8 @@ class DependencyInjectionTest extends FunctionalTestCase
     {
         $prototypeA = $this->objectManager->get(Fixtures\PrototypeClassAishInterface::class);
 
+        # Note: The "someProperty" injection is defined in the Objects.yaml of the Flow package (Testing context)
+        #       for the object "Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassAishInterface"
         self::assertInstanceOf(Fixtures\PrototypeClassA::class, $prototypeA);
         self::assertSame('value defined in Objects.yaml', $prototypeA->getSomeProperty());
     }
@@ -117,7 +119,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     {
         $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
 
-        // Note: The "settingsArgument" is defined in the Settings.yaml of the Flow package (testing context)
+        // Note: The "settingsArgument" is defined in the Settings.yaml of the Flow package (Testing context)
         self::assertSame('setting injected singleton value', $objectC->settingsArgument);
     }
 

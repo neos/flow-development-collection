@@ -11,8 +11,10 @@ namespace Neos\Flow\Aop\Builder;
  * source code.
  */
 
+use Laminas\Code\Generator\MethodGenerator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\Exception;
+use Neos\Flow\ObjectManagement\Proxy\ProxyMethodGenerator;
 
 /**
  * An AOP interceptor code builder for methods enriched by advices.
@@ -38,30 +40,31 @@ class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
 
         $declaringClassName = $methodMetaInformation[$methodName]['declaringClassName'];
         $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod($methodName);
-        if ($proxyMethod->isPrivate()) {
+        if ($proxyMethod->getVisibility() === ProxyMethodGenerator::VISIBILITY_PRIVATE) {
             throw new Exception(sprintf('The %s cannot build interceptor code for private method %s::%s(). Please change the scope to at least protected or adjust the pointcut expression in the corresponding aspect.', __CLASS__, $targetClassName, $methodName), 1593070574);
         }
         if ($declaringClassName !== $targetClassName) {
-            $proxyMethod->setMethodParametersCode($proxyMethod->buildMethodParametersCode($declaringClassName, $methodName, true));
+            $originalMethod = MethodGenerator::copyMethodSignature(new \Laminas\Code\Reflection\MethodReflection($declaringClassName, $methodName));
+            $proxyMethod->setParameters($originalMethod->getParameters());
         }
 
         $groupedAdvices = $methodMetaInformation[$methodName]['groupedAdvices'];
         $advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName, $declaringClassName);
 
-        $proxyMethod->addPreParentCallCode('
-    if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
-');
-        $proxyMethod->addPostParentCallCode('
-    } else {
-        $this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = true;
-        try {
-        ' . $advicesCode . '
-        } catch (\Exception $exception) {
-            unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
-            throw $exception;
+        $proxyMethod->addPreParentCallCode(<<<PHP
+        if (isset(\$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}'])) {
+        PHP);
+        $proxyMethod->addPostParentCallCode(<<<PHP
+        } else {
+            \$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}'] = true;
+            try {
+            {$advicesCode}
+            } catch (\Exception \$exception) {
+                unset(\$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}']);
+                throw \$exception;
+            }
+            unset(\$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}']);
         }
-        unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
-    }
-');
+        PHP);
     }
 }
