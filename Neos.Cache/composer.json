@@ -8,9 +8,9 @@
         "php": "^7.3 || ^8.0",
         "psr/simple-cache": "^1.0",
         "psr/cache": "~1.0",
-        "neos/utility-files": "*",
-        "neos/utility-pdo": "*",
-        "neos/utility-opcodecache": "*"
+        "neos/utility-files": "self.version",
+        "neos/utility-pdo": "self.version",
+        "neos/utility-opcodecache": "self.version"
     },
     "require-dev": {
         "mikey179/vfsstream": "^1.6.1",
