@@ -423,6 +423,11 @@ class ConfigurationManager
             $this->writeConfigurationCacheFile($cachePathAndFilename, $configurationType);
             $this->replaceConfigurationForConfigurationType($configurationType, $cachePathAndFilename);
             @unlink($cachePathAndFilename);
+        } else {
+            // in case the cache is disabled (implicitly, because temporaryDirectoryPath is null)
+            // we need to still handle replacing the environment variables like `%FLOW_PATH_ROOT%` in the configuration
+            $configuration = $this->unprocessedConfiguration[$configurationType];
+            $this->configurations[$configurationType] = eval('return ' . $this->replaceVariablesInPhpString(var_export($configuration, true)) . ';');
         }
     }
 
