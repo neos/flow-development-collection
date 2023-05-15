@@ -183,7 +183,7 @@ class ConfigurationBuilder
      * @param array $rawObjectConfiguration
      * @return array
      */
-    protected function enhanceRawConfigurationWithAnnotationOptions($className, array $rawObjectConfiguration)
+    protected function enhanceRawConfigurationWithAnnotationOptions($className, array $rawObjectConfiguration): array
     {
         if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Scope::class)) {
             $annotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);

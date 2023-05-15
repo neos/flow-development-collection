@@ -141,12 +141,11 @@ class Compiler
             return false;
         }
 
-        $proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, Flow\Proxy::class);
-        if ($proxyAnnotation !== null && $proxyAnnotation->enabled === false) {
+        if ($this->reflectionService->getClassAnnotation($fullClassName, Flow\Proxy::class)?->enabled === false) {
             return false;
         }
 
-        if (in_array(substr($fullClassName, 0, $this->excludedSubPackagesLength), $this->excludedSubPackages)) {
+        if (in_array(substr($fullClassName, 0, $this->excludedSubPackagesLength), $this->excludedSubPackages, true)) {
             return false;
         }
         // Annotation classes (like \Neos\Flow\Annotations\Entity) must never be proxied because that would break the Doctrine AnnotationParser
@@ -210,9 +209,10 @@ class Compiler
 
     /**
      * @param array<string> $classNames
+     *
      * @Flow\Signal
      */
-    public function emitCompiledClasses(array $classNames)
+    public function emitCompiledClasses(array $classNames): void
     {
     }
 

@@ -296,7 +296,7 @@ class ReflectionService
      *
      * @api
      */
-    public function isClassReflected($className): bool
+    public function isClassReflected(string $className): bool
     {
         if (!$this->initialized) {
             $this->initialize();
@@ -384,11 +384,13 @@ class ReflectionService
      * Searches for and returns all names of classes inheriting the specified class.
      * If no class inheriting the given class was found, an empty array is returned.
      *
+     * @psalm-param class-string $className
+     * @psalm-return array<class-string>
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @api
      */
-    public function getAllSubClassNamesForClass($className): array
+    public function getAllSubClassNamesForClass(string $className): array
     {
         if (!$this->initialized) {
             $this->initialize();
@@ -438,8 +440,10 @@ class ReflectionService
      * Returns the specified class annotations or an empty array
      *
      * @return array<object>
+     *
+     * @param null|string $annotationClassName
      */
-    public function getClassAnnotations($className, $annotationClassName = null): array
+    public function getClassAnnotations(string $className, string|null $annotationClassName = null): array
     {
         $className = $this->prepareClassReflectionForUsage($className);
 
@@ -499,7 +503,7 @@ class ReflectionService
      *
      * @api
      */
-    public function isClassAbstract($className): bool
+    public function isClassAbstract(string $className): bool
     {
         $className = $this->prepareClassReflectionForUsage($className);
         return isset($this->classReflectionData[$className][self::DATA_CLASS_ABSTRACT]);
@@ -652,11 +656,18 @@ class ReflectionService
     /**
      * Returns the specified method annotations or an empty array
      *
-     * @return array<object>|null
+     * @param string $className
+     * @param string $methodName
+     * @param null|string $annotationClassName
+     * @return array<object>
+     *
+     * @throws FilesException
      * @throws ReflectionException
+     * @throws \Neos\Flow\Utility\Exception
      * @api
+     *
      */
-    public function getMethodAnnotations($className, $methodName, $annotationClassName = null): ?array
+    public function getMethodAnnotations(string $className, string $methodName, string|null $annotationClassName = null): array
     {
         $className = $this->cleanClassName($className);
         $annotationClassName = $annotationClassName === null ? null : $this->cleanClassName($annotationClassName);
@@ -770,8 +781,10 @@ class ReflectionService
      * Returns the declared return type of a method (for PHP < 7.0 this will always return null)
      *
      * @return ?string The declared return type of the method or null if none was declared
+     *
+     * @param class-string $className
      */
-    public function getMethodDeclaredReturnType($className, $methodName): ?string
+    public function getMethodDeclaredReturnType(string $className, string $methodName): ?string
     {
         $className = $this->prepareClassReflectionForUsage($className);
         return $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] ?? null;
@@ -782,8 +795,10 @@ class ReflectionService
      * If no properties were found, an empty array is returned.
      *
      * @api
+     *
+     * @psalm-param 'id'|'var' $tag
      */
-    public function getPropertyNamesByTag($className, $tag): array
+    public function getPropertyNamesByTag(string $className, string $tag): array
     {
         $className = $this->prepareClassReflectionForUsage($className);
         if (!isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES])) {
@@ -819,8 +834,10 @@ class ReflectionService
      * Returns the values of the specified class property tag
      *
      * @api
+     *
+     * @psalm-param 'var' $tag
      */
-    public function getPropertyTagValues($className, $propertyName, $tag)
+    public function getPropertyTagValues(string $className, string $propertyName, string $tag)
     {
         $className = $this->prepareClassReflectionForUsage($className);
         if (!isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName])) {
@@ -833,7 +850,7 @@ class ReflectionService
     /**
      * Returns the property type
      */
-    public function getPropertyType($className, $propertyName): ?string
+    public function getPropertyType(string $className, string $propertyName): ?string
     {
         return $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TYPE] ?? null;
     }
@@ -994,7 +1011,7 @@ class ReflectionService
         $this->log('Reflected class names did not match class names to reflect', LogLevel::DEBUG);
         $count = 0;
 
-        $classNameFilterFunction = function ($className) use (&$count) {
+        $classNameFilterFunction = function ($className) use (&$count): bool {
             $this->reflectClass($className);
             if (
                 !$this->isClassAnnotatedWith($className, Flow\Entity::class) &&
@@ -1725,6 +1742,10 @@ class ReflectionService
 
     /**
      * Forgets all reflection data related to the specified class
+     *
+     * @param (int|string) $className
+     *
+     * @psalm-param array-key $className
      */
     protected function forgetClass($className): void
     {
@@ -1861,6 +1882,10 @@ class ReflectionService
      * in the PrecompiledReflectionData directory for the current context.
      *
      * This method is used by the package manager.
+     *
+     * @param (int|string) $packageKey
+     *
+     * @psalm-param array-key $packageKey
      */
     public function freezePackageReflection($packageKey): void
     {
@@ -1882,7 +1907,7 @@ class ReflectionService
         $reflectionData['classSchemata'] = $this->filterArrayByClassesInPackageNamespace($reflectionData['classSchemata'], $packageKey);
         $reflectionData['annotatedClasses'] = $this->filterArrayByClassesInPackageNamespace($reflectionData['annotatedClasses'], $packageKey);
 
-        $methodAnnotationsFilters = function ($className) use ($packageKey) {
+        $methodAnnotationsFilters = function ($className) use ($packageKey): bool {
             return (isset($this->availableClassNames[$packageKey]) && in_array($className, $this->availableClassNames[$packageKey], true));
         };
 
@@ -1900,6 +1925,10 @@ class ReflectionService
 
     /**
      * Filter an array of entries where keys are class names by being in the given package namespace.
+     *
+     * @param (int|string) $packageKey
+     *
+     * @psalm-param array-key $packageKey
      */
     protected function filterArrayByClassesInPackageNamespace(array $array, $packageKey): array
     {

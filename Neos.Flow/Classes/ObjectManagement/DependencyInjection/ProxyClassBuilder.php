@@ -97,7 +97,7 @@ class ProxyClassBuilder
             if ($proxyClass === false) {
                 continue;
             }
-            $this->logger?->debug(sprintf('Building dependency injection proxy for "%s"', $className), LogEnvironment::fromMethodName(__METHOD__));
+            $this->logger->debug(sprintf('Building dependency injection proxy for "%s"', $className), LogEnvironment::fromMethodName(__METHOD__));
 
             $constructor = $proxyClass->getConstructor();
             $constructor->addPreParentCallCode($this->buildSetInstanceCode($objectConfiguration));
@@ -184,8 +184,10 @@ class ProxyClassBuilder
             return '';
         }
 
+        $scopeAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
+
         $doBuildCode =  $this->reflectionService->getClassAnnotation($className, Flow\Entity::class) !== null;
-        $doBuildCode = $doBuildCode || $this->reflectionService->getClassAnnotation($className, Flow\Scope::class)?->value === 'session';
+        $doBuildCode = $doBuildCode || ($scopeAnnotation->value ?? 'prototype') === 'session';
         if ($doBuildCode === false) {
             return '';
         }
@@ -503,9 +505,12 @@ class ProxyClassBuilder
      * @param string $className Name of the class to inject into
      * @param string $propertyName Name of the property to inject
      * @param string $preparedSetterArgument PHP code to use for retrieving the value to inject
-     * @return array PHP code
+     *
+     * @return null|string[] PHP code
+     *
+     * @psalm-return array{0?: string}|null
      */
-    protected function buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument)
+    protected function buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument): array|null
     {
         $setterMethodName = 'inject' . ucfirst($propertyName);
         if ($this->reflectionService->hasMethod($className, $setterMethodName)) {

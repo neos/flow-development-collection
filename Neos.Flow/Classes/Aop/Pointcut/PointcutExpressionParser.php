@@ -13,8 +13,8 @@ namespace Neos\Flow\Aop\Pointcut;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\Builder\ProxyClassBuilder;
-use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Aop\Exception as AopException;
+use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -237,7 +237,7 @@ class PointcutExpressionParser
      */
     protected function parseAnnotationPattern(string &$annotationPattern, array &$annotationPropertyConstraints): void
     {
-        if (strpos($annotationPattern, '(') !== false) {
+        if (str_contains($annotationPattern, '(')) {
             $matches = [];
             preg_match(self::PATTERN_MATCHMETHODNAMEANDARGUMENTS, $annotationPattern, $matches);
 
@@ -450,11 +450,11 @@ class PointcutExpressionParser
     }
 
     /**
-    * Parses the method arguments pattern and returns the corresponding constraints array
-    *
-    * @param string $methodArgumentsPattern The arguments pattern defined in the pointcut expression
-    * @return array The corresponding constraints array
-    */
+     * Parses the method arguments pattern and returns the corresponding constraints array
+     *
+     * @param string $methodArgumentsPattern The arguments pattern defined in the pointcut expression
+     * @return array The corresponding constraints array
+     */
     protected function getArgumentConstraintsFromMethodArgumentsPattern(string $methodArgumentsPattern): array
     {
         $matches = [];
