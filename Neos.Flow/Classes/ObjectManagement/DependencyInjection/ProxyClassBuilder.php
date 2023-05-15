@@ -186,7 +186,7 @@ class ProxyClassBuilder
 
         $scopeAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
 
-        $doBuildCode =  $this->reflectionService->getClassAnnotation($className, Flow\Entity::class) !== null;
+        $doBuildCode = $this->reflectionService->getClassAnnotation($className, Flow\Entity::class) !== null;
         $doBuildCode = $doBuildCode || ($scopeAnnotation->value ?? 'prototype') === 'session';
         if ($doBuildCode === false) {
             return '';
@@ -225,13 +225,13 @@ class ProxyClassBuilder
     /**
      * Renders additional code for the __construct() method of the Proxy Class which realizes constructor injection.
      *
-     * TODO: Check if the constructor arguments are only prototypes, and if so, skip the constructor injection code.
-     *
      * @throws InvalidConfigurationTypeException
      * @throws UnknownObjectException
      */
     protected function buildConstructorInjectionCode(Configuration $objectConfiguration): string
     {
+        $doBuildCode = $objectConfiguration->getScope() !== Configuration::SCOPE_PROTOTYPE;
+
         $assignments = [];
 
         $argumentConfigurations = $objectConfiguration->getArguments();
@@ -259,6 +259,7 @@ class ProxyClassBuilder
                 switch ($argumentConfiguration->getType()) {
                     case ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
                         if ($argumentValue instanceof Configuration) {
+                            $doBuildCode = true;
                             $argumentValueObjectName = $argumentValue->getObjectName();
                             $argumentValueClassName = $argumentValue->getClassName();
                             if ($argumentValueClassName === null) {
@@ -279,15 +280,20 @@ class ProxyClassBuilder
                                 throw new UnknownObjectException('The object "' . $argumentValue . '" which was specified as an argument in the object configuration of object "' . $objectConfiguration->getObjectName() . '" does not exist.', 1264669967);
                             }
                             $assignments[$argumentPosition] = $assignmentPrologue . '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
+                            if ($this->objectConfigurations[$argumentValue]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
+                                $doBuildCode = true;
+                            }
                         }
                         break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                         $assignments[$argumentPosition] = $assignmentPrologue . var_export($argumentValue, true);
+                        $doBuildCode = true;
                         break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
                         $assignments[$argumentPosition] = $assignmentPrologue . '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, \'' . $argumentValue . '\')';
+                        $doBuildCode = true;
                         break;
                 }
             }
@@ -312,7 +318,7 @@ class ProxyClassBuilder
             $index++;
         }
 
-        return $code;
+        return $doBuildCode ? $code : '';
     }
 
     /**
