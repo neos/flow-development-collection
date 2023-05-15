@@ -87,6 +87,7 @@ class ReflectionService
     protected const DATA_CLASS_ANNOTATIONS = 5;
     protected const DATA_CLASS_ABSTRACT = 6;
     protected const DATA_CLASS_FINAL = 7;
+    protected const DATA_CLASS_READONLY = 27;
     protected const DATA_CLASS_METHODS = 8;
     protected const DATA_CLASS_PROPERTIES = 9;
     protected const DATA_METHOD_FINAL = 10;
@@ -520,6 +521,19 @@ class ReflectionService
     {
         $className = $this->prepareClassReflectionForUsage($className);
         return isset($this->classReflectionData[$className][self::DATA_CLASS_FINAL]);
+    }
+
+    /**
+     * Tells if the specified class is readonly or not
+     *
+     * @param string $className Name of the class to analyze
+     * @return bool true if the class is readonly, otherwise false
+     * @api
+     */
+    public function isClassReadonly(string $className): bool
+    {
+        $className = $this->prepareClassReflectionForUsage($className);
+        return isset($this->classReflectionData[$className][self::DATA_CLASS_READONLY]);
     }
 
     /**
@@ -1081,6 +1095,9 @@ class ReflectionService
         }
         if ($class->isFinal()) {
             $this->classReflectionData[$className][self::DATA_CLASS_FINAL] = true;
+        }
+        if ($class->isReadOnly()) {
+            $this->classReflectionData[$className][self::DATA_CLASS_READONLY] = true;
         }
 
         foreach ($this->getParentClasses($class) as $parentClass) {

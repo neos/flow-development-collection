@@ -130,6 +130,7 @@ class ProxyCompilerTest extends FunctionalTestCase
 
     /**
      * @test
+     * @noinspection SuspiciousAssignmentsInspection
      */
     public function transientPropertiesAreNotSerializedOnSleep()
     {
@@ -142,7 +143,7 @@ class ProxyCompilerTest extends FunctionalTestCase
 
         $prototypeF = unserialize($serializedObject);
         self::assertSame($prototypeF->getNonTransientProperty(), 'bar');
-        self::assertSame($prototypeF->getTransientProperty(), null);
+        self::assertNull($prototypeF->getTransientProperty());
     }
 
     /**
@@ -152,6 +153,15 @@ class ProxyCompilerTest extends FunctionalTestCase
     {
         $reflectionClass = new ClassReflection(Fixtures\FinalClassWithDependencies::class);
         self::assertTrue($reflectionClass->isFinal());
+    }
+
+    /**
+     * @test
+     */
+    public function proxiedReadonlyClassesAreStillReadonly(): void
+    {
+        $reflectionClass = new ClassReflection(Fixtures\ReadonlyClassWithDependencies::class);
+        self::assertTrue($reflectionClass->isReadOnly());
     }
 
     /**
