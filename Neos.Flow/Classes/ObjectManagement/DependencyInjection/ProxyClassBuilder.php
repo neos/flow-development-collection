@@ -103,18 +103,18 @@ class ProxyClassBuilder
             $constructor->addPreParentCallCode($this->buildSetInstanceCode($objectConfiguration));
             $constructor->addPreParentCallCode($this->buildConstructorInjectionCode($objectConfiguration));
 
-            $setRelatedEntitiesCode = '';
-            if (!$this->reflectionService->hasMethod($className, '__sleep')) {
-                $proxyClass->addTraits(['\\' . ObjectSerializationTrait::class]);
-                $sleepMethod = $proxyClass->getMethod('__sleep');
-                $sleepMethod->addPostParentCallCode($this->buildSerializeRelatedEntitiesCode($objectConfiguration));
+            $sleepMethod = $proxyClass->getMethod('__sleep');
+            $wakeupMethod = $proxyClass->getMethod('__wakeup');
 
-                $setRelatedEntitiesCode = "\n        " . '$this->Flow_setRelatedEntities();' . "\n";
+            $wakeupMethod->addPreParentCallCode($this->buildSetInstanceCode($objectConfiguration));
+
+            $serializeRelatedEntitiesCode = $this->buildSerializeRelatedEntitiesCode($objectConfiguration);
+            if ($serializeRelatedEntitiesCode !== '') {
+                $proxyClass->addTraits(['\\' . ObjectSerializationTrait::class]);
+                $sleepMethod->addPostParentCallCode($serializeRelatedEntitiesCode);
+                $wakeupMethod->addPreParentCallCode($this->buildSetRelatedEntitiesCode());
             }
 
-            $wakeupMethod = $proxyClass->getMethod('__wakeup');
-            $wakeupMethod->addPreParentCallCode($this->buildSetInstanceCode($objectConfiguration));
-            $wakeupMethod->addPreParentCallCode($setRelatedEntitiesCode);
             $wakeupMethod->addPostParentCallCode($this->buildLifecycleInitializationCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED));
             $wakeupMethod->addPostParentCallCode($this->buildLifecycleShutdownCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED));
 
@@ -166,31 +166,64 @@ class ProxyClassBuilder
 
     /**
      * Renders code to create identifier/type information from related entities in an object.
-     * Used in sleep methods.
+     *
+     * The code is only rendered if one of the following conditions is met:
+     *
+     *   - The class is annotated with Entity
+     *   - The class is annotated with Scope("session")
+     *
+     * Despite the previous condition, the code will not be rendered if the following condition is true:
+     *
+     *   - The class already has a __sleep() method (we assume that the developer wants to take care of serialization themself)
      */
     protected function buildSerializeRelatedEntitiesCode(Configuration $objectConfiguration): string
     {
         $className = $objectConfiguration->getClassName();
-        $code = '';
-        if ($this->reflectionService->hasMethod($className, '__sleep') === false) {
-            $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Transient::class);
-            $propertyVarTags = [];
-            foreach ($this->reflectionService->getPropertyNamesByTag($className, 'var') as $propertyName) {
-                $varTagValues = $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var');
-                $propertyVarTags[$propertyName] = $varTagValues[0] ?? null;
-            }
-            $code = "        \$this->Flow_Object_PropertiesToSerialize = array();
-        unset(\$this->Flow_Persistence_RelatedEntities);
 
-        \$transientProperties = " . var_export($transientProperties, true) . ";
-        \$propertyVarTags = " . var_export($propertyVarTags, true) . ";
-        \$result = \$this->Flow_serializeRelatedEntities(\$transientProperties, \$propertyVarTags);\n";
+        if ($this->reflectionService->hasMethod($className, '__sleep')) {
+            return '';
         }
-        return $code;
+
+        $doBuildCode =  $this->reflectionService->getClassAnnotation($className, Flow\Entity::class) !== null;
+        $doBuildCode = $doBuildCode || $this->reflectionService->getClassAnnotation($className, Flow\Scope::class)?->value === 'session';
+        if ($doBuildCode === false) {
+            return '';
+        }
+
+        $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Transient::class);
+        $propertyVarTags = [];
+        foreach ($this->reflectionService->getPropertyNamesByTag($className, 'var') as $propertyName) {
+            $varTagValues = $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var');
+            $propertyVarTags[$propertyName] = $varTagValues[0] ?? null;
+        }
+
+        if (count($transientProperties) === 0 && count($propertyVarTags) === 0) {
+            return '';
+        }
+
+        return str_replace(
+            ['{{transientPropertiesArrayCode}}', '{{propertyVarTagsArrayCode}}'],
+            [
+                var_export($transientProperties, true),
+                var_export($propertyVarTags, true)
+            ],
+            <<<'PHP'
+                    $this->Flow_Object_PropertiesToSerialize = [];
+                    $this->Flow_Persistence_RelatedEntities = null;
+                    $result = $this->Flow_serializeRelatedEntities({{transientPropertiesArrayCode}}, {{propertyVarTagsArrayCode}});
+            PHP
+        );
+    }
+
+    protected function buildSetRelatedEntitiesCode(): string
+    {
+        return "\n        " . '$this->Flow_setRelatedEntities();' . "\n";
     }
 
     /**
      * Renders additional code for the __construct() method of the Proxy Class which realizes constructor injection.
+     *
+     * TODO: Check if the constructor arguments are only prototypes, and if so, skip the constructor injection code.
      *
      * @throws InvalidConfigurationTypeException
      * @throws UnknownObjectException

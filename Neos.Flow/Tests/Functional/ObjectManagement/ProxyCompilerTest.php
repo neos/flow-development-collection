@@ -195,16 +195,17 @@ class ProxyCompilerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function complexPropertyTypesArePreserved()
+    public function complexPropertyTypesArePreserved(): void
     {
         if (PHP_MAJOR_VERSION < 8) {
             $this->markTestSkipped('Only for PHP 8 with UnionTypes');
         }
         $reflectionClass = new ClassReflection(Fixtures\PHP8\ClassWithUnionTypes::class);
-        /** @var PropertyReflection $property */
+
         foreach ($reflectionClass->getProperties() as $property) {
-            if ($property->getName() !== 'propertyA' && $property->getName() !== 'propertyB') {
-                self::assertInstanceOf(\ReflectionUnionType::class, $property->getType(), $property->getName() . ': ' . $property->getType());
+            assert($property instanceof PropertyReflection);
+            if ($property->getName() !== 'propertyA' && $property->getName() !== 'propertyB' && !str_starts_with($property->getName(), 'Flow_')) {
+                self::assertInstanceOf(\ReflectionUnionType::class, $property->getType(), sprintf('Property "%s" is of type "%s"', $property->getName(), $property->getType()));
             }
         }
         self::assertEquals(
