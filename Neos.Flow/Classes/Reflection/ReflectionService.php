@@ -1926,7 +1926,7 @@ class ReflectionService
     /**
      * Filter an array of entries where keys are class names by being in the given package namespace.
      *
-     * @param (int|string) $packageKey
+     * @param int|string $packageKey
      *
      * @psalm-param array-key $packageKey
      */
