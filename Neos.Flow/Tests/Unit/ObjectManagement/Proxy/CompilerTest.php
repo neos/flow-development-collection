@@ -19,6 +19,7 @@ use Neos\Flow\Annotations\Session;
 use Neos\Flow\Annotations\Signal;
 use Neos\Flow\Annotations\Validate;
 use Neos\Flow\ObjectManagement\Proxy\Compiler;
+use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\FooBarAnnotation;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -52,11 +53,11 @@ class CompilerTest extends UnitTestCase
             ],
             [
                 new FooBarAnnotation(),
-                '@\Neos\Flow\Tests\Unit\ObjectManagement\Proxy\FooBarAnnotation(1.2)'
+                '@\Neos\Flow\Tests\Unit\ObjectManagement\Fixture\FooBarAnnotation(1.2)'
             ],
             [
                 new FooBarAnnotation(new FooBarAnnotation()),
-                '@\Neos\Flow\Tests\Unit\ObjectManagement\Proxy\FooBarAnnotation(@\Neos\Flow\Tests\Unit\ObjectManagement\Proxy\FooBarAnnotation(1.2))'
+                '@\Neos\Flow\Tests\Unit\ObjectManagement\Fixture\FooBarAnnotation(@\Neos\Flow\Tests\Unit\ObjectManagement\Fixture\FooBarAnnotation(1.2))'
             ],
             [
                 $sessionWithAutoStart,
