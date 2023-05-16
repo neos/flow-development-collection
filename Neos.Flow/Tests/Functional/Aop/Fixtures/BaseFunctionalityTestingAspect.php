@@ -243,7 +243,7 @@ class BaseFunctionalityTestingAspect
      */
     public function methodWithStaticScalarReturnTypeDeclarationAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
     {
-        return 'adviced: ' . $joinPoint->getAdviceChain()->proceed($joinPoint);
+        return 'advised: ' . $joinPoint->getAdviceChain()->proceed($joinPoint);
     }
 
     /**
@@ -264,7 +264,7 @@ class BaseFunctionalityTestingAspect
     public function methodWithNullableScalarReturnTypeDeclarationAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
     {
         $originalResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
-        return 'adviced: ' . ($originalResult === null ? 'NULL' : $originalResult);
+        return 'advised: ' . ($originalResult === null ? 'NULL' : $originalResult);
     }
 
 

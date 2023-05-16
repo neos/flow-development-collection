@@ -111,7 +111,7 @@ class FrameworkTest extends FunctionalTestCase
 
     /**
      * Due to the way the proxy classes are rendered, lifecycle methods such as
-     * initializeObject() were called twice if the constructor is adviced by some
+     * initializeObject() were called twice if the constructor is advised by some
      * aspect. This test makes sure that any code after the AOP advice code is only
      * executed once.
      *
@@ -133,7 +133,7 @@ class FrameworkTest extends FunctionalTestCase
      *
      * @test
      */
-    public function protectedMethodsCanAlsoBeAdviced(): void
+    public function protectedMethodsCanAlsoBeAdvised(): void
     {
         $targetClass = new Fixtures\TargetClass02();
         $result = $targetClass->publicTargetMethod('foo');
@@ -178,7 +178,7 @@ class FrameworkTest extends FunctionalTestCase
     }
 
     /**
-     * An interface with a method which is not adviced and thus not implemented can be introduced.
+     * An interface with a method which is not advised and thus not implemented can be introduced.
      * The proxy class contains a place holder implementation of that introduced method.
      *
      * @test
@@ -300,17 +300,17 @@ class FrameworkTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function methodWithStaticScalarReturnTypeDeclarationCanBeAdviced(): void
+    public function methodWithStaticScalarReturnTypeDeclarationCanBeAdvised(): void
     {
         $targetClass = new Fixtures\TargetClassWithPhp7Features();
 
-        self::assertSame('adviced: it works', $targetClass->methodWithStaticScalarReturnTypeDeclaration());
+        self::assertSame('advised: it works', $targetClass->methodWithStaticScalarReturnTypeDeclaration());
     }
 
     /**
      * @test
      */
-    public function methodWithStaticObjectReturnTypeDeclarationCanBeAdviced(): void
+    public function methodWithStaticObjectReturnTypeDeclarationCanBeAdvised(): void
     {
         $targetClass = new Fixtures\TargetClassWithPhp7Features();
 
@@ -320,17 +320,17 @@ class FrameworkTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function methodWithNullableScalarReturnTypeDeclarationCanBeAdviced(): void
+    public function methodWithNullableScalarReturnTypeDeclarationCanBeAdvised(): void
     {
         $targetClass = new TargetClassWithPhp7Features();
 
-        self::assertSame('adviced: NULL', $targetClass->methodWithNullableScalarReturnTypeDeclaration());
+        self::assertSame('advised: NULL', $targetClass->methodWithNullableScalarReturnTypeDeclaration());
     }
 
     /**
      * @test
      */
-    public function methodWithNullableObjectReturnTypeDeclarationCanBeAdviced(): void
+    public function methodWithNullableObjectReturnTypeDeclarationCanBeAdvised(): void
     {
         $targetClass = new TargetClassWithPhp7Features();
 

@@ -184,7 +184,7 @@ class BasicClass
      *
      * @param  array $someArray Some array
      * @return void
-     * @see    \Neos\Flow\Aop\Builder\AdvicedMethodInterceptorBuilderTest
+     * @see    \Neos\Flow\Aop\Builder\AdvisedMethodInterceptorBuilderTest
      */
     public function methodWhichExpectsAnArrayArgument(array $someArray)
     {

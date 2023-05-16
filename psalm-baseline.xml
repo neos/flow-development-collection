@@ -365,7 +365,7 @@
       <code>Flow_Aop_Proxy_invokeJoinpoint</code>
     </UndefinedInterfaceMethod>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Aop/Builder/AdvicedConstructorInterceptorBuilder.php">
+  <file src="Packages/Framework/Neos.Flow/Classes/Aop/Builder/AdvisedConstructorInterceptorBuilder.php">
     <PossiblyInvalidMethodCall occurrences="1">
       <code>getConstructor</code>
     </PossiblyInvalidMethodCall>
@@ -373,7 +373,7 @@
       <code>buildMethodParametersCode</code>
     </UndefinedMethod>
   </file>
-  <file src="Packages/Framework/Neos.Flow/Classes/Aop/Builder/AdvicedMethodInterceptorBuilder.php">
+  <file src="Packages/Framework/Neos.Flow/Classes/Aop/Builder/AdvisedMethodInterceptorBuilder.php">
     <PossiblyInvalidMethodCall occurrences="1">
       <code>getMethod</code>
     </PossiblyInvalidMethodCall>

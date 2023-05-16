@@ -141,25 +141,25 @@ class ProxyClassBuilder
     }
 
     /**
-     * Injects the Adviced Constructor Interceptor Builder
+     * Injects the Advised Constructor Interceptor Builder
      *
-     * @param AdvicedConstructorInterceptorBuilder $builder
+     * @param AdvisedConstructorInterceptorBuilder $builder
      * @return void
      */
-    public function injectAdvicedConstructorInterceptorBuilder(AdvicedConstructorInterceptorBuilder $builder): void
+    public function injectAdvisedConstructorInterceptorBuilder(AdvisedConstructorInterceptorBuilder $builder): void
     {
-        $this->methodInterceptorBuilders['AdvicedConstructor'] = $builder;
+        $this->methodInterceptorBuilders['AdvisedConstructor'] = $builder;
     }
 
     /**
-     * Injects the Adviced Method Interceptor Builder
+     * Injects the Advised Method Interceptor Builder
      *
-     * @param AdvicedMethodInterceptorBuilder $builder
+     * @param AdvisedMethodInterceptorBuilder $builder
      * @return void
      */
-    public function injectAdvicedMethodInterceptorBuilder(AdvicedMethodInterceptorBuilder $builder): void
+    public function injectAdvisedMethodInterceptorBuilder(AdvisedMethodInterceptorBuilder $builder): void
     {
-        $this->methodInterceptorBuilders['AdvicedMethod'] = $builder;
+        $this->methodInterceptorBuilders['AdvisedMethod'] = $builder;
     }
 
     /**
@@ -222,7 +222,7 @@ class ProxyClassBuilder
             if ($rebuildEverything === true || $hasCacheEntry === false) {
                 $proxyBuildResult = $this->buildProxyClass($targetClassName, $this->aspectContainers);
                 if ($proxyBuildResult === false) {
-                    // In case the proxy was not build because there was nothing adviced,
+                    // In case the proxy was not build because there was nothing advised,
                     // it might be an advice in the parent and so we need to try to treat this class.
                     $treatedSubClasses = $this->addBuildMethodsAndAdvicesCodeToClass($targetClassName, $treatedSubClasses);
                 }
@@ -422,7 +422,7 @@ class ProxyClassBuilder
         $methodsFromIntroducedInterfaces = $this->getIntroducedMethodsFromInterfaceIntroductions($interfaceIntroductions);
 
         $interceptedMethods = [];
-        $this->addAdvicedMethodsToInterceptedMethods($interceptedMethods, array_merge($methodsFromTargetClass, $methodsFromIntroducedInterfaces), $targetClassName, $aspectContainers);
+        $this->addAdvisedMethodsToInterceptedMethods($interceptedMethods, array_merge($methodsFromTargetClass, $methodsFromIntroducedInterfaces), $targetClassName, $aspectContainers);
         $this->addIntroducedMethodsToInterceptedMethods($interceptedMethods, $methodsFromIntroducedInterfaces);
 
         if (count($interceptedMethods) < 1 && count($introducedInterfaces) < 1 && count($introducedTraits) < 1 && count($propertyIntroductions) < 1) {
@@ -480,9 +480,9 @@ class ProxyClassBuilder
     }
 
     /**
-     * Makes sure that any sub classes of an adviced class also build the advices array on construction.
+     * Makes sure that any sub classes of an advised class also build the advices array on construction.
      *
-     * @param string $className The adviced class name
+     * @param string $className The advised class name
      * @param ClassNameIndex $targetClassNameCandidates target class names for advices
      * @param ClassNameIndex $treatedSubClasses Already treated (sub) classes to avoid duplication
      * @return ClassNameIndex The new collection of already treated classes
@@ -625,7 +625,7 @@ class ProxyClassBuilder
             if (count($methodMetaInformation['groupedAdvices']) === 0) {
                 throw new Aop\Exception\VoidImplementationException(sprintf('Refuse to introduce method %s into target class %s because it has no implementation code. You might want to create an around advice which implements this method.', $methodName, $targetClassName), 1303224472);
             }
-            $builderType = 'Adviced' . ($methodName === '__construct' ? 'Constructor' : 'Method');
+            $builderType = 'Advised' . ($methodName === '__construct' ? 'Constructor' : 'Method');
             $this->methodInterceptorBuilders[$builderType]->build($methodName, $interceptedMethods, $targetClassName);
         }
     }
@@ -640,7 +640,7 @@ class ProxyClassBuilder
      * @param array &$aspectContainers All aspects to take into consideration
      * @return void
      */
-    protected function addAdvicedMethodsToInterceptedMethods(array &$interceptedMethods, array $methods, string $targetClassName, array &$aspectContainers): void
+    protected function addAdvisedMethodsToInterceptedMethods(array &$interceptedMethods, array $methods, string $targetClassName, array &$aspectContainers): void
     {
         $pointcutQueryIdentifier = 0;
 
