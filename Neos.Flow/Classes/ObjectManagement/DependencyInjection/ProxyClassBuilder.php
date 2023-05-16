@@ -288,7 +288,9 @@ class ProxyClassBuilder
 
                     case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                         $assignments[$argumentPosition] = $assignmentPrologue . var_export($argumentValue, true);
-                        $doBuildCode = true;
+                        if ($argumentValue !== null) {
+                            $doBuildCode = true;
+                        }
                         break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
