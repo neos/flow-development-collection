@@ -12,21 +12,22 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  */
 
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\FinalClassWithDependencies;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\ClassWithTransitivePrototypeDependency;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassH;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassA;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassB;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
  * Functional tests for the Dependency Injection features
- *
  */
 class DependencyInjectionTest extends FunctionalTestCase
 {
-    /**
-     * @var ConfigurationManager
-     */
-    protected $configurationManager;
+    protected ConfigurationManager $configurationManager;
 
     protected function setUp(): void
     {
@@ -38,7 +39,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function singletonObjectsCanBeInjectedIntoConstructorsOfSingletonObjects()
+    public function singletonObjectsCanBeInjectedIntoConstructorsOfSingletonObjects(): void
     {
         $objectA = $this->objectManager->get(Fixtures\SingletonClassA::class);
         $objectB = $this->objectManager->get(Fixtures\SingletonClassB::class);
@@ -49,7 +50,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function constructorInjectionCanHandleCombinationsOfRequiredAutowiredAndOptionalArguments()
+    public function constructorInjectionCanHandleCombinationsOfRequiredAutowiredAndOptionalArguments(): void
     {
         $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
 
@@ -61,7 +62,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function propertiesOfVariousPrimitiveTypeAreSetInSingletonPropertiesIfConfigured()
+    public function propertiesOfVariousPrimitiveTypeAreSetInSingletonPropertiesIfConfigured(): void
     {
         $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
 
@@ -76,7 +77,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function ifItExistsASetterIsUsedToInjectPrimitiveTypePropertiesFromConfiguration()
+    public function ifItExistsASetterIsUsedToInjectPrimitiveTypePropertiesFromConfiguration(): void
     {
         $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
 
@@ -87,7 +88,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function propertiesAreReinjectedIfTheObjectIsUnserialized()
+    public function propertiesAreReinjectedIfTheObjectIsUnserialized(): void
     {
         $className = Fixtures\PrototypeClassA::class;
 
@@ -100,7 +101,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function virtualObjectsDefinedInObjectsYamlCanUseAFactoryForTheirActualImplementation()
+    public function virtualObjectsDefinedInObjectsYamlCanUseAFactoryForTheirActualImplementation(): void
     {
         $prototypeA = $this->objectManager->get(Fixtures\PrototypeClassAishInterface::class);
 
@@ -111,7 +112,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function constructorInjectionInSingletonCanHandleArgumentDefinedInSettings()
+    public function constructorInjectionInSingletonCanHandleArgumentDefinedInSettings(): void
     {
         $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
 
@@ -122,7 +123,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function singletonCanHandleInjectedPrototypeWithSettingArgument()
+    public function singletonCanHandleInjectedPrototypeWithSettingArgument(): void
     {
         $objectD = $this->objectManager->get(Fixtures\SingletonClassD::class);
 
@@ -133,7 +134,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function singletonCanHandleInjectedPrototypeWithCustomFactory()
+    public function singletonCanHandleInjectedPrototypeWithCustomFactory(): void
     {
         $objectD = $this->objectManager->get(Fixtures\SingletonClassD::class);
 
@@ -145,7 +146,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function singletonCanHandleConstructorArgumentWithCustomFactory()
+    public function singletonCanHandleConstructorArgumentWithCustomFactory(): void
     {
         $objectG = $this->objectManager->get(Fixtures\SingletonClassG::class);
 
@@ -157,7 +158,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function onCreationOfObjectInjectionInParentClassIsDoneOnlyOnce()
+    public function onCreationOfObjectInjectionInParentClassIsDoneOnlyOnce(): void
     {
         $prototypeDsub = $this->objectManager->get(Fixtures\PrototypeClassDsub::class);
         self::assertSame(1, $prototypeDsub->injectionRuns);
@@ -168,7 +169,7 @@ class DependencyInjectionTest extends FunctionalTestCase
      *
      * @test
      */
-    public function injectedPropertiesAreAvailableInInitializeObjectEvenIfTheClassHasBeenExtended()
+    public function injectedPropertiesAreAvailableInInitializeObjectEvenIfTheClassHasBeenExtended(): void
     {
         $prototypeDsub = $this->objectManager->get(Fixtures\PrototypeClassDsub::class);
         self::assertFalse($prototypeDsub->injectedPropertyWasUnavailable);
@@ -177,7 +178,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function constructorsOfSingletonObjectsAcceptNullArguments()
+    public function constructorsOfSingletonObjectsAcceptNullArguments(): void
     {
         $objectF = $this->objectManager->get(Fixtures\SingletonClassF::class);
 
@@ -187,7 +188,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function constructorsOfPrototypeObjectsAcceptNullArguments()
+    public function constructorsOfPrototypeObjectsAcceptNullArguments(): void
     {
         $objectE = $this->objectManager->get(Fixtures\PrototypeClassE::class, null);
 
@@ -197,7 +198,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function injectionOfObjectFromSameNamespace()
+    public function injectionOfObjectFromSameNamespace(): void
     {
         $nonNamespacedDependencies = new Fixtures\ClassWithNonNamespacedDependencies();
         $classB = $this->objectManager->get(Fixtures\SingletonClassB::class);
@@ -207,7 +208,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function injectionOfObjectFromSubNamespace()
+    public function injectionOfObjectFromSubNamespace(): void
     {
         $nonNamespacedDependencies = new Fixtures\ClassWithNonNamespacedDependencies();
         $aClassFromSubNamespace = $this->objectManager->get(Fixtures\SubNamespace\AnotherClass::class);
@@ -217,7 +218,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function injectionOfAllSettings()
+    public function injectionOfAllSettings(): void
     {
         $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
         $actualSettings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
@@ -228,7 +229,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function injectionOfSpecifiedPackageSettings()
+    public function injectionOfSpecifiedPackageSettings(): void
     {
         $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
 
@@ -239,7 +240,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function injectionOfCurrentPackageSettings()
+    public function injectionOfCurrentPackageSettings(): void
     {
         $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
 
@@ -250,7 +251,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function injectionOfNonExistingSettingsOverridesDefaultValue()
+    public function injectionOfNonExistingSettingsOverridesDefaultValue(): void
     {
         $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
         self::assertNull($classWithInjectedConfiguration->getNonExistingSetting());
@@ -259,7 +260,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function injectionOfSingleSettings()
+    public function injectionOfSingleSettings(): void
     {
         $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
         self::assertSame('injected setting', $classWithInjectedConfiguration->getInjectedSettingA());
@@ -268,7 +269,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function injectionOfSingleSettingsFromSpecificPackage()
+    public function injectionOfSingleSettingsFromSpecificPackage(): void
     {
         $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
         self::assertSame('injected setting', $classWithInjectedConfiguration->getInjectedSettingB());
@@ -277,7 +278,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function injectionOfConfigurationCallsRespectiveSetterIfItExists()
+    public function injectionOfConfigurationCallsRespectiveSetterIfItExists(): void
     {
         $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
         self::assertSame('INJECTED SETTING', $classWithInjectedConfiguration->getInjectedSettingWithSetter());
@@ -286,7 +287,7 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function injectionOfOtherConfigurationTypes()
+    public function injectionOfOtherConfigurationTypes(): void
     {
         $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
         self::assertSame($this->configurationManager->getConfiguration('Views'), $classWithInjectedConfiguration->getInjectedViewsConfiguration());
@@ -303,7 +304,7 @@ class DependencyInjectionTest extends FunctionalTestCase
      * @test
      * @see https://jira.neos.io/browse/FLOW-175
      */
-    public function transitivePrototypeDependenciesWithExplicitObjectConfigurationAreConstructedCorrectly()
+    public function transitivePrototypeDependenciesWithExplicitObjectConfigurationAreConstructedCorrectly(): void
     {
         $classWithTransitivePrototypeDependency = new ClassWithTransitivePrototypeDependency();
         self::assertEquals('Hello World!', $classWithTransitivePrototypeDependency->getTestValue());
@@ -312,9 +313,24 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function dependencyInjectionWorksForFinalClasses()
+    public function dependencyInjectionWorksForFinalClasses(): void
     {
         $object = $this->objectManager->get(FinalClassWithDependencies::class);
         self::assertInstanceOf(SingletonClassA::class, $object->dependency);
+    }
+
+    /**
+     * @test
+     */
+    public function noProxyClassIsGeneratedForPrototypeClassesWithOnlyPrototypeConstructorArguments(): void
+    {
+        $object = new PrototypeClassH(
+            new ValueObjectClassA('foo'),
+            new ValueObjectClassB('bar')
+        );
+        self::assertNotInstanceOf(ProxyInterface::class, $object);
+
+        $object = new PrototypeClassA();
+        self::assertInstanceOf(ProxyInterface::class, $object);
     }
 }
