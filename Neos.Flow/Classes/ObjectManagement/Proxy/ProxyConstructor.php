@@ -38,7 +38,7 @@ class ProxyConstructor extends ProxyMethod
      * @return string PHP code
      * @throws CannotBuildObjectException|ClassLoadingForReflectionFailedException
      */
-    public function render()
+    public function render(): string
     {
         $methodDocumentation = $this->buildMethodDocumentation($this->fullOriginalClassName, $this->methodName);
         $callParentMethodCode = $this->buildCallParentMethodCode($this->fullOriginalClassName, $this->methodName);
@@ -65,21 +65,20 @@ class ProxyConstructor extends ProxyMethod
     }
 
     /**
-     * Builds PHP code which calls the original (ie. parent) method after the added code has been executed.
+     * Builds PHP code which calls the original (i.e. parent) method after the added code has been executed.
      *
      * @param string $fullClassName Fully qualified name of the original class
      * @param string $methodName Name of the original method
      * @return string PHP code
      */
-    protected function buildCallParentMethodCode($fullClassName, $methodName)
+    protected function buildCallParentMethodCode(string $fullClassName, string $methodName): string
     {
         if (!$this->reflectionService->hasMethod($fullClassName, $methodName)) {
             return '';
         }
         if (count($this->reflectionService->getMethodParameters($this->fullOriginalClassName, $this->methodName)) > 0) {
             return "        parent::" . $methodName . "(...\$arguments);\n";
-        } else {
-            return "        parent::" . $methodName . "();\n";
         }
+        return "        parent::" . $methodName . "();\n";
     }
 }
