@@ -16,6 +16,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\BaseTestCase;
+use ReflectionAttribute;
+use ReflectionClass;
 
 /**
  * Builder for proxy classes which are used to implement Dependency Injection and
@@ -29,7 +31,7 @@ class Compiler
     /**
      * @var string
      */
-    const ORIGINAL_CLASSNAME_SUFFIX = '_Original';
+    public const ORIGINAL_CLASSNAME_SUFFIX = '_Original';
 
     /**
      * @var CompileTimeObjectManager
@@ -61,7 +63,7 @@ class Compiler
      * Length of the prefix that will be checked for exclusion of proxy building.
      * See above.
      *
-     * @var integer
+     * @var int
      */
     protected $excludedSubPackagesLength;
 
@@ -84,7 +86,7 @@ class Compiler
      * @param CompileTimeObjectManager $objectManager
      * @return void
      */
-    public function injectObjectManager(CompileTimeObjectManager $objectManager)
+    public function injectObjectManager(CompileTimeObjectManager $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
@@ -96,7 +98,7 @@ class Compiler
      * @return void
      * @Flow\Autowiring(false)
      */
-    public function injectClassesCache(PhpFrontend $classesCache)
+    public function injectClassesCache(PhpFrontend $classesCache): void
     {
         $this->classesCache = $classesCache;
     }
@@ -105,7 +107,7 @@ class Compiler
      * @param ReflectionService $reflectionService
      * @return void
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
@@ -120,11 +122,11 @@ class Compiler
      * false will be returned
      *
      * @param string $fullClassName Name of the original class
-     * @return ProxyClass|boolean
+     * @return ProxyClass|bool
      */
-    public function getProxyClass(string $fullClassName)
+    public function getProxyClass(string $fullClassName): bool|ProxyClass
     {
-        if (interface_exists($fullClassName) || in_array(BaseTestCase::class, class_parents($fullClassName))) {
+        if (interface_exists($fullClassName) || in_array(BaseTestCase::class, class_parents($fullClassName), true)) {
             return false;
         }
 
@@ -132,7 +134,7 @@ class Compiler
             return false;
         }
 
-        $classReflection = new \ReflectionClass($fullClassName);
+        $classReflection = new ReflectionClass($fullClassName);
         if ($classReflection->isInternal() === true) {
             return false;
         }
@@ -166,9 +168,9 @@ class Compiler
      * monitor or some other mechanism.
      *
      * @param string $fullClassName Name of the original class
-     * @return boolean true if a cache entry exists
+     * @return bool true if a cache entry exists
      */
-    public function hasCacheEntryForClass($fullClassName)
+    public function hasCacheEntryForClass(string $fullClassName): bool
     {
         if (isset($this->proxyClasses[$fullClassName])) {
             return false;
@@ -180,9 +182,9 @@ class Compiler
      * Compiles the configured proxy classes and methods as static PHP code and stores it in the proxy class code cache.
      * Also builds the static object container which acts as a registry for non-prototype objects during runtime.
      *
-     * @return integer Number of classes which have been compiled
+     * @return int Number of classes which have been compiled
      */
-    public function compile()
+    public function compile(): int
     {
         $compiledClasses = [];
         foreach ($this->objectManager->getRegisteredClassNames() as $fullOriginalClassNames) {
@@ -190,16 +192,14 @@ class Compiler
                 if (isset($this->proxyClasses[$fullOriginalClassName])) {
                     $proxyClassCode = $this->proxyClasses[$fullOriginalClassName]->render();
                     if ($proxyClassCode !== '') {
-                        $class = new \ReflectionClass($fullOriginalClassName);
+                        $class = new ReflectionClass($fullOriginalClassName);
                         $classPathAndFilename = $class->getFileName();
                         $this->cacheOriginalClassFileAndProxyCode($fullOriginalClassName, $classPathAndFilename, $proxyClassCode);
                         $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
                         $compiledClasses[] = $fullOriginalClassName;
                     }
-                } else {
-                    if ($this->classesCache->has(str_replace('\\', '_', $fullOriginalClassName))) {
-                        $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
-                    }
+                } elseif ($this->classesCache->has(str_replace('\\', '_', $fullOriginalClassName))) {
+                    $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
                 }
             }
         }
@@ -219,16 +219,14 @@ class Compiler
     /**
      * @return string
      */
-    public function getStoredProxyClassMap()
+    public function getStoredProxyClassMap(): string
     {
-        $return = '<?php
+        return '<?php
 /**
  * This is a cached list of all proxy classes. Only classes in this array will
  * actually be loaded from the proxy class cache in the ClassLoader.
  */
 return ' . var_export($this->storedProxyClasses, true) . ';';
-
-        return $return;
     }
 
     /**
@@ -242,7 +240,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      *
      * @throws Exception If the original class filename doesn't match the actual class name inside the file.
      */
-    protected function cacheOriginalClassFileAndProxyCode($className, $pathAndFilename, $proxyClassCode)
+    protected function cacheOriginalClassFileAndProxyCode(string $className, string $pathAndFilename, string $proxyClassCode): void
     {
         $classCode = file_get_contents($pathAndFilename);
         $classCode = $this->replaceClassName($classCode, $pathAndFilename);
@@ -252,7 +250,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
         // Note: Method name regex according to http://php.net/manual/en/language.oop5.basic.php
         $classCode = preg_replace_callback('/^(\s*)((public|protected)\s+)?final(\s+(public|protected))?(\s+function\s+)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]+\s*\()/m', static function ($matches) use ($proxyClassCode) {
             // the method is not advised => don't remove the final keyword
-            if (strpos($proxyClassCode, $matches[0]) === false) {
+            if (!str_contains($proxyClassCode, $matches[0])) {
                 return $matches[0];
             }
             return $matches[1] . $matches[2] . '/*final*/' . $matches[4] . $matches[6] . $matches[7];
@@ -276,7 +274,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      * @param string $classCode
      * @return string the original class code without opening php tag
      */
-    protected function stripOpeningPhpTag($classCode)
+    protected function stripOpeningPhpTag(string $classCode): string
     {
         return preg_replace('/^\s*\\<\\?php(.*\n|.*)/', '$1', $classCode, 1);
     }
@@ -284,10 +282,10 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
     /**
      * Render the source (string) form of a PHP Attribute.
-     * @param \ReflectionAttribute $attribute
+     * @param ReflectionAttribute $attribute
      * @return string
      */
-    public static function renderAttribute($attribute): string
+    public static function renderAttribute(ReflectionAttribute $attribute): string
     {
         $attributeAsString = '\\' . $attribute->getName();
         if (count($attribute->getArguments()) > 0) {
@@ -308,10 +306,10 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     /**
      * Render the source (string) form of an Annotation instance.
      *
-     * @param \Doctrine\Common\Annotations\Annotation $annotation
+     * @param object $annotation
      * @return string
      */
-    public static function renderAnnotation($annotation)
+    public static function renderAnnotation(object $annotation): string
     {
         $annotationAsString = '@\\' . get_class($annotation);
 
@@ -335,15 +333,10 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
             } elseif (is_array($optionValue)) {
                 $optionValueAsString = self::renderOptionArrayValueAsString($optionValue);
             }
-            switch ($optionName) {
-                case 'value':
-                    $optionsAsStrings[] = $optionValueAsString;
-                    break;
-                default:
-                    if ($optionValue === $optionDefaults[$optionName]) {
-                        break;
-                    }
-                    $optionsAsStrings[] = $optionName . '=' . $optionValueAsString;
+            if ($optionName === 'value') {
+                $optionsAsStrings[] = $optionValueAsString;
+            } elseif ($optionValue !== $optionDefaults[$optionName]) {
+                $optionsAsStrings[] = $optionName . '=' . $optionValueAsString;
             }
         }
         return $annotationAsString . ($optionsAsStrings !== [] ? '(' . implode(', ', $optionsAsStrings) . ')' : '');
@@ -355,7 +348,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      * @param array $optionValue
      * @return string
      */
-    protected static function renderOptionArrayValueAsString(array $optionValue)
+    protected static function renderOptionArrayValueAsString(array $optionValue): string
     {
         $values = [];
         foreach ($optionValue as $k => $v) {

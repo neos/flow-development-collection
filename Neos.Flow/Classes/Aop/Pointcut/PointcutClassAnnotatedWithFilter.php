@@ -84,7 +84,7 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
      * @param string $methodName Name of the method - not used here
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean true if the class matches, otherwise false
+     * @return bool true if the class matches, otherwise false
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
@@ -109,7 +109,7 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
             }
         }
 
-        return $matches;
+        return $matches ?? false;
     }
 
     /**

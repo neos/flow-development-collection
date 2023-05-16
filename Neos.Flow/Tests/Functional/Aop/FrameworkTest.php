@@ -30,13 +30,14 @@ class FrameworkTest extends FunctionalTestCase
 
     /**
      * @test
+     * @throws
      */
     public function adviceRecoversFromException(): void
     {
         $targetClass = new Fixtures\TargetClass01();
         try {
             $targetClass->sayHelloAndThrow(true);
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
         }
         self::assertSame('Hello World', $targetClass->sayHelloAndThrow(false));
     }
@@ -63,7 +64,7 @@ class FrameworkTest extends FunctionalTestCase
         $splObjectStorage->attach($name);
         $targetClass->setCurrentName($name);
         self::assertEquals('Hello, special guest', $targetClass->greetMany($splObjectStorage));
-        $targetClass->setCurrentName(null);
+        $targetClass->setCurrentName();
         self::assertEquals('Hello, Flow', $targetClass->greetMany($splObjectStorage));
         $targetClass->setCurrentName($otherName);
         self::assertEquals('Hello, Flow', $targetClass->greetMany($splObjectStorage));
@@ -92,7 +93,7 @@ class FrameworkTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function adviceInformationIsAlsoBuiltWhenTheTargetClassIsUnserialized(): void
+    public function adviceInformationIsAlsoBuiltWhenTheTargetClassIsDeserialized(): void
     {
         $className = Fixtures\TargetClass01::class;
         $targetClass = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
@@ -126,7 +127,7 @@ class FrameworkTest extends FunctionalTestCase
     }
 
     /**
-     * Checks if the target class is protected, the advice is woven in anyway.
+     * Checks if the target class is protected, the advice is woven in any way.
      * The necessary advice is defined in BaseFunctionalityAspect.
      *
      * Test for bugfix #2581
@@ -163,7 +164,7 @@ class FrameworkTest extends FunctionalTestCase
         self::assertSame('Hello, you', $targetClass->greetObject($name), 'Aspect should greet with "you" if the current name equals the name argument');
 
         $name = new Fixtures\Name('Christopher');
-        $targetClass->setCurrentName(null);
+        $targetClass->setCurrentName();
         self::assertSame('Hello, Christopher', $targetClass->greetObject($name), 'Aspect should greet with given name if the current name is not equal to the name argument');
     }
 
@@ -179,7 +180,7 @@ class FrameworkTest extends FunctionalTestCase
 
     /**
      * An interface with a method which is not advised and thus not implemented can be introduced.
-     * The proxy class contains a place holder implementation of that introduced method.
+     * The proxy class contains a placeholder implementation of that introduced method.
      *
      * @test
      */
@@ -194,6 +195,7 @@ class FrameworkTest extends FunctionalTestCase
 
     /**
      * @test
+     * @noinspection VariableFunctionsUsageInspection
      */
     public function traitWithNewMethodCanBeIntroduced(): void
     {
@@ -242,7 +244,7 @@ class FrameworkTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function methodArgumentsCanBeSetInTheJoinpoint(): void
+    public function methodArgumentsCanBeSetInTheJoinPoint(): void
     {
         $targetClass = new Fixtures\TargetClass01();
         $result = $targetClass->greet('Andi');
@@ -251,12 +253,13 @@ class FrameworkTest extends FunctionalTestCase
 
     /**
      * @test
+     * @noinspection PhpUndefinedFieldInspection
      */
     public function introducedPropertiesCanHaveADefaultValue(): void
     {
         $targetClass = new Fixtures\TargetClass03();
 
-        self::assertSame(null, $targetClass->introducedPublicProperty);
+        self::assertNull($targetClass->introducedPublicProperty);
         self::assertSame('thisIsADefaultValueBelieveItOrNot', $targetClass->introducedProtectedPropertyWithDefaultValue);
     }
 
@@ -290,6 +293,7 @@ class FrameworkTest extends FunctionalTestCase
 
     /**
      * @test
+     * @throws
      */
     public function finalMethodsStayFinalEvenIfTheyAreNotAdvised(): void
     {
@@ -309,6 +313,7 @@ class FrameworkTest extends FunctionalTestCase
 
     /**
      * @test
+     * @noinspection UnnecessaryAssertionInspection
      */
     public function methodWithStaticObjectReturnTypeDeclarationCanBeAdvised(): void
     {
