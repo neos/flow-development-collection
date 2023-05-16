@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP8;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassToBeSerialized;
 
 /**
  * A class with PHP 8 type hints with union types

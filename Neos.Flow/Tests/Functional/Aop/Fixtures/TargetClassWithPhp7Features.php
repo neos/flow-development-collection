@@ -38,4 +38,14 @@ class TargetClassWithPhp7Features
     {
         return $this;
     }
+
+    public function methodWithNullableScalarReturnTypeDeclaration(): ?string
+    {
+        return null;
+    }
+
+    public function methodWithNullableObjectReturnTypeDeclaration(): ?TargetClassWithPhp7Features
+    {
+        return null;
+    }
 }
