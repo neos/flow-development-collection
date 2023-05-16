@@ -257,7 +257,7 @@ class BaseFunctionalityTestingAspect
     }
 
     /**
-     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp71Features->methodWithNullableScalarReturnTypeDeclaration())")
+     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithNullableScalarReturnTypeDeclaration())")
      * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
      * @return string
      */
@@ -269,7 +269,7 @@ class BaseFunctionalityTestingAspect
 
 
     /**
-     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp71Features->methodWithNullableObjectReturnTypeDeclaration())")
+     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithNullableObjectReturnTypeDeclaration())")
      * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
      * @return string
      */
