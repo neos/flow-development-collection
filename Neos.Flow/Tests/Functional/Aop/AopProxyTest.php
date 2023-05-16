@@ -30,7 +30,7 @@ class AopProxyTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function anAdvicedParentMethodIsCalledCorrectlyIfANonAdvicedOverridingMethodCallsIt(): void
+    public function anAdvisedParentMethodIsCalledCorrectlyIfANonAdvisedOverridingMethodCallsIt(): void
     {
         $targetClass = new Fixtures\ChildClassOfTargetClass01();
         self::assertEquals('Two plus two makes five! For big twos and small fives! That was smart, eh?', $targetClass->saySomethingSmart());
@@ -60,7 +60,7 @@ class AopProxyTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function canCallAdvicedParentMethodNotDeclaredInChild(): void
+    public function canCallAdvisedParentMethodNotDeclaredInChild(): void
     {
         $targetClass = new Fixtures\ChildClassOfTargetClass01();
         $greeting = $targetClass->greet('Flow');
