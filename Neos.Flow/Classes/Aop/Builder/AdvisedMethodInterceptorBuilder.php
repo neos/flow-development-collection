@@ -25,18 +25,18 @@ class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
      * Builds interception PHP code for an advised method
      *
      * @param string $methodName Name of the method to build an interceptor for
-     * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
+     * @param array $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
      * @param string $targetClassName Name of the target class to build the interceptor for
      * @return void
      * @throws Exception
      */
-    public function build(string $methodName, array $interceptedMethods, string $targetClassName): void
+    public function build(string $methodName, array $methodMetaInformation, string $targetClassName): void
     {
         if ($methodName === '__construct') {
             throw new Exception('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173107446);
         }
 
-        $declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];
+        $declaringClassName = $methodMetaInformation[$methodName]['declaringClassName'];
         $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod($methodName);
         if ($proxyMethod->isPrivate()) {
             throw new Exception(sprintf('The %s cannot build interceptor code for private method %s::%s(). Please change the scope to at least protected or adjust the pointcut expression in the corresponding aspect.', __CLASS__, $targetClassName, $methodName), 1593070574);
@@ -45,25 +45,23 @@ class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
             $proxyMethod->setMethodParametersCode($proxyMethod->buildMethodParametersCode($declaringClassName, $methodName, true));
         }
 
-        $groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
+        $groupedAdvices = $methodMetaInformation[$methodName]['groupedAdvices'];
         $advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName, $declaringClassName);
 
-        if ($methodName !== null || $methodName === '__wakeup') {
-            $proxyMethod->addPreParentCallCode('
-        if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
+        $proxyMethod->addPreParentCallCode('
+    if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
 ');
-            $proxyMethod->addPostParentCallCode('
-        } else {
-            $this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = true;
-            try {
-            ' . $advicesCode . '
-            } catch (\Exception $exception) {
-                unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
-                throw $exception;
-            }
+        $proxyMethod->addPostParentCallCode('
+    } else {
+        $this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = true;
+        try {
+        ' . $advicesCode . '
+        } catch (\Exception $exception) {
             unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
+            throw $exception;
         }
+        unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
+    }
 ');
-        }
     }
 }
