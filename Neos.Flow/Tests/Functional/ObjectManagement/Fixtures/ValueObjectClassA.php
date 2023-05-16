@@ -12,9 +12,9 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
  */
 
 /**
- * A class in the style of a value object
+ * A readonly class in the style of a value object
  */
-class ValueObjectClassA implements \JsonSerializable
+readonly class ValueObjectClassA implements \JsonSerializable
 {
     public function __construct(
         readonly public string $value,

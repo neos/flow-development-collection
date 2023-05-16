@@ -17,9 +17,8 @@ use Neos\Flow\Reflection\ReflectionService;
 
 /**
  * Representation of a Proxy Class during rendering time
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class ProxyClass
 {
     /**
@@ -207,7 +206,6 @@ class ProxyClass
      */
     public function render()
     {
-        $namespace = $this->namespace;
         $proxyClassName = $this->originalClassName;
         $originalClassName = $this->originalClassName . Compiler::ORIGINAL_CLASSNAME_SUFFIX;
         $classModifier = '';
@@ -215,6 +213,9 @@ class ProxyClass
             $classModifier = 'abstract ';
         } elseif ($this->reflectionService->isClassFinal($this->fullOriginalClassName)) {
             $classModifier = 'final ';
+        }
+        if ($this->reflectionService->isClassReadonly($this->fullOriginalClassName)) {
+            $classModifier .= 'readonly ';
         }
 
         $constantsCode = $this->renderConstantsCode();
