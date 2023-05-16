@@ -1046,7 +1046,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         }
 
         $proxyAnnotation = $this->reader->getClassAnnotation($class, Flow\Proxy::class);
-        if ($proxyAnnotation === null || $proxyAnnotation->enabled !== false) {
+        if (($proxyAnnotation === null || $proxyAnnotation->enabled !== false) && method_exists($class->getName(), '__wakeup')) {
             $metadata->addLifecycleCallback('__wakeup', Events::postLoad);
         }
     }

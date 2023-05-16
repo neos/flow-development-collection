@@ -184,7 +184,7 @@ class ProxyMethod
                             $code .= '            ' . $callParentMethodCode;
                         }
                     } else {
-                        $code .= '            $result = ' . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
+                        $code .= '        $result = ' . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
                     }
                     $code .= $this->addedPostParentCallCode;
                     if (!$returnTypeIsVoid) {

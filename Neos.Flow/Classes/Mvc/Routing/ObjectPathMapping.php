@@ -65,7 +65,7 @@ class ObjectPathMapping
     /**
      * @param string $pathSegment
      */
-    public function setPathSegment($pathSegment)
+    public function setPathSegment($pathSegment): void
     {
         $this->pathSegment = $pathSegment;
     }
@@ -81,7 +81,7 @@ class ObjectPathMapping
     /**
      * @param string $uriPattern
      */
-    public function setUriPattern($uriPattern)
+    public function setUriPattern($uriPattern): void
     {
         $this->uriPattern = $uriPattern;
     }
@@ -97,7 +97,7 @@ class ObjectPathMapping
     /**
      * @param string $identifier
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier($identifier): void
     {
         $this->identifier = $identifier;
     }
@@ -112,9 +112,10 @@ class ObjectPathMapping
 
     /**
      * @param string $objectType
+     *
      * @psalm-param class-string $objectType
      */
-    public function setObjectType($objectType)
+    public function setObjectType($objectType): void
     {
         $this->objectType = $objectType;
     }

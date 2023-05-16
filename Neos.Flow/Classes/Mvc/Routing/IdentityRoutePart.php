@@ -105,8 +105,7 @@ class IdentityRoutePart extends DynamicRoutePart
     public function getUriPattern()
     {
         if ($this->uriPattern === null) {
-            $classSchema = $this->reflectionService->getClassSchema($this->objectType);
-            $identityProperties = $classSchema->getIdentityProperties();
+            $identityProperties = $this->reflectionService->getClassSchema($this->objectType)?->getIdentityProperties() ?? [];
             if (count($identityProperties) === 0) {
                 $this->uriPattern = '';
             } else {
@@ -145,9 +144,10 @@ class IdentityRoutePart extends DynamicRoutePart
      * If no matching ObjectPathMapping was found or the given $pathSegment is no valid identifier NULL is returned.
      *
      * @param string $pathSegment the query path segment to convert
-     * @return string|integer the technical identifier of the object or NULL if it couldn't be found
+     *
+     * @return null|string the technical identifier of the object or NULL if it couldn't be found
      */
-    protected function getObjectIdentifierFromPathSegment($pathSegment)
+    protected function getObjectIdentifierFromPathSegment($pathSegment): string|null
     {
         if ($this->getUriPattern() === '') {
             $identifier = rawurldecode($pathSegment);

@@ -11,20 +11,22 @@ namespace Neos\Flow\Aop\Builder;
  * source code.
  */
 
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Aop;
 use Neos\Flow\Aop\AdvicesTrait;
 use Neos\Flow\Aop\AspectContainer;
+use Neos\Flow\Aop\Exception;
+use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Aop\PropertyIntroduction;
-use Neos\Flow\Aop\Exception\InvalidTargetClassException;
-use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Aop\TraitIntroduction;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
-use Neos\Flow\Reflection\PropertyReflection;
-use Neos\Flow\Aop\TraitIntroduction;
-use Neos\Flow\Aop;
 use Neos\Flow\ObjectManagement\Proxy;
+use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Utility\Algorithms;
+use Neos\Utility\Exception\FilesException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -303,17 +305,18 @@ class ProxyClassBuilder
      * is tagged as an aspect. The object acting as an advice will already be
      * fetched (and therefore instantiated if necessary).
      *
-     * @param  string $aspectClassName Name of the class which forms the aspect, contains advices etc.
+     * @param string $aspectClassName Name of the class which forms the aspect, contains advices etc.
      * @return AspectContainer The aspect container containing one or more advisors
-     * @throws Aop\Exception if no container could be built
+     * @throws Exception
+     * @throws InvalidPointcutExpressionException
+     * @throws \Neos\Flow\Utility\Exception
+     * @throws FilesException
+     * @throws \ReflectionException
      */
     protected function buildAspectContainer(string $aspectClassName): AspectContainer
     {
         $aspectContainer = new AspectContainer($aspectClassName);
         $methodNames = get_class_methods($aspectClassName);
-        if ($methodNames === null) {
-            throw new InvalidTargetClassException(sprintf('The class "%s" is not loadable for AOP proxy building. This is most likely an inconsistency with the caches. Try running `./flow flow:cache:flush` and if that does not help, check the class exists and is correctly namespaced.', $aspectClassName), 1607422151);
-        }
 
         foreach ($methodNames as $methodName) {
             foreach ($this->reflectionService->getMethodAnnotations($aspectClassName, $methodName) as $annotation) {
@@ -363,7 +366,7 @@ class ProxyClassBuilder
             }
         }
         $introduceAnnotation = $this->reflectionService->getClassAnnotation($aspectClassName, Flow\Introduce::class);
-        if ($introduceAnnotation !== null) {
+        if ($introduceAnnotation instanceof Flow\Introduce) {
             if ($introduceAnnotation->interfaceName === null && $introduceAnnotation->traitName === null) {
                 throw new Aop\Exception('The introduction in class "' . $aspectClassName . '" does neither contain an interface name nor a trait name, at least one is required.', 1172694761);
             }
