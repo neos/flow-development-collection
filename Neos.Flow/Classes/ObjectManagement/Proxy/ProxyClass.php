@@ -215,7 +215,7 @@ class ProxyClass
             $classModifier = 'final ';
         }
         if ($this->reflectionService->isClassReadonly($this->fullOriginalClassName)) {
-            $classModifier = 'readonly ';
+            $classModifier .= 'readonly ';
         }
 
         $constantsCode = $this->renderConstantsCode();
