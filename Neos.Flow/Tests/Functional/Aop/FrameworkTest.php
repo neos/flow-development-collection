@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Functional\Aop;
  */
 
 use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features;
+use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp8Features;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -340,5 +341,20 @@ class FrameworkTest extends FunctionalTestCase
         $targetClass = new TargetClassWithPhp7Features();
 
         self::assertNull($targetClass->methodWithNullableObjectReturnTypeDeclaration());
+    }
+
+    /**
+     * @test
+     */
+    public function methodWithUnionTypesCanBeAdvised(): void
+    {
+        $targetClass = new TargetClassWithPhp8Features();
+
+        # Note: In order to prove that the advice is actually executed, the advice BaseFunctionalityTestingAspect::methodWithUnionTypes()
+        #       modifies the second method argument and sets it to 123.
+        self::assertSame(
+            sprintf('advised: %s and %s and %s', 'Neos', 123, TargetClassWithPhp8Features::class),
+            $targetClass->methodWithUnionTypes('Neos', 42, $targetClass)
+        );
     }
 }
