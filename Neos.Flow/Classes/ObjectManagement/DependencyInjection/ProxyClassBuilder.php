@@ -171,6 +171,7 @@ class ProxyClassBuilder
      *
      *   - The class is annotated with Entity
      *   - The class is annotated with Scope("session")
+     *   - The class has properties annotated with Transient
      *
      * Despite the previous condition, the code will not be rendered if the following condition is true:
      *
@@ -185,14 +186,16 @@ class ProxyClassBuilder
         }
 
         $scopeAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
+        $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Transient::class);
 
         $doBuildCode = $this->reflectionService->getClassAnnotation($className, Flow\Entity::class) !== null;
+        $doBuildCode = $doBuildCode || (count($transientProperties) > 0);
         $doBuildCode = $doBuildCode || ($scopeAnnotation->value ?? 'prototype') === 'session';
+
         if ($doBuildCode === false) {
             return '';
         }
 
-        $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Transient::class);
         $propertyVarTags = [];
         foreach ($this->reflectionService->getPropertyNamesByTag($className, 'var') as $propertyName) {
             $varTagValues = $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var');
