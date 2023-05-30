@@ -16,6 +16,8 @@ namespace Neos\Flow\ObjectManagement\DependencyInjection;
  */
 trait PropertyInjectionTrait
 {
+    protected array $Flow_Injected_Properties = [];
+
     /**
      * Does a property injection lazily with fallbacks.
      * Used in proxy classes.
