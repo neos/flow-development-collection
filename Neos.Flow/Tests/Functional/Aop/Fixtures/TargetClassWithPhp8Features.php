@@ -18,6 +18,11 @@ class TargetClassWithPhp8Features
         return "{$aStringOrInteger} and {$aNumber} and {$anObject}";
     }
 
+    public function __invoke(string $aString, mixed $something, bool $aFlag): mixed
+    {
+        return $aFlag ? $aString : $something;
+    }
+
     public function __toString(): string
     {
         return get_class($this);

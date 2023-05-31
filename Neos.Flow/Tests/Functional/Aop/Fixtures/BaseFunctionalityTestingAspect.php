@@ -291,4 +291,11 @@ class BaseFunctionalityTestingAspect
         $originalResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
         return 'advised: ' . ($originalResult ?? 'NULL');
     }
+
+    #[Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp8Features->__invoke())")]
+    public function invokeWithMixedReturnAdvice(JoinPointInterface $joinPoint): mixed
+    {
+        $joinPoint->setMethodArgument('aFlag', true);
+        return $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
 }
