@@ -187,10 +187,14 @@ class ProxyClassBuilder
      *   - The class is annotated with Entity
      *   - The class is annotated with Scope("session")
      *   - The class has properties annotated with Transient
+     *   - The class has properties annotated with Inject
      *
      * Despite the previous condition, the code will not be rendered if the following condition is true:
      *
      *   - The class already has a __sleep() method (we assume that the developer wants to take care of serialization themself)
+     *
+     * NOTE: Even though the method name suggests that it is only dealing with related entities code, it is currently also
+     *       used for removing injected properties before serialization. This should be refactored in the future.
      */
     protected function buildSerializeRelatedEntitiesCode(Configuration $objectConfiguration): string
     {
@@ -202,9 +206,11 @@ class ProxyClassBuilder
 
         $scopeAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
         $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Transient::class);
+        $injectedProperties =  $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Inject::class);
 
         $doBuildCode = $this->reflectionService->getClassAnnotation($className, Flow\Entity::class) !== null;
         $doBuildCode = $doBuildCode || (count($transientProperties) > 0);
+        $doBuildCode = $doBuildCode || (count($injectedProperties) > 0);
         $doBuildCode = $doBuildCode || ($scopeAnnotation->value ?? 'prototype') === 'session';
 
         if ($doBuildCode === false) {
