@@ -357,4 +357,17 @@ class FrameworkTest extends FunctionalTestCase
             $targetClass->methodWithUnionTypes('Neos', 42, $targetClass)
         );
     }
+
+    /**
+     * @test
+     * @see https://github.com/neos/flow-development-collection/issues/2899
+     */
+    public function methodWithReturnTypeMixedIsGeneratedCorrectly(): void
+    {
+        $targetClass = new TargetClassWithPhp8Features();
+
+        # Note: In order to prove that the advice is actually executed, the advice BaseFunctionalityTestingAspect::invokeWithMixedReturnAdvice()
+        #       modifies the flag and sets it to true
+        self::assertSame('Flag is set', $targetClass->__invoke('Flag is set', 42, false));
+    }
 }
