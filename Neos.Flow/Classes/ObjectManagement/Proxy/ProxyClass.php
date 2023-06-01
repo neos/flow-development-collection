@@ -11,7 +11,9 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
+use Laminas\Code\Reflection\MethodReflection;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
 use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\ReflectionService;
 
@@ -44,7 +46,7 @@ class ProxyClass
     protected $fullOriginalClassName;
 
     /**
-     * @var ProxyConstructor
+     * @var ProxyConstructorGenerator
      */
     protected $constructor;
 
@@ -109,15 +111,21 @@ class ProxyClass
     }
 
     /**
-     * Returns the ProxyConstructor for this ProxyClass. Creates it if needed.
+     * Returns the ProxyConstructorGenerator for this ProxyClass. Creates it if needed.
      *
-     * @return ProxyConstructor
+     * @return ProxyConstructorGenerator
+     * @throws \ReflectionException
+     * @throws CannotBuildObjectException
      */
-    public function getConstructor(): ProxyConstructor
+    public function getConstructor(): ProxyConstructorGenerator
     {
         if (!isset($this->constructor)) {
-            $this->constructor = new ProxyConstructor($this->fullOriginalClassName);
-            $this->constructor->injectReflectionService($this->reflectionService);
+            if (method_exists($this->fullOriginalClassName, '__construct')) {
+                $this->constructor = ProxyConstructorGenerator::fromReflection(new MethodReflection($this->fullOriginalClassName, '__construct'));
+            } else {
+                $this->constructor = new ProxyConstructorGenerator();
+                $this->constructor->setFullOriginalClassName($this->fullOriginalClassName);
+            }
         }
         return $this->constructor;
     }
@@ -125,18 +133,21 @@ class ProxyClass
     /**
      * Returns the named ProxyMethod for this ProxyClass. Creates it if needed.
      *
-     * @param string $methodName The name of the methods to return
-     * @return ProxyMethod
+     * @throws \ReflectionException
      */
-    public function getMethod(string $methodName): ProxyConstructor|ProxyMethod
+    public function getMethod(string $methodName): ProxyMethodGenerator|ProxyConstructorGenerator
     {
         if ($methodName === '__construct') {
             return $this->getConstructor();
         }
         if (!isset($this->methods[$methodName])) {
-            $this->methods[$methodName] = new ProxyMethod($this->fullOriginalClassName, $methodName);
-            $this->methods[$methodName]->injectReflectionService($this->reflectionService);
+            if (method_exists($this->fullOriginalClassName, $methodName)) {
+                $this->methods[$methodName] = ProxyMethodGenerator::fromReflection(new MethodReflection($this->fullOriginalClassName, $methodName));
+            } else {
+                $this->methods[$methodName] = new ProxyMethodGenerator($methodName);
+            }
         }
+        $this->methods[$methodName]->getDocBlock()?->setWordWrap(false);
         return $this->methods[$methodName];
     }
 
@@ -203,6 +214,7 @@ class ProxyClass
      * Renders and returns the PHP code for this ProxyClass.
      *
      * @return string
+     * @throws CannotBuildObjectException
      */
     public function render(): string
     {
@@ -221,22 +233,40 @@ class ProxyClass
         $constantsCode = $this->renderConstantsCode();
         $propertiesCode = $this->renderPropertiesCode();
         $traitsCode = $this->renderTraitsCode();
+        $methodsCode = '';
 
-        $methodsCode = isset($this->constructor) ? $this->constructor->render() : '';
-        foreach ($this->methods as $proxyMethod) {
-            $methodsCode .= $proxyMethod->render();
+        $constructorBodyCode = isset($this->constructor) ? $this->constructor->renderBodyCode() : '';
+        if ($constructorBodyCode !== '') {
+            $this->constructor->setBody($constructorBodyCode);
+            $methodsCode .= PHP_EOL . $this->constructor->generate();
+
+            foreach (class_implements($this->fullOriginalClassName) as $interface) {
+                if (method_exists($interface, '__construct')) {
+                    throw new CannotBuildObjectException(sprintf('The class "%s" implements the interface "%s" which has a constructor. Proxy classes implementing an interface containing a constructor is not supported and constructors interfaces are generally strongly discouraged.', $this->fullOriginalClassName, $interface), 1685433328);
+                }
+            }
         }
 
-        if ($methodsCode . $constantsCode === '') {
+        foreach ($this->methods as $proxyMethod) {
+            assert($proxyMethod instanceof ProxyMethodGenerator);
+            $methodBodyCode = $proxyMethod->renderBodyCode();
+            if ($methodBodyCode !== '') {
+                $proxyMethod->setBody($methodBodyCode);
+                $methodsCode .= PHP_EOL . $proxyMethod->generate();
+            }
+        }
+
+        if (trim($methodsCode) . $constantsCode === '') {
             return '';
         }
+
         return $this->buildClassDocumentation() .
-            $classModifier . 'class ' . $proxyClassName . ' extends ' . $originalClassName . ' implements ' . implode(', ', array_unique($this->interfaces)) . " {\n\n" .
+            $classModifier . 'class ' . $proxyClassName . ' extends ' . $originalClassName . ' implements ' . implode(', ', array_unique($this->interfaces)) . " {" . PHP_EOL . PHP_EOL .
             $traitsCode .
             $constantsCode .
             $propertiesCode .
-            $methodsCode .
-            '}';
+            rtrim($methodsCode) .
+            PHP_EOL. '}';
     }
 
     /**
@@ -267,7 +297,7 @@ class ProxyClass
     {
         $code = '';
         foreach ($this->constants as $name => $valueCode) {
-            $code .= '    const ' . $name . ' = ' . $valueCode . ";\n\n";
+            $code .= '    const ' . $name . ' = ' . $valueCode . ";\n";
         }
         return $code;
     }
@@ -284,7 +314,7 @@ class ProxyClass
             if (!empty($attributes['docComment'])) {
                 $code .= '    ' . $attributes['docComment'] . "\n";
             }
-            $code .= '    ' . $attributes['visibility'] . ' $' . $name . ' = ' . $attributes['initialValueCode'] . ";\n\n";
+            $code .= '    ' . $attributes['visibility'] . ' $' . $name . ' = ' . $attributes['initialValueCode'] . ";\n";
         }
         return $code;
     }
