@@ -283,4 +283,12 @@ class BaseFunctionalityTestingAspect
     {
         return $joinPoint->getAdviceChain()->proceed($joinPoint);
     }
+
+    #[Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp8Features->methodWithUnionTypes())")]
+    public function methodWithUnionTypesAdvice(JoinPointInterface $joinPoint): string
+    {
+        $joinPoint->setMethodArgument('aNumber', 123);
+        $originalResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
+        return 'advised: ' . ($originalResult ?? 'NULL');
+    }
 }

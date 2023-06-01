@@ -1,4 +1,6 @@
 <?php
+/** @noinspection PhpUndefinedClassInspection */
+/** @noinspection PhpUndefinedNamespaceInspection */
 namespace Neos\Flow\Tests\Unit\ObjectManagement\Fixture;
 
 /*
@@ -33,7 +35,7 @@ class ClassWithSetterAndPropertyInjection
     /**
      * @param ObjectManagerInterface $firstDependency
      */
-    public function injectFirstDependency(ObjectManagerInterface $firstDependency)
+    public function injectFirstDependency(ObjectManagerInterface $firstDependency): void
     {
         $this->firstDependency = $firstDependency;
     }

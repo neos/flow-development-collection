@@ -33,7 +33,7 @@ class BasicClass
     protected $someProperty = 42;
 
     /**
-     * @var boolean Flag which reveals if the initializeAfterPropertiesSet method has been called.
+     * @var bool Flag which reveals if the initializeAfterPropertiesSet method has been called.
      */
     protected $hasBeenInitialized = false;
 
@@ -84,8 +84,8 @@ class BasicClass
     }
 
     /**
-     * This setter injection method is used to check if it the
-     * injectInjectOrSetMethod() is  preferred over this method.
+     * This setter injection method is used to check if the
+     * injectInjectOrSetMethod() is preferred over this method.
      *
      * @param  mixed $value
      * @return void
@@ -154,7 +154,7 @@ class BasicClass
     /**
      * Returns the hasBeenInitialized flag
      *
-     * @return boolean Returns the hasBeenInitialized flag
+     * @return bool Returns the hasBeenInitialized flag
      */
     public function hasBeenInitialized()
     {

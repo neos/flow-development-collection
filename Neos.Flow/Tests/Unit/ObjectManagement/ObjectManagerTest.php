@@ -40,8 +40,8 @@ class ObjectManagerTest extends UnitTestCase
      * @test
      * @dataProvider factoryGenerationDataProvider
      *
-     * @param integer $scope
-     * @param integer $factoryCalls
+     * @param int $scope
+     * @param int $factoryCalls
      */
     public function getFactoryGeneratedPrototypeObject($scope, $factoryCalls)
     {
@@ -65,7 +65,7 @@ class ObjectManagerTest extends UnitTestCase
         $object1 = $objectManager->get(BasicClass::class);
         $object2 = $objectManager->get(BasicClass::class);
 
-        if ($scope == ObjectConfiguration::SCOPE_PROTOTYPE) {
+        if ($scope === ObjectConfiguration::SCOPE_PROTOTYPE) {
             self::assertNotSame($object1, $object2);
         } else {
             self::assertSame($object1, $object2);
