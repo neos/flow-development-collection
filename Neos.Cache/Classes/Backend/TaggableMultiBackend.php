@@ -55,16 +55,15 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
     public function flushByTag(string $tag): int
     {
         $this->prepareBackends();
-        $count = 0;
+        $flushed = 0;
         foreach ($this->backends as $backend) {
             try {
-                $count |= $backend->flushByTag($tag);
+                $flushed += $backend->flushByTag($tag);
             } catch (\Throwable $t) {
                 $this->handleError($t);
             }
         }
-
-        return $count;
+        return $flushed;
     }
 
     /**
