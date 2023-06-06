@@ -6,11 +6,11 @@ Object Framework
 
 .. sectionauthor:: Robert Lemke <robert@neos.io>
 
-The lifecycle of objects are managed centrally by the object framework. It offers
+The lifecycle of objects is managed centrally by the object framework. It offers
 convenient support for Dependency Injection and provides some additional features such as
 a caching mechanism for objects. Because all packages are built on this foundation it is
 important to understand the general concept of objects in Flow.
-Note, the object management features of Flow are by default only enabled for classes in
+Note that the object management features of Flow are by default only enabled for classes in
 packages belonging to one of the `neos-*`` package types. All other classes are not
 considered by default. If you need that (see :ref:`sect-enabling-non-flow-packages`).
 
@@ -101,22 +101,23 @@ Objects live in a specific scope. The most commonly used are *prototype* and *si
 	The above examples are *not recommended* for the use within Flow applications.
 
 The scope of an object is determined from its configuration (see also :ref:`sect-configuring-objects`).
-The recommended way to specify the scope is the ``@scope`` annotation::
+The recommended way to specify the scope is the ``@scope`` attribute or annotation::
 
 	namespace MyCompany\MyPackage;
 
   use Neos\Flow\Annotations as Flow;
 
 	/**
-	 * A sample class
-	 *
 	 * @Flow\Scope("singleton")
 	 */
+	#[Flow\Scope("singleton")]
 	class SomeClass {
 	}
 
-Prototype is the default scope and is therefore assumed if no ``@scope`` annotation or
-other configuration was found.
+
+Note that only either the annotation or attribute is needed, not both. Prototype is the
+default scope and is therefore assumed if no ``Scope`` attribute or other configuration
+was found.
 
 Creating Prototypes
 -------------------
@@ -154,24 +155,20 @@ is dependency injection.
 
 	namespace MyCompany\MyPackage;
 
+	use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+
 	/**
 	 * A sample class
 	 */
 	class SampleClass {
 
-		/**
-		 * @var \Neos\Flow\ObjectManagement\ObjectManagerInterface
-		 */
-		protected $objectManager;
+		protected ObjectManagerInterface $objectManager;
 
 		/**
-		 * Constructor.
 		 * The Object Manager will automatically be passed (injected) by the object
 		 * framework on instantiating this class.
-		 *
-		 * @param \Neos\Flow\ObjectManagement\ObjectManagerInterface $objectManager
 		 */
-		public function __construct(\Neos\Flow\ObjectManagement\ObjectManagerInterface $objectManager) {
+		public function __construct(ObjectManagerInterface $objectManager) {
 			$this->objectManager = $objectManager;
 		}
 	}
@@ -188,7 +185,7 @@ to retrieve object instances directly. The ``ObjectManager`` provides methods fo
 retrieving object instances for these rare situations. First, you need an instance of the
 ``ObjectManager`` itself, again by taking advantage of constructor injection::
 
-	public function __construct(\Neos\Flow\ObjectManagement\ObjectManagerInterface $objectManager) {
+	public function __construct(ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -376,15 +373,16 @@ inject it to the authentication object.
 	demonstrates why ``new`` should be considered as a low-level tool and outlines issues
 	with polymorphism. He doesn't mention dependency injection though ...
 
-Dependencies on other objects can be declared in the object's configuration (see :ref:`sect-configuring-objects`) or they can be solved automatically (so called autowiring).
+Dependencies on other objects can be declared in the object's configuration
+(see :ref:`sect-configuring-objects`) or they can be solved automatically (so called autowiring).
 Generally there are two modes of dependency injection supported by Flow:
 *Constructor Injection* and *Setter Injection*.
 
 .. note::
 	Please note that Flow removes all injected properties before serializing an object.
-	Then after unserializing injections happen again. That means that injected properties are
-	fresh instances and do not keep any state from before the serialization. That hold true
-	also for Prototypes. If you want to keep a Prototype instance with its state throughout
+	Then after deserializing injections happen again. That means that injected properties are
+	fresh instances and do not keep any state from before the serialization. That holds true
+	also for prototypes. If you want to keep a prototype instance with its state throughout
 	a serialize/unserialize cycle you should not inject the Prototype but rather create it in
 	constructor of the object.
 
