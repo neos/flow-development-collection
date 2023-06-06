@@ -1189,10 +1189,36 @@ the object configuration:
 	MyCompany\MyPackage\MyObject:
 	  autowiring: false
 
-Autowiring can also be switched off through the ``@Flow\Autowiring(false)`` annotation - either
-in the documentation block of a whole class or of a single method. For the latter the
-annotation only has an effect when used in comment blocks of a constructor or of a method
-whose name starts with ``inject``.
+Autowiring can also be switched off through the ``@Flow\Autowiring(false)`` annotation or
+the ``#[Flow\Autowiring(false)]`` attribute - either in the documentation block of a whole
+class or of a single method. For the latter the annotation or attribute only has an effect
+when used for a constructor or a method whose name starts with ``inject``.
+
+Finally, autowiring for constructors can also be disabled through a setting. The setting
+accepts an array of fully qualified class names, where each entry is a regular expression:
+
+.. code-block:: yaml
+
+	Neos:
+	  Flow:
+	    object:
+	      dependencyInjection:
+	        excludeClassesFromConstructorAutowiring:
+	          - '^Neos\\SomePackage\\Domain\\.*\\Command\\.*$'
+
+Classes of scope prototype which expect objects to be passed to their constructor
+are usually considered for autowiring which results in a proxy class being generated.
+This option allows to exclude classes from this process. This is useful for classes
+like data transfer objects, read models, commands, events and value objects which
+usually don't rely on dependency injection.
+
+.. note::
+
+	Flow cannot reliably detect weather a prototype class depends on autowiring for
+	constructor arguments or not. Use this option to optimize your application to avoid
+	the small but measurable overhead of proxy generation for those kinds of classes.
+	Note that if there are other reasons than constructor injection which require a
+	proxy class to be generated, the proxy class will be generated no matter what.
 
 Custom Factories
 ----------------

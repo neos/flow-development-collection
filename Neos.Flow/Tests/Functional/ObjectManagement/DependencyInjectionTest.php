@@ -17,7 +17,6 @@ use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\FinalClassWithDependenc
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\ClassWithTransitivePrototypeDependency;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassH;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassI;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassB;
@@ -325,26 +324,10 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function noProxyClassIsGeneratedForPrototypeClassesWithOnlyPrototypeConstructorArguments(): void
+    public function noProxyClassIsGeneratedForClassesWhoseConstructorAutowiringIsDisabledViaSettings(): void
     {
         $object = new PrototypeClassH(
             new ValueObjectClassA('foo'),
-            new ValueObjectClassB('bar')
-        );
-        self::assertNotInstanceOf(ProxyInterface::class, $object);
-
-        $object = new PrototypeClassA();
-        self::assertInstanceOf(ProxyInterface::class, $object);
-    }
-
-    /**
-     * @test
-     */
-    public function noProxyClassIsGeneratedForPrototypeClassesWithOptionalStraightValues(): void
-    {
-        $object = new PrototypeClassI(
-            new ValueObjectClassA('foo'),
-            null,
             new ValueObjectClassB('bar')
         );
         self::assertNotInstanceOf(ProxyInterface::class, $object);

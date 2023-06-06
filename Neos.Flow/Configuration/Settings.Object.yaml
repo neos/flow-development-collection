@@ -22,4 +22,32 @@ Neos:
       # reflected by default. You can however exclude specific (or all) classes from Flow packages
       # by specifying corresponding regular expressions that don't match classes to exclude.
       #
-      includeClasses: []
+      includeClasses: [ ]
+
+      dependencyInjection:
+
+        # Explicitly exclude classes from constructor autowiring.
+        #
+        # This setting accepts an array of fully qualified class names, each class name
+        # being a regular expression.
+        #
+        # Classes of scope prototype which expect objects to be passed to their constructor
+        # are usually considered for autowiring which results in a proxy class being generated.
+        # This option allows to exclude classes from this process. This is useful for classes
+        # like data transfer objects, read models, commands, events and value objects which
+        # usually don't rely on dependency injection.
+        #
+        # Flow cannot reliably detect weather a prototype class depends on autowiring for
+        # constructor arguments or not. Use this option to optimize your application to avoid
+        # the small but measurable overhead of proxy generation for those kinds of classes.
+        #
+        # Note that if there are other reasons than constructor injection which require a
+        # proxy class to be generated, the proxy class will be generated no matter what.
+        #
+        # Example:
+        #  excludeClassesFromConstructorAutowiring:
+        #  - '^Neos\\SomePackage\\Domain\\.*\\Command\\.*$'
+        #  - '^Neos\\SomePackage\\Domain\\.*\\Event\\.*$'
+        #  - '^Neos\\SomePackage\\ValueObjects\\SomeSpecificValueObject$'
+        #
+        excludeClassesFromConstructorAutowiring: []
