@@ -28,8 +28,8 @@ Neos:
 
         # Explicitly exclude classes from constructor autowiring.
         #
-        # This setting accepts an array of fully qualified class names, each class name
-        # being a regular expression.
+        # This setting accepts an array of regular expressions, each matching one or more fully
+        # qualified class names.
         #
         # Classes of scope prototype which expect objects to be passed to their constructor
         # are usually considered for autowiring which results in a proxy class being generated.
@@ -37,7 +37,7 @@ Neos:
         # like data transfer objects, read models, commands, events and value objects which
         # usually don't rely on dependency injection.
         #
-        # Flow cannot reliably detect weather a prototype class depends on autowiring for
+        # Flow cannot reliably detect wether a prototype class depends on autowiring for
         # constructor arguments or not. Use this option to optimize your application to avoid
         # the small but measurable overhead of proxy generation for those kinds of classes.
         #
