@@ -26,4 +26,21 @@ class ClassWithPrivateConstructor extends AbstractClassWithFactoryMethod
     {
         return new static($constructorArgument, $anotherDependency);
     }
+
+    public static function createUsingSelf(string $constructorArgument, PrototypeClassA $anotherDependency): self
+    {
+        return new self($constructorArgument, $anotherDependency);
+    }
+
+    public function getStringContainingALotOfSelves(): string
+    {
+        return <<<PHP
+            new self();
+            self::class;
+            self::create();
+            function foo(self \$self): self {
+                return \$self;
+            }
+        PHP;
+    }
 }
