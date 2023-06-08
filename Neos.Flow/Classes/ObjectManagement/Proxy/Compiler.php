@@ -11,9 +11,12 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
+use Neos\Cache\Exception;
+use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
+use Neos\Flow\ObjectManagement\Exception\ProxyCompilerException;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\BaseTestCase;
 use ReflectionAttribute;
@@ -239,11 +242,15 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      * @return void
      *
      * @throws Exception If the original class filename doesn't match the actual class name inside the file.
+     * @throws InvalidDataException
+     * @throws Exception
+     * @throws ProxyCompilerException
      */
     protected function cacheOriginalClassFileAndProxyCode(string $className, string $pathAndFilename, string $proxyClassCode): void
     {
         $classCode = file_get_contents($pathAndFilename);
         $classCode = $this->replaceClassName($classCode, $pathAndFilename);
+        $classCode = $this->makePrivateConstructorPublic($classCode, $pathAndFilename);
         $classCode = $this->stripOpeningPhpTag($classCode);
 
         // comment out "final" keyword, if the method is final and if it is advised (= part of the $proxyClassCode)
@@ -416,5 +423,21 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
             $previousToken = $token;
         }
         return null;
+    }
+
+    /**
+     * If a constructor exists, and it is private, this method will change its visibility to public
+     * in the given class code. This is only necessary in order to allow the proxy class to call its
+     * parent constructor.
+     *
+     * @throws ProxyCompilerException
+     */
+    protected function makePrivateConstructorPublic(string $classCode, string $pathAndFilename): string
+    {
+        $result = preg_replace('/private\s+function\s+__construct/', 'public function __construct', $classCode, 1);
+        if ($result === null) {
+            throw new ProxyCompilerException(sprintf('Could not make private constructor protected in class file "%s".', $pathAndFilename), 1686149268);
+        }
+        return $result;
     }
 }
