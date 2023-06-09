@@ -55,6 +55,10 @@ Neos:
     object:
       registerFunctionalTestClasses: true
 
+      dependencyInjection:
+        excludeClassesFromConstructorAutowiring:
+          - '^Neos\\Flow\\Tests\\Functional\\ObjectManagement\\Fixtures\\PrototypeClassH$'
+
     session:
       name: 'Flow_Testing_Session'
 

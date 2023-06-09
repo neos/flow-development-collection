@@ -7,3 +7,10 @@ properties:
     additionalProperties:
       type: array
       items: { type: string, required: true }
+  'dependencyInjection':
+    type: dictionary
+    additionalProperties: false
+    properties:
+      excludeClassesFromConstructorAutowiring:
+        type: array
+        items: { type: string, required: true }

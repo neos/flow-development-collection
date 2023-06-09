@@ -13,12 +13,14 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
 
 /**
  * A class of scope prototype in the style of a read model
+ *
+ * NOTE: Autowiring for the constructor is disabled via the setting "excludeClassesFromConstructorAutowiring".
  */
-class PrototypeClassH
+readonly class PrototypeClassH
 {
     public function __construct(
-        readonly public ValueObjectClassA $classA,
-        readonly public ValueObjectClassB $classB,
+        public ValueObjectClassA $classA,
+        public ValueObjectClassB $classB,
     ) {
     }
 }

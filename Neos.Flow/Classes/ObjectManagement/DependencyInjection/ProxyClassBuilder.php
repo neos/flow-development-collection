@@ -20,6 +20,7 @@ use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationProperty;
 use Neos\Flow\ObjectManagement\Exception as ObjectException;
+use Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ObjectManagement\Proxy\Compiler;
@@ -45,6 +46,10 @@ class ProxyClassBuilder
     protected LoggerInterface $logger;
     protected ConfigurationManager $configurationManager;
     protected CompileTimeObjectManager $objectManager;
+
+    /**
+     * @var array<Configuration>
+     */
     protected array $objectConfigurations = [];
 
     public function injectReflectionService(ReflectionService $reflectionService): void
@@ -206,7 +211,7 @@ class ProxyClassBuilder
 
         $scopeAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
         $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Transient::class);
-        $injectedProperties =  $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Inject::class);
+        $injectedProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Inject::class);
 
         $doBuildCode = $this->reflectionService->getClassAnnotation($className, Flow\Entity::class) !== null;
         $doBuildCode = $doBuildCode || (count($transientProperties) > 0);
@@ -251,16 +256,17 @@ class ProxyClassBuilder
      *
      * @throws InvalidConfigurationTypeException
      * @throws UnknownObjectException
+     * @throws InvalidObjectConfigurationException
      */
     protected function buildConstructorInjectionCode(Configuration $objectConfiguration): string
     {
-        $doBuildCode = $objectConfiguration->getScope() !== Configuration::SCOPE_PROTOTYPE;
+        $doReturnCode = $objectConfiguration->getScope() !== Configuration::SCOPE_PROTOTYPE;
 
         $assignments = [];
-
         $argumentConfigurations = $objectConfiguration->getArguments();
         $constructorParameterInfo = $this->reflectionService->getMethodParameters($objectConfiguration->getClassName(), '__construct');
         $argumentNumberToOptionalInfo = [];
+
         foreach ($constructorParameterInfo as $parameterInfo) {
             $argumentNumberToOptionalInfo[($parameterInfo['position'] + 1)] = $parameterInfo['optional'];
         }
@@ -283,7 +289,7 @@ class ProxyClassBuilder
                 switch ($argumentConfiguration->getType()) {
                     case ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
                         if ($argumentValue instanceof Configuration) {
-                            $doBuildCode = true;
+                            $doReturnCode = true;
                             $argumentValueObjectName = $argumentValue->getObjectName();
                             $argumentValueClassName = $argumentValue->getClassName();
                             if ($argumentValueClassName === null) {
@@ -304,22 +310,20 @@ class ProxyClassBuilder
                                 throw new UnknownObjectException('The object "' . $argumentValue . '" which was specified as an argument in the object configuration of object "' . $objectConfiguration->getObjectName() . '" does not exist.', 1264669967);
                             }
                             $assignments[$argumentPosition] = $assignmentPrologue . '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
-                            if ($this->objectConfigurations[$argumentValue]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
-                                $doBuildCode = true;
-                            }
+                            $doReturnCode = true;
                         }
                         break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
                         $assignments[$argumentPosition] = $assignmentPrologue . var_export($argumentValue, true);
                         if ($argumentValue !== null) {
-                            $doBuildCode = true;
+                            $doReturnCode = true;
                         }
                         break;
 
                     case ConfigurationArgument::ARGUMENT_TYPES_SETTING:
                         $assignments[$argumentPosition] = $assignmentPrologue . '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, \'' . $argumentValue . '\')';
-                        $doBuildCode = true;
+                        $doReturnCode = true;
                         break;
                 }
             }
@@ -344,7 +348,7 @@ class ProxyClassBuilder
             $index++;
         }
 
-        return $doBuildCode ? $code : '';
+        return $doReturnCode ? $code : '';
     }
 
     /**
