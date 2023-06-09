@@ -321,4 +321,28 @@ class ProxyCompilerTest extends FunctionalTestCase
         self::assertNotInstanceOf(ClassExtendingClassWithPrivateConstructor::class, $object);
         self::assertSame($anotherDependency, $object->anotherDependency);
     }
+
+    /**
+     * @test
+     */
+    public function factoryMethodUsingSelfWorksEvenIfClassIsProxied(): void
+    {
+        $anotherDependency = new PrototypeClassA();
+        $object = ClassWithPrivateConstructor::createUsingSelf('the argument', $anotherDependency);
+
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertInstanceOf(ClassWithPrivateConstructor::class, $object);
+        self::assertNotInstanceOf(ClassExtendingClassWithPrivateConstructor::class, $object);
+        self::assertSame($anotherDependency, $object->anotherDependency);
+
+        $expectedSelves = <<<PHP
+            new self();
+            self::class;
+            self::create();
+            function foo(self \$self): self {
+                return \$self;
+            }
+        PHP;
+        self::assertSame($expectedSelves, $object->getStringContainingALotOfSelves());
+    }
 }

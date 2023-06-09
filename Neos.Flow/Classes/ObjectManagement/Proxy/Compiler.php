@@ -250,18 +250,10 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     {
         $classCode = file_get_contents($pathAndFilename);
         $classCode = $this->replaceClassName($classCode, $pathAndFilename);
+        $classCode = $this->replaceSelfWithStatic($classCode);
         $classCode = $this->makePrivateConstructorPublic($classCode, $pathAndFilename);
         $classCode = $this->stripOpeningPhpTag($classCode);
-
-        // comment out "final" keyword, if the method is final and if it is advised (= part of the $proxyClassCode)
-        // Note: Method name regex according to http://php.net/manual/en/language.oop5.basic.php
-        $classCode = preg_replace_callback('/^(\s*)((public|protected)\s+)?final(\s+(public|protected))?(\s+function\s+)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]+\s*\()/m', static function ($matches) use ($proxyClassCode) {
-            // the method is not advised => don't remove the final keyword
-            if (!str_contains($proxyClassCode, $matches[0])) {
-                return $matches[0];
-            }
-            return $matches[1] . $matches[2] . '/*final*/' . $matches[4] . $matches[6] . $matches[7];
-        }, $classCode);
+        $classCode = $this->commentOutFinalKeywordForMethods($classCode, $proxyClassCode);
 
         $classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
 
@@ -436,8 +428,57 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     {
         $result = preg_replace('/private\s+function\s+__construct/', 'public function __construct', $classCode, 1);
         if ($result === null) {
-            throw new ProxyCompilerException(sprintf('Could not make private constructor protected in class file "%s".', $pathAndFilename), 1686149268);
+            throw new ProxyCompilerException(sprintf('Could not make private constructor public in class file "%s".', $pathAndFilename), 1686149268);
         }
         return $result;
+    }
+
+    protected function commentOutFinalKeywordForMethods(string $classCode, string $proxyClassCode): string
+    {
+        // comment out "final" keyword, if the method is final and if it is advised (= part of the $proxyClassCode)
+        // Note: Method name regex according to http://php.net/manual/en/language.oop5.basic.php
+        $classCode = preg_replace_callback('/^(\s*)((public|protected)\s+)?final(\s+(public|protected))?(\s+function\s+)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]+\s*\()/m', static function ($matches) use ($proxyClassCode) {
+            // the method is not advised => don't remove the final keyword
+            if (!str_contains($proxyClassCode, $matches[0])) {
+                return $matches[0];
+            }
+            return $matches[1] . $matches[2] . '/*final*/' . $matches[4] . $matches[6] . $matches[7];
+        }, $classCode);
+        assert(is_string($classCode), 'preg_replace_callback() failed');
+        return $classCode;
+    }
+
+    /**
+     * Replace occurrences of "self" with "static" for instantiation with new self()
+     * and function return declarations like "public function foo(): self".
+     *
+     * References to constants like "self::FOO" are not replaced.
+     */
+    protected function replaceSelfWithStatic(string $classCode): string
+    {
+        if (!str_contains($classCode, 'self')) {
+            return $classCode;
+        }
+
+        $tokens = token_get_all($classCode);
+        $tokensCount = count($tokens);
+        $newClassCode = '';
+        /** @noinspection ForeachInvariantsInspection */
+        for ($i = 0; $i < $tokensCount; $i++) {
+            if (is_array($tokens[$i])) {
+                if ($tokens[$i][0] === T_NEW && $tokens[$i + 2][0] === T_STRING && $tokens[$i + 2][1] === 'self') {
+                    $newClassCode .= $tokens[$i][1] . $tokens[$i + 1][1] . 'static';
+                    $i += 2;
+                } elseif ($tokens[$i][0] === T_STRING && $tokens[$i][1] === 'self' && $tokens[$i + 1][0] !== T_DOUBLE_COLON) {
+                    $newClassCode .= 'static';
+                } else {
+                    $newClassCode .= $tokens[$i][1];
+                }
+            } else {
+                $newClassCode .= $tokens[$i];
+            }
+        }
+
+        return $newClassCode;
     }
 }
