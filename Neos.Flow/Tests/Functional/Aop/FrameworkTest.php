@@ -370,4 +370,25 @@ class FrameworkTest extends FunctionalTestCase
         #       modifies the flag and sets it to true
         self::assertSame('Flag is set', $targetClass->__invoke('Flag is set', 42, false));
     }
+
+    /**
+     * @test
+     * @see https://github.com/neos/flow-development-collection/issues/3027
+     * @throws
+     */
+    public function methodsWithReturnPhp8SimpleReturnTypesAreGeneratedCorrectly(): void
+    {
+        $targetClass = new TargetClassWithPhp8Features();
+
+        # Note: In order to prove that the advice is actually executed, the advice BaseFunctionalityTestingAspect::methodsWithPhp8SimpleReturnTypesAdvice()
+        #       modifies the flag and sets it to true
+        self::assertTrue($targetClass->alwaysTrue());
+        self::assertFalse($targetClass->alwaysFalse());
+
+        # This needs https://github.com/laminas/laminas-code/pull/186 to be merged in order to work:
+        # self::assertNull($targetClass->alwaysNull());
+
+        $this->expectExceptionCode(1686132896);
+        $targetClass->alwaysNever();
+    }
 }

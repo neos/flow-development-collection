@@ -298,4 +298,11 @@ class BaseFunctionalityTestingAspect
         $joinPoint->setMethodArgument('aFlag', true);
         return $joinPoint->getAdviceChain()->proceed($joinPoint);
     }
+
+    #[Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp8Features->always.*())")]
+    public function methodsWithPhp8SimpleReturnTypesAdvice(JoinPointInterface $joinPoint): mixed
+    {
+        $joinPoint->setMethodArgument('throwException', false);
+        return $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
 }

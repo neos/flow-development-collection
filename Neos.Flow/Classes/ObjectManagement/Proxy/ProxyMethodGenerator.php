@@ -80,21 +80,21 @@ class ProxyMethodGenerator extends MethodGenerator
         }
 
         $callParentMethodCode = $this->buildCallParentMethodCode($this->fullOriginalClassName, $this->name);
-        $returnTypeIsVoid = ((string)$this->getReturnType() === 'void');
+        $returnTypeIsVoidOrNever = ((string)$this->getReturnType() === 'void' || (string)$this->getReturnType() === 'never' );
         $code = $this->addedPreParentCallCode;
         if ($this->addedPostParentCallCode !== '') {
-            if ($returnTypeIsVoid) {
+            if ($returnTypeIsVoidOrNever) {
                 if ($callParentMethodCode !== '') {
                     $code .= '    ' . $callParentMethodCode;
                 }
             } else {
-                $code .= '$result = ' . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
+                $code .= '$result = ' . ($callParentMethodCode === '' ? "null;\n" : $callParentMethodCode);
             }
             $code .= $this->addedPostParentCallCode;
-            if (!$returnTypeIsVoid) {
+            if (!$returnTypeIsVoidOrNever) {
                 $code .= "return \$result;\n";
             }
-        } elseif (!$returnTypeIsVoid && $callParentMethodCode !== '') {
+        } elseif (!$returnTypeIsVoidOrNever && $callParentMethodCode !== '') {
             $code .= 'return ' . $callParentMethodCode . ";\n";
         }
         return $code;
