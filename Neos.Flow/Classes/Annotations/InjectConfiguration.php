@@ -25,50 +25,43 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @Target("PROPERTY")
  */
 #[\Attribute(\Attribute::TARGET_PROPERTY|\Attribute::TARGET_PARAMETER)]
-final class InjectConfiguration
+readonly final class InjectConfiguration
 {
-    /**
-     * Path of a configuration which should be injected into the property.
-     * Can be specified as anonymous argument: InjectConfiguration("some.path")
-     *
-     * For type "Settings" this refers to the relative path (excluding the package key)
-     *
-     * Example: session.name
-     *
-     * @var string|null
-     */
-    public readonly ?string $path;
-
-    /**
-     * Defines the package key to be used for retrieving settings. If no package key is specified, we'll assume the
-     * package to be the same which contains the class where the InjectConfiguration annotation is used.
-     *
-     * Note: This property is only supported for type "Settings"
-     *
-     * Example: Neos.Flow
-     *
-     * @var string|null
-     */
-    public readonly ?string $package;
-
-    /**
-     * Type of Configuration (defaults to "Settings").
-     *
-     * @var string one of the ConfigurationManager::CONFIGURATION_TYPE_* constants
-     */
-    public readonly string $type;
-
-    public function __construct(?string $path = null, ?string $package = null, ?string $type = null)
-    {
-        $this->path = $path;
-        $this->package = $package;
-        $this->type = $type ?? ConfigurationManager::CONFIGURATION_TYPE_SETTINGS;
+    public function __construct(
+        /**
+         * Path of a configuration which should be injected into the property.
+         * Can be specified as anonymous argument: InjectConfiguration("some.path")
+         *
+         * For type "Settings" this refers to the relative path (excluding the package key)
+         *
+         * Example: session.name
+         */
+        public ?string $path = null,
+        /**
+         * Defines the package key to be used for retrieving settings. If no package key is specified, we'll assume the
+         * package to be the same which contains the class where the InjectConfiguration annotation is used.
+         *
+         * Note: This property is only supported for type "Settings"
+         *
+         * Example: Neos.Flow
+         */
+        public ?string $package = null,
+        /**
+         * Type of Configuration (defaults to "Settings").
+         *
+         * @param $type ?string one of the ConfigurationManager::CONFIGURATION_TYPE_* constants
+         */
+        public ?string $type = ConfigurationManager::CONFIGURATION_TYPE_SETTINGS
+    ) {
         if ($this->type !== ConfigurationManager::CONFIGURATION_TYPE_SETTINGS && $this->package !== null) {
             throw new \DomainException(sprintf('Invalid usage of "package" with configuration type "%s". Using "package" is only valid for "Settings".', $this->type), 1686910380912);
         }
     }
 
-    public function getConfigurationPath(string $fallbackPackageKey): ?string
+    /**
+     * @param string $fallbackPackageKey fallback, in case no package key is specified {@see self::$package}
+     */
+    public function getFullConfigurationPath(string $fallbackPackageKey): ?string
     {
         if ($this->type !== ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
             return $this->path;

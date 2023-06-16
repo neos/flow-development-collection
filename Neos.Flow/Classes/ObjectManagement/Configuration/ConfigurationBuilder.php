@@ -493,7 +493,7 @@ class ConfigurationBuilder
                         }
                         $arguments[$index] = new ConfigurationArgument(
                             $index,
-                            $injectConfigurationAnnotation->getConfigurationPath($objectConfiguration->getPackageKey()),
+                            $injectConfigurationAnnotation->getFullConfigurationPath($objectConfiguration->getPackageKey()),
                             ConfigurationArgument::ARGUMENT_TYPES_SETTING
                         );
                     } elseif ($parameterInformation['optional'] === true) {
@@ -624,7 +624,7 @@ class ConfigurationBuilder
                     $propertyName,
                     [
                         'type' => $injectConfigurationAnnotation->type,
-                        'path' => $injectConfigurationAnnotation->getConfigurationPath($objectConfiguration->getPackageKey())
+                        'path' => $injectConfigurationAnnotation->getFullConfigurationPath($objectConfiguration->getPackageKey())
                     ],
                     ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION
                 );
