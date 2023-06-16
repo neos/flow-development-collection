@@ -636,7 +636,7 @@ class PackageManager
                 yield from self::findComposerPackagesInPath($potentialPackageDirectory);
                 continue;
             }
-            yield $potentialPackageDirectory;
+            yield Files::getUnixStylePath($potentialPackageDirectory);
         }
     }
 
