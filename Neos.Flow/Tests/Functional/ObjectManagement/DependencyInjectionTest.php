@@ -17,6 +17,7 @@ use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\FinalClassWithDependenc
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\ClassWithTransitivePrototypeDependency;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassH;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassL;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassB;
@@ -334,5 +335,18 @@ class DependencyInjectionTest extends FunctionalTestCase
 
         $object = new PrototypeClassA();
         self::assertInstanceOf(ProxyInterface::class, $object);
+    }
+
+    /**
+     * @test
+     */
+    public function constructorSettingsInjectionViaInjectAnnotation(): void
+    {
+        $object = $this->objectManager->get(PrototypeClassL::class);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertSame('injected setting', $object->value);
+
+        $object = new PrototypeClassL('override');
+        self::assertSame('override', $object->value);
     }
 }

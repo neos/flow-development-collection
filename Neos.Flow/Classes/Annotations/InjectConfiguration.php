@@ -24,7 +24,7 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @NamedArgumentConstructor
  * @Target("PROPERTY")
  */
-#[\Attribute(\Attribute::TARGET_PROPERTY)]
+#[\Attribute(\Attribute::TARGET_PROPERTY|\Attribute::TARGET_PARAMETER)]
 final class InjectConfiguration
 {
     /**
@@ -37,7 +37,7 @@ final class InjectConfiguration
      *
      * @var string|null
      */
-    public $path;
+    public readonly ?string $path;
 
     /**
      * Defines the package key to be used for retrieving settings. If no package key is specified, we'll assume the
@@ -49,21 +49,33 @@ final class InjectConfiguration
      *
      * @var string|null
      */
-    public $package;
+    public readonly ?string $package;
 
     /**
      * Type of Configuration (defaults to "Settings").
      *
      * @var string one of the ConfigurationManager::CONFIGURATION_TYPE_* constants
      */
-    public $type = ConfigurationManager::CONFIGURATION_TYPE_SETTINGS;
+    public readonly string $type;
 
     public function __construct(?string $path = null, ?string $package = null, ?string $type = null)
     {
         $this->path = $path;
         $this->package = $package;
-        if ($type !== null) {
-            $this->type = $type;
+        $this->type = $type ?? ConfigurationManager::CONFIGURATION_TYPE_SETTINGS;
+    }
+
+    public function getConfigurationPath(string $fallbackPackageKey): ?string
+    {
+        if ($this->type === ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
+            $packageKey = $this->package ?? $fallbackPackageKey;
+            $configurationPath = rtrim($packageKey . '.' . $this->path, '.');
+        } else {
+            if ($this->package !== null) {
+                throw new \InvalidArgumentException(sprintf('The InjectConfiguration annotation specifies a "package" key for configuration type "%s", but this is only supported for injection of "Settings".', $this->type), 1686910380912);
+            }
+            $configurationPath = $this->path;
         }
+        return $configurationPath;
     }
 }

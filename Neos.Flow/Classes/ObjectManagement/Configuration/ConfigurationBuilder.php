@@ -485,7 +485,15 @@ class ConfigurationBuilder
                 $debuggingHint = '';
                 $index = $parameterInformation['position'] + 1;
                 if (!isset($arguments[$index])) {
-                    if ($parameterInformation['optional'] === true) {
+                    /** @var InjectConfiguration $injectConfigurationAnnotation */
+                    $injectConfigurationAnnotation = $parameterInformation['annotations'][InjectConfiguration::class][0] ?? null;
+                    if ($injectConfigurationAnnotation && $injectConfigurationAnnotation->type === ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
+                        $arguments[$index] = new ConfigurationArgument(
+                            $index,
+                            $injectConfigurationAnnotation->getConfigurationPath($objectConfiguration->getPackageKey()),
+                            ConfigurationArgument::ARGUMENT_TYPES_SETTING
+                        );
+                    } elseif ($parameterInformation['optional'] === true) {
                         $defaultValue = (isset($parameterInformation['defaultValue'])) ? $parameterInformation['defaultValue'] : null;
                         $arguments[$index] = new ConfigurationArgument($index, $defaultValue, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
                         $arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
@@ -601,21 +609,26 @@ class ConfigurationBuilder
                 if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
                     throw new ObjectException(sprintf('The property "%s" in class "%s" must not be private when annotated for configuration injection.', $propertyName, $className), 1416765599);
                 }
+                if ($this->reflectionService->isPropertyPromoted($className, $propertyName)) {
+                    continue;
+                }
                 if (array_key_exists($propertyName, $properties)) {
                     continue;
                 }
                 /** @var InjectConfiguration $injectConfigurationAnnotation */
                 $injectConfigurationAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, InjectConfiguration::class);
-                if ($injectConfigurationAnnotation->type === ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
-                    $packageKey = $injectConfigurationAnnotation->package !== null ? $injectConfigurationAnnotation->package : $objectConfiguration->getPackageKey();
-                    $configurationPath = rtrim($packageKey . '.' . $injectConfigurationAnnotation->path, '.');
-                } else {
-                    if ($injectConfigurationAnnotation->package !== null) {
-                        throw new ObjectException(sprintf('The InjectConfiguration annotation for property "%s" in class "%s" specifies a "package" key for configuration type "%s", but this is only supported for injection of "Settings".', $propertyName, $className, $injectConfigurationAnnotation->type), 1420811958);
-                    }
-                    $configurationPath = $injectConfigurationAnnotation->path;
+                try {
+                    $properties[$propertyName] = new ConfigurationProperty(
+                        $propertyName,
+                        [
+                            'type' => $injectConfigurationAnnotation->type,
+                            'path' => $injectConfigurationAnnotation->getConfigurationPath($objectConfiguration->getPackageKey())
+                        ],
+                        ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION
+                    );
+                } catch (\InvalidArgumentException $exception) {
+                    throw new ObjectException(sprintf('The InjectConfiguration annotation for property "%s" in class "%s" specifies a "package" key for configuration type "%s", but this is only supported for injection of "Settings".', $propertyName, $className, $injectConfigurationAnnotation->type), 1420811958, $exception);
                 }
-                $properties[$propertyName] = new ConfigurationProperty($propertyName, ['type' => $injectConfigurationAnnotation->type, 'path' => $configurationPath], ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
             }
             $objectConfiguration->setProperties($properties);
         }
