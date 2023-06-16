@@ -17,6 +17,8 @@ use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\FinalClassWithDependenc
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\ClassWithTransitivePrototypeDependency;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassH;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassJ;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassK;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassB;
@@ -334,5 +336,28 @@ class DependencyInjectionTest extends FunctionalTestCase
 
         $object = new PrototypeClassA();
         self::assertInstanceOf(ProxyInterface::class, $object);
+    }
+
+    /**
+     * @test
+     */
+    public function namedConstructorArgumentWithObjectForSimplePrototype(): void
+    {
+        $classA = new ValueObjectClassA(value: 'foo');
+        $object = new PrototypeClassJ(classA: $classA);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertSame($classA, $object->classA);
+    }
+
+    /**
+     * @test
+     */
+    public function namedConstructorArgumentWithObjectForProxyPrototypeWithInjectedDependencies(): void
+    {
+        $classA = new ValueObjectClassA(value: 'foo');
+        $object = new PrototypeClassK(classA: $classA);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertSame($classA, $object->classA);
+        self::assertSame($this->objectManager->get(SingletonClassA::class), $object->singletonClassA);
     }
 }
