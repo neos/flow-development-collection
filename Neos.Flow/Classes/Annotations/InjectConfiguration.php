@@ -15,7 +15,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
 /**
- * Used to enable property injection for configuration including settings.
+ * Used to enable property and constructor argument injection for configuration including settings.
  *
  * Flow will build Dependency Injection code for the property and try
  * to inject the configured configuration.
@@ -63,19 +63,18 @@ final class InjectConfiguration
         $this->path = $path;
         $this->package = $package;
         $this->type = $type ?? ConfigurationManager::CONFIGURATION_TYPE_SETTINGS;
+        if ($this->type !== ConfigurationManager::CONFIGURATION_TYPE_SETTINGS && $this->package !== null) {
+            throw new \DomainException(sprintf('Invalid usage of "package" with configuration type "%s". Using "package" is only valid for "Settings".', $this->type), 1686910380912);
+        }
     }
 
     public function getConfigurationPath(string $fallbackPackageKey): ?string
     {
-        if ($this->type === ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
-            $packageKey = $this->package ?? $fallbackPackageKey;
-            $configurationPath = rtrim($packageKey . '.' . $this->path, '.');
-        } else {
-            if ($this->package !== null) {
-                throw new \InvalidArgumentException(sprintf('The InjectConfiguration annotation specifies a "package" key for configuration type "%s", but this is only supported for injection of "Settings".', $this->type), 1686910380912);
-            }
-            $configurationPath = $this->path;
+        if ($this->type !== ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
+            return $this->path;
         }
+        $packageKey = $this->package ?? $fallbackPackageKey;
+        $configurationPath = rtrim($packageKey . '.' . $this->path, '.');
         return $configurationPath;
     }
 }

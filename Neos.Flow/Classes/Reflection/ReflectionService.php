@@ -99,7 +99,7 @@ class ReflectionService
     protected const DATA_PROPERTY_ANNOTATIONS = 15;
     protected const DATA_PROPERTY_VISIBILITY = 24;
     protected const DATA_PROPERTY_TYPE = 26;
-    protected const DATA_PROPERTY_PROMOTED = 26;
+    protected const DATA_PROPERTY_PROMOTED = 28;
     protected const DATA_PARAMETER_POSITION = 16;
     protected const DATA_PARAMETER_OPTIONAL = 17;
     protected const DATA_PARAMETER_TYPE = 18;

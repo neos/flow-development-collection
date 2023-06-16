@@ -487,7 +487,10 @@ class ConfigurationBuilder
                 if (!isset($arguments[$index])) {
                     /** @var InjectConfiguration $injectConfigurationAnnotation */
                     $injectConfigurationAnnotation = $parameterInformation['annotations'][InjectConfiguration::class][0] ?? null;
-                    if ($injectConfigurationAnnotation && $injectConfigurationAnnotation->type === ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
+                    if ($injectConfigurationAnnotation) {
+                        if ($injectConfigurationAnnotation->type !== ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
+                            throw new InvalidObjectConfigurationException(sprintf('InjectConfiguration for constructor arguments currently only supports settings. Got type "%s" in constructor argument %s of class %s.', $injectConfigurationAnnotation->type, $index, $className));
+                        }
                         $arguments[$index] = new ConfigurationArgument(
                             $index,
                             $injectConfigurationAnnotation->getConfigurationPath($objectConfiguration->getPackageKey()),
@@ -617,18 +620,14 @@ class ConfigurationBuilder
                 }
                 /** @var InjectConfiguration $injectConfigurationAnnotation */
                 $injectConfigurationAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, InjectConfiguration::class);
-                try {
-                    $properties[$propertyName] = new ConfigurationProperty(
-                        $propertyName,
-                        [
-                            'type' => $injectConfigurationAnnotation->type,
-                            'path' => $injectConfigurationAnnotation->getConfigurationPath($objectConfiguration->getPackageKey())
-                        ],
-                        ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION
-                    );
-                } catch (\InvalidArgumentException $exception) {
-                    throw new ObjectException(sprintf('The InjectConfiguration annotation for property "%s" in class "%s" specifies a "package" key for configuration type "%s", but this is only supported for injection of "Settings".', $propertyName, $className, $injectConfigurationAnnotation->type), 1420811958, $exception);
-                }
+                $properties[$propertyName] = new ConfigurationProperty(
+                    $propertyName,
+                    [
+                        'type' => $injectConfigurationAnnotation->type,
+                        'path' => $injectConfigurationAnnotation->getConfigurationPath($objectConfiguration->getPackageKey())
+                    ],
+                    ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION
+                );
             }
             $objectConfiguration->setProperties($properties);
         }
