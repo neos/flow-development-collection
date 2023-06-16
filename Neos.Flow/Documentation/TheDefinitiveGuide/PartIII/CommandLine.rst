@@ -560,11 +560,8 @@ class and can be used as follows:
 	use Neos\Flow\Annotations as Flow;
 	use Neos\Flow\Core\Booting\Scripts;
 
-	/**
-	 * @Flow\InjectConfiguration(package="Neos.Flow")
-	 * @var array
-	 */
-	protected $flowSettings;
+	#[Flow\InjectConfiguration(package: "Neos.Flow")]
+	protected array $flowSettings;
 
 	public function runCommand() {
 		$success = Scripts::executeCommand('acme.foo:bar:baz', $this->flowSettings);
