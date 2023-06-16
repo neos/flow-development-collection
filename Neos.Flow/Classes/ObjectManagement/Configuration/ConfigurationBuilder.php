@@ -22,6 +22,7 @@ use Neos\Flow\ObjectManagement\Exception\UnknownClassException;
 use Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Utility\TypeHandling;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -605,6 +606,9 @@ class ConfigurationBuilder
                 if (array_key_exists($propertyName, $properties)) {
                     continue;
                 }
+
+                $propertyType = $this->reflectionService->getPropertyType($className, $propertyName);
+                $isClassType = $propertyType !== null && !TypeHandling::isLiteral($propertyType);
                 /** @var InjectConfiguration $injectConfigurationAnnotation */
                 $injectConfigurationAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, InjectConfiguration::class);
                 if ($injectConfigurationAnnotation->type === ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
@@ -616,7 +620,7 @@ class ConfigurationBuilder
                     }
                     $configurationPath = $injectConfigurationAnnotation->path;
                 }
-                $properties[$propertyName] = new ConfigurationProperty($propertyName, ['type' => $injectConfigurationAnnotation->type, 'path' => $configurationPath], ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
+                $properties[$propertyName] = new ConfigurationProperty($propertyName, ['type' => $injectConfigurationAnnotation->type, 'path' => $configurationPath, 'targetClassName' => $isClassType ? $propertyType : null], ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
             }
 
             foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, InjectCache::class) as $propertyName) {

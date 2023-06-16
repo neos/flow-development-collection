@@ -396,11 +396,11 @@ class ProxyClassBuilder
                     $commands[] = 'if (\Neos\Utility\ObjectAccess::setProperty($this, \'' . $propertyName . '\', ' . $preparedSetterArgument . ') === false) { $this->' . $propertyName . ' = ' . $preparedSetterArgument . ';}';
                     break;
                 case ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION:
-                    $configurationType = $propertyValue['type'];
-                    if (!in_array($configurationType, $this->configurationManager->getAvailableConfigurationTypes(), true)) {
-                        throw new UnknownObjectException('The configuration injection specified for property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" refers to the unknown configuration type "' . $configurationType . '".', 1420736211);
-                    }
-                    $commands = array_merge($commands, $this->buildPropertyInjectionCodeByConfigurationTypeAndPath($objectConfiguration, $propertyName, $configurationType, $propertyValue['path']));
+                    $commands = [...$commands, ...$this->buildPropertyConfigurationInjectionCode(
+                        $objectConfiguration,
+                        $propertyName,
+                        $propertyValue
+                    )];
                     break;
                 case ConfigurationProperty::PROPERTY_TYPES_CACHE:
                     $cacheIdentifier = $propertyValue['identifier'];
@@ -505,26 +505,43 @@ class ProxyClassBuilder
     /**
      * Builds code which assigns the value stored in the specified configuration into the given class property.
      *
+     * The $propertyConfiguration's value is an array of
+     *  'type' the configuration type of the injected property (one of the ConfigurationManager::CONFIGURATION_TYPE_* constants)
+     *  'path' Path with "." as separator specifying the setting value to inject or NULL if the complete configuration array should be injected
+     *  'targetClassName' a class name which will be instantiated via factory methods like `fromString`
+     *
      * @param Configuration $objectConfiguration Configuration of the object to inject into
      * @param string $propertyName Name of the property to inject
      * @param string $configurationType the configuration type of the injected property (one of the ConfigurationManager::CONFIGURATION_TYPE_* constants)
      * @param string|null $configurationPath Path with "." as separator specifying the setting value to inject or NULL if the complete configuration array should be injected
      * @return array PHP code
      */
-    public function buildPropertyInjectionCodeByConfigurationTypeAndPath(Configuration $objectConfiguration, $propertyName, $configurationType, $configurationPath = null): array
+    public function buildPropertyConfigurationInjectionCode(Configuration $objectConfiguration, string $propertyName, array $propertyValue): array
     {
         $className = $objectConfiguration->getClassName();
-        if ($configurationPath !== null) {
-            $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\'' . $configurationType . '\', \'' . $configurationPath . '\')';
-        } else {
-            $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\'' . $configurationType . '\')';
+        if (!in_array($propertyValue['type'], $this->configurationManager->getAvailableConfigurationTypes(), true)) {
+            throw new UnknownObjectException('The configuration injection specified for property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" refers to the unknown configuration type "' . $propertyValue['type'] . '".', 1420736211);
         }
 
-        $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
+        $configurationType = var_export($propertyValue['type'], true);
+        $configurationPath = var_export($propertyValue['path'] ?? null, true);
+
+        $getConfiguration = <<<PHP
+        \Neos\Flow\Core\Bootstrap::\$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration($configurationType, $configurationPath)
+        PHP;
+
+        if (isset($propertyValue['targetClassName'])) {
+            $targetClassName = var_export('\\' . $propertyValue['targetClassName'], true);
+            $getConfiguration = <<<PHP
+            \Neos\Flow\Property\TypeConverter\DenormalizingObjectConverter::convertFromSource($getConfiguration, $targetClassName)
+            PHP;
+        }
+
+        $result = $this->buildSetterInjectionCode($className, $propertyName, $getConfiguration);
         if ($result !== null) {
             return $result;
         }
-        return ['$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
+        return ['$this->' . $propertyName . ' = ' . $getConfiguration . ';'];
     }
 
     /**
