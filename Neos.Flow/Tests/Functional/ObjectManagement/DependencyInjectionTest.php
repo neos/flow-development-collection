@@ -18,6 +18,7 @@ use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\ClassWithTransi
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassH;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassL;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassM;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassB;
@@ -348,5 +349,17 @@ class DependencyInjectionTest extends FunctionalTestCase
 
         $object = new PrototypeClassL('override');
         self::assertSame('override', $object->value);
+    }
+
+    /**
+     * @test
+     */
+    public function settingConfigurationIsMappedToObjectViaStaticFactories(): void
+    {
+        $object = $this->objectManager->get(PrototypeClassM::class);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertInstanceOf(ValueObjectClassB::class, $object->configuration);
+
+        self::assertSame('injected setting', $object->configuration->value);
     }
 }
