@@ -512,7 +512,7 @@ class ProxyClassBuilder
         $configurationPath = var_export($propertyValue['path'] ?? null, true);
 
         $getConfiguration = <<<PHP
-        \Neos\Flow\Core\Bootstrap::\$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration($configurationType, $configurationPath)
+        \$currentConfigurationValue = \Neos\Flow\Core\Bootstrap::\$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration($configurationType, $configurationPath)
         PHP;
 
         if (isset($propertyValue['targetClassName'])) {
@@ -522,11 +522,22 @@ class ProxyClassBuilder
             PHP;
         }
 
-        $result = $this->buildSetterInjectionCode($className, $propertyName, $getConfiguration);
-        if ($result !== null) {
-            return $result;
+        $setProperty = $this->buildSetterInjectionCode($className, $propertyName, $getConfiguration)
+            ?? ['$this->' . $propertyName . ' = ' . $getConfiguration . ';'];
+
+        if (!isset($propertyValue['targetClassName'])) {
+            return $setProperty;
         }
-        return ['$this->' . $propertyName . ' = ' . $getConfiguration . ';'];
+
+        return [
+            'try {',
+            ...$setProperty,
+            '} catch (\Throwable $e) {',
+            sprintf(<<<'PHP'
+            throw new \DomainException('%s-Configuration "%s" with value ' . json_encode($currentConfigurationValue) . ' could not be deserialized to type "%s": "' . $e->getMessage() . '". In %s::$%s.', 1686995115380, $e);
+            PHP, $propertyValue['type'], $propertyValue['path'], $propertyValue['targetClassName'], $className, $propertyName),
+            '}'
+        ];
     }
 
     /**

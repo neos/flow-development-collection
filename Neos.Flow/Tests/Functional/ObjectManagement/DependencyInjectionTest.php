@@ -362,4 +362,59 @@ class DependencyInjectionTest extends FunctionalTestCase
 
         self::assertSame('injected setting', $object->configuration->value);
     }
+
+    /**
+     * @test
+     */
+    public function exceptionSettingConfigurationIsMappedToObjectViaStaticFactories(): void
+    {
+        $this->expectExceptionMessage('Settings-Configuration "Neos.Flow.tests.functional.settingInjection.someSetting" with value "" could not be deserialized to type "Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassB": "Value must not be empty". In Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassM::$configuration.');
+
+        $this->withMockedConfigurationSettings(
+            [
+                'Neos' => [
+                    'Flow' => [
+                        'tests' => [
+                            'functional' => [
+                                'settingInjection' => [
+                                    'someSetting' => ''
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            function () {
+                $this->objectManager->get(PrototypeClassM::class);
+            }
+        );
+    }
+
+    /**
+     * Mock the settings of the configuration manager and cleanup afterwards
+     *
+     * WARNING: If you activate Singletons during this transaction they will later still have a reference to the mocked object manger, so you might need to call
+     * {@see ObjectManagerInterface::forgetInstance()}. An alternative would be also to hack the protected $this->settings of the manager.
+     *
+     * @param array $additionalSettings settings that are merged onto the the current testing configuration
+     * @param callable $fn test code that is executed in the modified context
+     */
+    private function withMockedConfigurationSettings(array $additionalSettings, callable $fn): void
+    {
+        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
+        $configurationManagerMock = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
+        $mockedSettings = \Neos\Utility\Arrays::arrayMergeRecursiveOverrule($configurationManager->getConfiguration('Settings'), $additionalSettings);
+        $configurationManagerMock->expects(self::any())->method('getConfiguration')->willReturnCallback(function (string $configurationType, string $configurationPath = null) use($configurationManager, $mockedSettings) {
+            if ($configurationType !== 'Settings') {
+                return $configurationManager->getConfiguration($configurationType, $configurationPath);
+            }
+            return $configurationPath ? \Neos\Utility\Arrays::getValueByPath($mockedSettings, $configurationPath) : $mockedSettings;
+        });
+        $this->objectManager->setInstance(ConfigurationManager::class, $configurationManagerMock);
+        try {
+            $fn();
+        } finally {
+            $this->objectManager->setInstance(ConfigurationManager::class, $configurationManager);
+        }
+    }
 }
