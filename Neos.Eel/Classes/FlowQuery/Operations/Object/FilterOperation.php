@@ -254,7 +254,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strrpos($value, (string)$operand) === strlen($value) - strlen($operand);
+                    return strrpos((string)$value, (string)$operand) === strlen((string)$value) - strlen($operand);
                 }
                 // no break
             case '$=~':
@@ -264,7 +264,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strripos($value, (string)$operand) === strlen($value) - strlen($operand);
+                    return strripos((string)$value, (string)$operand) === strlen((string)$value) - strlen($operand);
                 }
                 // no break
             case '^=':
@@ -274,7 +274,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strpos($value, (string)$operand) === 0;
+                    return strpos((string)$value, (string)$operand) === 0;
                 }
                 // no break
             case '^=~':
@@ -284,7 +284,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return stripos($value, (string)$operand) === 0;
+                    return stripos((string)$value, (string)$operand) === 0;
                 }
                 // no break
             case '*=':
@@ -296,7 +296,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strpos($value, (string)$operand) !== false;
+                    return strpos((string)$value, (string)$operand) !== false;
                 }
                 // no break
             case '*=~':
@@ -308,7 +308,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return stripos($value, (string)$operand) !== false;
+                    return stripos((string)$value, (string)$operand) !== false;
                 }
                 // no break
             case 'instanceof':

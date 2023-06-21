@@ -37,7 +37,7 @@ class Algorithms
      */
     public static function pbkdf2($password, $salt, $iterationCount, $derivedKeyLength, $algorithm = 'sha256')
     {
-        $hashLength = strlen(hash($algorithm, null, true));
+        $hashLength = strlen(hash($algorithm, '', true));
         $keyBlocksToCompute = ceil($derivedKeyLength / $hashLength);
         $derivedKey = '';
 

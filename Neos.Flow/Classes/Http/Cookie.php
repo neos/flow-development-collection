@@ -421,7 +421,7 @@ class Cookie
             $value = $this->value;
         }
 
-        $cookiePair = sprintf('%s=%s', $this->name, urlencode($value));
+        $cookiePair = sprintf('%s=%s', $this->name, urlencode((string)$value));
         $attributes = '';
 
         if ($this->expiresTimestamp !== 0) {

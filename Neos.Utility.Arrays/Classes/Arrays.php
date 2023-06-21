@@ -284,7 +284,7 @@ abstract class Arrays
      * @return boolean true on success, false on failure
      * @see asort()
      */
-    public static function sortKeysRecursively(array &$array, int $sortFlags = null): bool
+    public static function sortKeysRecursively(array &$array, int $sortFlags = \SORT_REGULAR): bool
     {
         foreach ($array as &$value) {
             if (is_array($value)) {

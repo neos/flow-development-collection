@@ -508,25 +508,15 @@ class DateTimeConverterTest extends UnitTestCase
     public function convertFromSupportsDateTimeSubClasses()
     {
         $className = 'DateTimeSubClass' . md5(uniqid(mt_rand(), true));
-        if (version_compare(PHP_VERSION, '7.0.0-dev')) {
-            eval('
-			class ' . $className . ' extends \\DateTime {
-				public static function createFromFormat($format, $time, $timezone = NULL) {
-					return new ' . $className . '();
-				}
-				public function foo() { return "Bar"; }
-			}
-		');
-        } else {
-            eval('
-				class ' . $className . ' extends \\DateTime {
-					public static function createFromFormat($format, $time, \\DateTimeZone $timezone = NULL) {
-						return new ' . $className . '();
-					}
-					public function foo() { return "Bar"; }
-				}
-			');
+        eval('
+        class ' . $className . ' extends \\DateTime {
+            #[\ReturnTypeWillChange]
+            public static function createFromFormat($format, $time, $timezone = NULL) {
+                return new ' . $className . '();
+            }
+            public function foo() { return "Bar"; }
         }
+    ');
         $date = $this->converter->convertFrom('2005-08-15T15:52:01+00:00', $className);
 
         self::assertInstanceOf($className, $date);

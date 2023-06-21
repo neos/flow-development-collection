@@ -36,7 +36,7 @@ class TextValidator extends AbstractValidator
      */
     protected function isValid($value)
     {
-        if ($value !== filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES)) {
+        if ($value !== strip_tags((string)$value)) {
             $this->addError('Valid text without any XML tags is expected.', 1221565786);
         }
     }
