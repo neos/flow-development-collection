@@ -108,6 +108,7 @@ class TextIterator implements \Iterator
      *
      * @return string The value of the current element
      */
+    #[\ReturnTypeWillChange]
     public function current(): string
     {
         return $this->getCurrentElement()->getValue();
@@ -118,6 +119,7 @@ class TextIterator implements \Iterator
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->previousElement = $this->getCurrentElement();
@@ -130,6 +132,7 @@ class TextIterator implements \Iterator
      *
      * @return mixed Key (number) of the current element
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->iteratorCacheIterator->key();
@@ -140,6 +143,7 @@ class TextIterator implements \Iterator
      *
      * @return boolean True if the iterator has not reached it's end
      */
+    #[\ReturnTypeWillChange]
     public function valid(): bool
     {
         if ($this->getCurrentElement() !== null && $this->getCurrentElement()->getValue() !== self::DONE && $this->getCurrentElement()->getOffset() !== -1) {
@@ -153,6 +157,7 @@ class TextIterator implements \Iterator
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->iteratorCacheIterator->rewind();
