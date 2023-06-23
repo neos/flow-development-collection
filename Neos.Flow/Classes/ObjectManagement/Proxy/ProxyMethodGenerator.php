@@ -108,7 +108,7 @@ class ProxyMethodGenerator extends MethodGenerator
      */
     public function willBeRendered(): bool
     {
-        return ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '');
+        return ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '' || $this->body !== '');
     }
 
     /**
