@@ -23,14 +23,11 @@ class ProxyMethodGenerator extends MethodGenerator
 
     protected string $fullOriginalClassName = '';
 
-    protected bool $bodyWasOverridden = false;
-
     public static function fromReflection(\Laminas\Code\Reflection\MethodReflection $reflectionMethod): static
     {
         $instance = parent::fromReflection($reflectionMethod);
         assert($instance instanceof static);
         $instance->fullOriginalClassName = $reflectionMethod->getDeclaringClass()->getName();
-        $instance->bodyWasOverridden = false;
         return $instance;
     }
 
@@ -73,6 +70,11 @@ class ProxyMethodGenerator extends MethodGenerator
         if ($this->body === '') {
             $this->body = $this->renderBodyCode();
         }
+
+        if ($this->body === '') {
+            return '';
+        }
+
         return parent::generate();
     }
 
@@ -111,7 +113,7 @@ class ProxyMethodGenerator extends MethodGenerator
      */
     public function willBeRendered(): bool
     {
-        return ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '' || $this->bodyWasOverridden);
+        return ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '' || $this->body !== '');
     }
 
     /**
@@ -163,11 +165,5 @@ class ProxyMethodGenerator extends MethodGenerator
             return '';
         }
         return 'parent::' . $methodName . '(' . $this->buildMethodParametersCode($fullClassName, $methodName, false) . ");\n";
-    }
-
-    public function setBody($body): static
-    {
-        $this->bodyWasOverridden = true;
-        return parent::setBody($body);
     }
 }
