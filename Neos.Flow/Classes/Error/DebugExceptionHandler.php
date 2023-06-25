@@ -145,11 +145,11 @@ EOD;
         echo sprintf(
             $this->htmlExceptionTemplate,
             $statusCode . ' ' . $statusMessage,
-            file_get_contents(__DIR__ . '/../../Resources/Public/Error/Exception.css'),
+            file_get_contents(__DIR__ . '/../../Resources/Private/Error/Exception.css'),
             $exceptionHeader,
             $backtraceCode,
             $footer,
-            file_get_contents(__DIR__ . '/../../Resources/Public/Error/Exception.js')
+            file_get_contents(__DIR__ . '/../../Resources/Private/Error/Exception.js')
         );
     }
 }
