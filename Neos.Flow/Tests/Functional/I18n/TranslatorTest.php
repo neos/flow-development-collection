@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Functional\I18n;
  */
 
 use Neos\Flow\I18n;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Testcase for the I18N translations

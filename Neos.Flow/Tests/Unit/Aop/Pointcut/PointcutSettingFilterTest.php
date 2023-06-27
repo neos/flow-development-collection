@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Aop\Pointcut;
  */
 
 use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Aop;
 
 /**

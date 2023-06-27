@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Http;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the URI class

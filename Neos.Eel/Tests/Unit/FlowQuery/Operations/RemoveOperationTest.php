@@ -17,7 +17,7 @@ use Neos\Eel\FlowQuery\Operations\RemoveOperation;
 /**
  * RemoveOperation test
  */
-class RemoveOperationTest extends \Neos\Flow\Tests\UnitTestCase
+class RemoveOperationTest extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * This corresponds to ${q(node).remove(q(someOtherNode))}

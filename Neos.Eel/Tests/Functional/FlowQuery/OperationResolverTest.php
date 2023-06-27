@@ -3,7 +3,7 @@ namespace Neos\Eel\Tests\Functional\FlowQuery;
 
 use Neos\Eel\FlowQuery\OperationResolver;
 use Neos\Eel\FlowQuery\OperationResolverInterface;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Test cases for operation resolver

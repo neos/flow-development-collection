@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Functional\Http\Client;
  * source code.
  */
 
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Functional tests for the HTTP browser

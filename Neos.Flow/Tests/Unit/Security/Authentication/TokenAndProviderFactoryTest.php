@@ -16,7 +16,7 @@ use Neos\Flow\Security\Authentication\AuthenticationTokenResolver;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Flow\Security\Exception\InvalidAuthenticationProviderException;
 use Neos\Flow\Security\RequestPatternResolver;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Test for the default token and provider factory

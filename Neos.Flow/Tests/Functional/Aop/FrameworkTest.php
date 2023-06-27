@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Functional\Aop;
 
 use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features;
 use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp8Features;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Testcase for the AOP Framework class

@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Error;
 
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Error\Debugger;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the Debugger

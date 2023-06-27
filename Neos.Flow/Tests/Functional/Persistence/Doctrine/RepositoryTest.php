@@ -16,7 +16,7 @@ use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Testcase for basic repository operations

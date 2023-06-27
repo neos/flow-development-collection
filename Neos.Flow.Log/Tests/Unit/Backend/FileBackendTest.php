@@ -15,7 +15,7 @@ use Neos\Flow\Log\Exception\CouldNotOpenResourceException;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Log\Backend\FileBackend;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the File Backend

@@ -12,7 +12,7 @@ namespace Neos\Flow\Log\Tests\Unit\Backend;
  */
 
 use Neos\Flow\Log\Backend\AbstractBackend;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the abstract log backend

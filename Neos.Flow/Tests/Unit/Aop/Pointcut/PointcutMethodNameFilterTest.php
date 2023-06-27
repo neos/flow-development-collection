@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Aop\Pointcut;
 
 use Neos\Flow\Aop;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Psr\Log\LoggerInterface;
 
 /**

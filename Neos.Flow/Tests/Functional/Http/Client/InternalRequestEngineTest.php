@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Functional\Http\Client;
  */
 
 use Neos\Flow\Mvc\Routing\Route;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Functional tests for the HTTP client internal request engine

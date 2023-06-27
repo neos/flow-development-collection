@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\MediaTypeConverter;
 use Neos\Flow\Property\TypeConverter\MediaTypeConverterInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the MediaTypeConverter

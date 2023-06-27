@@ -15,7 +15,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Functional tests for the Object Manager features
@@ -101,7 +101,7 @@ class ObjectManagerTest extends FunctionalTestCase
         self::assertSame(ObjectManagerInterface::class, $first);
         self::assertSame(ConfigurationManager::class, $last);
     }
-    
+
     /**
      * @test
      */

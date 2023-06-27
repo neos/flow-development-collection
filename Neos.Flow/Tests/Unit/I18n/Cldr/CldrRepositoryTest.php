@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr;
 
 use Neos\Utility\ObjectAccess;
 use org\bovigo\vfs\vfsStream;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\I18n;
 
 /**

@@ -18,7 +18,7 @@ use Neos\Flow\Mvc\Routing\Route;
  *
  * @group large
  */
-class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
+class FormObjectsTest extends \Neos\Flow\Testing\FunctionalTestCase
 {
     /**
      * @var boolean

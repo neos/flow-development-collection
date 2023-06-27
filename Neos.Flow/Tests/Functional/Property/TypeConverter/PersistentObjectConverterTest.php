@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Functional\Property\TypeConverter;
 
 use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Neos\Flow\Tests\Functional\Property\Fixtures;
 
 class PersistentObjectConverterTest extends FunctionalTestCase

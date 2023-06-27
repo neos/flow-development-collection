@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Persistence;
 
 use Neos\Flow\Persistence\AbstractPersistenceManager;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the Abstract Persistence Manager

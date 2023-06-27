@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\I18n\Formatter;
 
 use Neos\Flow\I18n\Cldr\Reader\CurrencyReader;
 use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\I18n;
 
 /**

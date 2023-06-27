@@ -7,7 +7,7 @@ use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\FluidAdaptor\View\TemplatePaths;
 
 /**

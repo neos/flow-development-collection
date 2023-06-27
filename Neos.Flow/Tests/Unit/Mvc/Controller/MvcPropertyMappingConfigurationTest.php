@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  */
 
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfiguration;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the MVC Controller Argument

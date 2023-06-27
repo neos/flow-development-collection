@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr\Reader;
 
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\I18n\Cldr\Reader\CurrencyReader;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\I18n;
 
 /**

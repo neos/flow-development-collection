@@ -16,7 +16,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Neos\Flow\Http\Middleware\TrustedProxiesMiddleware;
 use Neos\Flow\Http\ServerRequestAttributes;
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use Psr\Http\Message\ResponseInterface;

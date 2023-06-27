@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Functional\Error;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Utility\ObjectAccess;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Neos\Flow\Error\Debugger;
 use Neos\Utility\Arrays;
 

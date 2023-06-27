@@ -14,7 +14,7 @@ use Neos\Flow\Error\AbstractExceptionHandler;
 use Neos\Flow\Exception;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Psr\Log\LoggerInterface;
 
 /**

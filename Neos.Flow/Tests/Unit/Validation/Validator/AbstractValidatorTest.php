@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * source code.
  */
 
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Flow\Validation\Validator\AbstractValidator;
 

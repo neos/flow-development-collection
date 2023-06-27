@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement\DependencyInjection;
  */
 
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 class DependencyProxyTest extends UnitTestCase
 {

@@ -13,7 +13,7 @@ namespace Neos\FluidAdaptor\Tests\Functional\View;
 
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception\WrongEnctypeException;
 use Neos\FluidAdaptor\Tests\Functional\View\Fixtures\View\StandaloneView;
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;

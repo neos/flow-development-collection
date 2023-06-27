@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Cli;
  */
 
 use Neos\Flow\Cli\ConsoleOutput;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\StreamOutput;
 use Symfony\Component\Console\Exception\RuntimeException;

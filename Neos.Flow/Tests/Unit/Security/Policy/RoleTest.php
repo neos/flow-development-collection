@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Security\Policy;
  */
 
 use Neos\Flow\Security\Policy\Role;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for for Neos\Flow\Security\Policy\Role

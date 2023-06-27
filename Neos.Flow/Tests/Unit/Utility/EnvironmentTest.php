@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Utility;
  */
 
 use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
 

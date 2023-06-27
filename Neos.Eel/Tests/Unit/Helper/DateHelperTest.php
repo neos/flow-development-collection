@@ -17,7 +17,7 @@ use Neos\Flow\I18n\Locale;
 /**
  * Tests for DateHelper
  */
-class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
+class DateHelperTest extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * @return array

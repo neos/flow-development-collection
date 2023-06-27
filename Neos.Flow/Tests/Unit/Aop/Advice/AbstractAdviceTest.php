@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Aop\Advice;
  */
 
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\SignalSlot;
 use Neos\Flow\Aop;
 

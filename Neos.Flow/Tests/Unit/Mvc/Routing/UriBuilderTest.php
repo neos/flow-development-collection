@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Mvc;
 use Neos\Flow\Utility;
 use Psr\Http\Message\ServerRequestInterface;

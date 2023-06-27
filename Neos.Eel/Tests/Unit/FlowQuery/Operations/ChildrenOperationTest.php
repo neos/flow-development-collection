@@ -16,7 +16,7 @@ use Neos\Eel\FlowQuery\Operations\Object\ChildrenOperation;
 /**
  * ChildrenOperation test
  */
-class ChildrenOperationTest extends \Neos\Flow\Tests\UnitTestCase
+class ChildrenOperationTest extends \Neos\Flow\Testing\UnitTestCase
 {
     public function childrenExamples()
     {

@@ -15,7 +15,7 @@ use Neos\Flow\Aop\Advice\AdviceChain;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Security;
 use Neos\Flow\Security\Aspect\PolicyEnforcementAspect;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the security policy enforcement aspect

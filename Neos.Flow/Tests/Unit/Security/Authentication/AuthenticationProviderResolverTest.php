@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Security\Authentication\AuthenticationProviderResolver;
 use Neos\Flow\Security\Exception\NoAuthenticationProviderFoundException;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the security interceptor resolver

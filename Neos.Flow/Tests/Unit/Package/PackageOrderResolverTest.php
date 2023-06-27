@@ -15,7 +15,7 @@ use Neos\Flow\Package\PackageOrderResolver;
 /**
  * Test the PackageOrderResolver
  */
-class PackageOrderResolverTest extends \Neos\Flow\Tests\UnitTestCase
+class PackageOrderResolverTest extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * Data provider for testing if a list of unordered packages gets ordered correctly.

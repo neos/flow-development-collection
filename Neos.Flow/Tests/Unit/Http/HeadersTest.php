@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Http;
 
 use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Cookie;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Test case for the Http Headers class

@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Functional\Security\Authentication\Provider;
  */
 
 use Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Neos\Flow\Security;
 
 /**

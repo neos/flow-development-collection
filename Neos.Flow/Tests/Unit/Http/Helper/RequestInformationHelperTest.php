@@ -3,7 +3,7 @@ namespace Neos\Flow\Tests\Unit\Http\Helper;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Tests for the RequestInformationHelper

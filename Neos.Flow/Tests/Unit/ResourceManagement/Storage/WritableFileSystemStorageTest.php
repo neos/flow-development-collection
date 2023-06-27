@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement\Storage;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use Neos\Flow\ResourceManagement\Storage\WritableFileSystemStorage;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
 

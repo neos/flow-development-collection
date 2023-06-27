@@ -18,7 +18,7 @@ use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Xliff\Service\XliffFileProvider;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Testcases for the XLIFF file provider

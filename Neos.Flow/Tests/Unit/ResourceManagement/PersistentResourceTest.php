@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement;
  */
 
 use Neos\Flow\ResourceManagement\PersistentResource;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Test case for the PersistentResource class

@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\EntryPoint;
 
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Security\Authentication\EntryPoint\HttpBasic;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**

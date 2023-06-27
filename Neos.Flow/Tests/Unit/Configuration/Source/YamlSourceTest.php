@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Configuration\Source;
 use Neos\Flow\Configuration\Exception;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Configuration\Source\YamlSource;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the YAML configuration source

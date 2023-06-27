@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Reflection;
 
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\Exception\ClassSchemaConstraintViolationException;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the Class Schema.

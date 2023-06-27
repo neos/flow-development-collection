@@ -26,7 +26,7 @@ use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Property\TypeConverterInterface;
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 require_once(__DIR__ . '/../../Fixtures/ClassWithSetters.php');
 require_once(__DIR__ . '/../../Fixtures/ClassWithSettersAndConstructor.php');

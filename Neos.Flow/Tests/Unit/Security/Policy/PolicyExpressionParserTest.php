@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Policy;
 
 use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodTargetExpressionParser;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the policy expression parser

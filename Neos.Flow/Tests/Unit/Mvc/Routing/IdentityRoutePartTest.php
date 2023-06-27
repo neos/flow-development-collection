@@ -19,7 +19,7 @@ use Neos\Flow\Mvc\Routing\ObjectPathMappingRepository;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the MVC Web Routing IdentityRoutePart Class

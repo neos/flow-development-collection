@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authorization;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Security;
 
 /**

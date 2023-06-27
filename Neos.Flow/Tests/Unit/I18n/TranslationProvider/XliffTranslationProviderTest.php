@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\I18n\TranslationProvider;
  */
 
 use Neos\Flow\I18n;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the XliffTranslationProvider

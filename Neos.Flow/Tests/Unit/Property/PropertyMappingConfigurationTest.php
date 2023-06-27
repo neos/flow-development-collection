@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Property;
 
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverterInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 require_once(__DIR__ . '/../Fixtures/ClassWithSetters.php');
 

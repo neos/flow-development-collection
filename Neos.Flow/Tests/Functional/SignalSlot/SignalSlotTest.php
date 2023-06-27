@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Functional\SignalSlot;
  * source code.
  */
 use Neos\Flow\SignalSlot\Dispatcher;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Test suite for Signal Slot

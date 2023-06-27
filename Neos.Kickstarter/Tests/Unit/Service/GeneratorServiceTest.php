@@ -15,7 +15,7 @@ namespace Neos\Kickstarter\Tests\Unit\Service;
  * Testcase for the generator service
  *
  */
-class GeneratorServiceTest extends \Neos\Flow\Tests\UnitTestCase
+class GeneratorServiceTest extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * @test

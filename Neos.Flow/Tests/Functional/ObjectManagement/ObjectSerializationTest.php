@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * source code.
  */
 
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Functional tests for Object serialization.

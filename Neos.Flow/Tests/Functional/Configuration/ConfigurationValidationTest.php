@@ -20,7 +20,7 @@ use Neos\Flow\Configuration\Loader\SettingsLoader;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\Functional\Configuration\Fixtures\RootDirectoryIgnoringYamlSource;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Neos\Utility\ObjectAccess;
 
 /**

@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  */
 
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Functional tests for the Lazy Dependency Injection features

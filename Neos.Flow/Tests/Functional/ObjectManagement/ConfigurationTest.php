@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  */
 
 use Neos\Utility\ObjectAccess;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Functional tests for the Object configuration via Objects.yaml

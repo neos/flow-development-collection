@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  */
 
 use Neos\Flow\Mvc\Routing\Route;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 class AbstractControllerTest extends FunctionalTestCase
 {

@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  */
 
 use Neos\Error\Messages as FlowError;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
 
 /**

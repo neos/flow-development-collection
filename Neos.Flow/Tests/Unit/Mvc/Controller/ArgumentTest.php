@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Mvc;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
 use Neos\Error\Messages as FlowError;
@@ -164,7 +164,7 @@ class ArgumentTest extends UnitTestCase
     {
         self::assertSame($this->simpleValueArgument, $this->setupPropertyMapperAndSetValue());
     }
-    
+
     /**
      * @test
      */

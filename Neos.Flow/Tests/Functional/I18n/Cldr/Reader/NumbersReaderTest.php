@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Functional\I18n\Cldr\Reader;
  */
 
 use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Neos\Flow\I18n;
 
 class NumbersReaderTest extends FunctionalTestCase

@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Error;
  * source code.
  */
 
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Error\Messages\Error as FlowError;
 
 /**

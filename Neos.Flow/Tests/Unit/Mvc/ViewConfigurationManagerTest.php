@@ -22,7 +22,7 @@ use Neos\Eel\CompilingEvaluator;
  * Testcase for the MVC ViewConfigurationManager
  *
  */
-class ViewConfigurationManagerTest extends \Neos\Flow\Tests\UnitTestCase
+class ViewConfigurationManagerTest extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * @var ViewConfigurationManager

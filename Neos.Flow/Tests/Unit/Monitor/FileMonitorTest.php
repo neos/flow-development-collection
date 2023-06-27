@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Monitor;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Monitor\FileMonitor;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Utility\Files;
 use Neos\Cache;
 use Psr\Log\LoggerInterface;

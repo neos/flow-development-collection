@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  */
 
 use Neos\Flow\Property\TypeConverter\BooleanConverter;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the Boolean converter

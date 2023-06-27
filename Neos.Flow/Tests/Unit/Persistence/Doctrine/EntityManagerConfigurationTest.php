@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Connection;
 use Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 class EntityManagerConfigurationTest extends UnitTestCase
 {

@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement\Configuration;
  */
 
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\ObjectManagement\Configuration;
 
 /**

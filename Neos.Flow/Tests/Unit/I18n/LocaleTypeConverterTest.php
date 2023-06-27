@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\I18n;
 use Neos\Flow\I18n;
 use Neos\Flow\I18n\LocaleTypeConverter;
 use Neos\Flow\Property\TypeConverterInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the Locale type converter

@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Http;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Cookie;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Test case for the Http Cookie class

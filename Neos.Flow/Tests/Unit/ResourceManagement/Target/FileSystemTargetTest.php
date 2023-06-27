@@ -19,7 +19,7 @@ use Neos\Flow\ResourceManagement\Collection;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
 use Neos\Flow\ResourceManagement\Target\FileSystemTarget;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
