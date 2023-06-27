@@ -1,0 +1,23 @@
+{
+    "name": "neos/flow-testing",
+    "type": "neos-framework",
+    "description": "Flow Framework Testing classes",
+    "homepage": "http://flow.neos.io",
+    "license": [
+        "MIT"
+    ],
+    "require": {
+        "php": "^8.2",
+        "phpunit/phpunit": "~9.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Flow\\Testing\\": "Classes"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Neos.Flow.Testing"
+        }
+    }
+}

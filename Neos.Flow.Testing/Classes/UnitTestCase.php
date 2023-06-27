@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests;
+namespace Neos\Flow\Testing;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -21,6 +21,6 @@ namespace Neos\Flow\Tests;
  *
  * @api
  */
-abstract class UnitTestCase extends \Neos\Flow\Tests\BaseTestCase
+abstract class UnitTestCase extends \Neos\Flow\Testing\BaseTestCase
 {
 }

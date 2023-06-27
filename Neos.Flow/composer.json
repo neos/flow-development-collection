@@ -58,6 +58,7 @@
         "egulias/email-validator": "^2.1.17 || ^3.0"
     },
     "require-dev": {
+        "neos/flow-testing": "self.version",
         "vimeo/psalm": "~4.30.0",
         "mikey179/vfsstream": "^1.6.10",
         "phpunit/phpunit": "~9.1"

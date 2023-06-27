@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests;
+namespace Neos\Flow\Testing;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -13,17 +13,16 @@ namespace Neos\Flow\Tests;
 
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
-use Psr\Http\Message\ServerRequestInterface as HttpRequest;
-use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
-use Neos\Flow\Mvc\Routing\Dto\RouteContext;
-use Neos\Flow\Mvc\Routing\Route;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
+use Psr\Http\Message\ServerRequestInterface as HttpRequest;
 
 /**
  * A base test case for functional tests
@@ -33,7 +32,7 @@ use Neos\Utility\Files;
  *
  * @api
  */
-abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
+abstract class FunctionalTestCase extends \Neos\Flow\Testing\BaseTestCase
 {
     /**
      * A functional instance of the Object Manager, for use in concrete test cases.
