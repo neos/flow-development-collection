@@ -11,6 +11,7 @@ namespace Neos\Flow\Testing;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\ActionRequest;
