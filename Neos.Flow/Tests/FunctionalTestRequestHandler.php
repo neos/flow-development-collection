@@ -11,6 +11,8 @@ namespace Neos\Flow\Tests;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * A request handler which boots up Flow into a basic runtime level and then returns
  * without actually further handling command line commands.
