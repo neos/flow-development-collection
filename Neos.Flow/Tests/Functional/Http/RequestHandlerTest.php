@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Functional\Http;
  */
 
 use Neos\Flow\Http\RequestHandler;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 

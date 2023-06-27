@@ -13,7 +13,7 @@ namespace Neos\Eel\Tests\Unit;
 
 use Neos\Eel\Helper\StringHelper;
 use Neos\Eel\Tests\Unit\Fixtures\TestObject;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Tests for StringHelper

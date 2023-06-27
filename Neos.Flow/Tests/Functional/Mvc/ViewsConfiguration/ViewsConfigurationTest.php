@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration;
  */
 
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Functional tests for the ActionController

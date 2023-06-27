@@ -17,7 +17,7 @@ use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerato
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlFilter;
 use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Neos\Eel;
 use Neos\Flow\Tests\Functional\Security\Fixtures;
 

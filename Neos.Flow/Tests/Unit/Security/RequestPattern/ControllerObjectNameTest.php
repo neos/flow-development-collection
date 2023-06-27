@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\RequestPattern;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\RequestPattern\ControllerObjectName;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the controller object name request pattern

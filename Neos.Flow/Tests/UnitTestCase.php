@@ -20,7 +20,8 @@ namespace Neos\Flow\Tests;
  * will profit from it automatically.
  *
  * @api
+ * @deprecated will be removed with Flow 10 use \Neos\Flow\Testing\UnitTestCase
  */
-abstract class UnitTestCase extends \Neos\Flow\Tests\BaseTestCase
+abstract class UnitTestCase extends \Neos\Flow\Testing\UnitTestCase
 {
 }

@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Security\Cryptography;
  */
 
 use Neos\Flow\Security\Cryptography\Algorithms;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the cryptographic algorithms

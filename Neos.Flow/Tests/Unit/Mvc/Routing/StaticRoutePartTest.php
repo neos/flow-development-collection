@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * source code.
  */
 
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Mvc;
 
 /**

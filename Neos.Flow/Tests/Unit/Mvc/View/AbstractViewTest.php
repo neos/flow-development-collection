@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\View;
  */
 
 use Neos\Flow\Mvc;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the MVC AbstractView

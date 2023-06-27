@@ -15,7 +15,7 @@ use Neos\Flow\Aop\Builder\ClassNameIndex;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\Session\Aspect\SessionObjectMethodsPointcutFilter;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the SessionObjectMethodsPointcutFilter

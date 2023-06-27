@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Error;
  */
 
 use Neos\Flow\Error\DebugExceptionHandler;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the Debug Exception Handler

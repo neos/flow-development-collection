@@ -16,7 +16,7 @@ include_once(__DIR__ . '/Fixtures/TemplateViewFixture.php');
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\FluidAdaptor\View\TemplateView;
 
 /**

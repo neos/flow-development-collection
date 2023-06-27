@@ -19,7 +19,7 @@ use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
 use Neos\Flow\Security;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Psr\Log\LoggerInterface;
 
 /**

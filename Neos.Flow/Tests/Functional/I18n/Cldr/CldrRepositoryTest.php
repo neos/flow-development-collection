@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Functional\I18n\Cldr;
 
 use Neos\Flow\I18n;
 use Neos\Flow\I18n\Cldr\CldrRepository;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Neos\Utility\Files;
 use Neos\Utility\ObjectAccess;
 

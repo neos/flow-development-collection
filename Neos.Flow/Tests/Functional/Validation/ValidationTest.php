@@ -14,7 +14,7 @@ use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /**

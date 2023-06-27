@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\Query;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Testcase for query

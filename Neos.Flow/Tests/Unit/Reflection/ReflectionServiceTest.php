@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Reflection;
 use Doctrine\Common\Annotations\Reader;
 use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the ReflectionService

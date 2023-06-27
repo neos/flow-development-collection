@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Functional\Aop;
  * source code.
  */
 
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Test suite for aop proxy classes

@@ -20,7 +20,7 @@ use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassH;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassB;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Functional tests for the Dependency Injection features

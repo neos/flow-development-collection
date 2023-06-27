@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
 
 use Neos\Flow\Property\TypeConverter\FloatConverter;
 use Neos\Flow\Property\TypeConverterInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Error\Messages as Error;
 
 /**

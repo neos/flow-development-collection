@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authorization\Interceptor;
 
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authorization\Interceptor\RequireAuthentication;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the authentication required security interceptor

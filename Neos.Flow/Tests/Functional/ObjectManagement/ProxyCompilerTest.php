@@ -22,7 +22,7 @@ use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterf
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithPrivateConstructor;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\BackedEnumWithMethod;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Functional tests for the Proxy Compiler and related features

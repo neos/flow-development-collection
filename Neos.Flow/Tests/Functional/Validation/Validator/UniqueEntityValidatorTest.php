@@ -18,7 +18,7 @@ use Neos\Flow\Tests\Functional\Persistence\Fixtures\AnnotatedIdentitiesEntity;
  * Testcase for the UniqueEntity Validator
  *
  */
-class UniqueEntityValidatorTest extends \Neos\Flow\Tests\FunctionalTestCase
+class UniqueEntityValidatorTest extends \Neos\Flow\Testing\FunctionalTestCase
 {
     /**
      * @var boolean

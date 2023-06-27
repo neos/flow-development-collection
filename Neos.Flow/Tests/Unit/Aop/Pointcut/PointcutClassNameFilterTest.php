@@ -15,7 +15,7 @@ require_once(FLOW_PATH_FLOW . 'Tests/Unit/Fixtures/DummyClass.php');
 require_once(FLOW_PATH_FLOW . 'Tests/Unit/Fixtures/SecondDummyClass.php');
 
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Aop;
 
 /**

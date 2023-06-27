@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Core;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Package\Package;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the object class loader

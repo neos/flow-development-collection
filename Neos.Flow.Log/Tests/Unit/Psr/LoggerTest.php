@@ -13,7 +13,7 @@ namespace Neos\Flow\Log\Tests\Unit\Psr;
 
 use Neos\Flow\Log\Backend\BackendInterface;
 use Neos\Flow\Log\Psr\Logger;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Psr\Log\LogLevel;
 
 /**

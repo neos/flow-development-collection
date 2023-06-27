@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine\Mapping\Driver;
  */
 
 use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Security;
 
 /**

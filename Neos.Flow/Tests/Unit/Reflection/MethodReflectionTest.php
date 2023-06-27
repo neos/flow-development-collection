@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  */
 
 use Neos\Flow\Reflection;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for MethodReflection

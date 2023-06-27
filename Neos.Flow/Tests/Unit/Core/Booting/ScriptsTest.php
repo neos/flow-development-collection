@@ -15,7 +15,7 @@ use Neos\Flow\Core\Booting\Scripts;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\SignalSlot\Dispatcher;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * This is something that PHPUnit would have to do in order to support stubbing static methods. And

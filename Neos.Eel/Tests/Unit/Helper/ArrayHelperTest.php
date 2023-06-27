@@ -17,7 +17,7 @@ use Neos\Eel\Tests\Unit\Fixtures\TestArrayIterator;
 /**
  * Tests for ArrayHelper
  */
-class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
+class ArrayHelperTest extends \Neos\Flow\Testing\UnitTestCase
 {
     public function concatExamples()
     {

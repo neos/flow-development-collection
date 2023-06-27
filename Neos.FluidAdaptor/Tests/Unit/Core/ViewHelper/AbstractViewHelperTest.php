@@ -14,7 +14,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\ViewHelper;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use Neos\FluidAdaptor\View\TemplateView;

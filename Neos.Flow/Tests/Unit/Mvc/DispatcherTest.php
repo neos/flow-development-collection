@@ -25,7 +25,7 @@ use Neos\Flow\Security\Authorization\FirewallInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;

@@ -16,7 +16,7 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\ArrayConverter;
 use Neos\Flow\Property\TypeConverter\ArrayObjectConverter;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the ArrayObject converter

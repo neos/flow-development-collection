@@ -16,7 +16,7 @@ use Neos\Flow\Http\Cookie;
 use Neos\Flow\Http\Middleware\SessionMiddleware;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManager;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 

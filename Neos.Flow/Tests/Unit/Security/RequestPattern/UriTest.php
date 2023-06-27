@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\RequestPattern;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\RequestPattern\Uri as UriPattern;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 

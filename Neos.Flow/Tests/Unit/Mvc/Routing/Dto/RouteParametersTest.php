@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RouterInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the RouteParameters DTO

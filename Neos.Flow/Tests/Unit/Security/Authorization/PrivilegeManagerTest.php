@@ -21,7 +21,7 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManager;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the privilege manager

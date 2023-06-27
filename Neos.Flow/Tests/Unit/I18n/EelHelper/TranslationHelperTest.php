@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\I18n\EelHelper;
 
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\I18n\EelHelper\TranslationParameterToken;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Tests for TranslateHelper

@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Neos\Flow\Persistence\Doctrine\Repository;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the doctrine Repository

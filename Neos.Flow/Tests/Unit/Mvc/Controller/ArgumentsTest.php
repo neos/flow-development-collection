@@ -15,7 +15,7 @@ use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\Argument;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Error\Messages as FlowError;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the MVC Controller Arguments

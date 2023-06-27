@@ -15,7 +15,7 @@ use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\I18n;
 
 /**

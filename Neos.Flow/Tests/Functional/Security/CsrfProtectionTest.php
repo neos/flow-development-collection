@@ -15,7 +15,7 @@ use Neos\Flow\Http\Cookie;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Security\AccountFactory;
 use Neos\Flow\Security\AccountRepository;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
 /**

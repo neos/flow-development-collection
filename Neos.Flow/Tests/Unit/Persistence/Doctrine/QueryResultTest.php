@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
 use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Persistence\Doctrine\Query;
 use Neos\Flow\Persistence\QueryInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for \Neos\Flow\Persistence\QueryResult

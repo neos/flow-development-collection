@@ -19,7 +19,7 @@ use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\StandardController;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\TestObjectArgument;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
 class ActionControllerTest extends FunctionalTestCase

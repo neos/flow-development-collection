@@ -22,7 +22,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 /**
  * Base test class for testing view helpers
  */
-abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
+abstract class ViewHelperBaseTestcase extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * @var \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer|\PHPUnit\Framework\MockObject\MockObject

@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Functional\Session;
  */
 
 use Neos\Flow\Mvc\Routing\Route;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Neos\Flow\Session;
 
 class SessionManagementTest extends FunctionalTestCase

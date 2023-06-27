@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Security\Cryptography;
  */
 
 use Neos\Flow\Security\Cryptography\BCryptHashingStrategy;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the BCryptHashingStrategy

@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Provider;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security;
 use Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for username/password authentication provider. The account are stored in the CR.

@@ -18,7 +18,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\Exception\ProxyCompilerException;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\BaseTestCase;
+use Neos\Flow\Testing\BaseTestCase;
 use ReflectionAttribute;
 use ReflectionClass;
 

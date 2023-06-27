@@ -16,7 +16,7 @@ use Neos\Eel\Helper\MathHelper;
 /**
  * Tests for MathHelper
  */
-class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
+class MathHelperTest extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * Define a "not a number" constant for comparison (because NAN !== NAN)

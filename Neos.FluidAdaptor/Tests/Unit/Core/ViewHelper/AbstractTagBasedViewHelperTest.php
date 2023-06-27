@@ -17,7 +17,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 /**
  * Testcase for TagBasedViewHelper
  */
-class AbstractTagBasedViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
+class AbstractTagBasedViewHelperTest extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|AbstractTagBasedViewHelper

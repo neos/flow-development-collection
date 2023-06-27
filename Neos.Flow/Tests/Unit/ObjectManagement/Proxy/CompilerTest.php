@@ -20,7 +20,7 @@ use Neos\Flow\Annotations\Signal;
 use Neos\Flow\Annotations\Validate;
 use Neos\Flow\ObjectManagement\Proxy\Compiler;
 use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\FooBarAnnotation;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**

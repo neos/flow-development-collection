@@ -16,7 +16,7 @@ use Neos\Cache;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Utility\Environment;
 use Psr\Log\LoggerInterface;
 use Psr\Cache\CacheItemPoolInterface;

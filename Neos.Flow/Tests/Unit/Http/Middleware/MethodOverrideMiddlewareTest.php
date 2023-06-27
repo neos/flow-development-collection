@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Http\Component;
  */
 
 use Neos\Flow\Http\Middleware\MethodOverrideMiddleware;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

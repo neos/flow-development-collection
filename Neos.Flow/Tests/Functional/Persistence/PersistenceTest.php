@@ -18,7 +18,7 @@ use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Persistence\Exception;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Neos\Utility\ObjectAccess;
 
 /**

@@ -16,7 +16,7 @@ use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceTypeConverter;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Error\Messages as FlowError;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Log\LoggerInterface;
@@ -94,7 +94,7 @@ class ResourceTypeConverterTest extends UnitTestCase
         $source = ['error' => \UPLOAD_ERR_NO_FILE];
         self::assertNull($this->resourceTypeConverter->convertFrom($source, PersistentResource::class));
     }
-    
+
     /**
      * @test
      */

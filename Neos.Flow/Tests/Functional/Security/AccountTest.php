@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Functional\Security;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Account;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Testcase for the account factory

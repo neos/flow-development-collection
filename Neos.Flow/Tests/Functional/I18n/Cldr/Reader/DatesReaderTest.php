@@ -15,7 +15,7 @@ namespace Neos\Flow\Tests\Functional\I18n\Cldr\Reader;
 
 use Neos\Flow\I18n\Cldr\Reader\DatesReader;
 use Neos\Flow\I18n\Locale;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 class DatesReaderTest extends FunctionalTestCase
 {

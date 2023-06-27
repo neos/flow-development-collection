@@ -15,7 +15,7 @@ use Neos\Eel\Context;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\EvaluationException;
 use Neos\Eel\ParserException;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Abstract evaluator test

@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Functional\Log\Utility;
  */
 
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 class LogEnvironmentTest extends FunctionalTestCase
 {

@@ -17,7 +17,7 @@ use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
  * Testcase for AjaxWidgetContextHolder
  *
  */
-class AjaxWidgetContextHolderTest extends \Neos\Flow\Tests\UnitTestCase
+class AjaxWidgetContextHolderTest extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * @test

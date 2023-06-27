@@ -12,7 +12,7 @@ namespace Neos\FluidAdaptor\Tests\Functional\Core;
  */
 
 use Neos\Flow\Mvc\Routing\Route;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Testcase for the widget mechanism

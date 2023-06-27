@@ -15,7 +15,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\Token\TestingToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\SessionDataContainer;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the SessionDataContainer

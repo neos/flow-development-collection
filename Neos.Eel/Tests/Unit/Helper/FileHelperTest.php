@@ -12,7 +12,7 @@ namespace Neos\Eel\Tests\Unit;
  */
 
 use Neos\Eel\Helper\FileHelper;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
 
 /**

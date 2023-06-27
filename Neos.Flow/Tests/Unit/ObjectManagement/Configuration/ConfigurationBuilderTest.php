@@ -20,7 +20,7 @@ use Neos\Flow\ObjectManagement\Exception;
 use Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException;
 use Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Annotations as Flow;
 
 /**

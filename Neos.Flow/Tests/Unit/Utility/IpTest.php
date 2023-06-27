@@ -17,7 +17,7 @@ use Neos\Flow\Utility\Ip;
  * Testcase for the Utility Ip class
  *
  */
-class IpTest extends \Neos\Flow\Tests\UnitTestCase
+class IpTest extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * Data provider with valid and invalid IP ranges

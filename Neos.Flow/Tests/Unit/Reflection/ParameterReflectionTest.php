@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Reflection;
 
 use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\ParameterReflection;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the ParameterReflection

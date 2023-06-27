@@ -16,7 +16,7 @@ use Neos\Eel\CompilingEvaluator;
 use Neos\Eel\NotAllowedException;
 use Neos\Eel\ProtectedContext;
 use Neos\Eel\Tests\Unit\Fixtures\TestObject;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Untrusted context test

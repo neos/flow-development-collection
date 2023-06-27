@@ -19,7 +19,7 @@ use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageFactory;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\ObjectAccess;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the package factory

@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Persistence\Aspect;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicAspect;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the PersistenceMagicAspect

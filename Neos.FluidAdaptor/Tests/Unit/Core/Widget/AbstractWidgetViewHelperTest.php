@@ -20,7 +20,7 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 /**
  * Testcase for AbstractWidgetViewHelper
  */
-class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
+class AbstractWidgetViewHelperTest extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * @var \Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper

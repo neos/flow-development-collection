@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Security;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Security\Exception\NoRequestPatternFoundException;
 use Neos\Flow\Security\RequestPatternResolver;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the request pattern resolver

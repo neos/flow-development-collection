@@ -25,7 +25,7 @@ use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Security\SessionDataContainer;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManagerInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Security\Policy\Role;
 use Psr\Log\LoggerInterface;
 

@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\View;
 
 use Neos\Flow\Mvc;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the JSON view

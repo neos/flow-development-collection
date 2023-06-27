@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement\Proxy;
 use Neos\Flow\ObjectManagement\Proxy\Compiler;
 use Neos\Flow\ObjectManagement\Proxy\ProxyClass;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class ProxyClassTest extends UnitTestCase

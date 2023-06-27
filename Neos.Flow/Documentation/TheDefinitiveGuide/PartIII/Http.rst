@@ -673,7 +673,7 @@ other application parts which are accessible via HTTP. This browser has the ``In
 	/**
 	 * Some functional tests
 	 */
-	class SomeTest extends \Neos\Flow\Tests\FunctionalTestCase
+	class SomeTest extends \Neos\Flow\Testing\FunctionalTestCase
 	{
 
 		/**

@@ -18,7 +18,7 @@ use org\bovigo\vfs\vfsStreamWrapper;
  * Testcase for the Modification Time Change Detection Strategy
  *
  */
-class ModificationTimeStrategyTest extends \Neos\Flow\Tests\UnitTestCase
+class ModificationTimeStrategyTest extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * @var \Neos\Flow\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy

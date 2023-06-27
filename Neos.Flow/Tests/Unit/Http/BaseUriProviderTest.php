@@ -17,7 +17,7 @@ use Neos\Flow\Core\RequestHandlerInterface;
 use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**

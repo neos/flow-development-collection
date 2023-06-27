@@ -11,7 +11,7 @@ namespace Neos\Flow\Tests\Unit\Persistence;
  * source code.
  */
 
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Persistence;
 
 require_once('Fixture/Repository/NonstandardEntityRepository.php');

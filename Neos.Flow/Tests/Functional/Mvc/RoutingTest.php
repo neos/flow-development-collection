@@ -20,7 +20,7 @@ use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestAController;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\RoutingTestAController;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;

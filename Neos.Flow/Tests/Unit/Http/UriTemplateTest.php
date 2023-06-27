@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Http;
  */
 
 use Neos\Flow\Http\UriTemplate;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the UriTemplate class

@@ -17,7 +17,7 @@ use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 
 class ObjectManagerTest extends UnitTestCase

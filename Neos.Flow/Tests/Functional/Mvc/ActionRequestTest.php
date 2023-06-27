@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Functional\Mvc;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 /**
  * Functional tests for the ActionRequest

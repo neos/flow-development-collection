@@ -15,7 +15,7 @@ use org\bovigo\vfs\vfsStream;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Psr\Log\LoggerInterface;
 
 class CompileTimeObjectManagerTest extends UnitTestCase

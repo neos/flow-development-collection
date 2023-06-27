@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Functional\Mvc;
 
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\RoutePartHandler\UriBuilderSetDomainAndPathPrefixRoutePartHandler;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\RoutePartHandler\UriBuilderSetDomainRoutePartHandler;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
 /**

@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Core;
 
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Exception;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the ApplicationContext class

@@ -21,7 +21,7 @@ use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
 use Neos\Flow\Security\Exception\InvalidHashException;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Neos\Flow\Tests\Unit\Cryptography\Fixture\TestHashingStrategy;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Test case for the Hash Service

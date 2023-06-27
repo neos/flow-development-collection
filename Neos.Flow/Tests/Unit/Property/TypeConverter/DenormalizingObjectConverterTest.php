@@ -19,7 +19,7 @@ use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\FloatBasedValueObject;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\IntegerBasedValueObject;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\IntegerBasedValueObjectWithLongName;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\StringBasedValueObject;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 final class DenormalizingObjectConverterTest extends UnitTestCase
 {

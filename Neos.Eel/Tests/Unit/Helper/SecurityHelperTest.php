@@ -10,7 +10,7 @@ use Neos\Eel\Helper\SecurityHelper;
 /**
  * Eel SecurityHelper test
  */
-class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
+class SecurityHelperTest extends \Neos\Flow\Testing\UnitTestCase
 {
     /**
      * @test

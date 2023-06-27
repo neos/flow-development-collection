@@ -17,7 +17,7 @@ use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ParameterReflection;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\Unit\Cli\Fixtures\Command\MockACommandController;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the CLI Command class

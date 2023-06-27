@@ -5,7 +5,7 @@ use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\Query;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Testing\FunctionalTestCase;
 
 class ValueObjectTest extends FunctionalTestCase
 {

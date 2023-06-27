@@ -18,7 +18,7 @@ use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Authentication\EntryPoint\WebRedirect;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for web redirect authentication entry point

@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr;
  */
 
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\I18n;
 
 /**

@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Utility\ObjectAccess;
 
 /**

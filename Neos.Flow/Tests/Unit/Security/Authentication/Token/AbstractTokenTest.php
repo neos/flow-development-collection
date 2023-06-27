@@ -16,7 +16,7 @@ use Neos\Flow\Security\Authentication\Token\AbstractToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use Neos\Flow\Security\RequestPattern\Uri as UriRequestPattern;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for abstract authentication token

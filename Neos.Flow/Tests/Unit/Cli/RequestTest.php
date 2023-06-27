@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Cli;
 
 use Neos\Flow\Cli\Request;
 use Neos\Flow\Command\CacheCommandController;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the CLI Request class

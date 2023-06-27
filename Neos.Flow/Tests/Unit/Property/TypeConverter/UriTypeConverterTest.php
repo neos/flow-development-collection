@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Property\TypeConverter\UriTypeConverter;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Error\Messages as FlowError;
 use Psr\Http\Message\UriInterface;
 

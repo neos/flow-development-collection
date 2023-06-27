@@ -13,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement\Streams;
 
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the StreamWrapperAdapter class

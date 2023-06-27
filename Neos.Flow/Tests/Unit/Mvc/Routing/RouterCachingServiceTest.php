@@ -23,7 +23,7 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;

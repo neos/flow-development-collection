@@ -20,7 +20,7 @@ use Neos\Flow\Fixtures\ClassWithIntegerConstructor;
 use Neos\Flow\Fixtures\ClassWithStringConstructor;
 use Neos\Flow\Property\TypeConverter\ScalarTypeToObjectConverter;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Annotations as Flow;
 
 /**

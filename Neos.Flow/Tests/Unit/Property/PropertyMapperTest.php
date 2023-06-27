@@ -21,7 +21,7 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverterInterface;
 use Neos\Flow\Security\Exception;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Utility\TypeHandling;
 
 require_once(__DIR__ . '/../Fixtures/ClassWithSetters.php');

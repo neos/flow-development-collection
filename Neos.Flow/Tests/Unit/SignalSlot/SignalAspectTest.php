@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\SignalSlot;
 use Neos\Flow\Aop\JoinPoint;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\SignalSlot\SignalAspect;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the Signal Aspect

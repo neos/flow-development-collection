@@ -22,7 +22,7 @@ use Neos\Flow\Persistence\AllowedObjectsContainer;
 use Neos\Flow\Persistence\Doctrine\AllowedObjectsListener;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Exception;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Psr\Log\LoggerInterface;
 
 /**

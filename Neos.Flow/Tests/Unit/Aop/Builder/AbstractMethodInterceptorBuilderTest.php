@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Unit\Aop\Builder;
 use Neos\Flow\Aop\Builder\AbstractMethodInterceptorBuilder;
 use Neos\Flow\Aop\Builder\AdvisedConstructorInterceptorBuilder;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 
 /**
  * Testcase for the Abstract Method Interceptor Builder

@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authorization\Interceptor;
  */
 
 use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Testing\UnitTestCase;
 use Neos\Flow\Security;
 
 /**

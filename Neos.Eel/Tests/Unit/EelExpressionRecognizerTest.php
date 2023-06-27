@@ -15,7 +15,7 @@ namespace Neos\Eel\Tests\Unit;
 use Neos\Eel\Package;
 use Neos\Eel\Utility;
 
-class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
+class EelExpressionRecognizerTest extends \Neos\Flow\Testing\UnitTestCase
 {
     public function wrappedEelExpressionProvider()
     {
