@@ -31,7 +31,7 @@
         "symfony/dom-crawler": "^5.1||^6.0",
         "symfony/console": "^5.1||^6.0",
         "neos/composer-plugin": "^2.0",
-        "composer/composer": "^1.10.22 || ^2.0.13",
+        "composer/composer": "^2.2.8",
         "egulias/email-validator": "^2.1.17 || ^3.0",
         "typo3fluid/fluid": "^2.8.0",
         "guzzlehttp/psr7": "^1.8.4 || ^2.1.1",

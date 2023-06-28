@@ -8,7 +8,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "neos/utility-files": "*",
+        "neos/utility-files": "self.version",
         "psr/log": "^2.0 || ^3.0"
     },
     "require-dev": {
