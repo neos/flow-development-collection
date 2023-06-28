@@ -9,7 +9,7 @@ use Neos\Flow\Utility\Algorithms;
  */
 class PrototypeClassK
 {
-    public function getMicrotime(): float
+    public function getToken(): string
     {
         return static::compiledStaticallyMethod();
     }
