@@ -353,6 +353,6 @@ class ProxyCompilerTest extends FunctionalTestCase
     public function staticCompileWillResultInAFrozenReturnValue(): void
     {
         $object = new PrototypeClassK();
-        self::assertSame($object->getMicrotime(), $object->getMicrotime());
+        self::assertSame($object->getToken(), $object->getToken());
     }
 }
