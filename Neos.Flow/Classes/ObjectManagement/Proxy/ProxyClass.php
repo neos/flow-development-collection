@@ -142,7 +142,7 @@ class ProxyClass
         }
         if (!isset($this->methods[$methodName])) {
             if (method_exists($this->fullOriginalClassName, $methodName)) {
-                $this->methods[$methodName] = ProxyMethodGenerator::copyMethodSignature(new MethodReflection($this->fullOriginalClassName, $methodName));
+                $this->methods[$methodName] = ProxyMethodGenerator::copyMethodSignatureAndDocblock(new MethodReflection($this->fullOriginalClassName, $methodName));
             } else {
                 $this->methods[$methodName] = new ProxyMethodGenerator($methodName);
             }

@@ -11,6 +11,7 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
+use Laminas\Code\Generator\DocBlockGenerator;
 use Laminas\Code\Generator\MethodGenerator;
 
 /**
@@ -31,10 +32,13 @@ class ProxyMethodGenerator extends MethodGenerator
         return $instance;
     }
 
-    public static function copyMethodSignature(\Laminas\Code\Reflection\MethodReflection $reflectionMethod): static
+    public static function copyMethodSignatureAndDocblock(\Laminas\Code\Reflection\MethodReflection $reflectionMethod): static
     {
         $instance = parent::copyMethodSignature($reflectionMethod);
         assert($instance instanceof static);
+        if ($reflectionMethod->getDocComment() !== false) {
+            $instance->setDocBlock(DocBlockGenerator::fromReflection($reflectionMethod->getDocBlock()));
+        }
         $instance->fullOriginalClassName = $reflectionMethod->getDeclaringClass()->getName();
         return $instance;
     }
