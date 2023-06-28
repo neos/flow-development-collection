@@ -34,6 +34,10 @@ class SomeAjaxController extends AbstractWidgetController
      */
     public function indexAction()
     {
+        $this->view->assignMultiple([
+            'option1' => $this->widgetConfiguration['option1'],
+            'option2' => $this->widgetConfiguration['option2'],
+        ]);
     }
 
     /**
