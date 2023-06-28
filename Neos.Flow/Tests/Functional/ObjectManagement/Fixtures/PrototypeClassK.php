@@ -22,6 +22,6 @@ class PrototypeClassK
      */
     public static function compiledStaticallyMethod(): float
     {
-        return microtime(true);
+        return bin2hex(random_bytes(10));
     }
 }
