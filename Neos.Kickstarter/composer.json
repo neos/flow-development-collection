@@ -5,9 +5,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.0",
-        "neos/flow": "~8.0.0",
-        "neos/fluid-adaptor": "~8.0.0",
-        "neos/utility-arrays": "*"
+        "neos/flow": "self.version",
+        "neos/fluid-adaptor": "self.version",
+        "neos/utility-arrays": "self.version"
     },
     "autoload": {
         "psr-4": {
