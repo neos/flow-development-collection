@@ -11,6 +11,7 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
+use Laminas\Code\Generator\DocBlockGenerator;
 use Laminas\Code\Generator\MethodGenerator;
 
 /**
@@ -31,10 +32,13 @@ class ProxyMethodGenerator extends MethodGenerator
         return $instance;
     }
 
-    public static function copyMethodSignature(\Laminas\Code\Reflection\MethodReflection $reflectionMethod): static
+    public static function copyMethodSignatureAndDocblock(\Laminas\Code\Reflection\MethodReflection $reflectionMethod): static
     {
         $instance = parent::copyMethodSignature($reflectionMethod);
         assert($instance instanceof static);
+        if ($reflectionMethod->getDocComment() !== false) {
+            $instance->setDocBlock(DocBlockGenerator::fromReflection($reflectionMethod->getDocBlock()));
+        }
         $instance->fullOriginalClassName = $reflectionMethod->getDeclaringClass()->getName();
         return $instance;
     }
@@ -70,6 +74,11 @@ class ProxyMethodGenerator extends MethodGenerator
         if ($this->body === '') {
             $this->body = $this->renderBodyCode();
         }
+
+        if ($this->body === '') {
+            return '';
+        }
+
         return parent::generate();
     }
 
@@ -80,7 +89,7 @@ class ProxyMethodGenerator extends MethodGenerator
         }
 
         $callParentMethodCode = $this->buildCallParentMethodCode($this->fullOriginalClassName, $this->name);
-        $returnTypeIsVoidOrNever = ((string)$this->getReturnType() === 'void' || (string)$this->getReturnType() === 'never' );
+        $returnTypeIsVoidOrNever = ((string)$this->getReturnType() === 'void' || (string)$this->getReturnType() === 'never');
         $code = $this->addedPreParentCallCode;
         if ($this->addedPostParentCallCode !== '') {
             if ($returnTypeIsVoidOrNever) {
@@ -108,7 +117,7 @@ class ProxyMethodGenerator extends MethodGenerator
      */
     public function willBeRendered(): bool
     {
-        return ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '');
+        return ($this->addedPreParentCallCode !== '' || $this->addedPostParentCallCode !== '' || $this->body !== '');
     }
 
     /**

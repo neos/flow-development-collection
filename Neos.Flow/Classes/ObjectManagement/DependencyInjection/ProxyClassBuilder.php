@@ -154,7 +154,7 @@ class ProxyClassBuilder
             $constructor->addPostParentCallCode($this->buildLifecycleInitializationCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED));
             $constructor->addPostParentCallCode($this->buildLifecycleShutdownCode($objectConfiguration, ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED));
 
-            if ($this->objectManager->getContext()->isProduction()) {
+            if ($this->objectManager->getContext()->isProduction() || $this->objectManager->getContext()->isTesting()) {
                 $this->compileStaticMethods($className, $proxyClass);
             }
         }

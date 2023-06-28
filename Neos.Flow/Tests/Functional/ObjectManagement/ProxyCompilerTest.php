@@ -22,6 +22,7 @@ use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterf
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithPrivateConstructor;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\BackedEnumWithMethod;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassK;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -344,5 +345,14 @@ class ProxyCompilerTest extends FunctionalTestCase
             }
         PHP;
         self::assertSame($expectedSelves, $object->getStringContainingALotOfSelves());
+    }
+
+    /**
+     * @test
+     */
+    public function staticCompileWillResultInAFrozenReturnValue(): void
+    {
+        $object = new PrototypeClassK();
+        self::assertSame($object->getToken(), $object->getToken());
     }
 }

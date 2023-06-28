@@ -142,7 +142,7 @@ class ProxyClass
         }
         if (!isset($this->methods[$methodName])) {
             if (method_exists($this->fullOriginalClassName, $methodName)) {
-                $this->methods[$methodName] = ProxyMethodGenerator::fromReflection(new MethodReflection($this->fullOriginalClassName, $methodName));
+                $this->methods[$methodName] = ProxyMethodGenerator::copyMethodSignatureAndDocblock(new MethodReflection($this->fullOriginalClassName, $methodName));
             } else {
                 $this->methods[$methodName] = new ProxyMethodGenerator($methodName);
             }
@@ -249,9 +249,7 @@ class ProxyClass
 
         foreach ($this->methods as $proxyMethod) {
             assert($proxyMethod instanceof ProxyMethodGenerator);
-            $methodBodyCode = $proxyMethod->renderBodyCode();
-            if ($methodBodyCode !== '') {
-                $proxyMethod->setBody($methodBodyCode);
+            if ($proxyMethod->willBeRendered()) {
                 $methodsCode .= PHP_EOL . $proxyMethod->generate();
             }
         }
