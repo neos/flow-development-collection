@@ -28,7 +28,7 @@
       </trans-unit>
       <trans-unit id="update" xml:space="preserve">
 				<source>Update</source>
-        <target state="translated">Actualizar</target>
+        <target state="translated">Actualización</target>
       </trans-unit>
       <trans-unit id="submit" xml:space="preserve">
 				<source>Submit</source>
