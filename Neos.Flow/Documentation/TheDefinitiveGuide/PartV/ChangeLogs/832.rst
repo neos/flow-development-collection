@@ -1,0 +1,106 @@
+`8.3.2 (2023-06-29) <https://github.com/neos/flow-development-collection/releases/tag/8.3.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Normalize windows package paths <https://github.com/neos/flow-development-collection/pull/3088>`_
+----------------------------------------------------------------------------------------------------------
+
+regression from: https://github.com/neos/flow-development-collection/pull/2736
+solves: `#3087 <https://github.com/neos/flow-development-collection/issues/3087>`_
+
+Thanks to @icpb and @eartahhj for reporting and helping me debug this ;)
+
+The root of the problem that flow cant read the packages composer.jsons is because we want to cache the ``packagePath``
+ of each package as relative path. (see AvailablePackages.php in your cache folder)
+On windows the cache would write include the absolute path.
+
+This line:
+https://github.com/neos/flow-development-collection/blob/`2aefffd8fa3a579d9e1e7d0eed4dba047ba295c7 <https://github.com/neos/flow-development-collection/commit/2aefffd8fa3a579d9e1e7d0eed4dba047ba295c7>`_/Neos.Flow/Classes/Package/PackageManager.php#L657
+
+should make sure we trim it to an relative path, but because a mismatch of directory separators, the str_replace doesnt work. See example:
+```php
+# FLOW_PATH_PACKAGES = 'X:/project/packages' # always unix style format
+
+$fullPackagePath = 'X:\\Project\\packages\\Application\\packageY'; # currently style depends on OS
+
+str_replace(FLOW_PATH_PACKAGES, '', $fullPackagePath);
+```
+
+on linux the ``fullPackagePath`` would be ``/project/packages/Application/packageY``, so we use Files::getUnixStylePath to normalize it.
+
+
+It was reported that this problem also appeared in Neos 8.0, but this fix is now written for 8.3, as we refactored the code a little.
+
+I cant actually believe that starting with Neos 8 it wouldnt work on windows anymore, as this would mean no one used Flow8 with windows.
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`BUGFIX: No usage of dynamic properties <https://github.com/neos/flow-development-collection/pull/3032>`_
+---------------------------------------------------------------------------------------------------------
+
+This patch resolves deprecation notices on PHP 8.2:
+
+## Dynamic properties in proxy classes
+There are some properties that are dynamically declared in proxy classes:
+* ``Flow_Injected_Properties``
+* ``Flow_Object_PropertiesToSerialize``
+* ``Flow_Persistence_RelatedEntities``: this is mostly used inside of the ``ObjectSerializationTrait``, so I thought it might make more sense to declare it there instead of adding a property using the ``ProxyClassBuilder``
+
+* Resolves: `#2946 <https://github.com/neos/flow-development-collection/issues/2946>`_
+
+## ``parent`` inside of closures
+There are some methods that will be checked against ``is_callable`` with ``parent::``:
+* ``parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray``
+* ``parent::__wakeup``
+
+**Review instructions**
+* Set up a flow distribution on PHP 8.2
+* Run tests and make sure no deprecation warnings are thrown
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Widgets can't be nested in For (Fluid) <https://github.com/neos/flow-development-collection/pull/3028>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* introduces a test with an AjaxWidgetViewHelper in a ForViewHelper which tests the indexAction and the ajaxAction
+* resolved: https://github.com/neos/flow-development-collection/issues/1214
+
+**Upgrade instructions**
+
+**Review instructions**
+
+The crucial part has a comment in code (AbstractWidgetViewHelper).
+
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Fix proxy compilation for edge cases <https://github.com/neos/flow-development-collection/pull/2624>`_
+---------------------------------------------------------------------------------------------------------------
+
+This change fixes proxy compilation for certain cases where "class"
+was used as a string in multi-line quoted strings or within comments.
+
+* Resolves: `#1835 <https://github.com/neos/flow-development-collection/issues/1835>`_
+
+* Packages: ``Flow``
+
+`TASK: Require all collection packages as `self.version` <https://github.com/neos/flow-development-collection/pull/3035>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Any dependency from one package in the collection to another should always be "to the same version".
+
+This changes makes sure this is the case by using ``self.version`` as the required version.
+
+See `#3034 <https://github.com/neos/flow-development-collection/issues/3034>`_
+
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.3.1...8.3.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
