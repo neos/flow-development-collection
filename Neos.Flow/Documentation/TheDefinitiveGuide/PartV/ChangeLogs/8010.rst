@@ -1,0 +1,70 @@
+`8.0.10 (2023-06-29) <https://github.com/neos/flow-development-collection/releases/tag/8.0.10>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: No usage of dynamic properties <https://github.com/neos/flow-development-collection/pull/3032>`_
+---------------------------------------------------------------------------------------------------------
+
+This patch resolves deprecation notices on PHP 8.2:
+
+## Dynamic properties in proxy classes
+There are some properties that are dynamically declared in proxy classes:
+* ``Flow_Injected_Properties``
+* ``Flow_Object_PropertiesToSerialize``
+* ``Flow_Persistence_RelatedEntities``: this is mostly used inside of the ``ObjectSerializationTrait``, so I thought it might make more sense to declare it there instead of adding a property using the ``ProxyClassBuilder``
+
+* Resolves: `#2946 <https://github.com/neos/flow-development-collection/issues/2946>`_
+
+## ``parent`` inside of closures
+There are some methods that will be checked against ``is_callable`` with ``parent::``:
+* ``parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray``
+* ``parent::__wakeup``
+
+**Review instructions**
+* Set up a flow distribution on PHP 8.2
+* Run tests and make sure no deprecation warnings are thrown
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Widgets can't be nested in For (Fluid) <https://github.com/neos/flow-development-collection/pull/3028>`_
+-----------------------------------------------------------------------------------------------------------------
+
+* introduces a test with an AjaxWidgetViewHelper in a ForViewHelper which tests the indexAction and the ajaxAction
+* resolved: https://github.com/neos/flow-development-collection/issues/1214
+
+**Upgrade instructions**
+
+**Review instructions**
+
+The crucial part has a comment in code (AbstractWidgetViewHelper).
+
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`BUGFIX: Fix proxy compilation for edge cases <https://github.com/neos/flow-development-collection/pull/2624>`_
+---------------------------------------------------------------------------------------------------------------
+
+This change fixes proxy compilation for certain cases where "class"
+was used as a string in multi-line quoted strings or within comments.
+
+* Resolves: `#1835 <https://github.com/neos/flow-development-collection/issues/1835>`_
+
+* Packages: ``Flow``
+
+`TASK: Require all collection packages as `self.version` <https://github.com/neos/flow-development-collection/pull/3035>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Any dependency from one package in the collection to another should always be "to the same version".
+
+This changes makes sure this is the case by using ``self.version`` as the required version.
+
+See `#3034 <https://github.com/neos/flow-development-collection/issues/3034>`_
+
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.0.9...8.0.10>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
