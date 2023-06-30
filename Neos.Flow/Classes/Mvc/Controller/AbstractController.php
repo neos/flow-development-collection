@@ -13,7 +13,6 @@ namespace Neos\Flow\Mvc\Controller;
 
 use Neos\Error\Messages as Error;
 use Neos\Flow\Annotations as Flow;
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\UriInterface;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
