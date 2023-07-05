@@ -11,24 +11,26 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Annotations as Flow;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Uri;
-use Psr\Http\Message\UriInterface;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
-use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
+use Neos\Flow\Mvc\Routing\ActionUriBuilder;
+use Neos\Flow\Mvc\Routing\ActionUriBuilderFactory;
+use Neos\Flow\Mvc\Routing\Dto\ActionUriSpecification;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Utility\MediaTypes;
+use Psr\Http\Message\UriInterface;
 
 /**
  * An abstract base class for HTTP based controllers
@@ -38,15 +40,27 @@ use Neos\Utility\MediaTypes;
 abstract class AbstractController implements ControllerInterface
 {
     /**
+     * @deprecated with Flow 8.3 - use $this->actionUriBuilder instead
      * @var UriBuilder
      */
     protected $uriBuilder;
+
+    /**
+     * @var ActionUriBuilder|null
+     */
+    protected ?ActionUriBuilder $actionUriBuilder;
 
     /**
      * @Flow\Inject
      * @var ValidatorResolver
      */
     protected $validatorResolver;
+
+    /**
+     * @Flow\Inject
+     * @var ActionUriBuilderFactory
+     */
+    protected $actionUriBuilderFactory;
 
     /**
      * The current action request directed to this controller
@@ -112,6 +126,7 @@ abstract class AbstractController implements ControllerInterface
 
         $this->uriBuilder = new UriBuilder();
         $this->uriBuilder->setRequest($this->request);
+        $this->actionUriBuilder = $this->actionUriBuilderFactory->createFromActionRequest($this->request);
 
         $this->arguments = new Arguments([]);
         $this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder);
@@ -253,33 +268,66 @@ abstract class AbstractController implements ControllerInterface
      * if used with other request types.
      *
      * @param string $actionName Name of the action to forward to
-     * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
-     * @param string $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
+     * @param string|null $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
+     * @param string|null $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
      * @param array $arguments Array of arguments for the target action
-     * @param integer $delay (optional) The delay in seconds. Default is no delay.
-     * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-     * @param string $format The format to use for the redirect URI
+     * @param int $delay (optional) The delay in seconds. Default is no delay.
+     * @param int $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
+     * @param string|null $format The format to use for the redirect URI
      * @return void
-     * @throws StopActionException
+     * @throws StopActionException | UnsupportedRequestTypeException | NoMatchingRouteException
      * @see forward()
      * @api
      */
     protected function redirect($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $delay = 0, $statusCode = 303, $format = null)
     {
-        if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
-            list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
+        // The namespaced request arguments are not yet handled by the new ActionUriSpecification (see below), so we are
+        // going to use the legacy implementation for any case, where we would need namespaces, which is always true,
+        // if the current request is a "sub request"
+        // Note: You need to compare request with request->getMainRequest, because action requests are NEVER main
+        // requests
+        if ($this->request !== $this->request->getMainRequest()) {
+            if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
+                list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
+            } else {
+                $subpackageKey = null;
+            }
+            $this->uriBuilder->reset();
+            if ($format === null) {
+                $this->uriBuilder->setFormat($this->request->getFormat());
+            } else {
+                $this->uriBuilder->setFormat($format);
+            }
+
+            $uri = $this->uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
+            $this->redirectToUri($uri, $delay, $statusCode);
+        }
+
+        if ($packageKey === null) {
+            $packageKey = $this->request->getControllerPackageKey();
+            $subpackageKey = $this->request->getControllerSubpackageKey();
+        } elseif (str_contains($packageKey, '\\')) {
+            [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
         } else {
             $subpackageKey = null;
         }
-        $this->uriBuilder->reset();
-        if ($format === null) {
-            $this->uriBuilder->setFormat($this->request->getFormat());
-        } else {
-            $this->uriBuilder->setFormat($format);
+
+        $targetActionUriSpecification = ActionUriSpecification::create(
+            $packageKey ?? $this->request->getControllerPackageKey(),
+            $controllerName ?? $this->request->getControllerName(),
+            $actionName
+        )
+            ->withFormat($format ?? $this->request->getFormat())
+            ->withRoutingArguments($arguments);
+        if ($subpackageKey !== null) {
+            $targetActionUriSpecification = $targetActionUriSpecification->withSubpackageKey($subpackageKey);
         }
 
-        $uri = $this->uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
-        $this->redirectToUri($uri, $delay, $statusCode);
+        $this->redirectToUri(
+            $this->actionUriBuilder->absoluteUriFor($targetActionUriSpecification),
+            $delay,
+            $statusCode
+        );
     }
 
     /**
@@ -294,7 +342,7 @@ abstract class AbstractController implements ControllerInterface
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @return void
-     * @throws StopActionException
+     * @throws StopActionException | NoMatchingRouteException | UnsupportedRequestTypeException
      * @see forwardToRequest()
      * @api
      */

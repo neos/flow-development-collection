@@ -55,7 +55,7 @@ final class ResolveContext
     private $parameters;
 
     /**
-     * @param UriInterface $baseUri The base URI, retrieved from the current request URI or from configuration, if specified. Required to fill in parts of the result when resolving absolute URIs
+     * @param UriInterface $baseUri The base URI, retrieved from the current request URI. Required to fill in parts of the result when resolving absolute URIs
      * @param array $routeValues Route values to build the URI, for example ['@action' => 'index', 'someArgument' => 'foo', ...]
      * @param bool $forceAbsoluteUri Whether or not an absolute URI is to be returned
      * @param string $uriPathPrefix A prefix to be prepended to any resolved URI. Not allowed to start with "/".

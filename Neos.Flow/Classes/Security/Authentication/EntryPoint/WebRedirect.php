@@ -11,14 +11,14 @@ namespace Neos\Flow\Security\Authentication\EntryPoint;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\BaseUriProvider;
-use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\Flow\Mvc\Routing\ActionUriBuilderFactory;
+use Neos\Flow\Mvc\Routing\Dto\ActionUriSpecification;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use GuzzleHttp\Psr7\Utils;
 
 /**
  * An authentication entry point, that redirects to another webpage.
@@ -26,18 +26,10 @@ use GuzzleHttp\Psr7\Utils;
 class WebRedirect extends AbstractEntryPoint
 {
     /**
-     * @Flow\Inject(lazy = false)
-     * @Flow\Transient
-     * @var UriBuilder
-     */
-    protected $uriBuilder;
-
-    /**
      * @Flow\Inject
-     * @Flow\Transient
-     * @var BaseUriProvider
+     * @var ActionUriBuilderFactory
      */
-    protected $baseUriProvider;
+    protected $actionUriBuilderFactory;
 
     /**
      * Starts the authentication: Redirect to login page
@@ -45,14 +37,15 @@ class WebRedirect extends AbstractEntryPoint
      * @param ServerRequestInterface $request The current request
      * @param ResponseInterface $response The current response
      * @return ResponseInterface
-     * @throws MissingConfigurationException
+     * @throws MissingConfigurationException | NoMatchingRouteException
      */
     public function startAuthentication(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $uri = null;
 
         if (isset($this->options['uri'])) {
-            $uri = strpos($this->options['uri'], '://') !== false ? $this->options['uri'] : (string)$this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest() . $this->options['uri'];
+            $scheme = parse_url($this->options['uri'], PHP_URL_SCHEME);
+            $uri = $scheme === null ? (string)$request->getUri()->withPath($this->options['uri']) : $this->options['uri'];
         }
 
         if (isset($this->options['routeValues'])) {
@@ -78,18 +71,19 @@ class WebRedirect extends AbstractEntryPoint
      * @param array $routeValues
      * @param ServerRequestInterface $request
      * @return string
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws NoMatchingRouteException
      */
     protected function generateUriFromRouteValues(array $routeValues, ServerRequestInterface $request): string
     {
-        $actionRequest = ActionRequest::fromHttpRequest($request);
-        $this->uriBuilder->setRequest($actionRequest);
-
         $actionName = $this->extractRouteValue($routeValues, '@action');
         $controllerName = $this->extractRouteValue($routeValues, '@controller');
         $packageKey = $this->extractRouteValue($routeValues, '@package');
-        $subPackageKey = $this->extractRouteValue($routeValues, '@subpackage');
-        return $this->uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $routeValues, $controllerName, $packageKey, $subPackageKey);
+        $uriBuilder = $this->actionUriBuilderFactory->createFromHttpRequest($request);
+        return (string)$uriBuilder->absoluteUriFor(
+            ActionUriSpecification::create($packageKey, $controllerName, $actionName)->withRoutingArguments(
+                $routeValues
+            )
+        );
     }
 
     /**
@@ -100,7 +94,7 @@ class WebRedirect extends AbstractEntryPoint
      * @param string $key
      * @return mixed the specified route value or NULL if it is not set
      */
-    protected function extractRouteValue(array &$routeValues, $key)
+    protected function extractRouteValue(array &$routeValues, string $key): mixed
     {
         if (!isset($routeValues[$key])) {
             return null;

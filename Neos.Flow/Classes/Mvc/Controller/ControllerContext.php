@@ -24,7 +24,7 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
  * for conveniently passing the information to other classes who need it, usually
  * views being views or view helpers.
  *
- * @api
+ * @deprecated with Flow 8.3 - The controller context is an internal concept that should be avoided in userland code
  */
 class ControllerContext
 {

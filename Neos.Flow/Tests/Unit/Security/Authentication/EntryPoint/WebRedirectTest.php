@@ -14,11 +14,13 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\EntryPoint;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Http\BaseUriProvider;
-use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Mvc\Routing\ActionUriBuilderFactory;
+use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
+use Neos\Flow\Mvc\Routing\RouterInterface;
 use Neos\Flow\Security\Authentication\EntryPoint\WebRedirect;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for web redirect authentication entry point
@@ -45,14 +47,10 @@ class WebRedirectTest extends UnitTestCase
      */
     public function startAuthenticationSetsTheCorrectValuesInTheResponseObjectIfUriIsSpecified()
     {
-        $baseUriProviderMock = $this->createMock(BaseUriProvider::class);
-        $baseUriProviderMock->expects(self::any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willReturn(new Uri('http://robertlemke.com/'));
-
         $request = new ServerRequest('GET', new Uri('http://robertlemke.com/admin'));
         $response = new Response();
 
         $entryPoint = new WebRedirect();
-        $this->inject($entryPoint, 'baseUriProvider', $baseUriProviderMock);
         $entryPoint->setOptions(['uri' => 'some/page']);
 
         $response = $entryPoint->startAuthentication($request, $response);
@@ -99,6 +97,7 @@ class WebRedirectTest extends UnitTestCase
         $request = new ServerRequest('GET', new Uri('http://robertlemke.com/admin'));
         $response = new Response();
 
+        /** @var WebRedirect|MockObject $entryPoint */
         $entryPoint = $this->getAccessibleMock(WebRedirect::class, ['dummy']);
         $routeValues = [
             '@package' => 'SomePackage',
@@ -110,10 +109,24 @@ class WebRedirectTest extends UnitTestCase
         ];
         $entryPoint->setOptions(['routeValues' => $routeValues]);
 
-        $mockUriBuilder = $this->createMock(UriBuilder::class);
-        $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->with(true)->will(self::returnValue($mockUriBuilder));
-        $mockUriBuilder->expects(self::once())->method('uriFor')->with('someAction', ['otherArguments' => ['foo' => 'bar'], '@format' => 'someFormat'], 'SomeController', 'SomePackage', 'SomeSubPackage')->will(self::returnValue('http://resolved/redirect/uri'));
-        $entryPoint->_set('uriBuilder', $mockUriBuilder);
+        /** @var RouterInterface|MockObject $mockRouter */
+        $mockRouter = $this->getMockBuilder(RouterInterface::class)->getMock();
+
+        $mockRouter->expects(self::atLeastOnce())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
+            $expectedRuteValues = [
+                '@package' => 'somepackage',
+                '@subpackage' => 'SomeSubPackage',
+                '@controller' => 'somecontroller',
+                '@action' => 'someaction',
+                '@format' => 'someFormat',
+                'otherArguments' => ['foo' => 'bar']
+            ];
+            self::assertEquals($expectedRuteValues, $resolveContext->getRouteValues());
+            return new Uri('http://resolved/redirect/uri');
+        });
+
+        $mockActionUriBuilderFactory = new ActionUriBuilderFactory($mockRouter);
+        $this->inject($entryPoint, 'actionUriBuilderFactory', $mockActionUriBuilderFactory);
 
         $response = $entryPoint->startAuthentication($request, $response);
 
