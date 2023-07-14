@@ -152,7 +152,7 @@ class ConfigurationManager
     protected $cacheNeedsUpdate = false;
 
     /**
-     * An absolute file path to store configuration caches in. If null no cache will be active.
+     * An absolute file path to store configuration caches in. If not set, no cache will be active.
      *
      * @var string
      */
@@ -174,12 +174,18 @@ class ConfigurationManager
     }
 
     /**
-     * Set an absolute file path to store configuration caches in. If null no cache will be active.
+     * Set an absolute file path to store configuration caches in.
+     *
+     * If never called no cache will be active.
      *
      * @param string $temporaryDirectoryPath
      */
     public function setTemporaryDirectoryPath(string $temporaryDirectoryPath): void
     {
+        if (!is_dir($temporaryDirectoryPath)) {
+            throw new \RuntimeException(sprintf('Cannot set temporaryDirectoryPath to "%s" for the ConfigurationManager cache, as it must be a valid directory.', $temporaryDirectoryPath));
+        }
+
         $this->temporaryDirectoryPath = $temporaryDirectoryPath;
 
         $this->loadConfigurationsFromCache();
@@ -394,7 +400,7 @@ class ConfigurationManager
     public function flushConfigurationCache(): void
     {
         $this->configurations = [self::CONFIGURATION_TYPE_SETTINGS => []];
-        if ($this->temporaryDirectoryPath === null) {
+        if (!isset($this->temporaryDirectoryPath)) {
             return;
         }
 
@@ -414,7 +420,7 @@ class ConfigurationManager
      */
     protected function processConfigurationType(string $configurationType)
     {
-        if ($this->temporaryDirectoryPath !== null) {
+        if (isset($this->temporaryDirectoryPath)) {
             // to avoid issues regarding concurrency and invalid filesystem characters
             // the configurationType is encoded as a uniqueid
             $configurationTypeId = \uniqid(\sprintf('%x', \crc32($configurationType)), true);
@@ -447,7 +453,7 @@ class ConfigurationManager
             }
         }
 
-        if ($this->temporaryDirectoryPath === null) {
+        if (!isset($this->temporaryDirectoryPath)) {
             return;
         }
 
