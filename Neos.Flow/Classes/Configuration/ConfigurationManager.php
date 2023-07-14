@@ -154,9 +154,9 @@ class ConfigurationManager
     /**
      * An absolute file path to store configuration caches in. If not set, no cache will be active.
      *
-     * @var string
+     * @var ?string
      */
-    protected $temporaryDirectoryPath;
+    protected $temporaryDirectoryPath = null;
 
     /**
      * @var array
@@ -400,7 +400,7 @@ class ConfigurationManager
     public function flushConfigurationCache(): void
     {
         $this->configurations = [self::CONFIGURATION_TYPE_SETTINGS => []];
-        if (!isset($this->temporaryDirectoryPath)) {
+        if ($this->temporaryDirectoryPath === null) {
             return;
         }
 
@@ -420,7 +420,7 @@ class ConfigurationManager
      */
     protected function processConfigurationType(string $configurationType)
     {
-        if (isset($this->temporaryDirectoryPath)) {
+        if ($this->temporaryDirectoryPath !== null) {
             // to avoid issues regarding concurrency and invalid filesystem characters
             // the configurationType is encoded as a uniqueid
             $configurationTypeId = \uniqid(\sprintf('%x', \crc32($configurationType)), true);
@@ -453,7 +453,7 @@ class ConfigurationManager
             }
         }
 
-        if (!isset($this->temporaryDirectoryPath)) {
+        if ($this->temporaryDirectoryPath === null) {
             return;
         }
 
