@@ -252,7 +252,9 @@ class ConfigurationManager
                 return new ObjectsLoader(new YamlSource());
             case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
                 $policyLoader = new PolicyLoader(new YamlSource());
-                $policyLoader->setTemporaryDirectoryPath($this->temporaryDirectoryPath);
+                if ($this->temporaryDirectoryPath) {
+                    $policyLoader->setTemporaryDirectoryPath($this->temporaryDirectoryPath);
+                }
                 return $policyLoader;
             case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
                 return new RoutesLoader(new YamlSource(), $this);
