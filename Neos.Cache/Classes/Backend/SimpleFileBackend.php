@@ -510,7 +510,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     $length = $maxlen !== null ? $maxlen : filesize($cacheEntryPathAndFilename) - (int)$offset;
 
                     // fread requires a positive length. If the file is empty, we just return an empty string.
-                    if ($length === 0) {
+                    if ($length <= 0) {
                         $data = '';
                     } else {
                         $data = fread($file, $length);

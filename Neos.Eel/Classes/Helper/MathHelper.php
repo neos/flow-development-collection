@@ -99,6 +99,9 @@ class MathHelper implements ProtectedContextAwareInterface
         if (!is_numeric($x) && $x !== null) {
             return NAN;
         }
+        if ($x === null) {
+            return 0.0;
+        }
         return abs((float)$x);
     }
 
