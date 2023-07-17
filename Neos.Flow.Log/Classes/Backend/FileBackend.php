@@ -241,7 +241,7 @@ class FileBackend extends AbstractBackend
         }
         $ipAddress = ($this->logIpAddress === true) ? str_pad(($_SERVER['REMOTE_ADDR'] ?? ''), 15) : '';
         $severityLabel = $this->severityLabels[$severity] ?? 'UNKNOWN  ';
-        $output = date('y-m-d H:i:s') . $processId . ' ' . $ipAddress . $severityLabel . ' ' . str_pad((string)$packageKey, 20) . ' ' . $message;
+        $output = (new \DateTime())->format('y-m-d H:m:i') . $processId . ' ' . $ipAddress . $severityLabel . ' ' . str_pad((string)$packageKey, 20) . ' ' . $message;
 
         if ($this->logMessageOrigin === true && ($className !== null || $methodName !== null)) {
             $output .= ' [logged in ' . $className . '::' . $methodName . '()]';

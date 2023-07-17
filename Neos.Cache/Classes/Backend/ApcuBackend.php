@@ -333,6 +333,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return mixed
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         if ($this->cacheEntriesIterator === null) {
@@ -347,6 +348,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         if ($this->cacheEntriesIterator === null) {
@@ -390,6 +392,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         if ($this->cacheEntriesIterator === null) {

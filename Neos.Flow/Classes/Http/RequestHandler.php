@@ -161,7 +161,7 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     protected function sendResponse(ResponseInterface $response)
     {
-        ob_implicit_flush(1);
+        ob_implicit_flush();
         foreach (ResponseInformationHelper::prepareHeaders($response) as $prepareHeader) {
             header($prepareHeader, false);
         }
