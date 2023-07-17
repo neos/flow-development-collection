@@ -466,6 +466,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return mixed
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         if ($this->cacheEntriesIterator === null) {
@@ -480,6 +481,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         if ($this->cacheEntriesIterator === null) {
@@ -495,6 +497,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return string
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function key(): string
     {
         if ($this->cacheEntriesIterator === null) {
@@ -509,6 +512,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return boolean true if the current position is valid, otherwise false
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function valid(): bool
     {
         if ($this->cacheEntriesIterator === null) {
@@ -524,6 +528,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         try {

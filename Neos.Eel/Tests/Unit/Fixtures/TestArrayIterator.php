@@ -29,26 +29,31 @@ class TestArrayIterator implements \Iterator
         return new self($array);
     }
 
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return current($this->array);
     }
 
+    #[\ReturnTypeWillChange]
     public function next()
     {
         next($this->array);
     }
 
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return key($this->array);
     }
 
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return current($this->array) !== false;
     }
 
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         reset($this->array);

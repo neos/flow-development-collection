@@ -99,6 +99,9 @@ class MathHelper implements ProtectedContextAwareInterface
         if (!is_numeric($x) && $x !== null) {
             return NAN;
         }
+        if ($x === null) {
+            return 0.0;
+        }
         return abs($x);
     }
 
@@ -411,7 +414,7 @@ class MathHelper implements ProtectedContextAwareInterface
         if ($precision != null && !is_int($precision)) {
             return NAN;
         }
-        return round($subject, $precision);
+        return round($subject, (int)$precision);
     }
 
     /**

@@ -296,6 +296,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->get($this->key());
@@ -304,6 +305,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->entryCursor++;
@@ -312,6 +314,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         $entryIdentifier = $this->redis->lIndex($this->getPrefixedIdentifier('entries'), $this->entryCursor);
@@ -324,6 +327,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function valid(): bool
     {
         return $this->key() !== false;
@@ -332,6 +336,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->entryCursor = 0;

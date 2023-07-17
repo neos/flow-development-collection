@@ -95,6 +95,7 @@ class QueryResult implements QueryResultInterface
      * @return integer The number of matching objects
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         if ($this->numberOfRows === null) {
@@ -126,6 +127,7 @@ class QueryResult implements QueryResultInterface
      * @param mixed $offset
      * @return boolean
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         $this->initialize();
@@ -136,6 +138,7 @@ class QueryResult implements QueryResultInterface
      * @param mixed $offset
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         $this->initialize();
@@ -149,6 +152,7 @@ class QueryResult implements QueryResultInterface
      * @param mixed $value
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->initialize();
@@ -161,6 +165,7 @@ class QueryResult implements QueryResultInterface
      * @param mixed $offset
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $this->initialize();
@@ -170,6 +175,7 @@ class QueryResult implements QueryResultInterface
     /**
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $this->initialize();
@@ -179,6 +185,7 @@ class QueryResult implements QueryResultInterface
     /**
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         $this->initialize();
@@ -188,6 +195,7 @@ class QueryResult implements QueryResultInterface
     /**
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->initialize();
@@ -197,6 +205,7 @@ class QueryResult implements QueryResultInterface
     /**
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->initialize();
@@ -206,6 +215,7 @@ class QueryResult implements QueryResultInterface
     /**
      * @return boolean
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         $this->initialize();

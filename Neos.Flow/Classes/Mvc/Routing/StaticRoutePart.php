@@ -37,6 +37,7 @@ class StaticRoutePart extends \Neos\Flow\Mvc\Routing\AbstractRoutePart
      */
     public function match(&$routePath)
     {
+        $routePath = (string)$routePath;
         $this->value = null;
         if ($this->name === null || $this->name === '') {
             return false;

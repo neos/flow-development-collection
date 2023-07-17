@@ -347,6 +347,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return mixed
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         if ($this->cacheFilesIterator === null) {
@@ -363,6 +364,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         if ($this->cacheFilesIterator === null) {
@@ -381,6 +383,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return string
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function key(): string
     {
         if ($this->cacheFilesIterator === null) {
@@ -395,6 +398,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return boolean true if the current position is valid, otherwise false
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function valid(): bool
     {
         if ($this->cacheFilesIterator === null) {
@@ -409,6 +413,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         if ($this->cacheFilesIterator === null) {

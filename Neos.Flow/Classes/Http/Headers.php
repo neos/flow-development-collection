@@ -440,6 +440,7 @@ class Headers implements \Iterator
     /**
      * @return string[]|mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->getRaw($this->key());
@@ -448,6 +449,7 @@ class Headers implements \Iterator
     /**
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         next($this->fields);
@@ -456,6 +458,7 @@ class Headers implements \Iterator
     /**
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return key($this->fields);
@@ -464,6 +467,7 @@ class Headers implements \Iterator
     /**
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return !(key($this->fields) === null && current($this->fields) === false);
@@ -472,6 +476,7 @@ class Headers implements \Iterator
     /**
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         reset($this->fields);
