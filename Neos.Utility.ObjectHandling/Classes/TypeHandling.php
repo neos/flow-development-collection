@@ -11,7 +11,6 @@ namespace Neos\Utility;
  * source code.
  */
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\Proxy;
 use Neos\Utility\Exception\InvalidTypeException;
 

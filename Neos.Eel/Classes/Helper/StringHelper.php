@@ -306,9 +306,9 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param integer $limit The maximum amount of items to return, in contrast to split() this will return all remaining characters in the last item (see example)
      * @return array An array of the splitted parts, excluding the matched pattern
      */
-    public function pregSplit($string, $pattern, $limit = null)
+    public function pregSplit($string, $pattern, $limit = -1)
     {
-        return preg_split($pattern, (string)$string, $limit);
+        return preg_split($pattern, (string)$string, (int)$limit);
     }
 
     /**

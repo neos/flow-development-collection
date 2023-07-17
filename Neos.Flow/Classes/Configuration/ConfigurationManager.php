@@ -219,7 +219,7 @@ class ConfigurationManager
         if ($configurationLoader === null) {
             $configurationLoader = new MergeLoader(new YamlSource(), $configurationType);
 
-        // B/C layer
+            // B/C layer
         } elseif (is_string($configurationLoader)) {
             $configurationLoader = $this->convertLegacyProcessingType($configurationType, $configurationLoader);
         }

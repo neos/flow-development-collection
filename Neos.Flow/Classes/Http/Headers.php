@@ -440,6 +440,7 @@ class Headers implements \Iterator
     /**
      * @return string[]|mixed
      */
+    #[\ReturnTypeWillChange]
     public function current(): mixed
     {
         return $this->getRaw($this->key());

@@ -264,7 +264,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strripos($value, (string)$operand) === strlen($value) - strlen($operand);
+                    return strripos((string)$value, (string)$operand) === strlen((string)$value) - strlen((string)$operand);
                 }
                 // no break
             case '^=':
