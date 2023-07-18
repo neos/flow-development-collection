@@ -382,6 +382,9 @@ class ConfigurationManager
      */
     protected function loadConfigurationsFromCache(): void
     {
+        if ($this->temporaryDirectoryPath === null) {
+            return;
+        }
         $cachePathAndFilename = $this->constructConfigurationCachePath();
         /** @noinspection UsingInclusionReturnValueInspection */
         $configurations = @include $cachePathAndFilename;
@@ -553,6 +556,7 @@ class ConfigurationManager
      */
     protected function constructConfigurationCachePath(): string
     {
+        assert($this->temporaryDirectoryPath !== null, 'ConfigurationManager::$temporaryDirectoryPath must not be null.');
         $configurationCachePath = $this->temporaryDirectoryPath . 'Configuration/';
         return $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
     }
