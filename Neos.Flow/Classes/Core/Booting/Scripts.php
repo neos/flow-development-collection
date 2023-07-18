@@ -60,6 +60,8 @@ use Psr\Http\Message\RequestInterface;
  */
 class Scripts
 {
+    protected static ?string $buildPhpCommand = null;
+
     /**
      * Initializes the Class Loader
      *
@@ -775,6 +777,10 @@ class Scripts
      */
     public static function buildPhpCommand(array $settings): string
     {
+        if (isset(static::$buildPhpCommand)) {
+            return static::$buildPhpCommand;
+        }
+
         $subRequestEnvironmentVariables = [
             'FLOW_ROOTPATH' => FLOW_PATH_ROOT,
             'FLOW_PATH_TEMPORARY_BASE' => FLOW_PATH_TEMPORARY_BASE,
@@ -812,7 +818,7 @@ class Scripts
 
         static::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
 
-        return $command;
+        return static::$buildPhpCommand = $command;
     }
 
     /**
@@ -849,8 +855,13 @@ class Scripts
             return;
         }
 
-        exec(PHP_BINARY . ' -r "echo realpath(PHP_BINARY);"', $output);
-        $realPhpBinary = $output[0];
+        // stfu to avoid possible open_basedir restriction https://github.com/neos/flow-development-collection/pull/2491
+        $realPhpBinary = @realpath(PHP_BINARY);
+        if ($realPhpBinary === false) {
+            // bypass with exec open_basedir restriction
+            exec(PHP_BINARY . ' -r "echo realpath(PHP_BINARY);"', $output);
+            $realPhpBinary = $output[0];
+        }
         if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
             throw new FlowException(sprintf(
                 'You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
