@@ -326,7 +326,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function replace($string, $search, $replace)
     {
-        return str_replace($search, $replace, (string)$string);
+        return str_replace((string)$search, (string)$replace, (string)$string);
     }
 
     /**
