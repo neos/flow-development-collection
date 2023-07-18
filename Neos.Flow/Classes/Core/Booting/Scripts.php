@@ -771,7 +771,7 @@ class Scripts
     /**
      * @param array $settings The Neos.Flow settings
      * @return string A command line command for PHP, which can be extended and then exec()uted
-     * @throws FlowException
+     * @throws Exception\SubProcessException in case the phpBinaryPathAndFilename is incorrect
      */
     public static function buildPhpCommand(array $settings): string
     {
@@ -820,7 +820,7 @@ class Scripts
      * This avoids config errors where users forget to set Neos.Flow.core.phpBinaryPathAndFilename in CLI.
      *
      * @param string $phpBinaryPathAndFilename
-     * @throws FlowException
+     * @throws Exception\SubProcessException in case the php binary doesn't exist / is a different one for the current cli request
      */
     protected static function ensureCLISubrequestsUseCurrentlyRunningPhpBinary($phpBinaryPathAndFilename)
     {
@@ -829,14 +829,14 @@ class Scripts
             return;
         }
 
-        // Ensure the actual PHP binary is known before checking if it is correct. If empty, we ignore it because it is checked later in the script.
-        if (strlen($phpBinaryPathAndFilename) === 0) {
-            return;
+        // Ensure the actual PHP binary is known before checking if it is correct.
+        if (!$phpBinaryPathAndFilename || strlen($phpBinaryPathAndFilename) === 0) {
+            throw new Exception\SubProcessException('"Neos.Flow.core.phpBinaryPathAndFilename" is not set.', 1689676816060);
         }
 
         // Try to resolve which binary file PHP is pointing to
         exec($phpBinaryPathAndFilename . ' -r "echo realpath(PHP_BINARY);" 2>&1', $output, $result);
-        if ($result === 0 && sizeof($output) === 1) {
+        if ($result === 0 && count($output) === 1) {
             // Resolve any wrapper
             $configuredPhpBinaryPathAndFilename = $output[0];
         } else {
@@ -844,15 +844,18 @@ class Scripts
             $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
         }
 
-        // if the configured PHP binary is empty here, the file does not exist. We ignore that here because it is checked later in the script.
+        // if the configured PHP binary is empty here, the file does not exist.
         if ($configuredPhpBinaryPathAndFilename === false || strlen($configuredPhpBinaryPathAndFilename) === 0) {
-            return;
+            throw new Exception\SubProcessException(
+                sprintf('The configured PHP binary "%s" via setting the "Neos.Flow.core.phpBinaryPathAndFilename" doesnt exist.', $phpBinaryPathAndFilename),
+                1689676923331
+            );
         }
 
         exec(PHP_BINARY . ' -r "echo realpath(PHP_BINARY);"', $output);
         $realPhpBinary = $output[0];
         if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
-            throw new FlowException(sprintf(
+            throw new Exception\SubProcessException(sprintf(
                 'You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
                 'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
@@ -870,7 +873,7 @@ class Scripts
      * server.
      *
      * @param string $phpCommand the completely build php string that is used to execute subrequests
-     * @throws FlowException
+     * @throws Exception\SubProcessException in case the php binary doesn't exist, or is not suitable for cli usage, or its version doesn't match
      */
     protected static function ensureWebSubrequestsUseCurrentlyRunningPhpVersion($phpCommand)
     {
@@ -882,12 +885,12 @@ class Scripts
         exec($phpCommand . ' -r "echo PHP_VERSION;" 2>&1', $output, $result);
 
         if ($result !== 0) {
-            return;
+            throw new Exception\SubProcessException(sprintf('PHP binary might not exist or is not suitable for cli usage. Command `%s` didnt succeed.', $phpCommand), 1689676967447);
         }
 
         $configuredPHPVersion = $output[0];
         if (array_slice(explode('.', $configuredPHPVersion), 0, 2) !== array_slice(explode('.', PHP_VERSION), 0, 2)) {
-            throw new FlowException(sprintf(
+            throw new Exception\SubProcessException(sprintf(
                 'You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
                 'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
