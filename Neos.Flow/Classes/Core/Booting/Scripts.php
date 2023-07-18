@@ -834,8 +834,25 @@ class Scripts
             throw new Exception\SubProcessException('"Neos.Flow.core.phpBinaryPathAndFilename" is not set.', 1689676816060);
         }
 
+        $command = [];
+        if (PHP_OS_FAMILY !== 'Windows') {
+            // Handle possible fast cgi: send empty stdin to close possible fast cgi server
+            //
+            // in case the phpBinaryPathAndFilename points to a fast cgi php binary we will get caught in an endless process
+            // the fast cgi will expect input from the stdin and otherwise continue listening
+            // to close the stdin we send an empty string
+            // related https://bugs.php.net/bug.php?id=71209
+            $command[] = 'echo "" | ';
+        }
+        $command[] = $phpBinaryPathAndFilename;
+        $command[] = <<<'EOF'
+        -r "echo realpath(PHP_BINARY);"
+        EOF;
+        $command[] = '2>&1'; // Output errors in response
+
         // Try to resolve which binary file PHP is pointing to
-        exec($phpBinaryPathAndFilename . ' -r "echo realpath(PHP_BINARY);" 2>&1', $output, $result);
+        exec(join(' ', $command), $output, $result);
+
         if ($result === 0 && count($output) === 1) {
             // Resolve any wrapper
             $configuredPhpBinaryPathAndFilename = $output[0];
@@ -882,21 +899,47 @@ class Scripts
             return;
         }
 
-        exec($phpCommand . ' -r "echo PHP_VERSION;" 2>&1', $output, $result);
+        $command = [];
+        if (PHP_OS_FAMILY !== 'Windows') {
+            // Handle possible fast cgi: send empty stdin to close possible fast cgi server
+            //
+            // in case the phpBinaryPathAndFilename points to a fast cgi php binary we will get caught in an endless process
+            // the fast cgi will expect input from the stdin and otherwise continue listening
+            // to close the stdin we send an empty string
+            // related https://bugs.php.net/bug.php?id=71209
+            $command[] = 'echo "" | ';
+        }
+        $command[] = $phpCommand;
+        $command[] = <<<'EOF'
+        -r "echo json_encode(['sapi' => PHP_SAPI, 'version' => PHP_VERSION]);"
+        EOF;
+        $command[] = '2>&1'; // Output errors in response
 
-        if ($result !== 0) {
+        exec(join(' ', $command), $output, $result);
+
+        $phpInformation = json_decode($output[0] ?? '{}', true) ?: [];
+
+        if ($result !== 0 || ($phpInformation['sapi'] ?? null) !== 'cli') {
             throw new Exception\SubProcessException(sprintf('PHP binary might not exist or is not suitable for cli usage. Command `%s` didnt succeed.', $phpCommand), 1689676967447);
         }
 
-        $configuredPHPVersion = $output[0];
-        if (array_slice(explode('.', $configuredPHPVersion), 0, 2) !== array_slice(explode('.', PHP_VERSION), 0, 2)) {
-            throw new Exception\SubProcessException(sprintf(
+        /**
+         * Checks if two (php) versions equal by comparing major and minor.
+         * Differences in the patch level will be ignored.
+         *
+         * versionsAlmostEqual(8.1.0, 8.1.1) === true
+         */
+        $versionsAlmostEqual = fn (string $oneVersion, string $otherVersion): bool
+            => array_slice(explode('.', $oneVersion), 0, 2) === array_slice(explode('.', $otherVersion), 0, 2);
+
+        if (!$versionsAlmostEqual($phpInformation['version'], PHP_VERSION)) {
+            throw new FlowException(sprintf(
                 'You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
                 'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
                 '%s. Flush the caches by removing the folder Data/Temporary before executing Flow/Neos again.',
                 PHP_VERSION,
-                $configuredPHPVersion,
+                $phpInformation['version'],
                 PHP_VERSION
             ), 1536563428);
         }
