@@ -835,7 +835,7 @@ class Scripts
         }
 
         // Try to resolve which binary file PHP is pointing to
-        exec($phpBinaryPathAndFilename . ' -r "echo realpath(PHP_BINARY);"', $output, $result);
+        exec($phpBinaryPathAndFilename . ' -r "echo realpath(PHP_BINARY);" 2>&1', $output, $result);
         if ($result === 0 && sizeof($output) === 1) {
             // Resolve any wrapper
             $configuredPhpBinaryPathAndFilename = $output[0];
@@ -879,7 +879,7 @@ class Scripts
             return;
         }
 
-        exec($phpCommand . ' -r "echo PHP_VERSION;"', $output, $result);
+        exec($phpCommand . ' -r "echo PHP_VERSION;" 2>&1', $output, $result);
 
         if ($result !== 0) {
             return;
