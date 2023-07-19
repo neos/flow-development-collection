@@ -675,16 +675,16 @@ class Scripts
      * @param array $settings The Neos.Flow settings
      * @param boolean $outputResults Echo the commands output on success
      * @param array $commandArguments Command arguments
-     * @param array|null &$output If the output argument is present, then the specified array will be filled with every line of output from the command. {@see exec()}
      * @return true Legacy return value. Will always be true. A failure is expressed as a thrown exception
      * @throws Exception\SubProcessException The execution of the sub process failed
      * @api
      */
-    public static function executeCommand(string $commandIdentifier, array $settings, bool $outputResults = true, array $commandArguments = [], ?array &$output = []): bool
+    public static function executeCommand(string $commandIdentifier, array $settings, bool $outputResults = true, array $commandArguments = []): bool
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
         // Output errors in response
         $command .= ' 2>&1';
+        $output = [];
         exec($command, $output, $result);
         if ($result !== 0) {
             if (count($output) > 0) {
