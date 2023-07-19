@@ -60,7 +60,8 @@ use Psr\Http\Message\RequestInterface;
  */
 class Scripts
 {
-    protected static ?string $builtPhpCommand = null;
+    /** @var string */
+    protected static $builtPhpCommand = null;
 
     /**
      * Initializes the Class Loader
