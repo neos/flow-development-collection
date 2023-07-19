@@ -60,7 +60,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class Scripts
 {
-    protected static ?string $buildPhpCommand = null;
+    protected static ?string $builtPhpCommand = null;
 
     /**
      * Initializes the Class Loader
@@ -777,8 +777,8 @@ class Scripts
      */
     public static function buildPhpCommand(array $settings): string
     {
-        if (isset(static::$buildPhpCommand)) {
-            return static::$buildPhpCommand;
+        if (isset(static::$builtPhpCommand)) {
+            return static::$builtPhpCommand;
         }
 
         $subRequestEnvironmentVariables = [
@@ -818,7 +818,7 @@ class Scripts
 
         static::ensureWebSubrequestsUseCurrentlyRunningPhpVersion($command);
 
-        return static::$buildPhpCommand = $command;
+        return static::$builtPhpCommand = $command;
     }
 
     /**
