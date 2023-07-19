@@ -584,24 +584,24 @@ class ConfigurationManagerTest extends UnitTestCase
      */
     public function loadConfigurationCacheLoadsConfigurationsFromCacheIfACacheFileExists()
     {
-        vfsStream::setup('Flow/Cache');
+        vfsStream::setup('Temporary', null, [
+            'Configuration' => [
+                'TestingConfigurations.php' => <<< "PHP"
+                <?php
+                return array('bar' => 'touched');
+                ?>
+                PHP
+            ],
+            'Empty' => []
+        ]);
 
-        $configurationsCode = <<< "EOD"
-<?php
-return array('bar' => 'touched');
-?>
-EOD;
-
-        $cachedConfigurationsPathAndFilename = vfsStream::url('Flow/Cache/Configurations.php');
-        file_put_contents($cachedConfigurationsPathAndFilename, $configurationsCode);
-
-        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType', 'constructConfigurationCachePath', 'refreshConfiguration']);
-        $configurationManager->expects(self::any())->method('constructConfigurationCachePath')->willReturn('notfound.php', $cachedConfigurationsPathAndFilename);
+        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType', 'refreshConfiguration']);
+        $configurationManager->_set('context', new ApplicationContext('Testing'));
         $configurationManager->_set('configurations', ['foo' => 'untouched']);
-        $configurationManager->_call('loadConfigurationsFromCache');
+        $configurationManager->setTemporaryDirectoryPath(vfsStream::url('Temporary/Empty/'));
         self::assertSame(['foo' => 'untouched'], $configurationManager->_get('configurations'));
 
-        $configurationManager->_call('loadConfigurationsFromCache');
+        $configurationManager->setTemporaryDirectoryPath(vfsStream::url('Temporary/'));
         self::assertSame(['bar' => 'touched'], $configurationManager->_get('configurations'));
     }
 
