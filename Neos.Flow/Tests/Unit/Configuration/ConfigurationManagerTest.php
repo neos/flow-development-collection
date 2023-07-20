@@ -1677,6 +1677,41 @@ class ConfigurationManagerTest extends UnitTestCase
     }
 
     /**
+     * Test the disabled cache and that we still replace env variables.
+     *
+     * {@see ConfigurationManager::$temporaryDirectoryPath} === null
+     *
+     * @test
+     */
+    public function configurationManagerWithDisabledCache(): void
+    {
+        $configurationManager = new ConfigurationManager(new ApplicationContext('Testing'));
+
+        // we don't invoke $configurationManager->setTemporaryDirectoryPath();, and thus the cache is disabled
+
+        $mockLoader = $this->getMockBuilder(LoaderInterface::class)->getMock();
+
+        $mockLoader->method('load')->willReturn(
+            [
+                'plainSetting' => '123',
+                'envSetting' => '%PHP_BINARY%'
+            ]
+        );
+
+        $configurationManager->registerConfigurationType('MockType', $mockLoader);
+
+        $configuration = $configurationManager->getConfiguration('MockType');
+
+        self::assertSame(
+            [
+                'plainSetting' => '123',
+                'envSetting' => PHP_BINARY
+            ],
+            $configuration
+        );
+    }
+
+    /**
      * A callback as stand in configruation source for above test.
      *
      * @param string $filenameAndPath
