@@ -154,7 +154,7 @@ class ConfigurationManager
     /**
      * An absolute file path to store configuration caches in. If not set, no cache will be active.
      *
-     * @var ?string
+     * @var string|null
      */
     protected $temporaryDirectoryPath = null;
 
