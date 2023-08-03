@@ -75,7 +75,7 @@ class ObjectValidationAndDeDuplicationListener
 
         if ($classSchema !== null && $classSchema->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
             foreach ($identityMap[$className] ?? [] as $objectInIdentityMap) {
-                if ($objectInIdentityMap == $object) {
+                if ($this->persistenceManager->getIdentifierByObject($objectInIdentityMap) === $this->persistenceManager->getIdentifierByObject($object)) {
                     $unitOfWork->removeFromIdentityMap($objectInIdentityMap);
                 }
             }
