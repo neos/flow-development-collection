@@ -20,7 +20,7 @@ use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
-use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
  * An onFlush listener for Flow's Doctrine PersistenceManager.
@@ -58,10 +58,10 @@ class ObjectValidationAndDeDuplicationListener
     /**
      * An prePersist event listener
      *
-     * @param PrePersistEventArgs $eventArgs
+     * @param LifecycleEventArgs $eventArgs
      * @return void
      */
-    public function prePersist(PrePersistEventArgs $eventArgs)
+    public function prePersist(LifecycleEventArgs $eventArgs)
     {
         $this->entityManager = $eventArgs->getObjectManager();
         $unitOfWork = $this->entityManager->getUnitOfWork();
