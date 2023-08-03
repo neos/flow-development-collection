@@ -20,6 +20,7 @@ use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
+use Doctrine\ORM\Event\PrePersistEventArgs;
 
 /**
  * An onFlush listener for Flow's Doctrine PersistenceManager.
@@ -53,6 +54,33 @@ class ObjectValidationAndDeDuplicationListener
      * @var EntityManagerInterface
      */
     protected $entityManager;
+
+    /**
+     * An prePersist event listener
+     *
+     * @param PrePersistEventArgs $eventArgs
+     * @return void
+     */
+    public function prePersist(PrePersistEventArgs $eventArgs)
+    {
+        $this->entityManager = $eventArgs->getObjectManager();
+        $unitOfWork = $this->entityManager->getUnitOfWork();
+        $object = $eventArgs->getObject();
+
+        $classMetadata = $this->entityManager->getClassMetadata(get_class($object));
+        $className     = $classMetadata->rootEntityName;
+
+        $classSchema = $this->reflectionService->getClassSchema($className);
+        $identityMap = $unitOfWork->getIdentityMap();
+
+        if ($classSchema !== null && $classSchema->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
+            foreach ($identityMap[$className] ?? [] as $objectInIdentityMap) {
+                if ($objectInIdentityMap == $object) {
+                    $unitOfWork->removeFromIdentityMap($objectInIdentityMap);
+                }
+            }
+        }
+    }
 
     /**
      * An onFlush event listener used to act upon persistence.
