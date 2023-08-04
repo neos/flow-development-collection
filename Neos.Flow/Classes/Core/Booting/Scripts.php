@@ -675,18 +675,18 @@ class Scripts
      *
      * @param string $commandIdentifier E.g. neos.flow:cache:flush
      * @param array $settings The Neos.Flow settings
-     * @param boolean $outputResults if false the output of this command is only echoed if the execution was not successful
+     * @param boolean $outputResults Echo the commands output on success
      * @param array $commandArguments Command arguments
-     * @return boolean true if the command execution was successful (exit code = 0)
+     * @return true Legacy return value. Will always be true. A failure is expressed as a thrown exception
+     * @throws Exception\SubProcessException The execution of the sub process failed
      * @api
-     * @throws Exception\SubProcessException if execution of the sub process failed
      */
     public static function executeCommand(string $commandIdentifier, array $settings, bool $outputResults = true, array $commandArguments = []): bool
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
-        $output = [];
         // Output errors in response
         $command .= ' 2>&1';
+        $output = [];
         exec($command, $output, $result);
         if ($result !== 0) {
             if (count($output) > 0) {
@@ -698,11 +698,11 @@ class Scripts
                 // If anything else goes wrong, it may as well not produce any $output, but might do so when run on an interactive
                 // shell. Thus we dump the command next to the exception dumps.
                 $exceptionMessage .= ' Try to run the command manually, to hopefully get some hint on the actual error.';
-
                 if (!file_exists(FLOW_PATH_DATA . 'Logs/Exceptions')) {
                     Files::createDirectoryRecursively(FLOW_PATH_DATA . 'Logs/Exceptions');
                 }
                 if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+                    // Logs the command string `php ./flow foo:bar` inside `Logs/Exceptions/123-command.txt`
                     $referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
                     $errorDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '-command.txt';
                     file_put_contents($errorDumpPathAndFilename, $command);
@@ -716,7 +716,8 @@ class Scripts
         if ($outputResults) {
             echo implode(PHP_EOL, $output);
         }
-        return $result === 0;
+        // Legacy return value
+        return true;
     }
 
     /**
