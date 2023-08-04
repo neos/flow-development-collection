@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -56,26 +57,29 @@ class ObjectValidationAndDeDuplicationListener
     protected $entityManager;
 
     /**
-     * An prePersist event listener
+     * An prePersist event listener to deduplicate value objects.
+     *
+     * This removes all existing value objects in doctrines identity map. This is needed as doctrine handles their
+     * identity based on the object and not based on the
      *
      * @param LifecycleEventArgs $eventArgs
      * @return void
      */
     public function prePersist(LifecycleEventArgs $eventArgs)
     {
-        $this->entityManager = $eventArgs->getObjectManager();
-        $unitOfWork = $this->entityManager->getUnitOfWork();
-        $object = $eventArgs->getObject();
+        $entityManager = $eventArgs->getObjectManager();
+        $unitOfWork = $entityManager->getUnitOfWork();
+        $objectToPersist = $eventArgs->getObject();
 
-        $classMetadata = $this->entityManager->getClassMetadata(get_class($object));
-        $className     = $classMetadata->rootEntityName;
+        $classMetadata = $entityManager->getClassMetadata(get_class($objectToPersist));
+        $className = $classMetadata->rootEntityName;
 
         $classSchema = $this->reflectionService->getClassSchema($className);
-        $identityMap = $unitOfWork->getIdentityMap();
+        $identityMapOfClassName = $unitOfWork->getIdentityMap()[$className] ?? [];
 
         if ($classSchema !== null && $classSchema->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
-            foreach ($identityMap[$className] ?? [] as $objectInIdentityMap) {
-                if ($this->persistenceManager->getIdentifierByObject($objectInIdentityMap) === $this->persistenceManager->getIdentifierByObject($object)) {
+            foreach ($identityMapOfClassName as $objectInIdentityMap) {
+                if ($this->persistenceManager->getIdentifierByObject($objectInIdentityMap) === $this->persistenceManager->getIdentifierByObject($objectToPersist)) {
                     $unitOfWork->removeFromIdentityMap($objectInIdentityMap);
                 }
             }
