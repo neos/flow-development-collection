@@ -197,7 +197,7 @@ class Scripts
      * @return void
      * @throws FlowException
      */
-    public static function initializeConfiguration(Bootstrap $bootstrap)
+    public static function initializeConfiguration(Bootstrap $bootstrap, bool $enableCache = true)
     {
         $context = $bootstrap->getContext();
         $environment = new Environment($context);
@@ -209,7 +209,9 @@ class Scripts
 
         $configurationManager = new ConfigurationManager($context);
         $configurationManager->setPackages($packageManager->getFlowPackages());
-        $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
+        if ($enableCache) {
+            $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
+        }
 
         $yamlSource = new YamlSource();
         $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, new MergeLoader($yamlSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES));
@@ -673,18 +675,18 @@ class Scripts
      *
      * @param string $commandIdentifier E.g. neos.flow:cache:flush
      * @param array $settings The Neos.Flow settings
-     * @param boolean $outputResults if false the output of this command is only echoed if the execution was not successful
+     * @param boolean $outputResults Echo the commands output on success
      * @param array $commandArguments Command arguments
-     * @return boolean true if the command execution was successful (exit code = 0)
+     * @return true Legacy return value. Will always be true. A failure is expressed as a thrown exception
+     * @throws Exception\SubProcessException The execution of the sub process failed
      * @api
-     * @throws Exception\SubProcessException if execution of the sub process failed
      */
     public static function executeCommand(string $commandIdentifier, array $settings, bool $outputResults = true, array $commandArguments = []): bool
     {
         $command = self::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
-        $output = [];
         // Output errors in response
         $command .= ' 2>&1';
+        $output = [];
         exec($command, $output, $result);
         if ($result !== 0) {
             if (count($output) > 0) {
@@ -696,11 +698,11 @@ class Scripts
                 // If anything else goes wrong, it may as well not produce any $output, but might do so when run on an interactive
                 // shell. Thus we dump the command next to the exception dumps.
                 $exceptionMessage .= ' Try to run the command manually, to hopefully get some hint on the actual error.';
-
                 if (!file_exists(FLOW_PATH_DATA . 'Logs/Exceptions')) {
                     Files::createDirectoryRecursively(FLOW_PATH_DATA . 'Logs/Exceptions');
                 }
                 if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
+                    // Logs the command string `php ./flow foo:bar` inside `Logs/Exceptions/123-command.txt`
                     $referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
                     $errorDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '-command.txt';
                     file_put_contents($errorDumpPathAndFilename, $command);
@@ -714,7 +716,8 @@ class Scripts
         if ($outputResults) {
             echo implode(PHP_EOL, $output);
         }
-        return $result === 0;
+        // Legacy return value
+        return true;
     }
 
     /**
@@ -771,7 +774,7 @@ class Scripts
     /**
      * @param array $settings The Neos.Flow settings
      * @return string A command line command for PHP, which can be extended and then exec()uted
-     * @throws FlowException
+     * @throws Exception\SubProcessException in case the phpBinaryPathAndFilename is incorrect
      */
     public static function buildPhpCommand(array $settings): string
     {
@@ -820,7 +823,7 @@ class Scripts
      * This avoids config errors where users forget to set Neos.Flow.core.phpBinaryPathAndFilename in CLI.
      *
      * @param string $phpBinaryPathAndFilename
-     * @throws FlowException
+     * @throws Exception\SubProcessException in case the php binary doesn't exist / is a different one for the current cli request
      */
     protected static function ensureCLISubrequestsUseCurrentlyRunningPhpBinary($phpBinaryPathAndFilename)
     {
@@ -829,14 +832,31 @@ class Scripts
             return;
         }
 
-        // Ensure the actual PHP binary is known before checking if it is correct. If empty, we ignore it because it is checked later in the script.
-        if (strlen($phpBinaryPathAndFilename) === 0) {
-            return;
+        // Ensure the actual PHP binary is known before checking if it is correct.
+        if (!$phpBinaryPathAndFilename || strlen($phpBinaryPathAndFilename) === 0) {
+            throw new Exception\SubProcessException('"Neos.Flow.core.phpBinaryPathAndFilename" is not set.', 1689676816060);
         }
 
+        $command = [];
+        if (PHP_OS_FAMILY !== 'Windows') {
+            // Handle possible fast cgi: send empty stdin to close possible fast cgi server
+            //
+            // in case the phpBinaryPathAndFilename points to a fast cgi php binary we will get caught in an endless process
+            // the fast cgi will expect input from the stdin and otherwise continue listening
+            // to close the stdin we send an empty string
+            // related https://bugs.php.net/bug.php?id=71209
+            $command[] = 'echo "" | ';
+        }
+        $command[] = $phpBinaryPathAndFilename;
+        $command[] = <<<'EOF'
+        -r "echo realpath(PHP_BINARY);"
+        EOF;
+        $command[] = '2>&1'; // Output errors in response
+
         // Try to resolve which binary file PHP is pointing to
-        exec($phpBinaryPathAndFilename . ' -r "echo realpath(PHP_BINARY);"', $output, $result);
-        if ($result === 0 && sizeof($output) === 1) {
+        exec(join(' ', $command), $output, $result);
+
+        if ($result === 0 && count($output) === 1) {
             // Resolve any wrapper
             $configuredPhpBinaryPathAndFilename = $output[0];
         } else {
@@ -844,15 +864,18 @@ class Scripts
             $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
         }
 
-        // if the configured PHP binary is empty here, the file does not exist. We ignore that here because it is checked later in the script.
+        // if the configured PHP binary is empty here, the file does not exist.
         if ($configuredPhpBinaryPathAndFilename === false || strlen($configuredPhpBinaryPathAndFilename) === 0) {
-            return;
+            throw new Exception\SubProcessException(
+                sprintf('The configured PHP binary "%s" via setting the "Neos.Flow.core.phpBinaryPathAndFilename" doesnt exist.', $phpBinaryPathAndFilename),
+                1689676923331
+            );
         }
 
         exec(PHP_BINARY . ' -r "echo realpath(PHP_BINARY);"', $output);
         $realPhpBinary = $output[0];
         if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
-            throw new FlowException(sprintf(
+            throw new Exception\SubProcessException(sprintf(
                 'You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
                 'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
@@ -870,7 +893,7 @@ class Scripts
      * server.
      *
      * @param string $phpCommand the completely build php string that is used to execute subrequests
-     * @throws FlowException
+     * @throws Exception\SubProcessException in case the php binary doesn't exist, or is not suitable for cli usage, or its version doesn't match
      */
     protected static function ensureWebSubrequestsUseCurrentlyRunningPhpVersion($phpCommand)
     {
@@ -879,21 +902,48 @@ class Scripts
             return;
         }
 
-        exec($phpCommand . ' -r "echo PHP_VERSION;"', $output, $result);
+        $command = [];
+        if (PHP_OS_FAMILY !== 'Windows') {
+            // Handle possible fast cgi: send empty stdin to close possible fast cgi server
+            //
+            // in case the phpBinaryPathAndFilename points to a fast cgi php binary we will get caught in an endless process
+            // the fast cgi will expect input from the stdin and otherwise continue listening
+            // to close the stdin we send an empty string
+            // related https://bugs.php.net/bug.php?id=71209
+            $command[] = 'echo "" | ';
+        }
+        $command[] = $phpCommand;
+        $command[] = <<<'EOF'
+        -r "echo json_encode(['sapi' => PHP_SAPI, 'version' => PHP_VERSION]);"
+        EOF;
+        $command[] = '2>&1'; // Output errors in response
 
-        if ($result !== 0) {
-            return;
+        exec(join(' ', $command), $output, $result);
+
+        $phpInformation = json_decode($output[0] ?? '{}', true) ?: [];
+
+        if ($result !== 0 || ($phpInformation['sapi'] ?? null) !== 'cli') {
+            throw new Exception\SubProcessException(sprintf('PHP binary might not exist or is not suitable for cli usage. Command `%s` didnt succeed.', $phpCommand), 1689676967447);
         }
 
-        $configuredPHPVersion = $output[0];
-        if (array_slice(explode('.', $configuredPHPVersion), 0, 2) !== array_slice(explode('.', PHP_VERSION), 0, 2)) {
+        /**
+         * Checks if two (php) versions equal by comparing major and minor.
+         * Differences in the patch level will be ignored.
+         *
+         * versionsAlmostEqual(8.1.0, 8.1.1) === true
+         */
+        $versionsAlmostEqual = function (string $oneVersion, string $otherVersion): bool {
+            return array_slice(explode('.', $oneVersion), 0, 2) === array_slice(explode('.', $otherVersion), 0, 2);
+        };
+
+        if (!$versionsAlmostEqual($phpInformation['version'], PHP_VERSION)) {
             throw new FlowException(sprintf(
                 'You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
                 'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
                 'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
                 '%s. Flush the caches by removing the folder Data/Temporary before executing Flow/Neos again.',
                 PHP_VERSION,
-                $configuredPHPVersion,
+                $phpInformation['version'],
                 PHP_VERSION
             ), 1536563428);
         }
