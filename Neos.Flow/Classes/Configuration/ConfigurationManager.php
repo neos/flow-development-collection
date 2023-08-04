@@ -152,11 +152,11 @@ class ConfigurationManager
     protected $cacheNeedsUpdate = false;
 
     /**
-     * An absolute file path to store configuration caches in. If null no cache will be active.
+     * An absolute file path to store configuration caches in. If not set, no cache will be active.
      *
-     * @var string
+     * @var string|null
      */
-    protected $temporaryDirectoryPath;
+    protected $temporaryDirectoryPath = null;
 
     /**
      * @var array
@@ -174,12 +174,18 @@ class ConfigurationManager
     }
 
     /**
-     * Set an absolute file path to store configuration caches in. If null no cache will be active.
+     * Set an absolute file path to store configuration caches in.
+     *
+     * If never called no cache will be active.
      *
      * @param string $temporaryDirectoryPath
      */
     public function setTemporaryDirectoryPath(string $temporaryDirectoryPath): void
     {
+        if (!is_dir($temporaryDirectoryPath)) {
+            throw new \RuntimeException(sprintf('Cannot set temporaryDirectoryPath to "%s" for the ConfigurationManager cache, as it must be a valid directory.', $temporaryDirectoryPath));
+        }
+
         $this->temporaryDirectoryPath = $temporaryDirectoryPath;
 
         $this->loadConfigurationsFromCache();
@@ -246,7 +252,9 @@ class ConfigurationManager
                 return new ObjectsLoader(new YamlSource());
             case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
                 $policyLoader = new PolicyLoader(new YamlSource());
-                $policyLoader->setTemporaryDirectoryPath($this->temporaryDirectoryPath);
+                if ($this->temporaryDirectoryPath) {
+                    $policyLoader->setTemporaryDirectoryPath($this->temporaryDirectoryPath);
+                }
                 return $policyLoader;
             case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
                 return new RoutesLoader(new YamlSource(), $this);
@@ -374,6 +382,9 @@ class ConfigurationManager
      */
     protected function loadConfigurationsFromCache(): void
     {
+        if ($this->temporaryDirectoryPath === null) {
+            return;
+        }
         $cachePathAndFilename = $this->constructConfigurationCachePath();
         /** @noinspection UsingInclusionReturnValueInspection */
         $configurations = @include $cachePathAndFilename;
@@ -423,6 +434,11 @@ class ConfigurationManager
             $this->writeConfigurationCacheFile($cachePathAndFilename, $configurationType);
             $this->replaceConfigurationForConfigurationType($configurationType, $cachePathAndFilename);
             @unlink($cachePathAndFilename);
+        } else {
+            // in case the cache is disabled (implicitly, because temporaryDirectoryPath is null)
+            // we need to still handle replacing the environment variables like `%FLOW_PATH_ROOT%` in the configuration
+            $configuration = $this->unprocessedConfiguration[$configurationType];
+            $this->configurations[$configurationType] = eval('return ' . $this->replaceVariablesInPhpString(var_export($configuration, true)) . ';');
         }
     }
 
@@ -540,6 +556,7 @@ class ConfigurationManager
      */
     protected function constructConfigurationCachePath(): string
     {
+        assert($this->temporaryDirectoryPath !== null, 'ConfigurationManager::$temporaryDirectoryPath must not be null.');
         $configurationCachePath = $this->temporaryDirectoryPath . 'Configuration/';
         return $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
     }

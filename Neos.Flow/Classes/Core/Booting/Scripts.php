@@ -197,7 +197,7 @@ class Scripts
      * @return void
      * @throws FlowException
      */
-    public static function initializeConfiguration(Bootstrap $bootstrap)
+    public static function initializeConfiguration(Bootstrap $bootstrap, bool $enableCache = true)
     {
         $context = $bootstrap->getContext();
         $environment = new Environment($context);
@@ -209,7 +209,9 @@ class Scripts
 
         $configurationManager = new ConfigurationManager($context);
         $configurationManager->setPackages($packageManager->getFlowPackages());
-        $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
+        if ($enableCache) {
+            $configurationManager->setTemporaryDirectoryPath($environment->getPathToTemporaryDirectory());
+        }
 
         $yamlSource = new YamlSource();
         $configurationManager->registerConfigurationType(ConfigurationManager::CONFIGURATION_TYPE_CACHES, new MergeLoader($yamlSource, ConfigurationManager::CONFIGURATION_TYPE_CACHES));
