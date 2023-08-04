@@ -932,8 +932,9 @@ class Scripts
          *
          * versionsAlmostEqual(8.1.0, 8.1.1) === true
          */
-        $versionsAlmostEqual = fn (string $oneVersion, string $otherVersion): bool
-            => array_slice(explode('.', $oneVersion), 0, 2) === array_slice(explode('.', $otherVersion), 0, 2);
+        $versionsAlmostEqual = function (string $oneVersion, string $otherVersion): bool {
+            return array_slice(explode('.', $oneVersion), 0, 2) === array_slice(explode('.', $otherVersion), 0, 2);
+        };
 
         if (!$versionsAlmostEqual($phpInformation['version'], PHP_VERSION)) {
             throw new FlowException(sprintf(
