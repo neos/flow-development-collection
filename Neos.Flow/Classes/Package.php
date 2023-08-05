@@ -107,7 +107,9 @@ class Package extends BasePackage
                 }
                 $objectManager = $bootstrap->getObjectManager();
                 $resourceManager = $objectManager->get(ResourceManager::class);
-                $resourceManager->getCollection(ResourceManager::DEFAULT_STATIC_COLLECTION_NAME)->publish();
+                if ($staticCollection = $resourceManager->getCollection(ResourceManager::DEFAULT_STATIC_COLLECTION_NAME)) {
+                    $staticCollection->publish();
+                }
             };
 
             $dispatcher->connect(Monitor\FileMonitor::class, 'filesHaveChanged', $publishResources);
