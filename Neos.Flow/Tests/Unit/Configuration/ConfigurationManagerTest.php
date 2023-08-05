@@ -584,24 +584,24 @@ class ConfigurationManagerTest extends UnitTestCase
      */
     public function loadConfigurationCacheLoadsConfigurationsFromCacheIfACacheFileExists()
     {
-        vfsStream::setup('Flow/Cache');
+        vfsStream::setup('Temporary', null, [
+            'Configuration' => [
+                'TestingConfigurations.php' => <<< "PHP"
+                <?php
+                return array('bar' => 'touched');
+                ?>
+                PHP
+            ],
+            'Empty' => []
+        ]);
 
-        $configurationsCode = <<< "EOD"
-<?php
-return array('bar' => 'touched');
-?>
-EOD;
-
-        $cachedConfigurationsPathAndFilename = vfsStream::url('Flow/Cache/Configurations.php');
-        file_put_contents($cachedConfigurationsPathAndFilename, $configurationsCode);
-
-        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType', 'constructConfigurationCachePath', 'refreshConfiguration']);
-        $configurationManager->expects(self::any())->method('constructConfigurationCachePath')->willReturn('notfound.php', $cachedConfigurationsPathAndFilename);
+        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType', 'refreshConfiguration']);
+        $configurationManager->_set('context', new ApplicationContext('Testing'));
         $configurationManager->_set('configurations', ['foo' => 'untouched']);
-        $configurationManager->_call('loadConfigurationsFromCache');
+        $configurationManager->setTemporaryDirectoryPath(vfsStream::url('Temporary/Empty/'));
         self::assertSame(['foo' => 'untouched'], $configurationManager->_get('configurations'));
 
-        $configurationManager->_call('loadConfigurationsFromCache');
+        $configurationManager->setTemporaryDirectoryPath(vfsStream::url('Temporary/'));
         self::assertSame(['bar' => 'touched'], $configurationManager->_get('configurations'));
     }
 
@@ -1729,6 +1729,41 @@ EOD;
         $configurationManager->_call('loadConfiguration', 'MyCustomConfiguration', $this->getMockPackages());
         $configuration = $configurationManager->getConfiguration('MyCustomConfiguration');
         self::assertArrayHasKey('SomeKey', $configuration);
+    }
+
+    /**
+     * Test the disabled cache and that we still replace env variables.
+     *
+     * {@see ConfigurationManager::$temporaryDirectoryPath} === null
+     *
+     * @test
+     */
+    public function configurationManagerWithDisabledCache(): void
+    {
+        $configurationManager = new ConfigurationManager(new ApplicationContext('Testing'));
+
+        // we don't invoke $configurationManager->setTemporaryDirectoryPath();, and thus the cache is disabled
+
+        $mockLoader = $this->getMockBuilder(LoaderInterface::class)->getMock();
+
+        $mockLoader->method('load')->willReturn(
+            [
+                'plainSetting' => '123',
+                'envSetting' => '%PHP_BINARY%'
+            ]
+        );
+
+        $configurationManager->registerConfigurationType('MockType', $mockLoader);
+
+        $configuration = $configurationManager->getConfiguration('MockType');
+
+        self::assertSame(
+            [
+                'plainSetting' => '123',
+                'envSetting' => PHP_BINARY
+            ],
+            $configuration
+        );
     }
 
     /**

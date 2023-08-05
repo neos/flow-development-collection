@@ -1,0 +1,45 @@
+`8.1.7 (2023-07-17) <https://github.com/neos/flow-development-collection/releases/tag/8.1.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: If bytes to read is not > 0, return empty string <https://github.com/neos/flow-development-collection/pull/3096>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2929 <https://github.com/neos/flow-development-collection/issues/2929>`_
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow`` ``Cache``
+
+`TASK: PHP 8.1 deprecations compatibility <https://github.com/neos/flow-development-collection/pull/3094>`_
+-----------------------------------------------------------------------------------------------------------
+
+This tweaks the code so that it runs without deprecations on PHP 8.1.
+
+**Upgrade instructions**
+
+None.
+
+**Review instructions**
+
+None.
+
+
+* Packages: ``Flow``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/flow-development-collection/pull/3107>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/nepNQA>`_.
+
+* Packages: ``Flow`` ``Utility.ObjectHandling``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.1.6...8.1.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
