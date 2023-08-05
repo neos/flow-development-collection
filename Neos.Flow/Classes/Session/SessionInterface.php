@@ -63,10 +63,10 @@ interface SessionInterface
     public function renewId();
 
     /**
-     * Returns the contents (array) associated with the given key.
+     * Returns the content (mixed) associated with the given key.
      *
      * @param string $key An identifier for the content stored in the session.
-     * @return array The contents associated with the given key
+     * @return mixed The contents associated with the given key
      * @throws Exception\SessionNotStartedException
      */
     public function getData($key);
