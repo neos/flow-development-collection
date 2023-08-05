@@ -340,8 +340,8 @@ abstract class AbstractMigration
     /**
      * Move a settings path from "source" to "destination"; best to be used when package names change.
      *
-     * @param string $sourcePath
-     * @param string $destinationPath
+     * @param array|string $sourcePath
+     * @param array|string $destinationPath
      */
     protected function moveSettingsPaths($sourcePath, $destinationPath)
     {
@@ -368,7 +368,7 @@ abstract class AbstractMigration
                     $configuration = Arrays::unsetValueByPath($configuration, $sourcePath);
 
                     // remove empty keys before our removed key (if it exists)
-                    $sourcePathExploded = explode('.', $sourcePath);
+                    $sourcePathExploded = !is_array($sourcePath) ? explode('.', $sourcePath) : $sourcePath;
                     for ($length = count($sourcePathExploded) - 1; $length > 0; $length--) {
                         $temporaryPath = array_slice($sourcePathExploded, 0, $length);
                         $valueAtPath = Arrays::getValueByPath($configuration, $temporaryPath);
