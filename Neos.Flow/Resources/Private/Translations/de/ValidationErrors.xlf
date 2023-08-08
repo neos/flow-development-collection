@@ -130,9 +130,9 @@
         <target state="final">Eine gültige Dezimalzahl wird erwartet</target>
       </trans-unit>
       <!-- RegularExpressionValidator -->
-      <trans-unit id="1221565130" xml:space="preserve" approved="yes">
+      <trans-unit id="1221565130" xml:space="preserve" approved="no">
 				<source>The given subject did not match the pattern. Got: {0}</source>
-        <target state="final">Der Wert entspricht nicht den Muster. Erhalten: {0}</target>
+        <target state="translated">Der Wert entspricht nicht dem Muster. Erhalten: {0}</target>
       </trans-unit>
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve" approved="yes">
@@ -150,22 +150,18 @@
       <group id="1238108068" restype="x-gettext-plurals">
         <trans-unit id="1238108068[0]" approved="yes">
           <source>This field must contain at least {0,number} character</source>
-          <target state="final">Dieses Feld muss mindestens {0,number} Zeichen enthalten</target>
-        </trans-unit>
+          <target state="final">Dieses Feld muss mindestens {0,number} Zeichen enthalten</target> </trans-unit>
         <trans-unit id="1238108068[1]" approved="yes">
           <source>This field must contain at least {0,number} characters</source>
-          <target state="final">Dieses Feld muss mindestens {0,number} Zeichen enthalten</target>
-        </trans-unit>
+          <target state="final">Dieses Feld muss mindestens {0,number} Zeichen enthalten</target> </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
         <trans-unit id="1238108069[0]" approved="yes">
           <source>This text may not exceed {0,number} character</source>
-          <target state="final">Die Zeichenfolge darf nicht mehr als {0,number} Zeichen enthalten</target>
-        </trans-unit>
+          <target state="final">Die Zeichenfolge darf nicht mehr als {0,number} Zeichen enthalten</target> </trans-unit>
         <trans-unit id="1238108069[1]" approved="yes">
           <source>This text may not exceed {0,number} characters</source>
-          <target state="final">Die Zeichenfolge darf nicht mehr als {0,number} Zeichen enthalten</target>
-        </trans-unit>
+          <target state="final">Die Zeichenfolge darf nicht mehr als {0,number} Zeichen enthalten</target> </trans-unit>
       </group>
       <!-- StringValidator -->
       <trans-unit id="1238108070" xml:space="preserve" approved="yes">
