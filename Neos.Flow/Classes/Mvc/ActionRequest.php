@@ -736,10 +736,19 @@ class ActionRequest implements RequestInterface
      */
     public function __sleep()
     {
-        $properties = ['controllerPackageKey', 'controllerSubpackageKey', 'controllerName', 'controllerActionName', 'arguments', 'internalArguments', 'pluginArguments', 'argumentNamespace', 'format', 'dispatched'];
-        if ($this->parentRequest instanceof ActionRequest) {
-            $properties[] = 'parentRequest';
-        }
-        return $properties;
+        return [
+            'controllerPackageKey',
+            'controllerSubpackageKey',
+            'controllerName',
+            'controllerActionName',
+            'arguments',
+            'internalArguments',
+            'pluginArguments',
+            'argumentNamespace',
+            'format',
+            'dispatched',
+            'parentRequest',
+            'rootRequest'
+        ];
     }
 }
