@@ -453,7 +453,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
         try {
-            PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, __DIR__ . '/../../Resources/Private/DDL.sql');
+            PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, __DIR__ . '/../../Resources/Private/DDL.sql', ['###CACHE_TABLE_NAME###' => $this->cacheTableName, '###TAGS_TABLE_NAME###' => $this->tagsTableName]);
         } catch (\PDOException $exception) {
             throw new Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1259576985);
         }
@@ -580,6 +580,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $this->connect();
         } catch (Exception $exception) {
             $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Failed'));
+            return $result;
         }
         if ($this->pdoDriver === 'sqlite') {
             $result->addNotice(new Notice('SQLite database tables are created automatically and don\'t need to be set up'));
