@@ -67,13 +67,17 @@ class JsonArrayType extends JsonType
      *
      * @param mixed $value The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
-     * @return array The PHP representation of the value.
+     * @return array|null The PHP representation of the value.
      * @throws ConversionException
      * @throws TypeConverterException
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform): array
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?array
     {
         $value = parent::convertToPHPValue($value, $platform);
+
+        if ($value === null) {
+            return null;
+        }
 
         if (!is_array($value)) {
             throw new \InvalidArgumentException(sprintf('The JsonArrayType only converts arrays, %s given', get_debug_type($value)), 1663056939);
