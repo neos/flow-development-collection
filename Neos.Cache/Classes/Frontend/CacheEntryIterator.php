@@ -52,6 +52,7 @@ class CacheEntryIterator implements \Iterator
      * @return mixed
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->frontend->get((string) $this->backend->key());
@@ -63,6 +64,7 @@ class CacheEntryIterator implements \Iterator
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->backend->next();
@@ -75,6 +77,7 @@ class CacheEntryIterator implements \Iterator
      * @return string
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function key(): string
     {
         return (string) $this->backend->key();
@@ -86,6 +89,7 @@ class CacheEntryIterator implements \Iterator
      * @return boolean true if the current element of the iterator is valid, otherwise false
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function valid(): bool
     {
         return $this->backend->valid();
@@ -97,6 +101,7 @@ class CacheEntryIterator implements \Iterator
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->backend->rewind();

@@ -7,11 +7,11 @@
   ],
   "require": {
     "php": "^7.3 || ^8.0",
-    "neos/flow": "~7.0.0",
-    "neos/cache": "*",
-    "neos/utility-files": "*",
-    "neos/utility-objecthandling": "*",
-    "typo3fluid/fluid": "~2.5.11 || ~2.6.10",
+    "neos/flow": "~7.3.0",
+    "neos/cache": "self.version",
+    "neos/utility-files": "self.version",
+    "neos/utility-objecthandling": "self.version",
+    "typo3fluid/fluid": "~2.7.0",
     "psr/log": "^1.0"
   },
   "autoload": {

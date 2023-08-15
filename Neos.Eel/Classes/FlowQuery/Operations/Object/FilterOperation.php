@@ -29,8 +29,12 @@ use Neos\Utility\TypeHandling;
  * It has the form `"[" [<value>] <operator> <operand> "]"` and supports the
  * following operators:
  *
+ * =~
+ *   Strict equality of case-insensitive value and operand
  * =
  *   Strict equality of value and operand
+ * !=~
+ *   Strict inequality of case-insensitive value and operand
  * !=
  *   Strict inequality of value and operand
  * <
@@ -41,10 +45,16 @@ use Neos\Utility\TypeHandling;
  *   Value is greater than operand
  * >=
  *   Value is greater than or equal to operand
+ * $=~
+ *   Value ends with operand (string-based) or case-insensitive value's last element is equal to operand (array-based)
  * $=
  *   Value ends with operand (string-based) or value's last element is equal to operand (array-based)
+ * ^=~
+ *   Value starts with operand (string-based) or case-insensitive value's first element is equal to operand (array-based)
  * ^=
  *   Value starts with operand (string-based) or value's first element is equal to operand (array-based)
+ * *=~
+ *   Value contains operand (string-based) or case-insensitive value contains an element that is equal to operand (array based)
  * *=
  *   Value contains operand (string-based) or value contains an element that is equal to operand (array based)
  * instanceof
@@ -223,8 +233,12 @@ class FilterOperation extends AbstractOperation
         switch ($operator) {
             case '=':
                 return $value === $operand;
+            case '=~':
+                return strcasecmp($value, $operand) === 0;
             case '!=':
                 return $value !== $operand;
+            case '!=~':
+                return strcasecmp($value, $operand) !== 0;
             case '<':
                 return $value < $operand;
             case '<=':
@@ -240,7 +254,17 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strrpos($value, (string)$operand) === strlen($value) - strlen($operand);
+                    return strrpos((string)$value, (string)$operand) === strlen((string)$value) - strlen($operand);
+                }
+                // no break
+            case '$=~':
+                if (is_array($value)) {
+                    if ($this->evaluateOperator(end($value), '=~', $operand)) {
+                        return true;
+                    }
+                    return false;
+                } else {
+                    return strripos((string)$value, (string)$operand) === strlen((string)$value) - strlen($operand);
                 }
                 // no break
             case '^=':
@@ -250,7 +274,17 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strpos($value, (string)$operand) === 0;
+                    return strpos((string)$value, (string)$operand) === 0;
+                }
+                // no break
+            case '^=~':
+                if (is_array($value)) {
+                    if ($this->evaluateOperator(reset($value), '=~', $operand)) {
+                        return true;
+                    }
+                    return false;
+                } else {
+                    return stripos((string)$value, (string)$operand) === 0;
                 }
                 // no break
             case '*=':
@@ -262,7 +296,19 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strpos($value, (string)$operand) !== false;
+                    return strpos((string)$value, (string)$operand) !== false;
+                }
+                // no break
+            case '*=~':
+                if (is_array($value)) {
+                    foreach ($value as $item) {
+                        if ($this->evaluateOperator($item, '=~', $operand)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                } else {
+                    return stripos((string)$value, (string)$operand) !== false;
                 }
                 // no break
             case 'instanceof':

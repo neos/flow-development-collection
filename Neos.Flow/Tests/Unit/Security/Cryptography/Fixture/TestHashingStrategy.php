@@ -15,7 +15,6 @@ use Neos\Flow\Security\Cryptography\PasswordHashingStrategyInterface;
 
 class TestHashingStrategy implements PasswordHashingStrategyInterface
 {
-
     /**
      * @param string $password Cleartext password that will be hashed
      * @param string $staticSalt Optional static salt that will not be stored in the hashed password

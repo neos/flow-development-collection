@@ -58,7 +58,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     protected $identifierPrefix;
 
     /**
-     * @var \APCUIterator
+     * @var \APCUIterator|null
      */
     protected $cacheEntriesIterator;
 
@@ -111,7 +111,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
      * @param array $tags Tags to associate with this cache entry
-     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param int|null $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
@@ -133,6 +133,8 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         } else {
             throw new Exception('Could not set value.', 1232986877);
         }
+
+        $this->cacheEntriesIterator = null;
     }
 
     /**
@@ -175,6 +177,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     public function remove(string $entryIdentifier): bool
     {
         $this->removeIdentifierFromAllTags($entryIdentifier);
+        $this->cacheEntriesIterator = null;
         return apcu_delete($this->getPrefixedIdentifier($entryIdentifier));
     }
 
@@ -238,6 +241,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         foreach ($identifiers as $identifier) {
             $this->remove($identifier);
         }
+        $this->cacheEntriesIterator = null;
         return count($identifiers);
     }
 
@@ -315,6 +319,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return mixed
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         if ($this->cacheEntriesIterator === null) {
@@ -329,6 +334,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         if ($this->cacheEntriesIterator === null) {
@@ -344,6 +350,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return string
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function key(): string
     {
         if ($this->cacheEntriesIterator === null) {
@@ -358,6 +365,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return boolean true if the current position is valid, otherwise false
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function valid(): bool
     {
         if ($this->cacheEntriesIterator === null) {
@@ -372,6 +380,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         if ($this->cacheEntriesIterator === null) {

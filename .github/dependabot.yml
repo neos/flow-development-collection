@@ -1,0 +1,21 @@
+version: 2
+updates:
+- package-ecosystem: composer
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "09:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: doctrine/migrations
+    versions:
+    - ">= 2.1.a, < 2.2"
+  - dependency-name: doctrine/migrations
+    versions:
+    - ">= 2.a, < 3"
+  - dependency-name: vimeo/psalm
+    versions:
+    - "> 4.1.1"
+  - dependency-name: egulias/email-validator
+    versions:
+    - 3.0.0

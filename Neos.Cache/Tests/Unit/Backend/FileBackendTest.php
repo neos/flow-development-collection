@@ -102,7 +102,6 @@ class FileBackendTest extends BaseTestCase
      */
     public function aDedicatedCacheDirectoryIsUsedForCodeCaches()
     {
-
         // We need to create the directory here because vfs doesn't support touch() which is used by
         // createDirectoryRecursively() in the setCache method.
         mkdir('vfs://Foo/Cache');
@@ -132,7 +131,7 @@ class FileBackendTest extends BaseTestCase
         $backend->set($entryIdentifier, $data);
 
         self::assertFileExists($pathAndFilename);
-        $retrievedData = file_get_contents($pathAndFilename, null, null, 0, strlen($data));
+        $retrievedData = file_get_contents($pathAndFilename, false, null, 0, strlen($data));
         self::assertEquals($data, $retrievedData);
     }
 
@@ -156,7 +155,7 @@ class FileBackendTest extends BaseTestCase
 
         $pathAndFilename = 'vfs://Foo/Cache/Data/UnitTestCache/' . $entryIdentifier;
         self::assertFileExists($pathAndFilename);
-        $retrievedData = file_get_contents($pathAndFilename, null, null, 0, strlen($data2));
+        $retrievedData = file_get_contents($pathAndFilename, false, null, 0, strlen($data2));
         self::assertEquals($data2, $retrievedData);
     }
 
@@ -178,7 +177,7 @@ class FileBackendTest extends BaseTestCase
 
         $pathAndFilename = 'vfs://Foo/Cache/Data/UnitTestCache/' . $entryIdentifier;
         self::assertFileExists($pathAndFilename);
-        $retrievedData = file_get_contents($pathAndFilename, null, null, strlen($data), 9);
+        $retrievedData = file_get_contents($pathAndFilename, false, null, strlen($data), 9);
         self::assertEquals('Tag1 Tag2', $retrievedData);
     }
 

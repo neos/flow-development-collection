@@ -11,6 +11,8 @@ namespace Neos\Flow\Annotations;
  * source code.
  */
 
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
+
 /**
  * Used to map the request body to a single action argument.
  *
@@ -18,24 +20,21 @@ namespace Neos\Flow\Annotations;
  * map the full body into a single argument without wrapping the request body.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"METHOD"})
  */
+#[\Attribute(\Attribute::TARGET_METHOD)]
 final class MapRequestBody
 {
     /**
      * Name of the argument to map the request body into. (Can be given as anonymous argument.)
      * @var string
+     * @Required
      */
     public $argumentName;
 
-    /**
-     * @param array $values
-     * @throws \InvalidArgumentException
-     */
-    public function __construct(array $values)
+    public function __construct(string $argumentName)
     {
-        if (isset($values['value']) || isset($values['argumentName'])) {
-            $this->argumentName = ltrim($values['argumentName'] ?? $values['value'], '$');
-        }
+        $this->argumentName = ltrim($argumentName, '$');
     }
 }

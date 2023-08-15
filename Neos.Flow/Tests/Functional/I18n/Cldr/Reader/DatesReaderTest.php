@@ -19,7 +19,6 @@ use Neos\Flow\Tests\FunctionalTestCase;
 
 class DatesReaderTest extends FunctionalTestCase
 {
-
     /**
      * @var DatesReader
      */

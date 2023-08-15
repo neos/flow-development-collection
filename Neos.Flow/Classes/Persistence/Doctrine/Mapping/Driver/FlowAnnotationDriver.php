@@ -358,7 +358,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             $inheritanceType = constant('Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_' . strtoupper($inheritanceTypeAnnotation->value));
 
             if ($inheritanceType !== ORM\ClassMetadata::INHERITANCE_TYPE_NONE) {
-
                 // Evaluate DiscriminatorColumn annotation
                 if (isset($classAnnotations[ORM\DiscriminatorColumn::class])) {
                     $discriminatorColumnAnnotation = $classAnnotations[ORM\DiscriminatorColumn::class];
@@ -598,6 +597,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             $mapping['fieldName'] = $property->getName();
             $mapping['columnName'] = strtolower($property->getName());
             $mapping['targetEntity'] = $propertyMetaData['type'];
+            $mapping['nullable'] = $propertyMetaData['nullable'];
 
             $joinColumns = $this->evaluateJoinColumnAnnotations($property);
 

@@ -165,12 +165,11 @@ class Context
     public function unwrapValue($value)
     {
         if (is_array($value)) {
-            $self = $this;
-            return array_map(function ($item) use ($self) {
+            return array_map(function ($item) {
                 if ($item instanceof Context) {
                     return $item->unwrap();
                 } else {
-                    return $self->unwrapValue($item);
+                    return $this->unwrapValue($item);
                 }
             }, $value);
         } else {

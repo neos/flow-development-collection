@@ -306,6 +306,48 @@ class DispatcherTest extends UnitTestCase
     /**
      * @test
      */
+    public function dispatchPassesSignalArgumentsAsReferenceInSignalInformation(): void
+    {
+        $mockSlot = function (SignalInformation $s) {
+            $s->getSignalArguments()[0]['foo'] = 'bar';
+        };
+
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $dispatcher = new Dispatcher();
+        $dispatcher->wire('SignalClassName', 'methodName', $mockSlot);
+        $dispatcher->injectObjectManager($mockObjectManager);
+
+        $referencedArray = [];
+        $passedArguments = [&$referencedArray];
+        $dispatcher->dispatch('SignalClassName', 'methodName', $passedArguments);
+        self::assertEquals('bar', $referencedArray['foo']);
+    }
+
+    /**
+     * @test
+     */
+    public function dispatchPassesSignalArgumentsAsReference(): void
+    {
+        $mockSlot = function (array &$array) {
+            $array['foo'] = 'bar';
+        };
+
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $dispatcher = new Dispatcher();
+        $dispatcher->connect('SignalClassName', 'methodName', $mockSlot);
+        $dispatcher->injectObjectManager($mockObjectManager);
+
+        $referencedArray = [];
+        $passedArguments = [&$referencedArray];
+        $dispatcher->dispatch('SignalClassName', 'methodName', $passedArguments);
+        self::assertEquals('bar', $referencedArray['foo']);
+    }
+
+    /**
+     * @test
+     */
     public function dispatchPassesSignalInformationObjectIfWireWasUsed(): void
     {
         $receivedArguments = [];

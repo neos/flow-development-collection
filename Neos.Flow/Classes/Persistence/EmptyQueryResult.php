@@ -69,6 +69,7 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * @return object Returns NULL in this case
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return null;
@@ -77,6 +78,7 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
     }
@@ -84,6 +86,7 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * @return integer Returns 0 in this case
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return 0;
@@ -100,6 +103,7 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
     }
@@ -108,6 +112,7 @@ class EmptyQueryResult implements QueryResultInterface
      * @param mixed $offset
      * @return boolean Returns false in this case
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return false;
@@ -117,6 +122,7 @@ class EmptyQueryResult implements QueryResultInterface
      * @param mixed $offset
      * @return mixed Returns NULL in this case
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return null;
@@ -127,6 +133,7 @@ class EmptyQueryResult implements QueryResultInterface
      * @param mixed $value The value is ignored in this case
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
     }
@@ -135,6 +142,7 @@ class EmptyQueryResult implements QueryResultInterface
      * @param mixed $offset The offset is ignored in this case
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
     }
@@ -142,6 +150,7 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * @return integer Returns 0 in this case
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return 0;

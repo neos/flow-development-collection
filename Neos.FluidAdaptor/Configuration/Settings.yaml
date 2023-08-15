@@ -26,8 +26,8 @@ Neos:
     collections:
       'Flow':
         references:
-          - 'TYPO3Fluid:ViewHelpers'
-          - 'Flow:FluidAdaptorViewHelpers'
+          'TYPO3Fluid:ViewHelpers': true
+          'Flow:FluidAdaptorViewHelpers': true
 
     commandReferences:
       'Flow:FlowCommands':
@@ -56,3 +56,9 @@ Neos:
           options:
             namespaces:
               f: 'Neos\FluidAdaptor\ViewHelpers'
+
+  FluidAdaptor:
+    namespaces:
+      f:
+        - 'TYPO3Fluid\Fluid\ViewHelpers'
+        - 'Neos\FluidAdaptor\ViewHelpers'

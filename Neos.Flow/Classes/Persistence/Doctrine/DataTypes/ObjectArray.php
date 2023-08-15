@@ -84,7 +84,7 @@ class ObjectArray extends Types\ArrayType
             case 'postgresql':
                 $value = (is_resource($value)) ? stream_get_contents($value) : $value;
                 $array = parent::convertToPHPValue(hex2bin($value), $platform);
-            break;
+                break;
             default:
                 $array = parent::convertToPHPValue($value, $platform);
         }

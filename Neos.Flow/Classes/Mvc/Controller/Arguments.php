@@ -18,6 +18,7 @@ use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
  * A composite of controller arguments
  *
  * @api
+ * @extends \ArrayObject<Argument>
  */
 class Arguments extends \ArrayObject
 {
@@ -37,6 +38,7 @@ class Arguments extends \ArrayObject
      * @throws \InvalidArgumentException if the argument is not a valid Controller Argument object
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (!$value instanceof Argument) {
@@ -56,6 +58,7 @@ class Arguments extends \ArrayObject
      * @throws \InvalidArgumentException if the argument is not a valid Controller Argument object
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function append($value)
     {
         if (!$value instanceof Argument) {
@@ -71,6 +74,7 @@ class Arguments extends \ArrayObject
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $translatedOffset = $this->validateArgumentExistence($offset);
@@ -89,6 +93,7 @@ class Arguments extends \ArrayObject
      * @return boolean
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         $translatedOffset = $this->validateArgumentExistence($offset);
@@ -103,6 +108,7 @@ class Arguments extends \ArrayObject
      * @throws NoSuchArgumentException if the argument does not exist
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         $translatedOffset = $this->validateArgumentExistence($offset);

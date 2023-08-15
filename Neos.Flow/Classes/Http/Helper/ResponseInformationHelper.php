@@ -13,11 +13,11 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Message;
+use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Http\CacheControlDirectives;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use function GuzzleHttp\Psr7\parse_response;
-use function GuzzleHttp\Psr7\stream_for;
 
 /**
  * Helper to extract various information from PSR-7 responses.
@@ -34,7 +34,7 @@ abstract class ResponseInformationHelper
      */
     public static function createFromRaw(string $rawResponse): ResponseInterface
     {
-        return parse_response($rawResponse);
+        return Message::parseResponse($rawResponse);
     }
 
     /**
@@ -211,7 +211,7 @@ abstract class ResponseInformationHelper
         }
 
         if (in_array($response->getStatusCode(), [100, 101, 204, 304])) {
-            $response = $response->withBody(stream_for());
+            $response = $response->withBody(Utils::streamFor());
         }
 
         if ($response->hasHeader('Cache-Control')) {
@@ -233,7 +233,7 @@ abstract class ResponseInformationHelper
         }
 
         if ($request->getMethod() === 'HEAD') {
-            $response = $response->withBody(stream_for());
+            $response = $response->withBody(Utils::streamFor());
         }
 
         if ($response->hasHeader('Transfer-Encoding')) {

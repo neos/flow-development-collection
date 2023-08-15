@@ -1,0 +1,252 @@
+========
+Flow 7.2
+========
+
+This release of Flow comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+
+As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+
+
+************
+New Features
+************
+
+!!! FEATURE: Extensible configuration loaders
+---------------------------------------------
+
+This PR allows to implement custom ConfigurationLoader classes which replace the currently rather hardcoded ConfigurationProcessor's in an OOP way.
+
+It is then possible to load custom configurations in the ConfigurationManager with custom locations and custom configuration formats. E.g. it is possible to load json files or NodeTypes from another directory than ``Configuration``.
+
+This is not a breaking change for most cases, but the signature of ``ConfigurationManager::registerConfigurationType()`` has been changed and the usage of "configurationProcessingTypes" deprecated in favor of ``Neos\\Flow\\Configuration\\Loader\\LoaderInterface`` instances::
+
+ // legacy (and still supported)
+ $configurationManager->registerConfigurationType('SomeCustom', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_APPEND);
+
+ // now
+ $configurationManager->registerConfigurationType('SomeCustom', new AppendLoader($yamlSource, 'SomeCustom'));
+
+Related: https://github.com/neos/neos-development-collection/issues/3000
+
+Related: https://github.com/neos/flow-development-collection/issues/1824
+
+FEATURE: Preserve class and method doc blocks
+---------------------------------------------
+
+This preserves the docblocks when generating proxies in order to not accidentially generate invalid annotations that break the classes.
+
+See also #2387
+
+FEATURE: Allow validation of dynamic argument types
+---------------------------------------------------
+
+This allows correct validation of action method arguments that are not
+statically typed, e.g. have a type hint of an interface.
+The type override via ``__type`` or the property mapping configuration will
+now take effect for building the correct validator chain, if the controller has
+the property ``$enableDynamicTypeValidation`` set to ``true``.
+
+If you enable this flag, note that the point in time when the validation
+chain is built is moved until **after** calling the ``initialize*Action`` method.
+This means that validator information is not available there any more.
+
+Related issue: `#1905 <https://github.com/neos/flow-development-collection/issues/1905>`_
+
+FEATURE: CLI parse array type controller arguments
+--------------------------------------------------
+
+With this PR, a CLI command can make use of array's as an argument type.
+
+If an argument is given multiple times and the type is an array, the argument values are pushed at the end of the array.
+
+As an example, this can be handy, if you need to process multiple language dimensions, nodes or urls, like::
+
+  ./flow my.pckg:index --dimension en --dimension de
+
+Maybe this can also be considered for the 7.2 release?
+
+The CLI ``RequestBuilder`` now distinguishes between array and non-array arguments. If an argument is of type ``array`` the argumentValue is appended to the array.
+
+Create a command controller command with an array signature like::
+
+  public function indexCommand(array $dimension){
+
+and then use the argument ``--dimension`` multiple times.
+
+
+FEATURE: Update documentation for new configuration loader
+----------------------------------------------------------
+
+I've added an updated documentation for the new configuration loader implemeted via https://github.com/neos/flow-development-collection/pull/2449
+
+FEATURE: Support PHP8 attributes
+--------------------------------
+
+This allows to use all existing Annotations as PHP8 Attributes and makes the ReflectionService pick up attributes like annotations.
+Hence all ``is*AnnotatedWith()`` and ``*Annotation()`` methods will return attribute classes as if they were annotations.
+
+.. code-block:: php
+
+ #[Flow\\Scope("singleton")]
+ class MyClass {
+
+     /**
+      * @var LoggerInterface
+      */
+     #[Flow\\Inject]
+     protected $logger;
+
+Note though, that this means a class that has both annotation and the equal attribute will behave as if all annotations were duplicated.
+
+Also, in case you manually instanciated an Annotation class, you need to adjust to the changed constructor, which no longer takes a named array, but the list of actual properties.
+In most cases instead of ``new Flow\\Inject($args)`` you can probably do ``new Flow\\Inject(...$args)`` with PHP8 and named parameters.
+
+For Doctrine Annotations - see https://github.com/doctrine/orm/pull/8266 which will be available with 2.9
+
+FEATURE:  I18n.translate() now accept $source to contain dots instead of only a path to the translation file
+------------------------------------------------------------------------------------------------------------
+
+``translateByExplicitlyPassedOrderedArguments()`` and ``I18n.translate()`` now accept ``$source`` argument to contain dots instead of only a path to the translation file.
+
+When we use translations we use for example the shorthand::
+
+  {I18n.translate('Muensmedia.DistributionPackage:NodeTypes.Content.Todo.Container:ui.label')}
+
+when we want to pass arguments we had to use::
+
+  ${I18n.translate('progress', null, {solved: this.checkedElementsCount, total: this.checkboxCount}, 'NodeTypes/Content/Todo/Container', 'Muensmedia.DistributionPackage')}
+
+As you can see, you have to pass the **path** to the translation file instead of the well known dot-notation.
+
+This commit enables you to use also the well known dot-notation for the source argument::
+
+  ${I18n.translate('progress', null, {solved: this.checkedElementsCount, total: this.checkboxCount}, 'NodeTypes.Content.Todo.Container', 'Muensmedia.DistributionPackage')}
+
+In the method ``translateByShortHandString()`` we already replace dots with slashes, so I just copied this behavior to the method ``translateByExplicitlyPassedOrderedArguments()``
+https://github.com/neos/flow-development-collection/blob/`5b7b57523ab1a3b05105227e0a5266ece2777038 <https://github.com/neos/flow-development-collection/commit/5b7b57523ab1a3b05105227e0a5266ece2777038>`_/Neos.Flow/Classes/I18n/EelHelper/TranslationHelper.php#L140
+
+
+********************
+Upgrade Instructions
+********************
+
+This section contains instructions for upgrading your Flow **7.1**
+based applications to Flow **7.2**.
+
+In general just make sure to run the following commands:
+
+To clear all file caches::
+
+ ./flow flow:cache:flush --force
+
+If you have additional cache backends configured, make sure to flush them too.
+
+To apply core migrations::
+
+  ./flow flow:core:migrate <Package-Key>
+
+For every package you have control over (see `Upgrading existing code`_ below).
+
+To validate/fix the database encoding, apply pending migrations and to (re)publish file resources::
+
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+If you are upgrading from a lower version than 7.1, be sure to read the
+upgrade instructions from the previous Release Notes first.
+
+
+Upgrading existing code
+-----------------------
+
+There have been major API changes in Flow 7.2 which require your code to be adjusted. As with earlier changes to Flow
+that required code changes on the user side we provide a code migration tool.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate Acme.Demo
+
+This will adjust the package code automatically and/or output further information.
+Read the output carefully and manually adjust the code if needed.
+
+To see all the other helpful options this command provides, make sure to run::
+
+ ./flow help core:migrate
+
+Also make sure to read about the `Potentially breaking changes`_ below.
+
+Inside core:migrate
+^^^^^^^^^^^^^^^^^^^
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from the specified package
+* For each migration
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.
+
+
+****************************
+Potentially breaking changes
+****************************
+
+Flow 7.2 comes with some breaking changes and removes several deprecated
+functionalities, be sure to read the following changes and adjust
+your code respectively. For a full list of changes please refer
+to the change log.
+
+!!! FEATURE: Extensible configuration loaders
+---------------------------------------------
+
+This PR allows to implement custom ConfigurationLoader classes which replace the currently rather hardcoded ConfigurationProcessor's in an OOP way.
+
+It is then possible to load custom configurations in the ConfigurationManager with custom locations and custom configuration formats. E.g. it is possible to load json files or NodeTypes from another directory than ``Configuration``.
+
+This is not a breaking change for most cases, but the signature of ``ConfigurationManager::registerConfigurationType()`` has been changed and the usage of "configurationProcessingTypes" deprecated in favor of ``Neos\\Flow\\Configuration\\Loader\\LoaderInterface`` instances::
+
+  // legacy (and still supported)
+  $configurationManager->registerConfigurationType('SomeCustom', ConfigurationManager::CONFIGURATION_PROCESSING_TYPE_APPEND);
+
+  // now
+  $configurationManager->registerConfigurationType('SomeCustom', new AppendLoader($yamlSource, 'SomeCustom'));
+
+Related: https://github.com/neos/neos-development-collection/issues/3000
+
+Related: https://github.com/neos/flow-development-collection/issues/1824
+
+`!!! BUGFIX: Avoid broken proxy docblocks <https://github.com/neos/flow-development-collection/pull/2568>`_
+------------------------------------------------------------------------------------------------------------
+
+With PR #2533 docblocks are copied from the original class to the proxy class. This breaks when using annotations
+without the "standard" imports Flow and ORM. One example is the ImportedAsset domain model.
+
+This fixes that by some changes to the proxy building.
+
+Note, if you use property introduction via AOP, those properties must from now on use fully-qualified classnames for
+annotations on them!
+
+Example::
+
+    /**
+     * @var string
+     * @Doctrine\ORM\Mapping\Id
+     * @Doctrine\ORM\Mapping\Column(length=40)
+     * @Flow\Introduce("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && filter(Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
+     */
+    protected $Persistence_Object_Identifier;

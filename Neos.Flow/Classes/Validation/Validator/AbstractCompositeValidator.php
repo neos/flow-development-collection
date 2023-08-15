@@ -129,6 +129,7 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
      * @return integer The number of validators
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return count($this->validators);

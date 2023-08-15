@@ -21,7 +21,6 @@ use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Persistence\Generic\Qom\Constraint;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
@@ -405,7 +404,7 @@ class Query implements QueryInterface
     /**
      * Gets the constraint for this query.
      *
-     * @return Constraint the constraint, or null if none
+     * @return object the constraint, or null if none
      * @api
     */
     public function getConstraint()

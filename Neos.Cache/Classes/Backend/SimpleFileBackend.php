@@ -73,7 +73,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     protected $useIgBinary = false;
 
     /**
-     * @var \DirectoryIterator
+     * @var \DirectoryIterator|null
      */
     protected $cacheFilesIterator;
 
@@ -99,7 +99,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Sets a reference to the cache frontend which uses this backend and
      * initializes the default cache directory.
      *
-     * @param \Neos\Cache\Frontend\FrontendInterface $cache The cache frontend
+     * @param FrontendInterface $cache The cache frontend
      * @return void
      * @throws Exception
      */
@@ -139,7 +139,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
      * @param array $tags Ignored in this type of cache backend
-     * @param integer $lifetime Ignored in this type of cache backend
+     * @param int|null $lifetime Ignored in this type of cache backend
      * @return void
      * @throws Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
      * @throws \InvalidArgumentException
@@ -161,6 +161,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
             if ($this->cacheEntryFileExtension === '.php') {
                 OpcodeCacheHelper::clearAllActive($cacheEntryPathAndFilename);
             }
+            $this->cacheFilesIterator = null;
             return;
         }
 
@@ -259,7 +260,8 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
 
                 if ($result === true) {
                     clearstatcache(true, $cacheEntryPathAndFilename);
-                    return $result;
+                    $this->cacheFilesIterator = null;
+                    return true;
                 }
             } catch (\Exception $e) {
             }
@@ -279,6 +281,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     public function flush(): void
     {
         Files::emptyDirectoryRecursively($this->cacheDirectory);
+        $this->cacheFilesIterator = null;
     }
 
     /**
@@ -344,6 +347,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return mixed
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         if ($this->cacheFilesIterator === null) {
@@ -360,6 +364,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         if ($this->cacheFilesIterator === null) {
@@ -378,6 +383,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return string
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function key(): string
     {
         if ($this->cacheFilesIterator === null) {
@@ -392,6 +398,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return boolean true if the current position is valid, otherwise false
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function valid(): bool
     {
         if ($this->cacheFilesIterator === null) {
@@ -406,6 +413,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @return void
      * @api
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         if ($this->cacheFilesIterator === null) {
@@ -503,7 +511,16 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     if ($offset !== null) {
                         fseek($file, $offset);
                     }
-                    $data = fread($file, $maxlen !== null ? $maxlen : filesize($cacheEntryPathAndFilename) - (int)$offset);
+
+                    $length = $maxlen !== null ? $maxlen : filesize($cacheEntryPathAndFilename) - (int)$offset;
+
+                    // fread requires a positive length. If the file is empty, we just return an empty string.
+                    if ($length <= 0) {
+                        $data = '';
+                    } else {
+                        $data = fread($file, $length);
+                    }
+
                     flock($file, LOCK_UN);
                 }
                 fclose($file);
@@ -535,11 +552,16 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         for ($i = 0; $i < 3; $i++) {
             $result = false;
             try {
-                $file = fopen($cacheEntryPathAndFilename, 'wb');
+                // It's important that we use the 'c' flag below, as `fopen` will otherwise truncate the file
+                // if it already exists. If we used 'w' and then didn't get the lock, the file would end up empty.
+                // https://www.php.net/manual/en/function.fopen.php#refsect1-function.fopen-parameters
+                $file = fopen($cacheEntryPathAndFilename, 'cb');
                 if ($file === false) {
                     continue;
                 }
                 if (flock($file, LOCK_EX) !== false) {
+                    // We need to truncate the file in case it was already present
+                    ftruncate($file, 0);
                     $result = !(fwrite($file, $data) === false);
                     flock($file, LOCK_UN);
                 }

@@ -400,7 +400,8 @@ class PackageManager
             $composerRequireArguments = new ArrayInput([
                 'command' => 'require',
                 'packages' => [$manifest['name'] . ' @dev'],
-                '--working-dir' => FLOW_PATH_ROOT
+                '--working-dir' => FLOW_PATH_ROOT,
+                '--quiet'
             ]);
 
             $composerApplication = new ComposerApplication();
