@@ -729,8 +729,7 @@ class ActionRequest implements RequestInterface
     }
 
     /**
-     * We provide our own __sleep method, where we serialize all properties *except* the parentRequest if it is
-     * a HTTP request -- as this one contains $_SERVER etc.
+     * We provide our own __sleep method to control serialization.
      *
      * @return array
      */
