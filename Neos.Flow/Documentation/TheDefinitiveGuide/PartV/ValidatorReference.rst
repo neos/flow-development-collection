@@ -487,6 +487,7 @@ Arguments
 *********
 
 * ``regularExpression`` (string): The regular expression to use for validation, used as given
+* ``validationErrorMessage`` (string): The error message to show for validation, if the regular expression validation fails
 
 
 

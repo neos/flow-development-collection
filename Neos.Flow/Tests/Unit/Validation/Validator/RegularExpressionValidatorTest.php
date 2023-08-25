@@ -80,4 +80,15 @@ class RegularExpressionValidatorTest extends AbstractValidatorTestcase
         $errors = $this->validator->validate($subject)->getErrors();
         self::assertEquals([new Validation\Error('The given subject did not match the pattern. Got: %1$s', 1221565130, [$subject])], $errors);
     }
+
+    /**
+     * @test
+     */
+    public function regularExpressionValidatorCreatesTheCorrectCustomErrorMessageIfTheExpressionDidNotMatch()
+    {
+        $this->validatorOptions(['regularExpression' => '/^simple[0-9]expression$/', 'validationErrorMessage' => 'Test Message']);
+        $subject = 'some subject that will not match';
+        $errors = $this->validator->validate($subject)->getErrors();
+        self::assertEquals([new Validation\Error('Test Message', 1692962252)], $errors);
+    }
 }

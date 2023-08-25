@@ -24,7 +24,8 @@ class RegularExpressionValidator extends AbstractValidator
      * @var array
      */
     protected $supportedOptions = [
-        'regularExpression' => ['', 'The regular expression to use for validation, used as given', 'string', true]
+        'regularExpression' => ['', 'The regular expression to use for validation, used as given', 'string', true],
+        'validationErrorMessage' => ['', 'The error message to show for validation, if the regular expression validation fails', 'string', false]
     ];
 
     /**
@@ -39,7 +40,11 @@ class RegularExpressionValidator extends AbstractValidator
     {
         $result = preg_match($this->options['regularExpression'], $value);
         if ($result === 0) {
-            $this->addError('The given subject did not match the pattern. Got: %1$s', 1221565130, [$value]);
+            if ($this->options['validationErrorMessage']) {
+                $this->addError($this->options['validationErrorMessage'], 1692962252);
+            } else {
+                $this->addError('The given subject did not match the pattern. Got: %1$s', 1221565130, [$value]);
+            }
         }
         if ($result === false) {
             throw new InvalidValidationOptionsException('regularExpression "' . $this->options['regularExpression'] . '" in RegularExpressionValidator contained an error.', 1298273089);
