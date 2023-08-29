@@ -194,12 +194,12 @@ abstract class Arrays
     /**
      * Returns the value of a nested array by following the specifed path.
      *
-     * @param array &$array The array to traverse as a reference
+     * @param array $array The array to traverse
      * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
      * @return mixed The value found, NULL if the path didn't exist (note there is no way to distinguish between a found NULL value and "path not found")
      * @throws \InvalidArgumentException
      */
-    public static function getValueByPath(array &$array, $path)
+    public static function getValueByPath(array $array, $path)
     {
         if (is_string($path)) {
             $path = explode('.', $path);
