@@ -291,7 +291,7 @@ class ProxyClassBuilder
                         } else {
                             if (strpos($argumentValue, '.') !== false) {
                                 $settingPath = explode('.', $argumentValue);
-                                $settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
+                                $settings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, array_shift($settingPath));
                                 $argumentValue = Arrays::getValueByPath($settings, $settingPath);
                             }
                             if (!isset($this->objectConfigurations[$argumentValue])) {
@@ -628,7 +628,7 @@ class ProxyClassBuilder
                         } else {
                             if (strpos($argumentValue, '.') !== false) {
                                 $settingPath = explode('.', $argumentValue);
-                                $settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
+                                $settings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, array_shift($settingPath));
                                 $argumentValue = Arrays::getValueByPath($settings, $settingPath);
                             }
                             $preparedArguments[] = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
