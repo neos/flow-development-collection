@@ -27,6 +27,7 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Dispatches requests to the controller which was specified by the request and
@@ -105,7 +106,7 @@ class Dispatcher
             // Rethrow as the SecurityEntryPoint middleware will take care of the rest
             throw $exception->attachInterceptedRequest($request);
         } catch (AccessDeniedException $exception) {
-            /** @var PsrLoggerFactoryInterface $securityLogger */
+            /** @var LoggerInterface $securityLogger */
             $securityLogger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('securityLogger');
             $securityLogger->warning('Access denied', LogEnvironment::fromMethodName(__METHOD__));
             throw $exception;
