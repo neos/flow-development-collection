@@ -85,7 +85,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
      */
     public function getValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         Arrays::getValueByPath($array, null);
     }
@@ -106,6 +106,94 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
     {
         $array = ['Foo' => ['Bar' => ['Baz' => 'the value']]];
         self::assertNull(Arrays::getValueByPath($array, ['Foo', 'Bar', 'Baz', 'Bux']));
+    }
+
+    /**
+     * @test
+     */
+    public function getAccessorByPathReturnsTheValueOfANestedArrayByFollowingTheGivenSimplePath()
+    {
+        $array = ['Foo' => 'the value'];
+        self::assertSame('the value', Arrays::getAccessorByPath($array, ['Foo'])->string());
+    }
+
+    /**
+     * @test
+     */
+    public function getAccessorByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPath()
+    {
+        $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
+        self::assertSame('the value', Arrays::getAccessorByPath($array, ['Foo', 'Bar', 'Baz', 2])->string());
+    }
+
+    /**
+     * @test
+     */
+    public function getAccessorByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPathIfPathIsString()
+    {
+        $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
+        self::assertSame('the value', Arrays::getAccessorByPath($array, 'Foo.Bar.Baz.2')->string());
+    }
+
+    /**
+     * @test
+     */
+    public function getAccessorByPathThrowsTypeErrorIfPathIsNoArrayOrString()
+    {
+        $this->expectException(\TypeError::class);
+        $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
+        Arrays::getAccessorByPath($array, null);
+    }
+
+    /**
+     * @test
+     */
+    public function getAccessorByPathReturnsNullIfTheSegementsOfThePathDontExist()
+    {
+        $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
+        self::assertNull(Arrays::getAccessorByPath($array, ['Foo', 'Bar', 'Bax', 2])->intOrNull());
+    }
+
+    /**
+     * @test
+     */
+    public function getAccessorByPathReturnsNullIfThePathHasMoreSegmentsThanTheGivenArray()
+    {
+        $array = ['Foo' => ['Bar' => ['Baz' => 'the value']]];
+        self::assertNull(Arrays::getAccessorByPath($array, ['Foo', 'Bar', 'Baz', 'Bux'])->intOrNull());
+    }
+
+    /**
+     * @test
+     */
+    public function getAccessorByPathTypeErrorContainsPathForNonMatchingTypes()
+    {
+        $array = ['Foo' => ['Bar' => ['Baz' => 'the value']]];
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('in path Foo.Bar.Baz');
+        Arrays::getAccessorByPath($array, ['Foo', 'Bar', 'Baz'])->int();
+    }
+
+    /**
+     * @test
+     */
+    public function getAccessorByPathTypeErrorContainsPathForNonMatchingTypesOnRoot()
+    {
+        $array = ['Foo' => 'string'];
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('in path Foo');
+        Arrays::getAccessorByPath($array, ['Foo'])->int();
+    }
+
+    /**
+     * @test
+     */
+    public function getAccessorByPathTypeErrorContainsPathForNonExistingPathes()
+    {
+        $array = ['Foo' => ['Bar' => ['Baz' => 'the value']]];
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('in path Foo.Bar.Bax');
+        Arrays::getAccessorByPath($array, ['Foo', 'Bar', 'Bax'])->int();
     }
 
     /**
