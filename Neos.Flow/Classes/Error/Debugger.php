@@ -286,6 +286,9 @@ class Debugger
                     if (preg_match(self::$excludedPropertyNames, $property->getName())) {
                         continue;
                     }
+                    if ($property->isStatic()) {
+                        continue;
+                    }
                     $dump .= chr(10);
                     $dump .= str_repeat(' ', $level) . ($plaintext ? '' : '<span class="debug-property">') . self::ansiEscapeWrap($property->getName(), '36', $ansiColors) . ($plaintext ? '' : '</span>') . ' => ';
                     $property->setAccessible(true);
