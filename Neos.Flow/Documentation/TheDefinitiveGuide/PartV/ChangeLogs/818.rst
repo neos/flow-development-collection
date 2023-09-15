@@ -1,0 +1,304 @@
+`8.1.8 (2023-09-15) <https://github.com/neos/flow-development-collection/releases/tag/8.1.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Prevent deprecation warning in `RouteTags::createFromArray()` <https://github.com/neos/flow-development-collection/pull/3156>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3120 <https://github.com/neos/flow-development-collection/issues/3120>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Change type hint of returned security logger <https://github.com/neos/flow-development-collection/pull/3145>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The type hint for the ``$securityLogger`` was referring to the ``PsrLoggerFactoryInterface`` instead of the correct ``LoggerInterface``
+
+Replaces PR `#2998 <https://github.com/neos/flow-development-collection/issues/2998>`_
+
+
+* Packages: ``Flow``
+
+`BUGFIX: improve performance of `Scripts::buildPhpCommand` <https://github.com/neos/flow-development-collection/pull/3119>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+https://github.com/neos/flow-development-collection/pull/2491 seems to cause a tiny minor performance regression. Booting minimal flow (only configuration manager), and running Scripts::buildPhpCommand went from ``0.025s`` to ``0.044s`` on my super fast machine ... it might be a more measurable difference on slower systems.
+
+
+using ``exec`` and invoking another php process is just slower than not to.
+
+Following changes were made:
+
+A: runtime cache the buildPhpCommand
+B: remove the overhead of a second ``exec`` by using first native realpath and only fallback in case of an open base dir restriction to ``exec``
+
+see https://github.com/neos/flow-development-collection/pull/2491#issuecomment-1639964461
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Prevent method call in ProxyClassBuilder <https://github.com/neos/flow-development-collection/pull/3143>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3142 <https://github.com/neos/flow-development-collection/issues/3142>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Don't pass getValueByPath() argument as reference <https://github.com/neos/flow-development-collection/pull/3144>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+This undoes https://github.com/neos/flow-development-collection/commit/`6af168180bbc729197d492f512e2a7e00cfd833d <https://github.com/neos/flow-development-collection/commit/6af168180bbc729197d492f512e2a7e00cfd833d>`_ as PHP is clever enough to optimize this these days…
+
+* Related: `#3142 <https://github.com/neos/flow-development-collection/issues/3142>`_
+
+* Packages: ``Flow`` ``Utility.Arrays``
+
+`BUGFIX: Deduplication on prePersist <https://github.com/neos/flow-development-collection/pull/3128>`_
+------------------------------------------------------------------------------------------------------
+
+Doctrine refactored their IdentityMap, so it checks for duplicated objects already on persist instead of on flush before.
+
+The way Flow works with ValueObjects allows creating multiple object instances, but they are equal on there persistance identifier. To prevent doctrine from throwing exceptions, because the objects are equal on their persistance identifier we remove one value objects from the IdentityMap if there is an equal one to persist.
+
+```
+        $post1 = new Fixtures\\Post();
+        $post1->setAuthor(new Fixtures\\TestValueObject('Some Name'));
+
+        $post2 = new Fixtures\\Post();
+        $post2->setAuthor(new Fixtures\\TestValueObject('Some Name'));
+
+        $this->postRepository->add($post1);
+        $this->postRepository->add($post2); // <-- doctrine would throw an exception here
+        $this->persistenceManager->persistAll();
+```
+
+Until now, flow removes the duplicated value objects on before flush from the list of scheduled insertions, but this is to late now.
+
+`BUGFIX: Support custom table names for PdoBackend <https://github.com/neos/flow-development-collection/pull/2957>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Fixes the ``PdoBackend::setup()`` to actually respect any configured ``cacheTableName`` and/or ``tagsTableName``.
+
+* Fixes: `#2958 <https://github.com/neos/flow-development-collection/issues/2958>`_
+
+* Packages: ``Flow`` ``Cache`` ``Utility.Pdo``
+
+`BUGFIX: Only publish static collection, if collection is present <https://github.com/neos/flow-development-collection/pull/3098>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3097 <https://github.com/neos/flow-development-collection/issues/3097>`_ 
+
+**Upgrade instructions**
+
+No changes needed
+
+**Review instructions**
+
+Reset the collections configuration like this
+
+```
+Neos:
+  Flow:
+    resource:
+      collections: []
+      storages: []
+      targets: []
+```
+
+and find the booting throw a exception as "can not call publish() on null"
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix return type in DocBlock <https://github.com/neos/flow-development-collection/pull/3061>`_
+------------------------------------------------------------------------------------------------------
+
+The return type of ``SessionInterface::getData()`` was noted as "array", but in fact is "mixed". 
+
+The returned data is the same unchanged data as passed in ``putData()`` as second parameter, which already was "mixed". All implementations of the ``SessionInterface`` also use "mixed" as return type.
+
+**Upgrade instructions**
+
+Nothing to do
+
+**Review instructions**
+
+See current implementation of ``TransientSession``: https://github.com/neos/flow-development-collection/blob/`d14198d03d42a0f406565c50d85bcff6dad0f69e <https://github.com/neos/flow-development-collection/commit/d14198d03d42a0f406565c50d85bcff6dad0f69e>`_/Neos.Flow/Classes/Session/TransientSession.php#L132
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Document `Scripts::executeCommand` properly <https://github.com/neos/flow-development-collection/pull/3118>`_
+----------------------------------------------------------------------------------------------------------------------
+
+* Related: `#3112 <https://github.com/neos/flow-development-collection/issues/3112>`_
+
+``Scripts::executeCommand`` has currently an odd, i suppose historically evolved api https://github.com/neos/flow-development-collection/blob/`1531a8125ad41e62324c7a85e440c14c1cb768ac <https://github.com/neos/flow-development-collection/commit/1531a8125ad41e62324c7a85e440c14c1cb768ac>`_/Neos.Flow/Classes/Core/Booting/Scripts.php#L682
+
+1. its not obvious at first what the behavior on error is. The returned status code is actually irrelevant - it will always be true because otherwise we throw an exceptions.
+2. the doc commend ``$outputResults if false the output of this command is only echoed if the execution was not successful`` is lying. In case of an error the output is converted into an exception
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Uncached ConfigurationManager <https://github.com/neos/flow-development-collection/pull/3045>`_
+--------------------------------------------------------------------------------------------------------
+
+### BUGFIX: Proper uncached configurationManager mode
+
+It is purposely not allowed to disable the cache at runtime (when you have a configuration manager at hand)
+
+The usage to create a configuration manager without caching, you need to have your own request handler and boot only this step:
+
+```php
+Scripts::initializeConfiguration($this->bootstrap, false);
+```
+
+---
+
+### BUGFIX: ConfigurationManager with disabled cache doesn't replace environment variables in setting
+
+@kitsunet and me need this for building https://github.com/neos/setup/pull/59 at super early boot time - pre compile time.
+
+We want to use the config manager without cache, which currently has a bug and you cant really disable the cache unless using reflection to set ``temporaryDirectoryPath`` to null.
+
+The config manager with disabled cache doesnt replace environment variables in settings.
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`BUGFIX: harden `Scripts::buildPhpCommand` <https://github.com/neos/flow-development-collection/pull/3116>`_
+------------------------------------------------------------------------------------------------------------
+
+
+The following changes are included to fix ``Scripts::buildPhpCommand`` 
+
+- ``BUGFIX: Catch stderr output, in case phpPathAndBinary is not found <https://github.com/neos/flow-development-collection/pull/3116/commits/``9d106b16d25773980ac53e095f443bd415ede42e <https://github.com/neos/flow-development-collection/commit/9d106b16d25773980ac53e095f443bd415ede42e>`_>`_
+  - we dont want any unnecessary console output 
+- ``BUGFIX: Make Scripts::buildPhpCommand throw on invalid phpBinaryPathAndFilename <https://github.com/neos/flow-development-collection/pull/3116/commits/``8edba3614f53def063383fa6f1622ccdae5c06af <https://github.com/neos/flow-development-collection/commit/8edba3614f53def063383fa6f1622ccdae5c06af>`_>`_
+  - this is needed for our new setup see https://github.com/neos/setup/pull/59/commits/`9098eb74a37ad250e78c63ad780454cc1dd1b14a <https://github.com/neos/flow-development-collection/commit/9098eb74a37ad250e78c63ad780454cc1dd1b14a>``_ where we ``try catch`` ``buildPhpCommand`` (so we can be sure ``phpBinaryPathAndFilename` is correctly configured beforehand)
+  - Also since ``buildPhpCommand`` is API anyone using it wants to be assured the php command will also work (point to an existing binary)
+- ``BUGFIX: Handle possible fast cgi in phpBinaryPathAndFilename: send empty stdin to close possible fast cgi server <https://github.com/neos/flow-development-collection/pull/3116/commits/``ec0cc6961145b761d143132d64f3f5820efce0c8 <https://github.com/neos/flow-development-collection/commit/ec0cc6961145b761d143132d64f3f5820efce0c8>`_>`_
+  - without this, the setup endpoint might never return on oddly configured webhosting
+ 
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow passing paths as array for settings migrations <https://github.com/neos/flow-development-collection/pull/3125>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This allows to write migrations also for paths with "." (dots) in the path key like:
+```
+Neos.Flow.mvc.routes.'Neos.Neos'.variables.defaultUriSuffix
+```
+
+```
+        $this->moveSettingsPaths(['Neos', 'Flow', 'mvc', 'routes', 'Neos.Neos', 'variables', 'defaultUriSuffix'], ['Neos', 'Neos', 'sites', '*', 'uriPathSuffix']);
+```
+
+As the ``Array::getValueByPath`` and ``Arrays::unsetValueByPath`` already can handle string and array paths, this is a an easy fix. 
+
+`BUGFIX: Wrong time format in log FileBackend - #3121 <https://github.com/neos/flow-development-collection/pull/3122>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Fixes a regression from https://github.com/neos/flow-development-collection/pull/3094
+
+* Fixes: `#3121 <https://github.com/neos/flow-development-collection/issues/3121>`_
+
+
+* Packages: ``Flow`` ``Flow.Log``
+
+`BUGFIX: Pin doctrine/orm to <2.16.0 <https://github.com/neos/flow-development-collection/pull/3126>`_
+------------------------------------------------------------------------------------------------------
+
+After release of 2.16.0 of doctrine/orm the order of created objects has changed. 
+See: https://github.com/doctrine/orm/issues/10864
+
+From Slack: https://neos-project.slack.com/archives/C050KKBEB/p1690915423960539
+
+Until this got fixed or we could fix this on our end we need to pin to a version below 2.16.0.
+
+`BUGFIX: Relax CachePool key check <https://github.com/neos/flow-development-collection/pull/2923>`_
+----------------------------------------------------------------------------------------------------
+
+Adjusts the ``CachePool`` regex that checks the key (aka entry identifier) such that it allows "." as character.
+
+*Note:* According to https://www.php-fig.org/psr/psr-6/#definitions the regex should be changed to ``/^[a-zA-Z0-9_\\.]{1,64}$/`` (like done in the ``SimpleCache implementation <https://github.com/neos/flow-development-collection/blob/``d11ff78a9e419c5b215d6e951e4fb9eed63e4ffa <https://github.com/neos/flow-development-collection/commit/d11ff78a9e419c5b215d6e951e4fb9eed63e4ffa>`_/Neos.Cache/Classes/Psr/SimpleCache/SimpleCache.php#L30>`_ – But this is out of scope of this bugfix since it would be a breaking change
+
+* Fixes: `#2922 <https://github.com/neos/flow-development-collection/issues/2922>`_
+
+* Packages: ``Flow`` ``Cache``
+
+`TASK: Avoid potential deprecation warning in StringHelper <https://github.com/neos/flow-development-collection/pull/3117>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+``str_replace()`` expects strings, but Eel with it's loose typing might pass in different types.
+
+
+* Packages: ``Flow`` ``Eel``
+
+`TASK: Fix settings for reference rendering <https://github.com/neos/flow-development-collection/pull/3114>`_
+-------------------------------------------------------------------------------------------------------------
+
+Since 4.0.0 the ``neos/doctools`` package expects the configuration in a different way. This lead to "hidden" errors during reference renedering on Jenkins.
+
+**Review instructions**
+
+This fixes errors like this:
+
+```
+15:37:24 Rendering Reference "0"
+15:37:24 Neos\\DocTools\\Command\\ReferenceCommandController_Original::renderReference(): Argument `#1 <https://github.com/neos/flow-development-collection/issues/1>`_($reference) must be of type string, int given, called in /var/lib/jenkins/workspace/Flow - update references/Data/Temporary/Development/Cache/Code/Flow_Object_Classes/Neos_DocTools_Command_ReferenceCommandController.php on line 90
+15:37:24 
+15:37:24   Type: TypeError
+15:37:24   File: Data/Temporary/Development/Cache/Code/Flow_Object_Classes/Neos_DocTools_Com
+15:37:24         mand_ReferenceCommandController.php
+15:37:24   Line: 98
+```
+
+Can be reproduced by doing this in a Flow development setup:
+
+```
+composer require --no-interaction --no-progress neos/doctools
+./flow reference:rendercollection Flow
+```
+
+
+* Packages: ``FluidAdaptor``
+
+`TASK: Update actions/checkout in add-pr-labels action <https://github.com/neos/flow-development-collection/pull/3113>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Switches to a version that uses Node 16. The same is needed for the ``actions-ecosystem/action-add-labels``, but that has not been released since 2020…
+**Review instructions**
+
+After a run, check the action output and make sure the deprecation warning is gone.
+
+
+* Packages: ``Flow`` ``.github``
+
+`TASK: Test count returned by TaggableMultiBackend.flushByTag <https://github.com/neos/flow-development-collection/pull/2893>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This makes sure the count of flushed entries returned by ``flushByTag()`` is calculated in a more readable way.
+
+* Fixes: `#2892 <https://github.com/neos/flow-development-collection/issues/2892>`_ 
+
+**Review instructions**
+
+The new test proves it…
+
+
+* Packages: ``Flow`` ``Cache``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.1.7...8.1.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
