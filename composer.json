@@ -22,7 +22,7 @@
         "psr/http-server-handler": "^1.0",
         "psr/http-client": "^1.0",
         "ramsey/uuid": "^3.0 || ^4.0",
-        "doctrine/orm": "^2.9.3 <2.16.0",
+        "doctrine/orm": "^2.9.3",
         "doctrine/migrations": "^3.0",
         "doctrine/dbal": "^2.13",
         "doctrine/common": "^3.0.3",
