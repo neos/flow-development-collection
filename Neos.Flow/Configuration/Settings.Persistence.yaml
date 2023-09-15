@@ -44,7 +44,7 @@ Neos:
             events: ['onFlush']
             listener: 'Neos\Flow\Persistence\Doctrine\AllowedObjectsListener'
           'Neos\Flow\Persistence\Doctrine\ObjectValidationAndDeDuplicationListener':
-            events: ['onFlush']
+            events: ['onFlush', 'prePersist']
             listener: 'Neos\Flow\Persistence\Doctrine\ObjectValidationAndDeDuplicationListener'
 
         # Doctrine ORM Second Level Cache configuration.

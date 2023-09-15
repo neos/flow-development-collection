@@ -33,9 +33,10 @@ abstract class PdoHelper
      * @param \PDO $databaseHandle
      * @param string $pdoDriver
      * @param string $pathAndFilename
+     * @param array $replacePairs every key in this array will be replaced with the corresponding value in the loaded SQL (example: ['###CACHE_TABLE_NAME###' => 'caches', '###TAGS_TABLE_NAME###' => 'tags'])
      * @return void
      */
-    public static function importSql(\PDO $databaseHandle, string $pdoDriver, string $pathAndFilename)
+    public static function importSql(\PDO $databaseHandle, string $pdoDriver, string $pathAndFilename, array $replacePairs = [])
     {
         $path = dirname($pathAndFilename);
         $filename = basename($pathAndFilename);
@@ -52,7 +53,7 @@ abstract class PdoHelper
 
         $statement = '';
         foreach ($sql as $line) {
-            $statement .= ' ' . trim($line);
+            $statement .= ' ' . trim(strtr($line, $replacePairs));
             if (substr($statement, -1) === ';') {
                 $databaseHandle->exec($statement);
                 $statement = '';
