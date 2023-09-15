@@ -71,7 +71,9 @@ final class RouteTags
      */
     public static function createFromArray(array $tags): self
     {
-        array_walk($tags, 'static::validateTag');
+        foreach ($tags as $tag) {
+            self::validateTag($tag);
+        }
         return new static($tags);
     }
 

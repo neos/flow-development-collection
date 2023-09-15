@@ -37,6 +37,8 @@ class ScriptsMock extends Scripts
 
     public static function buildSubprocessCommand(string $commandIdentifier, array $settings, array $commandArguments = []): string
     {
+        // clear cache for testing
+        static::$builtPhpCommand = null;
         return parent::buildSubprocessCommand($commandIdentifier, $settings, $commandArguments);
     }
 }
