@@ -12,6 +12,7 @@ namespace Neos\Cache\Tests\Unit\Psr\Cache;
  */
 
 use Neos\Cache\Backend\AbstractBackend;
+use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Psr\Cache\CachePool;
 use Neos\Cache\Psr\Cache\CacheItem;
 use Neos\Cache\Psr\InvalidArgumentException;
@@ -23,6 +24,57 @@ use Neos\Cache\Tests\BaseTestCase;
  */
 class CachePoolTest extends BaseTestCase
 {
+    public function validIdentifiersDataProvider(): array
+    {
+        return [
+            ['short'],
+            ['SomeValidIdentifier'],
+            ['withNumbers0123456789'],
+            ['withUnder_score'],
+            ['with.dot'],
+
+            // The following tests exceed the minimum requirements of the PSR-6 keys (@see https://www.php-fig.org/psr/psr-6/#definitions)
+            ['dashes-are-allowed'],
+            ['percent%sign'],
+            ['amper&sand'],
+            ['a-string-that-exceeds-the-psr-minimum-maxlength-of-sixtyfour-but-is-shorter-than-twohundredandfifty-characters'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider validIdentifiersDataProvider
+     */
+    public function validIdentifiers(string $identifier): void
+    {
+        $mockBackend = $this->getMockBuilder(BackendInterface::class)->getMock();
+        $cachePool = new CachePool($identifier, $mockBackend);
+        self::assertInstanceOf(CachePool::class, $cachePool);
+    }
+
+    public function invalidIdentifiersDataProvider(): array
+    {
+        return [
+            [''],
+            ['späcialcharacters'],
+            ['a-string-that-exceeds-the-maximum-allowed-length-of-twohundredandfifty-characters-which-is-pretty-large-as-it-turns-out-so-i-repeat-a-string-that-exceeds-the-maximum-allowed-length-of-twohundredandfifty-characters-still-not-there-wow-crazy-flow-rocks-though'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider invalidIdentifiersDataProvider
+     */
+    public function invalidIdentifiers(string $identifier): void
+    {
+        $mockBackend = $this->getMockBuilder(BackendInterface::class)->getMock();
+
+        $this->expectException(\InvalidArgumentException::class);
+        new CachePool($identifier, $mockBackend);
+    }
+
+    
+    
     /**
      * @test
      */
