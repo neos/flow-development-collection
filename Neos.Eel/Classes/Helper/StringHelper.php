@@ -319,8 +319,8 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * Note: this method does not perform regular expression matching, @see pregReplace().
      *
-     * @param string $string The input string
-     * @param string $search A search string
+     * @param string|array $string The input string|array
+     * @param string|array $search A search string|array
      * @param string $replace A replacement string
      * @return string The string with all occurrences replaced
      */
