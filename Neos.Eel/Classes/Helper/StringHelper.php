@@ -319,14 +319,24 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * Note: this method does not perform regular expression matching, @see pregReplace().
      *
-     * @param string|array $string The input string|array
+     * @param string|array $subject The input string|array
      * @param string|array $search A search string|array
-     * @param string $replace A replacement string
-     * @return string The string with all occurrences replaced
+     * @param string|array $replace A replacement string|array
+     * @return string|array The subject with all occurrences replaced
      */
-    public function replace($string, $search, $replace)
+    public function replace($subject, $search, $replace)
     {
-        return str_replace($search, $replace, (string)$string);
+        if (!is_array($subject) && !is_string($subject)) {
+            $subject = (string)$subject;
+        }
+        if (!is_array($search) && !is_string($search)) {
+            $search = (string)$search;
+        }
+        if (!is_array($replace) && !is_string($replace)) {
+            $replace = (string)$replace;
+        }
+
+        return str_replace($search, $replace, $subject);
     }
 
     /**
