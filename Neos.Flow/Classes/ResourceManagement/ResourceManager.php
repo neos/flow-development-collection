@@ -164,7 +164,7 @@ class ResourceManager
             /** @var string $filename */
             $filename = UnicodeFunctions::pathinfo($source, PATHINFO_FILENAME);
             if ($content === false) {
-                throw new Exception(sprintf('Could not read the file from "%s" as resource.', $source), 1695390671);
+                throw new Exception(sprintf('Could not read the file from "%s" as resource.', $source), 1695390672);
             }
         }
         return $this->importResourceFromContent($content, $filename, $collectionName, $forcedPersistenceObjectIdentifier);
