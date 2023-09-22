@@ -10,7 +10,6 @@ namespace Neos\Utility\MediaTypes\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Utility\MediaTypes;
 
 /**
@@ -66,6 +65,22 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
         $filePath = __DIR__ . '/Fixtures/' . $filename;
         $fileContent = is_file($filePath) ? file_get_contents($filePath) : '';
         self::assertSame($expectedMediaType, MediaTypes::getMediaTypeFromFileContent($fileContent));
+    }
+
+    /**
+     * @test
+     * @dataProvider filesAndMediaTypes
+     */
+    public function getMediaTypeFromResource(string $filename, string $expectedMediaType)
+    {
+        $filePath = __DIR__ . '/Fixtures/' . $filename;
+        $resource = is_file($filePath) ? fopen($filePath, 'rb') : fopen('data://text/plain,', 'rb');
+        if ($resource !== false) {
+            self::assertSame($expectedMediaType, MediaTypes::getMediaTypeFromResource($resource));
+            fclose($resource);
+        } else {
+            $this->fail('fixture ' . $filePath . ' could not be read');
+        }
     }
 
     /**
