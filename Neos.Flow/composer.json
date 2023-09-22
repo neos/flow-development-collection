@@ -51,7 +51,8 @@
 
         "composer/composer": "^2.2.8",
 
-        "egulias/email-validator": "^2.1.17 || ^3.0"
+        "egulias/email-validator": "^2.1.17 || ^3.0",
+        "enshrined/svg-sanitize": "^0.16.0"
     },
     "require-dev": {
         "vimeo/psalm": "~4.30.0",
