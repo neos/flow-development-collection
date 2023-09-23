@@ -18,6 +18,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\MediaTypes;
 use Neos\Utility\ObjectAccess;
+use Neos\Flow\ResourceManagement\Storage\Exception as StorageException;
 use Neos\Flow\ResourceManagement\Storage\StorageInterface;
 use Neos\Flow\ResourceManagement\Storage\WritableStorageInterface;
 use Neos\Flow\ResourceManagement\Target\TargetInterface;
@@ -153,21 +154,55 @@ class ResourceManager
      */
     public function importResource($source, $collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $forcedPersistenceObjectIdentifier = null)
     {
+        $this->initialize();
+        if (!isset($this->collections[$collectionName])) {
+            throw new Exception(sprintf('Tried to import a file into the resource collection "%s" but no such collection exists. Please check your settings and the code which triggered the import.', $collectionName), 1375196643);
+        }
+
+        // try to read as little as possible from the content to determine weather sanitizing is necessary
         if (is_resource($source)) {
-            $content = stream_get_contents($source);
-            $filename = '';
-            if ($content === false) {
-                throw new Exception('Could not import the content stream as resource.', 1695390671);
+            $mediaType = MediaTypes::getMediaTypeFromResource($source);
+            if ($this->isSanitizingRequired($mediaType)) {
+                $content = stream_get_contents($source);
+                if ($content === false) {
+                    throw new Exception(sprintf('Could not import the content stream into collection "%s".', $collectionName), 1695390671);
+                }
+                return $this->importResourceFromContent($content, '', $collectionName, $forcedPersistenceObjectIdentifier);
             }
         } else {
-            $content = file_get_contents($source);
-            /** @var string $filename */
-            $filename = UnicodeFunctions::pathinfo($source, PATHINFO_FILENAME);
-            if ($content === false) {
-                throw new Exception(sprintf('Could not read the file from "%s" as resource.', $source), 1695390672);
+            $resource = fopen($source, 'rb');
+            if ($resource === false) {
+                throw new StorageException(sprintf('Could not read the file from "%s" for import into collection "%s".', $source, $collectionName), 1695484845);
+            }
+            $mediaType = MediaTypes::getMediaTypeFromResource($resource);
+            fclose($resource);
+            if ($this->isSanitizingRequired($mediaType)) {
+                $content = file_get_contents($source);
+                /** @var string $filename */
+                $filename = UnicodeFunctions::pathinfo($source, PATHINFO_FILENAME);
+                return $this->importResourceFromContent($content, $filename, $collectionName, $forcedPersistenceObjectIdentifier);
             }
         }
-        return $this->importResourceFromContent($content, $filename, $collectionName, $forcedPersistenceObjectIdentifier);
+
+        /* @var CollectionInterface $collection */
+        $collection = $this->collections[$collectionName];
+
+        try {
+            $resource = $collection->importResource($source);
+            if ($forcedPersistenceObjectIdentifier !== null) {
+                ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $forcedPersistenceObjectIdentifier, true);
+            }
+            if (!is_resource($source)) {
+                $pathInfo = UnicodeFunctions::pathinfo($source);
+                $resource->setFilename($pathInfo['basename']);
+            }
+        } catch (Exception $exception) {
+            throw new Exception(sprintf('Importing a file into the resource collection "%s" failed: %s', $collectionName, $exception->getMessage()), 1375197120, $exception);
+        }
+
+        $this->resourceRepository->add($resource);
+        $this->logger->debug(sprintf('Successfully imported file "%s" into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $source, $collectionName, $collection->getStorage()->getName(), get_class($collection), $resource->getSha1()));
+        return $resource;
     }
 
     /**
@@ -199,7 +234,10 @@ class ResourceManager
             throw new Exception(sprintf('Tried to import a file into the resource collection "%s" but no such collection exists. Please check your settings and the code which triggered the import.', $collectionName), 1380878131);
         }
 
-        $content = $this->sanitizeImportedFileContent($filename, $content);
+        $mediaType = MediaTypes::getMediaTypeFromFileContent($content);
+        if ($this->isSanitizingRequired($mediaType)) {
+            $content = $this->sanitizeImportedFileContent($mediaType, $content, $filename);
+        }
 
         /* @var CollectionInterface $collection */
         $collection = $this->collections[$collectionName];
@@ -604,16 +642,25 @@ class ResourceManager
     }
 
     /**
+     * Decide weather the given media-type has to be sanitized
+     * for now this only checks svg file to solve the issue here https://nvd.nist.gov/vuln/detail/CVE-2023-37611
+     *
+     * @todo create a feature from this and allow to register code for sanitizing file content before importing
+     */
+    protected function isSanitizingRequired(string $mediaType): bool
+    {
+        return $mediaType === 'image/svg+xml';
+    }
+
+    /**
      * Sanitize file content and remove content that is suspicious
      * for now this only checks svg file to solve the issue here https://nvd.nist.gov/vuln/detail/CVE-2023-37611
      *
      * @todo create a feature from this and allow to register code for sanitizing file content before importing
      */
-    protected function sanitizeImportedFileContent(string $filename, string $content): string
+    protected function sanitizeImportedFileContent(string $mediaType, string $content, $filename = ''): string
     {
-        $typeFromFilename = MediaTypes::getMediaTypeFromFilename($content);
-        $typeFromContent = MediaTypes::getMediaTypeFromFileContent($content);
-        if ($typeFromFilename === 'image/svg+xml' || $typeFromContent === 'image/svg+xml') {
+        if ($mediaType === 'image/svg+xml') {
             // @todo: Simplify again when https://github.com/darylldoyle/svg-sanitizer/pull/90 is merged and released.
             $previousXmlErrorHandling = libxml_use_internal_errors(true);
             $sanitizer = new Sanitizer();

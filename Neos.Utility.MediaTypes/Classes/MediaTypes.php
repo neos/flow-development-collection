@@ -11,6 +11,7 @@ namespace Neos\Utility;
  * source code.
  */
 
+
 /**
  * Utility class for converting Internet Media Types to file extensions and vice
  * versa.
@@ -1827,6 +1828,21 @@ abstract class MediaTypes
     {
         $fileInfo = new \finfo(FILEINFO_MIME);
         $mediaType = self::trimMediaType($fileInfo->buffer($fileContent));
+        return isset(self::$mediaTypeToFileExtension[$mediaType]) ? $mediaType : 'application/octet-stream';
+    }
+
+    /**
+     * Returns a Media Type based on the given resource
+     *
+     * @param resource $resource The resource to determine the media type from
+     * @return string The IANA Internet Media Type
+     */
+    public static function getMediaTypeFromResource($resource): string
+    {
+        if (!is_resource($resource)) {
+            throw new \TypeError('Argument "resource" has to be a resource');
+        }
+        $mediaType = self::trimMediaType(mime_content_type($resource));
         return isset(self::$mediaTypeToFileExtension[$mediaType]) ? $mediaType : 'application/octet-stream';
     }
 
