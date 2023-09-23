@@ -166,7 +166,14 @@ class FileSystemSymlinkTarget extends FileSystemTarget
                 $result = Files::createRelativeSymlink($sourcePathAndFilename, $targetPathAndFilename);
             } else {
                 $temporaryTargetPathAndFilename = $targetPathAndFilename . '.' . Algorithms::generateRandomString(13) . '.tmp';
-                symlink($sourcePathAndFilename, $temporaryTargetPathAndFilename);
+                if (PHP_OS_FAMILY === 'Windows' && is_dir($sourcePathAndFilename)) {
+                    // on windows creating "normal" symlinks is only allowed as admin or with SeCreateSymbolicLinkPrivilege
+                    // in case we only want to symlink a dir, we can instead create directory junctions, which is allowed for non admins
+                    // see https://github.com/git-for-windows/git/wiki/Symbolic-Links
+                    exec(sprintf('mklink /j %s %s', escapeshellarg($temporaryTargetPathAndFilename), escapeshellarg($sourcePathAndFilename)));
+                } else {
+                    symlink($sourcePathAndFilename, $temporaryTargetPathAndFilename);
+                }
                 $result = rename($temporaryTargetPathAndFilename, $targetPathAndFilename);
             }
         } catch (\Exception $exception) {
