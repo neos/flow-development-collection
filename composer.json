@@ -12,6 +12,7 @@
         ]
     },
     "require": {
+        "behat/behat": "^3.5",
         "php": "^8.2",
         "psr/simple-cache": "^2.0 || ^3.0",
         "psr/cache": "^2.0 || ^3.0",
@@ -132,8 +133,7 @@
     "require-dev": {
         "mikey179/vfsstream": "^1.6.10",
         "phpunit/phpunit": "~9.1",
-        "vimeo/psalm": "~4.30.0",
-        "behat/behat": "^3.5"
+        "vimeo/psalm": "~4.30.0"
     },
     "autoload-dev": {
         "psr-4": {
