@@ -14,17 +14,11 @@ namespace Neos\Flow\Tests\Functional\Command;
 require_once(FLOW_PATH_PACKAGES . '/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(FLOW_PATH_PACKAGES . '/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
-use Neos\Flow\Security\Authentication\Provider\TestingProvider;
-use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
 
 /**
@@ -35,13 +29,11 @@ use Neos\Flow\Utility\Environment;
  */
 class BehatTestHelper
 {
-    use IsolatedBehatStepsTrait;
-
     use SecurityOperationsTrait;
 
-    /**
-     * @var Bootstrap
-     */
+    protected $isolated = false;
+
+    /** @var Bootstrap */
     protected static $bootstrap;
 
     /**
@@ -57,48 +49,17 @@ class BehatTestHelper
     protected $environment;
 
     /**
-     * @var ActionRequest
-     */
-    protected $mockActionRequest;
-
-    /**
-     * @var PrivilegeManagerInterface
-     */
-    protected $privilegeManager;
-
-    /**
      * @var PolicyService
      * @Flow\Inject
      */
     protected $policyService;
 
-    /**
-     * @var AuthenticationManagerInterface
-     */
-    protected $authenticationManager;
-
-    /**
-     * @var TestingProvider
-     */
-    protected $testingProvider;
-
-    /**
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * @return void
-     */
-    public function initializeObject()
+    public function initializeObject(): void
     {
         self::$bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
-        $this->isolated = false;
     }
 
-    /**
-     * @return mixed
-     */
+    /** @return ObjectManagerInterface */
     protected function getObjectManager()
     {
         return $this->objectManager;
