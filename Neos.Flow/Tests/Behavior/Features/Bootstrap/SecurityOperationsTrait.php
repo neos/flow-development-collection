@@ -33,6 +33,10 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
  * Note: Make sure to call $this->setupSecurity() in the constructor of your
  * behat context for these steps to work in your tests!
  *
+ * See {@see IsolatedBehatStepsTrait} documentation for a detailed explanation of Flow's isolated behat tests.
+ *
+ * @deprecated todo the policy features depending on this handcrafted isolated behat test infrastructure will be refactored and this infrastructure removed.
+ * @internal only allowed to be used internally for Neos.Flow behavioral tests!
  * @property Environment environment
  * @property ObjectManagerInterface objectManager
  */

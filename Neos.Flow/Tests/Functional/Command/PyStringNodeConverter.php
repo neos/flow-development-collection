@@ -17,6 +17,9 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 /**
  * A type converter to create behat scenario string parameters. This is
  * needed when processing behat scenarios/steps in an isolated process.
+ *
+ * @deprecated todo the policy features depending on this handcrafted isolated behat test infrastructure will be refactored and this infrastructure removed.
+ * @internal only allowed to be used internally for Neos.Flow behavioral tests!
  */
 class PyStringNodeConverter extends AbstractTypeConverter
 {

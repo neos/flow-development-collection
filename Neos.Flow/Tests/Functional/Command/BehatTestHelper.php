@@ -28,9 +28,12 @@ use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Utility\Environment;
 
 /**
- * A test helper, to include behat step traits, beeing executed by
- * the BehatHelperCommandController.
+ * A test helper, to include behat step traits, being executed from {@see BehatHelperCommandController}.
  *
+ * See {@see IsolatedBehatStepsTrait} documentation for a detailed explanation of Flow's isolated behat tests.
+ *
+ * @deprecated todo the policy features depending on this handcrafted isolated behat test infrastructure will be refactored and this infrastructure removed.
+ * @internal only allowed to be used internally for Neos.Flow behavioral tests!
  * @Flow\Scope("singleton")
  */
 class BehatTestHelper

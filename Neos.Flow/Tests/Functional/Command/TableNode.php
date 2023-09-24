@@ -14,6 +14,9 @@ namespace Neos\Flow\Tests\Functional\Command;
 /**
  * A helper class for behat scenario parameters, needed when processing
  * behat scenarios/steps in an isolated process
+ *
+ * @deprecated todo the policy features depending on this handcrafted isolated behat test infrastructure will be refactored and this infrastructure removed.
+ * @internal only allowed to be used internally for Neos.Flow behavioral tests!
  */
 class TableNode
 {
