@@ -6,4 +6,4 @@ default:
       paths:
         - "%paths.base%/Features/Security"
       contexts:
-        - FeatureContext:
+        - FeatureContext
