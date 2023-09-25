@@ -155,49 +155,49 @@ class ResourceManager
     public function importResource($source, $collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $forcedPersistenceObjectIdentifier = null)
     {
         $this->initialize();
+
         if (!isset($this->collections[$collectionName])) {
             throw new Exception(sprintf('Tried to import a file into the resource collection "%s" but no such collection exists. Please check your settings and the code which triggered the import.', $collectionName), 1375196643);
-        }
-
-        // try to read as little as possible from the content to determine weather sanitizing is necessary
-        if (is_resource($source)) {
-            $mediaType = MediaTypes::getMediaTypeFromResource($source);
-            if ($this->isSanitizingRequired($mediaType)) {
-                $content = stream_get_contents($source);
-                if ($content === false) {
-                    throw new Exception(sprintf('Could not import the content stream into collection "%s".', $collectionName), 1695390671);
-                }
-                return $this->importResourceFromContent($content, '', $collectionName, $forcedPersistenceObjectIdentifier);
-            }
-        } else {
-            $resource = fopen($source, 'rb');
-            if ($resource === false) {
-                throw new StorageException(sprintf('Could not read the file from "%s" for import into collection "%s".', $source, $collectionName), 1695484845);
-            }
-            $mediaType = MediaTypes::getMediaTypeFromResource($resource);
-            fclose($resource);
-            if ($this->isSanitizingRequired($mediaType)) {
-                $content = file_get_contents($source);
-                /** @var string $filename */
-                $filename = UnicodeFunctions::pathinfo($source, PATHINFO_FILENAME);
-                return $this->importResourceFromContent($content, $filename, $collectionName, $forcedPersistenceObjectIdentifier);
-            }
         }
 
         /* @var CollectionInterface $collection */
         $collection = $this->collections[$collectionName];
 
         try {
-            $resource = $collection->importResource($source);
-            if ($forcedPersistenceObjectIdentifier !== null) {
-                ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $forcedPersistenceObjectIdentifier, true);
-            }
-            if (!is_resource($source)) {
+            if (is_resource($source)) {
+                $mediaType = MediaTypes::getMediaTypeFromResource($source);
+                if ($this->isSanitizingRequired($mediaType)) {
+                    $content = stream_get_contents($source);
+                    if ($content === false) {
+                        throw new Exception(sprintf('Could not import the content stream into collection "%s".', $collectionName), 1695390671);
+                    }
+                    $resource = $this->importResourceFromContent($content, '', $collectionName, $forcedPersistenceObjectIdentifier);
+                } else {
+                    $resource = $collection->importResource($source);
+                }
+            } else {
+                $resource = fopen($source, 'rb');
+                if ($resource === false) {
+                    throw new Exception(sprintf('Could not read the file from "%s" for importing into collection "%s".', $source, $collectionName), 1695484845);
+                }
+                $mediaType = MediaTypes::getMediaTypeFromResource($resource);
+                fclose($resource);
                 $pathInfo = UnicodeFunctions::pathinfo($source);
-                $resource->setFilename($pathInfo['basename']);
+                if ($this->isSanitizingRequired($mediaType)) {
+                    $content = file_get_contents($source);
+                    /** @var string $filename */
+                    $resource = $this->importResourceFromContent($content, $pathInfo['basename'], $collectionName, $forcedPersistenceObjectIdentifier);
+                } else {
+                    $resource = $collection->importResource($source);
+                    $resource->setFilename($pathInfo['basename']);
+                }
             }
         } catch (Exception $exception) {
             throw new Exception(sprintf('Importing a file into the resource collection "%s" failed: %s', $collectionName, $exception->getMessage()), 1375197120, $exception);
+        }
+
+        if ($forcedPersistenceObjectIdentifier !== null) {
+            ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $forcedPersistenceObjectIdentifier, true);
         }
 
         $this->resourceRepository->add($resource);
