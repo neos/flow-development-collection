@@ -284,6 +284,7 @@ class StringHelperTest extends UnitTestCase
     {
         return [
             'replace' => ['canal', 'ana', 'oo', 'cool'],
+            'replace-array' => ['cool gridge', ['oo', 'gri'], ['ana', 'bri'], 'canal bridge'],
             'no match' => ['canal', 'x', 'y', 'canal'],
             'unicode replacement' => ['Öaßaü', 'aßa', 'g', 'Ögü']
         ];
