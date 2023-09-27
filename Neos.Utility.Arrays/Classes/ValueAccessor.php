@@ -81,10 +81,10 @@ class ValueAccessor
 
     /**
      * @template T
-     * @param class-string<T> $type
+     * @param class-string<T> $className
      * @return object&T
      */
-    public function object(string $type): object
+    public function instanceOf(string $className): object
     {
         if (is_a($this->value, $type, false)) {
             return $this->value;
@@ -145,10 +145,10 @@ class ValueAccessor
 
     /**
      * @template T
-     * @param class-string<T> $type
+     * @param class-string<T> $className
      * @return (object&T)|null
      */
-    public function objectOrNull(string $type): ?object
+    public function instanceOfOrNull(string $className): ?object
     {
         if (is_a($this->value, $type, false) || is_null($this->value)) {
             return $this->value;
