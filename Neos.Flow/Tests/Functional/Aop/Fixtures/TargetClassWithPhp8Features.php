@@ -47,7 +47,7 @@ class TargetClassWithPhp8Features
         return false;
     }
 
-// This needs https://github.com/laminas/laminas-code/pull/186 to be merged in order to work:
+    // This needs https://github.com/laminas/laminas-code/pull/186 to be merged in order to work:
 //    /**
 //     * @throws RuntimeException
 //     */

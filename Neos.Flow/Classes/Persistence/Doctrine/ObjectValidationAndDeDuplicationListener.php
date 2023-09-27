@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -20,6 +21,7 @@ use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
  * An onFlush listener for Flow's Doctrine PersistenceManager.
@@ -53,6 +55,36 @@ class ObjectValidationAndDeDuplicationListener
      * @var EntityManagerInterface
      */
     protected $entityManager;
+
+    /**
+     * An prePersist event listener to deduplicate value objects.
+     *
+     * This removes all existing value objects in doctrines identity map. This is needed as doctrine handles their
+     * identity based on the object and not based on the
+     *
+     * @param LifecycleEventArgs $eventArgs
+     * @return void
+     */
+    public function prePersist(LifecycleEventArgs $eventArgs)
+    {
+        $entityManager = $eventArgs->getObjectManager();
+        $unitOfWork = $entityManager->getUnitOfWork();
+        $objectToPersist = $eventArgs->getObject();
+
+        $classMetadata = $entityManager->getClassMetadata(get_class($objectToPersist));
+        $className = $classMetadata->rootEntityName;
+
+        $classSchema = $this->reflectionService->getClassSchema($className);
+        $identityMapOfClassName = $unitOfWork->getIdentityMap()[$className] ?? [];
+
+        if ($classSchema !== null && $classSchema->getModelType() === ClassSchema::MODELTYPE_VALUEOBJECT) {
+            foreach ($identityMapOfClassName as $objectInIdentityMap) {
+                if ($this->persistenceManager->getIdentifierByObject($objectInIdentityMap) === $this->persistenceManager->getIdentifierByObject($objectToPersist)) {
+                    $unitOfWork->removeFromIdentityMap($objectInIdentityMap);
+                }
+            }
+        }
+    }
 
     /**
      * An onFlush event listener used to act upon persistence.
