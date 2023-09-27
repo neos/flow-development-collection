@@ -20,7 +20,6 @@ use Neos\Flow\Utility\Environment;
 
 class ConfigurationManagerTest extends FunctionalTestCase
 {
-
     /**
      * @test
      */
