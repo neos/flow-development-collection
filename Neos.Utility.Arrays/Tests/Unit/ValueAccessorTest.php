@@ -95,7 +95,7 @@ class ValueAccessorTest extends \PHPUnit\Framework\TestCase
     /**
      * @test
      */
-    public function objectAccessorWorks()
+    public function instanceOfAccessorWorks()
     {
         $acceptableAsDateTimeInterface = [new \DateTime(), new \DateTimeImmutable()];
         $notAcceptableAsDateTimeInterface = [new \stdClass(), 1, -1, true, false, 'string'];
@@ -106,8 +106,8 @@ class ValueAccessorTest extends \PHPUnit\Framework\TestCase
         $acceptableAsDateTime = [new \DateTime()];
         $notAcceptableAsDateTime = [new \stdClass(), new \DateTimeImmutable(), 1, -1, true, false, 'string'];
 
-        $this->testAccessor($acceptableAsDateTime, [...$notAcceptableAsDateTime, null], 'object', [\DateTime::class]);
-        $this->testAccessor([...$acceptableAsDateTime, null], $notAcceptableAsDateTime, 'objectOrNull', [\DateTime::class]);
+        $this->testAccessor($acceptableAsDateTime, [...$notAcceptableAsDateTime, null], 'instanceOf', [\DateTime::class]);
+        $this->testAccessor([...$acceptableAsDateTime, null], $notAcceptableAsDateTime, 'instanceOfOrNull', [\DateTime::class]);
     }
 
     protected function testAccessor(
