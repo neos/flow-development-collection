@@ -23,9 +23,9 @@ class ValueAccessor
     ) {
     }
 
-    private function createTypeError($message): \TypeError
+    private function createTypeError($message): \UnexpectedValueException
     {
-        return new \TypeError(get_debug_type($this->value) . ' ' . $message . ($this->pathinfo ? ' in path ' . $this->pathinfo : ''));
+        return new \UnexpectedValueException(get_debug_type($this->value) . ' ' . $message . ($this->pathinfo ? ' in path ' . $this->pathinfo : ''));
     }
 
     public function int(): int
@@ -86,10 +86,10 @@ class ValueAccessor
      */
     public function instanceOf(string $className): object
     {
-        if (is_a($this->value, $type, false)) {
+        if ($this->value instanceof $className) {
             return $this->value;
         }
-        throw $this->createTypeError(sprintf('is not of type class %s', $type));
+        throw $this->createTypeError(sprintf('is not an instance of %s', $className));
     }
 
     public function intOrNull(): ?int
@@ -150,9 +150,9 @@ class ValueAccessor
      */
     public function instanceOfOrNull(string $className): ?object
     {
-        if (is_a($this->value, $type, false) || is_null($this->value)) {
+        if ($this->value instanceof $className || is_null($this->value)) {
             return $this->value;
         }
-        throw $this->createTypeError(sprintf('is not of type class %s or null', $type));
+        throw $this->createTypeError(sprintf('is not an instance of %s or null', $className));
     }
 }

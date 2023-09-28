@@ -100,8 +100,8 @@ class ValueAccessorTest extends \PHPUnit\Framework\TestCase
         $acceptableAsDateTimeInterface = [new \DateTime(), new \DateTimeImmutable()];
         $notAcceptableAsDateTimeInterface = [new \stdClass(), 1, -1, true, false, 'string'];
 
-        $this->testAccessor($acceptableAsDateTimeInterface, [...$notAcceptableAsDateTimeInterface, null], 'object', [\DateTimeInterface::class]);
-        $this->testAccessor([...$acceptableAsDateTimeInterface, null], $notAcceptableAsDateTimeInterface, 'objectOrNull', [\DateTimeInterface::class]);
+        $this->testAccessor($acceptableAsDateTimeInterface, [...$notAcceptableAsDateTimeInterface, null], 'instanceOf', [\DateTimeInterface::class]);
+        $this->testAccessor([...$acceptableAsDateTimeInterface, null], $notAcceptableAsDateTimeInterface, 'instanceOfOrNull', [\DateTimeInterface::class]);
 
         $acceptableAsDateTime = [new \DateTime()];
         $notAcceptableAsDateTime = [new \stdClass(), new \DateTimeImmutable(), 1, -1, true, false, 'string'];
@@ -122,13 +122,9 @@ class ValueAccessorTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals($value, $result);
         }
         foreach ($inacceptibleValues as $value) {
+            $this->expectException(\UnexpectedValueException::class);
             $accessor = new ValueAccessor($value, (is_scalar($value) || $value instanceof \Stringable) ? (string)$value : get_debug_type($value) . 'was given');
-            try {
-                $accessor->$methodName(...$methodArguments);
-                $this->fail('this should lead to an error');
-            } catch (\Error $error) {
-                $this->assertInstanceOf(\TypeError::class, $error);
-            }
+            $accessor->$methodName(...$methodArguments);
         }
     }
 }

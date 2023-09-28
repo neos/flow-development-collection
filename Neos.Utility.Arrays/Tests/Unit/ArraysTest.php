@@ -138,7 +138,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
     /**
      * @test
      */
-    public function getAccessorByPathThrowsTypeErrorIfPathIsNoArrayOrString()
+    public function getAccessorByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
         $this->expectException(\TypeError::class);
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
@@ -166,10 +166,10 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
     /**
      * @test
      */
-    public function getAccessorByPathTypeErrorContainsPathForNonMatchingTypes()
+    public function getAccessorByPathUnexpectedValueExceptionContainsPathForNonMatchingTypes()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => 'the value']]];
-        $this->expectException(\TypeError::class);
+        $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage('in path Foo.Bar.Baz');
         Arrays::getAccessorByPath($array, ['Foo', 'Bar', 'Baz'])->int();
     }
@@ -177,10 +177,10 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
     /**
      * @test
      */
-    public function getAccessorByPathTypeErrorContainsPathForNonMatchingTypesOnRoot()
+    public function getAccessorByPathUnexpectedValueExceptionContainsPathForNonMatchingTypesOnRoot()
     {
         $array = ['Foo' => 'string'];
-        $this->expectException(\TypeError::class);
+        $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage('in path Foo');
         Arrays::getAccessorByPath($array, ['Foo'])->int();
     }
@@ -188,10 +188,10 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
     /**
      * @test
      */
-    public function getAccessorByPathTypeErrorContainsPathForNonExistingPathes()
+    public function getAccessorByPathUnexpectedValueExceptionContainsPathForNonExistingPathes()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => 'the value']]];
-        $this->expectException(\TypeError::class);
+        $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage('in path Foo.Bar.Bax');
         Arrays::getAccessorByPath($array, ['Foo', 'Bar', 'Bax'])->int();
     }
