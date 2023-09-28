@@ -11,7 +11,10 @@ require_once(__DIR__ . '/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/SecurityOperationsTrait.php');
 
 /**
- * Features context
+ * See {@see IsolatedBehatStepsTrait} documentation for a detailed explanation of Flow's isolated behat tests.
+ *
+ * @deprecated todo the policy features depending on this handcrafted isolated behat test infrastructure will be refactored and this infrastructure removed.
+ * @internal only allowed to be used internally for Neos.Flow behavioral tests!
  */
 class FeatureContext implements Context
 {
