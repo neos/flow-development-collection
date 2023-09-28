@@ -208,7 +208,7 @@ trait SecurityOperationsTrait
             return;
         }
         $this->privilegeManager = $this->objectManager->get(PrivilegeManagerInterface::class);
-        $this->privilegeManager->setOverrideDecision(null);
+        $this->privilegeManager->reset();
 
         $this->policyService = $this->objectManager->get(PolicyService::class);
         $this->accountRepository = $this->objectManager->get(Security\AccountRepository::class);
