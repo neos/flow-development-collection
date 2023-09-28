@@ -490,7 +490,8 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         try {
             $connected = false;
             // keep the assignment above! the connect calls below leaves the variable undefined, if an error occurs.
-            if (strpos($this->hostname, '/') !== false) {
+            if (strncmp($this->hostname, '/', 1) === 0) {
+                // if the "hostname" starts with a slash, assume it's a socket and omit port.
                 $connected = $redis->connect($this->hostname);
             } else {
                 $connected = $redis->connect($this->hostname, $this->port);
