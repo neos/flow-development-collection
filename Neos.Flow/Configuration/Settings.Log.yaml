@@ -58,3 +58,7 @@ Neos:
         optionsByImplementation:
           'Neos\Flow\Log\ThrowableStorage\FileStorage':
             storagePath: '%FLOW_PATH_DATA%Logs/Exceptions'
+            # The maximum age of throwable dump in seconds, 0 to disable cleaning based on age, default 30 days
+            maximumThrowableDumpAge: 2592000
+            # The maximum number of throwable dumps to store, 0 to disable cleaning based on count, default 10.000
+            maximumThrowableDumpCount: 10000
