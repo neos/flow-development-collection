@@ -83,8 +83,10 @@ class Service
         $this->configuration = new Configuration($this->settings['defaultLocale']);
         $this->configuration->setFallbackRule($this->settings['fallbackRule']);
 
-        if ($this->cache->has('availableLocales')) {
-            $this->localeCollection = $this->cache->get('availableLocales');
+        $cachedCollection = $this->cache->get('availableLocales');
+
+        if ($cachedCollection !== false) {
+            $this->localeCollection = $cachedCollection;
         } elseif (isset($this->settings['availableLocales']) && !empty($this->settings['availableLocales'])) {
             $this->generateAvailableLocalesCollectionFromSettings();
             $this->cache->set('availableLocales', $this->localeCollection);
