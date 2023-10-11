@@ -91,6 +91,9 @@ class RedisBackendTest extends BaseTestCase
      */
     public function freezeInvokesRedis(): void
     {
+        $this->redis->method('exec')
+            ->willReturn($this->redis);
+
         $this->redis->expects(self::once())
             ->method('lRange')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entries', 0, -1)
