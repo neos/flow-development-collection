@@ -265,6 +265,9 @@ class ProxyClassBuilder
     protected function buildAspectContainer(string $aspectClassName): AspectContainer
     {
         $aspectContainer = new AspectContainer($aspectClassName);
+        if (!class_exists($aspectClassName)) {
+            throw new InvalidTargetClassException(sprintf('The class "%s" is not loadable for AOP proxy building. This is most likely an inconsistency with the caches. Try running `./flow flow:cache:flush` and if that does not help, check the class exists and is correctly namespaced.', $aspectClassName), 1607422151);
+        }
         $methodNames = get_class_methods($aspectClassName);
 
         foreach ($methodNames as $methodName) {

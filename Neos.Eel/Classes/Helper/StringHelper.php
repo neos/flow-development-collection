@@ -317,17 +317,23 @@ class StringHelper implements ProtectedContextAwareInterface
      * Example::
      *
      *     String.replace("canal", "ana", "oo") == "cool"
+     *     String.replace("cool gridge", ["oo", "gri"], ["ana", "bri"]) == "canal bridge"
      *
      * Note: this method does not perform regular expression matching, @see pregReplace().
      *
-     * @param string $string The input string
-     * @param string $search A search string
-     * @param string $replace A replacement string
-     * @return string The string with all occurrences replaced
+     * @param array|string|null $string The input string
+     * @param array|string|null $search A search string
+     * @param array|string|null $replace A replacement string
+     * @return array|string|string[] The string with all occurrences replaced
      */
     public function replace($string, $search, $replace)
     {
-        return str_replace((string)$search, (string)$replace, (string)$string);
+        // Replace null values with empty strings
+        $string = is_array($string) ? $string : (string) $string;
+        $search = is_array($search) ? $search : (string) $search;
+        $replace = is_array($replace) ? $replace : (string) $replace;
+
+        return str_replace($search, $replace, $string);
     }
 
     /**
