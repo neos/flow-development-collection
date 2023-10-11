@@ -10,6 +10,7 @@ namespace Neos\Utility\MediaTypes\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Utility\MediaTypes;
 
 /**
