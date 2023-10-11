@@ -370,10 +370,8 @@ class ConfigurationManager
      */
     protected function replaceConfigurationForConfigurationType(string $configurationType, string $cachePathAndFilename): void
     {
-        /** @noinspection UsingInclusionReturnValueInspection */
-        $configurations = @include $cachePathAndFilename;
-        if ($configurations !== false) {
-            $this->configurations[$configurationType] = $configurations;
+        if (is_file($cachePathAndFilename)) {
+            $this->configurations[$configurationType] = include $cachePathAndFilename;
         }
     }
 
@@ -386,10 +384,8 @@ class ConfigurationManager
             return;
         }
         $cachePathAndFilename = $this->constructConfigurationCachePath();
-        /** @noinspection UsingInclusionReturnValueInspection */
-        $configurations = @include $cachePathAndFilename;
-        if ($configurations !== false) {
-            $this->configurations = $configurations;
+        if (is_file($cachePathAndFilename)) {
+            $this->configurations = include $cachePathAndFilename;
         }
     }
 
