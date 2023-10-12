@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
@@ -15,8 +16,8 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Tests\BaseTestCase;
 
 /**
  * Testcase for the redis cache backend
@@ -27,7 +28,7 @@ use Neos\Cache\Frontend\FrontendInterface;
 class RedisBackendTest extends BaseTestCase
 {
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject|\Redis
      */
     private $redis;
 
@@ -37,7 +38,7 @@ class RedisBackendTest extends BaseTestCase
     private $backend;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject|FrontendInterface
      */
     private $cache;
 
@@ -54,9 +55,8 @@ class RedisBackendTest extends BaseTestCase
 
         $this->redis = $this->getMockBuilder(\Redis::class)->disableOriginalConstructor()->getMock();
         $this->cache = $this->createMock(FrontendInterface::class);
-        $this->cache->expects(self::any())
-            ->method('getIdentifier')
-            ->will(self::returnValue('Foo_Cache'));
+        $this->cache->method('getIdentifier')
+            ->willReturn('Foo_Cache');
 
         $mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)->setConstructorArgs([
             __DIR__ . '~Testing',
@@ -76,12 +76,12 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function findIdentifiersByTagInvokesRedis()
+    public function findIdentifiersByTagInvokesRedis(): void
     {
         $this->redis->expects(self::once())
             ->method('sMembers')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:tag:some_tag')
-            ->will(self::returnValue(['entry_1', 'entry_2']));
+            ->willReturn(['entry_1', 'entry_2']);
 
         $this->assertEquals(['entry_1', 'entry_2'], $this->backend->findIdentifiersByTag('some_tag'));
     }
@@ -89,11 +89,14 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function freezeInvokesRedis()
+    public function freezeInvokesRedis(): void
     {
+        $this->redis->method('exec')
+            ->willReturn($this->redis);
+
         $this->redis->expects(self::once())
             ->method('keys')
-            ->will(self::returnValue(['entry_1', 'entry_2']));
+            ->willReturn(['entry_1', 'entry_2']);
 
         $this->redis->expects(self::exactly(2))
             ->method('persist');
@@ -108,14 +111,13 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function setUsesDefaultLifetimeIfNotProvided()
+    public function setUsesDefaultLifetimeIfNotProvided(): void
     {
-        $defaultLifetime = rand(1, 9999);
+        $defaultLifetime = random_int(1, 9999);
         $this->backend->setDefaultLifetime($defaultLifetime);
         $expected = ['ex' => $defaultLifetime];
 
-        $this->redis->expects(self::any())
-            ->method('multi')
+        $this->redis->method('multi')
             ->willReturn($this->redis);
 
         $this->redis->expects(self::once())
@@ -129,14 +131,13 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function setUsesProvidedLifetime()
+    public function setUsesProvidedLifetime(): void
     {
         $defaultLifetime = 3600;
         $this->backend->setDefaultLifetime($defaultLifetime);
         $expected = ['ex' => 1600];
 
-        $this->redis->expects(self::any())
-            ->method('multi')
+        $this->redis->method('multi')
             ->willReturn($this->redis);
 
         $this->redis->expects(self::once())
@@ -150,10 +151,9 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function setAddsEntryToRedis()
+    public function setAddsEntryToRedis(): void
     {
-        $this->redis->expects(self::any())
-            ->method('multi')
+        $this->redis->method('multi')
             ->willReturn($this->redis);
 
         $this->redis->expects(self::once())
@@ -167,12 +167,12 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function getInvokesRedis()
+    public function getInvokesRedis(): void
     {
         $this->redis->expects(self::once())
             ->method('get')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo')
-            ->will(self::returnValue('bar'));
+            ->willReturn('bar');
 
         self::assertEquals('bar', $this->backend->get('foo'));
     }
@@ -180,12 +180,12 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function hasInvokesRedis()
+    public function hasInvokesRedis(): void
     {
         $this->redis->expects(self::once())
             ->method('exists')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo')
-            ->will(self::returnValue(true));
+            ->willReturn(true);
 
         self::assertEquals(true, $this->backend->has('foo'));
     }
@@ -195,14 +195,14 @@ class RedisBackendTest extends BaseTestCase
      * @dataProvider writingOperationsProvider
      * @param string $method
      */
-    public function writingOperationsThrowAnExceptionIfCacheIsFrozen($method)
+    public function writingOperationsThrowAnExceptionIfCacheIsFrozen(string $method): void
     {
         $this->expectException(\RuntimeException::class);
         $this->inject($this->backend, 'frozen', null);
         $this->redis->expects(self::once())
             ->method('exists')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen')
-            ->will(self::returnValue(true));
+            ->willReturn(true);
 
         $this->backend->$method('foo', 'bar');
     }
@@ -212,14 +212,14 @@ class RedisBackendTest extends BaseTestCase
      * @dataProvider batchWritingOperationsProvider
      * @param string $method
      */
-    public function batchWritingOperationsThrowAnExceptionIfCacheIsFrozen($method)
+    public function batchWritingOperationsThrowAnExceptionIfCacheIsFrozen(string $method): void
     {
         $this->expectException(\RuntimeException::class);
         $this->inject($this->backend, 'frozen', null);
         $this->redis->expects(self::once())
             ->method('exists')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen')
-            ->will(self::returnValue(true));
+            ->willReturn(true);
 
         $this->backend->$method(['foo', 'bar']);
     }
@@ -227,7 +227,7 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @return array
      */
-    public static function writingOperationsProvider()
+    public static function writingOperationsProvider(): array
     {
         return [
             ['set'],
@@ -240,7 +240,7 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @return array
      */
-    public static function batchWritingOperationsProvider()
+    public static function batchWritingOperationsProvider(): array
     {
         return [
             ['flushByTags'],
