@@ -1,0 +1,115 @@
+`8.2.7 (2023-10-12) <https://github.com/neos/flow-development-collection/releases/tag/8.2.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add PDO driverOptions <https://github.com/neos/flow-development-collection/pull/3184>`_
+------------------------------------------------------------------------------------------------
+
+This allows to pass driver options for the PDO cache backend, e.g. to make use of SSL, like so:
+
+```yaml
+Flow_Session_Storage:
+  backend: Neos\\Cache\\Backend\\PdoBackend
+  backendOptions:
+    dataSourceName: 'mysql:host=%env:DB_HOST%;dbname=%env:DB_NAME%;charset=utf8mb4'
+    username: '%env:DB_USER%'
+    password: '%env:DB_PASSWORD%'
+    cacheTableName: 'cache_session_storage'
+    tagsTableName: 'cache_session_storage_tags'
+    driverOptions:
+      '%PDO::MYSQL_ATTR_SSL_CA%': 'https://cacerts.digicert.com/DigiCertGlobalRootG2.crt.pem'
+      '%PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT%': false
+```
+
+* Fixes: `#3157 <https://github.com/neos/flow-development-collection/issues/3157>`_
+
+
+* Packages: ``Cache``
+
+`BUGFIX: Fix `RedisBackend` to allow scheme in hostname <https://github.com/neos/flow-development-collection/pull/3146>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+The hostname can hold a scheme, that is needed to enable TLS for the connection:
+
+    tls://127.0.0.1
+
+or
+
+    tlsv1.2://127.0.0.1
+
+This change fixes the overly naive check for a unix socket to allow using a scheme in the hostname together with a custom port.
+
+**Review instructions**
+
+Have an TLS enabled Redis (e.g. free tier on upstash.com) and try to connect to it…
+
+
+* Packages: ``Flow`` ``Cache``
+
+`BUGFIX: Allow arrays in `replace`-String-Helper <https://github.com/neos/flow-development-collection/pull/3180>`_
+------------------------------------------------------------------------------------------------------------------
+
+The ``str_replace`` function allows arrays as arguments to replace multiple words with other words
+
+### Here is a simple example:
+If you have an array to replace i. e. BB-Codes:
+
+```yaml
+Foo:
+  Bar:
+    bbCodes:
+      '[h2]': '<h2>'
+      '[/h2]': '</h2>'
+      '[h3]': '<h3>'
+      '[/h3]': '</h3>'
+```
+
+You can usethe helper (with my changes) like this:
+
+```neosfusion
+prototype(Foo.Bar:String) < prototype(Neos.Fusion:Value) {
+    string = '[h2]Hello[/h2][h3]something[/h3]';
+
+    search = ${Array.keys(Configuration.setting('Foo.Bar.bbCodes'))}
+    replace = ${Configuration.setting('Foo.Bar.bbCodes')}
+
+    value = ${String.replace(this.string, this.search, this.replace)}
+}
+```
+
+* Resolves: `#3166 <https://github.com/neos/flow-development-collection/issues/3166>`_
+
+
+* Packages: ``Flow`` ``Eel``
+
+`BUGFIX: Fix `ConfigurationManager::setTemporaryDirectoryBase()` for PHP 8+ <https://github.com/neos/flow-development-collection/pull/3183>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes ``ConfigurationManager::setTemporaryDirectoryBase()`` by replacing the use of the `error control operator <https://www.php.net/manual/en/language.operators.errorcontrol.php>`_ that leads to a Warning with PHP 8.0+
+
+* Fixes: `#3182 <https://github.com/neos/flow-development-collection/issues/3182>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: 3129 ProxyClassBuilder php 8.0 fix `get_class_methods` <https://github.com/neos/flow-development-collection/pull/3162>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#3129 <https://github.com/neos/flow-development-collection/issues/3129>`_
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`TASK: Fix cache RedisBackend unittest <https://github.com/neos/flow-development-collection/pull/3194>`_
+--------------------------------------------------------------------------------------------------------
+
+A test failed due to a missing return value from a method not being mocked (correctly),
+
+
+* Packages: ``Flow`` ``Cache``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.2.6...8.2.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
