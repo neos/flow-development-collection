@@ -115,7 +115,7 @@ class DocCommentParser
     protected function parseTag($line)
     {
         $tagAndValue = [];
-        if (preg_match('/@[A-Za-z0-9\\\\]+\\\\([A-Za-z0-9]+)(?:\\((.*)\\))?$/', $line, $tagAndValue) === 0) {
+        if (preg_match('/(@[A-Za-z0-9\\\\]+\\\\[A-Za-z0-9]+)(?:(?:\\(|\s)([^\)]*))?/', $line, $tagAndValue) === 0) {
             $tagAndValue = preg_split('/\s/', $line, 2);
         } else {
             array_shift($tagAndValue);
