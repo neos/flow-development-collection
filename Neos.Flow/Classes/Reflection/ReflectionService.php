@@ -228,7 +228,7 @@ class ReflectionService
         $this->environment = $environment;
     }
 
-    protected function getDoctrinePhpParser(): ?PhpParser
+    protected function getDoctrinePhpParser(): PhpParser
     {
         if ($this->doctrinePhpParser === null) {
             $this->doctrinePhpParser = new PhpParser();
@@ -472,7 +472,7 @@ class ReflectionService
      * If multiple annotations are set on the target you will
      * get the first instance of them.
      */
-    public function getClassAnnotation(string $className, string $annotationClassName): object|bool|null
+    public function getClassAnnotation(string $className, string $annotationClassName): ?object
     {
         if (!$this->initialized) {
             $this->initialize();
@@ -967,11 +967,12 @@ class ReflectionService
 
     /**
      * Returns the class schema for the given class
+     * @param class-string|string|object $classNameOrObject
      */
     public function getClassSchema(string|object $classNameOrObject): ?ClassSchema
     {
         $className = $classNameOrObject;
-        if (is_object($classNameOrObject)) {
+        if (is_object($className)) {
             $className = TypeHandling::getTypeForValue($classNameOrObject);
         }
         $className = $this->cleanClassName($className);
@@ -980,7 +981,7 @@ class ReflectionService
             $this->classSchemata[$className] = $this->classSchemataRuntimeCache->get($this->produceCacheIdentifierFromClassName($className));
         }
 
-        return is_object($this->classSchemata[$className]) ? $this->classSchemata[$className] : null;
+        return $this->classSchemata[$className] ?? null;
     }
 
     /**
@@ -1405,6 +1406,7 @@ class ReflectionService
     }
 
     /**
+     * @param class-string $className
      * @throws InvalidValueObjectException
      * @throws ClassSchemaConstraintViolationException
      */
@@ -1604,6 +1606,7 @@ class ReflectionService
      * Checks if the given class meets the requirements for a value object, i.e.
      * does have a constructor and does not have any setter methods.
      *
+     * @param class-string $className
      * @throws InvalidValueObjectException
      */
     protected function checkValueObjectRequirements(string $className): void
@@ -2099,7 +2102,7 @@ class ReflectionService
     /**
      * Transform backslashes to underscores to provide a valid cache identifier.
      */
-    protected function produceCacheIdentifierFromClassName(string $className): array|string
+    protected function produceCacheIdentifierFromClassName(string $className): string
     {
         return str_replace('\\', '_', $className);
     }

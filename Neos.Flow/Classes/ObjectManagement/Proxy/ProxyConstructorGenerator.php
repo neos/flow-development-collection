@@ -34,7 +34,7 @@ final class ProxyConstructorGenerator extends ProxyMethodGenerator
         $method = new static('__construct');
         $declaringClass = $reflectionMethod->getDeclaringClass();
 
-        $method->fullOriginalClassName = $declaringClass->name;
+        $method->fullOriginalClassName = $declaringClass->getName();
         $method->setFinal($reflectionMethod->isFinal());
 
         # Safe the original visibility of the constructor for later use in the proxy constructor
@@ -77,7 +77,7 @@ final class ProxyConstructorGenerator extends ProxyMethodGenerator
             return '';
         }
 
-        $callParentMethodCode = $this->buildCallParentMethodCode($this->fullOriginalClassName, $this->name);
+        $callParentMethodCode = isset($this->fullOriginalClassName) ? $this->buildCallParentMethodCode($this->fullOriginalClassName, $this->name) : '';
         $this->addedPreParentCallCode = rtrim($this->addedPreParentCallCode);
         $this->addedPostParentCallCode = rtrim($this->addedPostParentCallCode);
 
@@ -110,7 +110,7 @@ final class ProxyConstructorGenerator extends ProxyMethodGenerator
      *
      * See the ProxyCompilerTest functional tests for examples of these cases.
      *
-     * @psalm-param class-string $fullClassName
+     * @param class-string $fullClassName
      */
     protected function buildCallParentMethodCode(string $fullClassName, string $methodName): string
     {

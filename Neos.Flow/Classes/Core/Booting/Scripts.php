@@ -60,7 +60,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class Scripts
 {
-    /** @var string */
+    /** @var string|null */
     protected static $builtPhpCommand = null;
 
     /**

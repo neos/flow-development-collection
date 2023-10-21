@@ -99,7 +99,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * Returns the object name corresponding to a given class name.
      *
      * @param string $className The class name
-     * @return string The object name corresponding to the given class name
+     * @return string|false The object name corresponding to the given class name
      * @api
      */
     public function getObjectNameByClassName($className);

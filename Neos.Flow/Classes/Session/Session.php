@@ -365,7 +365,7 @@ class Session implements CookieEnabledInterface
                 foreach ($sessionObjects as $object) {
                     if ($object instanceof ProxyInterface) {
                         $objectName = $this->objectManager->getObjectNameByClassName(get_class($object));
-                        if ($this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
+                        if ($objectName && $this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
                             $this->objectManager->setInstance($objectName, $object);
                             $this->objectManager->get(Aspect\LazyLoadingAspect::class)->registerSessionInstance($objectName, $object);
                         }

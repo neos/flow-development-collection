@@ -270,9 +270,10 @@ class CommandManager
                 continue;
             }
             $controllerObjectName = $objectManager->getObjectNameByClassName($className);
+            assert($controllerObjectName !== false);
             $commandControllerMethodArgumentMap[$controllerObjectName] = [];
             foreach (get_class_methods($className) as $methodName) {
-                if (substr($methodName, -7, 7) === 'Command') {
+                if (str_ends_with($methodName, 'Command')) {
                     $commandControllerMethodArgumentMap[$className][$methodName] = $reflectionService->getMethodParameters($controllerObjectName, $methodName);
                 }
             }
