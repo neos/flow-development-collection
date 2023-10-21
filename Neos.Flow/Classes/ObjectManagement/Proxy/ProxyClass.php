@@ -235,8 +235,9 @@ class ProxyClass
         $traitsCode = $this->renderTraitsCode();
         $methodsCode = '';
 
-        if (isset($this->constructor)) {
-            $constructorBodyCode = $this->constructor->renderBodyCode();
+        $constructorBodyCode = $this->constructor?->renderBodyCode() ?? '';
+        if ($constructorBodyCode !== '') {
+            assert($this->constructor !== null);
             $this->constructor->setBody($constructorBodyCode);
             $methodsCode .= PHP_EOL . $this->constructor->generate();
 

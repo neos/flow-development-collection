@@ -153,7 +153,7 @@ class ReflectionService
     /**
      * Schemata of all classes which can be persisted
      *
-     * @var array<ClassSchema>
+     * @var array<string, ClassSchema|false>
      */
     protected array $classSchemata = [];
 
@@ -981,7 +981,8 @@ class ReflectionService
             $this->classSchemata[$className] = $this->classSchemataRuntimeCache->get($this->produceCacheIdentifierFromClassName($className));
         }
 
-        return $this->classSchemata[$className] ?? null;
+        $classSchema = $this->classSchemata[$className] ?? false;
+        return $classSchema === false ? null : $classSchema;
     }
 
     /**
