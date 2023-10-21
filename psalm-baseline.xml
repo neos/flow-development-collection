@@ -222,7 +222,6 @@
       <code>(float)$x</code>
       <code>(float)$x</code>
       <code>(float)$x</code>
-      <code>(float)$x</code>
       <code>(float)$y</code>
     </RedundantCastGivenDocblockType>
   </file>
@@ -252,8 +251,6 @@
       <code>(int)$value</code>
       <code>(string)$search</code>
       <code>(string)$search</code>
-      <code>(string)$string</code>
-      <code>(string)$string</code>
       <code>(string)$string</code>
       <code>(string)$string</code>
       <code>(string)$string</code>
@@ -357,6 +354,7 @@
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Aop/Builder/ProxyClassBuilder.php">
     <ArgumentTypeCoercion occurrences="2">
+      <code>$targetClassName</code>
       <code>$targetClassName</code>
     </ArgumentTypeCoercion>
     <NullArgument occurrences="2">
@@ -1388,7 +1386,6 @@
       <code>getMethod</code>
       <code>getMethod</code>
       <code>getMethod</code>
-      <code>getMethod</code>
     </PossiblyInvalidMethodCall>
     <PossiblyUndefinedVariable occurrences="1">
       <code>$commands</code>
@@ -1416,7 +1413,6 @@
       <code>strrpos($fullOriginalClassName, '\\')</code>
     </PossiblyFalseArgument>
     <RedundantPropertyInitializationCheck occurrences="1">
-      <code>isset($this-&gt;constructor)</code>
       <code>isset($this-&gt;constructor)</code>
     </RedundantPropertyInitializationCheck>
   </file>
@@ -1474,6 +1470,9 @@
     <NoInterfaceProperties occurrences="1">
       <code>$joinPoint-&gt;getProxy()-&gt;Flow_Persistence_clone</code>
     </NoInterfaceProperties>
+    <PossiblyNullReference occurrences="1">
+      <code>getProperties</code>
+    </PossiblyNullReference>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/ArrayTypeConverter.php">
     <PossiblyNullReference occurrences="1">
@@ -1541,7 +1540,8 @@
     </ArgumentTypeCoercion>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Persistence/Doctrine/Mapping/Driver/FlowAnnotationDriver.php">
-    <ArgumentTypeCoercion occurrences="5">
+    <ArgumentTypeCoercion occurrences="6">
+      <code>$className</code>
       <code>$className</code>
       <code>$className</code>
       <code>$classSchema-&gt;getRepositoryClassName()</code>
@@ -1743,6 +1743,10 @@
     <NullableReturnStatement occurrences="1">
       <code>null</code>
     </NullableReturnStatement>
+    <PossiblyNullReference occurrences="2">
+      <code>getIdentityProperties</code>
+      <code>hasProperty</code>
+    </PossiblyNullReference>
     <TooManyArguments occurrences="2">
       <code>logicalAnd</code>
       <code>logicalAnd</code>
@@ -1834,13 +1838,18 @@
     <ArgumentTypeCoercion occurrences="4">
       <code>$className</code>
       <code>$className</code>
-      <code>$className</code>
       <code>$this-&gt;cleanClassName($className)</code>
     </ArgumentTypeCoercion>
     <MissingDocblockType occurrences="2">
       <code>$package</code>
       <code>$packageKey</code>
     </MissingDocblockType>
+    <PossiblyFalseReference occurrences="4">
+      <code>isAggregateRoot</code>
+      <code>isAggregateRoot</code>
+      <code>setRepositoryClassName</code>
+      <code>setRepositoryClassName</code>
+    </PossiblyFalseReference>
     <PossiblyNullArrayAssignment occurrences="2">
       <code>$this-&gt;classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS]</code>
       <code>$this-&gt;classReflectionData[$parentClassName][self::DATA_CLASS_SUBCLASSES]</code>
@@ -1850,6 +1859,9 @@
       <code>freeze</code>
       <code>isFrozen</code>
     </UndefinedInterfaceMethod>
+    <UndefinedMethod occurrences="1">
+      <code>getName</code>
+    </UndefinedMethod>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Reflection/ReflectionServiceFactory.php">
     <ArgumentTypeCoercion occurrences="2">
@@ -2406,6 +2418,11 @@
       <code>$bits</code>
       <code>$bits</code>
     </PossiblyInvalidOperand>
+  </file>
+  <file src="Packages/Framework/Neos.Flow/Classes/Utility/Now.php">
+    <MethodSignatureMismatch occurrences="1">
+      <code>Now</code>
+    </MethodSignatureMismatch>
   </file>
   <file src="Packages/Framework/Neos.Flow/Classes/Validation/Error.php">
     <InvalidPropertyAssignmentValue occurrences="1">
