@@ -26,6 +26,9 @@
         "neos/utility-unicode": "self.version",
         "neos/flow-log": "self.version",
         "neos/http-factories": "self.version",
+        "neos/utility-pdo": "self.version",
+
+        "neos/composer-plugin": "^2.0",
 
         "psr/http-message": "^1.0",
         "psr/http-factory": "^1.0",
@@ -45,9 +48,6 @@
         "symfony/yaml": "^5.1",
         "symfony/dom-crawler": "^5.1",
         "symfony/console": "^5.1",
-
-        "neos/composer-plugin": "^2.0",
-        "neos/utility-pdo": "~7.3.0",
 
         "composer/composer": "^2.2.8",
 
