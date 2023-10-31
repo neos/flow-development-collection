@@ -14,18 +14,21 @@
         "ext-reflection": "*",
         "ext-xml": "*",
 
-        "neos/cache": "~8.3.0",
-        "neos/eel": "~8.3.0",
-        "neos/error-messages": "~8.3.0",
-        "neos/utility-arrays": "~8.3.0",
-        "neos/utility-files": "~8.3.0",
-        "neos/utility-mediatypes": "~8.3.0",
-        "neos/utility-objecthandling": "~8.3.0",
-        "neos/utility-opcodecache": "~8.3.0",
-        "neos/utility-schema": "~8.3.0",
-        "neos/utility-unicode": "~8.3.0",
-        "neos/flow-log": "~8.3.0",
-        "neos/http-factories": "~8.3.0",
+        "neos/cache": "self.version",
+        "neos/eel": "self.version",
+        "neos/error-messages": "self.version",
+        "neos/utility-arrays": "self.version",
+        "neos/utility-files": "self.version",
+        "neos/utility-mediatypes": "self.version",
+        "neos/utility-objecthandling": "self.version",
+        "neos/utility-opcodecache": "self.version",
+        "neos/utility-schema": "self.version",
+        "neos/utility-unicode": "self.version",
+        "neos/flow-log": "self.version",
+        "neos/http-factories": "self.version",
+        "neos/utility-pdo": "self.version",
+
+        "neos/composer-plugin": "^2.0",
 
         "psr/http-message": "^1.0",
         "psr/http-factory": "^1.0",
@@ -50,12 +53,10 @@
         "symfony/dom-crawler": "^5.1||^6.0",
         "symfony/console": "^5.1||^6.0",
 
-        "neos/composer-plugin": "^2.0",
-        "neos/utility-pdo": "~9.0.0",
-
         "composer/composer": "^2.2.8",
 
-        "egulias/email-validator": "^2.1.17 || ^3.0"
+        "egulias/email-validator": "^2.1.17 || ^3.0",
+        "enshrined/svg-sanitize": "^0.16.0"
     },
     "require-dev": {
         "vimeo/psalm": "~4.30.0",

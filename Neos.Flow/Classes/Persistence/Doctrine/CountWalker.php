@@ -49,7 +49,7 @@ class CountWalker extends TreeWalkerAdapter
 
         $AST->selectClause->selectExpressions = [
             new SelectExpression(
-                new AggregateExpression('count', $pathExpression, true),
+                new AggregateExpression('count', $pathExpression, $AST->selectClause->isDistinct),
                 null
             )
         ];
