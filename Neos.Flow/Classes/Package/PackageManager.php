@@ -580,7 +580,15 @@ class PackageManager
             if (isset($composerManifest['type']) && $composerManifest['type'] === 'neos-package-collection') {
                 // the package type "neos-package-collection" indicates a composer package that joins several "flow" packages together.
                 // continue traversal inside the package and append the nested generator to the $packages.
-                $packages->append(new \NoRewindIterator(self::findComposerPackagesInPath($packagePath)));
+                $collectionPackages = $composerManifest["extra"]["neos"]["collection-packages"];
+                $packages->append(new \NoRewindIterator((function () use ($collectionPackages, $packagePath) {
+                    foreach ($collectionPackages as $_packageName => $collectionPackageConfiguration) {
+                        yield Files::concatenatePaths([
+                            $packagePath,
+                            $collectionPackageConfiguration['path']
+                        ]);
+                    }
+                })()));
                 continue;
             }
 

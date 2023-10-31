@@ -89,7 +89,7 @@ class ComposerUtility
      */
     protected static function readComposerManifest(string $manifestPath): array
     {
-        $manifestPathAndFilename = $manifestPath . 'composer.json';
+        $manifestPathAndFilename = Files::concatenatePaths([$manifestPath, 'composer.json']);
         if (isset(self::$composerManifestCache[$manifestPathAndFilename])) {
             return self::$composerManifestCache[$manifestPathAndFilename];
         }
