@@ -5,7 +5,7 @@
     "description": "The Embedded Expression Language (Eel) is a building block for creating Domain Specific Languages",
     "require": {
         "php": "^8.0",
-        "neos/flow": "~8.1.0",
+        "neos/flow": "self.version",
         "neos/cache": "self.version",
         "neos/utility-unicode": "self.version",
         "neos/utility-objecthandling": "self.version"
