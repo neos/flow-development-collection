@@ -11,10 +11,12 @@ namespace Neos\Flow\ResourceManagement;
  * source code.
  */
 
+use enshrined\svgSanitize\Sanitizer;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Utility\MediaTypes;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\ResourceManagement\Storage\StorageInterface;
 use Neos\Flow\ResourceManagement\Storage\WritableStorageInterface;
@@ -160,13 +162,29 @@ class ResourceManager
         $collection = $this->collections[$collectionName];
 
         try {
-            $resource = $collection->importResource($source);
-            if ($forcedPersistenceObjectIdentifier !== null) {
-                ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $forcedPersistenceObjectIdentifier, true);
-            }
-            if (!is_resource($source)) {
+            if (is_resource($source)) {
+                $mediaType = MediaTypes::getMediaTypeFromResource($source);
+                if ($this->isSanitizingRequired($mediaType)) {
+                    $content = stream_get_contents($source);
+                    $resource = $this->importResourceFromContent($content, '', $collectionName, $forcedPersistenceObjectIdentifier);
+                } else {
+                    $resource = $collection->importResource($source);
+                }
+            } else {
+                $resource = fopen($source, 'rb');
+                $mediaType = MediaTypes::getMediaTypeFromResource($resource);
+                fclose($resource);
+                if ($this->isSanitizingRequired($mediaType)) {
+                    $content = file_get_contents($source);
+                    $resource = $this->importResourceFromContent($content, '', $collectionName, $forcedPersistenceObjectIdentifier);
+                } else {
+                    $resource = $collection->importResource($source);
+                }
                 $pathInfo = UnicodeFunctions::pathinfo($source);
                 $resource->setFilename($pathInfo['basename']);
+            }
+            if ($forcedPersistenceObjectIdentifier !== null) {
+                ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $forcedPersistenceObjectIdentifier, true);
             }
         } catch (Exception $exception) {
             throw new Exception(sprintf('Importing a file into the resource collection "%s" failed: %s', $collectionName, $exception->getMessage()), 1375197120, $exception);
@@ -204,6 +222,11 @@ class ResourceManager
 
         if (!isset($this->collections[$collectionName])) {
             throw new Exception(sprintf('Tried to import a file into the resource collection "%s" but no such collection exists. Please check your settings and the code which triggered the import.', $collectionName), 1380878131);
+        }
+
+        $mediaType = MediaTypes::getMediaTypeFromFileContent($content);
+        if ($this->isSanitizingRequired($mediaType)) {
+            $content = $this->sanitizeImportedFileContent($mediaType, $content, $filename);
         }
 
         /* @var CollectionInterface $collection */
@@ -606,6 +629,44 @@ class ResourceManager
 
             $this->collections[$collectionName] = new Collection($collectionName, $this->storages[$collectionDefinition['storage']], $this->targets[$collectionDefinition['target']], $pathPatterns, $filenames);
         }
+    }
+
+    /**
+     * Decide weather the given media-type has to be sanitized
+     * for now this only checks svg file to solve the issue here https://nvd.nist.gov/vuln/detail/CVE-2023-37611
+     *
+     * @todo create a feature from this and allow to register code for sanitizing file content before importing
+     */
+    protected function isSanitizingRequired(string $mediaType): bool
+    {
+        return $mediaType === 'image/svg+xml';
+    }
+
+    /**
+     * Sanitize file content and remove content that is suspicious
+     * for now this only checks svg file to solve the issue here https://nvd.nist.gov/vuln/detail/CVE-2023-37611
+     *
+     * @todo create a feature from this and allow to register code for sanitizing file content before importing
+     */
+    protected function sanitizeImportedFileContent(string $mediaType, string $content, $filename = ''): string
+    {
+        if ($mediaType === 'image/svg+xml') {
+            // @todo: Simplify again when https://github.com/darylldoyle/svg-sanitizer/pull/90 is merged and released.
+            $previousXmlErrorHandling = libxml_use_internal_errors(true);
+            $sanitizer = new Sanitizer();
+            $sanitizedContent = $sanitizer->sanitize($content);
+            libxml_clear_errors();
+            libxml_use_internal_errors($previousXmlErrorHandling);
+            $issues = $sanitizer->getXmlIssues();
+            if ($issues && count($issues) > 0) {
+                if ($sanitizedContent === false) {
+                    throw new Exception('Sanitizing of suspicious file "' . $filename . '" failed during import.', 1695395560);
+                }
+                $content = $sanitizedContent;
+                $this->logger->warning(sprintf('Imported file "%s" contained suspicious content and was sanitized.', $filename), $issues);
+            }
+        }
+        return $content;
     }
 
     /**
