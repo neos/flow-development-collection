@@ -26,21 +26,9 @@ class FeatureContext implements Context
      */
     protected $behatTestHelperObjectName = BehatTestHelper::class;
 
-    /**
-     * @var Environment
-     */
-    protected $environment;
-
-    /**
-     * @var \Neos\Flow\ObjectManagement\ObjectManagerInterface
-     */
-    protected $objectManager;
-
     public function __construct()
     {
         self::bootstrapFlow();
-        $this->objectManager = $this->getObjectManager();
-        $this->environment = $this->getObject(Environment::class);
         $this->setupSecurity();
     }
 }
