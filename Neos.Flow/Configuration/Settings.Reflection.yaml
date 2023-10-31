@@ -25,7 +25,6 @@ Neos:
         'AfterScenario': true
         'BeforeSuite': true
         'AfterSuite': true
-        'fixtures': true
         'Isolated': true
         'AfterFeature': true
         'BeforeFeature': true
