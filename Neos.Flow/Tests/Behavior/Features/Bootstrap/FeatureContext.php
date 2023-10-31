@@ -1,10 +1,10 @@
 <?php
+
 use Behat\Behat\Context\Context;
 use Neos\Behat\FlowBootstrapTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Tests\Functional\Command\BehatTestHelper;
-use Neos\Flow\Utility\Environment;
 
 require_once(__DIR__ . '/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/SecurityOperationsTrait.php');
