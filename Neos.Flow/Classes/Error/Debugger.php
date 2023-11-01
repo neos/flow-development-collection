@@ -307,6 +307,8 @@ class Debugger
             if (!$plaintext) {
                 $dump = '<a href="#o' . $objectIdentifier . '" onclick="document.location.hash=\'#o' . $objectIdentifier . '\'; return false;" class="debug-seeabove" title="see above">' . $dump . '</a>';
             }
+        } else {
+            $dump .= self::getObjectSnippetPlaintext($object);
         }
 
         return $dump;
@@ -336,7 +338,7 @@ class Debugger
                     $arguments .= (strlen($arguments) === 0) ? '' : '<span class="color-muted">,</span> ';
                     $arguments .= '<span class="color-text-inverted">';
                     if (is_object($argument)) {
-                        $arguments .= '<em>' . get_class($argument) . '</em>';
+                        $arguments .= '<em>' . self::getObjectSnippetPlaintext($argument) . '</em>';
                     } elseif (is_string($argument)) {
                         $preparedArgument = (strlen($argument) < 100) ? $argument : substr($argument, 0, 50) . '…' . substr($argument, -50);
                         $preparedArgument = htmlspecialchars($preparedArgument);
@@ -389,7 +391,7 @@ class Debugger
                 foreach ($step['args'] as $argument) {
                     $arguments .= (strlen($arguments) === 0) ? '' : ', ';
                     if (is_object($argument)) {
-                        $arguments .= get_class($argument);
+                        $arguments .= self::getObjectSnippetPlaintext($argument);
                     } elseif (is_string($argument)) {
                         $preparedArgument = (strlen($argument) < 100) ? $argument : substr($argument, 0, 50) . '…' . substr($argument, -50);
                         $arguments .= '"' . $preparedArgument . '"';
@@ -460,6 +462,37 @@ class Debugger
         }
 
         return $codeSnippet;
+    }
+
+    protected static function getObjectSnippetPlaintext(object $object): string
+    {
+
+
+        if (is_callable([$object, '__toString'])) {
+            return self::getObjectShortName($object) . '|' . self::truncateObjectOutput((string)$object) . '|';
+        }
+
+        if ($object instanceof \JsonSerializable) {
+            return self::getObjectShortName($object) . '|' . self::truncateObjectOutput(json_encode($object, JSON_PARTIAL_OUTPUT_ON_ERROR, 1)) . '|';
+        }
+
+        $publicProperties = get_object_vars($object);
+        if (!empty($publicProperties)) {
+            return self::getObjectShortName($object) . '|' . self::truncateObjectOutput(json_encode($publicProperties, JSON_PARTIAL_OUTPUT_ON_ERROR, 1)) . '|';
+        }
+
+        return get_class($object);
+    }
+
+    protected static function getObjectShortName(object $object): string
+    {
+        $classNameParts = explode('\\', get_class($object));
+        return array_pop($classNameParts);
+    }
+
+    protected static function truncateObjectOutput(string $stringifiedObject): string
+    {
+        return (strlen($stringifiedObject) > 100) ? substr($stringifiedObject, 0, 100) . '…' : $stringifiedObject;
     }
 
     protected static function getCodeSnippetPlaintext(string $filePathAndName, int $lineNumber): string
