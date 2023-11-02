@@ -119,9 +119,9 @@ class ProxyClass
     {
         if (!isset($this->constructor)) {
             if (method_exists($this->fullOriginalClassName, '__construct')) {
-                $this->constructor = ProxyConstructorGenerator::fromReflection(new MethodReflection($this->fullOriginalClassName, '__construct'));
+                $this->constructor = ProxyConstructorGenerator::copyMethodSignatureAndDocblock(new MethodReflection($this->fullOriginalClassName, '__construct'));
             } else {
-                $this->constructor = new ProxyConstructorGenerator();
+                $this->constructor = new ProxyConstructorGenerator('__construct');
                 $this->constructor->setFullOriginalClassName($this->fullOriginalClassName);
             }
         }
