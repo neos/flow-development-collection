@@ -82,7 +82,7 @@ Feature: Method policy enforcement
     Given I am authenticated with role "Neos.Flow:Customer"
     Then I can call the method "customerAction" of class "Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"
 
-  @Isolated @fixtures
+  @Isolated
   Scenario: customer action is granted for administrator (deny permission is overridden, due to a second equivalent privilege definition in the same role)
     Given I am authenticated with role "Neos.Flow:Administrator"
     Then I can call the method "customerAction" of class "Neos\Flow\Tests\Functional\Security\Fixtures\Controller\RestrictedController"

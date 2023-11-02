@@ -62,9 +62,14 @@ class BehatTestHelper
         self::$bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
     }
 
-    /** @return ObjectManagerInterface */
-    protected function getObjectManager()
+    /**
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return T
+     */
+    private function getObject(string $className): object
     {
-        return $this->objectManager;
+        return $this->objectManager->get($className);
     }
 }
