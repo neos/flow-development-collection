@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} (deps: ${{ matrix.dependencies }})"
+    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && 'static analysis ' || '' }}(deps: ${{ matrix.dependencies }})"
 
     continue-on-error: ${{ matrix.experimental }}
 
@@ -31,7 +31,7 @@ jobs:
           - php-versions: '8.0'
             mariadb-versions: '' # skip mariadb setup
             postgresql-versions: '' # skip postgresql setup
-            static-analysis: 'psalm'
+            static-analysis: 'yes'
             experimental: true
             dependencies: 'highest'
 
@@ -123,6 +123,8 @@ jobs:
           git -C ../${{ env.FLOW_FOLDER }} checkout -b build
           composer config repositories.flow '{ "type": "path", "url": "../${{ env.FLOW_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/flow-development-collection:"dev-build as ${{ env.FLOW_BRANCH_ALIAS }}"
+          # todo remove temporary hack ;) (sorry - if i forget)
+          composer require --no-update --dev "phpstan/phpstan:^1.10.0"
 
       - name: Cache Composer packages
         id: composer-cache
@@ -164,17 +166,8 @@ jobs:
           ./flow routing:list
 
       - name: Static analysis
-        if: matrix.static-analysis == 'psalm'
-        run: composer test-static
-
-      - name: Update psalm baseline
-        if: ${{ failure() && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
-        run: |
-          composer psalm-baseline-update
-          cd ./Packages/Framework
-          git add psalm-baseline.xml
-          git -c user.name='gh-action' -c user.email='gh-action@noreply.github.com' commit -m "TASK: Update psalm-baseline"
-          git push -f origin HEAD:${FLOW_TARGET_VERSION}
+        if: matrix.static-analysis == 'yes'
+        run: cd Packages/Framework && composer lint
 
       - name: Run unit tests
         if: matrix.static-analysis == 'no'

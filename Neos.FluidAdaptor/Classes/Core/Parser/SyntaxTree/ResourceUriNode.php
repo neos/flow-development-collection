@@ -14,7 +14,6 @@ namespace Neos\FluidAdaptor\Core\Parser\SyntaxTree;
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
 use Neos\FluidAdaptor\Core\ViewHelper\ViewHelperResolver;
 use Neos\FluidAdaptor\ViewHelpers\Uri\ResourceViewHelper;
-use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
 
