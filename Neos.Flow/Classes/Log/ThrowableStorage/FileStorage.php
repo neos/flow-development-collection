@@ -36,6 +36,20 @@ class FileStorage implements ThrowableStorageInterface
     protected $storagePath;
 
     /**
+     * The maximum age of throwable dump in seconds, 0 to disable cleaning based on age
+     *
+     * @var int
+     */
+    protected $maximumThrowableDumpAge = 0;
+
+    /**
+     * The maximum number of throwable dumps to store, 0 to disable cleaning based on count
+     *
+     * @var int
+     */
+    protected $maximumThrowableDumpCount = 0;
+
+    /**
      * Factory method to get an instance.
      *
      * @param array $options
@@ -44,18 +58,24 @@ class FileStorage implements ThrowableStorageInterface
     public static function createWithOptions(array $options): ThrowableStorageInterface
     {
         $storagePath = $options['storagePath'] ?? (FLOW_PATH_DATA . 'Logs/Exceptions');
-        return new static($storagePath);
+        $maximumThrowableDumpAge = $options['maximumThrowableDumpAge'] ?? 0;
+        $maximumThrowableDumpCount = $options['maximumThrowableDumpCount'] ?? 0;
+        return new static($storagePath, $maximumThrowableDumpAge, $maximumThrowableDumpCount);
     }
 
     /**
      * Create new instance.
      *
      * @param string $storagePath
+     * @param int $maximumThrowableDumpAge
+     * @param int $maximumThrowableDumpCount
      * @see createWithOptions
      */
-    public function __construct(string $storagePath)
+    public function __construct(string $storagePath, int $maximumThrowableDumpAge, int $maximumThrowableDumpCount)
     {
         $this->storagePath = $storagePath;
+        $this->maximumThrowableDumpAge = $maximumThrowableDumpAge;
+        $this->maximumThrowableDumpCount = $maximumThrowableDumpCount;
 
         $this->requestInformationRenderer = static function () {
             // The following lines duplicate Scripts::initializeExceptionStorage(), which is a fallback to handle
@@ -133,6 +153,8 @@ class FileStorage implements ThrowableStorageInterface
         if (!file_exists($this->storagePath) || !is_dir($this->storagePath) || !is_writable($this->storagePath)) {
             return sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', $this->storagePath);
         }
+
+        $this->cleanupThrowableDumps();
 
         // FIXME: getReferenceCode should probably become an interface.
         $referenceCode = (is_callable([
@@ -232,5 +254,37 @@ class FileStorage implements ThrowableStorageInterface
         }
 
         return $output;
+    }
+
+    /**
+     * Cleans up existing throwable dumps when they are older than the configured
+     * maximum age or the oldest ones exceeding the maximum number of dumps allowed.
+     */
+    protected function cleanupThrowableDumps(): void
+    {
+        if ($this->maximumThrowableDumpAge > 0) {
+            $cutoffTime = time() - $this->maximumThrowableDumpAge;
+
+            /** @var \SplFileInfo $directoryEntry */
+            $iterator = new \DirectoryIterator($this->storagePath);
+            foreach ($iterator as $directoryEntry) {
+                if ($directoryEntry->isFile() && $directoryEntry->getCTime() < $cutoffTime) {
+                    unlink($directoryEntry->getRealPath());
+                }
+            }
+        }
+
+        if ($this->maximumThrowableDumpCount > 0) {
+            // this returns alphabetically ordered, so oldest first, as we have a date/time in the name
+            $existingDumps = glob(Files::concatenatePaths([$this->storagePath, '*']));
+            $existingDumpsCount = count($existingDumps);
+            if ($existingDumpsCount > $this->maximumThrowableDumpCount) {
+                $dumpsToRemove = array_slice($existingDumps, 0, $existingDumpsCount - $this->maximumThrowableDumpCount);
+
+                foreach ($dumpsToRemove as $dumpToRemove) {
+                    unlink($dumpToRemove);
+                }
+            }
+        }
     }
 }
