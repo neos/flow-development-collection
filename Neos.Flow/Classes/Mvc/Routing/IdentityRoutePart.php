@@ -169,13 +169,13 @@ class IdentityRoutePart extends DynamicRoutePart
      * If no split string is set (route part is the last in the routes uriPattern), the complete $routePart is returned.
      * Otherwise the part is returned that matches the specified uriPattern of this route part.
      *
-     * @param string $routePath The request path to be matched
+     * @param string|null $routePath The request path to be matched
      * @return string value to match, or an empty string if $routePath is empty, split string was not found or uriPattern could not be matched
      * @api
      */
     protected function findValueToMatch($routePath)
     {
-        if (!isset($routePath) || $routePath === '' || $routePath[0] === '/') {
+        if ($routePath === null || $routePath === '' || $routePath[0] === '/') {
             return '';
         }
         if ($this->getUriPattern() === '') {

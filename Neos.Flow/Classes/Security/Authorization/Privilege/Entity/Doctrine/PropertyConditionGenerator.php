@@ -462,6 +462,8 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
             case 'in':
                 $subselectConstraint = $subselectQuery->in($propertyName, $this->operand);
                 break;
+            default:
+                throw new \Exception(sprintf('Invalid operator "%s".', $this->operator), 1699025734);
         }
 
         $subselectQuery->matching($subselectConstraint);

@@ -411,6 +411,8 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
     private function getClassNameTokenIndex(array $tokens): ?int
     {
+        $classToken = null;
+        $previousToken = null;
         foreach ($tokens as $i => $token) {
             # $token is an array: [0] => token id, [1] => token text, [2] => line number
             if (isset($classToken) && is_array($token) && $token[0] === T_STRING) {

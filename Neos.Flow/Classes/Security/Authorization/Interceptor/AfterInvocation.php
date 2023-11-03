@@ -43,6 +43,7 @@ class AfterInvocation implements InterceptorInterface
      *
      * @param Context $securityContext The current security context
      * @param AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
+     * @phpstan-ignore-next-line todo why are the params unused?
      */
     public function __construct(Context $securityContext, AfterInvocationManagerInterface $afterInvocationManager)
     {

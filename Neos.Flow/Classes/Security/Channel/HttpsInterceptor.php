@@ -36,6 +36,7 @@ class HttpsInterceptor implements InterceptorInterface
      *
      * @param Context $securityContext The current security context
      * @param AuthenticationManagerInterface $authenticationManager The authentication Manager
+     * @phpstan-ignore-next-line todo why are the params unused?
      */
     public function __construct(
         Context $securityContext,

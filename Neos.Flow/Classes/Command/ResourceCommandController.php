@@ -229,14 +229,12 @@ class ResourceCommandController extends CommandController
         $this->output->progressFinish();
         $this->outputLine();
 
-        if (count($brokenResources) > 0) {
-            if ($mediaPackagePresent) {
-                /* @var AssetRepository $assetRepository */
-                $assetRepository = $this->objectManager->get(AssetRepository::class);
-                /* @var ThumbnailRepository $thumbnailRepository */
-                $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
-            }
+        /* @var AssetRepository $assetRepository */
+        $assetRepository = $this->objectManager->get(AssetRepository::class);
+        /* @var ThumbnailRepository $thumbnailRepository */
+        $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
 
+        if (count($brokenResources) > 0) {
             foreach ($brokenResources as $key => $resourceIdentifier) {
                 $resource = $this->resourceRepository->findByIdentifier($resourceIdentifier);
                 $brokenResources[$key] = $resource;

@@ -1,5 +1,5 @@
 parameters:
-    level: 0
+    level: 1
     paths:
         - Neos.Cache/Classes
         - Neos.Eel/Classes
@@ -17,7 +17,8 @@ parameters:
         - Neos.Utility.Pdo/Classes
         - Neos.Utility.Schema/Classes
         - Neos.Utility.Unicode/Classes
-
+    bootstrapFiles:
+         - bootstrap-phpstan.php
     excludePaths:
         analyse:
             - Neos.Eel/Classes/FlowQuery/FizzleParser.php
