@@ -1232,7 +1232,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Attempts to resolve the fetch mode.
      *
-     * @param string $className The class name
+     * @param class-string $className The class name
      * @param string $fetchMode The fetch mode
      * @return integer The fetch mode as defined in ClassMetadata
      * @throws ORM\MappingException If the fetch mode is not valid

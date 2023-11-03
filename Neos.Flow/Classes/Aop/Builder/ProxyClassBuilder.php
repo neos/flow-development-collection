@@ -18,6 +18,7 @@ use Neos\Flow\Aop\AdvicesTrait;
 use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\Exception;
 use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
+use Neos\Flow\Aop\Exception\InvalidTargetClassException;
 use Neos\Flow\Aop\Exception\VoidImplementationException;
 use Neos\Flow\Aop\Pointcut\Pointcut;
 use Neos\Flow\Aop\Pointcut\PointcutExpressionParser;
@@ -437,7 +438,7 @@ class ProxyClassBuilder
     /**
      * Makes sure that any subclasses of an advised class also build the advices array on construction.
      *
-     * @param string $className The advised class name
+     * @param class-string $className The advised class name
      * @param ClassNameIndex $targetClassNameCandidates target class names for advices
      * @param ClassNameIndex $treatedSubClasses Already treated (sub) classes to avoid duplication
      * @return ClassNameIndex The new collection of already treated classes

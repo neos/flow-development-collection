@@ -88,9 +88,10 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
+        $matches = false;
         $designatedAnnotations = $this->reflectionService->getClassAnnotations($className, $this->annotation);
         if ($designatedAnnotations !== [] || $this->annotationValueConstraints === []) {
-            $matches = ($designatedAnnotations !== []);
+            $matches = $designatedAnnotations !== [];
         } else {
             // It makes no sense to check property values for an annotation that is used multiple times, we shortcut and check the value against the first annotation found.
             $firstFoundAnnotation = $designatedAnnotations;
@@ -109,7 +110,7 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
             }
         }
 
-        return $matches ?? false;
+        return $matches;
     }
 
     /**

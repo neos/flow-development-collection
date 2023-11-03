@@ -308,6 +308,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function pregSplit($string, $pattern, $limit = -1)
     {
+        /** @psalm-suppress RedundantCastGivenDocblockType */
         return preg_split($pattern, (string)$string, (int)$limit);
     }
 

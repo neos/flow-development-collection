@@ -22,7 +22,8 @@ class ProxyMethodGenerator extends MethodGenerator
     protected string $addedPreParentCallCode = '';
     protected string $addedPostParentCallCode = '';
 
-    protected string $fullOriginalClassName = '';
+    /** @var class-string|null */
+    protected ?string $fullOriginalClassName = null;
 
     public static function fromReflection(\Laminas\Code\Reflection\MethodReflection $reflectionMethod): static
     {
@@ -43,11 +44,14 @@ class ProxyMethodGenerator extends MethodGenerator
         return $instance;
     }
 
-    public function getFullOriginalClassName(): string
+    public function getFullOriginalClassName(): ?string
     {
         return $this->fullOriginalClassName;
     }
 
+    /**
+     * @param class-string $fullOriginalClassName
+     */
     public function setFullOriginalClassName(string $fullOriginalClassName): void
     {
         $this->fullOriginalClassName = $fullOriginalClassName;
@@ -88,7 +92,7 @@ class ProxyMethodGenerator extends MethodGenerator
             return '';
         }
 
-        $callParentMethodCode = $this->buildCallParentMethodCode($this->fullOriginalClassName, $this->name);
+        $callParentMethodCode = isset($this->fullOriginalClassName) ? $this->buildCallParentMethodCode($this->fullOriginalClassName, $this->name) : '';
         $returnTypeIsVoidOrNever = ((string)$this->getReturnType() === 'void' || (string)$this->getReturnType() === 'never');
         $code = $this->addedPreParentCallCode;
         if ($this->addedPostParentCallCode !== '') {
@@ -124,7 +128,7 @@ class ProxyMethodGenerator extends MethodGenerator
      * Builds the PHP code for the parameters of the specified method to be
      * used in a method interceptor in the proxy class
      *
-     * @param string|null $fullClassName Name of the class the method is declared in
+     * @param class-string|null $fullClassName Name of the class the method is declared in
      * @param string|null $methodName Name of the method to create the parameters code for
      * @param bool $addTypeAndDefaultValue If the type and default value for each parameter should be rendered
      * @return string A comma separated list of parameters
@@ -159,7 +163,7 @@ class ProxyMethodGenerator extends MethodGenerator
     /**
      * Builds PHP code which calls the original (i.e. parent) method after the added code has been executed.
      *
-     * @param string $fullClassName Fully qualified name of the original class
+     * @param class-string $fullClassName Fully qualified name of the original class
      * @param string $methodName Name of the original method
      * @return string PHP code
      */

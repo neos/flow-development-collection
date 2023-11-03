@@ -90,6 +90,7 @@ class LazyLoadingAspect
             return;
         }
 
+        /** @var string $objectName */
         $objectName = $this->objectManager->getObjectNameByClassName(get_class($joinPoint->getProxy()));
         $methodName = $joinPoint->getMethodName();
 
@@ -111,7 +112,7 @@ class LazyLoadingAspect
         $methodName = $joinPoint->getMethodName();
         $proxy = $joinPoint->getProxy();
 
-        if (!isset($this->sessionOriginalInstances[$objectName])) {
+        if ($objectName && !isset($this->sessionOriginalInstances[$objectName])) {
             $this->sessionOriginalInstances[$objectName] = $this->objectManager->get($objectName);
         }
 

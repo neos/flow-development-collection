@@ -235,12 +235,13 @@ class ProxyClass
         $traitsCode = $this->renderTraitsCode();
         $methodsCode = '';
 
-        $constructorBodyCode = isset($this->constructor) ? $this->constructor->renderBodyCode() : '';
-        if ($constructorBodyCode !== '') {
+        $constructorBodyCode = $this->constructor?->renderBodyCode() ?? '';
+        if ($this->constructor !== null && $constructorBodyCode !== '') {
             $this->constructor->setBody($constructorBodyCode);
             $methodsCode .= PHP_EOL . $this->constructor->generate();
 
             foreach (class_implements($this->fullOriginalClassName) as $interface) {
+                /** @psalm-suppress ArgumentTypeCoercion */
                 if (method_exists($interface, '__construct')) {
                     throw new CannotBuildObjectException(sprintf('The class "%s" implements the interface "%s" which has a constructor. Proxy classes implementing an interface containing a constructor is not supported and constructors interfaces are generally strongly discouraged.', $this->fullOriginalClassName, $interface), 1685433328);
                 }
