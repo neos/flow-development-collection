@@ -9,11 +9,11 @@ namespace PhpPeg;
  *  the bracket if a failed match + restore has moved the current position backwards - so we have to check that too.
  */
 class ParserRegexp {
-    protected ?Parser $parser = null;
-    protected string $rx = '';
-    protected ?array $matches = null;
-    protected ?int $match_pos = null;
-    protected ?int $check_pos = null;
+    protected $parser = null;
+    protected $rx = '';
+    protected $matches = null;
+    protected $match_pos = null;
+    protected $check_pos = null;
 
 	function __construct($parser, $rx) {
 		$this->parser = $parser;
@@ -55,10 +55,10 @@ class ParserRegexp {
  *   for result construction and building
  */
 class Parser {
-    public string $string = '';
-    public int $pos = 0;
-    protected int $depth = 0;
-    protected array $regexps = [];
+    public $string = '';
+    public $pos = 0;
+    protected $depth = 0;
+    protected $regexps = [];
 
 	function __construct($string) {
 		$this->string = $string;
@@ -220,9 +220,9 @@ class Parser {
  * @author Hamish Friedlander
  */
 class Packrat extends Parser {
-    protected string $packstatebase = '';
-    protected array $packstate = [];
-    protected array $packres = [];
+    protected $packstatebase = '';
+    protected $packstate = [];
+    protected $packres = [];
 
 	function __construct($string) {
 		parent::__construct($string);
