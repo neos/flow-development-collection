@@ -21,6 +21,7 @@ use Neos\Utility\ObjectAccess;
  * It works as a variable container with wrapping of return values
  * for safe access without warnings (on missing properties).
  *
+ * @phpstan-consistent-constructor
  * @Flow\Proxy(false)
  */
 class Context
@@ -33,7 +34,7 @@ class Context
     /**
      * @param mixed $value
      */
-    final public function __construct($value = null)
+    public function __construct($value = null)
     {
         $this->value = $value;
     }

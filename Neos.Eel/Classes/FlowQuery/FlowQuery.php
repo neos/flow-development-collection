@@ -69,6 +69,8 @@ use Neos\Flow\Annotations as Flow;
  * ----------------
  *
  * If an operation is final, it should return the resulting value directly.
+ *
+ * @phpstan-consistent-constructor
  */
 class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \Countable
 {
@@ -107,7 +109,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      * @throws Exception
      * @api
      */
-    final public function __construct($context, array $operations = [])
+    public function __construct($context, array $operations = [])
     {
         if (!(is_array($context) || $context instanceof \Traversable)) {
             throw new Exception('The FlowQuery context must be an array or implement \Traversable but context was a ' . gettype($context), 1380816689);

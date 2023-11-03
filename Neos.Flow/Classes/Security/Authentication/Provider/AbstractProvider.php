@@ -16,6 +16,7 @@ use Neos\Flow\Security\Authentication\TokenInterface;
 
 /**
  * An abstract authentication provider.
+ * @phpstan-consistent-constructor
  */
 abstract class AbstractProvider implements AuthenticationProviderInterface
 {
@@ -49,7 +50,7 @@ abstract class AbstractProvider implements AuthenticationProviderInterface
      * @param array $options Additional configuration options
      * @see create
      */
-    final protected function __construct($name, array $options = [])
+    protected function __construct($name, array $options = [])
     {
         $this->name = $name;
         $this->options = $options;

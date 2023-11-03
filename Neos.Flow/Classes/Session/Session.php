@@ -43,6 +43,7 @@ use Psr\Log\LoggerInterface;
  * that phase already, calling start() at a later stage will be a no-operation.
  *
  * @see SessionManager
+ * @phpstan-consistent-constructor
  */
 class Session implements CookieEnabledInterface
 {
@@ -190,7 +191,7 @@ class Session implements CookieEnabledInterface
      * @param array $tags A list of tags set for this session
      * @throws \InvalidArgumentException
      */
-    final public function __construct($sessionIdentifier = null, $storageIdentifier = null, $lastActivityTimestamp = null, array $tags = [])
+    public function __construct($sessionIdentifier = null, $storageIdentifier = null, $lastActivityTimestamp = null, array $tags = [])
     {
         if ($sessionIdentifier !== null) {
             if ($storageIdentifier === null || $lastActivityTimestamp === null) {

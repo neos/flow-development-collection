@@ -15,6 +15,7 @@ use Psr\Http\Message\RequestInterface;
 /**
  * Stores detailed information about throwables into files.
  *
+ * @phpstan-consistent-constructor
  * @Flow\Proxy(false)
  * @Flow\Autowiring(false)
  */
@@ -71,7 +72,7 @@ class FileStorage implements ThrowableStorageInterface
      * @param int $maximumThrowableDumpCount
      * @see createWithOptions
      */
-    final public function __construct(string $storagePath, int $maximumThrowableDumpAge, int $maximumThrowableDumpCount)
+    public function __construct(string $storagePath, int $maximumThrowableDumpAge, int $maximumThrowableDumpCount)
     {
         $this->storagePath = $storagePath;
         $this->maximumThrowableDumpAge = $maximumThrowableDumpAge;

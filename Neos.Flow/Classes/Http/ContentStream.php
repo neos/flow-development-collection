@@ -20,6 +20,7 @@ use Psr\Log\LoggerInterface;
  * Implementation of a PSR-7 HTTP stream
  *
  * @api PSR-7
+ * @phpstan-consistent-constructor
  */
 class ContentStream implements StreamInterface
 {
@@ -44,7 +45,7 @@ class ContentStream implements StreamInterface
      * @param string $mode Mode with which to open stream
      * @throws \InvalidArgumentException
      */
-    final public function __construct($stream, $mode = 'r')
+    public function __construct($stream, $mode = 'r')
     {
         $this->replace($stream, $mode);
     }
