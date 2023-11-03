@@ -111,7 +111,7 @@ class ResourceInterceptor implements InterceptorInterface
                     $arguments['package'] = new TextNode($matches['Package']);
                 }
 
-                $resourceUriNode = new ResourceUriNode($arguments, $parsingState);
+                $resourceUriNode = new ResourceUriNode($arguments);
                 $node->addChildNode($resourceUriNode);
             } else {
                 $textNode = new TextNode($part);

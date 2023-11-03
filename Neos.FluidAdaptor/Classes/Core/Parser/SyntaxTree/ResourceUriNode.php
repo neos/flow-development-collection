@@ -55,9 +55,8 @@ class ResourceUriNode extends ViewHelperNode
      * Constructor.
      *
      * @param NodeInterface[] $arguments Arguments of view helper - each value is a RootNode.
-     * @param ParsingState $state
      */
-    public function __construct(array $arguments, ParsingState $state)
+    public function __construct(array $arguments)
     {
         $this->arguments = $arguments;
     }
