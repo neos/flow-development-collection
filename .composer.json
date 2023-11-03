@@ -10,7 +10,7 @@
     ]
   },
   "require": {
-    "behat/behat": "^3.5"
+    "behat/behat": "^3.10"
   },
   "replace": {
   },

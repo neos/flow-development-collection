@@ -101,7 +101,6 @@ use PHPUnit\Framework\Assert;
  *
  * @deprecated todo the policy features depending on this handcrafted isolated behat test infrastructure will be refactored and this infrastructure removed.
  * @internal only allowed to be used internally for Neos.Flow behavioral tests!
- * @property ObjectManagerInterface objectManager
  */
 trait IsolatedBehatStepsTrait
 {
@@ -114,6 +113,14 @@ trait IsolatedBehatStepsTrait
      * @var SubProcess
      */
     protected $subProcess;
+
+    /**
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return T
+     */
+    abstract private function getObject(string $className): object;
 
     /**
      * @BeforeScenario @Isolated
@@ -130,8 +137,7 @@ trait IsolatedBehatStepsTrait
     protected function getSubProcess()
     {
         if ($this->subProcess === null) {
-            /** @var CacheManager $cacheManager */
-            $cacheManager = $this->objectManager->get(CacheManager::class);
+            $cacheManager = $this->getObject(CacheManager::class);
             if ($cacheManager->hasCache('Flow_Security_Authorization_Privilege_Method')) {
                 $cacheManager->getCache('Flow_Security_Authorization_Privilege_Method')->flush();
             }
@@ -141,11 +147,10 @@ trait IsolatedBehatStepsTrait
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
             $cacheManager->getCache('Flow_Object_Classes')->flush();
 
-            /** @var ConfigurationManager $configurationManager */
-            $configurationManager = $this->objectManager->get(ConfigurationManager::class);
+            $configurationManager = $this->getObject(ConfigurationManager::class);
             $configurationManager->flushConfigurationCache();
 
-            $this->subProcess = new SubProcess($this->objectManager->getContext());
+            $this->subProcess = new SubProcess($this->getObject(ObjectManagerInterface::class)->getContext());
         }
         return $this->subProcess;
     }
