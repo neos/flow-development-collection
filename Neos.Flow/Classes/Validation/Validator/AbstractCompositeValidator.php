@@ -102,8 +102,8 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
      */
     public function addValidator(ValidatorInterface $validator)
     {
-        if ($validator instanceof ObjectValidatorInterface) {
-            $validator->setValidatedInstancesContainer = $this->validatedInstancesContainer;
+        if ($validator instanceof ObjectValidatorInterface && isset($this->validatedInstancesContainer)) {
+            $validator->setValidatedInstancesContainer($this->validatedInstancesContainer);
         }
         $this->validators->attach($validator);
     }
