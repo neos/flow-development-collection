@@ -972,7 +972,7 @@ class ReflectionService
     public function getClassSchema(string|object $classNameOrObject): ?ClassSchema
     {
         $className = $classNameOrObject;
-        if (is_object($className)) {
+        if (is_object($classNameOrObject)) {
             $className = TypeHandling::getTypeForValue($classNameOrObject);
         }
         $className = $this->cleanClassName($className);

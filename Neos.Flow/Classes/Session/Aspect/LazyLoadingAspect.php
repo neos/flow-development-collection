@@ -90,8 +90,8 @@ class LazyLoadingAspect
             return;
         }
 
+        /** @var string $objectName */
         $objectName = $this->objectManager->getObjectNameByClassName(get_class($joinPoint->getProxy()));
-        assert($objectName !== false);
         $methodName = $joinPoint->getMethodName();
 
         $this->logger->debug(sprintf('Session initialization triggered by %s->%s.', $objectName, $methodName));
