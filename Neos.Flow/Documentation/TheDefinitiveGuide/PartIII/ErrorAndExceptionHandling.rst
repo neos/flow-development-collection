@@ -153,7 +153,7 @@ An example configuration could look like in the following Settings.yaml excerpt:
 key names, their actual naming has no further implications.
 
 ``matchingStatusCodes``:
-    an array of integer values what HTTP status codes the rendering group is for
+    an array of integer values what HTTP status codes the rendering group is for. Generic exceptions will be handled as if they had a 500 status code.
 
 ``matchingExceptionClassNames``:
     an array of string values what Exception types the rendering group is for. Keep in mind that, as always
