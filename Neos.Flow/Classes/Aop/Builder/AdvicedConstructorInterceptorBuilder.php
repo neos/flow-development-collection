@@ -40,6 +40,11 @@ class AdvicedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuil
         $declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];
         $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getConstructor();
         if ($declaringClassName !== $targetClassName) {
+            /**
+             * @phpstan-ignore-next-line "buildMethodParametersCode" does not exist, and never has since the introduction of this call:
+             * https://github.com/neos/flow-development-collection/commit/1e7938342d7a40852328116f8fde9a91f1028836
+             * Eventually this code will be removed with Neos 9 but im too afraid to touch any of it ^^
+             */
             $proxyMethod->setMethodParametersCode($this->buildMethodParametersCode($declaringClassName, $methodName, true));
         }
 
