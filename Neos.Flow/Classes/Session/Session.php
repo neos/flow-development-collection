@@ -190,7 +190,7 @@ class Session implements CookieEnabledInterface
      * @param array $tags A list of tags set for this session
      * @throws \InvalidArgumentException
      */
-    public function __construct($sessionIdentifier = null, $storageIdentifier = null, $lastActivityTimestamp = null, array $tags = [])
+    final public function __construct($sessionIdentifier = null, $storageIdentifier = null, $lastActivityTimestamp = null, array $tags = [])
     {
         if ($sessionIdentifier !== null) {
             if ($storageIdentifier === null || $lastActivityTimestamp === null) {
@@ -357,7 +357,7 @@ class Session implements CookieEnabledInterface
     /**
      * Resumes an existing session, if any.
      *
-     * @return integer If a session was resumed, the inactivity of this session since the last request is returned
+     * @return null|integer If a session was resumed, the inactivity of this session since the last request is returned
      * @api
      */
     public function resume()
@@ -614,7 +614,6 @@ class Session implements CookieEnabledInterface
         $this->sessionIdentifier = null;
         $this->storageIdentifier = null;
         $this->tags = [];
-        $this->request = null;
     }
 
     /**

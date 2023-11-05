@@ -519,6 +519,8 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
                 $inPart = $parameter !== null && $parameter !== '' ? $propertyPointer . ' IN (' . $parameter . ') ' : '';
                 $nullPart = $addNullExpression ? $propertyPointer . ' IS NULL' : '';
                 return $inPart . ($inPart !== '' && $nullPart !== '' ? ' OR ' : '') . $nullPart;
+            default:
+                throw new \Exception(sprintf('Invalid operator "%s".', $this->operator), 1699023642);
         }
     }
 

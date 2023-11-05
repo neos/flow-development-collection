@@ -55,6 +55,7 @@ class Package extends BasePackage
         }
 
         if ($context->isTesting()) {
+            /** @phpstan-ignore-next-line */
             $bootstrap->registerRequestHandler(new Tests\FunctionalTestRequestHandler($bootstrap));
         }
 
@@ -132,6 +133,7 @@ class Package extends BasePackage
             }
         });
 
+        /** @phpstan-ignore-next-line */
         $dispatcher->connect(Tests\FunctionalTestCase::class, 'functionalTestTearDown', Mvc\Routing\RouterCachingService::class, 'flushCaches');
 
         $dispatcher->connect(Configuration\ConfigurationManager::class, 'configurationManagerReady', function (Configuration\ConfigurationManager $configurationManager) {

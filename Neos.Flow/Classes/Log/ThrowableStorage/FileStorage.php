@@ -71,7 +71,7 @@ class FileStorage implements ThrowableStorageInterface
      * @param int $maximumThrowableDumpCount
      * @see createWithOptions
      */
-    public function __construct(string $storagePath, int $maximumThrowableDumpAge, int $maximumThrowableDumpCount)
+    final public function __construct(string $storagePath, int $maximumThrowableDumpAge, int $maximumThrowableDumpCount)
     {
         $this->storagePath = $storagePath;
         $this->maximumThrowableDumpAge = $maximumThrowableDumpAge;

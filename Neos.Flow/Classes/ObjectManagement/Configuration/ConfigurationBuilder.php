@@ -334,7 +334,7 @@ class ConfigurationBuilder
                 } else {
                     $annotations = $this->reflectionService->getPropertyTagValues($parentObjectConfiguration->getClassName(), $propertyName, 'var');
                     if (count($annotations) !== 1) {
-                        throw new InvalidObjectConfigurationException(sprintf('Object %s, for property "%s", contains neither object name, nor factory object name, and nor is the property properly @var - annotated.', $parentObjectConfiguration->getConfigurationSourceHint(), $propertyName, $parentObjectConfiguration->getClassName()), 1297097815);
+                        throw new InvalidObjectConfigurationException(sprintf('Object %s (%s), for property "%s", contains neither object name, nor factory object name, and nor is the property properly @var - annotated.', $parentObjectConfiguration->getClassName(), $parentObjectConfiguration->getConfigurationSourceHint(), $propertyName), 1297097815);
                     }
                     $objectName = $annotations[0];
                 }

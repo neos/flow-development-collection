@@ -124,7 +124,7 @@ class Compiler
      */
     public function getProxyClass(string $fullClassName)
     {
-        if (interface_exists($fullClassName) || in_array(BaseTestCase::class, class_parents($fullClassName))) {
+        if (interface_exists($fullClassName) || (class_exists(BaseTestCase::class) && in_array(BaseTestCase::class, class_parents($fullClassName), true))) {
             return false;
         }
 

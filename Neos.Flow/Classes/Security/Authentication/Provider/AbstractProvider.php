@@ -49,7 +49,7 @@ abstract class AbstractProvider implements AuthenticationProviderInterface
      * @param array $options Additional configuration options
      * @see create
      */
-    protected function __construct($name, array $options = [])
+    final protected function __construct($name, array $options = [])
     {
         $this->name = $name;
         $this->options = $options;

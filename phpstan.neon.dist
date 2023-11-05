@@ -1,0 +1,11 @@
+parameters:
+    level: 0
+    paths:
+        - Neos.Flow/Classes
+    excludePaths:
+        analyse:
+            - Neos.Eel/Classes/FlowQuery/FizzleParser.php
+            - Neos.Eel/Classes/AbstractParser.php
+            - Neos.Eel/Classes/EelParser.php
+            - Neos.Flow/.phpstorm.meta.php
+            - Neos.Flow/Classes/Security/Authorization/Privilege/Entity/Doctrine/EntityPrivilegeExpressionEvaluator.php

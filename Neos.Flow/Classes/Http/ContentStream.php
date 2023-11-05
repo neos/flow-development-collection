@@ -44,7 +44,7 @@ class ContentStream implements StreamInterface
      * @param string $mode Mode with which to open stream
      * @throws \InvalidArgumentException
      */
-    public function __construct($stream, $mode = 'r')
+    final public function __construct($stream, $mode = 'r')
     {
         $this->replace($stream, $mode);
     }
