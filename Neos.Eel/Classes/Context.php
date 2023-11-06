@@ -33,7 +33,7 @@ class Context
     /**
      * @param mixed $value
      */
-    public function __construct($value = null)
+    final public function __construct($value = null)
     {
         $this->value = $value;
     }
