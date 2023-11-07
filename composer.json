@@ -63,6 +63,11 @@
         "neos/utility-schema": "self.version",
         "neos/utility-unicode": "self.version"
     },
+    "scripts": {
+        "lint": [
+            "../../bin/phpstan analyse"
+        ]
+    },
     "suggest": {
         "ext-memcache": "If you have a memcache server and want to use it for caching.",
         "ext-memcached": "Alternative, if you have a memcache server and want to use it for caching.",
@@ -125,8 +130,7 @@
     },
     "require-dev": {
         "mikey179/vfsstream": "^1.6.10",
-        "phpunit/phpunit": "~9.1",
-        "vimeo/psalm": "~4.30.0"
+        "phpunit/phpunit": "~9.1"
     },
     "autoload-dev": {
         "psr-4": {

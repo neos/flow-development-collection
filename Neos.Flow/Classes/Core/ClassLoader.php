@@ -171,7 +171,7 @@ class ClassLoader
         foreach ($possiblePaths as $possiblePathData) {
             $possibleFilePath = '';
             if ($possiblePathData['mappingType'] === self::MAPPING_TYPE_PSR0) {
-                $possibleFilePath = $this->buildClassPathWithPsr0($namespaceParts, $possiblePathData['path'], $packageNamespacePartCount);
+                $possibleFilePath = $this->buildClassPathWithPsr0($namespaceParts, $possiblePathData['path']);
             }
             if ($possiblePathData['mappingType'] === self::MAPPING_TYPE_PSR4) {
                 $possibleFilePath = $this->buildClassPathWithPsr4($namespaceParts, $possiblePathData['path'], $packageNamespacePartCount);

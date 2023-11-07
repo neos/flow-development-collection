@@ -89,7 +89,7 @@ class ProtectedContext extends Context
      */
     public function whitelist($pathOrMethods)
     {
-        return $this->allow($pathOrMethods);
+        $this->allow($pathOrMethods);
     }
 
     /**

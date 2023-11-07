@@ -14,7 +14,6 @@ namespace Neos\FluidAdaptor\Core\Parser\SyntaxTree;
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
 use Neos\FluidAdaptor\Core\ViewHelper\ViewHelperResolver;
 use Neos\FluidAdaptor\ViewHelpers\Uri\ResourceViewHelper;
-use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
 
@@ -55,9 +54,8 @@ class ResourceUriNode extends ViewHelperNode
      * Constructor.
      *
      * @param NodeInterface[] $arguments Arguments of view helper - each value is a RootNode.
-     * @param ParsingState $state
      */
-    public function __construct(array $arguments, ParsingState $state)
+    public function __construct(array $arguments)
     {
         $this->arguments = $arguments;
     }

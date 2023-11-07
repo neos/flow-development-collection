@@ -238,7 +238,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
      * @param boolean $isConditionFullfilled
      * @param array $arguments
      * @param RenderingContextInterface $renderingContext
-     * @return string
+     * @return mixed
      */
     protected static function renderResult($isConditionFullfilled, array $arguments, RenderingContextInterface $renderingContext)
     {
@@ -258,5 +258,6 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
         if (array_key_exists('else', $arguments)) {
             return $arguments['else'];
         }
+        return null;
     }
 }

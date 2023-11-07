@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace Neos\Http\Factories;
 
-use function GuzzleHttp\Psr7\parse_query;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
-use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriFactoryInterface;
 
