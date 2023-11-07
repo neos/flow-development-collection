@@ -36,6 +36,7 @@ class AfterInvocationProcessorManager implements AfterInvocationManagerInterface
      * @return boolean true if access is granted, false if the manager abstains from decision
      * @throws AccessDeniedException If access is not granted
      * @todo processors must also be configurable
+     * @phpstan-ignore-next-line
      */
     public function process(Context $securityContext, $object, JoinPointInterface $joinPoint)
     {
@@ -46,6 +47,7 @@ class AfterInvocationProcessorManager implements AfterInvocationManagerInterface
      *
      * @param string $className The classname that should be checked
      * @return boolean true if this access decision manager can decide on objects with the given classname
+     * @phpstan-ignore-next-line
      */
     public function supports($className)
     {

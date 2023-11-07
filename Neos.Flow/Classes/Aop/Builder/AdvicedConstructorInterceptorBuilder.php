@@ -40,7 +40,7 @@ class AdvicedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuil
         $declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];
         $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getConstructor();
         if ($declaringClassName !== $targetClassName) {
-            $proxyMethod->setMethodParametersCode($this->buildMethodParametersCode($declaringClassName, $methodName, true));
+            $proxyMethod->setMethodParametersCode($proxyMethod->buildMethodParametersCode($declaringClassName, $methodName, true));
         }
 
         $groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];

@@ -627,7 +627,7 @@ class ResourceManager
             $pathPatterns = (isset($collectionDefinition['pathPatterns'])) ? $collectionDefinition['pathPatterns'] : [];
             $filenames = (isset($collectionDefinition['filenames'])) ? $collectionDefinition['filenames'] : [];
 
-            $this->collections[$collectionName] = new Collection($collectionName, $this->storages[$collectionDefinition['storage']], $this->targets[$collectionDefinition['target']], $pathPatterns, $filenames);
+            $this->collections[$collectionName] = new Collection($collectionName, $this->storages[$collectionDefinition['storage']], $this->targets[$collectionDefinition['target']], $pathPatterns);
         }
     }
 

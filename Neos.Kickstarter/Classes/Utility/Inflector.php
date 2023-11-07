@@ -24,6 +24,7 @@ class Inflector
      */
     public function pluralize($word)
     {
+        /** @phpstan-ignore-next-line we could use autoloading instead */
         return \Sho_Inflect::pluralize($word);
     }
 

@@ -86,6 +86,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
         echo "\nREADY\n";
 
         try {
+            $response = null;
             while (true) {
                 $commandLine = trim(fgets(STDIN));
                 $trimmedCommandLine = trim($commandLine);
@@ -109,7 +110,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
 
             $logger->debug('Exiting sub process loop.');
             $this->bootstrap->shutdown(Bootstrap::RUNLEVEL_RUNTIME);
-            exit($response->getExitCode());
+            exit($response?->getExitCode());
         } catch (\Exception $exception) {
             $this->handleException($exception);
         }
