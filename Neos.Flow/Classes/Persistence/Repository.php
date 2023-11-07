@@ -31,8 +31,7 @@ abstract class Repository implements RepositoryInterface
      * Warning: if you think you want to set this,
      * look at RepositoryInterface::ENTITY_CLASSNAME first!
      *
-     * @var string
-     * @psalm-var class-string
+     * @var class-string
      */
     protected $entityClassName;
 
@@ -46,7 +45,7 @@ abstract class Repository implements RepositoryInterface
      */
     public function __construct()
     {
-        /** @psalm-var class-string $entityClassName */
+        /** @var class-string $entityClassName */
         if (defined('static::ENTITY_CLASSNAME') === false) {
             $entityClassName = preg_replace(['/\\\Repository\\\/', '/Repository$/'], ['\\Model\\', ''], get_class($this));
         } else {
@@ -61,8 +60,7 @@ abstract class Repository implements RepositoryInterface
      * Note that anything that is an "instanceof" this class is accepted
      * by the repository.
      *
-     * @return string
-     * @psalm-return class-string
+     * @return class-string
      * @api
      */
     public function getEntityClassName(): string

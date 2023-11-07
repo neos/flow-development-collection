@@ -22,6 +22,7 @@ class ExpressionSyntaxValidator extends AbstractValidator
      */
     protected function isValid($value)
     {
+        /** @phpstan-ignore-next-line */
         $parser = new EelParser($value);
         $result = $parser->match_Expression();
 

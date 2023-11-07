@@ -16,6 +16,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Represents a HTTP Cookie as of RFC 6265
  *
+ * @phpstan-consistent-constructor
  * @api
  * @see http://tools.ietf.org/html/rfc6265
  * @Flow\Proxy(false)

@@ -8,8 +8,6 @@ use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use GuzzleHttp\Psr7\Response;
-use Neos\Flow\Http\Component\SetHeaderComponent;
-use Neos\Flow\Http\Component\ReplaceHttpResponseComponent;
 
 /**
  * The minimal MVC response object.
@@ -156,16 +154,20 @@ final class ActionResponse
      */
     public function setComponentParameter(string $componentClassName, string $parameterName, $value): void
     {
-        if ($componentClassName === SetHeaderComponent::class) {
+        /** @phpstan-ignore-next-line legacy layer */
+        if ($componentClassName === \Neos\Flow\Http\Component\SetHeaderComponent::class) {
             $this->setHttpHeader($parameterName, $value);
             return;
         }
 
-        if ($componentClassName === ReplaceHttpResponseComponent::class && $parameterName === 'response') {
+        /** @phpstan-ignore-next-line legacy layer */
+        if ($componentClassName === \Neos\Flow\Http\Component\ReplaceHttpResponseComponent::class && $parameterName === 'response') {
             $this->replaceHttpResponse($value);
             return;
         }
-        throw new \InvalidArgumentException(sprintf('The method %s is deprecated. It will only allow a $componentClassName parameter of "%s" or "%s". If you want to send data to your middleware from the action, use response headers or introduce a global context. Both solutions are to be considered bad practice though.', __METHOD__, SetHeaderComponent::class, ReplaceHttpResponseComponent::class), 1605088079);
+
+        /** @phpstan-ignore-next-line legacy layer */
+        throw new \InvalidArgumentException(sprintf('The method %s is deprecated. It will only allow a $componentClassName parameter of "%s" or "%s". If you want to send data to your middleware from the action, use response headers or introduce a global context. Both solutions are to be considered bad practice though.', __METHOD__, \Neos\Flow\Http\Component\SetHeaderComponent::class, \Neos\Flow\Http\Component\ReplaceHttpResponseComponent::class), 1605088079);
     }
 
     /**

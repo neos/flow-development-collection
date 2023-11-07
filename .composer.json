@@ -14,6 +14,11 @@
   },
   "replace": {
   },
+  "scripts": {
+    "lint": [
+      "../../bin/phpstan analyse"
+    ]
+  },
   "suggest": {
   },
   "autoload": {

@@ -710,15 +710,9 @@ class Context
      * @param array $sessionTokens Array of tokens restored from the session
      * @return array Array of Authentication\TokenInterface objects
      */
-    protected function mergeTokens($managerTokens, $sessionTokens)
+    protected function mergeTokens(array $managerTokens, array $sessionTokens)
     {
         $resultTokens = [];
-
-        if (!is_array($managerTokens)) {
-            return $resultTokens;
-        }
-
-        $sessionTokens = $sessionTokens ?? [];
 
         /** @var $managerToken TokenInterface */
         foreach ($managerTokens as $managerToken) {

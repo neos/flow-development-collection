@@ -28,6 +28,7 @@ abstract class Arrays
      */
     public static function integerExplode(string $delimiter, string $string): array
     {
+        $chunks = [];
         $chunksArr = explode($delimiter, $string);
         foreach ($chunksArr as $key => $value) {
             $chunks[$key] = (int)$value;

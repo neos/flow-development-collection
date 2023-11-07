@@ -97,6 +97,7 @@ class CompilingEvaluator implements EelEvaluatorInterface
      */
     protected function generateEvaluatorCode($expression)
     {
+        /** @phpstan-ignore-next-line */
         $parser = new CompilingEelParser($expression);
         $result = $parser->match_Expression();
 

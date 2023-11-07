@@ -530,7 +530,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
                 $connected = $redis->connect($this->hostname, $this->port);
             }
         } finally {
-            /** @psalm-suppress PossiblyUndefinedVariable */
             if ($connected === false) {
                 throw new CacheException('Could not connect to Redis.', 1391972021);
             }
