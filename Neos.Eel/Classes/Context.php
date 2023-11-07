@@ -21,6 +21,7 @@ use Neos\Utility\ObjectAccess;
  * It works as a variable container with wrapping of return values
  * for safe access without warnings (on missing properties).
  *
+ * @phpstan-consistent-constructor
  * @Flow\Proxy(false)
  */
 class Context

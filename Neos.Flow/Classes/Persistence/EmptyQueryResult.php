@@ -95,6 +95,7 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * @return boolean Returns false in this case
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return false;

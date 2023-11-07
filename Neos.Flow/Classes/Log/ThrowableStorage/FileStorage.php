@@ -15,6 +15,7 @@ use Psr\Http\Message\RequestInterface;
 /**
  * Stores detailed information about throwables into files.
  *
+ * @phpstan-consistent-constructor
  * @Flow\Proxy(false)
  * @Flow\Autowiring(false)
  */

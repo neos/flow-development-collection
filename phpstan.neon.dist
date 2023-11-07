@@ -1,0 +1,30 @@
+parameters:
+    level: 1
+    paths:
+        - Neos.Cache/Classes
+        - Neos.Eel/Classes
+        - Neos.Error.Messages/Classes
+        - Neos.Flow/Classes
+        - Neos.Flow.Log/Classes
+        - Neos.FluidAdaptor/Classes
+        - Neos.Http.Factories/Classes
+        - Neos.Kickstarter/Classes
+        - Neos.Utility.Arrays/Classes
+        - Neos.Utility.Files/Classes
+        - Neos.Utility.MediaTypes/Classes
+        - Neos.Utility.ObjectHandling/Classes
+        - Neos.Utility.OpcodeCache/Classes
+        - Neos.Utility.Pdo/Classes
+        - Neos.Utility.Schema/Classes
+        - Neos.Utility.Unicode/Classes
+    bootstrapFiles:
+         - bootstrap-phpstan.php
+    excludePaths:
+        analyse:
+            - Neos.Eel/Classes/FlowQuery/FizzleParser.php
+            - Neos.Eel/Classes/AbstractParser.php
+            - Neos.Eel/Classes/EelParser.php
+            - Neos.Eel/Classes/InterpretedEelParser.php
+            - Neos.Eel/Classes/CompilingEelParser.php
+            - Neos.Flow/.phpstorm.meta.php
+            - Neos.Flow/Classes/Security/Authorization/Privilege/Entity/Doctrine/EntityPrivilegeExpressionEvaluator.php

@@ -16,6 +16,7 @@ use Neos\Flow\Security\Authentication\TokenInterface;
 
 /**
  * An abstract authentication provider.
+ * @phpstan-consistent-constructor
  */
 abstract class AbstractProvider implements AuthenticationProviderInterface
 {

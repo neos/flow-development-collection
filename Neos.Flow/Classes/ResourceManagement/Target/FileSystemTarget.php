@@ -324,7 +324,7 @@ class FileSystemTarget implements TargetInterface
         }
 
         if (!is_writable(dirname($targetPathAndFilename))) {
-            throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the target file "%s" is not writable.', $sourceStream, $this->name, $targetPathAndFilename), 1428917322, (isset($exception) ? $exception : null));
+            throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the target file "%s" is not writable.', $sourceStream, $this->name, $targetPathAndFilename), 1428917322);
         }
 
         try {

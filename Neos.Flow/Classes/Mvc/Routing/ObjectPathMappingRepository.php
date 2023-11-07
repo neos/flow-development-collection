@@ -51,7 +51,6 @@ class ObjectPathMappingRepository extends Repository
      * @param string $pathSegment the URI path segment of the ObjectPathMapping object
      * @param boolean $caseSensitive whether the path segment lookup should be done case-sensitive
      * @return ObjectPathMapping|null
-     * @psalm-suppress MoreSpecificReturnType
      */
     public function findOneByObjectTypeUriPatternAndPathSegment($objectType, $uriPattern, $pathSegment, $caseSensitive = false)
     {
@@ -73,7 +72,6 @@ class ObjectPathMappingRepository extends Repository
      * @param string|integer $identifier the identifier of the object, for example the UUID, @see \Neos\Flow\Persistence\PersistenceManagerInterface::getIdentifierByObject()
      * @return ObjectPathMapping|null
      * @throws \InvalidArgumentException
-     * @psalm-suppress MoreSpecificReturnType
      */
     public function findOneByObjectTypeUriPatternAndIdentifier($objectType, $uriPattern, $identifier)
     {

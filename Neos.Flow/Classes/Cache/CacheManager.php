@@ -12,7 +12,7 @@ namespace Neos\Flow\Cache;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cache\Backend\FileBackend;
+use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\Exception\DuplicateIdentifierException;
 use Neos\Cache\Exception\NoSuchCacheException;
 use Neos\Cache\Frontend\FrontendInterface;

@@ -13,9 +13,6 @@ updates:
   - dependency-name: doctrine/migrations
     versions:
     - ">= 2.a, < 3"
-  - dependency-name: vimeo/psalm
-    versions:
-    - "> 4.1.1"
   - dependency-name: egulias/email-validator
     versions:
     - 3.0.0

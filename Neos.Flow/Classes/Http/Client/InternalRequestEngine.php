@@ -126,6 +126,7 @@ class InternalRequestEngine implements RequestEngineInterface
         }
 
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
+        /** @phpstan-ignore-next-line */
         if (!$requestHandler instanceof FunctionalTestRequestHandler) {
             throw new Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
         }

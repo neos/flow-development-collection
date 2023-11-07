@@ -43,6 +43,7 @@ use Psr\Log\LoggerInterface;
  * that phase already, calling start() at a later stage will be a no-operation.
  *
  * @see SessionManager
+ * @phpstan-consistent-constructor
  */
 class Session implements CookieEnabledInterface
 {
@@ -357,7 +358,7 @@ class Session implements CookieEnabledInterface
     /**
      * Resumes an existing session, if any.
      *
-     * @return integer If a session was resumed, the inactivity of this session since the last request is returned
+     * @return null|integer If a session was resumed, the inactivity of this session since the last request is returned
      * @api
      */
     public function resume()
@@ -614,7 +615,6 @@ class Session implements CookieEnabledInterface
         $this->sessionIdentifier = null;
         $this->storageIdentifier = null;
         $this->tags = [];
-        $this->request = null;
     }
 
     /**

@@ -17,6 +17,7 @@ use Neos\Flow\Mvc\Exception;
 /**
  * An abstract View
  *
+ * @phpstan-consistent-constructor
  * @api
  */
 abstract class AbstractView implements ViewInterface
