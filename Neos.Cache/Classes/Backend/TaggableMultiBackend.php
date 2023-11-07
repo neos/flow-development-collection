@@ -60,7 +60,6 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
      * @param array<string> $tags The tags the entries must have
      * @return integer The number of entries which have been affected by this flush
      * @throws Throwable
-     * @psalm-suppress MethodSignatureMismatch
      */
     public function flushByTags(array $tags): int
     {

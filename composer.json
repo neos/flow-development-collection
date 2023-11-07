@@ -9,6 +9,9 @@
         "test:behavioral": [
             "../../flow doctrine:migrate --quiet",
             "../../bin/behat -f progress -c Neos.Flow/Tests/Behavior/behat.yml"
+        ],
+        "lint": [
+            "../../bin/phpstan analyse"
         ]
     },
     "require": {
@@ -70,11 +73,6 @@
         "neos/utility-pdo": "self.version",
         "neos/utility-schema": "self.version",
         "neos/utility-unicode": "self.version"
-    },
-    "scripts": {
-        "lint": [
-            "../../bin/phpstan analyse"
-        ]
     },
     "suggest": {
         "ext-memcache": "If you have a memcache server and want to use it for caching.",

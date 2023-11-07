@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
+use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -283,21 +284,38 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function redirectRedirectsToTheSpecifiedAction()
     {
-        $arguments = ['foo' => 'bar'];
-
         $mockUriBuilder = $this->createMock(UriBuilder::class);
         $mockUriBuilder->expects(self::once())->method('reset')->willReturn($mockUriBuilder);
         $mockUriBuilder->expects(self::once())->method('setFormat')->with('doc')->willReturn($mockUriBuilder);
         $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->willReturn('the uri');
+        $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', ['foo' => 'bar'], 'Stuff', 'Super', 'Duper\Package')->willReturn('the_uri');
 
-        $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
-        //$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
-        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
+        $controller = new class extends AbstractController {
+            public function processRequest(ActionRequest $request, ActionResponse $response)
+            {
+                $mockUriBuilder = $this->uriBuilder;
+                $this->initializeController($request, $response);
+                $this->uriBuilder = $mockUriBuilder;
+
+                $this->myIndexAction();
+            }
+
+            public function myIndexAction(): void
+            {
+                $this->redirect('show', 'Stuff', 'Super\Duper\Package', ['foo' => 'bar'], 0, 303, 'doc');
+            }
+        };
+
         $this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
-        $controller->expects(self::once())->method('redirectToUri')->with('the uri');
-        $controller->_call('redirect', 'show', 'Stuff', 'Super\Duper\Package', $arguments, 0, 303, 'doc');
+        try {
+            $controller->processRequest($this->mockActionRequest, $this->actionResponse);
+        } catch (StopActionException) {
+            Assert::assertSame('the_uri', $this->actionResponse->getRedirectUri()?->__toString());
+            Assert::assertSame(303, $this->actionResponse->getStatusCode());
+            return;
+        }
+        Assert::assertTrue(false, 'Expected to be redirected.');
     }
 
     /**
@@ -305,22 +323,40 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function redirectUsesRequestFormatAsDefaultAndUnsetsSubPackageKeyIfNecessary()
     {
-        $arguments = ['foo' => 'bar'];
-
         $this->mockActionRequest->expects(self::atLeastOnce())->method('getFormat')->willReturn('json');
 
         $mockUriBuilder = $this->createMock(UriBuilder::class);
         $mockUriBuilder->expects(self::once())->method('reset')->willReturn($mockUriBuilder);
         $mockUriBuilder->expects(self::once())->method('setFormat')->with('json')->willReturn($mockUriBuilder);
         $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', null)->willReturn('the uri');
+        $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', ['foo' => 'bar'], 'Stuff', 'Super', null)->willReturn('the_uri');
 
-        $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
+        $controller = new class extends AbstractController {
+            public function processRequest(ActionRequest $request, ActionResponse $response)
+            {
+                $mockUriBuilder = $this->uriBuilder;
+                $this->initializeController($request, $response);
+                $this->uriBuilder = $mockUriBuilder;
+
+                $this->myIndexAction();
+            }
+
+            public function myIndexAction(): void
+            {
+                $this->redirect('show', 'Stuff', 'Super', ['foo' => 'bar']);
+            }
+        };
+
         $this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
-        $controller->expects(self::once())->method('redirectToUri')->with('the uri');
-        $controller->_call('redirect', 'show', 'Stuff', 'Super', $arguments);
+        try {
+            $controller->processRequest($this->mockActionRequest, $this->actionResponse);
+        } catch (StopActionException) {
+            Assert::assertSame('the_uri', $this->actionResponse->getRedirectUri()?->__toString());
+            Assert::assertSame(303, $this->actionResponse->getStatusCode());
+            return;
+        }
+        Assert::assertTrue(false, 'Expected to be redirected.');
     }
 
     /**

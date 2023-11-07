@@ -105,7 +105,7 @@ final class ResolveResult
      * Whether this result has a lifetime
      *
      * @return bool
-     * @psalm-assert-if-true RouteLifetime $this->getLifetime()
+     * @phpstan-assert-if-true RouteLifetime $this->getLifetime()
      */
     public function hasLifetime(): bool
     {

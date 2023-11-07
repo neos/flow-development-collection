@@ -40,8 +40,7 @@ class ProxyClass
     /**
      * Fully qualified class name of the original class
      *
-     * @var string
-     * @psalm-var class-string
+     * @var class-string
      */
     protected $fullOriginalClassName;
 
@@ -85,8 +84,7 @@ class ProxyClass
     /**
      * Creates a new ProxyClass instance.
      *
-     * @param string $fullOriginalClassName The fully qualified class name of the original class
-     * @psalm-param class-string $fullOriginalClassName
+     * @param class-string $fullOriginalClassName The fully qualified class name of the original class
      */
     public function __construct(string $fullOriginalClassName)
     {
@@ -241,7 +239,6 @@ class ProxyClass
             $methodsCode .= PHP_EOL . $this->constructor->generate();
 
             foreach (class_implements($this->fullOriginalClassName) as $interface) {
-                /** @psalm-suppress ArgumentTypeCoercion */
                 if (method_exists($interface, '__construct')) {
                     throw new CannotBuildObjectException(sprintf('The class "%s" implements the interface "%s" which has a constructor. Proxy classes implementing an interface containing a constructor is not supported and constructors interfaces are generally strongly discouraged.', $this->fullOriginalClassName, $interface), 1685433328);
                 }

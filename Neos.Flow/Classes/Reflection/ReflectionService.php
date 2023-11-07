@@ -385,8 +385,8 @@ class ReflectionService
      * Searches for and returns all names of classes inheriting the specified class.
      * If no class inheriting the given class was found, an empty array is returned.
      *
-     * @psalm-param class-string $className
-     * @psalm-return array<class-string>
+     * @param class-string $className
+     * @return array<class-string>
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @api

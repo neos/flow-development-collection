@@ -71,7 +71,7 @@ abstract class AbstractAuthenticationController extends ActionController
      * the according callback methods instead (onAuthenticationSuccess() and
      * onAuthenticationFailure()).
      *
-     * @return string
+     * @return string|null
      * @Flow\SkipCsrfProtection
      */
     public function authenticateAction()
@@ -135,7 +135,7 @@ abstract class AbstractAuthenticationController extends ActionController
      * $this->redirect('someDefaultActionAfterLogin');
      *
      * @param ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
-     * @return string
+     * @return string|null
      */
     abstract protected function onAuthenticationSuccess(ActionRequest $originalRequest = null);
 
@@ -148,7 +148,7 @@ abstract class AbstractAuthenticationController extends ActionController
      * Note: If you implement a nice redirect in the onAuthenticationFailure()
      * method of you login controller, this message should never be displayed.
      *
-     * @return Error The flash message
+     * @return Error|false The flash message
      * @api
      */
     protected function getErrorFlashMessage()

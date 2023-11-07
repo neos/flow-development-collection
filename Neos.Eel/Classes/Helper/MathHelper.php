@@ -493,9 +493,6 @@ class MathHelper implements ProtectedContextAwareInterface
     public function trunc($x)
     {
         $sign = $this->sign($x);
-        /**
-         * @psalm-suppress RedundantCastGivenDocblockType
-         */
         return match ($sign) {
             -1 => (int)ceil((float)$x),
             1 => (int)floor((float)$x),

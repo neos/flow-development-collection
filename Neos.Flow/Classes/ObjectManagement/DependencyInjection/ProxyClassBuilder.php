@@ -543,7 +543,7 @@ class ProxyClassBuilder
      *
      * @return null|string[] PHP code
      *
-     * @psalm-return array{0?: string}|null
+     * @phpstan-return array{0?: string}|null
      */
     protected function buildSetterInjectionCode(string $className, string $propertyName, string $preparedSetterArgument): array|null
     {
