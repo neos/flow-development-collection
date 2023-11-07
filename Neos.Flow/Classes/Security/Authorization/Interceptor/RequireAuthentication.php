@@ -39,12 +39,13 @@ class RequireAuthentication implements InterceptorInterface
     }
 
     /**
-     * Invokes the the authentication, if needed.
+     * Invokes the authentication, if needed.
      *
      * @return boolean true if the security checks was passed
      */
     public function invoke()
     {
         $this->authenticationManager->authenticate();
+        return true;
     }
 }

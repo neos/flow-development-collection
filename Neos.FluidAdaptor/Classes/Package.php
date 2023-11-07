@@ -42,7 +42,7 @@ class Package extends BasePackage
 
         $context = $bootstrap->getContext();
         if (!$context->isProduction()) {
-            $dispatcher->connect(Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap, $dispatcher) {
+            $dispatcher->connect(Sequence::class, 'afterInvokeStep', function ($step) use ($bootstrap) {
                 if ($step->getIdentifier() === 'neos.flow:systemfilemonitor') {
                     $templateFileMonitor = FileMonitor::createFileMonitorAtBoot('Fluid_TemplateFiles', $bootstrap);
                     $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);

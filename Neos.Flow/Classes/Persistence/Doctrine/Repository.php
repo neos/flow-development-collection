@@ -49,8 +49,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Warning: if you think you want to set this,
      * look at RepositoryInterface::ENTITY_CLASSNAME first!
      *
-     * @psalm-var class-string
-     * @var string
+     * @var class-string
      */
     protected $objectType;
 
@@ -68,7 +67,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     public function __construct(EntityManagerInterface $entityManager, ClassMetadata $classMetadata = null)
     {
         if ($classMetadata === null) {
-            /** @psalm-var class-string $objectType */
+            /** @var class-string $objectType */
             if (defined('static::ENTITY_CLASSNAME') === false) {
                 $objectType = preg_replace(['/\\\Repository\\\/', '/Repository$/'], ['\\Model\\', ''], get_class($this));
             } else {
