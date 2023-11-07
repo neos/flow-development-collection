@@ -7,7 +7,7 @@
   ],
   "require": {
     "php": "^8.2",
-    "neos/flow": "self.version",
+    "neos/flow": "~9.0.0",
     "neos/cache": "self.version",
     "neos/utility-files": "self.version",
     "neos/utility-objecthandling": "self.version",
