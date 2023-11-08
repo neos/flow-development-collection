@@ -125,11 +125,10 @@ class Compiler
      * false will be returned
      *
      * @param string $fullClassName Name of the original class
-     * @return ProxyClass|bool
      */
-    public function getProxyClass(string $fullClassName): bool|ProxyClass
+    public function getProxyClass(string $fullClassName): ProxyClass|false
     {
-        if (interface_exists($fullClassName) || in_array(BaseTestCase::class, class_parents($fullClassName), true)) {
+        if (interface_exists($fullClassName) || (class_exists(BaseTestCase::class) && in_array(BaseTestCase::class, class_parents($fullClassName), true))) {
             return false;
         }
 
@@ -403,6 +402,8 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
     private function getClassNameTokenIndex(array $tokens): ?int
     {
+        $classToken = null;
+        $previousToken = null;
         foreach ($tokens as $i => $token) {
             # $token is an array: [0] => token id, [1] => token text, [2] => line number
             if (isset($classToken) && is_array($token) && $token[0] === T_STRING) {

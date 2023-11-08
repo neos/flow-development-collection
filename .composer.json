@@ -7,17 +7,15 @@
     "test:behavioral": [
       "../../flow doctrine:migrate --quiet",
       "../../bin/behat -f progress -c Neos.Flow/Tests/Behavior/behat.yml"
+    ],
+    "lint": [
+      "../../bin/phpstan analyse"
     ]
   },
   "require": {
     "behat/behat": "^3.10"
   },
   "replace": {
-  },
-  "scripts": {
-    "lint": [
-      "../../bin/phpstan analyse"
-    ]
   },
   "suggest": {
   },

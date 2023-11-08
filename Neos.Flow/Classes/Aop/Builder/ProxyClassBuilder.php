@@ -18,7 +18,6 @@ use Neos\Flow\Aop\AdvicesTrait;
 use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\Exception;
 use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
-use Neos\Flow\Aop\Exception\InvalidTargetClassException;
 use Neos\Flow\Aop\Exception\VoidImplementationException;
 use Neos\Flow\Aop\Pointcut\Pointcut;
 use Neos\Flow\Aop\Pointcut\PointcutExpressionParser;

@@ -331,10 +331,9 @@ class CommandController implements CommandControllerInterface
      * shutdown (such as the persistence framework), you must use quit() instead of exit().
      *
      * @param integer $exitCode Exit code to return on exit (see http://www.php.net/exit)
-     * @psalm-return never-returns
      * @throws StopCommandException
      */
-    protected function quit(int $exitCode = 0)
+    protected function quit(int $exitCode = 0): never
     {
         $this->response->setExitCode($exitCode);
         throw new StopCommandException(sprintf('Quitting with exit code %s', $exitCode));
@@ -345,9 +344,8 @@ class CommandController implements CommandControllerInterface
      * Should be used for commands that flush code caches.
      *
      * @param integer $exitCode Exit code to return on exit
-     * @psalm-return never-returns
      */
-    protected function sendAndExit(int $exitCode = 0)
+    protected function sendAndExit(int $exitCode = 0): never
     {
         $this->response->send();
         exit($exitCode);

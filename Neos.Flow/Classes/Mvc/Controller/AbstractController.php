@@ -183,12 +183,11 @@ abstract class AbstractController implements ControllerInterface
      * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
      * @param string $packageKey Key of the package containing the controller to forward to. May also contain the sub package, concatenated with backslash (Vendor.Foo\Bar\Baz). If not specified, the current package is assumed.
      * @param array $arguments Arguments to pass to the target action
-     * @psalm-return never-returns
      * @throws ForwardException
      * @see redirect()
      * @api
      */
-    protected function forward($actionName, $controllerName = null, $packageKey = null, array $arguments = [])
+    protected function forward($actionName, $controllerName = null, $packageKey = null, array $arguments = []): never
     {
         $nextRequest = clone $this->request;
         $nextRequest->setControllerActionName($actionName);
@@ -258,12 +257,11 @@ abstract class AbstractController implements ControllerInterface
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @param string $format The format to use for the redirect URI
-     * @return void
      * @throws StopActionException
      * @see forward()
      * @api
      */
-    protected function redirect($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $delay = 0, $statusCode = 303, $format = null)
+    protected function redirect($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $delay = 0, $statusCode = 303, $format = null): never
     {
         if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
             list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
@@ -313,12 +311,11 @@ abstract class AbstractController implements ControllerInterface
      * @param mixed $uri Either a string representation of a URI or a \Neos\Flow\Http\Uri object
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-     * @psalm-return never-returns
      * @throws UnsupportedRequestTypeException If the request is not a web request
      * @throws StopActionException
      * @api
      */
-    protected function redirectToUri($uri, $delay = 0, $statusCode = 303)
+    protected function redirectToUri($uri, $delay = 0, $statusCode = 303): never
     {
         if ($delay === 0) {
             if (!$uri instanceof UriInterface) {
@@ -340,11 +337,10 @@ abstract class AbstractController implements ControllerInterface
      * @param integer $statusCode The HTTP status code
      * @param string $statusMessage A custom HTTP status message
      * @param string $content Body content which further explains the status
-     * @psalm-return never-returns
      * @throws StopActionException
      * @api
      */
-    protected function throwStatus(int $statusCode, $statusMessage = null, $content = null)
+    protected function throwStatus(int $statusCode, $statusMessage = null, $content = null): never
     {
         $this->response->setStatusCode($statusCode);
         if ($content === null) {

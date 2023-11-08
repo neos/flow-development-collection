@@ -31,7 +31,7 @@ class ObjectPathMapping
      * Class name of the object this mapping belongs to
      *
      * @var string
-     * @psalm-var class-string
+     * @phpstan-var class-string
      * @ORM\Id
      * @Flow\Validate(type="NotEmpty")
      */
@@ -111,9 +111,7 @@ class ObjectPathMapping
     }
 
     /**
-     * @param string $objectType
-     *
-     * @psalm-param class-string $objectType
+     * @param class-string $objectType
      */
     public function setObjectType($objectType): void
     {
@@ -121,8 +119,7 @@ class ObjectPathMapping
     }
 
     /**
-     * @return string
-     * @psalm-return class-string
+     * @return class-string
      */
     public function getObjectType()
     {
