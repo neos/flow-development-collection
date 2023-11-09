@@ -81,9 +81,10 @@ interface CollectionInterface
     /**
      * Returns all internal data objects of the storage attached to this collection.
      *
+     * @param callable(int $iteration, StorageObject $object): void $callback Function called after each object
      * @return \Generator<StorageObject>
      */
-    public function getObjects();
+    public function getObjects(callable $callback = null);
 
     /**
      * Returns a stream handle of the given persistent resource which allows for opening / copying the resource's
