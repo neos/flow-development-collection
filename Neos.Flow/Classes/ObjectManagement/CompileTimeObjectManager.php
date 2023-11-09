@@ -365,8 +365,9 @@ class CompileTimeObjectManager extends ObjectManager
      * defined in the object configuration of the specified object.
      *
      * @template T of object
-     * @param class-string<T> $objectName The name of the object to return an instance of
+     * @param class-string<T>|string $objectName The name of the object to return an instance of
      * @param mixed ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
+     * @phpstan-return ($objectName is class-string<T> ? T : object) The object instance
      * @return T The object instance
      * @throws \Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException
      * @throws \Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException

@@ -180,8 +180,9 @@ class ObjectManager implements ObjectManagerInterface
      * Returns a fresh or existing instance of the object specified by $objectName.
      *
      * @template T of object
-     * @param class-string<T> $objectName The name of the object to return an instance of
+     * @param class-string<T>|string $objectName The name of the object to return an instance of
      * @param mixed ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
+     * @phpstan-return ($objectName is class-string<T> ? T : object) The object instance
      * @return T The object instance
      * @throws Exception\CannotBuildObjectException
      * @throws Exception\UnknownObjectException if an object with the given name does not exist
@@ -370,7 +371,8 @@ class ObjectManager implements ObjectManagerInterface
      * registered yet.
      *
      * @template T of object
-     * @param class-string<T> $objectName The object name
+     * @param class-string<T>|string $objectName The object name
+     * @phpstan-return ($objectName is class-string<T> ? T|null : object|null) The object instance or null
      * @return T|null The object instance or null
      */
     public function getInstance($objectName)
