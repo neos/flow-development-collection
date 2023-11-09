@@ -5,17 +5,6 @@
  */
 
 namespace PHPSTORM_META {
-
-    override(
-        \Neos\Flow\ObjectManagement\ObjectManagerInterface::get(),
-        map(['' => '@'])
-    );
-
-    override(
-        \Neos\Flow\Core\Bootstrap::getEarlyInstance(),
-        map(['' => '@'])
-    );
-
     expectedArguments(\Neos\Flow\Annotations\Validate::__construct(), 1, 'AggregateBoundary', 'Alphanumeric', 'Boolean', 'Collection', 'Conjunction', 'Count', 'DateTimeRange', 'DateTime', 'Disjunction', 'EmailAddress', 'Float', 'GenericObject', 'Integer', 'Label', 'LocaleIdentifier', 'NotEmpty', 'NumberRange', 'Number', 'Raw', 'RegularExpresion', 'StringLength', 'Text', 'UniqueEntity', 'Uuid');
 
     expectedArguments(\Neos\Flow\Annotations\Scope::__construct(), 0, 'prototype', 'session', 'singleton');

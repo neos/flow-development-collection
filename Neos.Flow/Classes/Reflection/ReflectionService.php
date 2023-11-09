@@ -362,6 +362,9 @@ class ReflectionService
      * Searches for and returns all class names of implementations of the given object type
      * (interface name). If no class implementing the interface was found, an empty array is returned.
      *
+     * @template T of object
+     * @param class-string<T> $interfaceName
+     * @return list<class-string<T>>
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @api
