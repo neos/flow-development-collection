@@ -14,6 +14,8 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Exception\InvalidActionNameException;
+use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
@@ -48,41 +50,45 @@ class RestController extends ActionController
     /**
      * Determines the action method and assures that the method exists.
      *
+     * @param ActionRequest $request
      * @return string The action method name
      * @throws NoSuchActionException if the action specified in the request object does not exist (and if there's no default action either).
+     * @throws StopActionException
+     * @throws InvalidActionNameException
+     * @throws InvalidActionVisibilityException
      */
-    protected function resolveActionMethodName()
+    protected function resolveActionMethodName(ActionRequest $request): string
     {
-        if ($this->request->getControllerActionName() === 'index') {
+        if ($request->getControllerActionName() === 'index') {
             $actionName = 'index';
-            switch ($this->request->getHttpRequest()->getMethod()) {
+            switch ($request->getHttpRequest()->getMethod()) {
                 case 'HEAD':
                 case 'GET':
-                    $actionName = ($this->request->hasArgument($this->resourceArgumentName)) ? 'show' : 'list';
+                    $actionName = ($request->hasArgument($this->resourceArgumentName)) ? 'show' : 'list';
                     break;
                 case 'POST':
                     $actionName = 'create';
                     break;
                 case 'PUT':
-                    if (!$this->request->hasArgument($this->resourceArgumentName)) {
+                    if (!$request->hasArgument($this->resourceArgumentName)) {
                         $this->throwStatus(400, null, 'No resource specified');
                     }
                     $actionName = 'update';
                     break;
                 case 'DELETE':
-                    if (!$this->request->hasArgument($this->resourceArgumentName)) {
+                    if (!$request->hasArgument($this->resourceArgumentName)) {
                         $this->throwStatus(400, null, 'No resource specified');
                     }
                     $actionName = 'delete';
                     break;
             }
-            if ($this->request->getControllerActionName() !== $actionName) {
+            if ($request->getControllerActionName() !== $actionName) {
                 // Clone the request, because it should not be mutated to prevent unexpected routing behavior
-                $this->request = clone $this->request;
-                $this->request->setControllerActionName($actionName);
+                $request = clone $request;
+                $request->setControllerActionName($actionName);
             }
         }
-        return parent::resolveActionMethodName();
+        return parent::resolveActionMethodName($request);
     }
 
     /**

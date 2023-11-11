@@ -11,6 +11,8 @@ namespace Neos\Flow\Mvc\Exception;
  * source code.
  */
 
+use Neos\Flow\Mvc\ActionResponse;
+
 /**
  * This exception is thrown by a controller to stop the execution of the current
  * action and return the control to the dispatcher. The dispatcher catches this
@@ -23,4 +25,5 @@ namespace Neos\Flow\Mvc\Exception;
  */
 class StopActionException extends \Neos\Flow\Mvc\Exception
 {
+    public ActionResponse $response;
 }

@@ -14,6 +14,9 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
+use Neos\Flow\Property\Exception;
 use Psr\Http\Message\UriInterface;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
@@ -36,6 +39,8 @@ use Neos\Utility\MediaTypes;
  */
 abstract class AbstractController implements ControllerInterface
 {
+    use SpecialResponsesSupport;
+
     /**
      * @var UriBuilder
      */
@@ -196,7 +201,7 @@ abstract class AbstractController implements ControllerInterface
             $nextRequest->setControllerName($controllerName);
         }
         if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
-            list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
+            [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
         } else {
             $subpackageKey = null;
         }
@@ -251,20 +256,24 @@ abstract class AbstractController implements ControllerInterface
      * if used with other request types.
      *
      * @param string $actionName Name of the action to forward to
-     * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
-     * @param string $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
+     * @param null $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
+     * @param null $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
      * @param array $arguments Array of arguments for the target action
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-     * @param string $format The format to use for the redirect URI
+     * @param null $format The format to use for the redirect URI
+     * @return never
      * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
+     * @throws \Neos\Flow\Http\Exception
+     * @throws MissingActionNameException
      * @see forward()
      * @api
      */
     protected function redirect($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $delay = 0, $statusCode = 303, $format = null): never
     {
         if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
-            list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
+            [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
         } else {
             $subpackageKey = null;
         }
@@ -291,7 +300,10 @@ abstract class AbstractController implements ControllerInterface
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @return void
+     * @throws MissingActionNameException
      * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
+     * @throws \Neos\Flow\Http\Exception
      * @see forwardToRequest()
      * @api
      */
@@ -311,22 +323,17 @@ abstract class AbstractController implements ControllerInterface
      * @param mixed $uri Either a string representation of a URI or a \Neos\Flow\Http\Uri object
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-     * @throws UnsupportedRequestTypeException If the request is not a web request
      * @throws StopActionException
      * @api
      */
-    protected function redirectToUri($uri, $delay = 0, $statusCode = 303): never
+    protected function redirectToUri(string|UriInterface $uri, int $delay = 0, int $statusCode = 303): never
     {
-        if ($delay === 0) {
-            if (!$uri instanceof UriInterface) {
-                $uri = new Uri($uri);
-            }
-            $this->response->setRedirectUri($uri, $statusCode);
-        } else {
-            $this->response->setStatusCode($statusCode);
-            $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . (int)$delay . ';url=' . $uri . '"/></head></html>');
+        if (!$uri instanceof UriInterface) {
+            $uri = new Uri($uri);
         }
-        throw new StopActionException();
+
+        $response = $this->responseRedirectsToUri($uri,$delay, $statusCode, $this->response);
+        $this->throwStopActionWithReponse($response, '', 1699716808);
     }
 
     /**
@@ -357,19 +364,23 @@ abstract class AbstractController implements ControllerInterface
     /**
      * Maps arguments delivered by the request object to the local controller arguments.
      *
+     * @param ActionRequest $request
      * @return void
      * @throws RequiredArgumentMissingException
+     * @throws NoSuchArgumentException
+     * @throws Exception
+     * @throws \Neos\Flow\Security\Exception
      * @api
      */
-    protected function mapRequestArgumentsToControllerArguments()
+    protected function mapRequestArgumentsToControllerArguments(ActionRequest $request)
     {
         /* @var $argument \Neos\Flow\Mvc\Controller\Argument */
         foreach ($this->arguments as $argument) {
             $argumentName = $argument->getName();
             if ($argument->getMapRequestBody()) {
-                $argument->setValue($this->request->getHttpRequest()->getParsedBody());
-            } elseif ($this->request->hasArgument($argumentName)) {
-                $argument->setValue($this->request->getArgument($argumentName));
+                $argument->setValue($request->getHttpRequest()->getParsedBody());
+            } elseif ($request->hasArgument($argumentName)) {
+                $argument->setValue($request->getArgument($argumentName));
             } elseif ($argument->isRequired()) {
                 throw new RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1298012500);
             }

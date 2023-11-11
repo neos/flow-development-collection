@@ -21,8 +21,8 @@ use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
  * Generic interface for controllers
  *
  * This interface serves as a common contract for all kinds of controllers. That is,
- * in Flow it covers ActionController (dealing with ActionRequest) but also
- * CommandController (dealing with CommandRequest).
+ * in Flow it covers typical ActionController scenarios. They deal with an incoming
+ * request and provide a response.
  *
  * Controllers implementing this interface are compatible with the MVC Dispatcher.
  *
@@ -34,12 +34,11 @@ interface ControllerInterface
      * Processes a general request. The result can be returned by altering the given response.
      *
      * @param ActionRequest $request The request object
-     * @param ActionResponse $response The response, modified by the controller
-     * @return void
+     * @return ActionResponse $response The response, modified by the controller
      * @throws UnsupportedRequestTypeException if the controller doesn't support the current request type
      * @throws StopActionException
      * @throws ForwardException
      * @api
      */
-    public function processRequest(ActionRequest $request, ActionResponse $response);
+    public function processRequest(ActionRequest $request): ActionResponse;
 }

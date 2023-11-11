@@ -291,13 +291,16 @@ class AbstractControllerTest extends UnitTestCase
         $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', ['foo' => 'bar'], 'Stuff', 'Super', 'Duper\Package')->willReturn('the_uri');
 
         $controller = new class extends AbstractController {
-            public function processRequest(ActionRequest $request, ActionResponse $response)
+            public function processRequest(ActionRequest $request): ActionResponse
             {
+                $response = new ActionResponse();
                 $mockUriBuilder = $this->uriBuilder;
                 $this->initializeController($request, $response);
                 $this->uriBuilder = $mockUriBuilder;
 
                 $this->myIndexAction();
+
+                return $this->response;
             }
 
             public function myIndexAction(): void
@@ -309,10 +312,11 @@ class AbstractControllerTest extends UnitTestCase
         $this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
         try {
-            $controller->processRequest($this->mockActionRequest, $this->actionResponse);
-        } catch (StopActionException) {
-            Assert::assertSame('the_uri', $this->actionResponse->getRedirectUri()?->__toString());
-            Assert::assertSame(303, $this->actionResponse->getStatusCode());
+            $controller->processRequest($this->mockActionRequest);
+        } catch (StopActionException $exception) {
+            $actionReponse = $exception->response;
+            Assert::assertSame('the_uri', $actionReponse->getRedirectUri()?->__toString());
+            Assert::assertSame(303, $actionReponse->getStatusCode());
             return;
         }
         Assert::assertTrue(false, 'Expected to be redirected.');
@@ -332,13 +336,16 @@ class AbstractControllerTest extends UnitTestCase
         $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', ['foo' => 'bar'], 'Stuff', 'Super', null)->willReturn('the_uri');
 
         $controller = new class extends AbstractController {
-            public function processRequest(ActionRequest $request, ActionResponse $response)
+            public function processRequest(ActionRequest $request): ActionResponse
             {
+                $response = new ActionResponse();
                 $mockUriBuilder = $this->uriBuilder;
                 $this->initializeController($request, $response);
                 $this->uriBuilder = $mockUriBuilder;
 
                 $this->myIndexAction();
+
+                return $this->response;
             }
 
             public function myIndexAction(): void
@@ -350,10 +357,11 @@ class AbstractControllerTest extends UnitTestCase
         $this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
         try {
-            $controller->processRequest($this->mockActionRequest, $this->actionResponse);
-        } catch (StopActionException) {
-            Assert::assertSame('the_uri', $this->actionResponse->getRedirectUri()?->__toString());
-            Assert::assertSame(303, $this->actionResponse->getStatusCode());
+            $controller->processRequest($this->mockActionRequest);
+        } catch (StopActionException $exception) {
+            $actionReponse = $exception->response;
+            Assert::assertSame('the_uri', $actionReponse->getRedirectUri()?->__toString());
+            Assert::assertSame(303, $actionReponse->getStatusCode());
             return;
         }
         Assert::assertTrue(false, 'Expected to be redirected.');
@@ -489,13 +497,12 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $controller->_set('arguments', $controllerArguments);
 
         $this->mockActionRequest->expects(self::atLeast(2))->method('hasArgument')->withConsecutive(['foo'], ['baz'])->willReturn(true);
         $this->mockActionRequest->expects(self::atLeast(2))->method('getArgument')->withConsecutive(['foo'], ['baz'])->willReturnOnConsecutiveCalls('bar', 'quux');
 
-        $controller->_call('mapRequestArgumentsToControllerArguments');
+        $controller->_call('mapRequestArgumentsToControllerArguments', $this->mockActionRequest);
         self::assertEquals('bar', $controllerArguments['foo']->getValue());
         self::assertEquals('quux', $controllerArguments['baz']->getValue());
     }
@@ -518,12 +525,11 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $controller->_set('arguments', $controllerArguments);
 
         $this->mockActionRequest->expects(self::exactly(2))->method('hasArgument')->withConsecutive(['foo'], ['baz'])->willReturnOnConsecutiveCalls(true, false);
         $this->mockActionRequest->expects(self::once())->method('getArgument')->with('foo')->willReturn('bar');
 
-        $controller->_call('mapRequestArgumentsToControllerArguments');
+        $controller->_call('mapRequestArgumentsToControllerArguments', $this->mockActionRequest);
     }
 }

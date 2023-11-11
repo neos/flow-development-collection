@@ -37,13 +37,12 @@ abstract class AbstractWidgetController extends ActionController
      * Handles a request. The result output is returned by altering the given response.
      *
      * @param ActionRequest $request The request object
-     * @param ActionResponse $response The response, modified by this handler
-     * @return void
+     * @return ActionResponse $response The response, modified by this handler
      * @throws WidgetContextNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
      * @api
      */
-    public function processRequest(ActionRequest $request, ActionResponse $response)
+    public function processRequest(ActionRequest $request): ActionResponse
     {
         /** @var $widgetContext WidgetContext */
         $widgetContext = $request->getInternalArgument('__widgetContext');
@@ -51,6 +50,6 @@ abstract class AbstractWidgetController extends ActionController
             throw new WidgetContextNotFoundException('The widget context could not be found in the request.', 1307450180);
         }
         $this->widgetConfiguration = $widgetContext->getWidgetConfiguration();
-        parent::processRequest($request, $response);
+        return parent::processRequest($request);
     }
 }

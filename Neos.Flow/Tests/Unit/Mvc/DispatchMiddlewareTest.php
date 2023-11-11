@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Mvc;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\DispatchMiddleware;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Tests\UnitTestCase;
@@ -78,10 +79,14 @@ class DispatchMiddlewareTest extends UnitTestCase
      */
     public function processDispatchesTheRequest()
     {
+        $testContentType = 'audio/ogg';
         $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
-        $this->mockDispatcher->expects(self::once())->method('dispatch')->with($this->mockActionRequest);
+        $testReponse = new ActionResponse();
+        $testReponse->setContentType($testContentType);
+        $this->mockDispatcher->expects(self::once())->method('dispatch')->with($this->mockActionRequest)->willReturn($testReponse);
 
         $response = $this->dispatchMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
         self::assertInstanceOf(ResponseInterface::class, $response);
+        self::assertEquals([$testContentType], $response->getHeader('Content-Type'));
     }
 }

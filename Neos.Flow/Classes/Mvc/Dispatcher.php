@@ -85,8 +85,7 @@ class Dispatcher
      * Dispatches a request to a controller
      *
      * @param ActionRequest $request The request to dispatch
-     * @param ActionResponse $response The response, to be modified by the controller
-     * @return void
+     * @return ActionResponse
      * @throws AccessDeniedException
      * @throws AuthenticationRequiredException
      * @throws InfiniteLoopException
@@ -95,13 +94,13 @@ class Dispatcher
      * @throws MissingConfigurationException
      * @api
      */
-    public function dispatch(ActionRequest $request, ActionResponse $response)
+    public function dispatch(ActionRequest $request): ActionResponse
     {
         try {
             if ($this->securityContext->areAuthorizationChecksDisabled() !== true) {
                 $this->firewall->blockIllegalRequests($request);
             }
-            $this->initiateDispatchLoop($request, $response);
+            $response = $this->initiateDispatchLoop($request);
         } catch (AuthenticationRequiredException $exception) {
             // Rethrow as the SecurityEntryPoint middleware will take care of the rest
             throw $exception->attachInterceptedRequest($request);
@@ -111,6 +110,8 @@ class Dispatcher
             $securityLogger->warning('Access denied', LogEnvironment::fromMethodName(__METHOD__));
             throw $exception;
         }
+
+        return $response;
     }
 
     /**
@@ -121,20 +122,22 @@ class Dispatcher
      * @return ActionResponse
      * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException|UnsupportedRequestTypeException
      */
-    protected function initiateDispatchLoop(ActionRequest $request, ActionResponse $parentResponse)
+    protected function initiateDispatchLoop(ActionRequest $request): ActionResponse
     {
         $dispatchLoopCount = 0;
+        // This response is just for legacy reasons so the signals have something.
+        $response = new ActionResponse();
         while ($request !== null && $request->isDispatched() === false) {
             if ($dispatchLoopCount++ > 99) {
                 throw new Exception\InfiniteLoopException(sprintf('Could not ultimately dispatch the request after %d iterations.', $dispatchLoopCount), 1217839467);
             }
             $controller = $this->resolveController($request);
-            $response = new ActionResponse();
             try {
                 $this->emitBeforeControllerInvocation($request, $response, $controller);
-                $controller->processRequest($request, $response);
+                $response = $controller->processRequest($request);
                 $this->emitAfterControllerInvocation($request, $response, $controller);
             } catch (StopActionException $exception) {
+                $response = $exception->response ?? $response;
                 $this->emitAfterControllerInvocation($request, $response, $controller);
                 if ($exception instanceof ForwardException) {
                     $request = $exception->getNextRequest();
@@ -142,16 +145,15 @@ class Dispatcher
                     $request = $request->getParentRequest();
                 }
             }
-            $parentResponse = $response->mergeIntoParentResponse($parentResponse);
         }
-        return $parentResponse;
+        return $response;
     }
 
     /**
      * This signal is emitted directly before the request is been dispatched to a controller.
      *
      * @param ActionRequest $request
-     * @param ActionResponse $response
+     * @param ActionResponse $response This will always be an empty response, nothing to see here.
      * @param ControllerInterface $controller
      * @return void
      * @Flow\Signal
@@ -180,10 +182,9 @@ class Dispatcher
      *
      * @param ActionRequest $request The request to dispatch
      * @return ControllerInterface
-     * @throws NoSuchOptionException
-     * @throws Controller\Exception\InvalidControllerException
+     * @throws InvalidControllerException
      */
-    protected function resolveController(ActionRequest $request)
+    protected function resolveController(ActionRequest $request): ControllerInterface
     {
         /** @var ActionRequest $request */
         $controllerObjectName = $request->getControllerObjectName();
