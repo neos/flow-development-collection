@@ -206,9 +206,11 @@ class Context
      */
     public function __toString()
     {
-        if (is_object($this->value) && !method_exists($this->value, '__toString')) {
-            return '[object ' . get_class($this->value) . ']';
-        }
-        return (string)$this->value;
+        return sprintf('[%s%s]', gettype($this->value), match (true) {
+            is_object($this->value) => ' ' . get_class($this->value),
+            is_array($this->value) => ' length=' . count($this->value),
+            is_string($this->value)  => ' length=' . strlen($this->value),
+            default => ''
+        });
     }
 }
