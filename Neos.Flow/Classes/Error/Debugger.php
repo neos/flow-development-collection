@@ -467,7 +467,10 @@ class Debugger
     protected static function getObjectSnippetPlaintext(object $object): string
     {
         if (is_callable([$object, '__toString'])) {
-            return self::getObjectShortName($object) . '|' . self::truncateObjectOutput((string)$object) . '|';
+            try {
+                $string = (string)$object;
+                return self::getObjectShortName($object) . '|' . self::truncateObjectOutput($string) . '|';
+            } catch (\Throwable $_) {/* This can happen if what was callable was not actually __toString (a magic __call() will do that) we can try other ways to get information. */}
         }
 
         if ($object instanceof \JsonSerializable) {
