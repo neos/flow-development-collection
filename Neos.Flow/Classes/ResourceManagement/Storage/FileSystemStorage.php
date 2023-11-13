@@ -148,7 +148,6 @@ class FileSystemStorage implements StorageInterface
     public function getObjectsByCollection(CollectionInterface $collection)
     {
         $resources = $this->resourceRepository->findByCollectionNameIterator($collection->getName());
-        $iteration = 0;
         foreach ($resources as $resource) {
             /** @var PersistentResource $resource */
             $object = new StorageObject();
@@ -159,11 +158,6 @@ class FileSystemStorage implements StorageInterface
                 return $this->getStreamByResource($resource);
             });
             yield $object;
-            $iteration++;
-        }
-        if ($iteration === 0) {
-            // required because if the collection is empty, this should still return an empty generator
-            yield from [];
         }
     }
 
