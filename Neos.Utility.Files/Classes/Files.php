@@ -20,6 +20,34 @@ use Neos\Utility\Exception\FilesException;
 abstract class Files
 {
     /**
+     * Duckcheck if a path looks like it is absolute.
+     */
+    public static function isAbsolutePath(string $path): bool
+    {
+        if ($path === '') {
+            return false;
+        }
+        $isAbsolutePathInWindowsStyle = preg_match('`^[a-zA-Z]:[/\\\\][^/\\\\]`', $path) === 1;
+        $isAbsolutePathInUnixStyle = str_starts_with($path, '/');
+        return $isAbsolutePathInUnixStyle || $isAbsolutePathInWindowsStyle;
+    }
+
+    /**
+     * Duckcheck if a path looks like it is fully qualified.
+     * That means its absolute and has no directory traversal.
+     * {@see realpath()}
+     */
+    public static function isRealPath(string $path): bool
+    {
+        if (!self::isAbsolutePath($path)) {
+            return false;
+        }
+        $hasWindowsStyleDirectoryTraversal = str_contains($path, '\\..\\') || str_contains($path, '\\.\\');
+        $hasUnixStyleDirectoryTraversal = str_contains($path, '/../') || str_contains($path, '/./');
+        return !($hasWindowsStyleDirectoryTraversal || $hasUnixStyleDirectoryTraversal);
+    }
+
+    /**
      * Replacing backslashes and double slashes to slashes.
      * It's needed to compare paths (especially on windows).
      *

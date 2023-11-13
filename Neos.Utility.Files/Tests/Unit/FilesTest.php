@@ -160,6 +160,62 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         self::assertEquals('foo/bar', Files::concatenatePaths(['foo', '', 'bar']));
     }
 
+    public function isAbsolutePathExamples()
+    {
+        yield "realtive path" => ['foo/bar', false];
+
+        yield "absolute unix path" => ['/foo/bar', true];
+
+        yield "relative windows backslash path" => ['foo\\bar\\test\\', false];
+
+        yield "absolute windows backslash path" => ['c:\\foo\\bar\\test\\', true];
+
+        yield "absolute windows forwardslash path" => ['c:/foo/bar/test/', true];
+
+        yield "some stream wrapper" => ['stream://foobar', false];
+    }
+
+    /**
+     * @test
+     * @dataProvider isAbsolutePathExamples
+     */
+    public function isAbsolutePath($path, $expectedResult): void
+    {
+        self::assertEquals($expectedResult, Files::isAbsolutePath($path));
+    }
+
+    public function isRealPathExamples()
+    {
+        yield "absolute unix path" => ['/foo/bar', true];
+
+        yield "absolute windows backslash path" => ['c:\\foo\\bar\\test\\', true];
+
+        yield "absolute windows forwardslash path" => ['c:/foo/bar/test/', true];
+
+        yield "realtive path with traversal" => ['foo/../bar', false];
+
+        yield "absolute unix path with traversal" => ['/foo/../bar', false];
+
+        yield "absolute unix path with stupid traversal" => ['/foo/./bar', false];
+
+        yield "absolute windows backslash path with traversal" => ['c:\\foo\\..\\test\\', false];
+
+        yield "absolute windows backslash path with stupid traversal" => ['c:\\foo\\.\\test\\', false];
+
+        yield "absolute windows forwardslash path with traversal" => ['c:/foo/../test/', false];
+
+        yield "some stream wrapper with traversal" => ['stream://foo/../bar', false];
+    }
+
+    /**
+     * @test
+     * @dataProvider isRealPathExamples
+     */
+    public function isRealPath($path, $expectedResult): void
+    {
+        self::assertEquals($expectedResult, Files::isRealPath($path));
+    }
+
     /**
      * @test
      */
