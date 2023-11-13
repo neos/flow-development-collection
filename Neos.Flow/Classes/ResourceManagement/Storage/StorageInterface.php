@@ -52,19 +52,17 @@ interface StorageInterface
     /**
      * Retrieve all Objects stored in this storage.
      *
-     * @param callable(int $iteration, StorageObject $object): void $callback Function called after each object
      * @return \Generator<StorageObject>
      * @api
      */
-    public function getObjects(callable $callback = null);
+    public function getObjects();
 
     /**
      * Retrieve all Objects stored in this storage, filtered by the given collection name
      *
      * @param CollectionInterface $collection
-     * @param callable(int $iteration, object $object): void $callback Function called after each iteration
      * @return \Generator<StorageObject>
      * @api
      */
-    public function getObjectsByCollection(CollectionInterface $collection, callable $callback = null);
+    public function getObjectsByCollection(CollectionInterface $collection);
 }

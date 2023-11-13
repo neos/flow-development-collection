@@ -30,10 +30,9 @@ interface TargetInterface
      * Publishes the whole collection to this target
      *
      * @param CollectionInterface $collection The collection to publish
-     * @param callable(int $iteration, object $object): void $callback Function called after each resource publishing
      * @return void
      */
-    public function publishCollection(CollectionInterface $collection, callable $callback = null);
+    public function publishCollection(CollectionInterface $collection);
 
     /**
      * Publishes the given persistent resource from the given storage
@@ -69,4 +68,9 @@ interface TargetInterface
      * @throws Exception
      */
     public function getPublicPersistentResourceUri(PersistentResource $resource);
+
+    /**
+     * @param \Closure(int $iteration, object $object): void $callback Function called after each resource publishing
+     */
+    public function onPublish(\Closure $callback): void;
 }

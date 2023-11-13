@@ -32,18 +32,19 @@ class FileSystemSymlinkTarget extends FileSystemTarget
      * Publishes the whole collection to this target
      *
      * @param CollectionInterface $collection The collection to publish
-     * @param callable $callback Function called after each resource publishing
      * @return void
      */
-    public function publishCollection(CollectionInterface $collection, callable $callback = null)
+    public function publishCollection(CollectionInterface $collection)
     {
         $storage = $collection->getStorage();
         if ($storage instanceof PackageStorage) {
             foreach ($storage->getPublicResourcePaths() as $packageKey => $path) {
+                // FIXME we cannot invoke the callback here as we just symlink the whole folder,
+                // but $this->invokeOnPublishCallbacks() expects int $iteration and object $object
                 $this->publishDirectory($path, $packageKey);
             }
         } else {
-            parent::publishCollection($collection, $callback);
+            parent::publishCollection($collection);
         }
     }
 

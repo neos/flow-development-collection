@@ -130,13 +130,12 @@ class FileSystemStorage implements StorageInterface
     /**
      * Retrieve all Objects stored in this storage.
      *
-     * @param callable|null $callback Function called after each iteration
      * @return \Generator<StorageObject>
      */
-    public function getObjects(callable $callback = null)
+    public function getObjects()
     {
         foreach ($this->resourceManager->getCollectionsByStorage($this) as $collection) {
-            yield from $this->getObjectsByCollection($collection, $callback);
+            yield from $this->getObjectsByCollection($collection);
         }
     }
 
@@ -144,14 +143,13 @@ class FileSystemStorage implements StorageInterface
      * Retrieve all Objects stored in this storage, filtered by the given collection name
      *
      * @param CollectionInterface $collection
-     * @param callable|null $callback Function called after each iteration
      * @return \Generator<StorageObject>
      */
-    public function getObjectsByCollection(CollectionInterface $collection, callable $callback = null)
+    public function getObjectsByCollection(CollectionInterface $collection)
     {
-        $iterator = $this->resourceRepository->findByCollectionNameIterator($collection->getName());
+        $resources = $this->resourceRepository->findByCollectionNameIterator($collection->getName());
         $iteration = 0;
-        foreach ($this->resourceRepository->iterate($iterator, $callback) as $resource) {
+        foreach ($resources as $resource) {
             /** @var PersistentResource $resource */
             $object = new StorageObject();
             $object->setFilename($resource->getFilename());
@@ -161,9 +159,6 @@ class FileSystemStorage implements StorageInterface
                 return $this->getStreamByResource($resource);
             });
             yield $object;
-            if ($callback !== null) {
-                call_user_func($callback, $iteration, $object);
-            }
             $iteration++;
         }
         if ($iteration === 0) {
