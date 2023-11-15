@@ -200,17 +200,4 @@ class Context
         }
         return $this;
     }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return sprintf('[%s%s]', gettype($this->value), match (true) {
-            is_object($this->value) => ' ' . get_class($this->value),
-            is_array($this->value) => ' length=' . count($this->value),
-            is_string($this->value)  => ' length=' . strlen($this->value),
-            default => ''
-        });
-    }
 }
