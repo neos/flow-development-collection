@@ -466,7 +466,7 @@ class Debugger
 
     protected static function getObjectSnippetPlaintext(object $object): string
     {
-        if (method_exists([$object, '__toString'])) {
+        if (method_exists($object, '__toString')) {
             try {
                 $string = (string)$object;
                 return self::getObjectShortName($object) . '|' . self::truncateObjectOutput($string) . '|';
