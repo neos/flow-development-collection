@@ -77,9 +77,10 @@ class ResourceCommandController extends CommandController
      * to their respective configured publishing targets.
      *
      * @param string $collection If specified, only resources of this collection are published. Example: 'persistent'
+     * @param bool $quiet Don't print the progress-bar
      * @return void
      */
-    public function publishCommand(string $collection = null)
+    public function publishCommand(string $collection = null, bool $quiet = false)
     {
         try {
             if ($collection === null) {
@@ -94,21 +95,24 @@ class ResourceCommandController extends CommandController
             }
 
             foreach ($collections as $collection) {
-                $progressIndicator = new ProgressIndicator($this->output->getOutput());
+                $progressIndicator = $quiet
+                    ? null
+                    : new ProgressIndicator($this->output->getOutput());
                 try {
                     /** @var CollectionInterface $collection */
                     $this->outputLine('Publishing resources of collection "%s"', [$collection->getName()]);
-                    $progressIndicator->start('Published 0');
+                    $progressIndicator?->start('Published 0');
                     $target = $collection->getTarget();
                     $lastIteration = 0;
                     $target->onPublish(function ($iteration) use ($progressIndicator, &$lastIteration) {
-                        $progressIndicator->advance();
-                        $progressIndicator->setMessage(sprintf('Published %s', $iteration));
+                        $iteration += 1;
+                        $progressIndicator?->advance();
+                        $progressIndicator?->setMessage(sprintf('Published %s', $iteration));
                         $this->clearState($iteration);
                         $lastIteration = $iteration;
                     });
                     $target->publishCollection($collection);
-                    $progressIndicator->finish(sprintf('Published %s', $lastIteration));
+                    $progressIndicator?->finish(sprintf('Published %s', $lastIteration));
                 } catch (Exception $exception) {
                     $message = sprintf(
                         'An error occurred while publishing the collection "%s": %s (Exception code: %u): %s',

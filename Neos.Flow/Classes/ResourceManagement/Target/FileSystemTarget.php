@@ -45,7 +45,7 @@ class FileSystemTarget implements TargetInterface
     protected $name;
 
     /**
-     * @var list<\Closure(int $iteration, object $object): void>
+     * @var list<\Closure(int $iteration, ResourceMetaDataInterface $object): void>
      */
     protected $callbacks = [];
 
@@ -171,14 +171,14 @@ class FileSystemTarget implements TargetInterface
     }
 
     /**
-     * @param \Closure(int $iteration, object $object): void $callback Function called after each resource publishing
+     * @param \Closure(int $iteration, ResourceMetaDataInterface $object): void $callback Function called after each resource publishing
      */
     public function onPublish(\Closure $callback): void
     {
         $this->callbacks[] = $callback;
     }
 
-    protected function invokeOnPublishCallbacks(int $iteration, object $object): void
+    protected function invokeOnPublishCallbacks(int $iteration, ResourceMetaDataInterface $object): void
     {
         foreach ($this->callbacks as $callback) {
             $callback($iteration, $object);

@@ -38,10 +38,11 @@ class FileSystemSymlinkTarget extends FileSystemTarget
     {
         $storage = $collection->getStorage();
         if ($storage instanceof PackageStorage) {
+            $iteration = 0;
             foreach ($storage->getPublicResourcePaths() as $packageKey => $path) {
-                // FIXME we cannot invoke the callback here as we just symlink the whole folder,
-                // but $this->invokeOnPublishCallbacks() expects int $iteration and object $object
                 $this->publishDirectory($path, $packageKey);
+                $this->invokeOnPublishCallbacks($iteration, new SymlinkedFolderResourceObject($path));
+                $iteration++;
             }
         } else {
             parent::publishCollection($collection);
