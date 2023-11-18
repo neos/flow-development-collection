@@ -16,7 +16,7 @@ namespace Neos\Cache\Backend;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 
 /**
  * A caching backend which stores cache entries by using APCu.
@@ -76,10 +76,10 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     /**
      * Initializes the identifier prefix when setting the cache.
      *
-     * @param FrontendInterface $cache
+     * @param LowLevelFrontendInterface $cache
      * @return void
      */
-    public function setCache(FrontendInterface $cache): void
+    public function setCache(LowLevelFrontendInterface $cache): void
     {
         parent::setCache($cache);
 
@@ -119,7 +119,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
-        if (!$this->cache instanceof FrontendInterface) {
+        if (!$this->cache instanceof LowLevelFrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1232986818);
         }
 
@@ -222,7 +222,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      */
     public function flush(): void
     {
-        if (!$this->cache instanceof FrontendInterface) {
+        if (!$this->cache instanceof LowLevelFrontendInterface) {
             throw new Exception('Yet no cache frontend has been set via setCache().', 1232986971);
         }
         $this->flushByTag('%APCUBE%' . $this->cacheIdentifier);

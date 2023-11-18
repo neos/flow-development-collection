@@ -16,7 +16,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\PdoBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 use Neos\Cache\Tests\BaseTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -218,12 +218,12 @@ class PdoBackendTest extends BaseTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->getMockBuilder(FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $thisCache = $this->getMockBuilder(LowLevelFrontendInterface::class)->disableOriginalConstructor()->getMock();
         $thisCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thisCache'));
         $thisBackend = $this->setUpBackend();
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMockBuilder(FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        $thatCache = $this->getMockBuilder(LowLevelFrontendInterface::class)->disableOriginalConstructor()->getMock();
         $thatCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thatCache'));
         $thatBackend = $this->setUpBackend();
         $thatBackend->setCache($thatCache);
@@ -338,8 +338,8 @@ class PdoBackendTest extends BaseTestCase
      */
     protected function setUpBackend()
     {
-        /** @var FrontendInterface|MockObject $mockCache */
-        $mockCache = $this->getMockBuilder(FrontendInterface::class)->disableOriginalConstructor()->getMock();
+        /** @var LowLevelFrontendInterface|MockObject $mockCache */
+        $mockCache = $this->getMockBuilder(LowLevelFrontendInterface::class)->disableOriginalConstructor()->getMock();
         $mockCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('TestCache'));
 
         $mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)->setConstructorArgs([

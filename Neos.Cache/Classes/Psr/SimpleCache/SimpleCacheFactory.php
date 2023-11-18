@@ -22,6 +22,7 @@ use Psr\SimpleCache\CacheInterface;
 
 /**
  * A factory for PSR-16 simple caches.
+ * @deprecated will be removed with Neos Flow 10. Use CacheManager and Caches.yaml instead.
  */
 class SimpleCacheFactory
 {

@@ -23,7 +23,7 @@ use Neos\Cache\Backend\IterableBackendInterface;
 class CacheEntryIterator implements \Iterator
 {
     /**
-     * @var FrontendInterface
+     * @var LowLevelFrontendInterface
      */
     protected $frontend;
 
@@ -35,10 +35,10 @@ class CacheEntryIterator implements \Iterator
     /**
      * Constructs this Iterator
      *
-     * @param FrontendInterface $frontend Frontend of the cache to iterate over
+     * @param LowLevelFrontendInterface $frontend Frontend of the cache to iterate over
      * @param IterableBackendInterface $backend Backend of the cache
      */
-    public function __construct(FrontendInterface $frontend, IterableBackendInterface $backend)
+    public function __construct(LowLevelFrontendInterface $frontend, IterableBackendInterface $backend)
     {
         $this->frontend = $frontend;
         $this->backend = $backend;

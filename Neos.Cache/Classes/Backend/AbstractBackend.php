@@ -14,7 +14,7 @@ namespace Neos\Cache\Backend;
  */
 
 use Neos\Cache\EnvironmentConfiguration;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 
 /**
  * An abstract caching backend
@@ -28,7 +28,7 @@ abstract class AbstractBackend implements BackendInterface
 
     /**
      * Reference to the cache frontend which uses this backend
-     * @var FrontendInterface
+     * @var LowLevelFrontendInterface
      */
     protected $cache;
 
@@ -109,11 +109,11 @@ abstract class AbstractBackend implements BackendInterface
     /**
      * Sets a reference to the cache frontend which uses this backend
      *
-     * @param FrontendInterface $cache The frontend for this backend
+     * @param LowLevelFrontendInterface $cache The frontend for this backend
      * @return void
      * @api
      */
-    public function setCache(FrontendInterface $cache): void
+    public function setCache(LowLevelFrontendInterface $cache): void
     {
         $this->cache = $cache;
         $this->cacheIdentifier = $this->cache->getIdentifier();

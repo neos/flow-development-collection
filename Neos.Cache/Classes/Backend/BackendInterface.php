@@ -13,7 +13,7 @@ namespace Neos\Cache\Backend;
  * source code.
  */
 
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 
 /**
  * A contract for a Cache Backend
@@ -25,11 +25,11 @@ interface BackendInterface
     /**
      * Sets a reference to the cache frontend which uses this backend
      *
-     * @param FrontendInterface $cache The frontend for this backend
+     * @param LowLevelFrontendInterface $cache The frontend for this backend
      * @return void
      * @api
      */
-    public function setCache(FrontendInterface $cache): void;
+    public function setCache(LowLevelFrontendInterface $cache): void;
 
     /**
      * Returns the internally used, prefixed entry identifier for the given public

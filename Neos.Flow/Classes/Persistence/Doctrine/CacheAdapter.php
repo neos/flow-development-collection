@@ -13,7 +13,7 @@ namespace Neos\Flow\Persistence\Doctrine;
 
 use Doctrine\Common\Cache\Cache;
 use Neos\Flow\Annotations as Flow;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 use Neos\Flow\Security\Context;
 
 /**
@@ -22,7 +22,7 @@ use Neos\Flow\Security\Context;
 class CacheAdapter implements Cache
 {
     /**
-     * @var FrontendInterface
+     * @var LowLevelFrontendInterface
      */
     protected $cache;
 
@@ -35,10 +35,10 @@ class CacheAdapter implements Cache
     /**
      * Set the cache this adapter should use.
      *
-     * @param FrontendInterface $cache
+     * @param LowLevelFrontendInterface $cache
      * @return void
      */
-    public function setCache(FrontendInterface $cache)
+    public function setCache(LowLevelFrontendInterface $cache)
     {
         $this->cache = $cache;
     }

@@ -12,7 +12,7 @@ namespace Neos\Cache;
  */
 use Neos\Cache\Exception\InvalidCacheException;
 use Neos\Cache\Exception\InvalidBackendException;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 
 /**
  * This cache factory takes care of instantiating a cache frontend and injecting
@@ -31,10 +31,10 @@ interface CacheFactoryInterface
      * @param string $cacheObjectName Object name of the cache frontend
      * @param string $backendObjectName Object name of the cache backend
      * @param array $backendOptions (optional) Array of backend options
-     * @return \Neos\Cache\Frontend\FrontendInterface The created cache frontend
+     * @return \Neos\Cache\Frontend\LowLevelFrontendInterface The created cache frontend
      * @throws InvalidBackendException
      * @throws InvalidCacheException
      * @api
      */
-    public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): FrontendInterface;
+    public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): LowLevelFrontendInterface;
 }

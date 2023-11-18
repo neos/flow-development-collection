@@ -18,34 +18,8 @@ namespace Neos\Cache\Frontend;
  *
  * @api
  */
-interface FrontendInterface
+interface FrontendInterface extends LowLevelFrontendInterface
 {
-    /**
-     * Pattern an entry identifier must match.
-     */
-    const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
-
-    /**
-     * Pattern a tag must match.
-     */
-    const PATTERN_TAG = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
-
-    /**
-     * Returns this cache's identifier
-     *
-     * @return string The identifier for this cache
-     * @api
-     */
-    public function getIdentifier();
-
-    /**
-     * Returns the backend used by this cache
-     *
-     * @return \Neos\Cache\Backend\BackendInterface The backend used by this cache
-     * @api
-     */
-    public function getBackend();
-
     /**
      * Saves data in the cache.
      *
@@ -92,55 +66,4 @@ interface FrontendInterface
      * @return boolean true if such an entry exists, false if not
      */
     public function remove(string $entryIdentifier): bool;
-
-    /**
-     * Removes all cache entries of this cache.
-     *
-     * @return void
-     */
-    public function flush();
-
-    /**
-     * Removes all cache entries of this cache which are tagged by the specified tag.
-     *
-     * @param string $tag The tag the entries must have
-     * @return integer The number of entries which have been affected by this flush
-     * @api
-     */
-    public function flushByTag(string $tag): int;
-
-    /**
-     * Removes all cache entries of this cache which are tagged by any of the specified tags.
-     *
-     * @param array<string> $tags The tags the entries must have
-     * @return integer The number of entries which have been affected by this flush
-     * @api
-     */
-    public function flushByTags(array $tags): int;
-
-    /**
-     * Does garbage collection
-     *
-     * @return void
-     * @api
-     */
-    public function collectGarbage();
-
-    /**
-     * Checks the validity of an entry identifier. Returns true if it's valid.
-     *
-     * @param string $identifier An identifier to be checked for validity
-     * @return boolean
-     * @api
-     */
-    public function isValidEntryIdentifier(string $identifier): bool;
-
-    /**
-     * Checks the validity of a tag. Returns true if it's valid.
-     *
-     * @param string $tag A tag to be checked for validity
-     * @return boolean
-     * @api
-     */
-    public function isValidTag(string $tag): bool;
 }

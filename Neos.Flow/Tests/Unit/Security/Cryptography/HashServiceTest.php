@@ -64,8 +64,9 @@ class HashServiceTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->cache = new StringFrontend('TestCache', new TransientMemoryBackend(new EnvironmentConfiguration('Hash Testing', '/some/path', PHP_MAXPATHLEN)));
-        $this->cache->initializeObject();
+        $cacheBackend = new TransientMemoryBackend(new EnvironmentConfiguration('Hash Testing', '/some/path', PHP_MAXPATHLEN));
+        $this->cache = new StringFrontend('TestCache', $cacheBackend);
+        $cacheBackend->setCache($this->cache);
 
         $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
 

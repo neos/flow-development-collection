@@ -17,7 +17,7 @@ use Neos\Cache\Backend\ApcuBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
 use Neos\Cache\Tests\BaseTestCase;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 use Neos\Cache\Frontend\VariableFrontend;
 
 /**
@@ -227,12 +227,12 @@ class ApcuBackendTest extends BaseTestCase
      */
     public function flushRemovesOnlyOwnEntries()
     {
-        $thisCache = $this->createMock(FrontendInterface::class);
+        $thisCache = $this->createMock(LowLevelFrontendInterface::class);
         $thisCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thisCache'));
         $thisBackend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->createMock(FrontendInterface::class);
+        $thatCache = $this->createMock(LowLevelFrontendInterface::class);
         $thatCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thatCache'));
         $thatBackend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $thatBackend->setCache($thatCache);
@@ -422,7 +422,7 @@ class ApcuBackendTest extends BaseTestCase
      */
     protected function setUpBackend()
     {
-        $cache = $this->createMock(FrontendInterface::class);
+        $cache = $this->createMock(LowLevelFrontendInterface::class);
         $backend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $backend->setCache($cache);
         $backend->flush(); // I'd rather start with a clean directory in the first place, but I can't get the "vfs" thing to work

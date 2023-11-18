@@ -15,7 +15,7 @@ namespace Neos\Cache\Backend;
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\Exception;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 
 /**
  * A caching backend which stores cache entries during one script run.
@@ -47,7 +47,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
     {
-        if (!$this->cache instanceof FrontendInterface) {
+        if (!$this->cache instanceof LowLevelFrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1238244992);
         }
 

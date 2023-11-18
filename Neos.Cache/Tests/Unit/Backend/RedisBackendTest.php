@@ -16,7 +16,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 use Neos\Cache\Tests\BaseTestCase;
 
 /**
@@ -38,7 +38,7 @@ class RedisBackendTest extends BaseTestCase
     private $backend;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FrontendInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|LowLevelFrontendInterface
      */
     private $cache;
 
@@ -54,7 +54,7 @@ class RedisBackendTest extends BaseTestCase
         }
 
         $this->redis = $this->getMockBuilder(\Redis::class)->disableOriginalConstructor()->getMock();
-        $this->cache = $this->createMock(FrontendInterface::class);
+        $this->cache = $this->createMock(LowLevelFrontendInterface::class);
         $this->cache->method('getIdentifier')
             ->willReturn('Foo_Cache');
 

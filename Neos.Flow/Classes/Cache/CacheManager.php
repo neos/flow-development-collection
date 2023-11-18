@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\Exception\DuplicateIdentifierException;
 use Neos\Cache\Exception\NoSuchCacheException;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -57,7 +57,7 @@ class CacheManager
     protected $environment;
 
     /**
-     * @var FrontendInterface[]
+     * @var LowLevelFrontendInterface[]
      */
     protected $caches = [];
 
@@ -156,13 +156,13 @@ class CacheManager
     /**
      * Registers a cache so it can be retrieved at a later point.
      *
-     * @param FrontendInterface $cache The cache frontend to be registered
+     * @param LowLevelFrontendInterface $cache The cache frontend to be registered
      * @param bool $persistent
      * @return void
      * @throws DuplicateIdentifierException if a cache with the given identifier has already been registered.
      * @api
      */
-    public function registerCache(FrontendInterface $cache, bool $persistent = false): void
+    public function registerCache(LowLevelFrontendInterface $cache, bool $persistent = false): void
     {
         $identifier = $cache->getIdentifier();
         if (isset($this->caches[$identifier])) {
@@ -178,11 +178,12 @@ class CacheManager
      * Returns the cache specified by $identifier
      *
      * @param string $identifier Identifies which cache to return
-     * @return FrontendInterface The specified cache frontend
+     * @param class-string<T>|null $className The expected CacheManager for the cache frontend
+     * @return LowLevelFrontendInterface The specified cache frontend
      * @throws NoSuchCacheException
      * @api
      */
-    public function getCache(string $identifier): FrontendInterface
+    public function getCache(string $identifier): LowLevelFrontendInterface
     {
         if ($this->hasCache($identifier) === false) {
             throw new NoSuchCacheException('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
@@ -199,6 +200,7 @@ class CacheManager
      *
      * @param string $identifier
      * @return CacheInterface
+     * @deprecated will be removed with Neos Flow 10. Use Caches.yaml with \Neos\Cache\Frontend\Psr\SimpleCache\SimpleCacheFrontend.
      */
     public function getSimpleCache(string $identifier): CacheInterface
     {
@@ -217,6 +219,7 @@ class CacheManager
      *
      * @param string $identifier
      * @return CacheItemPoolInterface
+     * @deprecated will be removed with Neos Flow 10. Use Caches.yaml with \Neos\Cache\Frontend\Psr\CachePool\CachePoolFrontend.
      */
     public function getCacheItemPool(string $identifier): CacheItemPoolInterface
     {
@@ -263,7 +266,7 @@ class CacheManager
     public function flushCaches(bool $flushPersistentCaches = false): void
     {
         $this->createAllCaches();
-        /** @var FrontendInterface $cache */
+        /** @var LowLevelFrontendInterface $cache */
         foreach ($this->caches as $identifier => $cache) {
             if (!$flushPersistentCaches && $this->isCachePersistent($identifier)) {
                 continue;
@@ -287,7 +290,7 @@ class CacheManager
     public function flushCachesByTag(string $tag, bool $flushPersistentCaches = false): void
     {
         $this->createAllCaches();
-        /** @var FrontendInterface $cache */
+        /** @var LowLevelFrontendInterface $cache */
         foreach ($this->caches as $identifier => $cache) {
             if (!$flushPersistentCaches && $this->isCachePersistent($identifier)) {
                 continue;

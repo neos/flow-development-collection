@@ -17,8 +17,8 @@ use Neos\Cache\Backend\MemcachedBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
 use Neos\Cache\Tests\BaseTestCase;
-use Neos\Cache\Frontend\AbstractFrontend;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\AbstractLowLevelFrontend;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 
 /**
  * Testcase for the cache to memcached backend
@@ -233,12 +233,12 @@ class MemcachedBackendTest extends BaseTestCase
     {
         $backendOptions = ['servers' => ['localhost:11211']];
 
-        $thisCache = $this->getMockBuilder(AbstractFrontend::class)->disableOriginalConstructor()->getMock();
+        $thisCache = $this->getMockBuilder(AbstractLowLevelFrontend::class)->disableOriginalConstructor()->getMock();
         $thisCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thisCache'));
         $thisBackend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $thisBackend->setCache($thisCache);
 
-        $thatCache = $this->getMockBuilder(AbstractFrontend::class)->disableOriginalConstructor()->getMock();
+        $thatCache = $this->getMockBuilder(AbstractLowLevelFrontend::class)->disableOriginalConstructor()->getMock();
         $thatCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thatCache'));
         $thatBackend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $thatBackend->setCache($thatCache);
@@ -276,7 +276,7 @@ class MemcachedBackendTest extends BaseTestCase
      */
     protected function setUpBackend(array $backendOptions = [])
     {
-        $cache = $this->createMock(FrontendInterface::class, [], [], '', false);
+        $cache = $this->createMock(LowLevelFrontendInterface::class, [], [], '', false);
         if ($backendOptions == []) {
             $backendOptions = ['servers' => ['localhost:11211']];
         }

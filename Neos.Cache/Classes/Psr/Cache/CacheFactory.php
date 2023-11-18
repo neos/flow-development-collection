@@ -22,6 +22,7 @@ use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * A factory for the PSR-6 compatible cache pool.
+ * @deprecated will be removed with Neos Flow 10. Use CacheManager and Caches.yaml instead.
  */
 class CacheFactory
 {

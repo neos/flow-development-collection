@@ -24,7 +24,7 @@ use Neos\Flow\Annotations as Flow;
 final class RouteTags
 {
     /**
-     * Pattern a tag must match. @see \Neos\Cache\Frontend\FrontendInterface::PATTERN_TAG
+     * Pattern a tag must match. @see \Neos\Cache\Frontend\LowLevelFrontendInterface::PATTERN_TAG
      */
     const PATTERN_TAG = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
 

@@ -15,7 +15,7 @@ namespace Neos\Cache\Backend;
 
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\Exception;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Result;
@@ -186,7 +186,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
 
-        if (!$this->cache instanceof FrontendInterface) {
+        if (!$this->cache instanceof LowLevelFrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1259515600);
         }
 

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\Cache\Psr\Cache;
+namespace Neos\Cache\Frontend\Psr\Cache;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -19,7 +19,6 @@ use Psr\Cache\CacheItemInterface;
  * A cache item (entry).
  * This is not to be created by user libraries. Instead request an item from the pool (frontend).
  * @see CachePool
- * @deprecated will be removed with Neos Flow 10. Use \Neos\Cache\Frontend\Psr\Cache\CacheItem instead.
  */
 class CacheItem implements CacheItemInterface
 {
