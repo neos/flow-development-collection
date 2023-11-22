@@ -245,11 +245,15 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * specified tags.
      *
      * @param string[] $tags The tags to search for
-     * @return string[] An array with identifiers of all matching entries. An empty array if no entries matched
+     * @return string[] An array with identifiers of all matching entries. An empty array if no entries matched or no tags were provided
      * @api
      */
     public function findIdentifiersByTags(array $tags): array
     {
+        if (empty($tags)) {
+            return [];
+        }
+
         $entryIdentifiers = [];
         $now = $_SERVER['REQUEST_TIME'];
         $cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
