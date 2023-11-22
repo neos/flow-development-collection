@@ -58,7 +58,7 @@ But let's start with an easy example:
 	``name`` is optional, but it's recommended to set a name for all routes to make debugging
 	easier.
 
-If you insert these lines at the beginning of the file ``Configurations/Routes.yaml``,
+If you insert these lines at the beginning of the file ``Configuration/Routes.yaml``,
 the ``indexAction`` of the ``StandardController`` in your *My.Demo* package will be called
 when you open up the homepage of your Flow installation (``http://localhost/``).
 

@@ -475,7 +475,11 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      */
     public function pathStat($path, $flags)
     {
-        return @stat($this->evaluateResourcePath($path));
+        $evaluatedResourcePath = $this->evaluateResourcePath($path);
+        if (is_resource($evaluatedResourcePath)) {
+            return @fstat($evaluatedResourcePath);
+        }
+        return @stat($evaluatedResourcePath);
     }
 
     /**
