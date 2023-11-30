@@ -8,6 +8,7 @@ use Traversable;
 
 /**
  * @Flow\Proxy(false)
+ * @implements \IteratorAggregate<int, Route>
  */
 final class Routes implements \IteratorAggregate
 {
@@ -24,7 +25,7 @@ final class Routes implements \IteratorAggregate
 
     public static function fromConfiguration(array $configuration): self
     {
-        $routes = self::empty();
+        $routes = [];
         $routesWithHttpMethodConstraints = [];
         foreach ($configuration as $routeConfiguration) {
             $route = Route::fromConfiguration($routeConfiguration);
@@ -43,8 +44,9 @@ final class Routes implements \IteratorAggregate
                 }
                 $routesWithHttpMethodConstraints[$uriPattern] = false;
             }
-            $routes = $routes->append($route);
+            $routes[] = $route;
         }
+        return new self(...$routes);
     }
 
     public static function empty(): self
@@ -53,13 +55,16 @@ final class Routes implements \IteratorAggregate
     }
     public function prepend(Route $route): self
     {
-        return new self($route, ...$this->routes);
+        return new self(...[$route, ...$this->routes]);
     }
     public function append(Route $route): self
     {
-        return new self(...$this->routes, $route);
+        return new self(...[...$this->routes, $route]);
     }
 
+    /**
+     * @return \ArrayIterator<int, Route>
+     */
     public function getIterator(): Traversable
     {
         return new \ArrayIterator($this->routes);
