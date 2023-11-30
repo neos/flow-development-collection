@@ -12,7 +12,8 @@ final class ConfigurationRoutesProvider implements RoutesProviderInterface
 {
     public function __construct(
         private readonly ConfigurationManager $configurationManager
-    ) {}
+    ) {
+    }
 
     public function getRoutes(): Routes
     {

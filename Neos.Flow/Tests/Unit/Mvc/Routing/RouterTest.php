@@ -11,9 +11,6 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteLifetime;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -366,5 +363,4 @@ class RouterTest extends UnitTestCase
 
         self::assertSame($mockRoute2, $router->getLastMatchedRoute());
     }
-
 }

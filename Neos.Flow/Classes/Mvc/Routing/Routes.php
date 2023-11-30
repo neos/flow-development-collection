@@ -3,7 +3,6 @@
 namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Traversable;
 
