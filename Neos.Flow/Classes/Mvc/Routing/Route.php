@@ -192,6 +192,14 @@ class Route
         if (isset($configuration['appendExceedingArguments'])) {
             $route->setAppendExceedingArguments($configuration['appendExceedingArguments']);
         }
+        if (isset($configuration['cache'])) {
+            if (isset($configuration['cache']['lifetime']) && !is_null($configuration['cache']['lifetime'])) {
+                $route->setCacheLifetime(RouteLifetime::fromInt($configuration['cache']['lifetime']));
+            }
+            if (isset($configuration['cache']['tags']) && !empty($configuration['cache']['lifetime'])) {
+                $route->setCacheTags(RouteTags::createFromArray($configuration['cache']['tags']));
+            }
+        }
 
         return $route;
     }
