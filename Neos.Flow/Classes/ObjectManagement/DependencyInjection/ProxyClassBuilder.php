@@ -532,13 +532,13 @@ class ProxyClassBuilder
      *
      * @param Configuration $objectConfiguration Configuration of the object to inject into
      * @param string $propertyName Name of the property to inject
-     * @param string $cacheIdentiier the configuration type of the injected property (one of the ConfigurationManager::CONFIGURATION_TYPE_* constants)
+     * @param string $cacheIdentifier the identifier of the cache to inject
      * @return array PHP code
      */
-    public function buildPropertyInjectionCodeByCacheIdentifier(Configuration $objectConfiguration, string $propertyName, string $cacheIdentiier): array
+    public function buildPropertyInjectionCodeByCacheIdentifier(Configuration $objectConfiguration, string $propertyName, string $cacheIdentifier): array
     {
         $className = $objectConfiguration->getClassName();
-        $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Cache\CacheManager::class)->getCache(\'' . $cacheIdentiier . '\')';
+        $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Cache\CacheManager::class)->getCache(\'' . $cacheIdentifier . '\')';
         $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
         if ($result !== null) {
             return $result;
