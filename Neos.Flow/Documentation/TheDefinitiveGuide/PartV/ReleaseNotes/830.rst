@@ -1,0 +1,156 @@
+========
+Flow 8.3
+========
+
+This release of Flow comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+
+As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+
+
+************
+New Features
+************
+
+FEATURE: Add `Type.debugType` to Type EelHelper
+-----------------------------------------------
+
+As ``php get_debug_type`` this returns the classname for objects and otherwise the type of the value.
+
+
+FEATURE: Provide central `PsrHttpFactory` that implements all interfaces from PSR 17
+------------------------------------------------------------------------------------
+
+Injecting multiple factory objects to create PSR Http objects has been tedious in the past.
+
+To overcome this the implementations of the PSR 17 methods are extracted into traits
+and a central ``PsrHttpFactory`` is created. that implements all those interfaces.
+That way a single object can be used to create Requests, Uris and Streams.
+
+
+FEATURE: Add cache lifetime to routing MatchResult and ResolveResult DTOs in addition to cache tags
+---------------------------------------------------------------------------------------------------
+
+This change allows routeParts to specify the maximum lifetime for all cacheItems associated with the current route. This makes sense as routeParts already are allowed to define tags for the cache. If multiple routeParts set a cacheLifetime the lowest value that is not null is used for the cache entries.
+
+As an additional option the routing configuration now allows to configure "cache.lifetime" and "cache.tags" to specify the lifetime and tags that are merged with the lifetime and tags defined by the route parts.
+
+ 
+
+
+Related issue: `#2904 <https://github.com/neos/flow-development-collection/issues/2904>`_
+
+FEATURE: Add new validators `MediaType`, `FileExtension` and `FileSize`
+-----------------------------------------------------------------------
+
+The validators will validate both UploadedFileInterface (FlowUploadedFile) or ResourceMetaDataInterface (PersistentResource).
+
+The ``MediaType`` validator supports the following options: 
+
+- ``allowedTypes``: Array of allowed media ranges
+- ``disallowedTypes``: Array of disallowed media ranges
+
+The ``FileSize`` validator supports the following options: 
+
+- ``minimum``: Minimum allowed filesize in bytes
+- ``maximum``: Maximum allowed filesize in bytes
+
+The ``FileExtension`` validator supports the following options: 
+
+- ``allowedExtensions``: Array of allowed file extensions
+
+**Upgrade instructions**
+
+
+**Review instructions**
+
+The FileExtension validator is pretty much a clone of the FileType validator from the form package but is extended to support uploadedFiles aswell. The FileSize and MediaType validators were somehow missing before.
+
+
+FEATURE: Introduce `session:collectgarbage` command and move the garbage collection from session to sessionManager
+------------------------------------------------------------------------------------------------------------------
+
+The ``session:collectgarbage`` command will remove session-data and -metadata of outdated sessions identified by lastActivityTimestamp being older than inactivityTimeout. This is usually done automatically after shutdown for the percentage of requests specified in the setting ``Neos.Flow.session.garbageCollection.probability``. Use this command only if you need more direct control over the cleanup intervals.
+
+In addition the ``collectGarbage`` method is moved from the session to the sessionManager. As this was api before a backwards compatible implementation was left behind that can be removed with Flow 9.
+
+**Review instructions**
+
+The main purpose of the pr is moving the garbage collection to the session manager in preparation of further adjustments in session handling where it will likely would become problematic that the session is responsible for removing other outdated sessions.
+
+
+********************
+Upgrade Instructions
+********************
+
+This section contains instructions for upgrading your Flow **8.2**
+based applications to Flow **8.3**.
+
+In general just make sure to run the following commands:
+
+To clear all file caches::
+
+ ./flow flow:cache:flush --force
+
+If you have additional cache backends configured, make sure to flush them too.
+
+To apply core migrations::
+
+  ./flow flow:core:migrate <Package-Key>
+
+For every package you have control over (see `Upgrading existing code`_ below).
+
+To validate/fix the database encoding, apply pending migrations and to (re)publish file resources::
+
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+If you are upgrading from a lower version than 8.2, be sure to read the
+upgrade instructions from the previous Release Notes first.
+
+Upgrading your Packages
+=======================
+
+Upgrading existing code
+-----------------------
+
+There have been major API changes in Flow 8.3 which require your code to be adjusted. As with earlier changes to Flow
+that required code changes on the user side we provide a code migration tool.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate Acme.Demo
+
+This will adjust the package code automatically and/or output further information.
+Read the output carefully and manually adjust the code if needed.
+
+To see all the other helpful options this command provides, make sure to run::
+
+ ./flow help core:migrate
+
+Also make sure to read about the `Potentially breaking changes`_ below.
+
+Inside core:migrate
+^^^^^^^^^^^^^^^^^^^
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from the specified package
+* For each migration
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.

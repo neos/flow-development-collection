@@ -31,8 +31,7 @@ abstract class Repository implements RepositoryInterface
      * Warning: if you think you want to set this,
      * look at RepositoryInterface::ENTITY_CLASSNAME first!
      *
-     * @var string
-     * @psalm-var class-string
+     * @var class-string
      */
     protected $entityClassName;
 
@@ -46,7 +45,7 @@ abstract class Repository implements RepositoryInterface
      */
     public function __construct()
     {
-        /** @psalm-var class-string $entityClassName */
+        /** @var class-string $entityClassName */
         if (defined('static::ENTITY_CLASSNAME') === false) {
             $entityClassName = preg_replace(['/\\\Repository\\\/', '/Repository$/'], ['\\Model\\', ''], get_class($this));
         } else {
@@ -61,8 +60,7 @@ abstract class Repository implements RepositoryInterface
      * Note that anything that is an "instanceof" this class is accepted
      * by the repository.
      *
-     * @return string
-     * @psalm-return class-string
+     * @return class-string
      * @api
      */
     public function getEntityClassName(): string
@@ -218,20 +216,24 @@ abstract class Repository implements RepositoryInterface
     public function __call($method, $arguments)
     {
         $query = $this->createQuery();
-        $caseSensitive = isset($arguments[1]) ? (boolean)$arguments[1] : true;
-        $cacheResult = isset($arguments[2]) ? (boolean)$arguments[2] : false;
+        $caseSensitive = !isset($arguments[1]) || (boolean)$arguments[1];
+        $cacheResult = isset($arguments[2]) && (boolean)$arguments[2];
 
-        if (isset($method[10]) && strpos($method, 'findOneBy') === 0) {
+        if (isset($method[10]) && str_starts_with($method, 'findOneBy')) {
             $propertyName = lcfirst(substr($method, 9));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult)->getFirst();
-        } elseif (isset($method[8]) && strpos($method, 'countBy') === 0) {
+        }
+
+        if (isset($method[8]) && str_starts_with($method, 'countBy')) {
             $propertyName = lcfirst(substr($method, 7));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->count();
-        } elseif (isset($method[7]) && strpos($method, 'findBy') === 0) {
+        }
+
+        if (isset($method[7]) && str_starts_with($method, 'findBy')) {
             $propertyName = lcfirst(substr($method, 6));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult);
         }
 
-        trigger_error('Call to undefined method ' . get_class($this) . '::' . $method, E_USER_ERROR);
+        throw new \InvalidArgumentException('Call to undefined method ' . get_class($this) . '::' . $method, 1683026148);
     }
 }

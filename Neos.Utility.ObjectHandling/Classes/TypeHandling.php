@@ -11,7 +11,6 @@ namespace Neos\Utility;
  * source code.
  */
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\Proxy;
 use Neos\Utility\Exception\InvalidTypeException;
 
@@ -81,13 +80,13 @@ abstract class TypeHandling
         switch ($type) {
             case 'int':
                 $type = 'integer';
-            break;
+                break;
             case 'bool':
                 $type = 'boolean';
-            break;
+                break;
             case 'double':
                 $type = 'float';
-            break;
+                break;
         }
         return $type;
     }

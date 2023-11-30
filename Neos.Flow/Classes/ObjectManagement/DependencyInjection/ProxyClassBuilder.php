@@ -291,7 +291,7 @@ class ProxyClassBuilder
                         } else {
                             if (strpos($argumentValue, '.') !== false) {
                                 $settingPath = explode('.', $argumentValue);
-                                $settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
+                                $settings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, array_shift($settingPath));
                                 $argumentValue = Arrays::getValueByPath($settings, $settingPath);
                             }
                             if (!isset($this->objectConfigurations[$argumentValue])) {
@@ -622,14 +622,14 @@ class ProxyClassBuilder
                         if ($argumentValue instanceof Configuration) {
                             $argumentValueObjectName = $argumentValue->getObjectName();
                             if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
-                                $preparedArguments[] = 'new \\' . $argumentValueObjectName . '(' . $this->buildMethodParametersCode($argumentValue->getArguments(), $this->objectConfigurations) . ')';
+                                $preparedArguments[] = 'new \\' . $argumentValueObjectName . '(' . $this->buildMethodParametersCode($argumentValue->getArguments()) . ')';
                             } else {
                                 $preparedArguments[] = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
                             }
                         } else {
                             if (strpos($argumentValue, '.') !== false) {
                                 $settingPath = explode('.', $argumentValue);
-                                $settings = Arrays::getValueByPath($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS), array_shift($settingPath));
+                                $settings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, array_shift($settingPath));
                                 $argumentValue = Arrays::getValueByPath($settings, $settingPath);
                             }
                             $preparedArguments[] = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';

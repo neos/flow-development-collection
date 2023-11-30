@@ -216,7 +216,7 @@ class ConfigurationBuilder
             switch ($optionName) {
                 case 'scope':
                     $objectConfiguration->setScope($this->parseScope($optionValue));
-                break;
+                    break;
                 case 'properties':
                     if (is_array($optionValue)) {
                         foreach ($optionValue as $propertyName => $propertyValue) {
@@ -232,7 +232,7 @@ class ConfigurationBuilder
                             $objectConfiguration->setProperty($property);
                         }
                     }
-                break;
+                    break;
                 case 'arguments':
                     if (is_array($optionValue)) {
                         foreach ($optionValue as $argumentName => $argumentValue) {
@@ -252,7 +252,7 @@ class ConfigurationBuilder
                             }
                         }
                     }
-                break;
+                    break;
                 case 'className':
                 case 'factoryObjectName':
                 case 'factoryMethodName':
@@ -260,10 +260,10 @@ class ConfigurationBuilder
                 case 'lifecycleShutdownMethodName':
                     $methodName = 'set' . ucfirst($optionName);
                     $objectConfiguration->$methodName(trim($optionValue));
-                break;
+                    break;
                 case 'autowiring':
                     $objectConfiguration->setAutowiring($this->parseAutowiring($optionValue));
-                break;
+                    break;
                 default:
                     throw new InvalidObjectConfigurationException('Invalid configuration option "' . $optionName . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1167574981);
             }
@@ -334,7 +334,7 @@ class ConfigurationBuilder
                 } else {
                     $annotations = $this->reflectionService->getPropertyTagValues($parentObjectConfiguration->getClassName(), $propertyName, 'var');
                     if (count($annotations) !== 1) {
-                        throw new InvalidObjectConfigurationException(sprintf('Object %s, for property "%s", contains neither object name, nor factory object name, and nor is the property properly @var - annotated.', $parentObjectConfiguration->getConfigurationSourceHint(), $propertyName, $parentObjectConfiguration->getClassName()), 1297097815);
+                        throw new InvalidObjectConfigurationException(sprintf('Object %s (%s), for property "%s", contains neither object name, nor factory object name, and nor is the property properly @var - annotated.', $parentObjectConfiguration->getClassName(), $parentObjectConfiguration->getConfigurationSourceHint(), $propertyName), 1297097815);
                     }
                     $objectName = $annotations[0];
                 }

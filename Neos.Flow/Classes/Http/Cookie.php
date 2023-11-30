@@ -16,6 +16,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Represents a HTTP Cookie as of RFC 6265
  *
+ * @phpstan-consistent-constructor
  * @api
  * @see http://tools.ietf.org/html/rfc6265
  * @Flow\Proxy(false)
@@ -215,25 +216,25 @@ class Cookie
                         if (preg_match(self::PATTERN_MAX_AGE, $attributeValue) === 1) {
                             $maxAgeAttribute = (int)$attributeValue;
                         }
-                    break;
+                        break;
                     case 'DOMAIN':
                         if ($attributeValue !== '') {
                             $domainAttribute = strtolower(ltrim($attributeValue, '.'));
                         }
-                    break;
+                        break;
                     case 'PATH':
                         if ($attributeValue === '' || substr($attributeValue, 0, 1) !== '/') {
                             $pathAttribute = '/';
                         } else {
                             $pathAttribute = $attributeValue;
                         }
-                    break;
+                        break;
                     case 'SECURE':
                         $secureAttribute = true;
-                    break;
+                        break;
                     case 'HTTPONLY':
                         $httpOnlyAttribute = true;
-                    break;
+                        break;
                     case 'SAMESITE':
                         if (\in_array(strtolower($attributeValue), [self::SAMESITE_LAX, self::SAMESITE_STRICT, self::SAMESITE_NONE], true)) {
                             $sameSite = strtolower($attributeValue);
@@ -241,7 +242,7 @@ class Cookie
                         if (strtolower($attributeValue) === self::SAMESITE_NONE) {
                             $secureAttribute = true;
                         }
-                    break;
+                        break;
                 }
             }
         }

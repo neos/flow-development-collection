@@ -159,10 +159,10 @@ class PointcutExpressionParser
                     case 'setting':
                         $parseMethodName = 'parseDesignator' . ucfirst($pointcutDesignator);
                         $this->$parseMethodName($operator, $signaturePattern, $pointcutFilterComposite);
-                    break;
+                        break;
                     case 'evaluate':
                         $this->parseRuntimeEvaluations($operator, $signaturePattern, $pointcutFilterComposite);
-                    break;
+                        break;
                     default:
                         throw new AopException('Support for pointcut designator "' . $pointcutDesignator . '" has not been implemented (yet), defined in ' . $this->sourceHint, 1168874740);
                 }

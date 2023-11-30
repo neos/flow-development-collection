@@ -11,8 +11,8 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\PhpFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\BaseTestCase;
@@ -124,7 +124,7 @@ class Compiler
      */
     public function getProxyClass(string $fullClassName)
     {
-        if (interface_exists($fullClassName) || in_array(BaseTestCase::class, class_parents($fullClassName))) {
+        if (interface_exists($fullClassName) || (class_exists(BaseTestCase::class) && in_array(BaseTestCase::class, class_parents($fullClassName), true))) {
             return false;
         }
 
@@ -245,16 +245,8 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     protected function cacheOriginalClassFileAndProxyCode($className, $pathAndFilename, $proxyClassCode)
     {
         $classCode = file_get_contents($pathAndFilename);
+        $classCode = $this->replaceClassName($classCode, $pathAndFilename);
         $classCode = $this->stripOpeningPhpTag($classCode);
-
-        $classNameSuffix = self::ORIGINAL_CLASSNAME_SUFFIX;
-        $classCode = preg_replace_callback('/^([a-z\s]*?)(final\s+)?(interface|class)\s+([a-zA-Z0-9_]+)/m', static function ($matches) use ($pathAndFilename, $classNameSuffix, $proxyClassCode) {
-            $classNameAccordingToFileName = basename($pathAndFilename, '.php');
-            if ($matches[4] !== $classNameAccordingToFileName) {
-                throw new Exception('The name of the class "' . $matches[4] . '" is not the same as the filename which is "' . basename($pathAndFilename) . '". Path: ' . $pathAndFilename, 1398356897);
-            }
-            return $matches[1] . $matches[3] . ' ' . $matches[4] . $classNameSuffix;
-        }, $classCode);
 
         // comment out "final" keyword, if the method is final and if it is advised (= part of the $proxyClassCode)
         // Note: Method name regex according to http://php.net/manual/en/language.oop5.basic.php
@@ -385,5 +377,53 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
             $values[] = $value;
         }
         return '{ ' . implode(', ', $values) . ' }';
+    }
+
+    /**
+     * Appends ORIGINAL_CLASSNAME_SUFFIX to the original class name
+     *
+     * @param string $classCode
+     * @param string $pathAndFilename
+     * @return string
+     * @throws Exception
+     */
+    protected function replaceClassName(string $classCode, string $pathAndFilename): string
+    {
+        $tokens = token_get_all($classCode);
+        $classNameTokenIndex = $this->getClassNameTokenIndex($tokens);
+        if ($classNameTokenIndex === null) {
+            throw new Exception('No class token found in class file "' . basename($pathAndFilename) . '". Path: ' . $pathAndFilename, 1636575752);
+        }
+
+        $classCodeUntilClassName = '';
+        $classCodeUntilClassNameReplacement = '';
+        for ($i = 0; $i <= $classNameTokenIndex; $i++) {
+            $classCodeUntilClassName .= is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i];
+            if ($tokens[$i][0] === T_FINAL || ($i > 0 && $tokens[$i - 1][0] === T_FINAL)) {
+                continue;
+            }
+            $classCodeUntilClassNameReplacement .= is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i];
+        }
+        $classCodeUntilClassNameReplacement .= self::ORIGINAL_CLASSNAME_SUFFIX;
+
+        return str_replace($classCodeUntilClassName, $classCodeUntilClassNameReplacement, $classCode);
+    }
+
+    private function getClassNameTokenIndex(array $tokens): ?int
+    {
+        $classToken = null;
+        $previousToken = null;
+        foreach ($tokens as $i => $token) {
+            # $token is an array: [0] => token id, [1] => token text, [2] => line number
+            if (isset($classToken) && is_array($token) && $token[0] === T_STRING) {
+                return $i;
+            }
+            # search first T_CLASS token that is not a `Foo::class` class name resolution
+            if (is_array($token) && $token[0] === T_CLASS && isset($previousToken) && $previousToken[0] !== T_DOUBLE_COLON) {
+                $classToken = $token;
+            }
+            $previousToken = $token;
+        }
+        return null;
     }
 }

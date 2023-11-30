@@ -76,7 +76,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
                         return false;
                     }
                     $matches = $matches && $currentFilterMatches;
-                break;
+                    break;
                 case '&&!':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
                         if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
@@ -89,7 +89,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
                         return false;
                     }
                     $matches = $matches && (!$currentFilterMatches);
-                break;
+                    break;
                 case '||':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
                         if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
@@ -98,7 +98,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
                         $this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
                     }
                     $matches = $matches || $currentFilterMatches;
-                break;
+                    break;
                 case '||!':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
                         if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
@@ -108,7 +108,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
                         $currentFilterMatches = false;
                     }
                     $matches = $matches || (!$currentFilterMatches);
-                break;
+                    break;
             }
         }
 
@@ -200,10 +200,10 @@ class PointcutFilterComposite implements PointcutFilterInterface
             switch ($operator) {
                 case '&&':
                     $result->applyIntersect($filter->reduceTargetClassNames($result));
-                break;
+                    break;
                 case '||':
                     $result->applyUnion($filter->reduceTargetClassNames($classNameIndex));
-                break;
+                    break;
             }
         }
 

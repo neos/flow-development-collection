@@ -55,6 +55,7 @@ class Package extends BasePackage
         }
 
         if ($context->isTesting()) {
+            /** @phpstan-ignore-next-line */
             $bootstrap->registerRequestHandler(new Tests\FunctionalTestRequestHandler($bootstrap));
         }
 
@@ -81,7 +82,7 @@ class Package extends BasePackage
         $dispatcher->connect(Command\CacheCommandController::class, 'warmupCaches', PrecomposedHashProvider::class, 'precomposeHash');
 
         if (!$context->isProduction()) {
-            $dispatcher->connect(Core\Booting\Sequence::class, 'afterInvokeStep', function (Step $step) use ($bootstrap, $dispatcher) {
+            $dispatcher->connect(Core\Booting\Sequence::class, 'afterInvokeStep', function (Step $step) use ($bootstrap) {
                 if ($step->getIdentifier() === 'neos.flow:resources') {
                     $publicResourcesFileMonitor = Monitor\FileMonitor::createFileMonitorAtBoot('Flow_PublicResourcesFiles', $bootstrap);
                     /** @var PackageManager $packageManager */
@@ -107,7 +108,9 @@ class Package extends BasePackage
                 }
                 $objectManager = $bootstrap->getObjectManager();
                 $resourceManager = $objectManager->get(ResourceManager::class);
-                $resourceManager->getCollection(ResourceManager::DEFAULT_STATIC_COLLECTION_NAME)->publish();
+                if ($staticCollection = $resourceManager->getCollection(ResourceManager::DEFAULT_STATIC_COLLECTION_NAME)) {
+                    $staticCollection->publish();
+                }
             };
 
             $dispatcher->connect(Monitor\FileMonitor::class, 'filesHaveChanged', $publishResources);
@@ -130,6 +133,7 @@ class Package extends BasePackage
             }
         });
 
+        /** @phpstan-ignore-next-line */
         $dispatcher->connect(Tests\FunctionalTestCase::class, 'functionalTestTearDown', Mvc\Routing\RouterCachingService::class, 'flushCaches');
 
         $dispatcher->connect(Configuration\ConfigurationManager::class, 'configurationManagerReady', function (Configuration\ConfigurationManager $configurationManager) {

@@ -231,6 +231,7 @@ class TextIterator implements \Iterator
                 return $previousElement->getOffset() + $previousElement->getLength();
             }
         }
+        /** @phpstan-ignore-next-line */
         return $currentElement->getOffset() + $currentElement->getLength();
     }
 

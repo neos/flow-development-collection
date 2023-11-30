@@ -132,7 +132,7 @@ class SessionManager implements SessionManagerInterface
      * NULL is returned.
      *
      * @param string $sessionIdentifier The session identifier
-     * @return SessionInterface
+     * @return SessionInterface|null
      * @api
      */
     public function getSession($sessionIdentifier)

@@ -35,7 +35,6 @@ use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\TextNode;
  */
 class ResourceInterceptor implements InterceptorInterface
 {
-
     /**
      * Split a text at what seems to be a package resource URI.
      *
@@ -112,7 +111,7 @@ class ResourceInterceptor implements InterceptorInterface
                     $arguments['package'] = new TextNode($matches['Package']);
                 }
 
-                $resourceUriNode = new ResourceUriNode($arguments, $parsingState);
+                $resourceUriNode = new ResourceUriNode($arguments);
                 $node->addChildNode($resourceUriNode);
             } else {
                 $textNode = new TextNode($part);

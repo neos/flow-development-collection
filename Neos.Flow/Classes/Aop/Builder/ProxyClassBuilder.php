@@ -310,10 +310,11 @@ class ProxyClassBuilder
     protected function buildAspectContainer(string $aspectClassName): AspectContainer
     {
         $aspectContainer = new AspectContainer($aspectClassName);
-        $methodNames = get_class_methods($aspectClassName);
-        if ($methodNames === null) {
+        if (!class_exists($aspectClassName)) {
             throw new InvalidTargetClassException(sprintf('The class "%s" is not loadable for AOP proxy building. This is most likely an inconsistency with the caches. Try running `./flow flow:cache:flush` and if that does not help, check the class exists and is correctly namespaced.', $aspectClassName), 1607422151);
         }
+        $methodNames = get_class_methods($aspectClassName);
+        assert($methodNames !== null);
 
         foreach ($methodNames as $methodName) {
             foreach ($this->reflectionService->getMethodAnnotations($aspectClassName, $methodName) as $annotation) {
@@ -452,7 +453,7 @@ class ProxyClassBuilder
             $proxyClass->addProperty($propertyName, var_export($propertyIntroduction->getInitialValue(), true), $propertyIntroduction->getPropertyVisibility(), $propertyIntroduction->getPropertyDocComment());
         }
 
-        $proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode("        if (method_exists(get_parent_class(), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray')) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n");
+        $proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode("        if (method_exists(get_parent_class(), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable([parent::class, 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray'])) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n");
         $proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode($this->buildMethodsAndAdvicesArrayCode($interceptedMethods));
         $proxyClass->getMethod('Flow_Aop_Proxy_buildMethodsAndAdvicesArray')->overrideMethodVisibility('protected');
 
@@ -462,7 +463,7 @@ class ProxyClassBuilder
         $proxyClass->getMethod('__clone')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
 
         if (!$this->reflectionService->hasMethod($targetClassName, '__wakeup')) {
-            $proxyClass->getMethod('__wakeup')->addPostParentCallCode("        if (method_exists(get_parent_class(), '__wakeup') && is_callable('parent::__wakeup')) parent::__wakeup();\n");
+            $proxyClass->getMethod('__wakeup')->addPostParentCallCode("        if (method_exists(get_parent_class(), '__wakeup') && is_callable([parent::class, '__wakeup'])) parent::__wakeup();\n");
         }
 
         $proxyClass->addTraits(['\\' . AdvicesTrait::class]);
@@ -531,7 +532,7 @@ class ProxyClassBuilder
             return $treatedSubClasses;
         }
 
-        $callBuildMethodsAndAdvicesArrayCode = "        if (method_exists(get_parent_class(), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray')) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
+        $callBuildMethodsAndAdvicesArrayCode = "        if (method_exists(get_parent_class(), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable([parent::class, 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray'])) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
         $proxyClass->getConstructor()->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
         $proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
 

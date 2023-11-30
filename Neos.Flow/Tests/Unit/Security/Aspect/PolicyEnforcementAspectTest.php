@@ -80,48 +80,6 @@ class PolicyEnforcementAspectTest extends UnitTestCase
 
     /**
      * @test
-     */
-    public function enforcePolicyPassesTheGivenJoinPointOverToTheAfterInvocationInterceptor()
-    {
-        $this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
-
-        $this->mockJoinPoint->expects(self::once())->method('getAdviceChain')->will(self::returnValue($this->mockAdviceChain));
-        // $this->mockAfterInvocationInterceptor->expects(self::once())->method('setJoinPoint')->with($this->mockJoinPoint);
-
-        $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
-    }
-
-    /**
-     * @test
-     */
-    public function enforcePolicyPassesTheReturnValueOfTheInterceptedMethodOverToTheAfterInvocationInterceptor()
-    {
-        $this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
-
-        $someResult = 'blub';
-
-        $this->mockAdviceChain->expects(self::once())->method('proceed')->will(self::returnValue($someResult));
-        $this->mockJoinPoint->expects(self::once())->method('getAdviceChain')->will(self::returnValue($this->mockAdviceChain));
-        // $this->mockAfterInvocationInterceptor->expects(self::once())->method('setResult')->with($someResult);
-
-        $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
-    }
-
-    /**
-     * @test
-     */
-    public function enforcePolicyCallsTheTheAfterInvocationInterceptorCorrectly()
-    {
-        $this->markTestSkipped('Currently the AfterInvocationInterceptor is not used.');
-
-        $this->mockJoinPoint->expects(self::once())->method('getAdviceChain')->will(self::returnValue($this->mockAdviceChain));
-        // $this->mockAfterInvocationInterceptor->expects(self::once())->method('invoke');
-
-        $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
-    }
-
-    /**
-     * @test
      * @todo adjust when AfterInvocationInterceptor is used again
      */
     public function enforcePolicyCallsTheAdviceChainCorrectly()

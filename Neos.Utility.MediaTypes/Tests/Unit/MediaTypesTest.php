@@ -69,6 +69,22 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @test
+     * @dataProvider filesAndMediaTypes
+     */
+    public function getMediaTypeFromResource(string $filename, string $expectedMediaType)
+    {
+        $filePath = __DIR__ . '/Fixtures/' . $filename;
+        $resource = is_file($filePath) ? fopen($filePath, 'rb') : fopen('data://text/plain,', 'rb');
+        if ($resource !== false) {
+            self::assertSame($expectedMediaType, MediaTypes::getMediaTypeFromResource($resource));
+            fclose($resource);
+        } else {
+            $this->fail('fixture ' . $filePath . ' could not be read');
+        }
+    }
+
+    /**
      * Data Provider
      */
     public function mediaTypesAndFilenames()

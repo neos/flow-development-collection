@@ -24,7 +24,6 @@ use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
  * Functional tests for the Proxy Compiler and related features
- *
  */
 class ProxyCompilerTest extends FunctionalTestCase
 {
@@ -156,6 +155,16 @@ class ProxyCompilerTest extends FunctionalTestCase
     }
 
     /**
+     * @see https://github.com/neos/flow-development-collection/issues/1835
+     * @test
+     */
+    public function classKeywordIsIgnoredInsideClassBody()
+    {
+        $reflectionClass = new ClassReflection(Fixtures\ClassWithKeywordsInClassBody::class);
+        self::assertEquals(Fixtures\ClassWithKeywordsInClassBody::class, $reflectionClass->getNamespaceName() . '\ClassWithKeywordsInClassBody');
+    }
+
+    /**
      * @test
      */
     public function attributesArePreserved()
@@ -194,7 +203,7 @@ class ProxyCompilerTest extends FunctionalTestCase
         $reflectionClass = new ClassReflection(Fixtures\PHP8\ClassWithUnionTypes::class);
         /** @var PropertyReflection $property */
         foreach ($reflectionClass->getProperties() as $property) {
-            if ($property->getName() !== 'propertyA' && $property->getName() !== 'propertyB') {
+            if (str_starts_with($property->getName(), 'property') && $property->getName() !== 'propertyA' && $property->getName() !== 'propertyB') {
                 self::assertInstanceOf(\ReflectionUnionType::class, $property->getType(), $property->getName() . ': ' . $property->getType());
             }
         }

@@ -1,0 +1,195 @@
+`8.3.0 (2023-04-24) <https://github.com/neos/flow-development-collection/releases/tag/8.3.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Add `Type.debugType` to Type EelHelper <https://github.com/neos/flow-development-collection/pull/3011>`_
+------------------------------------------------------------------------------------------------------------------
+
+As ``php get_debug_type`` this returns the classname for objects and otherwise the type of the value.
+
+
+* Packages: ``Flow`` ``Eel``
+
+`FEATURE: Provide central `PsrHttpFactory` that implements all interfaces from PSR 17 <https://github.com/neos/flow-development-collection/pull/2793>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Injecting multiple factory objects to create PSR Http objects has been tedious in the past.
+
+To overcome this the implementations of the PSR 17 methods are extracted into traits
+and a central ``PsrHttpFactory`` is created. that implements all those interfaces.
+That way a single object can be used to create Requests, Uris and Streams.
+
+
+* Packages: ``Http.Factories``
+
+`FEATURE: Add cache lifetime to routing MatchResult and ResolveResult DTOs in addition to cache tags <https://github.com/neos/flow-development-collection/pull/2925>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This change allows routeParts to specify the maximum lifetime for all cacheItems associated with the current route. This makes sense as routeParts already are allowed to define tags for the cache. If multiple routeParts set a cacheLifetime the lowest value that is not null is used for the cache entries.
+
+As an additional option the routing configuration now allows to configure "cache.lifetime" and "cache.tags" to specify the lifetime and tags that are merged with the lifetime and tags defined by the route parts.
+
+* Resolves: `#2904 <https://github.com/neos/flow-development-collection/issues/2904>`_ 
+
+
+* Packages: ``Flow``
+
+`FEATURE: Add new validators `MediaType`, `FileExtension` and `FileSize` <https://github.com/neos/flow-development-collection/pull/2971>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+The validators will validate both UploadedFileInterface (FlowUploadedFile) or ResourceMetaDataInterface (PersistentResource).
+
+The ``MediaType`` validator supports the following options: 
+
+- ``allowedTypes``: Array of allowed media ranges
+- ``disallowedTypes``: Array of disallowed media ranges
+
+The ``FileSize`` validator supports the following options: 
+
+- ``minimum``: Minimum allowed filesize in bytes
+- ``maximum``: Maximum allowed filesize in bytes
+
+The ``FileExtension`` validator supports the following options: 
+
+- ``allowedExtensions``: Array of allowed file extensions
+
+**Upgrade instructions**
+
+
+**Review instructions**
+
+The FileExtension validator is pretty much a clone of the FileType validator from the form package but is extended to support uploadedFiles aswell. The FileSize and MediaType validators were somehow missing before.
+
+
+* Packages: ``Flow``
+
+`FEATURE: Introduce `session:collectgarbage` command and move the garbage collection from session to sessionManager <https://github.com/neos/flow-development-collection/pull/2911>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The ``session:collectgarbage`` command will remove session-data and -metadata of outdated sessions identified by lastActivityTimestamp being older than inactivityTimeout. This is usually done automatically after shutdown for the percentage of requests specified in the setting ``Neos.Flow.session.garbageCollection.probability``. Use this command only if you need more direct control over the cleanup intervals.
+
+In addition the ``collectGarbage`` method is moved from the session to the sessionManager. As this was api before a backwards compatible implementation was left behind that can be removed with Flow 9.
+
+**Review instructions**
+
+The main purpose of the pr is moving the garbage collection to the session manager in preparation of further adjustments in session handling where it will likely would become problematic that the session is responsible for removing other outdated sessions.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Atomic reads for cache files <https://github.com/neos/flow-development-collection/pull/2930>`_
+-------------------------------------------------------------------------------------------------------
+
+Reading from the same cache file several times and relying on a previously determined file size for offsets is dangerous because the file could be overwritten or deleted at any point in between. It is safer to read the whole file content and process it based on what was read afterwards.
+
+This introduces a ``FileBackendDataDto`` that encapsulates encoding and decoding of the complex data needed for the ``FileBackend``, which include tags and lifetime.
+
+This means reads and writes are now the same as for the ``SimpleFileBackend`` and atomic at all times.
+
+
+* Packages: ``Cache``
+
+`BUGFIX: Try public const FLOW_JSON_ARRAY in JsonArrayType <https://github.com/neos/flow-development-collection/pull/2965>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Fixes: https://github.com/neos/flow-development-collection/issues/2962
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`BUGFIX: #2962 JsonArrayType Regression <https://github.com/neos/flow-development-collection/pull/2963>`_
+---------------------------------------------------------------------------------------------------------
+
+* Fixes: `#2962 <https://github.com/neos/flow-development-collection/issues/2962>`_
+
+* Packages: ``Flow``
+
+`!!! TASK: Clean up password hashing strategies <https://github.com/neos/flow-development-collection/pull/2920>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Cleans up the password hashing strategies shipped with Flow.
+
+**Upgrade instructions**
+
+If you implemented ``PasswordHashingStrategyInterface``, take note that type declarations will be added for the next major version (9.0) so adjust your implementation to use the added type declarations like in the core implementations.
+
+
+* Packages: ``Flow``
+
+`TASK: Adjust FLOW_VERSION_BRANCH <https://github.com/neos/flow-development-collection/pull/3018>`_
+---------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: Update 8.3 baseline <https://github.com/neos/flow-development-collection/pull/3021>`_
+--------------------------------------------------------------------------------------------
+
+
+
+`TASK: Relax symfony component constraints to allow version 6.0 <https://github.com/neos/flow-development-collection/pull/2999>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Adjust symfony/(yaml, dom-crawler, console) composer constraints from ``^5.1`` to ``^5.1||^6.0``. Since symfony 6.0 is symfony 5.4 without deprecations (like php 7. support) we should be fine and no changes are needed.
+
+**Upgrade instructions**
+
+Any package that relies on features in those packages that are removed in 6.0 should have a version constraint for that which is good practice anyways.
+
+**Review instructions**
+
+According to the symfony release notes the 6.0 is symfony 5.4 with all deprecations removed. Unless we use deprecated functionality in places where i could not find it we should be safe in relaxing the dependency.  See https://www.heise.de/news/PHP-Framework-Symfony-6-0-erscheint-zeitgleich-mit-Version-5-4-6279941.html - german)
+
+
+* Packages: ``Flow``
+
+`TASK: Test and Fix Utility::parseEelExpression <https://github.com/neos/flow-development-collection/pull/2979>`_
+-----------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+**Review instructions**
+- make parseEelExpression faster, by checking first if the string starts with ``${`` via str_starts_with
+- fix catastrophic backtrace in regex: add atomic group ``(?>)``
+  - same was done with the new fusion parser: https://github.com/neos/neos-development-collection/blob/`7fa4fc647a61f5023e74fe1639285a37934b9dbf <https://github.com/neos/flow-development-collection/commit/7fa4fc647a61f5023e74fe1639285a37934b9dbf>`_/Neos.Fusion/Classes/Core/ObjectTreeParser/Lexer.php#L20
+- make regex more readable by avoiding escaping via nowdoc
+- add tests
+
+see catastrophic backtrace here without atomic group: https://regex101.com/r/94MJGr/1
+
+
+* Packages: ``Flow`` ``Eel``
+
+`TASK: Cleanup PackageManager->findComposerPackagesInPath() <https://github.com/neos/flow-development-collection/pull/2736>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+- use \\DirectoryIterator for iterating over files.
+
+- fix unit test: ``self::assertEquals(sort($foo), sort($bar));`` will always pass, since ``sort()`` returns not the sorted value but ``bool``.
+
+- cleanup unit tests to use ``getMockBuilder``
+
+- add test for package collections: ``neos-package-collection``
+
+- Solve TODO: ``Maybe get rid of magic string "neos-package-collection" by fetching collection package types from outside.`` by using AppendIterator and ``->append`` the packages of the collection.
+
+- [x] Code follows the PSR-2 coding style
+- [x] Tests have been created, run and adjusted as needed
+
+* Packages: ``Flow``
+
+`TASK: Modernize Doctrine array types <https://github.com/neos/flow-development-collection/pull/2900>`_
+-------------------------------------------------------------------------------------------------------
+
+Update the code of ``JsonArrayType`` and ``ObjectArray`` to follow modern PHP practices.
+
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.2.2...8.3.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -6,7 +6,7 @@
   "license": "MIT",
   "require": {
     "php": "^8.0",
-    "neos/error-messages": "*"
+    "neos/error-messages": "self.version"
   },
   "require-dev": {
     "mikey179/vfsstream": "^1.6.10",

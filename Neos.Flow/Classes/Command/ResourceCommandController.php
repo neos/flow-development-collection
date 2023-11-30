@@ -206,8 +206,6 @@ class ResourceCommandController extends CommandController
         $this->outputLine('Checking if resource data exists for all known resource objects ...');
         $this->outputLine();
 
-        $mediaPackagePresent = $this->packageManager->isPackageAvailable('Neos.Media');
-
         $resourcesCount = $this->resourceRepository->countAll();
         $this->output->progressStart($resourcesCount);
 
@@ -229,26 +227,24 @@ class ResourceCommandController extends CommandController
         $this->output->progressFinish();
         $this->outputLine();
 
-        if (count($brokenResources) > 0) {
-            if ($mediaPackagePresent) {
-                /* @var AssetRepository $assetRepository */
-                $assetRepository = $this->objectManager->get(AssetRepository::class);
-                /* @var ThumbnailRepository $thumbnailRepository */
-                $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
-            }
+        // FIXME flow has no dependency on Neos.Media. This code should be extracted.
+        /* @var AssetRepository|null $assetRepository */
+        $assetRepository = class_exists(AssetRepository::class) ? $this->objectManager->get(AssetRepository::class) : null;
+        /* @var ThumbnailRepository|null $thumbnailRepository */
+        $thumbnailRepository = class_exists(ThumbnailRepository::class) ? $this->objectManager->get(ThumbnailRepository::class) : null;
+        $mediaPackagePresent = $assetRepository && $thumbnailRepository && $this->packageManager->isPackageAvailable('Neos.Media');
 
+        if (count($brokenResources) > 0) {
             foreach ($brokenResources as $key => $resourceIdentifier) {
                 $resource = $this->resourceRepository->findByIdentifier($resourceIdentifier);
                 $brokenResources[$key] = $resource;
                 if ($mediaPackagePresent) {
                     $assets = $assetRepository->findByResource($resource);
                     if ($assets !== null) {
-                        /** @psalm-suppress PossiblyNullArrayOffset */
                         $relatedAssets[$resource] = $assets;
                     }
                     $thumbnails = $thumbnailRepository->findByResource($resource);
                     if ($assets !== null) {
-                        /** @psalm-suppress PossiblyNullArrayOffset */
                         $relatedThumbnails[$resource] = $thumbnails;
                     }
                 }
@@ -260,11 +256,8 @@ class ResourceCommandController extends CommandController
             $this->outputLine();
 
             foreach ($brokenResources as $resource) {
-                /** @psalm-suppress PossiblyNullReference */
                 $this->outputLine('%s (%s) from "%s" collection', [$resource->getFilename(), $resource->getSha1(), $resource->getCollectionName()]);
-                /** @psalm-suppress PossiblyNullArgument */
                 if (isset($relatedAssets[$resource])) {
-                    /** @psalm-suppress PossiblyNullArrayOffset */
                     foreach ($relatedAssets[$resource] as $asset) {
                         $this->outputLine(' -> %s (%s)', [get_class($asset), $asset->getIdentifier()]);
                     }
@@ -280,26 +273,25 @@ class ResourceCommandController extends CommandController
                     $brokenAssetCounter = 0;
                     $brokenThumbnailCounter = 0;
                     foreach ($brokenResources as $resource) {
-                        /** @psalm-suppress PossiblyNullReference */
                         $this->outputLine('- delete %s (%s) from "%s" collection', [
                             $resource->getFilename(),
                             $resource->getSha1(),
                             $resource->getCollectionName()
                         ]);
-                        /** @psalm-suppress PossiblyNullReference */
                         $resource->disableLifecycleEvents();
-                        /** @psalm-suppress PossiblyNullArgument */
                         $this->resourceRepository->remove($resource);
-                        if (isset($relatedAssets[$resource])) {
-                            foreach ($relatedAssets[$resource] as $asset) {
-                                $assetRepository->removeWithoutUsageChecks($asset);
-                                $brokenAssetCounter++;
+                        if ($mediaPackagePresent) {
+                            if (isset($relatedAssets[$resource])) {
+                                foreach ($relatedAssets[$resource] as $asset) {
+                                    $assetRepository->removeWithoutUsageChecks($asset);
+                                    $brokenAssetCounter++;
+                                }
                             }
-                        }
-                        if (isset($relatedThumbnails[$resource])) {
-                            foreach ($relatedThumbnails[$resource] as $thumbnail) {
-                                $thumbnailRepository->remove($thumbnail);
-                                $brokenThumbnailCounter++;
+                            if (isset($relatedThumbnails[$resource])) {
+                                foreach ($relatedThumbnails[$resource] as $thumbnail) {
+                                    $thumbnailRepository->remove($thumbnail);
+                                    $brokenThumbnailCounter++;
+                                }
                             }
                         }
                         $this->persistenceManager->persistAll();

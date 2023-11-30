@@ -113,7 +113,6 @@ class ProtectedContextTest extends UnitTestCase
      */
     public function resultOfFirstLevelMethodCallIsProtected()
     {
-        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
@@ -129,6 +128,7 @@ class ProtectedContextTest extends UnitTestCase
         $result = $evaluator->evaluate('ident(value)', $context);
         self::assertEquals($securedObject, $result);
 
+        $this->expectException(NotAllowedException::class);
         $evaluator->evaluate('ident(value).callMe("Foo")', $context);
     }
 
@@ -137,7 +137,6 @@ class ProtectedContextTest extends UnitTestCase
      */
     public function resultOfAllowedMethodCallIsProtected()
     {
-        $this->expectException(NotAllowedException::class);
         $securedObject = new TestObject();
 
         $context = new ProtectedContext([
@@ -148,13 +147,14 @@ class ProtectedContextTest extends UnitTestCase
             ],
             'value' => [$securedObject]
         ]);
-        $context->allow('Array');
+        $context->allow('Array.*');
 
         $evaluator = $this->createEvaluator();
 
         $result = $evaluator->evaluate('Array.reverse(value)[0]', $context);
         self::assertEquals($securedObject, $result);
 
+        $this->expectException(NotAllowedException::class);
         $evaluator->evaluate('Array.reverse(value)[0].callMe("Foo")', $context);
     }
 

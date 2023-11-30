@@ -20,7 +20,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ResolveResult
 {
-
     /**
      * The resolved string value, or NULL if the corresponding Route Part doesn't affect the uri path
      *

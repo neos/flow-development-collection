@@ -21,6 +21,7 @@ class ClassLoadingForReflectionFailedException extends \Neos\Flow\Reflection\Exc
     public static function forClassName(string $className, string $reflectedClass): self
     {
         // @deprecated This check was added with Flow 7.0 to improve the developer experience for upgrading components and can be removed later
+        /** @phpstan-ignore-next-line legacy layer */
         if ($className === \Neos\Flow\Http\Component\ComponentInterface::class) {
             $message = sprintf('The class "%s" still implements the ComponentInterface. The component chain was replaced with a middleware chain in Flow 7. Please make sure you have read the upgrade instructions and converted your components to middlewares.', $reflectedClass);
         } else {

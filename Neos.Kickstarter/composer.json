@@ -7,7 +7,7 @@
         "php": "^8.0",
         "neos/flow": "~8.3.0",
         "neos/fluid-adaptor": "~8.3.0",
-        "neos/utility-arrays": "*"
+        "neos/utility-arrays": "self.version"
     },
     "autoload": {
         "psr-4": {
