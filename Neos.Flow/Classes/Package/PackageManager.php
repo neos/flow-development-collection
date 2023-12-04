@@ -11,6 +11,7 @@ namespace Neos\Flow\Package;
  * source code.
  */
 
+use Composer\InstalledVersions;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Composer\Exception\InvalidConfigurationException;
 use Neos\Flow\Composer\ComposerUtility;
@@ -569,41 +570,72 @@ class PackageManager
      */
     protected function scanAvailablePackages(): array
     {
+        $rawData = InstalledVersions::getAllRawData();
+
+        // the root distribution
+        $rootPackageName = $rawData[0]['root']['name'];
+
+        /** @var array<string, array{type: string, install_path: string}> $installedPackages */
+        $installedPackages = $rawData[0]['versions'];
+
+        /** @var array<string, string> $flowPackageAndPath */
+        $packageAndPath = [];
+
+        foreach ($installedPackages as $installedPackageName => $installedPackageData) {
+            if (!isset($installedPackageData['install_path'])) {
+                // packages that are replaced like `typo3/neos` will still be known to composer but are obviously not "real"
+                continue;
+            }
+
+            if ($installedPackageName === $rootPackageName) {
+                // ignore the root distribution in the set. We don't allow resources here
+                continue;
+            }
+
+            if ($installedPackageData['type'] === 'neos-build') {
+                // ignore build helper packages which are not part of the application
+                continue;
+            }
+
+            if ($installedPackageData['type'] === 'neos-package-collection') {
+                $composerManifest = ComposerUtility::getComposerManifest($installedPackageData['install_path']);
+                $collectionPackages = $composerManifest["extra"]["neos"]["collection-packages"] ?? null;
+
+                if (!is_array($collectionPackages)) {
+                    throw new InvalidConfigurationException(sprintf('Malformed "neos-package-collection" with name "%s". A collection must specify its collection-packages via "extra.neos.collection-packages"', $installedPackageName), 1445933572);
+                }
+
+                foreach ($collectionPackages as $collectionPackageName => $collectionPackageConfiguration) {
+                    $collectionPackagePath = Files::concatenatePaths([
+                        $installedPackageData['install_path'],
+                        $collectionPackageConfiguration['path']
+                    ]);
+                    $packageAndPath[$collectionPackageName] = $collectionPackagePath;
+                }
+                continue;
+            }
+            $packageAndPath[$installedPackageName] = $installedPackageData['install_path'];
+        }
+
         $newPackageStatesConfiguration = ['packages' => []];
 
-        $packages = new \AppendIterator();
-        $packages->append(new \NoRewindIterator(self::findComposerPackagesInPath($this->packagesBasePath)));
-
-        foreach ($packages as $packagePath) {
+        foreach ($packageAndPath as $packageName => $packagePath) {
             $composerManifest = ComposerUtility::getComposerManifest($packagePath);
-
-            if (isset($composerManifest['type']) && $composerManifest['type'] === 'neos-package-collection') {
-                // the package type "neos-package-collection" indicates a composer package that joins several "flow" packages together.
-                // continue traversal inside the package and append the nested generator to the $packages.
-                $packages->append(new \NoRewindIterator(self::findComposerPackagesInPath($packagePath)));
-                continue;
-            }
-
-            if (!isset($composerManifest['name'])) {
-                throw new InvalidConfigurationException(sprintf('A package composer.json was found at "%s" that contained no "name".', $packagePath), 1445933572);
-            }
-
-            if (strpos($packagePath, Files::concatenatePaths([$this->packagesBasePath, 'Inactive'])) === 0) {
-                // Skip packages in legacy "Inactive" folder.
-                continue;
+            if (($composerManifest['name'] ?? null) !== $packageName) {
+                throw new InvalidConfigurationException(sprintf('Malformed composer package at "%s".', $packagePath), 1445933572);
             }
 
             $packageKey = $this->getPackageKeyFromManifest($composerManifest, $packagePath);
-            $this->composerNameToPackageKeyMap[strtolower($composerManifest['name'])] = $packageKey;
+            $this->composerNameToPackageKeyMap[strtolower($packageName)] = $packageKey;
 
             $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest);
-            if (isset($newPackageStatesConfiguration['packages'][$composerManifest['name']])) {
+            if (isset($newPackageStatesConfiguration['packages'][$packageName])) {
                 throw new PackageException(
                     sprintf(
                         'The package with the name "%s" was found more than once, please make sure it exists only once. Paths "%s" and "%s".',
-                        $composerManifest['name'],
+                        $packageName,
                         $packageConfiguration['packagePath'],
-                        $newPackageStatesConfiguration['packages'][$composerManifest['name']]['packagePath']
+                        $newPackageStatesConfiguration['packages'][$packageName]['packagePath']
                     ),
                     1493030262
                 );
@@ -613,31 +645,6 @@ class PackageManager
         }
 
         return $newPackageStatesConfiguration;
-    }
-
-    /**
-     * Traverses directories recursively from the given starting point and yields folder paths, who contain a composer.json.
-     * When a composer.json was found, traversing into lower directories is stopped.
-     */
-    protected function findComposerPackagesInPath(string $startingDirectory): \Generator
-    {
-        $directories = new \DirectoryIterator($startingDirectory);
-        /** @var \SplFileInfo $fileInfo */
-        foreach ($directories as $fileInfo) {
-            if ($fileInfo->isDot()) {
-                continue;
-            }
-            if ($fileInfo->isDir() === false) {
-                continue;
-            }
-            $potentialPackageDirectory = $fileInfo->getPathname() . '/';
-            if (is_file($potentialPackageDirectory . 'composer.json') === false) {
-                // no composer.json was found - search recursive for a composer.json
-                yield from self::findComposerPackagesInPath($potentialPackageDirectory);
-                continue;
-            }
-            yield Files::getUnixStylePath($potentialPackageDirectory);
-        }
     }
 
     /**
