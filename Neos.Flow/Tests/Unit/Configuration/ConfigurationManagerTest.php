@@ -733,7 +733,7 @@ class ConfigurationManagerTest extends UnitTestCase
             'baz' => '%Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY%',
             'inspiring' => [
                 'people' => [
-                    'to' => '%Neos\Flow\Core\Bootstrap::MINIMUM_PHP_VERSION%',
+                    'to' => '%Neos\Flow\Core\Bootstrap::RUNLEVEL_COMPILETIME%',
                     'share' => '%Neos\Flow\Package\FlowPackageInterface::DIRECTORY_CLASSES%'
                 ]
             ]
@@ -745,7 +745,7 @@ class ConfigurationManagerTest extends UnitTestCase
         $settings = eval('return ' . $processedPhpString . ';');
 
         self::assertSame(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $settings['baz']);
-        self::assertSame(Bootstrap::MINIMUM_PHP_VERSION, $settings['inspiring']['people']['to']);
+        self::assertSame(Bootstrap::RUNLEVEL_COMPILETIME, $settings['inspiring']['people']['to']);
         self::assertSame(FlowPackageInterface::DIRECTORY_CLASSES, $settings['inspiring']['people']['share']);
     }
 
