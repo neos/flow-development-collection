@@ -31,11 +31,6 @@ use Neos\Utility\Files;
  */
 class Bootstrap
 {
-    /**
-     * Required PHP version
-     */
-    const MINIMUM_PHP_VERSION = '8.0.0';
-
     const RUNLEVEL_COMPILETIME = 'Compiletime';
     const RUNLEVEL_RUNTIME = 'Runtime';
 
@@ -550,19 +545,10 @@ class Bootstrap
      */
     protected function ensureRequiredEnvironment()
     {
-        if (version_compare(phpversion(), self::MINIMUM_PHP_VERSION, '<')) {
-            echo('Flow requires PHP version ' . self::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)' . PHP_EOL);
-            exit(1);
-        }
-        if (!extension_loaded('mbstring')) {
-            echo('Flow requires the PHP extension "mbstring" (Error #1207148809)' . PHP_EOL);
-            exit(1);
-        }
         if (DIRECTORY_SEPARATOR !== '/' && PHP_WINDOWS_VERSION_MAJOR < 6) {
             echo('Flow does not support Windows versions older than Windows Vista or Windows Server 2008 (Error #1312463704)' . PHP_EOL);
             exit(1);
         }
-
         if (!extension_loaded('Reflection')) {
             echo('The PHP extension "Reflection" is required by Flow.' . PHP_EOL);
             exit(1);
