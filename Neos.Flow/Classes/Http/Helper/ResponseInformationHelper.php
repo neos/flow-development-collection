@@ -228,7 +228,7 @@ abstract class ResponseInformationHelper
             }
         }
 
-        if (!$response->hasHeader('Content-Length')) {
+        if (!$response->hasHeader('Content-Length') && $response->getBody()->getSize() !== null) {
             $response = $response->withHeader('Content-Length', $response->getBody()->getSize());
         }
 

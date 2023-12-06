@@ -347,6 +347,7 @@ final class ActionResponse
      */
     private function hasContent(): bool
     {
-        return $this->content->getSize() > 0;
+        $contentSize = $this->content->getSize();
+        return $contentSize === null || $contentSize > 0;
     }
 }
