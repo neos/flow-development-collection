@@ -1831,21 +1831,6 @@ abstract class MediaTypes
     }
 
     /**
-     * Returns a Media Type based on the given resource
-     *
-     * @param resource $resource The resource to determine the media type from
-     * @return string The IANA Internet Media Type
-     */
-    public static function getMediaTypeFromResource($resource): string
-    {
-        if (!is_resource($resource)) {
-            throw new \TypeError('Argument "resource" has to be a resource');
-        }
-        $mediaType = self::trimMediaType(mime_content_type($resource));
-        return isset(self::$mediaTypeToFileExtension[$mediaType]) ? $mediaType : 'application/octet-stream';
-    }
-
-    /**
      * Returns the primary filename extension based on the given Media Type.
      *
      * @param string $mediaType The IANA Internet Media Type, for example "text/html"

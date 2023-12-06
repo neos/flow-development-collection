@@ -93,7 +93,7 @@ class DependencyInjectionTest extends FunctionalTestCase
 
         $singletonA = $this->objectManager->get(Fixtures\SingletonClassA::class);
 
-        $prototypeA = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
+        $prototypeA = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{}');
         self::assertSame($singletonA, $prototypeA->getSingletonA());
     }
 
