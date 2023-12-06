@@ -1,0 +1,66 @@
+`8.2.9 (2023-12-06) <https://github.com/neos/flow-development-collection/releases/tag/8.2.9>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Revert "BUGFIX: Sanitize uploaded svg files for suspicious contents" <https://github.com/neos/flow-development-collection/pull/3249>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+As discussed in team meeting, this reverts commit `a1642ef31f19a974f34a302c98c13c77b6422ba1 <https://github.com/neos/flow-development-collection/commit/a1642ef31f19a974f34a302c98c13c77b6422ba1>`_
+as it raises issues when workong with streams (https://github.com/neos/flow-development-collection/issues/3246).
+
+Original PR: https://github.com/neos/flow-development-collection/pull/3172
+
+See also: https://github.com/neos/flow-development-collection/issues/3248
+
+
+
+* Packages: ``Flow`` ``Utility.MediaTypes``
+
+`BUGFIX: Assume content exists, if stream size is unknown <https://github.com/neos/flow-development-collection/pull/3250>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+If a PSR7 stream is returned from an ``ActionController`` action, no content arrives at the client, if the stream has an unknown size.
+
+Why is that? Because the check in our ``ActionResponse`` in ``hasContent()`` is implemented like this: 
+
+    $this->content->getSize() > 0
+
+If a stream returns ``null`` here, because the size is unknown, we should assume content exists...
+
+There should be no change in behavior, even if the stream is in fact empty. Because that would lead to ``hasContent()`` returning ``true``, and the HTTP response being built in ``ActionResponse`` would get the stream as content. When being delivered that would evaluate to "a stream from an empty string", so there will be (again) no difference, if you look at what the ``MessageTrait``does if the internal stream is ``null``:
+
+```php
+    public function getBody(): StreamInterface
+    {
+        if (!$this->stream) {
+            $this->stream = Utils::streamFor('');
+        }
+
+        return $this->stream;
+    }
+```
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Update requirements.txt <https://github.com/neos/flow-development-collection/pull/3242>`_
+--------------------------------------------------------------------------------------------------
+
+Update requirements to build documentation based on security suggestions.
+
+* Packages: ``Flow``
+
+`TASK: Add PHP 8.3 to build workflow matrix <https://github.com/neos/flow-development-collection/pull/3243>`_
+-------------------------------------------------------------------------------------------------------------
+
+This will test Flow against PHP 8.3
+
+
+* Packages: ``Eel`` ``Flow`` ``FluidAdaptor`` ``Kickstarter``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.2.8...8.2.9>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
