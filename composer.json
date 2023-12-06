@@ -44,7 +44,6 @@
         "neos/composer-plugin": "^2.0",
         "composer/composer": "^2.2.8",
         "egulias/email-validator": "^2.1.17 || ^3.0",
-        "enshrined/svg-sanitize": "^0.16.0",
         "typo3fluid/fluid": "^2.8.0",
         "guzzlehttp/psr7": "^1.8.4 || ^2.1.1",
         "ext-mbstring": "*"

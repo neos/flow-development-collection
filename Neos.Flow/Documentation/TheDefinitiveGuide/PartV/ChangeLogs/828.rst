@@ -1,0 +1,192 @@
+`8.2.8 (2023-11-22) <https://github.com/neos/flow-development-collection/releases/tag/8.2.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: No useless read in `FileBackend` (improve performance) <https://github.com/neos/flow-development-collection/pull/3240>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+``FileBackend::findIdentifiersByTags`` now early returns if ``$tags`` is empty. Otherwise it would read every cache entry completely unnecessarily from the filesystem. 
+
+<details>
+  <summary>Profile before</summary>
+
+!`Screenshot_1 <https://github.com/neos/flow-development-collection/assets/54950395/ee332ce9-09c0-40c4-bbb6-688ccaf037de>`_
+
+</details>
+
+<details>
+  <summary>Profile after</summary>
+
+<img width="725" alt="Screenshot_2" src="https://github.com/neos/flow-development-collection/assets/54950395/2506d2c9-82e0-4678-9277-1025b011589c">
+
+<img width="725" alt="Screenshot_3" src="https://github.com/neos/flow-development-collection/assets/54950395/d9469fb4-e5b9-41dc-928f-3aff68c4e756">
+
+</details>
+
+
+* Packages: ``Flow`` ``Cache``
+
+`BUGFIX: Set InvalidHashException status code to 400 <https://github.com/neos/flow-development-collection/pull/3234>`_
+----------------------------------------------------------------------------------------------------------------------
+
+``InvalidHashException`` now declares ``400`` as it's status code (not the inherited ``500`` it has now), as that is clearly a case of a "bad request".
+
+* See: `#3159 <https://github.com/neos/flow-development-collection/issues/3159>`_
+
+**Upgrade instructions**
+
+This might need adjustment, if you rely on the ``InvalidHashException`` throwing a status code of ``500`` somewhere.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Return the expected result for `is_dir('resource://sha1')` <https://github.com/neos/flow-development-collection/pull/3226>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3225 <https://github.com/neos/flow-development-collection/issues/3225>`_
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Use method to set validated instances container <https://github.com/neos/flow-development-collection/pull/3210>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3205 <https://github.com/neos/flow-development-collection/issues/3205>`_
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Require collection packages as `self.version` again <https://github.com/neos/flow-development-collection/pull/3206>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+* See: `#3035 <https://github.com/neos/flow-development-collection/issues/3035>`_ for the original change
+
+
+* Packages: ``Flow`` ``Eel`` ``FluidAdaptor`` ``Kickstarter``
+
+`BUGFIX: Only set distinct on count clause if explicitely set to improve performance <https://github.com/neos/flow-development-collection/pull/3140>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+F.e. Postgres has performance issues with large datasets and the DISTINCT clause. In a test this change reduced the query time of a count query for ~900.000 entities by >80%.
+
+In a custom project this affected their Neos Media.UI in which the following results were found:
+
+* Count all assets |  580ms ->  260ms
+* Query 20 assets  |  690ms ->  350ms
+* Query 100 assets |  990ms -> 650ms
+* Module load | 1900ms -> 1400ms
+
+**Review instructions**
+
+Everything should work the same, as https://github.com/neos/flow-development-collection/pull/415 already sets the distinct flag where (possibly) necessary.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Sanitize uploaded svg files from suspicious content <https://github.com/neos/flow-development-collection/pull/3172>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Adding an internal methods ``isSanitizingRequired`` and ``sanitizeImportedFileContent`` to the resourceManager. The import is adjusted to first determine the mediaType of an imported resource to decide wether sanitizing is needed which for now happens only for SVG files. If no sanitizing is needed the code will perform as before by passing streams or filenames around.
+
+If suspicious content was removed from a warning is logged that mentions the remove data and line. The sanitizing is done using "enshrined/svg-sanitize" that is used by other cms aswell.
+
+The initial implementation will only sanitize SVG files as those can contain malicious scripts. In future this should be expanded to a feature that allows registering of custom sanitizing functions.
+
+The sanitizing logic itself ist basically the same as what is done by typo3 here: https://github.com/TYPO3/typo3/blob/`357b07064cf2c7f1735cfb8f73ac4a7248ab040e <https://github.com/neos/flow-development-collection/commit/357b07064cf2c7f1735cfb8f73ac4a7248ab040e>`_/typo3/sysext/core/Classes/Resource/Security/SvgSanitizer.php
+
+This addresses the issue described here: https://nvd.nist.gov/vuln/detail/CVE-2023-37611
+
+**Review Instructions**
+
+The change adds quite a bit of complexity to the importResource method to avoid loading the file content into ram whenever possible. As this method accepts filenames and resources this leads to quite some nested checking. I consider this kindoff necessary as one does not want to read a full video file into php ram to check wether it may be an svg. 
+
+Better suggestions are welcome.
+
+
+* Packages: ``Utility.MediaTypes``
+
+`TASK: Update default .htaccess for _Resources <https://github.com/neos/flow-development-collection/pull/3238>`_
+----------------------------------------------------------------------------------------------------------------
+
+PHP 5 is a thing of the past, but for PHP 8 the module is name just ``mod_php.c``, so that needs to be added.
+
+**Upgrade instructions**
+
+Depending in the way you deploy and whether you have that file even in version control, the change might need to be applied manually to your setup.
+
+
+* Packages: ``Flow``
+
+`TASK: Routing Documentation Adjustment  <https://github.com/neos/flow-development-collection/pull/3231>`_
+----------------------------------------------------------------------------------------------------------
+
+Correction of an erroneous path in routing documentation.
+
+* Packages: ``Flow``
+
+`TASK: Migrate to PHPStan for Flow 8 <https://github.com/neos/flow-development-collection/pull/3218>`_
+------------------------------------------------------------------------------------------------------
+
+This is a backport of https://github.com/neos/flow-development-collection/pull/3216
+
+Adds PHPStan level 1 to the whole Flow code base and CI.
+Psalm was removed.
+
+
+* Packages: ``Flow`` ``.github`` ``Cache``
+
+`TASK: PEG Parser declares properties <https://github.com/neos/flow-development-collection/pull/3215>`_
+-------------------------------------------------------------------------------------------------------
+
+Prevents deprecation warnings for dynamic properties.
+
+* Packages: ``Flow`` ``Eel``
+
+`TASK: Clean up stored throwable dumps <https://github.com/neos/flow-development-collection/pull/3187>`_
+--------------------------------------------------------------------------------------------------------
+
+Whenever a new dump is written, check the existing dumps and remove those that are older than allowed or exceed the maximum count.
+
+By default nothing is cleaned up.
+
+* Resolves: `#3158 <https://github.com/neos/flow-development-collection/issues/3158>`_
+
+**Review instructions**
+
+Should remove old dump files as configured…
+
+
+* Packages: ``Flow``
+
+`TASK: Fix overlooked dependency… <https://github.com/neos/flow-development-collection/pull/3207>`_
+-----------------------------------------------------------------------------------------------------
+
+* See: `#3035 <https://github.com/neos/flow-development-collection/issues/3035>`_ for the original change
+
+
+* Packages: ``Flow``
+
+`TASK: Fix cache RedisBackend unittest <https://github.com/neos/flow-development-collection/pull/3196>`_
+--------------------------------------------------------------------------------------------------------
+
+A test failed due to a missing return value from a method not being mocked (correctly),
+
+
+* Packages: ``Cache``
+
+`TASK: Fix documentation builds <https://github.com/neos/flow-development-collection/pull/3195>`_
+-------------------------------------------------------------------------------------------------
+
+… by pinning updated dependencies.
+
+**Review instructions**
+
+Best is to see if the builds succeed on RTD again with this merged…
+
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.2.7...8.2.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
