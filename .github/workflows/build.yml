@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.0', '8.1', '8.2']
+        php-versions: ['8.0', '8.1', '8.2', '8.3']
         # see https://mariadb.com/kb/en/mariadb-server-release-dates/
         # this should be a current release, e.g. the LTS version
         mariadb-versions: ['10.6']
