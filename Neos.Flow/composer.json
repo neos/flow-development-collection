@@ -6,7 +6,7 @@
     "license": ["MIT"],
 
     "require": {
-        "php": "^7.3 || ^8.0",
+        "php": "^8.0",
 
         "ext-zlib": "*",
         "ext-SPL": "*",
@@ -33,9 +33,12 @@
         "psr/http-message": "^1.0",
         "psr/http-factory": "^1.0",
         "psr/container": "^1.0",
-        "psr/log": "^1.0",
+        "psr/log": "^2.0 || ^3.0",
         "psr/http-server-middleware": "^1.0",
         "psr/http-server-handler": "^1.0",
+        "psr/http-client": "^1.0",
+        "psr/simple-cache": "^2.0 || ^3.0",
+        "psr/cache": "^2.0 || ^3.0",
 
         "ramsey/uuid": "^3.0 || ^4.0",
 
@@ -61,7 +64,9 @@
         "symfony/polyfill-php70": "*",
         "symfony/polyfill-php71": "*",
         "symfony/polyfill-php72": "*",
-        "symfony/polyfill-php73": "*"
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*"
     },
     "suggest": {
         "ext-curl": "To use the \\Neos\\Flow\\Http\\Client\\CurlEngine",
