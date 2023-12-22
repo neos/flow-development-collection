@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Tests\Functional\Form;
  * source code.
  */
 
-use Neos\Flow\Mvc\Routing\Route;
 
 /**
  * Testcase for Standalone View
@@ -37,17 +36,18 @@ class FormObjectsTest extends \Neos\Flow\Tests\FunctionalTestCase
     {
         parent::setUp();
 
-        $route = new Route();
-        $route->setUriPattern('test/fluid/formobjects(/{@action})');
-        $route->setDefaults([
-            '@package' => 'Neos.FluidAdaptor',
-            '@subpackage' => 'Tests\Functional\Form\Fixtures',
-            '@controller' => 'Form',
-            '@action' => 'index',
-            '@format' => 'html'
-        ]);
-        $route->setAppendExceedingArguments(true);
-        $this->router->addRoute($route);
+        $this->registerRoute(
+            'Form Test Route',
+            'test/fluid/formobjects(/{@action})',
+            [
+                '@package' => 'Neos.FluidAdaptor',
+                '@subpackage' => 'Tests\Functional\Form\Fixtures',
+                '@controller' => 'Form',
+                '@action' => 'index',
+                '@format' => 'html'
+            ],
+            true
+        );
     }
 
     /**

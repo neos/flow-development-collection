@@ -10,9 +10,12 @@ use Neos\Flow\Configuration\ConfigurationManager;
  */
 final class ConfigurationRoutesProvider implements RoutesProviderInterface
 {
+    private ConfigurationManager $configurationManager;
+
     public function __construct(
-        private readonly ConfigurationManager $configurationManager
+        ConfigurationManager $configurationManager
     ) {
+        $this->configurationManager = $configurationManager;
     }
 
     public function getRoutes(): Routes

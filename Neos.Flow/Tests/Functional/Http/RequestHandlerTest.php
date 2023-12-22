@@ -32,9 +32,11 @@ class RequestHandlerTest extends FunctionalTestCase
     public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController(): void
     {
         $foundRoute = false;
-        foreach ($this->router->getRoutes() as $route) {
-            if ($route->getName() === 'Neos.Flow :: Functional Test: HTTP - FooController') {
-                $foundRoute = true;
+        if ($this->routes !== null) {
+            foreach ($this->routes as $route) {
+                if ($route->getName() === 'Neos.Flow :: Functional Test: HTTP - FooController') {
+                    $foundRoute = true;
+                }
             }
         }
         if (!$foundRoute) {

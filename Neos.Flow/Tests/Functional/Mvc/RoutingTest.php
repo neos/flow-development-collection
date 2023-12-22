@@ -48,10 +48,12 @@ class RoutingTest extends FunctionalTestCase
 
         $foundRoute = false;
         /** @var $route Route */
-        foreach ($this->router->getRoutes() as $route) {
-            if ($route->getName() === 'Neos.Flow :: Functional Test: HTTP - FooController') {
-                $foundRoute = true;
-                break;
+        if ($this->routes !== null) {
+            foreach ($this->routes as $route) {
+                if ($route->getName() === 'Neos.Flow :: Functional Test: HTTP - FooController') {
+                    $foundRoute = true;
+                    break;
+                }
             }
         }
 
@@ -381,38 +383,5 @@ class RoutingTest extends FunctionalTestCase
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, 'index.php/', RouteParameters::createEmpty()));
 
         self::assertSame('/index.php/neos/flow/test/http/foo', (string)$actualResult);
-    }
-
-    /**
-     * @test
-     */
-    public function explicitlySpecifiedRoutesOverruleConfiguredRoutes()
-    {
-        $routeValues = [
-            '@package' => 'Neos.Flow',
-            '@subpackage' => 'Tests\Functional\Http\Fixtures',
-            '@controller' => 'Foo',
-            '@action' => 'index',
-            '@format' => 'html'
-        ];
-        $routesConfiguration = [
-            [
-                'uriPattern' => 'custom/uri/pattern',
-                'defaults' => [
-                    '@package' => 'Neos.Flow',
-                    '@subpackage' => 'Tests\Functional\Http\Fixtures',
-                    '@controller' => 'Foo',
-                    '@action' => 'index',
-                    '@format' => 'html'
-                ],
-            ]
-        ];
-        $this->router->setRoutesConfiguration($routesConfiguration);
-        $baseUri = new Uri('http://localhost');
-        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty()));
-        self::assertSame('/custom/uri/pattern', (string)$actualResult);
-
-        // reset router configuration for following tests
-        $this->router->setRoutesConfiguration(null);
     }
 }

@@ -15,9 +15,9 @@ final class Routes implements \IteratorAggregate
     /**
      * @var array<int, Route>
      */
-    private readonly array $routes;
+    private array $routes;
 
-    private function __construct(
+    public function __construct(
         Route ...$routes
     ) {
         $this->routes = $routes;
@@ -53,11 +53,11 @@ final class Routes implements \IteratorAggregate
     {
         return new self();
     }
-    public function prepend(Route $route): self
+    public function withPrependedRoute(Route $route): self
     {
         return new self(...[$route, ...$this->routes]);
     }
-    public function append(Route $route): self
+    public function withAppendedRoute(Route $route): self
     {
         return new self(...[...$this->routes, $route]);
     }

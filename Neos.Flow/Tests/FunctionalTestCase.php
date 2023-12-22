@@ -14,6 +14,8 @@ namespace Neos\Flow\Tests;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\Routes;
+use Neos\Flow\Mvc\Routing\RoutesProviderInterface;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
@@ -85,6 +87,11 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      * @api
      */
     protected $router;
+
+    /**
+     * @var Routes
+     */
+    protected $routes;
 
     /**
      * @var \Neos\Flow\Security\Context
@@ -361,6 +368,9 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      */
     protected function registerRoute($name, $uriPattern, array $defaults, $appendExceedingArguments = false, array $httpMethods = null)
     {
+        if ($this->routes === null) {
+            $this->routes = Routes::empty();
+        }
         $route = new Route();
         $route->setName($name);
         $route->setUriPattern($uriPattern);
@@ -369,7 +379,14 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         if ($httpMethods !== null) {
             $route->setHttpMethods($httpMethods);
         }
-        $this->router->addRoute($route);
+
+        // the old router->addRoute prepended the routes so this is needed for consistency
+        $this->routes = $this->routes->withPrependedRoute($route);
+
+        $mockRouteProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRouteProvider->method('getRoutes')->willReturn($this->routes);
+        $this->inject($this->router, 'routesProvider', $mockRouteProvider);
+
         return $route;
     }
 
@@ -430,7 +447,10 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $this->browser = new \Neos\Flow\Http\Client\Browser();
         $this->browser->setRequestEngine(new \Neos\Flow\Http\Client\InternalRequestEngine());
         $this->router = $this->browser->getRequestEngine()->getRouter();
-        $this->router->setRoutesConfiguration(null);
+
+        $mockRouteProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRouteProvider->method('getRoutes')->willReturn($this->routes ?? Routes::empty());
+        $this->inject($this->router, 'routesProvider', $mockRouteProvider);
 
         $serverRequestFactory = new ServerRequestFactory(new UriFactory());
         $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost/neos/flow/test');

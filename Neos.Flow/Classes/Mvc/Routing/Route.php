@@ -172,8 +172,9 @@ class Route
      */
     protected $persistenceManager;
 
-    public static function fromConfiguration(array $configuration): self
+    public static function fromConfiguration(array $configuration): static
     {
+        /** @phpstan-ignore-next-line */
         $route = new static();
         if (isset($configuration['name'])) {
             $route->setName($configuration['name']);

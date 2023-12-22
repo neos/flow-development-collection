@@ -23,6 +23,7 @@ use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Routes;
+use Neos\Flow\Mvc\Routing\RoutesProviderInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -38,6 +39,12 @@ class RouterTest extends UnitTestCase
      * @var Router
      */
     protected $router;
+
+    /**
+     * @var RoutesProviderInterface
+     */
+    protected $mockRoutesProvider;
+
 
     /**
      * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -69,7 +76,11 @@ class RouterTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->router = $this->getMockBuilder(Router::class)->setConstructorArgs([Routes::empty()])->getMock();
+        $this->router = $this->getAccessibleMock(Router::class, ['dummy']);
+
+        $this->mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $this->mockRoutesProvider->method('getRoutes')->willReturn(Routes::empty());
+        $this->inject($this->router, 'routesProvider', $this->mockRoutesProvider);
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
         $this->inject($this->router, 'logger', $this->mockSystemLogger);
@@ -114,13 +125,12 @@ class RouterTest extends UnitTestCase
         $route3 = $this->getMockBuilder(Route::class)->disableOriginalConstructor()->setMethods(['resolves'])->getMock();
         $route3->expects(self::never())->method('resolves');
 
-        $mockRoutes = [$route1, $route2, $route3];
-        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $router */
-        $router = $this->getMockBuilder(Router::class)->setConstructorArgs([Routes::fromArray($mockRoutes)])->getMock();
-        $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'logger', $this->mockSystemLogger);
+        $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRoutesProvider->expects($this->once())->method("getRoutes")->willReturn(new Routes($route1, $route2, $route3));
+        $this->inject($this->router, 'routesProvider', $mockRoutesProvider);
 
-        $resolvedUri = $router->resolve($resolveContext);
+        $resolvedUri = $this->router->resolve($resolveContext);
+
         self::assertSame('/route2', $resolvedUri->getPath());
     }
 
@@ -131,21 +141,17 @@ class RouterTest extends UnitTestCase
     {
         $this->expectException(NoMatchingRouteException::class);
 
-
         $route1 = $this->createMock(Route::class);
         $route1->expects(self::once())->method('resolves')->willReturn(false);
 
         $route2 = $this->createMock(Route::class);
         $route2->expects(self::once())->method('resolves')->willReturn(false);
 
-        $mockRoutes = [$route1, $route2];
+        $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRoutesProvider->expects($this->once())->method("getRoutes")->willReturn(new Routes($route1, $route2));
+        $this->inject($this->router, 'routesProvider', $mockRoutesProvider);
 
-        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $router */
-        $router = $this->getMockBuilder(Router::class)->setConstructorArgs([Routes::fromArray($mockRoutes)])->getMock();
-        $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'logger', $this->mockSystemLogger);
-
-        $router->resolve(new ResolveContext($this->mockBaseUri, [], false, '', RouteParameters::createEmpty()));
+        $this->router->resolve(new ResolveContext($this->mockBaseUri, [], false, '', RouteParameters::createEmpty()));
     }
 
     /**
@@ -169,15 +175,13 @@ class RouterTest extends UnitTestCase
         $mockRoute2->expects(self::once())->method('resolves')->with($resolveContext)->willReturn(true);
         $mockRoute2->method('getResolvedUriConstraints')->willReturn(UriConstraints::create());
 
-        $mockRoutes = [$mockRoute1, $mockRoute2];
-        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $router */
-        $router = $this->getMockBuilder(Router::class)->setConstructorArgs([Routes::fromArray($mockRoutes)])->getMock();
-        $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'logger', $this->mockSystemLogger);
+        $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRoutesProvider->expects($this->once())->method("getRoutes")->willReturn(new Routes($mockRoute1, $mockRoute2));
+        $this->inject($this->router, 'routesProvider', $mockRoutesProvider);
 
-        $router->resolve($resolveContext);
+        $this->router->resolve($resolveContext);
 
-        self::assertSame($mockRoute2, $router->getLastResolvedRoute());
+        self::assertSame($mockRoute2, $this->router->getLastResolvedRoute());
     }
 
     /**
@@ -185,21 +189,20 @@ class RouterTest extends UnitTestCase
      */
     public function resolveReturnsCachedResolvedUriIfFoundInCache()
     {
-        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $router */
-        $router = $this->getMockBuilder(Router::class)->setConstructorArgs([Routes::empty()])->getMock();
-
         $routeValues = ['some' => 'route values'];
         $mockCachedResolvedUriConstraints = UriConstraints::create()->withPath('cached/path');
 
         $resolveContext = new ResolveContext($this->mockBaseUri, $routeValues, false, '', RouteParameters::createEmpty());
 
-        $mockRouterCachingService = $this->getMockBuilder(RouterCachingService::class)->getMock();
-        $mockRouterCachingService->method('getCachedResolvedUriConstraints')->with($resolveContext)->willReturn($mockCachedResolvedUriConstraints);
+        $mockRouterCachingService = $this->createMock(RouterCachingService::class);
+        $mockRouterCachingService->expects($this->once())->method('getCachedResolvedUriConstraints')->with($resolveContext)->willReturn($mockCachedResolvedUriConstraints);
+        $this->inject($this->router, 'routerCachingService', $mockRouterCachingService);
 
-        $this->inject($router, 'routerCachingService', $mockRouterCachingService);
-        $this->inject($router, 'logger', $this->mockSystemLogger);
+        $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRoutesProvider->expects($this->never())->method("getRoutes");
+        $this->inject($this->router, 'routesProvider', $mockRoutesProvider);
 
-        self::assertSame('/cached/path', (string)$router->resolve($resolveContext));
+        self::assertSame('/cached/path', (string)$this->router->resolve($resolveContext));
     }
 
     /**
@@ -218,15 +221,16 @@ class RouterTest extends UnitTestCase
         $mockRoute2->expects(self::once())->method('resolves')->with($resolveContext)->willReturn(true);
         $mockRoute2->expects(self::atLeastOnce())->method('getResolvedUriConstraints')->willReturn($mockResolvedUriConstraints);
 
+        $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRoutesProvider->expects($this->once())->method("getRoutes")->willReturn(new Routes($mockRoute1, $mockRoute2));
+        $this->inject($this->router, 'routesProvider', $mockRoutesProvider);
 
-        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $router */
-        $router = $this->getMockBuilder(Router::class)->setConstructorArgs([Routes::fromArray([$mockRoute1, $mockRoute2])])->getMock();
-        $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'logger', $this->mockSystemLogger);
+        $mockRouterCachingService = $this->createMock(RouterCachingService::class);
+        $mockRouterCachingService->expects(self::once())->method('getCachedResolvedUriConstraints')->with($resolveContext)->willReturn(false);
+        $mockRouterCachingService->expects(self::once())->method('storeResolvedUriConstraints')->with($resolveContext, $mockResolvedUriConstraints, null, null);
+        $this->inject($this->router, 'routerCachingService', $mockRouterCachingService);
 
-
-        $this->mockRouterCachingService->expects(self::once())->method('storeResolvedUriConstraints')->with($resolveContext, $mockResolvedUriConstraints, null, null);
-        self::assertSame('/resolved/path', (string)$router->resolve($resolveContext));
+        self::assertSame('/resolved/path', (string)$this->router->resolve($resolveContext));
     }
 
     /**
@@ -234,11 +238,6 @@ class RouterTest extends UnitTestCase
      */
     public function resolveStoresResolvedUriPathInCacheIfNotFoundInCachWithTagsAndCacheLifetime()
     {
-        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $router */
-        $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
-        $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'logger', $this->mockSystemLogger);
-
         $routeValues = ['some' => 'route values'];
         $mockResolvedUriConstraints = UriConstraints::create()->withPath('resolved/path');
 
@@ -253,11 +252,17 @@ class RouterTest extends UnitTestCase
         $mockRoute2->expects(self::atLeastOnce())->method('getResolvedUriConstraints')->willReturn($mockResolvedUriConstraints);
         $mockRoute2->expects(self::atLeastOnce())->method('getResolvedTags')->willReturn($routeTags);
         $mockRoute2->expects(self::atLeastOnce())->method('getResolvedLifetime')->willReturn($routeLifetime);
-        $router->_set('routes', [$mockRoute1, $mockRoute2]);
 
+        $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRoutesProvider->expects($this->once())->method("getRoutes")->willReturn(new Routes($mockRoute1, $mockRoute2));
+        $this->inject($this->router, 'routesProvider', $mockRoutesProvider);
 
-        $this->mockRouterCachingService->expects(self::once())->method('storeResolvedUriConstraints')->with($resolveContext, $mockResolvedUriConstraints, $routeTags, $routeLifetime);
-        self::assertSame('/resolved/path', (string)$router->resolve($resolveContext));
+        $mockRouterCachingService = $this->createMock(RouterCachingService::class);
+        $mockRouterCachingService->expects($this->once())->method('getCachedResolvedUriConstraints')->with($resolveContext)->willReturn(false);
+        $mockRouterCachingService->expects($this->once())->method('storeResolvedUriConstraints')->with($resolveContext, $mockResolvedUriConstraints)->willReturn(false);
+        $this->inject($this->router, 'routerCachingService', $mockRouterCachingService);
+
+        self::assertSame('/resolved/path', (string)$this->router->resolve($resolveContext));
     }
 
     /**
@@ -265,18 +270,14 @@ class RouterTest extends UnitTestCase
      */
     public function routeReturnsCachedMatchResultsIfFoundInCache()
     {
-        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $router */
-        $this->router = $this->getMockBuilder(Router::class)->setConstructorArgs([Routes::empty()])->getMock();
-        $this->inject($this->router, 'logger', $this->mockSystemLogger);
-
         $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
         $cachedMatchResults = ['some' => 'cached results'];
 
-        $mockRouterCachingService = $this->getMockBuilder(RouterCachingService::class)->getMock();
-        $mockRouterCachingService->expects(self::once())->method('getCachedMatchResults')->with($routeContext)->willReturn($cachedMatchResults);
-        $this->inject($router, 'routerCachingService', $mockRouterCachingService);
+        $mockRouterCachingService = $this->createMock(RouterCachingService::class);
+        $mockRouterCachingService->method('getCachedMatchResults')->with($routeContext)->willReturn($cachedMatchResults);
+        $this->inject($this->router, 'routerCachingService', $mockRouterCachingService);
 
-        self::assertSame($cachedMatchResults, $router->route($routeContext));
+        self::assertSame($cachedMatchResults, $this->router->route($routeContext));
     }
 
     /**
@@ -293,14 +294,16 @@ class RouterTest extends UnitTestCase
         $mockRoute2->expects(self::once())->method('matches')->with($routeContext)->willReturn(true);
         $mockRoute2->expects(self::once())->method('getMatchResults')->willReturn($matchResults);
 
-        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $router */
-        $router = $this->getMockBuilder(Router::class)->setConstructorArgs([Routes::fromArray([$mockRoute1, $mockRoute2])])->getMock();
-        $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'logger', $this->mockSystemLogger);
+        $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRoutesProvider->expects(self::once())->method("getRoutes")->willReturn(new Routes($mockRoute1, $mockRoute2));
+        $this->inject($this->router, 'routesProvider', $mockRoutesProvider);
 
-        $this->mockRouterCachingService->expects(self::once())->method('storeMatchResults')->with($routeContext, $matchResults, null, null);
+        $mockRouterCachingService = $this->createMock(RouterCachingService::class);
+        $mockRouterCachingService->expects(self::once())->method('getCachedMatchResults')->with($routeContext)->willReturn(false);
+        $mockRouterCachingService->expects(self::once())->method('storeMatchResults')->with($routeContext, $matchResults, null, null);
+        $this->inject($this->router, 'routerCachingService', $mockRouterCachingService);
 
-        self::assertSame($matchResults, $router->route($routeContext));
+        self::assertSame($matchResults, $this->router->route($routeContext));
     }
 
     /**
@@ -308,11 +311,6 @@ class RouterTest extends UnitTestCase
      */
     public function routeStoresMatchResultsInCacheIfNotFoundInCacheWithTagsAndCacheLifetime()
     {
-        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $router */
-        $router = $this->getAccessibleMock(Router::class, ['createRoutesFromConfiguration']);
-        $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'logger', $this->mockSystemLogger);
-
         $matchResults = ['some' => 'match results'];
         $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
         $routeTags = RouteTags::createFromArray(['foo', 'bar']);
@@ -326,11 +324,16 @@ class RouterTest extends UnitTestCase
         $mockRoute2->expects(self::once())->method('getMatchedTags')->willReturn($routeTags);
         $mockRoute2->expects(self::once())->method('getMatchedLifetime')->willReturn($routeLifetime);
 
-        $router->_set('routes', [$mockRoute1, $mockRoute2]);
+        $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRoutesProvider->expects(self::once())->method("getRoutes")->willReturn(new Routes($mockRoute1, $mockRoute2));
+        $this->inject($this->router, 'routesProvider', $mockRoutesProvider);
 
-        $this->mockRouterCachingService->expects(self::once())->method('storeMatchResults')->with($routeContext, $matchResults, $routeTags, $routeLifetime);
+        $mockRouterCachingService = $this->createMock(RouterCachingService::class);
+        $mockRouterCachingService->expects(self::once())->method('getCachedMatchResults')->with($routeContext)->willReturn(false);
+        $mockRouterCachingService->expects(self::once())->method('storeMatchResults')->with($routeContext, $matchResults, $routeTags, $routeLifetime);
+        $this->inject($this->router, 'routerCachingService', $mockRouterCachingService);
 
-        self::assertSame($matchResults, $router->route($routeContext));
+        self::assertSame($matchResults, $this->router->route($routeContext));
     }
 
     /**
@@ -354,13 +357,12 @@ class RouterTest extends UnitTestCase
         $mockRoute2->expects(self::once())->method('matches')->with($routeContext)->willReturn(true);
         $mockRoute2->expects(self::once())->method('getMatchResults')->willReturn([]);
 
-        /** @var Router|\PHPUnit\Framework\MockObject\MockObject $router */
-        $router = $this->getMockBuilder(Router::class)->setConstructorArgs([Routes::fromArray([$mockRoute1, $mockRoute2])])->getMock();
-        $this->inject($router, 'routerCachingService', $this->mockRouterCachingService);
-        $this->inject($router, 'logger', $this->mockSystemLogger);
+        $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRoutesProvider->expects($this->once())->method("getRoutes")->willReturn(new Routes($mockRoute1, $mockRoute2));
+        $this->inject($this->router, 'routesProvider', $mockRoutesProvider);
 
-        $router->route($routeContext);
+        $this->router->route($routeContext);
 
-        self::assertSame($mockRoute2, $router->getLastMatchedRoute());
+        self::assertSame($mockRoute2, $this->router->getLastMatchedRoute());
     }
 }

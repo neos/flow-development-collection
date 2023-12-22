@@ -12,12 +12,12 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  */
 
 use GuzzleHttp\Psr7\Response;
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
-use Neos\Flow\Mvc\Routing\RouteConfiguration;
 use Neos\Flow\Mvc\Routing\Router;
+use Neos\Flow\Mvc\Routing\Routes;
+use Neos\Flow\Mvc\Routing\RoutesProviderInterface;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -40,9 +40,9 @@ class RoutingMiddlewareTest extends UnitTestCase
     protected $mockRouter;
 
     /**
-     * @var ConfigurationManager|\PHPUnit\Framework\MockObject\MockObject
+     * @var RoutesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $mockConfigurationManager;
+    protected $mockRoutesProvider;
 
     /**
      * @var RequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -67,12 +67,10 @@ class RoutingMiddlewareTest extends UnitTestCase
     {
         $this->routingMiddleware = new RoutingMiddleware();
 
-        $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
-        $this->mockConfigurationManager->expects(self::atLeastOnce())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_ROUTES, 'package')->will(self::returnValue([]));
-
-        $routeConfiguration = new RouteConfiguration($this->mockConfigurationManager);
-        $routes = $routeConfiguration->getRoutes();
-        $this->mockRouter = $this->getMockBuilder(Router::class)->setConstructorArgs([$routes])->getMock();
+        $this->mockRouter = $this->createMock(Router::class);
+        $this->mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $this->mockRoutesProvider->method("getRoutes")->willReturn(Routes::empty());
+        $this->inject($this->mockRouter, 'routesProvider', $this->mockRoutesProvider);
 
         $this->inject($this->routingMiddleware, 'router', $this->mockRouter);
 
