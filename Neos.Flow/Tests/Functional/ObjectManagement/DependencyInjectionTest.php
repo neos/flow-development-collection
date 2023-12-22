@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * source code.
  */
 
+use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\FinalClassWithDependencies;
@@ -28,12 +29,14 @@ use Neos\Flow\Tests\FunctionalTestCase;
 class DependencyInjectionTest extends FunctionalTestCase
 {
     protected ConfigurationManager $configurationManager;
+    protected CacheManager $cacheManager;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->configurationManager = $this->objectManager->get(ConfigurationManager::class);
+        $this->cacheManager = $this->objectManager->get(CacheManager::class);
     }
 
     /**
@@ -293,6 +296,16 @@ class DependencyInjectionTest extends FunctionalTestCase
     {
         $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
         self::assertSame($this->configurationManager->getConfiguration('Views'), $classWithInjectedConfiguration->getInjectedViewsConfiguration());
+    }
+
+    /**
+     * @test
+     */
+    public function injectionOfCaches(): void
+    {
+        $classWithInjectedCache = new Fixtures\ClassWithInjectedCache();
+        self::assertSame($this->cacheManager->getCache('Flow_Monitor'), $classWithInjectedCache->getCacheInjectedViaAttribute());
+        self::assertSame($this->cacheManager->getCache('Flow_Monitor'), $classWithInjectedCache->getCacheInjectedViaAnnotation());
     }
 
     /**

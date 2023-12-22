@@ -13,6 +13,7 @@ namespace Neos\Flow\ObjectManagement\Configuration;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Annotations\Inject;
+use Neos\Flow\Annotations\InjectCache;
 use Neos\Flow\Annotations\InjectConfiguration;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\Exception as ObjectException;
@@ -616,6 +617,18 @@ class ConfigurationBuilder
                     $configurationPath = $injectConfigurationAnnotation->path;
                 }
                 $properties[$propertyName] = new ConfigurationProperty($propertyName, ['type' => $injectConfigurationAnnotation->type, 'path' => $configurationPath], ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
+            }
+
+            foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, InjectCache::class) as $propertyName) {
+                if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
+                    throw new ObjectException(sprintf('The property "%s" in class "%s" must not be private when annotated for cache injection.', $propertyName, $className), 1416765599);
+                }
+                if (array_key_exists($propertyName, $properties)) {
+                    continue;
+                }
+                /** @var InjectCache $injectCacheAnnotation */
+                $injectCacheAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, InjectCache::class);
+                $properties[$propertyName] = new ConfigurationProperty($propertyName, ['identifier' => $injectCacheAnnotation->identifier], ConfigurationProperty::PROPERTY_TYPES_CACHE);
             }
             $objectConfiguration->setProperties($properties);
         }
