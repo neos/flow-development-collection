@@ -53,10 +53,12 @@ final class Routes implements \IteratorAggregate
     {
         return new self();
     }
+
     public function withPrependedRoute(Route $route): self
     {
-        return new self(...[$route, ...$this->routes]);
+        return new self($route, ...$this->routes);
     }
+
     public function withAppendedRoute(Route $route): self
     {
         return new self(...[...$this->routes, $route]);
