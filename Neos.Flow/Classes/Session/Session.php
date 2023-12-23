@@ -11,16 +11,15 @@ namespace Neos\Flow\Session;
  * source code.
  */
 
-use Neos\Cache\Backend\IterableBackendInterface;
-use Neos\Cache\Exception\InvalidBackendException;
 use Neos\Cache\Exception\NotSupportedByBackendException;
-use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context;
+use Neos\Flow\Session\Data\SessionDataStore;
+use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Security\Authentication\TokenInterface;
@@ -65,17 +64,17 @@ class Session implements CookieEnabledInterface
      * Meta data cache for this session
      *
      * @Flow\Inject
-     * @var VariableFrontend
+     * @var SessionMetaDataStore
      */
-    protected $metaDataCache;
+    protected $sessionMetaDataStore;
 
     /**
      * Storage cache for this session
      *
      * @Flow\Inject
-     * @var VariableFrontend
+     * @var SessionDataStore
      */
-    protected $storageCache;
+    protected $sessionDataStore;
 
     /**
      * @deprecated will be removed with Flow 9 as this is only needed to avoid breakiness
@@ -252,20 +251,6 @@ class Session implements CookieEnabledInterface
     }
 
     /**
-     * @return void
-     * @throws InvalidBackendException
-     */
-    public function initializeObject()
-    {
-        if (!$this->metaDataCache->getBackend() instanceof IterableBackendInterface) {
-            throw new InvalidBackendException(sprintf('The session meta data cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', get_class($this->metaDataCache->getBackend())), 1370964557);
-        }
-        if (!$this->storageCache->getBackend() instanceof IterableBackendInterface) {
-            throw new InvalidBackendException(sprintf('The session storage cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', get_class($this->storageCache->getBackend())), 1370964558);
-        }
-    }
-
-    /**
      * @return Cookie
      */
     public function getSessionCookie(): Cookie
@@ -336,11 +321,11 @@ class Session implements CookieEnabledInterface
             return false;
         }
         $sessionIdentifier = $this->sessionCookie->getValue();
-        if ($this->metaDataCache->isValidEntryIdentifier($sessionIdentifier) === false) {
+        if ($this->sessionMetaDataStore->isValidEntryIdentifier($sessionIdentifier) === false) {
             $this->logger->warning('SESSION IDENTIFIER INVALID: ' . $sessionIdentifier, LogEnvironment::fromMethodName(__METHOD__));
             return false;
         }
-        $sessionMetaData = $this->metaDataCache->get($sessionIdentifier);
+        $sessionMetaData = $this->sessionMetaDataStore->get($sessionIdentifier);
         if ($sessionMetaData === false) {
             return false;
         }
@@ -361,7 +346,7 @@ class Session implements CookieEnabledInterface
         if ($this->started === false && $this->canBeResumed()) {
             $this->started = true;
 
-            $sessionObjects = $this->storageCache->get($this->storageIdentifier . md5('Neos_Flow_Object_ObjectManager'));
+            $sessionObjects = $this->sessionDataStore->get($this->storageIdentifier . md5('Neos_Flow_Object_ObjectManager'));
             if (is_array($sessionObjects)) {
                 foreach ($sessionObjects as $object) {
                     if ($object instanceof ProxyInterface) {
@@ -375,7 +360,7 @@ class Session implements CookieEnabledInterface
             } else {
                 // Fallback for some malformed session data, if it is no array but something else.
                 // In this case, we reset all session objects (graceful degradation).
-                $this->storageCache->set($this->storageIdentifier . md5('Neos_Flow_Object_ObjectManager'), [], [$this->storageIdentifier], 0);
+                $this->sessionDataStore->set($this->storageIdentifier . md5('Neos_Flow_Object_ObjectManager'), [], [$this->storageIdentifier], 0);
             }
 
             $lastActivitySecondsAgo = ($this->now - $this->lastActivityTimestamp);
@@ -438,7 +423,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to get session data, but the session has not been started yet.', 1351162255);
         }
-        return $this->storageCache->get($this->storageIdentifier . md5($key));
+        return $this->sessionDataStore->get($this->storageIdentifier . md5($key));
     }
 
     /**
@@ -453,7 +438,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to check a session data entry, but the session has not been started yet.', 1352488661);
         }
-        return $this->storageCache->has($this->storageIdentifier . md5($key));
+        return $this->sessionDataStore->has($this->storageIdentifier . md5($key));
     }
 
     /**
@@ -474,7 +459,7 @@ class Session implements CookieEnabledInterface
         if (is_resource($data)) {
             throw new Exception\DataNotSerializableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1351162262);
         }
-        $this->storageCache->set($this->storageIdentifier . md5($key), $data, [$this->storageIdentifier], 0);
+        $this->sessionDataStore->set($this->storageIdentifier . md5($key), $data, [$this->storageIdentifier], 0);
     }
 
     /**
@@ -513,7 +498,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355143533);
         }
-        if (!$this->metaDataCache->isValidTag($tag)) {
+        if (!$this->sessionMetaDataStore->isValidTag($tag)) {
             throw new \InvalidArgumentException(sprintf('The tag used for tagging session %s contained invalid characters. Make sure it matches this regular expression: "%s"', $this->sessionIdentifier, FrontendInterface::PATTERN_TAG));
         }
         if (!in_array($tag, $this->tags)) {
@@ -606,7 +591,7 @@ class Session implements CookieEnabledInterface
         }
 
         $this->removeSessionMetaDataCacheEntry($this->sessionIdentifier);
-        $this->storageCache->flushByTag($this->storageIdentifier);
+        $this->sessionDataStore->flushByTag($this->storageIdentifier);
         $this->started = false;
         $this->sessionIdentifier = null;
         $this->storageIdentifier = null;
@@ -644,7 +629,7 @@ class Session implements CookieEnabledInterface
     public function shutdownObject()
     {
         if ($this->started === true && $this->remote === false) {
-            if ($this->metaDataCache->has($this->sessionIdentifier)) {
+            if ($this->sessionMetaDataStore->has($this->sessionIdentifier)) {
                 // Security context can't be injected and must be retrieved manually
                 // because it relies on this very session object:
                 $securityContext = $this->objectManager->get(Context::class);
@@ -734,7 +719,7 @@ class Session implements CookieEnabledInterface
         $tagsForCacheEntry[] = $this->sessionIdentifier;
         $tagsForCacheEntry[] = 'session';
 
-        $this->metaDataCache->set($this->sessionIdentifier, $sessionInfo, $tagsForCacheEntry, 0);
+        $this->sessionMetaDataStore->set($this->sessionIdentifier, $sessionInfo, $tagsForCacheEntry, 0);
     }
 
     /**
@@ -748,6 +733,6 @@ class Session implements CookieEnabledInterface
      */
     protected function removeSessionMetaDataCacheEntry($sessionIdentifier)
     {
-        $this->metaDataCache->remove($sessionIdentifier);
+        $this->sessionMetaDataStore->remove($sessionIdentifier);
     }
 }
