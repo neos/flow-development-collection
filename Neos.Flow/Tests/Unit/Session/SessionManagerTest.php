@@ -116,8 +116,11 @@ class SessionManagerTest extends UnitTestCase
      */
     public function garbageCollectionWorksCorrectlyWithInvalidMetadataEntry()
     {
-        $sessionMetaDataStore = $this->createSessionMetaDataStore();
-        $sessionMetaDataStore->set('foo', null);
+        $cache = $this->createCache('Meta');
+        $cache->set('foo', null);
+
+        $sessionMetaDataStore = new SessionMetaDataStore();
+        $sessionMetaDataStore->injectCache($cache);
         $sessionDataStore = $this->createSessionDataStore();
 
         $sessionManager = new SessionManager();
@@ -161,7 +164,7 @@ class SessionManagerTest extends UnitTestCase
         // No sessions need to be removed:
         self::assertSame(0, $sessionManager->collectGarbage());
 
-        $sessionMetaDataStore->set('_garbage-collection-running', true, [], 120);
+        $sessionMetaDataStore->startGarbageCollection();
 
         // Session garbage collection is omitted:
         self::assertNull($sessionManager->collectGarbage());
@@ -194,9 +197,9 @@ class SessionManagerTest extends UnitTestCase
             $session->putData('foo', 'bar');
             $session->close();
 
-            $sessionInfo = $sessionMetaDataStore->get($sessionIdentifier);
-            $sessionInfo['lastActivityTimestamp'] = time() - 4000;
-            $sessionMetaDataStore->set($sessionIdentifier, $sessionInfo, ['session'], 0);
+            $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+            $sessionInfo = $sessionInfo->withLastActivityTimestamp(time() - 4000);
+            $sessionMetaDataStore->store($sessionIdentifier, $sessionInfo);
         }
 
         self::assertLessThanOrEqual(5, $sessionManager->collectGarbage());

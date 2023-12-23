@@ -19,6 +19,7 @@ use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Session\Data\SessionDataStore;
+use Neos\Flow\Session\Data\SessionMetaData;
 use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Http\Cookie;
@@ -46,8 +47,6 @@ use Psr\Log\LoggerInterface;
  */
 class Session implements CookieEnabledInterface
 {
-    const TAG_PREFIX = 'customtag-';
-
     /**
      * @Flow\Inject
      * @var ObjectManagerInterface
@@ -204,6 +203,17 @@ class Session implements CookieEnabledInterface
     }
 
     /**
+     * @param string $sessionIdentifier
+     * @param SessionMetaData $sessionMetaData
+     * @return Session
+     */
+    public static function createFromSessionIdentifierAndMetaData(string $sessionIdentifier, SessionMetaData $sessionMetaData): self
+    {
+        return new static($sessionIdentifier, $sessionMetaData->getStorageIdentifier(), $sessionMetaData->getLastActivityTimestamp(), $sessionMetaData->getTags());
+    }
+
+
+    /**
      * @param Cookie $sessionCookie
      * @param string $storageIdentifier
      * @param int $lastActivityTimestamp
@@ -325,13 +335,13 @@ class Session implements CookieEnabledInterface
             $this->logger->warning('SESSION IDENTIFIER INVALID: ' . $sessionIdentifier, LogEnvironment::fromMethodName(__METHOD__));
             return false;
         }
-        $sessionMetaData = $this->sessionMetaDataStore->get($sessionIdentifier);
-        if ($sessionMetaData === false) {
+        $sessionMetaData = $this->sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+        if ($sessionMetaData === null) {
             return false;
         }
-        $this->lastActivityTimestamp = $sessionMetaData['lastActivityTimestamp'];
-        $this->storageIdentifier = $sessionMetaData['storageIdentifier'];
-        $this->tags = $sessionMetaData['tags'];
+        $this->lastActivityTimestamp = $sessionMetaData->getLastActivityTimestamp();
+        $this->storageIdentifier = $sessionMetaData->getStorageIdentifier();
+        $this->tags = $sessionMetaData->getTags();
         return !$this->autoExpire();
     }
 
@@ -707,19 +717,12 @@ class Session implements CookieEnabledInterface
      */
     protected function writeSessionMetaDataCacheEntry()
     {
-        $sessionInfo = [
-            'lastActivityTimestamp' => $this->lastActivityTimestamp,
-            'storageIdentifier' => $this->storageIdentifier,
-            'tags' => $this->tags
-        ];
-
-        $tagsForCacheEntry = array_map(function ($tag) {
-            return Session::TAG_PREFIX . $tag;
-        }, $this->tags);
-        $tagsForCacheEntry[] = $this->sessionIdentifier;
-        $tagsForCacheEntry[] = 'session';
-
-        $this->sessionMetaDataStore->set($this->sessionIdentifier, $sessionInfo, $tagsForCacheEntry, 0);
+        $metaData = new SessionMetaData(
+            $this->storageIdentifier,
+            $this->lastActivityTimestamp,
+            $this->tags
+        );
+        $this->sessionMetaDataStore->store($this->sessionIdentifier, $metaData);
     }
 
     /**

@@ -205,9 +205,9 @@ class SessionTest extends UnitTestCase
 
         self::assertTrue($session->canBeResumed());
 
-        $sessionInfo = $sessionMetaDataStore->get($sessionIdentifier);
-        $sessionInfo['lastActivityTimestamp'] = time() - 4000;
-        $sessionMetaDataStore->set($sessionIdentifier, $sessionInfo, [$sessionInfo['storageIdentifier'], 'session'], 0);
+        $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+        $sessionInfo = $sessionInfo->withLastActivityTimestamp(time() - 4000);
+        $sessionMetaDataStore->store($sessionIdentifier, $sessionInfo);
         self::assertFalse($session->canBeResumed());
     }
 
@@ -510,8 +510,8 @@ class SessionTest extends UnitTestCase
 
         $session->close();
 
-        $sessionInfo = $sessionMetaDataStore->get($sessionIdentifier);
-        self::assertEquals($now, $sessionInfo['lastActivityTimestamp']);
+        $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+        self::assertEquals($now, $sessionInfo->getLastActivityTimestamp());
     }
 
     /**
@@ -721,9 +721,9 @@ class SessionTest extends UnitTestCase
 
         $session->touch();
 
-        $sessionInfo = $sessionMetaDataStore->get('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
-        self::assertEquals(2220000000, $sessionInfo['lastActivityTimestamp']);
-        self::assertEquals($storageIdentifier, $sessionInfo['storageIdentifier']);
+        $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
+        self::assertEquals(2220000000, $sessionInfo->getLastActivityTimestamp());
+        self::assertEquals($storageIdentifier, $sessionInfo->getStorageIdentifier());
     }
 
     /**
@@ -814,10 +814,10 @@ class SessionTest extends UnitTestCase
 
         $session->putData('foo', 'bar');
         $session->close();
-        $sessionInfo = $sessionMetaDataStore->get($sessionIdentifier);
+        $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
 
         // Simulate a remote server referring to the same session:
-        $remoteSession = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp']);
+        $remoteSession = new Session($sessionIdentifier, $sessionInfo->getStorageIdentifier(), $sessionInfo->getLastActivityTimestamp());
         $this->inject($remoteSession, 'objectManager', $this->mockObjectManager);
         $this->inject($remoteSession, 'settings', $this->settings);
         $this->inject($remoteSession, 'sessionMetaDataStore', $sessionMetaDataStore);
@@ -932,9 +932,9 @@ class SessionTest extends UnitTestCase
 
         $session->close();
 
-        $sessionInfo = $sessionMetaDataStore->get($sessionIdentifier);
-        $sessionInfo['lastActivityTimestamp'] = time() - 4000;
-        $sessionMetaDataStore->set($sessionIdentifier, $sessionInfo, [$storageIdentifier, 'session'], 0);
+        $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+        $sessionInfo  = $sessionInfo->withLastActivityTimestamp(time() - 4000);
+        $sessionMetaDataStore->store($sessionIdentifier, $sessionInfo);
 
         // canBeResumed implicitly calls autoExpire():
         self::assertFalse($session->canBeResumed(), 'canBeResumed');
@@ -974,9 +974,9 @@ class SessionTest extends UnitTestCase
         self::assertTrue($sessionMetaDataStore->has($sessionIdentifier1), 'session 1 meta entry doesnt exist');
         $session->close();
 
-        $sessionInfo1 = $sessionMetaDataStore->get($sessionIdentifier1);
-        $sessionInfo1['lastActivityTimestamp'] = time() - 4000;
-        $sessionMetaDataStore->set($sessionIdentifier1, $sessionInfo1, ['session'], 0);
+        $sessionInfo1 = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier1);
+        $sessionInfo1 = $sessionInfo1->withLastActivityTimestamp(time() - 4000);
+        $sessionMetaDataStore->store($sessionIdentifier1, $sessionInfo1);
 
         // Because we change the timeout post factum, the previously valid session
         // now expires:
@@ -1000,14 +1000,14 @@ class SessionTest extends UnitTestCase
         // Calls autoExpire() internally:
         $session->resume();
 
-        $sessionInfo2 = $sessionMetaDataStore->get($sessionIdentifier2);
+        $sessionInfo2 = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier2);
 
         // Check how the cache looks like - data of session 1 should be gone:
         self::assertFalse($sessionMetaDataStore->has($sessionIdentifier1), 'session 1 meta entry still there');
-        self::assertFalse($sessionDataStore->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 1')), 'session 1 key 1 still there');
-        self::assertFalse($sessionDataStore->has($sessionInfo1['storageIdentifier'] . md5('session 1 key 2')), 'session 1 key 2 still there');
-        self::assertTrue($sessionDataStore->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 1')), 'session 2 key 1 not there');
-        self::assertTrue($sessionDataStore->has($sessionInfo2['storageIdentifier'] . md5('session 2 key 2')), 'session 2 key 2 not there');
+        self::assertFalse($sessionDataStore->has($sessionInfo1->getStorageIdentifier() . md5('session 1 key 1')), 'session 1 key 1 still there');
+        self::assertFalse($sessionDataStore->has($sessionInfo1->getStorageIdentifier() . md5('session 1 key 2')), 'session 1 key 2 still there');
+        self::assertTrue($sessionDataStore->has($sessionInfo2->getStorageIdentifier() . md5('session 2 key 1')), 'session 2 key 1 not there');
+        self::assertTrue($sessionDataStore->has($sessionInfo2->getStorageIdentifier() . md5('session 2 key 2')), 'session 2 key 2 not there');
     }
 
     /**

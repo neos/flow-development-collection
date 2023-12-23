@@ -17,10 +17,18 @@ use Neos\Cache\Backend\IterableBackendInterface;
 use Neos\Cache\Exception\InvalidBackendException;
 use Neos\Cache\Frontend\CacheEntryIterator;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Session\Exception\InvalidDataInSessionDataStoreException;
+use Neos\Flow\Session\Session;
 
 class SessionMetaDataStore
 {
     protected VariableFrontend $cache;
+
+    protected const SESSION_TAG = 'session';
+
+    protected const TAG_PREFIX = 'customtag-';
+
+    protected const GARBAGE_COLLECTION_CACHEIDENTIFIER = '_garbage-collection-running';
 
     public function injectCache(VariableFrontend $cache): void
     {
@@ -49,19 +57,49 @@ class SessionMetaDataStore
         return $this->cache->has($entryIdentifier);
     }
 
-    public function get(string $entryIdentifier): mixed
+    public function findBySessionIdentifier(string $sessionIdentifier): ?SessionMetaData
     {
-        return $this->cache->get($entryIdentifier);
+        /**
+         * @var $metaDataFromCache false|array|SessionMetaData
+         */
+        $metaDataFromCache = $this->cache->get($sessionIdentifier);
+        if ($metaDataFromCache === false) {
+            return null;
+        } elseif ($metaDataFromCache instanceof SessionMetaData) {
+            return $metaDataFromCache;
+        } elseif (is_array($metaDataFromCache)) {
+            return SessionMetaData::fromClassicArrayFormat($metaDataFromCache);
+        }
+        throw new InvalidDataInSessionDataStoreException();
     }
 
-    public function getByTag(string $tag): array
+    /**
+     * @param string $tag
+     * @return \Generator<string, SessionMetaData> Session metadata indexed by session id
+     */
+    public function findByTag(string $tag): \Generator
     {
-        return $this->cache->getByTag($tag);
+        foreach ($this->cache->getByTag(self::TAG_PREFIX . $tag) as $sessionIdentifier => $sessionMetaData) {
+            if ($sessionIdentifier === self::GARBAGE_COLLECTION_CACHEIDENTIFIER) {
+                continue;
+            }
+            if ($sessionMetaData instanceof SessionMetaData) {
+                yield $sessionIdentifier => $sessionMetaData;
+            } elseif (is_array($sessionMetaData)) {
+                yield $sessionIdentifier => SessionMetaData::fromClassicArrayFormat($sessionMetaData);
+            }
+        }
     }
 
-    public function set(string $entryIdentifier, mixed $value, array $tags = [], int $lifetime = null): mixed
+    public function store(string $sessionIdentifier, SessionMetaData $sessionMetaData): void
     {
-        return $this->cache->set($entryIdentifier, $value, $tags, $lifetime);
+        $tagsForCacheEntry = array_map(function ($tag) {
+            return self::TAG_PREFIX . $tag;
+        }, $sessionMetaData->getTags());
+        $tagsForCacheEntry[] = $sessionIdentifier;
+        $tagsForCacheEntry[] = self::SESSION_TAG;
+
+        $this->cache->set($sessionIdentifier, $sessionMetaData, $tagsForCacheEntry, 0);
     }
 
     public function remove(string $entryIdentifier): mixed
@@ -69,13 +107,40 @@ class SessionMetaDataStore
         return $this->cache->remove($entryIdentifier);
     }
 
-    public function getIterator(): CacheEntryIterator
+    /**
+     * @return \Generator<string, SessionMetaData>
+     */
+    public function findAll(): \Generator
     {
-        return $this->cache->getIterator();
+        foreach ($this->cache->getIterator() as $sessionIdentifier => $sessionMetaData) {
+            if ($sessionIdentifier === self::GARBAGE_COLLECTION_CACHEIDENTIFIER) {
+                continue;
+            }
+            if ($sessionMetaData instanceof SessionMetaData) {
+                yield $sessionIdentifier => $sessionMetaData;
+            } elseif (is_array($sessionMetaData)) {
+                yield $sessionIdentifier => SessionMetaData::fromClassicArrayFormat($sessionMetaData);
+            }
+        }
     }
 
     public function flushByTag(string $tag): CacheEntryIterator
     {
         return $this->cache->flushByTag($tag);
+    }
+
+    public function startGarbageCollection(): void
+    {
+        $this->cache->set(self::GARBAGE_COLLECTION_CACHEIDENTIFIER, true, [], 120);
+    }
+
+    public function isGarbageCollectionRunning(): bool
+    {
+        return $this->cache->has(self::GARBAGE_COLLECTION_CACHEIDENTIFIER);
+    }
+
+    public function endGarbageCollection(): void
+    {
+        $this->cache->remove(self::GARBAGE_COLLECTION_CACHEIDENTIFIER);
     }
 }
