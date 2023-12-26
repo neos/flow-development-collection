@@ -120,8 +120,8 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
         $this->inject($this->ajaxWidgetMiddleware, 'hashService', $this->mockHashService);
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->getMock();
-        $actionReponse = new ActionResponse();
-        $this->mockDispatcher->expects(self::any())->method('dispatch')->willReturn($actionReponse);
+        $actionResponse = new ActionResponse();
+        $this->mockDispatcher->expects(self::any())->method('dispatch')->willReturn($actionResponse);
         $this->inject($this->ajaxWidgetMiddleware, 'dispatcher', $this->mockDispatcher);
 
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->getMock();
@@ -180,8 +180,8 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequestFactory->method('prepareActionRequest')->willReturn($mockActionRequest);
 
-        $actionReponse = new ActionResponse();
-        $this->mockDispatcher->expects(self::once())->method('dispatch')->willReturn($actionReponse);
+        $actionResponse = new ActionResponse();
+        $this->mockDispatcher->expects(self::once())->method('dispatch')->willReturn($actionResponse);
 
         $this->ajaxWidgetMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }

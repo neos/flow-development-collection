@@ -314,9 +314,9 @@ class AbstractControllerTest extends UnitTestCase
         try {
             $controller->processRequest($this->mockActionRequest);
         } catch (StopActionException $exception) {
-            $actionReponse = $exception->response;
-            Assert::assertSame('the_uri', $actionReponse->getRedirectUri()?->__toString());
-            Assert::assertSame(303, $actionReponse->getStatusCode());
+            $actionResponse = $exception->response;
+            Assert::assertSame('the_uri', $actionResponse->getRedirectUri()?->__toString());
+            Assert::assertSame(303, $actionResponse->getStatusCode());
             return;
         }
         Assert::assertTrue(false, 'Expected to be redirected.');
@@ -359,9 +359,9 @@ class AbstractControllerTest extends UnitTestCase
         try {
             $controller->processRequest($this->mockActionRequest);
         } catch (StopActionException $exception) {
-            $actionReponse = $exception->response;
-            Assert::assertSame('the_uri', $actionReponse->getRedirectUri()?->__toString());
-            Assert::assertSame(303, $actionReponse->getStatusCode());
+            $actionResponse = $exception->response;
+            Assert::assertSame('the_uri', $actionResponse->getRedirectUri()?->__toString());
+            Assert::assertSame(303, $actionResponse->getStatusCode());
             return;
         }
         Assert::assertTrue(false, 'Expected to be redirected.');
