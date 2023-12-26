@@ -35,7 +35,7 @@ class SimpleActionController implements ControllerInterface
      * @return string Method name of the current action
      * @throws NoSuchActionException
      */
-    protected function resolveActionMethodName(ActionRequest $request)
+    protected function resolveActionMethodName(ActionRequest $request): string
     {
         $actionMethodName = $request->getControllerActionName() . 'Action';
         if (!is_callable([$this, $actionMethodName])) {

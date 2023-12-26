@@ -181,7 +181,7 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
         $this->mockActionRequestFactory->method('prepareActionRequest')->willReturn($mockActionRequest);
 
         $actionReponse = new ActionResponse();
-        $this->mockDispatcher->expects(self::once())->method('dispatch')->willReturn($actionReponse);;
+        $this->mockDispatcher->expects(self::once())->method('dispatch')->willReturn($actionReponse);
 
         $this->ajaxWidgetMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }

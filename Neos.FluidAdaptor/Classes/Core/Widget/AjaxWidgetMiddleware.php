@@ -15,7 +15,6 @@ namespace Neos\FluidAdaptor\Core\Widget;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequestFactory;
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;

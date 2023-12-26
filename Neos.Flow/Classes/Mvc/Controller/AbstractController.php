@@ -316,7 +316,7 @@ abstract class AbstractController implements ControllerInterface
         }
 
         $response = $this->responseRedirectsToUri($uri, $delay, $statusCode, $this->response);
-        $this->throwStopActionWithReponse($response, '', 1699716808);
+        $this->throwStopActionWithResponse($response, '', 1699716808);
     }
 
     /**
@@ -328,8 +328,8 @@ abstract class AbstractController implements ControllerInterface
      * @param string $statusMessage A custom HTTP status message
      * @param string $content Body content which further explains the status
      * @throws StopActionException
-     * @deprecated Use SpecialResponsesSupport::reponseThrowsStatus
-     * @see SpecialResponsesSupport::reponseThrowsStatus
+     * @deprecated Use SpecialResponsesSupport::responseThrowsStatus
+     * @see SpecialResponsesSupport::responseThrowsStatus
      */
     protected function throwStatus(int $statusCode, $statusMessage = null, $content = null): never
     {
@@ -341,7 +341,7 @@ abstract class AbstractController implements ControllerInterface
             );
         }
 
-        $this->reponseThrowsStatus($statusCode, $content, $this->response);
+        $this->responseThrowsStatus($statusCode, $content, $this->response);
     }
 
     /**

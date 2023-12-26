@@ -1,12 +1,10 @@
 <?php
 namespace Neos\Flow\Mvc\Controller;
 
-use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -23,7 +21,7 @@ trait SpecialResponsesSupport
      * @return never
      * @throws StopActionException
      */
-    protected function reponseThrowsStatus(int $statusCode, string $content = '', ?ActionResponse $response =  null): never
+    protected function responseThrowsStatus(int $statusCode, string $content = '', ?ActionResponse $response =  null): never
     {
         $response = $response ?? new ActionResponse;
 
@@ -32,7 +30,7 @@ trait SpecialResponsesSupport
             $response->setContent($content);
         }
 
-        $this->throwStopActionWithReponse($response, $content, 1558088618);
+        $this->throwStopActionWithResponse($response, $content, 1558088618);
     }
 
     /**
@@ -51,7 +49,7 @@ trait SpecialResponsesSupport
 
         if ($delay < 1) {
             $nextResponse->setRedirectUri($uri, $statusCode);
-            $this->throwStopActionWithReponse($nextResponse, '', 1699478812);
+            $this->throwStopActionWithResponse($nextResponse, '', 1699478812);
         }
 
         $nextResponse->setStatusCode($statusCode);
@@ -67,7 +65,7 @@ trait SpecialResponsesSupport
      * @return never
      * @throws StopActionException
      */
-    protected function throwStopActionWithReponse(ActionResponse $response, string $message = '', int $code = 0): never
+    protected function throwStopActionWithResponse(ActionResponse $response, string $message = '', int $code = 0): never
     {
         $exception = new StopActionException($message, $code);
         $exception->response = $response;
