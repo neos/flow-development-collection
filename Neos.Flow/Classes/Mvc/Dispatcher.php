@@ -20,7 +20,6 @@ use Neos\Flow\Mvc\Controller\Exception\InvalidControllerException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\ForwardException;
-use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\FirewallInterface;
 use Neos\Flow\Security\Context;
@@ -118,9 +117,8 @@ class Dispatcher
      * Try processing the request until it is successfully marked "dispatched"
      *
      * @param ActionRequest $request
-     * @param ActionResponse $parentResponse
      * @return ActionResponse
-     * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException|UnsupportedRequestTypeException
+     * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException
      */
     protected function initiateDispatchLoop(ActionRequest $request): ActionResponse
     {

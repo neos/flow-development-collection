@@ -15,7 +15,6 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 
 /**
  * Generic interface for controllers
@@ -35,7 +34,6 @@ interface ControllerInterface
      *
      * @param ActionRequest $request The request object
      * @return ActionResponse $response The response, modified by the controller
-     * @throws UnsupportedRequestTypeException if the controller doesn't support the current request type
      * @throws StopActionException
      * @throws ForwardException
      * @api

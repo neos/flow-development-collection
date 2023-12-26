@@ -6,6 +6,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -17,25 +18,20 @@ trait SpecialResponsesSupport
      * Sends the specified HTTP status immediately.
      *
      * @param integer $statusCode The HTTP status code
-     * @param ?string $statusMessage A custom HTTP status message
-     * @param string $content Body content which further explains the status
-     * @param ActionResponse $response
+     * @param string $content Body content which further explains the status the body of a given response will be overwritten if this is not empty
+     * @param ActionResponse|null $response The response to use or null for an empty response with the given status and message or content
      * @return never
      * @throws StopActionException
      */
-    protected function reponseThrowsStatus(int $statusCode, ?string $statusMessage = null, string $content = '', ?ActionResponse $response =  null): never
+    protected function reponseThrowsStatus(int $statusCode, string $content = '', ?ActionResponse $response =  null): never
     {
         $response = $response ?? new ActionResponse;
 
         $response->setStatusCode($statusCode);
-        if ($content === '') {
-            $content = sprintf(
-                '%s %s',
-                $statusCode,
-                $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
-            );
+        if ($content !== '') {
+            $response->setContent($content);
         }
-        $response->setContent($content);
+
         $this->throwStopActionWithReponse($response, $content, 1558088618);
     }
 
@@ -45,23 +41,23 @@ trait SpecialResponsesSupport
      * @param UriInterface $uri Either a string representation of a URI or a UriInterface object
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-     * @param ActionResponse|null $response
+     * @param ActionResponse|null $response response that will have status, and location or body overwritten.
      * @return ActionResponse
      * @throws StopActionException
      */
     protected function responseRedirectsToUri(UriInterface $uri, int $delay = 0, int $statusCode = 303, ?ActionResponse $response = null): ActionResponse
     {
-        $response = $response ?? new ActionResponse;
+        $nextResponse = $response !== null ? clone $response : new ActionResponse();
 
         if ($delay < 1) {
-            $response->setRedirectUri($uri, $statusCode);
-            $this->throwStopActionWithReponse($response, '', 1699478812);
+            $nextResponse->setRedirectUri($uri, $statusCode);
+            $this->throwStopActionWithReponse($nextResponse, '', 1699478812);
         }
 
-        $response->setStatusCode($statusCode);
+        $nextResponse->setStatusCode($statusCode);
         $content = sprintf('<html><head><meta http-equiv="refresh" content="%u;url=%s"/></head></html>', $delay, $uri);
-        $response->setContent($content);
-        return $response;
+        $nextResponse->setContent($content);
+        return $nextResponse;
     }
 
     /**
@@ -89,7 +85,7 @@ trait SpecialResponsesSupport
      * @return never
      * @throws ForwardException
      */
-    protected function _forwardToRequest(ActionRequest $request): never
+    protected function forwardToRequset(ActionRequest $request): never
     {
         $nextRequest = clone $request;
         $forwardException = new ForwardException();

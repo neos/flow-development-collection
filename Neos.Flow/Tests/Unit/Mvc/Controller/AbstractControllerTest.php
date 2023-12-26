@@ -388,12 +388,16 @@ class AbstractControllerTest extends UnitTestCase
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
+        $response = null;
         try {
             $controller->_call('redirectToUri', 'http://some.uri');
         } catch (StopActionException $e) {
+            // The dispatcher takes the response from the exception, so it makes sense to check that
+            $response = $e->response;
         }
 
-        self::assertSame(303, $this->actionResponse->getStatusCode());
+        self::assertNotNull($response);
+        self::assertSame(303, $response->getStatusCode());
     }
 
     /**
@@ -406,12 +410,16 @@ class AbstractControllerTest extends UnitTestCase
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
+        $response = null;
         try {
             $controller->_call('redirectToUri', $uri);
         } catch (StopActionException $e) {
+            // The dispatcher takes the response from the exception, so it makes sense to check that
+            $response = $e->response;
         }
 
-        self::assertSame($uri, (string)$this->actionResponse->getRedirectUri());
+        self::assertNotNull($response);
+        self::assertSame($uri, (string)$response->getRedirectUri());
     }
 
     /**

@@ -14,8 +14,13 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Mvc\Exception\InvalidActionNameException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
+use Neos\Flow\Mvc\Exception\InvalidControllerNameException;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
+use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Property\Exception;
 use Psr\Http\Message\UriInterface;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
@@ -25,8 +30,6 @@ use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
-use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Validation\ValidatorResolver;
@@ -106,7 +109,6 @@ abstract class AbstractController implements ControllerInterface
      *
      * @param ActionRequest $request
      * @param ActionResponse $response
-     * @throws UnsupportedRequestTypeException
      */
     protected function initializeController(ActionRequest $request, ActionResponse $response)
     {
@@ -185,14 +187,20 @@ abstract class AbstractController implements ControllerInterface
      * Request is directly transferred to the other action / controller
      *
      * @param string $actionName Name of the action to forward to
-     * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
-     * @param string $packageKey Key of the package containing the controller to forward to. May also contain the sub package, concatenated with backslash (Vendor.Foo\Bar\Baz). If not specified, the current package is assumed.
-     * @param array $arguments Arguments to pass to the target action
+     * @param string|null $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
+     * @param string|null $packageKey Key of the package containing the controller to forward to. May also contain the sub package, concatenated with backslash (Vendor.Foo\Bar\Baz). If not specified, the current package is assumed.
+     * @param array<string, mixed> $arguments Arguments to pass to the target action
+     * @return never
      * @throws ForwardException
+     * @throws InvalidActionNameException
+     * @throws InvalidArgumentNameException
+     * @throws InvalidArgumentTypeException
+     * @throws InvalidControllerNameException
+     * @throws UnknownObjectException
      * @see redirect()
      * @api
      */
-    protected function forward($actionName, $controllerName = null, $packageKey = null, array $arguments = []): never
+    protected function forward(string $actionName, string $controllerName = null, string $packageKey = null, array $arguments = []): never
     {
         $nextRequest = clone $this->request;
         $nextRequest->setControllerActionName($actionName);
@@ -200,7 +208,7 @@ abstract class AbstractController implements ControllerInterface
         if ($controllerName !== null) {
             $nextRequest->setControllerName($controllerName);
         }
-        if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
+        if ($packageKey !== null && str_contains($packageKey, '\\')) {
             [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
         } else {
             $subpackageKey = null;
@@ -212,7 +220,7 @@ abstract class AbstractController implements ControllerInterface
 
         $regularArguments = [];
         foreach ($arguments as $argumentName => $argumentValue) {
-            if (substr($argumentName, 0, 2) === '__') {
+            if (str_starts_with($argumentName, '__')) {
                 $nextRequest->setArgument($argumentName, $argumentValue);
             } else {
                 $regularArguments[$argumentName] = $argumentValue;
@@ -221,30 +229,7 @@ abstract class AbstractController implements ControllerInterface
         $nextRequest->setArguments($this->persistenceManager->convertObjectsToIdentityArrays($regularArguments));
         $this->arguments->removeAll();
 
-        $forwardException = new ForwardException();
-        $forwardException->setNextRequest($nextRequest);
-        throw $forwardException;
-    }
-
-    /**
-     * Forwards the request to another action and / or controller.
-     *
-     * Request is directly transfered to the other action / controller
-     *
-     * @param ActionRequest $request The request to redirect to
-     * @return void
-     * @throws ForwardException
-     * @see redirectToRequest()
-     * @api
-     */
-    protected function forwardToRequest(ActionRequest $request)
-    {
-        $packageKey = $request->getControllerPackageKey();
-        $subpackageKey = $request->getControllerSubpackageKey();
-        if ($subpackageKey !== null) {
-            $packageKey .= '\\' . $subpackageKey;
-        }
-        $this->forward($request->getControllerActionName(), $request->getControllerName(), $packageKey, $request->getArguments());
+        $this->forwardToRequset($nextRequest);
     }
 
     /**
@@ -256,23 +241,22 @@ abstract class AbstractController implements ControllerInterface
      * if used with other request types.
      *
      * @param string $actionName Name of the action to forward to
-     * @param null $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
-     * @param null $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
-     * @param array $arguments Array of arguments for the target action
+     * @param string|null $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
+     * @param string|null $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
+     * @param array<string, string> $arguments Array of arguments for the target action
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-     * @param null $format The format to use for the redirect URI
+     * @param string|null $format The format to use for the redirect URI
      * @return never
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      * @throws \Neos\Flow\Http\Exception
      * @throws MissingActionNameException
      * @see forward()
      * @api
      */
-    protected function redirect($actionName, $controllerName = null, $packageKey = null, array $arguments = [], $delay = 0, $statusCode = 303, $format = null): never
+    protected function redirect(string $actionName, ?string $controllerName = null, ?string $packageKey = null, array $arguments = [], int $delay = 0, int $statusCode = 303, string $format = null): never
     {
-        if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
+        if ($packageKey !== null && str_contains($packageKey, '\\') !== false) {
             [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
         } else {
             $subpackageKey = null;
@@ -299,15 +283,14 @@ abstract class AbstractController implements ControllerInterface
      * @param ActionRequest $request The request to redirect to
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-     * @return void
+     * @return never
      * @throws MissingActionNameException
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      * @throws \Neos\Flow\Http\Exception
      * @see forwardToRequest()
      * @api
      */
-    protected function redirectToRequest(ActionRequest $request, $delay = 0, $statusCode = 303)
+    protected function redirectToRequest(ActionRequest $request, int $delay = 0, int $statusCode = 303): never
     {
         $packageKey = $request->getControllerPackageKey();
         $subpackageKey = $request->getControllerSubpackageKey();
@@ -320,7 +303,7 @@ abstract class AbstractController implements ControllerInterface
     /**
      * Redirects to another URI
      *
-     * @param mixed $uri Either a string representation of a URI or a \Neos\Flow\Http\Uri object
+     * @param UriInterface|string $uri Either a string representation of a URI or a \Neos\Flow\Http\Uri object
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @throws StopActionException
@@ -332,7 +315,7 @@ abstract class AbstractController implements ControllerInterface
             $uri = new Uri($uri);
         }
 
-        $response = $this->responseRedirectsToUri($uri,$delay, $statusCode, $this->response);
+        $response = $this->responseRedirectsToUri($uri, $delay, $statusCode, $this->response);
         $this->throwStopActionWithReponse($response, '', 1699716808);
     }
 
@@ -345,11 +328,11 @@ abstract class AbstractController implements ControllerInterface
      * @param string $statusMessage A custom HTTP status message
      * @param string $content Body content which further explains the status
      * @throws StopActionException
-     * @api
+     * @deprecated Use SpecialResponsesSupport::reponseThrowsStatus
+     * @see SpecialResponsesSupport::reponseThrowsStatus
      */
     protected function throwStatus(int $statusCode, $statusMessage = null, $content = null): never
     {
-        $this->response->setStatusCode($statusCode);
         if ($content === null) {
             $content = sprintf(
                 '%s %s',
@@ -357,8 +340,8 @@ abstract class AbstractController implements ControllerInterface
                 $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
             );
         }
-        $this->response->setContent($content);
-        throw new StopActionException($content, 1558088618);
+
+        $this->reponseThrowsStatus($statusCode, $content, $this->response);
     }
 
     /**

@@ -279,10 +279,10 @@ class UriBuilder
      * Creates an URI used for linking to an Controller action.
      *
      * @param string $actionName Name of the action to be called
-     * @param array $controllerArguments Additional query parameters. Will be merged with $this->arguments.
-     * @param string $controllerName Name of the target controller. If not set, current ControllerName is used.
-     * @param string $packageKey Name of the target package. If not set, current Package is used.
-     * @param string $subPackageKey Name of the target SubPackage. If not set, current SubPackage is used.
+     * @param array<string, string> $controllerArguments Additional query parameters. Will be merged with $this->arguments.
+     * @param string|null $controllerName Name of the target controller. If not set, current ControllerName is used.
+     * @param string|null $packageKey Name of the target package. If not set, current Package is used.
+     * @param string|null $subPackageKey Name of the target SubPackage. If not set, current SubPackage is used.
      * @return string the rendered URI
      * @api
      * @see build()

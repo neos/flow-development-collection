@@ -22,13 +22,14 @@ use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\Exception\ViewNotFoundException;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Mvc\ViewConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
@@ -206,10 +207,11 @@ class ActionController extends AbstractController
      * @throws InvalidActionVisibilityException
      * @throws InvalidArgumentTypeException
      * @throws NoSuchActionException
-     * @throws UnsupportedRequestTypeException
-     * @throws ViewNotFoundException
-     * @throws \Neos\Flow\Mvc\Exception\RequiredArgumentMissingException
      * @throws StopActionException
+     * @throws ViewNotFoundException
+     * @throws NoSuchArgumentException
+     * @throws Exception
+     * @throws \Neos\Flow\Security\Exception
      * @api
      */
     public function processRequest(ActionRequest $request): ActionResponse
@@ -380,7 +382,7 @@ class ActionController extends AbstractController
     /**
      * Adds the needed validators to the Arguments:
      *
-     * - Validators checking the data type from the @param annotation
+     * - Validators checking the data type from the "@param" annotation
      * - Custom validators specified with validate annotations.
      * - Model-based validators (validate annotations in the model)
      * - Custom model validator classes

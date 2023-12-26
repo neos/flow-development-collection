@@ -14,6 +14,13 @@ namespace Neos\FluidAdaptor\Core\Widget;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
+use Neos\Flow\Mvc\Exception\NoSuchActionException;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
+use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Exception\ViewNotFoundException;
+use Neos\Flow\Property\Exception;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 
 /**
@@ -39,12 +46,19 @@ abstract class AbstractWidgetController extends ActionController
      * @param ActionRequest $request The request object
      * @return ActionResponse $response The response, modified by this handler
      * @throws WidgetContextNotFoundException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws InvalidActionVisibilityException
+     * @throws InvalidArgumentTypeException
+     * @throws NoSuchActionException
+     * @throws NoSuchArgumentException
+     * @throws StopActionException
+     * @throws ViewNotFoundException
+     * @throws Exception
+     * @throws \Neos\Flow\Security\Exception
      * @api
      */
     public function processRequest(ActionRequest $request): ActionResponse
     {
-        /** @var $widgetContext WidgetContext */
+        /** @var WidgetContext $widgetContext */
         $widgetContext = $request->getInternalArgument('__widgetContext');
         if (!$widgetContext instanceof WidgetContext) {
             throw new WidgetContextNotFoundException('The widget context could not be found in the request.', 1307450180);
