@@ -67,9 +67,8 @@ class SimpleActionControllerTest extends UnitTestCase
         $response = $testObject->processRequest($request);
         self::assertInstanceOf(ActionResponse::class, $response);
         self::assertEquals('Simple', $response->getContent());
+        self::assertFalse($response->hasContentType());
         // default
         self::assertEquals(200, $response->getStatusCode());
-        self::assertFalse($response->hasContentType());
-
     }
 }

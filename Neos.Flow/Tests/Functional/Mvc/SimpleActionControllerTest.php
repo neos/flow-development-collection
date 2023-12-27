@@ -1,7 +1,6 @@
 <?php
 namespace Neos\Flow\Tests\Functional\Mvc;
 
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
