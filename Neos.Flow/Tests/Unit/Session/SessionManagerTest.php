@@ -199,7 +199,7 @@ class SessionManagerTest extends UnitTestCase
 
             $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
             $sessionInfo = $sessionInfo->withLastActivityTimestamp(time() - 4000);
-            $sessionMetaDataStore->store($sessionIdentifier, $sessionInfo);
+            $sessionMetaDataStore->store($sessionInfo);
         }
 
         self::assertLessThanOrEqual(5, $sessionManager->collectGarbage());

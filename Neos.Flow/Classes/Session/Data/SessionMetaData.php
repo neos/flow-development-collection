@@ -49,7 +49,7 @@ class SessionMetaData
     public static function createNew(): self
     {
         return new self(
-            Algorithms::generateUUID(),
+            Algorithms::generateRandomString(32),
             Algorithms::generateUUID(),
             time(),
             []
@@ -73,6 +73,55 @@ class SessionMetaData
             $this->storageIdentifier,
             $lastActivityTimestamp,
             $this->tags
+        );
+    }
+
+    public function withSessionIdentifier(string $sessionIdentifier): self
+    {
+        return new self(
+            $sessionIdentifier,
+            $this->storageIdentifier,
+            $this->lastActivityTimestamp,
+            $this->tags
+        );
+    }
+
+    public function withNewSessionIdentifier(): self
+    {
+        return new self(
+            Algorithms::generateRandomString(32),
+            $this->storageIdentifier,
+            $this->lastActivityTimestamp,
+            $this->tags
+        );
+    }
+
+    public function withAddedTag(string $tag): self
+    {
+        $tags = $this->tags;
+        if (!in_array($tag, $this->tags)) {
+            $tags[] = $tag;
+        }
+        return new self(
+            $this->sessionIdentifier,
+            $this->storageIdentifier,
+            $this->lastActivityTimestamp,
+            $tags
+        );
+    }
+
+    public function withRemovedTag(string $tag): self
+    {
+        $tags = $this->tags;
+        $index = array_search($tag, $tags);
+        if ($index !== false) {
+            unset($tags[$index]);
+        }
+        return new self(
+            $this->sessionIdentifier,
+            $this->storageIdentifier,
+            $this->lastActivityTimestamp,
+            $tags
         );
     }
 

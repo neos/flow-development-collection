@@ -207,7 +207,7 @@ class SessionTest extends UnitTestCase
 
         $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
         $sessionInfo = $sessionInfo->withLastActivityTimestamp(time() - 4000);
-        $sessionMetaDataStore->store($sessionIdentifier, $sessionInfo);
+        $sessionMetaDataStore->store($sessionInfo);
         self::assertFalse($session->canBeResumed());
     }
 
@@ -922,7 +922,7 @@ class SessionTest extends UnitTestCase
 
         $session->start();
         $sessionIdentifier = $session->getId();
-        $storageIdentifier = $session->_get('storageIdentifier');
+        $storageIdentifier = $session->_get('sessionMetaData')->getStorageIdentifier();
 
         $session->putData('session 1 key 1', 'some value');
         $session->putData('session 1 key 2', 'some other value');
@@ -934,7 +934,7 @@ class SessionTest extends UnitTestCase
 
         $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
         $sessionInfo  = $sessionInfo->withLastActivityTimestamp(time() - 4000);
-        $sessionMetaDataStore->store($sessionIdentifier, $sessionInfo);
+        $sessionMetaDataStore->store($sessionInfo);
 
         // canBeResumed implicitly calls autoExpire():
         self::assertFalse($session->canBeResumed(), 'canBeResumed');
@@ -976,7 +976,7 @@ class SessionTest extends UnitTestCase
 
         $sessionInfo1 = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier1);
         $sessionInfo1 = $sessionInfo1->withLastActivityTimestamp(time() - 4000);
-        $sessionMetaDataStore->store($sessionIdentifier1, $sessionInfo1);
+        $sessionMetaDataStore->store($sessionInfo1);
 
         // Because we change the timeout post factum, the previously valid session
         // now expires:

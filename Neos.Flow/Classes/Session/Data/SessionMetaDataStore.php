@@ -91,15 +91,15 @@ class SessionMetaDataStore
         }
     }
 
-    public function store(string $sessionIdentifier, SessionMetaData $sessionMetaData): void
+    public function store(SessionMetaData $sessionMetaData): void
     {
         $tagsForCacheEntry = array_map(function ($tag) {
             return self::TAG_PREFIX . $tag;
         }, $sessionMetaData->getTags());
-        $tagsForCacheEntry[] = $sessionIdentifier;
+        $tagsForCacheEntry[] = $sessionMetaData->getSessionIdentifier();
         $tagsForCacheEntry[] = self::SESSION_TAG;
 
-        $this->cache->set($sessionIdentifier, $sessionMetaData, $tagsForCacheEntry, 0);
+        $this->cache->set($sessionMetaData->getSessionIdentifier(), $sessionMetaData, $tagsForCacheEntry, 0);
     }
 
     public function remove(string $entryIdentifier): mixed
