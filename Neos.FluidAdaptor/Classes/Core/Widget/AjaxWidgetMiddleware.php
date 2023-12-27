@@ -79,7 +79,6 @@ class AjaxWidgetMiddleware implements MiddlewareInterface
         $actionRequest = $this->actionRequestFactory->createActionRequest($httpRequest, ['__widgetContext' => $widgetContext]);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
         $this->securityContext->setRequest($actionRequest);
-
         return $this->dispatcher->dispatch($actionRequest)->buildHttpResponse();
     }
 

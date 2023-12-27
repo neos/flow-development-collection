@@ -559,12 +559,12 @@ class ActionController extends AbstractController
         }
 
         if ($actionResult === null && $this->view instanceof ViewInterface) {
-            $response = $this->renderView($response);
+            $this->response = $this->renderView($this->response);
         } else {
-            $response->setContent($actionResult);
+            $this->response->setContent($actionResult);
         }
 
-        return $response;
+        return $this->response;
     }
 
     /**
