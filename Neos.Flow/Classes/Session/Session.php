@@ -203,15 +203,13 @@ class Session implements CookieEnabledInterface
     }
 
     /**
-     * @param string $sessionIdentifier
      * @param SessionMetaData $sessionMetaData
      * @return Session
      */
-    public static function createFromSessionIdentifierAndMetaData(string $sessionIdentifier, SessionMetaData $sessionMetaData): self
+    public static function createFromSessionMetaData(SessionMetaData $sessionMetaData): self
     {
-        return new static($sessionIdentifier, $sessionMetaData->getStorageIdentifier(), $sessionMetaData->getLastActivityTimestamp(), $sessionMetaData->getTags());
+        return new static($sessionMetaData->getSessionIdentifier(), $sessionMetaData->getStorageIdentifier(), $sessionMetaData->getLastActivityTimestamp(), $sessionMetaData->getTags());
     }
-
 
     /**
      * @param Cookie $sessionCookie
@@ -718,6 +716,7 @@ class Session implements CookieEnabledInterface
     protected function writeSessionMetaDataCacheEntry()
     {
         $metaData = new SessionMetaData(
+            $this->sessionIdentifier,
             $this->storageIdentifier,
             $this->lastActivityTimestamp,
             $this->tags

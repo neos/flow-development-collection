@@ -161,7 +161,7 @@ class SessionManager implements SessionManagerInterface
     {
         $activeSessions = [];
         foreach ($this->sessionMetaDataStore->findAll() as $sessionIdentifier => $sessionMetaData) {
-            $session = Session::createFromSessionIdentifierAndMetaData($sessionIdentifier, $sessionMetaData);
+            $session = Session::createFromSessionMetaData($sessionMetaData);
             $activeSessions[] = $session;
         }
         return $activeSessions;
@@ -178,7 +178,7 @@ class SessionManager implements SessionManagerInterface
     {
         $taggedSessions = [];
         foreach ($this->sessionMetaDataStore->findByTag($tag) as $sessionIdentifier => $sessionMetaData) {
-            $session = Session::createFromSessionIdentifierAndMetaData($sessionIdentifier, $sessionMetaData);
+            $session = Session::createFromSessionMetaData($sessionMetaData);
             $taggedSessions[] = $session;
         }
         return $taggedSessions;

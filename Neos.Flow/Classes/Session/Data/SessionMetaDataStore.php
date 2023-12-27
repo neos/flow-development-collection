@@ -68,7 +68,7 @@ class SessionMetaDataStore
         } elseif ($metaDataFromCache instanceof SessionMetaData) {
             return $metaDataFromCache;
         } elseif (is_array($metaDataFromCache)) {
-            return SessionMetaData::fromClassicArrayFormat($metaDataFromCache);
+            return SessionMetaData::fromSessionIdentifierAndArray($sessionIdentifier, $metaDataFromCache);
         }
         throw new InvalidDataInSessionDataStoreException();
     }
@@ -86,7 +86,7 @@ class SessionMetaDataStore
             if ($sessionMetaData instanceof SessionMetaData) {
                 yield $sessionIdentifier => $sessionMetaData;
             } elseif (is_array($sessionMetaData)) {
-                yield $sessionIdentifier => SessionMetaData::fromClassicArrayFormat($sessionMetaData);
+                yield $sessionIdentifier => SessionMetaData::fromSessionIdentifierAndArray($sessionIdentifier, $sessionMetaData);
             }
         }
     }
@@ -119,7 +119,7 @@ class SessionMetaDataStore
             if ($sessionMetaData instanceof SessionMetaData) {
                 yield $sessionIdentifier => $sessionMetaData;
             } elseif (is_array($sessionMetaData)) {
-                yield $sessionIdentifier => SessionMetaData::fromClassicArrayFormat($sessionMetaData);
+                yield $sessionIdentifier => SessionMetaData::fromSessionIdentifierAndArray($sessionIdentifier, $sessionMetaData);
             }
         }
     }
