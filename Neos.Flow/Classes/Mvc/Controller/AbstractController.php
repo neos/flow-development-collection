@@ -229,7 +229,7 @@ abstract class AbstractController implements ControllerInterface
         $nextRequest->setArguments($this->persistenceManager->convertObjectsToIdentityArrays($regularArguments));
         $this->arguments->removeAll();
 
-        $this->forwardToRequset($nextRequest);
+        $this->forwardToRequest($nextRequest);
     }
 
     /**
@@ -276,9 +276,6 @@ abstract class AbstractController implements ControllerInterface
      * Redirects the request to another action and / or controller.
      *
      * Redirect will be sent to the client which then performs another request to the new URI.
-     *
-     * NOTE: This method only supports web requests and will throw an exception
-     * if used with other request types.
      *
      * @param ActionRequest $request The request to redirect to
      * @param integer $delay (optional) The delay in seconds. Default is no delay.

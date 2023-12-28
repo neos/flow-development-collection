@@ -10,9 +10,11 @@ use Neos\Flow\SignalSlot\Exception\InvalidSlotException;
  * Provides most direct access to our request/response abstraction,
  * the request comes directly from the dispatcher and goes directly back to it.
  *
- * Views or other processing needs to be added to your controller as needed.
- * For helpers to facilitate throws, forwards, redirects and such:
+ * For helpers to facilitate throws, forwards, redirects:
  * @see SpecialResponsesSupport
+ *
+ * Views or other processing needs to be added to your controller as needed,
+ * helpers will be suggested here as they become available.
  */
 class SimpleActionController implements ControllerInterface
 {

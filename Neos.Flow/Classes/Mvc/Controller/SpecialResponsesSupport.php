@@ -83,7 +83,7 @@ trait SpecialResponsesSupport
      * @return never
      * @throws ForwardException
      */
-    protected function forwardToRequset(ActionRequest $request): never
+    protected function forwardToRequest(ActionRequest $request): never
     {
         $nextRequest = clone $request;
         $forwardException = new ForwardException();
