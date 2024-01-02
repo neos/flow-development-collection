@@ -20,7 +20,6 @@ use Neos\Cache\Frontend\VariableFrontend;
 class SessionDataStore
 {
     private const FLOW_OBJECT_STORAGE_KEY = 'Neos_Flow_Object_ObjectManager';
-    private const FLOW_ACCOUNTS_STORAGE_KEY = 'Neos_Flow_Security_Accounts';
 
     protected VariableFrontend $cache;
 
@@ -54,22 +53,12 @@ class SessionDataStore
         $this->cache->set($entryIdentifier, $value, [$sessionMetaData->getStorageIdentifier()], 0);
     }
 
-    public function storeFlowObjectsForSessionMetadata(SessionMetaData $sessionMetaData, array $objects): void
+    public function storeFlowObjects(SessionMetaData $sessionMetaData, array $objects): void
     {
         $this->store($sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY, $objects);
     }
 
-    /**
-     * @param SessionMetaData $sessionMetaData
-     * @param string[] $accounts Accounts and Providers
-     * @return void
-     */
-    public function storeFlowAccountsForSessionMetadata(SessionMetaData $sessionMetaData, array $accounts): void
-    {
-        $this->store($sessionMetaData, self::FLOW_ACCOUNTS_STORAGE_KEY, $accounts);
-    }
-
-    public function retrieveFlowObjectsForSessionMetadata(SessionMetaData $sessionMetaData): array
+    public function retrieveFlowObjects(SessionMetaData $sessionMetaData): array
     {
         return $this->retrieve($sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY);
     }

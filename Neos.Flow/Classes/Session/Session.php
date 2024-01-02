@@ -17,12 +17,10 @@ use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguratio
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Context;
 use Neos\Flow\Session\Data\SessionDataStore;
 use Neos\Flow\Session\Data\SessionMetaData;
 use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Flow\Http\Cookie;
-use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Cache\Frontend\FrontendInterface;
 use Psr\Log\LoggerInterface;
 
@@ -338,7 +336,7 @@ class Session implements CookieEnabledInterface
         if ($this->started === false && $this->canBeResumed()) {
             $this->started = true;
 
-            $sessionObjects = $this->sessionDataStore->retrieveFlowObjectsForSessionMetadata($this->sessionMetaData);
+            $sessionObjects = $this->sessionDataStore->retrieveFlowObjects($this->sessionMetaData);
             if (is_array($sessionObjects)) {
                 foreach ($sessionObjects as $object) {
                     if ($object instanceof ProxyInterface) {
@@ -352,7 +350,7 @@ class Session implements CookieEnabledInterface
             } else {
                 // Fallback for some malformed session data, if it is no array but something else.
                 // In this case, we reset all session objects (graceful degradation).
-                $this->sessionDataStore->storeFlowObjectsForSessionMetadata($this->sessionMetaData, []);
+                $this->sessionDataStore->storeFlowObjects($this->sessionMetaData, []);
             }
 
             $lastActivitySecondsAgo = ($this->now - $this->sessionMetaData->getLastActivityTimestamp());
@@ -614,13 +612,7 @@ class Session implements CookieEnabledInterface
     {
         if ($this->started === true && $this->remote === false) {
             if ($this->sessionMetaDataStore->has($this->sessionMetaData->getSessionIdentifier())) {
-                // Security context can't be injected and must be retrieved manually
-                // because it relies on this very session object:
-                $securityContext = $this->objectManager->get(Context::class);
-                if ($securityContext->isInitialized()) {
-                    $this->storeAuthenticatedAccountsInfo($securityContext->getAuthenticationTokens());
-                }
-                $this->sessionDataStore->storeFlowObjectsForSessionMetadata($this->sessionMetaData, $this->objectManager->getSessionInstances() ?? []);
+                $this->sessionDataStore->storeFlowObjects($this->sessionMetaData, $this->objectManager->getSessionInstances() ?? []);
                 $this->writeSessionMetaDataCacheEntry();
             }
             $this->started = false;
@@ -642,37 +634,6 @@ class Session implements CookieEnabledInterface
             $expired = true;
         }
         return $expired;
-    }
-
-    /**
-     * Stores some information about the authenticated accounts in the session data.
-     *
-     * This method will check if a session has already been started, which is
-     * the case after tokens relying on a session have been authenticated: the
-     * UsernamePasswordToken does, for example, start a session in its authenticate()
-     * method.
-     *
-     * Because more than one account can be authenticated at a time, this method
-     * accepts an array of tokens instead of a single account.
-     *
-     * Note that if a session is started after tokens have been authenticated, the
-     * session will NOT be tagged with authenticated accounts.
-     *
-     * @param $tokens array<TokenInterface>
-     * @return void
-     */
-    protected function storeAuthenticatedAccountsInfo(array $tokens)
-    {
-        $accountProviderAndIdentifierPairs = [];
-        foreach ($tokens as $token) {
-            $account = $token->getAccount();
-            if ($token->isAuthenticated() && $account !== null) {
-                $accountProviderAndIdentifierPairs[$account->getAuthenticationProviderName() . ':' . $account->getAccountIdentifier()] = true;
-            }
-        }
-        if ($accountProviderAndIdentifierPairs !== []) {
-            $this->sessionDataStore->storeFlowAccountsForSessionMetadata($this->sessionMetaData, array_keys($accountProviderAndIdentifierPairs));
-        }
     }
 
     /**

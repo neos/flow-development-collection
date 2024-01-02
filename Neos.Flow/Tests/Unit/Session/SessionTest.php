@@ -765,37 +765,6 @@ class SessionTest extends UnitTestCase
     /**
      * @test
      */
-    public function shutdownCreatesSpecialDataEntryForSessionWithAuthenticatedAccounts()
-    {
-        $session = Session::create();
-        $this->inject($session, 'objectManager', $this->mockObjectManager);
-        $this->inject($session, 'settings', $this->settings);
-        $this->inject($session, 'sessionMetaDataStore', $this->createSessionMetaDataStore());
-        $this->inject($session, 'sessionDataStore', $this->createSessionDataStore());
-
-        $session->start();
-
-        $account = new Account();
-        $account->setAccountIdentifier('admin');
-        $account->setAuthenticationProviderName('MyProvider');
-
-        $token = new UsernamePassword();
-        $token->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-        $token->setAccount($account);
-
-        $this->mockSecurityContext->expects(self::any())->method('isInitialized')->will(self::returnValue(true));
-        $this->mockSecurityContext->expects(self::any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
-
-        $sessionCookie = $session->getSessionCookie();
-        $session->close();
-
-        $session->resume();
-        self::assertEquals(['MyProvider:admin'], $session->getData('Neos_Flow_Security_Accounts'));
-    }
-
-    /**
-     * @test
-     */
     public function shutdownChecksIfSessionStillExistsInStorageCacheBeforeWritingData()
     {
         $sessionMetaDataStore = $this->createSessionMetaDataStore();
