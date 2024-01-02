@@ -102,9 +102,9 @@ class SessionMetaDataStore
         $this->cache->set($sessionMetaData->getSessionIdentifier(), $sessionMetaData, $tagsForCacheEntry, 0);
     }
 
-    public function remove(string $entryIdentifier): mixed
+    public function remove(SessionMetaData $sessionMetaData): mixed
     {
-        return $this->cache->remove($entryIdentifier);
+        return $this->cache->remove($sessionMetaData->getSessionIdentifier());
     }
 
     /**

@@ -76,16 +76,6 @@ class SessionMetaData
         );
     }
 
-    public function withSessionIdentifier(string $sessionIdentifier): self
-    {
-        return new self(
-            $sessionIdentifier,
-            $this->storageIdentifier,
-            $this->lastActivityTimestamp,
-            $this->tags
-        );
-    }
-
     public function withNewSessionIdentifier(): self
     {
         return new self(

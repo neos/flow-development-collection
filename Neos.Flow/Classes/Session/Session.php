@@ -338,7 +338,7 @@ class Session implements CookieEnabledInterface
         if ($this->started === false && $this->canBeResumed()) {
             $this->started = true;
 
-            $sessionObjects = $this->sessionDataStore->get($this->sessionMetaData->getStorageIdentifier() . md5('Neos_Flow_Object_ObjectManager'));
+            $sessionObjects = $this->sessionDataStore->retrieveFlowObjectsForSessionMetadata($this->sessionMetaData);
             if (is_array($sessionObjects)) {
                 foreach ($sessionObjects as $object) {
                     if ($object instanceof ProxyInterface) {
@@ -352,7 +352,7 @@ class Session implements CookieEnabledInterface
             } else {
                 // Fallback for some malformed session data, if it is no array but something else.
                 // In this case, we reset all session objects (graceful degradation).
-                $this->sessionDataStore->set($this->sessionMetaData->getStorageIdentifier() . md5('Neos_Flow_Object_ObjectManager'), [], [$this->sessionMetaData->getStorageIdentifier()], 0);
+                $this->sessionDataStore->storeFlowObjectsForSessionMetadata($this->sessionMetaData, []);
             }
 
             $lastActivitySecondsAgo = ($this->now - $this->sessionMetaData->getLastActivityTimestamp());
@@ -395,7 +395,7 @@ class Session implements CookieEnabledInterface
             throw new Exception\OperationNotSupportedException(sprintf('Tried to renew the session identifier on a remote session (%s).', $this->sessionMetaData->getSessionIdentifier()), 1354034230);
         }
 
-        $this->removeSessionMetaDataCacheEntry($this->sessionMetaData->getSessionIdentifier());
+        $this->sessionMetaDataStore->remove($this->sessionMetaData);
         $this->sessionMetaData = $this->sessionMetaData->withNewSessionIdentifier();
         $this->writeSessionMetaDataCacheEntry();
 
@@ -415,7 +415,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to get session data, but the session has not been started yet.', 1351162255);
         }
-        return $this->sessionDataStore->get($this->sessionMetaData->getStorageIdentifier() . md5($key));
+        return $this->sessionDataStore->retrieve($this->sessionMetaData , $key);
     }
 
     /**
@@ -430,7 +430,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to check a session data entry, but the session has not been started yet.', 1352488661);
         }
-        return $this->sessionDataStore->has($this->sessionMetaData?->getStorageIdentifier() . md5($key));
+        return $this->sessionDataStore->has($this->sessionMetaData, $key);
     }
 
     /**
@@ -451,7 +451,7 @@ class Session implements CookieEnabledInterface
         if (is_resource($data)) {
             throw new Exception\DataNotSerializableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1351162262);
         }
-        $this->sessionDataStore->set($this->sessionMetaData->getStorageIdentifier() . md5($key), $data, [$this->sessionMetaData->getStorageIdentifier()], 0);
+        $this->sessionDataStore->store($this->sessionMetaData,$key, $data);
     }
 
     /**
@@ -577,10 +577,9 @@ class Session implements CookieEnabledInterface
             $this->sessionCookie->expire();
         }
 
-        $this->removeSessionMetaDataCacheEntry($this->sessionMetaData->getSessionIdentifier());
-        $this->sessionDataStore->flushByTag($this->sessionMetaData->getStorageIdentifier());
+        $this->sessionMetaDataStore->remove($this->sessionMetaData);
+        $this->sessionDataStore->remove($this->sessionMetaData);
         $this->started = false;
-        $this->sessionMetaData = null;
     }
 
     /**
@@ -621,8 +620,7 @@ class Session implements CookieEnabledInterface
                 if ($securityContext->isInitialized()) {
                     $this->storeAuthenticatedAccountsInfo($securityContext->getAuthenticationTokens());
                 }
-
-                $this->putData('Neos_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
+                $this->sessionDataStore->storeFlowObjectsForSessionMetadata($this->sessionMetaData, $this->objectManager->getSessionInstances() ?? []);
                 $this->writeSessionMetaDataCacheEntry();
             }
             $this->started = false;
@@ -673,7 +671,7 @@ class Session implements CookieEnabledInterface
             }
         }
         if ($accountProviderAndIdentifierPairs !== []) {
-            $this->putData('Neos_Flow_Security_Accounts', array_keys($accountProviderAndIdentifierPairs));
+            $this->sessionDataStore->storeFlowAccountsForSessionMetadata($this->sessionMetaData, array_keys($accountProviderAndIdentifierPairs));
         }
     }
 
@@ -694,17 +692,5 @@ class Session implements CookieEnabledInterface
         $this->sessionMetaDataStore->store($this->sessionMetaData);
     }
 
-    /**
-     * Removes the session info cache entry for the specified session.
-     *
-     * Note that this function does only remove the "head" cache entry, not the
-     * related data referred to by the storage identifier.
-     *
-     * @param string $sessionIdentifier
-     * @return void
-     */
-    protected function removeSessionMetaDataCacheEntry($sessionIdentifier)
-    {
-        $this->sessionMetaDataStore->remove($sessionIdentifier);
-    }
+
 }

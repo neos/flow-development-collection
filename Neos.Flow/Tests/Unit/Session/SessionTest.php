@@ -15,6 +15,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Session\Data\SessionDataStore;
+use Neos\Flow\Session\Data\SessionMetaData;
 use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
@@ -134,8 +135,15 @@ class SessionTest extends UnitTestCase
      */
     public function remoteSessionUsesStorageIdentifierPassedToConstructor()
     {
+        $sessionIdentifier = 'ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb';
         $storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
-        $session = Session::createRemote('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, []);
+        $metadata = new SessionMetaData(
+            $sessionIdentifier,
+            $storageIdentifier,
+            1354293259,
+            []
+        );
+        $session = Session::createRemoteFromSessionMetaData($metadata);
 
         $sessionMetaDataStore = $this->createSessionMetaDataStore();
         $sessionDataStore = $this->createSessionDataStore();
@@ -149,7 +157,7 @@ class SessionTest extends UnitTestCase
         self::assertEquals('some value', $session->getData('some key'));
         self::assertTrue($session->hasKey('some key'));
 
-        self::assertTrue($sessionDataStore->has($storageIdentifier . md5('some key')));
+        self::assertTrue($sessionDataStore->has($metadata, 'some key'));
     }
 
     /**
@@ -863,6 +871,10 @@ class SessionTest extends UnitTestCase
         $session1->putData('session 1 key 2', 'some other value');
         $session2->putData('session 2 key', 'some value');
 
+        self::assertTrue($session1->hasKey('session 1 key 1'));
+        self::assertTrue($session1->hasKey('session 1 key 2'));
+        self::assertTrue($session2->hasKey('session 2 key'));
+
         $session1->destroy(__METHOD__);
 
         $this->inject($session1, 'started', true);
@@ -912,13 +924,14 @@ class SessionTest extends UnitTestCase
 
         $session->start();
         $sessionIdentifier = $session->getId();
-        $storageIdentifier = $session->_get('sessionMetaData')->getStorageIdentifier();
+        $sessionMetaData = $session->_get('sessionMetaData');
+        $storageIdentifier = $sessionMetaData->getStorageIdentifier();
 
         $session->putData('session 1 key 1', 'some value');
         $session->putData('session 1 key 2', 'some other value');
 
-        self::assertTrue($sessionDataStore->has($storageIdentifier . md5('session 1 key 1')));
-        self::assertTrue($sessionDataStore->has($storageIdentifier . md5('session 1 key 2')));
+        self::assertTrue($sessionDataStore->has($sessionMetaData, 'session 1 key 1'));
+        self::assertTrue($sessionDataStore->has($sessionMetaData, 'session 1 key 2'));
 
         $session->close();
 
@@ -929,8 +942,8 @@ class SessionTest extends UnitTestCase
         // canBeResumed implicitly calls autoExpire():
         self::assertFalse($session->canBeResumed(), 'canBeResumed');
 
-        self::assertFalse($sessionDataStore->has($storageIdentifier . md5('session 1 key 1')));
-        self::assertFalse($sessionDataStore->has($storageIdentifier . md5('session 1 key 2')));
+        self::assertFalse($sessionDataStore->has($sessionMetaData, 'session 1 key 1'));
+        self::assertFalse($sessionDataStore->has($sessionMetaData, 'session 1 key 2'));
     }
 
     /**
@@ -993,10 +1006,10 @@ class SessionTest extends UnitTestCase
 
         // Check how the cache looks like - data of session 1 should be gone:
         self::assertFalse($sessionMetaDataStore->has($sessionIdentifier1), 'session 1 meta entry still there');
-        self::assertFalse($sessionDataStore->has($sessionInfo1->getStorageIdentifier() . md5('session 1 key 1')), 'session 1 key 1 still there');
-        self::assertFalse($sessionDataStore->has($sessionInfo1->getStorageIdentifier() . md5('session 1 key 2')), 'session 1 key 2 still there');
-        self::assertTrue($sessionDataStore->has($sessionInfo2->getStorageIdentifier() . md5('session 2 key 1')), 'session 2 key 1 not there');
-        self::assertTrue($sessionDataStore->has($sessionInfo2->getStorageIdentifier() . md5('session 2 key 2')), 'session 2 key 2 not there');
+        self::assertFalse($sessionDataStore->has($sessionInfo1, 'session 1 key 1'), 'session 1 key 1 still there');
+        self::assertFalse($sessionDataStore->has($sessionInfo1,'session 1 key 2'), 'session 1 key 2 still there');
+        self::assertTrue($sessionDataStore->has($sessionInfo2,'session 2 key 1'), 'session 2 key 1 not there');
+        self::assertTrue($sessionDataStore->has($sessionInfo2, 'session 2 key 2'), 'session 2 key 2 not there');
     }
 
     /**

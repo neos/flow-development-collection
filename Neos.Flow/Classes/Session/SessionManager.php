@@ -225,10 +225,10 @@ class SessionManager implements SessionManagerInterface
             $lastActivitySecondsAgo = $now - $sessionMetadata->getLastActivityTimestamp();
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
                 if ($sessionMetadata->getLastActivityTimestamp() !== null) {
-                    $this->sessionDataStore->flushByTag($sessionMetadata->getStorageIdentifier());
+                    $this->sessionDataStore->remove($sessionMetadata);
                     $sessionRemovalCount++;
                 }
-                $this->sessionMetaDataStore->remove($sessionIdentifier);
+                $this->sessionMetaDataStore->remove($sessionMetadata);
             }
             if ($sessionRemovalCount >= $this->garbageCollectionMaximumPerRun) {
                 break;

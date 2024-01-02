@@ -19,6 +19,9 @@ use Neos\Cache\Frontend\VariableFrontend;
 
 class SessionDataStore
 {
+    private const FLOW_OBJECT_STORAGE_KEY = 'Neos_Flow_Object_ObjectManager';
+    private const FLOW_ACCOUNTS_STORAGE_KEY = 'Neos_Flow_Security_Accounts';
+
     protected VariableFrontend $cache;
 
     public function injectCache(VariableFrontend $cache): void
@@ -33,38 +36,51 @@ class SessionDataStore
         }
     }
 
-    public function isValidEntryIdentifier(string $entryIdentifier): bool
+    public function has(SessionMetaData $sessionMetaData, string $key): bool
     {
-        return $this->cache->isValidEntryIdentifier($entryIdentifier);
-    }
-
-    public function isValidTag(string $tag): bool
-    {
-        return $this->cache->isValidTag($tag);
-    }
-
-    public function has(string $entryIdentifier): bool
-    {
+        $entryIdentifier = $this->creteEntryIdentifier($sessionMetaData, $key);
         return $this->cache->has($entryIdentifier);
     }
 
-    public function get(string $entryIdentifier): mixed
+    public function retrieve(SessionMetaData $sessionMetaData, string $key): mixed
     {
+        $entryIdentifier = $this->creteEntryIdentifier($sessionMetaData, $key);
         return $this->cache->get($entryIdentifier);
     }
 
-    public function set(string $entryIdentifier, mixed $value, array $tags = [], int $lifetime = null): mixed
+    public function store(SessionMetaData $sessionMetaData, string $key, mixed $value): void
     {
-        return $this->cache->set($entryIdentifier, $value, $tags, $lifetime);
+        $entryIdentifier = $this->creteEntryIdentifier($sessionMetaData, $key);
+        $this->cache->set($entryIdentifier, $value, [$sessionMetaData->getStorageIdentifier()], 0);
     }
 
-    public function remove(string $entryIdentifier): mixed
+    public function storeFlowObjectsForSessionMetadata(SessionMetaData $sessionMetaData, array $objects): void
     {
-        return $this->cache->remove($entryIdentifier);
+        $this->store($sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY, $objects);
     }
 
-    public function flushByTag(string $tag): int
+    /**
+     * @param SessionMetaData $sessionMetaData
+     * @param string[] $accounts Accounts and Providers
+     * @return void
+     */
+    public function storeFlowAccountsForSessionMetadata(SessionMetaData $sessionMetaData, array $accounts): void
     {
-        return $this->cache->flushByTag($tag);
+        $this->store($sessionMetaData, self::FLOW_ACCOUNTS_STORAGE_KEY, $accounts);
+    }
+
+    public function retrieveFlowObjectsForSessionMetadata(SessionMetaData $sessionMetaData): array
+    {
+        return $this->retrieve($sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY);
+    }
+
+    public function remove(SessionMetaData $sessionMetaData): int
+    {
+        return $this->cache->flushByTag($sessionMetaData->getStorageIdentifier());
+    }
+
+    private function creteEntryIdentifier(SessionMetaData $metadata, $key): string
+    {
+        return $metadata->getStorageIdentifier() . md5($key);
     }
 }
