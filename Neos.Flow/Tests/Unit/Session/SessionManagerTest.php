@@ -187,7 +187,7 @@ class SessionManagerTest extends UnitTestCase
             $this->inject($sessionManager, 'garbageCollectionMaximumPerRun', 5);
             $this->inject($sessionManager, 'logger', $this->createMock(LoggerInterface::class));
 
-            $session = new Session();
+            $session = Session::create();
             $this->inject($session, 'sessionMetaDataStore', $sessionMetaDataStore);
             $this->inject($session, 'sessionDataStore', $sessionDataStore);
             $this->inject($session, 'objectManager', $this->mockObjectManager);

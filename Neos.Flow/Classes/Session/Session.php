@@ -156,44 +156,45 @@ class Session implements CookieEnabledInterface
     /**
      * Constructs this session
      *
-     * If $sessionIdentifier is specified, this constructor will create a session
-     * instance representing a remote session. In that case $storageIdentifier and
-     * $lastActivityTimestamp are also required arguments.
-     *
      * Session instances MUST NOT be created manually! They should be retrieved via
      * the Session Manager or through dependency injection (use SessionInterface!).
-     *
-     * @param string $sessionIdentifier The public session identifier which is also used in the session cookie
-     * @param string $storageIdentifier The private storage identifier which is used for storage cache entries
-     * @param integer $lastActivityTimestamp Unix timestamp of the last known activity for this session
-     * @param array $tags A list of tags set for this session
-     * @throws \InvalidArgumentException
      */
-    public function __construct($sessionIdentifier = null, $storageIdentifier = null, $lastActivityTimestamp = null, array $tags = [])
+    public function __construct()
     {
-        if ($sessionIdentifier !== null) {
-            if ($storageIdentifier === null || $lastActivityTimestamp === null) {
-                throw new \InvalidArgumentException('Session requires a storage identifier and last activity timestamp for remote sessions.', 1354045988);
-            }
-            $this->sessionMetaData = new SessionMetaData(
-                $sessionIdentifier,
-                $storageIdentifier,
-                $lastActivityTimestamp,
-                $tags
-            );
-            $this->started = true;
-            $this->remote = true;
-        }
         $this->now = time();
+    }
+
+    public static function create(): self
+    {
+        return new static();
+    }
+
+    public static function createRemote(string $sessionIdentifier, string $storageIdentifier, int $lastActivityTimestamp = null, array $tags): self
+    {
+        $session = new static();
+        $session->sessionMetaData = new SessionMetaData(
+            $sessionIdentifier,
+            $storageIdentifier,
+            $lastActivityTimestamp,
+            $tags
+        );
+        $session->started = true;
+        $session->remote = true;
+        return $session;
     }
 
     /**
      * @param SessionMetaData $sessionMetaData
      * @return Session
      */
-    public static function createFromSessionMetaData(SessionMetaData $sessionMetaData): self
+    public static function createRemoteFromSessionMetaData(SessionMetaData $sessionMetaData): self
     {
-        return new static($sessionMetaData->getSessionIdentifier(), $sessionMetaData->getStorageIdentifier(), $sessionMetaData->getLastActivityTimestamp(), $sessionMetaData->getTags());
+        return self::createRemote(
+            $sessionMetaData->getSessionIdentifier(),
+            $sessionMetaData->getStorageIdentifier(),
+            $sessionMetaData->getLastActivityTimestamp(),
+            $sessionMetaData->getTags()
+        );
     }
 
     /**

@@ -86,7 +86,7 @@ class SessionManager implements SessionManagerInterface
     public function getCurrentSession()
     {
         if ($this->currentSession === null) {
-            $this->currentSession = new Session();
+            $this->currentSession = Session::create();
         }
         return $this->currentSession;
     }
@@ -145,7 +145,7 @@ class SessionManager implements SessionManagerInterface
         }
         if ($this->sessionMetaDataStore->has($sessionIdentifier)) {
             $sessionMetaData = $this->sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
-            $this->remoteSessions[$sessionIdentifier] = new Session($sessionIdentifier, $sessionMetaData->getStorageIdentifier(), $sessionMetaData['lastActivityTimestamp'], $sessionMetaData['tags']);
+            $this->remoteSessions[$sessionIdentifier] = Session::createRemoteFromSessionMetaData($sessionMetaData);
             return $this->remoteSessions[$sessionIdentifier];
         }
         return null;
@@ -161,7 +161,7 @@ class SessionManager implements SessionManagerInterface
     {
         $activeSessions = [];
         foreach ($this->sessionMetaDataStore->findAll() as $sessionIdentifier => $sessionMetaData) {
-            $session = Session::createFromSessionMetaData($sessionMetaData);
+            $session = Session::createRemoteFromSessionMetaData($sessionMetaData);
             $activeSessions[] = $session;
         }
         return $activeSessions;
@@ -178,7 +178,7 @@ class SessionManager implements SessionManagerInterface
     {
         $taggedSessions = [];
         foreach ($this->sessionMetaDataStore->findByTag($tag) as $sessionIdentifier => $sessionMetaData) {
-            $session = Session::createFromSessionMetaData($sessionMetaData);
+            $session = Session::createRemoteFromSessionMetaData($sessionMetaData);
             $taggedSessions[] = $session;
         }
         return $taggedSessions;
