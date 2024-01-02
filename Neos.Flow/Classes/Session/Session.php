@@ -406,7 +406,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to get session data, but the session has not been started yet.', 1351162255);
         }
-        return $this->sessionDataStore->retrieve($this->sessionMetaData , $key);
+        return $this->sessionDataStore->retrieve($this->sessionMetaData, $key);
     }
 
     /**
@@ -442,7 +442,7 @@ class Session implements CookieEnabledInterface
         if (is_resource($data)) {
             throw new Exception\DataNotSerializableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1351162262);
         }
-        $this->sessionDataStore->store($this->sessionMetaData,$key, $data);
+        $this->sessionDataStore->store($this->sessionMetaData, $key, $data);
     }
 
     /**
@@ -629,6 +629,4 @@ class Session implements CookieEnabledInterface
     {
         $this->sessionMetaDataStore->store($this->sessionMetaData);
     }
-
-
 }

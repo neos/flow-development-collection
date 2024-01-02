@@ -32,9 +32,6 @@ use Neos\Flow\Session\Session;
 use Neos\Flow\Session\SessionManager;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Http\Cookie;
-use Neos\Flow\Security\Authentication\Token\UsernamePassword;
-use Neos\Flow\Security\Authentication\TokenInterface;
-use Neos\Flow\Security\Account;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -976,8 +973,8 @@ class SessionTest extends UnitTestCase
         // Check how the cache looks like - data of session 1 should be gone:
         self::assertFalse($sessionMetaDataStore->has($sessionIdentifier1), 'session 1 meta entry still there');
         self::assertFalse($sessionDataStore->has($sessionInfo1, 'session 1 key 1'), 'session 1 key 1 still there');
-        self::assertFalse($sessionDataStore->has($sessionInfo1,'session 1 key 2'), 'session 1 key 2 still there');
-        self::assertTrue($sessionDataStore->has($sessionInfo2,'session 2 key 1'), 'session 2 key 1 not there');
+        self::assertFalse($sessionDataStore->has($sessionInfo1, 'session 1 key 2'), 'session 1 key 2 still there');
+        self::assertTrue($sessionDataStore->has($sessionInfo2, 'session 2 key 1'), 'session 2 key 1 not there');
         self::assertTrue($sessionDataStore->has($sessionInfo2, 'session 2 key 2'), 'session 2 key 2 not there');
     }
 
