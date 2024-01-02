@@ -73,13 +73,6 @@ class Session implements CookieEnabledInterface
     protected $sessionDataStore;
 
     /**
-     * @deprecated will be removed with Flow 9 as this is only needed to avoid breakiness
-     * @Flow\Inject
-     * @var SessionManagerInterface
-     */
-    protected $sessionManager;
-
-    /**
      * @var string
      */
     protected $sessionCookieName;
@@ -578,22 +571,6 @@ class Session implements CookieEnabledInterface
         $this->sessionMetaDataStore->remove($this->sessionMetaData);
         $this->sessionDataStore->remove($this->sessionMetaData);
         $this->started = false;
-    }
-
-    /**
-     * Iterates over all existing sessions and removes their data if the inactivity
-     * timeout was reached.
-     *
-     * @return integer|null The number of outdated entries removed or NULL if no such information could be determined
-     * @deprecated will be removed with Flow 9, use SessionManager->collectGarbage
-     * @throws \Neos\Cache\Exception
-     * @throws NotSupportedByBackendException
-     * @api
-     */
-    public function collectGarbage()
-    {
-        $result = $this->sessionManager->collectGarbage();
-        return is_null($result) ? 0 : $result;
     }
 
     /**

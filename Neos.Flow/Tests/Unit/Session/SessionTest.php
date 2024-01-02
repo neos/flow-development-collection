@@ -981,20 +981,6 @@ class SessionTest extends UnitTestCase
         self::assertTrue($sessionDataStore->has($sessionInfo2, 'session 2 key 2'), 'session 2 key 2 not there');
     }
 
-    /**
-     * @test
-     * @deprecated remove with Flow 9
-     */
-    public function collectGarbageIsForwardedToTheSessionManager()
-    {
-        $mockSessionManager = $this->createMock(SessionManager::class);
-        $mockSessionManager->expects(self::once())->method('collectGarbage')->will(self::returnValue(5));
-
-        $session = Session::create();
-        $this->inject($session, 'sessionManager', $mockSessionManager);
-        $this->assertEquals(5, $session->collectGarbage());
-    }
-
     protected function createSessionDataStore(): SessionDataStore
     {
         $store = new SessionDataStore();

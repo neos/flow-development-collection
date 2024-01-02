@@ -158,12 +158,4 @@ interface SessionInterface
      * @throws Exception\SessionNotStartedException
      */
     public function destroy($reason = null);
-
-    /**
-     * Remove data of all sessions which are considered to be expired.
-     *
-     * @return integer|null The number of outdated entries removed or NULL if no such information could be determined
-     * @deprecated will be removed with Flow 9, use SessionManager->collectGarbage
-     */
-    public function collectGarbage();
 }
