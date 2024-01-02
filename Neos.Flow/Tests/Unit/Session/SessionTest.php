@@ -825,6 +825,7 @@ class SessionTest extends UnitTestCase
 
         $sessionMetaDataStore = $this->createSessionMetaDataStore();
         $sessionDataStore = $this->createSessionDataStore();
+
         $this->inject($session1, 'sessionMetaDataStore', $sessionMetaDataStore);
         $this->inject($session1, 'sessionDataStore', $sessionDataStore);
         $this->inject($session2, 'sessionMetaDataStore', $sessionMetaDataStore);
@@ -833,21 +834,25 @@ class SessionTest extends UnitTestCase
         $session1->start();
         $session2->start();
 
+        $metadata1 = $sessionMetaDataStore->findBySessionIdentifier($session1->getId());
+        $metadata2 = $sessionMetaDataStore->findBySessionIdentifier($session2->getId());
+
         $session1->putData('session 1 key 1', 'some value');
         $session1->putData('session 1 key 2', 'some other value');
         $session2->putData('session 2 key', 'some value');
 
-        self::assertTrue($session1->hasKey('session 1 key 1'));
-        self::assertTrue($session1->hasKey('session 1 key 2'));
-        self::assertTrue($session2->hasKey('session 2 key'));
+        self::assertTrue($sessionDataStore->has($metadata1, 'session 1 key 1'));
+        self::assertTrue($sessionDataStore->has($metadata1, 'session 1 key 2'));
+        self::assertTrue($sessionDataStore->has($metadata2, 'session 2 key'));
 
         $session1->destroy(__METHOD__);
 
         $this->inject($session1, 'started', true);
         $this->inject($session2, 'started', true);
-        self::assertFalse($session1->hasKey('session 1 key 1'));
-        self::assertFalse($session1->hasKey('session 1 key 2'));
-        self::assertTrue($session2->hasKey('session 2 key'), 'Entry in session was also removed.');
+
+        self::assertFalse($sessionDataStore->has($metadata1, 'session 1 key 1'));
+        self::assertFalse($sessionDataStore->has($metadata1, 'session 1 key 2'));
+        self::assertTrue($sessionDataStore->has($metadata2, 'session 2 key'), 'Entry in session was also removed.');
     }
 
     /**
@@ -855,12 +860,20 @@ class SessionTest extends UnitTestCase
      */
     public function destroyRemovesAllSessionDataFromARemoteSession()
     {
-        $storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
+        $sessionMetaData = new SessionMetaData(
+            'ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb',
+            '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16',
+            1354293259,
+            []
+        );
 
-        $session = Session::createRemote('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb', $storageIdentifier, 1354293259, []);
+        $sessionMetaDataStore = $this->createSessionMetaDataStore();
+        $sessionDataStore = $this->createSessionDataStore();
+
+        $session = Session::createRemoteFromSessionMetaData($sessionMetaData);
         $this->inject($session, 'settings', $this->settings);
-        $this->inject($session, 'sessionMetaDataStore', $this->createSessionMetaDataStore());
-        $this->inject($session, 'sessionDataStore', $this->createSessionDataStore());
+        $this->inject($session, 'sessionMetaDataStore', $sessionMetaDataStore);
+        $this->inject($session, 'sessionDataStore', $sessionDataStore);
 
         $session->start();
 
@@ -869,9 +882,8 @@ class SessionTest extends UnitTestCase
 
         $session->destroy(__METHOD__);
 
-        $this->inject($session, 'started', true);
-        self::assertFalse($session->hasKey('session 1 key 1'));
-        self::assertFalse($session->hasKey('session 1 key 2'));
+        self::assertFalse($sessionDataStore->has($sessionMetaData, 'session 1 key 1'));
+        self::assertFalse($sessionDataStore->has($sessionMetaData, 'session 1 key 2'));
     }
 
     /**

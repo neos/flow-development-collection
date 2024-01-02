@@ -570,6 +570,7 @@ class Session implements CookieEnabledInterface
 
         $this->sessionMetaDataStore->remove($this->sessionMetaData);
         $this->sessionDataStore->remove($this->sessionMetaData);
+        $this->sessionMetaData = null;
         $this->started = false;
     }
 
