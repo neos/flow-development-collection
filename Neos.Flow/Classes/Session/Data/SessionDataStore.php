@@ -19,8 +19,6 @@ use Neos\Cache\Frontend\VariableFrontend;
 
 class SessionDataStore
 {
-    private const FLOW_OBJECT_STORAGE_KEY = 'Neos_Flow_Object_ObjectManager';
-
     protected VariableFrontend $cache;
 
     public function injectCache(VariableFrontend $cache): void
@@ -51,16 +49,6 @@ class SessionDataStore
     {
         $entryIdentifier = $this->creteEntryIdentifier($sessionMetaData, $key);
         $this->cache->set($entryIdentifier, $value, [$sessionMetaData->getStorageIdentifier()], 0);
-    }
-
-    public function storeFlowObjects(SessionMetaData $sessionMetaData, array $objects): void
-    {
-        $this->store($sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY, $objects);
-    }
-
-    public function retrieveFlowObjects(SessionMetaData $sessionMetaData): array
-    {
-        return $this->retrieve($sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY);
     }
 
     public function remove(SessionMetaData $sessionMetaData): int

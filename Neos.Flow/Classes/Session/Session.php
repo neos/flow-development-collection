@@ -44,6 +44,8 @@ use Psr\Log\LoggerInterface;
  */
 class Session implements CookieEnabledInterface
 {
+    private const FLOW_OBJECT_STORAGE_KEY = 'Neos_Flow_Object_ObjectManager';
+
     /**
      * @Flow\Inject
      * @var ObjectManagerInterface
@@ -329,7 +331,7 @@ class Session implements CookieEnabledInterface
         if ($this->started === false && $this->canBeResumed()) {
             $this->started = true;
 
-            $sessionObjects = $this->sessionDataStore->retrieveFlowObjects($this->sessionMetaData);
+            $sessionObjects = $this->sessionDataStore->retrieve($this->sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY);
             if (is_array($sessionObjects)) {
                 foreach ($sessionObjects as $object) {
                     if ($object instanceof ProxyInterface) {
@@ -343,7 +345,7 @@ class Session implements CookieEnabledInterface
             } else {
                 // Fallback for some malformed session data, if it is no array but something else.
                 // In this case, we reset all session objects (graceful degradation).
-                $this->sessionDataStore->storeFlowObjects($this->sessionMetaData, []);
+                $this->sessionDataStore->store($this->sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY, []);
             }
 
             $lastActivitySecondsAgo = ($this->now - $this->sessionMetaData->getLastActivityTimestamp());
@@ -590,7 +592,7 @@ class Session implements CookieEnabledInterface
     {
         if ($this->started === true && $this->remote === false) {
             if ($this->sessionMetaDataStore->has($this->sessionMetaData->getSessionIdentifier())) {
-                $this->sessionDataStore->storeFlowObjects($this->sessionMetaData, $this->objectManager->getSessionInstances() ?? []);
+                $this->sessionDataStore->store($this->sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY, $this->objectManager->getSessionInstances() ?? []);
                 $this->writeSessionMetaDataCacheEntry();
             }
             $this->started = false;
