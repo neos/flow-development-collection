@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Session;
 
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Session\Data\SessionDataStore;
 use Neos\Flow\Session\Data\SessionMetaData;
@@ -992,31 +993,25 @@ class SessionTest extends UnitTestCase
 
     protected function createSessionDataStore(): SessionDataStore
     {
+        $backend = new FileBackend(new EnvironmentConfiguration('Session Testing', 'vfs://Foo/', PHP_MAXPATHLEN));
+        $cache = new StringFrontend('Storage', $backend);
+        $cache->initializeObject();
+        $backend->setCache($cache);
+        $cache->flush();
         $store = new SessionDataStore();
-        $store->injectCache($this->createCache('Storage'));
+        $store->injectCache($cache);
         return $store;
     }
 
     protected function createSessionMetaDataStore():SessionMetaDataStore
     {
-        $store = new SessionMetaDataStore();
-        $store->injectCache($this->createCache('Meta'));
-        return $store;
-    }
-
-    /**
-     * Creates a cache for testing
-     *
-     * @param string $name
-     * @return VariableFrontend
-     */
-    protected function createCache($name)
-    {
         $backend = new FileBackend(new EnvironmentConfiguration('Session Testing', 'vfs://Foo/', PHP_MAXPATHLEN));
-        $cache = new VariableFrontend($name, $backend);
+        $cache = new VariableFrontend('Meta', $backend);
         $cache->initializeObject();
         $backend->setCache($cache);
         $cache->flush();
-        return $cache;
+        $store = new SessionMetaDataStore();
+        $store->injectCache($cache);
+        return $store;
     }
 }
