@@ -46,12 +46,12 @@ class SessionMetaData
         $this->tags = $tags;
     }
 
-    public static function createNew(): self
+    public static function create(int $timestamp): self
     {
         return new self(
             Algorithms::generateRandomString(32),
             Algorithms::generateUUID(),
-            time(),
+            $timestamp,
             []
         );
     }
@@ -136,5 +136,33 @@ class SessionMetaData
     public function getTags(): array
     {
         return $this->tags;
+    }
+
+    /**
+     * Determine whether the metadata is equal in all aspects than lastActivityTimestamp
+     */
+    public function isSame(SessionMetaData $other): bool
+    {
+        if ($this->sessionIdentifier != $other->sessionIdentifier) {
+            return false;
+        }
+
+        if ($this->storageIdentifier != $other->storageIdentifier) {
+            return false;
+        }
+
+        if (array_diff($this->tags, $other->tags) || array_diff($other->tags, $this->tags)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Determine the age difference between the metadata items
+     */
+    public function ageDifference(SessionMetaData $other): ?int
+    {
+        return $this->lastActivityTimestamp - $other->lastActivityTimestamp;
     }
 }

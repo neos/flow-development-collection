@@ -198,7 +198,7 @@ class SessionManagerTest extends UnitTestCase
             $session->putData('foo', 'bar');
             $session->close();
 
-            $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+            $sessionInfo = $sessionMetaDataStore->retrieve($sessionIdentifier);
             $sessionInfo = $sessionInfo->withLastActivityTimestamp(time() - 4000);
             $sessionMetaDataStore->store($sessionInfo);
         }

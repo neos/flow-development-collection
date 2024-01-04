@@ -15,20 +15,28 @@ namespace Neos\Flow\Session\Data;
 
 use Neos\Cache\Backend\IterableBackendInterface;
 use Neos\Cache\Exception\InvalidBackendException;
-use Neos\Cache\Frontend\CacheEntryIterator;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\FLow\Annotations as Flow;
 use Neos\Flow\Session\Exception\InvalidDataInSessionDataStoreException;
-use Neos\Flow\Session\Session;
 
 class SessionMetaDataStore
 {
     protected VariableFrontend $cache;
 
-    protected const SESSION_TAG = 'session';
-
     protected const TAG_PREFIX = 'customtag-';
 
     protected const GARBAGE_COLLECTION_CACHEIDENTIFIER = '_garbage-collection-running';
+
+    /**
+     * @var int|null
+     * @Flow\InjectConfiguration(path="session.updateMetadataThreshold")
+     */
+    protected $updateMetadataThreshold = null;
+
+    /**
+     * @var array<string, SessionMetaData>
+     */
+    protected $writeDebounceCache = [];
 
     public function injectCache(VariableFrontend $cache): void
     {
@@ -42,22 +50,22 @@ class SessionMetaDataStore
         }
     }
 
-    public function isValidEntryIdentifier(string $entryIdentifier): bool
+    public function isValidSessionIdentifier(string $sessionIdentifier): bool
     {
-        return $this->cache->isValidEntryIdentifier($entryIdentifier);
+        return $this->cache->isValidEntryIdentifier($sessionIdentifier);
     }
 
-    public function isValidTag(string $tag): bool
+    public function isValidSessionTag(string $tag): bool
     {
-        return $this->cache->isValidTag($tag);
+        return $this->cache->isValidTag(self::TAG_PREFIX . $tag);
     }
 
-    public function has(string $entryIdentifier): bool
+    public function has(string $sessionIdentifier): bool
     {
-        return $this->cache->has($entryIdentifier);
+        return $this->cache->has($sessionIdentifier);
     }
 
-    public function findBySessionIdentifier(string $sessionIdentifier): ?SessionMetaData
+    public function retrieve(string $sessionIdentifier): ?SessionMetaData
     {
         /**
          * @var $metaDataFromCache false|array|SessionMetaData
@@ -66,27 +74,53 @@ class SessionMetaDataStore
         if ($metaDataFromCache === false) {
             return null;
         } elseif ($metaDataFromCache instanceof SessionMetaData) {
+            $this->writeDebounceCache[$metaDataFromCache->getSessionIdentifier()] = $metaDataFromCache;
             return $metaDataFromCache;
         } elseif (is_array($metaDataFromCache)) {
-            return SessionMetaData::fromSessionIdentifierAndArray($sessionIdentifier, $metaDataFromCache);
+            $metaDataFromCache = SessionMetaData::fromSessionIdentifierAndArray($sessionIdentifier, $metaDataFromCache);
+            $this->writeDebounceCache[$metaDataFromCache->getSessionIdentifier()] = $metaDataFromCache;
+            return $metaDataFromCache;
         }
         throw new InvalidDataInSessionDataStoreException();
     }
 
     /**
      * @param string $tag
-     * @return \Generator<string, SessionMetaData> Session metadata indexed by session id
+     * @return \Generator<string, SessionMetaData> Session metadata indexed by sessionIdentifier
      */
-    public function findByTag(string $tag): \Generator
+    public function retrieveByTag(string $tag): \Generator
     {
         foreach ($this->cache->getByTag(self::TAG_PREFIX . $tag) as $sessionIdentifier => $sessionMetaData) {
             if ($sessionIdentifier === self::GARBAGE_COLLECTION_CACHEIDENTIFIER) {
                 continue;
             }
             if ($sessionMetaData instanceof SessionMetaData) {
+                $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
             } elseif (is_array($sessionMetaData)) {
-                yield $sessionIdentifier => SessionMetaData::fromSessionIdentifierAndArray($sessionIdentifier, $sessionMetaData);
+                $sessionMetaData = SessionMetaData::fromSessionIdentifierAndArray($sessionIdentifier, $sessionMetaData);
+                $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
+                yield $sessionIdentifier => $sessionMetaData;
+            }
+        }
+    }
+
+    /**
+     * @return \Generator<string, SessionMetaData> Session metadata indexed by sessionIdentifier
+     */
+    public function retrieveAll(): \Generator
+    {
+        foreach ($this->cache->getIterator() as $sessionIdentifier => $sessionMetaData) {
+            if ($sessionIdentifier === self::GARBAGE_COLLECTION_CACHEIDENTIFIER) {
+                continue;
+            }
+            if ($sessionMetaData instanceof SessionMetaData) {
+                $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
+                yield $sessionIdentifier => $sessionMetaData;
+            } elseif (is_array($sessionMetaData)) {
+                $sessionMetaData = SessionMetaData::fromSessionIdentifierAndArray($sessionIdentifier, $sessionMetaData);
+                $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
+                yield $sessionIdentifier => $sessionMetaData;
             }
         }
     }
@@ -97,36 +131,23 @@ class SessionMetaDataStore
             return self::TAG_PREFIX . $tag;
         }, $sessionMetaData->getTags());
         $tagsForCacheEntry[] = $sessionMetaData->getSessionIdentifier();
-        $tagsForCacheEntry[] = self::SESSION_TAG;
 
+        // check whether the same data with an age < updateMetadataThreshold was just read to avoid pointless write operations
+        $metaDataFromDebounceCache = $this->writeDebounceCache[$sessionMetaData->getSessionIdentifier()] ?? null;
+        if ($metaDataFromDebounceCache !== null && $this->updateMetadataThreshold > 0) {
+            if ($sessionMetaData->isSame($metaDataFromDebounceCache) && $sessionMetaData->ageDifference($metaDataFromDebounceCache) < $this->updateMetadataThreshold) {
+                return;
+            }
+        }
+
+        $this->writeDebounceCache[$sessionMetaData->getSessionIdentifier()] = $sessionMetaData;
         $this->cache->set($sessionMetaData->getSessionIdentifier(), $sessionMetaData, $tagsForCacheEntry, 0);
     }
 
     public function remove(SessionMetaData $sessionMetaData): mixed
     {
+        unset($this->writeDebounceCache[$sessionMetaData->getSessionIdentifier()]);
         return $this->cache->remove($sessionMetaData->getSessionIdentifier());
-    }
-
-    /**
-     * @return \Generator<string, SessionMetaData>
-     */
-    public function findAll(): \Generator
-    {
-        foreach ($this->cache->getIterator() as $sessionIdentifier => $sessionMetaData) {
-            if ($sessionIdentifier === self::GARBAGE_COLLECTION_CACHEIDENTIFIER) {
-                continue;
-            }
-            if ($sessionMetaData instanceof SessionMetaData) {
-                yield $sessionIdentifier => $sessionMetaData;
-            } elseif (is_array($sessionMetaData)) {
-                yield $sessionIdentifier => SessionMetaData::fromSessionIdentifierAndArray($sessionIdentifier, $sessionMetaData);
-            }
-        }
-    }
-
-    public function flushByTag(string $tag): CacheEntryIterator
-    {
-        return $this->cache->flushByTag($tag);
     }
 
     public function startGarbageCollection(): void

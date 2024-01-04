@@ -102,7 +102,7 @@ class SessionManager implements SessionManagerInterface
         }
 
         $sessionIdentifier = $cookie->getValue();
-        $sessionMetaData = $this->sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+        $sessionMetaData = $this->sessionMetaDataStore->retrieve($sessionIdentifier);
 
         if (!$sessionMetaData) {
             return false;
@@ -144,7 +144,7 @@ class SessionManager implements SessionManagerInterface
             return $this->remoteSessions[$sessionIdentifier];
         }
         if ($this->sessionMetaDataStore->has($sessionIdentifier)) {
-            $sessionMetaData = $this->sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+            $sessionMetaData = $this->sessionMetaDataStore->retrieve($sessionIdentifier);
             $this->remoteSessions[$sessionIdentifier] = Session::createRemoteFromSessionMetaData($sessionMetaData);
             return $this->remoteSessions[$sessionIdentifier];
         }
@@ -160,7 +160,7 @@ class SessionManager implements SessionManagerInterface
     public function getActiveSessions()
     {
         $activeSessions = [];
-        foreach ($this->sessionMetaDataStore->findAll() as $sessionIdentifier => $sessionMetaData) {
+        foreach ($this->sessionMetaDataStore->retrieveAll() as $sessionIdentifier => $sessionMetaData) {
             $session = Session::createRemoteFromSessionMetaData($sessionMetaData);
             $activeSessions[] = $session;
         }
@@ -177,7 +177,7 @@ class SessionManager implements SessionManagerInterface
     public function getSessionsByTag($tag)
     {
         $taggedSessions = [];
-        foreach ($this->sessionMetaDataStore->findByTag($tag) as $sessionIdentifier => $sessionMetaData) {
+        foreach ($this->sessionMetaDataStore->retrieveByTag($tag) as $sessionIdentifier => $sessionMetaData) {
             $session = Session::createRemoteFromSessionMetaData($sessionMetaData);
             $taggedSessions[] = $session;
         }
@@ -221,7 +221,7 @@ class SessionManager implements SessionManagerInterface
         $sessionRemovalCount = 0;
         $this->sessionMetaDataStore->startGarbageCollection();
 
-        foreach ($this->sessionMetaDataStore->findAll() as $sessionIdentifier => $sessionMetadata) {
+        foreach ($this->sessionMetaDataStore->retrieveAll() as $sessionIdentifier => $sessionMetadata) {
             $lastActivitySecondsAgo = $now - $sessionMetadata->getLastActivityTimestamp();
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
                 if ($sessionMetadata->getLastActivityTimestamp() !== null) {

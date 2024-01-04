@@ -281,7 +281,7 @@ class Session implements CookieEnabledInterface
     public function start()
     {
         if ($this->started === false) {
-            $this->sessionMetaData = SessionMetaData::createNew()->withLastActivityTimestamp($this->now);
+            $this->sessionMetaData = SessionMetaData::create($this->now);
             $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionMetaData->getSessionIdentifier(), 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly, $this->sessionCookieSameSite);
             $this->started = true;
 
@@ -308,11 +308,11 @@ class Session implements CookieEnabledInterface
             return false;
         }
         $sessionIdentifier = $this->sessionCookie->getValue();
-        if ($this->sessionMetaDataStore->isValidEntryIdentifier($sessionIdentifier) === false) {
+        if ($this->sessionMetaDataStore->isValidSessionIdentifier($sessionIdentifier) === false) {
             $this->logger->warning('SESSION IDENTIFIER INVALID: ' . $sessionIdentifier, LogEnvironment::fromMethodName(__METHOD__));
             return false;
         }
-        $sessionMetaData = $this->sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+        $sessionMetaData = $this->sessionMetaDataStore->retrieve($sessionIdentifier);
         if ($sessionMetaData === null) {
             return false;
         }
@@ -483,7 +483,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355143533);
         }
-        if (!$this->sessionMetaDataStore->isValidTag($tag)) {
+        if (!$this->sessionMetaDataStore->isValidSessionTag($tag)) {
             throw new \InvalidArgumentException(sprintf('The tag used for tagging session %s contained invalid characters. Make sure it matches this regular expression: "%s"', $this->sessionMetaData->getSessionIdentifier(), FrontendInterface::PATTERN_TAG));
         }
         $this->sessionMetaData = $this->sessionMetaData->withAddedTag($tag);

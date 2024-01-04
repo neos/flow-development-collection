@@ -202,7 +202,7 @@ class SessionTest extends UnitTestCase
 
         self::assertTrue($session->canBeResumed());
 
-        $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+        $sessionInfo = $sessionMetaDataStore->retrieve($sessionIdentifier);
         $sessionInfo = $sessionInfo->withLastActivityTimestamp(time() - 4000);
         $sessionMetaDataStore->store($sessionInfo);
         self::assertFalse($session->canBeResumed());
@@ -507,7 +507,7 @@ class SessionTest extends UnitTestCase
 
         $session->close();
 
-        $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+        $sessionInfo = $sessionMetaDataStore->retrieve($sessionIdentifier);
         self::assertEquals($now, $sessionInfo->getLastActivityTimestamp());
     }
 
@@ -718,7 +718,7 @@ class SessionTest extends UnitTestCase
 
         $session->touch();
 
-        $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
+        $sessionInfo = $sessionMetaDataStore->retrieve('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
         self::assertEquals(2220000000, $sessionInfo->getLastActivityTimestamp());
         self::assertEquals($storageIdentifier, $sessionInfo->getStorageIdentifier());
     }
@@ -780,7 +780,7 @@ class SessionTest extends UnitTestCase
 
         $session->putData('foo', 'bar');
         $session->close();
-        $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+        $sessionInfo = $sessionMetaDataStore->retrieve($sessionIdentifier);
 
         // Simulate a remote server referring to the same session:
         $remoteSession = Session::createRemote($sessionIdentifier, $sessionInfo->getStorageIdentifier(), $sessionInfo->getLastActivityTimestamp(), []);
@@ -835,8 +835,8 @@ class SessionTest extends UnitTestCase
         $session1->start();
         $session2->start();
 
-        $metadata1 = $sessionMetaDataStore->findBySessionIdentifier($session1->getId());
-        $metadata2 = $sessionMetaDataStore->findBySessionIdentifier($session2->getId());
+        $metadata1 = $sessionMetaDataStore->retrieve($session1->getId());
+        $metadata2 = $sessionMetaDataStore->retrieve($session2->getId());
 
         $session1->putData('session 1 key 1', 'some value');
         $session1->putData('session 1 key 2', 'some other value');
@@ -914,7 +914,7 @@ class SessionTest extends UnitTestCase
 
         $session->close();
 
-        $sessionInfo = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier);
+        $sessionInfo = $sessionMetaDataStore->retrieve($sessionIdentifier);
         $sessionInfo  = $sessionInfo->withLastActivityTimestamp(time() - 4000);
         $sessionMetaDataStore->store($sessionInfo);
 
@@ -956,7 +956,7 @@ class SessionTest extends UnitTestCase
         self::assertTrue($sessionMetaDataStore->has($sessionIdentifier1), 'session 1 meta entry doesnt exist');
         $session->close();
 
-        $sessionInfo1 = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier1);
+        $sessionInfo1 = $sessionMetaDataStore->retrieve($sessionIdentifier1);
         $sessionInfo1 = $sessionInfo1->withLastActivityTimestamp(time() - 4000);
         $sessionMetaDataStore->store($sessionInfo1);
 
@@ -981,7 +981,7 @@ class SessionTest extends UnitTestCase
         // Calls autoExpire() internally:
         $session->resume();
 
-        $sessionInfo2 = $sessionMetaDataStore->findBySessionIdentifier($sessionIdentifier2);
+        $sessionInfo2 = $sessionMetaDataStore->retrieve($sessionIdentifier2);
 
         // Check how the cache looks like - data of session 1 should be gone:
         self::assertFalse($sessionMetaDataStore->has($sessionIdentifier1), 'session 1 meta entry still there');
