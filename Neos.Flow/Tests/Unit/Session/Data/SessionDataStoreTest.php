@@ -167,7 +167,7 @@ class SessionDataStoreTest extends UnitTestCase
         $value = 'theValue';
 
         $sessionMetaData = new SessionMetaData($sessionId, $storageId, time(), []);
-        $this->mockCache->expects($this->once())->method('get')->with($storageId . md5($key))->willReturn(serialize($value));
+        $this->mockCache->expects($this->exactly(2))->method('get')->with($storageId . md5($key))->willReturnOnConsecutiveCalls(serialize($value), false);
         $this->mockCache->expects($this->once())->method('flushByTag')->with($storageId);
         $this->mockCache->expects($this->once())->method('set')->with($storageId . md5($key), serialize($value), [$storageId], 0);
 

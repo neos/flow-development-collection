@@ -59,13 +59,19 @@ class SessionDataStore
     {
         $entryIdentifier = $this->createEntryIdentifier($sessionMetaData, $key);
         $serializedValue = ($this->useIgBinary === true) ? igbinary_serialize($value) : serialize($value);
-        $currentHash = md5($serializedValue);
+        $valueHash = md5($serializedValue);
         $debounceHash = $this->writeDebounceHashes[$sessionMetaData->getStorageIdentifier()][$key] ?? null;
-        if ($debounceHash !== null && $debounceHash === $currentHash) {
-            // the same value is already stored we can skip this
+        if ($debounceHash === null) {
+            $previousSerializedValue = $this->cache->get($entryIdentifier);
+            if (is_string($previousSerializedValue)) {
+                $debounceHash = md5($previousSerializedValue);
+            }
+        }
+        if ($debounceHash !== null && $debounceHash === $valueHash) {
             return;
         }
-        $this->writeDebounceHashes[$sessionMetaData->getStorageIdentifier()][$key] = $currentHash;
+
+        $this->writeDebounceHashes[$sessionMetaData->getStorageIdentifier()][$key] = $valueHash;
         $this->cache->set($entryIdentifier, $serializedValue, [$sessionMetaData->getStorageIdentifier()], 0);
     }
 
