@@ -51,7 +51,7 @@ class SessionMetaStoreTest extends UnitTestCase
     public function hasOperationsArePassedToTheCache(string $sessionId, bool $expectation): void
     {
         $sessionMetaData = new SessionMetaData($sessionId, '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16', time(), []);
-        $this->mockCache->expects($this->once())->method('has')->with($sessionMetaData->getSessionIdentifier())->willReturn($expectation);
+        $this->mockCache->expects($this->once())->method('has')->with($sessionMetaData->sessionIdentifier)->willReturn($expectation);
         $this->assertEquals($expectation, $this->store->has($sessionId));
     }
 
@@ -65,8 +65,8 @@ class SessionMetaStoreTest extends UnitTestCase
         $lastActivityTimestamp = time();
 
         $sessionMetaData = new SessionMetaData($sessionId, $storageId, $lastActivityTimestamp, []);
-        $this->mockCache->expects($this->once())->method('get')->with($sessionMetaData->getSessionIdentifier())->willReturn($sessionMetaData);
-        $this->assertEquals($sessionMetaData, $this->store->retrieve($sessionMetaData->getSessionIdentifier()));
+        $this->mockCache->expects($this->once())->method('get')->with($sessionMetaData->sessionIdentifier)->willReturn($sessionMetaData);
+        $this->assertEquals($sessionMetaData, $this->store->retrieve($sessionMetaData->sessionIdentifier));
     }
 
     /**
@@ -79,8 +79,8 @@ class SessionMetaStoreTest extends UnitTestCase
         $lastActivityTimestamp = time();
 
         $sessionMetaData = new SessionMetaData($sessionId, $storageId, $lastActivityTimestamp, []);
-        $this->mockCache->expects($this->once())->method('get')->with($sessionMetaData->getSessionIdentifier())->willReturn(['storageIdentifier'=>$storageId, 'tags' => [], 'lastActivityTimestamp' => $lastActivityTimestamp]);
-        $this->assertEquals($sessionMetaData, $this->store->retrieve($sessionMetaData->getSessionIdentifier()));
+        $this->mockCache->expects($this->once())->method('get')->with($sessionMetaData->sessionIdentifier)->willReturn(['storageIdentifier'=>$storageId, 'tags' => [], 'lastActivityTimestamp' => $lastActivityTimestamp]);
+        $this->assertEquals($sessionMetaData, $this->store->retrieve($sessionMetaData->sessionIdentifier));
     }
 
     /**
@@ -93,7 +93,7 @@ class SessionMetaStoreTest extends UnitTestCase
         $lastActivityTimestamp = time();
 
         $sessionMetaData = new SessionMetaData($sessionId, $storageId, $lastActivityTimestamp, []);
-        $this->mockCache->expects($this->once())->method('set')->with($sessionMetaData->getSessionIdentifier(), $sessionMetaData, [$sessionMetaData->getSessionIdentifier()], 0);
+        $this->mockCache->expects($this->once())->method('set')->with($sessionMetaData->sessionIdentifier, $sessionMetaData, [$sessionMetaData->sessionIdentifier], 0);
 
         $this->store->store($sessionMetaData);
     }
@@ -109,10 +109,10 @@ class SessionMetaStoreTest extends UnitTestCase
 
         $sessionMetaData = new SessionMetaData($sessionId, $storageId, $lastActivityTimestamp, []);
         $sessionMetaDataUpdated = $sessionMetaData->withLastActivityTimestamp($lastActivityTimestamp + 10);
-        $this->mockCache->expects($this->once())->method('get')->with($sessionMetaData->getSessionIdentifier())->willReturn($sessionMetaData);
+        $this->mockCache->expects($this->once())->method('get')->with($sessionMetaData->sessionIdentifier)->willReturn($sessionMetaData);
         $this->mockCache->expects($this->never())->method('set');
 
-        $this->store->retrieve($sessionMetaData->getSessionIdentifier());
+        $this->store->retrieve($sessionMetaData->sessionIdentifier);
         $this->store->store($sessionMetaDataUpdated);
     }
 
@@ -127,10 +127,10 @@ class SessionMetaStoreTest extends UnitTestCase
 
         $sessionMetaData = new SessionMetaData($sessionId, $storageId, $lastActivityTimestamp, []);
         $sessionMetaDataUpdated = $sessionMetaData->withLastActivityTimestamp($lastActivityTimestamp + 70);
-        $this->mockCache->expects($this->once())->method('get')->with($sessionMetaData->getSessionIdentifier())->willReturn($sessionMetaData);
-        $this->mockCache->expects($this->once())->method('set')->with($sessionMetaDataUpdated->getSessionIdentifier(), $sessionMetaDataUpdated, [$sessionMetaDataUpdated->getSessionIdentifier()], 0);
+        $this->mockCache->expects($this->once())->method('get')->with($sessionMetaData->sessionIdentifier)->willReturn($sessionMetaData);
+        $this->mockCache->expects($this->once())->method('set')->with($sessionMetaDataUpdated->sessionIdentifier, $sessionMetaDataUpdated, [$sessionMetaDataUpdated->sessionIdentifier], 0);
 
-        $this->store->retrieve($sessionMetaData->getSessionIdentifier());
+        $this->store->retrieve($sessionMetaData->sessionIdentifier);
         $this->store->store($sessionMetaDataUpdated);
     }
 
@@ -145,7 +145,7 @@ class SessionMetaStoreTest extends UnitTestCase
 
         $sessionMetaData = new SessionMetaData($sessionId, $storageId, $lastActivityTimestamp, []);
         $sessionMetaDataUpdated = $sessionMetaData->withLastActivityTimestamp($lastActivityTimestamp + 10);
-        $this->mockCache->expects($this->once())->method('set')->with($sessionMetaData->getSessionIdentifier(), $sessionMetaData, [$sessionMetaData->getSessionIdentifier()], 0);
+        $this->mockCache->expects($this->once())->method('set')->with($sessionMetaData->sessionIdentifier, $sessionMetaData, [$sessionMetaData->sessionIdentifier], 0);
 
         $this->store->store($sessionMetaData);
         $this->store->store($sessionMetaDataUpdated);
@@ -163,8 +163,8 @@ class SessionMetaStoreTest extends UnitTestCase
         $sessionMetaData = new SessionMetaData($sessionId, $storageId, $lastActivityTimestamp, []);
         $sessionMetaDataUpdated = $sessionMetaData->withLastActivityTimestamp($lastActivityTimestamp + 70);
         $this->mockCache->expects($this->exactly(2))->method('set')->withConsecutive(
-            [$sessionMetaData->getSessionIdentifier(), $sessionMetaData, [$sessionMetaData->getSessionIdentifier()], 0],
-            [$sessionMetaData->getSessionIdentifier(), $sessionMetaDataUpdated, [$sessionMetaData->getSessionIdentifier()], 0]
+            [$sessionMetaData->sessionIdentifier, $sessionMetaData, [$sessionMetaData->sessionIdentifier], 0],
+            [$sessionMetaData->sessionIdentifier, $sessionMetaDataUpdated, [$sessionMetaData->sessionIdentifier], 0]
         );
 
         $this->store->store($sessionMetaData);

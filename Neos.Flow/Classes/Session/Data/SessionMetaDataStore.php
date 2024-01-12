@@ -74,11 +74,11 @@ class SessionMetaDataStore
         if ($metaDataFromCache === false) {
             return null;
         } elseif ($metaDataFromCache instanceof SessionMetaData) {
-            $this->writeDebounceCache[$metaDataFromCache->getSessionIdentifier()] = $metaDataFromCache;
+            $this->writeDebounceCache[$metaDataFromCache->sessionIdentifier] = $metaDataFromCache;
             return $metaDataFromCache;
         } elseif (is_array($metaDataFromCache)) {
-            $metaDataFromCache = SessionMetaData::fromSessionIdentifierAndArray($sessionIdentifier, $metaDataFromCache);
-            $this->writeDebounceCache[$metaDataFromCache->getSessionIdentifier()] = $metaDataFromCache;
+            $metaDataFromCache = SessionMetaData::createFromSessionIdentifierAndOldArrayCacheFormat($sessionIdentifier, $metaDataFromCache);
+            $this->writeDebounceCache[$metaDataFromCache->sessionIdentifier] = $metaDataFromCache;
             return $metaDataFromCache;
         }
         throw new InvalidDataInSessionDataStoreException();
@@ -98,7 +98,7 @@ class SessionMetaDataStore
                 $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
             } elseif (is_array($sessionMetaData)) {
-                $sessionMetaData = SessionMetaData::fromSessionIdentifierAndArray($sessionIdentifier, $sessionMetaData);
+                $sessionMetaData = SessionMetaData::createFromSessionIdentifierAndOldArrayCacheFormat($sessionIdentifier, $sessionMetaData);
                 $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
             }
@@ -118,7 +118,7 @@ class SessionMetaDataStore
                 $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
             } elseif (is_array($sessionMetaData)) {
-                $sessionMetaData = SessionMetaData::fromSessionIdentifierAndArray($sessionIdentifier, $sessionMetaData);
+                $sessionMetaData = SessionMetaData::createFromSessionIdentifierAndOldArrayCacheFormat($sessionIdentifier, $sessionMetaData);
                 $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
             }
@@ -129,25 +129,25 @@ class SessionMetaDataStore
     {
         $tagsForCacheEntry = array_map(function ($tag) {
             return self::TAG_PREFIX . $tag;
-        }, $sessionMetaData->getTags());
-        $tagsForCacheEntry[] = $sessionMetaData->getSessionIdentifier();
+        }, $sessionMetaData->tags);
+        $tagsForCacheEntry[] = $sessionMetaData->sessionIdentifier;
 
         // check whether the same data with an age < updateMetadataThreshold was just read to avoid pointless write operations
-        $metaDataFromDebounceCache = $this->writeDebounceCache[$sessionMetaData->getSessionIdentifier()] ?? null;
+        $metaDataFromDebounceCache = $this->writeDebounceCache[$sessionMetaData->sessionIdentifier] ?? null;
         if ($metaDataFromDebounceCache !== null && $this->updateMetadataThreshold > 0) {
             if ($sessionMetaData->isSame($metaDataFromDebounceCache) && $sessionMetaData->ageDifference($metaDataFromDebounceCache) < $this->updateMetadataThreshold) {
                 return;
             }
         }
 
-        $this->writeDebounceCache[$sessionMetaData->getSessionIdentifier()] = $sessionMetaData;
-        $this->cache->set($sessionMetaData->getSessionIdentifier(), $sessionMetaData, $tagsForCacheEntry, 0);
+        $this->writeDebounceCache[$sessionMetaData->sessionIdentifier] = $sessionMetaData;
+        $this->cache->set($sessionMetaData->sessionIdentifier, $sessionMetaData, $tagsForCacheEntry, 0);
     }
 
     public function remove(SessionMetaData $sessionMetaData): mixed
     {
-        unset($this->writeDebounceCache[$sessionMetaData->getSessionIdentifier()]);
-        return $this->cache->remove($sessionMetaData->getSessionIdentifier());
+        unset($this->writeDebounceCache[$sessionMetaData->sessionIdentifier]);
+        return $this->cache->remove($sessionMetaData->sessionIdentifier);
     }
 
     public function startGarbageCollection(): void

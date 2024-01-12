@@ -183,10 +183,10 @@ class Session implements CookieEnabledInterface
     public static function createRemoteFromSessionMetaData(SessionMetaData $sessionMetaData): self
     {
         return self::createRemote(
-            $sessionMetaData->getSessionIdentifier(),
-            $sessionMetaData->getStorageIdentifier(),
-            $sessionMetaData->getLastActivityTimestamp(),
-            $sessionMetaData->getTags()
+            $sessionMetaData->sessionIdentifier,
+            $sessionMetaData->storageIdentifier,
+            $sessionMetaData->lastActivityTimestamp,
+            $sessionMetaData->tags
         );
     }
 
@@ -281,8 +281,8 @@ class Session implements CookieEnabledInterface
     public function start()
     {
         if ($this->started === false) {
-            $this->sessionMetaData = SessionMetaData::create($this->now);
-            $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionMetaData->getSessionIdentifier(), 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly, $this->sessionCookieSameSite);
+            $this->sessionMetaData = SessionMetaData::createWithTimestamp($this->now);
+            $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionMetaData->sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly, $this->sessionCookieSameSite);
             $this->started = true;
 
             $this->writeSessionMetaDataCacheEntry();
@@ -348,7 +348,7 @@ class Session implements CookieEnabledInterface
                 $this->sessionDataStore->store($this->sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY, []);
             }
 
-            $lastActivitySecondsAgo = ($this->now - $this->sessionMetaData->getLastActivityTimestamp());
+            $lastActivitySecondsAgo = ($this->now - $this->sessionMetaData->lastActivityTimestamp);
             $this->sessionMetaData = $this->sessionMetaData->withLastActivityTimestamp($this->now);
             return $lastActivitySecondsAgo;
         }
@@ -367,7 +367,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to retrieve the session identifier, but the session has not been started yet.)', 1351171517);
         }
-        return $this->sessionMetaData->getSessionIdentifier();
+        return $this->sessionMetaData->sessionIdentifier;
     }
 
     /**
@@ -385,15 +385,15 @@ class Session implements CookieEnabledInterface
             throw new Exception\SessionNotStartedException('Tried to renew the session identifier, but the session has not been started yet.', 1351182429);
         }
         if ($this->remote === true) {
-            throw new Exception\OperationNotSupportedException(sprintf('Tried to renew the session identifier on a remote session (%s).', $this->sessionMetaData->getSessionIdentifier()), 1354034230);
+            throw new Exception\OperationNotSupportedException(sprintf('Tried to renew the session identifier on a remote session (%s).', $this->sessionMetaData->sessionIdentifier), 1354034230);
         }
 
         $this->sessionMetaDataStore->remove($this->sessionMetaData);
         $this->sessionMetaData = $this->sessionMetaData->withNewSessionIdentifier();
         $this->writeSessionMetaDataCacheEntry();
 
-        $this->sessionCookie->setValue($this->sessionMetaData->getSessionIdentifier());
-        return $this->sessionMetaData->getSessionIdentifier();
+        $this->sessionCookie->setValue($this->sessionMetaData->sessionIdentifier);
+        return $this->sessionMetaData->sessionIdentifier;
     }
 
     /**
@@ -463,7 +463,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to retrieve the last activity timestamp of a session which has not been started yet.', 1354290378);
         }
-        return $this->sessionMetaData->getLastActivityTimestamp();
+        return $this->sessionMetaData->lastActivityTimestamp;
     }
 
     /**
@@ -484,7 +484,7 @@ class Session implements CookieEnabledInterface
             throw new Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355143533);
         }
         if (!$this->sessionMetaDataStore->isValidSessionTag($tag)) {
-            throw new \InvalidArgumentException(sprintf('The tag used for tagging session %s contained invalid characters. Make sure it matches this regular expression: "%s"', $this->sessionMetaData->getSessionIdentifier(), FrontendInterface::PATTERN_TAG));
+            throw new \InvalidArgumentException(sprintf('The tag used for tagging session %s contained invalid characters. Make sure it matches this regular expression: "%s"', $this->sessionMetaData->sessionIdentifier, FrontendInterface::PATTERN_TAG));
         }
         $this->sessionMetaData = $this->sessionMetaData->withAddedTag($tag);
     }
@@ -518,7 +518,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to retrieve tags from a session which has not been started yet.', 1355141501);
         }
-        return $this->sessionMetaData->getTags();
+        return $this->sessionMetaData->tags;
     }
 
     /**
@@ -591,7 +591,7 @@ class Session implements CookieEnabledInterface
     public function shutdownObject()
     {
         if ($this->started === true && $this->remote === false) {
-            if ($this->sessionMetaDataStore->has($this->sessionMetaData->getSessionIdentifier())) {
+            if ($this->sessionMetaDataStore->has($this->sessionMetaData->sessionIdentifier)) {
                 $this->sessionDataStore->store($this->sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY, $this->objectManager->getSessionInstances() ?? []);
                 $this->writeSessionMetaDataCacheEntry();
             }
@@ -606,11 +606,11 @@ class Session implements CookieEnabledInterface
      */
     protected function autoExpire()
     {
-        $lastActivitySecondsAgo = $this->now - $this->sessionMetaData->getLastActivityTimestamp();
+        $lastActivitySecondsAgo = $this->now - $this->sessionMetaData->lastActivityTimestamp;
         $expired = false;
         if ($this->inactivityTimeout !== 0 && $lastActivitySecondsAgo > $this->inactivityTimeout) {
             $this->started = true;
-            $this->destroy(sprintf('Session %s was inactive for %s seconds, more than the configured timeout of %s seconds.', $this->sessionMetaData->getSessionIdentifier(), $lastActivitySecondsAgo, $this->inactivityTimeout));
+            $this->destroy(sprintf('Session %s was inactive for %s seconds, more than the configured timeout of %s seconds.', $this->sessionMetaData->sessionIdentifier, $lastActivitySecondsAgo, $this->inactivityTimeout));
             $expired = true;
         }
         return $expired;

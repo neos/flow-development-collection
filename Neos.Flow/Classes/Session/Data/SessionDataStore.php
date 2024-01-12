@@ -51,7 +51,7 @@ class SessionDataStore
     {
         $entryIdentifier = $this->createEntryIdentifier($sessionMetaData, $key);
         $serializedResult = $this->cache->get($entryIdentifier);
-        $this->writeDebounceHashes[$sessionMetaData->getStorageIdentifier()][$key] = md5($serializedResult);
+        $this->writeDebounceHashes[$sessionMetaData->storageIdentifier][$key] = md5($serializedResult);
         return ($this->useIgBinary === true) ? igbinary_unserialize($serializedResult) : unserialize($serializedResult);
     }
 
@@ -60,7 +60,7 @@ class SessionDataStore
         $entryIdentifier = $this->createEntryIdentifier($sessionMetaData, $key);
         $serializedValue = ($this->useIgBinary === true) ? igbinary_serialize($value) : serialize($value);
         $valueHash = md5($serializedValue);
-        $debounceHash = $this->writeDebounceHashes[$sessionMetaData->getStorageIdentifier()][$key] ?? null;
+        $debounceHash = $this->writeDebounceHashes[$sessionMetaData->storageIdentifier][$key] ?? null;
         if ($debounceHash === null) {
             $previousSerializedValue = $this->cache->get($entryIdentifier);
             if (is_string($previousSerializedValue)) {
@@ -71,20 +71,20 @@ class SessionDataStore
             return;
         }
 
-        $this->writeDebounceHashes[$sessionMetaData->getStorageIdentifier()][$key] = $valueHash;
-        $this->cache->set($entryIdentifier, $serializedValue, [$sessionMetaData->getStorageIdentifier()], 0);
+        $this->writeDebounceHashes[$sessionMetaData->storageIdentifier][$key] = $valueHash;
+        $this->cache->set($entryIdentifier, $serializedValue, [$sessionMetaData->storageIdentifier], 0);
     }
 
     public function remove(SessionMetaData $sessionMetaData): int
     {
-        if (array_key_exists($sessionMetaData->getStorageIdentifier(), $this->writeDebounceHashes)) {
-            unset($this->writeDebounceHashes[$sessionMetaData->getStorageIdentifier()]);
+        if (array_key_exists($sessionMetaData->storageIdentifier, $this->writeDebounceHashes)) {
+            unset($this->writeDebounceHashes[$sessionMetaData->storageIdentifier]);
         }
-        return $this->cache->flushByTag($sessionMetaData->getStorageIdentifier());
+        return $this->cache->flushByTag($sessionMetaData->storageIdentifier);
     }
 
     private function createEntryIdentifier(SessionMetaData $metadata, $key): string
     {
-        return $metadata->getStorageIdentifier() . md5($key);
+        return $metadata->storageIdentifier . md5($key);
     }
 }

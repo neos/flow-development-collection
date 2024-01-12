@@ -508,7 +508,7 @@ class SessionTest extends UnitTestCase
         $session->close();
 
         $sessionInfo = $sessionMetaDataStore->retrieve($sessionIdentifier);
-        self::assertEquals($now, $sessionInfo->getLastActivityTimestamp());
+        self::assertEquals($now, $sessionInfo->lastActivityTimestamp);
     }
 
     /**
@@ -719,8 +719,8 @@ class SessionTest extends UnitTestCase
         $session->touch();
 
         $sessionInfo = $sessionMetaDataStore->retrieve('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
-        self::assertEquals(2220000000, $sessionInfo->getLastActivityTimestamp());
-        self::assertEquals($storageIdentifier, $sessionInfo->getStorageIdentifier());
+        self::assertEquals(2220000000, $sessionInfo->lastActivityTimestamp);
+        self::assertEquals($storageIdentifier, $sessionInfo->storageIdentifier);
     }
 
     /**
@@ -783,7 +783,7 @@ class SessionTest extends UnitTestCase
         $sessionInfo = $sessionMetaDataStore->retrieve($sessionIdentifier);
 
         // Simulate a remote server referring to the same session:
-        $remoteSession = Session::createRemote($sessionIdentifier, $sessionInfo->getStorageIdentifier(), $sessionInfo->getLastActivityTimestamp(), []);
+        $remoteSession = Session::createRemote($sessionIdentifier, $sessionInfo->storageIdentifier, $sessionInfo->lastActivityTimestamp, []);
         $this->inject($remoteSession, 'objectManager', $this->mockObjectManager);
         $this->inject($remoteSession, 'settings', $this->settings);
         $this->inject($remoteSession, 'sessionMetaDataStore', $sessionMetaDataStore);
@@ -904,7 +904,6 @@ class SessionTest extends UnitTestCase
         $session->start();
         $sessionIdentifier = $session->getId();
         $sessionMetaData = $session->_get('sessionMetaData');
-        $storageIdentifier = $sessionMetaData->getStorageIdentifier();
 
         $session->putData('session 1 key 1', 'some value');
         $session->putData('session 1 key 2', 'some other value');

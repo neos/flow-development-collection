@@ -21,32 +21,21 @@ use Neos\Flow\Utility\Algorithms;
  */
 class SessionMetaData
 {
-    protected string $sessionIdentifier;
-
-    protected string $storageIdentifier;
-
-    protected int $lastActivityTimestamp;
-
-    /**
-     * @var string[]
-     */
-    protected array $tags;
-
     /**
      * @param string $sessionIdentifier
      * @param string $storageIdentifier
      * @param int $lastActivityTimestamp
      * @param string[] $tags
      */
-    public function __construct(string $sessionIdentifier, string $storageIdentifier, int $lastActivityTimestamp, array $tags)
-    {
-        $this->sessionIdentifier = $sessionIdentifier;
-        $this->storageIdentifier = $storageIdentifier;
-        $this->lastActivityTimestamp = $lastActivityTimestamp;
-        $this->tags = $tags;
+    public function __construct(
+        public /** readonly */ string $sessionIdentifier,
+        public /** readonly */ string $storageIdentifier,
+        public /** readonly */ int $lastActivityTimestamp,
+        public /** readonly */ array $tags
+    ) {
     }
 
-    public static function create(int $timestamp): self
+    public static function createWithTimestamp(int $timestamp): self
     {
         return new self(
             Algorithms::generateRandomString(32),
@@ -56,7 +45,13 @@ class SessionMetaData
         );
     }
 
-    public static function fromSessionIdentifierAndArray(string $sessionIdentifier, array $data): self
+    /**
+     * Create session metadata from classic cache format for backwards compatibility
+     * @param string $sessionIdentifier
+     * @param array{'storageIdentifier': string, 'lastActivityTimestamp': int, 'tags': string[]} $data
+     * @deprecated this will be removed with flow 10
+     */
+    public static function createFromSessionIdentifierAndOldArrayCacheFormat(string $sessionIdentifier, array $data): self
     {
         return new self(
             $sessionIdentifier,
@@ -115,31 +110,8 @@ class SessionMetaData
         );
     }
 
-    public function getSessionIdentifier(): string
-    {
-        return $this->sessionIdentifier;
-    }
-
-    public function getLastActivityTimestamp(): int
-    {
-        return $this->lastActivityTimestamp;
-    }
-
-    public function getStorageIdentifier(): string
-    {
-        return $this->storageIdentifier;
-    }
-
     /**
-     * @return string[]
-     */
-    public function getTags(): array
-    {
-        return $this->tags;
-    }
-
-    /**
-     * Determine whether the metadata is equal in all aspects than lastActivityTimestamp
+     * Determine whether the metadata is equal in all aspects other than lastActivityTimestamp
      */
     public function isSame(SessionMetaData $other): bool
     {

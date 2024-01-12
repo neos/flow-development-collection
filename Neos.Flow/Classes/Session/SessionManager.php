@@ -108,7 +108,7 @@ class SessionManager implements SessionManagerInterface
             return false;
         }
 
-        $this->currentSession = Session::createFromCookieAndSessionInformation($cookie, $sessionMetaData->getStorageIdentifier(), $sessionMetaData->getLastActivityTimestamp(), $sessionMetaData->getTags());
+        $this->currentSession = Session::createFromCookieAndSessionInformation($cookie, $sessionMetaData->storageIdentifier, $sessionMetaData->lastActivityTimestamp, $sessionMetaData->tags);
         return true;
     }
 
@@ -222,9 +222,9 @@ class SessionManager implements SessionManagerInterface
         $this->sessionMetaDataStore->startGarbageCollection();
 
         foreach ($this->sessionMetaDataStore->retrieveAll() as $sessionIdentifier => $sessionMetadata) {
-            $lastActivitySecondsAgo = $now - $sessionMetadata->getLastActivityTimestamp();
+            $lastActivitySecondsAgo = $now - $sessionMetadata->lastActivityTimestamp;
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
-                if ($sessionMetadata->getLastActivityTimestamp() !== null) {
+                if ($sessionMetadata->lastActivityTimestamp !== null) {
                     $this->sessionDataStore->remove($sessionMetadata);
                     $sessionRemovalCount++;
                 }
