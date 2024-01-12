@@ -48,19 +48,19 @@ class SessionMetaDataTest extends UnitTestCase
 
         yield "different tags 1" => [
             new SessionMetaData('foo', 'bar', 123, ['baz']),
-            new SessionMetaData('foo', '!bar', 123, ['baz', 'bam']),
+            new SessionMetaData('foo', 'bar', 123, ['baz', 'bam']),
             false
         ];
 
         yield "different tags 2" => [
             new SessionMetaData('foo', 'bar', 123, ['baz', 'bam']),
-            new SessionMetaData('foo', '!bar', 123, ['baz']),
+            new SessionMetaData('foo', 'bar', 123, ['baz']),
             false
         ];
 
         yield "different tags 3" => [
             new SessionMetaData('foo', 'bar', 123, ['baz']),
-            new SessionMetaData('foo', '!bar', 123, ['bam']),
+            new SessionMetaData('foo', 'bar', 123, ['bam']),
             false
         ];
     }

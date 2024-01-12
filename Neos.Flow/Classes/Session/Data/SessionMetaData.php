@@ -115,15 +115,15 @@ class SessionMetaData
      */
     public function isSame(SessionMetaData $other): bool
     {
-        if ($this->sessionIdentifier != $other->sessionIdentifier) {
+        if ($this->sessionIdentifier !== $other->sessionIdentifier) {
             return false;
         }
 
-        if ($this->storageIdentifier != $other->storageIdentifier) {
+        if ($this->storageIdentifier !== $other->storageIdentifier) {
             return false;
         }
 
-        if (array_diff($this->tags, $other->tags) || array_diff($other->tags, $this->tags)) {
+        if ($this->tags !== $other->tags) {
             return false;
         }
 
