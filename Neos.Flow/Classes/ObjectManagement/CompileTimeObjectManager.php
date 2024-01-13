@@ -117,7 +117,7 @@ class CompileTimeObjectManager extends ObjectManager
     }
 
     /**
-     * Initializes the the object configurations and some other parts of this Object Manager.
+     * Initializes the object configurations and some other parts of this Object Manager.
      *
      * @param PackageInterface[] $packages An array of active packages to consider
      * @return void
@@ -132,6 +132,7 @@ class CompileTimeObjectManager extends ObjectManager
         $configurationBuilder = new ConfigurationBuilder();
         $configurationBuilder->injectReflectionService($this->reflectionService);
         $configurationBuilder->injectLogger($this->logger);
+        $configurationBuilder->injectExcludeClassesFromConstructorAutowiring($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.object.dependencyInjection.excludeClassesFromConstructorAutowiring'));
 
         $this->objectConfigurations = $configurationBuilder->buildObjectConfigurations($this->registeredClassNames, $rawCustomObjectConfigurations);
 
@@ -363,9 +364,11 @@ class CompileTimeObjectManager extends ObjectManager
      * This specialized get() method is able to do setter injection for properties
      * defined in the object configuration of the specified object.
      *
-     * @param string $objectName The name of the object to return an instance of
+     * @template T of object
+     * @param class-string<T>|string $objectName The name of the object to return an instance of
      * @param mixed ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
-     * @return object The object instance
+     * @phpstan-return ($objectName is class-string<T> ? T : object) The object instance
+     * @return T The object instance
      * @throws \Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException
      * @throws \Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException
      * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException

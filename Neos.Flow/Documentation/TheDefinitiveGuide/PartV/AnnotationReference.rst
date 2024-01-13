@@ -3,7 +3,7 @@
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2023-11-22
+This reference was automatically generated from code on 2024-01-04
 
 
 .. _`Flow Annotation Reference: After`:
@@ -266,6 +266,31 @@ Arguments
 * ``name`` (string|null): Optional object name
   This is useful if the object name does not match the class name of the object to be injected:
   (at)Inject(name="Some.Package:Some.Virtual.Object")
+
+
+
+
+.. _`Flow Annotation Reference: InjectCache`:
+
+InjectCache
+-----------
+
+Used to enable property injection for cache frontends.
+
+Flow will build Dependency Injection code for the property and try
+to inject the specified cache.
+
+:Applicable to: Property
+
+
+
+
+Arguments
+*********
+
+* ``identifier`` (string): Identifier for the Cache that will be injected.
+  
+  Example: Neos_Fusion_Content
 
 
 

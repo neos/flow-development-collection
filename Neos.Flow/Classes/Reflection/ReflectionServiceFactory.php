@@ -51,7 +51,7 @@ class ReflectionServiceFactory
     /**
      * Get reflection service instance
      */
-    public function create()
+    public function create(): ReflectionService
     {
         if ($this->reflectionService !== null) {
             return $this->reflectionService;

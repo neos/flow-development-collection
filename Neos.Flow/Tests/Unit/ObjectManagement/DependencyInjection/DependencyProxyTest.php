@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Unit\ObjectManagement\DependencyInject;
+namespace Neos\Flow\Tests\Unit\ObjectManagement\DependencyInjection;
 
 /*
  * This file is part of the Neos.Flow package.

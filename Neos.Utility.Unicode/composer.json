@@ -8,7 +8,7 @@
     "bin-dir": "bin"
   },
   "require": {
-    "php": "^8.0",
+    "php": "^8.2",
     "ext-mbstring": "*"
   },
   "require-dev": {

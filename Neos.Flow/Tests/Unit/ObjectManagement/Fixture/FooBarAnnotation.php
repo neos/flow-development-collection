@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Unit\ObjectManagement\Proxy;
+namespace Neos\Flow\Tests\Unit\ObjectManagement\Fixture;
 
 /**
  * fixture "annotation" for the above test case

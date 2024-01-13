@@ -53,7 +53,8 @@ class ObjectSerializationTest extends FunctionalTestCase
         $propertiesToBeSerialized = $object->__sleep();
 
         // Note that the privateProperty is not serialized as it was declared in the parent class of the proxy.
-        self::assertCount(2, $propertiesToBeSerialized);
+        self::assertCount(3, $propertiesToBeSerialized);
+        self::assertContains('Persistence_Object_Identifier', $propertiesToBeSerialized); # Introduced due to "Entity" annotation
         self::assertContains('someProperty', $propertiesToBeSerialized);
         self::assertContains('protectedProperty', $propertiesToBeSerialized);
     }

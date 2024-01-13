@@ -29,7 +29,7 @@ class ClassSchema
     /**
      * Name of the class this schema is referring to
      *
-     * @var string
+     * @var class-string
      */
     protected $className;
 
@@ -68,7 +68,7 @@ class ClassSchema
     /**
      * Constructs this class schema
      *
-     * @param string $className Name of the class this schema is referring to
+     * @param class-string $className Name of the class this schema is referring to
      */
     public function __construct($className)
     {
@@ -78,7 +78,7 @@ class ClassSchema
     /**
      * Returns the class name this schema is referring to
      *
-     * @return string The class name
+     * @return class-string The class name
      */
     public function getClassName()
     {

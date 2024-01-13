@@ -179,9 +179,11 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * Returns a fresh or existing instance of the object specified by $objectName.
      *
-     * @param string $objectName The name of the object to return an instance of
+     * @template T of object
+     * @param class-string<T>|string $objectName The name of the object to return an instance of
      * @param mixed ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
-     * @return object The object instance
+     * @phpstan-return ($objectName is class-string<T> ? T : object) The object instance
+     * @return T The object instance
      * @throws Exception\CannotBuildObjectException
      * @throws Exception\UnknownObjectException if an object with the given name does not exist
      * @throws \InvalidArgumentException
@@ -273,8 +275,11 @@ class ObjectManager implements ObjectManagerInterface
      * Returns the object name corresponding to a given class name.
      *
      * @param string $className The class name
-     * @return string The object name corresponding to the given class name or false if no object is configured to use that class
+     *
+     * @return string|false The object name corresponding to the given class name or false if no object is configured to use that class
+     *
      * @throws \InvalidArgumentException
+     *
      * @api
      */
     public function getObjectNameByClassName($className)
@@ -365,8 +370,10 @@ class ObjectManager implements ObjectManagerInterface
      * Returns the instance of the specified object or NULL if no instance has been
      * registered yet.
      *
-     * @param string $objectName The object name
-     * @return object The object or NULL
+     * @template T of object
+     * @param class-string<T>|string $objectName The object name
+     * @phpstan-return ($objectName is class-string<T> ? T|null : object|null) The object instance or null
+     * @return T|null The object instance or null
      */
     public function getInstance($objectName)
     {

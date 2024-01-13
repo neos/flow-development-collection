@@ -1046,7 +1046,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         }
 
         $proxyAnnotation = $this->reader->getClassAnnotation($class, Flow\Proxy::class);
-        if ($proxyAnnotation === null || $proxyAnnotation->enabled !== false) {
+        if (($proxyAnnotation === null || $proxyAnnotation->enabled !== false) && method_exists($class->getName(), '__wakeup')) {
             $metadata->addLifecycleCallback('__wakeup', Events::postLoad);
         }
     }
@@ -1232,7 +1232,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Attempts to resolve the fetch mode.
      *
-     * @param string $className The class name
+     * @param class-string $className The class name
      * @param string $fetchMode The fetch mode
      * @return integer The fetch mode as defined in ClassMetadata
      * @throws ORM\MappingException If the fetch mode is not valid

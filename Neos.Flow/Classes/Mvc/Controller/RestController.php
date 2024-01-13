@@ -118,11 +118,10 @@ class RestController extends ActionController
      * @param mixed $uri Either a string representation of a URI or a \Neos\Flow\Http\Uri object
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-     * @psalm-return never-returns
      * @throws StopActionException
      * @api
      */
-    protected function redirectToUri($uri, $delay = 0, $statusCode = 303)
+    protected function redirectToUri($uri, $delay = 0, $statusCode = 303): never
     {
         // the parent method throws the exception, but we need to act afterwards
         // thus the code in catch - it's the expected state

@@ -130,9 +130,9 @@
         <target state="final">Eine gültige Dezimalzahl wird erwartet</target>
       </trans-unit>
       <!-- RegularExpressionValidator -->
-      <trans-unit id="1221565130" xml:space="preserve" approved="no">
+      <trans-unit id="1221565130" xml:space="preserve" approved="yes">
 				<source>The given subject did not match the pattern. Got: {0}</source>
-        <target state="final">Der Wert entspricht nicht dem Muster. Erhalten: {0}</target>
+        <target state="final">Der Wert entspricht nicht den Muster. Erhalten: {0}</target>
       </trans-unit>
       <!-- StringLengthValidator -->
       <trans-unit id="1238110957" xml:space="preserve" approved="yes">

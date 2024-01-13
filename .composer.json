@@ -3,14 +3,19 @@
   "description": "Flow packages in a joined repository for pull requests.",
   "license": ["MIT"],
   "type": "neos-package-collection",
-  "require": {
-  },
-  "replace": {
-  },
   "scripts": {
+    "test:behavioral": [
+      "../../flow doctrine:migrate --quiet",
+      "../../bin/behat -f progress -c Neos.Flow/Tests/Behavior/behat.yml"
+    ],
     "lint": [
       "../../bin/phpstan analyse"
     ]
+  },
+  "require": {
+    "behat/behat": "^3.10"
+  },
+  "replace": {
   },
   "suggest": {
   },

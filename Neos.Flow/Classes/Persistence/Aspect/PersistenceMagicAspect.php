@@ -140,19 +140,4 @@ class PersistenceMagicAspect
         $proxy = $joinPoint->getProxy();
         ObjectAccess::setProperty($proxy, 'Persistence_Object_Identifier', sha1($serializedSource), true);
     }
-
-    /**
-     * Mark object as cloned after cloning.
-     *
-     * Note: this is not used by anything in the Flow base distribution,
-     * but might be needed by custom backends (like Neos.CouchDB).
-     *
-     * @param JoinPointInterface $joinPoint
-     * @return void
-     * @Flow\AfterReturning("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && method(.*->__clone())")
-     */
-    public function cloneObject(JoinPointInterface $joinPoint)
-    {
-        $joinPoint->getProxy()->Flow_Persistence_clone = true;
-    }
 }

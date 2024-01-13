@@ -341,7 +341,7 @@ class FilterOperation extends AbstractOperation
 
     /**
      * @param string $operand
-     * @param string $value
+     * @param mixed $value
      * @return boolean true if $value is of type $operand; false otherwise
      */
     protected function handleSimpleTypeOperand($operand, $value)

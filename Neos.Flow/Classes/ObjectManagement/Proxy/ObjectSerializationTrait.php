@@ -18,13 +18,12 @@ use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Utility\Arrays;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
 use Neos\Utility\ObjectAccess;
-use Neos\Utility\Arrays;
 
 /**
  * Methods used to serialize objects used by proxy classes.
- *
  */
 trait ObjectSerializationTrait
 {
@@ -147,7 +146,7 @@ trait ObjectSerializationTrait
     }
 
     /**
-     * Reconstitutes related entities to an unserialized object in __wakeup.
+     * Reconstitutes related entities to a deserialized object in __wakeup.
      * Used in __wakeup methods of proxy classes.
      *
      * @return void
