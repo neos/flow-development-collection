@@ -18,7 +18,7 @@ final class Routes implements \IteratorAggregate
      */
     private array $routes;
 
-    public function __construct(
+    private function __construct(
         Route ...$routes
     ) {
         $this->routes = $routes;
@@ -41,6 +41,11 @@ final class Routes implements \IteratorAggregate
         }
     }
 
+    public static function create(Route ...$routes): self
+    {
+        return new self(...$routes);
+    }
+
     public static function fromConfiguration(array $configuration): self
     {
         $routes = [];
@@ -55,14 +60,9 @@ final class Routes implements \IteratorAggregate
         return new self();
     }
 
-    public function withPrependedRoute(Route $route): self
+    public function merge(Routes $other): self
     {
-        return new self($route, ...$this->routes);
-    }
-
-    public function withAppendedRoute(Route $route): self
-    {
-        return new self(...[...$this->routes, $route]);
+        return new self(...$this->routes, ...$other->routes);
     }
 
     /**

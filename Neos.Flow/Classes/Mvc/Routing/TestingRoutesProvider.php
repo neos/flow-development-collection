@@ -36,7 +36,7 @@ final class TestingRoutesProvider implements RoutesProviderInterface
      */
     public function addRoute(Route $route)
     {
-        $this->additionalRoutes = $this->additionalRoutes->withPrependedRoute($route);
+        $this->additionalRoutes = Routes::create($route)->merge($this->additionalRoutes);
     }
 
     public function reset(): void
@@ -46,9 +46,9 @@ final class TestingRoutesProvider implements RoutesProviderInterface
 
     public function getRoutes(): Routes
     {
-        return new Routes(
-            ...$this->additionalRoutes,
-            ...$this->configurationRoutesProvider->getRoutes()
+        // prepended a route
+        return $this->additionalRoutes->merge(
+            $this->configurationRoutesProvider->getRoutes()
         );
     }
 }

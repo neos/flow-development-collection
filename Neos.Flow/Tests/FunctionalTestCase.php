@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\Routing\Routes;
 use Neos\Flow\Mvc\Routing\TestingRoutesProvider;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Http\Factories\ServerRequestFactory;

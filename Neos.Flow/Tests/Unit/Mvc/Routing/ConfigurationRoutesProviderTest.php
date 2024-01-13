@@ -69,7 +69,7 @@ class ConfigurationRoutesProviderTest extends UnitTestCase
         $expectedRoute2->setCacheTags(Routing\Dto\RouteTags::createFromArray(['foo', 'bar']));
         $expectedRoute2->setAppendExceedingArguments(true);
 
-        $expectedRoutes = new Routes($expectedRoute1, $expectedRoute2);
+        $expectedRoutes = Routes::create($expectedRoute1, $expectedRoute2);
 
         $configurationRoutesProvider = new Routing\ConfigurationRoutesProvider($mockConfigurationManager);
         $this->assertEquals($expectedRoutes, $configurationRoutesProvider->getRoutes());

@@ -74,7 +74,7 @@ class RoutesTest extends UnitTestCase
     /**
      * @test
      */
-    public function appendInsertsAtTheEnd(): void
+    public function mergeRoutes(): void
     {
         $route1 = new Route();
         $route1->setName("Route 1");
@@ -82,26 +82,8 @@ class RoutesTest extends UnitTestCase
         $route2 = new Route();
         $route2->setName("Route 2");
 
-        $routes = new Routes($route1);
-        $routes = $routes->withAppendedRoute($route2);
+        $routes = Routes::create($route1)->merge(Routes::create($route2));
 
         $this->assertSame([$route1, $route2], iterator_to_array($routes->getIterator()));
-    }
-
-    /**
-     * @test
-     */
-    public function prependInsertsAtTheBeginning(): void
-    {
-        $route1 = new Route();
-        $route1->setName("Route 1");
-
-        $route2 = new Route();
-        $route2->setName("Route 2");
-
-        $routes = new Routes($route1);
-        $routes = $routes->withPrependedRoute($route2);
-
-        $this->assertSame([$route2, $route1], iterator_to_array($routes->getIterator()));
     }
 }
