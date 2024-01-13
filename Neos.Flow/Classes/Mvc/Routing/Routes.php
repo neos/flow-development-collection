@@ -7,6 +7,7 @@ use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Traversable;
 
 /**
+ * @internal
  * @Flow\Proxy(false)
  * @implements \IteratorAggregate<int, Route>
  */
@@ -21,30 +22,30 @@ final class Routes implements \IteratorAggregate
         Route ...$routes
     ) {
         $this->routes = $routes;
-    }
 
-    public static function fromConfiguration(array $configuration): self
-    {
-        $routes = [];
+        // validate that each route is unique
         $routesWithHttpMethodConstraints = [];
-        foreach ($configuration as $routeConfiguration) {
-            $route = Route::fromConfiguration($routeConfiguration);
-
+        foreach ($this->routes as $route) {
             $uriPattern = $route->getUriPattern();
-
-            if (isset($routeConfiguration['httpMethods'])) {
+            if ($route->hasHttpMethodConstraints()) {
                 if (isset($routesWithHttpMethodConstraints[$uriPattern]) && $routesWithHttpMethodConstraints[$uriPattern] === false) {
                     throw new InvalidRouteSetupException(sprintf('There are multiple routes with the uriPattern "%s" and "httpMethods" option set. Please specify accepted HTTP methods for all of these, or adjust the uriPattern', $uriPattern), 1365678427);
                 }
                 $routesWithHttpMethodConstraints[$uriPattern] = true;
-                $route->setHttpMethods($routeConfiguration['httpMethods']);
             } else {
                 if (isset($routesWithHttpMethodConstraints[$uriPattern]) && $routesWithHttpMethodConstraints[$uriPattern] === true) {
                     throw new InvalidRouteSetupException(sprintf('There are multiple routes with the uriPattern "%s" and "httpMethods" option set. Please specify accepted HTTP methods for all of these, or adjust the uriPattern', $uriPattern), 1365678432);
                 }
                 $routesWithHttpMethodConstraints[$uriPattern] = false;
             }
-            $routes[] = $route;
+        }
+    }
+
+    public static function fromConfiguration(array $configuration): self
+    {
+        $routes = [];
+        foreach ($configuration as $routeConfiguration) {
+            $routes[] = Route::fromConfiguration($routeConfiguration);
         }
         return new self(...$routes);
     }
@@ -65,10 +66,10 @@ final class Routes implements \IteratorAggregate
     }
 
     /**
-     * @return \ArrayIterator<int, Route>
+     * @return \Traversable<int, Route>
      */
     public function getIterator(): Traversable
     {
-        return new \ArrayIterator($this->routes);
+        yield from $this->routes;
     }
 }

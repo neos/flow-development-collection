@@ -201,7 +201,9 @@ class Route
                 $route->setCacheTags(RouteTags::createFromArray($configuration['cache']['tags']));
             }
         }
-
+        if (isset($configuration['httpMethods'])) {
+            $route->setHttpMethods($configuration['httpMethods']);
+        }
         return $route;
     }
 
