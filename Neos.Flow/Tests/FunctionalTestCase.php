@@ -15,7 +15,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Routes;
-use Neos\Flow\Mvc\Routing\RoutesProviderInterface;
+use Neos\Flow\Mvc\Routing\TestingRoutesProvider;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
@@ -270,6 +270,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         }
 
         self::$bootstrap->getObjectManager()->forgetInstance(\Neos\Flow\Http\Client\InternalRequestEngine::class);
+        self::$bootstrap->getObjectManager()->get(TestingRoutesProvider::class)->reset();
         self::$bootstrap->getObjectManager()->forgetInstance(\Neos\Flow\Persistence\Aspect\PersistenceMagicAspect::class);
         $this->inject(self::$bootstrap->getObjectManager()->get(\Neos\Flow\ResourceManagement\ResourceRepository::class), 'addedResources', new \SplObjectStorage());
         $this->inject(self::$bootstrap->getObjectManager()->get(\Neos\Flow\ResourceManagement\ResourceRepository::class), 'removedResources', new \SplObjectStorage());
@@ -368,9 +369,6 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      */
     protected function registerRoute($name, $uriPattern, array $defaults, $appendExceedingArguments = false, array $httpMethods = null)
     {
-        if ($this->routes === null) {
-            $this->routes = Routes::empty();
-        }
         $route = new Route();
         $route->setName($name);
         $route->setUriPattern($uriPattern);
@@ -380,12 +378,8 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $route->setHttpMethods($httpMethods);
         }
 
-        // the old router->addRoute prepended the routes so this is needed for consistency
-        $this->routes = $this->routes->withPrependedRoute($route);
-
-        $mockRouteProvider = $this->createMock(RoutesProviderInterface::class);
-        $mockRouteProvider->method('getRoutes')->willReturn($this->routes);
-        $this->inject($this->router, 'routesProvider', $mockRouteProvider);
+        $testingRoutesProvider = $this->objectManager->get(TestingRoutesProvider::class);
+        $testingRoutesProvider->addRoute($route);
 
         return $route;
     }
@@ -447,10 +441,6 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $this->browser = new \Neos\Flow\Http\Client\Browser();
         $this->browser->setRequestEngine(new \Neos\Flow\Http\Client\InternalRequestEngine());
         $this->router = $this->browser->getRequestEngine()->getRouter();
-
-        $mockRouteProvider = $this->createMock(RoutesProviderInterface::class);
-        $mockRouteProvider->method('getRoutes')->willReturn($this->routes ?? Routes::empty());
-        $this->inject($this->router, 'routesProvider', $mockRouteProvider);
 
         $serverRequestFactory = new ServerRequestFactory(new UriFactory());
         $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost/neos/flow/test');

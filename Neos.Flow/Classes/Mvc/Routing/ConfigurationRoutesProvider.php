@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\Annotations as Flow;
