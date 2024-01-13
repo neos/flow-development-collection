@@ -66,9 +66,7 @@ class RoutingCommandController extends CommandController
     {
         $this->outputLine('<b>Currently registered routes:</b>');
         $rows = [];
-        $routes = $this->routesProvider->getRoutes();
-        /** @var Route $route */
-        foreach ($routes as $index => $route) {
+        foreach ($this->routesProvider->getRoutes() as $index => $route) {
             $routeNumber = $index + 1;
             $rows[] = [
                 '#' => $routeNumber,
@@ -93,15 +91,12 @@ class RoutingCommandController extends CommandController
      */
     public function showCommand(int $index): void
     {
-        /** @var Route[] $routes */
-        $routes = $this->routesProvider->getRoutes();
-        if (!isset($routes[$index - 1])) {
+        $route = $this->routesProvider->getRoutes()[$index - 1] ?? null;
+        if ($route === null) {
             $this->outputLine('<error>Route %d was not found!</error>', [$index]);
             $this->outputLine('Run <i>./flow routing:list</i> to show all registered routes');
             $this->quit(1);
-            return;
         }
-        $route = $routes[$index - 1];
 
         $this->outputLine('<b>Information for route #' . $index . ':</b>');
         $this->outputLine();
@@ -198,9 +193,7 @@ class RoutingCommandController extends CommandController
         $resolvedRoute = null;
         $resolvedRouteNumber = 0;
 
-        $routes = $this->routesProvider->getRoutes();
-        /** @var int $index */
-        foreach ($routes as $index => $route) {
+        foreach ($this->routesProvider->getRoutes() as $index => $route) {
             /** @var Route $route */
             if ($route->resolves($resolveContext) === true) {
                 $resolvedRoute = $route;
@@ -212,7 +205,6 @@ class RoutingCommandController extends CommandController
         if ($resolvedRoute === null) {
             $this->outputLine('<error>No route could resolve these values...</error>');
             $this->quit(1);
-            return;
         }
 
         /** @var UriConstraints $uriConstraints */
@@ -269,7 +261,6 @@ class RoutingCommandController extends CommandController
         if (isset($requestUri->getPath()[0]) && $requestUri->getPath()[0] !== '/') {
             $this->outputLine('<error>The URI "%s" is not valid. The path has to start with a "/"</error>', [$requestUri]);
             $this->quit(1);
-            return;
         }
         $httpRequest = $this->serverRequestFactory->createServerRequest($method, $requestUri);
         $routeParameters = $this->createRouteParametersFromJson($parameters);
@@ -288,9 +279,7 @@ class RoutingCommandController extends CommandController
         /** @var Route|null $matchedRoute */
         $matchedRoute = null;
         $matchedRouteNumber = 0;
-        $routes = $this->routesProvider->getRoutes();
-        /** @var int $index */
-        foreach ($routes as $index => $route) {
+        foreach ($this->routesProvider->getRoutes() as $index => $route) {
             /** @var Route $route */
             if ($route->matches($routeContext) === true) {
                 $matchedRoute = $route;
@@ -302,7 +291,6 @@ class RoutingCommandController extends CommandController
         if ($matchedRoute === null) {
             $this->outputLine('<error>No route could match %s request to URL <i>%s</i>...</error>', [$method, $requestUri]);
             $this->quit(1);
-            return;
         }
 
         $this->outputLine('<b><success>Route matched!</success></b>');
@@ -362,12 +350,10 @@ class RoutingCommandController extends CommandController
         if ($parsedValue === null && \json_last_error() !== JSON_ERROR_NONE) {
             $this->outputLine('<error>Failed to parse <i>%s</i> as JSON: %s</error>', [$json, \json_last_error_msg()]);
             $this->quit(1);
-            return [];
         }
         if (!is_array($parsedValue)) {
             $this->outputLine('<error>Failed to parse <i>%s</i> to an array, please a provide valid JSON object that can be represented as PHP array</error>', [$json]);
             $this->quit(1);
-            return [];
         }
         return $parsedValue;
     }

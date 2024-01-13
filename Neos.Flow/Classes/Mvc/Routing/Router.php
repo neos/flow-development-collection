@@ -91,9 +91,7 @@ class Router implements RouterInterface
 
         $httpRequest = $routeContext->getHttpRequest();
 
-        $routes = $this->routesProvider->getRoutes();
-        /** @var $route Route */
-        foreach ($routes as $route) {
+        foreach ($this->routesProvider->getRoutes() as $route) {
             if ($route->matches($routeContext) === true) {
                 $this->lastMatchedRoute = $route;
                 $matchResults = $route->getMatchResults();
@@ -136,10 +134,7 @@ class Router implements RouterInterface
             return $cachedResolvedUriConstraints->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri());
         }
 
-        $routes = $this->routesProvider->getRoutes();
-
-        /** @var $route Route */
-        foreach ($routes as $route) {
+        foreach ($this->routesProvider->getRoutes() as $route) {
             if ($route->resolves($resolveContext) === true) {
                 $uriConstraints = $route->getResolvedUriConstraints()->withPathPrefix($resolveContext->getUriPathPrefix());
                 $resolvedUri = $uriConstraints->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri());
