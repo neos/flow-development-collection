@@ -40,11 +40,6 @@ class RoutingMiddlewareTest extends UnitTestCase
     protected $mockRouter;
 
     /**
-     * @var RoutesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockRoutesProvider;
-
-    /**
      * @var RequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockRequestHandler;
@@ -68,9 +63,9 @@ class RoutingMiddlewareTest extends UnitTestCase
         $this->routingMiddleware = new RoutingMiddleware();
 
         $this->mockRouter = $this->createMock(Router::class);
-        $this->mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
-        $this->mockRoutesProvider->method("getRoutes")->willReturn(Routes::empty());
-        $this->inject($this->mockRouter, 'routesProvider', $this->mockRoutesProvider);
+        $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRoutesProvider->method('getRoutes')->willReturn(Routes::empty());
+        $this->inject($this->mockRouter, 'routesProvider', $mockRoutesProvider);
 
         $this->inject($this->routingMiddleware, 'router', $this->mockRouter);
 

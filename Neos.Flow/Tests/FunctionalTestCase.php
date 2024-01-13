@@ -89,11 +89,6 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     protected $router;
 
     /**
-     * @var Routes
-     */
-    protected $routes;
-
-    /**
      * @var \Neos\Flow\Security\Context
      */
     protected $securityContext;

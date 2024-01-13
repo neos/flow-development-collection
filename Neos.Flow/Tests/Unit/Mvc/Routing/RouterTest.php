@@ -41,12 +41,6 @@ class RouterTest extends UnitTestCase
     protected $router;
 
     /**
-     * @var RoutesProviderInterface
-     */
-    protected $mockRoutesProvider;
-
-
-    /**
      * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockSystemLogger;
@@ -78,9 +72,9 @@ class RouterTest extends UnitTestCase
     {
         $this->router = $this->getAccessibleMock(Router::class, ['dummy']);
 
-        $this->mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
-        $this->mockRoutesProvider->method('getRoutes')->willReturn(Routes::empty());
-        $this->inject($this->router, 'routesProvider', $this->mockRoutesProvider);
+        $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRoutesProvider->method('getRoutes')->willReturn(Routes::empty());
+        $this->inject($this->router, 'routesProvider', $mockRoutesProvider);
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
         $this->inject($this->router, 'logger', $this->mockSystemLogger);

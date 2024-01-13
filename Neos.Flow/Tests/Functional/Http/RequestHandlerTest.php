@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Functional\Http;
  * source code.
  */
 
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Tests\FunctionalTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -31,16 +32,11 @@ class RequestHandlerTest extends FunctionalTestCase
      */
     public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController(): void
     {
-        $foundRoute = false;
-        if ($this->routes !== null) {
-            foreach ($this->routes as $route) {
-                if ($route->getName() === 'Neos.Flow :: Functional Test: HTTP - FooController') {
-                    $foundRoute = true;
-                }
-            }
-        }
-        if (!$foundRoute) {
-            self::markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
+        if (
+            ($this->objectManager->get(ConfigurationManager::class)
+                ->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.mvc.routes')['Neos.Flow'] ?? false) !== true
+        ) {
+            self::markTestSkipped(sprintf('In this distribution the Flow routes are not included into the global configuration and thus cannot be tested. Please set in Neos.Flow.mvc.routes "Neos.Flow": true.'));
         }
 
         $_SERVER = [
