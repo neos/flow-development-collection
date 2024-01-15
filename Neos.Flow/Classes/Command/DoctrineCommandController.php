@@ -12,7 +12,9 @@ namespace Neos\Flow\Command;
  */
 
 use Doctrine\Common\Util\Debug;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\Migrations\Exception\MigrationException;
+use Doctrine\Migrations\Metadata\ExecutedMigration;
 use Doctrine\ORM\Tools\ToolsException;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
@@ -509,6 +511,44 @@ class DoctrineCommandController extends CommandController
             }
             $this->outputLine('- Review and adjust the generated migration.');
             $this->outputLine('- (optional) execute the migration using <comment>%s doctrine:migrate</comment>', [$this->getFlowInvocationString()]);
+        }
+    }
+
+    /**
+     * Rollback latest executed migration
+     *
+     * Based on the executedAt property of executed migrations,
+     * the latest migration will be executed, using the `down`
+     * direction.
+     *
+     * @see neos.flow:doctrine:migrate
+     * @return void
+     */
+    public function rollbackCommand(bool $dryRun = false): void
+    {
+        $executedMigrations = $this->doctrineService->getExecutedMigrations()->getItems();
+        uasort($executedMigrations, function (ExecutedMigration $a, ExecutedMigration $b) {
+            return ($a->getExecutedAt() === $b->getExecutedAt()) ? 0 : (($a->getExecutedAt() > $b->getExecutedAt()) ? 1 : -1);
+        });
+
+        $last = end($executedMigrations);
+        if (!$last) {
+            $this->outputLine('No migration to rollback');
+            $this->quit(1);
+        }
+
+        if ($dryRun) {
+            $this->outputLine('DRY RUN: Rollback migration "%s"', [(string) $last->getVersion()]);
+            $this->quit();
+        }
+
+        try {
+            $result = $this->doctrineService->executeMigration((string) $last->getVersion(), 'down');
+            $this->output($result);
+        } catch (DBALException $exception) {
+            $this->outputLine('<error>Rollback failed</error>');
+            $this->outputLine($exception->getMessage());
+            $this->quit(1);
         }
     }
 
