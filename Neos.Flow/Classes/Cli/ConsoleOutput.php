@@ -32,12 +32,12 @@ use Symfony\Component\Console\Question\Question;
 class ConsoleOutput
 {
     /**
-     * @var SymfonyConsoleOutput
+     * @var OutputInterface
      */
     protected $output;
 
     /**
-     * @var SymfonyStringInput
+     * @var InputInterface
      */
     protected $input;
 

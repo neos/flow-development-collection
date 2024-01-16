@@ -48,7 +48,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     protected $cacheEntryFileExtension = '';
 
     /**
-     * @var array
+     * @var array<string>
      */
     protected $cacheEntryIdentifiers = [];
 

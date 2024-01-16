@@ -61,7 +61,7 @@ class CacheCommandController extends CommandController
     protected $bootstrap;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
