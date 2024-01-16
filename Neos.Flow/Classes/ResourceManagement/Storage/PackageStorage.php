@@ -42,10 +42,9 @@ class PackageStorage extends FileSystemStorage
     /**
      * Retrieve all Objects stored in this storage.
      *
-     * @param callable $callback Function called after each iteration
      * @return \Generator<StorageObject>
      */
-    public function getObjects(callable $callback = null)
+    public function getObjects()
     {
         return $this->getObjectsByPathPattern('*');
     }
@@ -54,10 +53,9 @@ class PackageStorage extends FileSystemStorage
      * Return all Objects stored in this storage filtered by the given directory / filename pattern
      *
      * @param string $pattern A glob compatible directory / filename pattern
-     * @param callable $callback Function called after each object
      * @return \Generator<StorageObject>
      */
-    public function getObjectsByPathPattern($pattern, callable $callback = null)
+    public function getObjectsByPathPattern($pattern)
     {
         $directories = [];
 
@@ -77,16 +75,11 @@ class PackageStorage extends FileSystemStorage
             }
         }
 
-        $iteration = 0;
         foreach ($directories as $packageKey => $packageDirectories) {
             foreach ($packageDirectories as $directoryPath) {
                 foreach (Files::getRecursiveDirectoryGenerator($directoryPath) as $resourcePathAndFilename) {
                     $object = $this->createStorageObject($resourcePathAndFilename, $packages[$packageKey]);
                     yield $object;
-                    if (is_callable($callback)) {
-                        call_user_func($callback, $iteration, $object);
-                    }
-                    $iteration++;
                 }
             }
         }

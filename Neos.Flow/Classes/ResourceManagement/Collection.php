@@ -152,23 +152,17 @@ class Collection implements CollectionInterface
     /**
      * Returns all internal data objects of the storage attached to this collection.
      *
-     * @param callable $callback Function called after each object
      * @return \Generator<StorageObject>
      */
-    public function getObjects(callable $callback = null)
+    public function getObjects()
     {
         if ($this->storage instanceof PackageStorage && $this->pathPatterns !== []) {
             foreach ($this->pathPatterns as $pathPattern) {
-                foreach ($this->storage->getObjectsByPathPattern($pathPattern, $callback) as $storageObject) {
-                    yield $storageObject;
-                }
+                yield from $this->storage->getObjectsByPathPattern($pathPattern);
             }
         } else {
-            yield from $this->storage->getObjectsByCollection($this, $callback);
+            yield from $this->storage->getObjectsByCollection($this);
         }
-
-        // NOTE: NEVER mix "return" and "yield" in the same function; this
-        // leads to totally unpredictable effects.
     }
 
     /**
