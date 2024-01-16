@@ -508,7 +508,7 @@ class ProxyClassBuilder
      * @param Configuration $objectConfiguration Configuration of the object to inject into
      * @param string $propertyName Name of the property to inject
      * @param string $configurationType the configuration type of the injected property (one of the ConfigurationManager::CONFIGURATION_TYPE_* constants)
-     * @param string $configurationPath Path with "." as separator specifying the setting value to inject or NULL if the complete configuration array should be injected
+     * @param string|null $configurationPath Path with "." as separator specifying the setting value to inject or NULL if the complete configuration array should be injected
      * @return array PHP code
      */
     public function buildPropertyInjectionCodeByConfigurationTypeAndPath(Configuration $objectConfiguration, $propertyName, $configurationType, $configurationPath = null): array

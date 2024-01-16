@@ -128,7 +128,7 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
      * Returns a previously uploaded resource, or the resource specified via "value" argument if no resource has been uploaded before
      * If errors occurred during property mapping for this property, NULL is returned
      *
-     * @return PersistentResource or NULL if no resource was uploaded and the "value" argument is not set
+     * @return PersistentResource|null or NULL if no resource was uploaded and the "value" argument is not set
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */

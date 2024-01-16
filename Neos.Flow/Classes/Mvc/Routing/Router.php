@@ -97,7 +97,7 @@ class Router implements RouterInterface
     /**
      * Sets the routes configuration.
      *
-     * @param array $routesConfiguration The routes configuration or NULL if it should be fetched from configuration
+     * @param array|null $routesConfiguration The routes configuration or NULL if it should be fetched from configuration
      * @return void
      */
     public function setRoutesConfiguration(array $routesConfiguration = null)
@@ -112,7 +112,7 @@ class Router implements RouterInterface
      * route could be found.
      *
      * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing RouteParameters
-     * @return array The results of the matching route or NULL if no route matched
+     * @return array|null The results of the matching route or NULL if no route matched
      * @throws InvalidRouteSetupException
      * @throws NoMatchingRouteException if no route matched the given $routeContext
      * @throws InvalidRoutePartValueException

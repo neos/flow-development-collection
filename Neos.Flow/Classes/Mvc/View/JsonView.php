@@ -269,7 +269,7 @@ class JsonView extends AbstractView
      * array structure.
      *
      * @param object $object Object to traverse
-     * @param array $configuration Configuration for transforming the given object or NULL
+     * @param array|null $configuration Configuration for transforming the given object or NULL
      * @return array|string Object structure as an array
      */
     protected function transformObject($object, array $configuration)

@@ -118,7 +118,7 @@ class Response
     /**
      * Sets color support / styled output to yes, no or auto detection
      *
-     * @param boolean $colorSupport true, false or NULL (= autodetection)
+     * @param boolean|null $colorSupport true, false or NULL (= autodetection)
      * @return void
      */
     public function setColorSupport(bool $colorSupport): void

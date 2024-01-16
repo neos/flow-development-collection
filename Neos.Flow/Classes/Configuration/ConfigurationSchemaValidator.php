@@ -90,7 +90,7 @@ class ConfigurationSchemaValidator
      * Validate a single configuration type
      *
      * @param string $configurationType the configuration typr to validate
-     * @param string $path configuration path to validate, or NULL.
+     * @param string|null $path configuration path to validate, or NULL.
      * @param array $loadedSchemaFiles will be filled with a list of loaded schema files
      * @return \Neos\Error\Messages\Result
      * @throws Exception\SchemaValidationException

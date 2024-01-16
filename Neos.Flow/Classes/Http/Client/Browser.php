@@ -223,7 +223,7 @@ class Browser implements ClientInterface
     /**
      * Returns the response received after the last request.
      *
-     * @return ResponseInterface The HTTP response or NULL if there wasn't a response yet
+     * @return ResponseInterface|null The HTTP response or NULL if there wasn't a response yet
      * @api
      */
     public function getLastResponse()
@@ -234,7 +234,7 @@ class Browser implements ClientInterface
     /**
      * Returns the last request executed.
      *
-     * @return RequestInterface The HTTP request or NULL if there wasn't a request yet
+     * @return RequestInterface|null The HTTP request or NULL if there wasn't a request yet
      * @api
      */
     public function getLastRequest()

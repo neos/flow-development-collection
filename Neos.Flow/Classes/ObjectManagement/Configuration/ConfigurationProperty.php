@@ -124,7 +124,7 @@ class ConfigurationProperty
     /**
      * Returns the (optional) object configuration which may be defined for properties of type OBJECT
      *
-     * @return Configuration The object configuration or NULL
+     * @return Configuration|null The object configuration or NULL
      */
     public function getObjectConfiguration()
     {

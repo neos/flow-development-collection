@@ -371,7 +371,7 @@ class FormViewHelper extends AbstractFormViewHelper
      * If the "objectName" argument has been specified, this is returned. Otherwise the name attribute of this form.
      * If neither objectName nor name arguments have been set, NULL is returned.
      *
-     * @return string specified Form name or NULL if neither $objectName nor $name arguments have been specified
+     * @return string|null specified Form name or NULL if neither $objectName nor $name arguments have been specified
      */
     protected function getFormObjectName()
     {
