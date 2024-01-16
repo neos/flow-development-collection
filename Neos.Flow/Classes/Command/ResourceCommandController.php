@@ -232,13 +232,13 @@ class ResourceCommandController extends CommandController
         $assetRepository = class_exists(AssetRepository::class) ? $this->objectManager->get(AssetRepository::class) : null;
         /* @var ThumbnailRepository|null $thumbnailRepository */
         $thumbnailRepository = class_exists(ThumbnailRepository::class) ? $this->objectManager->get(ThumbnailRepository::class) : null;
-        $mediaPackagePresent = $assetRepository && $thumbnailRepository && $this->packageManager->isPackageAvailable('Neos.Media');
+        $mediaPackagePresent = $this->packageManager->isPackageAvailable('Neos.Media');
 
         if (count($brokenResources) > 0) {
             foreach ($brokenResources as $key => $resourceIdentifier) {
                 $resource = $this->resourceRepository->findByIdentifier($resourceIdentifier);
                 $brokenResources[$key] = $resource;
-                if ($mediaPackagePresent) {
+                if ($mediaPackagePresent && class_exists(AssetRepository::class) && class_exists(ThumbnailRepository::class)) {
                     $assets = $assetRepository->findByResource($resource);
                     if ($assets !== null) {
                         $relatedAssets[$resource] = $assets;
@@ -280,7 +280,7 @@ class ResourceCommandController extends CommandController
                         ]);
                         $resource->disableLifecycleEvents();
                         $this->resourceRepository->remove($resource);
-                        if ($mediaPackagePresent) {
+                        if ($mediaPackagePresent && class_exists(AssetRepository::class) && class_exists(ThumbnailRepository::class)) {
                             if (isset($relatedAssets[$resource])) {
                                 foreach ($relatedAssets[$resource] as $asset) {
                                     $assetRepository->removeWithoutUsageChecks($asset);

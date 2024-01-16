@@ -421,12 +421,12 @@ class Query implements QueryInterface
      * @return object
      * @api
      */
-    public function logicalAnd($constraint1)
+    public function logicalAnd(mixed $constraint1, mixed ...$constraints)
     {
         if (is_array($constraint1)) {
             $constraints = $constraint1;
         } else {
-            $constraints = func_get_args();
+            $constraints = [$constraint1, ...$constraints];
         }
         return $this->queryBuilder->expr()->andX(...$constraints);
     }
@@ -440,12 +440,12 @@ class Query implements QueryInterface
      * @return object
      * @api
      */
-    public function logicalOr($constraint1)
+    public function logicalOr(mixed $constraint1, mixed ...$constraints)
     {
         if (is_array($constraint1)) {
             $constraints = $constraint1;
         } else {
-            $constraints = func_get_args();
+            $constraints = [$constraint1, ...$constraints];
         }
         return $this->queryBuilder->expr()->orX(...$constraints);
     }

@@ -94,7 +94,7 @@ class PersistenceMagicAspect
      */
     public function generateUuid(JoinPointInterface $joinPoint)
     {
-        /** @var $proxy PersistenceMagicInterface */
+        /** @var PersistenceMagicInterface $proxy */
         $proxy = $joinPoint->getProxy();
         ObjectAccess::setProperty($proxy, 'Persistence_Object_Identifier', Algorithms::generateUUID(), true);
         $this->persistenceManager->registerNewObject($proxy);

@@ -103,7 +103,9 @@ class CompilingEvaluator implements EelEvaluatorInterface
 
         if ($result === false) {
             throw new ParserException(sprintf('Expression "%s" could not be parsed.', $expression), 1344513194);
+            /** @phpstan-ignore-next-line */
         } elseif ($parser->pos !== strlen($expression)) {
+            /** @phpstan-ignore-next-line */
             throw new ParserException(sprintf('Expression "%s" could not be parsed. Error starting at character %d: "%s".', $expression, $parser->pos, substr($expression, $parser->pos)), 1327682383);
         } elseif (!array_key_exists('code', $result)) {
             throw new ParserException(sprintf('Parser error, no code in result %s ', json_encode($result)), 1334491498);

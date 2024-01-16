@@ -94,7 +94,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The absolute value of the given value
      */
-    public function abs($x = 'NAN')
+    public function abs($x = NAN)
     {
         if (!is_numeric($x) && $x !== null) {
             return NAN;

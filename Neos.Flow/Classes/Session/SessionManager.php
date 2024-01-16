@@ -148,6 +148,7 @@ class SessionManager implements SessionManagerInterface
             $this->remoteSessions[$sessionIdentifier] = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
             return $this->remoteSessions[$sessionIdentifier];
         }
+        return null;
     }
 
     /**

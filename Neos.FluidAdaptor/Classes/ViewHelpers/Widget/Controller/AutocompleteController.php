@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Widget\Controller;
  * source code.
  */
 
-use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
@@ -49,7 +48,6 @@ class AutocompleteController extends AbstractWidgetController
     public function autocompleteAction($term)
     {
         $searchProperty = $this->widgetConfiguration['searchProperty'];
-        /** @var $queryResult QueryResultInterface */
         $queryResult = $this->widgetConfiguration['objects'];
         $query = clone $queryResult->getQuery();
         $constraint = $query->getConstraint();

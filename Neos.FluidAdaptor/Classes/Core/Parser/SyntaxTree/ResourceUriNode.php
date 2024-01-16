@@ -46,6 +46,7 @@ class ResourceUriNode extends ViewHelperNode
     {
         $this->viewHelperResolver = $viewHelperResolver;
         $this->uninitializedViewHelper = $this->viewHelperResolver->createViewHelperInstanceFromClassName($this->viewHelperClassName);
+        /** @phpstan-ignore-next-line we use internal api */
         $this->uninitializedViewHelper->setViewHelperNode($this);
         $this->argumentDefinitions = $this->viewHelperResolver->getArgumentDefinitionsForViewHelper($this->uninitializedViewHelper);
     }

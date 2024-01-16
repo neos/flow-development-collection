@@ -8,7 +8,6 @@ namespace Neos\FluidAdaptor\ViewHelpers;
  * the terms of the MIT license.                                          *
  *                                                                        */
 
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\Widget\Exception\RenderingContextNotFoundException;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
@@ -112,11 +111,9 @@ class RenderChildrenViewHelper extends AbstractViewHelper
      */
     protected function getWidgetContext(): WidgetContext
     {
-        /** @var ActionRequest $request */
         $request = $this->controllerContext->getRequest();
-        /** @var $widgetContext WidgetContext */
         $widgetContext = $request->getInternalArgument('__widgetContext');
-        if ($widgetContext === null) {
+        if (!$widgetContext instanceof WidgetContext) {
             throw new WidgetContextNotFoundException('The Request does not contain a widget context! <f:renderChildren> must be called inside a Widget Template.', 1284986120);
         }
 

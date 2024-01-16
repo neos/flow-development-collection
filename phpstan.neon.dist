@@ -1,5 +1,5 @@
 parameters:
-    level: 1
+    level: 2
     paths:
         - Neos.Cache/Classes
         - Neos.Eel/Classes
@@ -21,10 +21,10 @@ parameters:
          - bootstrap-phpstan.php
     excludePaths:
         analyse:
+            - Neos.Flow/.phpstorm.meta.php
             - Neos.Eel/Classes/FlowQuery/FizzleParser.php
             - Neos.Eel/Classes/AbstractParser.php
             - Neos.Eel/Classes/EelParser.php
             - Neos.Eel/Classes/InterpretedEelParser.php
             - Neos.Eel/Classes/CompilingEelParser.php
-            - Neos.Flow/.phpstorm.meta.php
             - Neos.Flow/Classes/Security/Authorization/Privilege/Entity/Doctrine/EntityPrivilegeExpressionEvaluator.php

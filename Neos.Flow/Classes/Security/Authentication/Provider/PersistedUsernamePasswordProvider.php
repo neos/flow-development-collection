@@ -86,7 +86,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
             throw new UnsupportedAuthenticationTokenException(sprintf('This provider cannot authenticate the given token. The token must implement %s', UsernamePasswordTokenInterface::class), 1217339840);
         }
 
-        /** @var $account Account */
+        /** @var Account|null $account */
         $account = null;
 
         if ($authenticationToken->getAuthenticationStatus() !== TokenInterface::AUTHENTICATION_SUCCESSFUL) {

@@ -13,7 +13,6 @@ namespace Neos\Flow\Command;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Mvc\Routing\Route;
 use Neos\Utility\PositionalArraySorter;
 
 /**
@@ -36,7 +35,6 @@ final class MiddlewareCommandController extends CommandController
         $this->outputLine('<b>Currently configured middlewares:</b>');
         $rows = [];
         $index = 0;
-        /** @var Route $route */
         foreach ($orderedChainConfiguration->toArray() as $middlewareName => $middlewareConfiguration) {
             $rows[] = [
                 '#' => ++ $index,

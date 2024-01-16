@@ -48,7 +48,7 @@ class ParameterReflection extends \ReflectionParameter
             return null;
         }
 
-        return is_object($class) && !$class->isBuiltin() ? new ClassReflection($class->getName()) : null;
+        return is_object($class) && $class instanceof \ReflectionNamedType && !$class->isBuiltin() ? new ClassReflection($class->getName()) : null;
     }
 
     /**

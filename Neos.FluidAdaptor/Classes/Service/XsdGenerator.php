@@ -13,7 +13,7 @@ namespace Neos\FluidAdaptor\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Reflection\ClassReflection;
-use Neos\FluidAdaptor\Core\ViewHelper\ArgumentDefinition;
+use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperInterface;
 
 /**
  * XML Schema (XSD) Generator. Will generate an XML schema which can be used for auto-completion
@@ -75,16 +75,16 @@ class XsdGenerator extends AbstractGenerator
         $tagName = $this->getTagNameForClass($className, $viewHelperNamespace);
 
         $xsdElement = $xmlRootNode->addChild('xsd:element');
-        $xsdElement['name'] = $tagName;
+        $xsdElement->offsetSet('name', $tagName);
         $this->docCommentParser->parseDocComment($reflectionClass->getDocComment());
         $this->addDocumentation($this->docCommentParser->getDescription(), $xsdElement);
 
         $xsdComplexType = $xsdElement->addChild('xsd:complexType');
-        $xsdComplexType['mixed'] = 'true';
+        $xsdComplexType->offsetSet('mixed', 'true');
         $xsdSequence = $xsdComplexType->addChild('xsd:sequence');
         $xsdAny = $xsdSequence->addChild('xsd:any');
-        $xsdAny['minOccurs'] = '0';
-        $xsdAny['maxOccurs'] = 'unbounded';
+        $xsdAny->offsetSet('minOccurs', '0');
+        $xsdAny->offsetSet('maxOccurs', 'unbounded');
 
         $this->addAttributes($className, $xsdComplexType);
     }
@@ -99,10 +99,10 @@ class XsdGenerator extends AbstractGenerator
      */
     protected function addAttributes($className, \SimpleXMLElement $xsdElement)
     {
+        /** @var ViewHelperInterface $viewHelper */
         $viewHelper = $this->objectManager->get($className);
         $argumentDefinitions = $viewHelper->prepareArguments();
 
-        /** @var $argumentDefinition ArgumentDefinition */
         foreach ($argumentDefinitions as $argumentDefinition) {
             $xsdAttribute = $xsdElement->addChild('xsd:attribute');
             $xsdAttribute['type'] = 'xsd:string';

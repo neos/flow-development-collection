@@ -418,7 +418,6 @@ class Context
 
         $this->roles['Neos.Flow:AuthenticatedUser'] = $this->policyService->getRole('Neos.Flow:AuthenticatedUser');
 
-        /** @var $token TokenInterface */
         foreach ($authenticatedTokens as $token) {
             $account = $token->getAccount();
             if ($account === null) {
@@ -466,7 +465,6 @@ class Context
             $this->initialize();
         }
 
-        /** @var $token TokenInterface */
         foreach ($this->getAuthenticationTokens() as $token) {
             if ($token->isAuthenticated() === true) {
                 return $token->getAccount();
@@ -666,7 +664,6 @@ class Context
             return;
         }
 
-        /** @var $token TokenInterface */
         foreach ($tokens as $token) {
             if ($this->isTokenActive($token)) {
                 $this->activeTokens[$token->getAuthenticationProviderName()] = $token;
@@ -690,7 +687,6 @@ class Context
             return true;
         }
         $requestPatternsByType = [];
-        /** @var $requestPattern RequestPatternInterface */
         foreach ($token->getRequestPatterns() as $requestPattern) {
             $patternType = TypeHandling::getTypeForValue($requestPattern);
             if (isset($requestPatternsByType[$patternType]) && $requestPatternsByType[$patternType] === true) {
@@ -706,15 +702,14 @@ class Context
      * If a specific type is found in the session this token replaces the one (of the same type)
      * given by the manager.
      *
-     * @param array $managerTokens Array of tokens provided by the authentication manager
-     * @param array $sessionTokens Array of tokens restored from the session
+     * @param array<TokenInterface> $managerTokens Array of tokens provided by the authentication manager
+     * @param array<TokenInterface> $sessionTokens Array of tokens restored from the session
      * @return array Array of Authentication\TokenInterface objects
      */
     protected function mergeTokens(array $managerTokens, array $sessionTokens)
     {
         $resultTokens = [];
 
-        /** @var $managerToken TokenInterface */
         foreach ($managerTokens as $managerToken) {
             $resultTokens[$managerToken->getAuthenticationProviderName()] = $this->findBestMatchingToken($managerToken, $sessionTokens);
         }
@@ -760,7 +755,7 @@ class Context
     /**
      * Updates the token credentials for all tokens in the given array.
      *
-     * @param array $tokens Array of authentication tokens the credentials should be updated for
+     * @param array<TokenInterface> $tokens Array of authentication tokens the credentials should be updated for
      * @return void
      */
     protected function updateTokens(array $tokens)
@@ -772,7 +767,6 @@ class Context
             return;
         }
 
-        /** @var $token TokenInterface */
         foreach ($tokens as $token) {
             $token->updateCredentials($this->request);
         }

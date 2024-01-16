@@ -110,7 +110,7 @@ class CacheItem implements CacheItemInterface
 
     /**
      * @param \DateInterval|int|null $time
-     * @return CacheItem|static
+     * @return static
      */
     public function expiresAfter(int|\DateInterval|null $time): static
     {

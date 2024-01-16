@@ -138,7 +138,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      */
     protected function hasMappingErrorOccurred(): bool
     {
-        /** @var $validationResults Result */
         $validationResults = $this->getRequest()->getInternalArgument('__submittedArgumentValidationResults');
         return ($validationResults instanceof Result && $validationResults->hasErrors());
     }
@@ -267,7 +266,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      */
     protected function getMappingResultsForProperty(): Result
     {
-        /** @var $validationResults Result */
         $validationResults = $this->getRequest()->getInternalArgument('__submittedArgumentValidationResults');
         if (!$validationResults instanceof Result) {
             return new Result();
