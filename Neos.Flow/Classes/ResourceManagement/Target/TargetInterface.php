@@ -16,7 +16,6 @@ namespace Neos\Flow\ResourceManagement\Target;
  */
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
-use Neos\Flow\ResourceManagement\ResourceMetaDataInterface;
 
 interface TargetInterface
 {
@@ -71,7 +70,7 @@ interface TargetInterface
     public function getPublicPersistentResourceUri(PersistentResource $resource);
 
     /**
-     * @param \Closure(int $iteration, ResourceMetaDataInterface $object): void $callback Function called after each resource publishing
+     * @param \Closure(int $iteration): void $callback Function called after each resource publishing
      */
     public function onPublish(\Closure $callback): void;
 }

@@ -194,7 +194,7 @@ class FileSystemTargetTest extends UnitTestCase
 
         $oneResourcePublished = false;
 
-        $_publicationCallback = function ($i, $o) use (&$oneResourcePublished) {
+        $_publicationCallback = function ($i) use (&$oneResourcePublished) {
             $oneResourcePublished = true;
         };
 

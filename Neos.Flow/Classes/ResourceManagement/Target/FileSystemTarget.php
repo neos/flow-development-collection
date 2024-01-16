@@ -45,7 +45,7 @@ class FileSystemTarget implements TargetInterface
     protected $name;
 
     /**
-     * @var list<\Closure(int $iteration, ResourceMetaDataInterface $object): void>
+     * @var list<\Closure(int $iteration): void>
      */
     protected $callbacks = [];
 
@@ -171,17 +171,17 @@ class FileSystemTarget implements TargetInterface
     }
 
     /**
-     * @param \Closure(int $iteration, ResourceMetaDataInterface $object): void $callback Function called after each resource publishing
+     * @param \Closure(int $iteration): void $callback Function called after each resource publishing
      */
     public function onPublish(\Closure $callback): void
     {
         $this->callbacks[] = $callback;
     }
 
-    protected function invokeOnPublishCallbacks(int $iteration, ResourceMetaDataInterface $object): void
+    protected function invokeOnPublishCallbacks(int $iteration): void
     {
         foreach ($this->callbacks as $callback) {
-            $callback($iteration, $object);
+            $callback($iteration);
         }
     }
 
@@ -226,7 +226,7 @@ class FileSystemTarget implements TargetInterface
             $this->publishFile($sourceStream, $this->getRelativePublicationPathAndFilename($object));
             fclose($sourceStream);
 
-            $this->invokeOnPublishCallbacks($iteration, $object);
+            $this->invokeOnPublishCallbacks($iteration);
             $iteration++;
         }
     }
