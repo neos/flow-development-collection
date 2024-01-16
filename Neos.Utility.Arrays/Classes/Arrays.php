@@ -203,7 +203,14 @@ abstract class Arrays
     public static function getValueByPath(array $array, $path)
     {
         if (is_string($path)) {
-            $path = explode('.', $path);
+            if (strpos($path, '\\.') === false) {
+                $path = explode('.', $path);
+            } else {
+                // the magic is that this selects all backslashes and its following char and excludes these matches from being used, for what was not matched it checks for simple dots
+                $pattern = '#(?:\\\.)(*SKIP)(*FAIL)|\\.#';
+                $split = preg_split($pattern, $path);
+                $path = array_map('stripslashes', $split);
+            }
         } elseif (!is_array($path)) {
             throw new \InvalidArgumentException('getValueByPath() expects $path to be string or array, "' . gettype($path) . '" given.', 1304950007);
         }

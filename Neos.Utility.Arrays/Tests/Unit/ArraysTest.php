@@ -83,6 +83,31 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
     /**
      * @test
      */
+    public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPathIfPathIsStringWithEscapedDots()
+    {
+        $path = 'Foo.Bar\.Baz.2';
+        $array = ['Foo' => ['Bar.Baz' => [2 => 'the value']]];
+        $expectedResult = 'the value';
+        $actualResult = Arrays::getValueByPath($array, $path);
+        self::assertSame($expectedResult, $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPathIfPathIsStringWithBackslashes()
+    {
+        $path = 'Foo.Bar\\\\.Baz.2';
+        $array = ['Foo' => ['Bar\\' => ['Baz' => [2 => 'the value']]]];
+        $expectedResult = 'the value';
+        $actualResult = Arrays::getValueByPath($array, $path);
+        self::assertSame($expectedResult, $actualResult);
+    }
+    
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
     public function getValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
         $this->expectException(\InvalidArgumentException::class);
