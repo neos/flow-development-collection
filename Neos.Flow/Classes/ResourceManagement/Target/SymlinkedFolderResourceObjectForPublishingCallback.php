@@ -7,12 +7,21 @@ namespace Neos\Flow\ResourceManagement\Target;
 use Neos\Flow\ResourceManagement\ResourceMetaDataInterface;
 
 /**
- * @internal only for the callback {@see TargetInterface::onPublish()}
+ * @internal only to satisfy the callback {@see TargetInterface::onPublish()}
+ * Note that the callback is only invoked once per resource public directory of each package, instead of the actual contents
  */
-class SymlinkedFolderResourceObject implements ResourceMetaDataInterface
+class SymlinkedFolderResourceObjectForPublishingCallback implements ResourceMetaDataInterface
 {
-    public function __construct(private readonly string $path)
+    private function __construct(private readonly string $path)
     {
+    }
+
+    /**
+     * @internal
+     */
+    public static function createForPublishingCallback(string $path)
+    {
+        return new self($path);
     }
 
     public function setFilename($filename)

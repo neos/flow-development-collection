@@ -41,7 +41,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget
             $iteration = 0;
             foreach ($storage->getPublicResourcePaths() as $packageKey => $path) {
                 $this->publishDirectory($path, $packageKey);
-                $this->invokeOnPublishCallbacks($iteration, new SymlinkedFolderResourceObject($path));
+                $this->invokeOnPublishCallbacks($iteration, SymlinkedFolderResourceObjectForPublishingCallback::createForPublishingCallback($path));
                 $iteration++;
             }
         } else {
