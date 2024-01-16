@@ -112,7 +112,7 @@ class Router implements RouterInterface
      * route could be found.
      *
      * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing RouteParameters
-     * @return array|null The results of the matching route or NULL if no route matched
+     * @return array The results of the matching route
      * @throws InvalidRouteSetupException
      * @throws NoMatchingRouteException if no route matched the given $routeContext
      * @throws InvalidRoutePartValueException
