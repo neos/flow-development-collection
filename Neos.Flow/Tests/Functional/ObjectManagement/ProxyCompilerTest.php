@@ -11,6 +11,8 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * source code.
  */
 
+use Neos\Flow\Annotations\Around;
+use Neos\Flow\Annotations\Session;
 use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
 use Neos\Flow\ObjectManagement\Proxy\ProxyClass;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
@@ -23,6 +25,7 @@ use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithPrivateConstru
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\BackedEnumWithMethod;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassK;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SampleMethodAttribute;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -86,6 +89,36 @@ class ProxyCompilerTest extends FunctionalTestCase
         $method = $class->getMethod('setSomeProperty');
 
         self::assertEquals(['autoStart=true'], $method->getTagValues('session'));
+    }
+
+    /**
+     * @test
+     */
+    public function proxiedMethodsStillContainMethodAttributesFromOriginalClass(): void
+    {
+        $class = new ClassReflection(Fixtures\ClassWithPhpAttributes::class);
+        $actualAttributes = [];
+        foreach ($class->getMethod('methodWithAttributes')->getAttributes() as $attribute) {
+            $actualAttributes[] = [
+                'name' => $attribute->getName(),
+                'arguments' => $attribute->getArguments(),
+            ];
+        }
+        $expectedAttributes = [
+            [
+                'name' => Around::class,
+                'arguments' => ['pointcutExpression' => 'method(somethingImpossible())']
+            ],
+            [
+                'name' => Session::class,
+                'arguments' => ['autoStart' => false]
+            ],
+            [
+                'name' => SampleMethodAttribute::class,
+                'arguments' => ['value without name']
+            ],
+        ];
+        self::assertEquals($expectedAttributes, $actualAttributes);
     }
 
     /**
