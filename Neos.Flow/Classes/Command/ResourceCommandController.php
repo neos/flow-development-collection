@@ -98,6 +98,7 @@ class ResourceCommandController extends CommandController
                     /** @var CollectionInterface $collection */
                     $this->outputLine('Publishing resources of collection "%s"', [$collection->getName()]);
                     $target = $collection->getTarget();
+                    /** @phpstan-ignore-next-line will be fixed via https://github.com/neos/flow-development-collection/pull/3229 */
                     $target->publishCollection($collection, function ($iteration) {
                         $this->clearState($iteration);
                     });

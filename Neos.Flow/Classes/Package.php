@@ -73,7 +73,6 @@ class Package extends BasePackage
                 if (!$request instanceof Mvc\ActionRequest || SecurityHelper::hasSafeMethod($request->getHttpRequest()) !== true) {
                     $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();
                 } elseif (SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
-                    /** @phpstan-ignore-next-line the persistence manager interface doesn't specify this method */
                     $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAllowedObjects();
                 }
             }

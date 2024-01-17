@@ -153,6 +153,7 @@ class PersistenceMagicAspect
      */
     public function cloneObject(JoinPointInterface $joinPoint)
     {
+        /** @phpstan-ignore-next-line will be removed with https://github.com/neos/flow-development-collection/pull/3223 */
         $joinPoint->getProxy()->Flow_Persistence_clone = true;
     }
 }

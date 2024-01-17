@@ -248,6 +248,7 @@ class ReflectionService
         $this->statusCache = $cache;
         $backend = $this->statusCache->getBackend();
         if (is_callable(['initializeObject', $backend])) {
+            /** @phpstan-ignore-next-line will be refactored with neos 9 */
             $backend->initializeObject();
         }
     }
@@ -1282,12 +1283,10 @@ class ReflectionService
             $this->classReflectionData[$className][self::DATA_CLASS_FINAL] = true;
         }
 
-        /** @var $parentClass ClassReflection */
         foreach ($this->getParentClasses($class) as $parentClass) {
             $this->addParentClass($className, $parentClass);
         }
 
-        /** @var $interface ClassReflection */
         foreach ($class->getInterfaces() as $interface) {
             $this->addImplementedInterface($className, $interface);
         }
@@ -1308,7 +1307,6 @@ class ReflectionService
             }
         }
 
-        /** @var $property PropertyReflection */
         foreach ($class->getProperties() as $property) {
             $this->reflectClassProperty($className, $property);
         }
@@ -1877,6 +1875,7 @@ class ReflectionService
             $parameterInformation[self::DATA_PARAMETER_ALLOWS_NULL] = true;
         }
 
+        /** @var \ReflectionNamedType|\ReflectionUnionType|\ReflectionIntersectionType|null $parameterType */
         $parameterType = $parameter->getType();
         if ($parameterType !== null) {
             if ($parameterType instanceof \ReflectionUnionType) {
@@ -1940,7 +1939,6 @@ class ReflectionService
     protected function forgetChangedClasses()
     {
         $frozenNamespaces = [];
-        /** @var $package Package */
         foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
             if ($this->packageManager->isPackageFrozen($packageKey)) {
                 $frozenNamespaces = array_merge($frozenNamespaces, $package->getNamespaces());
@@ -2259,7 +2257,9 @@ class ReflectionService
         $this->reflectionDataRuntimeCache->set('__classNames', $classNames);
         $this->reflectionDataRuntimeCache->set('__annotatedClasses', $this->annotatedClasses);
 
+        /** @phpstan-ignore-next-line will be refactored with neos 9 */
         $this->reflectionDataRuntimeCache->getBackend()->freeze();
+        /** @phpstan-ignore-next-line will be refactored with neos 9 */
         $this->classSchemataRuntimeCache->getBackend()->freeze();
 
         $this->log(sprintf('Built and froze reflection runtime caches (%s classes).', count($this->classReflectionData)), LogLevel::INFO);
@@ -2343,6 +2343,7 @@ class ReflectionService
      */
     protected function hasFrozenCacheInProduction()
     {
+        /** @phpstan-ignore-next-line will be refactored with neos 9 */
         return $this->environment->getContext()->isProduction() && $this->reflectionDataRuntimeCache->getBackend()->isFrozen();
     }
 }

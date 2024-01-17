@@ -73,7 +73,7 @@ class OperationResolver implements OperationResolverInterface
 
         $reflectionService = $objectManager->get(ReflectionService::class);
         $operationClassNames = $reflectionService->getAllImplementationClassNamesForInterface(OperationInterface::class);
-        /** @var $operationClassName OperationInterface */
+        /** @var OperationInterface $operationClassName */
         foreach ($operationClassNames as $operationClassName) {
             $shortOperationName = $operationClassName::getShortName();
             $operationPriority = $operationClassName::getPriority();

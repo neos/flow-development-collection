@@ -164,6 +164,7 @@ class Collection implements CollectionInterface
                 }
             }
         } else {
+            /** @phpstan-ignore-next-line will be fixed via https://github.com/neos/flow-development-collection/pull/3229 */
             yield from $this->storage->getObjectsByCollection($this, $callback);
         }
 

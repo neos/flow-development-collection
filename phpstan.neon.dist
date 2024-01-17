@@ -1,5 +1,9 @@
 parameters:
     level: 2
+    ignoreErrors:
+        # https://github.com/phpstan/phpstan/issues/9467 will be fixed with flow 9
+        - '#^Method Neos\\Flow\\Persistence\\QueryInterface\:\:logicalOr\(\) invoked with \d parameters, 1 required\.$#'
+        - '#^Method Neos\\Flow\\Persistence\\QueryInterface\:\:logicalAnd\(\) invoked with \d parameters, 1 required\.$#'
     paths:
         - Neos.Cache/Classes
         - Neos.Eel/Classes

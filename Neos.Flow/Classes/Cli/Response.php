@@ -47,12 +47,12 @@ class Response
     private $content = '';
 
     /**
-     * @var
+     * @var boolean|int
      */
     private $colorSupport;
 
     /**
-     * @var
+     * @var int
      */
     private $outputFormat = self::OUTPUTFORMAT_STYLED;
 
@@ -118,6 +118,7 @@ class Response
     /**
      * Sets color support / styled output to yes, no or auto detection
      *
+     * @deprecated and will be removed https://github.com/neos/flow-development-collection/pull/3262
      * @param boolean $colorSupport true, false or NULL (= autodetection)
      * @return void
      */
