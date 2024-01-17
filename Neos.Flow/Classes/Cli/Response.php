@@ -47,11 +47,6 @@ class Response
     private $content = '';
 
     /**
-     * @var bool|null
-     */
-    private $colorSupport;
-
-    /**
      * @var int
      */
     private $outputFormat = self::OUTPUTFORMAT_STYLED;
@@ -116,17 +111,6 @@ class Response
     }
 
     /**
-     * Sets color support / styled output to yes, no or auto detection
-     *
-     * @param boolean|null $colorSupport true, false or NULL (= autodetection)
-     * @return void
-     */
-    public function setColorSupport(bool|null $colorSupport): void
-    {
-        $this->colorSupport = $colorSupport;
-    }
-
-    /**
      * Tells if the response content should be styled on send().
      *
      * Regardless of this setting content will only be styled with output format
@@ -136,9 +120,6 @@ class Response
      */
     public function hasColorSupport(): bool
     {
-        if ($this->colorSupport !== null) {
-            return $this->colorSupport;
-        }
         if (DIRECTORY_SEPARATOR !== '\\') {
             return function_exists('posix_isatty') && posix_isatty(STDOUT);
         }
