@@ -125,7 +125,7 @@ class ProxyMethodGenerator extends MethodGenerator
             . $this->getName() . '(';
 
         $output .= implode(', ', array_map(
-            static fn(ParameterGenerator $parameter): string => $parameter->generate(),
+            static fn (ParameterGenerator $parameter): string => $parameter->generate(),
             $this->getParameters()
         ));
 
@@ -329,7 +329,8 @@ class ProxyMethodGenerator extends MethodGenerator
                 $this->getFullOriginalClassName(),
                 $methodName,
                 get_debug_type($value)
-            ), 1705501433
+            ),
+            1705501433
         );
     }
 }

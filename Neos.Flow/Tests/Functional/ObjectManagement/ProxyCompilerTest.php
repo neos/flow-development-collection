@@ -25,7 +25,6 @@ use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithPrivateConstru
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\BackedEnumWithMethod;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassK;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SampleAttribute;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SampleMethodAttribute;
 use Neos\Flow\Tests\FunctionalTestCase;
 
