@@ -21,4 +21,12 @@ use Neos\Flow\Annotations as Flow;
 #[SampleAttribute(ClassWithPhpAttributes::class, ['foo' => 'bar'])]
 class ClassWithPhpAttributes
 {
+    /**
+     * @return void
+     */
+    #[Flow\Around(pointcutExpression: "method(somethingImpossible())")]
+    #[Flow\Session(autoStart: false)]
+    public function methodWithAttributes(): void
+    {
+    }
 }
