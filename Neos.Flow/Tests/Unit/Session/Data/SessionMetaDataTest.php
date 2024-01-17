@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Session\Data;
  * source code.
  */
 
-use Neos\Flow\Session\Data\SessionDataStore;
 use Neos\Flow\Session\Data\SessionMetaData;
 use Neos\Flow\Tests\UnitTestCase;
 

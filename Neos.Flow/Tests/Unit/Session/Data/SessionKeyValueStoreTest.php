@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Session\Data;
  */
 
 use Neos\Cache\Frontend\StringFrontend;
-use Neos\Flow\Session\Data\SessionDataStore;
+use Neos\Flow\Session\Data\SessionKeyValueStore;
 use Neos\Flow\Session\Data\SessionMetaData;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,11 +20,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * Unit tests for the Flow SessionDataStore implementation
  */
-class SessionDataStoreTest extends UnitTestCase
+class SessionKeyValueStoreTest extends UnitTestCase
 {
     protected StringFrontend|MockObject $mockCache;
 
-    protected SessionDataStore $store;
+    protected SessionKeyValueStore $store;
 
     /**
      * @return void
@@ -32,7 +32,7 @@ class SessionDataStoreTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->mockCache = $this->createMock(StringFrontend::class);
-        $this->store = new SessionDataStore();
+        $this->store = new SessionKeyValueStore();
         $this->store->injectCache($this->mockCache);
     }
 

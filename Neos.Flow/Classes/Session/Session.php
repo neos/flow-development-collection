@@ -17,7 +17,7 @@ use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguratio
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Session\Data\SessionDataStore;
+use Neos\Flow\Session\Data\SessionKeyValueStore;
 use Neos\Flow\Session\Data\SessionMetaData;
 use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Flow\Http\Cookie;
@@ -70,7 +70,7 @@ class Session implements CookieEnabledInterface
      * Storage cache for this session
      *
      * @Flow\Inject
-     * @var SessionDataStore
+     * @var SessionKeyValueStore
      */
     protected $sessionDataStore;
 

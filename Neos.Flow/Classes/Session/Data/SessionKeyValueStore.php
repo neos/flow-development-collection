@@ -17,7 +17,10 @@ use Neos\Cache\Backend\IterableBackendInterface;
 use Neos\Cache\Exception\InvalidBackendException;
 use Neos\Cache\Frontend\StringFrontend;
 
-class SessionDataStore
+/**
+ * @internal
+ */
+class SessionKeyValueStore
 {
     protected StringFrontend $cache;
 

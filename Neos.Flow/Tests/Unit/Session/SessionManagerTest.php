@@ -15,7 +15,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Http\RequestHandler;
-use Neos\Flow\Session\Data\SessionDataStore;
+use Neos\Flow\Session\Data\SessionKeyValueStore;
 use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
@@ -206,7 +206,7 @@ class SessionManagerTest extends UnitTestCase
         self::assertLessThanOrEqual(5, $sessionManager->collectGarbage());
     }
 
-    protected function createSessionDataStore(): SessionDataStore
+    protected function createSessionDataStore(): SessionKeyValueStore
     {
         $backend = new FileBackend(new EnvironmentConfiguration('Session Testing', 'vfs://Foo/', PHP_MAXPATHLEN));
         $cache = new StringFrontend('Storage', $backend);
@@ -214,7 +214,7 @@ class SessionManagerTest extends UnitTestCase
         $backend->setCache($cache);
         $cache->flush();
 
-        $store = new SessionDataStore();
+        $store = new SessionKeyValueStore();
         $store->injectCache($cache);
         return $store;
     }

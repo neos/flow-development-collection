@@ -466,7 +466,7 @@ Neos\Flow\Session\SessionInterface:
   factoryObjectName: Neos\Flow\Session\SessionManagerInterface
   factoryMethodName: getCurrentSession
 
-Neos\Flow\Session\Data\SessionDataStore:
+Neos\Flow\Session\Data\SessionKeyValueStore:
   properties:
     cache:
       object:

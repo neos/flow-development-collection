@@ -19,6 +19,9 @@ use Neos\Cache\Frontend\VariableFrontend;
 use Neos\FLow\Annotations as Flow;
 use Neos\Flow\Session\Exception\InvalidDataInSessionDataStoreException;
 
+/**
+ * @internal
+ */
 class SessionMetaDataStore
 {
     protected VariableFrontend $cache;

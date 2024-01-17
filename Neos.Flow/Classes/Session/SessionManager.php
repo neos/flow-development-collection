@@ -14,7 +14,7 @@ namespace Neos\Flow\Session;
 use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Cookie;
-use Neos\Flow\Session\Data\SessionDataStore;
+use Neos\Flow\Session\Data\SessionKeyValueStore;
 use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Flow\Utility\Algorithms;
 use Psr\Log\LoggerInterface;
@@ -48,7 +48,7 @@ class SessionManager implements SessionManagerInterface
      * Storage for sessions data
      *
      * @Flow\Inject
-     * @var SessionDataStore
+     * @var SessionKeyValueStore
      */
     protected $sessionDataStore;
 
