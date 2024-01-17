@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Session\Data;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Session\Data\SessionKeyValueStore;
 use Neos\Flow\Session\Data\SessionMetaData;
+use Neos\Flow\Session\Data\StorageIdentifier;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -51,9 +52,9 @@ class SessionKeyValueStoreTest extends UnitTestCase
         $sessionId = 'ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb';
         $storageId = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
 
-        $sessionMetaData = new SessionMetaData($sessionId, $storageId, time(), []);
+        $sessionMetaData = new SessionMetaData($sessionId, StorageIdentifier::createFromString($storageId), time(), []);
         $this->mockCache->expects($this->once())->method('has')->with($storageId . md5($key))->willReturn($result);
-        $this->assertEquals($result, $this->store->has($sessionMetaData, $key));
+        $this->assertEquals($result, $this->store->has($sessionMetaData->storageIdentifier, $key));
     }
 
     /**
@@ -66,9 +67,9 @@ class SessionKeyValueStoreTest extends UnitTestCase
         $key = 'theKey';
         $value = 'theValue';
 
-        $sessionMetaData = new SessionMetaData($sessionId, $storageId, time(), []);
+        $sessionMetaData = new SessionMetaData($sessionId, StorageIdentifier::createFromString($storageId), time(), []);
         $this->mockCache->expects($this->once())->method('get')->with($storageId . md5($key))->willReturn(serialize($value));
-        $this->assertEquals($value, $this->store->retrieve($sessionMetaData, $key));
+        $this->assertEquals($value, $this->store->retrieve($sessionMetaData->storageIdentifier, $key));
     }
 
     /**
@@ -81,9 +82,9 @@ class SessionKeyValueStoreTest extends UnitTestCase
         $key = 'foo';
         $value = 'bar';
 
-        $sessionMetaData = new SessionMetaData($sessionId, $storageId, time(), []);
+        $sessionMetaData = new SessionMetaData($sessionId, StorageIdentifier::createFromString($storageId), time(), []);
         $this->mockCache->expects($this->once())->method('set')->with($storageId . md5($key), serialize($value), [$storageId], 0);
-        $this->store->store($sessionMetaData, $key, $value);
+        $this->store->store($sessionMetaData->storageIdentifier, $key, $value);
     }
 
     /**
@@ -94,9 +95,9 @@ class SessionKeyValueStoreTest extends UnitTestCase
         $sessionId = 'ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb';
         $storageId = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
 
-        $sessionMetaData = new SessionMetaData($sessionId, $storageId, time(), []);
+        $sessionMetaData = new SessionMetaData($sessionId, StorageIdentifier::createFromString($storageId), time(), []);
         $this->mockCache->expects($this->once())->method('flushByTag')->with($storageId);
-        $this->store->remove($sessionMetaData);
+        $this->store->remove($sessionMetaData->storageIdentifier);
     }
 
     /**
@@ -110,12 +111,12 @@ class SessionKeyValueStoreTest extends UnitTestCase
         $key = 'theKey';
         $value = 'theValue';
 
-        $sessionMetaData = new SessionMetaData($sessionId, $storageId, time(), []);
+        $sessionMetaData = new SessionMetaData($sessionId, StorageIdentifier::createFromString($storageId), time(), []);
         $this->mockCache->expects($this->once())->method('get')->with($storageId . md5($key))->willReturn(serialize($value));
         $this->mockCache->expects($this->never())->method('set');
 
-        $this->store->retrieve($sessionMetaData, $key);
-        $this->store->store($sessionMetaData, $key, $value);
+        $this->store->retrieve($sessionMetaData->storageIdentifier, $key);
+        $this->store->store($sessionMetaData->storageIdentifier, $key, $value);
     }
 
     /**
@@ -129,11 +130,11 @@ class SessionKeyValueStoreTest extends UnitTestCase
         $key = 'theKey';
         $value = 'theValue';
 
-        $sessionMetaData = new SessionMetaData($sessionId, $storageId, time(), []);
+        $sessionMetaData = new SessionMetaData($sessionId, StorageIdentifier::createFromString($storageId), time(), []);
         $this->mockCache->expects($this->once())->method('set')->with($storageId . md5($key), serialize($value), [$storageId], 0);
 
-        $this->store->store($sessionMetaData, $key, $value);
-        $this->store->store($sessionMetaData, $key, $value);
+        $this->store->store($sessionMetaData->storageIdentifier, $key, $value);
+        $this->store->store($sessionMetaData->storageIdentifier, $key, $value);
     }
 
     /**
@@ -147,12 +148,12 @@ class SessionKeyValueStoreTest extends UnitTestCase
         $key = 'theKey';
         $value = 'theValue';
 
-        $sessionMetaData = new SessionMetaData($sessionId, $storageId, time(), []);
+        $sessionMetaData = new SessionMetaData($sessionId, StorageIdentifier::createFromString($storageId), time(), []);
         $this->mockCache->expects($this->once())->method('get')->with($storageId . md5($key))->willReturn(serialize($value));
         $this->mockCache->expects($this->once())->method('set')->with($storageId . md5($key), serialize('otherValue'), [$storageId], 0);
 
-        $this->store->retrieve($sessionMetaData, $key);
-        $this->store->store($sessionMetaData, $key, 'otherValue');
+        $this->store->retrieve($sessionMetaData->storageIdentifier, $key);
+        $this->store->store($sessionMetaData->storageIdentifier, $key, 'otherValue');
     }
 
     /**
@@ -166,13 +167,13 @@ class SessionKeyValueStoreTest extends UnitTestCase
         $key = 'theKey';
         $value = 'theValue';
 
-        $sessionMetaData = new SessionMetaData($sessionId, $storageId, time(), []);
+        $sessionMetaData = new SessionMetaData($sessionId, StorageIdentifier::createFromString($storageId), time(), []);
         $this->mockCache->expects($this->exactly(2))->method('get')->with($storageId . md5($key))->willReturnOnConsecutiveCalls(serialize($value), false);
         $this->mockCache->expects($this->once())->method('flushByTag')->with($storageId);
         $this->mockCache->expects($this->once())->method('set')->with($storageId . md5($key), serialize($value), [$storageId], 0);
 
-        $this->store->retrieve($sessionMetaData, $key);
-        $this->store->remove($sessionMetaData);
-        $this->store->store($sessionMetaData, $key, $value);
+        $this->store->retrieve($sessionMetaData->storageIdentifier, $key);
+        $this->store->remove($sessionMetaData->storageIdentifier);
+        $this->store->store($sessionMetaData->storageIdentifier, $key, $value);
     }
 }

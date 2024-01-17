@@ -22,6 +22,7 @@ use Neos\Flow\Session\Data\SessionMetaData;
 use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Flow\Http\Cookie;
 use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Flow\Session\Data\StorageIdentifier;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -72,7 +73,7 @@ class Session implements CookieEnabledInterface
      * @Flow\Inject
      * @var SessionKeyValueStore
      */
-    protected $sessionDataStore;
+    protected $sessionKeyValueStore;
 
     /**
      * @var string
@@ -167,7 +168,7 @@ class Session implements CookieEnabledInterface
         $session = new static();
         $session->sessionMetaData = new SessionMetaData(
             $sessionIdentifier,
-            $storageIdentifier,
+            StorageIdentifier::createFromString($storageIdentifier),
             $lastActivityTimestamp,
             $tags
         );
@@ -182,12 +183,11 @@ class Session implements CookieEnabledInterface
      */
     public static function createRemoteFromSessionMetaData(SessionMetaData $sessionMetaData): self
     {
-        return self::createRemote(
-            $sessionMetaData->sessionIdentifier,
-            $sessionMetaData->storageIdentifier,
-            $sessionMetaData->lastActivityTimestamp,
-            $sessionMetaData->tags
-        );
+        $session = new static();
+        $session->sessionMetaData = $sessionMetaData;
+        $session->started = true;
+        $session->remote = true;
+        return $session;
     }
 
     /**
@@ -202,7 +202,7 @@ class Session implements CookieEnabledInterface
         $session = new static();
         $session->sessionMetaData = new SessionMetaData(
             $sessionCookie->getValue(),
-            $storageIdentifier,
+            StorageIdentifier::createFromString($storageIdentifier),
             $lastActivityTimestamp,
             $tags
         );
@@ -331,7 +331,7 @@ class Session implements CookieEnabledInterface
         if ($this->started === false && $this->canBeResumed()) {
             $this->started = true;
 
-            $sessionObjects = $this->sessionDataStore->retrieve($this->sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY);
+            $sessionObjects = $this->sessionKeyValueStore->retrieve($this->sessionMetaData->storageIdentifier, self::FLOW_OBJECT_STORAGE_KEY);
             if (is_array($sessionObjects)) {
                 foreach ($sessionObjects as $object) {
                     if ($object instanceof ProxyInterface) {
@@ -345,7 +345,7 @@ class Session implements CookieEnabledInterface
             } else {
                 // Fallback for some malformed session data, if it is no array but something else.
                 // In this case, we reset all session objects (graceful degradation).
-                $this->sessionDataStore->store($this->sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY, []);
+                $this->sessionKeyValueStore->store($this->sessionMetaData->storageIdentifier, self::FLOW_OBJECT_STORAGE_KEY, []);
             }
 
             $lastActivitySecondsAgo = ($this->now - $this->sessionMetaData->lastActivityTimestamp);
@@ -408,7 +408,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to get session data, but the session has not been started yet.', 1351162255);
         }
-        return $this->sessionDataStore->retrieve($this->sessionMetaData, $key);
+        return $this->sessionKeyValueStore->retrieve($this->sessionMetaData->storageIdentifier, $key);
     }
 
     /**
@@ -423,7 +423,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to check a session data entry, but the session has not been started yet.', 1352488661);
         }
-        return $this->sessionDataStore->has($this->sessionMetaData, $key);
+        return $this->sessionKeyValueStore->has($this->sessionMetaData->storageIdentifier, $key);
     }
 
     /**
@@ -444,7 +444,7 @@ class Session implements CookieEnabledInterface
         if (is_resource($data)) {
             throw new Exception\DataNotSerializableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1351162262);
         }
-        $this->sessionDataStore->store($this->sessionMetaData, $key, $data);
+        $this->sessionKeyValueStore->store($this->sessionMetaData->storageIdentifier, $key, $data);
     }
 
     /**
@@ -571,7 +571,7 @@ class Session implements CookieEnabledInterface
         }
 
         $this->sessionMetaDataStore->remove($this->sessionMetaData);
-        $this->sessionDataStore->remove($this->sessionMetaData);
+        $this->sessionKeyValueStore->remove($this->sessionMetaData->storageIdentifier);
         $this->sessionMetaData = null;
         $this->started = false;
     }
@@ -592,7 +592,7 @@ class Session implements CookieEnabledInterface
     {
         if ($this->started === true && $this->remote === false) {
             if ($this->sessionMetaDataStore->has($this->sessionMetaData->sessionIdentifier)) {
-                $this->sessionDataStore->store($this->sessionMetaData, self::FLOW_OBJECT_STORAGE_KEY, $this->objectManager->getSessionInstances() ?? []);
+                $this->sessionKeyValueStore->store($this->sessionMetaData->storageIdentifier, self::FLOW_OBJECT_STORAGE_KEY, $this->objectManager->getSessionInstances() ?? []);
                 $this->writeSessionMetaDataCacheEntry();
             }
             $this->started = false;

@@ -23,13 +23,13 @@ class SessionMetaData
 {
     /**
      * @param string $sessionIdentifier
-     * @param string $storageIdentifier
+     * @param StorageIdentifier $storageIdentifier
      * @param int $lastActivityTimestamp
      * @param string[] $tags
      */
     public function __construct(
         public /** readonly */ string $sessionIdentifier,
-        public /** readonly */ string $storageIdentifier,
+        public /** readonly */ StorageIdentifier $storageIdentifier,
         public /** readonly */ int $lastActivityTimestamp,
         public /** readonly */ array $tags
     ) {
@@ -39,7 +39,7 @@ class SessionMetaData
     {
         return new self(
             Algorithms::generateRandomString(32),
-            Algorithms::generateUUID(),
+            StorageIdentifier::createRandom(),
             $timestamp,
             []
         );
@@ -55,7 +55,7 @@ class SessionMetaData
     {
         return new self(
             $sessionIdentifier,
-            $data['storageIdentifier'],
+            StorageIdentifier::createFromString($data['storageIdentifier']),
             $data['lastActivityTimestamp'],
             $data['tags']
         );
@@ -119,7 +119,7 @@ class SessionMetaData
             return false;
         }
 
-        if ($this->storageIdentifier !== $other->storageIdentifier) {
+        if ($this->storageIdentifier->equals($other->storageIdentifier) === false) {
             return false;
         }
 

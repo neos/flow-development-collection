@@ -50,7 +50,7 @@ class SessionManager implements SessionManagerInterface
      * @Flow\Inject
      * @var SessionKeyValueStore
      */
-    protected $sessionDataStore;
+    protected $sessionKeyValueStore;
 
     /**
      * @var float
@@ -108,7 +108,7 @@ class SessionManager implements SessionManagerInterface
             return false;
         }
 
-        $this->currentSession = Session::createFromCookieAndSessionInformation($cookie, $sessionMetaData->storageIdentifier, $sessionMetaData->lastActivityTimestamp, $sessionMetaData->tags);
+        $this->currentSession = Session::createFromCookieAndSessionInformation($cookie, $sessionMetaData->storageIdentifier->value, $sessionMetaData->lastActivityTimestamp, $sessionMetaData->tags);
         return true;
     }
 
@@ -225,7 +225,7 @@ class SessionManager implements SessionManagerInterface
             $lastActivitySecondsAgo = $now - $sessionMetadata->lastActivityTimestamp;
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
                 if ($sessionMetadata->lastActivityTimestamp !== null) {
-                    $this->sessionDataStore->remove($sessionMetadata);
+                    $this->sessionKeyValueStore->remove($sessionMetadata->storageIdentifier);
                     $sessionRemovalCount++;
                 }
                 $this->sessionMetaDataStore->remove($sessionMetadata);

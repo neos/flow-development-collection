@@ -44,26 +44,26 @@ class SessionKeyValueStore
         $this->useIgBinary = extension_loaded('igbinary');
     }
 
-    public function has(SessionMetaData $sessionMetaData, string $key): bool
+    public function has(StorageIdentifier $storageIdentifier, string $key): bool
     {
-        $entryIdentifier = $this->createEntryIdentifier($sessionMetaData, $key);
+        $entryIdentifier = $this->createEntryIdentifier($storageIdentifier, $key);
         return $this->cache->has($entryIdentifier);
     }
 
-    public function retrieve(SessionMetaData $sessionMetaData, string $key): mixed
+    public function retrieve(StorageIdentifier $storageIdentifier, string $key): mixed
     {
-        $entryIdentifier = $this->createEntryIdentifier($sessionMetaData, $key);
+        $entryIdentifier = $this->createEntryIdentifier($storageIdentifier, $key);
         $serializedResult = $this->cache->get($entryIdentifier);
-        $this->writeDebounceHashes[$sessionMetaData->storageIdentifier][$key] = md5($serializedResult);
+        $this->writeDebounceHashes[$storageIdentifier->value][$key] = md5($serializedResult);
         return ($this->useIgBinary === true) ? igbinary_unserialize($serializedResult) : unserialize($serializedResult);
     }
 
-    public function store(SessionMetaData $sessionMetaData, string $key, mixed $value): void
+    public function store(StorageIdentifier $storageIdentifier, string $key, mixed $value): void
     {
-        $entryIdentifier = $this->createEntryIdentifier($sessionMetaData, $key);
+        $entryIdentifier = $this->createEntryIdentifier($storageIdentifier, $key);
         $serializedValue = ($this->useIgBinary === true) ? igbinary_serialize($value) : serialize($value);
         $valueHash = md5($serializedValue);
-        $debounceHash = $this->writeDebounceHashes[$sessionMetaData->storageIdentifier][$key] ?? null;
+        $debounceHash = $this->writeDebounceHashes[$storageIdentifier->value][$key] ?? null;
         if ($debounceHash === null) {
             $previousSerializedValue = $this->cache->get($entryIdentifier);
             if (is_string($previousSerializedValue)) {
@@ -74,20 +74,20 @@ class SessionKeyValueStore
             return;
         }
 
-        $this->writeDebounceHashes[$sessionMetaData->storageIdentifier][$key] = $valueHash;
-        $this->cache->set($entryIdentifier, $serializedValue, [$sessionMetaData->storageIdentifier], 0);
+        $this->writeDebounceHashes[$storageIdentifier->value][$key] = $valueHash;
+        $this->cache->set($entryIdentifier, $serializedValue, [$storageIdentifier->value], 0);
     }
 
-    public function remove(SessionMetaData $sessionMetaData): int
+    public function remove(StorageIdentifier $storageIdentifier): int
     {
-        if (array_key_exists($sessionMetaData->storageIdentifier, $this->writeDebounceHashes)) {
-            unset($this->writeDebounceHashes[$sessionMetaData->storageIdentifier]);
+        if (array_key_exists($storageIdentifier->value, $this->writeDebounceHashes)) {
+            unset($this->writeDebounceHashes[$storageIdentifier->value]);
         }
-        return $this->cache->flushByTag($sessionMetaData->storageIdentifier);
+        return $this->cache->flushByTag($storageIdentifier->value);
     }
 
-    private function createEntryIdentifier(SessionMetaData $metadata, $key): string
+    private function createEntryIdentifier(StorageIdentifier $storageIdentifier, $key): string
     {
-        return $metadata->storageIdentifier . md5($key);
+        return $storageIdentifier->value . md5($key);
     }
 }

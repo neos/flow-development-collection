@@ -122,11 +122,11 @@ class SessionManagerTest extends UnitTestCase
 
         $sessionMetaDataStore = new SessionMetaDataStore();
         $sessionMetaDataStore->injectCache($cache);
-        $sessionDataStore = $this->createSessionDataStore();
+        $sessionKeyValueStore = $this->createSessionKeyValueStore();
 
         $sessionManager = new SessionManager();
         $this->inject($sessionManager, 'sessionMetaDataStore', $sessionMetaDataStore);
-        $this->inject($sessionManager, 'sessionDataStore', $sessionDataStore);
+        $this->inject($sessionManager, 'sessionKeyValueStore', $sessionKeyValueStore);
         $this->inject($sessionManager, 'logger', $this->createMock(LoggerInterface::class));
 
         $this->assertSame(0, $sessionManager->collectGarbage());
@@ -138,11 +138,11 @@ class SessionManagerTest extends UnitTestCase
     public function garbageCollectionIsOmittedIfInactivityTimeoutIsSetToZero()
     {
         $sessionMetaDataStore = $this->createSessionMetaDataStore();
-        $sessionDataStore = $this->createSessionDataStore();
+        $sessionKeyValueStore = $this->createSessionKeyValueStore();
 
         $sessionManager = new SessionManager();
         $this->inject($sessionManager, 'sessionMetaDataStore', $sessionMetaDataStore);
-        $this->inject($sessionManager, 'sessionDataStore', $sessionDataStore);
+        $this->inject($sessionManager, 'sessionKeyValueStore', $sessionKeyValueStore);
         $this->inject($sessionManager, 'inactivityTimeout', 0);
 
         self::assertSame(0, $sessionManager->collectGarbage());
@@ -154,11 +154,11 @@ class SessionManagerTest extends UnitTestCase
     public function garbageCollectionIsOmittedIfAnotherProcessIsAlreadyRunning()
     {
         $sessionMetaDataStore = $this->createSessionMetaDataStore();
-        $sessionDataStore = $this->createSessionDataStore();
+        $sessionKeyValueStore = $this->createSessionKeyValueStore();
 
         $sessionManager = new SessionManager();
         $this->inject($sessionManager, 'sessionMetaDataStore', $sessionMetaDataStore);
-        $this->inject($sessionManager, 'sessionDataStore', $sessionDataStore);
+        $this->inject($sessionManager, 'sessionKeyValueStore', $sessionKeyValueStore);
         $this->inject($sessionManager, 'inactivityTimeout', 5000);
         $this->inject($sessionManager, 'garbageCollectionProbability', 100);
 
@@ -177,12 +177,12 @@ class SessionManagerTest extends UnitTestCase
     public function garbageCollectionOnlyRemovesTheDefinedMaximumNumberOfSessions()
     {
         $sessionMetaDataStore = $this->createSessionMetaDataStore();
-        $sessionDataStore = $this->createSessionDataStore();
+        $sessionKeyValueStore = $this->createSessionKeyValueStore();
 
         for ($i = 0; $i < 9; $i++) {
             $sessionManager = new SessionManager();
             $this->inject($sessionManager, 'sessionMetaDataStore', $sessionMetaDataStore);
-            $this->inject($sessionManager, 'sessionDataStore', $sessionDataStore);
+            $this->inject($sessionManager, 'sessionKeyValueStore', $sessionKeyValueStore);
             $this->inject($sessionManager, 'inactivityTimeout', 1000);
             $this->inject($sessionManager, 'garbageCollectionProbability', 0);
             $this->inject($sessionManager, 'garbageCollectionMaximumPerRun', 5);
@@ -190,7 +190,7 @@ class SessionManagerTest extends UnitTestCase
 
             $session = Session::create();
             $this->inject($session, 'sessionMetaDataStore', $sessionMetaDataStore);
-            $this->inject($session, 'sessionDataStore', $sessionDataStore);
+            $this->inject($session, 'sessionKeyValueStore', $sessionKeyValueStore);
             $this->inject($session, 'objectManager', $this->mockObjectManager);
             $this->inject($session, 'settings', $this->settings);
             $session->start();
@@ -206,7 +206,7 @@ class SessionManagerTest extends UnitTestCase
         self::assertLessThanOrEqual(5, $sessionManager->collectGarbage());
     }
 
-    protected function createSessionDataStore(): SessionKeyValueStore
+    protected function createSessionKeyValueStore(): SessionKeyValueStore
     {
         $backend = new FileBackend(new EnvironmentConfiguration('Session Testing', 'vfs://Foo/', PHP_MAXPATHLEN));
         $cache = new StringFrontend('Storage', $backend);
