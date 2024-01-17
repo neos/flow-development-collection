@@ -374,7 +374,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
     /**
      * Return the type converter set for this configuration.
      *
-     * @return TypeConverterInterface
+     * @return TypeConverterInterface|null
      * @api
      */
     public function getTypeConverter()

@@ -152,7 +152,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
      *
      * @param string $type One of the HEADER_* constants
      * @param ServerRequestInterface $request The request to get the trusted proxy header from
-     * @return \Iterator|null An array of the values for this header type or NULL if this header type should not be trusted
+     * @return \Generator<array|null> Yields the array of the values for this header type or yields NULL if this header type should not be trusted
      */
     protected function getTrustedProxyHeaderValues($type, ServerRequestInterface $request)
     {

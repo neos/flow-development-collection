@@ -69,7 +69,7 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper
      *
      * @param object $object Object to create the identity field for
      * @param string $name Name
-     * @return string|null A hidden field containing the Identity (UUID in Flow) of the given object or NULL if the object is unknown to the persistence framework
+     * @return string A hidden field containing the Identity (UUID in Flow) of the given object or empty string if the object is unknown to the persistence framework
      * @see \Neos\Flow\Mvc\Controller\Argument::setValue()
      */
     protected function renderHiddenIdentityField($object, $name)
