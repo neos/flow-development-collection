@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Neos\Flow\Session\Data;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Utility\Algorithms;
 
 /**
  * @Flow\Proxy(false)
@@ -22,13 +21,13 @@ use Neos\Flow\Utility\Algorithms;
 class SessionMetaData
 {
     /**
-     * @param string $sessionIdentifier
+     * @param SessionIdentifier $sessionIdentifier
      * @param StorageIdentifier $storageIdentifier
      * @param int $lastActivityTimestamp
      * @param string[] $tags
      */
     public function __construct(
-        public /** readonly */ string $sessionIdentifier,
+        public /** readonly */ SessionIdentifier $sessionIdentifier,
         public /** readonly */ StorageIdentifier $storageIdentifier,
         public /** readonly */ int $lastActivityTimestamp,
         public /** readonly */ array $tags
@@ -38,7 +37,7 @@ class SessionMetaData
     public static function createWithTimestamp(int $timestamp): self
     {
         return new self(
-            Algorithms::generateRandomString(32),
+            SessionIdentifier::createRandom(),
             StorageIdentifier::createRandom(),
             $timestamp,
             []
@@ -51,10 +50,10 @@ class SessionMetaData
      * @param array{'storageIdentifier': string, 'lastActivityTimestamp': int, 'tags': string[]} $data
      * @deprecated this will be removed with flow 10
      */
-    public static function createFromSessionIdentifierAndOldArrayCacheFormat(string $sessionIdentifier, array $data): self
+    public static function createFromSessionIdentifierStringAndOldArrayCacheFormat(string $sessionIdentifier, array $data): self
     {
         return new self(
-            $sessionIdentifier,
+            SessionIdentifier::createFromString($sessionIdentifier),
             StorageIdentifier::createFromString($data['storageIdentifier']),
             $data['lastActivityTimestamp'],
             $data['tags']
@@ -74,7 +73,7 @@ class SessionMetaData
     public function withNewSessionIdentifier(): self
     {
         return new self(
-            Algorithms::generateRandomString(32),
+            SessionIdentifier::createRandom(),
             $this->storageIdentifier,
             $this->lastActivityTimestamp,
             $this->tags
@@ -115,7 +114,7 @@ class SessionMetaData
      */
     public function isSame(SessionMetaData $other): bool
     {
-        if ($this->sessionIdentifier !== $other->sessionIdentifier) {
+        if ($this->sessionIdentifier->equals($other->sessionIdentifier) === false) {
             return false;
         }
 

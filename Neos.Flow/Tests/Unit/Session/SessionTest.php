@@ -15,6 +15,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Http\RequestHandler;
+use Neos\Flow\Session\Data\SessionIdentifier;
 use Neos\Flow\Session\Data\SessionKeyValueStore;
 use Neos\Flow\Session\Data\SessionMetaData;
 use Neos\Flow\Session\Data\SessionMetaDataStore;
@@ -137,7 +138,7 @@ class SessionTest extends UnitTestCase
         $sessionIdentifier = 'ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb';
         $storageIdentifier = '6e988eaa-7010-4ee8-bfb8-96ea4b40ec16';
         $metadata = new SessionMetaData(
-            $sessionIdentifier,
+            SessionIdentifier::createFromString($sessionIdentifier),
             StorageIdentifier::createFromString($storageIdentifier),
             1354293259,
             []
@@ -198,7 +199,8 @@ class SessionTest extends UnitTestCase
         $this->inject($session, 'sessionKeyValueStore', $sessionKeyValueStore);
 
         $session->start();
-        $sessionIdentifier = $session->getId();
+        $sessionIdentifierString = $session->getId();
+        $sessionIdentifier = SessionIdentifier::createFromString($sessionIdentifierString);
         $session->close();
 
         self::assertTrue($session->canBeResumed());
@@ -503,7 +505,8 @@ class SessionTest extends UnitTestCase
         $now = $session->_get('now');
 
         $session->start();
-        $sessionIdentifier = $session->getId();
+        $sessionIdentifierString = $session->getId();
+        $sessionIdentifier = SessionIdentifier::createFromString($sessionIdentifierString);
         self::assertEquals($now, $session->getLastActivityTimestamp());
 
         $session->close();
@@ -719,7 +722,7 @@ class SessionTest extends UnitTestCase
 
         $session->touch();
 
-        $sessionInfo = $sessionMetaDataStore->retrieve('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
+        $sessionInfo = $sessionMetaDataStore->retrieve(SessionIdentifier::createFromString('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb'));
         self::assertEquals(2220000000, $sessionInfo->lastActivityTimestamp);
         self::assertEquals($storageIdentifier, $sessionInfo->storageIdentifier->value);
     }
@@ -777,14 +780,15 @@ class SessionTest extends UnitTestCase
 
         // Start a "local" session and store some data:
         $session->start();
-        $sessionIdentifier = $session->getId();
+        $sessionIdentifierString = $session->getId();
+        $sessionIdentifier = SessionIdentifier::createFromString($sessionIdentifierString);
 
         $session->putData('foo', 'bar');
         $session->close();
         $sessionInfo = $sessionMetaDataStore->retrieve($sessionIdentifier);
 
         // Simulate a remote server referring to the same session:
-        $remoteSession = Session::createRemote($sessionIdentifier, $sessionInfo->storageIdentifier->value, $sessionInfo->lastActivityTimestamp, []);
+        $remoteSession = Session::createRemote($sessionIdentifierString, $sessionInfo->storageIdentifier->value, $sessionInfo->lastActivityTimestamp, []);
         $this->inject($remoteSession, 'objectManager', $this->mockObjectManager);
         $this->inject($remoteSession, 'settings', $this->settings);
         $this->inject($remoteSession, 'sessionMetaDataStore', $sessionMetaDataStore);
@@ -836,8 +840,8 @@ class SessionTest extends UnitTestCase
         $session1->start();
         $session2->start();
 
-        $metadata1 = $sessionMetaDataStore->retrieve($session1->getId());
-        $metadata2 = $sessionMetaDataStore->retrieve($session2->getId());
+        $metadata1 = $sessionMetaDataStore->retrieve(SessionIdentifier::createFromString($session1->getId()));
+        $metadata2 = $sessionMetaDataStore->retrieve(SessionIdentifier::createFromString($session2->getId()));
 
         $session1->putData('session 1 key 1', 'some value');
         $session1->putData('session 1 key 2', 'some other value');
@@ -863,7 +867,7 @@ class SessionTest extends UnitTestCase
     public function destroyRemovesAllSessionDataFromARemoteSession()
     {
         $sessionMetaData = new SessionMetaData(
-            'ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb',
+            SessionIdentifier::createFromString('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb'),
             StorageIdentifier::createFromString('6e988eaa-7010-4ee8-bfb8-96ea4b40ec16'),
             1354293259,
             []
@@ -903,7 +907,8 @@ class SessionTest extends UnitTestCase
         $this->inject($session, 'sessionKeyValueStore', $sessionKeyValueStore);
 
         $session->start();
-        $sessionIdentifier = $session->getId();
+        $sessionIdentifierString = $session->getId();
+        $sessionIdentifier = SessionIdentifier::createFromString($sessionIdentifierString);
         /**
          * @var SessionMetaData $sessionMetaData
          */
@@ -949,7 +954,8 @@ class SessionTest extends UnitTestCase
         $session->injectSettings($settings);
 
         $session->start();
-        $sessionIdentifier1 = $session->getId();
+        $sessionIdentifier1String = $session->getId();
+        $sessionIdentifier1 = SessionIdentifier::createFromString($sessionIdentifier1String);
         $session->putData('session 1 key 1', 'session 1 value 1');
         $session->putData('session 1 key 2', 'session 1 value 2');
         $session->close();
@@ -976,7 +982,8 @@ class SessionTest extends UnitTestCase
         $session->injectSettings($settings);
 
         $session->start();
-        $sessionIdentifier2 = $session->getId();
+        $sessionIdentifier2String = $session->getId();
+        $sessionIdentifier2 = SessionIdentifier::createFromString($sessionIdentifier2String);
         $session->putData('session 2 key 1', 'session 1 value 1');
         $session->putData('session 2 key 2', 'session 1 value 2');
         $session->close();

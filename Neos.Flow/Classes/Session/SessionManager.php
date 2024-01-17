@@ -14,6 +14,7 @@ namespace Neos\Flow\Session;
 use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Cookie;
+use Neos\Flow\Session\Data\SessionIdentifier;
 use Neos\Flow\Session\Data\SessionKeyValueStore;
 use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Flow\Utility\Algorithms;
@@ -101,7 +102,8 @@ class SessionManager implements SessionManagerInterface
             return false;
         }
 
-        $sessionIdentifier = $cookie->getValue();
+        $sessionIdentifierString = $cookie->getValue();
+        $sessionIdentifier = SessionIdentifier::createFromString($sessionIdentifierString);
         $sessionMetaData = $this->sessionMetaDataStore->retrieve($sessionIdentifier);
 
         if (!$sessionMetaData) {
@@ -143,10 +145,11 @@ class SessionManager implements SessionManagerInterface
         if (isset($this->remoteSessions[$sessionIdentifier])) {
             return $this->remoteSessions[$sessionIdentifier];
         }
-        if ($this->sessionMetaDataStore->has($sessionIdentifier)) {
-            $sessionMetaData = $this->sessionMetaDataStore->retrieve($sessionIdentifier);
-            $this->remoteSessions[$sessionIdentifier] = Session::createRemoteFromSessionMetaData($sessionMetaData);
-            return $this->remoteSessions[$sessionIdentifier];
+        $sessionIdentifierObject = SessionIdentifier::createFromString($sessionIdentifier);
+        if ($this->sessionMetaDataStore->has($sessionIdentifierObject)) {
+            $sessionMetaData = $this->sessionMetaDataStore->retrieve($sessionIdentifierObject);
+            $this->remoteSessions[$sessionIdentifierObject->value] = Session::createRemoteFromSessionMetaData($sessionMetaData);
+            return $this->remoteSessions[$sessionIdentifierObject->value];
         }
         return null;
     }

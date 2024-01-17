@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Session\Data;
  * source code.
  */
 
+use Neos\Flow\Session\Data\SessionIdentifier;
 use Neos\Flow\Session\Data\SessionMetaData;
 use Neos\Flow\Session\Data\StorageIdentifier;
 use Neos\Flow\Tests\UnitTestCase;
@@ -23,44 +24,44 @@ class SessionMetaDataTest extends UnitTestCase
     public function isSameDataProvider(): \Generator
     {
         yield "same" => [
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 123, ['baz']),
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 123, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 123, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 123, ['baz']),
             true
         ];
 
         yield "different time" => [
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 123, ['baz']),
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 645645876, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 123, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 645645876, ['baz']),
             true
         ];
 
         yield "different session id" => [
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 123, ['baz']),
-            new SessionMetaData('!foo', StorageIdentifier::createFromString('bar'), 123, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 123, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('!foo'), StorageIdentifier::createFromString('bar'), 123, ['baz']),
             false
         ];
 
         yield "different storage id" => [
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 123, ['baz']),
-            new SessionMetaData('foo', StorageIdentifier::createFromString('!bar'), 123, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 123, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('!bar'), 123, ['baz']),
             false
         ];
 
         yield "different tags 1" => [
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 123, ['baz']),
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 123, ['baz', 'bam']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 123, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 123, ['baz', 'bam']),
             false
         ];
 
         yield "different tags 2" => [
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 123, ['baz', 'bam']),
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 123, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 123, ['baz', 'bam']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 123, ['baz']),
             false
         ];
 
         yield "different tags 3" => [
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 123, ['baz']),
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 123, ['bam']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 123, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 123, ['bam']),
             false
         ];
     }
@@ -78,14 +79,14 @@ class SessionMetaDataTest extends UnitTestCase
     public function ageDifferenceDataProvider(): \Generator
     {
         yield "same" => [
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 999, ['baz']),
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 333, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 999, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 333, ['baz']),
             666
         ];
 
         yield "different" => [
-            new SessionMetaData('foo', StorageIdentifier::createFromString('bar'), 999, ['baz']),
-            new SessionMetaData('!foo', StorageIdentifier::createFromString('!bar'), 333, ['!baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 999, ['baz']),
+            new SessionMetaData(SessionIdentifier::createFromString('!foo'), StorageIdentifier::createFromString('!bar'), 333, ['!baz']),
             666
         ];
     }

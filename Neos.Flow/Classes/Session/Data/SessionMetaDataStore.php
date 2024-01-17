@@ -63,25 +63,25 @@ class SessionMetaDataStore
         return $this->cache->isValidTag(self::TAG_PREFIX . $tag);
     }
 
-    public function has(string $sessionIdentifier): bool
+    public function has(SessionIdentifier $sessionIdentifier): bool
     {
-        return $this->cache->has($sessionIdentifier);
+        return $this->cache->has($sessionIdentifier->value);
     }
 
-    public function retrieve(string $sessionIdentifier): ?SessionMetaData
+    public function retrieve(SessionIdentifier $sessionIdentifier): ?SessionMetaData
     {
         /**
          * @var $metaDataFromCache false|array|SessionMetaData
          */
-        $metaDataFromCache = $this->cache->get($sessionIdentifier);
+        $metaDataFromCache = $this->cache->get($sessionIdentifier->value);
         if ($metaDataFromCache === false) {
             return null;
         } elseif ($metaDataFromCache instanceof SessionMetaData) {
-            $this->writeDebounceCache[$metaDataFromCache->sessionIdentifier] = $metaDataFromCache;
+            $this->writeDebounceCache[$metaDataFromCache->sessionIdentifier->value] = $metaDataFromCache;
             return $metaDataFromCache;
         } elseif (is_array($metaDataFromCache)) {
-            $metaDataFromCache = SessionMetaData::createFromSessionIdentifierAndOldArrayCacheFormat($sessionIdentifier, $metaDataFromCache);
-            $this->writeDebounceCache[$metaDataFromCache->sessionIdentifier] = $metaDataFromCache;
+            $metaDataFromCache = SessionMetaData::createFromSessionIdentifierStringAndOldArrayCacheFormat($sessionIdentifier->value, $metaDataFromCache);
+            $this->writeDebounceCache[$metaDataFromCache->sessionIdentifier->value] = $metaDataFromCache;
             return $metaDataFromCache;
         }
         throw new InvalidDataInSessionDataStoreException();
@@ -101,7 +101,7 @@ class SessionMetaDataStore
                 $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
             } elseif (is_array($sessionMetaData)) {
-                $sessionMetaData = SessionMetaData::createFromSessionIdentifierAndOldArrayCacheFormat($sessionIdentifier, $sessionMetaData);
+                $sessionMetaData = SessionMetaData::createFromSessionIdentifierStringAndOldArrayCacheFormat($sessionIdentifier, $sessionMetaData);
                 $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
             }
@@ -121,7 +121,7 @@ class SessionMetaDataStore
                 $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
             } elseif (is_array($sessionMetaData)) {
-                $sessionMetaData = SessionMetaData::createFromSessionIdentifierAndOldArrayCacheFormat($sessionIdentifier, $sessionMetaData);
+                $sessionMetaData = SessionMetaData::createFromSessionIdentifierStringAndOldArrayCacheFormat($sessionIdentifier, $sessionMetaData);
                 $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
             }
@@ -133,24 +133,24 @@ class SessionMetaDataStore
         $tagsForCacheEntry = array_map(function ($tag) {
             return self::TAG_PREFIX . $tag;
         }, $sessionMetaData->tags);
-        $tagsForCacheEntry[] = $sessionMetaData->sessionIdentifier;
+        $tagsForCacheEntry[] = $sessionMetaData->sessionIdentifier->value;
 
         // check whether the same data with an age < updateMetadataThreshold was just read to avoid pointless write operations
-        $metaDataFromDebounceCache = $this->writeDebounceCache[$sessionMetaData->sessionIdentifier] ?? null;
+        $metaDataFromDebounceCache = $this->writeDebounceCache[$sessionMetaData->sessionIdentifier->value] ?? null;
         if ($metaDataFromDebounceCache !== null && $this->updateMetadataThreshold > 0) {
             if ($sessionMetaData->isSame($metaDataFromDebounceCache) && $sessionMetaData->ageDifference($metaDataFromDebounceCache) < $this->updateMetadataThreshold) {
                 return;
             }
         }
 
-        $this->writeDebounceCache[$sessionMetaData->sessionIdentifier] = $sessionMetaData;
-        $this->cache->set($sessionMetaData->sessionIdentifier, $sessionMetaData, $tagsForCacheEntry, 0);
+        $this->writeDebounceCache[$sessionMetaData->sessionIdentifier->value] = $sessionMetaData;
+        $this->cache->set($sessionMetaData->sessionIdentifier->value, $sessionMetaData, $tagsForCacheEntry, 0);
     }
 
     public function remove(SessionMetaData $sessionMetaData): mixed
     {
-        unset($this->writeDebounceCache[$sessionMetaData->sessionIdentifier]);
-        return $this->cache->remove($sessionMetaData->sessionIdentifier);
+        unset($this->writeDebounceCache[$sessionMetaData->sessionIdentifier->value]);
+        return $this->cache->remove($sessionMetaData->sessionIdentifier->value);
     }
 
     public function startGarbageCollection(): void

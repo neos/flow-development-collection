@@ -15,6 +15,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Http\RequestHandler;
+use Neos\Flow\Session\Data\SessionIdentifier;
 use Neos\Flow\Session\Data\SessionKeyValueStore;
 use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Http\Factories\ServerRequestFactory;
@@ -198,7 +199,7 @@ class SessionManagerTest extends UnitTestCase
             $session->putData('foo', 'bar');
             $session->close();
 
-            $sessionInfo = $sessionMetaDataStore->retrieve($sessionIdentifier);
+            $sessionInfo = $sessionMetaDataStore->retrieve(SessionIdentifier::createFromString($sessionIdentifier));
             $sessionInfo = $sessionInfo->withLastActivityTimestamp(time() - 4000);
             $sessionMetaDataStore->store($sessionInfo);
         }
