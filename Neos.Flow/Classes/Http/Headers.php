@@ -257,7 +257,7 @@ class Headers implements \Iterator
      * Returns a cookie specified by the given name
      *
      * @param string $name Name of the cookie
-     * @return Cookie The cookie or NULL if no such cookie exists
+     * @return Cookie|null The cookie or NULL if no such cookie exists
      * @api
      */
     public function getCookie($name)

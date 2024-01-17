@@ -616,7 +616,7 @@ class Session implements CookieEnabledInterface
      * Iterates over all existing sessions and removes their data if the inactivity
      * timeout was reached.
      *
-     * @return integer The number of outdated entries removed or NULL if no such information could be determined
+     * @return integer|null The number of outdated entries removed or NULL if no such information could be determined
      * @deprecated will be removed with Flow 9, use SessionManager->collectGarbage
      * @throws \Neos\Cache\Exception
      * @throws NotSupportedByBackendException
