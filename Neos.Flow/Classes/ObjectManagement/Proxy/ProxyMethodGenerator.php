@@ -14,6 +14,7 @@ namespace Neos\Flow\ObjectManagement\Proxy;
 use Laminas\Code\Generator\DocBlockGenerator;
 use Laminas\Code\Generator\MethodGenerator;
 use Laminas\Code\Generator\ParameterGenerator;
+use Neos\Flow\ObjectManagement\Exception\UnsupportedAttributeException;
 
 /**
  * Class ProxyMethodGenerator
@@ -251,6 +252,7 @@ class ProxyMethodGenerator extends MethodGenerator
      *
      * @param \ReflectionMethod $reflectionMethod The \ReflectionMethod object to retrieve attributes from.
      * @return string The code for the attributes of the given \ReflectionMethod object.
+     * @throws UnsupportedAttributeException
      */
     protected function buildAttributesCode(\ReflectionMethod $reflectionMethod): string
     {
@@ -259,7 +261,7 @@ class ProxyMethodGenerator extends MethodGenerator
 
         foreach ($reflectionMethod->getAttributes() as $attribute) {
             $attributeName = "\\" . ltrim($attribute->getName(), '\\');
-            $argumentsString = $this->formatAttributesArguments($attribute->getArguments());
+            $argumentsString = $this->formatAttributesArguments($attribute->getArguments(), $reflectionMethod->name);
             $attributesCode .= "{$indent}#[{$attributeName}({$argumentsString})]" . self::LINE_FEED;
         }
 
@@ -270,15 +272,16 @@ class ProxyMethodGenerator extends MethodGenerator
      * Formats the arguments of attributes into a string.
      *
      * @param array $arguments An array of arguments for attributes.
-     *
+     * @param string $methodName The current method name the proxy code is built for.
      * @return string The formatted arguments as a string.
+     * @throws UnsupportedAttributeException
      */
-    private function formatAttributesArguments(array $arguments): string
+    private function formatAttributesArguments(array $arguments, string $methodName): string
     {
         $formattedArguments = [];
 
         foreach ($arguments as $key => $value) {
-            $formattedArguments[] = "{$key}: " . $this->formatAttributeValue($value);
+            $formattedArguments[] = "{$key}: " . $this->formatAttributeValue($value, $methodName);
         }
 
         return implode(', ', $formattedArguments);
@@ -288,32 +291,41 @@ class ProxyMethodGenerator extends MethodGenerator
      * Formats the given attribute value.
      *
      * @param mixed $value The value to be formatted.
+     * @param string $methodName The current method name the proxy code is built for.
      * @return string The formatted attribute value.
      */
-    private function formatAttributeValue(mixed $value): string
+    private function formatAttributeValue(mixed $value, string $methodName): string
     {
         if (is_string($value)) {
             return "\"$value\"";
         }
-
         if (is_bool($value)) {
             return $value ? 'true' : 'false';
         }
-
         if (is_int($value)) {
             return (string)$value;
         }
-
+        if (is_float($value)) {
+            return (string)$value;
+        }
+        if ($value === null) {
+            return 'null';
+        }
         if (is_array($value)) {
-            $formattedArrayElements = implode(', ', array_map(function ($key, $value) {
+            $formattedArrayElements = implode(', ', array_map(function ($key, $value) use ($methodName) {
                 return is_int($key)
-                    ? $this->formatAttributeValue($value)
-                    : "\"{$key}\" => " . $this->formatAttributeValue($value);
+                    ? $this->formatAttributeValue($value, $methodName)
+                    : "\"{$key}\" => " . $this->formatAttributeValue($value, $methodName);
             }, array_keys($value), $value));
             return "[{$formattedArrayElements}]";
         }
-
-        // Fallback for any other types (shouldn't happen with PHP attributes)
-        return '';
+        throw new UnsupportedAttributeException(
+            sprintf(
+                'Failed rendering proxy method %s::%s because an attribute contained an unsupported value type (%s)',
+                $this->getFullOriginalClassName(),
+                $methodName,
+                get_debug_type($value)
+            ), 1705501433
+        );
     }
 }
