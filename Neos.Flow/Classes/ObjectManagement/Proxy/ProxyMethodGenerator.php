@@ -281,7 +281,11 @@ class ProxyMethodGenerator extends MethodGenerator
         $formattedArguments = [];
 
         foreach ($arguments as $key => $value) {
-            $formattedArguments[] = "{$key}: " . $this->formatAttributeValue($value, $methodName);
+            if (is_int($key)) {
+                $formattedArguments[] = $this->formatAttributeValue($value, $methodName);
+            } else {
+                $formattedArguments[] = "{$key}: " . $this->formatAttributeValue($value, $methodName);
+            }
         }
 
         return implode(', ', $formattedArguments);

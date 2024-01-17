@@ -26,6 +26,7 @@ use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\BackedEnumWithMet
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassK;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SampleAttribute;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SampleMethodAttribute;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -112,7 +113,11 @@ class ProxyCompilerTest extends FunctionalTestCase
             [
                 'name' => Session::class,
                 'arguments' => ['autoStart' => false]
-            ]
+            ],
+            [
+                'name' => SampleMethodAttribute::class,
+                'arguments' => ['value without name']
+            ],
         ];
         self::assertEquals($expectedAttributes, $actualAttributes);
     }

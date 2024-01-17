@@ -26,6 +26,7 @@ class ClassWithPhpAttributes
      */
     #[Flow\Around(pointcutExpression: "method(somethingImpossible())")]
     #[Flow\Session(autoStart: false)]
+    #[SampleMethodAttribute('value without name')]
     public function methodWithAttributes(): void
     {
     }
