@@ -64,8 +64,9 @@
         "neos/utility-unicode": "self.version"
     },
     "scripts": {
+        "lint:phpstan": "../../bin/phpstan analyse",
         "lint": [
-            "../../bin/phpstan analyse"
+            "@lint:phpstan"
         ]
     },
     "suggest": {
