@@ -213,7 +213,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      */
     public function isRealPath($path, $expectedResult): void
     {
-        self::assertEquals($expectedResult, Files::isRealPath($path));
+        self::assertEquals($expectedResult, Files::isAbsolutePathWithoutDirectoryTraversal($path));
     }
 
     /**

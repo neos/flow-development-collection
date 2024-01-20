@@ -20,7 +20,8 @@ use Neos\Utility\Exception\FilesException;
 abstract class Files
 {
     /**
-     * Duckcheck if a path looks like it is absolute.
+     * Checks if the path starts from the root.
+     * On windows the path is root if it starts with a driver letter.
      */
     public static function isAbsolutePath(string $path): bool
     {
@@ -33,11 +34,18 @@ abstract class Files
     }
 
     /**
-     * Duckcheck if a path looks like it is fully qualified.
-     * That means its absolute and has no directory traversal.
-     * {@see realpath()}
+     * Check if a path looks like a canonical pathname
+     *
+     * something like
+     *  - /Users/Me-eh-eh/code/neos-flow/Packages/Framework
+     *
+     * the criteria are
+     *  - the path is absolute
+     *  - the path doesn't contain directory traversal /../ or /./
+     *
+     * to ensure the path matches the criteria, {@see realpath} can be used.
      */
-    public static function isRealPath(string $path): bool
+    public static function isAbsolutePathWithoutDirectoryTraversal(string $path): bool
     {
         if (!self::isAbsolutePath($path)) {
             return false;
@@ -65,6 +73,8 @@ abstract class Files
 
     /**
      * Makes sure path has a trailing slash
+     *
+     * Must only be used on directory paths!
      *
      * @param string $path
      * @return string
