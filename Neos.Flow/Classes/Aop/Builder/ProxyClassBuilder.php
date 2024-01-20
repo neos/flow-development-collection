@@ -435,7 +435,7 @@ class ProxyClassBuilder
         $proxyClass->addInterfaces($introducedInterfaces);
         $proxyClass->addTraits($introducedTraits);
 
-        /** @var $propertyIntroduction PropertyIntroduction */
+        /** @var PropertyIntroduction $propertyIntroduction */
         foreach ($propertyIntroductions as $propertyIntroduction) {
             $propertyName = $propertyIntroduction->getPropertyName();
             $declaringAspectClassName = $propertyIntroduction->getDeclaringAspectClassName();

@@ -279,7 +279,6 @@ class PointcutExpressionParser
         $classNameFilter = new PointcutClassNameFilter($classPattern);
         $classNameFilter->injectReflectionService($this->reflectionService);
         $methodNameFilter = new PointcutMethodNameFilter($methodNamePattern, $methodVisibility, $methodArgumentConstraints);
-        /** @var LoggerInterface $logger */
         $logger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger');
         $methodNameFilter->injectLogger($logger);
         $methodNameFilter->injectReflectionService($this->reflectionService);

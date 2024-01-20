@@ -16,6 +16,7 @@ use Neos\Flow\I18n\Service;
 use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\FluidAdaptor\Core\Rendering\FlowAwareRenderingContextInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -101,13 +102,12 @@ class ResourceViewHelper extends AbstractViewHelper
     /**
      * @param array $arguments
      * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
+     * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return string
      * @throws InvalidVariableException
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
-        /** @var ResourceManager $resourceManager */
         $resourceManager = $renderingContext->getObjectManager()->get(ResourceManager::class);
 
         $resource = $arguments['resource'] ?? null;

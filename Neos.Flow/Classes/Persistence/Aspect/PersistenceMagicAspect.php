@@ -94,7 +94,7 @@ class PersistenceMagicAspect
      */
     public function generateUuid(JoinPointInterface $joinPoint)
     {
-        /** @var $proxy PersistenceMagicInterface */
+        /** @var PersistenceMagicInterface $proxy */
         $proxy = $joinPoint->getProxy();
         ObjectAccess::setProperty($proxy, 'Persistence_Object_Identifier', Algorithms::generateUUID(), true);
         $this->persistenceManager->registerNewObject($proxy);
@@ -153,6 +153,7 @@ class PersistenceMagicAspect
      */
     public function cloneObject(JoinPointInterface $joinPoint)
     {
+        /** @phpstan-ignore-next-line will be removed with https://github.com/neos/flow-development-collection/pull/3223 */
         $joinPoint->getProxy()->Flow_Persistence_clone = true;
     }
 }

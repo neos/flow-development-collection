@@ -39,6 +39,7 @@ class XliffReader
         $reader->open($sourcePath);
         $reader->read();
 
+        /** @var object|\XMLReader $reader the stubs for XMLReader are wrong https://github.com/phpstan/phpstan/issues/8629 */
         if ($reader->nodeType == \XMLReader::ELEMENT && $reader->name === 'xliff') {
             $version = $reader->getAttribute('version');
             $result = true;
@@ -66,6 +67,7 @@ class XliffReader
      */
     protected function isFileNode(\XMLReader $reader)
     {
+        /** @var object|\XMLReader $reader the stubs for XMLReader are wrong https://github.com/phpstan/phpstan/issues/8629 */
         return $reader->nodeType === \XMLReader::ELEMENT && $reader->name === 'file';
     }
 }

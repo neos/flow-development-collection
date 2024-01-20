@@ -197,6 +197,7 @@ class FileSystemTarget implements TargetInterface
     {
         $storage = $collection->getStorage();
         $this->checkAndRemovePackageSymlinks($storage);
+        /** @phpstan-ignore-next-line will be fixed via https://github.com/neos/flow-development-collection/pull/3229 */
         foreach ($collection->getObjects($callback) as $object) {
             /** @var StorageObject $object */
             $sourceStream = $object->getStream();

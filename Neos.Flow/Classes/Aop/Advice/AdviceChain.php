@@ -11,6 +11,7 @@ namespace Neos\Flow\Aop\Advice;
  * source code.
  */
 use Neos\Flow\Aop\JoinPointInterface;
+use Neos\Flow\Aop\ProxyInterface as InternalAopProxyInterface;
 
 /**
  * The advice chain holds a number of subsequent advices that
@@ -56,7 +57,9 @@ class AdviceChain
         if ($this->adviceIndex < count($this->advices)) {
             $result = $this->advices[$this->adviceIndex]->invoke($joinPoint);
         } else {
-            $result = $joinPoint->getProxy()->Flow_Aop_Proxy_invokeJoinpoint($joinPoint);
+            /** @var InternalAopProxyInterface $proxy */
+            $proxy = $joinPoint->getProxy();
+            $result = $proxy->Flow_Aop_Proxy_invokeJoinpoint($joinPoint);
         }
         return $result;
     }

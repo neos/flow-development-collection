@@ -24,7 +24,6 @@ use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
-
 use Neos\Media\Domain\Repository\ThumbnailRepository;
 
 /**
@@ -98,6 +97,7 @@ class ResourceCommandController extends CommandController
                     /** @var CollectionInterface $collection */
                     $this->outputLine('Publishing resources of collection "%s"', [$collection->getName()]);
                     $target = $collection->getTarget();
+                    /** @phpstan-ignore-next-line will be fixed via https://github.com/neos/flow-development-collection/pull/3229 */
                     $target->publishCollection($collection, function ($iteration) {
                         $this->clearState($iteration);
                     });
@@ -232,13 +232,13 @@ class ResourceCommandController extends CommandController
         $assetRepository = class_exists(AssetRepository::class) ? $this->objectManager->get(AssetRepository::class) : null;
         /* @var ThumbnailRepository|null $thumbnailRepository */
         $thumbnailRepository = class_exists(ThumbnailRepository::class) ? $this->objectManager->get(ThumbnailRepository::class) : null;
-        $mediaPackagePresent = $assetRepository && $thumbnailRepository && $this->packageManager->isPackageAvailable('Neos.Media');
+        $mediaPackagePresent = $this->packageManager->isPackageAvailable('Neos.Media');
 
         if (count($brokenResources) > 0) {
             foreach ($brokenResources as $key => $resourceIdentifier) {
                 $resource = $this->resourceRepository->findByIdentifier($resourceIdentifier);
                 $brokenResources[$key] = $resource;
-                if ($mediaPackagePresent) {
+                if ($mediaPackagePresent && $assetRepository !== null && $thumbnailRepository !== null) {
                     $assets = $assetRepository->findByResource($resource);
                     if ($assets !== null) {
                         $relatedAssets[$resource] = $assets;
@@ -280,7 +280,7 @@ class ResourceCommandController extends CommandController
                         ]);
                         $resource->disableLifecycleEvents();
                         $this->resourceRepository->remove($resource);
-                        if ($mediaPackagePresent) {
+                        if ($mediaPackagePresent && $assetRepository !== null && $thumbnailRepository !== null) {
                             if (isset($relatedAssets[$resource])) {
                                 foreach ($relatedAssets[$resource] as $asset) {
                                     $assetRepository->removeWithoutUsageChecks($asset);
