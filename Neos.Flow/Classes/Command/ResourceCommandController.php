@@ -24,7 +24,6 @@ use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
-
 use Neos\Media\Domain\Repository\ThumbnailRepository;
 
 /**
@@ -239,7 +238,7 @@ class ResourceCommandController extends CommandController
             foreach ($brokenResources as $key => $resourceIdentifier) {
                 $resource = $this->resourceRepository->findByIdentifier($resourceIdentifier);
                 $brokenResources[$key] = $resource;
-                if ($mediaPackagePresent && class_exists(AssetRepository::class) && class_exists(ThumbnailRepository::class)) {
+                if ($mediaPackagePresent && $assetRepository !== null && $thumbnailRepository !== null) {
                     $assets = $assetRepository->findByResource($resource);
                     if ($assets !== null) {
                         $relatedAssets[$resource] = $assets;
@@ -281,7 +280,7 @@ class ResourceCommandController extends CommandController
                         ]);
                         $resource->disableLifecycleEvents();
                         $this->resourceRepository->remove($resource);
-                        if ($mediaPackagePresent && class_exists(AssetRepository::class) && class_exists(ThumbnailRepository::class)) {
+                        if ($mediaPackagePresent && $assetRepository !== null && $thumbnailRepository !== null) {
                             if (isset($relatedAssets[$resource])) {
                                 foreach ($relatedAssets[$resource] as $asset) {
                                     $assetRepository->removeWithoutUsageChecks($asset);

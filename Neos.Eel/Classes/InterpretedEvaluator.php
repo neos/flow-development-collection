@@ -35,9 +35,12 @@ class InterpretedEvaluator implements EelEvaluatorInterface
 
         if ($res === false) {
             throw new ParserException(sprintf('Expression "%s" could not be parsed.', $expression), 1344514198);
-            /** @phpstan-ignore-next-line */
+            /**
+             * @phpstan-ignore-next-line $parser->pos appears to be undeclared, because it is declared up in the parent class chain of `InterpretedEelParser`,
+             * wherein multiple classes (e.g. `EelParser` and `AbstractEelParser`) are explicitly excluded from analysis, because they contain generated code that is impossible to fix
+             */
         } elseif ($parser->pos !== strlen($expression)) {
-            /** @phpstan-ignore-next-line */
+            /** @phpstan-ignore-next-line $parser->pos appears to be undeclared see comment above. */
             throw new ParserException(sprintf('Expression "%s" could not be parsed. Error starting at character %d: "%s".', $expression, $parser->pos, substr($expression, $parser->pos)), 1344514188);
         } elseif (!array_key_exists('val', $res)) {
             throw new ParserException(sprintf('Parser error, no val in result %s ', json_encode($res)), 1344514204);

@@ -47,7 +47,7 @@ class Response
     private $content = '';
 
     /**
-     * @var boolean|int
+     * @var bool|int
      */
     private $colorSupport;
 
@@ -118,7 +118,6 @@ class Response
     /**
      * Sets color support / styled output to yes, no or auto detection
      *
-     * @deprecated and will be removed https://github.com/neos/flow-development-collection/pull/3262
      * @param boolean $colorSupport true, false or NULL (= autodetection)
      * @return void
      */

@@ -61,7 +61,7 @@ class CacheAdaptor implements FluidCacheInterface
      * the entire cache if no entry is provided.
      *
      * @param string|null $name
-     * @return bool|void
+     * @return bool|null
      */
     public function flush($name = null)
     {
@@ -69,6 +69,7 @@ class CacheAdaptor implements FluidCacheInterface
             return $this->flowCache->remove($name);
         } else {
             $this->flowCache->flush();
+            return null;
         }
     }
 

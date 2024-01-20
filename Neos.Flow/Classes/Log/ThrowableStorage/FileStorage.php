@@ -267,7 +267,6 @@ class FileStorage implements ThrowableStorageInterface
             $cutoffTime = time() - $this->maximumThrowableDumpAge;
 
             $iterator = new \DirectoryIterator($this->storagePath);
-            /** @var \DirectoryIterator $directoryEntry */
             foreach ($iterator as $directoryEntry) {
                 if ($directoryEntry->isFile() && $directoryEntry->getCTime() < $cutoffTime) {
                     unlink($directoryEntry->getRealPath());
