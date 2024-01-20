@@ -685,7 +685,7 @@ class Query implements QueryInterface
     /**
      * Return the SQL statements representing this Query.
      *
-     * @return array
+     * @return string
      */
     public function getSql()
     {

@@ -14,6 +14,7 @@ namespace Neos\FluidAdaptor\Core\Widget;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 
 /**
@@ -28,7 +29,7 @@ abstract class AbstractWidgetController extends ActionController
     /**
      * Configuration for this widget.
      *
-     * @var array
+     * @var array{objects: QueryResultInterface}
      * @api
      */
     protected $widgetConfiguration;
@@ -45,7 +46,6 @@ abstract class AbstractWidgetController extends ActionController
      */
     public function processRequest(ActionRequest $request, ActionResponse $response)
     {
-        /** @var $widgetContext WidgetContext */
         $widgetContext = $request->getInternalArgument('__widgetContext');
         if (!$widgetContext instanceof WidgetContext) {
             throw new WidgetContextNotFoundException('The widget context could not be found in the request.', 1307450180);

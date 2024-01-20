@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\View;
  * source code.
  */
 
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\ObjectAccess;
@@ -298,6 +299,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
 
         if (strpos($partialName, ':') !== false) {
             list($packageKey, $actualPartialName) = explode(':', $partialName);
+            /** @var FlowPackageInterface $package */
             $package = $this->packageManager->getPackage($packageKey);
             $patternReplacementVariables['package'] = $packageKey;
             $patternReplacementVariables['packageResourcesPath'] = $package->getResourcesPath();
@@ -365,6 +367,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
             return null;
         }
+        /** @phpstan-ignore-next-line this code will be dropped totally as its unused */
         $packageResourcesPath = $this->packageManager->getPackage($packageKey)->getResourcesPath();
 
         return Files::concatenatePaths([$packageResourcesPath, 'Private']);

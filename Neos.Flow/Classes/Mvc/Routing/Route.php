@@ -141,14 +141,14 @@ class Route
     /**
      * Container for Route Parts.
      *
-     * @var array
+     * @var array<RoutePartInterface>
      */
     protected $routeParts = [];
 
     /**
      * If not empty only the specified HTTP verbs are accepted by this route
      *
-     * @var array non-associative array e.g. array('GET', 'POST')
+     * @var list<string> non-associative array e.g. array('GET', 'POST')
      */
     protected $httpMethods = [];
 
@@ -459,7 +459,6 @@ class Route
         $routePath = trim($routePath, '/');
         $skipOptionalParts = false;
         $optionalPartCount = 0;
-        /** @var $routePart RoutePartInterface */
         foreach ($this->routeParts as $routePart) {
             if ($routePart->isOptional()) {
                 $optionalPartCount++;
@@ -543,7 +542,6 @@ class Route
         $requireOptionalRouteParts = false;
         $matchingOptionalUriPortion = '';
         $routeValues = $resolveContext->getRouteValues();
-        /** @var $routePart RoutePartInterface */
         foreach ($this->routeParts as $routePart) {
             if ($routePart instanceof ParameterAwareRoutePartInterface) {
                 $resolveResult = $routePart->resolveWithParameters($routeValues, $resolveContext->getParameters());
@@ -738,7 +736,7 @@ class Route
         $matches = [];
         preg_match_all(self::PATTERN_EXTRACTROUTEPARTS, $this->uriPattern, $matches, PREG_SET_ORDER);
 
-        /** @var $lastRoutePart RoutePartInterface */
+        /** @var RoutePartInterface|null $lastRoutePart */
         $lastRoutePart = null;
         foreach ($matches as $match) {
             $routePartType = empty($match['dynamic']) ? self::ROUTEPART_TYPE_STATIC : self::ROUTEPART_TYPE_DYNAMIC;

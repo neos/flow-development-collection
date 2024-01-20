@@ -62,7 +62,7 @@ class Router implements RouterInterface
     /**
      * Array of routes to match against
      *
-     * @var array
+     * @var array<Route>
      */
     protected $routes = [];
 
@@ -127,7 +127,6 @@ class Router implements RouterInterface
         $this->createRoutesFromConfiguration();
         $httpRequest = $routeContext->getHttpRequest();
 
-        /** @var $route Route */
         foreach ($this->routes as $route) {
             if ($route->matches($routeContext) === true) {
                 $this->lastMatchedRoute = $route;
@@ -196,7 +195,6 @@ class Router implements RouterInterface
 
         $this->createRoutesFromConfiguration();
 
-        /** @var $route Route */
         foreach ($this->routes as $route) {
             if ($route->resolves($resolveContext) === true) {
                 $uriConstraints = $route->getResolvedUriConstraints()->withPathPrefix($resolveContext->getUriPathPrefix());

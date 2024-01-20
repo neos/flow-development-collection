@@ -96,6 +96,7 @@ class ObjectPathMappingRepository extends Repository
     {
         foreach ($this->entityManager->getUnitOfWork()->getIdentityMap() as $className => $entities) {
             if ($className === $this->entityClassName) {
+                /** @phpstan-ignore-next-line we pass an optional parameter, which is not part of the interface */
                 $this->entityManager->flush($entities);
                 return;
             }

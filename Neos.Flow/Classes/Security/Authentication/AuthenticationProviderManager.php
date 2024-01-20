@@ -147,9 +147,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
 
         $session = $this->sessionManager->getCurrentSession();
 
-        /** @var $token TokenInterface */
         foreach ($tokens as $token) {
-            /** @var $provider AuthenticationProviderInterface */
             foreach ($this->tokenAndProviderFactory->getProviders() as $provider) {
                 if ($provider->canAuthenticate($token) && $token->getAuthenticationStatus() === TokenInterface::AUTHENTICATION_NEEDED) {
                     $provider->authenticate($token);
@@ -226,7 +224,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
         $this->isAuthenticated = null;
         $session = $this->sessionManager->getCurrentSession();
 
-        /** @var $token TokenInterface */
         foreach ($this->securityContext->getAuthenticationTokens() as $token) {
             $token->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
         }
