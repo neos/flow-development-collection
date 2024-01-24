@@ -359,21 +359,6 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     }
 
     /**
-     * @param string $packageKey
-     * @return string|null
-     */
-    protected function getPackagePrivateResourcesPath($packageKey)
-    {
-        if (!$this->packageManager->isPackageAvailable($packageKey)) {
-            return null;
-        }
-        /** @phpstan-ignore-next-line this code will be dropped totally as its unused */
-        $packageResourcesPath = $this->packageManager->getPackage($packageKey)->getResourcesPath();
-
-        return Files::concatenatePaths([$packageResourcesPath, 'Private']);
-    }
-
-    /**
      * Processes following placeholders inside $pattern:
      *  - "@templateRoot"
      *  - "@partialRoot"
