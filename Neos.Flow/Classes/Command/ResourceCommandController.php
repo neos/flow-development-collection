@@ -221,6 +221,7 @@ class ResourceCommandController extends CommandController
         $resourcesCount = $this->resourceRepository->countAll();
         $this->output->progressStart($resourcesCount);
 
+        /** @var list<PersistentResource> $brokenResources */
         $brokenResources = [];
         $relatedAssets = new \SplObjectStorage();
         $relatedThumbnails = new \SplObjectStorage();
@@ -230,10 +231,9 @@ class ResourceCommandController extends CommandController
             $this->clearState($iteration);
             $iteration++;
             $this->output->progressAdvance(1);
-            /* @var PersistentResource $resource */
             $stream = $resource->getStream();
             if (!is_resource($stream)) {
-                $brokenResources[] = $this->persistenceManager->getIdentifierByObject($resource);
+                $brokenResources[] = $resource;
             }
         }
 
@@ -246,9 +246,7 @@ class ResourceCommandController extends CommandController
         $mediaPackagePresent = $this->packageManager->isPackageAvailable('Neos.Media');
 
         if (count($brokenResources) > 0) {
-            foreach ($brokenResources as $key => $resourceIdentifier) {
-                $resource = $this->resourceRepository->findByIdentifier($resourceIdentifier);
-                $brokenResources[$key] = $resource;
+            foreach ($brokenResources as $resource) {
                 if ($mediaPackagePresent) {
                     $assets = $assetRepository->findByResource($resource);
                     if ($assets !== null) {
