@@ -613,7 +613,7 @@ class ActionRequest implements RequestInterface
      * internal argument, its name must start with two underscores.
      *
      * @param string $argumentName Name of the argument, for example "__fooBar"
-     * @return string|object Value of the argument, or NULL if not set.
+     * @return string|object|null Value of the argument, or NULL if not set.
      */
     public function getInternalArgument(string $argumentName)
     {

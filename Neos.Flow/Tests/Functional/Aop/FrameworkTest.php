@@ -97,7 +97,7 @@ class FrameworkTest extends FunctionalTestCase
     public function adviceInformationIsAlsoBuiltWhenTheTargetClassIsDeserialized(): void
     {
         $className = Fixtures\TargetClass01::class;
-        $targetClass = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
+        $targetClass = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{}');
         self::assertSame('Hello, me', $targetClass->greet('Flow'));
     }
 

@@ -62,7 +62,7 @@ class Router implements RouterInterface
     /**
      * Array of routes to match against
      *
-     * @var array
+     * @var array<Route>
      */
     protected $routes = [];
 
@@ -97,7 +97,7 @@ class Router implements RouterInterface
     /**
      * Sets the routes configuration.
      *
-     * @param array $routesConfiguration The routes configuration or NULL if it should be fetched from configuration
+     * @param array|null $routesConfiguration The routes configuration or NULL if it should be fetched from configuration
      * @return void
      */
     public function setRoutesConfiguration(array $routesConfiguration = null)
@@ -112,7 +112,7 @@ class Router implements RouterInterface
      * route could be found.
      *
      * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing RouteParameters
-     * @return array The results of the matching route or NULL if no route matched
+     * @return array The results of the matching route
      * @throws InvalidRouteSetupException
      * @throws NoMatchingRouteException if no route matched the given $routeContext
      * @throws InvalidRoutePartValueException
@@ -127,7 +127,6 @@ class Router implements RouterInterface
         $this->createRoutesFromConfiguration();
         $httpRequest = $routeContext->getHttpRequest();
 
-        /** @var $route Route */
         foreach ($this->routes as $route) {
             if ($route->matches($routeContext) === true) {
                 $this->lastMatchedRoute = $route;
@@ -196,7 +195,6 @@ class Router implements RouterInterface
 
         $this->createRoutesFromConfiguration();
 
-        /** @var $route Route */
         foreach ($this->routes as $route) {
             if ($route->resolves($resolveContext) === true) {
                 $uriConstraints = $route->getResolvedUriConstraints()->withPathPrefix($resolveContext->getUriPathPrefix());

@@ -80,9 +80,9 @@ class ValueAccessor
     }
 
     /**
-     * @template T
+     * @template T of object
      * @param class-string<T> $className
-     * @return object&T
+     * @return T
      */
     public function instanceOf(string $className): object
     {
@@ -144,9 +144,9 @@ class ValueAccessor
     }
 
     /**
-     * @template T
+     * @template T of object
      * @param class-string<T> $className
-     * @return (object&T)|null
+     * @return T|null
      */
     public function instanceOfOrNull(string $className): ?object
     {

@@ -318,7 +318,7 @@ class Cookie
      * This information is rendered as the Max-Age attribute (RFC 6265, 4.1.2.2).
      * Note that not all browsers support this attribute.
      *
-     * @return integer The maximum age in seconds, or NULL if none has been defined.
+     * @return integer|null The maximum age in seconds, or NULL if none has been defined.
      * @api
      */
     public function getMaximumAge()

@@ -364,9 +364,11 @@ class CompileTimeObjectManager extends ObjectManager
      * This specialized get() method is able to do setter injection for properties
      * defined in the object configuration of the specified object.
      *
-     * @param string $objectName The name of the object to return an instance of
+     * @template T of object
+     * @param class-string<T>|string $objectName The name of the object to return an instance of
      * @param mixed ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
-     * @return object The object instance
+     * @phpstan-return ($objectName is class-string<T> ? T : object) The object instance
+     * @return T The object instance
      * @throws \Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException
      * @throws \Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException
      * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException

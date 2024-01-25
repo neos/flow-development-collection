@@ -91,7 +91,7 @@ interface JoinPointInterface
      * If no exception has been thrown, NULL is returned.
      * Only makes sense for After Throwing advices.
      *
-     * @return \Exception The exception thrown or NULL
+     * @return \Exception|null The exception thrown or NULL
      */
     public function getException();
 

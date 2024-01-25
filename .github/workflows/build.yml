@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.2']
+        php-versions: ['8.2', '8.3']
         # see https://mariadb.com/kb/en/mariadb-server-release-dates/
         # this should be a current release, e.g. the LTS version
         mariadb-versions: ['10.6']
@@ -120,8 +120,6 @@ jobs:
           git -C ../${{ env.FLOW_FOLDER }} checkout -b build
           composer config repositories.flow '{ "type": "path", "url": "../${{ env.FLOW_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/flow-development-collection:"dev-build as ${{ env.FLOW_BRANCH_ALIAS }}"
-          # todo remove temporary hack ;) (sorry - if i forget)
-          composer require --no-update --dev "phpstan/phpstan:^1.10.0"
 
       - name: Cache Composer packages
         id: composer-cache

@@ -31,11 +31,6 @@ use Neos\Utility\Files;
  */
 class Bootstrap
 {
-    /**
-     * Required PHP version
-     */
-    const MINIMUM_PHP_VERSION = '8.0.0';
-
     const RUNLEVEL_COMPILETIME = 'Compiletime';
     const RUNLEVEL_RUNTIME = 'Runtime';
 
@@ -45,12 +40,12 @@ class Bootstrap
     protected $context;
 
     /**
-     * @var array
+     * @var array<class-string<RequestHandlerInterface>, RequestHandlerInterface>
      */
     protected $requestHandlers = [];
 
     /**
-     * @var string
+     * @var class-string<RequestHandlerInterface>
      */
     protected $preselectedRequestHandlerClassName;
 
@@ -67,12 +62,12 @@ class Bootstrap
     public static $staticObjectManager;
 
     /**
-     * @var array
+     * @var array<string, true>
      */
     protected $compiletimeCommands = [];
 
     /**
-     * @var array
+     * @var array<string|class-string, object>
      */
     protected $earlyInstances = [];
 
@@ -167,7 +162,7 @@ class Bootstrap
      * it will be used if it can handle the request – regardless of the priority
      * of this or other request handlers.
      *
-     * @param string $className
+     * @param class-string<RequestHandlerInterface> $className
      */
     public function setPreselectedRequestHandlerClassName(string $className)
     {
@@ -338,12 +333,11 @@ class Bootstrap
      * On finalizing the Object Manager initialization, all those instances will
      * be transferred to the Object Manager's registry.
      *
-     * @param string $objectName Object name, as later used by the Object Manager
+     * @param string|class-string $objectName Object name, as later used by the Object Manager
      * @param object $instance The instance to register
-     * @return void
      * @api
      */
-    public function setEarlyInstance(string $objectName, $instance)
+    public function setEarlyInstance(string $objectName, object $instance): void
     {
         $this->earlyInstances[$objectName] = $instance;
     }
@@ -356,14 +350,16 @@ class Bootstrap
      */
     public function getSignalSlotDispatcher(): Dispatcher
     {
-        return $this->earlyInstances[Dispatcher::class];
+        return $this->getEarlyInstance(Dispatcher::class);
     }
 
     /**
      * Returns an instance which was registered earlier through setEarlyInstance()
      *
-     * @param string $objectName Object name of the registered instance
-     * @return object
+     * @template T of object
+     * @param class-string<T>|string $objectName Object name of the registered instance
+     * @phpstan-return ($objectName is class-string<T> ? T : object)
+     * @return T
      * @throws FlowException
      * @api
      */
@@ -378,7 +374,7 @@ class Bootstrap
     /**
      * Returns all registered early instances indexed by object name
      *
-     * @return array
+     * @return array<string|class-string, object>
      */
     public function getEarlyInstances(): array
     {
@@ -393,11 +389,11 @@ class Bootstrap
      */
     public function getObjectManager(): ObjectManagerInterface
     {
-        if (!isset($this->earlyInstances[ObjectManagerInterface::class])) {
-            debug_print_backtrace();
+        try {
+            return $this->getEarlyInstance(ObjectManagerInterface::class);
+        } catch (FlowException) {
             throw new FlowException('The Object Manager is not available at this stage of the bootstrap run.', 1301120788);
         }
-        return $this->earlyInstances[ObjectManagerInterface::class];
     }
 
     /**
@@ -409,14 +405,12 @@ class Bootstrap
     protected function resolveRequestHandler(): RequestHandlerInterface
     {
         if ($this->preselectedRequestHandlerClassName !== null && isset($this->requestHandlers[$this->preselectedRequestHandlerClassName])) {
-            /** @var RequestHandlerInterface $requestHandler */
             $requestHandler = $this->requestHandlers[$this->preselectedRequestHandlerClassName];
             if ($requestHandler->canHandleRequest()) {
                 return $requestHandler;
             }
         }
 
-        /** @var RequestHandlerInterface $requestHandler */
         foreach ($this->requestHandlers as $requestHandler) {
             if ($requestHandler->canHandleRequest() > 0) {
                 $priority = $requestHandler->getPriority();
@@ -441,7 +435,7 @@ class Bootstrap
      */
     protected function emitFinishedCompiletimeRun()
     {
-        $this->earlyInstances[Dispatcher::class]->dispatch(__CLASS__, 'finishedCompiletimeRun', []);
+        $this->getSignalSlotDispatcher()->dispatch(__CLASS__, 'finishedCompiletimeRun', []);
     }
 
     /**
@@ -452,7 +446,7 @@ class Bootstrap
      */
     protected function emitFinishedRuntimeRun()
     {
-        $this->earlyInstances[Dispatcher::class]->dispatch(__CLASS__, 'finishedRuntimeRun', []);
+        $this->getSignalSlotDispatcher()->dispatch(__CLASS__, 'finishedRuntimeRun', []);
     }
 
     /**
@@ -464,7 +458,7 @@ class Bootstrap
      */
     protected function emitBootstrapShuttingDown(string $runLevel)
     {
-        $this->earlyInstances[Dispatcher::class]->dispatch(__CLASS__, 'bootstrapShuttingDown', [$runLevel]);
+        $this->getSignalSlotDispatcher()->dispatch(__CLASS__, 'bootstrapShuttingDown', [$runLevel]);
     }
 
     /**
@@ -551,19 +545,10 @@ class Bootstrap
      */
     protected function ensureRequiredEnvironment()
     {
-        if (version_compare(phpversion(), self::MINIMUM_PHP_VERSION, '<')) {
-            echo('Flow requires PHP version ' . self::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)' . PHP_EOL);
-            exit(1);
-        }
-        if (!extension_loaded('mbstring')) {
-            echo('Flow requires the PHP extension "mbstring" (Error #1207148809)' . PHP_EOL);
-            exit(1);
-        }
         if (DIRECTORY_SEPARATOR !== '/' && PHP_WINDOWS_VERSION_MAJOR < 6) {
             echo('Flow does not support Windows versions older than Windows Vista or Windows Server 2008 (Error #1312463704)' . PHP_EOL);
             exit(1);
         }
-
         if (!extension_loaded('Reflection')) {
             echo('The PHP extension "Reflection" is required by Flow.' . PHP_EOL);
             exit(1);

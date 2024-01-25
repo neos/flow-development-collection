@@ -110,7 +110,6 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
         if ($this->hasArgument('format')) {
             $arguments['@format'] = $this->arguments['format'];
         }
-        /** @var $widgetContext WidgetContext */
         $widgetContext = $this->controllerContext->getRequest()->getInternalArgument('__widgetContext');
         if (!$widgetContext instanceof WidgetContext) {
             throw new WidgetContextNotFoundException('Widget context not found in <f:widget.link>', 1307450686);

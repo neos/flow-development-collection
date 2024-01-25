@@ -12,6 +12,7 @@ namespace Neos\Flow\ObjectManagement\DependencyInjection;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -45,6 +46,7 @@ class ProxyClassBuilder
     protected Compiler $compiler;
     protected LoggerInterface $logger;
     protected ConfigurationManager $configurationManager;
+    protected CacheManager $cacheManager;
     protected CompileTimeObjectManager $objectManager;
 
     /**
@@ -65,6 +67,11 @@ class ProxyClassBuilder
     public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
+    }
+
+    public function injectCacheManager(CacheManager $cacheManager): void
+    {
+        $this->cacheManager = $cacheManager;
     }
 
     #[Flow\Autowiring(false)]
@@ -395,6 +402,13 @@ class ProxyClassBuilder
                     }
                     $commands = array_merge($commands, $this->buildPropertyInjectionCodeByConfigurationTypeAndPath($objectConfiguration, $propertyName, $configurationType, $propertyValue['path']));
                     break;
+                case ConfigurationProperty::PROPERTY_TYPES_CACHE:
+                    $cacheIdentifier = $propertyValue['identifier'];
+                    if (!array_key_exists($cacheIdentifier, $this->cacheManager->getCacheConfigurations())) {
+                        throw new UnknownObjectException('The cache injection specified for property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" refers to the unknown cache identifier "' . $cacheIdentifier . '".', 1701280300);
+                    }
+                    $commands = array_merge($commands, $this->buildPropertyInjectionCodeByCacheIdentifier($objectConfiguration, $propertyName, $cacheIdentifier));
+                    break;
             }
             $injectedProperties[] = $propertyName;
         }
@@ -494,7 +508,7 @@ class ProxyClassBuilder
      * @param Configuration $objectConfiguration Configuration of the object to inject into
      * @param string $propertyName Name of the property to inject
      * @param string $configurationType the configuration type of the injected property (one of the ConfigurationManager::CONFIGURATION_TYPE_* constants)
-     * @param string $configurationPath Path with "." as separator specifying the setting value to inject or NULL if the complete configuration array should be injected
+     * @param string|null $configurationPath Path with "." as separator specifying the setting value to inject or NULL if the complete configuration array should be injected
      * @return array PHP code
      */
     public function buildPropertyInjectionCodeByConfigurationTypeAndPath(Configuration $objectConfiguration, $propertyName, $configurationType, $configurationPath = null): array
@@ -506,6 +520,25 @@ class ProxyClassBuilder
             $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\'' . $configurationType . '\')';
         }
 
+        $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
+        if ($result !== null) {
+            return $result;
+        }
+        return ['$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
+    }
+
+    /**
+     * Builds code which assigns the frontend of the specified cache into the given class property.
+     *
+     * @param Configuration $objectConfiguration Configuration of the object to inject into
+     * @param string $propertyName Name of the property to inject
+     * @param string $cacheIdentifier the identifier of the cache to inject
+     * @return array PHP code
+     */
+    public function buildPropertyInjectionCodeByCacheIdentifier(Configuration $objectConfiguration, string $propertyName, string $cacheIdentifier): array
+    {
+        $className = $objectConfiguration->getClassName();
+        $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Cache\CacheManager::class)->getCache(\'' . $cacheIdentifier . '\')';
         $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
         if ($result !== null) {
             return $result;

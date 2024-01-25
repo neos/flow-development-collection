@@ -200,15 +200,4 @@ class Context
         }
         return $this;
     }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        if (is_object($this->value) && !method_exists($this->value, '__toString')) {
-            return '[object ' . get_class($this->value) . ']';
-        }
-        return (string)$this->value;
-    }
 }

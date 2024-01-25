@@ -188,7 +188,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      * Checks if custom rendering rules apply to the given $exception and returns those.
      *
      * @param \Throwable $exception
-     * @return array the custom rendering options, or NULL if no custom rendering is defined for this exception
+     * @return array the custom rendering options, or the default
      */
     protected function resolveCustomRenderingOptions(\Throwable $exception): array
     {
@@ -206,7 +206,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
     /**
      * @param \Throwable $exception
-     * @return string name of the resolved renderingGroup or NULL if no group could be resolved
+     * @return string|null name of the resolved renderingGroup or NULL if no group could be resolved
      */
     protected function resolveRenderingGroup(\Throwable $exception)
     {

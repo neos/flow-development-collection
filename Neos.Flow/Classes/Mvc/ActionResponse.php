@@ -143,34 +143,6 @@ final class ActionResponse
     }
 
     /**
-     * Set a (HTTP) component parameter for use later in the chain.
-     * This can be used to adjust all aspects of the later processing if needed.
-     *
-     * @param string $componentClassName
-     * @param string $parameterName
-     * @param mixed $value
-     * @return void
-     * @deprecated since Flow 7.0 use setHttpHeader or replaceHttpResponse instead. For now this will still work with $componentClassName of "SetHeaderComponent" or "ReplaceHttpResponseComponent" only.
-     */
-    public function setComponentParameter(string $componentClassName, string $parameterName, $value): void
-    {
-        /** @phpstan-ignore-next-line legacy layer */
-        if ($componentClassName === \Neos\Flow\Http\Component\SetHeaderComponent::class) {
-            $this->setHttpHeader($parameterName, $value);
-            return;
-        }
-
-        /** @phpstan-ignore-next-line legacy layer */
-        if ($componentClassName === \Neos\Flow\Http\Component\ReplaceHttpResponseComponent::class && $parameterName === 'response') {
-            $this->replaceHttpResponse($value);
-            return;
-        }
-
-        /** @phpstan-ignore-next-line legacy layer */
-        throw new \InvalidArgumentException(sprintf('The method %s is deprecated. It will only allow a $componentClassName parameter of "%s" or "%s". If you want to send data to your middleware from the action, use response headers or introduce a global context. Both solutions are to be considered bad practice though.', __METHOD__, \Neos\Flow\Http\Component\SetHeaderComponent::class, \Neos\Flow\Http\Component\ReplaceHttpResponseComponent::class), 1605088079);
-    }
-
-    /**
      * Set the specified header in the response, overwriting any previous value set for this header.
      *
      * @param string $headerName The name of the header to set
@@ -347,6 +319,7 @@ final class ActionResponse
      */
     private function hasContent(): bool
     {
-        return $this->content->getSize() > 0;
+        $contentSize = $this->content->getSize();
+        return $contentSize === null || $contentSize > 0;
     }
 }

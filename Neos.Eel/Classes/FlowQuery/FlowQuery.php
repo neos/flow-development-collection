@@ -257,7 +257,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * Should only be called inside an operation.
      *
-     * @return string the next operation name or NULL if no next operation found.
+     * @return string|null the next operation name or NULL if no next operation found.
      */
     public function peekOperationName()
     {
