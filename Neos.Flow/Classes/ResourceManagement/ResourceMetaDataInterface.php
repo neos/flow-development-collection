@@ -37,14 +37,14 @@ interface ResourceMetaDataInterface
     /**
      * Returns the size of the content of this storage object
      *
-     * @return string The md5 hash
+     * @return int
      */
     public function getFileSize();
 
     /**
      * Sets the size of the content of this storage object
      *
-     * @param string $fileSize The content size
+     * @param int $fileSize The content size
      * @return void
      */
     public function setFileSize($fileSize);

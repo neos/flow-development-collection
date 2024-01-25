@@ -22,7 +22,7 @@ use Neos\Flow\Security\Authentication\TokenInterface;
 class TestingProvider extends AbstractProvider
 {
     /**
-     * @var Account
+     * @var Account|null
      */
     protected $account;
 

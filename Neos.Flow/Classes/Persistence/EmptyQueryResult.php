@@ -47,7 +47,7 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * Returns NULL
      *
-     * @return object Returns NULL in this case
+     * @return object|null
      * @api
      */
     public function getFirst()

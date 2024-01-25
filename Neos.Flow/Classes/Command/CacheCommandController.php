@@ -25,7 +25,6 @@ use Neos\Flow\Cli\Response;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\LockManager;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Utility\Environment;

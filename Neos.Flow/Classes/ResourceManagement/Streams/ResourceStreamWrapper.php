@@ -142,14 +142,15 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * @param string $path Directory which should be created.
      * @param integer $mode The value passed to mkdir().
      * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
-     * @return void
+     * @return bool
      */
     public function makeDirectory($path, $mode, $options)
     {
         $resourceUriOrStream = $this->evaluateResourcePath($path, false);
         if (is_string($resourceUriOrStream)) {
-            mkdir($resourceUriOrStream, $mode, $options&STREAM_MKDIR_RECURSIVE);
+            return mkdir($resourceUriOrStream, $mode, $options&STREAM_MKDIR_RECURSIVE);
         }
+        return false;
     }
 
     /**
@@ -162,7 +163,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * @param string $path The directory URL which should be removed.
      * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
-     * @return void
+     * @return bool
      * @throws \BadMethodCallException
      */
     public function removeDirectory($path, $options)
@@ -192,7 +193,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * This method is called in response to stream_select().
      *
      * @param integer $castType Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
-     * @return resource Should return the underlying stream resource used by the wrapper, or false.
+     * @return resource|false Should return the underlying stream resource used by the wrapper, or false.
      */
     public function cast($castType)
     {

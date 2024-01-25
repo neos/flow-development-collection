@@ -147,14 +147,14 @@ class Session implements CookieEnabledInterface
     /**
      * The session identifier
      *
-     * @var string
+     * @var string|null
      */
     protected $sessionIdentifier;
 
     /**
      * Internal identifier used for storing session data in the cache
      *
-     * @var string
+     * @var string|null
      */
     protected $storageIdentifier;
 

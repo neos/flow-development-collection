@@ -88,7 +88,7 @@ class ValidatorResolver
      *
      * @param string $validatorType Either one of the built-in data types or fully qualified validator class name
      * @param array $validatorOptions Options to be passed to the validator
-     * @return ValidatorInterface
+     * @return ValidatorInterface|null
      * @throws Exception\NoSuchValidatorException
      * @throws Exception\InvalidValidationConfigurationException
      * @api

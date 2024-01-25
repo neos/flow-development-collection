@@ -21,6 +21,11 @@ use Neos\Flow\Reflection\ClassReflection;
 class ClassMetadata extends \Doctrine\ORM\Mapping\ClassMetadata
 {
     /**
+     * @var ClassReflection|null
+     */
+    public $reflClass;
+
+    /**
      * Gets the ReflectionClass instance of the mapped class.
      *
      * @return ClassReflection
@@ -59,6 +64,7 @@ class ClassMetadata extends \Doctrine\ORM\Mapping\ClassMetadata
     /**
      * Initializes $this->reflClass and a number of related variables.
      *
+     * @phpstan-assert !null $this->reflClass
      * @return void
      */
     protected function _initializeReflection()

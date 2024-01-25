@@ -70,7 +70,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * Create a new instance of this PsrLoggerFactory
      *
      * @param array $configuration
-     * @return static
+     * @return PsrLoggerFactory
      * @api
      */
     public static function create(array $configuration): PsrLoggerFactory

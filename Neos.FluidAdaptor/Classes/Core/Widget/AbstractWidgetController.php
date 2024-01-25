@@ -14,7 +14,6 @@ namespace Neos\FluidAdaptor\Core\Widget;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 
 /**
@@ -29,7 +28,7 @@ abstract class AbstractWidgetController extends ActionController
     /**
      * Configuration for this widget.
      *
-     * @var array{objects: QueryResultInterface}
+     * @var array
      * @api
      */
     protected $widgetConfiguration;

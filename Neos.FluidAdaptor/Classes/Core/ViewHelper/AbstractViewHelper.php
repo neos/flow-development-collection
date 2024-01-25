@@ -51,7 +51,7 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
     protected $logger;
 
     /**
-     * @param RenderingContextInterface $renderingContext
+     * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return void
      */
     public function setRenderingContext(RenderingContextInterface $renderingContext)

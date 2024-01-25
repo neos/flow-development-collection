@@ -143,7 +143,7 @@ class DatetimeParser
      * @param string $datetimeToParse Date/time to be parsed
      * @param array $parsedFormat Format parsed by DatesReader
      * @param array $localizedLiterals Array of date / time literals from CLDR
-     * @return array Array of parsed date and / or time elements, false on failure
+     * @return array|false Array of parsed date and / or time elements, false on failure
      * @throws InvalidArgumentException When unexpected symbol found in format
      * @see DatesReader
      */

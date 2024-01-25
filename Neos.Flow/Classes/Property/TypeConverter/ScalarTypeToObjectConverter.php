@@ -29,7 +29,7 @@ use Neos\Utility\TypeHandling;
 class ScalarTypeToObjectConverter extends AbstractTypeConverter
 {
     /**
-     * @var array
+     * @var array<string>
      */
     protected $sourceTypes = ['string', 'integer', 'float', 'boolean'];
 
