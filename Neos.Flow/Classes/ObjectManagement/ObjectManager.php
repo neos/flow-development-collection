@@ -13,8 +13,6 @@ namespace Neos\Flow\ObjectManagement;
  * source code.
  */
 
-use Closure;
-use InvalidArgumentException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
@@ -23,7 +21,6 @@ use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Security\Context;
-use SplObjectStorage;
 
 /**
  * Object Manager
@@ -81,17 +78,17 @@ class ObjectManager implements ObjectManagerInterface
      * A SplObjectStorage containing those objects which need to be shutdown when the container
      * shuts down. Each value of each entry is the respective shutdown method name.
      *
-     * @var SplObjectStorage
+     * @var \SplObjectStorage
      */
-    protected SplObjectStorage $shutdownObjects;
+    protected \SplObjectStorage $shutdownObjects;
 
     /**
      * A SplObjectStorage containing only those shutdown objects which have been registered for Flow.
      * These shutdown method will be called after all other shutdown methods have been called.
      *
-     * @var SplObjectStorage
+     * @var \SplObjectStorage
      */
-    protected SplObjectStorage $internalShutdownObjects;
+    protected \SplObjectStorage $internalShutdownObjects;
 
     /**
      * Constructor for this Object Container
@@ -101,8 +98,8 @@ class ObjectManager implements ObjectManagerInterface
     public function __construct(ApplicationContext $context)
     {
         $this->context = $context;
-        $this->shutdownObjects = new SplObjectStorage;
-        $this->internalShutdownObjects = new SplObjectStorage;
+        $this->shutdownObjects = new \SplObjectStorage;
+        $this->internalShutdownObjects = new \SplObjectStorage;
     }
 
     /**
@@ -145,7 +142,7 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param  string $objectName Name of the object
      * @return boolean true if the object has been registered, otherwise false
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @api
      */
     public function isRegistered($objectName): bool
@@ -155,7 +152,7 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         if ($objectName[0] === '\\') {
-            throw new InvalidArgumentException('Object names must not start with a backslash ("' . $objectName . '")', 1270827335);
+            throw new \InvalidArgumentException('Object names must not start with a backslash ("' . $objectName . '")', 1270827335);
         }
         return false;
     }
@@ -199,14 +196,14 @@ class ObjectManager implements ObjectManagerInterface
      * @return T The object instance
      * @throws Exception\CannotBuildObjectException
      * @throws Exception\UnknownObjectException if an object with the given name does not exist
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @throws InvalidConfigurationTypeException
      * @api
      */
     public function get($objectName, ...$constructorArguments): object
     {
         if (!empty($constructorArguments) && isset($this->objects[$objectName]) && $this->objects[$objectName][self::KEY_SCOPE] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
-            throw new InvalidArgumentException('You cannot provide constructor arguments for singleton objects via get(). If you need to pass arguments to the constructor, define them in the Objects.yaml configuration.', 1298049934);
+            throw new \InvalidArgumentException('You cannot provide constructor arguments for singleton objects via get(). If you need to pass arguments to the constructor, define them in the Objects.yaml configuration.', 1298049934);
         }
 
         if (isset($this->objects[$objectName][self::KEY_INSTANCE])) {
@@ -307,7 +304,7 @@ class ObjectManager implements ObjectManagerInterface
             }
         }
         if ($className[0] === '\\') {
-            throw new InvalidArgumentException('Class names must not start with a backslash ("' . $className . '")', 1270826088);
+            throw new \InvalidArgumentException('Class names must not start with a backslash ("' . $className . '")', 1270826088);
         }
 
         return false;
@@ -425,10 +422,10 @@ class ObjectManager implements ObjectManagerInterface
      * @param string $hash An md5 hash over the code needed to actually build the dependency instance
      * @param mixed &$propertyReferenceVariable A first variable where the dependency needs to be injected into
      * @param string $className Name of the class of the dependency which eventually will be instantiated
-     * @param Closure $builder An anonymous function which creates the instance to be injected
+     * @param \Closure $builder An anonymous function which creates the instance to be injected
      * @return DependencyProxy
      */
-    public function createLazyDependency(string $hash, mixed &$propertyReferenceVariable, string $className, Closure $builder): DependencyProxy
+    public function createLazyDependency(string $hash, mixed &$propertyReferenceVariable, string $className, \Closure $builder): DependencyProxy
     {
         $this->dependencyProxies[$hash] = new DependencyProxy($className, $builder);
         $this->dependencyProxies[$hash]->_addPropertyVariable($propertyReferenceVariable);
@@ -569,10 +566,10 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * Executes the methods of the provided objects.
      *
-     * @param SplObjectStorage $shutdownObjects
+     * @param \SplObjectStorage $shutdownObjects
      * @return void
      */
-    protected function callShutdownMethods(SplObjectStorage $shutdownObjects): void
+    protected function callShutdownMethods(\SplObjectStorage $shutdownObjects): void
     {
         foreach ($shutdownObjects as $object) {
             $methodName = $shutdownObjects[$object];

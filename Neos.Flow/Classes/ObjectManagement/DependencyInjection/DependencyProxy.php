@@ -11,7 +11,6 @@ namespace Neos\Flow\ObjectManagement\DependencyInjection;
  * source code.
  */
 
-use Closure;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -28,9 +27,9 @@ class DependencyProxy
     protected string $className;
 
     /**
-     * @var Closure
+     * @var \Closure
      */
-    protected Closure $builder;
+    protected \Closure $builder;
 
     /**
      * @var array
@@ -41,9 +40,9 @@ class DependencyProxy
      * Constructs this proxy
      *
      * @param string $className Implementation class name of the dependency to proxy
-     * @param Closure $builder The closure which eventually builds the dependency
+     * @param \Closure $builder The closure which eventually builds the dependency
      */
-    public function __construct(string $className, Closure $builder)
+    public function __construct(string $className, \Closure $builder)
     {
         $this->className = $className;
         $this->builder = $builder;

@@ -11,7 +11,6 @@ namespace Neos\Flow\ObjectManagement\Configuration;
  * source code.
  */
 
-use InvalidArgumentException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 
@@ -127,7 +126,7 @@ class Configuration
         }
 
         $this->objectName = $objectName;
-        $this->className = ($className ?? $objectName);
+        $this->className = $className;
     }
 
     /**
@@ -224,12 +223,12 @@ class Configuration
      *
      * @param string $methodName The factory method name
      * @return void
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function setFactoryMethodName(string $methodName): void
     {
         if ($methodName === '') {
-            throw new InvalidArgumentException('No valid factory method name specified.', 1229700126);
+            throw new \InvalidArgumentException('No valid factory method name specified.', 1229700126);
         }
         $this->factoryMethodName = $methodName;
     }

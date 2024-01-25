@@ -24,7 +24,6 @@ use Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Reflection\ReflectionService;
 use Psr\Log\LoggerInterface;
-use TypeError;
 
 /**
  * Object Configuration Builder which can build object configuration objects
@@ -314,7 +313,7 @@ class ConfigurationBuilder
      * @return integer The autowiring option translated into one of Configuration::AUTOWIRING_MODE_*
      * @throws InvalidObjectConfigurationException if an invalid option has been specified
      */
-    protected static function parseAutowiring(bool|int $value): int
+    protected static function parseAutowiring(mixed $value): int
     {
         return match ($value) {
             true, Configuration::AUTOWIRING_MODE_ON => Configuration::AUTOWIRING_MODE_ON,
@@ -523,7 +522,7 @@ class ConfigurationBuilder
 
             try {
                 $classMethodNames = get_class_methods($className);
-            } catch (TypeError $error) {
+            } catch (\TypeError $error) {
                 throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371372);
             }
             foreach ($classMethodNames as $methodName) {
