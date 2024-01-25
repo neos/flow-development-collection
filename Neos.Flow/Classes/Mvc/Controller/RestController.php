@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -19,6 +20,7 @@ use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
+use Psr\Http\Message\UriInterface;
 
 /**
  * An action controller for RESTful web services
@@ -116,28 +118,26 @@ class RestController extends ActionController
     }
 
     /**
-     * Redirects the web request to another uri.
+     * Redirects to another URI
      *
-     * NOTE: This method only supports web requests and will throw an exception
-     * if used with other request types.
-     *
-     * @param mixed $uri Either a string representation of a URI or a \Neos\Flow\Http\Uri object
+     * @param UriInterface|string $uri Either a string or a psr uri
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @throws StopActionException
      * @api
      */
-    protected function redirectToUri($uri, $delay = 0, $statusCode = 303): never
+    protected function redirectToUri(string|UriInterface $uri, int $delay = 0, int $statusCode = 303): never
     {
-        // the parent method throws the exception, but we need to act afterwards
-        // thus the code in catch - it's the expected state
-        try {
-            parent::redirectToUri($uri, $delay, $statusCode);
-        } catch (StopActionException $exception) {
-            if ($this->request->getFormat() === 'json') {
-                $this->response->setContent('');
-            }
-            throw $exception;
+        if (!$uri instanceof UriInterface) {
+            $uri = new Uri($uri);
         }
+
+        $response = $this->responseRedirectsToUri($uri, $delay, $statusCode, $this->response);
+        if ($this->request->getFormat() === 'json') {
+            // send empty body on redirects for JSON requests
+            $response->setContent('');
+        }
+
+        $this->throwStopActionWithResponse($response, '', 1699716808);
     }
 }
