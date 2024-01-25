@@ -55,7 +55,7 @@ class IntegerConverter extends AbstractTypeConverter
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if ($source instanceof \DateTimeInterface) {
-            return $source->format('U');
+            return (int)$source->format('U');
         }
 
         if ($source === null || $source === '') {
