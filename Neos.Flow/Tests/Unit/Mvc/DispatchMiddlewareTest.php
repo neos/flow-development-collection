@@ -81,9 +81,9 @@ class DispatchMiddlewareTest extends UnitTestCase
     {
         $testContentType = 'audio/ogg';
         $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
-        $testReponse = new ActionResponse();
-        $testReponse->setContentType($testContentType);
-        $this->mockDispatcher->expects(self::once())->method('dispatch')->with($this->mockActionRequest)->willReturn($testReponse);
+        $testResponse = new ActionResponse();
+        $testResponse->setContentType($testContentType);
+        $this->mockDispatcher->expects(self::once())->method('dispatch')->with($this->mockActionRequest)->willReturn($testResponse);
 
         $response = $this->dispatchMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
         self::assertInstanceOf(ResponseInterface::class, $response);

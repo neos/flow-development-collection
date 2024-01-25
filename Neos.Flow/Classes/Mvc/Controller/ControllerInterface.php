@@ -30,12 +30,15 @@ use Neos\Flow\Mvc\Exception\StopActionException;
 interface ControllerInterface
 {
     /**
-     * Processes a general request. The result can be returned by altering the given response.
+     * Processes a general request.
      *
-     * @param ActionRequest $request The request object
-     * @return ActionResponse $response The response, modified by the controller
-     * @throws StopActionException
-     * @throws ForwardException
+     * The action request can either be returned, or handed over
+     * by throwing a dedicated exception with response attached.
+     *
+     * @param ActionRequest $request The dispatched action request
+     * @return ActionResponse The resulting created response
+     * @throws StopActionException is allowed for exceptional control flow
+     * @throws ForwardException is allowed for exceptional control flow
      * @api
      */
     public function processRequest(ActionRequest $request): ActionResponse;

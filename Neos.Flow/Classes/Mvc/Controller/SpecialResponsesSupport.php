@@ -74,7 +74,7 @@ trait SpecialResponsesSupport
 
     /**
      * Forwards the request to another action and / or controller
-     * Request is directly transfered to the other action / controller
+     * Request is directly transferred to the other action / controller
      *
      * NOTE that this will not try to convert any objects in the requests arguments,
      * this can be a fine or a problem depending on context of usage.
