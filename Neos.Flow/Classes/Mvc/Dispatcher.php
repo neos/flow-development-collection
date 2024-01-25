@@ -135,13 +135,14 @@ class Dispatcher
                 $response = $controller->processRequest($request);
                 $this->emitAfterControllerInvocation($request, $response, $controller);
             } catch (StopActionException $exception) {
-                $response = $exception->response ?? $response;
+                $response = $exception->response;
                 $this->emitAfterControllerInvocation($request, $response, $controller);
-                if ($exception instanceof ForwardException) {
-                    $request = $exception->getNextRequest();
-                } elseif (!$request->isMainRequest()) {
+                if (!$request->isMainRequest()) {
                     $request = $request->getParentRequest();
                 }
+            } catch (ForwardException $exception) {
+                $this->emitAfterControllerInvocation($request, $response, $controller);
+                $request = $exception->nextRequest;
             }
         }
         return $response;

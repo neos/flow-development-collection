@@ -23,7 +23,24 @@ use Neos\Flow\Mvc\ActionResponse;
  *
  * @api
  */
-class StopActionException extends \Neos\Flow\Mvc\Exception
+final class StopActionException extends \Neos\Flow\Mvc\Exception
 {
-    public ActionResponse $response;
+    /**
+     * As throwing the exception allows for an unusual control flow, we attach the response for the dispatcher.
+     */
+    public readonly ActionResponse $response;
+
+    private function __construct(string $message, int $code, ?\Throwable $previous, ActionResponse $response)
+    {
+        parent::__construct($message, $code, $previous);
+        $this->response = $response;
+    }
+
+    public static function create(
+        ActionResponse $response,
+        string $message,
+        int $code
+    ) {
+        return new self($message, $code, null, $response);
+    }
 }

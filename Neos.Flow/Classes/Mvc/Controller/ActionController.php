@@ -208,6 +208,7 @@ class ActionController extends AbstractController
      * @throws InvalidArgumentTypeException
      * @throws NoSuchActionException
      * @throws StopActionException
+     * @throws ForwardException
      * @throws ViewNotFoundException
      * @throws NoSuchArgumentException
      * @throws Exception

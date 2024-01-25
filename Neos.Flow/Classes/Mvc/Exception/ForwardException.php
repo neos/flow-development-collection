@@ -19,32 +19,21 @@ use Neos\Flow\Mvc\ActionRequest;
  *
  * @api
  */
-class ForwardException extends StopActionException
+final class ForwardException extends \Neos\Flow\Mvc\Exception
 {
     /**
-     * @var ActionRequest
+     * @var ActionRequest The next request, containing the information about the next action to execute.
      */
-    protected $nextRequest;
+    public readonly ActionRequest $nextRequest;
 
-    /**
-     * Sets the next request, containing the information about the next action to
-     * execute.
-     *
-     * @param ActionRequest $nextRequest
-     * @return void
-     */
-    public function setNextRequest(ActionRequest $nextRequest)
+    private function __construct(string $message, int $code, ?\Throwable $previous, ActionRequest $nextRequest)
     {
+        parent::__construct($message, $code, $previous);
         $this->nextRequest = $nextRequest;
     }
 
-    /**
-     * Returns the next request
-     *
-     * @return ActionRequest
-     */
-    public function getNextRequest()
+    public static function create(ActionRequest $nextRequest)
     {
-        return $this->nextRequest;
+        return new self('', 0, null, $nextRequest);
     }
 }

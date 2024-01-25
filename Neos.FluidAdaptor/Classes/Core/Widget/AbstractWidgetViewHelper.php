@@ -244,13 +244,12 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
                 $content = $subResponse->getContent();
                 $subResponse->setContent('');
             } catch (StopActionException $exception) {
-                $subResponse = $exception->response ?? $subResponse;
-                if ($exception instanceof ForwardException) {
-                    $subRequest = $exception->getNextRequest();
-                    continue;
-                }
+                $subResponse = $exception->response;
                 $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
                 throw $exception;
+            } catch (ForwardException $exception) {
+                $subRequest = $exception->nextRequest;
+                continue;
             }
             $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
         }

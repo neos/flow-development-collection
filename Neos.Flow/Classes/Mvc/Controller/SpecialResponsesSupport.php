@@ -67,9 +67,7 @@ trait SpecialResponsesSupport
      */
     protected function throwStopActionWithResponse(ActionResponse $response, string $message = '', int $code = 0): never
     {
-        $exception = new StopActionException($message, $code);
-        $exception->response = $response;
-        throw $exception;
+        throw StopActionException::create($response, $message, $code);
     }
 
     /**
@@ -86,8 +84,7 @@ trait SpecialResponsesSupport
     protected function forwardToRequest(ActionRequest $request): never
     {
         $nextRequest = clone $request;
-        $forwardException = new ForwardException();
-        $forwardException->setNextRequest($nextRequest);
+        $forwardException = ForwardException::create($nextRequest);
         throw $forwardException;
     }
 }

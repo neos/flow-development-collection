@@ -155,7 +155,7 @@ class DispatcherTest extends UnitTestCase
         $this->mockParentRequest->expects(self::exactly(2))->method('isDispatched')->willReturnOnConsecutiveCalls(false, true);
         $this->mockParentRequest->expects(self::once())->method('isMainRequest')->willReturn(true);
 
-        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(new StopActionException()));
+        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(StopActionException::create(new ActionResponse(), '', 0)));
 
         $this->dispatcher->dispatch($this->mockParentRequest);
     }
@@ -168,7 +168,7 @@ class DispatcherTest extends UnitTestCase
         $this->mockActionRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(false);
         $this->mockParentRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(true);
 
-        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(new StopActionException()));
+        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(StopActionException::create(new ActionResponse(), '', 0)));
 
         $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
     }
@@ -181,14 +181,13 @@ class DispatcherTest extends UnitTestCase
         /** @var ActionRequest|MockObject $nextRequest */
         $nextRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $nextRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(true);
-        $forwardException = new ForwardException();
-        $forwardException->setNextRequest($nextRequest);
+        $forwardException = ForwardException::create($nextRequest);
 
         $this->mockParentRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(false);
 
         $this->mockController->expects(self::exactly(2))->method('processRequest')
             ->withConsecutive([$this->mockActionRequest], [$this->mockParentRequest])
-            ->willReturnOnConsecutiveCalls(self::throwException(new StopActionException()), self::throwException($forwardException));
+            ->willReturnOnConsecutiveCalls(self::throwException(StopActionException::create(new ActionResponse(), '', 0)), self::throwException($forwardException));
 
         $this->dispatcher->dispatch($this->mockActionRequest);
     }
