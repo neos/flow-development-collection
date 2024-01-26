@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Functional\Http\Fixtures\Controller;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\AbstractController;
 
-class FooController extends AbstractController
+class FooController implements ControllerInterface
 {
     /**
      * @inheritDoc
