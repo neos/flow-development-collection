@@ -18,7 +18,6 @@ use Neos\Error\Messages\Message;
 /**
  * A controller fixture
  *
- * @Flow\Scope("singleton")
  */
 class StandardController extends ActionController
 {

@@ -18,7 +18,6 @@ use Neos\Flow\Property\TypeConverter\ObjectConverter;
 /**
  * An action controller test fixture
  *
- * @Flow\Scope("singleton")
  */
 class ActionControllerTestBController extends ActionController
 {

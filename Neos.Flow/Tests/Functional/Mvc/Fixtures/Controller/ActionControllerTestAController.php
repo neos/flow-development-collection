@@ -17,7 +17,6 @@ use Neos\Flow\Mvc\Controller\ActionController;
 /**
  * A controller fixture
  *
- * @Flow\Scope("singleton")
  */
 class ActionControllerTestAController extends ActionController
 {

@@ -18,7 +18,6 @@ use Neos\Flow\Mvc\Controller\ActionController;
 /**
  * part of the test fixture for {@see UriBuilderTest}
  *
- * @Flow\Scope("singleton")
  */
 class UriBuilderController extends ActionController
 {
