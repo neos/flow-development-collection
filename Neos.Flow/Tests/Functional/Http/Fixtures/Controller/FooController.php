@@ -14,7 +14,7 @@ namespace Neos\Flow\Tests\Functional\Http\Fixtures\Controller;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\AbstractController;
 
-class FooController implements ControllerInterface
+class FooController extends AbstractController
 {
     /**
      * @inheritDoc
@@ -22,6 +22,7 @@ class FooController implements ControllerInterface
     public function processRequest($request): ActionResponse
     {
         $response = new ActionResponse();
+        // test's AbstractController::initializeController
         $this->initializeController($request, $response);
         $response->setContent('FooController responded');
         return $response;
