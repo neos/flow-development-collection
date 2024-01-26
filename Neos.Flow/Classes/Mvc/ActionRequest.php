@@ -212,6 +212,7 @@ class ActionRequest implements RequestInterface
      * Checks if this request is the uppermost ActionRequest, just one below the
      * HTTP request.
      *
+     * @phpstan-assert-if-true null $this->getParentRequest()
      * @return boolean
      * @api
      */
