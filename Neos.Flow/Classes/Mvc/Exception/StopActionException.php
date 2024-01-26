@@ -19,14 +19,17 @@ use Neos\Flow\Mvc\ActionResponse;
  * exception and - depending on the "dispatched" status of the request - either
  * continues dispatching the request or returns control to the request handler.
  *
- * See the Action Controller's forward() and redirectToUri() methods for more information.
+ * See {@see SpecialResponsesSupport::throwStopActionWithResponse()}
+ * or {@see SpecialResponsesSupport::responseRedirectsToUri()} for more information.
+ *
+ * Other control flow exceptions: {@see ForwardException}
  *
  * @api
  */
 final class StopActionException extends \Neos\Flow\Mvc\Exception
 {
     /**
-     * As throwing the exception allows for an unusual control flow, we attach the response for the dispatcher.
+     * The response to be received by the MVC Dispatcher.
      */
     public readonly ActionResponse $response;
 
@@ -36,10 +39,18 @@ final class StopActionException extends \Neos\Flow\Mvc\Exception
         $this->response = $response;
     }
 
-    public static function create(
-        ActionResponse $response,
-        string $message
-    ) {
-        return new self($message, 1558088618, null, $response);
+    /**
+     * @param ActionResponse $response The response to be received by the MVC Dispatcher.
+     * @param string $details Additional details just for this exception, in case it is logged (the regular exception message).
+     */
+    public static function create(ActionResponse $response, string $details): self
+    {
+        if (empty($details)) {
+            $details = sprintf(
+                'Stop action with %s response.',
+                $response->getStatusCode()
+            );
+        }
+        return new self($details, 1558088618, null, $response);
     }
 }

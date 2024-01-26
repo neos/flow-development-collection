@@ -181,7 +181,7 @@ class DispatcherTest extends UnitTestCase
         /** @var ActionRequest|MockObject $nextRequest */
         $nextRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $nextRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(true);
-        $forwardException = ForwardException::create($nextRequest);
+        $forwardException = ForwardException::create($nextRequest, '');
 
         $this->mockParentRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(false);
 

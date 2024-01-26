@@ -21,7 +21,7 @@ trait SpecialResponsesSupport
      * @return never
      * @throws StopActionException
      */
-    protected function responseThrowsStatus(int $statusCode, string $content = '', ?ActionResponse $response =  null): never
+    protected function responseThrowsStatus(int $statusCode, string $content = '', ?ActionResponse $response = null): never
     {
         $response = $response ?? new ActionResponse;
 
@@ -59,14 +59,14 @@ trait SpecialResponsesSupport
     }
 
     /**
-     * @param ActionResponse $response
-     * @param string $message
+     * @param ActionResponse $response The response to be received by the MVC Dispatcher.
+     * @param string $details Additional details just for the exception, in case it is logged (the regular exception message).
      * @return never
      * @throws StopActionException
      */
-    protected function throwStopActionWithResponse(ActionResponse $response, string $message = ''): never
+    protected function throwStopActionWithResponse(ActionResponse $response, string $details = ''): never
     {
-        throw StopActionException::create($response, $message);
+        throw StopActionException::create($response, $details);
     }
 
     /**
@@ -83,7 +83,6 @@ trait SpecialResponsesSupport
     protected function forwardToRequest(ActionRequest $request): never
     {
         $nextRequest = clone $request;
-        $forwardException = ForwardException::create($nextRequest);
-        throw $forwardException;
+        throw ForwardException::create($nextRequest, '');
     }
 }
