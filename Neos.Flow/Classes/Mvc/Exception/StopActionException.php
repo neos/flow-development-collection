@@ -38,9 +38,8 @@ final class StopActionException extends \Neos\Flow\Mvc\Exception
 
     public static function create(
         ActionResponse $response,
-        string $message,
-        int $code
+        string $message
     ) {
-        return new self($message, $code, null, $response);
+        return new self($message, 1558088618, null, $response);
     }
 }

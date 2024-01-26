@@ -30,7 +30,7 @@ trait SpecialResponsesSupport
             $response->setContent($content);
         }
 
-        $this->throwStopActionWithResponse($response, $content, 1558088618);
+        $this->throwStopActionWithResponse($response, $content);
     }
 
     /**
@@ -49,7 +49,7 @@ trait SpecialResponsesSupport
 
         if ($delay < 1) {
             $nextResponse->setRedirectUri($uri, $statusCode);
-            $this->throwStopActionWithResponse($nextResponse, '', 1699478812);
+            $this->throwStopActionWithResponse($nextResponse, '');
         }
 
         $nextResponse->setStatusCode($statusCode);
@@ -61,13 +61,12 @@ trait SpecialResponsesSupport
     /**
      * @param ActionResponse $response
      * @param string $message
-     * @param int $code
      * @return never
      * @throws StopActionException
      */
-    protected function throwStopActionWithResponse(ActionResponse $response, string $message = '', int $code = 0): never
+    protected function throwStopActionWithResponse(ActionResponse $response, string $message = ''): never
     {
-        throw StopActionException::create($response, $message, $code);
+        throw StopActionException::create($response, $message);
     }
 
     /**

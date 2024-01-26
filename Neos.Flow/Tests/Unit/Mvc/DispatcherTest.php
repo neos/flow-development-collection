@@ -155,7 +155,7 @@ class DispatcherTest extends UnitTestCase
         $this->mockParentRequest->expects(self::exactly(2))->method('isDispatched')->willReturnOnConsecutiveCalls(false, true);
         $this->mockParentRequest->expects(self::once())->method('isMainRequest')->willReturn(true);
 
-        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(StopActionException::create(new ActionResponse(), '', 0)));
+        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(StopActionException::create(new ActionResponse(), '')));
 
         $this->dispatcher->dispatch($this->mockParentRequest);
     }
@@ -168,7 +168,7 @@ class DispatcherTest extends UnitTestCase
         $this->mockActionRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(false);
         $this->mockParentRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(true);
 
-        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(StopActionException::create(new ActionResponse(), '', 0)));
+        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(StopActionException::create(new ActionResponse(), '')));
 
         $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
     }
@@ -187,7 +187,7 @@ class DispatcherTest extends UnitTestCase
 
         $this->mockController->expects(self::exactly(2))->method('processRequest')
             ->withConsecutive([$this->mockActionRequest], [$this->mockParentRequest])
-            ->willReturnOnConsecutiveCalls(self::throwException(StopActionException::create(new ActionResponse(), '', 0)), self::throwException($forwardException));
+            ->willReturnOnConsecutiveCalls(self::throwException(StopActionException::create(new ActionResponse(), '')), self::throwException($forwardException));
 
         $this->dispatcher->dispatch($this->mockActionRequest);
     }
