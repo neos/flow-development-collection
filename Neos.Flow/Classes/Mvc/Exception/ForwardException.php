@@ -39,7 +39,7 @@ final class ForwardException extends \Neos\Flow\Mvc\Exception
      * @param ActionRequest $nextRequest The next request the MVC Dispatcher should handle.
      * @param string $details Additional details just for this exception, in case it is logged (the regular exception message).
      */
-    public static function create(ActionRequest $nextRequest, string $details): self
+    public static function createForNextRequest(ActionRequest $nextRequest, string $details): self
     {
         if (empty($details)) {
             $details = sprintf(

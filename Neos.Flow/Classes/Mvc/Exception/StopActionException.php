@@ -43,7 +43,7 @@ final class StopActionException extends \Neos\Flow\Mvc\Exception
      * @param ActionResponse $response The response to be received by the MVC Dispatcher.
      * @param string $details Additional details just for this exception, in case it is logged (the regular exception message).
      */
-    public static function create(ActionResponse $response, string $details): self
+    public static function createForResponse(ActionResponse $response, string $details): self
     {
         if (empty($details)) {
             $details = sprintf(
