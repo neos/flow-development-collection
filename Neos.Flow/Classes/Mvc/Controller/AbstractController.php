@@ -313,7 +313,7 @@ abstract class AbstractController implements ControllerInterface
         }
 
         $response = $this->responseRedirectsToUri($uri, $delay, $statusCode, $this->response);
-        $this->throwStopActionWithResponse($response, '', 1699716808);
+        $this->throwStopActionWithResponse($response, '');
     }
 
     /**

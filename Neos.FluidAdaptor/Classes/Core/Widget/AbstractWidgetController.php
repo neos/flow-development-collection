@@ -14,6 +14,7 @@ namespace Neos\FluidAdaptor\Core\Widget;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
@@ -52,6 +53,7 @@ abstract class AbstractWidgetController extends ActionController
      * @throws NoSuchActionException
      * @throws NoSuchArgumentException
      * @throws StopActionException
+     * @throws ForwardException
      * @throws ViewNotFoundException
      * @throws Exception
      * @throws \Neos\Flow\Security\Exception

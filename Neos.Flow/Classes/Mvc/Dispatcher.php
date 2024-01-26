@@ -123,40 +123,39 @@ class Dispatcher
     protected function initiateDispatchLoop(ActionRequest $request): ActionResponse
     {
         $dispatchLoopCount = 0;
-        // This response is just for legacy reasons so the signals have something.
-        $response = new ActionResponse();
-        while ($request !== null && $request->isDispatched() === false) {
+        while ($request->isDispatched() === false) {
             if ($dispatchLoopCount++ > 99) {
                 throw new Exception\InfiniteLoopException(sprintf('Could not ultimately dispatch the request after %d iterations.', $dispatchLoopCount), 1217839467);
             }
             $controller = $this->resolveController($request);
+            $this->emitBeforeControllerInvocation($request, $controller);
             try {
-                $this->emitBeforeControllerInvocation($request, $response, $controller);
                 $response = $controller->processRequest($request);
                 $this->emitAfterControllerInvocation($request, $response, $controller);
-            } catch (StopActionException $exception) {
-                $response = $exception->response ?? $response;
-                $this->emitAfterControllerInvocation($request, $response, $controller);
-                if ($exception instanceof ForwardException) {
-                    $request = $exception->getNextRequest();
-                } elseif (!$request->isMainRequest()) {
+            } catch (StopActionException $stopActionException) {
+                $this->emitAfterControllerInvocation($request, $stopActionException->response, $controller);
+                $response = $stopActionException->response;
+                if (!$request->isMainRequest()) {
                     $request = $request->getParentRequest();
                 }
+            } catch (ForwardException $forwardException) {
+                $this->emitAfterControllerInvocation($request, null, $controller);
+                $request = $forwardException->nextRequest;
             }
         }
-        return $response;
+        // TODO $response is never _null_ at this point, except a `forwardToRequest` and the `nextRequest` is already dispatched == true, which seems illegal af
+        return $response ?? new ActionResponse();
     }
 
     /**
-     * This signal is emitted directly before the request is been dispatched to a controller.
+     * This signal is emitted directly before the request is being dispatched to a controller.
      *
      * @param ActionRequest $request
-     * @param ActionResponse $response This will always be an empty response, nothing to see here.
      * @param ControllerInterface $controller
      * @return void
      * @Flow\Signal
      */
-    protected function emitBeforeControllerInvocation(ActionRequest $request, ActionResponse $response, ControllerInterface $controller)
+    protected function emitBeforeControllerInvocation(ActionRequest $request, ControllerInterface $controller)
     {
     }
 
@@ -165,12 +164,14 @@ class Dispatcher
      * returned control back to the dispatcher.
      *
      * @param ActionRequest $request
-     * @param ActionResponse $response
+     * @param ActionResponse|null $response The response the controller returned or null, if it was just forwarding a request.
+     *                                      Modifying the response through this signal is not always going to take effect
+     *                                      and might be ignored for example if the dispatcher is still in the loop.
      * @param ControllerInterface $controller
      * @return void
      * @Flow\Signal
      */
-    protected function emitAfterControllerInvocation(ActionRequest $request, ActionResponse $response, ControllerInterface $controller)
+    protected function emitAfterControllerInvocation(ActionRequest $request, ?ActionResponse $response, ControllerInterface $controller)
     {
     }
 

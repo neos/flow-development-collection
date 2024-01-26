@@ -138,6 +138,6 @@ class RestController extends ActionController
             $response->setContent('');
         }
 
-        $this->throwStopActionWithResponse($response, '', 1699716808);
+        $this->throwStopActionWithResponse($response, '');
     }
 }

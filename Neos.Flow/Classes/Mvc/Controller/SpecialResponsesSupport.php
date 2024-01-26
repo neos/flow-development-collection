@@ -21,7 +21,7 @@ trait SpecialResponsesSupport
      * @return never
      * @throws StopActionException
      */
-    protected function responseThrowsStatus(int $statusCode, string $content = '', ?ActionResponse $response =  null): never
+    protected function responseThrowsStatus(int $statusCode, string $content = '', ?ActionResponse $response = null): never
     {
         $response = $response ?? new ActionResponse;
 
@@ -30,7 +30,7 @@ trait SpecialResponsesSupport
             $response->setContent($content);
         }
 
-        $this->throwStopActionWithResponse($response, $content, 1558088618);
+        $this->throwStopActionWithResponse($response, $content);
     }
 
     /**
@@ -49,7 +49,7 @@ trait SpecialResponsesSupport
 
         if ($delay < 1) {
             $nextResponse->setRedirectUri($uri, $statusCode);
-            $this->throwStopActionWithResponse($nextResponse, '', 1699478812);
+            $this->throwStopActionWithResponse($nextResponse, '');
         }
 
         $nextResponse->setStatusCode($statusCode);
@@ -59,17 +59,14 @@ trait SpecialResponsesSupport
     }
 
     /**
-     * @param ActionResponse $response
-     * @param string $message
-     * @param int $code
+     * @param ActionResponse $response The response to be received by the MVC Dispatcher.
+     * @param string $details Additional details just for the exception, in case it is logged (the regular exception message).
      * @return never
      * @throws StopActionException
      */
-    protected function throwStopActionWithResponse(ActionResponse $response, string $message = '', int $code = 0): never
+    protected function throwStopActionWithResponse(ActionResponse $response, string $details = ''): never
     {
-        $exception = new StopActionException($message, $code);
-        $exception->response = $response;
-        throw $exception;
+        throw StopActionException::createForResponse($response, $details);
     }
 
     /**
@@ -86,8 +83,6 @@ trait SpecialResponsesSupport
     protected function forwardToRequest(ActionRequest $request): never
     {
         $nextRequest = clone $request;
-        $forwardException = new ForwardException();
-        $forwardException->setNextRequest($nextRequest);
-        throw $forwardException;
+        throw ForwardException::createForNextRequest($nextRequest, '');
     }
 }
