@@ -559,7 +559,7 @@ class ActionController extends AbstractController
         }
 
         if ($actionResult === null && $this->view instanceof ViewInterface) {
-            $this->response = $this->renderView($this->response);
+            $this->renderView($this->response)->mergeIntoParentResponse($this->response);
         } else {
             $this->response->setContent($actionResult);
         }

@@ -60,14 +60,14 @@ abstract class AbstractController implements ControllerInterface
      * @var ActionRequest
      * @api
      */
-    protected $request;
+    protected readonly ActionRequest $request;
 
     /**
      * The response which will be returned by this action controller
      * @var ActionResponse
      * @api
      */
-    protected $response;
+    protected readonly ActionResponse $response;
 
     /**
      * Arguments passed to the controller

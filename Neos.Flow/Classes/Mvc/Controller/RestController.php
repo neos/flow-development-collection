@@ -28,18 +28,6 @@ use Psr\Http\Message\UriInterface;
 class RestController extends ActionController
 {
     /**
-     * The current request
-     * @var ActionRequest
-     */
-    protected $request;
-
-    /**
-     * The response which will be returned by this action controller
-     * @var ActionResponse
-     */
-    protected $response;
-
-    /**
      * Name of the action method argument which acts as the resource for the
      * RESTful controller. If an argument with the specified name is passed
      * to the controller, the show, update and delete actions can be triggered
