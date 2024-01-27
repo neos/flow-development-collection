@@ -23,8 +23,6 @@ use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
-use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Media\Domain\Repository\ThumbnailRepository;
 use Symfony\Component\Console\Helper\ProgressIndicator;
 
 /**
@@ -206,8 +204,8 @@ class ResourceCommandController extends CommandController
      * seem to have any corresponding data anymore (for example: the file in Data/Persistent/Resources has been deleted
      * without removing the related PersistentResource object).
      *
-     * If the Neos.Media package is active, this command will also detect any assets referring to broken resources
-     * and will remove the respective Asset object from the database when the broken resource is removed.
+     * If the Neos.Media package is installed you should prefer the `media:cleanresources` command, as it would also detect
+     * any assets referring to broken resources and thumbnails.
      *
      * This command will ask you interactively what to do before deleting anything.
      *
@@ -215,6 +213,15 @@ class ResourceCommandController extends CommandController
      */
     public function cleanCommand()
     {
+        $mediaPackagePresent = $this->packageManager->isPackageAvailable('Neos.Media');
+
+        if ($mediaPackagePresent) {
+            $continue = $this->output->askConfirmation("With Neos.Media installed it's recommended to use the <comment>./flow media:cleanresources</comment> command\ninstead as it will also cleanup broken assets. Do you still want to continue? ");
+            if (!$continue) {
+                $this->quit(1);
+            }
+        }
+
         $this->outputLine('Checking if resource data exists for all known resource objects ...');
         $this->outputLine();
 
@@ -223,8 +230,6 @@ class ResourceCommandController extends CommandController
 
         /** @var list<PersistentResource> $brokenResources */
         $brokenResources = [];
-        $relatedAssets = new \SplObjectStorage();
-        $relatedThumbnails = new \SplObjectStorage();
         $resources = $this->resourceRepository->findAllIterator();
         $iteration = 0;
         foreach ($resources as $resource) {
@@ -240,47 +245,20 @@ class ResourceCommandController extends CommandController
         $this->output->progressFinish();
         $this->outputLine();
 
-        // FIXME flow has no dependency on Neos.Media. This code should be extracted. https://github.com/neos/flow-development-collection/issues/3272
-        $assetRepository = $this->objectManager->get(AssetRepository::class);
-        $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
-        $mediaPackagePresent = $this->packageManager->isPackageAvailable('Neos.Media');
-
-        if (count($brokenResources) > 0) {
-            foreach ($brokenResources as $resource) {
-                if ($mediaPackagePresent) {
-                    $assets = $assetRepository->findByResource($resource);
-                    if ($assets !== null) {
-                        $relatedAssets[$resource] = $assets;
-                    }
-                    $thumbnails = $thumbnailRepository->findByResource($resource);
-                    if ($assets !== null) {
-                        $relatedThumbnails[$resource] = $thumbnails;
-                    }
-                }
-            }
-        }
-
         if (count($brokenResources) > 0) {
             $this->outputLine('<b>Found %s broken resource(s):</b>', [count($brokenResources)]);
             $this->outputLine();
 
             foreach ($brokenResources as $resource) {
                 $this->outputLine('%s (%s) from "%s" collection', [$resource->getFilename(), $resource->getSha1(), $resource->getCollectionName()]);
-                if (isset($relatedAssets[$resource])) {
-                    foreach ($relatedAssets[$resource] as $asset) {
-                        $this->outputLine(' -> %s (%s)', [get_class($asset), $asset->getIdentifier()]);
-                    }
-                }
             }
             $response = null;
-            while (!in_array($response, ['y', 'n', 'c'])) {
-                $response = $this->output->ask('<comment>Do you want to remove all broken resource objects and related assets from the database? (y/n/c) </comment>');
+            while (!in_array($response, ['y', 'n'])) {
+                $response = $this->output->ask('<comment>Do you want to remove all broken resource objects from the database? (y/n) </comment>');
             }
 
             switch ($response) {
                 case 'y':
-                    $brokenAssetCounter = 0;
-                    $brokenThumbnailCounter = 0;
                     foreach ($brokenResources as $resource) {
                         $this->outputLine('- delete %s (%s) from "%s" collection', [
                             $resource->getFilename(),
@@ -289,38 +267,15 @@ class ResourceCommandController extends CommandController
                         ]);
                         $resource->disableLifecycleEvents();
                         $this->resourceRepository->remove($resource);
-                        if ($mediaPackagePresent) {
-                            if (isset($relatedAssets[$resource])) {
-                                foreach ($relatedAssets[$resource] as $asset) {
-                                    $assetRepository->removeWithoutUsageChecks($asset);
-                                    $brokenAssetCounter++;
-                                }
-                            }
-                            if (isset($relatedThumbnails[$resource])) {
-                                foreach ($relatedThumbnails[$resource] as $thumbnail) {
-                                    $thumbnailRepository->remove($thumbnail);
-                                    $brokenThumbnailCounter++;
-                                }
-                            }
-                        }
                         $this->persistenceManager->persistAll();
                     }
                     $brokenResourcesCounter = count($brokenResources);
                     if ($brokenResourcesCounter > 0) {
                         $this->outputLine('Removed %s resource object(s) from the database.', [$brokenResourcesCounter]);
                     }
-                    if ($brokenAssetCounter > 0) {
-                        $this->outputLine('Removed %s asset object(s) from the database.', [$brokenAssetCounter]);
-                    }
-                    if ($brokenThumbnailCounter > 0) {
-                        $this->outputLine('Removed %s thumbnail object(s) from the database.', [$brokenThumbnailCounter]);
-                    }
                     break;
                 case 'n':
                     $this->outputLine('Did not delete any resource objects.');
-                    break;
-                case 'c':
-                    $this->outputLine('Stopping. Did not delete any resource objects.');
                     $this->quit(0);
                     break;
             }
