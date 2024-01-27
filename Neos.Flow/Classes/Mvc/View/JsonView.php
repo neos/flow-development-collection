@@ -13,7 +13,7 @@ namespace Neos\Flow\Mvc\View;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\ActionMessages;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
@@ -195,8 +195,10 @@ class JsonView extends AbstractView
      */
     public function render()
     {
-        // todo how to support this?
-        $this->controllerContext->getResponse()->setContentType('application/json');
+        /** @var ActionMessages $actionMessages */
+        $actionMessages = $this->variables['actionMessages'];
+        $actionMessages->response->setContentType('application/json');
+
         $propertiesToRender = $this->renderArray();
         $options = $this->getOption('jsonEncodingOptions');
         return json_encode($propertiesToRender, JSON_THROW_ON_ERROR | $options);
