@@ -273,8 +273,8 @@ class ResourceCommandController extends CommandController
                 }
             }
             $response = null;
-            while (!in_array($response, ['y', 'n', 'c'])) {
-                $response = $this->output->ask('<comment>Do you want to remove all broken resource objects and related assets from the database? (y/n/c) </comment>');
+            while (!in_array($response, ['y', 'n'])) {
+                $response = $this->output->ask('<comment>Do you want to remove all broken resource objects and related assets from the database? (y/n) </comment>');
             }
 
             switch ($response) {
@@ -318,9 +318,6 @@ class ResourceCommandController extends CommandController
                     break;
                 case 'n':
                     $this->outputLine('Did not delete any resource objects.');
-                    break;
-                case 'c':
-                    $this->outputLine('Stopping. Did not delete any resource objects.');
                     $this->quit(0);
                     break;
             }
