@@ -153,15 +153,11 @@ abstract class AbstractController implements ControllerInterface
      * @param array $messageArguments arguments to be passed to the FlashMessage
      * @param integer $messageCode
      * @return void
-     * @throws \InvalidArgumentException if the message body is no string
      * @see Error\Message
      * @api
      */
-    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Error\Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
+    public function addFlashMessage(string $messageBody, string $messageTitle = '', string $severity = Error\Message::SEVERITY_OK, array $messageArguments = [], int $messageCode = null)
     {
-        if (!is_string($messageBody)) {
-            throw new \InvalidArgumentException('The message body must be of type string, "' . gettype($messageBody) . '" given.', 1243258395);
-        }
         switch ($severity) {
             case Error\Message::SEVERITY_NOTICE:
                 $message = new Error\Notice($messageBody, $messageCode, $messageArguments, $messageTitle);
