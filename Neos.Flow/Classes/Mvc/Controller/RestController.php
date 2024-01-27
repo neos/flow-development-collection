@@ -14,7 +14,6 @@ namespace Neos\Flow\Mvc\Controller;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\InvalidActionNameException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
@@ -27,18 +26,6 @@ use Psr\Http\Message\UriInterface;
  */
 class RestController extends ActionController
 {
-    /**
-     * The current request
-     * @var ActionRequest
-     */
-    protected $request;
-
-    /**
-     * The response which will be returned by this action controller
-     * @var ActionResponse
-     */
-    protected $response;
-
     /**
      * Name of the action method argument which acts as the resource for the
      * RESTful controller. If an argument with the specified name is passed
