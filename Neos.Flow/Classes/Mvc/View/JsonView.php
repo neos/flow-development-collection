@@ -51,11 +51,6 @@ class JsonView extends AbstractView
     const EXPOSE_CLASSNAME_UNQUALIFIED = 2;
 
     /**
-     * @var ControllerContext
-     */
-    protected $controllerContext;
-
-    /**
      * Only variables whose name is contained in this array will be rendered
      *
      * @var array
@@ -200,6 +195,7 @@ class JsonView extends AbstractView
      */
     public function render()
     {
+        // todo how to support this?
         $this->controllerContext->getResponse()->setContentType('application/json');
         $propertiesToRender = $this->renderArray();
         $options = $this->getOption('jsonEncodingOptions');

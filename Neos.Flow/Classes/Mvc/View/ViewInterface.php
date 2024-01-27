@@ -26,11 +26,12 @@ interface ViewInterface
     /**
      * Sets the current controller context
      *
+     * @deprecated if you absolutely need access to the current request please assign a variable.
+     *             when using the action controller the request is directly available at "request"
      * @param ControllerContext $controllerContext Context of the controller associated with this view
      * @return void
-     * @api
      */
-    public function setControllerContext(ControllerContext $controllerContext);
+    // public function setControllerContext(ControllerContext $controllerContext);
 
     /**
      * Add a variable to the view data collection.

@@ -246,7 +246,10 @@ class ActionController extends AbstractController
         }
         if ($this->view !== null) {
             $this->view->assign('settings', $this->settings);
-            $this->view->setControllerContext($this->controllerContext);
+            $this->view->assign('request', $this->request);
+            if (method_exists($this->view, 'setControllerContext')) {
+                $this->view->setControllerContext($this->controllerContext);
+            }
             $this->initializeView($this->view);
         }
 

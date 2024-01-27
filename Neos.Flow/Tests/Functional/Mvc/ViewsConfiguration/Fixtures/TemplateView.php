@@ -42,17 +42,6 @@ final class TemplateView extends AbstractView
     /**
      * Dummy method to satisfy the ViewInterface
      *
-     * @param ControllerContext $controllerContext
-     * @return void
-     * @api
-     */
-    public function setControllerContext(ControllerContext $controllerContext)
-    {
-    }
-
-    /**
-     * Dummy method to satisfy the ViewInterface
-     *
      * @param string $key
      * @param mixed $value
      * @return self instance of $this to allow chaining

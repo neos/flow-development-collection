@@ -11,8 +11,11 @@ namespace Neos\Flow\Mvc\View;
  * source code.
  */
 
+use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 
 /**
  * An abstract View
@@ -52,6 +55,8 @@ abstract class AbstractView implements ViewInterface
 
     /**
      * @var ControllerContext
+     * @deprecated if you absolutely need access to the current request please assign a variable.
+     *             when using the action controller the request is directly available at "request"
      */
     protected $controllerContext;
 
@@ -168,9 +173,10 @@ abstract class AbstractView implements ViewInterface
     /**
      * Sets the current controller context
      *
-     * @param ControllerContext $controllerContext
+     * @deprecated if you absolutely need access to the current request please assign a variable.
+     *             when using the action controller the request is directly available at "request"
+     * @param ControllerContext $controllerContext Context of the controller associated with this view
      * @return void
-     * @api
      */
     public function setControllerContext(ControllerContext $controllerContext)
     {
