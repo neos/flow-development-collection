@@ -4,7 +4,6 @@ on:
   push:
     branches: [ master, '[0-9]+.[0-9]' ]
   pull_request:
-    branches: [ master, '[0-9]+.[0-9]' ]
 
 permissions: {}
 jobs:
@@ -64,16 +63,13 @@ jobs:
       FLOW_CONTEXT: Testing
       FLOW_DIST_FOLDER: flow-development-distribution
       FLOW_FOLDER: flow-development-collection
+      FLOW_TARGET_VERSION: '9.0'
 
     defaults:
       run:
         working-directory: ${{ env.FLOW_DIST_FOLDER }}
 
     steps:
-      - name: Set Flow target branch name
-        run: echo "FLOW_TARGET_VERSION=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
-        working-directory: .
-
       - name: Checkout
         uses: actions/checkout@v2
         with:
