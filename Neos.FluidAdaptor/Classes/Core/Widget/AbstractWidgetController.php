@@ -46,7 +46,7 @@ abstract class AbstractWidgetController extends ActionController
      * Handles a request. The result output is returned by altering the given response.
      *
      * @param ActionRequest $request The request object
-     * @return ActionResponse $response The response, modified by this handler
+     * @return ActionResponse The response, modified by this handler
      * @throws WidgetContextNotFoundException
      * @throws InvalidActionVisibilityException
      * @throws InvalidArgumentTypeException

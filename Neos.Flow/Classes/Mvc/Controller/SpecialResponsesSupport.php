@@ -21,7 +21,7 @@ trait SpecialResponsesSupport
      * @return never
      * @throws StopActionException
      */
-    final protected function responseThrowsStatus(int $statusCode, string $content = '', ?ActionResponse $response =  null): never
+    final protected static function responseThrowsStatus(int $statusCode, string $content = '', ?ActionResponse $response =  null): never
     {
         $response = $response ?? new ActionResponse;
 
@@ -30,7 +30,7 @@ trait SpecialResponsesSupport
             $response->setContent($content);
         }
 
-        $this->throwStopActionWithResponse($response, $content);
+        self::throwStopActionWithResponse($response, $content);
     }
 
     /**
@@ -43,13 +43,13 @@ trait SpecialResponsesSupport
      * @return ActionResponse
      * @throws StopActionException
      */
-    final protected function responseRedirectsToUri(UriInterface $uri, int $delay = 0, int $statusCode = 303, ?ActionResponse $response = null): ActionResponse
+    final protected static function responseRedirectsToUri(UriInterface $uri, int $delay = 0, int $statusCode = 303, ?ActionResponse $response = null): ActionResponse
     {
         $nextResponse = $response !== null ? clone $response : new ActionResponse();
 
         if ($delay < 1) {
             $nextResponse->setRedirectUri($uri, $statusCode);
-            $this->throwStopActionWithResponse($nextResponse, '');
+            self::throwStopActionWithResponse($nextResponse, '');
         }
 
         $nextResponse->setStatusCode($statusCode);
@@ -64,7 +64,7 @@ trait SpecialResponsesSupport
      * @return never
      * @throws StopActionException
      */
-    final protected function throwStopActionWithResponse(ActionResponse $response, string $details = ''): never
+    final protected static function throwStopActionWithResponse(ActionResponse $response, string $details = ''): never
     {
         throw StopActionException::createForResponse($response, $details);
     }
@@ -80,7 +80,7 @@ trait SpecialResponsesSupport
      * @return never
      * @throws ForwardException
      */
-    final protected function forwardToRequest(ActionRequest $request): never
+    final protected static function forwardToRequest(ActionRequest $request): never
     {
         $nextRequest = clone $request;
         throw ForwardException::createForNextRequest($nextRequest, '');
