@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Mvc;
 
+use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Http\Cookie;
 use Psr\Http\Message\ResponseInterface;
@@ -52,11 +53,6 @@ final class ActionResponse
      * @var array
      */
     protected $headers = [];
-
-    /**
-     * @var ResponseInterface|null
-     */
-    protected $httpResponse;
 
     public function __construct()
     {
@@ -231,13 +227,36 @@ final class ActionResponse
         return $this->contentType ?? '';
     }
 
-    /**
-     * Use this if you want build your own HTTP Response inside your action
-     * @param ResponseInterface $response
-     */
-    public function replaceHttpResponse(ResponseInterface $response): void
+    public function replaceHttpResponse(ResponseInterface $httpResponse): void
     {
-        $this->httpResponse = $response;
+        $this->reset();
+
+        $this->setStatusCode($httpResponse->getStatusCode());
+        $this->setContent($httpResponse->getBody());
+
+        $contentType = $httpResponse->getHeader('Content-Type');
+        if (!empty($contentType)) {
+            $this->setContentType(reset($contentType));
+            $httpResponse = $httpResponse->withoutHeader('Content-Type');
+        }
+
+        $location = $httpResponse->getHeader('Location');
+        if (!empty($location)) {
+            $this->setRedirectUri(new Uri(reset($location)), $httpResponse->getStatusCode());
+            $httpResponse = $httpResponse->withoutHeader('Location');
+        } else {
+            $this->setStatusCode($httpResponse->getStatusCode());
+        }
+
+        foreach ($httpResponse->getHeader('Set-Cookie') as $value) {
+            $cookie = Cookie::createFromRawSetCookieHeader($value);
+            $this->cookies[$cookie->getName()] = $cookie;
+        }
+        $httpResponse = $httpResponse->withoutHeader('Set-Cookie');
+
+        foreach ($httpResponse->getHeaders() as $headerName => $headerValues) {
+            $this->setHttpHeader($headerName, $headerValues);
+        }
     }
 
     /**
@@ -258,9 +277,6 @@ final class ActionResponse
             $actionResponse->setRedirectUri($this->redirectUri);
         }
 
-        if ($this->httpResponse !== null) {
-            $actionResponse->replaceHttpResponse($this->httpResponse);
-        }
         if ($this->statusCode !== null) {
             $actionResponse->setStatusCode($this->statusCode);
         }
@@ -276,15 +292,14 @@ final class ActionResponse
     /**
      * Note this is a special use case method that will apply the internal properties (Content-Type, StatusCode, Location, Set-Cookie and Content)
      * to the given PSR-7 Response and return a modified response. This is used to merge the ActionResponse properties into a possible HttpResponse
-     * created in a View (see ActionController::renderView()) because those would be overwritten otherwise. Note that any component parameters will
-     * still run through the component chain and will not be propagated here.
+     * created in a View (see ActionController::renderView()) because those would be overwritten otherwise.
      *
      * @return ResponseInterface
      * @internal
      */
     public function buildHttpResponse(): ResponseInterface
     {
-        $httpResponse = $this->httpResponse ?? new Response();
+        $httpResponse = new Response();
 
         if ($this->statusCode !== null) {
             $httpResponse = $httpResponse->withStatus($this->statusCode);
@@ -321,5 +336,15 @@ final class ActionResponse
     {
         $contentSize = $this->content->getSize();
         return $contentSize === null || $contentSize > 0;
+    }
+
+    private function reset(): void
+    {
+        $this->content = null;;
+        $this->redirectUri = null;
+        $this->statusCode = null;
+        $this->contentType = null;
+        $this->cookies = [];
+        $this->headers = [];
     }
 }
