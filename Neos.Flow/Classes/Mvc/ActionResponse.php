@@ -3,6 +3,7 @@ namespace Neos\Flow\Mvc;
 
 use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Http\Cookie;
+use Neos\Flow\Http\Headers;
 use Psr\Http\Message\ResponseInterface;
 use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\StreamInterface;
@@ -49,18 +50,19 @@ final class ActionResponse
     protected $cookies = [];
 
     /**
-     * @var array
-     */
-    protected $headers = [];
-
-    /**
      * @var ResponseInterface|null
      */
     protected $httpResponse;
 
+    /**
+     * @var Headers
+     */
+    protected $headers;
+
     public function __construct()
     {
         $this->content = Utils::streamFor();
+        $this->headers = new Headers();
     }
 
     /**
@@ -87,6 +89,7 @@ final class ActionResponse
     public function setContentType(string $contentType): void
     {
         $this->contentType = $contentType;
+        $this->headers->set('Content-Type', $contentType);
     }
 
     /**
@@ -126,6 +129,7 @@ final class ActionResponse
     public function setCookie(Cookie $cookie): void
     {
         $this->cookies[$cookie->getName()] = clone $cookie;
+        $this->headers->setCookie($cookie);
     }
 
     /**
@@ -140,6 +144,7 @@ final class ActionResponse
         $cookie = new Cookie($cookieName);
         $cookie->expire();
         $this->cookies[$cookie->getName()] = $cookie;
+        $this->headers->deleteCookie($cookieName);
     }
 
     /**
@@ -151,13 +156,7 @@ final class ActionResponse
      */
     public function setHttpHeader(string $headerName, $headerValue): void
     {
-        // This is taken from the Headers class, which should eventually replace this implementation and add more response API methods.
-        if ($headerValue instanceof \DateTimeInterface) {
-            $date = clone $headerValue;
-            $date->setTimezone(new \DateTimeZone('GMT'));
-            $headerValue = [$date->format(DATE_RFC2822)];
-        }
-        $this->headers[$headerName] = (array)$headerValue;
+        $this->headers->set($headerName, $headerValue);
     }
 
     /**
@@ -169,27 +168,19 @@ final class ActionResponse
      */
     public function addHttpHeader(string $headerName, $headerValue): void
     {
-        if ($headerValue instanceof \DateTimeInterface) {
-            $date = clone $headerValue;
-            $date->setTimezone(new \DateTimeZone('GMT'));
-            $headerValue = [$date->format(DATE_RFC2822)];
-        }
-        $this->headers[$headerName] = array_merge($this->headers[$headerName] ?? [], (array)$headerValue);
+        $this->headers->set($headerName, $headerValue, false);
     }
 
     /**
      * Return the specified HTTP header that was previously set.
+     * Dates are returned as DateTime objects with the timezone set to GMT.
      *
      * @param string $headerName The name of the header to get the value(s) for
-     * @return array|string|null An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
+     * @return array|string|\DateTime|null An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
      */
     public function getHttpHeader(string $headerName)
     {
-        if (!isset($this->headers[$headerName])) {
-            return null;
-        }
-
-        return count($this->headers[$headerName]) > 1 ? $this->headers[$headerName] : reset($this->headers[$headerName]);
+        return $this->headers->get($headerName);
     }
 
     /**
@@ -228,7 +219,9 @@ final class ActionResponse
      */
     public function getContentType(): string
     {
-        return $this->contentType ?? '';
+        $contentType = $this->headers->get('Content-Type');
+        return is_string($contentType) ? $contentType : '';
+        return $this->contentType;
     }
 
     /**
@@ -321,5 +314,169 @@ final class ActionResponse
     {
         $contentSize = $this->content->getSize();
         return $contentSize === null || $contentSize > 0;
+    }
+
+    /**
+     * Sets the respective directive in the Cache-Control header.
+     *
+     * A response flagged as "public" may be cached by any cache, even if it normally
+     * wouldn't be cacheable in a shared cache.
+     */
+    public function setPublic(): void
+    {
+        $this->headers->setCacheControlDirective('public');
+    }
+
+    /**
+     * Sets the respective directive in the Cache-Control header.
+     *
+     * A response flagged as "private" tells that it is intended for a specific
+     * user and must not be cached by a shared cache.
+     */
+    public function setPrivate(): void
+    {
+        $this->headers->setCacheControlDirective('private');
+    }
+
+    /**
+     * Sets the Date header.
+     *
+     * The given date must either be an RFC2822 parseable date string or a DateTime
+     * object. The timezone will be converted to GMT internally, but the point in
+     * time remains the same.
+     *
+     * @param string|\DateTime $date
+     */
+    public function setDate($date): void
+    {
+        $this->headers->set('Date', $date);
+    }
+
+    /**
+     * Returns the date from the Date header.
+     *
+     * The returned date is configured to be in the GMT timezone.
+     *
+     * @return \DateTime|null The date of this response
+     */
+    public function getDate(): ?\DateTime
+    {
+        $dateHeaderValue = $this->headers->get('Date');
+        return $dateHeaderValue instanceof \DateTime ? $dateHeaderValue : null;
+    }
+
+    /**
+     * Sets the Last-Modified header.
+     *
+     * The given date must either be an RFC2822 parseable date string or a DateTime
+     * object. The timezone will be converted to GMT internally, but the point in
+     * time remains the same.
+     *
+     * @param string|\DateTime $date
+     */
+    public function setLastModified($date): void
+    {
+        $this->headers->set('Last-Modified', $date);
+    }
+
+    /**
+     * Returns the date from the Last-Modified header or NULL if no such header
+     * is present.
+     *
+     * The returned date is configured to be in the GMT timezone.
+     *
+     * @return \DateTime|null The last modification date or NULL
+     */
+    public function getLastModified(): ?\DateTime
+    {
+        $lastModifiedHeaderValue = $this->headers->get('Last-Modified');
+        return $lastModifiedHeaderValue instanceof \DateTime ? $lastModifiedHeaderValue : null;
+    }
+
+    /**
+     * Sets the Expires header.
+     *
+     * The given date must either be an RFC2822 parseable date string or a DateTime
+     * object. The timezone will be converted to GMT internally, but the point in
+     * time remains the same.
+     *
+     * In order to signal that the response has already expired, the date should
+     * be set to the same date as the Date header (that is, $now). To communicate
+     * an infinite expiration time, the date should be set to one year in the future.
+     *
+     * Expiration times should not be more than one year in the future, according
+     * to RFC 2616 / 14.21
+     *
+     * @param string|\DateTime $date
+     */
+    public function setExpires($date): void
+    {
+        $this->headers->set('Expires', $date);
+    }
+
+    /**
+     * Returns the date from the Expires header or NULL if no such header
+     * is present.
+     *
+     * The returned date is configured to be in the GMT timezone.
+     *
+     * @return \DateTime|null The expiration date or NULL
+     */
+    public function getExpires(): ?\DateTime
+    {
+        $expiresHeaderValue = $this->headers->get('Expires');
+        return $expiresHeaderValue instanceof \DateTime ? $expiresHeaderValue : null;
+    }
+
+    /**
+     * Sets the maximum age in seconds before this response becomes stale.
+     *
+     * This method sets the "max-age" directive in the Cache-Control header.
+     *
+     * @param integer $age The maximum age in seconds
+     */
+    public function setMaximumAge(int $age): void
+    {
+        $this->headers->setCacheControlDirective('max-age', (string)$age);
+    }
+
+    /**
+     * Returns the maximum age in seconds before this response becomes stale.
+     *
+     * This method returns the value from the "max-age" directive in the
+     * Cache-Control header.
+     *
+     * @return integer|null The maximum age in seconds, or NULL if none has been defined
+     */
+    public function getMaximumAge(): ?int
+    {
+        return $this->headers->getCacheControlDirective('max-age');
+    }
+
+    /**
+     * Sets the maximum age in seconds before this response becomes stale in shared
+     * caches, such as proxies.
+     *
+     * This method sets the "s-maxage" directive in the Cache-Control header.
+     *
+     * @param integer $maximumAge The maximum age in seconds
+     */
+    public function setSharedMaximumAge(int $maximumAge): void
+    {
+        $this->headers->setCacheControlDirective('s-maxage', (string)$maximumAge);
+    }
+
+    /**
+     * Returns the maximum age in seconds before this response becomes stale in shared
+     * caches, such as proxies.
+     *
+     * This method returns the value from the "s-maxage" directive in the
+     * Cache-Control header.
+     *
+     * @return integer|null The maximum age in seconds, or NULL if none has been defined
+     */
+    public function getSharedMaximumAge(): ?int
+    {
+        return $this->headers->getCacheControlDirective('s-maxage');
     }
 }
