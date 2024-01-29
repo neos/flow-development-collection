@@ -222,7 +222,7 @@ class ActionControllerTest extends UnitTestCase
         $mockResponse = new Mvc\ActionResponse;
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
-        $mockView->expects(self::exactly(2))->method('assign')->withConsecutive(['settings', $mockSettings], ['actionMessages', Mvc\ActionMessages::create($this->mockRequest, $mockResponse)]);
+        $mockView->expects(self::exactly(2))->method('assign')->withConsecutive(['settings', $mockSettings], ['request', $this->mockRequest]);
         $this->actionController->expects(self::once())->method('resolveView')->will(self::returnValue($mockView));
         $this->actionController->expects(self::once())->method('resolveActionMethodName')->will(self::returnValue('someAction'));
 

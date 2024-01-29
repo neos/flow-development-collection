@@ -16,7 +16,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Mvc\ActionMessages;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
@@ -247,7 +246,7 @@ class ActionController extends AbstractController
         }
         if ($this->view !== null) {
             $this->view->assign('settings', $this->settings);
-            $this->view->assign('actionMessages', ActionMessages::create($this->request, $this->response));
+            $this->view->assign('request', $this->request);
             if (method_exists($this->view, 'setControllerContext')) {
                 $this->view->setControllerContext($this->controllerContext);
             }
