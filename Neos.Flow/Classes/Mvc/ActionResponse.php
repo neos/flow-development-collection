@@ -233,7 +233,9 @@ final class ActionResponse
     }
 
     /**
-     * Use this if you want build your own HTTP Response inside your action
+     * Unsafe. Please avoid the use of this escape hatch as the behaviour is partly unspecified
+     * https://github.com/neos/flow-development-collection/issues/2492
+     *
      * @param ResponseInterface $response
      */
     public function replaceHttpResponse(ResponseInterface $response): void
@@ -275,10 +277,12 @@ final class ActionResponse
     }
 
     /**
-     * Note this is a special use case method that will apply the internal properties (Content-Type, StatusCode, Location, Set-Cookie and Content)
-     * to the given PSR-7 Response and return a modified response. This is used to merge the ActionResponse properties into a possible HttpResponse
-     * created in a View (see ActionController::renderView()) because those would be overwritten otherwise. Note that any component parameters will
-     * still run through the component chain and will not be propagated here.
+     * Note this is a special use case method that will apply the internal properties
+     * (Content-Type, StatusCode, Location, Set-Cookie and Content)
+     * to a new or replaced PSR-7 Response and return it.
+     *
+     * Possibly unsafe when used in combination with {@see self::replaceHttpResponse()}
+     * https://github.com/neos/flow-development-collection/issues/2492
      *
      * @return ResponseInterface
      * @internal

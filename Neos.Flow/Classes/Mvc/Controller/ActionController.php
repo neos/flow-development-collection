@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Utils;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
@@ -558,13 +559,16 @@ class ActionController extends AbstractController
             }
         }
 
-        if ($actionResult === null && $this->view instanceof ViewInterface) {
-            return $this->renderView($this->response);
-        } else {
-            $response->setContent($actionResult);
+        if ($actionResult instanceof ResponseInterface) {
+            return $actionResult;
         }
 
-        return $this->response->buildHttpResponse();
+        if ($actionResult === null && $this->view instanceof ViewInterface) {
+            return $this->renderView($this->response);
+        }
+
+        $httpResponse = $this->response->buildHttpResponse();
+        return $httpResponse->withBody(Utils::streamFor($actionResult));
     }
 
     /**
