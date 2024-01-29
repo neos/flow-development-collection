@@ -11,11 +11,8 @@ namespace Neos\Flow\Mvc\View;
  * source code.
  */
 
-use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception;
-use Neos\Flow\Mvc\Routing\UriBuilder;
 
 /**
  * An abstract View
