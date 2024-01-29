@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\Core\Widget;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
@@ -230,7 +231,6 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             if ($dispatchLoopCount++ > 99) {
                 throw new InfiniteLoopException('Could not ultimately dispatch the widget request after ' . $dispatchLoopCount . ' iterations.', 1380282310);
             }
-            $subResponse = new ActionResponse();
 
             $widgetControllerObjectName = $this->widgetContext->getControllerObjectName();
             if ($subRequest->getControllerObjectName() !== '' && $subRequest->getControllerObjectName() !== $widgetControllerObjectName) {
@@ -241,17 +241,17 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
                 $subResponse = $this->controller->processRequest($subRequest);
 
                 // We need to make sure to not merge content up into the parent ActionResponse because that _could_ break the parent response.
-                $content = $subResponse->getContent();
-                $subResponse->setContent('');
+                $content = $subResponse->getBody()->getContents();
+                $subResponse = $subResponse->withBody(Utils::streamFor(''));
             } catch (StopActionException $exception) {
                 $subResponse = $exception->response;
-                $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
+                $this->controllerContext->getResponse()->replaceHttpResponse($subResponse);
                 throw $exception;
             } catch (ForwardException $exception) {
                 $subRequest = $exception->nextRequest;
                 continue;
             }
-            $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
+            $this->controllerContext->getResponse()->replaceHttpResponse($subResponse);
         }
 
         return $content;

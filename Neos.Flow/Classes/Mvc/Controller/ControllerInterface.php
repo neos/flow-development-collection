@@ -12,9 +12,9 @@ namespace Neos\Flow\Mvc\Controller;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Generic interface for controllers
@@ -43,10 +43,10 @@ interface ControllerInterface
      * wich the Dispatcher will catch and handle its attached next-request.
      *
      * @param ActionRequest $request The dispatched action request
-     * @return ActionResponse The resulting created response
+     * @return ResponseInterface The resulting created response
      * @throws StopActionException
      * @throws ForwardException
      * @api
      */
-    public function processRequest(ActionRequest $request): ActionResponse;
+    public function processRequest(ActionRequest $request): ResponseInterface;
 }

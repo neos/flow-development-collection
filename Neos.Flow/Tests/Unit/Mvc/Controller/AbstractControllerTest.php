@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use PHPUnit\Framework\Assert;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -291,7 +292,7 @@ class AbstractControllerTest extends UnitTestCase
         $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', ['foo' => 'bar'], 'Stuff', 'Super', 'Duper\Package')->willReturn('the_uri');
 
         $controller = new class extends AbstractController {
-            public function processRequest(ActionRequest $request): ActionResponse
+            public function processRequest(ActionRequest $request): ResponseInterface
             {
                 $response = new ActionResponse();
                 $mockUriBuilder = $this->uriBuilder;
@@ -300,7 +301,7 @@ class AbstractControllerTest extends UnitTestCase
 
                 $this->myIndexAction();
 
-                return $this->response;
+                return $this->response->buildHttpResponse();
             }
 
             public function myIndexAction(): void
@@ -336,7 +337,7 @@ class AbstractControllerTest extends UnitTestCase
         $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', ['foo' => 'bar'], 'Stuff', 'Super', null)->willReturn('the_uri');
 
         $controller = new class extends AbstractController {
-            public function processRequest(ActionRequest $request): ActionResponse
+            public function processRequest(ActionRequest $request): ResponseInterface
             {
                 $response = new ActionResponse();
                 $mockUriBuilder = $this->uriBuilder;
@@ -345,7 +346,7 @@ class AbstractControllerTest extends UnitTestCase
 
                 $this->myIndexAction();
 
-                return $this->response;
+                return $this->response->buildHttpResponse();
             }
 
             public function myIndexAction(): void

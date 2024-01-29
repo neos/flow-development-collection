@@ -13,6 +13,7 @@ use GuzzleHttp\Psr7\Response;
  * The minimal MVC response object.
  * It allows for simple interactions with the HTTP response from within MVC actions. More specific requirements can be implemented via HTTP middlewares.
  *
+ * @deprecated
  * @Flow\Proxy(false)
  * @api
  */
