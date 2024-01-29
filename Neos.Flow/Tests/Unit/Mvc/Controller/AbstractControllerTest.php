@@ -316,7 +316,7 @@ class AbstractControllerTest extends UnitTestCase
             $controller->processRequest($this->mockActionRequest);
         } catch (StopActionException $exception) {
             $actionResponse = $exception->response;
-            Assert::assertSame('the_uri', $actionResponse->getRedirectUri()?->__toString());
+            Assert::assertSame('the_uri', $actionResponse->getHeaderLine('Location'));
             Assert::assertSame(303, $actionResponse->getStatusCode());
             return;
         }
@@ -361,7 +361,7 @@ class AbstractControllerTest extends UnitTestCase
             $controller->processRequest($this->mockActionRequest);
         } catch (StopActionException $exception) {
             $actionResponse = $exception->response;
-            Assert::assertSame('the_uri', $actionResponse->getRedirectUri()?->__toString());
+            Assert::assertSame('the_uri', $actionResponse->getHeaderLine('Location'));
             Assert::assertSame(303, $actionResponse->getStatusCode());
             return;
         }
@@ -420,7 +420,7 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         self::assertNotNull($response);
-        self::assertSame($uri, (string)$response->getRedirectUri());
+        self::assertSame($uri, $response->getHeaderLine('Location'));
     }
 
     /**

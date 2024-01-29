@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Mvc;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -142,7 +143,7 @@ class DispatcherTest extends UnitTestCase
     {
         $this->mockActionRequest->expects(self::exactly(3))->method('isDispatched')->willReturnOnConsecutiveCalls(false, false, true);
 
-        $this->mockController->expects(self::exactly(2))->method('processRequest')->with($this->mockActionRequest)->willReturn($this->actionResponse);
+        $this->mockController->expects(self::exactly(2))->method('processRequest')->with($this->mockActionRequest)->willReturn(new Response());
 
         $this->dispatcher->dispatch($this->mockActionRequest);
     }
@@ -197,8 +198,7 @@ class DispatcherTest extends UnitTestCase
      */
     public function dispatchThrowsAnInfiniteLoopExceptionIfTheRequestCouldNotBeDispachedAfter99Iterations()
     {
-        $response = new ActionResponse();
-        $this->mockController->expects(self::any())->method('processRequest')->with($this->mockActionRequest)->willReturn($response);
+        $this->mockController->expects(self::any())->method('processRequest')->with($this->mockActionRequest)->willReturn(new Response());
 
         $this->expectException(InfiniteLoopException::class);
         $requestCallCounter = 0;

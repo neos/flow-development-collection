@@ -11,6 +11,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionResponse;
@@ -48,7 +49,6 @@ class AbstractWidgetControllerTest extends UnitTestCase
     {
         /** @var \Neos\Flow\Mvc\ActionRequest $mockActionRequest */
         $mockActionRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class);
-        $mockResponse = new ActionResponse();
 
         $httpRequest = new ServerRequest('GET', new Uri('http://localhost'));
         $mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
@@ -64,7 +64,7 @@ class AbstractWidgetControllerTest extends UnitTestCase
         $abstractWidgetController = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AbstractWidgetController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'detectFormat', 'resolveView', 'callActionMethod']);
         $abstractWidgetController->method('resolveActionMethodName')->willReturn('indexAction');
         $abstractWidgetController->_set('mvcPropertyMappingConfigurationService', $this->createMock(\Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService::class));
-        $abstractWidgetController->expects(self::once())->method('callActionMethod')->willReturn($mockResponse);
+        $abstractWidgetController->expects(self::once())->method('callActionMethod')->willReturn(new Response());
         $abstractWidgetController->processRequest($mockActionRequest);
 
         $actualWidgetConfiguration = $abstractWidgetController->_get('widgetConfiguration');
