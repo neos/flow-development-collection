@@ -19,6 +19,7 @@ use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\InvalidControllerNameException;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Property\Exception;
@@ -84,6 +85,9 @@ abstract class AbstractController implements ControllerInterface
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    #[Flow\Inject]
+    protected FlashMessageService $flashMessageService;
 
     /**
      * A list of IANA media types which are supported by this controller
@@ -172,7 +176,7 @@ abstract class AbstractController implements ControllerInterface
                 $message = new Error\Message($messageBody, $messageCode, $messageArguments, $messageTitle);
                 break;
         }
-        $this->controllerContext->getFlashMessageContainer()->addMessage($message);
+        $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->addMessage($message);
     }
 
     /**

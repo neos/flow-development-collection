@@ -49,11 +49,6 @@ class ActionControllerTest extends UnitTestCase
      */
     protected $mockViewConfigurationManager;
 
-    /**
-     * @var Mvc\Controller\ControllerContext
-     */
-    protected $mockControllerContext;
-
     protected function setUp(): void
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['dummy']);
@@ -143,7 +138,6 @@ class ActionControllerTest extends UnitTestCase
         $this->actionController = new ActionController();
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
-        $this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
 
         $mockRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
         $mockRequest->expects(self::any())->method('getControllerActionName')->will(self::returnValue('nonExisting'));
@@ -167,7 +161,6 @@ class ActionControllerTest extends UnitTestCase
         $this->actionController = new ActionController();
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
-        $this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
         $this->inject($this->actionController, 'arguments', new Arguments([]));
 
         $mockRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
@@ -240,7 +233,6 @@ class ActionControllerTest extends UnitTestCase
         $this->actionController->method('resolveActionMethodName')->willReturn('indexAction');
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
-        $this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
 
         $mockSettings = ['foo', 'bar'];
         $this->inject($this->actionController, 'settings', $mockSettings);
