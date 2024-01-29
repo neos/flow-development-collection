@@ -408,7 +408,6 @@ class ActionControllerTest extends UnitTestCase
         $this->actionController->expects(self::any())->method('getInformationNeededForInitializeActionMethodValidators')->will(self::returnValue([[], [], [], $ignoredValidationArguments]));
 
         $this->inject($this->actionController, 'actionMethodName', 'showAction');
-        $this->inject($this->actionController, 'arguments', $arguments);
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
 
@@ -423,6 +422,6 @@ class ActionControllerTest extends UnitTestCase
             $mockArgument->expects(self::never())->method('setValidator');
         }
 
-        $this->actionController->_call('initializeActionMethodValidators');
+        $this->actionController->_call('initializeActionMethodValidators', $arguments);
     }
 }

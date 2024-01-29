@@ -110,15 +110,17 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function initializeController(ActionRequest $request, ActionResponse $response)
     {
+        // make the current request "globally" available to everywhere in this controller.
         $this->request = $request;
-        $this->request->setDispatched(true);
         $this->response = $response;
 
+        $this->request->setDispatched(true);
+
         $this->uriBuilder = new UriBuilder();
-        $this->uriBuilder->setRequest($this->request);
+        $this->uriBuilder->setRequest($request);
 
         $this->arguments = new Arguments([]);
-        $this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder);
+        $this->controllerContext = new ControllerContext($request, $response, $this->arguments, $this->uriBuilder);
 
         $mediaType = MediaTypeHelper::negotiateMediaType(MediaTypeHelper::determineAcceptedMediaTypes($request->getHttpRequest()), $this->supportedMediaTypes);
         if ($mediaType === null) {
@@ -126,7 +128,7 @@ abstract class AbstractController implements ControllerInterface
         }
         $this->negotiatedMediaType = $mediaType;
         if ($request->getFormat() === '') {
-            $this->request->setFormat(MediaTypes::getFilenameExtensionFromMediaType($mediaType));
+            $request->setFormat(MediaTypes::getFilenameExtensionFromMediaType($mediaType));
         }
     }
 
@@ -370,10 +372,10 @@ abstract class AbstractController implements ControllerInterface
      * @throws \Neos\Flow\Security\Exception
      * @api
      */
-    protected function mapRequestArgumentsToControllerArguments(ActionRequest $request)
+    protected function mapRequestArgumentsToControllerArguments(ActionRequest $request, Arguments $arguments)
     {
         /* @var $argument \Neos\Flow\Mvc\Controller\Argument */
-        foreach ($this->arguments as $argument) {
+        foreach ($arguments as $argument) {
             $argumentName = $argument->getName();
             if ($argument->getMapRequestBody()) {
                 $argument->setValue($request->getHttpRequest()->getParsedBody());

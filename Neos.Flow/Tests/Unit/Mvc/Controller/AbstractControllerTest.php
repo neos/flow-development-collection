@@ -505,12 +505,11 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_set('arguments', $controllerArguments);
 
         $this->mockActionRequest->expects(self::atLeast(2))->method('hasArgument')->withConsecutive(['foo'], ['baz'])->willReturn(true);
         $this->mockActionRequest->expects(self::atLeast(2))->method('getArgument')->withConsecutive(['foo'], ['baz'])->willReturnOnConsecutiveCalls('bar', 'quux');
 
-        $controller->_call('mapRequestArgumentsToControllerArguments', $this->mockActionRequest);
+        $controller->_call('mapRequestArgumentsToControllerArguments', $this->mockActionRequest, $controllerArguments);
         self::assertEquals('bar', $controllerArguments['foo']->getValue());
         self::assertEquals('quux', $controllerArguments['baz']->getValue());
     }
@@ -533,11 +532,10 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-        $controller->_set('arguments', $controllerArguments);
 
         $this->mockActionRequest->expects(self::exactly(2))->method('hasArgument')->withConsecutive(['foo'], ['baz'])->willReturnOnConsecutiveCalls(true, false);
         $this->mockActionRequest->expects(self::once())->method('getArgument')->with('foo')->willReturn('bar');
 
-        $controller->_call('mapRequestArgumentsToControllerArguments', $this->mockActionRequest);
+        $controller->_call('mapRequestArgumentsToControllerArguments', $this->mockActionRequest, $controllerArguments);
     }
 }

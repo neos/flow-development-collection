@@ -222,9 +222,9 @@ class ActionController extends AbstractController
 
         $this->actionMethodName = $this->resolveActionMethodName($request);
 
-        $this->initializeActionMethodArguments();
+        $this->initializeActionMethodArguments($this->arguments);
         if ($this->enableDynamicTypeValidation !== true) {
-            $this->initializeActionMethodValidators();
+            $this->initializeActionMethodValidators($this->arguments);
         }
 
         $this->initializeAction();
@@ -241,14 +241,14 @@ class ActionController extends AbstractController
         }
 
         try {
-            $this->mapRequestArgumentsToControllerArguments($request);
+            $this->mapRequestArgumentsToControllerArguments($request, $this->arguments);
         } catch (RequiredArgumentMissingException $e) {
             $message = $this->throwableStorage->logThrowable($e);
             $this->logger->notice('Request argument mapping failed due to a missing required argument. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
             $this->throwStatus(400, null, 'Required argument is missing');
         }
         if ($this->enableDynamicTypeValidation === true) {
-            $this->initializeActionMethodValidators();
+            $this->initializeActionMethodValidators($this->arguments);
         }
 
         if ($this->view === null) {
@@ -260,8 +260,7 @@ class ActionController extends AbstractController
             $this->initializeView($this->view);
         }
 
-        // We still use a global response here as it might have been changed in any of the steps above
-        $response = $this->callActionMethod($request, $this->response);
+        $response = $this->callActionMethod($request, $this->arguments, $response);
 
         if (!$response->hasContentType()) {
             $response->setContentType($this->negotiatedMediaType);
@@ -301,7 +300,7 @@ class ActionController extends AbstractController
      * @throws InvalidArgumentTypeException
      * @see initializeArguments()
      */
-    protected function initializeActionMethodArguments()
+    protected function initializeActionMethodArguments(Arguments $arguments)
     {
         $actionMethodParameters = static::getActionMethodParameters($this->objectManager);
         if (isset($actionMethodParameters[$this->actionMethodName])) {
@@ -310,7 +309,7 @@ class ActionController extends AbstractController
             $methodParameters = [];
         }
 
-        $this->arguments->removeAll();
+        $arguments->removeAll();
         foreach ($methodParameters as $parameterName => $parameterInfo) {
             $dataType = null;
             if (isset($parameterInfo['type'])) {
@@ -326,7 +325,7 @@ class ActionController extends AbstractController
                 $dataType = TypeHandling::stripNullableType($dataType);
             }
             $mapRequestBody = isset($parameterInfo['mapRequestBody']) && $parameterInfo['mapRequestBody'] === true;
-            $this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue, $mapRequestBody);
+            $arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue, $mapRequestBody);
         }
     }
 
@@ -390,7 +389,7 @@ class ActionController extends AbstractController
      *
      * @return void
      */
-    protected function initializeActionMethodValidators()
+    protected function initializeActionMethodValidators(Arguments $arguments)
     {
         [$validateGroupAnnotations, $actionMethodParameters, $actionValidateAnnotations, $actionIgnoredArguments] = $this->getInformationNeededForInitializeActionMethodValidators();
 
@@ -420,7 +419,7 @@ class ActionController extends AbstractController
         }
 
         /* @var $argument Argument */
-        foreach ($this->arguments as $argument) {
+        foreach ($arguments as $argument) {
             $argumentName = $argument->getName();
             if (isset($ignoredArguments[$argumentName]) && !$ignoredArguments[$argumentName]['evaluate']) {
                 continue;
@@ -515,17 +514,18 @@ class ActionController extends AbstractController
      * view exists, the view is rendered automatically.
      *
      * @param ActionRequest $request
-     * @param ActionResponse $response
-     * @return ActionResponse
+     * @param Arguments $arguments
+     * @param ActionResponse $response The most likely empty response to modify or replace.
+     * @return ActionResponse The final response for this request.
      */
-    protected function callActionMethod(ActionRequest $request, ActionResponse $response): ActionResponse
+    protected function callActionMethod(ActionRequest $request, Arguments $arguments, ActionResponse $response): ActionResponse
     {
         $preparedArguments = [];
-        foreach ($this->arguments as $argument) {
+        foreach ($arguments as $argument) {
             $preparedArguments[] = $argument->getValue();
         }
 
-        $validationResult = $this->arguments->getValidationResults();
+        $validationResult = $arguments->getValidationResults();
 
         if (!$validationResult->hasErrors()) {
             $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
@@ -560,12 +560,12 @@ class ActionController extends AbstractController
         }
 
         if ($actionResult === null && $this->view instanceof ViewInterface) {
-            $this->response = $this->renderView($this->response);
+            $response = $this->renderView($response);
         } else {
-            $this->response->setContent($actionResult);
+            $response->setContent($actionResult);
         }
 
-        return $this->response;
+        return $response;
     }
 
     /**
