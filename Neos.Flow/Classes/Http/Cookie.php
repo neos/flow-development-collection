@@ -161,6 +161,8 @@ class Cookie
     }
 
     /**
+     * Remove? Seems unused https://github.com/neos/flow-development-collection/issues/3288
+     *
      * Creates a cookie (an instance of this class) by a provided
      * raw header string like "foo=507d9f20317a5; path=/; domain=.example.org"
      * This is is an implementation of the algorithm explained in RFC 6265, Section 5.2

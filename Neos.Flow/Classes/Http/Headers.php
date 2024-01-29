@@ -1,4 +1,6 @@
 <?php
+
+// move deprecated Http\Headers class into the Mvc namespace?
 namespace Neos\Flow\Http;
 
 /*
@@ -18,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @deprecated Headers will be only accessed via request in the future, if this class stays, then as internal implementation detail.
  * @Flow\Proxy(false)
- * TODO: case-insensitive header name matching
+ * TODO: case-insensitive header name matching ???
  */
 class Headers implements \Iterator
 {
@@ -350,6 +352,8 @@ class Headers implements \Iterator
 
     /**
      * Internally sets cookie objects based on the Cookie header field value.
+     *
+     * Todo why not {@see Cookie::createFromRawSetCookieHeader}
      *
      * @param string $rawFieldValue The value of a specification compliant Cookie header
      * @return void
