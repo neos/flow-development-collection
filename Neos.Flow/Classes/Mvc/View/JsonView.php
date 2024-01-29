@@ -12,11 +12,13 @@ namespace Neos\Flow\Mvc\View;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * A JSON view
@@ -190,16 +192,17 @@ class JsonView extends AbstractView
      * array represantion using a YAML view configuration and JSON encodes
      * the result.
      *
-     * @return string The JSON encoded variables
+     * @return ResponseInterface The JSON encoded variables
      * @api
      */
     public function render()
     {
-        // todo how to support this?
-        $this->controllerContext->getResponse()->setContentType('application/json');
+        $response = new Response();
+        $response = $response->withHeader('Content-Type', 'application/json');
         $propertiesToRender = $this->renderArray();
         $options = $this->getOption('jsonEncodingOptions');
-        return json_encode($propertiesToRender, JSON_THROW_ON_ERROR | $options);
+        $value = json_encode($propertiesToRender, JSON_THROW_ON_ERROR | $options);
+        return $response->withBody(Utils::streamFor($value));
     }
 
     /**
