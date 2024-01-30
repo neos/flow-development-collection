@@ -14,7 +14,10 @@ namespace Neos\Flow\Mvc;
 /**
  * Contract for a dispatchable request.
  *
- * @api
+ * @deprecated Since the separation of http and cli requests
+ *             this is completely unused. And strict types against
+ *             its only implementation, the ActionRequest make it
+ *             impossible to implement a custom request.
  */
 interface RequestInterface
 {
