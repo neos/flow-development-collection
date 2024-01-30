@@ -13,15 +13,14 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Controller\SimpleActionController;
+use Neos\Flow\Mvc\Controller\ActionToMethodDelegation;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
- * Tests for
- * @see SimpleActionController
+ * Tests for @see ActionToMethodDelegation
  */
-class SimpleActionControllerTest extends UnitTestCase
+class ActionToMethodDelegationTest extends UnitTestCase
 {
     /**
      * Note: additional checks like "123" or "Foo" might seem sensible but those cases are prevented in the ActionRequest already.

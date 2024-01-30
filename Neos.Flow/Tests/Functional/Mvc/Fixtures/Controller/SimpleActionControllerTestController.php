@@ -3,13 +3,13 @@ namespace Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Controller\SimpleActionController;
+use Neos\Flow\Mvc\Controller\ActionToMethodDelegation;
+use Neos\Flow\Mvc\Controller\ControllerInterface;
 
-/**
- *
- */
-class SimpleActionControllerTestController extends SimpleActionController
+class SimpleActionControllerTestController implements ControllerInterface
 {
+    use ActionToMethodDelegation;
+
     public function indexAction(ActionRequest $actionRequest): ActionResponse
     {
         $response = new ActionResponse();
