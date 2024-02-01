@@ -134,8 +134,8 @@ that defines the ``process($request, $next)`` method::
    */
   final class SomeMiddleware implements MiddlewareInterface
   {
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface;
-      $response = $next->handle($httpRequest);
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface {
+      $response = $next->handle($request);
       return $response->withAddedHeader('X-MyHeader', '123');
     }
   }
