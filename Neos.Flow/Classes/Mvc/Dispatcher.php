@@ -11,7 +11,6 @@ namespace Neos\Flow\Mvc;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\NoSuchOptionException;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
@@ -123,28 +122,26 @@ class Dispatcher
     protected function initiateDispatchLoop(ActionRequest $request): ResponseInterface
     {
         $dispatchLoopCount = 0;
-        while ($request->isDispatched() === false) {
-            if ($dispatchLoopCount++ > 99) {
-                throw new Exception\InfiniteLoopException(sprintf('Could not ultimately dispatch the request after %d iterations.', $dispatchLoopCount), 1217839467);
-            }
+        do {
             $controller = $this->resolveController($request);
             $this->emitBeforeControllerInvocation($request, $controller);
             try {
                 $response = $controller->processRequest($request);
                 $this->emitAfterControllerInvocation($request, $response, $controller);
+                return $response;
             } catch (StopActionException $stopActionException) {
                 $this->emitAfterControllerInvocation($request, $stopActionException->response, $controller);
                 $response = $stopActionException->response;
-                if (!$request->isMainRequest()) {
-                    $request = $request->getParentRequest();
+                if ($request->isMainRequest()) {
+                    return $response;
                 }
+                $request = $request->getParentRequest();
             } catch (ForwardException $forwardException) {
                 $this->emitAfterControllerInvocation($request, null, $controller);
                 $request = $forwardException->nextRequest;
             }
-        }
-        // TODO $response is never _null_ at this point, except a `forwardToRequest` and the `nextRequest` is already dispatched == true, which seems illegal af
-        return $response ?? new Response();
+        } while ($dispatchLoopCount++ < 99);
+        throw new Exception\InfiniteLoopException(sprintf('Could not ultimately dispatch the request after %d iterations.', $dispatchLoopCount), 1217839467);
     }
 
     /**

@@ -115,8 +115,6 @@ abstract class AbstractController implements ControllerInterface
         $this->request = $request;
         $this->response = $response;
 
-        $this->request->setDispatched(true);
-
         $this->uriBuilder = new UriBuilder();
         $this->uriBuilder->setRequest($request);
 

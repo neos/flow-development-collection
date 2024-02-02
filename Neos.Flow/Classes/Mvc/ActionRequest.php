@@ -18,7 +18,6 @@ use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Security\Cryptography\HashService;
-use Neos\Flow\SignalSlot\Dispatcher as SignalSlotDispatcher;
 use Neos\Utility\Arrays;
 
 /**
@@ -262,38 +261,6 @@ class ActionRequest
         }
         $this->referringRequest = $this->internalArguments['__referrer'];
         return $this->referringRequest;
-    }
-
-    /**
-     * Sets the dispatched flag
-     *
-     * @param boolean $flag If this request has been dispatched
-     * @return void
-     * @throws \Neos\Flow\SignalSlot\Exception\InvalidSlotException
-     * @api
-     */
-    public function setDispatched($flag): void
-    {
-        $this->dispatched = (bool)$flag;
-
-        if ($flag) {
-            $this->emitRequestDispatched($this);
-        }
-    }
-
-    /**
-     * If this request has been dispatched and addressed by the responsible
-     * controller and the response is ready to be sent.
-     *
-     * The dispatcher will try to dispatch the request again if it has not been
-     * addressed yet.
-     *
-     * @return boolean true if this request has been dispatched successfully
-     * @api
-     */
-    public function isDispatched(): bool
-    {
-        return $this->dispatched;
     }
 
     /**
@@ -687,28 +654,6 @@ class ActionRequest
     public function getFormat(): string
     {
         return $this->format;
-    }
-
-    /**
-     * Emits a signal when a Request has been dispatched
-     *
-     * The action request is not proxyable, so the signal is dispatched manually here.
-     * The safeguard allows unit tests without the dispatcher dependency.
-     *
-     * @param ActionRequest $request
-     * @return void
-     * @Flow\Signal
-     * @throws \Neos\Flow\SignalSlot\Exception\InvalidSlotException
-     * @deprecated Since Flow 9.0 as this signal has no meaning for quite some time, you might as well use Dispatcher::beforeControllerInvocation
-     */
-    protected function emitRequestDispatched($request): void
-    {
-        if ($this->objectManager !== null) {
-            $dispatcher = $this->objectManager->get(SignalSlotDispatcher::class);
-            if ($dispatcher !== null) {
-                $dispatcher->dispatch(ActionRequest::class, 'requestDispatched', [$request]);
-            }
-        }
     }
 
     /**
