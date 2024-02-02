@@ -62,7 +62,7 @@ interface FrontendInterface
      * Finds and returns data from the cache.
      *
      * @param string $entryIdentifier Something which identifies the cache entry - depends on concrete cache
-     * @return mixed
+     * @return mixed The value or false if the cache entry could not be loaded
      * @api
      */
     public function get(string $entryIdentifier);
