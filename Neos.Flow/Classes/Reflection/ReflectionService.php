@@ -779,6 +779,8 @@ class ReflectionService
      */
     public function isAttributeIgnored(string $attributeName): bool
     {
+        // Ignore attributes that only exist in specific versions of PHP (8.1)
+        // can be removed with Flow 9
         if (in_array($attributeName, ['ReturnTypeWillChange']) && !class_exists($attributeName)) {
             return true;
         }
