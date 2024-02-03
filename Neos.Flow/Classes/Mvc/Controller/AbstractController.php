@@ -56,28 +56,32 @@ abstract class AbstractController implements ControllerInterface
     /**
      * The current action request directed to this controller
      * @var ActionRequest
+     * @readonly it should not be necessary to modify the request in any way.
      * @api
      */
-    protected $request;
+    protected ActionRequest $request;
 
     /**
      * The response which will be returned by this action controller
      * @var ActionResponse
+     * @readonly you should prefer to return a new response, but it is possible to mutate this instance.
      * @api
      */
-    protected $response;
+    protected ActionResponse $response;
 
     /**
      * Arguments passed to the controller
      * @var Arguments
+     * @readonly
      * @api
      */
-    protected $arguments;
+    protected Arguments $arguments;
 
     /**
      * @var ControllerContext
+     * @readonly
      */
-    protected $controllerContext;
+    protected ControllerContext $controllerContext;
 
     /**
      * @Flow\Inject
