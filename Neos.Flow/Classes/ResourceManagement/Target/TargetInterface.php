@@ -70,7 +70,9 @@ interface TargetInterface
     public function getPublicPersistentResourceUri(PersistentResource $resource);
 
     /**
-     * @param \Closure(int $iteration): void $callback Function called after each resource publishing
+     * Registers a callback, which must be invoked by the implementation after each resource publishing
+     *
+     * @param \Closure(int $iteration): void $callback
      */
     public function onPublish(\Closure $callback): void;
 }
