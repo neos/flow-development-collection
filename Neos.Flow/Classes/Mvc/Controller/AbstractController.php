@@ -42,6 +42,8 @@ use Neos\Utility\MediaTypes;
  */
 abstract class AbstractController implements ControllerInterface
 {
+    use SpecialResponsesSupport;
+
     /**
      * @var UriBuilder
      */
@@ -231,22 +233,6 @@ abstract class AbstractController implements ControllerInterface
     }
 
     /**
-     * Forwards the request to another action and / or controller.
-     *
-     * Request is directly transfered to the other action / controller
-     *
-     * @param ActionRequest $request The request to redirect to
-     * @throws ForwardException
-     * @see redirectToRequest()
-     * @api
-     */
-    protected function forwardToRequest(ActionRequest $request): never
-    {
-        $nextRequest = clone $request;
-        throw ForwardException::createForNextRequest($nextRequest, '');
-    }
-
-    /**
      * Redirects the request to another action and / or controller.
      *
      * Redirect will be sent to the client which then performs another request to the new URI.
@@ -322,16 +308,12 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function redirectToUri(string|UriInterface $uri, int $delay = 0, int $statusCode = 303): never
     {
-        if ($delay === 0) {
-            if (!$uri instanceof UriInterface) {
-                $uri = new Uri($uri);
-            }
-            $this->response->setRedirectUri($uri, $statusCode);
-        } else {
-            $this->response->setStatusCode($statusCode);
-            $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . (int)$delay . ';url=' . $uri . '"/></head></html>');
+        if (!$uri instanceof UriInterface) {
+            $uri = new Uri($uri);
         }
-        throw StopActionException::createForResponse($this->response, '');
+
+        $response = $this->responseRedirectsToUri($uri, $delay, $statusCode, $this->response);
+        $this->throwStopActionWithResponse($response, '');
     }
 
     /**
@@ -343,11 +325,11 @@ abstract class AbstractController implements ControllerInterface
      * @param string $statusMessage A custom HTTP status message
      * @param string $content Body content which further explains the status
      * @throws StopActionException
-     * @api
+     * @deprecated Use SpecialResponsesSupport::responseThrowsStatus
+     * @see SpecialResponsesSupport::responseThrowsStatus
      */
     protected function throwStatus(int $statusCode, $statusMessage = null, $content = null): never
     {
-        $this->response->setStatusCode($statusCode);
         if ($content === null) {
             $content = sprintf(
                 '%s %s',
@@ -355,8 +337,8 @@ abstract class AbstractController implements ControllerInterface
                 $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
             );
         }
-        $this->response->setContent($content);
-        throw StopActionException::createForResponse($this->response, $content);
+
+        $this->responseThrowsStatus($statusCode, $content, $this->response);
     }
 
     /**
