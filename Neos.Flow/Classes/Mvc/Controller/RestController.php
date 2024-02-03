@@ -128,16 +128,15 @@ class RestController extends ActionController
      */
     protected function redirectToUri(string|UriInterface $uri, int $delay = 0, int $statusCode = 303): never
     {
-        if (!$uri instanceof UriInterface) {
-            $uri = new Uri($uri);
+        // the parent method throws the exception, but we need to act afterwards
+        // thus the code in catch - it's the expected state
+        try {
+            parent::redirectToUri($uri, $delay, $statusCode);
+        } catch (StopActionException $exception) {
+            if ($this->request->getFormat() === 'json') {
+                $exception->response->setContent('');
+            }
+            throw $exception;
         }
-
-        $response = $this->responseRedirectsToUri($uri, $delay, $statusCode, $this->response);
-        if ($this->request->getFormat() === 'json') {
-            // send empty body on redirects for JSON requests
-            $response->setContent('');
-        }
-
-        $this->throwStopActionWithResponse($response, '');
     }
 }

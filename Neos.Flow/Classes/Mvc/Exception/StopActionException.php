@@ -12,6 +12,7 @@ namespace Neos\Flow\Mvc\Exception;
  */
 
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Controller\AbstractController;
 
 /**
  * This exception is thrown by a controller to stop the execution of the current
@@ -19,8 +20,7 @@ use Neos\Flow\Mvc\ActionResponse;
  * exception and - depending on the "dispatched" status of the request - either
  * continues dispatching the request or returns control to the request handler.
  *
- * See {@see SpecialResponsesSupport::throwStopActionWithResponse()}
- * or {@see SpecialResponsesSupport::responseRedirectsToUri()} for more information.
+ * See {@see AbstractController::throwStatus()} or {@see AbstractController::redirectToUri()} for more information.
  *
  * Other control flow exceptions: {@see ForwardException}
  *
