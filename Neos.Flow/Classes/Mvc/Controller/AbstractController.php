@@ -236,12 +236,11 @@ abstract class AbstractController implements ControllerInterface
      * Request is directly transfered to the other action / controller
      *
      * @param ActionRequest $request The request to redirect to
-     * @return void
      * @throws ForwardException
      * @see redirectToRequest()
      * @api
      */
-    protected function forwardToRequest(ActionRequest $request)
+    protected function forwardToRequest(ActionRequest $request): never
     {
         $nextRequest = clone $request;
         throw ForwardException::createForNextRequest($nextRequest, '');
