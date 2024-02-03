@@ -11,13 +11,12 @@ namespace Neos\Flow\Mvc\Exception;
  * source code.
  */
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Controller\AbstractController;
 
 /**
  * This exception is thrown by a controller to stop the execution of the current
  * action and return the control to the dispatcher for the special case of a forward.
  *
- * See {@see AbstractController::forward()} for more information.
+ * See {@see SpecialResponsesSupport::forwardToRequest()} for more information.
  *
  * Other control flow exceptions: {@see StopActionException}
  *
