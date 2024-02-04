@@ -17,6 +17,7 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
+use Neos\Flow\Monitor\ChangeDetectionStrategy\StrategyWithFlushDeletedOnPathInterface;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\StrategyWithMarkDeletedInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Utility\Files;
@@ -81,6 +82,7 @@ class FileMonitor
     /**
      * Array of directories and files that were cached on the last run.
      *
+     * @deprecated to be replaced by only supporting {@see StrategyWithFlushDeletedOnPathInterface}
      * @var array
      */
     protected $directoriesAndFiles = null;
@@ -318,24 +320,27 @@ class FileMonitor
             $nowDetectedFilesAndDirectories[$pathAndFilename] = 1;
         }
 
-        $deletedFiles = $this->changeDetectionStrategy->flushDeletedOnPath($path, $currentSubDirectoriesAndFilesMask);
-        if ($deletedFiles) {
-            $this->changedFiles = [...$this->changedFiles, ...$deletedFiles];
-            $currentDirectoryChanged = true;
-        }
-
-        if ($this->directoriesAndFiles[$path] !== []) {
-            foreach (array_keys($this->directoriesAndFiles[$path]) as $pathAndFilename) {
-                $this->changedFiles[$pathAndFilename] = ChangeDetectionStrategyInterface::STATUS_DELETED;
-                if ($this->changeDetectionStrategy instanceof StrategyWithMarkDeletedInterface) {
-                    $this->changeDetectionStrategy->setFileDeleted($pathAndFilename);
-                } else {
-                    // This call is needed to mark the file deleted in any possibly existing caches of the strategy.
-                    // The return value is not important as we know this file doesn't exist so we set the status to DELETED anyway.
-                    $this->changeDetectionStrategy->getFileStatus($pathAndFilename);
-                }
+        if ($this->changeDetectionStrategy instanceof StrategyWithFlushDeletedOnPathInterface) {
+            $deletedFiles = $this->changeDetectionStrategy->flushDeletedOnPath($path, $currentSubDirectoriesAndFilesMask);
+            if ($deletedFiles) {
+                $this->changedFiles = [...$this->changedFiles, ...$deletedFiles];
+                $currentDirectoryChanged = true;
             }
-            $currentDirectoryChanged = true;
+        } else {
+            // legacy deletion detection
+            if ($this->directoriesAndFiles[$path] !== []) {
+                foreach (array_keys($this->directoriesAndFiles[$path]) as $pathAndFilename) {
+                    $this->changedFiles[$pathAndFilename] = ChangeDetectionStrategyInterface::STATUS_DELETED;
+                    if ($this->changeDetectionStrategy instanceof StrategyWithMarkDeletedInterface) {
+                        $this->changeDetectionStrategy->setFileDeleted($pathAndFilename);
+                    } else {
+                        // This call is needed to mark the file deleted in any possibly existing caches of the strategy.
+                        // The return value is not important as we know this file doesn't exist so we set the status to DELETED anyway.
+                        $this->changeDetectionStrategy->getFileStatus($pathAndFilename);
+                    }
+                }
+                $currentDirectoryChanged = true;
+            }
         }
 
         if ($currentDirectoryChanged) {

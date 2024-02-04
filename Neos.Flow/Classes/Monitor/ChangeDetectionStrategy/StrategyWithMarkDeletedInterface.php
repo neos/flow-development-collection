@@ -14,6 +14,7 @@ namespace Neos\Flow\Monitor\ChangeDetectionStrategy;
 /**
  * Contract for a change detection strategy that allows the FileMonitor to mark a file deleted directly.
  *
+ * @deprecated in favour of more reliable {@see StrategyWithFlushDeletedOnPathInterface}
  * @api
  */
 interface StrategyWithMarkDeletedInterface

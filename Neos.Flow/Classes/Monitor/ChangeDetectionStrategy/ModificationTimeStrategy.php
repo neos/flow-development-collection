@@ -18,7 +18,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A change detection strategy based on modification times
  */
-class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, StrategyWithMarkDeletedInterface
+class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, StrategyWithMarkDeletedInterface, StrategyWithFlushDeletedOnPathInterface
 {
     /**
      * @var \Neos\Flow\Monitor\FileMonitor
