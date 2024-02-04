@@ -348,41 +348,42 @@ class CacheManager
         $objectClassesCache = $this->getCache('Flow_Object_Classes');
         $objectConfigurationCache = $this->getCache('Flow_Object_Configuration');
         $modifiedAspectClassNamesWithUnderscores = [];
-        $modifiedClassNamesWithUnderscores = [];
         foreach ($changedFiles as $pathAndFilename => $status) {
-            if (!file_exists($pathAndFilename)) {
-                continue;
-            }
-            $fileContents = file_get_contents($pathAndFilename);
-            $className = (new PhpAnalyzer($fileContents))->extractFullyQualifiedClassName();
-            if ($className === null) {
-                continue;
-            }
-            $classNameWithUnderscores = str_replace('\\', '_', $className);
-            $modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = true;
+            // // todo fix. cant flush cache
+            // if (!file_exists($pathAndFilename)) {
+            //     continue;
+            // }
+            // $fileContents = file_get_contents($pathAndFilename);
+            // $className = (new PhpAnalyzer($fileContents))->extractFullyQualifiedClassName();
+            // if ($className === null) {
+            //     continue;
+            // }
+            // $classNameWithUnderscores = str_replace('\\', '_', $className);
+            // $modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = true;
 
             // If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
-            if (substr($classNameWithUnderscores, -6, 6) === 'Aspect') {
-                $modifiedAspectClassNamesWithUnderscores[$classNameWithUnderscores] = true;
+            if (str_ends_with($pathAndFilename, 'Aspect.php')) {
+                $modifiedAspectClassNamesWithUnderscores[$pathAndFilename] = true;
             }
             // As long as no modified aspect was found, we are optimistic that only part of the cache needs to be flushed:
             if (count($modifiedAspectClassNamesWithUnderscores) === 0) {
-                $objectClassesCache->remove($classNameWithUnderscores);
+                $objectClassesCache->remove(md5($pathAndFilename));
             }
         }
         $flushDoctrineProxyCache = false;
         $flushPolicyCache = false;
-        if (count($modifiedClassNamesWithUnderscores) > 0) {
+        if (count($changedFiles) > 0) {
             $reflectionStatusCache = $this->getCache('Flow_Reflection_Status');
-            foreach (array_keys($modifiedClassNamesWithUnderscores) as $classNameWithUnderscores) {
-                $reflectionStatusCache->remove($classNameWithUnderscores);
-                if ($flushDoctrineProxyCache === false && preg_match('/_Domain_Model_(.+)/', $classNameWithUnderscores) === 1) {
-                    $flushDoctrineProxyCache = true;
-                }
-                if ($flushPolicyCache === false && preg_match('/_Controller_(.+)Controller/', $classNameWithUnderscores) === 1) {
-                    $flushPolicyCache = true;
-                }
-            }
+            // TODO
+            // foreach (array_keys($modifiedClassNamesWithUnderscores) as $classNameWithUnderscores) {
+            //     $reflectionStatusCache->remove($classNameWithUnderscores);
+            //     if ($flushDoctrineProxyCache === false && preg_match('/_Domain_Model_(.+)/', $classNameWithUnderscores) === 1) {
+            //         $flushDoctrineProxyCache = true;
+            //     }
+            //     if ($flushPolicyCache === false && preg_match('/_Controller_(.+)Controller/', $classNameWithUnderscores) === 1) {
+            //         $flushPolicyCache = true;
+            //     }
+            // }
             $objectConfigurationCache->remove('allCompiledCodeUpToDate');
         }
         if (count($modifiedAspectClassNamesWithUnderscores) > 0) {

@@ -186,7 +186,7 @@ class Compiler
      *
      * @return int Number of classes which have been compiled
      */
-    public function compile(): int
+    public function compile(array $previousProxyClasses): int
     {
         $compiledClasses = [];
         foreach ($this->objectManager->getRegisteredClassNames() as $fullOriginalClassNames) {
@@ -197,11 +197,12 @@ class Compiler
                         $class = new ReflectionClass($fullOriginalClassName);
                         $classPathAndFilename = $class->getFileName();
                         $this->cacheOriginalClassFileAndProxyCode($fullOriginalClassName, $classPathAndFilename, $proxyClassCode);
-                        $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
+                        $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = md5($classPathAndFilename);
                         $compiledClasses[] = $fullOriginalClassName;
                     }
                 } elseif ($this->classesCache->has(str_replace('\\', '_', $fullOriginalClassName))) {
-                    $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
+                    assert($previousProxyClasses[str_replace('\\', '_', $fullOriginalClassName)]);
+                    $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = $previousProxyClasses[str_replace('\\', '_', $fullOriginalClassName)];
                 }
             }
         }
