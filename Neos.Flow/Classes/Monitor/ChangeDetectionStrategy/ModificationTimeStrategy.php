@@ -65,6 +65,32 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     }
 
     /**
+     * @param string $onPath
+     * @param array<string,1> $filesIgnoreMask files to ignore as we are sure they exist
+     * @return array<string, ChangeDetectionStrategyInterface::STATUS_DELETED>
+     */
+    public function flushDeletedOnPath(string $onPath, array $filesIgnoreMask): array
+    {
+        $deletedFiles = [];
+        foreach ($this->filesAndModificationTimes as $pathAndFilename => $modificationTime) {
+            if (!str_starts_with($pathAndFilename, $onPath)) {
+                continue;
+            }
+            if (isset($filesIgnoreMask[$pathAndFilename])) {
+                continue;
+            }
+            if (file_exists($pathAndFilename)) {
+                // should not happen?
+                continue;
+            }
+            $this->modificationTimesChanged = true;
+            unset($this->filesAndModificationTimes[$pathAndFilename]);
+            $deletedFiles[$pathAndFilename] = ChangeDetectionStrategyInterface::STATUS_DELETED;
+        }
+        return $deletedFiles;
+    }
+
+    /**
      * Checks if the specified file has changed
      *
      * @param string $pathAndFilename

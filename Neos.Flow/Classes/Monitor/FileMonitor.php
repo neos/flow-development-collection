@@ -303,7 +303,9 @@ class FileMonitor
             $this->changedPaths[$path] = ChangeDetectionStrategyInterface::STATUS_CREATED;
         }
 
+        $currentSubDirectoriesAndFilesMask = [];
         foreach ($currentSubDirectoriesAndFiles as $pathAndFilename) {
+            $currentSubDirectoriesAndFilesMask[$pathAndFilename] = 1;
             $status = $this->changeDetectionStrategy->getFileStatus($pathAndFilename);
             if ($status !== ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
                 $this->changedFiles[$pathAndFilename] = $status;
@@ -314,6 +316,12 @@ class FileMonitor
                 unset($this->directoriesAndFiles[$path][$pathAndFilename]);
             }
             $nowDetectedFilesAndDirectories[$pathAndFilename] = 1;
+        }
+
+        $deletedFiles = $this->changeDetectionStrategy->flushDeletedOnPath($path, $currentSubDirectoriesAndFilesMask);
+        if ($deletedFiles) {
+            $this->changedFiles = [...$this->changedFiles, ...$deletedFiles];
+            $currentDirectoryChanged = true;
         }
 
         if ($this->directoriesAndFiles[$path] !== []) {
