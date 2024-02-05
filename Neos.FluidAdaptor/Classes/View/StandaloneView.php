@@ -27,8 +27,8 @@ use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
  * A standalone template view.
  * Helpful if you want to use Fluid separately from MVC
  * E.g. to generate template based emails.
- *
  * @api
+ * @phpstan-consistent-constructor
  */
 class StandaloneView extends AbstractTemplateView
 {

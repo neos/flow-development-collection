@@ -63,10 +63,10 @@ interface SessionInterface
     public function renewId();
 
     /**
-     * Returns the contents (array) associated with the given key.
+     * Returns the content (mixed) associated with the given key.
      *
      * @param string $key An identifier for the content stored in the session.
-     * @return array The contents associated with the given key
+     * @return mixed The contents associated with the given key
      * @throws Exception\SessionNotStartedException
      */
     public function getData($key);
@@ -162,7 +162,8 @@ interface SessionInterface
     /**
      * Remove data of all sessions which are considered to be expired.
      *
-     * @return integer The number of outdated entries removed or NULL if no such information could be determined
+     * @return integer|null The number of outdated entries removed or NULL if no such information could be determined
+     * @deprecated will be removed with Flow 9, use SessionManager->collectGarbage
      */
     public function collectGarbage();
 }

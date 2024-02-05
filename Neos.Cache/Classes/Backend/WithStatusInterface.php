@@ -20,7 +20,6 @@ use Neos\Error\Messages\Result;
  */
 interface WithStatusInterface
 {
-
     /**
      * Returns the status of the cache backend
      *

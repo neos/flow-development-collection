@@ -19,7 +19,6 @@ use Neos\Flow\I18n;
 
 class PluralsReaderTest extends FunctionalTestCase
 {
-
     /**
      * @var PluralsReader
      */

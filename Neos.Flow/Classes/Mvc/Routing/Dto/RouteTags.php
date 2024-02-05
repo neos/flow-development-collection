@@ -23,7 +23,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class RouteTags
 {
-
     /**
      * Pattern a tag must match. @see \Neos\Cache\Frontend\FrontendInterface::PATTERN_TAG
      */
@@ -72,7 +71,9 @@ final class RouteTags
      */
     public static function createFromArray(array $tags): self
     {
-        array_walk($tags, 'static::validateTag');
+        foreach ($tags as $tag) {
+            self::validateTag($tag);
+        }
         return new static($tags);
     }
 

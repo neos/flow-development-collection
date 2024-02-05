@@ -4,7 +4,6 @@ namespace Neos\Flow\Tests\Behavior\Features\Bootstrap;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security;
@@ -33,8 +32,10 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
  * Note: Make sure to call $this->setupSecurity() in the constructor of your
  * behat context for these steps to work in your tests!
  *
- * @property Environment environment
- * @property ObjectManagerInterface objectManager
+ * See {@see IsolatedBehatStepsTrait} documentation for a detailed explanation of Flow's isolated behat tests.
+ *
+ * @deprecated todo the policy features depending on this handcrafted isolated behat test infrastructure will be refactored and this infrastructure removed.
+ * @internal only allowed to be used internally for Neos.Flow behavioral tests!
  */
 trait SecurityOperationsTrait
 {
@@ -78,6 +79,14 @@ trait SecurityOperationsTrait
     protected $testingProvider;
 
     /**
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return T
+     */
+    abstract private function getObject(string $className): object;
+
+    /**
      * WARNING: If using this step definition, IT MUST RUN AS ABSOLUTELY FIRST STEP IN A SCENARIO!
      *
      * @Given /^I have the following policies:$/
@@ -91,10 +100,10 @@ trait SecurityOperationsTrait
             throw new \Exception('Step "I have the following policies:" must run as FIRST step in a scenario, because otherwise the proxy-classes are already built in the wrong manner!');
         }
 
-        self::$testingPolicyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'Policy.yaml';
+        self::$testingPolicyPathAndFilename = $this->getObject(Environment::class)->getPathToTemporaryDirectory() . 'Policy.yaml';
         file_put_contents(self::$testingPolicyPathAndFilename, $string->getRaw());
 
-        $policyService = $this->objectManager->get(PolicyService::class);
+        $policyService = $this->getObject(PolicyService::class);
         ObjectAccess::setProperty($policyService, 'initialized', false, true);
     }
 
@@ -174,7 +183,7 @@ trait SecurityOperationsTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($methodName), 'string', escapeshellarg($className), 'string', escapeshellarg($arguments)));
         } else {
             $this->setupSecurity();
-            $instance = $this->objectManager->get($className);
+            $instance = $this->getObject($className);
 
             try {
                 $result = $instance->$methodName(...Arrays::trimExplode(',', $arguments));
@@ -203,22 +212,22 @@ trait SecurityOperationsTrait
         if ($this->securityInitialized === true) {
             return;
         }
-        $this->privilegeManager = $this->objectManager->get(PrivilegeManagerInterface::class);
-        $this->privilegeManager->setOverrideDecision(null);
+        $this->privilegeManager = $this->getObject(PrivilegeManagerInterface::class);
+        $this->privilegeManager->reset();
 
-        $this->policyService = $this->objectManager->get(PolicyService::class);
-        $this->accountRepository = $this->objectManager->get(Security\AccountRepository::class);
-        $this->authenticationManager = $this->objectManager->get(AuthenticationProviderManager::class);
-        $this->tokenAndProviderFactory = $this->objectManager->get(Security\Authentication\TokenAndProviderFactoryInterface::class);
+        $this->policyService = $this->getObject(PolicyService::class);
+        $this->accountRepository = $this->getObject(Security\AccountRepository::class);
+        $this->authenticationManager = $this->getObject(AuthenticationProviderManager::class);
+        $this->tokenAndProviderFactory = $this->getObject(Security\Authentication\TokenAndProviderFactoryInterface::class);
 
         // Making sure providers and tokens were actually build, so the singleton TestingProvider exists.
         $this->tokenAndProviderFactory->getProviders();
 
         $this->testingProvider = $this->tokenAndProviderFactory->getProviders()['TestingProvider'];
 
-        $this->securityContext = $this->objectManager->get(Security\Context::class);
+        $this->securityContext = $this->getObject(Security\Context::class);
         $this->securityContext->clearContext();
-        $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost/');
+        $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost/');
         $this->mockActionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $this->mockActionRequest->setControllerObjectName(AuthenticationController::class);
         $this->securityContext->setRequest($this->mockActionRequest);

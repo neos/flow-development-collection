@@ -23,6 +23,7 @@ use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\Exception\ViewNotFoundException;
 use Neos\Flow\Mvc\View\ViewInterface;
@@ -209,6 +210,7 @@ class ActionController extends AbstractController
      * @throws UnsupportedRequestTypeException
      * @throws ViewNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\RequiredArgumentMissingException
+     * @throws StopActionException
      * @api
      */
     public function processRequest(ActionRequest $request, ActionResponse $response)
@@ -810,7 +812,7 @@ class ActionController extends AbstractController
      * display no flash message at all on errors. Override this to customize
      * the flash message in your action controller.
      *
-     * @return \Neos\Error\Messages\Message The flash message or false if no flash message should be set
+     * @return Error\Error|false The flash message or false if no flash message should be set
      * @api
      */
     protected function getErrorFlashMessage()

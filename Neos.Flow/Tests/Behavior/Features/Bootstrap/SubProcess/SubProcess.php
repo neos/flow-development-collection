@@ -9,6 +9,11 @@ use Neos\Flow\Core\ApplicationContext;
  * Usage:
  *  $subProcess = new SubProcess($applicationContext);
  *  $subProcessResponse = $subProcess->execute('some:flow:command');
+ *
+ * See {@see IsolatedBehatStepsTrait} documentation for a detailed explanation of Flow's isolated behat tests.
+ *
+ * @deprecated todo the policy features depending on this handcrafted isolated behat test infrastructure will be refactored and this infrastructure removed.
+ * @internal only allowed to be used internally for Neos.Flow behavioral tests!
  */
 class SubProcess
 {
@@ -53,7 +58,7 @@ class SubProcess
             }
         };
         if (!is_resource($this->subProcess)) {
-            list($this->subProcess, $this->pipes) = $this->launchSubProcess();
+            [$this->subProcess, $this->pipes] = $this->launchSubProcess();
             if ($this->subProcess === false || !is_array($this->pipes)) {
                 throw new \Exception('Failed launching the shell sub process');
             }

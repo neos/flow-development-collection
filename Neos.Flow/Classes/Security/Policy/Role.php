@@ -247,7 +247,7 @@ class Role
     /**
      * @param string $privilegeTargetIdentifier
      * @param array $privilegeParameters
-     * @return PrivilegeInterface the matching privilege or NULL if no privilege exists for the given constraints
+     * @return PrivilegeInterface|null the matching privilege or NULL if no privilege exists for the given constraints
      */
     public function getPrivilegeForTarget(string $privilegeTargetIdentifier, array $privilegeParameters = []): ?PrivilegeInterface
     {

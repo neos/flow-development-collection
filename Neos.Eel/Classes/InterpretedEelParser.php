@@ -191,26 +191,26 @@ class InterpretedEelParser extends EelParser
         $rval = $this->unwrap($sub['val']);
 
         switch ($result['comp']) {
-        case '==':
-            $result['val'] = $lval === $rval;
-            break;
-        case '!=':
-            $result['val'] = $lval !== $rval;
-            break;
-        case '<':
-            $result['val'] = $lval < $rval;
-            break;
-        case '<=':
-            $result['val'] = $lval <= $rval;
-            break;
-        case '>':
-            $result['val'] = $lval > $rval;
-            break;
-        case '>=':
-            $result['val'] = $lval >= $rval;
-            break;
-        default:
-            throw new ParserException('Unknown comparison operator "' . $result['comp'] . '"', 1344512487);
+            case '==':
+                $result['val'] = $lval === $rval;
+                break;
+            case '!=':
+                $result['val'] = $lval !== $rval;
+                break;
+            case '<':
+                $result['val'] = $lval < $rval;
+                break;
+            case '<=':
+                $result['val'] = $lval <= $rval;
+                break;
+            case '>':
+                $result['val'] = $lval > $rval;
+                break;
+            case '>=':
+                $result['val'] = $lval >= $rval;
+                break;
+            default:
+                throw new ParserException('Unknown comparison operator "' . $result['comp'] . '"', 1344512487);
         }
     }
 
@@ -226,21 +226,20 @@ class InterpretedEelParser extends EelParser
 
     public function SumCalculation_rgt(&$result, $sub)
     {
-        $lval = $result['val'];
-        $rval = $sub['val'];
+        $lval = $this->unwrap($result['val']);
+        $rval = $this->unwrap($sub['val']);
 
         switch ($result['op']) {
-        case '+':
-            if (is_string($lval) || is_string($rval)) {
-                // Do not unwrap here and use better __toString handling of Context
-                $result['val'] = $lval . $rval;
-            } else {
-                $result['val'] = $this->unwrap($lval) + $this->unwrap($rval);
-            }
-            break;
-        case '-':
-            $result['val'] = $this->unwrap($lval) - $this->unwrap($rval);
-            break;
+            case '+':
+                if (is_string($lval) || is_string($rval)) {
+                    $result['val'] = $lval . $rval;
+                } else {
+                    $result['val'] = $lval + $rval;
+                }
+                break;
+            case '-':
+                $result['val'] = $lval - $rval;
+                break;
         }
     }
 
@@ -260,15 +259,15 @@ class InterpretedEelParser extends EelParser
         $rval = $this->unwrap($sub['val']);
 
         switch ($result['op']) {
-        case '/':
-            $result['val'] = $lval / $rval;
-            break;
-        case '*':
-            $result['val'] = $lval * $rval;
-            break;
-        case '%':
-            $result['val'] = $lval % $rval;
-            break;
+            case '/':
+                $result['val'] = $lval / $rval;
+                break;
+            case '*':
+                $result['val'] = $lval * $rval;
+                break;
+            case '%':
+                $result['val'] = $lval % $rval;
+                break;
         }
     }
 

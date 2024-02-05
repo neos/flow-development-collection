@@ -57,7 +57,7 @@ class Version20200908155620 extends AbstractMigration
         $persistenceManager = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class);
 
         $iterator = $resourceRepository->findAllIterator();
-        foreach ($resourceRepository->iterate($iterator) as $resource) {
+        foreach ($iterator as $resource) {
             /* @var PersistentResource $resource */
             if (!is_resource($resource->getStream())) {
                 continue;

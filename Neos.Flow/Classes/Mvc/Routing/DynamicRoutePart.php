@@ -107,13 +107,13 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * If a split string is set, only the first part of the value until location of the splitString is returned.
      * This method can be overridden by custom RoutePartHandlers to implement custom matching mechanisms.
      *
-     * @param string $routePath The request path to be matched
+     * @param string|null $routePath The request path to be matched
      * @return string value to match, or an empty string if $routePath is empty or split string was not found
      * @api
      */
     protected function findValueToMatch($routePath)
     {
-        if (!isset($routePath) || $routePath === '' || $routePath[0] === '/') {
+        if ($routePath === null || $routePath === '' || $routePath[0] === '/') {
             return '';
         }
         $valueToMatch = $routePath;

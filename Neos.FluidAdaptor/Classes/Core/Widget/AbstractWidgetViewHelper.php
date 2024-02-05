@@ -17,6 +17,7 @@ use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
+use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Facets\ChildNodeAccessInterface;
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
@@ -118,9 +119,20 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
      * Initialize the Widget Context, before the Render method is called.
      *
      * @return void
+     * @throws \Exception
      */
     private function initializeWidgetContext()
     {
+        /*
+         * We reset the state of the ViewHelper by generating a new WidgetContext to handle multiple occurrences of one instance (e.g. in a ForViewHelper).
+         *
+         * By only calling $this->resetState() we would end in a situation where the RenderChildrenViewHelper could not find its children therefore we move the original children to the new WidgetContext.
+         * We create new instances of RootNode and RenderingContext in case we got null because setViewHelperChildNodes requires its parameters to be corresponding instances.
+         */
+        $rootNode = $this->widgetContext->getViewHelperChildNodes() ?? new RootNode();
+        $renderingContext = $this->widgetContext->getViewHelperChildNodeRenderingContext() ?? new RenderingContext();
+        $this->resetState();
+        $this->widgetContext->setViewHelperChildNodes($rootNode, $renderingContext);
         if ($this->ajaxWidget === true) {
             if ($this->storeConfigurationInSession === true) {
                 $this->ajaxWidgetContextHolder->store($this->widgetContext);
@@ -206,7 +218,6 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             throw new Exception\MissingControllerException('initiateSubRequest() can not be called if there is no controller inside $this->controller. Make sure to add the @Neos\Flow\Annotations\Inject annotation in your widget class.', 1284401632);
         }
 
-        /** @var $subRequest ActionRequest */
         $subRequest = $this->controllerContext->getRequest()->createSubRequest();
 
         $this->passArgumentsToSubRequest($subRequest);

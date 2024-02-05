@@ -22,12 +22,15 @@ class ExpressionSyntaxValidator extends AbstractValidator
      */
     protected function isValid($value)
     {
+        /** @phpstan-ignore-next-line */
         $parser = new EelParser($value);
         $result = $parser->match_Expression();
 
         if ($result === false) {
             $this->addError('Expression "%s" could not be parsed.', 1421940748, [$value]);
+            /** @phpstan-ignore-next-line */
         } elseif ($parser->pos !== strlen($value)) {
+            /** @phpstan-ignore-next-line */
             $this->addError('Expression "%s" could not be parsed. Error starting at character %d: "%s".', 1421940760, [$value, $parser->pos, substr($value, $parser->pos)]);
         }
     }

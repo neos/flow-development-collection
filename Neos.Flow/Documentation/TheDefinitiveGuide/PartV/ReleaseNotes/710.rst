@@ -25,7 +25,7 @@ activate URL rewriting.
 
 This could be a breaking change in case you relied on the previous behavior.
 For example: Using the ``UriBuilder`` in CLI previously created URLs in the format ``/index.php/some/path``. Now it will lead to ``/some/path`` by default.
-To re-establish the former behavior, the ``FLOW_REWRITEURLS`` can be set to 0 explicitly, for example via ``putenv('FLOW_REWRITEURLS=1');``.
+To re-establish the former behavior, the ``FLOW_REWRITEURLS`` can be set to 0 explicitly, for example via ``putenv('FLOW_REWRITEURLS=0');``.
 
 
 FEATURE: Allow flushing caches by compiled classes
@@ -77,11 +77,13 @@ FEATURE: Introduce ability to add Fluid namespaces via configuration
 Added the ability to add Fluid namespaces via configuration.
 
 By adding a new configuration option:
-```
-Neos:
-  FluidAdaptor:
-    namespaces:
-```
+
+.. code-block:: yaml
+
+  Neos:
+    FluidAdaptor:
+      namespaces:
+
 This configuration is used, to add namespaces inside the ViewHelperResolver.
 
 Add a default namespace in Settings.yaml and try to use its view helpers in any template, without including the namespace there.

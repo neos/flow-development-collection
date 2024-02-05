@@ -21,6 +21,7 @@ use Neos\Utility\ObjectAccess;
  * It works as a variable container with wrapping of return values
  * for safe access without warnings (on missing properties).
  *
+ * @phpstan-consistent-constructor
  * @Flow\Proxy(false)
  */
 class Context
@@ -159,18 +160,17 @@ class Context
      *
      * This method is public for closure access.
      *
-     * @param $value
+     * @param mixed $value
      * @return mixed
      */
     public function unwrapValue($value)
     {
         if (is_array($value)) {
-            $self = $this;
-            return array_map(function ($item) use ($self) {
+            return array_map(function ($item) {
                 if ($item instanceof Context) {
                     return $item->unwrap();
                 } else {
-                    return $self->unwrapValue($item);
+                    return $this->unwrapValue($item);
                 }
             }, $value);
         } else {
@@ -199,16 +199,5 @@ class Context
             $this->value[$key] = $value;
         }
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        if (is_object($this->value) && !method_exists($this->value, '__toString')) {
-            return '[object ' . get_class($this->value) . ']';
-        }
-        return (string)$this->value;
     }
 }

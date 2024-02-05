@@ -232,7 +232,7 @@ class Service
      * Returns a parent Locale object of the locale provided.
      *
      * @param Locale $locale The Locale to search parent for
-     * @return Locale Existing Locale instance or NULL on failure
+     * @return Locale|null Existing Locale instance or NULL on failure
      * @api
      */
     public function getParentLocaleOf(Locale $locale)

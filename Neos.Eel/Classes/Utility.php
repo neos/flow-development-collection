@@ -18,14 +18,17 @@ namespace Neos\Eel;
 class Utility
 {
     /**
-     * Return the expression if it is an valid EEL expression, otherwise return null.
-     *
-     * @param string $expression
-     * @return string|null
+     * Return the expression if it is a valid EEL expression, null otherwise.
      */
-    public static function parseEelExpression($expression)
+    public static function parseEelExpression(string $expression): ?string
     {
-        return preg_match(Package::EelExpressionRecognizer, $expression, $matches) === 1 ? $matches['exp'] : null;
+        if (!str_starts_with($expression, '${')) {
+            return null;
+        }
+        return match (preg_match(Package::EelExpressionRecognizer, $expression, $matches)) {
+            1 => $matches['exp'],
+            default => null
+        };
     }
 
     /**

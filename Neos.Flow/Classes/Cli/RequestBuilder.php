@@ -154,6 +154,7 @@ class RequestBuilder
 
             return $request;
         }
+        /** @var string $controllerObjectName */
         $controllerObjectName = $this->objectManager->getObjectNameByClassName($command->getControllerClassName());
         $controllerCommandName = $command->getControllerCommandName();
         $request->setControllerObjectName($controllerObjectName);

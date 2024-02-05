@@ -79,7 +79,7 @@ interface PropertyMappingConfigurationInterface
     /**
      * This method can be used to explicitely force a TypeConverter to be used for this Configuration.
      *
-     * @return TypeConverterInterface The type converter to be used for this particular PropertyMappingConfiguration, or NULL if the system-wide configured type converter should be used.
+     * @return TypeConverterInterface|null The type converter to be used for this particular PropertyMappingConfiguration, or NULL if the system-wide configured type converter should be used.
      * @api
      */
     public function getTypeConverter();

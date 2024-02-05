@@ -94,10 +94,13 @@ class MathHelper implements ProtectedContextAwareInterface
      * @param float $x A number
      * @return float The absolute value of the given value
      */
-    public function abs($x = 'NAN')
+    public function abs($x = NAN)
     {
         if (!is_numeric($x) && $x !== null) {
             return NAN;
+        }
+        if ($x === null) {
+            return 0.0;
         }
         return abs((float)$x);
     }
@@ -398,7 +401,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * The precision defines the number of digits after the decimal point.
      * Negative values are also supported (-1 rounds to full 10ths).
      *
-     * @param float $subject The value to round
+     * @param mixed $subject The value to round
      * @param integer $precision The precision (digits after decimal point) to use, defaults to 0
      * @return float The rounded value
      */
@@ -490,14 +493,11 @@ class MathHelper implements ProtectedContextAwareInterface
     public function trunc($x)
     {
         $sign = $this->sign($x);
-        switch ($sign) {
-            case -1:
-                return (int)ceil((float)$x);
-            case 1:
-                return (int)floor((float)$x);
-            default:
-                return $sign;
-        }
+        return match ($sign) {
+            -1 => (int)ceil((float)$x),
+            1 => (int)floor((float)$x),
+            default => $sign,
+        };
     }
 
     /**

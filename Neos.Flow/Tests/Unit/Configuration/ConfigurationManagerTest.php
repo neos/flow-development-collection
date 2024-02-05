@@ -584,24 +584,24 @@ class ConfigurationManagerTest extends UnitTestCase
      */
     public function loadConfigurationCacheLoadsConfigurationsFromCacheIfACacheFileExists()
     {
-        vfsStream::setup('Flow/Cache');
+        vfsStream::setup('Temporary', null, [
+            'Configuration' => [
+                'TestingConfigurations.php' => <<< "PHP"
+                <?php
+                return array('bar' => 'touched');
+                ?>
+                PHP
+            ],
+            'Empty' => []
+        ]);
 
-        $configurationsCode = <<< "EOD"
-<?php
-return array('bar' => 'touched');
-?>
-EOD;
-
-        $cachedConfigurationsPathAndFilename = vfsStream::url('Flow/Cache/Configurations.php');
-        file_put_contents($cachedConfigurationsPathAndFilename, $configurationsCode);
-
-        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType', 'constructConfigurationCachePath', 'refreshConfiguration']);
-        $configurationManager->expects(self::any())->method('constructConfigurationCachePath')->willReturn('notfound.php', $cachedConfigurationsPathAndFilename);
+        $configurationManager = $this->getAccessibleConfigurationManager(['postProcessConfigurationType', 'refreshConfiguration']);
+        $configurationManager->_set('context', new ApplicationContext('Testing'));
         $configurationManager->_set('configurations', ['foo' => 'untouched']);
-        $configurationManager->_call('loadConfigurationsFromCache');
+        $configurationManager->setTemporaryDirectoryPath(vfsStream::url('Temporary/Empty/'));
         self::assertSame(['foo' => 'untouched'], $configurationManager->_get('configurations'));
 
-        $configurationManager->_call('loadConfigurationsFromCache');
+        $configurationManager->setTemporaryDirectoryPath(vfsStream::url('Temporary/'));
         self::assertSame(['bar' => 'touched'], $configurationManager->_get('configurations'));
     }
 
@@ -733,7 +733,7 @@ EOD;
             'baz' => '%Neos\Flow\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY%',
             'inspiring' => [
                 'people' => [
-                    'to' => '%Neos\Flow\Core\Bootstrap::MINIMUM_PHP_VERSION%',
+                    'to' => '%Neos\Flow\Core\Bootstrap::RUNLEVEL_COMPILETIME%',
                     'share' => '%Neos\Flow\Package\FlowPackageInterface::DIRECTORY_CLASSES%'
                 ]
             ]
@@ -745,7 +745,7 @@ EOD;
         $settings = eval('return ' . $processedPhpString . ';');
 
         self::assertSame(ConfigurationManager::CONFIGURATION_TYPE_POLICY, $settings['baz']);
-        self::assertSame(Bootstrap::MINIMUM_PHP_VERSION, $settings['inspiring']['people']['to']);
+        self::assertSame(Bootstrap::RUNLEVEL_COMPILETIME, $settings['inspiring']['people']['to']);
         self::assertSame(FlowPackageInterface::DIRECTORY_CLASSES, $settings['inspiring']['people']['share']);
     }
 
@@ -782,6 +782,61 @@ EOD;
         self::assertSame('foo ' . $envVarValue . ' bar', $settings['inspiring']['people']['share']);
 
         putenv($envVarName);
+    }
+
+    public function replaceVariablesInPhpStringReplacesEnvMarkersDataProvider(): \Traversable
+    {
+        yield 'lower case env variables are not replaced' => ['envVarName' => '', 'envVarValue' => '', 'setting' => '%env:neos_flow_test_unit_configuration_lower_case_environment_variable%', 'expectedResult' => '%env:neos_flow_test_unit_configuration_lower_case_environment_variable%'];
+        yield 'non-existing environment variables evaluate to false' => ['envVarName' => '', 'envVarValue' => '', 'setting' => '%env:NEOS_FLOW_TESTS_UNIT_CONFIGURATION_NON_EXISTING_ENVIRONMENT_VARIABLE%', 'expectedResult' => false];
+        yield 'concatenating non-existing environment variables' => ['envVarName' => '', 'envVarValue' => '', 'setting' => 'prefix%env:NEOS_FLOW_TESTS_UNIT_CONFIGURATION_NON_EXISTING_ENVIRONMENT_VARIABLE%suffix', 'expectedResult' => 'prefixsuffix'];
+        yield 'integer env variables are casted to string by default' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => '123', 'setting' => '%env:NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => '123'];
+
+        yield 'invalid format skips replacement' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => '123', 'setting' => '%env(unknown):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => '%env(unknown):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%'];
+        yield 'empty format skips replacement' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => '123', 'setting' => '%env():NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => '%env():NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%'];
+
+        yield 'format int casts non-numeric env variable to 0' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => 'foo', 'setting' => '%env(int):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => 0];
+        yield 'format int casts numeric env variable to its integer value' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => '123', 'setting' => '%env(int):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => 123];
+        yield 'integer-casted values can be concatenated with strings' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => '123', 'setting' => '%env(int):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%suffix', 'expectedResult' => '123suffix'];
+        yield 'integer-casted values can be concatenated with integers' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => '123', 'setting' => '%env(int):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%456', 'expectedResult' => '123456'];
+        yield 'format int casts non-existing env variable to 0' => ['envVarName' => '', 'envVarValue' => '', 'setting' => '%env(int):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_NON_EXISTING_ENVIRONMENT_VARIABLE%', 'expectedResult' => 0];
+
+        yield 'format bool casts "1" to true' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => '1', 'setting' => '%env(bool):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => true];
+        yield 'format bool casts "true" to true' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => 'true', 'setting' => '%env(bool):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => true];
+        yield 'format bool casts "false" to false' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => 'false', 'setting' => '%env(bool):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => false];
+        yield 'format bool casts "FALSE" to false' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => 'FALSE', 'setting' => '%env(bool):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => false];
+        yield 'format bool casts "0" to false' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => '0', 'setting' => '%env(bool):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => false];
+        yield 'concatenating format bool, true' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => 'true', 'setting' => 'prefix%env(bool):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%suffix', 'expectedResult' => 'prefix1suffix'];
+        yield 'concatenating format bool, false' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => '0', 'setting' => 'prefix%env(bool):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%suffix', 'expectedResult' => 'prefixsuffix'];
+        yield 'format bool casts non-existing env variable to false' => ['envVarName' => '', 'envVarValue' => '', 'setting' => '%env(bool):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_NON_EXISTING_ENVIRONMENT_VARIABLE%', 'expectedResult' => false];
+
+        yield 'format float casts string to 0.0' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => 'foo', 'setting' => '%env(float):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => 0.0];
+        yield 'format float casts "1,4" to 1.0' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => '1,4', 'setting' => '%env(float):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => 1.0];
+        yield 'format float casts "1.5" to 1.5' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => '1.5', 'setting' => '%env(float):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => 1.5];
+        yield 'format float casts non-existing env variable to 0.0' => ['envVarName' => '', 'envVarValue' => '', 'setting' => '%env(float):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_NON_EXISTING_ENVIRONMENT_VARIABLE%', 'expectedResult' => 0.0];
+
+        yield 'format string casts numeric string' => ['envVarName' => 'NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR', 'envVarValue' => '123', 'setting' => '%env(string):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_CONFIGURATIONMANAGERTEST_MOCKENVVAR%', 'expectedResult' => '123'];
+        yield 'format string casts non-existing env variable to ""' => ['envVarName' => '', 'envVarValue' => '', 'setting' => '%env(string):NEOS_FLOW_TESTS_UNIT_CONFIGURATION_NON_EXISTING_ENVIRONMENT_VARIABLE%', 'expectedResult' => ''];
+    }
+
+    /**
+     * @test
+     * @dataProvider replaceVariablesInPhpStringReplacesEnvMarkersDataProvider
+     */
+    public function replaceVariablesInPhpStringReplacesEnvMarkersTests(string $envVarName, string $envVarValue, string $setting, $expectedResult): void
+    {
+        if ($envVarName !== '') {
+            putenv($envVarName . '=' . $envVarValue);
+        }
+        $settingsPhpString = var_export(['setting' => $setting], true);
+        $configurationManager = $this->getAccessibleConfigurationManager(['dummy']);
+        $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
+        $settings = eval('return ' . $processedPhpString . ';');
+
+        self::assertSame($expectedResult, $settings['setting']);
+
+        if ($envVarName !== '') {
+            putenv($envVarName);
+        }
     }
 
     /**
@@ -864,7 +919,6 @@ EOD;
      */
     public function packageRoutesCallback($filenameAndPath)
     {
-
         // The routes from the innermost context should be added FIRST, such that
         // they take precedence over more generic contexts
         $packageSubContextRoutes = [
@@ -1675,6 +1729,41 @@ EOD;
         $configurationManager->_call('loadConfiguration', 'MyCustomConfiguration', $this->getMockPackages());
         $configuration = $configurationManager->getConfiguration('MyCustomConfiguration');
         self::assertArrayHasKey('SomeKey', $configuration);
+    }
+
+    /**
+     * Test the disabled cache and that we still replace env variables.
+     *
+     * {@see ConfigurationManager::$temporaryDirectoryPath} === null
+     *
+     * @test
+     */
+    public function configurationManagerWithDisabledCache(): void
+    {
+        $configurationManager = new ConfigurationManager(new ApplicationContext('Testing'));
+
+        // we don't invoke $configurationManager->setTemporaryDirectoryPath();, and thus the cache is disabled
+
+        $mockLoader = $this->getMockBuilder(LoaderInterface::class)->getMock();
+
+        $mockLoader->method('load')->willReturn(
+            [
+                'plainSetting' => '123',
+                'envSetting' => '%PHP_BINARY%'
+            ]
+        );
+
+        $configurationManager->registerConfigurationType('MockType', $mockLoader);
+
+        $configuration = $configurationManager->getConfiguration('MockType');
+
+        self::assertSame(
+            [
+                'plainSetting' => '123',
+                'envSetting' => PHP_BINARY
+            ],
+            $configuration
+        );
     }
 
     /**

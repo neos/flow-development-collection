@@ -320,7 +320,7 @@ abstract class Files
      * @return mixed The file content as a string or false if the file could not be opened.
      * @api
      */
-    public static function getFileContents(string $pathAndFilename, int $flags = 0, $context = null, int $offset = null, int $maximumLength = -1)
+    public static function getFileContents(string $pathAndFilename, int $flags = 0, $context = null, int $offset = 0, int $maximumLength = -1)
     {
         if ($flags === true) {
             $flags = FILE_USE_INCLUDE_PATH;

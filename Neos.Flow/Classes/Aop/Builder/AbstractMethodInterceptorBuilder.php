@@ -91,9 +91,9 @@ abstract class AbstractMethodInterceptorBuilder
      * the constructor of a new join point. Used in the method interceptor
      * functions.
      *
-     * @param string $className Name of the declaring class of the method
-     * @param string $methodName Name of the method to create arguments array code for
-     * @param boolean $useArgumentsArray If set, the $methodArguments array will be built from $arguments instead of using the actual parameter variables.
+     * @param string|null $className Name of the declaring class of the method
+     * @param string|null $methodName Name of the method to create arguments array code for
+     * @param bool $useArgumentsArray If set, the $methodArguments array will be built from $arguments instead of using the actual parameter variables.
      * @return string The generated code to be used in an "array()" definition
      */
     protected function buildMethodArgumentsArrayCode(string $className = null, string $methodName = null, bool $useArgumentsArray = false): string
@@ -126,7 +126,7 @@ abstract class AbstractMethodInterceptorBuilder
     /**
      * Generates the parameters code needed to call the constructor with the saved parameters.
      *
-     * @param string $className Name of the class the method is declared in
+     * @param string|null $className Name of the class the method is declared in
      * @return string The generated parameters code
      */
     protected function buildSavedConstructorParametersCode(string $className = null): string
@@ -151,9 +151,9 @@ abstract class AbstractMethodInterceptorBuilder
      * Builds the advice interception code, to be used in a method interceptor.
      *
      * @param array $groupedAdvices The advices grouped by advice type
-     * @param string $methodName Name of the method the advice applies to
-     * @param string $targetClassName Name of the target class
-     * @param string $declaringClassName Name of the declaring class. This is usually the same as the $targetClassName. However, it is the introduction interface for introduced methods.
+     * @param string|null $methodName Name of the method the advice applies to
+     * @param string|null $targetClassName Name of the target class
+     * @param string|null $declaringClassName Name of the declaring class. This is usually the same as the $targetClassName. However, it is the introduction interface for introduced methods.
      * @return string PHP code to be used in the method interceptor
      */
     protected function buildAdvicesCode(array $groupedAdvices, string $methodName = null, string $targetClassName = null, string $declaringClassName = null): string

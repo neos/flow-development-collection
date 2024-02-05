@@ -19,6 +19,7 @@ use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 
 /**
  * The abstract base of all Fluid views.
+ * @phpstan-consistent-constructor
  */
 abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTemplateView implements ViewInterface
 {

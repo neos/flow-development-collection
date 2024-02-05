@@ -68,4 +68,9 @@ interface TargetInterface
      * @throws Exception
      */
     public function getPublicPersistentResourceUri(PersistentResource $resource);
+
+    /**
+     * @param \Closure(int $iteration): void $callback Function called after each resource publishing
+     */
+    public function onPublish(\Closure $callback): void;
 }

@@ -86,4 +86,15 @@ class BrowserTest extends FunctionalTestCase
         self::assertEquals(303, $response->getStatusCode());
         self::assertEquals('http://localhost/test/http/redirecting/tohere', $response->getHeaderLine('Location'));
     }
+
+    /**
+     * Check if request method can be overridden (@see https://github.com/neos/flow-development-collection/issues/2856)
+     *
+     * @test
+     */
+    public function methodCanBeOverriddenInPostRequests(): void
+    {
+        $response = $this->browser->request('http://localhost/test/http/request/method', 'POST', ['__method' => 'DELETE']);
+        self::assertSame('DELETE', $response->getBody()->getContents());
+    }
 }

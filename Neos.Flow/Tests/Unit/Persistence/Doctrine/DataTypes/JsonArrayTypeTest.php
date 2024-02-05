@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine\DataTypes;
 */
 
 use Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\ArrayBasedValueObject;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\BooleanBasedValueObject;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\FloatBasedValueObject;
@@ -37,7 +38,7 @@ class JsonArrayTypeTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->jsonArrayTypeMock = $this->getMockBuilder(JsonArrayType::class)
-            ->setMethods(['initializeDependencies'])
+            ->onlyMethods(['initializeDependencies'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -56,8 +57,9 @@ class JsonArrayTypeTest extends UnitTestCase
     /**
      * @test
      */
-    public function passSimpleArrayAndConvertToJson()
+    public function passSimpleArrayAndConvertToJson(): void
     {
+        $this->inject($this->jsonArrayTypeMock, 'persistenceManager', $this->createMock(PersistenceManagerInterface::class));
         $json = $this->jsonArrayTypeMock->convertToDatabaseValue(['simplestring',1,['nestedArray']], $this->abstractPlatformMock);
         self::assertEquals("{\n    \"0\": \"simplestring\",\n    \"1\": 1,\n    \"2\": {\n        \"0\": \"nestedArray\"\n    }\n}", $json);
     }

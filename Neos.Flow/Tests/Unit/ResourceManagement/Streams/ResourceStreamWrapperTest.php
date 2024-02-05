@@ -103,6 +103,22 @@ class ResourceStreamWrapperTest extends UnitTestCase
     /**
      * @test
      */
+    public function resourceStreamWrapperAllowsStatOfValidResourceLinks()
+    {
+        $sha1Hash = '68ac906495480a3404beee4874ed853a037a7a8f';
+
+        $tempFile = tmpfile();
+
+        $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
+        $this->mockResourceManager->expects(self::once())->method('getResourceBySha1')->with($sha1Hash)->will(self::returnValue($mockResource));
+        $this->mockResourceManager->expects(self::once())->method('getStreamByResource')->with($mockResource)->will(self::returnValue($tempFile));
+
+        self::assertIsArray($this->resourceStreamWrapper->pathStat('resource://' . $sha1Hash, 0));
+    }
+
+    /**
+     * @test
+     */
     public function openThrowsExceptionForNonExistingPackages()
     {
         $this->expectException(Exception::class);

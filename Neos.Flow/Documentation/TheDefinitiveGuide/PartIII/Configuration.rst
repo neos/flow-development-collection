@@ -153,6 +153,25 @@ Some examples:
 ``%env:HOME%``
   Will be replaced by the value of the "HOME" environment variable.
 
+**Type of environment variables**
+
+Evnironment variables are replaced via PHPs ``getenv()`` function. Thus, they always evaluate to *strings*.
+Unless a mentioned environment variable does not exist, in which case it evaluates to ``false``.
+With version 8.1 Flow allows to cast the type of an environment variable to an *Integer*, *Float*, *Boolean*
+or *String* explicitly, specifying the *type* in the replacement string:
+
+``%env(int):SOME_ENVIRONMENT_VARIABLE``
+
+This would lead to the specified configuration to be casted to an integer. When the environment variable
+is not defined, the base value of the specified type will be used.
+
+The allowed types and their base values are:
+
+* ``int``: 0
+* ``bool``: false
+* ``float``: 0.0
+* ``string``: "" (empty string)
+
 Custom Configuration Types
 --------------------------
 

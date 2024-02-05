@@ -21,7 +21,7 @@ class AopProxyTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function advicesAreExecutedAgainIfAnOverriddenMethodCallsItsParentMethod()
+    public function advicesAreExecutedAgainIfAnOverriddenMethodCallsItsParentMethod(): void
     {
         $targetClass = new Fixtures\ChildClassOfTargetClass01();
         self::assertEquals('Greetings, I just wanted to say: Hello World World', $targetClass->sayHello());
@@ -30,7 +30,7 @@ class AopProxyTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function anAdvicedParentMethodIsCalledCorrectlyIfANonAdvicedOverridingMethodCallsIt()
+    public function anAdvisedParentMethodIsCalledCorrectlyIfANonAdvisedOverridingMethodCallsIt(): void
     {
         $targetClass = new Fixtures\ChildClassOfTargetClass01();
         self::assertEquals('Two plus two makes five! For big twos and small fives! That was smart, eh?', $targetClass->saySomethingSmart());
@@ -39,7 +39,7 @@ class AopProxyTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function methodArgumentsWithValueNullArePassedToTheProxiedMethod()
+    public function methodArgumentsWithValueNullArePassedToTheProxiedMethod(): void
     {
         $proxiedClass = new Fixtures\EntityWithOptionalConstructorArguments('argument1', null, 'argument3');
 
@@ -51,7 +51,7 @@ class AopProxyTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function staticMethodsCannotBeAdvised()
+    public function staticMethodsCannotBeAdvised(): void
     {
         $targetClass01 = new Fixtures\TargetClass01();
         self::assertSame('I won\'t take any advice', $targetClass01->someStaticMethod());
@@ -60,7 +60,7 @@ class AopProxyTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function canCallAdvicedParentMethodNotDeclaredInChild()
+    public function canCallAdvisedParentMethodNotDeclaredInChild(): void
     {
         $targetClass = new Fixtures\ChildClassOfTargetClass01();
         $greeting = $targetClass->greet('Flow');
@@ -70,7 +70,7 @@ class AopProxyTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function cloneCanCallParentCloneMethod()
+    public function cloneCanCallParentCloneMethod(): void
     {
         $entity = new Fixtures\PrototypeClassGsubsub();
         self::assertSame('real', $entity->realOrCloned);

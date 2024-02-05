@@ -17,6 +17,9 @@ use Neos\Flow\Aop\JoinPointInterface;
 /**
  * An aspect for testing the basic functionality of the AOP framework
  *
+ * Note: In this class we use old-fashioned PHPDoc annotations with or without fully
+ *       qualified class names and PHP attributes, because we want to test all variations.
+ *
  * @Flow\Introduce("class(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClass03)", interfaceName="Neos\Flow\Tests\Functional\Aop\Fixtures\Introduced01Interface")
  * @Flow\Aspect
  */
@@ -45,10 +48,12 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return void
      */
-    public function lousyConstructorAdvice(JoinPointInterface $joinPoint)
+    public function lousyConstructorAdvice(JoinPointInterface $joinPoint): void
     {
         $joinPoint->getAdviceChain()->proceed($joinPoint);
-        $joinPoint->getProxy()->constructorResult .= ' is lousier than A-380';
+        $proxy = $joinPoint->getProxy();
+        assert($proxy instanceof TargetClass01);
+        $proxy->constructorResult .= ' is lousier than A-380';
     }
 
     /**
@@ -56,7 +61,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function worldAdvice(JoinPointInterface $joinPoint)
+    public function worldAdvice(JoinPointInterface $joinPoint): string
     {
         return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' World';
     }
@@ -66,7 +71,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function rocketScienceAdvice(JoinPointInterface $joinPoint)
+    public function rocketScienceAdvice(JoinPointInterface $joinPoint): string
     {
         return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' Rocket Science';
     }
@@ -76,7 +81,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function tryToWrapStaticMethodAdvice(JoinPointInterface $joinPoint)
+    public function tryToWrapStaticMethodAdvice(JoinPointInterface $joinPoint): string
     {
         return 'failed';
     }
@@ -86,7 +91,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function somethingSmartAdvice(JoinPointInterface $joinPoint)
+    public function somethingSmartAdvice(JoinPointInterface $joinPoint): string
     {
         return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' For big twos and small fives!';
     }
@@ -96,7 +101,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function throwWorldAdvice(JoinPointInterface $joinPoint)
+    public function throwWorldAdvice(JoinPointInterface $joinPoint): string
     {
         return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' World';
     }
@@ -106,7 +111,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function specialNameAdvice(JoinPointInterface $joinPoint)
+    public function specialNameAdvice(JoinPointInterface $joinPoint): string
     {
         return 'Hello, me';
     }
@@ -116,7 +121,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function changeNameArgumentAdvice(JoinPointInterface $joinPoint)
+    public function changeNameArgumentAdvice(JoinPointInterface $joinPoint): string
     {
         if ($joinPoint->getMethodArgument('name') === 'Andi') {
             $joinPoint->setMethodArgument('name', 'Robert');
@@ -129,7 +134,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function manyNamesAdvice(JoinPointInterface $joinPoint)
+    public function manyNamesAdvice(JoinPointInterface $joinPoint): string
     {
         return 'Hello, special guest';
     }
@@ -137,11 +142,13 @@ class BaseFunctionalityTestingAspect
     /**
      * @Flow\AfterReturning("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClass02->publicTargetMethod())")
      * @param JoinPointInterface $joinPoint
-     * @return string
+     * @return void
      */
-    public function anAfterReturningAdvice(JoinPointInterface $joinPoint)
+    public function anAfterReturningAdvice(JoinPointInterface $joinPoint): void
     {
-        $joinPoint->getProxy()->afterReturningAdviceWasInvoked = true;
+        $proxy = $joinPoint->getProxy();
+        assert($proxy instanceof TargetClass02);
+        $proxy->afterReturningAdviceWasInvoked = true;
     }
 
     /**
@@ -149,7 +156,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function anAdviceForAProtectedTargetMethod(JoinPointInterface $joinPoint)
+    public function anAdviceForAProtectedTargetMethod(JoinPointInterface $joinPoint): string
     {
         return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' bar';
     }
@@ -159,7 +166,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function propertyOnMethodArgumentAdvice(JoinPointInterface $joinPoint)
+    public function propertyOnMethodArgumentAdvice(JoinPointInterface $joinPoint): string
     {
         return 'Hello, old friend';
     }
@@ -169,7 +176,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function thisOnMethodArgumentAdvice(JoinPointInterface $joinPoint)
+    public function thisOnMethodArgumentAdvice(JoinPointInterface $joinPoint): string
     {
         return 'Hello, you';
     }
@@ -179,7 +186,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function globalNameAdvice(JoinPointInterface $joinPoint)
+    public function globalNameAdvice(JoinPointInterface $joinPoint): string
     {
         return 'Hello, superstar';
     }
@@ -189,7 +196,7 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function introducedMethod01Implementation(JoinPointInterface $joinPoint)
+    public function introducedMethod01Implementation(JoinPointInterface $joinPoint): string
     {
         return 'Implemented';
     }
@@ -199,27 +206,27 @@ class BaseFunctionalityTestingAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function introducedMethodWithArgumentsImplementation(JoinPointInterface $joinPoint)
+    public function introducedMethodWithArgumentsImplementation(JoinPointInterface $joinPoint): string
     {
         return 'Implemented';
     }
 
     /**
      * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithStaticTypeDeclarations())")
-     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function methodWithStaticTypeDeclarationsAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
+    public function methodWithStaticTypeDeclarationsAdvice(JoinPointInterface $joinPoint): string
     {
         return 'This is so NaN';
     }
 
     /**
      * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithFinalModifier->someMethod())")
-     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function methodOfFinalClassAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
+    public function methodOfFinalClassAdvice(JoinPointInterface $joinPoint): string
     {
         $originalValue = $joinPoint->getAdviceChain()->proceed($joinPoint);
         return 'nothing is ' . $originalValue . '!';
@@ -227,10 +234,10 @@ class BaseFunctionalityTestingAspect
 
     /**
      * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClass01->someFinalMethod())")
-     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function methodWithFinalModifierAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
+    public function methodWithFinalModifierAdvice(JoinPointInterface $joinPoint): string
     {
         $originalValue = $joinPoint->getAdviceChain()->proceed($joinPoint);
         return $originalValue . ' But, as said, nothing is final!';
@@ -238,43 +245,64 @@ class BaseFunctionalityTestingAspect
 
     /**
      * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithStaticScalarReturnTypeDeclaration())")
-     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function methodWithStaticScalarReturnTypeDeclarationAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
+    public function methodWithStaticScalarReturnTypeDeclarationAdvice(JoinPointInterface $joinPoint): string
     {
-        return 'adviced: ' . $joinPoint->getAdviceChain()->proceed($joinPoint);
+        return 'advised: ' . $joinPoint->getAdviceChain()->proceed($joinPoint);
     }
 
     /**
      * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithStaticObjectReturnTypeDeclaration())")
-     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
-     * @return string
+     * @param JoinPointInterface $joinPoint
+     * @return TargetClassWithPhp7Features
      */
-    public function methodWithStaticObjectReturnTypeDeclarationAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
+    public function methodWithStaticObjectReturnTypeDeclarationAdvice(JoinPointInterface $joinPoint): TargetClassWithPhp7Features
     {
         return $joinPoint->getAdviceChain()->proceed($joinPoint);
     }
 
     /**
-     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp71Features->methodWithNullableScalarReturnTypeDeclaration())")
-     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
+     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithNullableScalarReturnTypeDeclaration())")
+     * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function methodWithNullableScalarReturnTypeDeclarationAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
+    public function methodWithNullableScalarReturnTypeDeclarationAdvice(JoinPointInterface $joinPoint): string
     {
         $originalResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
-        return 'adviced: ' . ($originalResult === null ? 'NULL' : $originalResult);
+        return 'advised: ' . ($originalResult ?? 'NULL');
     }
 
-
     /**
-     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp71Features->methodWithNullableObjectReturnTypeDeclaration())")
-     * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint
-     * @return string
+     * @Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features->methodWithNullableObjectReturnTypeDeclaration())")
+     * @param JoinPointInterface $joinPoint
+     * @return null
      */
-    public function methodWithNullableObjectReturnTypeDeclarationAdvice(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
+    public function methodWithNullableObjectReturnTypeDeclarationAdvice(JoinPointInterface $joinPoint): null
     {
+        return $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
+
+    #[Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp8Features->methodWithUnionTypes())")]
+    public function methodWithUnionTypesAdvice(JoinPointInterface $joinPoint): string
+    {
+        $joinPoint->setMethodArgument('aNumber', 123);
+        $originalResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
+        return 'advised: ' . ($originalResult ?? 'NULL');
+    }
+
+    #[Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp8Features->__invoke())")]
+    public function invokeWithMixedReturnAdvice(JoinPointInterface $joinPoint): mixed
+    {
+        $joinPoint->setMethodArgument('aFlag', true);
+        return $joinPoint->getAdviceChain()->proceed($joinPoint);
+    }
+
+    #[Flow\Around("method(Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp8Features->always.*())")]
+    public function methodsWithPhp8SimpleReturnTypesAdvice(JoinPointInterface $joinPoint): mixed
+    {
+        $joinPoint->setMethodArgument('throwException', false);
         return $joinPoint->getAdviceChain()->proceed($joinPoint);
     }
 }

@@ -152,11 +152,11 @@ class ConfigurationManager
     protected $cacheNeedsUpdate = false;
 
     /**
-     * An absolute file path to store configuration caches in. If null no cache will be active.
+     * An absolute file path to store configuration caches in. If not set, no cache will be active.
      *
-     * @var string
+     * @var string|null
      */
-    protected $temporaryDirectoryPath;
+    protected $temporaryDirectoryPath = null;
 
     /**
      * @var array
@@ -174,12 +174,18 @@ class ConfigurationManager
     }
 
     /**
-     * Set an absolute file path to store configuration caches in. If null no cache will be active.
+     * Set an absolute file path to store configuration caches in.
+     *
+     * If never called no cache will be active.
      *
      * @param string $temporaryDirectoryPath
      */
     public function setTemporaryDirectoryPath(string $temporaryDirectoryPath): void
     {
+        if (!is_dir($temporaryDirectoryPath)) {
+            throw new \RuntimeException(sprintf('Cannot set temporaryDirectoryPath to "%s" for the ConfigurationManager cache, as it must be a valid directory.', $temporaryDirectoryPath));
+        }
+
         $this->temporaryDirectoryPath = $temporaryDirectoryPath;
 
         $this->loadConfigurationsFromCache();
@@ -246,7 +252,9 @@ class ConfigurationManager
                 return new ObjectsLoader(new YamlSource());
             case self::CONFIGURATION_PROCESSING_TYPE_POLICY:
                 $policyLoader = new PolicyLoader(new YamlSource());
-                $policyLoader->setTemporaryDirectoryPath($this->temporaryDirectoryPath);
+                if ($this->temporaryDirectoryPath) {
+                    $policyLoader->setTemporaryDirectoryPath($this->temporaryDirectoryPath);
+                }
                 return $policyLoader;
             case self::CONFIGURATION_PROCESSING_TYPE_ROUTES:
                 return new RoutesLoader(new YamlSource(), $this);
@@ -362,10 +370,8 @@ class ConfigurationManager
      */
     protected function replaceConfigurationForConfigurationType(string $configurationType, string $cachePathAndFilename): void
     {
-        /** @noinspection UsingInclusionReturnValueInspection */
-        $configurations = @include $cachePathAndFilename;
-        if ($configurations !== false) {
-            $this->configurations[$configurationType] = $configurations;
+        if (is_file($cachePathAndFilename)) {
+            $this->configurations[$configurationType] = include $cachePathAndFilename;
         }
     }
 
@@ -374,11 +380,12 @@ class ConfigurationManager
      */
     protected function loadConfigurationsFromCache(): void
     {
+        if ($this->temporaryDirectoryPath === null) {
+            return;
+        }
         $cachePathAndFilename = $this->constructConfigurationCachePath();
-        /** @noinspection UsingInclusionReturnValueInspection */
-        $configurations = @include $cachePathAndFilename;
-        if ($configurations !== false) {
-            $this->configurations = $configurations;
+        if (is_file($cachePathAndFilename)) {
+            $this->configurations = include $cachePathAndFilename;
         }
     }
 
@@ -423,6 +430,11 @@ class ConfigurationManager
             $this->writeConfigurationCacheFile($cachePathAndFilename, $configurationType);
             $this->replaceConfigurationForConfigurationType($configurationType, $cachePathAndFilename);
             @unlink($cachePathAndFilename);
+        } else {
+            // in case the cache is disabled (implicitly, because temporaryDirectoryPath is null)
+            // we need to still handle replacing the environment variables like `%FLOW_PATH_ROOT%` in the configuration
+            $configuration = $this->unprocessedConfiguration[$configurationType];
+            $this->configurations[$configurationType] = eval('return ' . $this->replaceVariablesInPhpString(var_export($configuration, true)) . ';');
         }
     }
 
@@ -493,17 +505,18 @@ class ConfigurationManager
     protected function replaceVariablesInPhpString(string $phpString): string
     {
         $phpString = preg_replace_callback('/
-            (?<startString>=>\s\'.*?)?         # optionally assignment operator and starting a string
-            (?P<fullMatch>%                    # an expression is indicated by %
+            (?<startString>=>\s\'.*?)?             # optionally assignment operator and starting a string
+            (?P<fullMatch>%                        # an expression is indicated by %
             (?P<expression>
-            (?:(?:\\\?[\d\w_\\\]+\:\:)         # either a class name followed by ::
-            |                                  # or
-            (?:(?P<prefix>[a-z]+)\:)           # a prefix followed by : (like "env:")
-            )?
-            (?P<name>[A-Z_0-9]+))              # the actual variable name in all upper
-            %)                                 # concluded by %
-            (?<endString>[^%]*?(?:\',\n)?)?    # optionally concluding a string
-        /mx', function ($matchGroup) {
+            (?:(?:\\\?[\d\w_\\\]+\:\:)             # either a class name followed by ::
+            |                                      # or
+            (?:(?P<prefix>[a-z]+)                  # a prefix (like "env")
+            (\((?P<type>int|bool|float|string)\))? # optional type (like "(int)")
+            \:))?                                  # followed by ":"
+            (?P<name>[A-Z_0-9]+))                  # the actual variable name in all upper
+            %)                                     # concluded by %
+            (?<endString>[^%]*?(?:\',\n)?)?        # optionally concluding a string
+        /mx', static function ($matchGroup) {
             $replacement = "";
             $constantDoesNotStartAsBeginning = false;
             if ($matchGroup['startString'] !== "=> '") {
@@ -512,7 +525,13 @@ class ConfigurationManager
             $replacement .= ($constantDoesNotStartAsBeginning ? $matchGroup['startString'] . "' . " : '=> ');
 
             if (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'env') {
-                $replacement .= "getenv('" . $matchGroup['name'] . "')";
+                if ($matchGroup['type'] === 'bool') {
+                    $replacement .= "!in_array(strtolower(getenv('" . $matchGroup['name'] . "')), ['', '0', 'false'], true)";
+                } elseif ($matchGroup['type'] !== '') {
+                    $replacement .= "(" . $matchGroup['type'] . ")getenv('" . $matchGroup['name'] . "')";
+                } else {
+                    $replacement .= "getenv('" . $matchGroup['name'] . "')";
+                }
             } elseif (isset($matchGroup['expression'])) {
                 $replacement .= "(defined('" . $matchGroup['expression'] . "') ? constant('" . $matchGroup['expression'] . "') : null)";
             }
@@ -540,6 +559,7 @@ class ConfigurationManager
      */
     protected function constructConfigurationCachePath(): string
     {
+        assert($this->temporaryDirectoryPath !== null, 'ConfigurationManager::$temporaryDirectoryPath must not be null.');
         $configurationCachePath = $this->temporaryDirectoryPath . 'Configuration/';
         return $configurationCachePath . str_replace('/', '_', (string)$this->context) . 'Configurations.php';
     }

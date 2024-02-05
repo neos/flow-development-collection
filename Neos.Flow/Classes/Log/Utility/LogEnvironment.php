@@ -22,7 +22,6 @@ use Neos\Flow\Annotations as Flow;
 
 abstract class LogEnvironment
 {
-
     /**
      * @var array
      */
@@ -48,6 +47,8 @@ abstract class LogEnvironment
         } elseif (substr($methodName, -9, 9) === '{closure}') {
             $className = substr($methodName, 0, -9);
             $functionName = '{closure}';
+        } else {
+            return [];
         }
 
         return [

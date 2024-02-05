@@ -66,58 +66,35 @@ class EmptyQueryResult implements QueryResultInterface
         return [];
     }
 
-    /**
-     * @return object Returns NULL in this case
-     */
-    public function current()
+    public function current(): mixed
     {
         return null;
     }
 
-    /**
-     * @return void
-     */
-    public function next()
+    public function next(): void
     {
     }
 
-    /**
-     * @return integer Returns 0 in this case
-     */
-    public function key()
+    public function key(): int
     {
         return 0;
     }
 
-    /**
-     * @return boolean Returns false in this case
-     */
-    public function valid()
+    public function valid(): bool
     {
         return false;
     }
 
-    /**
-     * @return void
-     */
-    public function rewind()
+    public function rewind(): void
     {
     }
 
-    /**
-     * @param mixed $offset
-     * @return boolean Returns false in this case
-     */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return false;
     }
 
-    /**
-     * @param mixed $offset
-     * @return mixed Returns NULL in this case
-     */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return null;
     }
@@ -125,24 +102,19 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * @param mixed $offset The offset is ignored in this case
      * @param mixed $value The value is ignored in this case
-     * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
     }
 
     /**
      * @param mixed $offset The offset is ignored in this case
-     * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
     }
 
-    /**
-     * @return integer Returns 0 in this case
-     */
-    public function count()
+    public function count(): int
     {
         return 0;
     }

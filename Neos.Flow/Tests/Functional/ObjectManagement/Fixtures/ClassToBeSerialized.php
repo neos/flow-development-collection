@@ -14,7 +14,9 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * A class to serialize and check if all dependencies are reinjected on unserialize.
+ * A class to serialize and check if all dependencies are re-injected on unserialize.
+ *
+ * @Flow\Entity()
  */
 class ClassToBeSerialized
 {

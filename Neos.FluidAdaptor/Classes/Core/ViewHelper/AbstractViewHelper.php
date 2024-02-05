@@ -28,6 +28,11 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper as FluidAbstractViewHelp
 abstract class AbstractViewHelper extends FluidAbstractViewHelper
 {
     /**
+     * @var FlowAwareRenderingContextInterface&RenderingContextInterface
+     */
+    protected $renderingContext;
+
+    /**
      * Controller Context to use
      *
      * @var ControllerContext

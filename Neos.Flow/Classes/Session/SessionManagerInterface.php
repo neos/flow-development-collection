@@ -38,7 +38,7 @@ interface SessionManagerInterface
      * NULL is returned.
      *
      * @param string $sessionIdentifier The session identifier
-     * @return SessionInterface
+     * @return SessionInterface|null
      * @api
      */
     public function getSession($sessionIdentifier);
@@ -69,4 +69,11 @@ interface SessionManagerInterface
      * @api
      */
     public function destroySessionsByTag($tag, $reason = '');
+
+    /**
+     * Remove data of all sessions which are considered to be expired.
+     *
+     * @return integer|null The number of outdated entries removed or NULL if no such information could be determined
+     */
+    public function collectGarbage(): ?int;
 }

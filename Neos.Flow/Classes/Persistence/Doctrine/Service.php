@@ -571,7 +571,6 @@ class Service
      * Returns the current migration status as an array.
      *
      * @return array
-     * @return DependencyFactory
      * @throws DBALException
      */
     public function getMigrationStatus(): array

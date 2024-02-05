@@ -23,6 +23,7 @@ class ConfigurationProperty
     const PROPERTY_TYPES_STRAIGHTVALUE = 0;
     const PROPERTY_TYPES_OBJECT = 1;
     const PROPERTY_TYPES_CONFIGURATION = 2;
+    const PROPERTY_TYPES_CACHE = 3;
 
     /**
      * @var string Name of the property
@@ -123,7 +124,7 @@ class ConfigurationProperty
     /**
      * Returns the (optional) object configuration which may be defined for properties of type OBJECT
      *
-     * @return Configuration The object configuration or NULL
+     * @return Configuration|null The object configuration or NULL
      */
     public function getObjectConfiguration()
     {

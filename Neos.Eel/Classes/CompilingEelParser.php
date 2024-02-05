@@ -208,26 +208,26 @@ class CompilingEelParser extends EelParser
         $rval = $this->unwrapExpression($sub['code']);
 
         switch ($result['comp']) {
-        case '==':
-            $result['code'] = '(' . $lval . ')===(' . $rval . ')';
-            break;
-        case '!=':
-            $result['code'] = '(' . $lval . ')!==(' . $rval . ')';
-            break;
-        case '<':
-            $result['code'] = '(' . $lval . ')<(' . $rval . ')';
-            break;
-        case '<=':
-            $result['code'] = '(' . $lval . ')<=(' . $rval . ')';
-            break;
-        case '>':
-            $result['code'] = '(' . $lval . ')>(' . $rval . ')';
-            break;
-        case '>=':
-            $result['code'] = '(' . $lval . ')>=(' . $rval . ')';
-            break;
-        default:
-            throw new ParserException('Unexpected comparison operator "' . $result['comp'] . '"', 1344512571);
+            case '==':
+                $result['code'] = '(' . $lval . ')===(' . $rval . ')';
+                break;
+            case '!=':
+                $result['code'] = '(' . $lval . ')!==(' . $rval . ')';
+                break;
+            case '<':
+                $result['code'] = '(' . $lval . ')<(' . $rval . ')';
+                break;
+            case '<=':
+                $result['code'] = '(' . $lval . ')<=(' . $rval . ')';
+                break;
+            case '>':
+                $result['code'] = '(' . $lval . ')>(' . $rval . ')';
+                break;
+            case '>=':
+                $result['code'] = '(' . $lval . ')>=(' . $rval . ')';
+                break;
+            default:
+                throw new ParserException('Unexpected comparison operator "' . $result['comp'] . '"', 1344512571);
         }
     }
 
@@ -247,16 +247,16 @@ class CompilingEelParser extends EelParser
         $lval = $this->unwrapExpression($result['code']);
 
         switch ($result['op']) {
-        case '+':
-            $xVarName = '$_x_' . $this->tmpId++;
-            $yVarName = '$_y_' . $this->tmpId++;
-            $result['code'] = '(is_string(' . $xVarName . '=' . $lval . ')|is_string(' . $yVarName . '=' . $rval . '))?(' . $xVarName . ' . ' . $yVarName . '):(' . $xVarName . '+' . $yVarName . ')';
-            break;
-        case '-':
-            $result['code'] = $lval . '-' . $rval;
-            break;
-        default:
-            throw new ParserException('Unexpected operator "' . $result['op'] . '"', 1344512602);
+            case '+':
+                $xVarName = '$_x_' . $this->tmpId++;
+                $yVarName = '$_y_' . $this->tmpId++;
+                $result['code'] = '(is_string(' . $xVarName . '=' . $lval . ')|is_string(' . $yVarName . '=' . $rval . '))?(' . $xVarName . ' . ' . $yVarName . '):(' . $xVarName . '+' . $yVarName . ')';
+                break;
+            case '-':
+                $result['code'] = $lval . '-' . $rval;
+                break;
+            default:
+                throw new ParserException('Unexpected operator "' . $result['op'] . '"', 1344512602);
         }
     }
 
@@ -276,17 +276,17 @@ class CompilingEelParser extends EelParser
         $lval = $this->unwrapExpression($result['code']);
 
         switch ($result['op']) {
-        case '/':
-            $result['code'] = $lval . '/' . $rval;
-            break;
-        case '*':
-            $result['code'] = $lval . '*' . $rval;
-            break;
-        case '%':
-            $result['code'] = $lval . '%' . $rval;
-            break;
-        default:
-            throw new ParserException('Unexpected operator "' . $result['op'] . '"', 1344512641);
+            case '/':
+                $result['code'] = $lval . '/' . $rval;
+                break;
+            case '*':
+                $result['code'] = $lval . '*' . $rval;
+                break;
+            case '%':
+                $result['code'] = $lval . '%' . $rval;
+                break;
+            default:
+                throw new ParserException('Unexpected operator "' . $result['op'] . '"', 1344512641);
         }
     }
 
@@ -339,7 +339,7 @@ class CompilingEelParser extends EelParser
         foreach ($self['args'] as $arg) {
             $contextScope .= '$context->push($' . $arg . ',"' . $arg . '");';
         }
-        $self['code'] = 'function(' . implode(',', array_map(function ($arg) {
+        $self['code'] = 'static function(' . implode(',', array_map(function ($arg) {
             return '$' . $arg;
         }, $self['args'])) . ') use ($context) {
             $context = clone $context;

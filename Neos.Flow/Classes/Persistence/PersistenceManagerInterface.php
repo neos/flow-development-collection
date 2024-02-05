@@ -94,8 +94,7 @@ interface PersistenceManagerInterface
      * backend. Otherwise NULL is returned.
      *
      * @param mixed $identifier
-     * @param string|null $objectType
-     * @psalm-param class-string|null $objectType
+     * @param class-string|null $objectType
      * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
      * @return object|null The object for the identifier if it is known, or NULL
      * @api
@@ -162,8 +161,8 @@ interface PersistenceManagerInterface
     public function update(object $object): void;
 
     /**
-     * Adds the given object to a list of allowed objects which may be persisted when persistAll() is called with the
-     * $onlyAllowedObjects flag. This is the case if "safe" HTTP request methods are used.
+     * Adds the given object to a list of allowed objects which may be persisted when persistAllowedObjects() is called.
+     * This is the case if "safe" HTTP request methods are used.
      *
      * @param object $object The object
      * @return void

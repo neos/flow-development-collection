@@ -43,17 +43,12 @@ class EmbeddedValueObjectPointcutFilter implements \Neos\Flow\Aop\Pointcut\Point
      * @param string $methodName Name of the method to check against
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean true if the class / method match, otherwise false
+     * @return bool true if the class / method match, otherwise false
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
-        $valueObjectAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\ValueObject::class);
-
-        if ($valueObjectAnnotation !== null && $valueObjectAnnotation->embedded === true) {
-            return true;
-        }
-
-        return false;
+        $annotation = $this->reflectionService->getClassAnnotation($className, Flow\ValueObject::class);
+        return ($annotation->embedded ?? false) === true;
     }
 
     /**

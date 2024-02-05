@@ -57,18 +57,6 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function aspectFlagsClonedEntities()
-    {
-        $entity = new Fixtures\AnnotatedIdEntity();
-        $clonedEntity = clone $entity;
-        self::assertObjectNotHasAttribute('Flow_Persistence_clone', $entity);
-        $this->assertObjectHasAttribute('Flow_Persistence_clone', $clonedEntity);
-        self::assertTrue($clonedEntity->Flow_Persistence_clone);
-    }
-
-    /**
-     * @test
-     */
     public function valueHashIsGeneratedForValueObjects()
     {
         $valueObject = new Fixtures\TestValueObject('value');
@@ -81,17 +69,19 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
      * @test
      * @dataProvider sameValueObjectDataProvider
      */
-    public function valueObjectsWithTheSamePropertyValuesAreEqual($valueObject1, $valueObject2)
+    public function valueObjectsWithTheSamePropertyValuesAreEqual($closure)
     {
+        [$valueObject1, $valueObject2] = $closure();
         self::assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
     }
 
     public function sameValueObjectDataProvider()
     {
+        // These need to be provided as closures so that the construction happens inside the test and not outside of the test environment.
         return [
-            [new Fixtures\TestValueObject('value'), new Fixtures\TestValueObject('value')],
-            [new Fixtures\TestValueObjectWithConstructorLogic('val', 'val'), new Fixtures\TestValueObjectWithConstructorLogic(' val', 'val ')],
-            [new Fixtures\TestValueObjectWithConstructorLogic('moreThan5Chars', 'alsoMoreButDoesntMatter'), new Fixtures\TestValueObjectWithConstructorLogic('  moreThan5Chars  ', '        alsoMoreButDoesntMatter ')]
+            [static fn () => [new Fixtures\TestValueObject('value'), new Fixtures\TestValueObject('value')]],
+            [static fn () => [new Fixtures\TestValueObjectWithConstructorLogic('val', 'val'), new Fixtures\TestValueObjectWithConstructorLogic(' val', 'val ')]],
+            [static fn () => [new Fixtures\TestValueObjectWithConstructorLogic('moreThan5Chars', 'alsoMoreButDoesntMatter'), new Fixtures\TestValueObjectWithConstructorLogic('  moreThan5Chars  ', '        alsoMoreButDoesntMatter ')]]
         ];
     }
 
@@ -99,17 +89,19 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
      * @test
      * @dataProvider differentValueObjectDataProvider
      */
-    public function valueObjectWithDifferentPropertyValuesAreNotEqual($valueObject1, $valueObject2)
+    public function valueObjectWithDifferentPropertyValuesAreNotEqual($closure)
     {
+        [$valueObject1, $valueObject2] = $closure();
         self::assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
     }
 
     public function differentValueObjectDataProvider()
     {
+        // These need to be provided as closures so that the construction happens inside the test and not outside of the test environment.
         return [
-            [new Fixtures\TestValueObject('value1'), new Fixtures\TestValueObject('value2')],
-            [new Fixtures\TestValueObject(''), new Fixtures\TestValueObject(null)],
-            [new Fixtures\TestValueObjectWithConstructorLogic('chars', ' value2IsJustTrimmed        '), new Fixtures\TestValueObjectWithConstructorLogic('chars ', '        value2IsJustTrimmed ')]
+            [static fn () => [new Fixtures\TestValueObject('value1'), new Fixtures\TestValueObject('value2')]],
+            [static fn () => [new Fixtures\TestValueObject(''), new Fixtures\TestValueObject(null)]],
+            [static fn () => [new Fixtures\TestValueObjectWithConstructorLogic('chars', ' value2IsJustTrimmed        '), new Fixtures\TestValueObjectWithConstructorLogic('chars ', '        value2IsJustTrimmed ')]]
         ];
     }
 

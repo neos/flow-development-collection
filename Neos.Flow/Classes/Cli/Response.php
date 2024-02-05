@@ -47,12 +47,12 @@ class Response
     private $content = '';
 
     /**
-     * @var
+     * @var bool|null
      */
     private $colorSupport;
 
     /**
-     * @var
+     * @var int
      */
     private $outputFormat = self::OUTPUTFORMAT_STYLED;
 
@@ -118,10 +118,10 @@ class Response
     /**
      * Sets color support / styled output to yes, no or auto detection
      *
-     * @param boolean $colorSupport true, false or NULL (= autodetection)
+     * @param boolean|null $colorSupport true, false or NULL (= autodetection)
      * @return void
      */
-    public function setColorSupport(bool $colorSupport): void
+    public function setColorSupport(bool|null $colorSupport): void
     {
         $this->colorSupport = $colorSupport;
     }

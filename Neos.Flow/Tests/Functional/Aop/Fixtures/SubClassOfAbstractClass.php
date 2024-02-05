@@ -19,7 +19,7 @@ namespace Neos\Flow\Tests\Functional\Aop\Fixtures;
 class SubClassOfAbstractClass extends AbstractClass
 {
     /**
-     * @param $foo
+     * @param string $foo
      * @return string
      */
     public function abstractMethod($foo)

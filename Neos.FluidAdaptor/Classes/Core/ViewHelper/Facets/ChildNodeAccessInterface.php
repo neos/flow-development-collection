@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\Core\ViewHelper\Facets;
  * source code.
  */
 
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\AbstractNode;
+
 /**
  * Child Node Access Facet. View Helpers should implement this interface if they
  * need access to the direct children in the Syntax Tree at rendering-time.
@@ -28,7 +30,7 @@ interface ChildNodeAccessInterface
     /**
      * Sets the direct child nodes of the current syntax tree node.
      *
-     * @param array<\Neos\FluidAdaptor\Core\Parser\SyntaxTree\AbstractNode> $childNodes
+     * @param array<AbstractNode> $childNodes
      * @return void
      */
     public function setChildNodes(array $childNodes);

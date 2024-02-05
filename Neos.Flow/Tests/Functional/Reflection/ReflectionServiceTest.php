@@ -12,9 +12,9 @@ namespace Neos\Flow\Tests\Functional\Reflection;
  */
 
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Reflection;
 use Neos\Flow\Tests\Functional\Persistence;
+use Neos\Flow\Tests\Functional\Reflection;
+use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
  * Functional tests for the Reflection Service features
@@ -301,5 +301,31 @@ class ReflectionServiceTest extends FunctionalTestCase
     {
         $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithArrayTypeHintAndAnnotation');
         self::assertEquals('array<string>', $methodWithTypeHintsParameters['array']['type']);
+    }
+
+    /**
+     * @test
+     */
+    public function unionReturnTypesWorkCorrectly()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with UnionTypes');
+        }
+        $returnTypeA = $this->reflectionService->getMethodDeclaredReturnType(Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class, 'methodWithUnionReturnTypeA');
+        $returnTypeB = $this->reflectionService->getMethodDeclaredReturnType(Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class, 'methodWithUnionReturnTypesB');
+        $returnTypeC = $this->reflectionService->getMethodDeclaredReturnType(Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class, 'methodWithUnionReturnTypesC');
+
+        self::assertEquals('string|false', $returnTypeA);
+        self::assertEquals('\Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints|false', $returnTypeB);
+        self::assertEquals('?\Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints', $returnTypeC);
+    }
+
+    /**
+     * @test
+     */
+    public function readonlyClassIsDetectedCorrectly(): void
+    {
+        $isReadonly = $this->reflectionService->isClassReadOnly(Reflection\Fixtures\DummyReadonlyClass::class);
+        self::assertTrue($isReadonly);
     }
 }

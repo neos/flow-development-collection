@@ -19,6 +19,8 @@ use Neos\Flow\Security\Context;
 /**
  * This security interceptor switches the current channel between HTTP and HTTPS protocol.
  *
+ * TODO this interceptor was never properly implemented. Either throw away or finish it ;)
+ *
  * @Flow\Scope("singleton")
  */
 class HttpsInterceptor implements InterceptorInterface
@@ -34,6 +36,7 @@ class HttpsInterceptor implements InterceptorInterface
      *
      * @param Context $securityContext The current security context
      * @param AuthenticationManagerInterface $authenticationManager The authentication Manager
+     * @phpstan-ignore-next-line todo why are the params unused?
      */
     public function __construct(
         Context $securityContext,
@@ -48,5 +51,6 @@ class HttpsInterceptor implements InterceptorInterface
      */
     public function invoke()
     {
+        return true;
     }
 }

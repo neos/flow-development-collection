@@ -20,7 +20,6 @@ use Neos\Utility\Arrays;
 
 class SettingsLoader implements LoaderInterface
 {
-
     /**
      * @var YamlSource
      */

@@ -84,13 +84,14 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
      * @param string $methodName Name of the method - not used here
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean true if the class matches, otherwise false
+     * @return bool true if the class matches, otherwise false
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
+        $matches = false;
         $designatedAnnotations = $this->reflectionService->getClassAnnotations($className, $this->annotation);
         if ($designatedAnnotations !== [] || $this->annotationValueConstraints === []) {
-            $matches = ($designatedAnnotations !== []);
+            $matches = $designatedAnnotations !== [];
         } else {
             // It makes no sense to check property values for an annotation that is used multiple times, we shortcut and check the value against the first annotation found.
             $firstFoundAnnotation = $designatedAnnotations;

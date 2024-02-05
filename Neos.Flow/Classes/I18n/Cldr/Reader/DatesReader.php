@@ -284,10 +284,15 @@ class DatesReader
         if ($formatType === 'dateTime') {
             // DateTime is a simple format like this: '{0} {1}' which denotes where to insert date and time
             $parsedFormat = $this->prepareDateAndTimeFormat($format, $locale, $formatLength);
+
+            // Therefore, we need to change the format which is used as cache key to the expanded pattern
+            $format = '';
+            array_walk_recursive($parsedFormat, function ($element) use (&$format) {
+                $format .= $element;
+            });
         } else {
             $parsedFormat = $this->parseFormat($format);
         }
-
         $this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength] = $format;
         return $this->parsedFormats[$format] = $parsedFormat;
     }

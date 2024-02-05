@@ -43,6 +43,7 @@ use Psr\Log\LoggerInterface;
  * that phase already, calling start() at a later stage will be a no-operation.
  *
  * @see SessionManager
+ * @phpstan-consistent-constructor
  */
 class Session implements CookieEnabledInterface
 {
@@ -75,6 +76,13 @@ class Session implements CookieEnabledInterface
      * @var VariableFrontend
      */
     protected $storageCache;
+
+    /**
+     * @deprecated will be removed with Flow 9 as this is only needed to avoid breakiness
+     * @Flow\Inject
+     * @var SessionManagerInterface
+     */
+    protected $sessionManager;
 
     /**
      * @var string
@@ -135,16 +143,6 @@ class Session implements CookieEnabledInterface
      * @var integer
      */
     protected $now;
-
-    /**
-     * @var float
-     */
-    protected $garbageCollectionProbability;
-
-    /**
-     * @var integer
-     */
-    protected $garbageCollectionMaximumPerRun;
 
     /**
      * The session identifier
@@ -239,8 +237,6 @@ class Session implements CookieEnabledInterface
         $this->sessionCookieSecure = (boolean)$settings['session']['cookie']['secure'];
         $this->sessionCookieHttpOnly = (boolean)$settings['session']['cookie']['httponly'];
         $this->sessionCookieSameSite = $settings['session']['cookie']['samesite'];
-        $this->garbageCollectionProbability = $settings['session']['garbageCollection']['probability'];
-        $this->garbageCollectionMaximumPerRun = $settings['session']['garbageCollection']['maximumPerRun'];
         $this->inactivityTimeout = (integer)$settings['session']['inactivityTimeout'];
     }
 
@@ -357,7 +353,7 @@ class Session implements CookieEnabledInterface
     /**
      * Resumes an existing session, if any.
      *
-     * @return integer If a session was resumed, the inactivity of this session since the last request is returned
+     * @return null|integer If a session was resumed, the inactivity of this session since the last request is returned
      * @api
      */
     public function resume()
@@ -370,7 +366,7 @@ class Session implements CookieEnabledInterface
                 foreach ($sessionObjects as $object) {
                     if ($object instanceof ProxyInterface) {
                         $objectName = $this->objectManager->getObjectNameByClassName(get_class($object));
-                        if ($this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
+                        if ($objectName && $this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
                             $this->objectManager->setInstance($objectName, $object);
                             $this->objectManager->get(Aspect\LazyLoadingAspect::class)->registerSessionInstance($objectName, $object);
                         }
@@ -386,6 +382,7 @@ class Session implements CookieEnabledInterface
             $this->lastActivityTimestamp = $this->now;
             return $lastActivitySecondsAgo;
         }
+        return null;
     }
 
     /**
@@ -614,57 +611,22 @@ class Session implements CookieEnabledInterface
         $this->sessionIdentifier = null;
         $this->storageIdentifier = null;
         $this->tags = [];
-        $this->request = null;
     }
 
     /**
      * Iterates over all existing sessions and removes their data if the inactivity
      * timeout was reached.
      *
-     * @return integer The number of outdated entries removed
+     * @return integer|null The number of outdated entries removed or NULL if no such information could be determined
+     * @deprecated will be removed with Flow 9, use SessionManager->collectGarbage
      * @throws \Neos\Cache\Exception
      * @throws NotSupportedByBackendException
      * @api
      */
     public function collectGarbage()
     {
-        if ($this->inactivityTimeout === 0) {
-            return 0;
-        }
-        if ($this->metaDataCache->has('_garbage-collection-running')) {
-            return false;
-        }
-
-        $sessionRemovalCount = 0;
-        $this->metaDataCache->set('_garbage-collection-running', true, [], 120);
-
-        foreach ($this->metaDataCache->getIterator() as $sessionIdentifier => $sessionInfo) {
-            if ($sessionIdentifier === '_garbage-collection-running') {
-                continue;
-            }
-            if (!is_array($sessionInfo)) {
-                $sessionInfo = [
-                    'sessionMetaData' => $sessionInfo,
-                    'lastActivityTimestamp' => 0,
-                    'storageIdentifier' => null
-                ];
-                $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo + LogEnvironment::fromMethodName(__METHOD__));
-            }
-            $lastActivitySecondsAgo = $this->now - $sessionInfo['lastActivityTimestamp'];
-            if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
-                if ($sessionInfo['storageIdentifier'] !== null) {
-                    $this->storageCache->flushByTag($sessionInfo['storageIdentifier']);
-                    $sessionRemovalCount++;
-                }
-                $this->metaDataCache->remove($sessionIdentifier);
-            }
-            if ($sessionRemovalCount >= $this->garbageCollectionMaximumPerRun) {
-                break;
-            }
-        }
-
-        $this->metaDataCache->remove('_garbage-collection-running');
-        return $sessionRemovalCount;
+        $result = $this->sessionManager->collectGarbage();
+        return is_null($result) ? 0 : $result;
     }
 
     /**
@@ -694,12 +656,6 @@ class Session implements CookieEnabledInterface
                 $this->writeSessionMetaDataCacheEntry();
             }
             $this->started = false;
-
-            $decimals = (integer)strlen(strrchr($this->garbageCollectionProbability, '.')) - 1;
-            $factor = ($decimals > -1) ? $decimals * 10 : 1;
-            if (rand(1, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
-                $this->collectGarbage();
-            }
         }
     }
 
@@ -735,13 +691,12 @@ class Session implements CookieEnabledInterface
      * Note that if a session is started after tokens have been authenticated, the
      * session will NOT be tagged with authenticated accounts.
      *
-     * @param array<TokenInterface>
+     * @param $tokens array<TokenInterface>
      * @return void
      */
     protected function storeAuthenticatedAccountsInfo(array $tokens)
     {
         $accountProviderAndIdentifierPairs = [];
-        /** @var TokenInterface $token */
         foreach ($tokens as $token) {
             $account = $token->getAccount();
             if ($token->isAuthenticated() && $account !== null) {

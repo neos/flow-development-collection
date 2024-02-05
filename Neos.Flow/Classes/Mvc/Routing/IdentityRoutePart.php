@@ -55,8 +55,7 @@ class IdentityRoutePart extends DynamicRoutePart
     /**
      * The object type (class name) of the entity this route part belongs to
      *
-     * @var string
-     * @psalm-var class-string
+     * @var class-string
      */
     protected $objectType;
 
@@ -68,8 +67,7 @@ class IdentityRoutePart extends DynamicRoutePart
     protected $uriPattern = null;
 
     /**
-     * @param string $objectType
-     * @psalm-param class-string $objectType
+     * @param class-string $objectType
      * @return void
      */
     public function setObjectType($objectType)
@@ -78,8 +76,7 @@ class IdentityRoutePart extends DynamicRoutePart
     }
 
     /**
-     * @return string
-     * @psalm-return class-string
+     * @return class-string
      */
     public function getObjectType()
     {
@@ -105,8 +102,7 @@ class IdentityRoutePart extends DynamicRoutePart
     public function getUriPattern()
     {
         if ($this->uriPattern === null) {
-            $classSchema = $this->reflectionService->getClassSchema($this->objectType);
-            $identityProperties = $classSchema->getIdentityProperties();
+            $identityProperties = $this->reflectionService->getClassSchema($this->objectType)?->getIdentityProperties() ?? [];
             if (count($identityProperties) === 0) {
                 $this->uriPattern = '';
             } else {
@@ -145,9 +141,10 @@ class IdentityRoutePart extends DynamicRoutePart
      * If no matching ObjectPathMapping was found or the given $pathSegment is no valid identifier NULL is returned.
      *
      * @param string $pathSegment the query path segment to convert
-     * @return string|integer the technical identifier of the object or NULL if it couldn't be found
+     *
+     * @return null|string the technical identifier of the object or NULL if it couldn't be found
      */
-    protected function getObjectIdentifierFromPathSegment($pathSegment)
+    protected function getObjectIdentifierFromPathSegment($pathSegment): string|null
     {
         if ($this->getUriPattern() === '') {
             $identifier = rawurldecode($pathSegment);
@@ -169,13 +166,13 @@ class IdentityRoutePart extends DynamicRoutePart
      * If no split string is set (route part is the last in the routes uriPattern), the complete $routePart is returned.
      * Otherwise the part is returned that matches the specified uriPattern of this route part.
      *
-     * @param string $routePath The request path to be matched
+     * @param string|null $routePath The request path to be matched
      * @return string value to match, or an empty string if $routePath is empty, split string was not found or uriPattern could not be matched
      * @api
      */
     protected function findValueToMatch($routePath)
     {
-        if (!isset($routePath) || $routePath === '' || $routePath[0] === '/') {
+        if ($routePath === null || $routePath === '' || $routePath[0] === '/') {
             return '';
         }
         if ($this->getUriPattern() === '') {

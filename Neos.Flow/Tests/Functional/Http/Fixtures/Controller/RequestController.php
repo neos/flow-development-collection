@@ -22,4 +22,9 @@ class RequestController extends ActionController
     {
         return json_encode($this->request->getHttpRequest()->getParsedBody());
     }
+
+    public function methodAction(): string
+    {
+        return $this->request->getHttpRequest()->getMethod();
+    }
 }

@@ -480,6 +480,7 @@ Here's an example showing of some of those functions:
 				usleep(5000);
 			}
 			$this->output->progressFinish();
+			$this->output->outputLine();
 		}
 	}
 

@@ -19,7 +19,6 @@ use Neos\Flow\I18n;
 
 class NumbersReaderTest extends FunctionalTestCase
 {
-
     /**
      * @var NumbersReader
      */

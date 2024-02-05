@@ -18,4 +18,5 @@ namespace Neos\Flow\Security\Exception;
  */
 class InvalidHashException extends \Neos\Flow\Security\Exception
 {
+    protected $statusCode = 400;
 }
