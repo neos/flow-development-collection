@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\ObjectManagement\Configuration;
 
 /*
@@ -125,6 +127,7 @@ class Configuration
             $this->configurationSourceHint = $backtrace[1]['class'];
         }
 
+        // todo throw if empty string?
         $this->objectName = $objectName;
         $this->className = $className;
     }
@@ -158,6 +161,7 @@ class Configuration
      */
     public function setClassName(string $className): void
     {
+        // todo throw if empty?
         $this->className = $className;
     }
 

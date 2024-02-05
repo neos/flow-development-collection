@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\ObjectManagement\Configuration;
 
 /*
@@ -204,12 +206,10 @@ class ConfigurationBuilder
     protected function enhanceRawConfigurationWithAnnotationOptions(string $className, array $rawObjectConfiguration): array
     {
         if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Scope::class)) {
-            $annotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
-            $rawObjectConfiguration['scope'] = $annotation->value ?? null;
+            $rawObjectConfiguration['scope'] = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class)->value;
         }
         if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Autowiring::class)) {
-            $annotation = $this->reflectionService->getClassAnnotation($className, Flow\Autowiring::class);
-            $rawObjectConfiguration['autowiring'] = $annotation->enabled ?? null;
+            $rawObjectConfiguration['autowiring'] = $this->reflectionService->getClassAnnotation($className, Flow\Autowiring::class)->enabled;
         }
         return $rawObjectConfiguration;
     }
@@ -272,12 +272,19 @@ class ConfigurationBuilder
                     }
                     break;
                 case 'className':
+                    $objectConfiguration->setClassName(trim((string)$optionValue));
+                    break;
                 case 'factoryObjectName':
+                    $objectConfiguration->setFactoryObjectName(trim((string)$optionValue));
+                    break;
                 case 'factoryMethodName':
+                    $objectConfiguration->setFactoryMethodName(trim((string)$optionValue));
+                    break;
                 case 'lifecycleInitializationMethodName':
+                    $objectConfiguration->setLifecycleInitializationMethodName(trim((string)$optionValue));
+                    break;
                 case 'lifecycleShutdownMethodName':
-                    $methodName = 'set' . ucfirst($optionName);
-                    $objectConfiguration->$methodName(trim((string)$optionValue));
+                    $objectConfiguration->setLifecycleShutdownMethodName(trim((string)$optionValue));
                     break;
                 case 'autowiring':
                     $objectConfiguration->setAutowiring(self::parseAutowiring($optionValue));
@@ -292,11 +299,11 @@ class ConfigurationBuilder
     /**
      * Parses the value of the option "scope"
      *
-     * @param string $value Value of the option
+     * @param string|mixed $value Value of the option
      * @return integer The scope translated into a Configuration::SCOPE_* constant
      * @throws InvalidObjectConfigurationException if an invalid scope has been specified
      */
-    protected function parseScope(string $value): int
+    protected function parseScope(mixed $value): int
     {
         return match ($value) {
             'singleton' => Configuration::SCOPE_SINGLETON,
@@ -313,13 +320,19 @@ class ConfigurationBuilder
      * @return integer The autowiring option translated into one of Configuration::AUTOWIRING_MODE_*
      * @throws InvalidObjectConfigurationException if an invalid option has been specified
      */
-    protected static function parseAutowiring(mixed $value): int
+    protected static function parseAutowiring($value)
     {
-        return match ($value) {
-            true, Configuration::AUTOWIRING_MODE_ON => Configuration::AUTOWIRING_MODE_ON,
-            false, Configuration::AUTOWIRING_MODE_OFF => Configuration::AUTOWIRING_MODE_OFF,
-            default => throw new InvalidObjectConfigurationException('Invalid autowiring declaration', 1283866757),
-        };
+        // todo yessss this is wrong: https://github.com/neos/flow-development-collection/issues/3307
+        switch ($value) {
+            case true:
+            case Configuration::AUTOWIRING_MODE_ON:
+                return Configuration::AUTOWIRING_MODE_ON;
+            case false:
+            case Configuration::AUTOWIRING_MODE_OFF:
+                return Configuration::AUTOWIRING_MODE_OFF;
+            default:
+                throw new InvalidObjectConfigurationException('Invalid autowiring declaration', 1283866757);
+        }
     }
 
     /**
@@ -359,13 +372,13 @@ class ConfigurationBuilder
     /**
      * Parses the configuration for arguments of type OBJECT
      *
-     * @param string $argumentName Name of the argument
+     * @param int $argumentName Name of the argument
      * @param string|array $objectNameOrConfiguration Value of the "object" section of the argument configuration - either a string or an array
      * @param string $configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
      * @return ConfigurationArgument A configuration argument of type object
      * @throws InvalidObjectConfigurationException
      */
-    protected function parseArgumentOfTypeObject(string $argumentName, string|array $objectNameOrConfiguration, string $configurationSourceHint): ConfigurationArgument
+    protected function parseArgumentOfTypeObject(int $argumentName, string|array $objectNameOrConfiguration, string $configurationSourceHint): ConfigurationArgument
     {
         if (!is_array($objectNameOrConfiguration)) {
             return new ConfigurationArgument($argumentName, $objectNameOrConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
@@ -484,7 +497,7 @@ class ConfigurationBuilder
                     } elseif ($parameterInformation['allowsNull'] === true) {
                         $arguments[$index] = new ConfigurationArgument($index, null, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
                         $arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
-                    } elseif (interface_exists($parameterInformation['class'])) {
+                    } elseif ($parameterInformation['class'] && interface_exists($parameterInformation['class'])) {
                         $debuggingHint = sprintf('No default implementation for the required interface %s was configured, therefore no specific class name could be used for this dependency. ', $parameterInformation['class']);
                     }
                 }
