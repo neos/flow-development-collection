@@ -37,7 +37,8 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * Returns a mock object which allows for calling protected methods and access
      * of protected properties.
      *
-     * @param string $originalClassName Full qualified name of the original class
+     * @template T of object
+     * @param class-string<T> $originalClassName Full qualified name of the original class
      * @param array $methods
      * @param array $arguments
      * @param string $mockClassName
@@ -47,8 +48,8 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * @param boolean $cloneArguments
      * @param boolean $callOriginalMethods
      * @param object $proxyTarget
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     * @api
+     * @return T&\PHPUnit\Framework\MockObject\MockObject&AccessibleProxyInterface
+     * @deprecated please don't use this {@see AccessibleProxyInterface}
      */
     protected function getAccessibleMock($originalClassName, $methods = [], array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
     {
@@ -87,7 +88,8 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * Returns a mock object which allows for calling protected methods and access
      * of protected properties.
      *
-     * @param string $originalClassName Full qualified name of the original class
+     * @template T of object
+     * @param class-string<T> $originalClassName Full qualified name of the original class
      * @param array $arguments
      * @param string $mockClassName
      * @param boolean $callOriginalConstructor
@@ -95,8 +97,8 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * @param boolean $callAutoload
      * @param array $mockedMethods
      * @param boolean $cloneArguments
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     * @api
+     * @return T&\PHPUnit\Framework\MockObject\MockObject&AccessibleProxyInterface
+     * @deprecated please don't use this {@see AccessibleProxyInterface}
      */
     protected function getAccessibleMockForAbstractClass($originalClassName, array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $mockedMethods = [], $cloneArguments = false)
     {
@@ -109,7 +111,7 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      *
      * @param string $className Full qualified name of the original class
      * @return string Full qualified name of the built class
-     * @api
+     * @deprecated please don't use this {@see AccessibleProxyInterface}
      */
     protected function buildAccessibleProxy($className)
     {
