@@ -41,10 +41,6 @@ abstract class ObjectAccess
      */
     protected static $propertyGetterCache = [];
 
-    const ACCESS_GET = 0;
-    const ACCESS_SET = 1;
-    const ACCESS_PUBLIC = 2;
-
     /**
      * Get a property of a given object or array.
      *
@@ -62,10 +58,9 @@ abstract class ObjectAccess
      * @param string|integer $propertyName Name or index of the property to retrieve
      * @param boolean $forceDirectAccess Directly access property using reflection(!)
      * @return mixed Value of the property
-     * @throws \TypeError in case $subject was not an object or array, or $propertyName was not a string or int
      * @throws PropertyNotAccessibleException if the property was not accessible
      */
-    public static function getProperty(object|array $subject, string|int $propertyName, bool $forceDirectAccess = false)
+    public static function getProperty(object|array $subject, string|int $propertyName, bool $forceDirectAccess = false): mixed
     {
         $propertyExists = false;
         $propertyValue = self::getPropertyInternal($subject, $propertyName, $forceDirectAccess, $propertyExists);
@@ -87,22 +82,16 @@ abstract class ObjectAccess
      * @param string $propertyName name of the property to retrieve
      * @param boolean $forceDirectAccess directly access property using reflection(!)
      * @param boolean $propertyExists (by reference) will be set to true if the specified property exists and is gettable
+     * @param-out boolean $propertyExists
      * @return mixed Value of the property
-     * @throws \TypeError in case $subject was not an object or array or $propertyName was not a string
      * @throws PropertyNotAccessibleException
      * @see getProperty()
      */
     protected static function getPropertyInternal(object|array $subject, string $propertyName, bool $forceDirectAccess, bool &$propertyExists)
     {
-        if ($subject === null) {
-            return null;
-        }
         if (is_array($subject)) {
             $propertyExists = array_key_exists($propertyName, $subject);
             return $propertyExists ? $subject[$propertyName] : null;
-        }
-        if (!is_object($subject)) {
-            return null;
         }
 
         $propertyExists = true;
@@ -195,18 +184,21 @@ abstract class ObjectAccess
      * @param object|array $subject An object or array
      * @param string $propertyPath
      * @return mixed Value of the property
-     * @throws \TypeError in case $object was not an object or array
      */
-    public static function getPropertyPath(object|array $subject, string $propertyPath)
+    public static function getPropertyPath(object|array $subject, string $propertyPath): mixed
     {
         $propertyPathSegments = explode('.', $propertyPath);
         foreach ($propertyPathSegments as $pathSegment) {
             $propertyExists = false;
             $propertyValue = self::getPropertyInternal($subject, $pathSegment, false, $propertyExists);
             if ($propertyExists !== true && (is_array($subject) || $subject instanceof \ArrayAccess) && isset($subject[$pathSegment])) {
+                // todo is this needed "correctly processes Closures located in an array or object implementing ArrayAccess"?
                 $subject = $subject[$pathSegment];
             } else {
                 $subject = $propertyValue;
+            }
+            if ($subject === null) {
+                return null;
             }
         }
         return $subject;
