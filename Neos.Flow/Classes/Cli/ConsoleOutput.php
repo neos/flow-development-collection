@@ -158,7 +158,7 @@ class ConsoleOutput
      *
      * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param array $choices List of choices to pick from
-     * @param mixed|null $default The default answer if the user enters nothing
+     * @param string|bool|int|float|null $default The default answer if the user enters nothing
      * @param boolean $multiSelect If true the result will be an array with the selected options. Multiple options can be given separated by commas
      * @param integer|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
      * @return integer|string|array Either the value for indexed arrays, the key for associative arrays or an array for multiple selections
@@ -291,7 +291,7 @@ class ConsoleOutput
     /**
      * Starts the progress output
      *
-     * @param integer $max Maximum steps. If NULL an indeterminate progress bar is rendered
+     * @param integer|null $max Maximum steps. If NULL an indeterminate progress bar is rendered
      * @return void
      */
     public function progressStart(int $max = null): void

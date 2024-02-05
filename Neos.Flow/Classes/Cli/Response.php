@@ -47,7 +47,7 @@ class Response
     private $content = '';
 
     /**
-     * @var bool|null
+     * @var bool|null true, false or NULL (= autodetection)
      */
     private $colorSupport;
 
