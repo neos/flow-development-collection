@@ -53,7 +53,7 @@ class CacheAdaptor implements FluidCacheInterface
     public function set($name, $value)
     {
         // we need to strip the first line with the php header as the flow cache adds that again.
-        return $this->flowCache->set($name, substr($value, strpos($value, "\n") + 1));
+        $this->flowCache->set($name, substr($value, strpos($value, "\n") + 1));
     }
 
     /**
@@ -61,14 +61,15 @@ class CacheAdaptor implements FluidCacheInterface
      * the entire cache if no entry is provided.
      *
      * @param string|null $name
-     * @return bool|void
+     * @return bool|null
      */
     public function flush($name = null)
     {
         if ($name !== null) {
             return $this->flowCache->remove($name);
         } else {
-            return $this->flowCache->flush();
+            $this->flowCache->flush();
+            return null;
         }
     }
 

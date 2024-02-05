@@ -60,7 +60,7 @@ class SimpleCache implements CacheInterface
      *
      * @param string $key An identifier used for this cache entry
      * @param mixed $value The variable to cache
-     * @param null|int|\DateInterval $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param null|int|\DateInterval $ttl Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return bool
      *
      * @throws Exception

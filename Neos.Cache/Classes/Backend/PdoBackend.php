@@ -48,6 +48,11 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected $password;
 
     /**
+     * @var array
+     */
+    protected $driverOptions = [];
+
+    /**
      * @var \PDO
      */
     protected $databaseHandle;
@@ -116,6 +121,18 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected function setPassword(string $password): void
     {
         $this->password = $password;
+    }
+
+    /**
+     * Sets the driverOptions to use
+     *
+     * @param array $driverOptions The options to use for connecting to the DB
+     * @return void
+     * @api
+     */
+    protected function setDriverOptions(array $driverOptions): void
+    {
+        $this->driverOptions = $driverOptions;
     }
 
     /**
@@ -501,10 +518,10 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
                         throw new Exception(sprintf('Could not create directory for sqlite file "%s"', $splitdsn[1]), 1565359792, $exception);
                     }
                 }
-                $this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
+                $this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password, $this->driverOptions);
                 $this->createCacheTables();
             } else {
-                $this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
+                $this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password, $this->driverOptions);
             }
             $this->databaseHandle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
@@ -526,7 +543,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         $this->connect();
         try {
-            PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, __DIR__ . '/../../Resources/Private/DDL.sql');
+            PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, __DIR__ . '/../../Resources/Private/DDL.sql', ['###CACHE_TABLE_NAME###' => $this->cacheTableName, '###TAGS_TABLE_NAME###' => $this->tagsTableName]);
         } catch (\PDOException $exception) {
             throw new Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $exception->getMessage(), 1259576985);
         }
@@ -648,6 +665,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $this->connect();
         } catch (Exception $exception) {
             $result->addError(new Error($exception->getMessage(), (int)$exception->getCode(), [], 'Failed'));
+            return $result;
         }
         if ($this->pdoDriver === 'sqlite') {
             $result->addNotice(new Notice('SQLite database tables are created automatically and don\'t need to be set up'));

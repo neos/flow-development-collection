@@ -11,6 +11,7 @@ namespace Neos\Flow\Aop\Pointcut;
  * source code.
  */
 
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Cache\CacheManager;

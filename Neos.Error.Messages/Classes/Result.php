@@ -458,7 +458,6 @@ class Result
             $this->mergeProperty($otherResult, 'getNotices', 'addNotice');
         }
 
-        /** @var $subResult Result */
         foreach ($otherResult->getSubResults() as $subPropertyName => $subResult) {
             if (array_key_exists($subPropertyName, $this->propertyResults) && $this->propertyResults[$subPropertyName]->hasMessages()) {
                 $this->forProperty($subPropertyName)->merge($subResult);

@@ -169,7 +169,7 @@ Pointcut expression
 	pointcut- and advice declarations.
 
 Target
-	A class or method being adviced by one or more aspects is referred to as a
+	A class or method being advised by one or more aspects is referred to as a
 	target class /-method.
 
 Introduction
@@ -250,10 +250,10 @@ Manager to fulfill its task.
 Flow uses PHP's reflection capabilities to analyze declarations of aspects,
 pointcuts and advices and implements method interceptors as a dynamic proxy. In
 accordance to the GoF patterns [#]_, the proxy classes act as a placeholders for
-the target object. They are true subclasses of the original and override adviced
+the target object. They are true subclasses of the original and override advised
 methods by implementing an interceptor method. The proxy classes are generated
 automatically by the AOP framework and cached for further use. If a class has
-been adviced by some aspect, the Object Manager will only deliver instances of
+been advised by some aspect, the Object Manager will only deliver instances of
 the proxy class instead of the original.
 
 The approach of storing generated proxy classes in files provides the whole

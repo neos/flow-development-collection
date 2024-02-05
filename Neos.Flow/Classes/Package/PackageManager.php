@@ -289,7 +289,6 @@ class PackageManager
     protected function filterPackagesByType($packages, $packageType): array
     {
         $filteredPackages = [];
-        /** @var $package Package */
         foreach ($packages as $package) {
             if ($package->getComposerManifest('type') === $packageType) {
                 $filteredPackages[$package->getPackageKey()] = $package;
@@ -622,7 +621,7 @@ class PackageManager
     protected function findComposerPackagesInPath(string $startingDirectory): \Generator
     {
         $directories = new \DirectoryIterator($startingDirectory);
-        /** @var \SplFileInfo $fileInfo */
+        /** @var \DirectoryIterator $fileInfo */
         foreach ($directories as $fileInfo) {
             if ($fileInfo->isDot()) {
                 continue;
@@ -636,7 +635,7 @@ class PackageManager
                 yield from self::findComposerPackagesInPath($potentialPackageDirectory);
                 continue;
             }
-            yield $potentialPackageDirectory;
+            yield Files::getUnixStylePath($potentialPackageDirectory);
         }
     }
 

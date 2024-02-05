@@ -11,8 +11,8 @@ namespace Neos\Flow\Tests\Unit\Cli;
  * source code.
  */
 
-use Neos\Flow\Cli\CommandManager;
 use Neos\Flow\Cli;
+use Neos\Flow\Cli\CommandManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use Neos\Flow\Mvc\Exception\NoSuchCommandException;
@@ -54,17 +54,18 @@ class CommandManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function getAvailableCommandsReturnsAllAvailableCommands()
+    public function getAvailableCommandsReturnsAllAvailableCommands(): void
     {
         $commandManager = new CommandManager();
         $mockCommandControllerClassNames = [Fixtures\Command\MockACommandController::class, Fixtures\Command\MockBCommandController::class];
-        $this->mockReflectionService->expects(self::once())->method('getAllSubClassNamesForClass')->with(Cli\CommandController::class)->will(self::returnValue($mockCommandControllerClassNames));
+        $this->mockReflectionService->expects(self::once())->method('getAllSubClassNamesForClass')->with(Cli\CommandController::class)->willReturn($mockCommandControllerClassNames);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::any())->method('get')->with(ReflectionService::class)->willReturn($this->mockReflectionService);
+        $mockObjectManager->method('get')->with(ReflectionService::class)->willReturn($this->mockReflectionService);
+        $mockObjectManager->method('getObjectNameByClassName')->willReturnArgument(0);
         $commandManager->injectObjectManager($mockObjectManager);
 
         $commands = $commandManager->getAvailableCommands();
-        self::assertEquals(3, count($commands));
+        self::assertCount(3, $commands);
         self::assertEquals('neos.flow.tests.unit.cli.fixtures:mocka:foo', $commands[0]->getCommandIdentifier());
         self::assertEquals('neos.flow.tests.unit.cli.fixtures:mocka:bar', $commands[1]->getCommandIdentifier());
         self::assertEquals('neos.flow.tests.unit.cli.fixtures:mockb:baz', $commands[2]->getCommandIdentifier());

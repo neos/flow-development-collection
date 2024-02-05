@@ -48,7 +48,7 @@ abstract class AbstractLocaleAwareViewHelper extends AbstractViewHelper
      * Get the locale to use for all locale specific functionality.
      *
      * @throws InvalidVariableException
-     * @return I18n\Locale The locale to use or NULL if locale should not be used
+     * @return I18n\Locale|null The locale to use or NULL if locale should not be used
      */
     protected function getLocale()
     {

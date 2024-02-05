@@ -69,6 +69,7 @@ abstract class OpcodeCacheHelper
             self::$clearCacheCallbacks[] = function ($absolutePathAndFilename) {
                 // XCache can only be fully cleared.
                 if (!ini_get('xcache.admin.enable_auth')) {
+                    /** @phpstan-ignore-next-line */
                     xcache_clear_cache(XC_TYPE_PHP);
                 }
             };

@@ -43,24 +43,23 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
     public function flushByTag(string $tag): int
     {
         $this->prepareBackends();
-        $count = 0;
+        $flushed = 0;
         foreach ($this->backends as $backend) {
             try {
-                $count |= $backend->flushByTag($tag);
+                $flushed += $backend->flushByTag($tag);
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed flushing cache by tag using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
                 $this->removeUnhealthyBackend($backend);
             }
         }
-        return $count;
+        return $flushed;
     }
 
     /**
      * @param array<string> $tags The tags the entries must have
      * @return integer The number of entries which have been affected by this flush
      * @throws Throwable
-     * @psalm-suppress MethodSignatureMismatch
      */
     public function flushByTags(array $tags): int
     {

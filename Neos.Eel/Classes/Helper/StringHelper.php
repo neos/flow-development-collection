@@ -230,7 +230,7 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * @param string $string The input string
      * @param string $pattern A PREG pattern
-     * @return array The matches as array or NULL if not matched
+     * @return array|null The matches as array or NULL if not matched
      * @throws EvaluationException
      */
     public function pregMatch($string, $pattern)
@@ -255,7 +255,7 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * @param string $string The input string
      * @param string $pattern A PREG pattern
-     * @return array The matches as array or NULL if not matched
+     * @return array|null The matches as array or NULL if not matched
      * @throws EvaluationException
      */
     public function pregMatchAll($string, $pattern)
@@ -306,9 +306,9 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param integer $limit The maximum amount of items to return, in contrast to split() this will return all remaining characters in the last item (see example)
      * @return array An array of the splitted parts, excluding the matched pattern
      */
-    public function pregSplit($string, $pattern, $limit = null)
+    public function pregSplit($string, $pattern, $limit = -1)
     {
-        return preg_split($pattern, (string)$string, $limit);
+        return preg_split($pattern, (string)$string, (int)$limit);
     }
 
     /**
@@ -317,17 +317,23 @@ class StringHelper implements ProtectedContextAwareInterface
      * Example::
      *
      *     String.replace("canal", "ana", "oo") == "cool"
+     *     String.replace("cool gridge", ["oo", "gri"], ["ana", "bri"]) == "canal bridge"
      *
      * Note: this method does not perform regular expression matching, @see pregReplace().
      *
-     * @param string $string The input string
-     * @param string $search A search string
-     * @param string $replace A replacement string
-     * @return string The string with all occurrences replaced
+     * @param array|string|null $string The input string
+     * @param array|string|null $search A search string
+     * @param array|string|null $replace A replacement string
+     * @return array|string|string[] The string with all occurrences replaced
      */
     public function replace($string, $search, $replace)
     {
-        return str_replace($search, $replace, (string)$string);
+        // Replace null values with empty strings
+        $string = is_array($string) ? $string : (string) $string;
+        $search = is_array($search) ? $search : (string) $search;
+        $replace = is_array($replace) ? $replace : (string) $replace;
+
+        return str_replace($search, $replace, $string);
     }
 
     /**

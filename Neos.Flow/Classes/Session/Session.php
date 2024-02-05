@@ -43,6 +43,7 @@ use Psr\Log\LoggerInterface;
  * that phase already, calling start() at a later stage will be a no-operation.
  *
  * @see SessionManager
+ * @phpstan-consistent-constructor
  */
 class Session implements CookieEnabledInterface
 {
@@ -352,7 +353,7 @@ class Session implements CookieEnabledInterface
     /**
      * Resumes an existing session, if any.
      *
-     * @return integer If a session was resumed, the inactivity of this session since the last request is returned
+     * @return null|integer If a session was resumed, the inactivity of this session since the last request is returned
      * @api
      */
     public function resume()
@@ -365,7 +366,7 @@ class Session implements CookieEnabledInterface
                 foreach ($sessionObjects as $object) {
                     if ($object instanceof ProxyInterface) {
                         $objectName = $this->objectManager->getObjectNameByClassName(get_class($object));
-                        if ($this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
+                        if ($objectName && $this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
                             $this->objectManager->setInstance($objectName, $object);
                             $this->objectManager->get(Aspect\LazyLoadingAspect::class)->registerSessionInstance($objectName, $object);
                         }
@@ -381,6 +382,7 @@ class Session implements CookieEnabledInterface
             $this->lastActivityTimestamp = $this->now;
             return $lastActivitySecondsAgo;
         }
+        return null;
     }
 
     /**
@@ -609,14 +611,13 @@ class Session implements CookieEnabledInterface
         $this->sessionIdentifier = null;
         $this->storageIdentifier = null;
         $this->tags = [];
-        $this->request = null;
     }
 
     /**
      * Iterates over all existing sessions and removes their data if the inactivity
      * timeout was reached.
      *
-     * @return integer The number of outdated entries removed or NULL if no such information could be determined
+     * @return integer|null The number of outdated entries removed or NULL if no such information could be determined
      * @deprecated will be removed with Flow 9, use SessionManager->collectGarbage
      * @throws \Neos\Cache\Exception
      * @throws NotSupportedByBackendException
@@ -690,13 +691,12 @@ class Session implements CookieEnabledInterface
      * Note that if a session is started after tokens have been authenticated, the
      * session will NOT be tagged with authenticated accounts.
      *
-     * @param array<TokenInterface>
+     * @param $tokens array<TokenInterface>
      * @return void
      */
     protected function storeAuthenticatedAccountsInfo(array $tokens)
     {
         $accountProviderAndIdentifierPairs = [];
-        /** @var TokenInterface $token */
         foreach ($tokens as $token) {
             $account = $token->getAccount();
             if ($token->isAuthenticated() && $account !== null) {

@@ -13,6 +13,7 @@ namespace Neos\Flow\ObjectManagement\Configuration;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Annotations\Inject;
+use Neos\Flow\Annotations\InjectCache;
 use Neos\Flow\Annotations\InjectConfiguration;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\Exception as ObjectException;
@@ -44,10 +45,18 @@ class ConfigurationBuilder
     protected $logger;
 
     /**
+     * An array of object names for which constructor injection autowiring should be disabled.
+     * Note that the object names are regular expressions.
+     *
+     * @var array
+     */
+    protected array $excludeClassesFromConstructorAutowiring = [];
+
+    /**
      * @param ReflectionService $reflectionService
      * @return void
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
@@ -61,6 +70,11 @@ class ConfigurationBuilder
     public function injectLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+    }
+
+    public function injectExcludeClassesFromConstructorAutowiring(array $excludeClassesFromConstructorAutowiring): void
+    {
+        $this->excludeClassesFromConstructorAutowiring = $excludeClassesFromConstructorAutowiring;
     }
 
     /**
@@ -183,7 +197,7 @@ class ConfigurationBuilder
      * @param array $rawObjectConfiguration
      * @return array
      */
-    protected function enhanceRawConfigurationWithAnnotationOptions($className, array $rawObjectConfiguration)
+    protected function enhanceRawConfigurationWithAnnotationOptions($className, array $rawObjectConfiguration): array
     {
         if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Scope::class)) {
             $annotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
@@ -216,7 +230,7 @@ class ConfigurationBuilder
             switch ($optionName) {
                 case 'scope':
                     $objectConfiguration->setScope($this->parseScope($optionValue));
-                break;
+                    break;
                 case 'properties':
                     if (is_array($optionValue)) {
                         foreach ($optionValue as $propertyName => $propertyValue) {
@@ -232,7 +246,7 @@ class ConfigurationBuilder
                             $objectConfiguration->setProperty($property);
                         }
                     }
-                break;
+                    break;
                 case 'arguments':
                     if (is_array($optionValue)) {
                         foreach ($optionValue as $argumentName => $argumentValue) {
@@ -252,18 +266,18 @@ class ConfigurationBuilder
                             }
                         }
                     }
-                break;
+                    break;
                 case 'className':
                 case 'factoryObjectName':
                 case 'factoryMethodName':
                 case 'lifecycleInitializationMethodName':
                 case 'lifecycleShutdownMethodName':
                     $methodName = 'set' . ucfirst($optionName);
-                    $objectConfiguration->$methodName(trim($optionValue));
-                break;
+                    $objectConfiguration->$methodName(trim((string)$optionValue));
+                    break;
                 case 'autowiring':
-                    $objectConfiguration->setAutowiring($this->parseAutowiring($optionValue));
-                break;
+                    $objectConfiguration->setAutowiring(self::parseAutowiring($optionValue));
+                    break;
                 default:
                     throw new InvalidObjectConfigurationException('Invalid configuration option "' . $optionName . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1167574981);
             }
@@ -274,7 +288,7 @@ class ConfigurationBuilder
     /**
      * Parses the value of the option "scope"
      *
-     * @param  string $value Value of the option
+     * @param string $value Value of the option
      * @return integer The scope translated into a Configuration::SCOPE_* constant
      * @throws InvalidObjectConfigurationException if an invalid scope has been specified
      */
@@ -295,7 +309,7 @@ class ConfigurationBuilder
     /**
      * Parses the value of the option "autowiring"
      *
-     * @param  mixed $value Value of the option
+     * @param mixed $value Value of the option
      * @return integer The autowiring option translated into one of Configuration::AUTOWIRING_MODE_*
      * @throws InvalidObjectConfigurationException if an invalid option has been specified
      */
@@ -334,7 +348,7 @@ class ConfigurationBuilder
                 } else {
                     $annotations = $this->reflectionService->getPropertyTagValues($parentObjectConfiguration->getClassName(), $propertyName, 'var');
                     if (count($annotations) !== 1) {
-                        throw new InvalidObjectConfigurationException(sprintf('Object %s, for property "%s", contains neither object name, nor factory object name, and nor is the property properly @var - annotated.', $parentObjectConfiguration->getConfigurationSourceHint(), $propertyName, $parentObjectConfiguration->getClassName()), 1297097815);
+                        throw new InvalidObjectConfigurationException(sprintf('Object %s (%s), for property "%s", contains neither object name, nor factory object name, and nor is the property properly @var - annotated.', $parentObjectConfiguration->getClassName(), $parentObjectConfiguration->getConfigurationSourceHint(), $propertyName), 1297097815);
                     }
                     $objectName = $annotations[0];
                 }
@@ -434,14 +448,14 @@ class ConfigurationBuilder
      * @return void
      * @throws UnresolvedDependenciesException
      */
-    protected function autowireArguments(array &$objectConfigurations)
+    protected function autowireArguments(array $objectConfigurations): void
     {
         foreach ($objectConfigurations as $objectConfiguration) {
             /** @var Configuration $objectConfiguration */
-            if ($objectConfiguration->getClassName() === '') {
+            $className = $objectConfiguration->getClassName();
+            if ($className === '') {
                 continue;
             }
-
             if ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
                 continue;
             }
@@ -453,6 +467,13 @@ class ConfigurationBuilder
             $className = $objectConfiguration->getClassName();
             if (!$this->reflectionService->hasMethod($className, '__construct')) {
                 continue;
+            }
+
+            foreach ($this->excludeClassesFromConstructorAutowiring as $excludeClassNameRegex) {
+                if ((preg_match('/' . $excludeClassNameRegex . '/', $className) === 1) && $objectConfiguration->getScope() === Configuration::SCOPE_PROTOTYPE) {
+                    $objectConfiguration->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
+                    continue 2;
+                }
             }
 
             $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', Flow\Autowiring::class);
@@ -572,7 +593,7 @@ class ConfigurationBuilder
                     if ($objectName === null) {
                         $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
                     }
-                    $configurationProperty =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $enableLazyInjection);
+                    $configurationProperty = new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $enableLazyInjection);
                     $properties[$propertyName] = $configurationProperty;
                 }
             }
@@ -596,6 +617,18 @@ class ConfigurationBuilder
                     $configurationPath = $injectConfigurationAnnotation->path;
                 }
                 $properties[$propertyName] = new ConfigurationProperty($propertyName, ['type' => $injectConfigurationAnnotation->type, 'path' => $configurationPath], ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
+            }
+
+            foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, InjectCache::class) as $propertyName) {
+                if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
+                    throw new ObjectException(sprintf('The property "%s" in class "%s" must not be private when annotated for cache injection.', $propertyName, $className), 1416765599);
+                }
+                if (array_key_exists($propertyName, $properties)) {
+                    continue;
+                }
+                /** @var InjectCache $injectCacheAnnotation */
+                $injectCacheAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, InjectCache::class);
+                $properties[$propertyName] = new ConfigurationProperty($propertyName, ['identifier' => $injectCacheAnnotation->identifier], ConfigurationProperty::PROPERTY_TYPES_CACHE);
             }
             $objectConfiguration->setProperties($properties);
         }

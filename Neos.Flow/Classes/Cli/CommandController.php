@@ -332,9 +332,8 @@ class CommandController implements CommandControllerInterface
      *
      * @param integer $exitCode Exit code to return on exit (see http://www.php.net/exit)
      * @throws StopCommandException
-     * @return void
      */
-    protected function quit(int $exitCode = 0)
+    protected function quit(int $exitCode = 0): never
     {
         $this->response->setExitCode($exitCode);
         throw new StopCommandException(sprintf('Quitting with exit code %s', $exitCode));
@@ -345,9 +344,8 @@ class CommandController implements CommandControllerInterface
      * Should be used for commands that flush code caches.
      *
      * @param integer $exitCode Exit code to return on exit
-     * @return void
      */
-    protected function sendAndExit(int $exitCode = 0)
+    protected function sendAndExit(int $exitCode = 0): never
     {
         $this->response->send();
         exit($exitCode);

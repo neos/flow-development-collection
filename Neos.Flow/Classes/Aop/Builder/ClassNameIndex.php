@@ -64,9 +64,9 @@ class ClassNameIndex
      * Checks, if a class name is contained in this index
      *
      * @param string $className The class name to check for
-     * @return boolean true, if the given class name is contained in this index
+     * @return bool true, if the given class name is contained in this index
      */
-    public function hasClassName($className): bool
+    public function hasClassName(string $className): bool
     {
         return isset($this->classNames[$className]);
     }
@@ -75,8 +75,8 @@ class ClassNameIndex
      * Returns a new index object with all class names contained in this and
      * the given index
      *
-     * @param \Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex
-     * @return \Neos\Flow\Aop\Builder\ClassNameIndex A new index object
+     * @param ClassNameIndex $classNameIndex
+     * @return ClassNameIndex A new index object
      */
     public function intersect(ClassNameIndex $classNameIndex): ClassNameIndex
     {
@@ -87,7 +87,7 @@ class ClassNameIndex
      * Sets this index to all class names which are present currently and
      * contained in the given index
      *
-     * @param \Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+     * @param ClassNameIndex $classNameIndex
      * @return void
      */
     public function applyIntersect(ClassNameIndex $classNameIndex): void
@@ -99,8 +99,8 @@ class ClassNameIndex
      * Returns a new index object containing all class names of
      * this index and the given one
      *
-     * @param \Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex
-     * @return \Neos\Flow\Aop\Builder\ClassNameIndex A new index object
+     * @param ClassNameIndex $classNameIndex
+     * @return ClassNameIndex A new index object
      */
     public function union(ClassNameIndex $classNameIndex): ClassNameIndex
     {
@@ -113,7 +113,7 @@ class ClassNameIndex
      * Sets this index to all class names which are either already present or are
      * contained in the given index
      *
-     * @param \Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex
+     * @param ClassNameIndex $classNameIndex
      * @return void
      */
     public function applyUnion(ClassNameIndex $classNameIndex): void
@@ -152,7 +152,7 @@ class ClassNameIndex
      * starting with the given prefix
      *
      * @param string $prefixFilter A prefix string to filter the class names of this index
-     * @return \Neos\Flow\Aop\Builder\ClassNameIndex A new index object
+     * @return ClassNameIndex A new index object
      */
     public function filterByPrefix(string $prefixFilter): ClassNameIndex
     {
@@ -164,32 +164,32 @@ class ClassNameIndex
 
         $found = false;
         $currentPosition = -1;
-        while ($found === false) {
+        while (true) {
             if ($left > $right) {
                 break;
             }
             $currentPosition = $left + (int)floor(($right - $left) / 2);
-            if (strpos($pointcuts[$currentPosition], $prefixFilter) === 0) {
+            if (str_starts_with($pointcuts[$currentPosition], $prefixFilter)) {
                 $found = true;
                 break;
+            }
+
+            $comparisonResult = strcmp($prefixFilter, $pointcuts[$currentPosition]);
+            if ($comparisonResult > 0) {
+                $left = $currentPosition + 1;
             } else {
-                $comparisonResult = strcmp($prefixFilter, $pointcuts[$currentPosition]);
-                if ($comparisonResult > 0) {
-                    $left = $currentPosition + 1;
-                } else {
-                    $right = $currentPosition - 1;
-                }
+                $right = $currentPosition - 1;
             }
         }
 
         if ($found === true) {
             $startIndex = $currentPosition;
-            while ($startIndex >= 0 && strpos($pointcuts[$startIndex], $prefixFilter) === 0) {
+            while ($startIndex >= 0 && str_starts_with($pointcuts[$startIndex], $prefixFilter)) {
                 $startIndex--;
             }
             $startIndex++;
             $endIndex = $currentPosition;
-            while ($endIndex < count($pointcuts) && strpos($pointcuts[$endIndex], $prefixFilter) === 0) {
+            while ($endIndex < count($pointcuts) && str_starts_with($pointcuts[$endIndex], $prefixFilter)) {
                 $endIndex++;
             }
 

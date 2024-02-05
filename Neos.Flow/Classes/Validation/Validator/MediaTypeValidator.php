@@ -19,7 +19,7 @@ use Neos\Utility\MediaTypes;
 use Psr\Http\Message\UploadedFileInterface;
 
 /**
- * The given $value is matches the defined medis types
+ * The given $value is matches the defined media types
  * Note: a value of NULL or empty string ('') are considered valid
  */
 class MediaTypeValidator extends AbstractValidator

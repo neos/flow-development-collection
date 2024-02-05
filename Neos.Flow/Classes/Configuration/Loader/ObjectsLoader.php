@@ -20,7 +20,6 @@ use Neos\Utility\Arrays;
 
 class ObjectsLoader implements LoaderInterface
 {
-
     /**
      * @var YamlSource
      */

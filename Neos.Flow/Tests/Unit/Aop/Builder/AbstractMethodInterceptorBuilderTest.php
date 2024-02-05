@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Aop\Builder;
  */
 
 use Neos\Flow\Aop\Builder\AbstractMethodInterceptorBuilder;
-use Neos\Flow\Aop\Builder\AdvicedConstructorInterceptorBuilder;
+use Neos\Flow\Aop\Builder\AdvisedConstructorInterceptorBuilder;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -162,7 +162,7 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
         $mockReflectionService->expects(self::any())->method('getMethodParameters')->with($className, '__construct')->will(self::returnValue($methodParameters));
 
-        $builder = $this->getAccessibleMock(AdvicedConstructorInterceptorBuilder::class, ['dummy'], [], '', false);
+        $builder = $this->getAccessibleMock(AdvisedConstructorInterceptorBuilder::class, ['dummy'], [], '', false);
         $builder->injectReflectionService($mockReflectionService);
 
         $expectedCode = '$this->Flow_Aop_Proxy_originalConstructorArguments[\'arg1\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg2\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg3\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg4\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg5\']';

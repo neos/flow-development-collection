@@ -11,59 +11,60 @@ namespace Neos\Flow\Aop\Builder;
  * source code.
  */
 
+use Laminas\Code\Generator\MethodGenerator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\Exception;
+use Neos\Flow\ObjectManagement\Proxy\ProxyMethodGenerator;
 
 /**
  * An AOP interceptor code builder for methods enriched by advices.
  *
  * @Flow\Scope("singleton")
  */
-class AdvicedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
+class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
 {
     /**
-     * Builds interception PHP code for an adviced method
+     * Builds interception PHP code for an advised method
      *
      * @param string $methodName Name of the method to build an interceptor for
-     * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
+     * @param array $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
      * @param string $targetClassName Name of the target class to build the interceptor for
      * @return void
      * @throws Exception
      */
-    public function build(string $methodName, array $interceptedMethods, string $targetClassName): void
+    public function build(string $methodName, array $methodMetaInformation, string $targetClassName): void
     {
         if ($methodName === '__construct') {
             throw new Exception('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173107446);
         }
 
-        $declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];
+        $declaringClassName = $methodMetaInformation[$methodName]['declaringClassName'];
         $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod($methodName);
-        if ($proxyMethod->isPrivate()) {
+        if ($proxyMethod->getVisibility() === ProxyMethodGenerator::VISIBILITY_PRIVATE) {
             throw new Exception(sprintf('The %s cannot build interceptor code for private method %s::%s(). Please change the scope to at least protected or adjust the pointcut expression in the corresponding aspect.', __CLASS__, $targetClassName, $methodName), 1593070574);
         }
         if ($declaringClassName !== $targetClassName) {
-            $proxyMethod->setMethodParametersCode($proxyMethod->buildMethodParametersCode($declaringClassName, $methodName, true));
+            $originalMethod = MethodGenerator::copyMethodSignature(new \Laminas\Code\Reflection\MethodReflection($declaringClassName, $methodName));
+            $proxyMethod->setParameters($originalMethod->getParameters());
         }
 
-        $groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
+        $groupedAdvices = $methodMetaInformation[$methodName]['groupedAdvices'];
         $advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName, $declaringClassName);
 
-        if ($methodName !== null || $methodName === '__wakeup') {
-            $proxyMethod->addPreParentCallCode('
-        if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
-');
-            $proxyMethod->addPostParentCallCode('
+        $proxyMethod->addPreParentCallCode(<<<PHP
+        if (isset(\$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}'])) {
+        PHP);
+        $proxyMethod->addPostParentCallCode(<<<PHP
         } else {
-            $this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = true;
+            \$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}'] = true;
             try {
-            ' . $advicesCode . '
-            } catch (\Exception $exception) {
-                unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
-                throw $exception;
+            {$advicesCode}
+            } catch (\Exception \$exception) {
+                unset(\$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}']);
+                throw \$exception;
             }
-            unset($this->Flow_Aop_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
+            unset(\$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}']);
         }
-');
-        }
+        PHP);
     }
 }

@@ -5,8 +5,19 @@
         "MIT"
     ],
     "type": "neos-package-collection",
+    "scripts": {
+        "test:behavioral": [
+            "../../flow doctrine:migrate --quiet",
+            "../../bin/behat -f progress -c Neos.Flow/Tests/Behavior/behat.yml"
+        ],
+        "lint:phpstan": "../../bin/phpstan analyse",
+        "lint": [
+            "@lint:phpstan"
+        ]
+    },
     "require": {
-        "php": "^8.0",
+        "behat/behat": "^3.10",
+        "php": "^8.2",
         "psr/simple-cache": "^2.0 || ^3.0",
         "psr/cache": "^2.0 || ^3.0",
         "psr/log": "^2.0 || ^3.0",
@@ -15,6 +26,8 @@
         "ext-json": "*",
         "ext-reflection": "*",
         "ext-xml": "*",
+        "ext-xmlreader": "*",
+        "neos/composer-plugin": "^2.0",
         "psr/http-message": "^1.0",
         "psr/http-factory": "^1.0",
         "psr/container": "^1.0",
@@ -22,18 +35,18 @@
         "psr/http-server-handler": "^1.0",
         "psr/http-client": "^1.0",
         "ramsey/uuid": "^3.0 || ^4.0",
-        "doctrine/orm": "^2.9.3",
+        "laminas/laminas-code": "^4.10",
+        "doctrine/orm": "^2.12.0",
         "doctrine/migrations": "^3.0",
         "doctrine/dbal": "^2.13",
         "doctrine/common": "^3.0.3",
         "doctrine/annotations": "^1.12",
-        "symfony/yaml": "^5.1",
-        "symfony/dom-crawler": "^5.1",
-        "symfony/console": "^5.1",
-        "neos/composer-plugin": "^2.0",
-        "composer/composer": "^1.10.22 || ^2.0.13",
+        "symfony/yaml": "^5.1||^6.0",
+        "symfony/dom-crawler": "^5.1||^6.0",
+        "symfony/console": "^5.1||^6.0",
+        "composer/composer": "^2.2.8",
         "egulias/email-validator": "^2.1.17 || ^3.0",
-        "typo3fluid/fluid": "^2.7.0",
+        "typo3fluid/fluid": "^2.8.0",
         "guzzlehttp/psr7": "^1.8.4 || ^2.1.1",
         "ext-mbstring": "*"
     },
@@ -124,8 +137,12 @@
     },
     "require-dev": {
         "mikey179/vfsstream": "^1.6.10",
-        "phpunit/phpunit": "~9.1",
-        "vimeo/psalm": "~4.22.0"
+        "phpunit/phpunit": "~9.1"
+    },
+    "provide": {
+        "psr/cache-implementation": "2.0.0 || 3.0.0",
+        "psr/simple-cache-implementation": "2.0.0 || 3.0.0",
+        "psr/log-implementation": "2.0.0 || 3.0.0"
     },
     "autoload-dev": {
         "psr-4": {

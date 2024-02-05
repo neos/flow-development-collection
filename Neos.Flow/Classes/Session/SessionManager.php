@@ -132,7 +132,7 @@ class SessionManager implements SessionManagerInterface
      * NULL is returned.
      *
      * @param string $sessionIdentifier The session identifier
-     * @return SessionInterface
+     * @return SessionInterface|null
      * @api
      */
     public function getSession($sessionIdentifier)
@@ -148,6 +148,7 @@ class SessionManager implements SessionManagerInterface
             $this->remoteSessions[$sessionIdentifier] = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
             return $this->remoteSessions[$sessionIdentifier];
         }
+        return null;
     }
 
     /**

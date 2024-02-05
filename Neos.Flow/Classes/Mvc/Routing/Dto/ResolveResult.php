@@ -20,7 +20,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ResolveResult
 {
-
     /**
      * The resolved string value, or NULL if the corresponding Route Part doesn't affect the uri path
      *
@@ -106,7 +105,7 @@ final class ResolveResult
      * Whether this result has a lifetime
      *
      * @return bool
-     * @psalm-assert-if-true RouteLifetime $this->getLifetime()
+     * @phpstan-assert-if-true RouteLifetime $this->getLifetime()
      */
     public function hasLifetime(): bool
     {

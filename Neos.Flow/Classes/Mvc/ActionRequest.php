@@ -444,7 +444,6 @@ class ActionRequest implements RequestInterface
     {
         $controllerObjectName = $this->getControllerObjectName();
         if ($controllerObjectName !== '') {
-
             // Extract the controller name from the controller object name to assure that the case is correct.
             // Note: Controller name can also contain sub structure like "Foo\Bar\Baz"
             return substr($controllerObjectName, -(strlen($this->controllerName) + 10), - 10);
@@ -614,7 +613,7 @@ class ActionRequest implements RequestInterface
      * internal argument, its name must start with two underscores.
      *
      * @param string $argumentName Name of the argument, for example "__fooBar"
-     * @return string|object Value of the argument, or NULL if not set.
+     * @return string|object|null Value of the argument, or NULL if not set.
      */
     public function getInternalArgument(string $argumentName)
     {

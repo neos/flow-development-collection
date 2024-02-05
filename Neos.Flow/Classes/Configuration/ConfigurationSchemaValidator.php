@@ -90,12 +90,12 @@ class ConfigurationSchemaValidator
      * Validate a single configuration type
      *
      * @param string $configurationType the configuration typr to validate
-     * @param string $path configuration path to validate, or NULL.
+     * @param string|null $path configuration path to validate, or NULL.
      * @param array $loadedSchemaFiles will be filled with a list of loaded schema files
      * @return \Neos\Error\Messages\Result
      * @throws Exception\SchemaValidationException
      */
-    protected function validateSingleType(string $configurationType, string $path = null, array&$loadedSchemaFiles = []): Result
+    protected function validateSingleType(string $configurationType, ?string $path = null, array&$loadedSchemaFiles = []): Result
     {
         $availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
         if (in_array($configurationType, $availableConfigurationTypes) === false) {

@@ -69,6 +69,8 @@ use Neos\Flow\Annotations as Flow;
  * ----------------
  *
  * If an operation is final, it should return the resulting value directly.
+ *
+ * @phpstan-consistent-constructor
  */
 class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \Countable
 {
@@ -209,6 +211,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      */
     protected function evaluateOperations()
     {
+        $lastOperationResult = null;
         while ($op = array_shift($this->operations)) {
             $operation = $this->operationResolver->resolveOperation($op['name'], $this->context);
             $lastOperationResult = $operation->evaluate($this, $op['arguments']);
@@ -254,7 +257,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * Should only be called inside an operation.
      *
-     * @return string the next operation name or NULL if no next operation found.
+     * @return string|null the next operation name or NULL if no next operation found.
      */
     public function peekOperationName()
     {

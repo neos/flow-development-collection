@@ -24,8 +24,8 @@ use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
-
 use Neos\Media\Domain\Repository\ThumbnailRepository;
+use Symfony\Component\Console\Helper\ProgressIndicator;
 
 /**
  * PersistentResource command controller for the Neos.Flow package
@@ -77,9 +77,10 @@ class ResourceCommandController extends CommandController
      * to their respective configured publishing targets.
      *
      * @param string $collection If specified, only resources of this collection are published. Example: 'persistent'
+     * @param bool $quiet Don't print the progress-bar
      * @return void
      */
-    public function publishCommand(string $collection = null)
+    public function publishCommand(string $collection = null, bool $quiet = false)
     {
         try {
             if ($collection === null) {
@@ -94,13 +95,24 @@ class ResourceCommandController extends CommandController
             }
 
             foreach ($collections as $collection) {
+                $progressIndicator = $quiet
+                    ? null
+                    : new ProgressIndicator($this->output->getOutput());
                 try {
                     /** @var CollectionInterface $collection */
                     $this->outputLine('Publishing resources of collection "%s"', [$collection->getName()]);
+                    $progressIndicator?->start('Published 0');
                     $target = $collection->getTarget();
-                    $target->publishCollection($collection, function ($iteration) {
+                    $lastIteration = 0;
+                    $target->onPublish(function ($iteration) use ($progressIndicator, &$lastIteration) {
+                        $iteration += 1;
+                        $progressIndicator?->advance();
+                        $progressIndicator?->setMessage(sprintf('Published %s', $iteration));
                         $this->clearState($iteration);
+                        $lastIteration = $iteration;
                     });
+                    $target->publishCollection($collection);
+                    $progressIndicator?->finish(sprintf('Published %s', $lastIteration));
                 } catch (Exception $exception) {
                     $message = sprintf(
                         'An error occurred while publishing the collection "%s": %s (Exception code: %u): %s',
@@ -206,18 +218,17 @@ class ResourceCommandController extends CommandController
         $this->outputLine('Checking if resource data exists for all known resource objects ...');
         $this->outputLine();
 
-        $mediaPackagePresent = $this->packageManager->isPackageAvailable('Neos.Media');
-
         $resourcesCount = $this->resourceRepository->countAll();
         $this->output->progressStart($resourcesCount);
 
         $brokenResources = [];
         $relatedAssets = new \SplObjectStorage();
         $relatedThumbnails = new \SplObjectStorage();
-        $iterator = $this->resourceRepository->findAllIterator();
-        foreach ($this->resourceRepository->iterate($iterator, function ($iteration) {
+        $resources = $this->resourceRepository->findAllIterator();
+        $iteration = 0;
+        foreach ($resources as $resource) {
             $this->clearState($iteration);
-        }) as $resource) {
+            $iteration++;
             $this->output->progressAdvance(1);
             /* @var PersistentResource $resource */
             $stream = $resource->getStream();
@@ -229,26 +240,22 @@ class ResourceCommandController extends CommandController
         $this->output->progressFinish();
         $this->outputLine();
 
-        if (count($brokenResources) > 0) {
-            if ($mediaPackagePresent) {
-                /* @var AssetRepository $assetRepository */
-                $assetRepository = $this->objectManager->get(AssetRepository::class);
-                /* @var ThumbnailRepository $thumbnailRepository */
-                $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
-            }
+        // FIXME flow has no dependency on Neos.Media. This code should be extracted. https://github.com/neos/flow-development-collection/issues/3272
+        $assetRepository = $this->objectManager->get(AssetRepository::class);
+        $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
+        $mediaPackagePresent = $this->packageManager->isPackageAvailable('Neos.Media');
 
+        if (count($brokenResources) > 0) {
             foreach ($brokenResources as $key => $resourceIdentifier) {
                 $resource = $this->resourceRepository->findByIdentifier($resourceIdentifier);
                 $brokenResources[$key] = $resource;
                 if ($mediaPackagePresent) {
                     $assets = $assetRepository->findByResource($resource);
                     if ($assets !== null) {
-                        /** @psalm-suppress PossiblyNullArrayOffset */
                         $relatedAssets[$resource] = $assets;
                     }
                     $thumbnails = $thumbnailRepository->findByResource($resource);
                     if ($assets !== null) {
-                        /** @psalm-suppress PossiblyNullArrayOffset */
                         $relatedThumbnails[$resource] = $thumbnails;
                     }
                 }
@@ -260,11 +267,8 @@ class ResourceCommandController extends CommandController
             $this->outputLine();
 
             foreach ($brokenResources as $resource) {
-                /** @psalm-suppress PossiblyNullReference */
                 $this->outputLine('%s (%s) from "%s" collection', [$resource->getFilename(), $resource->getSha1(), $resource->getCollectionName()]);
-                /** @psalm-suppress PossiblyNullArgument */
                 if (isset($relatedAssets[$resource])) {
-                    /** @psalm-suppress PossiblyNullArrayOffset */
                     foreach ($relatedAssets[$resource] as $asset) {
                         $this->outputLine(' -> %s (%s)', [get_class($asset), $asset->getIdentifier()]);
                     }
@@ -280,26 +284,25 @@ class ResourceCommandController extends CommandController
                     $brokenAssetCounter = 0;
                     $brokenThumbnailCounter = 0;
                     foreach ($brokenResources as $resource) {
-                        /** @psalm-suppress PossiblyNullReference */
                         $this->outputLine('- delete %s (%s) from "%s" collection', [
                             $resource->getFilename(),
                             $resource->getSha1(),
                             $resource->getCollectionName()
                         ]);
-                        /** @psalm-suppress PossiblyNullReference */
                         $resource->disableLifecycleEvents();
-                        /** @psalm-suppress PossiblyNullArgument */
                         $this->resourceRepository->remove($resource);
-                        if (isset($relatedAssets[$resource])) {
-                            foreach ($relatedAssets[$resource] as $asset) {
-                                $assetRepository->removeWithoutUsageChecks($asset);
-                                $brokenAssetCounter++;
+                        if ($mediaPackagePresent) {
+                            if (isset($relatedAssets[$resource])) {
+                                foreach ($relatedAssets[$resource] as $asset) {
+                                    $assetRepository->removeWithoutUsageChecks($asset);
+                                    $brokenAssetCounter++;
+                                }
                             }
-                        }
-                        if (isset($relatedThumbnails[$resource])) {
-                            foreach ($relatedThumbnails[$resource] as $thumbnail) {
-                                $thumbnailRepository->remove($thumbnail);
-                                $brokenThumbnailCounter++;
+                            if (isset($relatedThumbnails[$resource])) {
+                                foreach ($relatedThumbnails[$resource] as $thumbnail) {
+                                    $thumbnailRepository->remove($thumbnail);
+                                    $brokenThumbnailCounter++;
+                                }
                             }
                         }
                         $this->persistenceManager->persistAll();

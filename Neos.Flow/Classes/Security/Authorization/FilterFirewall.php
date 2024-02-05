@@ -112,7 +112,7 @@ class FilterFirewall implements FirewallInterface
         $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
 
         $patternOptions = isset($filterConfiguration['patternOptions']) ? $filterConfiguration['patternOptions'] : [];
-        /** @var $requestPattern RequestPatternInterface */
+        /** @var RequestPatternInterface $requestPattern */
         $requestPattern = $this->objectManager->get($patternClassName, $patternOptions);
 
         /** @var InterceptorInterface $interceptor */

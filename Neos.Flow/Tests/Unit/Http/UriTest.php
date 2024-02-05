@@ -148,16 +148,6 @@ class UriTest extends UnitTestCase
         self::assertEquals($plainHost, $uri->getHost());
     }
 
-    /**
-     * @test
-     */
-    public function settingInvalidHostThrowsException()
-    {
-        $this->markTestSkipped('This is no longer the case with PSR-7 URIs');
-        $this->expectException(\InvalidArgumentException::class);
-        (new Uri(''))->withHost('an#invalid.host');
-    }
-
     public function uriStringTestUris()
     {
         return [

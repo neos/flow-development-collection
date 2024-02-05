@@ -78,7 +78,7 @@ class LocaleCollection
      * system, please use findBestMatchingLocale() method of this class.
      *
      * @param Locale $locale The Locale to search parent for
-     * @return mixed Existing Locale instance or NULL on failure
+     * @return Locale|null Existing Locale instance or NULL on failure
      */
     public function getParentLocaleOf(Locale $locale)
     {
@@ -110,7 +110,7 @@ class LocaleCollection
      * is most similar to the "template" Locale object given as parameter.
      *
      * @param Locale $locale The "template" locale to be matched
-     * @return mixed Existing Locale instance on success, NULL on failure
+     * @return Locale|null Existing Locale instance on success, NULL on failure
      */
     public function findBestMatchingLocale(Locale $locale)
     {

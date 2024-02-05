@@ -112,16 +112,16 @@ class Headers implements \Iterator
                 // Ensure Host is the first header.
                 // See: http://tools.ietf.org/html/rfc7230#section-5.4
                 $this->fields = ['Host' => $values] + $this->fields;
-            break;
+                break;
             case 'Cache-Control':
                 $this->cacheControlDirectives = CacheControlDirectives::fromRawHeader(implode(', ', $values));
-            break;
+                break;
             case 'Cookie':
                 if (count($values) !== 1) {
                     throw new \InvalidArgumentException('The "Cookie" header must be unique and thus only one field value may be specified.', 1345127727);
                 }
                 $this->setCookiesFromRawHeader(array_pop($values));
-            break;
+                break;
             default:
                 if ($replaceExistingHeader === true || !isset($this->fields[$name])) {
                     $this->fields[$name] = $values;
@@ -257,7 +257,7 @@ class Headers implements \Iterator
      * Returns a cookie specified by the given name
      *
      * @param string $name Name of the cookie
-     * @return Cookie The cookie or NULL if no such cookie exists
+     * @return Cookie|null The cookie or NULL if no such cookie exists
      * @api
      */
     public function getCookie($name)
@@ -440,6 +440,7 @@ class Headers implements \Iterator
     /**
      * @return string[]|mixed
      */
+    #[\ReturnTypeWillChange]
     public function current(): mixed
     {
         return $this->getRaw($this->key());

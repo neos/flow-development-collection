@@ -13,14 +13,14 @@ jobs:
       contents: read # to fetch code (actions/checkout)
 
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} (deps: ${{ matrix.dependencies }})"
+    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && 'static analysis ' || '' }}(deps: ${{ matrix.dependencies }})"
 
     continue-on-error: ${{ matrix.experimental == 'true' || matrix.experimental == true }}
 
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.0', '8.1', '8.2']
+        php-versions: ['8.2', '8.3']
         # see https://mariadb.com/kb/en/mariadb-server-release-dates/
         # this should be a current release, e.g. the LTS version
         mariadb-versions: ['10.6']
@@ -32,15 +32,15 @@ jobs:
         static-analysis: ['no']
         experimental: [false]
         include:
-          - php-versions: '8.0'
+          - php-versions: '8.2'
             mariadb-versions: '' # skip mariadb setup
             postgresql-versions: '' # skip postgresql setup
-            static-analysis: 'psalm'
+            static-analysis: 'yes'
             experimental: true
             dependencies: 'highest'
 
           # Build for minimum dependencies.
-          - php-versions: '8.0'
+          - php-versions: '8.2'
             mariadb-versions: '10.2'
             postgresql-versions: '10-alpine'
             static-analysis: 'no'
@@ -161,17 +161,8 @@ jobs:
           ./flow routing:list
 
       - name: Static analysis
-        if: matrix.static-analysis == 'psalm'
-        run: composer test-static
-
-      - name: Update psalm baseline
-        if: ${{ failure() && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
-        run: |
-          composer psalm-baseline-update
-          cd ./Packages/Framework
-          git add psalm-baseline.xml
-          git -c user.name='gh-action' -c user.email='gh-action@noreply.github.com' commit -m "TASK: Update psalm-baseline"
-          git push -f origin HEAD:${FLOW_TARGET_VERSION}
+        if: matrix.static-analysis == 'yes'
+        run: cd Packages/Framework && composer lint
 
       - name: Run unit tests
         if: matrix.static-analysis == 'no'
@@ -185,8 +176,8 @@ jobs:
         if: ${{ matrix.static-analysis == 'no' && matrix.dependencies != 'lowest' }}
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
-          bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
+          cd Packages/Framework
+          composer test:behavioral
 
       - name: Setup Flow configuration (PGSQL)
         run: |
@@ -222,8 +213,8 @@ jobs:
         if: ${{ matrix.static-analysis == 'no' && matrix.dependencies != 'lowest' }}
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
-          bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
+          cd Packages/Framework
+          composer test:behavioral
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"

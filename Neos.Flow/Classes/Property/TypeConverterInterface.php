@@ -86,7 +86,7 @@ interface TypeConverterInterface
      * @param string $targetType
      * @param string $propertyName
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return string the type of $propertyName in $targetType
+     * @return string|null the type of $propertyName in $targetType
      * @api
      */
     public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration);

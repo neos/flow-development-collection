@@ -167,9 +167,11 @@ class FloatConverter extends AbstractTypeConverter
             $locale = new Locale($configuration['locale']);
         } elseif ($configuration['locale'] instanceof Locale) {
             $locale = $configuration['locale'];
+        } else {
+            $locale = null;
         }
 
-        if (!($locale instanceof Locale)) {
+        if (!$locale instanceof Locale) {
             $exceptionMessage = 'Determined locale is not of type "\Neos\Flow\I18n\Locale", but of type "' . (is_object($locale) ? get_class($locale) : gettype($locale)) . '".';
             throw new InvalidPropertyMappingConfigurationException($exceptionMessage, 1334837413);
         }

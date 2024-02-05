@@ -16,6 +16,7 @@ use Neos\Flow\Command\CacheCommandController;
 use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ParameterReflection;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Unit\Cli\Fixtures\Command\MockACommandController;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -40,7 +41,7 @@ class CommandTest extends UnitTestCase
     {
         $this->command = $this->getAccessibleMock(Cli\Command::class, ['getCommandMethodReflection'], [], '', false);
         $this->methodReflection = $this->createMock(MethodReflection::class, [], [__CLASS__, 'dummyMethod']);
-        $this->command->expects(self::any())->method('getCommandMethodReflection')->will(self::returnValue($this->methodReflection));
+        $this->command->method('getCommandMethodReflection')->willReturn($this->methodReflection);
     }
 
     /**
@@ -104,15 +105,18 @@ class CommandTest extends UnitTestCase
     /**
      * @test
      */
-    public function getArgumentDefinitionsReturnsArrayOfArgumentDefinitionIfCommandExpectsArguments()
+    public function getArgumentDefinitionsReturnsArrayOfArgumentDefinitionIfCommandExpectsArguments(): void
     {
         $parameterReflection = $this->createMock(ParameterReflection::class, [], [[__CLASS__, 'dummyMethod'], 'arg']);
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockMethodParameters = ['argument1' => ['optional' => false], 'argument2' => ['optional' => true]];
-        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue($mockMethodParameters));
+        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->willReturn($mockMethodParameters);
+
         $this->command->injectReflectionService($mockReflectionService);
-        $this->methodReflection->expects(self::atLeastOnce())->method('getParameters')->will(self::returnValue([$parameterReflection]));
-        $this->methodReflection->expects(self::atLeastOnce())->method('getTagsValues')->will(self::returnValue(['param' => ['@param $argument1 argument1 description', '@param $argument2 argument2 description']]));
+        $this->inject($this->command, 'controllerClassName', MockACommandController::class);
+
+        $this->methodReflection->expects(self::atLeastOnce())->method('getParameters')->willReturn([$parameterReflection]);
+        $this->methodReflection->expects(self::atLeastOnce())->method('getTagsValues')->willReturn(['param' => ['@param $argument1 argument1 description', '@param $argument2 argument2 description']]);
 
         $expectedResult = [
             new Cli\CommandArgumentDefinition('argument1', true, 'argument1 description'),
@@ -125,15 +129,16 @@ class CommandTest extends UnitTestCase
     /**
      * @test
      */
-    public function getArgumentDefinitionsReturnsArrayOfArgumentDefinitionIfCommandExpectsArgumentsEvenWhenDocblocksAreMissing()
+    public function getArgumentDefinitionsReturnsArrayOfArgumentDefinitionIfCommandExpectsArgumentsEvenWhenDocBlocksAreMissing(): void
     {
         $parameterReflection = $this->createMock(ParameterReflection::class, [], [[__CLASS__, 'dummyMethod'], 'arg']);
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockMethodParameters = ['argument1' => ['optional' => false], 'argument2' => ['optional' => true]];
-        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue($mockMethodParameters));
+        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->willReturn($mockMethodParameters);
         $this->command->injectReflectionService($mockReflectionService);
-        $this->methodReflection->expects(self::atLeastOnce())->method('getParameters')->will(self::returnValue([$parameterReflection]));
-        $this->methodReflection->expects(self::atLeastOnce())->method('getTagsValues')->will(self::returnValue([]));
+        $this->inject($this->command, 'controllerClassName', MockACommandController::class);
+        $this->methodReflection->expects(self::atLeastOnce())->method('getParameters')->willReturn([$parameterReflection]);
+        $this->methodReflection->expects(self::atLeastOnce())->method('getTagsValues')->willReturn([]);
 
         $expectedResult = [
             new Cli\CommandArgumentDefinition('argument1', true, 'argument1'),
