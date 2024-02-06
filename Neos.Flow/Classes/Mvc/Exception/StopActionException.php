@@ -11,16 +11,46 @@ namespace Neos\Flow\Mvc\Exception;
  * source code.
  */
 
+use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Controller\AbstractController;
+
 /**
  * This exception is thrown by a controller to stop the execution of the current
  * action and return the control to the dispatcher. The dispatcher catches this
  * exception and - depending on the "dispatched" status of the request - either
  * continues dispatching the request or returns control to the request handler.
  *
- * See the Action Controller's forward() and redirectToUri() methods for more information.
+ * See {@see AbstractController::throwStatus()} or {@see AbstractController::redirectToUri()} for more information.
+ *
+ * Other control flow exceptions: {@see ForwardException}
  *
  * @api
  */
-class StopActionException extends \Neos\Flow\Mvc\Exception
+final class StopActionException extends \Neos\Flow\Mvc\Exception
 {
+    /**
+     * The response to be received by the MVC Dispatcher.
+     */
+    public readonly ActionResponse $response;
+
+    private function __construct(string $message, int $code, ?\Throwable $previous, ActionResponse $response)
+    {
+        parent::__construct($message, $code, $previous);
+        $this->response = $response;
+    }
+
+    /**
+     * @param ActionResponse $response The response to be received by the MVC Dispatcher.
+     * @param string $details Additional details just for this exception, in case it is logged (the regular exception message).
+     */
+    public static function createForResponse(ActionResponse $response, string $details): self
+    {
+        if (empty($details)) {
+            $details = sprintf(
+                'Stop action with %s response.',
+                $response->getStatusCode()
+            );
+        }
+        return new self($details, 1558088618, null, $response);
+    }
 }

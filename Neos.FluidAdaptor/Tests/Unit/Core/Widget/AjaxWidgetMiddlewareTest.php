@@ -14,6 +14,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionRequestFactory;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
@@ -119,6 +120,8 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
         $this->inject($this->ajaxWidgetMiddleware, 'hashService', $this->mockHashService);
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->getMock();
+        $actionResponse = new ActionResponse();
+        $this->mockDispatcher->expects(self::any())->method('dispatch')->willReturn($actionResponse);
         $this->inject($this->ajaxWidgetMiddleware, 'dispatcher', $this->mockDispatcher);
 
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->getMock();
@@ -177,7 +180,8 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequestFactory->method('prepareActionRequest')->willReturn($mockActionRequest);
 
-        $this->mockDispatcher->expects(self::once())->method('dispatch');
+        $actionResponse = new ActionResponse();
+        $this->mockDispatcher->expects(self::once())->method('dispatch')->willReturn($actionResponse);
 
         $this->ajaxWidgetMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }

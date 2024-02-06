@@ -11,12 +11,16 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Exception\InvalidActionNameException;
+use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
+use Psr\Http\Message\UriInterface;
 
 /**
  * An action controller for RESTful web services
@@ -48,41 +52,45 @@ class RestController extends ActionController
     /**
      * Determines the action method and assures that the method exists.
      *
+     * @param ActionRequest $request
      * @return string The action method name
      * @throws NoSuchActionException if the action specified in the request object does not exist (and if there's no default action either).
+     * @throws StopActionException
+     * @throws InvalidActionNameException
+     * @throws InvalidActionVisibilityException
      */
-    protected function resolveActionMethodName()
+    protected function resolveActionMethodName(ActionRequest $request): string
     {
-        if ($this->request->getControllerActionName() === 'index') {
+        if ($request->getControllerActionName() === 'index') {
             $actionName = 'index';
-            switch ($this->request->getHttpRequest()->getMethod()) {
+            switch ($request->getHttpRequest()->getMethod()) {
                 case 'HEAD':
                 case 'GET':
-                    $actionName = ($this->request->hasArgument($this->resourceArgumentName)) ? 'show' : 'list';
+                    $actionName = ($request->hasArgument($this->resourceArgumentName)) ? 'show' : 'list';
                     break;
                 case 'POST':
                     $actionName = 'create';
                     break;
                 case 'PUT':
-                    if (!$this->request->hasArgument($this->resourceArgumentName)) {
+                    if (!$request->hasArgument($this->resourceArgumentName)) {
                         $this->throwStatus(400, null, 'No resource specified');
                     }
                     $actionName = 'update';
                     break;
                 case 'DELETE':
-                    if (!$this->request->hasArgument($this->resourceArgumentName)) {
+                    if (!$request->hasArgument($this->resourceArgumentName)) {
                         $this->throwStatus(400, null, 'No resource specified');
                     }
                     $actionName = 'delete';
                     break;
             }
-            if ($this->request->getControllerActionName() !== $actionName) {
+            if ($request->getControllerActionName() !== $actionName) {
                 // Clone the request, because it should not be mutated to prevent unexpected routing behavior
-                $this->request = clone $this->request;
-                $this->request->setControllerActionName($actionName);
+                $request = clone $request;
+                $request->setControllerActionName($actionName);
             }
         }
-        return parent::resolveActionMethodName();
+        return parent::resolveActionMethodName($request);
     }
 
     /**
@@ -110,18 +118,15 @@ class RestController extends ActionController
     }
 
     /**
-     * Redirects the web request to another uri.
+     * Redirects to another URI
      *
-     * NOTE: This method only supports web requests and will throw an exception
-     * if used with other request types.
-     *
-     * @param mixed $uri Either a string representation of a URI or a \Neos\Flow\Http\Uri object
+     * @param UriInterface|string $uri Either a string or a psr uri
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @throws StopActionException
      * @api
      */
-    protected function redirectToUri($uri, $delay = 0, $statusCode = 303): never
+    protected function redirectToUri(string|UriInterface $uri, int $delay = 0, int $statusCode = 303): never
     {
         // the parent method throws the exception, but we need to act afterwards
         // thus the code in catch - it's the expected state
@@ -129,7 +134,7 @@ class RestController extends ActionController
             parent::redirectToUri($uri, $delay, $statusCode);
         } catch (StopActionException $exception) {
             if ($this->request->getFormat() === 'json') {
-                $this->response->setContent('');
+                $exception->response->setContent('');
             }
             throw $exception;
         }

@@ -225,7 +225,6 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         $subRequest->setArgumentNamespace('--' . $this->widgetContext->getWidgetIdentifier());
 
         $dispatchLoopCount = 0;
-        $subResponse = new ActionResponse();
         $content = '';
         while (!$subRequest->isDispatched()) {
             if ($dispatchLoopCount++ > 99) {
@@ -239,18 +238,18 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             }
             $subRequest->setControllerObjectName($this->widgetContext->getControllerObjectName());
             try {
-                $this->controller->processRequest($subRequest, $subResponse);
+                $subResponse = $this->controller->processRequest($subRequest);
 
                 // We need to make sure to not merge content up into the parent ActionResponse because that _could_ break the parent response.
                 $content = $subResponse->getContent();
                 $subResponse->setContent('');
             } catch (StopActionException $exception) {
-                if ($exception instanceof ForwardException) {
-                    $subRequest = $exception->getNextRequest();
-                    continue;
-                }
+                $subResponse = $exception->response;
                 $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
                 throw $exception;
+            } catch (ForwardException $exception) {
+                $subRequest = $exception->nextRequest;
+                continue;
             }
             $subResponse->mergeIntoParentResponse($this->controllerContext->getResponse());
         }
