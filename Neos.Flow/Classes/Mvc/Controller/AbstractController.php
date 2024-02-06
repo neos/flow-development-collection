@@ -333,7 +333,7 @@ abstract class AbstractController implements ControllerInterface
             $this->response->setStatusCode($statusCode);
             $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . (int)$delay . ';url=' . $uri . '"/></head></html>');
         }
-        throw StopActionException::createForResponse($this->response, '');
+        throw StopActionException::createForResponse($this->response->buildHttpResponse(), '');
     }
 
     /**
@@ -358,7 +358,7 @@ abstract class AbstractController implements ControllerInterface
             );
         }
         $this->response->setContent($content);
-        throw StopActionException::createForResponse($this->response, $content);
+        throw StopActionException::createForResponse($this->response->buildHttpResponse(), $content);
     }
 
     /**

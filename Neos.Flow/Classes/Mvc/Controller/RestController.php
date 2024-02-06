@@ -12,6 +12,7 @@ namespace Neos\Flow\Mvc\Controller;
  */
 
 use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -134,7 +135,7 @@ class RestController extends ActionController
             parent::redirectToUri($uri, $delay, $statusCode);
         } catch (StopActionException $exception) {
             if ($this->request->getFormat() === 'json') {
-                $exception->response->setContent('');
+                throw StopActionException::createForResponse($exception->response->withBody(Utils::streamFor('')), '');
             }
             throw $exception;
         }

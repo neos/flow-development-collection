@@ -11,7 +11,6 @@ namespace Neos\Flow\Mvc\Exception;
  * source code.
  */
 
-use Neos\Flow\Mvc\ActionResponse;
 use Psr\Http\Message\ResponseInterface;
 use Neos\Flow\Mvc\Controller\AbstractController;
 
@@ -41,11 +40,10 @@ final class StopActionException extends \Neos\Flow\Mvc\Exception
     }
 
     /**
-     * @deprecated
-     * @param ActionResponse $response The response to be received by the MVC Dispatcher.
+     * @param ResponseInterface $response The response to be received by the MVC Dispatcher.
      * @param string $details Additional details just for this exception, in case it is logged (the regular exception message).
      */
-    public static function createForResponse(ActionResponse $response, string $details): self
+    public static function createForResponse(ResponseInterface $response, string $details): self
     {
         if (empty($details)) {
             $details = sprintf(
@@ -53,6 +51,6 @@ final class StopActionException extends \Neos\Flow\Mvc\Exception
                 $response->getStatusCode()
             );
         }
-        return new self($details, 1558088618, null, $response->buildHttpResponse());
+        return new self($details, 1558088618, null, $response);
     }
 }
