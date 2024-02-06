@@ -861,6 +861,7 @@ class Scripts
         $command[] = '2>&1'; // Output errors in response
 
         // Try to resolve which binary file PHP is pointing to
+        $output = [];
         exec(join(' ', $command), $output, $result);
 
         if ($result === 0 && count($output) === 1) {
@@ -883,6 +884,7 @@ class Scripts
         $realPhpBinary = @realpath(PHP_BINARY);
         if ($realPhpBinary === false) {
             // bypass with exec open_basedir restriction
+            $output = [];
             exec(PHP_BINARY . ' -r "echo realpath(PHP_BINARY);"', $output);
             $realPhpBinary = $output[0];
         }
