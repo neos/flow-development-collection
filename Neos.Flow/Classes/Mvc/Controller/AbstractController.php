@@ -61,9 +61,9 @@ abstract class AbstractController implements ControllerInterface
     protected $request;
 
     /**
-     * The response which will be returned by this action controller
+     * The legacy response which will is provide by this action controller
      * @var ActionResponse
-     * @api
+     * @deprecated with Flow 9 {@see ActionResponse}
      */
     protected $response;
 
