@@ -261,7 +261,7 @@ class ActionController extends AbstractController
             $this->initializeView($this->view);
         }
 
-        $httpResponse = $this->callActionMethod($request, $this->arguments, $response);
+        $httpResponse = $this->callActionMethod($request, $this->arguments, $response->buildHttpResponse());
 
         if (!$httpResponse->hasHeader('Content-Type')) {
             $httpResponse = $httpResponse->withHeader('Content-Type', $this->negotiatedMediaType);
@@ -516,9 +516,9 @@ class ActionController extends AbstractController
      *
      * @param ActionRequest $request
      * @param Arguments $arguments
-     * @param ActionResponse $response The most likely empty response.
+     * @param ResponseInterface $httpResponse The most likely empty response, previously available as $this->response
      */
-    protected function callActionMethod(ActionRequest $request, Arguments $arguments, ActionResponse $response): ResponseInterface
+    protected function callActionMethod(ActionRequest $request, Arguments $arguments, ResponseInterface $httpResponse): ResponseInterface
     {
         $preparedArguments = [];
         foreach ($arguments as $argument) {
@@ -564,10 +564,9 @@ class ActionController extends AbstractController
         }
 
         if ($actionResult === null && $this->view instanceof ViewInterface) {
-            return $this->renderView($this->response);
+            return $this->renderView($httpResponse);
         }
 
-        $httpResponse = $this->response->buildHttpResponse();
         return $httpResponse->withBody(Utils::streamFor($actionResult));
     }
 
@@ -834,32 +833,34 @@ class ActionController extends AbstractController
     /**
      * Renders the view and applies the result to the response object.
      *
-     * @param ActionResponse $response
+     * @param ResponseInterface $httpResponse The most likely empty response, previously available as $this->response
      */
-    protected function renderView(ActionResponse $response): ResponseInterface
+    protected function renderView(ResponseInterface $httpResponse): ResponseInterface
     {
         $result = $this->view->render();
 
         if (is_string($result)) {
-            $response->setContent($result);
+            return $httpResponse->withBody(Utils::streamFor($result));
         }
 
         if ($result instanceof ActionResponse) {
-            $result->mergeIntoParentResponse($response);
+            // any modifications to $this-response or via the controller context will be lost!
+            return $result->buildHttpResponse();
         }
 
         if ($result instanceof ResponseInterface) {
             return $result;
         }
 
-        if (is_object($result) && is_callable([$result, '__toString'])) {
-            $response->setContent((string)$result);
-        }
-
         if ($result instanceof StreamInterface) {
-            $response->setContent($result);
+            return $httpResponse->withBody($result);
         }
 
-        return $response->buildHttpResponse();
+        if ($result instanceof \Stringable) {
+            return $httpResponse->withBody(Utils::streamFor((string)$result));
+        }
+
+        // Case should not happen. Contract of the view was not obeyed.
+        return $httpResponse;
     }
 }

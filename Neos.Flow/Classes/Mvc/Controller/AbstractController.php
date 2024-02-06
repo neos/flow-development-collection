@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Utils;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Uri;
@@ -110,7 +111,7 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function initializeController(ActionRequest $request, ActionResponse $response)
     {
-        // make the current request "globally" available to everywhere in this controller.
+        // make the current request and response "globally" available to everywhere in this controller.
         $this->request = $request;
         $this->response = $response;
 
@@ -324,16 +325,21 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function redirectToUri(string|UriInterface $uri, int $delay = 0, int $statusCode = 303): never
     {
+        $httpResponse = $this->response->buildHttpResponse();
         if ($delay === 0) {
             if (!$uri instanceof UriInterface) {
                 $uri = new Uri($uri);
             }
-            $this->response->setRedirectUri($uri, $statusCode);
+            $httpResponse = $httpResponse
+                ->withStatus($statusCode)
+                ->withHeader('Location', (string)$uri);
         } else {
-            $this->response->setStatusCode($statusCode);
-            $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . (int)$delay . ';url=' . $uri . '"/></head></html>');
+            $content = '<html><head><meta http-equiv="refresh" content="' . (int)$delay . ';url=' . $uri . '"/></head></html>';
+            $httpResponse = $httpResponse
+                ->withStatus($statusCode)
+                ->withBody(Utils::streamFor($content));
         }
-        throw StopActionException::createForResponse($this->response->buildHttpResponse(), '');
+        throw StopActionException::createForResponse($httpResponse, '');
     }
 
     /**
@@ -349,7 +355,8 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function throwStatus(int $statusCode, $statusMessage = null, $content = null): never
     {
-        $this->response->setStatusCode($statusCode);
+        $httpResponse = $this->response->buildHttpResponse();
+        $httpResponse = $httpResponse->withStatus($statusCode);
         if ($content === null) {
             $content = sprintf(
                 '%s %s',
@@ -357,8 +364,8 @@ abstract class AbstractController implements ControllerInterface
                 $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
             );
         }
-        $this->response->setContent($content);
-        throw StopActionException::createForResponse($this->response->buildHttpResponse(), $content);
+        $httpResponse = $httpResponse->withBody(Utils::streamFor($content));
+        throw StopActionException::createForResponse($httpResponse, $content);
     }
 
     /**

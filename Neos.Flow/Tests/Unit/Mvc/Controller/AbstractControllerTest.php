@@ -466,10 +466,12 @@ class AbstractControllerTest extends UnitTestCase
         try {
             $controller->_call('throwStatus', 404, 'File Really Not Found', $message);
         } catch (StopActionException $e) {
+            self::assertSame(404, $e->response->getStatusCode());
+            self::assertSame($message, $e->response->getBody()->getContents());
+            return;
         }
 
-        self::assertSame(404, $this->actionResponse->getStatusCode());
-        self::assertSame($message, $this->actionResponse->getContent());
+        self::fail('Expected throwStatus to throw.');
     }
 
     /**
@@ -483,10 +485,12 @@ class AbstractControllerTest extends UnitTestCase
         try {
             $controller->_call('throwStatus', 404);
         } catch (StopActionException $e) {
+            self::assertSame(404, $e->response->getStatusCode());
+            self::assertSame('404 Not Found', $e->response->getBody()->getContents());
+            return;
         }
 
-        self::assertSame(404, $this->actionResponse->getStatusCode());
-        self::assertSame('404 Not Found', $this->actionResponse->getContent());
+        self::fail('Expected throwStatus to throw.');
     }
 
     /**
