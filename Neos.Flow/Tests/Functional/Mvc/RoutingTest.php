@@ -18,6 +18,8 @@ use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Route;
+use Neos\Flow\Mvc\Routing\TestingRoutesProvider;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestAController;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\RoutingTestAController;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -374,5 +376,34 @@ class RoutingTest extends FunctionalTestCase
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, 'index.php/', RouteParameters::createEmpty()));
 
         self::assertSame('/index.php/neos/flow/test/http/foo', (string)$actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function testingRoutesProviderCanRegisterOwnRoute()
+    {
+        $routeValues = [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Http\Fixtures',
+            '@controller' => 'Foo',
+            '@action' => 'index',
+            '@format' => 'html'
+        ];
+
+        $this->objectManager->get(TestingRoutesProvider::class)->addRoute(Route::fromConfiguration([
+            'uriPattern' => 'custom/uri/pattern',
+            'defaults' => [
+                '@package' => 'Neos.Flow',
+                '@subpackage' => 'Tests\Functional\Http\Fixtures',
+                '@controller' => 'Foo',
+                '@action' => 'index',
+                '@format' => 'html'
+            ],
+        ]));
+
+        $baseUri = new Uri('http://localhost');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty()));
+        self::assertSame('/custom/uri/pattern', (string)$actualResult);
     }
 }

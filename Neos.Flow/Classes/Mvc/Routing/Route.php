@@ -31,6 +31,7 @@ use Neos\Utility\ObjectAccess;
 
 /**
  * Implementation of a standard route
+ * @phpstan-consistent-constructor
  */
 class Route
 {
@@ -174,7 +175,7 @@ class Route
 
     public static function fromConfiguration(array $configuration): static
     {
-        /** @phpstan-ignore-next-line */
+        /** @phpstan-ignore-next-line phpstan doesn't respekt the consistent constructor flag in the class doc block */
         $route = new static();
         if (isset($configuration['name'])) {
             $route->setName($configuration['name']);
@@ -194,7 +195,7 @@ class Route
             $route->setAppendExceedingArguments($configuration['appendExceedingArguments']);
         }
         if (isset($configuration['cache'])) {
-            if (isset($configuration['cache']['lifetime']) && !is_null($configuration['cache']['lifetime'])) {
+            if (isset($configuration['cache']['lifetime'])) {
                 $route->setCacheLifetime(RouteLifetime::fromInt($configuration['cache']['lifetime']));
             }
             if (isset($configuration['cache']['tags']) && !empty($configuration['cache']['lifetime'])) {

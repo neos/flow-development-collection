@@ -32,10 +32,13 @@ final class TestingRoutesProvider implements RoutesProviderInterface
     }
 
     /**
-     * Prepended a route
+     * Prepends a route additionally to the routes form the Testing context configuration
+     *
+     * @internal Please use {@see FunctionalTestCase::registerRoute} instead.
      */
     public function addRoute(Route $route)
     {
+        // we prepended the route, like the old Router::addRoute
         $this->additionalRoutes = Routes::create($route)->merge($this->additionalRoutes);
     }
 
@@ -46,7 +49,7 @@ final class TestingRoutesProvider implements RoutesProviderInterface
 
     public function getRoutes(): Routes
     {
-        // prepended a route
+        // we prepended all additional routes, like the old Router::addRoute
         return $this->additionalRoutes->merge(
             $this->configurationRoutesProvider->getRoutes()
         );
