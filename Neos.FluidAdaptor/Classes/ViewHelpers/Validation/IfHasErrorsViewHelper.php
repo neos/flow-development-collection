@@ -13,7 +13,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Validation;
 
 
 use Neos\Error\Messages\Result;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\Rendering\FlowAwareRenderingContextInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -72,18 +71,15 @@ class IfHasErrorsViewHelper extends AbstractConditionViewHelper
 
     /**
      * @param null $arguments
-     * @param FlowAwareRenderingContextInterface|RenderingContextInterface $renderingContext
+     * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return boolean
      */
     protected static function evaluateCondition($arguments, RenderingContextInterface $renderingContext)
     {
-        /** @var ActionRequest $request */
-        /** @var FlowAwareRenderingContextInterface $renderingContext */
         $request = $renderingContext->getControllerContext()->getRequest();
-        /** @var Result $validationResults */
         $validationResults = $request->getInternalArgument('__submittedArgumentValidationResults');
 
-        if ($validationResults === null) {
+        if (!$validationResults instanceof Result) {
             return false;
         }
         if (isset($arguments['for'])) {

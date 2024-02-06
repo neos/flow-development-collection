@@ -41,6 +41,7 @@ use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\GenericPackage;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Reflection\ReflectionServiceFactory;
@@ -577,8 +578,10 @@ class Scripts
             if (!in_array($packageKey, $packagesWithConfiguredObjects)) {
                 continue;
             }
-            foreach ($package->getAutoloadPaths() as $autoloadPath) {
-                self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $autoloadPath, '\.php$');
+            if ($package instanceof GenericPackage) {
+                foreach ($package->getAutoloadPaths() as $autoloadPath) {
+                    self::monitorDirectoryIfItExists($fileMonitors['Flow_ClassFiles'], $autoloadPath, '\.php$');
+                }
             }
 
             // Note that getFunctionalTestsPath is currently not part of any interface... We might want to add it or find a better way.
@@ -602,8 +605,10 @@ class Scripts
      */
     protected static function getListOfPackagesWithConfiguredObjects(Bootstrap $bootstrap): array
     {
-        $objectManager = $bootstrap->getEarlyInstance(ObjectManagerInterface::class);
-        $packagesWithConfiguredObjects = array_reduce($objectManager->getAllObjectConfigurations(), function ($foundPackages, $item) {
+        $objectManager = $bootstrap->getObjectManager();
+        /** @phpstan-ignore-next-line the object manager interface doesn't specify this method */
+        $allObjectConfigurations = $objectManager->getAllObjectConfigurations();
+        $packagesWithConfiguredObjects = array_reduce($allObjectConfigurations, function ($foundPackages, $item) {
             if (isset($item['p']) && !in_array($item['p'], $foundPackages)) {
                 $foundPackages[] = $item['p'];
             }

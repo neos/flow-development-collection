@@ -12,7 +12,6 @@ namespace Neos\Utility\Arrays\Tests\Unit;
  * source code.
  */
 
-use Neos\Utility\Arrays;
 use Neos\Utility\ValueAccessor;
 
 /**
@@ -111,19 +110,19 @@ class ValueAccessorTest extends \PHPUnit\Framework\TestCase
     }
 
     protected function testAccessor(
-        array  $acceptibleValues,
-        array  $inacceptibleValues,
+        array $acceptibleValues,
+        array $inacceptibleValues,
         string $methodName,
-        array  $methodArguments = [],
+        array $methodArguments = [],
     ): void {
         foreach ($acceptibleValues as $value) {
-            $accessor = new ValueAccessor($value, (is_scalar($value) || $value instanceof \Stringable) ? (string)$value : get_debug_type($value) . 'was given');
+            $accessor = ValueAccessor::forValue($value);
             $result = $accessor->$methodName(...$methodArguments);
             $this->assertEquals($value, $result);
         }
         foreach ($inacceptibleValues as $value) {
             $this->expectException(\UnexpectedValueException::class);
-            $accessor = new ValueAccessor($value, (is_scalar($value) || $value instanceof \Stringable) ? (string)$value : get_debug_type($value) . 'was given');
+            $accessor = ValueAccessor::forValue($value);
             $accessor->$methodName(...$methodArguments);
         }
     }

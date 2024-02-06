@@ -382,6 +382,7 @@ class Session implements CookieEnabledInterface
             $this->lastActivityTimestamp = $this->now;
             return $lastActivitySecondsAgo;
         }
+        return null;
     }
 
     /**
@@ -616,7 +617,7 @@ class Session implements CookieEnabledInterface
      * Iterates over all existing sessions and removes their data if the inactivity
      * timeout was reached.
      *
-     * @return integer The number of outdated entries removed or NULL if no such information could be determined
+     * @return integer|null The number of outdated entries removed or NULL if no such information could be determined
      * @deprecated will be removed with Flow 9, use SessionManager->collectGarbage
      * @throws \Neos\Cache\Exception
      * @throws NotSupportedByBackendException
@@ -690,13 +691,12 @@ class Session implements CookieEnabledInterface
      * Note that if a session is started after tokens have been authenticated, the
      * session will NOT be tagged with authenticated accounts.
      *
-     * @param array<TokenInterface>
+     * @param $tokens array<TokenInterface>
      * @return void
      */
     protected function storeAuthenticatedAccountsInfo(array $tokens)
     {
         $accountProviderAndIdentifierPairs = [];
-        /** @var TokenInterface $token */
         foreach ($tokens as $token) {
             $account = $token->getAccount();
             if ($token->isAuthenticated() && $account !== null) {

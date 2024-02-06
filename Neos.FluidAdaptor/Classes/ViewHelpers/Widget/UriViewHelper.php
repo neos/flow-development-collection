@@ -94,7 +94,6 @@ class UriViewHelper extends AbstractViewHelper
         if ($this->arguments['format'] !== '') {
             $arguments['@format'] = $this->arguments['format'];
         }
-        /** @var $widgetContext WidgetContext */
         $widgetContext = $this->controllerContext->getRequest()->getInternalArgument('__widgetContext');
         if (!$widgetContext instanceof WidgetContext) {
             throw new WidgetContextNotFoundException('Widget context not found in <f:widget.uri>', 1307450639);

@@ -55,7 +55,7 @@ class Package extends BasePackage
         }
 
         if ($context->isTesting()) {
-            /** @phpstan-ignore-next-line */
+            /** @phpstan-ignore-next-line composer doesnt autoload this class */
             $bootstrap->registerRequestHandler(new Tests\FunctionalTestRequestHandler($bootstrap));
         }
 
@@ -73,6 +73,7 @@ class Package extends BasePackage
                 if (!$request instanceof Mvc\ActionRequest || SecurityHelper::hasSafeMethod($request->getHttpRequest()) !== true) {
                     $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();
                 } elseif (SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
+                    /** @phpstan-ignore-next-line the persistence manager interface doesn't specify this method */
                     $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAllowedObjects();
                 }
             }
@@ -133,7 +134,7 @@ class Package extends BasePackage
             }
         });
 
-        /** @phpstan-ignore-next-line */
+        /** @phpstan-ignore-next-line composer doesnt autoload this class */
         $dispatcher->connect(Tests\FunctionalTestCase::class, 'functionalTestTearDown', Mvc\Routing\RouterCachingService::class, 'flushCaches');
 
         $dispatcher->connect(Configuration\ConfigurationManager::class, 'configurationManagerReady', function (Configuration\ConfigurationManager $configurationManager) {

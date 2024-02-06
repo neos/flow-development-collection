@@ -468,7 +468,7 @@ class ResourceManager
      * Returns a Storage instance by the given name
      *
      * @param string $storageName Name of the storage as defined in the settings
-     * @return StorageInterface or NULL
+     * @return StorageInterface|null
      */
     public function getStorage($storageName)
     {
@@ -481,7 +481,7 @@ class ResourceManager
      * Returns a Collection instance by the given name
      *
      * @param string $collectionName Name of the collection as defined in the settings
-     * @return CollectionInterface or NULL
+     * @return CollectionInterface|null
      * @api
      */
     public function getCollection($collectionName)

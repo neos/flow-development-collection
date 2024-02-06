@@ -97,13 +97,15 @@ class CompilingEvaluator implements EelEvaluatorInterface
      */
     protected function generateEvaluatorCode($expression)
     {
-        /** @phpstan-ignore-next-line */
+        /** @phpstan-ignore-next-line `CompilingEelParser` has been explicitly excluded from analysis, because it contains generated code that is impossible to fix */
         $parser = new CompilingEelParser($expression);
         $result = $parser->match_Expression();
 
         if ($result === false) {
             throw new ParserException(sprintf('Expression "%s" could not be parsed.', $expression), 1344513194);
+            /** @phpstan-ignore-next-line $parser->pos appears to be undeclared, because instantiation of $parser is hidden as well */
         } elseif ($parser->pos !== strlen($expression)) {
+            /** @phpstan-ignore-next-line $parser->pos appears to be undeclared, because instantiation of $parser is hidden as well */
             throw new ParserException(sprintf('Expression "%s" could not be parsed. Error starting at character %d: "%s".', $expression, $parser->pos, substr($expression, $parser->pos)), 1327682383);
         } elseif (!array_key_exists('code', $result)) {
             throw new ParserException(sprintf('Parser error, no code in result %s ', json_encode($result)), 1334491498);

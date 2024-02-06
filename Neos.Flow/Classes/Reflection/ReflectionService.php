@@ -17,6 +17,7 @@ use Doctrine\Common\Annotations\PhpParser;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Persistence\Proxy as DoctrineProxy;
+use Neos\Cache\Backend\FreezableBackendInterface;
 use Neos\Cache\Exception;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
@@ -24,7 +25,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
-use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
@@ -1676,6 +1676,7 @@ class ReflectionService
             $parameterInformation[self::DATA_PARAMETER_ALLOWS_NULL] = true;
         }
 
+        /** @var \ReflectionNamedType|\ReflectionUnionType|\ReflectionIntersectionType|null $parameterType */
         $parameterType = $parameter->getType();
         if ($parameterType !== null) {
             if ($parameterType instanceof \ReflectionUnionType) {
@@ -1739,7 +1740,6 @@ class ReflectionService
     protected function forgetChangedClasses(): void
     {
         $frozenNamespaces = [];
-        /** @var $package Package */
         foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
             if ($this->packageManager->isPackageFrozen($packageKey)) {
                 $frozenNamespaces = array_merge($frozenNamespaces, $package->getNamespaces());
@@ -2061,8 +2061,12 @@ class ReflectionService
         $this->reflectionDataRuntimeCache->set('__classNames', $classNames);
         $this->reflectionDataRuntimeCache->set('__annotatedClasses', $this->annotatedClasses);
 
-        $this->reflectionDataRuntimeCache->getBackend()->freeze();
-        $this->classSchemataRuntimeCache->getBackend()->freeze();
+        if ($this->reflectionDataRuntimeCache->getBackend() instanceof FreezableBackendInterface) {
+            $this->reflectionDataRuntimeCache->getBackend()->freeze();
+        }
+        if ($this->classSchemataRuntimeCache->getBackend() instanceof FreezableBackendInterface) {
+            $this->classSchemataRuntimeCache->getBackend()->freeze();
+        }
 
         $this->log(sprintf('Built and froze reflection runtime caches (%s classes).', count($this->classReflectionData)), LogLevel::INFO);
     }
@@ -2130,6 +2134,8 @@ class ReflectionService
 
     protected function hasFrozenCacheInProduction(): bool
     {
-        return $this->environment->getContext()->isProduction() && $this->reflectionDataRuntimeCache->getBackend()->isFrozen();
+        return $this->environment->getContext()->isProduction()
+            && $this->reflectionDataRuntimeCache->getBackend() instanceof FreezableBackendInterface
+            && $this->reflectionDataRuntimeCache->getBackend()->isFrozen();
     }
 }

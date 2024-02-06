@@ -41,7 +41,7 @@ class AuthenticationProviderResolver
      * Resolves the class name of an authentication provider. If a valid provider class name is given, it is just returned.
      *
      * @param string $providerName The (short) name of the provider
-     * @return string The object name of the authentication provider
+     * @return class-string<AuthenticationProviderInterface> The object name of the authentication provider
      * @throws NoAuthenticationProviderFoundException
      */
     public function resolveProviderClass($providerName)

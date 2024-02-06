@@ -14,6 +14,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Security;
 
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
+use Neos\FluidAdaptor\Core\Rendering\FlowAwareRenderingContextInterface;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractConditionViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -91,7 +92,7 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
 
     /**
      * @param null $arguments
-     * @param RenderingContextInterface $renderingContext
+     * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return boolean
      */
     protected static function evaluateCondition($arguments, RenderingContextInterface $renderingContext)

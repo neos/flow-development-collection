@@ -260,7 +260,7 @@ class RouterCachingService
      * Recursively converts objects in an array to their identifiers
      *
      * @param array $routeValues the array to be processed
-     * @return array the modified array or NULL if $routeValues contain an object and its identifier could not be determined
+     * @return array|null the modified array or NULL if $routeValues contain an object and its identifier could not be determined
      */
     protected function convertObjectsToHashes(array $routeValues)
     {

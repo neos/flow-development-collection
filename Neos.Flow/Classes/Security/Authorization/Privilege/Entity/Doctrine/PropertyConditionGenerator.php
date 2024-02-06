@@ -11,6 +11,7 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  * source code.
  */
 
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\QuoteStrategy;
@@ -258,7 +259,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     /**
      * @param DoctrineSqlFilter $sqlFilter
      * @param QuoteStrategy $quoteStrategy
-     * @param ClassMetadata $targetEntity
+     * @param ClassMetadataInfo $targetEntity
      * @param string $targetTableAlias
      * @param string $targetEntityPropertyName
      * @return string
@@ -272,7 +273,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
         }
 
         if (is_array($this->operandDefinition)) {
-            throw new InvalidQueryRewritingConstraintException('Multivalued properties with "contains" cannot have a multivalued operand! Got: "' . $this->path . ' ' . $this->operator . ' ' . $this->operandDefinition . '"', 1545145424);
+            throw new InvalidQueryRewritingConstraintException('Multivalued properties with "contains" cannot have a multivalued operand! Got: "' . $this->path . ' ' . $this->operator . ' ' . json_encode($this->operandDefinition) . '"', 1545145424);
         }
 
         $associationMapping = $targetEntity->getAssociationMapping($targetEntityPropertyName);
@@ -345,7 +346,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     /**
      * @param DoctrineSqlFilter $sqlFilter
      * @param QuoteStrategy $quoteStrategy
-     * @param ClassMetadata $targetEntity
+     * @param ClassMetadataInfo $targetEntity
      * @param string $targetTableAlias
      * @param string $targetEntityPropertyName
      * @return string
@@ -390,7 +391,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     /**
      * @param DoctrineSqlFilter $sqlFilter
      * @param QuoteStrategy $quoteStrategy
-     * @param ClassMetadata $targetEntity
+     * @param ClassMetadataInfo $targetEntity
      * @param string $targetTableAlias
      * @param string $targetEntityPropertyName
      * @return string
@@ -471,12 +472,12 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param SQLFilter $sqlFilter
+     * @param DoctrineSqlFilter $sqlFilter
      * @param string $propertyPointer
      * @param string $operandDefinition
      * @return string
      */
-    protected function getConstraintStringForSimpleProperty(SQLFilter $sqlFilter, $propertyPointer, $operandDefinition = null)
+    protected function getConstraintStringForSimpleProperty(DoctrineSqlFilter $sqlFilter, $propertyPointer, $operandDefinition = null)
     {
         $operandDefinition = ($operandDefinition === null ? $this->operandDefinition : $operandDefinition);
         $parameter = null;

@@ -135,7 +135,7 @@ class ApplicationContext
     /**
      * Returns the parent context object, if any
      *
-     * @return ApplicationContext the parent context or NULL, if there is none
+     * @return ApplicationContext|null the parent context or NULL, if there is none
      * @api
      */
     public function getParent()

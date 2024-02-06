@@ -22,7 +22,6 @@ use Neos\Flow\ResourceManagement\ResourceMetaDataInterface;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
 use Neos\Flow\ResourceManagement\Storage\StorageInterface;
-use Neos\Flow\ResourceManagement\Storage\StorageObject;
 use Neos\Utility\Files;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Flow\ResourceManagement\Target\Exception as TargetException;
@@ -44,6 +43,11 @@ class FileSystemTarget implements TargetInterface
      * @var string
      */
     protected $name;
+
+    /**
+     * @var list<\Closure(int $iteration): void>
+     */
+    protected $callbacks = [];
 
     /**
      * The path (in a filesystem) where resources are published to
@@ -167,6 +171,21 @@ class FileSystemTarget implements TargetInterface
     }
 
     /**
+     * @param \Closure(int $iteration): void $callback Function called after each resource publishing
+     */
+    public function onPublish(\Closure $callback): void
+    {
+        $this->callbacks[] = $callback;
+    }
+
+    protected function invokeOnPublishCallbacks(int $iteration): void
+    {
+        foreach ($this->callbacks as $callback) {
+            $callback($iteration);
+        }
+    }
+
+    /**
      * Checks if the PackageStorage has been previously initialized with symlinks
      * and clears them. Otherwise the original sources would be overwritten.
      *
@@ -190,22 +209,25 @@ class FileSystemTarget implements TargetInterface
      * Publishes the whole collection to this target
      *
      * @param CollectionInterface $collection The collection to publish
-     * @param callable $callback Function called after each resource publishing
      * @return void
      */
-    public function publishCollection(CollectionInterface $collection, callable $callback = null)
+    public function publishCollection(CollectionInterface $collection)
     {
         $storage = $collection->getStorage();
         $this->checkAndRemovePackageSymlinks($storage);
-        foreach ($collection->getObjects($callback) as $object) {
-            /** @var StorageObject $object */
+        $iteration = 0;
+        foreach ($collection->getObjects() as $object) {
             $sourceStream = $object->getStream();
             if ($sourceStream === false) {
                 $this->handleMissingData($object, $collection);
                 continue;
             }
+
             $this->publishFile($sourceStream, $this->getRelativePublicationPathAndFilename($object));
             fclose($sourceStream);
+
+            $this->invokeOnPublishCallbacks($iteration);
+            $iteration++;
         }
     }
 

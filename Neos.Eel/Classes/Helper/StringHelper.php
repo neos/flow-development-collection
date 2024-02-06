@@ -230,7 +230,7 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * @param string $string The input string
      * @param string $pattern A PREG pattern
-     * @return array The matches as array or NULL if not matched
+     * @return array|null The matches as array or NULL if not matched
      * @throws EvaluationException
      */
     public function pregMatch($string, $pattern)
@@ -255,7 +255,7 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * @param string $string The input string
      * @param string $pattern A PREG pattern
-     * @return array The matches as array or NULL if not matched
+     * @return array|null The matches as array or NULL if not matched
      * @throws EvaluationException
      */
     public function pregMatchAll($string, $pattern)

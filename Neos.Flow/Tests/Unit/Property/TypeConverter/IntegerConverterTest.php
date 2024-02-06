@@ -57,7 +57,7 @@ class IntegerConverterTest extends UnitTestCase
     public function convertFromCastsDateTimeToInteger()
     {
         $dateTime = new \DateTime();
-        self::assertSame($dateTime->format('U'), $this->converter->convertFrom($dateTime, 'integer'));
+        self::assertSame((int)$dateTime->format('U'), $this->converter->convertFrom($dateTime, 'integer'));
     }
 
     /**
