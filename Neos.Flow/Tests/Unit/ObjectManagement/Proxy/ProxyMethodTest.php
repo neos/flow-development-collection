@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement\Proxy;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\Proxy\ProxyMethod;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
@@ -127,13 +128,56 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
                 'class' => null,
                 'defaultValue' => [0 => true, 'foo' => 'bar', 1 => null, 3 => 1, 4 => 2.3],
                 'scalarDeclaration' => false
-            ],
+            ]
         ];
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue($methodParameters));
 
         $expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = true, array $arg6 = array(0 => true, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3)';
+
+        $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
+        $builder->injectReflectionService($mockReflectionService);
+
+        $actualCode = $builder->buildMethodParametersCode($className, 'foo', true);
+        self::assertSame($expectedCode, $actualCode);
+    }
+
+    /**
+     * @test
+     */
+    public function buildMethodParametersCodeRendersParametersCodeWithCorrectTypeHintAndDefaultValueWhenClassIsGiven()
+    {
+        if ((\PHP_MAJOR_VERSION >= 8 && \PHP_MINOR_VERSION >= 1) === false) {
+            $this->markTestSkipped('Only testing on minimum PHP 8.1');
+        }
+
+        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        eval('
+            /**
+             * @param Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass $arg1 Arg1
+             */
+            class ' . $className . ' {
+                public function foo(\Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass $arg1 = new \Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass()) {}
+            }
+        ');
+        $methodParameters = [
+            'arg1' => [
+                'position' => 0,
+                'byReference' => false,
+                'array' => false,
+                'optional' => true,
+                'allowsNull' => false,
+                'class' => BasicClass::class,
+                'defaultValue' => new BasicClass(),
+                'scalarDeclaration' => false
+            ],
+        ];
+
+        $mockReflectionService = $this->createMock(ReflectionService::class);
+        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue($methodParameters));
+
+        $expectedCode = '\Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass $arg1 = new Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass()';
 
         $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
         $builder->injectReflectionService($mockReflectionService);
