@@ -356,11 +356,14 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $environment = $bootstrap->getEarlyInstance(Environment::class);
 
-        $cacheFactoryClass = null;
+        // Workaround to find the correct CacheFactory implementation at compile time.
+        // We can rely on the $objectConfiguration being ordered by the package names after their loading order.
+        // Normally this wiring would be done for proxy building a similar way, see ConfigurationBuilder.
+        $cacheFactoryClass = CacheFactory::class;
         $cacheFactoryObjectConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS);
         foreach ($cacheFactoryObjectConfiguration as $objectConfiguration) {
-            if (isset($objectConfiguration[CacheFactoryInterface::class])) {
-                $cacheFactoryClass = $objectConfiguration[CacheFactoryInterface::class]['className'] ?? CacheFactory::class;
+            if (isset($objectConfiguration[CacheFactoryInterface::class]['className'])) {
+                $cacheFactoryClass = $objectConfiguration[CacheFactoryInterface::class]['className'];
             }
         }
 
