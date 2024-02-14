@@ -377,8 +377,6 @@ class Scripts
         $cacheManager->injectEnvironment($environment);
         $cacheManager->injectCacheFactory($cacheFactory);
 
-        $cacheFactory->injectCacheManager($cacheManager);
-
         $bootstrap->setEarlyInstance(CacheManager::class, $cacheManager);
         $bootstrap->setEarlyInstance(CacheFactory::class, $cacheFactory);
     }
