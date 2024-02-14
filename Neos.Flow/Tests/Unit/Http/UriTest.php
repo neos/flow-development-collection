@@ -11,8 +11,8 @@ namespace Neos\Flow\Tests\Unit\Http;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Uri as GuzzleUri;
-use Neos\Flow\Http\Uri as FlowUri;
+use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\UriHelper;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -21,6 +21,41 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class UriTest extends UnitTestCase
 {
+    /** @test */
+    public function specificationWithoutQueryParametersDontModifyTheUri()
+    {
+        self::assertEquals(
+            new Uri('http://localhost/index?param1=foo&param2[0]=bar'),
+            UriHelper::withAdditionalQueryParameters(new Uri('http://localhost/index?param1=foo&param2[0]=bar'), [])
+        );
+    }
+
+    /** @test */
+    public function queryParametersAddedToUriWithoutQueryParameters()
+    {
+        self::assertEquals(
+            new Uri('http://localhost/index?param=123'),
+            UriHelper::withAdditionalQueryParameters(new Uri('http://localhost/index'), ['param' => 123])
+        );
+    }
+
+    /** @test */
+    public function nestedQueryParametersAreMergedCorrectly()
+    {
+        self::assertEquals(
+            new Uri('http://localhost/index?param1=foo&param2[a]=bar&param2[b]=huhu&param3=123'),
+            UriHelper::withAdditionalQueryParameters(
+                new Uri('http://localhost/index?param1=foo&param2[a]=bar'),
+                [
+                    'param2' => [
+                        'b' => 'huhu'
+                    ],
+                    'param3' => 123,
+                ]
+            )
+        );
+    }
+
     /**
      * Checks if a complete URI with all parts is transformed into an object correctly.
      *
@@ -29,7 +64,7 @@ class UriTest extends UnitTestCase
     public function constructorParsesAFullBlownUriStringCorrectly()
     {
         $uriString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchor';
-        $uri = FlowUri::decorate(new GuzzleUri($uriString));
+        $uri = new Uri($uriString);
 
         $check = (
             $uri->getScheme() === 'http' &&
@@ -69,7 +104,7 @@ class UriTest extends UnitTestCase
      */
     public function urisCanBeConvertedForthAndBackWithoutLoss(string $uriString)
     {
-        $uri = FlowUri::decorate(new GuzzleUri($uriString));
+        $uri = new Uri($uriString);
         self::assertSame($uriString, (string)$uri);
     }
 
@@ -80,7 +115,7 @@ class UriTest extends UnitTestCase
      */
     public function settingSchemeAndHostOnUriDoesNotConfuseToString()
     {
-        $uri = FlowUri::decorate(new GuzzleUri('/no/scheme/or/host'));
+        $uri = new Uri('/no/scheme/or/host');
         $uri = $uri->withScheme('http')
                    ->withHost('localhost');
         self::assertSame('http://localhost/no/scheme/or/host', (string)$uri);
@@ -91,11 +126,11 @@ class UriTest extends UnitTestCase
      */
     public function toStringOmitsStandardPorts()
     {
-        $uri = FlowUri::decorate(new GuzzleUri('http://flow.neos.io'));
+        $uri = new Uri('http://flow.neos.io');
         self::assertSame('http://flow.neos.io', (string)$uri);
         self::assertNull($uri->getPort());
 
-        $uri = FlowUri::decorate(new GuzzleUri('https://flow.neos.io'));
+        $uri = new Uri('https://flow.neos.io');
         self::assertSame('https://flow.neos.io', (string)$uri);
         self::assertNull($uri->getPort());
     }
@@ -106,7 +141,7 @@ class UriTest extends UnitTestCase
     public function constructorParsesArgumentsWithSpecialCharactersCorrectly()
     {
         $uriString = 'http://www.neos.io/path1/?argumentäöü1=' . urlencode('valueåø€œ');
-        $uri = FlowUri::decorate(new GuzzleUri($uriString));
+        $uri = new Uri($uriString);
 
         $check = (
             $uri->getScheme() === 'http' &&
@@ -135,7 +170,7 @@ class UriTest extends UnitTestCase
      */
     public function constructorParsesHostCorrectly(string $uriString, string $expectedHost)
     {
-        $uri = FlowUri::decorate(new GuzzleUri($uriString));
+        $uri = new Uri($uriString);
         self::assertSame($expectedHost, $uri->getHost());
     }
 
@@ -145,7 +180,7 @@ class UriTest extends UnitTestCase
      */
     public function settingValidHostPassesRegexCheck(string $uriString, string $plainHost)
     {
-        $uri = FlowUri::decorate(new GuzzleUri(''))->withHost($plainHost);
+        $uri = (new Uri(''))->withHost($plainHost);
         self::assertEquals($plainHost, $uri->getHost());
     }
 
@@ -164,18 +199,18 @@ class UriTest extends UnitTestCase
      */
     public function stringRepresentationIsCorrect(string $uriString)
     {
-        $uri = FlowUri::decorate(new GuzzleUri($uriString));
+        $uri = new Uri($uriString);
         self::assertEquals($uriString, (string)$uri, 'The string representation of the URI is not equal to the original URI string.');
     }
 
     /**
      * @test
      */
-    public function constructingWithNotAUriThrowsException()
+    public function constructingWithNotAStringThrowsException()
     {
         $error = null;
         try {
-            FlowUri::decorate('http://foo.bar');
+            new Uri(['http://foo.bar']);
         } catch (\Throwable $error) {
         }
         $this->assertNotEmpty($error);
@@ -187,66 +222,6 @@ class UriTest extends UnitTestCase
     public function unparsableUriStringThrowsException()
     {
         $this->expectException(\InvalidArgumentException::class);
-        new GuzzleUri('http:////localhost');
-    }
-
-    /** @test */
-    public function specificationWithoutQueryParametersDontModifyTheUri()
-    {
-        self::assertEquals(
-            FlowUri::decorate(new GuzzleUri('http://localhost/index?param1=foo&param2[0]=bar')),
-            FlowUri::decorate(new GuzzleUri('http://localhost/index?param1=foo&param2[0]=bar'))->withAdditionalQueryParameters([])
-        );
-    }
-
-    /** @test */
-    public function queryParametersAddedToUriWithoutQueryParameters()
-    {
-        self::assertEquals(
-            FlowUri::decorate(new GuzzleUri('http://localhost/index?param=123')),
-            FlowUri::decorate(new GuzzleUri('http://localhost/index'))
-                ->withAdditionalQueryParameters(['param' => 123])
-        );
-    }
-
-    /** @test */
-    public function nestedQueryParametersAreMergedCorrectly()
-    {
-        self::assertEquals(
-            FlowUri::decorate(new GuzzleUri('http://localhost/index?param1=foo&param2[a]=bar&param2[b]=huhu&param3=123')),
-            FlowUri::decorate(new GuzzleUri('http://localhost/index?param1=foo&param2[a]=bar'))
-                ->withAdditionalQueryParameters([
-                    'param2' => [
-                        'b' => 'huhu'
-                    ],
-                    'param3' => 123,
-                ])
-        );
-    }
-
-    /** @test */
-    public function aFlowUriIsReturnedAgain()
-    {
-        $uri = FlowUri::decorate(new GuzzleUri(''));
-        self::assertInstanceOf(FlowUri::class, $uri);
-        $uri = $uri->withScheme('http');
-        self::assertInstanceOf(FlowUri::class, $uri);
-        $uri = $uri->withUserInfo('foo');
-        self::assertInstanceOf(FlowUri::class, $uri);
-        $uri = $uri->withHost('marchery.de');
-        self::assertInstanceOf(FlowUri::class, $uri);
-        $uri = $uri->withPort(2001);
-        self::assertInstanceOf(FlowUri::class, $uri);
-        $uri = $uri->withPath('foo');
-        self::assertInstanceOf(FlowUri::class, $uri);
-        $uri = $uri->withQuery('bla=bliblub');
-        self::assertInstanceOf(FlowUri::class, $uri);
-        $uri = $uri->withFragment('hello');
-        self::assertInstanceOf(FlowUri::class, $uri);
-
-        $uri = $uri->withAdditionalQueryParameters(['this' => 'that']);
-        self::assertInstanceOf(FlowUri::class, $uri);
-
-        self::assertSame('http://foo@marchery.de:2001/foo?bla=bliblub&this=that#hello', (string)$uri);
+        new Uri('http:////localhost');
     }
 }

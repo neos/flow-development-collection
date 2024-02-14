@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\Http\Factories;
 
-use GuzzleHttp\Psr7\Uri as UriImplementation;
-use Neos\Flow\Http\Uri as UriDecorator;
+use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -17,6 +16,6 @@ trait UriFactoryTrait
      */
     public function createUri(string $uri = ''): UriInterface
     {
-        return UriDecorator::decorate(new UriImplementation($uri));
+        return new Uri($uri);
     }
 }

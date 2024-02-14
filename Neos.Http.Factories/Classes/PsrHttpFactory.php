@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Neos\Http\Factories;
 
-use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
