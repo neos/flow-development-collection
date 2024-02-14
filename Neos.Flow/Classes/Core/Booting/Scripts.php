@@ -356,10 +356,15 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $environment = $bootstrap->getEarlyInstance(Environment::class);
 
-        $cacheFactoryObjectConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, CacheFactoryInterface::class);
-        $cacheFactoryClass = isset($cacheFactoryObjectConfiguration['className']) ? $cacheFactoryObjectConfiguration['className'] : CacheFactory::class;
+        $cacheFactoryClass = null;
+        $cacheFactoryObjectConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS);
+        foreach ($cacheFactoryObjectConfiguration as $objectConfiguration) {
+            if (isset($objectConfiguration[CacheFactoryInterface::class])) {
+                $cacheFactoryClass = $objectConfiguration[CacheFactoryInterface::class]['className'] ?? CacheFactory::class;
+            }
+        }
 
-        /** @var CacheFactory $cacheFactory */
+        /** @var CacheFactoryInterface $cacheFactory */
         $cacheFactory = new $cacheFactoryClass($bootstrap->getContext(), $environment, $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.cache.applicationIdentifier'));
 
         $cacheManager = new CacheManager();

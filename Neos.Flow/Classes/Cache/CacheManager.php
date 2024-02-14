@@ -11,6 +11,7 @@ namespace Neos\Flow\Cache;
  * source code.
  */
 
+use Neos\Cache\CacheFactoryInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\Exception\DuplicateIdentifierException;
@@ -37,7 +38,7 @@ use Psr\Cache\CacheItemPoolInterface;
 class CacheManager
 {
     /**
-     * @var CacheFactory
+     * @var CacheFactoryInterface
      */
     protected $cacheFactory;
 
@@ -100,10 +101,10 @@ class CacheManager
     }
 
     /**
-     * @param CacheFactory $cacheFactory
+     * @param CacheFactoryInterface $cacheFactory
      * @return void
      */
-    public function injectCacheFactory(CacheFactory $cacheFactory): void
+    public function injectCacheFactory(CacheFactoryInterface $cacheFactory): void
     {
         $this->cacheFactory = $cacheFactory;
     }
