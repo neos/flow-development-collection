@@ -136,7 +136,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
      */
     public function getPropertyThrowsExceptionIfThePropertyNameIsNotAString()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         ObjectAccess::getProperty($this->dummyObject, new \ArrayObject());
     }
 
@@ -145,7 +145,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
      */
     public function setPropertyThrowsExceptionIfThePropertyNameIsNotAString()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         ObjectAccess::setProperty($this->dummyObject, new \ArrayObject(), 42);
     }
 
@@ -560,7 +560,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     public function setPropertyUsingDirectAccessWorksOnPrivatePropertyOfProxyParent()
     {
         $proxyObject = new ProxiedClassWithPrivateProperty();
- 
+
         ObjectAccess::setProperty($proxyObject, 'property', 'changed', true);
         self::assertEquals('changed', $proxyObject->getProperty());
     }
