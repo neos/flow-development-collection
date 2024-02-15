@@ -666,7 +666,7 @@ function var_dump($variable, string $title = null, bool $return = false, bool $p
     } else {
         $output = '';
         if (Debugger::$stylesheetEchoed === false) {
-            $output .= '<style type="text/css">' . file_get_contents('resource://Neos.Flow/Public/Error/Debugger.css') . '</style>';
+            $output .= '<style type="text/css">' . file_get_contents('resource://Neos.Flow/Private/Error/Debugger.css') . '</style>';
             Debugger::$stylesheetEchoed = true;
         }
         $output .= '
