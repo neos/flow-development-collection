@@ -31,7 +31,7 @@ class ConfigurationTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->objectConfiguration = new Configuration\Configuration('Neos\Foo\Bar');
+        $this->objectConfiguration = new Configuration\Configuration('Neos\Foo\Bar', 'Neos\Foo\Bar');
     }
 
     /**
@@ -121,7 +121,7 @@ class ConfigurationTest extends UnitTestCase
      */
     public function setFactoryMethodNameRejectsAnythingElseThanAString()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         $this->objectConfiguration->setFactoryMethodName([]);
     }
 

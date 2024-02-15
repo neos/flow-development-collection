@@ -24,17 +24,17 @@ class DependencyProxy
     /**
      * @var string
      */
-    protected $className;
+    protected string $className;
 
     /**
      * @var \Closure
      */
-    protected $builder;
+    protected \Closure $builder;
 
     /**
      * @var array
      */
-    protected $propertyVariables = [];
+    protected array $propertyVariables = [];
 
     /**
      * Constructs this proxy
@@ -42,7 +42,7 @@ class DependencyProxy
      * @param string $className Implementation class name of the dependency to proxy
      * @param \Closure $builder The closure which eventually builds the dependency
      */
-    public function __construct($className, \Closure $builder)
+    public function __construct(string $className, \Closure $builder)
     {
         $this->className = $className;
         $this->builder = $builder;
@@ -54,7 +54,7 @@ class DependencyProxy
      * @return object The real dependency object
      * @api
      */
-    public function _activateDependency()
+    public function _activateDependency(): object
     {
         $realDependency = $this->builder->__invoke();
         foreach ($this->propertyVariables as &$propertyVariable) {
@@ -69,7 +69,7 @@ class DependencyProxy
      * @return string Fully qualified class name of the proxied object
      * @api
      */
-    public function _getClassName()
+    public function _getClassName(): string
     {
         return $this->className;
     }
@@ -81,7 +81,7 @@ class DependencyProxy
      * @param mixed &$propertyVariable The variable to replace
      * @return void
      */
-    public function _addPropertyVariable(&$propertyVariable)
+    public function _addPropertyVariable(mixed &$propertyVariable): void
     {
         $this->propertyVariables[] = &$propertyVariable;
     }
@@ -94,7 +94,7 @@ class DependencyProxy
      * @param array $arguments An array of arguments to be passed to the method
      * @return mixed
      */
-    public function __call($methodName, array $arguments)
+    public function __call(string $methodName, array $arguments): mixed
     {
         return $this->_activateDependency()->$methodName(...$arguments);
     }

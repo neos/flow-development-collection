@@ -20,43 +20,44 @@ use Neos\Flow\Annotations as Flow;
  */
 class ConfigurationProperty
 {
-    const PROPERTY_TYPES_STRAIGHTVALUE = 0;
-    const PROPERTY_TYPES_OBJECT = 1;
-    const PROPERTY_TYPES_CONFIGURATION = 2;
-    const PROPERTY_TYPES_CACHE = 3;
+    public const PROPERTY_TYPES_STRAIGHTVALUE = 0;
+    public const PROPERTY_TYPES_OBJECT = 1;
+    public const PROPERTY_TYPES_CONFIGURATION = 2;
+    public const PROPERTY_TYPES_CACHE = 3;
 
     /**
      * @var string Name of the property
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @var mixed Value of the property
      */
-    protected $value;
+    protected mixed $value;
 
     /**
      * @var integer Type of the property - one of the PROPERTY_TYPE_* constants
      */
-    protected $type;
+    protected int $type = self::PROPERTY_TYPES_STRAIGHTVALUE;
 
     /**
      * If specified, this configuration is used for instantiating / retrieving an property of type object
-     * @var Configuration
+     *
+     * @var Configuration|null
      */
-    protected $objectConfiguration = null;
+    protected ?Configuration $objectConfiguration = null;
 
     /**
      * @var integer
      */
-    protected $autowiring = Configuration::AUTOWIRING_MODE_ON;
+    protected int $autowiring = Configuration::AUTOWIRING_MODE_ON;
 
     /**
      * Should this property be lazy loaded
      *
      * @var boolean
      */
-    protected $lazyLoading = true;
+    protected bool $lazyLoading = true;
 
     /**
      * Constructor - sets the name, type and value of the property
@@ -64,10 +65,10 @@ class ConfigurationProperty
      * @param string $name Name of the property
      * @param mixed $value Value of the property
      * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
-     * @param Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
+     * @param Configuration|null $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
      * @param boolean $lazyLoading
      */
-    public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = null, $lazyLoading = true)
+    public function __construct(string $name, mixed $value, int $type = self::PROPERTY_TYPES_STRAIGHTVALUE, ?Configuration $objectConfiguration = null, bool $lazyLoading = true)
     {
         $this->set($name, $value, $type, $objectConfiguration, $lazyLoading);
     }
@@ -78,11 +79,11 @@ class ConfigurationProperty
      * @param string $name Name of the property
      * @param mixed $value Value of the property
      * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
-     * @param Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
+     * @param Configuration|null $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
      * @param boolean $lazyLoading
      * @return void
      */
-    public function set($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = null, $lazyLoading = true)
+    public function set(string $name, mixed $value, int $type = self::PROPERTY_TYPES_STRAIGHTVALUE, ?Configuration $objectConfiguration = null, bool $lazyLoading = true)
     {
         $this->name = $name;
         $this->value = $value;
@@ -96,7 +97,7 @@ class ConfigurationProperty
      *
      * @return string Name of the property
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -106,7 +107,7 @@ class ConfigurationProperty
      *
      * @return mixed Value of the property
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
@@ -116,7 +117,7 @@ class ConfigurationProperty
      *
      * @return integer Type of the property
      */
-    public function getType()
+    public function getType(): int
     {
         return $this->type;
     }
@@ -126,7 +127,7 @@ class ConfigurationProperty
      *
      * @return Configuration|null The object configuration or NULL
      */
-    public function getObjectConfiguration()
+    public function getObjectConfiguration(): ?Configuration
     {
         return $this->objectConfiguration;
     }
@@ -137,7 +138,7 @@ class ConfigurationProperty
      * @param integer $autowiring One of the Configuration::AUTOWIRING_MODE_* constants
      * @return void
      */
-    public function setAutowiring($autowiring)
+    public function setAutowiring(int $autowiring): void
     {
         $this->autowiring = $autowiring;
     }
@@ -147,7 +148,7 @@ class ConfigurationProperty
      *
      * @return integer Value of one of the Configuration::AUTOWIRING_MODE_* constants
      */
-    public function getAutowiring()
+    public function getAutowiring(): int
     {
         return $this->autowiring;
     }
@@ -157,7 +158,7 @@ class ConfigurationProperty
      *
      * @return boolean
      */
-    public function isLazyLoading()
+    public function isLazyLoading(): bool
     {
         return $this->lazyLoading;
     }

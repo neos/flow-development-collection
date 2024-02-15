@@ -156,7 +156,7 @@ class ConfigurationBuilderTest extends UnitTestCase
                 ->will(self::returnValue(true));
 
         $configurationBuilder->injectReflectionService($reflectionServiceMock);
-        $configurationBuilder->_callRef('autowireProperties', $dummyObjectConfiguration);
+        $configurationBuilder->_call('autowireProperties', $dummyObjectConfiguration);
     }
 
     /**
@@ -172,7 +172,7 @@ class ConfigurationBuilderTest extends UnitTestCase
         $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
         $dummyObjectConfiguration = [$configurationBuilder->_call('parseConfigurationArray', 'Foo', $configurationArray, __CLASS__)];
 
-        $configurationBuilder->_callRef('autowireProperties', $dummyObjectConfiguration);
+        $configurationBuilder->_call('autowireProperties', $dummyObjectConfiguration);
     }
 
     /**
@@ -243,7 +243,7 @@ class ConfigurationBuilderTest extends UnitTestCase
 
         $configurationBuilder->injectReflectionService($reflectionServiceMock);
         try {
-            $configurationBuilder->_callRef('autowireArguments', $dummyObjectConfiguration);
+            $configurationBuilder->_call('autowireArguments', $dummyObjectConfiguration);
         } catch (UnresolvedDependenciesException $e) {
             self::fail('Factory created objects should not throw UnresolvedDependenciesException by autowiring constructor arguments');
         }
