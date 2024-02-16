@@ -31,6 +31,7 @@ use Neos\Utility\ObjectAccess;
 
 /**
  * Implementation of a standard route
+ * @phpstan-consistent-constructor
  */
 class Route
 {
@@ -171,6 +172,41 @@ class Route
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    public static function fromConfiguration(array $configuration): static
+    {
+        /** @phpstan-ignore-next-line phpstan doesn't respekt the consistent constructor flag in the class doc block */
+        $route = new static();
+        if (isset($configuration['name'])) {
+            $route->setName($configuration['name']);
+        }
+        $uriPattern = $configuration['uriPattern'];
+        $route->setUriPattern($uriPattern);
+        if (isset($configuration['defaults'])) {
+            $route->setDefaults($configuration['defaults']);
+        }
+        if (isset($configuration['routeParts'])) {
+            $route->setRoutePartsConfiguration($configuration['routeParts']);
+        }
+        if (isset($configuration['toLowerCase'])) {
+            $route->setLowerCase($configuration['toLowerCase']);
+        }
+        if (isset($configuration['appendExceedingArguments'])) {
+            $route->setAppendExceedingArguments($configuration['appendExceedingArguments']);
+        }
+        if (isset($configuration['cache'])) {
+            if (isset($configuration['cache']['lifetime'])) {
+                $route->setCacheLifetime(RouteLifetime::fromInt($configuration['cache']['lifetime']));
+            }
+            if (isset($configuration['cache']['tags']) && !empty($configuration['cache']['lifetime'])) {
+                $route->setCacheTags(RouteTags::createFromArray($configuration['cache']['tags']));
+            }
+        }
+        if (isset($configuration['httpMethods'])) {
+            $route->setHttpMethods($configuration['httpMethods']);
+        }
+        return $route;
+    }
 
     /**
      * Sets Route name.

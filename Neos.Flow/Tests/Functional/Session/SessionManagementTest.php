@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Session;
  * source code.
  */
 
-use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Session;
 
@@ -24,17 +23,17 @@ class SessionManagementTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $route = new Route();
-        $route->setName('Functional Test - Session::SessionTest');
-        $route->setUriPattern('test/session(/{@action})');
-        $route->setDefaults([
-            '@package' => 'Neos.Flow',
-            '@subpackage' => 'Tests\Functional\Session\Fixtures',
-            '@controller' => 'SessionTest',
-            '@action' => 'sessionStart',
-            '@format' =>'html'
-        ]);
-        $this->router->addRoute($route);
+        $this->registerRoute(
+            'Functional Test - Session::SessionTest',
+            'test/session(/{@action})',
+            [
+                '@package' => 'Neos.Flow',
+                '@subpackage' => 'Tests\Functional\Session\Fixtures',
+                '@controller' => 'SessionTest',
+                '@action' => 'sessionStart',
+                '@format' =>'html'
+            ]
+        );
     }
 
     /**
