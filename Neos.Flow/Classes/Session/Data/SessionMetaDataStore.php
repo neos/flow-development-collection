@@ -71,7 +71,7 @@ class SessionMetaDataStore
     public function retrieve(SessionIdentifier $sessionIdentifier): ?SessionMetaData
     {
         /**
-         * @var $metaDataFromCache false|array|SessionMetaData
+         * @var false|array|SessionMetaData $metaDataFromCache
          */
         $metaDataFromCache = $this->cache->get($sessionIdentifier->value);
         if ($metaDataFromCache === false) {
