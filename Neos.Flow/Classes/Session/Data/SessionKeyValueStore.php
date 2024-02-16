@@ -64,12 +64,6 @@ class SessionKeyValueStore
         $serializedValue = ($this->useIgBinary === true) ? igbinary_serialize($value) : serialize($value);
         $valueHash = md5($serializedValue);
         $debounceHash = $this->writeDebounceHashes[$storageIdentifier->value][$key] ?? null;
-        if ($debounceHash === null) {
-            $previousSerializedValue = $this->cache->get($entryIdentifier);
-            if (is_string($previousSerializedValue)) {
-                $debounceHash = md5($previousSerializedValue);
-            }
-        }
         if ($debounceHash !== null && $debounceHash === $valueHash) {
             return;
         }
