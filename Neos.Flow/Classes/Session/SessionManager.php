@@ -81,10 +81,9 @@ class SessionManager implements SessionManagerInterface
      * Returns the currently active session which stores session data for the
      * current HTTP request on this local system.
      *
-     * @return SessionInterface
      * @api
      */
-    public function getCurrentSession()
+    public function getCurrentSession(): SessionInterface
     {
         if ($this->currentSession === null) {
             $this->currentSession = Session::create();
@@ -94,9 +93,8 @@ class SessionManager implements SessionManagerInterface
 
     /**
      * @param Cookie $cookie
-     * @return bool
      */
-    public function initializeCurrentSessionFromCookie(Cookie $cookie)
+    public function initializeCurrentSessionFromCookie(Cookie $cookie): bool
     {
         if ($this->currentSession !== null && $this->currentSession->isStarted()) {
             return false;
@@ -116,9 +114,8 @@ class SessionManager implements SessionManagerInterface
 
     /**
      * @param Cookie $cookie
-     * @return bool
      */
-    public function createCurrentSessionFromCookie(Cookie $cookie)
+    public function createCurrentSessionFromCookie(Cookie $cookie): bool
     {
         if ($this->currentSession !== null && $this->currentSession->isStarted()) {
             return false;
@@ -137,7 +134,7 @@ class SessionManager implements SessionManagerInterface
      * @return SessionInterface|null
      * @api
      */
-    public function getSession($sessionIdentifier)
+    public function getSession(string $sessionIdentifier): ?SessionInterface
     {
         if ($this->currentSession !== null && $this->currentSession->isStarted() && $this->currentSession->getId() === $sessionIdentifier) {
             return $this->currentSession;
@@ -160,7 +157,7 @@ class SessionManager implements SessionManagerInterface
      * @return array<SessionInterface>
      * @api
      */
-    public function getActiveSessions()
+    public function getActiveSessions(): array
     {
         $activeSessions = [];
         foreach ($this->sessionMetaDataStore->retrieveAll() as $sessionIdentifier => $sessionMetaData) {
@@ -177,7 +174,7 @@ class SessionManager implements SessionManagerInterface
      * @return array A collection of Session objects or an empty array if tag did not match
      * @api
      */
-    public function getSessionsByTag($tag)
+    public function getSessionsByTag(string $tag): array
     {
         $taggedSessions = [];
         foreach ($this->sessionMetaDataStore->retrieveByTag($tag) as $sessionIdentifier => $sessionMetaData) {
@@ -194,7 +191,7 @@ class SessionManager implements SessionManagerInterface
      * @param string $reason A reason to mention in log output for why the sessions have been destroyed. For example: "The corresponding account was deleted"
      * @return integer Number of sessions which have been destroyed
      */
-    public function destroySessionsByTag($tag, $reason = '')
+    public function destroySessionsByTag(string $tag, string $reason = ''): int
     {
         $sessions = $this->getSessionsByTag($tag);
         foreach ($sessions as $session) {
@@ -254,7 +251,7 @@ class SessionManager implements SessionManagerInterface
      * @throws NotSupportedByBackendException
      * @throws \Neos\Cache\Exception
      */
-    public function shutdownObject()
+    public function shutdownObject(): void
     {
         $decimals = strlen(strrchr((string)$this->garbageCollectionProbability, '.')) - 1;
         $factor = ($decimals > -1) ? $decimals * 10 : 1;

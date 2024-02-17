@@ -18,31 +18,23 @@ interface SessionInterface
 {
     /**
      * Tells if the session has been started already.
-     *
-     * @return boolean
      */
-    public function isStarted();
+    public function isStarted(): bool;
 
     /**
      * Starts the session, if is has not been already started
-     *
-     * @return void
      */
-    public function start();
+    public function start(): void;
 
     /**
      * Returns true if there is a session that can be resumed. false otherwise
-     *
-     * @return boolean
      */
-    public function canBeResumed();
+    public function canBeResumed(): bool;
 
     /**
      * Resumes an existing session, if any.
-     *
-     * @return void
      */
-    public function resume();
+    public function resume(): null|int;
 
     /**
      * Returns the current session ID.
@@ -50,7 +42,7 @@ interface SessionInterface
      * @return string The current session ID
      * @throws Exception\SessionNotStartedException
      */
-    public function getId();
+    public function getId(): string;
 
     /**
      * Generates and propagates a new session ID and transfers all existing data
@@ -60,7 +52,7 @@ interface SessionInterface
      *
      * @return string The new session ID
      */
-    public function renewId();
+    public function renewId(): string;
 
     /**
      * Returns the content (mixed) associated with the given key.
@@ -69,25 +61,23 @@ interface SessionInterface
      * @return mixed The contents associated with the given key
      * @throws Exception\SessionNotStartedException
      */
-    public function getData($key);
+    public function getData(string $key): mixed;
 
     /**
      * Returns true if $key is available.
      *
-     * @param string $key
-     * @return boolean
+     * @param string $key The key to check for
      */
-    public function hasKey($key);
+    public function hasKey(string $key): bool;
 
     /**
      * Stores the given data under the given key in the session
      *
      * @param string $key The key under which the data should be stored
      * @param mixed $data The data to be stored
-     * @return void
      * @throws Exception\SessionNotStartedException
      */
-    public function putData($key, $data);
+    public function putData(string $key, mixed $data): void;
 
     /**
      * Tags this session with the given tag.
@@ -96,39 +86,36 @@ interface SessionInterface
      * recommended to use namespaced tags such as "Acme-Demo-MySpecialTag".
      *
      * @param string $tag The tag – must match be a valid cache frontend tag
-     * @return void
      * @throws Exception\SessionNotStartedException
      * @throws \InvalidArgumentException
      * @api
      */
-    public function addTag($tag);
+    public function addTag(string $tag): void;
 
     /**
      * Removes the specified tag from this session.
      *
      * @param string $tag The tag – must match be a valid cache frontend tag
-     * @return void
      * @throws Exception\SessionNotStartedException
      * @api
      */
-    public function removeTag($tag);
+    public function removeTag(string $tag): void;
 
     /**
      * Returns the tags this session has been tagged with.
      *
-     * @return array The tags or an empty array if there aren't any
+     * @return string[] The tags or an empty array if there aren't any
      * @throws Exception\SessionNotStartedException
      * @api
      */
-    public function getTags();
+    public function getTags(): array;
 
     /**
      * Updates the last activity time to "now".
      *
-     * @return void
      * @api
      */
-    public function touch();
+    public function touch(): void;
 
     /**
      * Returns the unix time stamp marking the last point in time this session has
@@ -140,22 +127,20 @@ interface SessionInterface
      * @return integer unix timestamp
      * @api
      */
-    public function getLastActivityTimestamp();
+    public function getLastActivityTimestamp(): int;
 
     /**
      * Explicitly writes (persists) and closes the session
      *
-     * @return void
      * @throws Exception\SessionNotStartedException
      */
-    public function close();
+    public function close(): void;
 
     /**
      * Explicitly destroys all session data
      *
      * @param string $reason A reason for destroying the session – used by the LoggingAspect
-     * @return void
      * @throws Exception\SessionNotStartedException
      */
-    public function destroy($reason = null);
+    public function destroy(string $reason = null): void;
 }

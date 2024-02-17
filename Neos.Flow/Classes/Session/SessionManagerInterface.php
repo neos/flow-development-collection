@@ -28,20 +28,18 @@ interface SessionManagerInterface
      * Returns the currently active session which stores session data for the
      * current HTTP request on this local system.
      *
-     * @return SessionInterface
      * @api
      */
-    public function getCurrentSession();
+    public function getCurrentSession(): SessionInterface;
 
     /**
      * Returns the specified session. If no session with the given identifier exists,
      * NULL is returned.
      *
      * @param string $sessionIdentifier The session identifier
-     * @return SessionInterface|null
      * @api
      */
-    public function getSession($sessionIdentifier);
+    public function getSession(string $sessionIdentifier): ?SessionInterface;
 
     /**
      * Returns all active sessions, even remote ones.
@@ -49,7 +47,7 @@ interface SessionManagerInterface
      * @return array<Session>
      * @api
      */
-    public function getActiveSessions();
+    public function getActiveSessions(): array;
 
     /**
      * Returns all sessions which are tagged by the specified tag.
@@ -58,7 +56,7 @@ interface SessionManagerInterface
      * @return array A collection of Session objects or an empty array if tag did not match
      * @api
      */
-    public function getSessionsByTag($tag);
+    public function getSessionsByTag(string $tag): array;
 
     /**
      * Destroys all sessions which are tagged with the specified tag.
@@ -68,7 +66,7 @@ interface SessionManagerInterface
      * @return integer Number of sessions which have been destroyed
      * @api
      */
-    public function destroySessionsByTag($tag, $reason = '');
+    public function destroySessionsByTag(string $tag, string $reason = ''): int;
 
     /**
      * Remove data of all sessions which are considered to be expired.
