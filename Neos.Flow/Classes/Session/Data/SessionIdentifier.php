@@ -23,7 +23,7 @@ use Neos\Flow\Utility\Algorithms;
 class SessionIdentifier
 {
     private function __construct(
-        public /*readonly*/ $value
+        public readonly string $value
     ) {
     }
 

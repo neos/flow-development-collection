@@ -27,10 +27,10 @@ class SessionMetaData
      * @param string[] $tags
      */
     public function __construct(
-        public /** readonly */ SessionIdentifier $sessionIdentifier,
-        public /** readonly */ StorageIdentifier $storageIdentifier,
-        public /** readonly */ int $lastActivityTimestamp,
-        public /** readonly */ array $tags
+        public readonly SessionIdentifier $sessionIdentifier,
+        public readonly StorageIdentifier $storageIdentifier,
+        public readonly int $lastActivityTimestamp,
+        public readonly array $tags
     ) {
     }
 

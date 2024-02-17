@@ -23,7 +23,7 @@ use Neos\Flow\Utility\Algorithms;
 class StorageIdentifier
 {
     private function __construct(
-        public /*readonly*/ $value
+        public readonly string $value
     ) {
     }
 
