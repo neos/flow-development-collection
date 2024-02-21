@@ -497,6 +497,7 @@ class CacheManager
         $backend = isset($this->cacheConfigurations[$identifier]['backend']) ? $this->cacheConfigurations[$identifier]['backend'] : $this->cacheConfigurations['Default']['backend'];
         $backendOptions = isset($this->cacheConfigurations[$identifier]['backendOptions']) ? $this->cacheConfigurations[$identifier]['backendOptions'] : $this->cacheConfigurations['Default']['backendOptions'];
         $persistent = isset($this->cacheConfigurations[$identifier]['persistent']) ? $this->cacheConfigurations[$identifier]['persistent'] : $this->cacheConfigurations['Default']['persistent'];
+        // @phpstan-ignore-next-line - $persistent is not yet part of the CacheFactoryInterface
         $cache = $this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions, $persistent);
         $this->registerCache($cache, $persistent);
     }
