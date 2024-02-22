@@ -17,6 +17,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Algorithms;
 
 /**
+ * The StorageIdentifier is used by the SessionKeyValueStore to write / retrieve
+ * th values for the given session. The StorageIdentifier is a secret of the server session
+ * and  is never exposed to the outside. The StorageIdentifier stays the same if a
+ * Session gets a new SessionIdentifier (renewId).
+ *
  * @Flow\Proxy(false)
  * @internal
  */

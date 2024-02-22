@@ -17,6 +17,10 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Algorithms;
 
 /**
+ * The session identifier that in a string form is written in the session cookie
+ * and identifies a SessionMetadata object from the SessionMetaDataStore that represents
+ * a stored session without the key value store.
+ *
  * @Flow\Proxy(false)
  * @internal
  */
