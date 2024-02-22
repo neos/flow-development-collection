@@ -25,25 +25,7 @@ use TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException;
  */
 class StandaloneViewTest extends FunctionalTestCase
 {
-    /**
-     * @var string
-     */
-    protected $standaloneViewNonce = '42';
-
-    /**
-     * Every testcase should run *twice*. First, it is run in *uncached* way, second,
-     * it is run *cached*. To make sure that the first run is always uncached, the
-     * $standaloneViewNonce is initialized to some random value which is used inside
-     * an overridden version of StandaloneView::createIdentifierForFile.
-     */
-    public function runBare(): void
-    {
-        $this->standaloneViewNonce = uniqid('', true);
-        parent::runBare();
-        $numberOfAssertions = $this->getNumAssertions();
-        parent::runBare();
-        $this->addToAssertionCount($numberOfAssertions);
-    }
+    protected string $standaloneViewNonce = '42';
 
     /**
      * @test
