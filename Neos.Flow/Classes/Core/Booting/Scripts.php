@@ -356,13 +356,17 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $environment = $bootstrap->getEarlyInstance(Environment::class);
 
-        // Workaround to find the correct CacheFactory implementation at compile time.
-        // We can rely on the $objectConfiguration being ordered by the package names after their loading order.
-        // Normally this wiring would be done for proxy building a similar way, see ConfigurationBuilder.
+        /**
+         * Workaround to find the correct CacheFactory implementation at compile time.
+         * We can rely on the $objectConfiguration being ordered by the package names after their loading order.
+         * The object manager _does_ even know that at a later step in compile time: {@see CompileTimeObjectManager::getClassNameByObjectName()}
+         * But at this time it is not available. https://github.com/neos/flow-development-collection/issues/3317
+         */
         $cacheFactoryClass = CacheFactory::class;
         $cacheFactoryObjectConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_OBJECTS);
         foreach ($cacheFactoryObjectConfiguration as $objectConfiguration) {
             if (isset($objectConfiguration[CacheFactoryInterface::class]['className'])) {
+                // use the implementation of the package with the highest loading order
                 $cacheFactoryClass = $objectConfiguration[CacheFactoryInterface::class]['className'];
             }
         }
