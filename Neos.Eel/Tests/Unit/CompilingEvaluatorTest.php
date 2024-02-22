@@ -67,7 +67,7 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest
      */
     protected function createEvaluator()
     {
-        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->setMethods([])->disableOriginalConstructor()->getMock();
+        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->onlyMethods([])->disableOriginalConstructor()->getMock();
         $stringFrontendMock->expects(self::any())->method('get')->willReturn(false);
 
         $evaluator = new CompilingEvaluator();
@@ -95,7 +95,7 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest
      */
     protected function assertEvaluated($expected, $expression, $context)
     {
-        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->setMethods([])->disableOriginalConstructor()->getMock();
+        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->onlyMethods([])->disableOriginalConstructor()->getMock();
         $stringFrontendMock->expects(self::any())->method('get')->willReturn(false);
 
         $evaluator = $this->getAccessibleMock(CompilingEvaluator::class, ['dummy']);

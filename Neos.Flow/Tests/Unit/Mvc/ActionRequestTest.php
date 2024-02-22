@@ -260,7 +260,7 @@ class ActionRequestTest extends UnitTestCase
     public function getControllerNameExtractsTheControllerNameFromTheControllerObjectNameToAssureTheCorrectCase()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
-        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
+        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
         $actionRequest->expects(self::once())->method('getControllerObjectName')->will(self::returnValue('Neos\MyPackage\Controller\Foo\BarController'));
 
         $actionRequest->setControllerName('foo\bar');
@@ -273,7 +273,7 @@ class ActionRequestTest extends UnitTestCase
     public function getControllerNameReturnsTheUnknownCasesControllerNameIfNoControllerObjectNameCouldBeDetermined()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
-        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
+        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
         $actionRequest->expects(self::once())->method('getControllerObjectName')->will(self::returnValue(''));
 
         $actionRequest->setControllerName('foo\bar');
@@ -286,7 +286,7 @@ class ActionRequestTest extends UnitTestCase
     public function getControllerSubpackageKeyExtractsTheSubpackageKeyFromTheControllerObjectNameToAssureTheCorrectCase()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
-        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
+        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
         $actionRequest->expects(self::once())->method('getControllerObjectName')->will(self::returnValue('Neos\MyPackage\Some\SubPackage\Controller\Foo\BarController'));
 
         /** @var PackageManager|\PHPUnit\Framework\MockObject\MockObject $mockPackageManager */
@@ -305,7 +305,7 @@ class ActionRequestTest extends UnitTestCase
     public function getControllerSubpackageKeyReturnsNullIfNoSubpackageKeyIsSet()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
-        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
+        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
         $actionRequest->expects(self::any())->method('getControllerObjectName')->will(self::returnValue('Neos\MyPackage\Controller\Foo\BarController'));
 
         /** @var PackageManager|\PHPUnit\Framework\MockObject\MockObject $mockPackageManager */
@@ -323,7 +323,7 @@ class ActionRequestTest extends UnitTestCase
     public function getControllerSubpackageKeyReturnsTheUnknownCasesPackageKeyIfNoControllerObjectNameCouldBeDetermined()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
-        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
+        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
         $actionRequest->expects(self::once())->method('getControllerObjectName')->will(self::returnValue(''));
 
         /** @var PackageManager|\PHPUnit\Framework\MockObject\MockObject $mockPackageManager */
@@ -365,7 +365,7 @@ class ActionRequestTest extends UnitTestCase
     public function theActionNameCanBeSetAndRetrieved()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
-        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
+        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
         $actionRequest->expects(self::once())->method('getControllerObjectName')->will(self::returnValue(''));
 
         $actionRequest->setControllerActionName('theAction');

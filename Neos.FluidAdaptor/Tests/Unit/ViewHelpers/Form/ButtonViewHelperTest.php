@@ -39,7 +39,7 @@ class ButtonViewHelperTest extends FormFieldViewHelperBaseTestcase
      */
     public function renderCorrectlySetsTagNameAndDefaultAttributes(): void
     {
-        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['setTagName', 'addAttribute', 'setContent'])->getMock();
+        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->onlyMethods(['setTagName', 'addAttribute', 'setContent'])->getMock();
         $mockTagBuilder->expects(self::any())->method('setTagName')->with('button');
         $mockTagBuilder->expects(self::exactly(3))->method('addAttribute')->withConsecutive(
             ['type', 'submit'],

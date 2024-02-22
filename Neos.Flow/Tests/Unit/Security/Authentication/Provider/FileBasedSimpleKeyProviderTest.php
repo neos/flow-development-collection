@@ -106,7 +106,7 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     public function authenticationAddsAnAccountHoldingTheConfiguredRoles()
     {
-        $this->mockToken = $this->getMockBuilder(PasswordToken::class)->disableOriginalConstructor()->setMethods(['getPassword'])->getMock();
+        $this->mockToken = $this->getMockBuilder(PasswordToken::class)->disableOriginalConstructor()->onlyMethods(['getPassword'])->getMock();
         $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue($this->testKeyClearText));
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', ['keyName' => 'testKey', 'authenticateRoles' => ['Neos.Flow:TestRoleIdentifier']]);

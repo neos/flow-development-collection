@@ -70,7 +70,7 @@ class UploadViewHelperTest extends FormFieldViewHelperBaseTestcase
      */
     public function renderCorrectlySetsTypeNameAndValueAttributes(): void
     {
-        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->setMethods(['setContent', 'render', 'addAttribute'])->getMock();
+        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->onlyMethods(['setContent', 'render', 'addAttribute'])->getMock();
         $mockTagBuilder->expects(self::exactly(2))->method('addAttribute')->withConsecutive(
             ['type', 'file'],
             ['name', 'someName']

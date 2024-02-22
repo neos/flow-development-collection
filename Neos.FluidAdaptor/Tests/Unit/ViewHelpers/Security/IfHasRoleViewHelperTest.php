@@ -45,7 +45,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mockViewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Security\IfHasRoleViewHelper::class)->setMethods([
+        $this->mockViewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Security\IfHasRoleViewHelper::class)->onlyMethods([
             'renderThenChild',
             'renderElseChild'
         ])->getMock();
@@ -92,7 +92,7 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         $mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
         $mockRequest->expects(self::any())->method('getControllerPackageKey')->will(self::returnValue('Acme.Demo'));
 
-        $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->setMethods(['getRequest'])->disableOriginalConstructor()->getMock();
+        $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->onlyMethods(['getRequest'])->disableOriginalConstructor()->getMock();
         $mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($mockRequest));
 
         return $mockControllerContext;

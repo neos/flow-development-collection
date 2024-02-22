@@ -95,7 +95,7 @@ class PointcutMethodNameFilterTest extends UnitTestCase
             ['arg1' => [], 'arg2' => [], 'arg3' => []]
         ));
 
-        $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->setMethods([])->getMock();
+        $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->onlyMethods([])->getMock();
         $mockSystemLogger->expects(self::once())->method('notice')->with(self::equalTo(
             'The argument "arg2" declared in pointcut does not exist in method ' . $className . '->somePublicMethod'
         ));

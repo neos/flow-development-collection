@@ -32,7 +32,7 @@ class PhpFrontendTest extends BaseTestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['isValidEntryIdentifier'])
+            ->onlyMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
         $cache->expects(self::once())->method('isValidEntryIdentifier')->with('foo')->will(self::returnValue(false));
@@ -51,7 +51,7 @@ class PhpFrontendTest extends BaseTestCase
         $mockBackend->expects(self::once())->method('set')->with('Foo-Bar', $modifiedSourceCode, ['tags'], 1234);
 
         $cache = $this->getMockBuilder(PhpFrontend::class)
-            ->setMethods(null)
+            ->onlyMethods(null)
             ->disableOriginalConstructor()
             ->getMock();
         $this->inject($cache, 'backend', $mockBackend);
@@ -65,7 +65,7 @@ class PhpFrontendTest extends BaseTestCase
     {
         $this->expectException(InvalidDataException::class);
         $cache = $this->getMockBuilder(PhpFrontend::class)
-            ->setMethods(null)
+            ->onlyMethods(null)
             ->disableOriginalConstructor()
             ->getMock();
         $cache->set('Foo-Bar', []);
@@ -80,7 +80,7 @@ class PhpFrontendTest extends BaseTestCase
         $mockBackend->expects(self::once())->method('requireOnce')->with('Foo-Bar')->will(self::returnValue('hello world!'));
 
         $cache = $this->getMockBuilder(PhpFrontend::class)
-            ->setMethods(null)
+            ->onlyMethods(null)
             ->disableOriginalConstructor()
             ->getMock();
         $this->inject($cache, 'backend', $mockBackend);

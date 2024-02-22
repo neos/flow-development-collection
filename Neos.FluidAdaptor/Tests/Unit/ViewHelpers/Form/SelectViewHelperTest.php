@@ -491,7 +491,7 @@ class SelectViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
         $this->tagBuilder->expects(self::once())->method('setContent')->with('<option value="fakeUUID">toStringResult</option>' . chr(10));
         $this->tagBuilder->expects(self::once())->method('render');
 
-        $user = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass::class)->setMethods(['__toString'])->setConstructorArgs([1, 'Ingmar', 'Schlecht'])->getMock();
+        $user = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass::class)->onlyMethods(['__toString'])->setConstructorArgs([1, 'Ingmar', 'Schlecht'])->getMock();
         $user->expects(self::atLeastOnce())->method('__toString')->will(self::returnValue('toStringResult'));
 
         $this->arguments['options'] = [

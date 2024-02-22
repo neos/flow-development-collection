@@ -36,7 +36,7 @@ class CsrfTokenViewHelperTest extends ViewHelperBaseTestcase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(CsrfTokenViewHelper::class)->setMethods(['buildRenderChildrenClosure'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(CsrfTokenViewHelper::class)->onlyMethods(['buildRenderChildrenClosure'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
         $this->renderingContext->injectObjectManager($this->objectManagerMock);

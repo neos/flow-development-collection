@@ -44,7 +44,7 @@ class SimpleFileBackendTest extends BaseTestCase
         vfsStream::setup('Temporary/Directory/');
 
         $this->mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->setConstructorArgs([
                 __DIR__ . '~Testing',
                 'vfs://Temporary/Directory/',
@@ -81,7 +81,7 @@ class SimpleFileBackendTest extends BaseTestCase
     {
         $this->expectException(Exception::class);
         $mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->setConstructorArgs([
                 __DIR__ . '~Testing',
                 'vfs://Some/NonExisting/Directory/',
@@ -109,7 +109,7 @@ class SimpleFileBackendTest extends BaseTestCase
 
         $entryIdentifier = 'BackendFileTest';
 
-        $backend = $this->getMockBuilder(SimpleFileBackend::class)->setMethods(['setTag', 'writeCacheFile'])->disableOriginalConstructor()->getMock();
+        $backend = $this->getMockBuilder(SimpleFileBackend::class)->onlyMethods(['setTag', 'writeCacheFile'])->disableOriginalConstructor()->getMock();
         $backend->expects(self::once())->method('writeCacheFile')->willReturn(false);
         $this->inject($backend, 'environmentConfiguration', $mockEnvironmentConfiguration);
 
@@ -332,10 +332,7 @@ class SimpleFileBackendTest extends BaseTestCase
         self::assertFalse($simpleFileBackend->has($entryIdentifier));
     }
 
-    /**
-     * @return array
-     */
-    public function invalidEntryIdentifiers()
+    public static function invalidEntryIdentifiers(): array
     {
         return [
             'trailing slash' => ['/myIdentifer'],

@@ -53,7 +53,7 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
     protected function getAccessibleMock($originalClassName, $methods = [], array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
     {
         $mockBuilder = $this->getMockBuilder($this->buildAccessibleProxy($originalClassName));
-        $mockBuilder->setMethods($methods)->setConstructorArgs($arguments)->setMockClassName($mockClassName);
+        $mockBuilder->onlyMethods($methods)->setConstructorArgs($arguments)->setMockClassName($mockClassName);
         if ($callOriginalConstructor === false) {
             $mockBuilder->disableOriginalConstructor();
         }

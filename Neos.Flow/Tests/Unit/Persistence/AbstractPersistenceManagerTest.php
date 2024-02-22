@@ -27,7 +27,7 @@ class AbstractPersistenceManagerTest extends UnitTestCase
 
     protected function setUp(): void
     {
-        $this->abstractPersistenceManager = $this->getMockBuilder(AbstractPersistenceManager::class)->setMethods(['initialize', 'persistAll', 'isNewObject', 'getObjectByIdentifier', 'createQueryForType', 'add', 'remove', 'update', 'getIdentifierByObject', 'clearState', 'isConnected'])->getMock();
+        $this->abstractPersistenceManager = $this->getMockBuilder(AbstractPersistenceManager::class)->onlyMethods(['initialize', 'persistAll', 'isNewObject', 'getObjectByIdentifier', 'createQueryForType', 'add', 'remove', 'update', 'getIdentifierByObject', 'clearState', 'isConnected'])->getMock();
     }
 
     /**

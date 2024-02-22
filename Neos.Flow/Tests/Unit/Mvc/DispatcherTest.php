@@ -95,7 +95,7 @@ class DispatcherTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->dispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->setMethods(['resolveController'])->getMock();
+        $this->dispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->onlyMethods(['resolveController'])->getMock();
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequest->method('isMainRequest')->willReturn(false);
@@ -111,7 +111,7 @@ class DispatcherTest extends UnitTestCase
 
         $this->actionResponse = new ActionResponse();
 
-        $this->mockController = $this->getMockBuilder(ControllerInterface::class)->setMethods(['processRequest'])->getMock();
+        $this->mockController = $this->getMockBuilder(ControllerInterface::class)->onlyMethods(['processRequest'])->getMock();
         $this->dispatcher->method('resolveController')->willReturn($this->mockController);
 
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
@@ -272,7 +272,7 @@ class DispatcherTest extends UnitTestCase
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects(self::once())->method('get')->with(self::equalTo('Flow\TestPackage\SomeController'))->willReturn($mockController);
 
-        $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerPackageKey', 'getControllerObjectName'])->getMock();
+        $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerPackageKey', 'getControllerObjectName'])->getMock();
         $mockRequest->method('getControllerObjectName')->willReturn('Flow\TestPackage\SomeController');
 
         /** @var Dispatcher|MockObject $dispatcher */
@@ -294,7 +294,7 @@ class DispatcherTest extends UnitTestCase
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects(self::once())->method('get')->with(self::equalTo('Flow\TestPackage\SomeController'))->willReturn($mockController);
 
-        $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerPackageKey', 'getControllerObjectName'])->getMock();
+        $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerPackageKey', 'getControllerObjectName'])->getMock();
         $mockRequest->method('getControllerObjectName')->willReturn('Flow\TestPackage\SomeController');
 
         /** @var Dispatcher|MockObject $dispatcher */
@@ -311,7 +311,7 @@ class DispatcherTest extends UnitTestCase
     {
         $this->expectException(InvalidControllerException::class);
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName', 'getHttpRequest'])->getMock();
+        $mockRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName', 'getHttpRequest'])->getMock();
         $mockRequest->method('getControllerObjectName')->willReturn('');
         $mockRequest->method('getHttpRequest')->willReturn($mockHttpRequest);
 

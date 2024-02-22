@@ -75,7 +75,7 @@ class PointcutExpressionParserTest extends UnitTestCase
     public function parseCallsSpecializedMethodsToParseEachDesignator()
     {
         $mockMethods = ['parseDesignatorPointcut', 'parseDesignatorClassAnnotatedWith', 'parseDesignatorClass', 'parseDesignatorMethodAnnotatedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting', 'parseRuntimeEvaluations'];
-        $parser = $this->getMockBuilder(PointcutExpressionParser::class)->setMethods($mockMethods)->disableOriginalConstructor()->getMock();
+        $parser = $this->getMockBuilder(PointcutExpressionParser::class)->onlyMethods($mockMethods)->disableOriginalConstructor()->getMock();
 
         $parser->expects(self::once())->method('parseDesignatorPointcut')->with('&&', '\Foo\Bar->baz');
         $parser->expects(self::once())->method('parseDesignatorClassAnnotatedWith')->with('&&', Flow\Aspect::class);
@@ -104,7 +104,7 @@ class PointcutExpressionParserTest extends UnitTestCase
     public function parseCallsParseDesignatorMethodWithTheCorrectSignaturePatternStringIfTheExpressionContainsArgumentPatterns()
     {
         $mockMethods = ['parseDesignatorMethod'];
-        $parser = $this->getMockBuilder(PointcutExpressionParser::class)->setMethods($mockMethods)->disableOriginalConstructor()->getMock();
+        $parser = $this->getMockBuilder(PointcutExpressionParser::class)->onlyMethods($mockMethods)->disableOriginalConstructor()->getMock();
         $parser->injectObjectManager($this->mockObjectManager);
 
         $parser->expects(self::once())->method('parseDesignatorMethod')->with('&&', 'Foo->Bar(firstArgument = "baz", secondArgument = true)');
@@ -118,7 +118,7 @@ class PointcutExpressionParserTest extends UnitTestCase
     public function parseSplitsUpTheExpressionIntoDesignatorsAndPassesTheOperatorsToTheDesginatorParseMethod()
     {
         $mockMethods = ['parseDesignatorPointcut', 'parseDesignatorClass', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting'];
-        $parser = $this->getMockBuilder(PointcutExpressionParser::class)->setMethods($mockMethods)->disableOriginalConstructor()->getMock();
+        $parser = $this->getMockBuilder(PointcutExpressionParser::class)->onlyMethods($mockMethods)->disableOriginalConstructor()->getMock();
         $parser->injectObjectManager($this->mockObjectManager);
 
         $parser->expects(self::once())->method('parseDesignatorClass')->with('&&', 'Foo');

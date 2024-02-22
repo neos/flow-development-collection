@@ -33,7 +33,7 @@ class VariableFrontendTest extends BaseTestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['isValidEntryIdentifier'])
+            ->onlyMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
         $cache->expects(self::once())->method('isValidEntryIdentifier')->with('foo')->will(self::returnValue(false));
@@ -241,7 +241,7 @@ class VariableFrontendTest extends BaseTestCase
     protected function prepareDefaultBackend()
     {
         return $this->getMockBuilder(AbstractBackend::class)
-            ->setMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
+            ->onlyMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -253,7 +253,7 @@ class VariableFrontendTest extends BaseTestCase
     protected function prepareTaggableBackend(array $methods = ['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
     {
         return $this->getMockBuilder(NullBackend::class)
-            ->setMethods($methods)
+            ->onlyMethods($methods)
             ->disableOriginalConstructor()
             ->getMock();
     }

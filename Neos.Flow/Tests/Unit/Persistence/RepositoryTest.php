@@ -116,7 +116,7 @@ class RepositoryTest extends UnitTestCase
         $mockQuery = $this->createMock(Persistence\QueryInterface::class);
         $mockQuery->expects(self::once())->method('execute')->with()->will(self::returnValue($expectedResult));
 
-        $repository = $this->getMockBuilder(Persistence\Repository::class)->setMethods(['createQuery'])->getMock();
+        $repository = $this->getMockBuilder(Persistence\Repository::class)->onlyMethods(['createQuery'])->getMock();
         $repository->expects(self::once())->method('createQuery')->will(self::returnValue($mockQuery));
 
         self::assertSame($expectedResult, $repository->findAll());
@@ -193,7 +193,7 @@ class RepositoryTest extends UnitTestCase
         $mockQuery->expects(self::once())->method('matching')->with('matchCriteria')->will(self::returnValue($mockQuery));
         $mockQuery->expects(self::once())->method('execute')->with()->will(self::returnValue($mockQueryResult));
 
-        $repository = $this->getMockBuilder(Persistence\Repository::class)->setMethods(['createQuery'])->getMock();
+        $repository = $this->getMockBuilder(Persistence\Repository::class)->onlyMethods(['createQuery'])->getMock();
         $repository->expects(self::once())->method('createQuery')->will(self::returnValue($mockQuery));
 
         self::assertSame($mockQueryResult, $repository->findByFoo('bar'));
@@ -212,7 +212,7 @@ class RepositoryTest extends UnitTestCase
         $mockQuery->expects(self::once())->method('matching')->with('matchCriteria')->will(self::returnValue($mockQuery));
         $mockQuery->expects(self::once())->method('execute')->will(self::returnValue($mockQueryResult));
 
-        $repository = $this->getMockBuilder(Persistence\Repository::class)->setMethods(['createQuery'])->getMock();
+        $repository = $this->getMockBuilder(Persistence\Repository::class)->onlyMethods(['createQuery'])->getMock();
         $repository->expects(self::once())->method('createQuery')->will(self::returnValue($mockQuery));
 
         self::assertSame($object, $repository->findOneByFoo('bar'));
@@ -228,7 +228,7 @@ class RepositoryTest extends UnitTestCase
         $mockQuery->expects(self::once())->method('matching')->with('matchCriteria')->will(self::returnValue($mockQuery));
         $mockQuery->expects(self::once())->method('count')->will(self::returnValue(2));
 
-        $repository = $this->getMockBuilder(Persistence\Repository::class)->setMethods(['createQuery'])->getMock();
+        $repository = $this->getMockBuilder(Persistence\Repository::class)->onlyMethods(['createQuery'])->getMock();
         $repository->expects(self::once())->method('createQuery')->will(self::returnValue($mockQuery));
 
         self::assertSame(2, $repository->countByFoo('bar'));

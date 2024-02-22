@@ -47,7 +47,7 @@ class FileBackendTest extends BaseTestCase
         $mockEnvironmentConfiguration = $this->createEnvironmentConfigurationMock([__DIR__ . '~Testing', 'http://localhost/', PHP_MAXPATHLEN]);
 
         $backend = $this->getMockBuilder(FileBackend::class)
-            ->setMethods(['dummy'])
+            ->onlyMethods(['dummy'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -201,7 +201,7 @@ class FileBackendTest extends BaseTestCase
         $entryIdentifier = 'BackendFileTest';
 
         $backend = $this->getMockBuilder(FileBackend::class)
-            ->setMethods(['setTag', 'writeCacheFile'])
+            ->onlyMethods(['setTag', 'writeCacheFile'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -230,7 +230,7 @@ class FileBackendTest extends BaseTestCase
         $entryIdentifier = 'BackendFileTest';
 
         $backend = $this->getMockBuilder(FileBackend::class)
-            ->setMethods(null)
+            ->onlyMethods(null)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -241,7 +241,7 @@ class FileBackendTest extends BaseTestCase
         unset($backend);
 
         $backend = $this->getMockBuilder(FileBackend::class)
-            ->setMethods(null)
+            ->onlyMethods(null)
             ->disableOriginalConstructor()
             ->getMock();
         $this->inject($backend, 'environmentConfiguration', $mockEnvironmentConfiguration);
@@ -266,7 +266,7 @@ class FileBackendTest extends BaseTestCase
         ]);
 
         $backend = $this->getMockBuilder(FileBackend::class)
-            ->setMethods(['setTag'])
+            ->onlyMethods(['setTag'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -409,9 +409,7 @@ class FileBackendTest extends BaseTestCase
         self::assertFileDoesNotExist($pathAndFilename);
     }
 
-    /**
-     */
-    public function invalidEntryIdentifiers()
+    public static function invalidEntryIdentifiers(): array
     {
         return [
             'trailing slash' => ['/myIdentifer'],
@@ -781,7 +779,7 @@ class FileBackendTest extends BaseTestCase
         $mockEnvironmentConfiguration = $this->createEnvironmentConfigurationMock($environmentConfiguration);
 
         $backend = $this->getMockBuilder(FileBackend::class)
-            ->setMethods($backendMockMethods)
+            ->onlyMethods($backendMockMethods)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -796,6 +794,6 @@ class FileBackendTest extends BaseTestCase
      */
     protected function createEnvironmentConfigurationMock(array $constructorArguments)
     {
-        return $this->getMockBuilder(EnvironmentConfiguration::class)->setConstructorArgs($constructorArguments)->setMethods(null)->getMock();
+        return $this->getMockBuilder(EnvironmentConfiguration::class)->setConstructorArgs($constructorArguments)->onlyMethods([])->getMock();
     }
 }

@@ -116,7 +116,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
      */
     public function generateTrustedPropertiesTokenGeneratesTheCorrectHashesInNormalOperation($input, $expected)
     {
-        $requestHashService = $this->getMockBuilder(Mvc\Controller\MvcPropertyMappingConfigurationService::class)->setMethods(['serializeAndHashFormFieldArray'])->getMock();
+        $requestHashService = $this->getMockBuilder(Mvc\Controller\MvcPropertyMappingConfigurationService::class)->onlyMethods(['serializeAndHashFormFieldArray'])->getMock();
         $requestHashService->expects(self::once())->method('serializeAndHashFormFieldArray')->with($expected);
         $requestHashService->generateTrustedPropertiesToken($input);
     }
@@ -128,7 +128,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
     public function generateTrustedPropertiesTokenThrowsExceptionInWrongCases($input)
     {
         $this->expectException(InvalidArgumentForHashGenerationException::class);
-        $requestHashService = $this->getMockBuilder(Mvc\Controller\MvcPropertyMappingConfigurationService::class)->setMethods(['serializeAndHashFormFieldArray'])->getMock();
+        $requestHashService = $this->getMockBuilder(Mvc\Controller\MvcPropertyMappingConfigurationService::class)->onlyMethods(['serializeAndHashFormFieldArray'])->getMock();
         $requestHashService->generateTrustedPropertiesToken($input);
     }
 
@@ -162,7 +162,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
      */
     public function initializePropertyMappingConfigurationDoesNothingIfTrustedPropertiesAreNotSet()
     {
-        $request = $this->getMockBuilder(Mvc\ActionRequest::class)->setMethods(['getInternalArgument'])->disableOriginalConstructor()->getMock();
+        $request = $this->getMockBuilder(Mvc\ActionRequest::class)->onlyMethods(['getInternalArgument'])->disableOriginalConstructor()->getMock();
         $request->expects(self::any())->method('getInternalArgument')->with('__trustedProperties')->will(self::returnValue(null));
         $arguments = new Mvc\Controller\Arguments();
 
@@ -282,10 +282,10 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
      */
     protected function initializePropertyMappingConfiguration(array $trustedProperties)
     {
-        $request = $this->getMockBuilder(Mvc\ActionRequest::class)->setMethods(['getInternalArgument'])->disableOriginalConstructor()->getMock();
+        $request = $this->getMockBuilder(Mvc\ActionRequest::class)->onlyMethods(['getInternalArgument'])->disableOriginalConstructor()->getMock();
         $request->expects(self::any())->method('getInternalArgument')->with('__trustedProperties')->will(self::returnValue('fooTrustedProperties'));
         $arguments = new Mvc\Controller\Arguments();
-        $mockHashService = $this->getMockBuilder(HashService::class)->setMethods(['validateAndStripHmac'])->getMock();
+        $mockHashService = $this->getMockBuilder(HashService::class)->onlyMethods(['validateAndStripHmac'])->getMock();
         $mockHashService->expects(self::once())->method('validateAndStripHmac')->with('fooTrustedProperties')->will(self::returnValue(serialize($trustedProperties)));
 
         $arguments->addNewArgument('foo', 'something');

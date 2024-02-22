@@ -111,7 +111,7 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
         $this->mockAjaxWidgetContextHolder = $this->getMockBuilder(AjaxWidgetContextHolder::class)->getMock();
         $this->inject($this->ajaxWidgetMiddleware, 'ajaxWidgetContextHolder', $this->mockAjaxWidgetContextHolder);
 
-        $this->mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->setMethods(['prepareActionRequest'])->getMock();
+        $this->mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->onlyMethods(['prepareActionRequest'])->getMock();
 
         $this->inject($this->ajaxWidgetMiddleware, 'actionRequestFactory', $this->mockActionRequestFactory);
 

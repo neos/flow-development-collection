@@ -11,9 +11,7 @@ use Neos\Cache\Tests\BaseTestCase;
  */
 class FileBackendEntryDtoTest extends BaseTestCase
 {
-    /**
-     */
-    public function validEntryConstructorParameters()
+    public static function validEntryConstructorParameters(): array
     {
         return [
             ['data', [], 0],

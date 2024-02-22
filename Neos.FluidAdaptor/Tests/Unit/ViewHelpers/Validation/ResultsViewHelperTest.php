@@ -31,7 +31,7 @@ class ResultsViewHelperTest extends ViewHelperBaseTestcase
     {
         parent::setUp();
         $this->viewHelper = $this->getMockBuilder(ResultsViewHelper::class)
-            ->setMethods(['renderChildren'])
+            ->onlyMethods(['renderChildren'])
             ->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }

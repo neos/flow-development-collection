@@ -72,7 +72,7 @@ class ContextTest extends UnitTestCase
         $this->securityContext = $this->getAccessibleMock(Context::class, ['separateActiveAndInactiveTokens']);
         $this->inject($this->securityContext, 'objectManager', $this->mockObjectManager);
 
-        $this->mockTokenAndProviderFactory = $this->getMockBuilder(TokenAndProviderFactoryInterface::class)->setMethods(['getTokens', 'getProviders'])->getMock();
+        $this->mockTokenAndProviderFactory = $this->getMockBuilder(TokenAndProviderFactoryInterface::class)->onlyMethods(['getTokens', 'getProviders'])->getMock();
         $this->securityContext->_set('tokenAndProviderFactory', $this->mockTokenAndProviderFactory);
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();

@@ -57,7 +57,7 @@ class TranslationHelperTest extends UnitTestCase
             ->method('translate')
             ->willReturn('I am a translation result');
 
-        $mockTranslationHelper = $this->getMockBuilder(TranslationHelper::class)->setMethods(['createTranslationParameterToken'])->getMock();
+        $mockTranslationHelper = $this->getMockBuilder(TranslationHelper::class)->onlyMethods(['createTranslationParameterToken'])->getMock();
         $mockTranslationHelper->expects(static::once())
             ->method('createTranslationParameterToken', 'SomeId')
             ->willReturn($mockTranslationParameterToken);
@@ -88,7 +88,7 @@ class TranslationHelperTest extends UnitTestCase
             ->method('translate')
             ->willReturn('I am a translation result');
 
-        $mockTranslationHelper = $this->getMockBuilder(TranslationHelper::class)->setMethods(['createTranslationParameterToken'])->getMock();
+        $mockTranslationHelper = $this->getMockBuilder(TranslationHelper::class)->onlyMethods(['createTranslationParameterToken'])->getMock();
         $mockTranslationHelper->expects(static::once())
             ->method('createTranslationParameterToken', 'SomeId')
             ->willReturn($mockTranslationParameterToken);
@@ -102,7 +102,7 @@ class TranslationHelperTest extends UnitTestCase
      */
     public function idReturnsTranslationParameterTokenWithPreconfiguredId()
     {
-        $mockTranslationHelper = $this->getMockBuilder(TranslationHelper::class)->setMethods(['createTranslationParameterToken'])->getMock();
+        $mockTranslationHelper = $this->getMockBuilder(TranslationHelper::class)->onlyMethods(['createTranslationParameterToken'])->getMock();
         $mockTranslationHelper->expects(static::once())
             ->method('createTranslationParameterToken', 'SomeId')
             ->willReturn('TranslationParameterTokenWithPreconfiguredId');
@@ -116,7 +116,7 @@ class TranslationHelperTest extends UnitTestCase
      */
     public function valueReturnsTranslationParameterTokenWithPreconfiguredValue()
     {
-        $mockTranslationHelper = $this->getMockBuilder(TranslationHelper::class)->setMethods(['createTranslationParameterToken'])->getMock();
+        $mockTranslationHelper = $this->getMockBuilder(TranslationHelper::class)->onlyMethods(['createTranslationParameterToken'])->getMock();
         $mockTranslationHelper->expects(static::once())
             ->method('createTranslationParameterToken', null, 'SomeValue')
             ->willReturn('TranslationParameterTokenWithPreconfiguredValue');

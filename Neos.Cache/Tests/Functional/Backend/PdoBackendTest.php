@@ -33,26 +33,93 @@ class PdoBackendTest extends BaseTestCase
     /**
      * @var PdoBackend[]
      */
-    private $backends = [];
+    private static array $backends = [];
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FrontendInterface
-     */
-    private $cache;
+    private static ?FrontendInterface $cache = null;
 
     protected function tearDown(): void
     {
-        foreach ($this->backends as $backend) {
+        foreach (self::$backends as $backend) {
             $backend->flush();
         }
     }
 
-    public function backendsToTest(): array
+    public static function backendsToTest(): array
     {
-        $this->cache = $this->createMock(FrontendInterface::class);
-        $this->cache->method('getIdentifier')->willReturn('TestCache');
-        $this->setupBackends();
-        return $this->backends;
+        self::$cache = self::createMockCacheFrontend();
+        self::initializeBackends();
+        return self::$backends;
+    }
+
+    private static function createMockCacheFrontend(): FrontendInterface
+    {
+        return new class implements FrontendInterface
+        {
+            public function getIdentifier()
+            {
+                return 'TestCache';
+            }
+
+            public function getBackend()
+            {
+                throw new \BadMethodCallException('Not implemented');
+            }
+
+            public function set(string $entryIdentifier, $data, array $tags = [], int $lifetime = null)
+            {
+                throw new \BadMethodCallException('Not implemented');
+            }
+
+            public function get(string $entryIdentifier)
+            {
+                throw new \BadMethodCallException('Not implemented');
+            }
+
+            public function getByTag(string $tag): array
+            {
+                throw new \BadMethodCallException('Not implemented');
+            }
+
+            public function has(string $entryIdentifier): bool
+            {
+                throw new \BadMethodCallException('Not implemented');
+            }
+
+            public function remove(string $entryIdentifier): bool
+            {
+                throw new \BadMethodCallException('Not implemented');
+            }
+
+            public function flush()
+            {
+                throw new \BadMethodCallException('Not implemented');
+            }
+
+            public function flushByTag(string $tag): int
+            {
+                throw new \BadMethodCallException('Not implemented');
+            }
+
+            public function flushByTags(array $tags): int
+            {
+                throw new \BadMethodCallException('Not implemented');
+            }
+
+            public function collectGarbage()
+            {
+                throw new \BadMethodCallException('Not implemented');
+            }
+
+            public function isValidEntryIdentifier(string $identifier): bool
+            {
+                throw new \BadMethodCallException('Not implemented');
+            }
+
+            public function isValidTag(string $tag): bool
+            {
+                throw new \BadMethodCallException('Not implemented');
+            }
+        };
     }
 
     /**
@@ -92,7 +159,7 @@ class PdoBackendTest extends BaseTestCase
         self::assertEquals(3, $entries);
     }
 
-    private function setupBackends(): void
+    private static function initializeBackends(): void
     {
         try {
             $backend = new PdoBackend(
@@ -103,11 +170,11 @@ class PdoBackendTest extends BaseTestCase
                 ]
             );
             $backend->setup();
-            $backend->setCache($this->cache);
+            $backend->setCache(self::$cache);
             $backend->flush();
-            $this->backends['sqlite'] = [$backend];
+            self::$backends['sqlite'] = [$backend];
         } catch (\Throwable $t) {
-            $this->addWarning('SQLite DB is not reachable: ' . $t->getMessage());
+            //$this->addWarning('SQLite DB is not reachable: ' . $t->getMessage());
         }
 
         try {
@@ -121,11 +188,12 @@ class PdoBackendTest extends BaseTestCase
                 ]
             );
             $backend->setup();
-            $backend->setCache($this->cache);
+            $backend->setCache(self::$cache);
             $backend->flush();
-            $this->backends['mysql'] = [$backend];
+
+            self::$backends['mysql'] = [$backend];
         } catch (\Throwable $t) {
-            $this->addWarning('MySQL DB server is not reachable: ' . $t->getMessage());
+            //$this->addWarning('MySQL DB server is not reachable: ' . $t->getMessage());
         }
 
         try {
@@ -139,11 +207,11 @@ class PdoBackendTest extends BaseTestCase
                 ]
             );
             $backend->setup();
-            $backend->setCache($this->cache);
+            $backend->setCache(self::$cache);
             $backend->flush();
-            $this->backends['pgsql'] = [$backend];
+            self::$backends['pgsql'] = [$backend];
         } catch (\Throwable $t) {
-            $this->addWarning('PostgreSQL DB server is not reachable: ' . $t->getMessage());
+            //$this->addWarning('PostgreSQL DB server is not reachable: ' . $t->getMessage());
         }
     }
 }

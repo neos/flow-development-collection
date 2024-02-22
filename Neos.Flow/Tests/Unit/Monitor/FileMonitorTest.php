@@ -96,7 +96,7 @@ class FileMonitorTest extends UnitTestCase
     {
         $mockSystemLogger = $this->createMock(LoggerInterface::class);
 
-        $mockMonitor = $this->getMockBuilder(FileMonitor::class)->setMethods(['loadDetectedDirectoriesAndFiles', 'detectChangedFiles'])->setConstructorArgs(['Flow_Test'])->getMock();
+        $mockMonitor = $this->getMockBuilder(FileMonitor::class)->onlyMethods(['loadDetectedDirectoriesAndFiles', 'detectChangedFiles'])->setConstructorArgs(['Flow_Test'])->getMock();
         $mockMonitor->expects(self::once())->method('detectChangedFiles')->with([$this->unixStylePathAndFilename])->will(self::returnValue([]));
 
         $mockMonitor->injectLogger($mockSystemLogger);

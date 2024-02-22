@@ -33,7 +33,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper::class)->setMethods(['renderChildren'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper::class)->onlyMethods(['renderChildren'])->getMock();
 
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
@@ -157,7 +157,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
     {
         $mockNumberFormatter = $this
             ->getMockBuilder(NumberFormatter::class)
-            ->setMethods(['formatDecimalNumber'])
+            ->onlyMethods(['formatDecimalNumber'])
             ->getMock()
         ;
         $mockNumberFormatter->expects(static::once())->method('formatDecimalNumber');
@@ -175,7 +175,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
     {
         $mockNumberFormatter = $this
             ->getMockBuilder(NumberFormatter::class)
-            ->setMethods(['formatDecimalNumber'])
+            ->onlyMethods(['formatDecimalNumber'])
             ->getMock()
         ;
         $mockNumberFormatter
@@ -201,7 +201,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
 
         $mockLocalizationService = $this
             ->getMockBuilder(Service::class)
-            ->setMethods(['getConfiguration'])
+            ->onlyMethods(['getConfiguration'])
             ->getMock()
         ;
         $mockLocalizationService
@@ -213,7 +213,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
 
         $mockNumberFormatter = $this
             ->getMockBuilder(NumberFormatter::class)
-            ->setMethods(['formatDecimalNumber'])
+            ->onlyMethods(['formatDecimalNumber'])
             ->getMock()
         ;
         $mockNumberFormatter->expects(static::once())->method('formatDecimalNumber');
@@ -234,7 +234,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
 
         $mockLocalizationService = $this
             ->getMockBuilder(Service::class)
-            ->setMethods(['getConfiguration'])
+            ->onlyMethods(['getConfiguration'])
             ->getMock()
         ;
         $mockLocalizationService
@@ -246,7 +246,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
 
         $mockNumberFormatter = $this
             ->getMockBuilder(NumberFormatter::class)
-            ->setMethods(['formatDecimalNumber'])
+            ->onlyMethods(['formatDecimalNumber'])
             ->getMock()
         ;
         $mockNumberFormatter

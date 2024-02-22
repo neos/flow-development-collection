@@ -109,14 +109,14 @@ class RouterTest extends UnitTestCase
     {
         $routeValues = ['foo' => 'bar'];
         $resolveContext = new ResolveContext($this->mockBaseUri, $routeValues, false, '', RouteParameters::createEmpty());
-        $route1 = $this->getMockBuilder(Route::class)->disableOriginalConstructor()->setMethods(['resolves'])->getMock();
+        $route1 = $this->getMockBuilder(Route::class)->disableOriginalConstructor()->onlyMethods(['resolves'])->getMock();
         $route1->expects(self::once())->method('resolves')->with($resolveContext)->willReturn(false);
 
-        $route2 = $this->getMockBuilder(Route::class)->disableOriginalConstructor()->setMethods(['resolves', 'getResolvedUriConstraints'])->getMock();
+        $route2 = $this->getMockBuilder(Route::class)->disableOriginalConstructor()->onlyMethods(['resolves', 'getResolvedUriConstraints'])->getMock();
         $route2->expects(self::once())->method('resolves')->with($resolveContext)->willReturn(true);
         $route2->expects(self::atLeastOnce())->method('getResolvedUriConstraints')->willReturn(UriConstraints::create()->withPath('route2'));
 
-        $route3 = $this->getMockBuilder(Route::class)->disableOriginalConstructor()->setMethods(['resolves'])->getMock();
+        $route3 = $this->getMockBuilder(Route::class)->disableOriginalConstructor()->onlyMethods(['resolves'])->getMock();
         $route3->expects(self::never())->method('resolves');
 
         $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);

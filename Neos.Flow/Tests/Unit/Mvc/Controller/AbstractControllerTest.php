@@ -477,7 +477,7 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function mapRequestArgumentsToControllerArgumentsDoesJustThat()
     {
-        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->setMethods(['convert'])->getMock();
+        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->onlyMethods(['convert'])->getMock();
         $mockPropertyMapper->expects(self::atLeastOnce())->method('convert')->will($this->returnArgument(0));
 
         $controllerArguments = new Arguments();
@@ -506,7 +506,7 @@ class AbstractControllerTest extends UnitTestCase
     public function mapRequestArgumentsToControllerArgumentsThrowsExceptionIfRequiredArgumentWasNotSet()
     {
         $this->expectException(RequiredArgumentMissingException::class);
-        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->setMethods(['convert'])->getMock();
+        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->onlyMethods(['convert'])->getMock();
         $mockPropertyMapper->expects(self::atLeastOnce())->method('convert')->will($this->returnArgument(0));
 
         $controllerArguments = new Arguments();

@@ -205,7 +205,7 @@ class FormatResolverTest extends UnitTestCase
      */
     public function namedPlaceholdersAreResolvedCorrectly()
     {
-        $formatResolver = $this->getMockBuilder(I18n\FormatResolver::class)->setMethods(['dummy'])->getMock();
+        $formatResolver = $this->getMockBuilder(I18n\FormatResolver::class)->onlyMethods(['dummy'])->getMock();
 
         $result = $formatResolver->resolvePlaceholders('Key {keyName} is {valueName}', ['keyName' => 'foo', 'valueName' => 'bar'], $this->sampleLocale);
         self::assertEquals('Key foo is bar', $result);

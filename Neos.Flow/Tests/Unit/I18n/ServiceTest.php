@@ -45,7 +45,7 @@ class ServiceTest extends UnitTestCase
         mkdir(dirname($filename), 0777, true);
         file_put_contents($expectedFilename, 'FooBar');
 
-        $service = $this->getMockBuilder(I18n\Service::class)->setMethods(['getLocaleChain'])->getMock();
+        $service = $this->getMockBuilder(I18n\Service::class)->onlyMethods(['getLocaleChain'])->getMock();
         $service->expects(self::atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will(self::returnValue($localeChain));
 
         list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
@@ -67,7 +67,7 @@ class ServiceTest extends UnitTestCase
 
         mkdir($filename, 0777, true);
 
-        $service = $this->getMockBuilder(I18n\Service::class)->setMethods(['getLocaleChain'])->getMock();
+        $service = $this->getMockBuilder(I18n\Service::class)->onlyMethods(['getLocaleChain'])->getMock();
         $service->expects(self::atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will(self::returnValue($localeChain));
 
         list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);
@@ -130,7 +130,7 @@ class ServiceTest extends UnitTestCase
         $desiredLocale = new I18n\Locale('de_CH');
         $localeChain = ['de_CH' => $desiredLocale, 'en' => new I18n\Locale('en')];
 
-        $service = $this->getMockBuilder(I18n\Service::class)->setMethods(['getLocaleChain'])->getMock();
+        $service = $this->getMockBuilder(I18n\Service::class)->onlyMethods(['getLocaleChain'])->getMock();
         $service->expects(self::atLeastOnce())->method('getLocaleChain')->with($desiredLocale)->will(self::returnValue($localeChain));
 
         list($result, ) = $service->getLocalizedFilename($filename, $desiredLocale);

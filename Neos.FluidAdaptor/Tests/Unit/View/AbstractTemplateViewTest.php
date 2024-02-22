@@ -47,12 +47,12 @@ class AbstractTemplateViewTest extends \Neos\Flow\Tests\UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->templateVariableContainer = $this->getMockBuilder(TemplateVariableContainer::class)->setMethods(['exists', 'remove', 'add'])->getMock();
-        $this->viewHelperVariableContainer = $this->getMockBuilder(ViewHelperVariableContainer::class)->setMethods(['setView'])->getMock();
-        $this->renderingContext = $this->getMockBuilder(RenderingContext::class)->setMethods(['getViewHelperVariableContainer', 'getVariableProvider'])->disableOriginalConstructor()->getMock();
+        $this->templateVariableContainer = $this->getMockBuilder(TemplateVariableContainer::class)->onlyMethods(['exists', 'remove', 'add'])->getMock();
+        $this->viewHelperVariableContainer = $this->getMockBuilder(ViewHelperVariableContainer::class)->onlyMethods(['setView'])->getMock();
+        $this->renderingContext = $this->getMockBuilder(RenderingContext::class)->onlyMethods(['getViewHelperVariableContainer', 'getVariableProvider'])->disableOriginalConstructor()->getMock();
         $this->renderingContext->expects(self::any())->method('getViewHelperVariableContainer')->will(self::returnValue($this->viewHelperVariableContainer));
         $this->renderingContext->expects(self::any())->method('getVariableProvider')->will(self::returnValue($this->templateVariableContainer));
-        $this->view = $this->getMockBuilder(AbstractTemplateView::class)->setMethods(['getTemplateSource', 'getLayoutSource', 'getPartialSource', 'canRender', 'getTemplateIdentifier', 'getLayoutIdentifier', 'getPartialIdentifier'])->getMock();
+        $this->view = $this->getMockBuilder(AbstractTemplateView::class)->onlyMethods(['getTemplateSource', 'getLayoutSource', 'getPartialSource', 'canRender', 'getTemplateIdentifier', 'getLayoutIdentifier', 'getPartialIdentifier'])->getMock();
         $this->view->setRenderingContext($this->renderingContext);
     }
 

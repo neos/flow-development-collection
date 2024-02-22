@@ -41,7 +41,7 @@ class JsonViewTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->view = $this->getMockBuilder(Mvc\View\JsonView::class)->setMethods(['loadConfigurationFromYamlFile'])->getMock();
+        $this->view = $this->getMockBuilder(Mvc\View\JsonView::class)->onlyMethods(['loadConfigurationFromYamlFile'])->getMock();
         $this->controllerContext = $this->getMockBuilder(Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->response = new Mvc\ActionResponse();
         $this->controllerContext->expects(self::any())->method('getResponse')->will(self::returnValue($this->response));
@@ -194,7 +194,7 @@ class JsonViewTest extends UnitTestCase
      */
     public function testTransformValueWithObjectIdentifierExposure($object, $configuration, $expected, $dummyIdentifier, $description)
     {
-        $persistenceManagerMock = $this->getMockBuilder(PersistenceManager::class)->setMethods(['getIdentifierByObject'])->getMock();
+        $persistenceManagerMock = $this->getMockBuilder(PersistenceManager::class)->onlyMethods(['getIdentifierByObject'])->getMock();
         $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '', false);
         $jsonView->_set('persistenceManager', $persistenceManagerMock);
 
@@ -434,7 +434,7 @@ class JsonViewTest extends UnitTestCase
      */
     public function renderTransformsJsonSerializableValues()
     {
-        $value = $this->getMockBuilder('JsonSerializable')->setMethods(['jsonSerialize'])->getMock();
+        $value = $this->getMockBuilder('JsonSerializable')->onlyMethods(['jsonSerialize'])->getMock();
         $value->expects(self::any())->method('jsonSerialize')->will(self::returnValue(['name' => 'Foo', 'age' => 42]));
 
         $this->view->assign('value', $value);

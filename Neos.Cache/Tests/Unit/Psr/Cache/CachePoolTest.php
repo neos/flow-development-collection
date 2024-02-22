@@ -24,7 +24,7 @@ use Neos\Cache\Tests\BaseTestCase;
  */
 class CachePoolTest extends BaseTestCase
 {
-    public function validIdentifiersDataProvider(): array
+    public static function validIdentifiersDataProvider(): array
     {
         return [
             ['short'],
@@ -52,7 +52,7 @@ class CachePoolTest extends BaseTestCase
         self::assertInstanceOf(CachePool::class, $cachePool);
     }
 
-    public function invalidIdentifiersDataProvider(): array
+    public static function invalidIdentifiersDataProvider(): array
     {
         return [
             [''],
@@ -73,8 +73,8 @@ class CachePoolTest extends BaseTestCase
         new CachePool($identifier, $mockBackend);
     }
 
-    
-    
+
+
     /**
      * @test
      */
@@ -83,7 +83,7 @@ class CachePoolTest extends BaseTestCase
         $this->expectException(InvalidArgumentException::class);
         /** @var PsrFrontend|\PHPUnit\Framework\MockObject\MockObject $cache */
         $cache = $this->getMockBuilder(CachePool::class)
-            ->setMethods(['isValidEntryIdentifier'])
+            ->onlyMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
         $cache->expects(self::once())->method('isValidEntryIdentifier')->with('foo')->willReturn(false);
@@ -195,7 +195,7 @@ class CachePoolTest extends BaseTestCase
     protected function prepareDefaultBackend()
     {
         return $this->getMockBuilder(AbstractBackend::class)
-            ->setMethods([
+            ->onlyMethods([
                 'get',
                 'set',
                 'has',

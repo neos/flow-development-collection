@@ -41,7 +41,7 @@ class ResourceInterceptorTest extends UnitTestCase
 				background-repeat: no-repeat;
 			}';
         $originalText = $originalText1 . $originalText2 . $originalText3;
-        $mockTextNode = $this->getMockBuilder(TextNode::class)->setMethods(['evaluateChildNodes'])->setConstructorArgs([$originalText])->getMock();
+        $mockTextNode = $this->getMockBuilder(TextNode::class)->onlyMethods(['evaluateChildNodes'])->setConstructorArgs([$originalText])->getMock();
         self::assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
 
         $interceptor = new ResourceInterceptor();
@@ -111,7 +111,7 @@ class ResourceInterceptorTest extends UnitTestCase
     public function supportedUrlsAreDetected($part1, $part2, $part3, $expectedPath, $expectedPackageKey)
     {
         $originalText = $part1 . $part2 . $part3;
-        $mockTextNode = $this->getMockBuilder(TextNode::class)->setMethods(['evaluateChildNodes'])->setConstructorArgs([$originalText])->getMock();
+        $mockTextNode = $this->getMockBuilder(TextNode::class)->onlyMethods(['evaluateChildNodes'])->setConstructorArgs([$originalText])->getMock();
         self::assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
 
         $interceptor = new ResourceInterceptor();

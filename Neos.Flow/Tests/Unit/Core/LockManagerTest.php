@@ -49,7 +49,7 @@ class LockManagerTest extends UnitTestCase
         $this->mockLockFile = vfsStream::newFile(md5(FLOW_PATH_ROOT) . '_Flow.lock')->at($this->mockLockDirectory);
         $this->mockLockFlagFile = vfsStream::newFile(md5(FLOW_PATH_ROOT) . '_FlowIsLocked')->at($this->mockLockDirectory);
 
-        $this->lockManager = $this->getMockBuilder(LockManager::class)->setMethods(['getLockPath', 'doExit'])->disableOriginalConstructor()->getMock();
+        $this->lockManager = $this->getMockBuilder(LockManager::class)->onlyMethods(['getLockPath', 'doExit'])->disableOriginalConstructor()->getMock();
         $this->lockManager->expects(self::atLeastOnce())->method('getLockPath')->will(self::returnValue($this->mockLockDirectory->url() . '/'));
         $this->lockManager->__construct();
     }

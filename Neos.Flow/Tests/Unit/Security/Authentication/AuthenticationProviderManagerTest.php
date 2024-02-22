@@ -111,7 +111,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $account = new Account();
         $account->setAccountIdentifier('admin');
 
-        $securityContext = $this->getMockBuilder(Context::class)->setMethods(['getAuthenticationStrategy', 'getAuthenticationTokens', 'refreshTokens', 'refreshRoles'])->getMock();
+        $securityContext = $this->getMockBuilder(Context::class)->onlyMethods(['getAuthenticationStrategy', 'getAuthenticationTokens', 'refreshTokens', 'refreshRoles'])->getMock();
 
         $token = $this->createMock(TokenInterface::class);
         $token->expects(self::any())->method('getAccount')->will(self::returnValue($account));

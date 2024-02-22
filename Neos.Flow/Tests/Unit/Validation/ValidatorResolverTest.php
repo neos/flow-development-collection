@@ -202,7 +202,7 @@ class ValidatorResolverTest extends UnitTestCase
      */
     public function createValidatorReturnsNullIfAValidatorCouldNotBeResolved()
     {
-        $validatorResolver = $this->getMockBuilder(ValidatorResolver::class)->setMethods(['resolveValidatorObjectName'])->getMock();
+        $validatorResolver = $this->getMockBuilder(ValidatorResolver::class)->onlyMethods(['resolveValidatorObjectName'])->getMock();
         $validatorResolver->expects(self::once())->method('resolveValidatorObjectName')->with('Foo')->willReturn(false);
         $validator = $validatorResolver->createValidator('Foo', ['foo' => 'bar']);
         self::assertNull($validator);
@@ -217,7 +217,7 @@ class ValidatorResolverTest extends UnitTestCase
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects(self::once())->method('getScope')->with('FooType')->willReturn(Configuration::SCOPE_SINGLETON);
 
-        $validatorResolver = $this->getMockBuilder(ValidatorResolver::class)->setMethods(['resolveValidatorObjectName'])->getMock();
+        $validatorResolver = $this->getMockBuilder(ValidatorResolver::class)->onlyMethods(['resolveValidatorObjectName'])->getMock();
         $this->inject($validatorResolver, 'objectManager', $mockObjectManager);
         $validatorResolver->expects(self::once())->method('resolveValidatorObjectName')->with('FooType')->willReturn('FooType');
         $validatorResolver->createValidator('FooType', ['foo' => 'bar']);
@@ -450,7 +450,7 @@ class ValidatorResolverTest extends UnitTestCase
         $mockHighPriorityValidator->expects(self::atLeastOnce())->method('canValidate')->with($modelClassName)->willReturn(true);
         $mockHighPriorityValidator->expects(self::atLeastOnce())->method('getPriority')->willReturn(200);
 
-        $mockConjunctionValidator = $this->getMockBuilder(ConjunctionValidator::class)->setMethods(['addValidator'])->getMock();
+        $mockConjunctionValidator = $this->getMockBuilder(ConjunctionValidator::class)->onlyMethods(['addValidator'])->getMock();
         $mockConjunctionValidator->expects(self::once())->method('addValidator')->with($mockHighPriorityValidator);
 
         $mockReflectionService = $this->createMock(ReflectionService::class);

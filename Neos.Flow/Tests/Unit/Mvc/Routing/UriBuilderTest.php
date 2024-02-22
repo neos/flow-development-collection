@@ -97,7 +97,7 @@ class UriBuilderTest extends UnitTestCase
         $this->mockSubSubRequest->expects(self::any())->method('isMainRequest')->willReturn(false);
         $this->mockSubSubRequest->expects(self::any())->method('getParentRequest')->willReturn($this->mockSubRequest);
 
-        $environment = $this->getMockBuilder(Utility\Environment::class)->disableOriginalConstructor()->setMethods(['isRewriteEnabled'])->getMock();
+        $environment = $this->getMockBuilder(Utility\Environment::class)->disableOriginalConstructor()->onlyMethods(['isRewriteEnabled'])->getMock();
         $environment->expects(self::any())->method('isRewriteEnabled')->will(self::returnValue(true));
 
         $this->uriBuilder = new Mvc\Routing\UriBuilder();
@@ -209,7 +209,7 @@ class UriBuilderTest extends UnitTestCase
     public function uriForInSubRequestWithExplicitEmptySubpackageKeyDoesNotUseRequestSubpackageKey()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $mockSubRequest */
-        $mockSubRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->setMethods([])->disableOriginalConstructor()->getMock();
+        $mockSubRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->onlyMethods([])->disableOriginalConstructor()->getMock();
         $mockSubRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
         $mockSubRequest->expects(self::any())->method('getMainRequest')->will(self::returnValue($this->mockMainRequest));
         $mockSubRequest->expects(self::any())->method('isMainRequest')->will(self::returnValue(false));
@@ -796,7 +796,7 @@ class UriBuilderTest extends UnitTestCase
      */
     public function buildPrependsIndexFileIfRewriteUrlsIsOff()
     {
-        $mockEnvironment = $this->getMockBuilder(Utility\Environment::class)->disableOriginalConstructor()->setMethods(['isRewriteEnabled'])->getMock();
+        $mockEnvironment = $this->getMockBuilder(Utility\Environment::class)->disableOriginalConstructor()->onlyMethods(['isRewriteEnabled'])->getMock();
         $this->inject($this->uriBuilder, 'environment', $mockEnvironment);
 
         $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
