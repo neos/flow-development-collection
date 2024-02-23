@@ -99,9 +99,7 @@ class CacheFactoryTest extends UnitTestCase
      */
     public function aDifferentDefaultCacheDirectoryIsUsedForPersistentFileCaches()
     {
-        $cacheManager = new CacheManager();
         $factory = new CacheFactory(new ApplicationContext('Testing'), $this->mockEnvironment, 'UnitTesting');
-        $factory->injectCacheManager($cacheManager);
         $factory->injectEnvironmentConfiguration($this->mockEnvironmentConfiguration);
 
         $cache = $factory->create('Persistent_Cache', VariableFrontend::class, FileBackend::class, [], true);

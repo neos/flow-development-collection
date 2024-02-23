@@ -71,7 +71,7 @@ class ScalarTypeToObjectConverter extends AbstractTypeConverter
             return false;
         }
         $methodParameter = array_shift($methodParameters);
-        return TypeHandling::normalizeType($methodParameter['type']) === gettype($source);
+        return TypeHandling::normalizeType($methodParameter['type']) === TypeHandling::normalizeType(gettype($source));
     }
 
     /**

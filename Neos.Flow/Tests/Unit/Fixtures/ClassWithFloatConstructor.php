@@ -12,21 +12,21 @@ namespace Neos\Flow\Fixtures;
  */
 
 /**
- * A value object (POPO) with one constructor argument (integer)
+ * A value object (POPO) with one constructor argument (float)
  */
-class ClassWithIntegerConstructor
+class ClassWithFloatConstructor
 {
     /**
-     * @var int
+     * @var float
      */
     public $value;
 
     /**
-     * ClassWithIntegerConstructor constructor.
+     * ClassWithFloatConstructor constructor.
      *
-     * @param int $value
+     * @param float $value
      */
-    public function __construct(int $value)
+    public function __construct(float $value)
     {
         $this->value = $value;
     }
