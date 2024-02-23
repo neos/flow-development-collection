@@ -78,9 +78,6 @@ class Arguments extends \ArrayObject
         parent::offsetUnset($translatedOffset);
 
         unset($this->argumentNames[$translatedOffset]);
-        if ($offset != $translatedOffset) {
-            unset($this->argumentShortNames[$offset]);
-        }
     }
 
     /**
