@@ -1,0 +1,64 @@
+`8.0.16 (2024-02-23) <https://github.com/neos/flow-development-collection/releases/tag/8.0.16>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Dont log stack trace for `InvalidHashException` in Production <https://github.com/neos/flow-development-collection/pull/3247>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+This configures an ``invalidHashExceptions`` exception handler rendering group and configures it to not dump stack traces in ``Production`` context. For ``Development`` context stack traces are still written to ease debugging.
+
+* See: `#3159 <https://github.com/neos/flow-development-collection/issues/3159>`_
+
+**Upgrade instructions**
+
+In case you need trace dumps for ``InvalidHashException`` in production context, override the settings as needed.
+
+**Review instructions**
+
+* See: `#3159 <https://github.com/neos/flow-development-collection/issues/3159>`_ for ways to trigger those exceptions. Then check if a trace is dumped.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix documentation of `maximumThrowableDump` defaults <https://github.com/neos/flow-development-collection/pull/3269>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+* Related: `#3158 <https://github.com/neos/flow-development-collection/issues/3158>`_
+
+* Packages: ``Flow``
+
+`TASK: Scripts.php avoid use of same references for exec <https://github.com/neos/flow-development-collection/pull/3171>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Followup to https://github.com/neos/flow-development-collection/pull/3116
+
+I debugged with @dlubitz a problem and we found that in theory?  $output _might_ be possibly already filled?
+I dont know if that can happen but just to be sure we set it to empty as its also a bad practice.
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`TASK: Fix errors in Middleware code example <https://github.com/neos/flow-development-collection/pull/3299>`_
+--------------------------------------------------------------------------------------------------------------
+
+I found two small errors in the Middleware code example in the documentation.
+
+
+* Packages: ``Flow``
+
+`TASK: Correct Flow composer.json <https://github.com/neos/flow-development-collection/pull/3252>`_
+---------------------------------------------------------------------------------------------------
+
+The upmerge commit `42e3fd7886d5bed317511a2046d4119867216923 <https://github.com/neos/flow-development-collection/commit/42e3fd7886d5bed317511a2046d4119867216923>`_ wrongly overwrote major parts of Flows composer.json, introducing older versions of PHP and psr/log as well as removing dependencies on some other psr packages. This change corrects the issue and needs to be upmerged accordingly.
+
+The changes were never merged into the collection composer.json so that the issue was not noticed in development environments.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.0.15...8.0.16>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
