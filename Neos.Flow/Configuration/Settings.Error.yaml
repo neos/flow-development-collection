@@ -37,6 +37,14 @@ Neos:
               variables:
                 errorDescription: 'Sorry, the database connection couldn''t be established.'
 
+          noStacktraceExceptionGroup:
+            matchingExceptionClassNames: ['Neos\Flow\Security\Exception\InvalidHashException']
+            options:
+              logException: false
+              templatePathAndFilename: 'resource://Neos.Flow/Private/Templates/Error/Default.html'
+              variables:
+                errorDescription: 'Sorry, something went wrong.'
+
       errorHandler:
 
         # Defines which errors should result in an exception thrown - all other error
@@ -71,4 +79,3 @@ Neos:
 
         # Maximal recursion for the debugger
         recursionLimit: 5
-
