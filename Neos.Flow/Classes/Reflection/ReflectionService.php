@@ -1352,6 +1352,9 @@ class ReflectionService
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
         }
         if (PHP_MAJOR_VERSION >= 8) {
+            if ($property->hasType() && !isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES]['var'])) {
+                $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES]['var'] = [trim((string)$property->getType(), '?')];
+            }
             foreach ($property->getAttributes() as $attribute) {
                 if ($this->isAttributeIgnored($attribute->getName())) {
                     continue;

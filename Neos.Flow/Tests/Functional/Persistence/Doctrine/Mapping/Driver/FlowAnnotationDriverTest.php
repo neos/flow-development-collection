@@ -52,12 +52,40 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function lifecycleEventAnnotationsAreDetectedWithAttributes()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Attributes');
+        }
+        $classMetadata = new ClassMetadata(Fixtures\Attributes\Post::class);
+        $driver = $this->objectManager->get(FlowAnnotationDriver::class);
+        $driver->loadMetadataForClass(Fixtures\Attributes\Post::class, $classMetadata);
+        self::assertTrue($classMetadata->hasLifecycleCallbacks('prePersist'));
+    }
+
+    /**
+     * @test
+     */
     public function lifecycleEventAnnotationsAreDetectedWithoutHasLifecycleCallbacks()
     {
         $classMetadata = new ClassMetadata(Fixtures\Comment::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
         $driver->loadMetadataForClass(Fixtures\Comment::class, $classMetadata);
-        self::assertTrue($classMetadata->hasLifecycleCallbacks('prePersist'));
+        self::assertTrue($classMetadata->hasLifecycleCallbacks(\Doctrine\ORM\Events::prePersist));
+    }
+
+    /**
+     * @test
+     */
+    public function lifecycleEventAnnotationsAreDetectedWithoutHasLifecycleCallbacksWithAttributes()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Attributes');
+        }
+        $classMetadata = new ClassMetadata(Fixtures\Attributes\Comment::class);
+        $driver = $this->objectManager->get(FlowAnnotationDriver::class);
+        $driver->loadMetadataForClass(Fixtures\Attributes\Comment::class, $classMetadata);
+        self::assertTrue($classMetadata->hasLifecycleCallbacks(\Doctrine\ORM\Events::prePersist));
     }
 
     /**
@@ -68,6 +96,20 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
         $classMetadata = new ClassMetadata(Fixtures\UnproxiedTestEntity::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
         $driver->loadMetadataForClass(Fixtures\UnproxiedTestEntity::class, $classMetadata);
+        self::assertFalse($classMetadata->hasLifecycleCallbacks(\Doctrine\ORM\Events::postLoad));
+    }
+
+    /**
+     * @test
+     */
+    public function lifecycleCallbacksAreNotRegisteredForUnproxiedEntitiesWithAttributes()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Attributes');
+        }
+        $classMetadata = new ClassMetadata(Fixtures\Attributes\UnproxiedTestEntity::class);
+        $driver = $this->objectManager->get(FlowAnnotationDriver::class);
+        $driver->loadMetadataForClass(Fixtures\Attributes\UnproxiedTestEntity::class, $classMetadata);
         self::assertFalse($classMetadata->hasLifecycleCallbacks(\Doctrine\ORM\Events::postLoad));
     }
 
@@ -85,6 +127,20 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function inheritanceTypeIsNotChangedIfNoSubclassesOfNonAbstractClassExistWithAttributes()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Attributes');
+        }
+        $classMetadata = new ClassMetadata(Fixtures\Attributes\Post::class);
+        $driver = $this->objectManager->get(FlowAnnotationDriver::class);
+        $driver->loadMetadataForClass(Fixtures\Attributes\Post::class, $classMetadata);
+        self::assertSame(\Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_JOINED, $classMetadata->inheritanceType);
+    }
+
+    /**
+     * @test
+     */
     public function inheritanceTypeIsSetToNoneIfNoSubclassesOfAbstractClassExist()
     {
         $classMetadata = new ClassMetadata(Fixtures\AbstractEntity::class);
@@ -96,11 +152,41 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function inheritanceTypeIsSetToNoneIfNoSubclassesOfAbstractClassExistWithAttributes()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Attributes');
+        }
+        $classMetadata = new ClassMetadata(Fixtures\Attributes\AbstractEntity::class);
+        $driver = $this->objectManager->get(FlowAnnotationDriver::class);
+        $driver->loadMetadataForClass(Fixtures\Attributes\AbstractEntity::class, $classMetadata);
+        self::assertSame(\Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE, $classMetadata->inheritanceType);
+    }
+
+    /**
+     * @test
+     */
     public function compositePrimaryKeyOverEntityRelationIsRegistered()
     {
         $classMetadata = new ClassMetadata(Fixtures\CompositeKeyTestEntity::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
         $driver->loadMetadataForClass(Fixtures\CompositeKeyTestEntity::class, $classMetadata);
+        self::assertTrue($classMetadata->isIdentifierComposite);
+        self::assertTrue($classMetadata->containsForeignIdentifier);
+        self::assertEquals($classMetadata->identifier, ['name', 'relatedEntity']);
+    }
+
+    /**
+     * @test
+     */
+    public function compositePrimaryKeyOverEntityRelationIsRegisteredWithAttributes()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Attributes');
+        }
+        $classMetadata = new ClassMetadata(Fixtures\Attributes\CompositeKeyTestEntity::class);
+        $driver = $this->objectManager->get(FlowAnnotationDriver::class);
+        $driver->loadMetadataForClass(Fixtures\Attributes\CompositeKeyTestEntity::class, $classMetadata);
         self::assertTrue($classMetadata->isIdentifierComposite);
         self::assertTrue($classMetadata->containsForeignIdentifier);
         self::assertEquals($classMetadata->identifier, ['name', 'relatedEntity']);
@@ -183,6 +269,85 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
     }
 
     /**
+     * Makes sure that
+     * - thumbnail and image (same type) do get distinct column names
+     * - simple properties get mapped to their name
+     * - using joincolumn without name on single associations uses the property name
+     *
+     * @test
+     */
+    public function columnNamesAreBuiltCorrectlyWithAttributes()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Attributes');
+        }
+        $expectedTitleMapping = [
+            'fieldName' => 'title',
+            'columnName' => 'title',
+            'targetEntity' => 'string',
+            'nullable' => false,
+            'type' => 'string',
+        ];
+
+        $expectedImageAssociationMapping = [
+            'fieldName' => 'image',
+            'columnName' => 'image',
+            'joinColumns' => [
+                0 => [
+                    'name' => 'image',
+                    'referencedColumnName' => 'persistence_object_identifier',
+                    'unique' => true,
+                ],
+            ],
+            'joinColumnFieldNames' => [
+                'image' => 'image',
+            ],
+        ];
+
+        $expectedCommentAssociationMapping = [
+            'fieldName' => 'comment',
+            'columnName' => 'comment',
+            'joinColumns' => [0 => [
+                    'name' => 'comment',
+                    'referencedColumnName' => 'persistence_object_identifier',
+                    'unique' => true,
+                    'nullable' => true,
+                    'onDelete' => 'SET NULL',
+                    'columnDefinition' => null,
+            ],
+            ],
+            'sourceEntity' => Fixtures\Attributes\Post::class,
+            'sourceToTargetKeyColumns' => [
+                'comment' => 'persistence_object_identifier',
+            ],
+            'joinColumnFieldNames' => [
+                'comment' => 'comment',
+            ],
+            'targetToSourceKeyColumns' => [
+                'persistence_object_identifier' => 'comment',
+            ],
+        ];
+
+        $classMetadata = new ClassMetadata(Fixtures\Attributes\Post::class);
+        $driver = $this->objectManager->get(FlowAnnotationDriver::class);
+        $driver->loadMetadataForClass(Fixtures\Attributes\Post::class, $classMetadata);
+
+        self::assertEquals($expectedTitleMapping, $classMetadata->getFieldMapping('title'), 'mapping for "title" not as expected');
+        $imageAssociationMapping = $classMetadata->getAssociationMapping('image');
+        $thumbnailAssociationMapping = $classMetadata->getAssociationMapping('thumbnail');
+        foreach (array_keys($expectedImageAssociationMapping) as $key) {
+            self::assertEquals($expectedImageAssociationMapping[$key], $imageAssociationMapping[$key], 'mapping for "image" not as expected');
+            self::assertNotEquals($expectedImageAssociationMapping[$key], $thumbnailAssociationMapping[$key], 'mapping for "thumbnail" not as expected');
+        }
+
+        $commentAssociationMapping = $classMetadata->getAssociationMapping('comment');
+        self::assertEquals(1, count($commentAssociationMapping['joinColumns']));
+        foreach (array_keys($expectedCommentAssociationMapping) as $key) {
+            self::assertEquals($expectedCommentAssociationMapping[$key], $commentAssociationMapping[$key], 'mapping for "comment" not as expected');
+        }
+    }
+
+    /**
      * The "related_post_id" column given manually must be kept.
      *
      * @test
@@ -234,6 +399,60 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
     }
 
     /**
+     * The "related_post_id" column given manually must be kept.
+     *
+     * @test
+     */
+    public function joinColumnAnnotationsAreObservedWithAttributes()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Attributes');
+        }
+        $expectedRelatedAssociationMapping = [
+            'fieldName' => 'related',
+            'columnName' => 'related',
+            'joinTable' => [
+                'name' => 'neos_flow_tests_functional_persistence_fixtu_a5ca5_related_join',
+                'schema' => null,
+                'joinColumns' => [
+                    0 => [
+                        'name' => 'flow_attributes_post',
+                        'referencedColumnName' => 'persistence_object_identifier',
+                    ],
+                ],
+                'inverseJoinColumns' => [
+                    0 => [
+                        'name' => 'related_post_id',
+                        'referencedColumnName' => 'persistence_object_identifier',
+                        'unique' => false,
+                        'nullable' => true,
+                        'onDelete' => null,
+                        'columnDefinition' => null,
+                    ],
+                ],
+            ],
+            'relationToSourceKeyColumns' => [
+                'flow_attributes_post' => 'persistence_object_identifier',
+            ],
+            'joinTableColumns' => [
+                0 => 'flow_attributes_post',
+                1 => 'related_post_id',
+            ],
+            'relationToTargetKeyColumns' => [
+                'related_post_id' => 'persistence_object_identifier',
+            ],
+        ];
+        $classMetadata = new ClassMetadata(Fixtures\Attributes\Post::class);
+        $driver = $this->objectManager->get(FlowAnnotationDriver::class);
+        $driver->loadMetadataForClass(Fixtures\Attributes\Post::class, $classMetadata);
+
+        $relatedAssociationMapping = $classMetadata->getAssociationMapping('related');
+        foreach (array_keys($expectedRelatedAssociationMapping) as $key) {
+            self::assertEquals($expectedRelatedAssociationMapping[$key], $relatedAssociationMapping[$key]);
+        }
+    }
+
+    /**
      * The "indexBy" annotation of EntityWithIndexedRelation must be kept
      *
      * @test
@@ -243,6 +462,31 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
         $classMetadata = new ClassMetadata(Fixtures\EntityWithIndexedRelation::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
         $driver->loadMetadataForClass(Fixtures\EntityWithIndexedRelation::class, $classMetadata);
+
+        /* The annotation should be available at ManyToMany relations */
+        $relatedAssociationMapping = $classMetadata->getAssociationMapping('annotatedIdentitiesEntities');
+        self::assertArrayHasKey('indexBy', $relatedAssociationMapping);
+        self::assertEquals('author', $relatedAssociationMapping['indexBy']);
+
+        /* The annotation should be available at OneToMany relations */
+        $relatedAssociationMapping = $classMetadata->getAssociationMapping('relatedIndexEntities');
+        self::assertArrayHasKey('indexBy', $relatedAssociationMapping);
+        self::assertEquals('sorting', $relatedAssociationMapping['indexBy']);
+    }
+
+    /**
+     * The "indexBy" annotation of EntityWithIndexedRelation must be kept
+     *
+     * @test
+     */
+    public function doctrineIndexByAnnotationIsObservedWithAttributes()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Attributes');
+        }
+        $classMetadata = new ClassMetadata(Fixtures\Attributes\EntityWithIndexedRelation::class);
+        $driver = $this->objectManager->get(FlowAnnotationDriver::class);
+        $driver->loadMetadataForClass(Fixtures\Attributes\EntityWithIndexedRelation::class, $classMetadata);
 
         /* The annotation should be available at ManyToMany relations */
         $relatedAssociationMapping = $classMetadata->getAssociationMapping('annotatedIdentitiesEntities');
@@ -306,6 +550,50 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
         /* @var $foreignKey \Doctrine\DBAL\Schema\ForeignKeyConstraint */
         foreach ($schema->getTable('persistence_onetooneentity2')->getForeignKeys() as $foreignKey) {
             if ($foreignKey->getForeignTableName() === 'persistence_onetooneentity') {
+                self::assertTrue(false);
+            }
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function oneToOneRelationsAreMappedCorrectlyWithAttributes()
+    {
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->markTestSkipped('Only for PHP 8 with Attributes');
+        }
+        $classMetadata = new ClassMetadata(Fixtures\Attributes\OneToOneEntity::class);
+        $driver = $this->objectManager->get(FlowAnnotationDriver::class);
+        $driver->loadMetadataForClass(Fixtures\Attributes\OneToOneEntity::class, $classMetadata);
+
+        $selfReferencingMapping = $classMetadata->getAssociationMapping('selfReferencing');
+        self::assertNotEmpty($selfReferencingMapping['joinColumns']);
+        self::assertTrue($selfReferencingMapping['isOwningSide']);
+
+        $bidirectionalMapping = $classMetadata->getAssociationMapping('bidirectionalRelation');
+        self::assertNotEmpty($bidirectionalMapping['joinColumns']);
+        self::assertEquals('bidirectionalRelation', $bidirectionalMapping['inversedBy']);
+        self::assertTrue($bidirectionalMapping['isOwningSide']);
+
+        $classMetadata2 = new ClassMetadata(Fixtures\Attributes\OneToOneEntity2::class);
+        $driver->loadMetadataForClass(Fixtures\Attributes\OneToOneEntity2::class, $classMetadata2);
+        $bidirectionalMapping2 = $classMetadata2->getAssociationMapping('bidirectionalRelation');
+        self::assertFalse(isset($bidirectionalMapping2['joinColumns']));
+        self::assertEquals('bidirectionalRelation', $bidirectionalMapping2['mappedBy']);
+        self::assertFalse($bidirectionalMapping2['isOwningSide']);
+
+        $unidirectionalMapping = $classMetadata->getAssociationMapping('unidirectionalRelation');
+        self::assertNotEmpty($unidirectionalMapping['joinColumns']);
+        self::assertTrue($unidirectionalMapping['isOwningSide']);
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->objectManager->get(EntityManagerInterface::class);
+        $schemaTool = new SchemaTool($entityManager);
+        $schema = $schemaTool->getSchemaFromMetadata([$entityManager->getClassMetadata(Fixtures\Attributes\OneToOneEntity2::class)]);
+        /* @var $foreignKey \Doctrine\DBAL\Schema\ForeignKeyConstraint */
+        foreach ($schema->getTable('persistence_attributes_onetooneentity2')->getForeignKeys() as $foreignKey) {
+            if ($foreignKey->getForeignTableName() === 'persistence_attributes_onetooneentity2') {
                 self::assertTrue(false);
             }
         }
