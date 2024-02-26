@@ -178,15 +178,6 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
     }
 
     /**
-     * @param ControllerContext $controllerContext
-     * @return boolean
-     */
-    public function canRender(ControllerContext $controllerContext)
-    {
-        return true;
-    }
-
-    /**
      * Renders a given section.
      *
      * @param string $sectionName Name of section to render

@@ -65,18 +65,6 @@ final class TemplateView extends AbstractView
     }
 
     /**
-     * This view can be used in any case.
-     *
-     * @param ControllerContext $controllerContext
-     * @return boolean true
-     * @api
-     */
-    public function canRender(ControllerContext $controllerContext)
-    {
-        return true;
-    }
-
-    /**
      * Renders the empty view
      *
      * @return string An empty string

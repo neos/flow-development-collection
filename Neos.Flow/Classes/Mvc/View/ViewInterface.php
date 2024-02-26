@@ -54,14 +54,6 @@ interface ViewInterface
     public function assignMultiple(array $values);
 
     /**
-     * Tells if the view implementation can render the view for the given context.
-     *
-     * @param ControllerContext $controllerContext
-     * @return boolean true if the view has something useful to display, otherwise false
-     */
-    public function canRender(ControllerContext $controllerContext);
-
-    /**
      * Renders the view
      *
      * @return string|ActionResponse|ResponseInterface|StreamInterface|object The rendered result; object is only handled if __toString() exists!
