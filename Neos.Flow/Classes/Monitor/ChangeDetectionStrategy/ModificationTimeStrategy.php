@@ -18,7 +18,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A change detection strategy based on modification times
  */
-class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, StrategyWithMarkDeletedInterface
+class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, StrategyWithMarkDeletedInterface, StrategyWithFlushDeletedOnPathInterface
 {
     /**
      * @var \Neos\Flow\Monitor\FileMonitor
@@ -62,6 +62,32 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     {
         $this->fileMonitor = $fileMonitor;
         $this->filesAndModificationTimes = json_decode($this->cache->get($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes'), true);
+    }
+
+    /**
+     * @param string $onPath
+     * @param array<string,1> $filesIgnoreMask files to ignore as we are sure they exist
+     * @return array<string, ChangeDetectionStrategyInterface::STATUS_DELETED>
+     */
+    public function flushDeletedOnPath(string $onPath, array $filesIgnoreMask): array
+    {
+        $deletedFiles = [];
+        foreach ($this->filesAndModificationTimes as $pathAndFilename => $modificationTime) {
+            if (!str_starts_with($pathAndFilename, $onPath)) {
+                continue;
+            }
+            if (isset($filesIgnoreMask[$pathAndFilename])) {
+                continue;
+            }
+            if (file_exists($pathAndFilename)) {
+                // should not happen?
+                continue;
+            }
+            $this->modificationTimesChanged = true;
+            unset($this->filesAndModificationTimes[$pathAndFilename]);
+            $deletedFiles[$pathAndFilename] = ChangeDetectionStrategyInterface::STATUS_DELETED;
+        }
+        return $deletedFiles;
     }
 
     /**
