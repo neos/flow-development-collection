@@ -260,7 +260,7 @@ abstract class AbstractController implements ControllerInterface
      * @param string $actionName Name of the action to forward to
      * @param string|null $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
      * @param string|null $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
-     * @param array<string, string> $arguments Array of arguments for the target action
+     * @param array<string, mixed> $arguments Array of arguments for the target action
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @param string|null $format The format to use for the redirect URI

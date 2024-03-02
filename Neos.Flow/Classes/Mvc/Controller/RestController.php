@@ -11,9 +11,7 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Uri;
-use GuzzleHttp\Psr7\Utils;
-use Neos\Flow\Annotations as Flow;
+use GuzzleHttp\Psr7\BufferStream;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\InvalidActionNameException;
@@ -129,13 +127,15 @@ class RestController extends ActionController
      */
     protected function redirectToUri(string|UriInterface $uri, int $delay = 0, int $statusCode = 303): never
     {
-        // the parent method throws the exception, but we need to act afterwards
-        // thus the code in catch - it's the expected state
+        // the parent method throws the exception, we decorate it afterwards
         try {
             parent::redirectToUri($uri, $delay, $statusCode);
         } catch (StopActionException $exception) {
             if ($this->request->getFormat() === 'json') {
-                throw StopActionException::createForResponse($exception->response->withBody(Utils::streamFor('')), '');
+                throw StopActionException::createForResponse(
+                    $exception->response->withBody(new BufferStream()),
+                    'Intercepted to sent empty body for JSON request.'
+                );
             }
             throw $exception;
         }
