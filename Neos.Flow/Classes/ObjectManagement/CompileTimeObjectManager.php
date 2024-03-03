@@ -11,14 +11,18 @@ namespace Neos\Flow\ObjectManagement;
  * source code.
  */
 
+use Neos\Cache\Exception as CacheException;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Composer\ComposerUtility as ComposerUtility;
+use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationBuilder;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationProperty as Property;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException;
+use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
+use Neos\Flow\ObjectManagement\Exception\WrongScopeException;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Reflection\ReflectionService;
@@ -35,52 +39,52 @@ use Psr\Log\LoggerInterface;
 class CompileTimeObjectManager extends ObjectManager
 {
     /**
-     * @var VariableFrontend
+     * @var VariableFrontend|null
      */
-    protected $configurationCache;
+    protected ?VariableFrontend $configurationCache;
 
     /**
-     * @var ReflectionService
+     * @var ReflectionService|null
      */
-    protected $reflectionService;
+    protected ?ReflectionService $reflectionService;
 
     /**
-     * @var ConfigurationManager
+     * @var ConfigurationManager|null
      */
-    protected $configurationManager;
+    protected ?ConfigurationManager $configurationManager;
 
     /**
-     * @var LoggerInterface
+     * @var LoggerInterface|null
      */
-    protected $logger;
+    protected ?LoggerInterface $logger;
 
     /**
      * @var array
      */
-    protected $objectConfigurations;
+    protected array $objectConfigurations = [];
 
     /**
      * A list of all class names known to the Object Manager
      *
      * @var array
      */
-    protected $registeredClassNames = [];
+    protected array $registeredClassNames = [];
 
     /**
      * @var array
      */
-    protected $objectNameBuildStack = [];
+    protected array $objectNameBuildStack = [];
 
     /**
      * @var array
      */
-    protected $cachedClassNamesByScope = [];
+    protected array $cachedClassNamesByScope = [];
 
     /**
      * @param ReflectionService $reflectionService
      * @return void
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
@@ -89,7 +93,7 @@ class CompileTimeObjectManager extends ObjectManager
      * @param ConfigurationManager $configurationManager
      * @return void
      */
-    public function injectConfigurationManager(ConfigurationManager $configurationManager)
+    public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
     }
@@ -100,7 +104,7 @@ class CompileTimeObjectManager extends ObjectManager
      * @param VariableFrontend $configurationCache
      * @return void
      */
-    public function injectConfigurationCache(VariableFrontend $configurationCache)
+    public function injectConfigurationCache(VariableFrontend $configurationCache): void
     {
         $this->configurationCache = $configurationCache;
     }
@@ -111,7 +115,7 @@ class CompileTimeObjectManager extends ObjectManager
      * @param LoggerInterface $logger
      * @return void
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -121,8 +125,11 @@ class CompileTimeObjectManager extends ObjectManager
      *
      * @param PackageInterface[] $packages An array of active packages to consider
      * @return void
+     * @throws InvalidConfigurationTypeException
+     * @throws InvalidObjectConfigurationException
+     * @throws CacheException
      */
-    public function initialize(array $packages)
+    public function initialize(array $packages): void
     {
         $this->registeredClassNames = $this->registerClassFiles($packages);
         $this->reflectionService->buildReflectionData($this->registeredClassNames);
@@ -149,11 +156,13 @@ class CompileTimeObjectManager extends ObjectManager
      * @param string $objectName The object name
      * @param object $instance A prebuilt instance
      * @return void
+     * @throws UnknownObjectException
+     * @throws WrongScopeException
      */
-    public function setInstance($objectName, $instance)
+    public function setInstance($objectName, $instance): void
     {
         if ($this->registeredClassNames === []) {
-            $this->objects[$objectName]['i'] = $instance;
+            $this->objects[$objectName][self::KEY_INSTANCE] = $instance;
         } else {
             parent::setInstance($objectName, $instance);
         }
@@ -164,7 +173,7 @@ class CompileTimeObjectManager extends ObjectManager
      *
      * @return array
      */
-    public function getRegisteredClassNames()
+    public function getRegisteredClassNames(): array
     {
         return $this->registeredClassNames;
     }
@@ -175,13 +184,13 @@ class CompileTimeObjectManager extends ObjectManager
      * @param integer $scope One of the ObjectConfiguration::SCOPE_ constants
      * @return array An array of class names configured with the given scope
      */
-    public function getClassNamesByScope($scope)
+    public function getClassNamesByScope(int $scope): array
     {
         if (!isset($this->cachedClassNamesByScope[$scope])) {
             foreach ($this->objects as $objectName => $information) {
-                if ($information['s'] === $scope) {
-                    if (isset($information['c'])) {
-                        $this->cachedClassNamesByScope[$scope][] = $information['c'];
+                if ($information[self::KEY_SCOPE] === $scope) {
+                    if (isset($information[self::KEY_CLASS_NAME])) {
+                        $this->cachedClassNamesByScope[$scope][] = $information[self::KEY_CLASS_NAME];
                     } else {
                         $this->cachedClassNamesByScope[$scope][] = $objectName;
                     }
@@ -203,7 +212,7 @@ class CompileTimeObjectManager extends ObjectManager
      *
      * @throws InvalidConfigurationTypeException
      */
-    protected function registerClassFiles(array $packages)
+    protected function registerClassFiles(array $packages): array
     {
         $includeClassesConfiguration = [];
         if (isset($this->allSettings['Neos']['Flow']['object']['includeClasses'])) {
@@ -218,24 +227,23 @@ class CompileTimeObjectManager extends ObjectManager
 
         $shouldRegisterFunctionalTestClasses = (bool)($this->allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses'] ?? false);
 
-        /** @var \Neos\Flow\Package\PackageInterface $package */
         foreach ($packages as $packageKey => $package) {
             $packageType = (string)$package->getComposerManifest('type');
-            if (ComposerUtility::isFlowPackageType($packageType) || isset($includeClassesConfiguration[$packageKey])) {
+            if (isset($includeClassesConfiguration[$packageKey]) || ComposerUtility::isFlowPackageType($packageType)) {
                 foreach ($package->getClassFiles() as $fullClassName => $path) {
-                    if (substr($fullClassName, -9, 9) !== 'Exception') {
+                    if (!str_ends_with($fullClassName, 'Exception')) {
                         $availableClassNames[$packageKey][] = $fullClassName;
                     }
                 }
                 if ($package instanceof FlowPackageInterface && $shouldRegisterFunctionalTestClasses) {
                     foreach ($package->getFunctionalTestsClassFiles() as $fullClassName => $path) {
-                        if (version_compare(PHP_VERSION, '8.0', '<=') && strpos($fullClassName, '\\PHP8\\') !== false) {
+                        if (PHP_VERSION_ID <= 80000 && str_contains($fullClassName, '\\PHP8\\')) {
                             continue;
                         }
-                        if (version_compare(PHP_VERSION, '8.1', '<=') && strpos($fullClassName, '\\PHP81\\') !== false) {
+                        if (PHP_VERSION_ID <= 80100 && str_contains($fullClassName, '\\PHP81\\')) {
                             continue;
                         }
-                        if (substr($fullClassName, -9, 9) !== 'Exception') {
+                        if (!str_ends_with($fullClassName, 'Exception')) {
                             $availableClassNames[$packageKey][] = $fullClassName;
                         }
                     }
@@ -256,12 +264,10 @@ class CompileTimeObjectManager extends ObjectManager
      * @param array $includeClassesConfiguration array of includeClasses configurations
      * @return array The input array with all configured to be included in object management added in
      * @throws InvalidConfigurationTypeException
-     * @throws \Neos\Flow\Configuration\Exception\NoSuchOptionException
      */
-    protected function filterClassNamesFromConfiguration(array $classNames, $includeClassesConfiguration)
+    protected function filterClassNamesFromConfiguration(array $classNames, array $includeClassesConfiguration): array
     {
-        $classNames = $this->applyClassFilterConfiguration($classNames, $includeClassesConfiguration);
-        return $classNames;
+        return $this->applyClassFilterConfiguration($classNames, $includeClassesConfiguration);
     }
 
     /**
@@ -272,7 +278,7 @@ class CompileTimeObjectManager extends ObjectManager
      * @return array the remaining class
      * @throws InvalidConfigurationTypeException
      */
-    protected function applyClassFilterConfiguration($classNames, $filterConfiguration)
+    protected function applyClassFilterConfiguration(array $classNames, array $filterConfiguration): array
     {
         foreach ($filterConfiguration as $packageKey => $filterExpressions) {
             if (!array_key_exists($packageKey, $classNames)) {
@@ -289,7 +295,7 @@ class CompileTimeObjectManager extends ObjectManager
             foreach ($filterExpressions as $filterExpression) {
                 $classesForPackageUnderInspection = array_filter(
                     $classesForPackageUnderInspection,
-                    function ($className) use ($filterExpression) {
+                    static function ($className) use ($filterExpression) {
                         $match = preg_match('/' . $filterExpression . '/', $className);
                         return $match === 1;
                     }
@@ -311,34 +317,35 @@ class CompileTimeObjectManager extends ObjectManager
      * their scope, class, built method etc.
      *
      * @return array
+     * @throws CacheException
      */
-    protected function buildObjectsArray()
+    protected function buildObjectsArray(): array
     {
         $objects = [];
         /* @var $objectConfiguration Configuration */
         foreach ($this->objectConfigurations as $objectConfiguration) {
             $objectName = $objectConfiguration->getObjectName();
             $objects[$objectName] = [
-                'l' => strtolower($objectName),
-                's' => $objectConfiguration->getScope(),
-                'p' => $objectConfiguration->getPackageKey()
+                self::KEY_LOWERCASE_NAME => strtolower($objectName),
+                self::KEY_SCOPE => $objectConfiguration->getScope(),
+                self::KEY_PACKAGE => $objectConfiguration->getPackageKey()
             ];
             if ($objectConfiguration->getClassName() !== $objectName) {
-                $objects[$objectName]['c'] = $objectConfiguration->getClassName();
+                $objects[$objectName][self::KEY_CLASS_NAME] = $objectConfiguration->getClassName();
             }
             if ($objectConfiguration->isCreatedByFactory()) {
-                $objects[$objectName]['f'] = [
+                $objects[$objectName][self::KEY_FACTORY] = [
                     $objectConfiguration->getFactoryObjectName(),
                     $objectConfiguration->getFactoryMethodName()
                 ];
 
-                $objects[$objectName]['fa'] = [];
+                $objects[$objectName][self::KEY_FACTORY_ARGUMENTS] = [];
                 $factoryMethodArguments = $objectConfiguration->getFactoryArguments();
                 if (count($factoryMethodArguments) > 0) {
                     foreach ($factoryMethodArguments as $index => $argument) {
-                        $objects[$objectName]['fa'][$index] = [
-                            't' => $argument->getType(),
-                            'v' => $argument->getValue()
+                        $objects[$objectName][self::KEY_FACTORY_ARGUMENTS][$index] = [
+                            self::KEY_ARGUMENT_TYPE => $argument->getType(),
+                            self::KEY_ARGUMENT_VALUE => $argument->getValue()
                         ];
                     }
                 }
@@ -353,7 +360,7 @@ class CompileTimeObjectManager extends ObjectManager
      *
      * @return array
      */
-    public function getObjectConfigurations()
+    public function getObjectConfigurations(): array
     {
         return $this->objectConfigurations;
     }
@@ -369,14 +376,15 @@ class CompileTimeObjectManager extends ObjectManager
      * @param mixed ...$constructorArguments Any number of arguments that should be passed to the constructor of the object
      * @phpstan-return ($objectName is class-string<T> ? T : object) The object instance
      * @return T The object instance
-     * @throws \Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException
-     * @throws \Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException
-     * @throws \Neos\Flow\ObjectManagement\Exception\UnknownObjectException
+     * @throws Exception\CannotBuildObjectException
+     * @throws Exception\UnresolvedDependenciesException
+     * @throws Exception\UnknownObjectException
+     * @throws InvalidConfigurationTypeException
      */
-    public function get($objectName, ...$constructorArguments)
+    public function get($objectName, ...$constructorArguments): object
     {
-        if (isset($this->objects[$objectName]['i'])) {
-            return $this->objects[$objectName]['i'];
+        if (isset($this->objects[$objectName][self::KEY_INSTANCE])) {
+            return $this->objects[$objectName][self::KEY_INSTANCE];
         }
 
         if (isset($this->objectConfigurations[$objectName]) && count($this->objectConfigurations[$objectName]->getArguments()) > 0) {
@@ -386,7 +394,7 @@ class CompileTimeObjectManager extends ObjectManager
             throw new Exception\UnknownObjectException('Cannot build object "' . $objectName . '" because it is unknown to the compile time Object Manager.', 1301477694);
         }
 
-        if ($this->objects[$objectName]['s'] !== Configuration::SCOPE_SINGLETON) {
+        if ($this->objects[$objectName][self::KEY_SCOPE] !== Configuration::SCOPE_SINGLETON) {
             throw new Exception\CannotBuildObjectException('Cannot build object "' . $objectName . '" because the get() method in the compile time Object Manager only supports singletons.', 1297090027);
         }
 
@@ -395,7 +403,6 @@ class CompileTimeObjectManager extends ObjectManager
         $object = parent::get($objectName);
         /** @var Configuration $objectConfiguration */
         $objectConfiguration = $this->objectConfigurations[$objectName];
-        /** @var Property $property */
         foreach ($objectConfiguration->getProperties() as $propertyName => $property) {
             if ($property->getAutowiring() !== Configuration::AUTOWIRING_MODE_ON) {
                 continue;
@@ -448,7 +455,7 @@ class CompileTimeObjectManager extends ObjectManager
      *
      * @return void
      */
-    public function shutdown()
+    public function shutdown(): void
     {
         $this->callShutdownMethods($this->shutdownObjects);
         $this->callShutdownMethods($this->internalShutdownObjects);

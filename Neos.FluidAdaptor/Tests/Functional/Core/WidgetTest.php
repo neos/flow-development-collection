@@ -11,7 +11,6 @@ namespace Neos\FluidAdaptor\Tests\Functional\Core;
  * source code.
  */
 
-use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -26,17 +25,17 @@ class WidgetTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $route = new Route();
-        $route->setName('WidgetTest');
-        $route->setUriPattern('test/widget/{@controller}(/{@action})');
-        $route->setDefaults([
-            '@package' => 'Neos.FluidAdaptor',
-            '@subpackage' => 'Tests\Functional\Core\Fixtures',
-            '@action' => 'index',
-            '@format' => 'html'
-        ]);
-        $route->setAppendExceedingArguments(true);
-        $this->router->addRoute($route);
+        $this->registerRoute(
+            'WidgetTest',
+            'test/widget/{@controller}(/{@action})',
+            [
+                '@package' => 'Neos.FluidAdaptor',
+                '@subpackage' => 'Tests\Functional\Core\Fixtures',
+                '@action' => 'index',
+                '@format' => 'html'
+            ],
+            true
+        );
     }
 
     /**

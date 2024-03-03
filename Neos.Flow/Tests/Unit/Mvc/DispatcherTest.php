@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Unit\Mvc;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -142,7 +143,7 @@ class DispatcherTest extends UnitTestCase
     {
         $this->mockActionRequest->expects(self::exactly(3))->method('isDispatched')->willReturnOnConsecutiveCalls(false, false, true);
 
-        $this->mockController->expects(self::exactly(2))->method('processRequest')->with($this->mockActionRequest)->willReturn($this->actionResponse);
+        $this->mockController->expects(self::exactly(2))->method('processRequest')->with($this->mockActionRequest)->willReturn(new Response());
 
         $this->dispatcher->dispatch($this->mockActionRequest);
     }
@@ -155,7 +156,7 @@ class DispatcherTest extends UnitTestCase
         $this->mockParentRequest->expects(self::exactly(2))->method('isDispatched')->willReturnOnConsecutiveCalls(false, true);
         $this->mockParentRequest->expects(self::once())->method('isMainRequest')->willReturn(true);
 
-        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(StopActionException::createForResponse(new ActionResponse(), '')));
+        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(StopActionException::createForResponse(new Response(), '')));
 
         $this->dispatcher->dispatch($this->mockParentRequest);
     }
@@ -168,7 +169,7 @@ class DispatcherTest extends UnitTestCase
         $this->mockActionRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(false);
         $this->mockParentRequest->expects(self::atLeastOnce())->method('isDispatched')->willReturn(true);
 
-        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(StopActionException::createForResponse(new ActionResponse(), '')));
+        $this->mockController->expects(self::atLeastOnce())->method('processRequest')->will(self::throwException(StopActionException::createForResponse(new Response(), '')));
 
         $this->dispatcher->dispatch($this->mockActionRequest, $this->actionResponse);
     }
@@ -187,7 +188,7 @@ class DispatcherTest extends UnitTestCase
 
         $this->mockController->expects(self::exactly(2))->method('processRequest')
             ->withConsecutive([$this->mockActionRequest], [$this->mockParentRequest])
-            ->willReturnOnConsecutiveCalls(self::throwException(StopActionException::createForResponse(new ActionResponse(), '')), self::throwException($forwardException));
+            ->willReturnOnConsecutiveCalls(self::throwException(StopActionException::createForResponse(new Response(), '')), self::throwException($forwardException));
 
         $this->dispatcher->dispatch($this->mockActionRequest);
     }
@@ -197,8 +198,7 @@ class DispatcherTest extends UnitTestCase
      */
     public function dispatchThrowsAnInfiniteLoopExceptionIfTheRequestCouldNotBeDispachedAfter99Iterations()
     {
-        $response = new ActionResponse();
-        $this->mockController->expects(self::any())->method('processRequest')->with($this->mockActionRequest)->willReturn($response);
+        $this->mockController->expects(self::any())->method('processRequest')->with($this->mockActionRequest)->willReturn(new Response());
 
         $this->expectException(InfiniteLoopException::class);
         $requestCallCounter = 0;

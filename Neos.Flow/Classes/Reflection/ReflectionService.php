@@ -1174,7 +1174,12 @@ class ReflectionService
                 if ($this->isAttributeIgnored($attribute->getName())) {
                     continue;
                 }
-                $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attribute->newInstance();
+                try {
+                    $attributeInstance = $attribute->newInstance();
+                } catch (\Error $error) {
+                    throw new \RuntimeException(sprintf('Attribute "%s" used in class "%s" was not found.', $attribute->getName(), $className), 1695635128, $error);
+                }
+                $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attributeInstance;
             }
         }
 

@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  * source code.
  */
 
-use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 class AbstractControllerTest extends FunctionalTestCase
@@ -27,18 +26,17 @@ class AbstractControllerTest extends FunctionalTestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        $route = new Route();
-        $route->setName('AbstractControllerTest Route 1');
-        $route->setUriPattern('test/mvc/abstractcontrollertesta/{@action}');
-        $route->setDefaults([
-            '@package' => 'Neos.Flow',
-            '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
-            '@controller' => 'AbstractControllerTestA',
-            '@format' =>'html'
-        ]);
-        $route->setAppendExceedingArguments(true);
-        $this->router->addRoute($route);
+        $this->registerRoute(
+            'AbstractControllerTest Route 1',
+            'test/mvc/abstractcontrollertesta/{@action}',
+            [
+                '@package' => 'Neos.Flow',
+                '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
+                '@controller' => 'AbstractControllerTestA',
+                '@format' =>'html'
+            ],
+            true
+        );
     }
 
     /**

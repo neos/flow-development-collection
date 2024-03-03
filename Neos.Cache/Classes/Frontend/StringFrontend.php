@@ -58,7 +58,7 @@ class StringFrontend extends AbstractFrontend
      * Finds and returns a variable value from the cache.
      *
      * @param string $entryIdentifier Identifier of the cache entry to fetch
-     * @return string The value
+     * @return string|false The value or false if the cache entry could not be loaded
      * @throws \InvalidArgumentException
      * @api
      */
