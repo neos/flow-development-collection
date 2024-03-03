@@ -130,12 +130,9 @@ class Dispatcher
                 $this->emitAfterControllerInvocation($request, $response, $controller);
                 return $response;
             } catch (StopActionException $stopActionException) {
-                $this->emitAfterControllerInvocation($request, $stopActionException->response, $controller);
                 $response = $stopActionException->response;
-                if ($request->isMainRequest()) {
-                    return $response;
-                }
-                $request = $request->getParentRequest();
+                $this->emitAfterControllerInvocation($request, $response, $controller);
+                return $response;
             } catch (ForwardException $forwardException) {
                 $this->emitAfterControllerInvocation($request, null, $controller);
                 $request = $forwardException->nextRequest;
