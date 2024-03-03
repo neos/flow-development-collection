@@ -15,6 +15,11 @@ Neos\Flow\Http\Client\Browser:
   properties:
     requestEngine:
       object: Neos\Flow\Http\Client\InternalRequestEngine
+#
+# Routing will be extended to be able to add custom routes at runtime
+#
+Neos\Flow\Mvc\Routing\RoutesProviderInterface:
+  className: Neos\Flow\Mvc\Routing\TestingRoutesProvider
 
 #
 # Security and PersistentResource handling need specialized testing classes:

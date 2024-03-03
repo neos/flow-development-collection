@@ -34,8 +34,6 @@ use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
-use Neos\Flow\Security\Exception\InvalidHashException;
 use Neos\Utility\TypeHandling;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -233,13 +231,8 @@ class ActionController extends AbstractController
         if (method_exists($this, $actionInitializationMethodName)) {
             call_user_func([$this, $actionInitializationMethodName]);
         }
-        try {
-            $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($request, $this->arguments);
-        } catch (InvalidArgumentForHashGenerationException|InvalidHashException $e) {
-            $message = $this->throwableStorage->logThrowable($e);
-            $this->logger->notice('Property mapping configuration failed due to HMAC errors. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
-            $this->throwStatus(400, null, 'Invalid HMAC submitted');
-        }
+
+        $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($request, $this->arguments);
 
         try {
             $this->mapRequestArgumentsToControllerArguments($request, $this->arguments);

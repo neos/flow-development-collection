@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Http\Client;
  * source code.
  */
 
-use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
@@ -31,17 +30,17 @@ class InternalRequestEngineTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $route = new Route();
-        $route->setName('Functional Test - Http::Client::InternalRequestEngine');
-        $route->setUriPattern('test/security/restricted');
-        $route->setDefaults([
-            '@package' => 'Neos.Flow',
-            '@subpackage' => 'Tests\Functional\Security\Fixtures',
-            '@controller' => 'Restricted',
-            '@action' => 'admin',
-            '@format' => 'html'
-        ]);
-        $this->router->addRoute($route);
+        $this->registerRoute(
+            'Functional Test - Http::Client::InternalRequestEngine',
+            'test/security/restricted',
+            [
+                '@package' => 'Neos.Flow',
+                '@subpackage' => 'Tests\Functional\Security\Fixtures',
+                '@controller' => 'Restricted',
+                '@action' => 'admin',
+                '@format' => 'html'
+            ]
+        );
     }
 
     /**

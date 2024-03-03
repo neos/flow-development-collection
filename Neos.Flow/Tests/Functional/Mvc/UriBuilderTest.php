@@ -126,7 +126,7 @@ class UriBuilderTest extends FunctionalTestCase
      */
     public function whenLinkingToRootOfSameHostTheUrlContainsASingleSlash()
     {
-        // NOTE: the route part handler here does not really match; as we link to the the route
+        // NOTE: the route part handler here does not really match; as we link to the route
         // registered in "registerAbsoluteRoute()".
         $this->registerSingleRoute(UriBuilderSetDomainRoutePartHandler::class);
         // NOTE: the registered route is PREPENDED to the existing list; so we need to register the absolute route LAST as it should match FIRST.
