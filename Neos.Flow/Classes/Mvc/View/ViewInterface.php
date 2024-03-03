@@ -63,7 +63,9 @@ interface ViewInterface
     /**
      * Renders the view
      *
-     * @return string|ActionResponse|ResponseInterface|StreamInterface|object The rendered result; object is only handled if __toString() exists!
+     * Returning an {@see ActionResponse} is deprecated.
+     *
+     * @return string|ActionResponse|ResponseInterface|StreamInterface|\Stringable The rendered result
      * @api
      */
     public function render();

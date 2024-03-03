@@ -82,10 +82,10 @@ class ControllerContext
     }
 
     /**
-     * Get the response of the controller
+     * The legacy response of the controller.
      *
      * @return ActionResponse
-     * @api
+     * @deprecated with Flow 9 {@see ActionResponse}
      */
     public function getResponse()
     {

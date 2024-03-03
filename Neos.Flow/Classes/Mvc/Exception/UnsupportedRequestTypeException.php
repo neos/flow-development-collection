@@ -14,7 +14,7 @@ namespace Neos\Flow\Mvc\Exception;
 /**
  * An "Unsupported Request Type" exception
  *
- * @api
+ * @deprecated since Flow 9.0
  */
 class UnsupportedRequestTypeException extends \Neos\Flow\Mvc\Exception
 {

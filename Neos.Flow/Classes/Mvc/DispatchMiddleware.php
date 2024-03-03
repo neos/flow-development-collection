@@ -41,8 +41,6 @@ class DispatchMiddleware implements MiddlewareInterface
             throw new Exception('No ActionRequest was created before the DispatchMiddleware. Make sure you have the SecurityEntryPointMiddleware configured before dispatch.', 1605091292);
         }
 
-        $actionResponse = new ActionResponse();
-        $this->dispatcher->dispatch($actionRequest, $actionResponse);
-        return $actionResponse->buildHttpResponse();
+        return $this->dispatcher->dispatch($actionRequest);
     }
 }
