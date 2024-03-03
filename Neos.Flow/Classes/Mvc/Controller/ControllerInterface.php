@@ -34,13 +34,12 @@ interface ControllerInterface
      *
      * The contract to the MVC Dispatcher is as follows.
      *
-     * - If a request can be handled it must be set to `dispatched` {@see ActionRequest::setDispatched()}
-     * - The repose should be returned directly.
+     * - The response should be returned directly.
      * - For outer ordinary control flow a {@see StopActionException} with response attached
      * can be thrown which will be handled by the Dispatcher accordingly.
      *
      * - To forward the request to another controller, a {@see ForwardException} might be thrown
-     * wich the Dispatcher will catch and handle its attached next-request.
+     * which the Dispatcher will catch and handle its attached next-request.
      *
      * @param ActionRequest $request The dispatched action request
      * @return ResponseInterface The resulting created response

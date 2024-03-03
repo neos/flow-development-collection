@@ -21,7 +21,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\InvalidHashException;
-use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -64,15 +63,6 @@ class ActionRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function constructorThrowsAnExceptionIfNoValidRequestIsPassed()
-    {
-        $this->expectException(\Error::class);
-        new ActionRequest(new \stdClass());
-    }
-
-    /**
-     * @test
-     */
     public function getHttpRequestReturnsTheHttpRequestWhichIsTheRootOfAllActionRequests()
     {
         $anotherActionRequest = $this->actionRequest->createSubRequest();
@@ -107,24 +97,6 @@ class ActionRequestTest extends UnitTestCase
         self::assertTrue($this->actionRequest->isMainRequest());
         self::assertFalse($anotherActionRequest->isMainRequest());
         self::assertFalse($yetAnotherActionRequest->isMainRequest());
-    }
-
-    /**
-     * @test
-     */
-    public function requestIsDispatchable()
-    {
-        $mockDispatcher = $this->createMock(Dispatcher::class);
-
-        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::any())->method('get')->will(self::returnValue($mockDispatcher));
-        $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
-
-        self::assertFalse($this->actionRequest->isDispatched());
-        $this->actionRequest->setDispatched(true);
-        self::assertTrue($this->actionRequest->isDispatched());
-        $this->actionRequest->setDispatched(false);
-        self::assertFalse($this->actionRequest->isDispatched());
     }
 
     /**
@@ -527,18 +499,6 @@ class ActionRequestTest extends UnitTestCase
     /**
      * @test
      */
-    public function cloneResetsTheStatusToNotDispatched()
-    {
-        $this->actionRequest->setDispatched(true);
-        $cloneRequest = clone $this->actionRequest;
-
-        self::assertTrue($this->actionRequest->isDispatched());
-        self::assertFalse($cloneRequest->isDispatched());
-    }
-
-    /**
-     * @test
-     */
     public function getReferringRequestThrowsAnExceptionIfTheHmacOfTheArgumentsCouldNotBeValid()
     {
         $this->expectException(InvalidHashException::class);
@@ -556,21 +516,6 @@ class ActionRequestTest extends UnitTestCase
         $this->actionRequest->setArgument('__referrer', $referrer);
 
         $this->actionRequest->getReferringRequest();
-    }
-
-    /**
-     * @test
-     */
-    public function setDispatchedEmitsSignalIfDispatched()
-    {
-        $mockDispatcher = $this->createMock(Dispatcher::class);
-        $mockDispatcher->expects(self::once())->method('dispatch')->with(ActionRequest::class, 'requestDispatched', [$this->actionRequest]);
-
-        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::any())->method('get')->will(self::returnValue($mockDispatcher));
-        $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
-
-        $this->actionRequest->setDispatched(true);
     }
 
     /**
