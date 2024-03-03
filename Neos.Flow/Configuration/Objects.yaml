@@ -258,7 +258,7 @@ Neos\Flow\Mvc\Routing\RouterInterface:
   className: Neos\Flow\Mvc\Routing\Router
 
 Neos\Flow\Mvc\Routing\RoutesProviderInterface:
-  className: Neos\Flow\Mvc\Routing\ConfigurationRoutesProvider
+  className: Neos\Flow\Mvc\Routing\CombinedRoutesProvider
 
 Neos\Flow\Mvc\Routing\RouterCachingService:
   properties:
