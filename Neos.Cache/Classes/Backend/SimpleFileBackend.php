@@ -21,7 +21,7 @@ use Neos\Error\Messages\Result;
 use Neos\Utility\Files;
 use Neos\Cache\Exception;
 use Neos\Cache\Frontend\PhpFrontend;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 use Neos\Utility\Exception\FilesException;
 use Neos\Utility\OpcodeCacheHelper;
 
@@ -99,11 +99,11 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * Sets a reference to the cache frontend which uses this backend and
      * initializes the default cache directory.
      *
-     * @param FrontendInterface $cache The cache frontend
+     * @param LowLevelFrontendInterface $cache The cache frontend
      * @return void
      * @throws Exception
      */
-    public function setCache(FrontendInterface $cache): void
+    public function setCache(LowLevelFrontendInterface $cache): void
     {
         parent::setCache($cache);
         $this->cacheEntryFileExtension = ($cache instanceof PhpFrontend) ? '.php' : '';

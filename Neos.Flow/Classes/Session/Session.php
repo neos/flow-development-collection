@@ -24,7 +24,7 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Security\Authentication\TokenInterface;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -514,7 +514,7 @@ class Session implements CookieEnabledInterface
             throw new Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355143533);
         }
         if (!$this->metaDataCache->isValidTag($tag)) {
-            throw new \InvalidArgumentException(sprintf('The tag used for tagging session %s contained invalid characters. Make sure it matches this regular expression: "%s"', $this->sessionIdentifier, FrontendInterface::PATTERN_TAG));
+            throw new \InvalidArgumentException(sprintf('The tag used for tagging session %s contained invalid characters. Make sure it matches this regular expression: "%s"', $this->sessionIdentifier, LowLevelFrontendInterface::PATTERN_TAG));
         }
         if (!in_array($tag, $this->tags)) {
             $this->tags[] = $tag;

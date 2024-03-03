@@ -16,7 +16,7 @@ namespace Neos\Cache\Backend;
 use Neos\Cache\Backend\AbstractBackend as IndependentAbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 
 /**
  * A caching backend which stores cache entries by using Memcache/Memcached.
@@ -158,10 +158,10 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     /**
      * Initializes the identifier prefix when setting the cache.
      *
-     * @param FrontendInterface $cache
+     * @param LowLevelFrontendInterface $cache
      * @return void
      */
-    public function setCache(FrontendInterface $cache): void
+    public function setCache(LowLevelFrontendInterface $cache): void
     {
         parent::setCache($cache);
 
@@ -204,7 +204,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
         if (strlen($this->getPrefixedIdentifier($entryIdentifier)) > 250) {
             throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->getPrefixedIdentifier($entryIdentifier) . ').', 1232969508);
         }
-        if (!$this->cache instanceof FrontendInterface) {
+        if (!$this->cache instanceof LowLevelFrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1207149215);
         }
 
@@ -342,7 +342,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      */
     public function flush(): void
     {
-        if (!$this->cache instanceof FrontendInterface) {
+        if (!$this->cache instanceof LowLevelFrontendInterface) {
             throw new Exception('Yet no cache frontend has been set via setCache().', 1204111376);
         }
 

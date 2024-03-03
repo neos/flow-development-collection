@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\Cache\Psr\Cache;
+namespace Neos\Cache\Frontend\Psr\Cache;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -14,16 +14,14 @@ namespace Neos\Cache\Psr\Cache;
  */
 
 use Neos\Cache\Backend\BackendInterface;
-use Neos\Cache\Psr\InvalidArgumentException;
+use Neos\Cache\Frontend\AbstractLowLevelFrontend;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * An implementation of the CacheItemPoolInterface from the PSR-6 specification to be used with our provided backends.
- * @see CacheFactory
- * @deprecated will be removed with Neos Flow 10. Use \Neos\Cache\Frontend\Psr\Cache\CacheItemPoolFrontend instead.
  */
-class CachePool implements CacheItemPoolInterface
+class CacheItemPoolFrontend extends AbstractLowLevelFrontend implements CacheItemPoolInterface
 {
     /**
      * Pattern an entry identifier must match.
@@ -48,22 +46,6 @@ class CachePool implements CacheItemPoolInterface
      * @var array
      */
     protected $deferredItems = [];
-
-    /**
-     * Constructs the cache
-     *
-     * @param string $identifier A identifier which describes this cache
-     * @param BackendInterface $backend Backend to be used for this cache
-     * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
-     */
-    public function __construct(string $identifier, BackendInterface $backend)
-    {
-        if (preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) !== 1) {
-            throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
-        }
-        $this->identifier = $identifier;
-        $this->backend = $backend;
-    }
 
     /**
      * Returns a Cache Item representing the specified key.

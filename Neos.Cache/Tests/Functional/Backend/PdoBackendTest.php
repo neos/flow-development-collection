@@ -17,7 +17,7 @@ use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Backend\PdoBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 
 /**
  * Testcase for the PDO cache backend
@@ -36,7 +36,7 @@ class PdoBackendTest extends BaseTestCase
     private $backends = [];
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FrontendInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|LowLevelFrontendInterface
      */
     private $cache;
 
@@ -49,7 +49,7 @@ class PdoBackendTest extends BaseTestCase
 
     public function backendsToTest(): array
     {
-        $this->cache = $this->createMock(FrontendInterface::class);
+        $this->cache = $this->createMock(LowLevelFrontendInterface::class);
         $this->cache->method('getIdentifier')->willReturn('TestCache');
         $this->setupBackends();
         return $this->backends;

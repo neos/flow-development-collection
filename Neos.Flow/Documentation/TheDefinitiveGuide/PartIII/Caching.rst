@@ -293,22 +293,27 @@ which can be stored using a specific frontend.
 	The PHP frontend can only be used to cache PHP files, it does not work with strings,
 	arrays or objects.
 
-PSR Cache Interfaces
-====================
 
-The implementations of the PSR Cache Interfaces allow to provide caches for external
+PSR Cache Frontends
+===================
+
+The implementations of the PSR Cache Interfaces as cache frontends allows to provide caches for external
 libraries that do not know the flow cache interfaces.
 
-PSR-6 Caching Interface
------------------------
+PSR-6 Cache Interface
+---------------------
 
-The classes ``\Neos\Cache\Psr\Cache\CachePool`` and ``\Neos\Cache\Psr\Cache\CacheItem``
+``Neos\Cache\Frontend\Psr\Cache\CacheItemPoolFrontend``
+
+The classes ``\Neos\Cache\Frontend\Psr\Cache\CacheItemPoolFrontend`` and ``\Neos\Cache\Frontend\Psr\Cache\CacheItem``
 implement the Caching Interface as specified in https://www.php-fig.org/psr/psr-6/
 
 PSR-16 Simple Cache Interface
 -----------------------------
 
-The class ``\Neos\Cache\Psr\SimpleCache\SimpleCache`` implements the SimpleCacheInterface
+``Neos\Cache\Frontend\Psr\SimpleCache\SimpleCacheFrontend``
+
+The class ``\Neos\Cache\Frontend\Psr\SimpleCache\SimpleCacheFrontend`` implements the SimpleCacheInterface
 that is specified in https://www.php-fig.org/psr/psr-16/
 
 Cache Backends

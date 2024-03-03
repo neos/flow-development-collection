@@ -18,7 +18,7 @@ use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
 use Neos\Cache\Tests\BaseTestCase;
 use org\bovigo\vfs\vfsStream;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 use Neos\Cache\Frontend\PhpFrontend;
 
 /**
@@ -27,7 +27,7 @@ use Neos\Cache\Frontend\PhpFrontend;
 class SimpleFileBackendTest extends BaseTestCase
 {
     /**
-     * @var FrontendInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var LowLevelFrontendInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockCacheFrontend;
 
@@ -51,17 +51,17 @@ class SimpleFileBackendTest extends BaseTestCase
                 1024
             ])->getMock();
 
-        $this->mockCacheFrontend = $this->createMock(FrontendInterface::class);
+        $this->mockCacheFrontend = $this->createMock(LowLevelFrontendInterface::class);
     }
 
     /**
      * Convenience function to retrieve an instance of SimpleFileBackend with required dependencies
      *
      * @param array $options
-     * @param FrontendInterface $mockCacheFrontend
+     * @param LowLevelFrontendInterface $mockCacheFrontend
      * @return SimpleFileBackend
      */
-    protected function getSimpleFileBackend(array $options = [], FrontendInterface $mockCacheFrontend = null)
+    protected function getSimpleFileBackend(array $options = [], LowLevelFrontendInterface $mockCacheFrontend = null)
     {
         $simpleFileBackend = new SimpleFileBackend($this->mockEnvironmentConfiguration, $options);
 

@@ -1,10 +1,10 @@
 <?php
-namespace Neos\Cache\Tests\Unit\Psr\SimpleCache;
+namespace Neos\Cache\Tests\Unit\Frontend\Psr\SimpleCache;
 
 use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Exception;
-use Neos\Cache\Psr\InvalidArgumentException;
-use Neos\Cache\Psr\SimpleCache\SimpleCache;
+use Neos\Cache\Frontend\Psr\SimpleCache\SimpleCacheFrontend;
+use Neos\Cache\Frontend\Psr\SimpleCache\InvalidArgumentException;
 use Neos\Cache\Tests\BaseTestCase;
 
 /**
@@ -27,11 +27,11 @@ class SimpleCacheTest extends BaseTestCase
 
     /**
      * @param string $identifier
-     * @return SimpleCache
+     * @return SimpleCacheFrontend
      */
     protected function createSimpleCache($identifier = 'SimpleCacheTest')
     {
-        return new SimpleCache($identifier, $this->mockBackend);
+        return new SimpleCacheFrontend($identifier, $this->mockBackend);
     }
 
     /**

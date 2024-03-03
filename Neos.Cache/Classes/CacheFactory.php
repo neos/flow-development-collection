@@ -14,7 +14,7 @@ namespace Neos\Cache;
 use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Exception\InvalidBackendException;
 use Neos\Cache\Exception\InvalidCacheException;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 
 /**
  * This cache factory takes care of instantiating a cache frontend and injecting
@@ -50,12 +50,12 @@ class CacheFactory implements CacheFactoryInterface
      * @param string $cacheObjectName Object name of the cache frontend
      * @param string $backendObjectName Object name of the cache backend
      * @param array $backendOptions (optional) Array of backend options
-     * @return FrontendInterface The created cache frontend
+     * @return LowLevelFrontendInterface The created cache frontend
      * @throws InvalidBackendException
      * @throws InvalidCacheException
      * @api
      */
-    public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): FrontendInterface
+    public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): LowLevelFrontendInterface
     {
         $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $this->environmentConfiguration);
         $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
@@ -68,13 +68,13 @@ class CacheFactory implements CacheFactoryInterface
      * @param string $cacheIdentifier
      * @param string $cacheObjectName
      * @param BackendInterface $backend
-     * @return FrontendInterface
+     * @return LowLevelFrontendInterface
      * @throws InvalidCacheException
      */
-    protected function instantiateCache(string $cacheIdentifier, string $cacheObjectName, BackendInterface $backend): FrontendInterface
+    protected function instantiateCache(string $cacheIdentifier, string $cacheObjectName, BackendInterface $backend): LowLevelFrontendInterface
     {
         $cache = new $cacheObjectName($cacheIdentifier, $backend);
-        if (!$cache instanceof FrontendInterface) {
+        if (!$cache instanceof LowLevelFrontendInterface) {
             throw new InvalidCacheException('"' . $cacheObjectName . '" is not a valid cache frontend object.', 1216304300);
         }
 

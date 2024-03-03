@@ -14,7 +14,7 @@ namespace Neos\Cache\Backend;
  */
 
 use Neos\Cache\Exception;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
@@ -115,11 +115,11 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * This method also detects if this backend is frozen and sets the internal
      * flag accordingly.
      *
-     * @param FrontendInterface $cache The cache frontend
+     * @param LowLevelFrontendInterface $cache The cache frontend
      * @return void
      * @throws Exception
      */
-    public function setCache(FrontendInterface $cache): void
+    public function setCache(LowLevelFrontendInterface $cache): void
     {
         parent::setCache($cache);
 

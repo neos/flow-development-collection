@@ -14,7 +14,7 @@ namespace Neos\Flow\Cache;
 use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Backend\SimpleFileBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\LowLevelFrontendInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Exception\InvalidBackendException;
 use Neos\Flow\Core\ApplicationContext;
@@ -85,9 +85,9 @@ class CacheFactory extends \Neos\Cache\CacheFactory
      * @param string $backendObjectName
      * @param array $backendOptions
      * @param bool $persistent
-     * @return FrontendInterface
+     * @return LowLevelFrontendInterface
      */
-    public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = [], bool $persistent = false): FrontendInterface
+    public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = [], bool $persistent = false): LowLevelFrontendInterface
     {
         $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $this->environmentConfiguration, $persistent);
         $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
@@ -99,7 +99,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory
     /**
      * {@inheritdoc}
      */
-    protected function instantiateCache(string $cacheIdentifier, string $cacheObjectName, BackendInterface $backend): FrontendInterface
+    protected function instantiateCache(string $cacheIdentifier, string $cacheObjectName, BackendInterface $backend): LowLevelFrontendInterface
     {
         $cache = parent::instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
 

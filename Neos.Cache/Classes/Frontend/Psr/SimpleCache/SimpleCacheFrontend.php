@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\Cache\Psr\SimpleCache;
+namespace Neos\Cache\Frontend\Psr\SimpleCache;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -13,17 +13,14 @@ namespace Neos\Cache\Psr\SimpleCache;
  * source code.
  */
 
-use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Exception;
-use Neos\Cache\Psr\InvalidArgumentException;
+use Neos\Cache\Frontend\AbstractLowLevelFrontend;
 use Psr\SimpleCache\CacheInterface;
 
 /**
  * A simple cache frontend
- * Note: This does not follow the \Neos\Cache\Frontend\FrontendInterface this package provides.
- * @deprecated will be removed with Neos Flow 10. Use \Neos\Cache\Frontend\Psr\SimpleCache\SimpleCacheFrontend instead.
  */
-class SimpleCache implements CacheInterface
+class SimpleCacheFrontend extends AbstractLowLevelFrontend implements CacheInterface
 {
     /**
      * Pattern an entry identifier must match.
@@ -31,37 +28,11 @@ class SimpleCache implements CacheInterface
     const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_\.]{1,64}$/';
 
     /**
-     * @var string
-     */
-    protected $identifier;
-
-    /**
-     * @var BackendInterface
-     */
-    protected $backend;
-
-    /**
-     * Constructs the cache
-     *
-     * @param string $identifier A identifier which describes this cache
-     * @param BackendInterface $backend Backend to be used for this cache
-     * @throws InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
-     */
-    public function __construct(string $identifier, BackendInterface $backend)
-    {
-        if ($this->isValidEntryIdentifier($identifier) === false) {
-            throw new InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1515192811703);
-        }
-        $this->identifier = $identifier;
-        $this->backend = $backend;
-    }
-
-    /**
      * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
      *
      * @param string $key An identifier used for this cache entry
      * @param mixed $value The variable to cache
-     * @param null|int|\DateInterval $ttl Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param null|int|\DateInterval $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return bool
      *
      * @throws Exception
@@ -197,14 +168,6 @@ class SimpleCache implements CacheInterface
         return $this->backend->has($key);
     }
 
-    /**
-     * @param string $key
-     * @return bool
-     */
-    protected function isValidEntryIdentifier(string $key): bool
-    {
-        return (preg_match(self::PATTERN_ENTRYIDENTIFIER, $key) === 1);
-    }
 
     /**
      * @param string $key
@@ -213,7 +176,7 @@ class SimpleCache implements CacheInterface
      */
     protected function ensureValidEntryIdentifier($key): void
     {
-        if ($this->isValidEntryIdentifier($key) === false) {
+        if (preg_match(self::PATTERN_ENTRYIDENTIFIER, $key) !== 1) {
             throw new InvalidArgumentException('"' . $key . '" is not a valid cache key.', 1515192768083);
         }
     }
