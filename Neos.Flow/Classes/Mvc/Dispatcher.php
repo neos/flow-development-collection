@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\NoSuchOptionException;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
@@ -26,6 +27,7 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -84,7 +86,6 @@ class Dispatcher
      * Dispatches a request to a controller
      *
      * @param ActionRequest $request The request to dispatch
-     * @return ActionResponse
      * @throws AccessDeniedException
      * @throws AuthenticationRequiredException
      * @throws InfiniteLoopException
@@ -93,7 +94,7 @@ class Dispatcher
      * @throws MissingConfigurationException
      * @api
      */
-    public function dispatch(ActionRequest $request): ActionResponse
+    public function dispatch(ActionRequest $request): ResponseInterface
     {
         try {
             if ($this->securityContext->areAuthorizationChecksDisabled() !== true) {
@@ -117,10 +118,9 @@ class Dispatcher
      * Try processing the request until it is successfully marked "dispatched"
      *
      * @param ActionRequest $request
-     * @return ActionResponse
      * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException
      */
-    protected function initiateDispatchLoop(ActionRequest $request): ActionResponse
+    protected function initiateDispatchLoop(ActionRequest $request): ResponseInterface
     {
         $dispatchLoopCount = 0;
         while ($request->isDispatched() === false) {
@@ -144,7 +144,7 @@ class Dispatcher
             }
         }
         // TODO $response is never _null_ at this point, except a `forwardToRequest` and the `nextRequest` is already dispatched == true, which seems illegal af
-        return $response ?? new ActionResponse();
+        return $response ?? new Response();
     }
 
     /**
@@ -164,14 +164,12 @@ class Dispatcher
      * returned control back to the dispatcher.
      *
      * @param ActionRequest $request
-     * @param ActionResponse|null $response The response the controller returned or null, if it was just forwarding a request.
-     *                                      Modifying the response through this signal is not always going to take effect
-     *                                      and might be ignored for example if the dispatcher is still in the loop.
+     * @param ResponseInterface|null $response The readonly response the controller returned or null, if it was just forwarding a request.
      * @param ControllerInterface $controller
      * @return void
      * @Flow\Signal
      */
-    protected function emitAfterControllerInvocation(ActionRequest $request, ?ActionResponse $response, ControllerInterface $controller)
+    protected function emitAfterControllerInvocation(ActionRequest $request, ?ResponseInterface $response, ControllerInterface $controller)
     {
     }
 

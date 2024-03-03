@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use PHPUnit\Framework\Assert;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -291,7 +292,7 @@ class AbstractControllerTest extends UnitTestCase
         $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', ['foo' => 'bar'], 'Stuff', 'Super', 'Duper\Package')->willReturn('the_uri');
 
         $controller = new class extends AbstractController {
-            public function processRequest(ActionRequest $request): ActionResponse
+            public function processRequest(ActionRequest $request): ResponseInterface
             {
                 $response = new ActionResponse();
                 $mockUriBuilder = $this->uriBuilder;
@@ -300,7 +301,7 @@ class AbstractControllerTest extends UnitTestCase
 
                 $this->myIndexAction();
 
-                return $this->response;
+                return $this->response->buildHttpResponse();
             }
 
             public function myIndexAction(): void
@@ -315,7 +316,7 @@ class AbstractControllerTest extends UnitTestCase
             $controller->processRequest($this->mockActionRequest);
         } catch (StopActionException $exception) {
             $actionResponse = $exception->response;
-            Assert::assertSame('the_uri', $actionResponse->getRedirectUri()?->__toString());
+            Assert::assertSame('the_uri', $actionResponse->getHeaderLine('Location'));
             Assert::assertSame(303, $actionResponse->getStatusCode());
             return;
         }
@@ -336,7 +337,7 @@ class AbstractControllerTest extends UnitTestCase
         $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', ['foo' => 'bar'], 'Stuff', 'Super', null)->willReturn('the_uri');
 
         $controller = new class extends AbstractController {
-            public function processRequest(ActionRequest $request): ActionResponse
+            public function processRequest(ActionRequest $request): ResponseInterface
             {
                 $response = new ActionResponse();
                 $mockUriBuilder = $this->uriBuilder;
@@ -345,7 +346,7 @@ class AbstractControllerTest extends UnitTestCase
 
                 $this->myIndexAction();
 
-                return $this->response;
+                return $this->response->buildHttpResponse();
             }
 
             public function myIndexAction(): void
@@ -360,7 +361,7 @@ class AbstractControllerTest extends UnitTestCase
             $controller->processRequest($this->mockActionRequest);
         } catch (StopActionException $exception) {
             $actionResponse = $exception->response;
-            Assert::assertSame('the_uri', $actionResponse->getRedirectUri()?->__toString());
+            Assert::assertSame('the_uri', $actionResponse->getHeaderLine('Location'));
             Assert::assertSame(303, $actionResponse->getStatusCode());
             return;
         }
@@ -419,7 +420,7 @@ class AbstractControllerTest extends UnitTestCase
         }
 
         self::assertNotNull($response);
-        self::assertSame($uri, (string)$response->getRedirectUri());
+        self::assertSame($uri, $response->getHeaderLine('Location'));
     }
 
     /**
@@ -465,10 +466,12 @@ class AbstractControllerTest extends UnitTestCase
         try {
             $controller->_call('throwStatus', 404, 'File Really Not Found', $message);
         } catch (StopActionException $e) {
+            self::assertSame(404, $e->response->getStatusCode());
+            self::assertSame($message, $e->response->getBody()->getContents());
+            return;
         }
 
-        self::assertSame(404, $this->actionResponse->getStatusCode());
-        self::assertSame($message, $this->actionResponse->getContent());
+        self::fail('Expected throwStatus to throw.');
     }
 
     /**
@@ -482,10 +485,12 @@ class AbstractControllerTest extends UnitTestCase
         try {
             $controller->_call('throwStatus', 404);
         } catch (StopActionException $e) {
+            self::assertSame(404, $e->response->getStatusCode());
+            self::assertSame('404 Not Found', $e->response->getBody()->getContents());
+            return;
         }
 
-        self::assertSame(404, $this->actionResponse->getStatusCode());
-        self::assertSame('404 Not Found', $this->actionResponse->getContent());
+        self::fail('Expected throwStatus to throw.');
     }
 
     /**

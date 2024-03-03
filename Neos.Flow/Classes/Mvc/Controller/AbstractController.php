@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Utils;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Uri;
@@ -61,9 +62,9 @@ abstract class AbstractController implements ControllerInterface
     protected $request;
 
     /**
-     * The response which will be returned by this action controller
+     * The legacy response which will is provide by this action controller
      * @var ActionResponse
-     * @api
+     * @deprecated with Flow 9 {@see ActionResponse}
      */
     protected $response;
 
@@ -110,7 +111,7 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function initializeController(ActionRequest $request, ActionResponse $response)
     {
-        // make the current request "globally" available to everywhere in this controller.
+        // make the current request and response "globally" available to everywhere in this controller.
         $this->request = $request;
         $this->response = $response;
 
@@ -259,7 +260,7 @@ abstract class AbstractController implements ControllerInterface
      * @param string $actionName Name of the action to forward to
      * @param string|null $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
      * @param string|null $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
-     * @param array<string, string> $arguments Array of arguments for the target action
+     * @param array<string, mixed> $arguments Array of arguments for the target action
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @param string|null $format The format to use for the redirect URI
@@ -324,16 +325,21 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function redirectToUri(string|UriInterface $uri, int $delay = 0, int $statusCode = 303): never
     {
+        $httpResponse = $this->response->buildHttpResponse();
         if ($delay === 0) {
             if (!$uri instanceof UriInterface) {
                 $uri = new Uri($uri);
             }
-            $this->response->setRedirectUri($uri, $statusCode);
+            $httpResponse = $httpResponse
+                ->withStatus($statusCode)
+                ->withHeader('Location', (string)$uri);
         } else {
-            $this->response->setStatusCode($statusCode);
-            $this->response->setContent('<html><head><meta http-equiv="refresh" content="' . (int)$delay . ';url=' . $uri . '"/></head></html>');
+            $content = '<html><head><meta http-equiv="refresh" content="' . (int)$delay . ';url=' . $uri . '"/></head></html>';
+            $httpResponse = $httpResponse
+                ->withStatus($statusCode)
+                ->withBody(Utils::streamFor($content));
         }
-        throw StopActionException::createForResponse($this->response, '');
+        throw StopActionException::createForResponse($httpResponse, '');
     }
 
     /**
@@ -349,7 +355,8 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function throwStatus(int $statusCode, $statusMessage = null, $content = null): never
     {
-        $this->response->setStatusCode($statusCode);
+        $httpResponse = $this->response->buildHttpResponse();
+        $httpResponse = $httpResponse->withStatus($statusCode);
         if ($content === null) {
             $content = sprintf(
                 '%s %s',
@@ -357,8 +364,8 @@ abstract class AbstractController implements ControllerInterface
                 $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
             );
         }
-        $this->response->setContent($content);
-        throw StopActionException::createForResponse($this->response, $content);
+        $httpResponse = $httpResponse->withBody(Utils::streamFor($content));
+        throw StopActionException::createForResponse($httpResponse, $content);
     }
 
     /**

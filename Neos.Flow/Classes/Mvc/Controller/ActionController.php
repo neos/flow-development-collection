@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Utils;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
@@ -203,7 +204,7 @@ class ActionController extends AbstractController
      * Handles a request. The result output is returned by altering the given response.
      *
      * @param ActionRequest $request The request object
-     * @return ActionResponse
+     * @return ResponseInterface
      * @throws InvalidActionVisibilityException
      * @throws InvalidArgumentTypeException
      * @throws NoSuchActionException
@@ -215,7 +216,7 @@ class ActionController extends AbstractController
      * @throws \Neos\Flow\Security\Exception
      * @api
      */
-    public function processRequest(ActionRequest $request): ActionResponse
+    public function processRequest(ActionRequest $request): ResponseInterface
     {
         $response = new ActionResponse();
         $this->initializeController($request, $response);
@@ -260,13 +261,13 @@ class ActionController extends AbstractController
             $this->initializeView($this->view);
         }
 
-        $response = $this->callActionMethod($request, $this->arguments, $response);
+        $httpResponse = $this->callActionMethod($request, $this->arguments, $response->buildHttpResponse());
 
-        if (!$response->hasContentType()) {
-            $response->setContentType($this->negotiatedMediaType);
+        if (!$httpResponse->hasHeader('Content-Type')) {
+            $httpResponse = $httpResponse->withHeader('Content-Type', $this->negotiatedMediaType);
         }
 
-        return $response;
+        return $httpResponse;
     }
 
     /**
@@ -515,10 +516,9 @@ class ActionController extends AbstractController
      *
      * @param ActionRequest $request
      * @param Arguments $arguments
-     * @param ActionResponse $response The most likely empty response to modify or replace.
-     * @return ActionResponse The final response for this request.
+     * @param ResponseInterface $httpResponse The most likely empty response, previously available as $this->response
      */
-    protected function callActionMethod(ActionRequest $request, Arguments $arguments, ActionResponse $response): ActionResponse
+    protected function callActionMethod(ActionRequest $request, Arguments $arguments, ResponseInterface $httpResponse): ResponseInterface
     {
         $preparedArguments = [];
         foreach ($arguments as $argument) {
@@ -559,13 +559,15 @@ class ActionController extends AbstractController
             }
         }
 
-        if ($actionResult === null && $this->view instanceof ViewInterface) {
-            $response = $this->renderView($response);
-        } else {
-            $response->setContent($actionResult);
+        if ($actionResult instanceof ResponseInterface) {
+            return $actionResult;
         }
 
-        return $response;
+        if ($actionResult === null && $this->view instanceof ViewInterface) {
+            return $this->renderView($httpResponse);
+        }
+
+        return $httpResponse->withBody(Utils::streamFor($actionResult));
     }
 
     /**
@@ -831,36 +833,48 @@ class ActionController extends AbstractController
     /**
      * Renders the view and applies the result to the response object.
      *
-     * @param ActionResponse $response
-     * @return ActionResponse
+     * @param ResponseInterface $httpResponse The most likely empty response, previously available as $this->response
      */
-    protected function renderView(ActionResponse $response): ActionResponse
+    protected function renderView(ResponseInterface $httpResponse): ResponseInterface
     {
         $result = $this->view->render();
 
         if (is_string($result)) {
-            $response->setContent($result);
+            return $httpResponse->withBody(Utils::streamFor($result));
         }
 
         if ($result instanceof ActionResponse) {
-            $result->mergeIntoParentResponse($response);
+            // deprecated behaviour to return an ActionResponse from a view
+            $subResponse = $result->buildHttpResponse();
+            // legacy behaviour of "mergeIntoParentResponse":
+            // transfer possible headers
+            foreach ($subResponse->getHeaders() as $name => $values) {
+                $httpResponse = $httpResponse->withHeader($name, $values);
+            }
+            // if the status code is 200 we assume it's the default and will not overrule it
+            if ($subResponse->getStatusCode() !== 200) {
+                $httpResponse = $httpResponse->withStatus($subResponse->getStatusCode());
+            }
+            // if the known body size is not empty replace the body
+            if ($subResponse->getBody()->getSize() !== 0) {
+                $httpResponse = $httpResponse->withBody($subResponse->getBody());
+            }
+            return $httpResponse;
         }
 
         if ($result instanceof ResponseInterface) {
-            $response->replaceHttpResponse($result);
-            if ($result->hasHeader('Content-Type')) {
-                $response->setContentType($result->getHeaderLine('Content-Type'));
-            }
-        }
-
-        if (is_object($result) && is_callable([$result, '__toString'])) {
-            $response->setContent((string)$result);
+            return $result;
         }
 
         if ($result instanceof StreamInterface) {
-            $response->setContent($result);
+            return $httpResponse->withBody($result);
         }
 
-        return $response;
+        if ($result instanceof \Stringable) {
+            return $httpResponse->withBody(Utils::streamFor((string)$result));
+        }
+
+        // Case should not happen. Contract of the view was not obeyed.
+        return $httpResponse;
     }
 }
