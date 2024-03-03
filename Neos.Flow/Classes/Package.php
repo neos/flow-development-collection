@@ -26,6 +26,8 @@ use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\PrecomposedHashProvider;
+use Neos\Flow\Security\Policy\PolicyAnnotationService;
+use Neos\Flow\Security\Policy\PolicyService;
 
 /**
  * The Flow Package
@@ -160,5 +162,7 @@ class Package extends BasePackage
             $annotationsCacheFlusher = $bootstrap->getObjectManager()->get(AnnotationsCacheFlusher::class);
             $annotationsCacheFlusher->flushConfigurationCachesByCompiledClass($classNames);
         });
+
+        $dispatcher->connect(PolicyService::class, 'configurationLoaded', PolicyAnnotationService::class, 'ammendPolicyConfiguration');
     }
 }
