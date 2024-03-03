@@ -241,6 +241,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
                 $subResponse = $exception->response;
                 $parentResponse = $this->controllerContext->getResponse()->buildHttpResponse();
 
+                // legacy behaviour of "mergeIntoParentResponse":
                 // transfer possible headers that have been set dynamically
                 foreach ($subResponse->getHeaders() as $name => $values) {
                     $parentResponse = $parentResponse->withHeader($name, $values);
@@ -249,7 +250,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
                 if ($subResponse->getStatusCode() !== 200) {
                     $parentResponse = $parentResponse->withStatus($subResponse->getStatusCode());
                 }
-
+                // if the known body size is not empty replace the body
                 if ($subResponse->getBody()->getSize() !== 0) {
                     $parentResponse = $parentResponse->withBody($subResponse->getBody());
                 }
@@ -263,7 +264,8 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             // We need to make sure to not merge content up into the parent ActionResponse because that _could_ break the parent response.
             $content = $subResponse->getBody()->getContents();
 
-            // hacky, but part of the deal. We have to manipulate the global response to redirect for example.
+            // hacky, but part of the deal. Legacy behaviour of "mergeIntoParentResponse":
+            // we have to manipulate the global response to redirect for example.
             // transfer possible headers that have been set dynamically
             foreach ($subResponse->getHeaders() as $name => $values) {
                 $this->controllerContext->getResponse()->setHttpHeader($name, $values);

@@ -844,8 +844,22 @@ class ActionController extends AbstractController
         }
 
         if ($result instanceof ActionResponse) {
-            // any modifications to $this-response or via the controller context will be lost!
-            return $result->buildHttpResponse();
+            // deprecated behaviour to return an ActionResponse from a view
+            $subResponse = $result->buildHttpResponse();
+            // legacy behaviour of "mergeIntoParentResponse":
+            // transfer possible headers
+            foreach ($subResponse->getHeaders() as $name => $values) {
+                $httpResponse = $httpResponse->withHeader($name, $values);
+            }
+            // if the status code is 200 we assume it's the default and will not overrule it
+            if ($subResponse->getStatusCode() !== 200) {
+                $httpResponse = $httpResponse->withStatus($subResponse->getStatusCode());
+            }
+            // if the known body size is not empty replace the body
+            if ($subResponse->getBody()->getSize() !== 0) {
+                $httpResponse = $httpResponse->withBody($subResponse->getBody());
+            }
+            return $httpResponse;
         }
 
         if ($result instanceof ResponseInterface) {
