@@ -26,7 +26,7 @@ use Neos\Utility\Arrays;
  *
  * @api
  */
-class ActionRequest implements RequestInterface
+class ActionRequest
 {
     /**
      * @Flow\Inject
