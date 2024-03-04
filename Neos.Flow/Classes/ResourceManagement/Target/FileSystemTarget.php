@@ -392,7 +392,14 @@ class FileSystemTarget implements TargetInterface
             return $this->baseUri;
         }
 
-        $httpBaseUri = (string)$this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
+        try {
+            $httpBaseUri = (string)$this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
+        } catch (\Neos\Flow\Http\Exception) {
+            // the handstand to get the request via bootstrap failed. Most likely because we are in cli context.
+            // to avoid an error and still allow resolving a link we return a slash wich will result in building a relative uri.
+            // todo find a way to configure this fallback for this use case.
+            $httpBaseUri = '/';
+        }
         return $httpBaseUri . $this->baseUri;
     }
 
