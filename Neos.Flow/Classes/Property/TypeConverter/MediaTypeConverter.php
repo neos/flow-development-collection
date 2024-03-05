@@ -27,7 +27,7 @@ use Neos\Utility\MediaTypes;
 class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConverterInterface
 {
     /**
-     * @var string
+     * @var array<string>
      */
     protected $sourceTypes = ['string'];
 

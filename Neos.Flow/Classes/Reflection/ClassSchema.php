@@ -47,7 +47,7 @@ class ClassSchema
     protected $lazyLoadable = false;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $repositoryClassName;
 

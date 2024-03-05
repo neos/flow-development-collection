@@ -24,7 +24,7 @@ class Error extends \Neos\Error\Messages\Error
     protected $message = 'Unknown validation error';
 
     /**
-     * @var string
+     * @var int
      */
     protected $code = 1201447005;
 }

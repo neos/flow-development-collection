@@ -50,14 +50,14 @@ class Router implements RouterInterface
     protected $routerCachingService;
 
     /**
-     * @var Route
+     * @var Route|null
      */
-    protected $lastMatchedRoute;
+    protected $lastMatchedRoute = null;
 
     /**
-     * @var Route
+     * @var Route|null
      */
-    protected $lastResolvedRoute;
+    protected $lastResolvedRoute = null;
 
     /**
      * Injects the (system) logger based on PSR-3.

@@ -161,7 +161,7 @@ class Headers implements \Iterator
      * Dates are returned as DateTime objects with the timezone set to GMT.
      *
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
-     * @return array|string An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
+     * @return array|string|null An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
      * @api
      */
     public function get($name)

@@ -47,7 +47,7 @@ class Environment
     protected $temporaryDirectoryBase = '';
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $temporaryDirectory = null;
 

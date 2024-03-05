@@ -73,7 +73,7 @@ class CldrRepository
      * file.
      *
      * @param string $filename Relative (from CLDR root) path to existing CLDR file
-     * @return CldrModel|boolean A CldrModel instance or false on failure
+     * @return CldrModel|false A CldrModel instance or false on failure
      */
     public function getModel($filename)
     {

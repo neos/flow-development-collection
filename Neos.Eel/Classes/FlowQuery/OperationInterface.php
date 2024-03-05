@@ -58,7 +58,7 @@ interface OperationInterface
      *
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation
-     * @return mixed|null if the operation is final, the return value
+     * @return mixed if the operation is final, the return value
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments);
 }

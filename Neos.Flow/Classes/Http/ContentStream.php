@@ -25,7 +25,7 @@ use Psr\Log\LoggerInterface;
 class ContentStream implements StreamInterface
 {
     /**
-     * @var resource
+     * @var resource|null
      */
     protected $resource;
 

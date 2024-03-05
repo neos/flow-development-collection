@@ -130,6 +130,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Finds all entities in the repository.
      *
+     * @phpstan-ignore-next-line we don't satisfy the contract of doctrines repository as we don't return a simple array.
      * @return QueryResultInterface The query result
      * @api
      */

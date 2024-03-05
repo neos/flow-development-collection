@@ -62,7 +62,7 @@ class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterf
      *
      * @param ClassMetadata $targetEntity
      * @param string $targetTableAlias
-     * @return string
+     * @return string|null
      */
     public function getSqlConstraint(ClassMetadata $targetEntity, $targetTableAlias)
     {

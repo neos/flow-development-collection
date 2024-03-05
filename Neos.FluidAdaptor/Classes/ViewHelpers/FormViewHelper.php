@@ -92,7 +92,7 @@ class FormViewHelper extends AbstractFormViewHelper
     protected $authenticationManager;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $formActionUri;
 

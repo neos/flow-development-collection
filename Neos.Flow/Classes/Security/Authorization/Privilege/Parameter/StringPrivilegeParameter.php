@@ -19,7 +19,7 @@ use Neos\Flow\Annotations as Flow;
 class StringPrivilegeParameter extends AbstractPrivilegeParameter
 {
     /**
-     * @return array
+     * @return array|null
      */
     public function getPossibleValues()
     {

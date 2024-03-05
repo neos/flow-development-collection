@@ -25,7 +25,7 @@ use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
 class ResourceUriNode extends ViewHelperNode
 {
     /**
-     * @var array
+     * @var array<NodeInterface>
      */
     protected $arguments = [];
 

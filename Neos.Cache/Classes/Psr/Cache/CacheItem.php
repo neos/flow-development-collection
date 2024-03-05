@@ -39,7 +39,7 @@ class CacheItem implements CacheItemInterface
 
 
     /**
-     * @var \DateTime|null
+     * @var \DateTimeInterface|null
      */
     protected $expirationDate;
 
@@ -127,7 +127,7 @@ class CacheItem implements CacheItemInterface
     }
 
     /**
-     * @return \DateTime|null
+     * @return \DateTimeInterface|null
      */
     public function getExpirationDate()
     {

@@ -56,7 +56,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     protected $providerConfigurations;
 
     /**
-     * @var bool
+     * @var bool|null
      */
     protected $isAuthenticated;
 
@@ -66,7 +66,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     protected $isInitialized = false;
 
     /**
-     * @var string
+     * @var int
      */
     protected $authenticationStrategy;
 

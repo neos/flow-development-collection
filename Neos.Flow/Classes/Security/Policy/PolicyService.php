@@ -18,6 +18,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterDefinition;
+use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Exception as SecurityException;
@@ -193,10 +194,14 @@ class PolicyService
                     if (!isset($privilegeTargetConfiguration['parameters'][$parameterName])) {
                         throw new SecurityException(sprintf('No parameter definition found for parameter "%s" in privilegeTarget "%s"', $parameterName, $privilegeTargetIdentifier), 1395869330);
                     }
-                    if (!isset($privilegeTargetConfiguration['parameters'][$parameterName]['className'])) {
+                    $parameterClassName = $privilegeTargetConfiguration['parameters'][$parameterName]['className'] ?? null;
+                    if ($parameterClassName === null) {
                         throw new SecurityException(sprintf('No "className" defined for parameter "%s" in privilegeTarget "%s"', $parameterName, $privilegeTargetIdentifier), 1396021782);
                     }
-                    $parameterDefinitions[$parameterName] = new PrivilegeParameterDefinition($parameterName, $privilegeTargetConfiguration['parameters'][$parameterName]['className']);
+                    if (!in_array(PrivilegeParameterInterface::class, class_implements($parameterClassName), true)) {
+                        throw new SecurityException(sprintf('PrivilegeParameterInterface must be implemented for "className" defined for parameter "%s" in privilegeTarget "%s"', $parameterName, $privilegeTargetIdentifier), 1396021782);
+                    }
+                    $parameterDefinitions[$parameterName] = new PrivilegeParameterDefinition($parameterName, $parameterClassName);
                 }
 
                 $label = $privilegeTargetConfiguration['label'] ?? $privilegeTargetIdentifier;

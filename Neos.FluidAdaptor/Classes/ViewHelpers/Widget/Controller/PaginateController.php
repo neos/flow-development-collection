@@ -56,12 +56,12 @@ class PaginateController extends AbstractWidgetController
     protected $numberOfPages = 1;
 
     /**
-     * @var integer
+     * @var float
      */
     protected $displayRangeStart;
 
     /**
-     * @var integer
+     * @var float
      */
     protected $displayRangeEnd;
 
