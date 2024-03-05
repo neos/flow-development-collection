@@ -40,7 +40,7 @@ class IsOperation extends AbstractOperation
      *
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the filter arguments
-     * @return void|boolean
+     * @return mixed
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
@@ -49,6 +49,7 @@ class IsOperation extends AbstractOperation
         } else {
             $flowQuery->pushOperation('is', []);
             $flowQuery->pushOperation('filter', $arguments);
+            return null;
         }
     }
 }
