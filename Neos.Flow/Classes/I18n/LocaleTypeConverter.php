@@ -24,7 +24,7 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 class LocaleTypeConverter extends AbstractTypeConverter
 {
     /**
-     * @var string
+     * @var array<string>
      */
     protected $sourceTypes = ['string'];
 

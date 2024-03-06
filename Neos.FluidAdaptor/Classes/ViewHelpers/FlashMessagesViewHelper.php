@@ -105,14 +105,13 @@ class FlashMessagesViewHelper extends AbstractTagBasedViewHelper
      * Render the flash messages as unsorted list. This is triggered if no "as" argument is given
      * to the ViewHelper.
      *
-     * @param array<Message> $flashMessages
+     * @param list<Message> $flashMessages
      * @return string
      */
     protected function renderAsList(array $flashMessages)
     {
         $flashMessagesClass = isset($this->arguments['class']) ? $this->arguments['class'] : 'flashmessages';
         $tagContent = '';
-        /** @var $singleFlashMessage Message */
         foreach ($flashMessages as $singleFlashMessage) {
             $severityClass = sprintf('%s-%s', $flashMessagesClass, strtolower($singleFlashMessage->getSeverity()));
             $messageContent = htmlspecialchars($singleFlashMessage->render());

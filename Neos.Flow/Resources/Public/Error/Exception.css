@@ -47,6 +47,14 @@ h1, h2, h3 {
     color: #000000;
 }
 
+.ExceptionBodyPre {
+  padding: 10px;
+  margin: 10px;
+  color: #000000;
+  white-space: pre;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
 .ExceptionProperty {
     color: #34363C;
 }

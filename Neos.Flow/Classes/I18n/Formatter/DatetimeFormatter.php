@@ -228,9 +228,9 @@ class DatetimeFormatter implements FormatterInterface
             case 'd':
                 return $this->padString($dateTime->format('j'), $formatLengthOfSubformat);
             case 'D':
-                return $this->padString((int)($dateTime->format('z') + 1), $formatLengthOfSubformat);
+                return $this->padString(((int)$dateTime->format('z') + 1), $formatLengthOfSubformat);
             case 'F':
-                return (int)(($dateTime->format('j') + 6) / 7);
+                return (string)(int)(((int)$dateTime->format('j') + 6) / 7);
             case 'M':
             case 'L':
                 $month = (int)$dateTime->format('n');

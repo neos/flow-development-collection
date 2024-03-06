@@ -66,7 +66,7 @@ class Base64DecodeViewHelper extends AbstractViewHelper
     /**
      * Converts all HTML entities to their applicable characters as needed using PHPs html_entity_decode() function.
      *
-     * @return string the altered string
+     * @return string|mixed the altered string
      * @api
      */
     public function render()

@@ -12,12 +12,14 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  */
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Route;
+use Neos\Flow\Mvc\Routing\TestingRoutesProvider;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestAController;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\RoutingTestAController;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -46,18 +48,11 @@ class RoutingTest extends FunctionalTestCase
         parent::setUp();
         $this->serverRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
 
-        $foundRoute = false;
-        /** @var $route Route */
-        foreach ($this->router->getRoutes() as $route) {
-            if ($route->getName() === 'Neos.Flow :: Functional Test: HTTP - FooController') {
-                $foundRoute = true;
-                break;
-            }
-        }
-
-        if (!$foundRoute) {
-            self::markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
-            return;
+        if (
+            ($this->objectManager->get(ConfigurationManager::class)
+                ->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.mvc.routes')['Neos.Flow'] ?? false) !== true
+        ) {
+            self::markTestSkipped(sprintf('In this distribution the Flow routes are not included into the global configuration and thus cannot be tested. Please set in Neos.Flow.mvc.routes "Neos.Flow": true.'));
         }
     }
 
@@ -386,7 +381,7 @@ class RoutingTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function explicitlySpecifiedRoutesOverruleConfiguredRoutes()
+    public function testingRoutesProviderCanRegisterOwnRoute()
     {
         $routeValues = [
             '@package' => 'Neos.Flow',
@@ -395,24 +390,20 @@ class RoutingTest extends FunctionalTestCase
             '@action' => 'index',
             '@format' => 'html'
         ];
-        $routesConfiguration = [
-            [
-                'uriPattern' => 'custom/uri/pattern',
-                'defaults' => [
-                    '@package' => 'Neos.Flow',
-                    '@subpackage' => 'Tests\Functional\Http\Fixtures',
-                    '@controller' => 'Foo',
-                    '@action' => 'index',
-                    '@format' => 'html'
-                ],
-            ]
-        ];
-        $this->router->setRoutesConfiguration($routesConfiguration);
+
+        $this->objectManager->get(TestingRoutesProvider::class)->addRoute(Route::fromConfiguration([
+            'uriPattern' => 'custom/uri/pattern',
+            'defaults' => [
+                '@package' => 'Neos.Flow',
+                '@subpackage' => 'Tests\Functional\Http\Fixtures',
+                '@controller' => 'Foo',
+                '@action' => 'index',
+                '@format' => 'html'
+            ],
+        ]));
+
         $baseUri = new Uri('http://localhost');
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty()));
         self::assertSame('/custom/uri/pattern', (string)$actualResult);
-
-        // reset router configuration for following tests
-        $this->router->setRoutesConfiguration(null);
     }
 }

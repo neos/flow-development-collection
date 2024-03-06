@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Utility;
 
 /*
@@ -13,19 +15,40 @@ namespace Neos\Utility;
  */
 
 /**
- * Type safe accessing of values from nested arrays
+ * Type safe accessing of values from nested arrays without type casting
+ *
+ * ```php
+ * $intValue = ValueAccessor::forValue($someMixedValue)->int();
+ * ```
+ *
+ * Or in combination with {@see Arrays::getAccessorByPath()} to access values inside an array
+ *
+ * ```php
+ * $intValue = Arrays::getAccessorByPath($mixedArray, 'foo.myIntOption')->int();
+ * ```
+ *
+ * @api
  */
-class ValueAccessor
+final readonly class ValueAccessor
 {
-    public function __construct(
-        public readonly mixed   $value,
-        public readonly ?string $pathinfo = null
+    private function __construct(
+        public mixed $value,
+        private ?string $additionalErrorMessage
     ) {
     }
 
-    private function createTypeError($message): \UnexpectedValueException
+    public static function forValue(mixed $value): self
     {
-        return new \UnexpectedValueException(get_debug_type($this->value) . ' ' . $message . ($this->pathinfo ? ' in path ' . $this->pathinfo : ''));
+        return new self($value, null);
+    }
+
+    /**
+     * @internal You should use {@see ValueAccessor::forValue} instead
+     */
+    public static function forValueInPath(mixed $value, array|string $path): self
+    {
+        $pathinfo = is_array($path) ? implode('.', $path) : $path;
+        return new self($value, 'in path ' . $pathinfo);
     }
 
     public function int(): int
@@ -154,5 +177,10 @@ class ValueAccessor
             return $this->value;
         }
         throw $this->createTypeError(sprintf('is not an instance of %s or null', $className));
+    }
+
+    private function createTypeError($message): \UnexpectedValueException
+    {
+        return new \UnexpectedValueException(get_debug_type($this->value) . ' ' . $message . ($this->additionalErrorMessage ? ' ' . $this->additionalErrorMessage : ''));
     }
 }

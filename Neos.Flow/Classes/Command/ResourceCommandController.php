@@ -221,6 +221,7 @@ class ResourceCommandController extends CommandController
         $resourcesCount = $this->resourceRepository->countAll();
         $this->output->progressStart($resourcesCount);
 
+        /** @var list<PersistentResource> $brokenResources */
         $brokenResources = [];
         $relatedAssets = new \SplObjectStorage();
         $relatedThumbnails = new \SplObjectStorage();
@@ -230,27 +231,22 @@ class ResourceCommandController extends CommandController
             $this->clearState($iteration);
             $iteration++;
             $this->output->progressAdvance(1);
-            /* @var PersistentResource $resource */
             $stream = $resource->getStream();
             if (!is_resource($stream)) {
-                $brokenResources[] = $this->persistenceManager->getIdentifierByObject($resource);
+                $brokenResources[] = $resource;
             }
         }
 
         $this->output->progressFinish();
         $this->outputLine();
 
-        // FIXME flow has no dependency on Neos.Media. This code should be extracted.
-        /* @var AssetRepository|null $assetRepository */
-        $assetRepository = class_exists(AssetRepository::class) ? $this->objectManager->get(AssetRepository::class) : null;
-        /* @var ThumbnailRepository|null $thumbnailRepository */
-        $thumbnailRepository = class_exists(ThumbnailRepository::class) ? $this->objectManager->get(ThumbnailRepository::class) : null;
-        $mediaPackagePresent = $assetRepository && $thumbnailRepository && $this->packageManager->isPackageAvailable('Neos.Media');
+        // FIXME flow has no dependency on Neos.Media. This code should be extracted. https://github.com/neos/flow-development-collection/issues/3272
+        $assetRepository = $this->objectManager->get(AssetRepository::class);
+        $thumbnailRepository = $this->objectManager->get(ThumbnailRepository::class);
+        $mediaPackagePresent = $this->packageManager->isPackageAvailable('Neos.Media');
 
         if (count($brokenResources) > 0) {
-            foreach ($brokenResources as $key => $resourceIdentifier) {
-                $resource = $this->resourceRepository->findByIdentifier($resourceIdentifier);
-                $brokenResources[$key] = $resource;
+            foreach ($brokenResources as $resource) {
                 if ($mediaPackagePresent) {
                     $assets = $assetRepository->findByResource($resource);
                     if ($assets !== null) {
@@ -277,8 +273,8 @@ class ResourceCommandController extends CommandController
                 }
             }
             $response = null;
-            while (!in_array($response, ['y', 'n', 'c'])) {
-                $response = $this->output->ask('<comment>Do you want to remove all broken resource objects and related assets from the database? (y/n/c) </comment>');
+            while (!in_array($response, ['y', 'n'])) {
+                $response = $this->output->ask('<comment>Do you want to remove all broken resource objects and related assets from the database? (y/n) </comment>');
             }
 
             switch ($response) {
@@ -322,9 +318,6 @@ class ResourceCommandController extends CommandController
                     break;
                 case 'n':
                     $this->outputLine('Did not delete any resource objects.');
-                    break;
-                case 'c':
-                    $this->outputLine('Stopping. Did not delete any resource objects.');
                     $this->quit(0);
                     break;
             }

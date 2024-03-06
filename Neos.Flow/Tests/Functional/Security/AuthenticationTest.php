@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Functional\Security;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Security\AccountFactory;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -56,57 +55,57 @@ class AuthenticationTest extends FunctionalTestCase
         $accountRepository->add($account3);
         $this->persistenceManager->persistAll();
 
-        $route = new Route();
-        $route->setName('Functional Test - Security::Restricted');
-        $route->setUriPattern('test/security/restricted(/{@action})');
-        $route->setDefaults([
-            '@package' => 'Neos.Flow',
-            '@subpackage' => 'Tests\Functional\Security\Fixtures',
-            '@controller' => 'Restricted',
-            '@action' => 'public',
-            '@format' =>'html'
-        ]);
-        $route->setAppendExceedingArguments(true);
-        $this->router->addRoute($route);
+        $this->registerRoute(
+            'Functional Test - Security::Restricted',
+            'test/security/restricted(/{@action})',
+            [
+                '@package' => 'Neos.Flow',
+                '@subpackage' => 'Tests\Functional\Security\Fixtures',
+                '@controller' => 'Restricted',
+                '@action' => 'public',
+                '@format' =>'html'
+            ],
+            true
+        );
 
-        $route2 = new Route();
-        $route2->setName('Functional Test - Security::Authentication');
-        $route2->setUriPattern('test/security/authentication(/{@action})');
-        $route2->setDefaults([
-            '@package' => 'Neos.Flow',
-            '@subpackage' => 'Tests\Functional\Security\Fixtures',
-            '@controller' => 'Authentication',
-            '@action' => 'authenticate',
-            '@format' => 'html'
-        ]);
-        $route2->setAppendExceedingArguments(true);
-        $this->router->addRoute($route2);
+        $this->registerRoute(
+            'Functional Test - Security::Authentication',
+            'test/security/authentication(/{@action})',
+            [
+                '@package' => 'Neos.Flow',
+                '@subpackage' => 'Tests\Functional\Security\Fixtures',
+                '@controller' => 'Authentication',
+                '@action' => 'authenticate',
+                '@format' => 'html'
+            ],
+            true
+        );
 
-        $route3 = new Route();
-        $route3->setName('Functional Test - Security::HttpBasicAuthentication');
-        $route3->setUriPattern('test/security/authentication/httpbasic(/{@action})');
-        $route3->setDefaults([
-            '@package' => 'Neos.Flow',
-            '@subpackage' => 'Tests\Functional\Security\Fixtures',
-            '@controller' => 'HttpBasicTest',
-            '@action' => 'authenticate',
-            '@format' => 'html'
-        ]);
-        $route3->setAppendExceedingArguments(true);
-        $this->router->addRoute($route3);
+        $this->registerRoute(
+            'Functional Test - Security::HttpBasicAuthentication',
+            'test/security/authentication/httpbasic(/{@action})',
+            [
+                 '@package' => 'Neos.Flow',
+                 '@subpackage' => 'Tests\Functional\Security\Fixtures',
+                 '@controller' => 'HttpBasicTest',
+                 '@action' => 'authenticate',
+                 '@format' => 'html'
+             ],
+            true
+        );
 
-        $route4 = new Route();
-        $route4->setName('Functional Test - Security::UsernamePasswordAuthentication');
-        $route4->setUriPattern('test/security/authentication/usernamepassword(/{@action})');
-        $route4->setDefaults([
-            '@package' => 'Neos.Flow',
-            '@subpackage' => 'Tests\Functional\Security\Fixtures',
-            '@controller' => 'UsernamePasswordTest',
-            '@action' => 'authenticate',
-            '@format' => 'html'
-        ]);
-        $route4->setAppendExceedingArguments(true);
-        $this->router->addRoute($route4);
+        $this->registerRoute(
+            'Functional Test - Security::UsernamePasswordAuthentication',
+            'test/security/authentication/usernamepassword(/{@action})',
+            [
+                '@package' => 'Neos.Flow',
+                '@subpackage' => 'Tests\Functional\Security\Fixtures',
+                '@controller' => 'UsernamePasswordTest',
+                '@action' => 'authenticate',
+                '@format' => 'html'
+            ],
+            true
+        );
 
         $this->serverRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
     }

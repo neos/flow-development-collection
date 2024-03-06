@@ -24,7 +24,7 @@ interface PackageInterface
     /**
      * Returns the array of filenames of the class files
      *
-     * @return array An array of class names (key) and their filename, including the relative path to the package's directory
+     * @return iterable An array or yields the class names (key) and their filename, including the relative path to the package's directory
      * @api
      */
     public function getClassFiles();

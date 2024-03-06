@@ -91,7 +91,9 @@ class ResourceInterceptor implements InterceptorInterface
      */
     public function process(NodeInterface $node, $interceptorPosition, ParsingState $parsingState)
     {
-        /** @var $node TextNode */
+        if (!$node instanceof TextNode) {
+            return $node;
+        }
         if (strpos($node->getText(), 'Public/') === false) {
             return $node;
         }

@@ -210,10 +210,11 @@ class TransientSession implements SessionInterface
     /**
      * No operation for transient session.
      *
-     * @return void
+     * @return null
      */
     public function collectGarbage()
     {
+        return null;
     }
 
     /**

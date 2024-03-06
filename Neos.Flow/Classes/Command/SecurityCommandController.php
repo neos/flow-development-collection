@@ -11,9 +11,9 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
+use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
-use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Mvc\Controller\AbstractController;
@@ -60,7 +60,7 @@ class SecurityCommandController extends CommandController
     protected $policyService;
 
     /**
-     * @var VariableFrontend
+     * @var FrontendInterface
      */
     protected $methodPermissionCache;
 

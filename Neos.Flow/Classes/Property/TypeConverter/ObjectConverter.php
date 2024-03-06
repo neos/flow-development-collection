@@ -50,7 +50,7 @@ class ObjectConverter extends AbstractTypeConverter
     const CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED = 4;
 
     /**
-     * @var array
+     * @var array<string>
      */
     protected $sourceTypes = ['array'];
 
@@ -119,7 +119,7 @@ class ObjectConverter extends AbstractTypeConverter
      * @param string $targetType
      * @param string $propertyName
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return string
+     * @return string|null
      * @throws InvalidTargetException
      */
     public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration)

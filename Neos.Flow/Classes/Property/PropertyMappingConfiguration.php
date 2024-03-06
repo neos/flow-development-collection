@@ -14,6 +14,7 @@ namespace Neos\Flow\Property;
 /**
  * Concrete configuration object for the PropertyMapper.
  *
+ * @phpstan-consistent-constructor
  * @api
  */
 class PropertyMappingConfiguration implements PropertyMappingConfigurationInterface
@@ -36,7 +37,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
     /**
      * Stores the configuration for specific child properties.
      *
-     * @var array<PropertyMappingConfigurationInterface>
+     * @var array<PropertyMappingConfiguration>
      */
     protected $subConfigurationForProperty = [];
 
@@ -86,6 +87,10 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      * @var boolean
      */
     protected $mapUnknownProperties = false;
+
+    public function __construct()
+    {
+    }
 
     /**
      * The behavior is as follows:
@@ -361,11 +366,10 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
 
         $currentProperty = array_shift($splittedPropertyPath);
         if (!isset($this->subConfigurationForProperty[$currentProperty])) {
-            $type = get_class($this);
             if (isset($this->subConfigurationForProperty[self::PROPERTY_PATH_PLACEHOLDER])) {
                 $this->subConfigurationForProperty[$currentProperty] = clone $this->subConfigurationForProperty[self::PROPERTY_PATH_PLACEHOLDER];
             } else {
-                $this->subConfigurationForProperty[$currentProperty] = new $type;
+                $this->subConfigurationForProperty[$currentProperty] = new static();
             }
         }
         return $this->subConfigurationForProperty[$currentProperty]->traverseProperties($splittedPropertyPath);

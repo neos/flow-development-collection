@@ -45,7 +45,7 @@ class Argument
 
     /**
      * Actual value of this argument
-     * @var object
+     * @var object|null
      */
     protected $value = null;
 

@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\TestingRoutesProvider;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
@@ -263,6 +264,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         }
 
         self::$bootstrap->getObjectManager()->forgetInstance(\Neos\Flow\Http\Client\InternalRequestEngine::class);
+        self::$bootstrap->getObjectManager()->get(TestingRoutesProvider::class)->reset();
         self::$bootstrap->getObjectManager()->forgetInstance(\Neos\Flow\Persistence\Aspect\PersistenceMagicAspect::class);
         $this->inject(self::$bootstrap->getObjectManager()->get(\Neos\Flow\ResourceManagement\ResourceRepository::class), 'addedResources', new \SplObjectStorage());
         $this->inject(self::$bootstrap->getObjectManager()->get(\Neos\Flow\ResourceManagement\ResourceRepository::class), 'removedResources', new \SplObjectStorage());
@@ -369,7 +371,10 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         if ($httpMethods !== null) {
             $route->setHttpMethods($httpMethods);
         }
-        $this->router->addRoute($route);
+
+        $testingRoutesProvider = $this->objectManager->get(TestingRoutesProvider::class);
+        $testingRoutesProvider->addRoute($route);
+
         return $route;
     }
 
@@ -430,7 +435,6 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $this->browser = new \Neos\Flow\Http\Client\Browser();
         $this->browser->setRequestEngine(new \Neos\Flow\Http\Client\InternalRequestEngine());
         $this->router = $this->browser->getRequestEngine()->getRouter();
-        $this->router->setRoutesConfiguration(null);
 
         $serverRequestFactory = new ServerRequestFactory(new UriFactory());
         $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost/neos/flow/test');

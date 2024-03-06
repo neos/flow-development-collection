@@ -147,14 +147,14 @@ class Session implements CookieEnabledInterface
     /**
      * The session identifier
      *
-     * @var string
+     * @var string|null
      */
     protected $sessionIdentifier;
 
     /**
      * Internal identifier used for storing session data in the cache
      *
-     * @var string
+     * @var string|null
      */
     protected $storageIdentifier;
 
@@ -382,6 +382,7 @@ class Session implements CookieEnabledInterface
             $this->lastActivityTimestamp = $this->now;
             return $lastActivitySecondsAgo;
         }
+        return null;
     }
 
     /**
@@ -690,13 +691,12 @@ class Session implements CookieEnabledInterface
      * Note that if a session is started after tokens have been authenticated, the
      * session will NOT be tagged with authenticated accounts.
      *
-     * @param array<TokenInterface>
+     * @param $tokens array<TokenInterface>
      * @return void
      */
     protected function storeAuthenticatedAccountsInfo(array $tokens)
     {
         $accountProviderAndIdentifierPairs = [];
-        /** @var TokenInterface $token */
         foreach ($tokens as $token) {
             $account = $token->getAccount();
             if ($token->isAuthenticated() && $account !== null) {

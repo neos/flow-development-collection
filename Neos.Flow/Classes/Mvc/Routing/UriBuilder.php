@@ -82,7 +82,7 @@ class UriBuilder
     protected $argumentsToBeExcludedFromQueryString = [];
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $format = null;
 
