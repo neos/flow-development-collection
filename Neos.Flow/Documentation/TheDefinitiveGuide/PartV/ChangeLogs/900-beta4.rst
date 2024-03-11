@@ -1,0 +1,648 @@
+`9.0.0-beta4 (2024-03-11) <https://github.com/neos/flow-development-collection/releases/tag/9.0.0-beta4>`_
+==========================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Separate RouteConfiguration from Router <https://github.com/neos/flow-development-collection/pull/2970>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This separates the Routes configuration from the router by introducing a ``RoutesProviderInterface`` which will be used by the router implementation together with a ``ConfigurationRoutesProvider`` that implements the current configuration from Routes.yaml. 
+
+Switching out the internal implementation of the ``RoutesProviderInterface`` can be done via Objects.yaml to add custom behaviour. But be aware that this is not covered by our api promises. All Implementations should include the routes provided by the ``ConfigurationRoutesProvider``.
+
+This change also makes sure, that the RouteCommandController uses the current ``RoutesProviderInterface`` implementation, instead of hard coded Flow router. That ensures that all Routes available to the router are now also visible to route cli-commands.
+
+* Fixes: `#2948 <https://github.com/neos/flow-development-collection/issues/2948>`_
+
+**Upgrade instructions**
+
+This change removes the methods ``getRoutes`` and ``addRoute`` from the Router that previously were mainly used in functional-tests as they were never part of the Router Interface. 
+
+To adjust for that the existing utility ``FunctionalTestCase->registerRoute`` method has to be used instead of ``FunctionalTestCase->router->addRoute``.
+
+The method ``Router::setRoutesConfiguration``, which was also previously used for internal testing has been removed without official replacement. You _could_ technically inject a custom routes provider to do so but be aware that this is internal behaviour.
+
+**Review instructions**
+
+Run the ./flow routing:list command - you will see the list as expected
+
+
+* Packages: ``Flow``
+
+`FEATURE: Consider PHP attributes in proxy method building <https://github.com/neos/flow-development-collection/pull/3265>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Added support for preserving PHP 8 attributes in generated proxy class methods. This feature enables correct argument passing from attributes to proxied methods which allows developers to use attributes instead of annotations in most cases.
+
+* Resolves: `#3075 <https://github.com/neos/flow-development-collection/issues/3075>`_
+
+* Packages: ``Flow``
+
+`FEATURE: Add `Flow\InjectCache` Attribute / Annotation for property injection <https://github.com/neos/flow-development-collection/pull/3244>`_
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+In many cases an ``Objects.yaml`` is created just to inject caches which can feel a bit cumbersome as one already had specified the cache in ``Caches.yaml``.
+
+To address this the new ``@Flow\\InjectCache`` annotation allows to assign a cache frontend of a configured cache directly to a property without having to configure the ``Objects.yaml`` at all.
+
+```php
+    #[Flow\\InjectCache(identifier: 'Flow_Mvc_Routing_Resolve')]
+    protected VariableFrontend $cache;
+```
+
+
+* Packages: ``Flow``
+
+`FEATURE: Add more information for object arguments in debugging <https://github.com/neos/flow-development-collection/pull/3211>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+For stacktraces in exceptions and logs we now render some representation of content for objects to ease debugging with DTOs.
+
+Specifically we will try to obtain a string representation for such an object by using either in this order:
+
+- a string cast if __toString() is available
+- json_encode if it is JsonSerializable
+- json_encode on the array of public properties
+
+For readability json_encode will be limited to the first level, also all of those string representations will be cut off after 100 characters.
+
+If any of those options works we will also shorten the className to avoid this output becoming overly long.
+
+Note that we use JSON_PARTIAL_OUTPUT_ON_ERROR to make sure some output is provided. This might lead to partial or weird outputs depending on the object structure, but might still provide pointers for debugging.
+
+* Fixes: `#3165 <https://github.com/neos/flow-development-collection/issues/3165>`_
+
+* Packages: ``Flow``
+
+`9.0 FEATURE: Add `unique` flowQuery operation <https://github.com/neos/flow-development-collection/pull/3102>`_
+----------------------------------------------------------------------------------------------------------------
+
+This operation applies ``array_unique`` to the current flowQuery context.
+
+While the same could previously achieved via ``Array.unique()`` the flow query operation can be placed in an operation chain without extra wrapping.
+
+**Review instructions**
+
+There is also a node specific implementation of the ``unique`` operation in https://github.com/neos/neos-development-collection/pull/4355
+
+I know the php code looks oldish but the style is in line with the other flowQuery operations around. 
+
+
+* Packages: ``Eel``
+
+`FEATURE: Add `getAccessorByPath` to `Neos\Utility\Arrays` for type safe accessing of array values <https://github.com/neos/flow-development-collection/pull/3149>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The array utility allows to create a type safe accessor via ``Arrays::getAccessorByPath($arrayValue, 'your.path')``. The accessor provides the following methods that will either return the requested type or throw a ``\\UnexpectedValueException``.  
+
+* ``int(): int``
+* ``float(): float``
+* ``number(): int|float``
+* ``string(): string``
+* ``classString(): string`` - with annotation for class-string
+* ``array(): array``
+* ``instanceOf(string $className): object`` - with annotation for dynamic type
+* ``intOrNull(): ?int``
+* ``floatOrNull(): ?float``
+* ``numberOrNull(): null|int|float``
+* ``stringOrNull(): ?string``
+* ``classStringOrNull(): ?string`` - with annotation for class-string | null
+* ``arrayOrNull(): ?array``
+* ``instanceOfOrNull(string $className): ?object`` - with annotation for dynamic type | null
+
+This will allow to write code that accesses settings via pathes without checking every level for existence still beeing type safe and accessible for static analysis.
+
+This can be used together with settingInjection.
+
+```php
+public function injectSettings(array $settings): void
+{
+   $this->limit = Arrays::getAccessorByPath($settings, 'limit')->intOrNull();
+}
+```
+
+* Resolves: `#3164 <https://github.com/neos/flow-development-collection/issues/3164>`_
+
+**Review instructions**
+
+It may look inefficient to manually throw TypeErrors that in many cases would be thrown automatically because of the declared return types. However this is not a performance issue as those are never on the happy-path and the created TypeError provides additional informations to help understand and fix problems faster.
+
+
+* Packages: ``Flow`` ``Utility.Arrays``
+
+`FEATURE: Exclude classes from constructor autowiring <https://github.com/neos/flow-development-collection/pull/3070>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Classes can now explicitly be excluded from constructor autowiring through a new setting.
+
+The setting accepts an array of fully qualified class names, each class name being a regular expression. Classes of scope prototype which expect objects to be passed to their constructor are usually considered for autowiring which results in a proxy class being generated.
+
+This option allows to exclude classes from this process. This is useful for classes like data transfer objects, read models, commands, events and value objects which usually don't rely on dependency injection.
+
+Flow cannot reliably detect weather a prototype class depends on autowiring for constructor arguments or not. Use this option to optimize your application to avoid the small but measurable overhead of proxy generation for those kinds of classes.
+
+Note that if there are other reasons than constructor injection which require a proxy class to be generated, the proxy class will be generated no matter what.
+
+This change partly reverts `#3050 <https://github.com/neos/flow-development-collection/issues/3050>`_because now proxy classes _are_ generated for prototype classes by default. Otherwise a lot of existing Flow applications would not work correctly anymore.
+
+resolves: #3049
+
+* Packages: ``Flow``
+
+`FEATURE: Replace self with static in proxy classes <https://github.com/neos/flow-development-collection/pull/3074>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Factory methods which use code like new self() for creating a new instance are now handled correctly in proxy classes. The compiler automatically replaces "self" keywords with "static" in the rendered proxy class file to make this possible.
+
+This implementation has not been optimized for performance.
+
+* Resolves: `#3059 <https://github.com/neos/flow-development-collection/issues/3059>`_
+
+* Packages: ``Flow``
+
+`FEATURE: Support private constructors in proxy classes <https://github.com/neos/flow-development-collection/pull/3072>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Flow now can correctly build proxy classes for classes with private constructors. Previously, such classes caused errors and proxy class building had to be disabled with the ``Proxy(false)`` annotation. Now classes with private constructors can take advantage of setter and property injection and are considered for advices through the AOP framework.
+
+* Resolves: `#3058 <https://github.com/neos/flow-development-collection/issues/3058>`_
+
+* Packages: ``Flow``
+
+`FEATURE: Add support for readonly classes <https://github.com/neos/flow-development-collection/pull/3051>`_
+------------------------------------------------------------------------------------------------------------
+
+Flow now respects readonly classes during proxy class building and makes sure that proxy classes are readonly as well.
+
+resolves: #3025
+
+* Packages: ``Flow``
+
+`BUGFIX: Make new object debug output more robust <https://github.com/neos/flow-development-collection/pull/3233>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Unfortunately magic methods are tricky and __toString is no exception, a check if it's callable can result in true if the magic __call method is implemented but then the results of this call are completely undefined and therefore catching errors and continuing with other options is a good safeguard here.
+
+Noticed this when I had an error in the ``Mvc\\Arguments`` implementation which declares __call.
+
+* Packages: ``Flow``
+
+`BUGFIX: Use correct exception class <https://github.com/neos/flow-development-collection/pull/3209>`_
+------------------------------------------------------------------------------------------------------
+
+Fix the use of an exception class that is no longer where it was.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Replacement proxy methods rendered again <https://github.com/neos/flow-development-collection/pull/3101>`_
+-------------------------------------------------------------------------------------------------------------------
+
+This fixes a bug introduced in d939e6b8 switching to laminuas-code. A proxy method can replace the full body of an existing method or even be a fully new method, in which case only ``body`` will be set in the proxy method. We still want those to be generated. This for example currently breaks the CompileStatic feature, as those methods do not get rendered anymore resulting in worse performance in Production context compared to before.
+
+This fix renders a proxy method also when a body was set for it, but still skips it if neither pre/post nor body is set.
+
+It also enabled CompileStatic in Testing Context so that it is testable and adds a test to make sure it works as intended.
+
+* Fixes: `#3099 <https://github.com/neos/flow-development-collection/issues/3099>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Remove injected properties before serialization <https://github.com/neos/flow-development-collection/pull/3067>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+This fixes a regression introduced recently which resulted in serialization errors if the object to be serialized contained properties which were previously injected.
+
+* Resolves: `#3066 <https://github.com/neos/flow-development-collection/issues/3066>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Support mixed return type in proxied methods <https://github.com/neos/flow-development-collection/pull/3065>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Flow's proxy class building now supports mixed return types for methods.
+
+This change merely adds a test which proves that the feature is working. The actual implementation was part of https://github.com/neos/flow-development-collection/issues/3042.
+
+resolves: https://github.com/neos/flow-development-collection/issues/2899
+
+* Packages: ``Flow``
+
+`BUGFIX: Union types in proxy classes <https://github.com/neos/flow-development-collection/pull/3057>`_
+-------------------------------------------------------------------------------------------------------
+
+Flow's proxy class building now supports union types in method signatures.
+
+This change merely adds a test which proves that the feature is working. The actual implementation was part of #3042.
+
+resolves: #2941
+
+* Packages: ``Flow``
+
+`BUGFIX: Create serialization code for transient properties <https://github.com/neos/flow-development-collection/pull/3063>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Due to a recent optimization, Flow was not generating ``__sleep()`` methods for classes which are not either entities or were configured with a session scope. This led to errors in classes which were using the ``@Transient`` annotation to exclude certain properties from serialization. Therefore, Flow now also generates proxy classes with ``__sleep()`` methods if the original class contains such annotations.
+
+* Resolves: `#3062 <https://github.com/neos/flow-development-collection/issues/3062>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Skip proxy for optional straight values <https://github.com/neos/flow-development-collection/pull/3052>`_
+------------------------------------------------------------------------------------------------------------------
+
+When a promoted property was an optional straight value, the proxy class builder decided to create a proxy class because it could be a straight value configured in the object configuration via Objects.yaml. Flow now checks the value of the given argument and only triggers proxy class building if the argument is not null. That way, Flow will not build useless proxies for typical read models which expect a mix of objects and straight values in their constructor.
+
+related: `#1539 <https://github.com/neos/flow-development-collection/issues/1539>`_
+related: `#3049 <https://github.com/neos/flow-development-collection/issues/3049>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Move access to objectAccess of TemplateObjectAccessInterface into getByPath <https://github.com/neos/flow-development-collection/pull/3041>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+... as accessors are not used anymore for variable provider within fluid, starting v2.8.0.
+
+Due to the missing accessors the ``objectAccess`` of ``TemplateObjectAccessInterface`` didn't get called anymore, so the result of the ``getByPath`` method was an object of ``FusionPathProxy`` instead of an rendered string.
+
+See: 
+https://github.com/TYPO3/Fluid/compare/2.7.4...2.8.0#diff-`a0aa72aa19d9eb57cdb9a4dcd344c3706d75ae7c <https://github.com/neos/flow-development-collection/commit/a0aa72aa19d9eb57cdb9a4dcd344c3706d75ae7c>`_a408286f91a846e495b3c766L122
+https://github.com/TYPO3/Fluid/compare/2.7.4...2.8.0#diff-`a0aa72aa19d9eb57cdb9a4dcd344c3706d75ae7c <https://github.com/neos/flow-development-collection/commit/a0aa72aa19d9eb57cdb9a4dcd344c3706d75ae7c>`_a408286f91a846e495b3c766L341
+https://github.com/TYPO3/Fluid/compare/2.7.4...2.8.0#diff-`a0aa72aa19d9eb57cdb9a4dcd344c3706d75ae7c <https://github.com/neos/flow-development-collection/commit/a0aa72aa19d9eb57cdb9a4dcd344c3706d75ae7c>`_a408286f91a846e495b3c766L312
+
+
+* Packages: ``FluidAdaptor``
+
+`!!! TASK: Make `QueryInterface::logicalAnd` variadic <https://github.com/neos/flow-development-collection/pull/3276>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+_If_ someone implemented the ``QueryInterface``, the implementation must now use conventional variadic parameters instead of legacy ``func_get_args``
+
+This allows phpstan to understand the code ;)
+
+* Packages: ``Flow``
+
+`!!! TASK: Fix `TextIterator::following` and `preceding` <https://github.com/neos/flow-development-collection/pull/3278>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Accidentally they have been typed wrongly. First in phpdoc, which is harmless and later actual types introduced in https://github.com/neos/flow-development-collection/commit/`70b671228ee4f66c54fb7fbfa390aac12b5a71c5 <https://github.com/neos/flow-development-collection/commit/70b671228ee4f66c54fb7fbfa390aac12b5a71c5>``_#diff-``947f5937b1e181a6e4ae7bb23349d22d839b073a <https://github.com/neos/flow-development-collection/commit/947f5937b1e181a6e4ae7bb23349d22d839b073a>`_07104b884c08583cc12f63df enforced that.
+
+The tests didnt fail, because as strict types were not enabled php just cast the int's to string.
+
+The tests, also casting when using assertEquals, didnt notice that.
+
+
+This is required in preparation for https://github.com/neos/flow-development-collection/pull/3261
+
+* Packages: ``Flow`` ``Utility.Unicode``
+
+`!!! TASK: Introduce `TargetInterface::onPublish` callback <https://github.com/neos/flow-development-collection/pull/3229>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Currently every implementation of the ``TargetInterface::publishCollection`` should declare a second parameter: ``callable $callback = null`` which not part of the interface, but used by convention. This pattern causes trouble when using phpstan and also it’s not best practice. To improve this code and preserve the usecase partially the interface now allows to register ``onPublish`` callbacks, which should be called when ``publishCollection`` is run:
+
+```php
+interface TargetInterface
+{
+     // ...
+
+     /**
+      * @param \\Closure(int $iteration): void $callback Function called after each resource publishing
+      */
+     public function onPublish(\\Closure $callback): void;
+}
+```
+
+**Upgrade instructions**
+
+In case you are using the callback, you need to adjust the calling side:
+
+```diff
+- $fileSystemTarget->publishCollection($staticCollection, $myPublicationCallback);
++ $fileSystemTarget->onPublish($myPublicationCallback);
++ $fileSystemTarget->publishCollection($staticCollection);
+```
+
+Also note that the second parameter ``$object`` will not be passed anymore. The callback only contains the ``$iteration`` as one and only parameter.
+
+Additionally the method ``iterate(…)`` in the ``ResourceRepository`` has been removed, replace it by iterating over the result of ``findAllIterator()`` directly.
+
+
+* Packages: ``Flow``
+
+`!!! TASK: Modernized code style in ReflectionService <https://github.com/neos/flow-development-collection/pull/2914>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Code in the reflection service was adjusted to the current code style best practices. 
+
+The method arguments in the Reflection Service are now strictly typed. Therefore, third-party code which relied on loose types and passes invalid types, need to be adjusted. Tests in the Flow package were adjusted were necessary.
+
+As part of the clean up, the setStatusCache() method in ReflectionService was fixed which used a wrong order of parameters in its is_callable() call.
+
+Preparation for #2913
+
+* Packages: ``Flow``
+
+`!!! TASK: Require PHP 8.2 <https://github.com/neos/flow-development-collection/pull/3040>`_
+--------------------------------------------------------------------------------------------
+
+The minimum requirement for the Flow Framework, including all packages of its distribution, was raised to PHP 8.2.
+
+* Packages: ``Flow`` ``Utility.ObjectHandling``
+
+`TASK: `resource:clean` followup #1678 <https://github.com/neos/flow-development-collection/pull/3275>`_
+--------------------------------------------------------------------------------------------------------
+
+While reading the code, looking for improvement, it seems tedious that we ``getIdentifierByObject`` just to ``findByIdentifier`` a few lines later.
+
+This happened due to a funny history of back and forth.
+
+At first - 2014 - ``resource:clean`` was introduced looping over the PersistentResource: https://github.com/neos/flow-development-collection/commit/`8a1ce0fba6cb0bf301f971a6d7d5675e0c038d75 <https://github.com/neos/flow-development-collection/commit/8a1ce0fba6cb0bf301f971a6d7d5675e0c038d75>`_
+
+Then - 2016 - it was decided to save the sha1 and loop over them and retrieve the asset via ``findOneBySha1``: https://github.com/neos/flow-development-collection/commit/`879fba19f93d0a8628682698e57da9f1b58ad7d4 <https://github.com/neos/flow-development-collection/commit/879fba19f93d0a8628682698e57da9f1b58ad7d4>`_
+
+But that did not improve the situation as described in https://github.com/neos/flow-development-collection/pull/1678 and was removed again - 2019.
+
+So in functionality we made a full round, im just here to followup on the last fix to restore the full state syntactically as it was once though of.
+
+* Packages: ``Flow``
+
+`TASK: *PLING PLING* phpstan level 3 <https://github.com/neos/flow-development-collection/pull/3261>`_
+------------------------------------------------------------------------------------------------------
+
+~Requires: https://github.com/neos/flow-development-collection/pull/3260~
+~Requires: https://github.com/neos/flow-development-collection/pull/3217~
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow`` ``Eel``
+
+`TASK: Add type hints and minimal cleanup in object manager <https://github.com/neos/flow-development-collection/pull/3308>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Copied from https://github.com/neos/flow-development-collection/pull/2956
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`TASK: Followup ValueAccessor <https://github.com/neos/flow-development-collection/pull/3201>`_
+-----------------------------------------------------------------------------------------------
+
+followup for `#3149 <https://github.com/neos/flow-development-collection/issues/3149>`_
+
+see https://github.com/neos/flow-development-collection/pull/3149#discussion_r1376013861
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow`` ``Utility.Arrays``
+
+`TASK: Ensure `IntegerConverter` converts DateTime to unix time stamp as int <https://github.com/neos/flow-development-collection/pull/3277>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Previously the date was formatted to a unix time stamp, but in string format and not as desired as int.
+
+This is required in preparation for https://github.com/neos/flow-development-collection/pull/3261
+
+* Packages: ``Flow``
+
+`TASK: Level up to phpstan 2 (Flow 9 adjustments) <https://github.com/neos/flow-development-collection/pull/3217>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The upgrade to phpstan level two was introduced via https://github.com/neos/flow-development-collection/pull/3264, this holds the flow 9 specific adjustments.
+
+Related (phpstan level 1) https://github.com/neos/flow-development-collection/pull/3216
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`TASK: Fix some nullable php doc types <https://github.com/neos/flow-development-collection/pull/3260>`_
+--------------------------------------------------------------------------------------------------------
+
+I ran phpstan level 3 once on flow. And it seems we dont specifiy the nullable types correctly, but we document them in the doc string.
+So i wrote a little helping script that would add the ``|null`` php doc annotation to all ``@param`` and ``@return`` types if we specify ``or NULL`` in the message. I carefully reviewed every change and made additionally some manual changes and corrected things. This is completely non breaking as only doc comments are being touched.
+
+This will help for migrating to phpstan level 3.
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`TASK: Remove deprecated code <https://github.com/neos/flow-development-collection/pull/3220>`_
+-----------------------------------------------------------------------------------------------
+
+- remove deprecated ProtectedContext::whitelist
+- remove deprecated Http Component legacy layer
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`TASK: Change version constraints for Neos packages to self.version <https://github.com/neos/flow-development-collection/pull/3256>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Kickstarter``
+
+`TASK: Remove Bootstrap::MINIMUM_PHP_VERSION <https://github.com/neos/flow-development-collection/pull/3227>`_
+--------------------------------------------------------------------------------------------------------------
+
+We declare these dependencies in composer and it should not be necessary to validate them at runtime.
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`TASK: Use generics via @template instead of PHPSTORM_META <https://github.com/neos/flow-development-collection/pull/3222>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Since the php universe evolved im gonna try https://github.com/neos/flow-development-collection/pull/2753 again ;)
+
+Adds typings to:
+
+\\Neos\\Flow\\ObjectManagement\\ObjectManagerInterface::get()
+
+and
+
+\\Neos\\Flow\\Core\\Bootstrap::getEarlyInstance()
+
+by usage of the @template tag: https://phpstan.org/writing-php-code/phpdocs-basics#generics
+
+This feature is supported by phpstorm, psalm and phpstan and also used widely in Neos 9
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`TASK: Remove dead AfterInvocation related code <https://github.com/neos/flow-development-collection/pull/3219>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This was never properly implemented.
+
+
+* Packages: ``Flow``
+
+`TASK: Remove persistence clone magic <https://github.com/neos/flow-development-collection/pull/3223>`_
+-------------------------------------------------------------------------------------------------------
+
+This removed the code that set ``Flow_Persistence_clone`` in entities or value objects when they were ``clone``d.
+
+As dynamic properties are deprecated with PHP 8.2, this caused warnings and will eventually break.
+
+Since this was (re)-introduced in Flow 2 via `90cb65827c1550e9144e9f83b9231b430c106660 <https://github.com/neos/flow-development-collection/commit/90cb65827c1550e9144e9f83b9231b430c106660>``_ to support custom backends in the geenric persistence layer of Flow, like the (now outdated) ``TYPO3.CouchDB`, we felt it is best to remove it.
+
+**Upgrade instructions**
+
+If you rely on this, you need to adjust your code. Chances are, if you still need this, you use the generic peristsnece layer, which is gone in Flow 7 aready (see https://github.com/neos/flow-development-collection/pull/1769 and https://github.com/neos/flow-development-collection/pull/2262). So, you have other problems to solve, anyway…
+
+
+* Packages: ``Flow``
+
+`TASK: Migrate to PHPStan (adjustments in Flow 9) <https://github.com/neos/flow-development-collection/pull/3216>`_
+-------------------------------------------------------------------------------------------------------------------
+
+With https://github.com/neos/flow-development-collection/pull/3218 PHPStan level 1 was added to the whole Flow code base and CI for Flow 8. This upmerged change needs some adjustments to pass the CI in Flow 9
+
+- fix types in code that was introduced with Flow 9
+- fix types where neos depends on it (by correcting types and adding ``never``)
+- adjust unit test as ``never`` cannot be doubled (eventually this will be fixed via: https://github.com/sebastianbergmann/phpunit/issues/5048)
+- fix ci and style as neos 9 followup for https://github.com/neos/flow-development-collection/pull/3218
+
+
+* Packages: ``Eel`` ``Flow`` ``FluidAdaptor`` ``Kickstarter`` ``Cache``
+
+`TASK: Carefully fix psalm types across codebase to make it green ;) <https://github.com/neos/flow-development-collection/pull/3199>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`TASK: Update default settings for stored throwable dumps <https://github.com/neos/flow-development-collection/pull/3213>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This updates the default settings in YAML to 30 days of dump retention and a maximum of 10.000 files.
+
+The class properties keep their ``0`` default, so that in case the class has been extended no change is enforced.
+
+**Review instructions**
+
+Needs upmerge of https://github.com/neos/flow-development-collection/pull/3187
+
+
+`TASK: Use new Behat `FlowBootstrapTrait` <https://github.com/neos/flow-development-collection/pull/3208>`_
+-----------------------------------------------------------------------------------------------------------
+
+Adjust to behat adjustments see https://github.com/neos/behat/pull/35
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`TASK: document and deprecate flows internal isolated behat tests <https://github.com/neos/flow-development-collection/pull/3173>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Related https://github.com/neos/flow-development-collection/issues/3170
+
+The infrastructure is quite complex and not in relation to those two tests. That's why we declare it ready to be removed.
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`TASK: Support PHP never, null, false, and true as stand-alone types <https://github.com/neos/flow-development-collection/pull/3071>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+This change adds functional tests to prove that Flow can handle PHP 8 stand-alone return types in AOP proxy class building.
+
+Note that "null" is not supported yet by laminas-code, therefore the corresponding test is not active yet.
+
+* Resolves: `#3027 <https://github.com/neos/flow-development-collection/issues/3027>`_
+
+* Packages: ``Flow``
+
+`TASK: Use Laminas Code for proxy method rendering <https://github.com/neos/flow-development-collection/pull/3064>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Flow now uses laminas/laminas-code for rendering proxy methods. The Dependency Injection Proxy Class Builder was refactored and the classes ProxyConstructor and ProxyMethod were replaced by new implementations called ProxyConstructorGenerator and ProxyMethodGenerator respectively.
+
+* Resolves: `#3042 <https://github.com/neos/flow-development-collection/issues/3042>`_
+
+* Packages: ``Flow``
+
+`TASK: Clean up code in AOP and ObjectManagement <https://github.com/neos/flow-development-collection/pull/3055>`_
+------------------------------------------------------------------------------------------------------------------
+
+This change contains various code clean-ups which fell off with the preparation of a new bug fix for AOP.
+
+* Packages: ``Flow``
+
+`TASK: Replace "adviced" by "advised" <https://github.com/neos/flow-development-collection/pull/3054>`_
+-------------------------------------------------------------------------------------------------------
+
+Fixed a good old typo everywhere in Flow by replacing all occurrences of "adviced" by "advised".
+
+* Packages: ``Flow``
+
+`TASK: Clean up functional tests for AOP <https://github.com/neos/flow-development-collection/pull/3053>`_
+----------------------------------------------------------------------------------------------------------
+
+This also re-activates a functional test targeting PHP 7.1 features which was disabled at some point in history.
+
+* Packages: ``Flow``
+
+`TASK: Only add constructor injection code if needed <https://github.com/neos/flow-development-collection/pull/3050>`_
+----------------------------------------------------------------------------------------------------------------------
+
+The proxy class builder now skips code generation for constructor injection code if the given original class is prototype, no user-defined object configuration exists and all potentially autowired constructor arguments are prototypes or simple values. This change should result in a significantly less amount of proxy classes generated in most modern Flow projects.
+
+resolves: `#3049 <https://github.com/neos/flow-development-collection/issues/3049>`_
+resolves: #1539
+
+* Packages: ``Flow``
+
+`TASK: Only add serialization entities code if needed <https://github.com/neos/flow-development-collection/pull/3047>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Proxy classes created by the Dependency Injection Proxy Class Builder now only contain code related to serialization and deserialization of related entities if needed.
+
+The code is only rendered if one of the following conditions is met:
+
+- The class is annotated with Entity
+- The class is annotated with Scope("session")
+
+Despite the previous condition, the code will not be rendered if the following condition is true:
+
+- The class already has a __sleep() method (we assume that the developer wants to take care of serialization themself)
+
+As part of this change, the generated code related to serialization was slightly adjusted for stricter type handling.
+
+related: `#1539 <https://github.com/neos/flow-development-collection/issues/1539>`_
+
+**Review instructions**
+
+- try to find an existing application which relies on serialization of related entities, for example a Flow application which uses ORM with relations or uses entities in a session scope.
+- remove all caches and then access your application in a browser using the current Flow 9 branch (without this patch)
+- create a backup of the Cache/Code/Flow_Object_Classes directory
+- switch to a branch with this change, remove all caches and access the application again in a browser
+- use a diff tool (e.g. Kaleidoscope) to compare both cache directories to see what is now different
+- check if your application still works
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.3.8...9.0.0-beta4>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
