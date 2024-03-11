@@ -88,7 +88,7 @@ class ValidatorResolver
      *
      * @param string $validatorType Either one of the built-in data types or fully qualified validator class name
      * @param array $validatorOptions Options to be passed to the validator
-     * @return ValidatorInterface
+     * @return ValidatorInterface|null
      * @throws Exception\NoSuchValidatorException
      * @throws Exception\InvalidValidationConfigurationException
      * @api
@@ -439,7 +439,7 @@ class ValidatorResolver
      * validator is available false is returned
      *
      * @param string $validatorType Either the fully qualified class name of the validator or the short name of a built-in validator
-     * @return string|boolean Class name of the validator or false if not available
+     * @return string|false Class name of the validator or false if not available
      */
     protected function resolveValidatorObjectName($validatorType)
     {

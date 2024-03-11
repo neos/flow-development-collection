@@ -225,7 +225,7 @@ class StandaloneView extends AbstractTemplateView
     /**
      * Resolves the layout root to be used inside other paths.
      *
-     * @return string Fluid layout root path
+     * @return array Fluid layout root paths
      * @throws InvalidTemplateResourceException
      * @api
      */
@@ -262,7 +262,7 @@ class StandaloneView extends AbstractTemplateView
     /**
      * Returns the absolute path to the folder that contains Fluid partial files
      *
-     * @return string Fluid partial root path
+     * @return array Fluid partial root paths
      * @throws InvalidTemplateResourceException
      * @api
      */

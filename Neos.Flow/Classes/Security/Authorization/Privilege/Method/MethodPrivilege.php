@@ -12,7 +12,6 @@ namespace Neos\Flow\Security\Authorization\Privilege\Method;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Aop\Pointcut\PointcutFilter;
 use Neos\Flow\Aop\Pointcut\PointcutFilterComposite;
 use Neos\Flow\Aop\Pointcut\RuntimeExpressionEvaluator;
 use Neos\Flow\Cache\CacheManager;
@@ -33,7 +32,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
     protected static $methodPermissions;
 
     /**
-     * @var PointcutFilter
+     * @var PointcutFilterComposite
      */
     protected $pointcutFilter;
 

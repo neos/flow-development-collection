@@ -124,12 +124,12 @@ class Context
     protected $inactiveTokens = [];
 
     /**
-     * @var ActionRequest
+     * @var ActionRequest|null
      */
-    protected $request;
+    protected $request = null;
 
     /**
-     * @var Role[]
+     * @var Role[]|null
      */
     protected $roles = null;
 
@@ -143,7 +143,7 @@ class Context
     /**
      * A hash for this security context that is unique to the currently authenticated roles. @see getContextHash()
      *
-     * @var string
+     * @var string|null
      */
     protected $contextHash = null;
 
@@ -457,7 +457,7 @@ class Context
      * from the tokens.
      * (@see getAuthenticationTokens())
      *
-     * @return Account The authenticated account
+     * @return Account|null The authenticated account
      */
     public function getAccount()
     {
@@ -479,7 +479,7 @@ class Context
      * authentication provider name.
      *
      * @param string $authenticationProviderName Authentication provider name of the account to find
-     * @return Account The authenticated account
+     * @return Account|null The authenticated account
      */
     public function getAccountByAuthenticationProviderName($authenticationProviderName)
     {

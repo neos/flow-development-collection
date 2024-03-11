@@ -27,7 +27,7 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 class PersistentObjectSerializer extends AbstractTypeConverter
 {
     /**
-     * @var array
+     * @var array<string>
      */
     protected $sourceTypes = [PersistenceMagicInterface::class];
 

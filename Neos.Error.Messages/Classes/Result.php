@@ -345,7 +345,7 @@ class Result
      * where the key is the property path where the error occurred, and the
      * value is a list of all errors (stored as array)
      *
-     * @return array<Error>
+     * @return array<string, array<int, Error>>
      * @api
      */
     public function getFlattenedErrors(): array
@@ -361,7 +361,7 @@ class Result
      * value is a list of all errors (stored as array)
      *
      * @param string $type
-     * @return array<Error>
+     * @return array<string, array<int, Error>>
      * @api
      */
     public function getFlattenedErrorsOfType(string $type): array
@@ -376,7 +376,7 @@ class Result
      * where the key is the property path where the warning occurred, and the
      * value is a list of all warnings (stored as array)
      *
-     * @return array<Warning>
+     * @return array<string, array<int, Warning>>
      * @api
      */
     public function getFlattenedWarnings(): array
@@ -391,7 +391,7 @@ class Result
      * where the key is the property path where the notice occurred, and the
      * value is a list of all notices (stored as array)
      *
-     * @return array<Notice>
+     * @return array<string, array<int, Notice>>
      * @api
      */
     public function getFlattenedNotices(): array
@@ -408,6 +408,7 @@ class Result
      * @param array $result The current result to be flattened
      * @param array $level The property path in the format array('level1', 'level2', ...) for recursion
      * @param string $messageTypeFilter If specified only messages implementing the given class name are taken into account
+     * @param-out array<string, array<int, mixed>> $result
      * @return void
      */
     public function flattenTree(string $propertyName, array &$result, array $level = [], string $messageTypeFilter = null)

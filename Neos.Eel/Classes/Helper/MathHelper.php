@@ -421,7 +421,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * Get the sign of the given number, indicating whether the number is positive, negative or zero
      *
      * @param integer|float $x The value
-     * @return integer -1, 0, 1 depending on the sign or NAN if the given value was not numeric
+     * @return integer|float -1, 0, 1 depending on the sign or NAN if the given value was not numeric
      */
     public function sign($x)
     {

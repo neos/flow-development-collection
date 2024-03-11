@@ -96,11 +96,17 @@ EOD;
         while (true) {
             $filepaths = Debugger::findProxyAndShortFilePath($exception->getFile());
             $filePathAndName = $filepaths['proxy'] !== '' ? $filepaths['proxy'] : $filepaths['short'];
-            $exceptionMessageParts = $this->splitExceptionMessage($exception->getMessage());
 
-            $exceptionHeader .= '<h1 class="ExceptionSubject">' . htmlspecialchars($exceptionMessageParts['subject']) . '</h1>';
-            if ($exceptionMessageParts['body'] !== '') {
-                $exceptionHeader .= '<p class="ExceptionBody">' . nl2br(htmlspecialchars($exceptionMessageParts['body'])) . '</p>';
+            ['subject' => $exceptionMessageSubject, 'body' => $exceptionMessageBody] = $this->splitExceptionMessage($exception->getMessage());
+
+            $exceptionHeader .= '<h1 class="ExceptionSubject">' . htmlspecialchars($exceptionMessageSubject) . '</h1>';
+            if ($exceptionMessageBody !== '') {
+                if (str_contains($exceptionMessageBody, '  ')) {
+                    // contents with multiple spaces will be pre-served
+                    $exceptionHeader .= '<p class="ExceptionBodyPre">' . htmlspecialchars($exceptionMessageBody) . '</p>';
+                } else {
+                    $exceptionHeader .= '<p class="ExceptionBody">' . nl2br(htmlspecialchars($exceptionMessageBody)) . '</p>';
+                }
             }
 
             $exceptionHeader .= '<table class="Flow-Debug-Exception-Meta"><tbody>';

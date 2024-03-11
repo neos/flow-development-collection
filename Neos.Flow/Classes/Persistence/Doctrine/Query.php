@@ -13,10 +13,10 @@ namespace Neos\Flow\Persistence\Doctrine;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Comparison;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -56,7 +56,7 @@ class Query implements QueryInterface
     protected $queryBuilder;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -96,7 +96,7 @@ class Query implements QueryInterface
     protected $parameterIndex = 1;
 
     /**
-     * @var array
+     * @var ArrayCollection<int, Parameter>
      */
     protected $parameters;
 

@@ -91,7 +91,7 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * @param null $arguments
+     * @param array|null $arguments
      * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return boolean
      */

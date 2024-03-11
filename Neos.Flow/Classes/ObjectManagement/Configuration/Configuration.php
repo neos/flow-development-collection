@@ -65,7 +65,7 @@ class Configuration
     protected $factoryArguments = [];
 
     /**
-     * @var string
+     * @var int
      */
     protected $scope = self::SCOPE_PROTOTYPE;
 
@@ -113,7 +113,7 @@ class Configuration
      */
     public function __construct($objectName, $className = null)
     {
-        $backtrace = debug_backtrace();
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         if (isset($backtrace[1]['object'])) {
             $this->configurationSourceHint = get_class($backtrace[1]['object']);
         } elseif (isset($backtrace[1]['class'])) {
@@ -263,7 +263,7 @@ class Configuration
     /**
      * Returns the scope for this object
      *
-     * @return string The scope, one of the SCOPE constants
+     * @return int The scope, one of the SCOPE constants
      */
     public function getScope()
     {

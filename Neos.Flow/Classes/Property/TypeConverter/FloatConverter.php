@@ -152,7 +152,7 @@ class FloatConverter extends AbstractTypeConverter
      *
      * @param string $source
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return float|\Neos\Flow\Validation\Error Parsed float number or error
+     * @return float|int|string|\Neos\Flow\Validation\Error
      * @throws \Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
      */
     protected function parseUsingLocaleIfConfigured($source, PropertyMappingConfigurationInterface $configuration)

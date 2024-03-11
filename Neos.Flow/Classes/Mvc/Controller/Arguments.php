@@ -221,7 +221,7 @@ class Arguments extends \ArrayObject
      * string is returned.
      *
      * @param string $argumentName argument name
-     * @return string long argument name or empty string
+     * @return string|false long argument name or empty string
      */
     protected function validateArgumentExistence($argumentName)
     {

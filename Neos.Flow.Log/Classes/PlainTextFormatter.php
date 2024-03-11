@@ -36,7 +36,7 @@ class PlainTextFormatter
      * @param mixed $var The variable
      * @param integer $spaces Indent for this var dump
      * @param int $continuationSpaces Running total indentation (INTERNAL)
-     * @return string text output
+     * @return string|null text output
      */
     protected function renderVariableAsPlaintext($var, $spaces = 4, $continuationSpaces = 0)
     {
