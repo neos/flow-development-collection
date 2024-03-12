@@ -1684,30 +1684,7 @@ class ReflectionService
             $parameterInformation[self::DATA_PARAMETER_ALLOWS_NULL] = true;
         }
 
-        /** @var \ReflectionNamedType|\ReflectionUnionType|\ReflectionIntersectionType|null $parameterType */
-        $parameterType = $parameter->getType();
-        if ($parameterType !== null) {
-            if ($parameterType instanceof \ReflectionUnionType) {
-                // ReflectionUnionType as of PHP 8
-                $parameterType = implode('|', array_map(
-                    static function (\ReflectionNamedType $type) {
-                        return $type->getName();
-                    },
-                    $parameterType->getTypes()
-                ));
-            } elseif ($parameterType instanceof \ReflectionIntersectionType) {
-                // ReflectionIntersectionType as of PHP 8.1
-                $parameterType = implode('&', array_map(
-                    static function (\ReflectionNamedType $type) {
-                        return $type->getName();
-                    },
-                    $parameterType->getTypes()
-                ));
-            } else {
-                // ReflectionNamedType as of PHP 7.1
-                $parameterType = $parameterType->getName();
-            }
-        }
+        $parameterType = $this->renderParameterType($parameter->getType());
         if ($parameterType !== null && !TypeHandling::isSimpleType($parameterType)) {
             // We use parameter type here to make class_alias usage work and return the hinted class name instead of the alias
             $parameterInformation[self::DATA_PARAMETER_CLASS] = $parameterType;
@@ -2145,5 +2122,29 @@ class ReflectionService
         return $this->environment->getContext()->isProduction()
             && $this->reflectionDataRuntimeCache->getBackend() instanceof FreezableBackendInterface
             && $this->reflectionDataRuntimeCache->getBackend()->isFrozen();
+    }
+
+    private function renderParameterType(?\ReflectionType $parameterType): ?string
+    {
+        $that = $this;
+        return match (true) {
+            $parameterType instanceof \ReflectionUnionType => implode('|', array_map(
+                static function (\ReflectionNamedType | \ReflectionIntersectionType $type) use ($that) {
+                    if ($type instanceof  \ReflectionNamedType) {
+                        return $type->getName();
+                    }
+                    return '(' . $that->renderParameterType($type) . ')';
+                },
+                $parameterType->getTypes()
+            )),
+            $parameterType instanceof \ReflectionIntersectionType => implode('&', array_map(
+                static function (\ReflectionNamedType $type) use ($that) {
+                    return $that->renderParameterType($type);
+                },
+                $parameterType->getTypes()
+            )),
+            $parameterType instanceof \ReflectionNamedType => $parameterType->getName(),
+            default => null,
+        };
     }
 }

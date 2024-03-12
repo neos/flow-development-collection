@@ -318,6 +318,38 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function disjunctiveNormalFormTypesWorkCorrectly(): void
+    {
+        $parameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\PHP8\DummyClassWithDisjunctiveNormalFormTypes::class, 'dnfTypesA');
+        self::assertEquals(
+            Reflection\Fixtures\DummyReadonlyClass::class .
+            '|(' .
+            Reflection\Fixtures\DummyClassWithTypeHints::class .
+            '&' .
+            Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class .
+            ')|null',
+            $parameters['theParameter']['type']
+        );
+
+        $parameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\PHP8\DummyClassWithDisjunctiveNormalFormTypes::class, 'dnfTypesB');
+        self::assertEquals(
+            Reflection\Fixtures\DummyReadonlyClass::class .
+            '|(' .
+            Reflection\Fixtures\DummyClassWithTypeHints::class .
+            '&' .
+            Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class .
+            ')|(' .
+            Reflection\Fixtures\DummyClassWithTypeHints::class .
+            '&' .
+            Reflection\Fixtures\DummyClassWithProperties::class .
+            ')|null',
+            $parameters['theParameter']['type']
+        );
+    }
+
+    /**
+     * @test
+     */
     public function readonlyClassIsDetectedCorrectly(): void
     {
         $isReadonly = $this->reflectionService->isClassReadOnly(Reflection\Fixtures\DummyReadonlyClass::class);
