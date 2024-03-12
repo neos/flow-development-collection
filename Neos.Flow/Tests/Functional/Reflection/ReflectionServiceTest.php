@@ -21,10 +21,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
  */
 class ReflectionServiceTest extends FunctionalTestCase
 {
-    /**
-     * @var ReflectionService
-     */
-    protected $reflectionService;
+    protected ReflectionService $reflectionService;
 
     protected function setUp(): void
     {
@@ -35,7 +32,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function theReflectionServiceBuildsClassSchemataForEntities()
+    public function theReflectionServiceBuildsClassSchemataForEntities(): void
     {
         $classSchema = $this->reflectionService->getClassSchema(Reflection\Fixtures\ClassSchemaFixture::class);
 
@@ -49,15 +46,16 @@ class ReflectionServiceTest extends FunctionalTestCase
      * @test
      * @doesNotPerformAssertions
      */
-    public function classSchemaCanBeBuiltForAggregateRootsWithPlainOldPhpBaseClasses()
+    public function classSchemaCanBeBuiltForAggregateRootsWithPlainOldPhpBaseClasses(): void
     {
         $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\EntityExtendingPlainObject::class);
     }
 
     /**
      * @test
+     * @throws
      */
-    public function theReflectionServiceCorrectlyBuildsMethodTagsValues()
+    public function theReflectionServiceCorrectlyBuildsMethodTagsValues(): void
     {
         $actual = $this->reflectionService->getMethodTagsValues(Reflection\Fixtures\ClassSchemaFixture::class, 'setName');
 
@@ -80,7 +78,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function aggregateRootAssignmentsInHierarchiesAreCorrect()
+    public function aggregateRootAssignmentsInHierarchiesAreCorrect(): void
     {
         self::assertEquals(Reflection\Fixtures\Repository\SuperEntityRepository::class, $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\SuperEntity::class)->getRepositoryClassName());
         self::assertEquals(Reflection\Fixtures\Repository\SuperEntityRepository::class, $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\SubEntity::class)->getRepositoryClassName());
@@ -91,7 +89,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function propertyTypesAreExpandedWithUseStatements()
+    public function propertyTypesAreExpandedWithUseStatements(): void
     {
         $varTagValues = $this->reflectionService->getPropertyTagValues(Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'reflectionService', 'var');
         $expected = [ReflectionService::class];
@@ -101,7 +99,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function propertyTypesFromAbstractBaseClassAreExpandedWithRelativeNamespaces()
+    public function propertyTypesFromAbstractBaseClassAreExpandedWithRelativeNamespaces(): void
     {
         $varTagValues = $this->reflectionService->getPropertyTagValues(Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'subSubEntity', 'var');
         $expected = [Reflection\Fixtures\Model\SubSubEntity::class];
@@ -111,7 +109,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function propertyTypesFromAbstractBaseClassAreExpandedWithUseStatements()
+    public function propertyTypesFromAbstractBaseClassAreExpandedWithUseStatements(): void
     {
         $varTagValues = $this->reflectionService->getPropertyTagValues(Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'superEntity', 'var');
         $expected = [Reflection\Fixtures\Model\SuperEntity::class];
@@ -121,7 +119,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function propertyTypesFromSameSubpackageAreRetrievedCorrectly()
+    public function propertyTypesFromSameSubpackageAreRetrievedCorrectly(): void
     {
         $varTagValues = $this->reflectionService->getPropertyTagValues(Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'annotatedClass', 'var');
         $expected = [Reflection\Fixtures\AnnotatedClass::class];
@@ -131,7 +129,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function propertyTypesFromNestedSubpackageAreRetrievedCorrectly()
+    public function propertyTypesFromNestedSubpackageAreRetrievedCorrectly(): void
     {
         $varTagValues = $this->reflectionService->getPropertyTagValues(Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'subEntity', 'var');
         $expected = [Reflection\Fixtures\Model\SubEntity::class];
@@ -141,7 +139,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function domainModelPropertyTypesAreExpandedWithUseStatementsInClassSchema()
+    public function domainModelPropertyTypesAreExpandedWithUseStatementsInClassSchema(): void
     {
         $classSchema = $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\EntityWithUseStatements::class);
         self::assertEquals(Reflection\Fixtures\Model\SubSubEntity::class, $classSchema->getProperty('subSubEntity')['type']);
@@ -152,7 +150,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function methodParameterTypeExpansionWorksWithFullyQualifiedClassName()
+    public function methodParameterTypeExpansionWorksWithFullyQualifiedClassName(): void
     {
         $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'fullyQualifiedClassName');
 
@@ -164,7 +162,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function methodParameterTypeExpansionWorksWithAliasedClassName()
+    public function methodParameterTypeExpansionWorksWithAliasedClassName(): void
     {
         $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'aliasedClassName');
 
@@ -176,7 +174,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function methodParameterTypeExpansionWorksWithRelativeClassName()
+    public function methodParameterTypeExpansionWorksWithRelativeClassName(): void
     {
         $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'relativeClassName');
 
@@ -188,7 +186,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function methodParameterTypeExpansionWorksWithNullable()
+    public function methodParameterTypeExpansionWorksWithNullable(): void
     {
         $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'nullableClassName');
 
@@ -200,7 +198,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function methodParameterTypeExpansionDoesNotModifySimpleTypes()
+    public function methodParameterTypeExpansionDoesNotModifySimpleTypes(): void
     {
         $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'simpleType');
 
@@ -228,7 +226,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function booleanPropertiesGetANormlizedType()
+    public function booleanPropertiesGetANormlizedType(): void
     {
         $className = Reflection\Fixtures\DummyClassWithProperties::class;
 
@@ -244,7 +242,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function methodParametersGetNormalizedType()
+    public function methodParametersGetNormalizedType(): void
     {
         $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\AnnotatedClass::class, 'intAndIntegerParameters');
 
@@ -256,7 +254,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function nullableMethodParametersWorkCorrectly()
+    public function nullableMethodParametersWorkCorrectly(): void
     {
         $nativeNullableMethodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\AnnotatedClass::class, 'nativeNullableParameter');
         $annotatedNullableMethodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\AnnotatedClass::class, 'annotatedNullableParameter');
@@ -277,7 +275,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function scalarTypeHintsWorkCorrectly()
+    public function scalarTypeHintsWorkCorrectly(): void
     {
         $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithScalarTypeHints');
 
@@ -288,7 +286,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function arrayTypeHintsWorkCorrectly()
+    public function arrayTypeHintsWorkCorrectly(): void
     {
         $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithArrayTypeHint');
         self::assertEquals('array', $methodWithTypeHintsParameters['array']['type']);
@@ -297,7 +295,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function annotatedArrayTypeHintsWorkCorrectly()
+    public function annotatedArrayTypeHintsWorkCorrectly(): void
     {
         $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithArrayTypeHintAndAnnotation');
         self::assertEquals('array<string>', $methodWithTypeHintsParameters['array']['type']);
@@ -306,7 +304,7 @@ class ReflectionServiceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function unionReturnTypesWorkCorrectly()
+    public function unionReturnTypesWorkCorrectly(): void
     {
         if (PHP_MAJOR_VERSION < 8) {
             $this->markTestSkipped('Only for PHP 8 with UnionTypes');
