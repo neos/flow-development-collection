@@ -443,9 +443,9 @@ class ReflectionService
     /**
      * Returns the specified class annotations or an empty array
      *
+     * @param null|string $annotationClassName
      * @return array<object>
      *
-     * @param null|string $annotationClassName
      */
     public function getClassAnnotations(string $className, string|null $annotationClassName = null): array
     {
@@ -797,9 +797,9 @@ class ReflectionService
     /**
      * Returns the declared return type of a method (for PHP < 7.0 this will always return null)
      *
+     * @param class-string $className
      * @return ?string The declared return type of the method or null if none was declared
      *
-     * @param class-string $className
      */
     public function getMethodDeclaredReturnType(string $className, string $methodName): ?string
     {
@@ -1118,15 +1118,14 @@ class ReflectionService
             $this->annotatedClasses[$annotationClassName][$className] = true;
             $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $annotation;
         }
-        if (PHP_MAJOR_VERSION >= 8) {
-            foreach ($class->getAttributes() as $attribute) {
-                $annotationClassName = $attribute->getName();
-                if ($this->isAttributeIgnored($annotationClassName)) {
-                    continue;
-                }
-                $this->annotatedClasses[$annotationClassName][$className] = true;
-                $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $attribute->newInstance();
+
+        foreach ($class->getAttributes() as $attribute) {
+            $annotationClassName = $attribute->getName();
+            if ($this->isAttributeIgnored($annotationClassName)) {
+                continue;
             }
+            $this->annotatedClasses[$annotationClassName][$className] = true;
+            $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $attribute->newInstance();
         }
 
         foreach ($class->getProperties() as $property) {
@@ -1169,18 +1168,17 @@ class ReflectionService
         foreach ($this->annotationReader->getPropertyAnnotations($property) as $annotation) {
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
         }
-        if (PHP_MAJOR_VERSION >= 8) {
-            foreach ($property->getAttributes() as $attribute) {
-                if ($this->isAttributeIgnored($attribute->getName())) {
-                    continue;
-                }
-                try {
-                    $attributeInstance = $attribute->newInstance();
-                } catch (\Error $error) {
-                    throw new \RuntimeException(sprintf('Attribute "%s" used in class "%s" was not found.', $attribute->getName(), $className), 1695635128, $error);
-                }
-                $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attributeInstance;
+
+        foreach ($property->getAttributes() as $attribute) {
+            if ($this->isAttributeIgnored($attribute->getName())) {
+                continue;
             }
+            try {
+                $attributeInstance = $attribute->newInstance();
+            } catch (\Error $error) {
+                throw new \RuntimeException(sprintf('Attribute "%s" used in class "%s" was not found.', $attribute->getName(), $className), 1695635128, $error);
+            }
+            $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attributeInstance;
         }
 
         return $visibility;
@@ -1239,7 +1237,9 @@ class ReflectionService
     }
 
     /**
+     * @throws FilesException
      * @throws ReflectionException
+     * @throws \Neos\Flow\Utility\Exception
      */
     protected function reflectClassMethod(string $className, MethodReflection $method): void
     {
@@ -1261,8 +1261,8 @@ class ReflectionService
             $this->classesByMethodAnnotations[$annotationClassName][$className][] = $methodName;
         }
 
-        $returnType= $method->getDeclaredReturnType();
-        $applyLeadingSlashIfNeeded = function (string $type): string {
+        $returnType = $method->getDeclaredReturnType();
+        $applyLeadingSlashIfNeeded = static function (string $type): string {
             if (!in_array($type, ['self', 'parent', 'static', 'null', 'callable', 'void', 'never', 'iterable', 'object', 'resource', 'mixed'])
                 && !TypeHandling::isSimpleType($type)
             ) {
@@ -1295,7 +1295,7 @@ class ReflectionService
      * @param ParameterReflection $parameter
      * @return void
      */
-    protected function reflectClassMethodParameter($className, MethodReflection $method, ParameterReflection $parameter): void
+    protected function reflectClassMethodParameter(string $className, MethodReflection $method, ParameterReflection $parameter): void
     {
         $methodName = $method->getName();
         $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
@@ -1370,9 +1370,9 @@ class ReflectionService
 
         // ... and try to expand them
         $typeParts = explode('\\', $typeWithoutNull, 2);
-        $lowercasedFirstTypePart = strtolower($typeParts[0]);
-        if (isset($useStatementsForClass[$lowercasedFirstTypePart])) {
-            $typeParts[0] = $useStatementsForClass[$lowercasedFirstTypePart];
+        $lowerCasedFirstTypePart = strtolower($typeParts[0]);
+        if (isset($useStatementsForClass[$lowerCasedFirstTypePart])) {
+            $typeParts[0] = $useStatementsForClass[$lowerCasedFirstTypePart];
 
             return implode('\\', $typeParts) . ($isNullable ? '|null' : '');
         }
@@ -1399,9 +1399,10 @@ class ReflectionService
     /**
      * Builds class schemata from classes annotated as entities or value objects
      *
+     * @throws ClassLoadingForReflectionFailedException
      * @throws ClassSchemaConstraintViolationException
      * @throws Exception
-     * @throws InvalidPropertyTypeException
+     * @throws InvalidClassException
      * @throws InvalidValueObjectException
      */
     protected function buildClassSchemata(array $classNames): void
@@ -1416,8 +1417,10 @@ class ReflectionService
 
     /**
      * @param class-string $className
-     * @throws InvalidValueObjectException
+     * @return ClassSchema
      * @throws ClassSchemaConstraintViolationException
+     * @throws InvalidPropertyTypeException
+     * @throws InvalidValueObjectException
      */
     protected function buildClassSchema(string $className): ClassSchema
     {
