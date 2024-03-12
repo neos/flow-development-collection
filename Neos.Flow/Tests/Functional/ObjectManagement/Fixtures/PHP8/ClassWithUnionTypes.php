@@ -13,13 +13,20 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP8;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassToBeSerialized;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassB;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassC;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
 
 /**
  * A class with PHP 8 type hints with union types
- * @Flow\Scope("prototype")
  */
 class ClassWithUnionTypes
 {
+    /* Make sure that this class is proxied, so we can test the proxy compiler */
+    #[Flow\Inject]
+    protected SingletonClassA $classA;
+
     protected ?string $propertyA;
 
     /* This should be fully equal to $propertyA */
@@ -31,6 +38,8 @@ class ClassWithUnionTypes
     protected ClassToBeSerialized|string|null $propertyD;
 
     protected int|float|string|null $propertyE;
+
+    protected PrototypeClassA|(PrototypeClassB&PrototypeClassC)|null $propertyF;
 
     public function getPropertyA(): ?string
     {
@@ -80,5 +89,15 @@ class ClassWithUnionTypes
     public function setPropertyE(float|int|string|null $propertyE): void
     {
         $this->propertyE = $propertyE;
+    }
+
+    public function setPropertyF(PrototypeClassA | (PrototypeClassB & PrototypeClassC) | null  $propertyF): void
+    {
+        $this->propertyF = $propertyF;
+    }
+
+    public function classA(): SingletonClassA
+    {
+        return $this->classA;
     }
 }
