@@ -237,12 +237,6 @@ class CompileTimeObjectManager extends ObjectManager
                 }
                 if ($package instanceof FlowPackageInterface && $shouldRegisterFunctionalTestClasses) {
                     foreach ($package->getFunctionalTestsClassFiles() as $fullClassName => $path) {
-                        if (PHP_VERSION_ID <= 80000 && str_contains($fullClassName, '\\PHP8\\')) {
-                            continue;
-                        }
-                        if (PHP_VERSION_ID <= 80100 && str_contains($fullClassName, '\\PHP81\\')) {
-                            continue;
-                        }
                         if (!str_ends_with($fullClassName, 'Exception')) {
                             $availableClassNames[$packageKey][] = $fullClassName;
                         }
