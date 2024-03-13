@@ -14,9 +14,11 @@ namespace Neos\Flow\Session\Data;
  */
 
 use Neos\Cache\Backend\IterableBackendInterface;
+use Neos\Cache\Exception;
 use Neos\Cache\Exception\InvalidBackendException;
+use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\FLow\Annotations as Flow;
+use Neos\Flow\Annotations\InjectConfiguration;
 use Neos\Flow\Session\Exception\InvalidDataInSessionDataStoreException;
 
 /**
@@ -24,17 +26,13 @@ use Neos\Flow\Session\Exception\InvalidDataInSessionDataStoreException;
  */
 class SessionMetaDataStore
 {
-    protected VariableFrontend $cache;
-
     protected const TAG_PREFIX = 'customtag-';
+    protected const GARBAGE_COLLECTION_CACHE_IDENTIFIER = '_garbage-collection-running';
 
-    protected const GARBAGE_COLLECTION_CACHEIDENTIFIER = '_garbage-collection-running';
+    #[InjectConfiguration(path: "session.updateMetadataThreshold")]
+    protected ?int $updateMetadataThreshold = null;
 
-    /**
-     * @var int|null
-     * @Flow\InjectConfiguration(path="session.updateMetadataThreshold")
-     */
-    protected $updateMetadataThreshold = null;
+    protected VariableFrontend $cache;
 
     /**
      * @var array<string, SessionMetaData>
@@ -46,7 +44,7 @@ class SessionMetaDataStore
         $this->cache = $cache;
     }
 
-    public function initializeObject()
+    public function initializeObject(): void
     {
         if (!$this->cache->getBackend() instanceof IterableBackendInterface) {
             throw new InvalidBackendException(sprintf('The session storage cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', get_class($this->cache->getBackend())), 1370964558);
@@ -68,18 +66,22 @@ class SessionMetaDataStore
         return $this->cache->has($sessionIdentifier->value);
     }
 
+    /**
+     * @throws InvalidDataInSessionDataStoreException
+     */
     public function retrieve(SessionIdentifier $sessionIdentifier): ?SessionMetaData
     {
-        /**
-         * @var false|array|SessionMetaData $metaDataFromCache
-         */
         $metaDataFromCache = $this->cache->get($sessionIdentifier->value);
         if ($metaDataFromCache === false) {
             return null;
-        } elseif ($metaDataFromCache instanceof SessionMetaData) {
+        }
+
+        if ($metaDataFromCache instanceof SessionMetaData) {
             $this->writeDebounceCache[$metaDataFromCache->sessionIdentifier->value] = $metaDataFromCache;
             return $metaDataFromCache;
-        } elseif (is_array($metaDataFromCache)) {
+        }
+
+        if (is_array($metaDataFromCache)) {
             $metaDataFromCache = SessionMetaData::createFromSessionIdentifierStringAndOldArrayCacheFormat($sessionIdentifier->value, $metaDataFromCache);
             $this->writeDebounceCache[$metaDataFromCache->sessionIdentifier->value] = $metaDataFromCache;
             return $metaDataFromCache;
@@ -90,11 +92,12 @@ class SessionMetaDataStore
     /**
      * @param string $tag
      * @return \Generator<string, SessionMetaData> Session metadata indexed by sessionIdentifier
+     * @throws NotSupportedByBackendException
      */
     public function retrieveByTag(string $tag): \Generator
     {
         foreach ($this->cache->getByTag(self::TAG_PREFIX . $tag) as $sessionIdentifier => $sessionMetaData) {
-            if ($sessionIdentifier === self::GARBAGE_COLLECTION_CACHEIDENTIFIER) {
+            if ($sessionIdentifier === self::GARBAGE_COLLECTION_CACHE_IDENTIFIER) {
                 continue;
             }
             if ($sessionMetaData instanceof SessionMetaData) {
@@ -110,11 +113,12 @@ class SessionMetaDataStore
 
     /**
      * @return \Generator<string, SessionMetaData> Session metadata indexed by sessionIdentifier
+     * @throws NotSupportedByBackendException
      */
     public function retrieveAll(): \Generator
     {
         foreach ($this->cache->getIterator() as $sessionIdentifier => $sessionMetaData) {
-            if ($sessionIdentifier === self::GARBAGE_COLLECTION_CACHEIDENTIFIER) {
+            if ($sessionIdentifier === self::GARBAGE_COLLECTION_CACHE_IDENTIFIER) {
                 continue;
             }
             if ($sessionMetaData instanceof SessionMetaData) {
@@ -128,6 +132,9 @@ class SessionMetaDataStore
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function store(SessionMetaData $sessionMetaData): void
     {
         $tagsForCacheEntry = array_map(function ($tag) {
@@ -147,24 +154,27 @@ class SessionMetaDataStore
         $this->cache->set($sessionMetaData->sessionIdentifier->value, $sessionMetaData, $tagsForCacheEntry, 0);
     }
 
-    public function remove(SessionMetaData $sessionMetaData): mixed
+    public function remove(SessionMetaData $sessionMetaData): bool
     {
         unset($this->writeDebounceCache[$sessionMetaData->sessionIdentifier->value]);
         return $this->cache->remove($sessionMetaData->sessionIdentifier->value);
     }
 
+    /**
+     * @throws Exception
+     */
     public function startGarbageCollection(): void
     {
-        $this->cache->set(self::GARBAGE_COLLECTION_CACHEIDENTIFIER, true, [], 120);
+        $this->cache->set(self::GARBAGE_COLLECTION_CACHE_IDENTIFIER, true, [], 120);
     }
 
     public function isGarbageCollectionRunning(): bool
     {
-        return $this->cache->has(self::GARBAGE_COLLECTION_CACHEIDENTIFIER);
+        return $this->cache->has(self::GARBAGE_COLLECTION_CACHE_IDENTIFIER);
     }
 
     public function endGarbageCollection(): void
     {
-        $this->cache->remove(self::GARBAGE_COLLECTION_CACHEIDENTIFIER);
+        $this->cache->remove(self::GARBAGE_COLLECTION_CACHE_IDENTIFIER);
     }
 }

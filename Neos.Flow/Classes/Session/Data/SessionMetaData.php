@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\Flow\Session\Data;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -10,8 +11,6 @@ declare(strict_types=1);
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-namespace Neos\Flow\Session\Data;
 
 use Neos\Flow\Annotations as Flow;
 
@@ -32,6 +31,9 @@ class SessionMetaData
     ) {
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function createWithTimestamp(int $timestamp): self
     {
         return new self(
@@ -82,7 +84,7 @@ class SessionMetaData
     public function withAddedTag(string $tag): self
     {
         $tags = $this->tags;
-        if (!in_array($tag, $this->tags)) {
+        if (!in_array($tag, $this->tags, true)) {
             $tags[] = $tag;
         }
         return new self(

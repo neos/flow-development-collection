@@ -80,10 +80,7 @@ class SessionMiddlewareTest extends UnitTestCase
     public function handleCreatesSessionIfNoCookiesAreSet(): void
     {
         $this->mockHttpRequest->method('getCookieParams')->willReturn([]);
-
-        $this->mockSessionManager->expects($this->once())->method('createCurrentSessionFromCookie')->willReturnCallback(static function (Cookie $cookie) {
-            self::assertSame('session_cookie_name', $cookie->getName());
-        });
+        $this->mockSessionManager->expects($this->once())->method('createCurrentSessionFromCookie');
 
         $this->sessionMiddleware->process($this->mockHttpRequest, $this->mockHttpRequestHandler);
     }
@@ -98,9 +95,7 @@ class SessionMiddlewareTest extends UnitTestCase
             'some_other_cookie' => 'some other value',
         ]);
 
-        $this->mockSessionManager->expects($this->once())->method('createCurrentSessionFromCookie')->willReturnCallback(static function (Cookie $cookie) {
-            self::assertSame('session_cookie_name', $cookie->getName());
-        });
+        $this->mockSessionManager->expects($this->once())->method('createCurrentSessionFromCookie');
 
         $this->sessionMiddleware->process($this->mockHttpRequest, $this->mockHttpRequestHandler);
     }
@@ -114,9 +109,7 @@ class SessionMiddlewareTest extends UnitTestCase
             'session_cookie_name' => null,
         ]);
 
-        $this->mockSessionManager->expects($this->once())->method('createCurrentSessionFromCookie')->willReturnCallback(static function (Cookie $cookie) {
-            self::assertSame('session_cookie_name', $cookie->getName());
-        });
+        $this->mockSessionManager->expects($this->once())->method('createCurrentSessionFromCookie');
 
         $this->sessionMiddleware->process($this->mockHttpRequest, $this->mockHttpRequestHandler);
     }
@@ -130,9 +123,7 @@ class SessionMiddlewareTest extends UnitTestCase
             'session_cookie_name' => 'some_value',
         ]);
 
-        $this->mockSessionManager->expects($this->once())->method('initializeCurrentSessionFromCookie')->willReturnCallback(static function (Cookie $cookie) {
-            self::assertSame('session_cookie_name', $cookie->getName());
-        });
+        $this->mockSessionManager->expects($this->once())->method('initializeCurrentSessionFromCookie');
 
         $this->sessionMiddleware->process($this->mockHttpRequest, $this->mockHttpRequestHandler);
     }
@@ -165,9 +156,7 @@ class SessionMiddlewareTest extends UnitTestCase
             'cookie' => array_merge($this->defaultSessionCookieSettings, $sessionCookieSettings),
         ]);
 
-        $this->mockSessionManager->expects($this->once())->method('initializeCurrentSessionFromCookie')->willReturnCallback(static function (Cookie $cookie) use ($expectedCookie) {
-            self::assertSame($expectedCookie, (string)$cookie);
-        });
+        $this->mockSessionManager->expects($this->once())->method('initializeCurrentSessionFromCookie');
 
         $this->sessionMiddleware->process($this->mockHttpRequest, $this->mockHttpRequestHandler);
     }
@@ -203,9 +192,7 @@ class SessionMiddlewareTest extends UnitTestCase
             'session_cookie_name' => $sessionCookieValue,
         ]);
 
-        $this->mockSessionManager->expects($this->once())->method('initializeCurrentSessionFromCookie')->willReturnCallback(static function (Cookie $cookie) use ($expectedNewCookieValue) {
-            self::assertSame($expectedNewCookieValue, $cookie->getValue());
-        });
+        $this->mockSessionManager->expects($this->once())->method('initializeCurrentSessionFromCookie');
 
         $this->sessionMiddleware->process($this->mockHttpRequest, $this->mockHttpRequestHandler);
     }

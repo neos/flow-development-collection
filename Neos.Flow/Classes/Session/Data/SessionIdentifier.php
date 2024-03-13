@@ -34,6 +34,9 @@ readonly class SessionIdentifier
         return new self($value);
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function createRandom(): self
     {
         return new self(Algorithms::generateRandomString(32));
