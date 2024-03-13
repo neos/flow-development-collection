@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Session\Data;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Algorithms;
 
 /**
@@ -22,13 +21,12 @@ use Neos\Flow\Utility\Algorithms;
  * and  is never exposed to the outside. The StorageIdentifier stays the same if a
  * Session gets a new SessionIdentifier (renewId).
  *
- * @Flow\Proxy(false)
  * @internal
  */
-class StorageIdentifier
+readonly class StorageIdentifier
 {
     private function __construct(
-        public readonly string $value
+        public string $value
     ) {
     }
 

@@ -15,9 +15,6 @@ namespace Neos\Flow\Session\Data;
 
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
 class SessionMetaData
 {
     /**
@@ -26,6 +23,7 @@ class SessionMetaData
      * @param int $lastActivityTimestamp
      * @param string[] $tags
      */
+    #[Flow\Autowiring(false)]
     public function __construct(
         public readonly SessionIdentifier $sessionIdentifier,
         public readonly StorageIdentifier $storageIdentifier,
@@ -48,7 +46,8 @@ class SessionMetaData
      * Create session metadata from classic cache format for backwards compatibility
      * @param string $sessionIdentifier
      * @param array{'storageIdentifier': string, 'lastActivityTimestamp': int, 'tags': string[]} $data
-     * @deprecated this will be removed with flow 10
+     * @return self
+     * @deprecated this will be removed with Flow 10
      */
     public static function createFromSessionIdentifierStringAndOldArrayCacheFormat(string $sessionIdentifier, array $data): self
     {

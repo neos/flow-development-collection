@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Session\Data;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Algorithms;
 
 /**
@@ -21,13 +20,12 @@ use Neos\Flow\Utility\Algorithms;
  * and identifies a SessionMetadata object from the SessionMetaDataStore that represents
  * a stored session without the key value store.
  *
- * @Flow\Proxy(false)
  * @internal
  */
-class SessionIdentifier
+readonly class SessionIdentifier
 {
     private function __construct(
-        public readonly string $value
+        public string $value
     ) {
     }
 
