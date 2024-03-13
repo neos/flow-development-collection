@@ -697,13 +697,11 @@ class ReflectionService
 
             $method = new MethodReflection($className, $methodName);
             $methodAnnotations = $this->annotationReader->getMethodAnnotations($method);
-            if (PHP_MAJOR_VERSION >= 8) {
-                foreach ($method->getAttributes() as $attribute) {
-                    if ($this->isAttributeIgnored($attribute->getName())) {
-                        continue;
-                    }
-                    $methodAnnotations[] = $attribute->newInstance();
+            foreach ($method->getAttributes() as $attribute) {
+                if ($this->isAttributeIgnored($attribute->getName())) {
+                    continue;
                 }
+                $methodAnnotations[] = $attribute->newInstance();
             }
             $this->methodAnnotationsRuntimeCache[$className][$methodName] = $methodAnnotations;
         }
