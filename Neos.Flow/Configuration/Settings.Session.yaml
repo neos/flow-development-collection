@@ -11,6 +11,11 @@ Neos:
       # automatically.
       inactivityTimeout: 3600
 
+      # A threshold for updating the session metadata, unless other data changes
+      # session metadata is only updated it at least the specified number seconds
+      # has passed since the last update.
+      updateMetadataThreshold: 60
+
       # A specific name for the session, used in the session cookie.
       # The session name must be alphanumerical and must contain at least one
       # character – not only numbers.

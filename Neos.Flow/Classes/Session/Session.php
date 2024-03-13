@@ -11,20 +11,19 @@ namespace Neos\Flow\Session;
  * source code.
  */
 
-use Neos\Cache\Backend\IterableBackendInterface;
-use Neos\Cache\Exception\InvalidBackendException;
 use Neos\Cache\Exception\NotSupportedByBackendException;
-use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Context;
-use Neos\Flow\Utility\Algorithms;
+use Neos\Flow\Session\Data\SessionIdentifier;
+use Neos\Flow\Session\Data\SessionKeyValueStore;
+use Neos\Flow\Session\Data\SessionMetaData;
+use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Flow\Http\Cookie;
-use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Flow\Session\Data\StorageIdentifier;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -47,7 +46,7 @@ use Psr\Log\LoggerInterface;
  */
 class Session implements CookieEnabledInterface
 {
-    const TAG_PREFIX = 'customtag-';
+    private const FLOW_OBJECT_STORAGE_KEY = 'Neos_Flow_Object_ObjectManager';
 
     /**
      * @Flow\Inject
@@ -65,24 +64,17 @@ class Session implements CookieEnabledInterface
      * Meta data cache for this session
      *
      * @Flow\Inject
-     * @var VariableFrontend
+     * @var SessionMetaDataStore
      */
-    protected $metaDataCache;
+    protected $sessionMetaDataStore;
 
     /**
      * Storage cache for this session
      *
      * @Flow\Inject
-     * @var VariableFrontend
+     * @var SessionKeyValueStore
      */
-    protected $storageCache;
-
-    /**
-     * @deprecated will be removed with Flow 9 as this is only needed to avoid breakiness
-     * @Flow\Inject
-     * @var SessionManagerInterface
-     */
-    protected $sessionManager;
+    protected $sessionKeyValueStore;
 
     /**
      * @var string
@@ -129,10 +121,6 @@ class Session implements CookieEnabledInterface
      */
     protected $inactivityTimeout;
 
-    /**
-     * @var integer
-     */
-    protected $lastActivityTimestamp;
 
     /**
      * @var array
@@ -144,19 +132,7 @@ class Session implements CookieEnabledInterface
      */
     protected $now;
 
-    /**
-     * The session identifier
-     *
-     * @var string|null
-     */
-    protected $sessionIdentifier;
-
-    /**
-     * Internal identifier used for storing session data in the cache
-     *
-     * @var string|null
-     */
-    protected $storageIdentifier;
+    protected SessionMetaData|null $sessionMetaData = null;
 
     /**
      * If this session has been started
@@ -175,33 +151,44 @@ class Session implements CookieEnabledInterface
     /**
      * Constructs this session
      *
-     * If $sessionIdentifier is specified, this constructor will create a session
-     * instance representing a remote session. In that case $storageIdentifier and
-     * $lastActivityTimestamp are also required arguments.
-     *
      * Session instances MUST NOT be created manually! They should be retrieved via
      * the Session Manager or through dependency injection (use SessionInterface!).
-     *
-     * @param string $sessionIdentifier The public session identifier which is also used in the session cookie
-     * @param string $storageIdentifier The private storage identifier which is used for storage cache entries
-     * @param integer $lastActivityTimestamp Unix timestamp of the last known activity for this session
-     * @param array $tags A list of tags set for this session
-     * @throws \InvalidArgumentException
      */
-    public function __construct($sessionIdentifier = null, $storageIdentifier = null, $lastActivityTimestamp = null, array $tags = [])
+    public function __construct()
     {
-        if ($sessionIdentifier !== null) {
-            if ($storageIdentifier === null || $lastActivityTimestamp === null) {
-                throw new \InvalidArgumentException('Session requires a storage identifier and last activity timestamp for remote sessions.', 1354045988);
-            }
-            $this->sessionIdentifier = $sessionIdentifier;
-            $this->storageIdentifier = $storageIdentifier;
-            $this->lastActivityTimestamp = $lastActivityTimestamp;
-            $this->started = true;
-            $this->remote = true;
-            $this->tags = $tags;
-        }
         $this->now = time();
+    }
+
+    public static function create(): self
+    {
+        return new static();
+    }
+
+    public static function createRemote(string $sessionIdentifier, string $storageIdentifier, int $lastActivityTimestamp = null, array $tags): self
+    {
+        $session = new static();
+        $session->sessionMetaData = new SessionMetaData(
+            SessionIdentifier::createFromString($sessionIdentifier),
+            StorageIdentifier::createFromString($storageIdentifier),
+            $lastActivityTimestamp,
+            $tags
+        );
+        $session->started = true;
+        $session->remote = true;
+        return $session;
+    }
+
+    /**
+     * @param SessionMetaData $sessionMetaData
+     * @return Session
+     */
+    public static function createRemoteFromSessionMetaData(SessionMetaData $sessionMetaData): self
+    {
+        $session = new static();
+        $session->sessionMetaData = $sessionMetaData;
+        $session->started = true;
+        $session->remote = true;
+        return $session;
     }
 
     /**
@@ -214,10 +201,12 @@ class Session implements CookieEnabledInterface
     public static function createFromCookieAndSessionInformation(Cookie $sessionCookie, string $storageIdentifier, int $lastActivityTimestamp, array $tags = [])
     {
         $session = new static();
-        $session->sessionIdentifier = $sessionCookie->getValue();
-        $session->storageIdentifier = $storageIdentifier;
-        $session->lastActivityTimestamp = $lastActivityTimestamp;
-        $session->tags = $tags;
+        $session->sessionMetaData = new SessionMetaData(
+            SessionIdentifier::createFromString($sessionCookie->getValue()),
+            StorageIdentifier::createFromString($storageIdentifier),
+            $lastActivityTimestamp,
+            $tags
+        );
         $session->sessionCookie = $sessionCookie;
         return $session;
     }
@@ -249,20 +238,6 @@ class Session implements CookieEnabledInterface
     public function injectLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
-    }
-
-    /**
-     * @return void
-     * @throws InvalidBackendException
-     */
-    public function initializeObject()
-    {
-        if (!$this->metaDataCache->getBackend() instanceof IterableBackendInterface) {
-            throw new InvalidBackendException(sprintf('The session meta data cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', get_class($this->metaDataCache->getBackend())), 1370964557);
-        }
-        if (!$this->storageCache->getBackend() instanceof IterableBackendInterface) {
-            throw new InvalidBackendException(sprintf('The session storage cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', get_class($this->storageCache->getBackend())), 1370964558);
-        }
     }
 
     /**
@@ -307,10 +282,8 @@ class Session implements CookieEnabledInterface
     public function start()
     {
         if ($this->started === false) {
-            $this->sessionIdentifier = Algorithms::generateRandomString(32);
-            $this->storageIdentifier = Algorithms::generateUUID();
-            $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionIdentifier, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly, $this->sessionCookieSameSite);
-            $this->lastActivityTimestamp = $this->now;
+            $this->sessionMetaData = SessionMetaData::createWithTimestamp($this->now);
+            $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionMetaData->sessionIdentifier->value, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly, $this->sessionCookieSameSite);
             $this->started = true;
 
             $this->writeSessionMetaDataCacheEntry();
@@ -336,17 +309,15 @@ class Session implements CookieEnabledInterface
             return false;
         }
         $sessionIdentifier = $this->sessionCookie->getValue();
-        if ($this->metaDataCache->isValidEntryIdentifier($sessionIdentifier) === false) {
+        if ($this->sessionMetaDataStore->isValidSessionIdentifier($sessionIdentifier) === false) {
             $this->logger->warning('SESSION IDENTIFIER INVALID: ' . $sessionIdentifier, LogEnvironment::fromMethodName(__METHOD__));
             return false;
         }
-        $sessionMetaData = $this->metaDataCache->get($sessionIdentifier);
-        if ($sessionMetaData === false) {
+        $sessionMetaData = $this->sessionMetaDataStore->retrieve(SessionIdentifier::createFromString($sessionIdentifier));
+        if ($sessionMetaData === null) {
             return false;
         }
-        $this->lastActivityTimestamp = $sessionMetaData['lastActivityTimestamp'];
-        $this->storageIdentifier = $sessionMetaData['storageIdentifier'];
-        $this->tags = $sessionMetaData['tags'];
+        $this->sessionMetaData = $sessionMetaData;
         return !$this->autoExpire();
     }
 
@@ -361,7 +332,7 @@ class Session implements CookieEnabledInterface
         if ($this->started === false && $this->canBeResumed()) {
             $this->started = true;
 
-            $sessionObjects = $this->storageCache->get($this->storageIdentifier . md5('Neos_Flow_Object_ObjectManager'));
+            $sessionObjects = $this->sessionKeyValueStore->retrieve($this->sessionMetaData->storageIdentifier, self::FLOW_OBJECT_STORAGE_KEY);
             if (is_array($sessionObjects)) {
                 foreach ($sessionObjects as $object) {
                     if ($object instanceof ProxyInterface) {
@@ -375,11 +346,11 @@ class Session implements CookieEnabledInterface
             } else {
                 // Fallback for some malformed session data, if it is no array but something else.
                 // In this case, we reset all session objects (graceful degradation).
-                $this->storageCache->set($this->storageIdentifier . md5('Neos_Flow_Object_ObjectManager'), [], [$this->storageIdentifier], 0);
+                $this->sessionKeyValueStore->store($this->sessionMetaData->storageIdentifier, self::FLOW_OBJECT_STORAGE_KEY, []);
             }
 
-            $lastActivitySecondsAgo = ($this->now - $this->lastActivityTimestamp);
-            $this->lastActivityTimestamp = $this->now;
+            $lastActivitySecondsAgo = ($this->now - $this->sessionMetaData->lastActivityTimestamp);
+            $this->sessionMetaData = $this->sessionMetaData->withLastActivityTimestamp($this->now);
             return $lastActivitySecondsAgo;
         }
         return null;
@@ -397,7 +368,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to retrieve the session identifier, but the session has not been started yet.)', 1351171517);
         }
-        return $this->sessionIdentifier;
+        return $this->sessionMetaData->sessionIdentifier->value;
     }
 
     /**
@@ -415,15 +386,15 @@ class Session implements CookieEnabledInterface
             throw new Exception\SessionNotStartedException('Tried to renew the session identifier, but the session has not been started yet.', 1351182429);
         }
         if ($this->remote === true) {
-            throw new Exception\OperationNotSupportedException(sprintf('Tried to renew the session identifier on a remote session (%s).', $this->sessionIdentifier), 1354034230);
+            throw new Exception\OperationNotSupportedException(sprintf('Tried to renew the session identifier on a remote session (%s).', $this->sessionMetaData->sessionIdentifier->value), 1354034230);
         }
 
-        $this->removeSessionMetaDataCacheEntry($this->sessionIdentifier);
-        $this->sessionIdentifier = Algorithms::generateRandomString(32);
+        $this->sessionMetaDataStore->remove($this->sessionMetaData);
+        $this->sessionMetaData = $this->sessionMetaData->withNewSessionIdentifier();
         $this->writeSessionMetaDataCacheEntry();
 
-        $this->sessionCookie->setValue($this->sessionIdentifier);
-        return $this->sessionIdentifier;
+        $this->sessionCookie->setValue($this->sessionMetaData->sessionIdentifier->value);
+        return $this->sessionMetaData->sessionIdentifier->value;
     }
 
     /**
@@ -438,7 +409,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to get session data, but the session has not been started yet.', 1351162255);
         }
-        return $this->storageCache->get($this->storageIdentifier . md5($key));
+        return $this->sessionKeyValueStore->retrieve($this->sessionMetaData->storageIdentifier, $key);
     }
 
     /**
@@ -453,7 +424,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to check a session data entry, but the session has not been started yet.', 1352488661);
         }
-        return $this->storageCache->has($this->storageIdentifier . md5($key));
+        return $this->sessionKeyValueStore->has($this->sessionMetaData->storageIdentifier, $key);
     }
 
     /**
@@ -474,7 +445,7 @@ class Session implements CookieEnabledInterface
         if (is_resource($data)) {
             throw new Exception\DataNotSerializableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1351162262);
         }
-        $this->storageCache->set($this->storageIdentifier . md5($key), $data, [$this->storageIdentifier], 0);
+        $this->sessionKeyValueStore->store($this->sessionMetaData->storageIdentifier, $key, $data);
     }
 
     /**
@@ -493,7 +464,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to retrieve the last activity timestamp of a session which has not been started yet.', 1354290378);
         }
-        return $this->lastActivityTimestamp;
+        return $this->sessionMetaData->lastActivityTimestamp;
     }
 
     /**
@@ -513,12 +484,10 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355143533);
         }
-        if (!$this->metaDataCache->isValidTag($tag)) {
-            throw new \InvalidArgumentException(sprintf('The tag used for tagging session %s contained invalid characters. Make sure it matches this regular expression: "%s"', $this->sessionIdentifier, FrontendInterface::PATTERN_TAG));
+        if (!$this->sessionMetaDataStore->isValidSessionTag($tag)) {
+            throw new \InvalidArgumentException(sprintf('The tag used for tagging session %s contained invalid characters. Make sure it matches this regular expression: "%s"', $this->sessionMetaData->sessionIdentifier->value, FrontendInterface::PATTERN_TAG));
         }
-        if (!in_array($tag, $this->tags)) {
-            $this->tags[] = $tag;
-        }
+        $this->sessionMetaData = $this->sessionMetaData->withAddedTag($tag);
     }
 
     /**
@@ -534,10 +503,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to tag a session which has not been started yet.', 1355150140);
         }
-        $index = array_search($tag, $this->tags);
-        if ($index !== false) {
-            unset($this->tags[$index]);
-        }
+        $this->sessionMetaData = $this->sessionMetaData->withRemovedTag($tag);
     }
 
 
@@ -553,7 +519,7 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to retrieve tags from a session which has not been started yet.', 1355141501);
         }
-        return $this->tags;
+        return $this->sessionMetaData->tags;
     }
 
     /**
@@ -571,7 +537,7 @@ class Session implements CookieEnabledInterface
         // Only makes sense for remote sessions because the currently active session
         // will be updated on shutdown anyway:
         if ($this->remote === true) {
-            $this->lastActivityTimestamp = $this->now;
+            $this->sessionMetaData = $this->sessionMetaData->withLastActivityTimestamp($this->now);
             $this->writeSessionMetaDataCacheEntry();
         }
     }
@@ -605,28 +571,10 @@ class Session implements CookieEnabledInterface
             $this->sessionCookie->expire();
         }
 
-        $this->removeSessionMetaDataCacheEntry($this->sessionIdentifier);
-        $this->storageCache->flushByTag($this->storageIdentifier);
+        $this->sessionMetaDataStore->remove($this->sessionMetaData);
+        $this->sessionKeyValueStore->remove($this->sessionMetaData->storageIdentifier);
+        $this->sessionMetaData = null;
         $this->started = false;
-        $this->sessionIdentifier = null;
-        $this->storageIdentifier = null;
-        $this->tags = [];
-    }
-
-    /**
-     * Iterates over all existing sessions and removes their data if the inactivity
-     * timeout was reached.
-     *
-     * @return integer|null The number of outdated entries removed or NULL if no such information could be determined
-     * @deprecated will be removed with Flow 9, use SessionManager->collectGarbage
-     * @throws \Neos\Cache\Exception
-     * @throws NotSupportedByBackendException
-     * @api
-     */
-    public function collectGarbage()
-    {
-        $result = $this->sessionManager->collectGarbage();
-        return is_null($result) ? 0 : $result;
     }
 
     /**
@@ -644,15 +592,8 @@ class Session implements CookieEnabledInterface
     public function shutdownObject()
     {
         if ($this->started === true && $this->remote === false) {
-            if ($this->metaDataCache->has($this->sessionIdentifier)) {
-                // Security context can't be injected and must be retrieved manually
-                // because it relies on this very session object:
-                $securityContext = $this->objectManager->get(Context::class);
-                if ($securityContext->isInitialized()) {
-                    $this->storeAuthenticatedAccountsInfo($securityContext->getAuthenticationTokens());
-                }
-
-                $this->putData('Neos_Flow_Object_ObjectManager', $this->objectManager->getSessionInstances());
+            if ($this->sessionMetaDataStore->has($this->sessionMetaData->sessionIdentifier)) {
+                $this->sessionKeyValueStore->store($this->sessionMetaData->storageIdentifier, self::FLOW_OBJECT_STORAGE_KEY, $this->objectManager->getSessionInstances() ?? []);
                 $this->writeSessionMetaDataCacheEntry();
             }
             $this->started = false;
@@ -666,46 +607,14 @@ class Session implements CookieEnabledInterface
      */
     protected function autoExpire()
     {
-        $lastActivitySecondsAgo = $this->now - $this->lastActivityTimestamp;
+        $lastActivitySecondsAgo = $this->now - $this->sessionMetaData->lastActivityTimestamp;
         $expired = false;
         if ($this->inactivityTimeout !== 0 && $lastActivitySecondsAgo > $this->inactivityTimeout) {
             $this->started = true;
-            $this->sessionIdentifier = $this->sessionCookie->getValue();
-            $this->destroy(sprintf('Session %s was inactive for %s seconds, more than the configured timeout of %s seconds.', $this->sessionIdentifier, $lastActivitySecondsAgo, $this->inactivityTimeout));
+            $this->destroy(sprintf('Session %s was inactive for %s seconds, more than the configured timeout of %s seconds.', $this->sessionMetaData->sessionIdentifier->value, $lastActivitySecondsAgo, $this->inactivityTimeout));
             $expired = true;
         }
         return $expired;
-    }
-
-    /**
-     * Stores some information about the authenticated accounts in the session data.
-     *
-     * This method will check if a session has already been started, which is
-     * the case after tokens relying on a session have been authenticated: the
-     * UsernamePasswordToken does, for example, start a session in its authenticate()
-     * method.
-     *
-     * Because more than one account can be authenticated at a time, this method
-     * accepts an array of tokens instead of a single account.
-     *
-     * Note that if a session is started after tokens have been authenticated, the
-     * session will NOT be tagged with authenticated accounts.
-     *
-     * @param $tokens array<TokenInterface>
-     * @return void
-     */
-    protected function storeAuthenticatedAccountsInfo(array $tokens)
-    {
-        $accountProviderAndIdentifierPairs = [];
-        foreach ($tokens as $token) {
-            $account = $token->getAccount();
-            if ($token->isAuthenticated() && $account !== null) {
-                $accountProviderAndIdentifierPairs[$account->getAuthenticationProviderName() . ':' . $account->getAccountIdentifier()] = true;
-            }
-        }
-        if ($accountProviderAndIdentifierPairs !== []) {
-            $this->putData('Neos_Flow_Security_Accounts', array_keys($accountProviderAndIdentifierPairs));
-        }
     }
 
     /**
@@ -722,32 +631,6 @@ class Session implements CookieEnabledInterface
      */
     protected function writeSessionMetaDataCacheEntry()
     {
-        $sessionInfo = [
-            'lastActivityTimestamp' => $this->lastActivityTimestamp,
-            'storageIdentifier' => $this->storageIdentifier,
-            'tags' => $this->tags
-        ];
-
-        $tagsForCacheEntry = array_map(function ($tag) {
-            return Session::TAG_PREFIX . $tag;
-        }, $this->tags);
-        $tagsForCacheEntry[] = $this->sessionIdentifier;
-        $tagsForCacheEntry[] = 'session';
-
-        $this->metaDataCache->set($this->sessionIdentifier, $sessionInfo, $tagsForCacheEntry, 0);
-    }
-
-    /**
-     * Removes the session info cache entry for the specified session.
-     *
-     * Note that this function does only remove the "head" cache entry, not the
-     * related data referred to by the storage identifier.
-     *
-     * @param string $sessionIdentifier
-     * @return void
-     */
-    protected function removeSessionMetaDataCacheEntry($sessionIdentifier)
-    {
-        $this->metaDataCache->remove($sessionIdentifier);
+        $this->sessionMetaDataStore->store($this->sessionMetaData);
     }
 }
