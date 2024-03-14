@@ -99,6 +99,7 @@ class ReflectionService
     protected const DATA_PROPERTY_ANNOTATIONS = 15;
     protected const DATA_PROPERTY_VISIBILITY = 24;
     protected const DATA_PROPERTY_TYPE = 26;
+    protected const DATA_PROPERTY_PROMOTED = 28;
     protected const DATA_PARAMETER_POSITION = 16;
     protected const DATA_PARAMETER_OPTIONAL = 17;
     protected const DATA_PARAMETER_TYPE = 18;
@@ -108,6 +109,7 @@ class ReflectionService
     protected const DATA_PARAMETER_DEFAULT_VALUE = 22;
     protected const DATA_PARAMETER_BY_REFERENCE = 23;
     protected const DATA_PARAMETER_SCALAR_DECLARATION = 24;
+    protected const DATA_PARAMETER_ANNOTATIONS = 25;
 
     protected Reader $annotationReader;
     protected array $availableClassNames = [];
@@ -883,6 +885,17 @@ class ReflectionService
     }
 
     /**
+     * Tells if the specified property is promoted
+     *
+     * @api
+     */
+    public function isPropertyPromoted(string $className, string $propertyName): bool
+    {
+        $className = $this->prepareClassReflectionForUsage($className);
+        return isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_PROMOTED]);
+    }
+
+    /**
      * Tells if the specified class property is tagged with the given tag
      *
      * @api
@@ -1154,6 +1167,10 @@ class ReflectionService
 
         $visibility = $property->isPublic() ? self::VISIBILITY_PUBLIC : ($property->isProtected() ? self::VISIBILITY_PROTECTED : self::VISIBILITY_PRIVATE);
         $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] = $visibility;
+
+        if ($property->isPromoted()) {
+            $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_PROMOTED] = true;
+        }
 
         foreach ($property->getTagsValues() as $tagName => $tagValues) {
             $tagValues = $this->reflectPropertyTag($className, $property, $tagName, $tagValues);
@@ -1655,7 +1672,8 @@ class ReflectionService
                 'byReference' => isset($parameterData[self::DATA_PARAMETER_BY_REFERENCE]),
                 'allowsNull' => isset($parameterData[self::DATA_PARAMETER_ALLOWS_NULL]),
                 'defaultValue' => $parameterData[self::DATA_PARAMETER_DEFAULT_VALUE] ?? null,
-                'scalarDeclaration' => isset($parameterData[self::DATA_PARAMETER_SCALAR_DECLARATION])
+                'scalarDeclaration' => isset($parameterData[self::DATA_PARAMETER_SCALAR_DECLARATION]),
+                'annotations' => $parameterData[self::DATA_PARAMETER_ANNOTATIONS] ?? [],
             ];
         }
 
@@ -1710,7 +1728,12 @@ class ReflectionService
         } elseif (!isset($parameterInformation[self::DATA_PARAMETER_TYPE])) {
             $parameterInformation[self::DATA_PARAMETER_TYPE] = 'mixed';
         }
-
+        foreach ($parameter->getAttributes() as $attribute) {
+            if ($this->isAttributeIgnored($attribute->getName())) {
+                continue;
+            }
+            $parameterInformation[self::DATA_PARAMETER_ANNOTATIONS][$attribute->getName()][] = $attribute->newInstance();
+        }
         return $parameterInformation;
     }
 
