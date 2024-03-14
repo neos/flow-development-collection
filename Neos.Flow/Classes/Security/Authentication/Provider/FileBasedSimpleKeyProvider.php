@@ -12,7 +12,7 @@ namespace Neos\Flow\Security\Authentication\Provider;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Authentication\AccountWithoutPersistence;
 use Neos\Flow\Security\Authentication\Token\PasswordTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Cryptography\FileBasedSimpleKeyService;
@@ -112,7 +112,7 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
         }
 
         $authenticationToken->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
-        $account = new Account();
+        $account = new AccountWithoutPersistence();
         $roles = array_map([$this->policyService, 'getRole'], $this->options['authenticateRoles']);
         $account->setRoles($roles);
         $authenticationToken->setAccount($account);
