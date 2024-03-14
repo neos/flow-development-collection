@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Validation\Validator\GenericObjectValidator;
+use Neos\Error\Messages\Result;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\ResourceManagement\Storage\StorageInterface;
 use Neos\Flow\ResourceManagement\Storage\WritableStorageInterface;
@@ -135,6 +137,20 @@ class ResourceManager
         $this->initialized = true;
     }
 
+    protected function persistResource(PersistentResource $resource, CollectionInterface $collection, string $sourceHint = ''): void
+    {
+        $this->resourceRepository->add($resource);
+        GenericObjectValidator::onValidated($resource, function (Result $result) use ($resource) {
+            if ($result->hasErrors()) {
+                $this->deleteResource($resource, false);
+            }
+        });
+        if ($sourceHint === '') {
+            $sourceHint = $resource->getFilename();
+        }
+        $this->logger->debug(sprintf('Successfully imported %s into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $sourceHint, $collection->getName(), $collection->getStorage()->getName(), get_class($collection->getStorage()), $resource->getSha1()));
+    }
+
     /**
      * Imports a resource (file) from the given location as a persistent resource.
      *
@@ -172,8 +188,7 @@ class ResourceManager
             throw new Exception(sprintf('Importing a file into the resource collection "%s" failed: %s', $collectionName, $exception->getMessage()), 1375197120, $exception);
         }
 
-        $this->resourceRepository->add($resource);
-        $this->logger->debug(sprintf('Successfully imported file "%s" into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $source, $collectionName, $collection->getStorage()->getName(), get_class($collection), $resource->getSha1()));
+        $this->persistResource($resource, $collection, is_resource($source) ? get_resource_type($source) : sprintf('file "%s"', $source));
         return $resource;
     }
 
@@ -219,8 +234,7 @@ class ResourceManager
             throw new Exception(sprintf('Importing content into the resource collection "%s" failed: %s', $collectionName, $exception->getMessage()), 1381156155, $exception);
         }
 
-        $this->resourceRepository->add($resource);
-        $this->logger->debug(sprintf('Successfully imported content into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), get_class($collection->getStorage()), $resource->getSha1()));
+        $this->persistResource($resource, $collection, 'content');
 
         return $resource;
     }
@@ -255,8 +269,7 @@ class ResourceManager
             throw new Exception(sprintf('Importing an uploaded file into the resource collection "%s" failed.', $collectionName), 1375197680, $exception);
         }
 
-        $this->resourceRepository->add($resource);
-        $this->logger->debug(sprintf('Successfully imported the uploaded file "%s" into the resource collection "%s" (storage: "%s", a %s. SHA1: %s)', $resource->getFilename(), $collectionName, $this->collections[$collectionName]->getStorage()->getName(), get_class($this->collections[$collectionName]->getStorage()), $resource->getSha1()));
+        $this->persistResource($resource, $collection, sprintf('uploaded file "%s"', $resource->getFilename()));
 
         return $resource;
     }
