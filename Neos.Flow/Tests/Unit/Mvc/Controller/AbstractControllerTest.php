@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,7 +21,6 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\AbstractController;
 use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -132,30 +132,28 @@ class AbstractControllerTest extends UnitTestCase
     public function addFlashMessageTests($expectedMessage, $messageBody, $messageTitle = '', $severity = FlowError\Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
     {
         $flashMessageContainer = new FlashMessageContainer();
-        $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
 
-        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $controllerContext->method('getFlashMessageContainer')->willReturn($flashMessageContainer);
-        $this->inject($controller, 'controllerContext', $controllerContext);
+        $flashMessageService = $this->getMockBuilder(FlashMessageService::class)->disableOriginalConstructor()->getMock();
+        $flashMessageService->method('getFlashMessageContainerForRequest')->willReturn($flashMessageContainer);
 
-        $controller->addFlashMessage($messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
+        $mockController = new class($messageBody, $messageTitle, $severity, $messageArguments, $messageCode) extends AbstractController {
+            public function __construct(private mixed $messageBody, private mixed $messageTitle, private mixed $severity, private mixed $messageArguments, private mixed $messageCode)
+            {
+            }
+
+            public function processRequest(ActionRequest $request): ActionResponse
+            {
+                $this->initializeController($request, new ActionResponse());
+                $this->addFlashMessage($this->messageBody, $this->messageTitle, $this->severity, $this->messageArguments, $this->messageCode);
+                return new ActionResponse();
+            }
+        };
+
+        $this->inject($mockController, 'flashMessageService', $flashMessageService);
+
+        $mockController->processRequest($this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock());
+
         self::assertEquals([$expectedMessage], $flashMessageContainer->getMessages());
-    }
-
-    /**
-     * @test
-     */
-    public function addFlashMessageThrowsExceptionOnInvalidMessageBody()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $flashMessageContainer = new FlashMessageContainer();
-        $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
-
-        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $controllerContext->method('getFlashMessageContainer')->willReturn($flashMessageContainer);
-        $this->inject($controller, 'controllerContext', $controllerContext);
-
-        $controller->addFlashMessage(new \stdClass());
     }
 
     /**

@@ -20,6 +20,7 @@ use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\InvalidControllerNameException;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Property\Exception;
@@ -85,6 +86,9 @@ abstract class AbstractController implements ControllerInterface
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    #[Flow\Inject]
+    protected FlashMessageService $flashMessageService;
 
     /**
      * A list of IANA media types which are supported by this controller
@@ -156,15 +160,11 @@ abstract class AbstractController implements ControllerInterface
      * @param array $messageArguments arguments to be passed to the FlashMessage
      * @param integer $messageCode
      * @return void
-     * @throws \InvalidArgumentException if the message body is no string
      * @see Error\Message
      * @api
      */
-    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Error\Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
+    public function addFlashMessage(string $messageBody, string $messageTitle = '', string $severity = Error\Message::SEVERITY_OK, array $messageArguments = [], int $messageCode = null)
     {
-        if (!is_string($messageBody)) {
-            throw new \InvalidArgumentException('The message body must be of type string, "' . gettype($messageBody) . '" given.', 1243258395);
-        }
         switch ($severity) {
             case Error\Message::SEVERITY_NOTICE:
                 $message = new Error\Notice($messageBody, $messageCode, $messageArguments, $messageTitle);
@@ -179,7 +179,7 @@ abstract class AbstractController implements ControllerInterface
                 $message = new Error\Message($messageBody, $messageCode, $messageArguments, $messageTitle);
                 break;
         }
-        $this->controllerContext->getFlashMessageContainer()->addMessage($message);
+        $this->flashMessageService->getFlashMessageContainerForRequest($this->request)->addMessage($message);
     }
 
     /**

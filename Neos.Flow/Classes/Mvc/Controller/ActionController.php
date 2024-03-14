@@ -760,7 +760,8 @@ class ActionController extends AbstractController
     {
         $errorFlashMessage = $this->getErrorFlashMessage();
         if ($errorFlashMessage !== false) {
-            $this->controllerContext->getFlashMessageContainer()->addMessage($errorFlashMessage);
+            $this->flashMessageService->getFlashMessageContainerForRequest($this->request)
+                ->addMessage($errorFlashMessage);
         }
     }
 

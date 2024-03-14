@@ -118,7 +118,7 @@ class ControllerContext
      * Get the flash message container
      *
      * @return FlashMessageContainer A container for flash messages
-     * @api
+     * @deprecated please use {@see FlashMessageService::getFlashMessageContainerForRequest()} instead.
      */
     public function getFlashMessageContainer()
     {
