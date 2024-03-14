@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Neos\Flow\Session\Data;
 
 /*
@@ -14,7 +13,9 @@ namespace Neos\Flow\Session\Data;
  */
 
 use Neos\Cache\Backend\IterableBackendInterface;
+use Neos\Cache\Exception;
 use Neos\Cache\Exception\InvalidBackendException;
+use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\StringFrontend;
 
 /**
@@ -23,7 +24,6 @@ use Neos\Cache\Frontend\StringFrontend;
 class SessionKeyValueStore
 {
     protected StringFrontend $cache;
-
     protected bool $useIgBinary = false;
 
     /**
@@ -36,6 +36,9 @@ class SessionKeyValueStore
         $this->cache = $cache;
     }
 
+    /**
+     * @throws InvalidBackendException
+     */
     public function initializeObject(): void
     {
         if (!$this->cache->getBackend() instanceof IterableBackendInterface) {
@@ -54,10 +57,17 @@ class SessionKeyValueStore
     {
         $entryIdentifier = $this->createEntryIdentifier($storageIdentifier, $key);
         $serializedResult = $this->cache->get($entryIdentifier);
+        if (!is_string($serializedResult)) {
+            return null;
+        }
         $this->writeDebounceHashes[$storageIdentifier->value][$key] = md5($serializedResult);
         return ($this->useIgBinary === true) ? igbinary_unserialize($serializedResult) : unserialize($serializedResult);
     }
 
+    /**
+     * @throws Exception
+     * @throws InvalidDataException
+     */
     public function store(StorageIdentifier $storageIdentifier, string $key, mixed $value): void
     {
         $entryIdentifier = $this->createEntryIdentifier($storageIdentifier, $key);

@@ -486,9 +486,6 @@ Neos\Flow\Session\Data\SessionMetaDataStore:
           1:
             value: Flow_Session_MetaData
 
-Neos\Flow\Session\SessionManagerInterface:
-  className: Neos\Flow\Session\SessionManager
-
 #
 # Utility
 #

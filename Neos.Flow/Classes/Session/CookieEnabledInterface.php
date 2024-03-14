@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\Flow\Session;
 
 /*
@@ -13,22 +14,9 @@ namespace Neos\Flow\Session;
 
 use Neos\Flow\Http\Cookie;
 
-/**
- * Interface for Sessions that are related to a cookie.
- */
 interface CookieEnabledInterface extends SessionInterface
 {
-    /**
-     * @return Cookie
-     */
     public function getSessionCookie(): Cookie;
 
-    /**
-     * @param Cookie $sessionCookie
-     * @param string $storageIdentifier
-     * @param int $lastActivityTimestamp
-     * @param array $tags
-     * @return CookieEnabledInterface|SessionInterface
-     */
-    public static function createFromCookieAndSessionInformation(Cookie $sessionCookie, string $storageIdentifier, int $lastActivityTimestamp, array $tags = []);
+    public static function createFromCookieAndSessionInformation(Cookie $sessionCookie, string $storageIdentifier, int $lastActivityTimestamp, array $tags = []): SessionInterface|CookieEnabledInterface;
 }

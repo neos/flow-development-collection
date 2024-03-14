@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\Flow\Session\Aspect;
 
 /*
@@ -19,55 +20,29 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Adds the aspect of lazy loading to objects with scope session.
- *
- * @Flow\Aspect
- * @Flow\Introduce("filter(Neos\Flow\Session\Aspect\SessionObjectMethodsPointcutFilter)", interfaceName = "Neos\Flow\Session\Aspect\LazyLoadingProxyInterface")
- * @Flow\Scope("singleton")
  */
+#[Flow\Aspect]
+#[Flow\Introduce(pointcutExpression: "filter(Neos\Flow\Session\Aspect\SessionObjectMethodsPointcutFilter)", interfaceName: LazyLoadingProxyInterface::class)]
+#[Flow\Scope("singleton")]
 class LazyLoadingAspect
 {
-    /**
-     * @Flow\Inject
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
+    #[Flow\Inject]
+    protected ?LoggerInterface $logger = null;
 
-    /**
-     * @Flow\Inject
-     * @var SessionManagerInterface
-     */
-    protected $sessionManager;
+    protected array $sessionOriginalInstances = [];
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var array
-     */
-    protected $sessionOriginalInstances = [];
-
-    /**
-     * Injects the (system) logger based on PSR-3.
-     *
-     * @param LoggerInterface $logger
-     * @return void
-     */
-    public function injectLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
+    public function __construct(
+        readonly protected ObjectManagerInterface $objectManager,
+        readonly protected SessionManagerInterface $sessionManager,
+    ) {
     }
 
     /**
      * Registers an object of scope session.
      *
-     * @param string $objectName
-     * @param object $object
-     * @return void
      * @see \Neos\Flow\ObjectManagement\ObjectManager
      */
-    public function registerSessionInstance($objectName, $object)
+    public function registerSessionInstance(string $objectName, object $object): void
     {
         $this->sessionOriginalInstances[$objectName] = $object;
     }
@@ -77,12 +52,10 @@ class LazyLoadingAspect
      * Those methods will trigger a session initialization if a session does not exist
      * yet.
      *
-     * @param JoinPointInterface $joinPoint The current join point
-     * @return void
-     * @fixme The pointcut expression below does not consider the options of the session annotation ‚Äì¬†needs adjustments in the AOP framework
-     * @Flow\Before("methodAnnotatedWith(Neos\Flow\Annotations\Session)")
+     * @fixme The pointcut expression below does not consider the options of the session annotation and needs adjustments in the AOP framework
      */
-    public function initializeSession(JoinPointInterface $joinPoint)
+    #[Flow\Before("methodAnnotatedWith(Neos\Flow\Annotations\Session)")]
+    public function initializeSession(JoinPointInterface $joinPoint): void
     {
         $session = $this->sessionManager->getCurrentSession();
 
@@ -90,23 +63,20 @@ class LazyLoadingAspect
             return;
         }
 
-        /** @var string $objectName */
-        $objectName = $this->objectManager->getObjectNameByClassName(get_class($joinPoint->getProxy()));
-        $methodName = $joinPoint->getMethodName();
-
-        $this->logger->debug(sprintf('Session initialization triggered by %s->%s.', $objectName, $methodName));
+        if ($this->logger) {
+            $objectName = $this->objectManager->getObjectNameByClassName(get_class($joinPoint->getProxy()));
+            $methodName = $joinPoint->getMethodName();
+            $this->logger->debug(sprintf('Session initialization triggered by %s->%s.', $objectName, $methodName));
+        }
         $session->start();
     }
 
     /**
      * Around advice, wrapping every method of a scope session object. It redirects
      * all method calls to the session object once there is one.
-     *
-     * @param JoinPointInterface $joinPoint The current join point
-     * @return mixed
-     * @Flow\Around("filter(Neos\Flow\Session\Aspect\SessionObjectMethodsPointcutFilter)")
      */
-    public function callMethodOnOriginalSessionObject(JoinPointInterface $joinPoint)
+    #[Flow\Around("filter(Neos\Flow\Session\Aspect\SessionObjectMethodsPointcutFilter)")]
+    public function callMethodOnOriginalSessionObject(JoinPointInterface $joinPoint): mixed
     {
         $objectName = $this->objectManager->getObjectNameByClassName(get_class($joinPoint->getProxy()));
         $methodName = $joinPoint->getMethodName();
@@ -118,9 +88,9 @@ class LazyLoadingAspect
 
         if ($this->sessionOriginalInstances[$objectName] === $proxy) {
             return $joinPoint->getAdviceChain()->proceed($joinPoint);
-        } else {
-            $arguments = array_values($joinPoint->getMethodArguments());
-            return $this->sessionOriginalInstances[$objectName]->$methodName(...$arguments);
         }
+
+        $arguments = array_values($joinPoint->getMethodArguments());
+        return $this->sessionOriginalInstances[$objectName]->$methodName(...$arguments);
     }
 }

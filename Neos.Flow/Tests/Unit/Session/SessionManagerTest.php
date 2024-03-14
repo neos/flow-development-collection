@@ -13,27 +13,26 @@ namespace Neos\Flow\Tests\Unit\Session;
 
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Cache\Backend\FileBackend;
+use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Http\Cookie;
 use Neos\Flow\Http\RequestHandler;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Security\Context;
 use Neos\Flow\Session\Data\SessionIdentifier;
 use Neos\Flow\Session\Data\SessionKeyValueStore;
 use Neos\Flow\Session\Data\SessionMetaDataStore;
+use Neos\Flow\Session\Session;
+use Neos\Flow\Session\SessionManager;
+use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use org\bovigo\vfs\vfsStream;
-use Neos\Cache\Backend\FileBackend;
-use Neos\Cache\EnvironmentConfiguration;
-use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Security\Context;
-use Neos\Flow\Session\Session;
-use Neos\Flow\Session\SessionManager;
-use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Http\Cookie;
-use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Unit tests for the Flow Session implementation
@@ -115,8 +114,9 @@ class SessionManagerTest extends UnitTestCase
 
     /**
      * @test for #1674
+     * @throws
      */
-    public function garbageCollectionWorksCorrectlyWithInvalidMetadataEntry()
+    public function garbageCollectionWorksCorrectlyWithInvalidMetadataEntry(): void
     {
         $cache = $this->createCache('Meta');
         $cache->set('foo', null);
@@ -125,43 +125,53 @@ class SessionManagerTest extends UnitTestCase
         $sessionMetaDataStore->injectCache($cache);
         $sessionKeyValueStore = $this->createSessionKeyValueStore();
 
-        $sessionManager = new SessionManager();
-        $this->inject($sessionManager, 'sessionMetaDataStore', $sessionMetaDataStore);
-        $this->inject($sessionManager, 'sessionKeyValueStore', $sessionKeyValueStore);
-        $this->inject($sessionManager, 'logger', $this->createMock(LoggerInterface::class));
+        $sessionManager = new SessionManager(
+            $sessionMetaDataStore,
+            $sessionKeyValueStore,
+            1.0,
+            100,
+            500
+        );
 
         $this->assertSame(0, $sessionManager->collectGarbage());
     }
 
     /**
      * @test
+     * @throws
      */
-    public function garbageCollectionIsOmittedIfInactivityTimeoutIsSetToZero()
+    public function garbageCollectionIsOmittedIfInactivityTimeoutIsSetToZero(): void
     {
         $sessionMetaDataStore = $this->createSessionMetaDataStore();
         $sessionKeyValueStore = $this->createSessionKeyValueStore();
 
-        $sessionManager = new SessionManager();
-        $this->inject($sessionManager, 'sessionMetaDataStore', $sessionMetaDataStore);
-        $this->inject($sessionManager, 'sessionKeyValueStore', $sessionKeyValueStore);
-        $this->inject($sessionManager, 'inactivityTimeout', 0);
+        $sessionManager = new SessionManager(
+            $sessionMetaDataStore,
+            $sessionKeyValueStore,
+            1.0,
+            100,
+            0
+        );
 
         self::assertSame(0, $sessionManager->collectGarbage());
     }
 
     /**
      * @test
+     * @throws
      */
-    public function garbageCollectionIsOmittedIfAnotherProcessIsAlreadyRunning()
+    public function garbageCollectionIsOmittedIfAnotherProcessIsAlreadyRunning(): void
     {
         $sessionMetaDataStore = $this->createSessionMetaDataStore();
         $sessionKeyValueStore = $this->createSessionKeyValueStore();
 
-        $sessionManager = new SessionManager();
-        $this->inject($sessionManager, 'sessionMetaDataStore', $sessionMetaDataStore);
-        $this->inject($sessionManager, 'sessionKeyValueStore', $sessionKeyValueStore);
-        $this->inject($sessionManager, 'inactivityTimeout', 5000);
-        $this->inject($sessionManager, 'garbageCollectionProbability', 100);
+        $sessionManager = new SessionManager(
+            $sessionMetaDataStore,
+            $sessionKeyValueStore,
+            100.0,
+            100,
+            5000
+        );
 
         // No sessions need to be removed:
         self::assertSame(0, $sessionManager->collectGarbage());
@@ -174,20 +184,21 @@ class SessionManagerTest extends UnitTestCase
 
     /**
      * @test
+     * @throws
      */
-    public function garbageCollectionOnlyRemovesTheDefinedMaximumNumberOfSessions()
+    public function garbageCollectionOnlyRemovesTheDefinedMaximumNumberOfSessions(): void
     {
         $sessionMetaDataStore = $this->createSessionMetaDataStore();
         $sessionKeyValueStore = $this->createSessionKeyValueStore();
 
         for ($i = 0; $i < 9; $i++) {
-            $sessionManager = new SessionManager();
-            $this->inject($sessionManager, 'sessionMetaDataStore', $sessionMetaDataStore);
-            $this->inject($sessionManager, 'sessionKeyValueStore', $sessionKeyValueStore);
-            $this->inject($sessionManager, 'inactivityTimeout', 1000);
-            $this->inject($sessionManager, 'garbageCollectionProbability', 0);
-            $this->inject($sessionManager, 'garbageCollectionMaximumPerRun', 5);
-            $this->inject($sessionManager, 'logger', $this->createMock(LoggerInterface::class));
+            $sessionManager = new SessionManager(
+                $sessionMetaDataStore,
+                $sessionKeyValueStore,
+                0,
+                5,
+                1000
+            );
 
             $session = Session::create();
             $this->inject($session, 'sessionMetaDataStore', $sessionMetaDataStore);
@@ -220,7 +231,7 @@ class SessionManagerTest extends UnitTestCase
         return $store;
     }
 
-    protected function createSessionMetaDataStore():SessionMetaDataStore
+    protected function createSessionMetaDataStore(): SessionMetaDataStore
     {
         $backend = new FileBackend(new EnvironmentConfiguration('Session Testing', 'vfs://Foo/', PHP_MAXPATHLEN));
         $cache = new VariableFrontend('Meta', $backend);
@@ -237,8 +248,9 @@ class SessionManagerTest extends UnitTestCase
      *
      * @param string $name
      * @return VariableFrontend
+     * @throws
      */
-    protected function createCache($name)
+    protected function createCache(string $name): VariableFrontend
     {
         $backend = new FileBackend(new EnvironmentConfiguration('Session Testing', 'vfs://Foo/', PHP_MAXPATHLEN));
         $cache = new VariableFrontend($name, $backend);

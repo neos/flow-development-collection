@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+namespace Neos\Flow\Session\Data;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -11,13 +12,8 @@ declare(strict_types=1);
  * source code.
  */
 
-namespace Neos\Flow\Session\Data;
-
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
 class SessionMetaData
 {
     /**
@@ -26,6 +22,7 @@ class SessionMetaData
      * @param int $lastActivityTimestamp
      * @param string[] $tags
      */
+    #[Flow\Autowiring(false)]
     public function __construct(
         public readonly SessionIdentifier $sessionIdentifier,
         public readonly StorageIdentifier $storageIdentifier,
@@ -34,6 +31,9 @@ class SessionMetaData
     ) {
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function createWithTimestamp(int $timestamp): self
     {
         return new self(
@@ -48,7 +48,8 @@ class SessionMetaData
      * Create session metadata from classic cache format for backwards compatibility
      * @param string $sessionIdentifier
      * @param array{'storageIdentifier': string, 'lastActivityTimestamp': int, 'tags': string[]} $data
-     * @deprecated this will be removed with flow 10
+     * @return self
+     * @deprecated this will be removed with Flow 10
      */
     public static function createFromSessionIdentifierStringAndOldArrayCacheFormat(string $sessionIdentifier, array $data): self
     {
@@ -83,7 +84,7 @@ class SessionMetaData
     public function withAddedTag(string $tag): self
     {
         $tags = $this->tags;
-        if (!in_array($tag, $this->tags)) {
+        if (!in_array($tag, $this->tags, true)) {
             $tags[] = $tag;
         }
         return new self(

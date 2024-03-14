@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\Flow\Session\Aspect;
 
 /*
@@ -17,24 +18,17 @@ use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Reflection\ClassReflection;
+use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 
 /**
  * Pointcut filter matching proxyable methods in objects of scope session
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope("singleton")]
 class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
 {
-    /**
-     * @var CompileTimeObjectManager
-     */
-    protected $objectManager;
+    protected CompileTimeObjectManager $objectManager;
 
-    /**
-     * @param CompileTimeObjectManager $objectManager
-     * @return void
-     */
-    public function injectObjectManager(CompileTimeObjectManager $objectManager)
+    public function injectObjectManager(CompileTimeObjectManager $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
@@ -46,9 +40,10 @@ class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
      * @param string $methodName Name of the method to check against
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-     * @return boolean true if the class / method match, otherwise false
+     * @return bool true if the class / method match, otherwise false
+     * @throws ClassLoadingForReflectionFailedException
      */
-    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)
+    public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         if ($methodName === null) {
             return false;
@@ -68,19 +63,15 @@ class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
         }
 
         $classReflection = new ClassReflection($className);
-        if ($classReflection->hasMethod($methodName) && $classReflection->getMethod($methodName)->isPrivate()) {
-            return false;
-        }
-
-        return true;
+        return !($classReflection->hasMethod($methodName) && $classReflection->getMethod($methodName)->isPrivate());
     }
 
     /**
      * Returns true if this filter holds runtime evaluations for a previously matched pointcut
      *
-     * @return boolean true if this filter has runtime evaluations
+     * @return bool true if this filter has runtime evaluations
      */
-    public function hasRuntimeEvaluationsDefinition()
+    public function hasRuntimeEvaluationsDefinition(): bool
     {
         return false;
     }
@@ -90,18 +81,15 @@ class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
      *
      * @return array Runtime evaluations
      */
-    public function getRuntimeEvaluationsDefinition()
+    public function getRuntimeEvaluationsDefinition(): array
     {
         return [];
     }
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return ClassNameIndex
      */
-    public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
+    public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         $sessionClasses = new ClassNameIndex();
         $sessionClasses->setClassNames($this->objectManager->getClassNamesByScope(ObjectConfiguration::SCOPE_SESSION));
