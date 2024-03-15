@@ -16,6 +16,8 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
+use Neos\Http\Factories\StreamFactoryTrait;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * The abstract base of all Fluid views.
@@ -23,6 +25,8 @@ use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
  */
 abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTemplateView implements ViewInterface
 {
+    use StreamFactoryTrait;
+
     /**
      * This contains the supported options, their default values, descriptions and types.
      * Syntax example:
@@ -105,6 +109,14 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * @var ControllerContext
      */
     protected $controllerContext;
+
+    /**
+     * @phpstan-ignore-next-line we are incompatible with the fluid view and should use composition instead
+     */
+    public function render($actionName = null): StreamInterface
+    {
+        return $this->createStream(parent::render($actionName));
+    }
 
     /**
      * Factory method to create an instance with given options.

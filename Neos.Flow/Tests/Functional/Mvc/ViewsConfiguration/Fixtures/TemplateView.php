@@ -12,6 +12,8 @@ namespace Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures;
  */
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\AbstractView;
+use Neos\Http\Factories\StreamFactoryTrait;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * An empty view - a special case.
@@ -19,6 +21,8 @@ use Neos\Flow\Mvc\View\AbstractView;
  */
 final class TemplateView extends AbstractView
 {
+    use StreamFactoryTrait;
+
     /**
      * @var array
      */
@@ -69,9 +73,9 @@ final class TemplateView extends AbstractView
      *
      * @return string An empty string
      */
-    public function render()
+    public function render(): StreamInterface
     {
-        return get_class($this);
+        return $this->createStream(get_class($this));
     }
 
     /**

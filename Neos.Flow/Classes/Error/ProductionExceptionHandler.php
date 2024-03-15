@@ -13,6 +13,7 @@ namespace Neos\Flow\Error;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * A quite exception handler which catches but ignores any exception.
@@ -39,7 +40,21 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
         try {
             if ($this->useCustomErrorView()) {
                 try {
-                    echo $this->buildView($exception, $this->renderingOptions)->render();
+                    $stream = $this->buildView($exception, $this->renderingOptions)->render();
+                    if ($stream instanceof ResponseInterface) {
+                        /**
+                         * The http status code will already be sent, and we are only currently interested in the content stream
+                         * Thus, we unwrap the repose here:
+                         */
+                        $stream = $stream->getBody();
+                    }
+                    $resourceOrString = $stream->detach() ?: $stream->getContents();
+                    if (is_resource($resourceOrString)) {
+                        fpassthru($resourceOrString);
+                        fclose($resourceOrString);
+                    } else {
+                        echo $resourceOrString;
+                    }
                 } catch (\Throwable $throwable) {
                     $this->renderStatically($statusCode, $throwable);
                 }

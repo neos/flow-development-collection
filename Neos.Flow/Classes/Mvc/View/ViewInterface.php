@@ -56,10 +56,9 @@ interface ViewInterface
     /**
      * Renders the view
      *
-     * @return string|ActionResponse|ResponseInterface|StreamInterface|object The rendered result; object is only handled if __toString() exists!
      * @api
      */
-    public function render();
+    public function render(): ResponseInterface|StreamInterface;
 
     /**
      * Factory method to create an instance with given options.
