@@ -15,6 +15,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Mvc\Routing;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Mvc\Routing\Routes;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -27,9 +28,10 @@ class ConfigurationRoutesProviderTest extends UnitTestCase
      */
     public function configurationManagerIsNotCalledInConstructor(): void
     {
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockConfigurationManager = $this->createMock(ConfigurationManager::class);
         $mockConfigurationManager->expects($this->never())->method('getConfiguration');
-        $configurationRoutesProvider = new Routing\ConfigurationRoutesProvider($mockConfigurationManager);
+        $configurationRoutesProvider = new Routing\ConfigurationRoutesProvider($mockConfigurationManager, $mockObjectManager);
         $this->assertInstanceOf(Routing\ConfigurationRoutesProvider::class, $configurationRoutesProvider);
     }
 
@@ -53,6 +55,7 @@ class ConfigurationRoutesProviderTest extends UnitTestCase
             ],
         ];
 
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockConfigurationManager = $this->createMock(ConfigurationManager::class);
         $mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_ROUTES)->willReturn($configuration);
 
@@ -71,7 +74,7 @@ class ConfigurationRoutesProviderTest extends UnitTestCase
 
         $expectedRoutes = Routes::create($expectedRoute1, $expectedRoute2);
 
-        $configurationRoutesProvider = new Routing\ConfigurationRoutesProvider($mockConfigurationManager);
+        $configurationRoutesProvider = new Routing\ConfigurationRoutesProvider($mockConfigurationManager, $mockObjectManager);
         $this->assertEquals($expectedRoutes, $configurationRoutesProvider->getRoutes());
     }
 }

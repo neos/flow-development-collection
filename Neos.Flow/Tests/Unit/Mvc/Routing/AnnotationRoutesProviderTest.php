@@ -28,14 +28,14 @@ class AnnotationRoutesProviderTest extends UnitTestCase
 {
     private ReflectionService|MockObject $mockReflectionService;
     private ObjectManagerInterface|MockObject $mockObjectManager;
-    private Routing\AnnotationRoutesProvider $annotationRoutesProvider;
+    private Routing\RouteAnnotationRoutesProvider $annotationRoutesProvider;
 
     public function setUp(): void
     {
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
 
-        $this->annotationRoutesProvider = new Routing\AnnotationRoutesProvider(
+        $this->annotationRoutesProvider = new Routing\RouteAnnotationRoutesProvider(
             $this->mockReflectionService,
             $this->mockObjectManager
         );
@@ -58,8 +58,10 @@ class AnnotationRoutesProviderTest extends UnitTestCase
     /**
      * @test
      */
-    public function routesFromAnnotationAreCreated(): void
+    public function routesFromAnnotationAreCreatedWhenClassNamesMatch(): void
     {
+        $annotationRoutesProvider = $this->annotationRoutesProvider->withOptions(['classNames' => ['Vendor\Example\Controller\ExampleController']]);
+
         $this->mockReflectionService->expects($this->once())
             ->method('getClassesContainingMethodsAnnotatedWith')
             ->with(Flow\Route::class)
@@ -113,7 +115,22 @@ class AnnotationRoutesProviderTest extends UnitTestCase
 
         $this->assertEquals(
             Routes::create($expectedRoute1, $expectedRoute2),
-            $this->annotationRoutesProvider->getRoutes()
+            $annotationRoutesProvider->getRoutes()
         );
+    }
+
+    /**
+     * @test
+     */
+    public function annotationsOutsideClassNamesAreIgnored(): void
+    {
+        $annotationRoutesProvider = $this->annotationRoutesProvider->withOptions(['classNames' => []]);
+
+        $this->mockReflectionService->expects($this->once())
+            ->method('getClassesContainingMethodsAnnotatedWith')
+            ->with(Flow\Route::class)
+            ->willReturn(['Vendor\Example\Controller\ExampleController']);
+
+        $this->assertEquals([], $annotationRoutesProvider->getRoutes()->getIterator());
     }
 }
