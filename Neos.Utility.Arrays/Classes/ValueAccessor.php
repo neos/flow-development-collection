@@ -27,7 +27,7 @@ namespace Neos\Utility;
  * $intValue = Arrays::getAccessorByPath($mixedArray, 'foo.myIntOption')->int();
  * ```
  *
- * @api
+ * @internal experimental feature, not stable API
  */
 final readonly class ValueAccessor
 {
@@ -37,6 +37,9 @@ final readonly class ValueAccessor
     ) {
     }
 
+    /**
+     * @internal experimental feature, not stable API
+     */
     public static function forValue(mixed $value): self
     {
         return new self($value, null);
