@@ -85,13 +85,7 @@ EOD;
                  */
                 $stream = $stream->getBody();
             }
-            $resourceOrString = $stream->detach() ?: $stream->getContents();
-            if (is_resource($resourceOrString)) {
-                fpassthru($resourceOrString);
-                fclose($resourceOrString);
-            } else {
-                echo $resourceOrString;
-            }
+            ResponseInformationHelper::sendStream($stream);
         } catch (\Throwable $throwable) {
             $this->renderStatically($statusCode, $throwable);
         }

@@ -171,12 +171,6 @@ class RequestHandler implements HttpRequestHandlerInterface
             ob_end_flush();
         }
 
-        $body = $response->getBody()->detach() ?: $response->getBody()->getContents();
-        if (is_resource($body)) {
-            fpassthru($body);
-            fclose($body);
-        } else {
-            echo $body;
-        }
+        ResponseInformationHelper::sendStream($response->getBody());
     }
 }
