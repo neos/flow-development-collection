@@ -221,6 +221,7 @@ abstract class Arrays
      *
      * See {@see ValueAccessor}
      *
+     * @internal experimental feature, not stable API
      * @param array $array The array to traverse
      * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
      * @return ValueAccessor
