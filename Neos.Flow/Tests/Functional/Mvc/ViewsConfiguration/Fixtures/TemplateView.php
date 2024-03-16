@@ -10,7 +10,6 @@ namespace Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Http\Factories\StreamFactoryTrait;
 use Psr\Http\Message\StreamInterface;

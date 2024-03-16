@@ -11,7 +11,6 @@ namespace Neos\Flow\Mvc\View;
  * source code.
  */
 
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
