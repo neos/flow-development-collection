@@ -50,7 +50,7 @@ final class TemplateView extends AbstractView
      * @return self instance of $this to allow chaining
      * @api
      */
-    public function assign($key, $value)
+    public function assign(string $key, mixed $value): self
     {
         return $this;
     }
@@ -62,7 +62,7 @@ final class TemplateView extends AbstractView
      * @return self instance of $this to allow chaining
      * @api
      */
-    public function assignMultiple(array $values)
+    public function assignMultiple(array $values): self
     {
         return $this;
     }

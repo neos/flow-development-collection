@@ -30,27 +30,27 @@ interface ViewInterface
      * @param ControllerContext $controllerContext Context of the controller associated with this view
      * @return void
      */
-    // public function setControllerContext(ControllerContext $controllerContext);
+    // public function setControllerContext(ControllerContext $controllerContext): void;
 
     /**
      * Add a variable to the view data collection.
-     * Can be chained, so $this->view->assign(..., ...)->assign(..., ...); is possible
+     * Can be chained: $this->view->assign(..., ...)->assign(..., ...);
      *
      * @param string $key Key of variable
      * @param mixed $value Value of object
-     * @return ViewInterface an instance of $this, to enable chaining
+     * @return $this for chaining
      * @api
      */
-    public function assign($key, $value);
+    public function assign(string $key, mixed $value): self;
 
     /**
      * Add multiple variables to the view data collection
      *
-     * @param array $values array in the format array(key1 => value1, key2 => value2)
-     * @return ViewInterface an instance of $this, to enable chaining
+     * @param array<string,mixed> $values associative array with the key being its name
+     * @return $this for chaining
      * @api
      */
-    public function assignMultiple(array $values);
+    public function assignMultiple(array $values): self;
 
     /**
      * Renders the view
@@ -62,8 +62,8 @@ interface ViewInterface
     /**
      * Factory method to create an instance with given options.
      *
-     * @param array $options
-     * @return ViewInterface
+     * @param array<string,mixed> $options
+     * @return static
      */
-    public static function createWithOptions(array $options);
+    public static function createWithOptions(array $options): self;
 }

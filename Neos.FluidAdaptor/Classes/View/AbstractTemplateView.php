@@ -118,13 +118,25 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
         return $this->createStream(parent::render($actionName));
     }
 
+    public function assign($key, $value): self
+    {
+        // layer to fix incompatibility error with typo3 fluid interface
+        return parent::assign($key, $value);
+    }
+
+    public function assignMultiple(array $values): self
+    {
+        // layer to fix incompatibility error with typo3 fluid interface
+        return parent::assignMultiple($values);
+    }
+
     /**
      * Factory method to create an instance with given options.
      *
      * @param array $options
-     * @return AbstractTemplateView
+     * @return static
      */
-    public static function createWithOptions(array $options)
+    public static function createWithOptions(array $options): self
     {
         return new static($options);
     }

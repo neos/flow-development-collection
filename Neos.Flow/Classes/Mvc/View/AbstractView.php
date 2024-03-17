@@ -61,9 +61,9 @@ abstract class AbstractView implements ViewInterface
      * Factory method to create an instance with given options.
      *
      * @param array $options
-     * @return ViewInterface
+     * @return static
      */
-    public static function createWithOptions(array $options)
+    public static function createWithOptions(array $options): self
     {
         return new static($options);
     }
@@ -143,10 +143,10 @@ abstract class AbstractView implements ViewInterface
      *
      * @param string $key Key of variable
      * @param mixed $value Value of object
-     * @return AbstractView an instance of $this, to enable chaining
+     * @return $this for chaining
      * @api
      */
-    public function assign($key, $value)
+    public function assign(string $key, mixed $value): self
     {
         $this->variables[$key] = $value;
         return $this;
@@ -156,10 +156,10 @@ abstract class AbstractView implements ViewInterface
      * Add multiple variables to $this->variables.
      *
      * @param array $values array in the format array(key1 => value1, key2 => value2)
-     * @return AbstractView an instance of $this, to enable chaining
+     * @return $this for chaining
      * @api
      */
-    public function assignMultiple(array $values)
+    public function assignMultiple(array $values): self
     {
         foreach ($values as $key => $value) {
             $this->assign($key, $value);
