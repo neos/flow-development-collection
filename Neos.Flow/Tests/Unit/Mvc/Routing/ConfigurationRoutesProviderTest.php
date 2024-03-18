@@ -86,24 +86,36 @@ class ConfigurationRoutesProviderTest extends UnitTestCase
         $configuration = [
             [
                 'name' => 'Routes provider without options',
-                'provider' => 'Vendor\Example\RoutesProvider',
+                'providerFactory' => 'Vendor\Example\RoutesProvider',
             ],
             [
                 'name' => 'Routes provider with options',
-                'provider' => 'Vendor\Example\RoutesProviderWithOptions',
+                'providerFactory' => 'Vendor\Example\RoutesProviderWithOptions',
                 'providerOptions' => ['foo' => 'bar'],
             ],
         ];
 
         $mockRoutesProvider = $this->createMock(Routing\RoutesProviderInterface::class);
-        $mockRoutesProviderWithOptions = $this->createMock(Routing\RoutesProviderWithOptionsInterface::class);
+        $mockRoutesProviderWithOptions = $this->createMock(Routing\RoutesProviderInterface::class);
+
+        $mockRoutesProviderFactory = $this->createMock(Routing\RoutesProviderFactoryInterface::class);
+        $mockRoutesProviderFactory->expects($this->once())
+            ->method('createRoutesProvider')
+            ->with([])
+            ->willReturn($mockRoutesProvider);
+
+        $mockRoutesProviderWithOptionsFactory = $this->createMock(Routing\RoutesProviderFactoryInterface::class);
+        $mockRoutesProviderWithOptionsFactory->expects($this->once())
+            ->method('createRoutesProvider')
+            ->with(['foo' => 'bar'])
+            ->willReturn($mockRoutesProviderWithOptions);
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects($this->exactly(2))->method('get')->willReturnCallback(
-            function (string $name) use ($mockRoutesProvider, $mockRoutesProviderWithOptions) {
+            function (string $name) use ($mockRoutesProviderFactory, $mockRoutesProviderWithOptionsFactory) {
                 return match ($name) {
-                    'Vendor\Example\RoutesProvider' => $mockRoutesProvider,
-                    'Vendor\Example\RoutesProviderWithOptions' => $mockRoutesProviderWithOptions
+                    'Vendor\Example\RoutesProvider' => $mockRoutesProviderFactory,
+                    'Vendor\Example\RoutesProviderWithOptions' => $mockRoutesProviderWithOptionsFactory
                 };
             }
         );
@@ -121,8 +133,6 @@ class ConfigurationRoutesProviderTest extends UnitTestCase
         $expectedRoute2->setUriPattern('route2/{@package}/{@controller}/{@action}(.{@format})');
 
         $mockRoutesProvider->expects($this->once())->method('getRoutes')->willReturn(Routes::create($expectedRoute1));
-
-        $mockRoutesProviderWithOptions->expects($this->once())->method('withOptions')->with(['foo' => 'bar'])->willReturn($mockRoutesProviderWithOptions);
         $mockRoutesProviderWithOptions->expects($this->once())->method('getRoutes')->willReturn(Routes::create($expectedRoute2));
 
         $expectedRoutes = Routes::create($expectedRoute1, $expectedRoute2);

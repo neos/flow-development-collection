@@ -88,10 +88,10 @@ class RoutesLoader implements LoaderInterface
             if ($routeFromSettings === false) {
                 continue;
             }
-            if (isset($routeFromSettings['provider'])) {
+            if (isset($routeFromSettings['providerFactory'])) {
                 $routeDefinitions[] = [
                     'name' => $configurationKey,
-                    'provider' => $routeFromSettings['provider'],
+                    'providerFactory' => $routeFromSettings['providerFactory'],
                     'providerOptions' => $routeFromSettings['providerOptions'] ?? [],
                 ];
                 continue;

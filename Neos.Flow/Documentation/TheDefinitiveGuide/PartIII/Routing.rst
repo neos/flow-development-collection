@@ -729,8 +729,8 @@ two more options you can use:
 With ``suffix`` you can specify a custom filename suffix for the SubRoute. The ``variables`` option allows you to
 specify placeholders in the SubRoutes (see `Nested Subroutes`_).
 
-It also is possible to specify a `provider` and (optional) `providerOptions` to generate the subroutes via the
-`Neos\Flow\Mvc\Routing\RoutesProviderInterface` or the ``Neos\Flow\Mvc\Routing\RoutesProviderWithOptionsInterface`.
+It also is possible to specify a `providerFactory` and (optional) `providerOptions` to generate the subroutes via the
+`Neos\Flow\Mvc\Routing\RoutesProviderFactoryInterface` and the ``Neos\Flow\Mvc\Routing\RoutesProviderInterface`.
 
 .. code-block:: yaml
 
@@ -740,7 +740,7 @@ It also is possible to specify a `provider` and (optional) `providerOptions` to 
         routes:
           Vendor.Example:
             position: 'before Neos.Neos'
-            provider: \Neos\Flow\Mvc\Routing\RouteAnnotationRoutesProvider
+            providerFactory: \Neos\Flow\Mvc\Routing\AttributeRoutesProviderFactory
             providerOptions:
               classNames:
                 - Vendor\Example\Controller\ExampleController
@@ -774,7 +774,7 @@ The ``Flow\Route`` attribute allows to define routes directly on the affected me
   }
 
 To find the annotation and tp specify the order of routes this has to be used together with the
-`\Neos\Flow\Mvc\Routing\RouteAnnotationRoutesProvider` in Setting `Neos.Flow.mvs.routes`
+`\Neos\Flow\Mvc\Routing\AttributeRoutesProviderFactory` as `providerFactory` in  Setting `Neos.Flow.mvs.routes`
 
 .. code-block:: yaml
 
@@ -784,7 +784,7 @@ To find the annotation and tp specify the order of routes this has to be used to
         routes:
           Vendor.Example:
             position: 'before Neos.Neos'
-            provider: \Neos\Flow\Mvc\Routing\RouteAnnotationRoutesProvider
+            providerFactory: \Neos\Flow\Mvc\Routing\AttributeRoutesProviderFactory
             providerOptions:
               classNames:
                 - Vendor\Example\Controller\ExampleController
