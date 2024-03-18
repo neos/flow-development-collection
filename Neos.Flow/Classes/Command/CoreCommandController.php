@@ -197,9 +197,10 @@ class CoreCommandController extends CommandController
         $this->aopProxyClassBuilder->build();
         $this->dependencyInjectionProxyClassBuilder->build();
 
-        $classCount = $this->proxyClassCompiler->compile();
-
         $dataTemporaryPath = $this->environment->getPathToTemporaryDirectory();
+        $previousProxyClasses = @include($dataTemporaryPath . 'AvailableProxyClasses.php') ?: [];
+        $classCount = $this->proxyClassCompiler->compile($previousProxyClasses);
+
         Files::createDirectoryRecursively($dataTemporaryPath);
         file_put_contents($dataTemporaryPath . 'AvailableProxyClasses.php', $this->proxyClassCompiler->getStoredProxyClassMap());
 

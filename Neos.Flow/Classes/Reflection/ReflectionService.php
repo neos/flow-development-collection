@@ -1151,7 +1151,7 @@ class ReflectionService
         // Development context.
         ksort($this->classReflectionData);
 
-        $this->updatedReflectionData[$className] = true;
+        $this->updatedReflectionData[$className] = md5($class->getFileName());
     }
 
     /**
@@ -1763,11 +1763,12 @@ class ReflectionService
             }
         }
 
-        foreach ($classNames as $className) {
-            if (!$this->statusCache->has($this->produceCacheIdentifierFromClassName($className))) {
-                $this->forgetClass($className);
-            }
-        }
+        // impossible without the path saved in classReflectionData
+        // foreach ($classNames as $className) {
+        //     if (!$this->statusCache->has($this->produceCacheIdentifierFromClassName($className))) {
+        //         $this->forgetClass($className);
+        //     }
+        // }
     }
 
     /**
@@ -2086,8 +2087,8 @@ class ReflectionService
     {
         $this->log(sprintf('Found %s classes whose reflection data was not cached previously.', count($this->updatedReflectionData)), LogLevel::DEBUG);
 
-        foreach (array_keys($this->updatedReflectionData) as $className) {
-            $this->statusCache->set($this->produceCacheIdentifierFromClassName($className), '');
+        foreach (array_keys($this->updatedReflectionData) as $md5FileName) {
+            $this->statusCache->set($md5FileName, '');
         }
 
         $data = [];
