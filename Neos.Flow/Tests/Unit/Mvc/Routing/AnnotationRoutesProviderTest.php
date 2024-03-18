@@ -91,6 +91,7 @@ class AnnotationRoutesProviderTest extends UnitTestCase
             ->willReturn('Vendor.Example');
 
         $expectedRoute1 = new Route();
+        $expectedRoute1->setName('Vendor.Example :: Example :: special');
         $expectedRoute1->setUriPattern('my/path');
         $expectedRoute1->setDefaults([
             '@package' => 'Vendor.Example',
@@ -101,7 +102,7 @@ class AnnotationRoutesProviderTest extends UnitTestCase
         ]);
 
         $expectedRoute2 = new Route();
-        $expectedRoute2->setName('specialRoute');
+        $expectedRoute2->setName('Vendor.Example :: Example :: specialRoute');
         $expectedRoute2->setUriPattern('my/other/path');
         $expectedRoute2->setDefaults([
             '@package' => 'Vendor.Example',
@@ -131,6 +132,6 @@ class AnnotationRoutesProviderTest extends UnitTestCase
             ->with(Flow\Route::class)
             ->willReturn(['Vendor\Example\Controller\ExampleController']);
 
-        $this->assertEquals([], $annotationRoutesProvider->getRoutes()->getIterator());
+        $this->assertEquals([], iterator_to_array($annotationRoutesProvider->getRoutes()->getIterator()));
     }
 }

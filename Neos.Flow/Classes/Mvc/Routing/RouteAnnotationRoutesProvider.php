@@ -27,11 +27,10 @@ class RouteAnnotationRoutesProvider implements RoutesProviderWithOptionsInterfac
 
     /**
      * @param array<string, mixed> $options
-     * @return $this
      */
-    public function withOptions(array $options): static
+    public function withOptions(array $options): RoutesProviderInterface
     {
-        return new static(
+        return new RouteAnnotationRoutesProvider (
             $this->reflectionService,
             $this->objectManager,
             $options['classNames'] ?? [],

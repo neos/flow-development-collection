@@ -17,5 +17,5 @@ interface RoutesProviderWithOptionsInterface extends RoutesProviderInterface
     /**
      * @param array<string, mixed> $options
      */
-    public function withOptions(array $options): static;
+    public function withOptions(array $options): RoutesProviderInterface;
 }
