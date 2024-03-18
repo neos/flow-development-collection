@@ -10,8 +10,9 @@ namespace Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\AbstractView;
+use Neos\Http\Factories\StreamFactoryTrait;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * An empty view - a special case.
@@ -19,6 +20,8 @@ use Neos\Flow\Mvc\View\AbstractView;
  */
 final class TemplateView extends AbstractView
 {
+    use StreamFactoryTrait;
+
     /**
      * @var array
      */
@@ -42,23 +45,12 @@ final class TemplateView extends AbstractView
     /**
      * Dummy method to satisfy the ViewInterface
      *
-     * @param ControllerContext $controllerContext
-     * @return void
-     * @api
-     */
-    public function setControllerContext(ControllerContext $controllerContext)
-    {
-    }
-
-    /**
-     * Dummy method to satisfy the ViewInterface
-     *
      * @param string $key
      * @param mixed $value
      * @return self instance of $this to allow chaining
      * @api
      */
-    public function assign($key, $value)
+    public function assign(string $key, mixed $value): self
     {
         return $this;
     }
@@ -70,21 +62,9 @@ final class TemplateView extends AbstractView
      * @return self instance of $this to allow chaining
      * @api
      */
-    public function assignMultiple(array $values)
+    public function assignMultiple(array $values): self
     {
         return $this;
-    }
-
-    /**
-     * This view can be used in any case.
-     *
-     * @param ControllerContext $controllerContext
-     * @return boolean true
-     * @api
-     */
-    public function canRender(ControllerContext $controllerContext)
-    {
-        return true;
     }
 
     /**
@@ -92,9 +72,9 @@ final class TemplateView extends AbstractView
      *
      * @return string An empty string
      */
-    public function render()
+    public function render(): StreamInterface
     {
-        return get_class($this);
+        return $this->createStream(get_class($this));
     }
 
     /**

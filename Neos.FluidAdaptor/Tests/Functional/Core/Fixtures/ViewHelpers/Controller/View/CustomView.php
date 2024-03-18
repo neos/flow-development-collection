@@ -13,10 +13,11 @@ namespace Neos\FluidAdaptor\Tests\Functional\Core\Fixtures\ViewHelpers\Controlle
 
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Mvc\View\AbstractView;
+use Psr\Http\Message\ResponseInterface;
 
 class CustomView extends AbstractView
 {
-    public function render()
+    public function render(): ResponseInterface
     {
         return new Response(418, ['X-Flow-Special-Header' => 'YEAH!'], 'Hello World!');
     }

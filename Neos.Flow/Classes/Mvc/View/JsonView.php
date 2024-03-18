@@ -12,19 +12,23 @@ namespace Neos\Flow\Mvc\View;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Http\Factories\StreamFactoryTrait;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * A JSON view
  *
- * @api
+ * @deprecated please use json_encode instead
  */
 class JsonView extends AbstractView
 {
+    use StreamFactoryTrait;
+
     /**
      * Supported options
      * @var array
@@ -49,11 +53,6 @@ class JsonView extends AbstractView
      * See EXPOSE_CLASSNAME_FULL for the meaning of the constant at all.
      */
     const EXPOSE_CLASSNAME_UNQUALIFIED = 2;
-
-    /**
-     * @var ControllerContext
-     */
-    protected $controllerContext;
 
     /**
      * Only variables whose name is contained in this array will be rendered
@@ -195,15 +194,17 @@ class JsonView extends AbstractView
      * array represantion using a YAML view configuration and JSON encodes
      * the result.
      *
-     * @return string The JSON encoded variables
+     * @return ResponseInterface The JSON encoded variables
      * @api
      */
-    public function render()
+    public function render(): ResponseInterface
     {
-        $this->controllerContext->getResponse()->setContentType('application/json');
+        $response = new Response();
+        $response = $response->withHeader('Content-Type', 'application/json');
         $propertiesToRender = $this->renderArray();
         $options = $this->getOption('jsonEncodingOptions');
-        return json_encode($propertiesToRender, JSON_THROW_ON_ERROR | $options);
+        $value = json_encode($propertiesToRender, JSON_THROW_ON_ERROR | $options);
+        return $response->withBody($this->createStream($value));
     }
 
     /**

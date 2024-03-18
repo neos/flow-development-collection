@@ -16,6 +16,8 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
+use Neos\Http\Factories\StreamFactoryTrait;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * The abstract base of all Fluid views.
@@ -23,6 +25,8 @@ use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
  */
 abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTemplateView implements ViewInterface
 {
+    use StreamFactoryTrait;
+
     /**
      * This contains the supported options, their default values, descriptions and types.
      * Syntax example:
@@ -107,12 +111,32 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
     protected $controllerContext;
 
     /**
+     * @phpstan-ignore-next-line we are incompatible with the fluid view and should use composition instead
+     */
+    public function render($actionName = null): StreamInterface
+    {
+        return $this->createStream(parent::render($actionName));
+    }
+
+    public function assign($key, $value): self
+    {
+        // layer to fix incompatibility error with typo3 fluid interface
+        return parent::assign($key, $value);
+    }
+
+    public function assignMultiple(array $values): self
+    {
+        // layer to fix incompatibility error with typo3 fluid interface
+        return parent::assignMultiple($values);
+    }
+
+    /**
      * Factory method to create an instance with given options.
      *
      * @param array $options
-     * @return AbstractTemplateView
+     * @return static
      */
-    public static function createWithOptions(array $options)
+    public static function createWithOptions(array $options): self
     {
         return new static($options);
     }
@@ -175,15 +199,6 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
         }
         $this->baseRenderingContext->setControllerName(str_replace('\\', '/', $request->getControllerName()));
         $this->baseRenderingContext->setControllerAction($request->getControllerActionName());
-    }
-
-    /**
-     * @param ControllerContext $controllerContext
-     * @return boolean
-     */
-    public function canRender(ControllerContext $controllerContext)
-    {
-        return true;
     }
 
     /**

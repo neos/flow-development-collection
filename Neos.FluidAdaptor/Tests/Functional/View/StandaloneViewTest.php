@@ -58,7 +58,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setTemplateSource('This is my cool {foo} template!');
 
         $expected = 'This is my cool bar template!';
-        $actual = $standaloneView->render();
+        $actual = $standaloneView->render()->getContents();
         self::assertSame($expected, $actual);
     }
 
@@ -89,7 +89,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
-        $standaloneView->render();
+        $standaloneView->render()->getContents();
     }
 
     /**
@@ -103,7 +103,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/NonExistingTemplate.txt');
-        $standaloneView->render();
+        $standaloneView->render()->getContents();
     }
 
     /**
@@ -117,7 +117,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithFormUpload.txt');
-        $standaloneView->render();
+        $standaloneView->render()->getContents();
     }
 
     /**
@@ -131,7 +131,7 @@ class StandaloneViewTest extends FunctionalTestCase
 
         $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures');
-        $standaloneView->render();
+        $standaloneView->render()->getContents();
     }
 
     /**
@@ -148,7 +148,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplate.txt');
 
         $expected = 'This is a test template. Hello Robert.';
-        $actual = $standaloneView->render();
+        $actual = $standaloneView->render()->getContents();
         self::assertSame($expected, $actual);
     }
 
@@ -162,7 +162,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setTemplateSource('Hello {name}.');
 
         $expected = 'Hello Sebastian &lt;script&gt;alert(&quot;dangerous&quot;);&lt;/script&gt;.';
-        $actual = $standaloneView->render();
+        $actual = $standaloneView->render()->getContents();
         self::assertSame($expected, $actual);
     }
 
@@ -176,7 +176,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setTemplateSource('{escapingEnabled=false}Hello {name}.');
 
         $expected = 'Hello Sebastian <script>alert("dangerous");</script>.';
-        $actual = $standaloneView->render();
+        $actual = $standaloneView->render()->getContents();
         self::assertSame($expected, $actual);
     }
 
@@ -192,7 +192,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setTemplateSource('{config.{type}.value.{flavor}}');
 
         $expected = 'Okayish';
-        $actual = $standaloneView->render();
+        $actual = $standaloneView->render()->getContents();
         $this->assertSame($expected, $actual);
     }
 
@@ -209,7 +209,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithPartial.txt');
 
         $expected = 'This is a test template. Hello Robert.';
-        $actual = $standaloneView->render();
+        $actual = $standaloneView->render()->getContents();
         self::assertSame($expected, $actual);
     }
 
@@ -227,7 +227,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setPartialRootPath(__DIR__ . '/Fixtures/SpecialPartialsDirectory');
 
         $expected = 'This is a test template. Hello Karsten.';
-        $actual = $standaloneView->render();
+        $actual = $standaloneView->render()->getContents();
         self::assertSame($expected, $actual);
     }
 
@@ -244,7 +244,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithLayout.txt');
 
         $expected = 'Hey HEY HO';
-        $actual = $standaloneView->render();
+        $actual = $standaloneView->render()->getContents();
         self::assertSame($expected, $actual);
     }
 
@@ -261,7 +261,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setLayoutRootPath(__DIR__ . '/Fixtures/SpecialLayouts');
 
         $expected = 'Hey -- overridden -- HEY HO';
-        $actual = $standaloneView->render();
+        $actual = $standaloneView->render()->getContents();
         self::assertSame($expected, $actual);
     }
 
@@ -278,7 +278,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithUnknownViewHelper.txt');
         $standaloneView->setLayoutRootPath(__DIR__ . '/Fixtures/SpecialLayouts');
 
-        $standaloneView->render();
+        $standaloneView->render()->getContents();
     }
 
     /**
@@ -294,7 +294,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setLayoutRootPath(__DIR__ . '/Fixtures/SpecialLayouts');
 
         $expected = '<foo:bar /><bar:foo></bar:foo><foo.bar:baz />foobar';
-        $actual = $standaloneView->render();
+        $actual = $standaloneView->render()->getContents();
         self::assertSame($expected, $actual);
     }
 
@@ -372,7 +372,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithFormField.txt');
 
         $expected = 'This is a test template.<input type="checkbox" name="checkbox-outside" value="1" />';
-        $actual = $standaloneView->render();
+        $actual = $standaloneView->render()->getContents();
         self::assertSame($expected, $actual);
     }
 }

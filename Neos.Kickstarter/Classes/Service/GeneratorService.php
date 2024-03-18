@@ -583,7 +583,7 @@ class GeneratorService
         $standaloneView = new StandaloneView();
         $standaloneView->setTemplatePathAndFilename($templatePathAndFilename);
         $standaloneView->assignMultiple($contextVariables);
-        return $standaloneView->render();
+        return $standaloneView->render()->getContents();
     }
 
     /**

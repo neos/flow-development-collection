@@ -201,45 +201,14 @@ class ActionControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestInjectsControllerContextToView()
-    {
-        $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod', 'initializeController']);
-        $this->actionController->method('resolveActionMethodName')->willReturn('indexAction');
-
-        $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
-        $this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
-        $this->inject($this->actionController, 'request', $this->mockRequest);
-
-        $this->inject($this->actionController, 'arguments', new Arguments([]));
-
-        $mockMvcPropertyMappingConfigurationService = $this->createMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class);
-        $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
-
-        $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($mockHttpRequest));
-
-        $mockResponse = new Mvc\ActionResponse;
-        $mockResponse->setContentType('text/plain');
-        $this->inject($this->actionController, 'response', $mockResponse);
-
-        $mockView = $this->createMock(Mvc\View\ViewInterface::class);
-        $mockView->expects(self::once())->method('setControllerContext')->with($this->mockControllerContext);
-        $this->actionController->expects(self::once())->method('resolveView')->will(self::returnValue($mockView));
-        $this->actionController->expects(self::once())->method('resolveActionMethodName')->will(self::returnValue('someAction'));
-
-        $this->actionController->processRequest($this->mockRequest, $mockResponse);
-    }
-
-    /**
-     * @test
-     */
-    public function processRequestInjectsSettingsToView()
+    public function processRequestInjectsSettingsAndRequestToView()
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod']);
         $this->actionController->method('resolveActionMethodName')->willReturn('indexAction');
 
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
         $this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
+        $this->inject($this->actionController, 'request', $this->mockRequest);
 
         $mockSettings = ['foo', 'bar'];
         $this->inject($this->actionController, 'settings', $mockSettings);
@@ -253,7 +222,7 @@ class ActionControllerTest extends UnitTestCase
         $mockResponse = new Mvc\ActionResponse;
 
         $mockView = $this->createMock(Mvc\View\ViewInterface::class);
-        $mockView->expects(self::once())->method('assign')->with('settings', $mockSettings);
+        $mockView->expects(self::exactly(2))->method('assign')->withConsecutive(['settings', $mockSettings], ['request', $this->mockRequest]);
         $this->actionController->expects(self::once())->method('resolveView')->will(self::returnValue($mockView));
         $this->actionController->expects(self::once())->method('resolveActionMethodName')->will(self::returnValue('someAction'));
 

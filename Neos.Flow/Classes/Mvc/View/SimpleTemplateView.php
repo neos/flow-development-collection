@@ -11,7 +11,9 @@ namespace Neos\Flow\Mvc\View;
  * source code.
  */
 
+use Neos\Http\Factories\StreamFactoryTrait;
 use Neos\Utility\ObjectAccess;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * An abstract View
@@ -20,6 +22,8 @@ use Neos\Utility\ObjectAccess;
  */
 class SimpleTemplateView extends AbstractView
 {
+    use StreamFactoryTrait;
+
     /**
      * @var array
      */
@@ -31,10 +35,9 @@ class SimpleTemplateView extends AbstractView
     /**
      * Renders the view
      *
-     * @return string The rendered view
      * @api
      */
-    public function render()
+    public function render(): StreamInterface
     {
         $source = $this->getOption('templateSource');
         $templatePathAndFilename = $this->getOption('templatePathAndFilename');
@@ -42,8 +45,10 @@ class SimpleTemplateView extends AbstractView
             $source = file_get_contents($templatePathAndFilename);
         }
 
-        return preg_replace_callback('/\{([a-zA-Z0-9\-_.]+)\}/', function ($matches) {
+        $content = preg_replace_callback('/\{([a-zA-Z0-9\-_.]+)\}/', function ($matches) {
             return ObjectAccess::getPropertyPath($this->variables, $matches[1]);
         }, $source);
+
+        return $this->createStream($content);
     }
 }

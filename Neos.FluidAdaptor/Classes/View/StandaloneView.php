@@ -65,9 +65,9 @@ class StandaloneView extends AbstractTemplateView
      * Factory method to create an instance with given options.
      *
      * @param array $options
-     * @return StandaloneView
+     * @return static
      */
-    public static function createWithOptions(array $options)
+    public static function createWithOptions(array $options): self
     {
         return new static(null, $options);
     }
