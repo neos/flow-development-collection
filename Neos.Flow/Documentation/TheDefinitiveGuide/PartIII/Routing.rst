@@ -729,9 +729,65 @@ two more options you can use:
 With ``suffix`` you can specify a custom filename suffix for the SubRoute. The ``variables`` option allows you to
 specify placeholders in the SubRoutes (see `Nested Subroutes`_).
 
+It also is possible to specify a `provider` and (optional) `providerOptions` to generate the subroutes via the
+`Neos\Flow\Mvc\Routing\RoutesProviderInterface` or the ``Neos\Flow\Mvc\Routing\RoutesProviderWithOptionsInterface`.
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      mvc:
+        routes:
+          Vendor.Example:
+            position: 'before Neos.Neos'
+            provider: \Neos\Flow\Mvc\Routing\RouteAnnotationRoutesProvider
+            providerOptions:
+              classNames:
+                - Vendor\Example\Controller\ExampleController
+
 .. tip::
 
 	You can use the ``flow:routing:list`` command to list all routes which are currently active, see `CLI`_
+
+Subroutes from Annotations
+--------------------------
+
+The ``Flow\Route`` attribute allows to define routes directly on the affected method.
+
+.. code-block:: php
+
+  use Neos\Flow\Mvc\Controller\ActionController;
+  use Neos\Flow\Annotations as Flow;
+
+  class ExampleController extends ActionController
+  {
+      #[Flow\Route(uriPattern:'my/path', httpMethods: ['get'])]
+      public function someAction(): void
+      {
+      }
+
+      #[Flow\Route(uriPattern:'my/other/b-path', defaults: ['test' => 'b'])]
+      #[Flow\Route(uriPattern:'my/other/c-path', defaults: ['test' => 'c'])]
+      public function otherAction(string $test): void
+      {
+      }
+  }
+
+To find the annotation and tp specify the order of routes this has to be used together with the
+`\Neos\Flow\Mvc\Routing\RouteAnnotationRoutesProvider` in Setting `Neos.Flow.mvs.routes`
+
+.. code-block:: yaml
+
+  Neos:
+    Flow:
+      mvc:
+        routes:
+          Vendor.Example:
+            position: 'before Neos.Neos'
+            provider: \Neos\Flow\Mvc\Routing\RouteAnnotationRoutesProvider
+            providerOptions:
+              classNames:
+                - Vendor\Example\Controller\ExampleController
 
 Route Loading Order and the Flow Application Context
 ====================================================
