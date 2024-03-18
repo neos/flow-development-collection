@@ -26,7 +26,7 @@ final class ConfigurationRoutesProvider implements RoutesProviderInterface
             if (isset($routeConfiguration['providerFactory'])) {
                 $providerFactory = $this->objectManager->get($routeConfiguration['providerFactory']);
                 if (!$providerFactory instanceof RoutesProviderFactoryInterface) {
-                    throw new \InvalidArgumentException(sprintf('The configured route providerFactory "%s" does not implement the "%s"', $routeConfiguration['provider'], RoutesProviderFactoryInterface::class), 1710784630);
+                    throw new \InvalidArgumentException(sprintf('The configured route providerFactory "%s" does not implement the "%s"', $routeConfiguration['providerFactory'], RoutesProviderFactoryInterface::class), 1710784630);
                 }
                 $provider = $providerFactory->createRoutesProvider($routeConfiguration['providerOptions'] ?? []);
                 foreach ($provider->getRoutes() as $route) {

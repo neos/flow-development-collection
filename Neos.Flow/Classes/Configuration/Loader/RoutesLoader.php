@@ -136,7 +136,7 @@ class RoutesLoader implements LoaderInterface
             }
             $mergedSubRoutesConfiguration = [$routeConfiguration];
             foreach ($routeConfiguration['subRoutes'] as $subRouteKey => $subRouteOptions) {
-                if (isset($subRouteOptions['provider'])) {
+                if (isset($subRouteOptions['providerFactory'])) {
                     $mergedRoutesConfiguration[] = $subRouteOptions;
                     continue;
                 }

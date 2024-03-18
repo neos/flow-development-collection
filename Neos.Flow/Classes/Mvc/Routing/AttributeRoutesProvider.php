@@ -29,7 +29,7 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
     public function __construct(
         public readonly ReflectionService $reflectionService,
         public readonly ObjectManagerInterface $objectManager,
-        public readonly array $classNames = [],
+        public readonly array $classNames,
     ) {
     }
 
