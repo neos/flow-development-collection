@@ -30,7 +30,7 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 final class Route
 {
     /**
-     * @param string $uriPattern The uri-pattern for the route without leading '/'
+     * @param string $uriPattern The uri-pattern for the route without leading '/'. Must not contain `{@action}` or `{@controller}`.
      * @param string|null $name (default null) The name ouf the route as it shows up in the route:list command
      * @param array $httpMethods (default []) List of http verbs like 'GET', 'POST', 'PUT', 'DELETE', if not specified 'any' is used
      * @param array $defaults (default []) Values to set for this route. Dan define arguments but also specify the `@format` if required.
@@ -41,5 +41,8 @@ final class Route
         public readonly array $httpMethods = [],
         public readonly array $defaults = [],
     ) {
+        if (str_contains($uriPattern, '{@controller}') || str_contains($uriPattern, '{@action}')) {
+            throw new \DomainException(sprintf('It is not allowed to override {@controller} or {@action} in route annotations "%s"', $uriPattern), 1711129634);
+        }
     }
 }
