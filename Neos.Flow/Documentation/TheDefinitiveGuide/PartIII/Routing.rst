@@ -761,7 +761,7 @@ The ``Flow\Route`` attribute allows to define routes directly on the affected me
 
   class ExampleController extends ActionController
   {
-      #[Flow\Route(uriPattern:'my/path', httpMethods: ['get'])]
+      #[Flow\Route(uriPattern:'my/path', httpMethods: ['GET'])]
       public function someAction(): void
       {
       }

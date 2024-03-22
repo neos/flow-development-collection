@@ -29,6 +29,12 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
 final class Route
 {
+    /**
+     * @param string $uriPattern The uri-pattern for the route without leading '/'
+     * @param string|null $name (default null) The name ouf the route as it shows up in the route:list command
+     * @param array $httpMethods (default []) List of http verbs like 'GET', 'POST', 'PUT', 'DELETE', if not specified 'any' is used
+     * @param array $defaults (default []) Values to set for this route. Dan define arguments but also specify the `@format` if required.
+     */
     public function __construct(
         public readonly string $uriPattern,
         public readonly ?string $name = null,
