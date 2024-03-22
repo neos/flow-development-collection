@@ -26,7 +26,7 @@ use Neos\Utility\Arrays;
  *
  * Implementation:
  *
- * Flows routing configuration is declared via \@package, \@subpackage, \@controller and \@action (as well as the format \@format)
+ * Flows routing configuration is declared via \@package, \@subpackage, \@controller and \@action
  * The first three options will resolve to a fully qualified class name {@see \Neos\Flow\Mvc\ActionRequest::getControllerObjectName()}
  * which is instantiated in the dispatcher {@see \Neos\Flow\Mvc\Dispatcher::dispatch()}
  *
@@ -34,7 +34,7 @@ use Neos\Utility\Arrays;
  * By convention and implementation of the default ActionController inside processRequest
  * {@see \Neos\Flow\Mvc\Controller\ActionController::callActionMethod()} will be used to concatenate the "Action" suffix
  * to the action name and invoke it internally with prepared method arguments.
- * The \@action is just another routing value while the doest not really know about "actions" from the "outside" (dispatcher).
+ * The \@action is just another routing value while the dispatcher does not really know about "actions" from the "outside".
  *
  * Creating routes by annotation must make a few assumptions to work.
  * As not every FQ class name is representable via the routing configuration (e.g. the class has to end with "Controller"),
@@ -119,7 +119,6 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
                                     '@subpackage' => $subPackage,
                                     '@controller' => $controller,
                                     '@action' => $action,
-                                    '@format' => 'html'
                                 ],
                                 $annotation->defaults ?? []
                             )

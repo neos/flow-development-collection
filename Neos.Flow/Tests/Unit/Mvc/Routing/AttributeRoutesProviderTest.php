@@ -97,7 +97,6 @@ class AttributeRoutesProviderTest extends UnitTestCase
             '@subpackage' => null,
             '@controller' => 'Example',
             '@action' => 'special',
-            '@format' => 'html'
         ]);
 
         $expectedRoute2 = new Route();
@@ -108,7 +107,6 @@ class AttributeRoutesProviderTest extends UnitTestCase
             '@subpackage' => null,
             '@controller' => 'Example',
             '@action' => 'special',
-            '@format' => 'html',
             'test' => 'foo'
         ]);
         $expectedRoute2->setHttpMethods(['get', 'post']);
