@@ -44,5 +44,8 @@ final class Route
         if (str_contains($uriPattern, '{@controller}') || str_contains($uriPattern, '{@action}')) {
             throw new \DomainException(sprintf('It is not allowed to override {@controller} or {@action} in route annotations "%s"', $uriPattern), 1711129634);
         }
+        if (in_array(array_keys($defaults), ['@package', '@subpackage', '@controller', '@action'])) {
+            throw new \DomainException(sprintf('It is not allowed to override @package, @controller, @subpackage and @action in route annotation defaults "%s"', $uriPattern), 1711129638);
+        }
     }
 }

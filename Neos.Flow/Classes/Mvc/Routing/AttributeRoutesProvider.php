@@ -108,11 +108,6 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
                     if ($annotation instanceof Flow\Route) {
                         $controller = substr($controllerName, 0, -10);
                         $action = substr($methodName, 0, -6);
-                        $defaults = array_filter(
-                            $annotation->defaults ?? [],
-                            fn($key) => !in_array($key, ['@package', '@subpackage', '@controller', '@action']),
-                            ARRAY_FILTER_USE_KEY
-                        );
                         $configuration = [
                             'name' => $controllerPackageKey . ' :: ' . $controller . ' :: ' . ($annotation->name ?: $action),
                             'uriPattern' => $annotation->uriPattern,
@@ -125,7 +120,7 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
                                     '@action' => $action,
                                     '@format' => 'html'
                                 ],
-                                $defaults
+                                $annotation->defaults ?? []
                             )
                         ];
                         $routes[] = Route::fromConfiguration($configuration);
