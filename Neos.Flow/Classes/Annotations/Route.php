@@ -32,8 +32,8 @@ final class Route
     public function __construct(
         public readonly string $uriPattern,
         public readonly ?string $name = null,
-        public readonly ?array $httpMethods = null,
-        public readonly ?array $defaults = null,
+        public readonly array $httpMethods = [],
+        public readonly array $defaults = [],
     ) {
     }
 }

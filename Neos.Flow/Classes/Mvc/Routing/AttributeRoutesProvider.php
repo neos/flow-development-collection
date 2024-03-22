@@ -21,6 +21,37 @@ use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 
+/**
+ * Allows to annotate controller methods with route configurations
+ *
+ * Implementation:
+ *
+ * Flows routing configuration is declared via \@package, \@subpackage, \@controller and \@action (as well as the format \@format)
+ * The first three options will resolve to a fully qualified class name {@see \Neos\Flow\Mvc\ActionRequest::getControllerObjectName()}
+ * which is instantiated in the dispatcher {@see \Neos\Flow\Mvc\Dispatcher::dispatch()}
+ *
+ * The latter \@action option will be treated internally by each controller.
+ * By convention and implementation of the default ActionController inside processRequest
+ * {@see \Neos\Flow\Mvc\Controller\ActionController::callActionMethod()} will be used to concatenate the "Action" suffix
+ * to the action name and invoke it internally with prepared method arguments.
+ * The \@action is just another routing value while the doest not really know about "actions" from the "outside" (dispatcher).
+ *
+ * Creating routes by annotation must make a few assumptions to work.
+ * As not every FQ class name is representable via the routing configuration (e.g. the class has to end with "Controller"),
+ * only classes can be annotated that reside in a correct location and have the correct suffix.
+ * Otherwise, an exception will be thrown as the class is not discoverable by the dispatcher.
+ *
+ * The routing annotation is placed at methods.
+ * It is validated that the annotated method ends with "Action" and a routing value with the suffix trimmed will be generated.
+ * Using the annotations on any controller makes the assumption that the controller will delegate the request to the dedicate
+ * action by depending "Action".
+ * This thesis is true for the ActionController.
+ *
+ * As discussed in https://discuss.neos.io/t/rfc-future-of-routing-mvc-in-flow/6535 we want to refactor the routing values
+ * to include the fully qualified controller name, so it can be easier generated without strong restrictions.
+ * Additionally, the action mapping should include its full name and be guaranteed to called.
+ * Either by invoking the action in the dispatcher or by documenting this feature as part of a implementation of a ControllerInterface
+ */
 final class AttributeRoutesProvider implements RoutesProviderInterface
 {
     /**
@@ -43,6 +74,7 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
             foreach ($this->classNames as $classNamePattern) {
                 if (fnmatch($classNamePattern, $className, FNM_NOESCAPE)) {
                     $includeClassName = true;
+                    break;
                 }
             }
             if (!$includeClassName) {
