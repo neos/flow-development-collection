@@ -38,7 +38,7 @@ class AttributeRoutesProviderTest extends UnitTestCase
         $this->annotationRoutesProvider = new Routing\AttributeRoutesProvider(
             $this->mockReflectionService,
             $this->mockObjectManager,
-            ['Vendor\Example\Controller\ExampleController']
+            ['Vendor\\Example\\Controller\\*']
         );
     }
 
@@ -61,19 +61,26 @@ class AttributeRoutesProviderTest extends UnitTestCase
      */
     public function routesFromAnnotationAreCreatedWhenClassNamesMatch(): void
     {
+        $exampleFqnControllerName = 'Vendor\\Example\\Controller\\ExampleController';
+        eval('
+        namespace Vendor\Example\Controller;
+        class ExampleController extends \Neos\Flow\Mvc\Controller\ActionController {
+        }'
+        );
+
         $this->mockReflectionService->expects($this->once())
             ->method('getClassesContainingMethodsAnnotatedWith')
             ->with(Flow\Route::class)
-            ->willReturn(['Vendor\Example\Controller\ExampleController']);
+            ->willReturn([$exampleFqnControllerName]);
 
         $this->mockReflectionService->expects($this->once())
             ->method('getMethodsAnnotatedWith')
-            ->with('Vendor\Example\Controller\ExampleController', Flow\Route::class)
+            ->with($exampleFqnControllerName, Flow\Route::class)
             ->willReturn(['specialAction']);
 
         $this->mockReflectionService->expects($this->once())
             ->method('getMethodAnnotations')
-            ->with('Vendor\Example\Controller\ExampleController', 'specialAction', Flow\Route::class)
+            ->with($exampleFqnControllerName, 'specialAction', Flow\Route::class)
             ->willReturn([
                 new Flow\Route(uriPattern: 'my/path'),
                 new Flow\Route(
@@ -86,12 +93,12 @@ class AttributeRoutesProviderTest extends UnitTestCase
 
         $this->mockObjectManager->expects($this->once())
             ->method('getCaseSensitiveObjectName')
-            ->with('Vendor\Example\Controller\ExampleController')
-            ->willReturn('Vendor\Example\Controller\ExampleController');
+            ->with($exampleFqnControllerName)
+            ->willReturn($exampleFqnControllerName);
 
         $this->mockObjectManager->expects($this->once())
             ->method('getPackageKeyByObjectName')
-            ->with('Vendor\Example\Controller\ExampleController')
+            ->with($exampleFqnControllerName)
             ->willReturn('Vendor.Example');
 
         $expectedRoute1 = new Route();

@@ -753,6 +753,7 @@ Subroutes from Annotations
 --------------------------
 
 The ``Flow\Route`` attribute allows to define routes directly on the affected method.
+(Currently only ActionController are supported https://github.com/neos/flow-development-collection/issues/3335)
 
 .. code-block:: php
 
@@ -774,7 +775,7 @@ The ``Flow\Route`` attribute allows to define routes directly on the affected me
   }
 
 To find the annotation and tp specify the order of routes this has to be used together with the
-`\Neos\Flow\Mvc\Routing\AttributeRoutesProviderFactory` as `providerFactory` in  Setting `Neos.Flow.mvs.routes`
+`\Neos\Flow\Mvc\Routing\AttributeRoutesProviderFactory` as `providerFactory` in  Setting `Neos.Flow.mvc.routes`
 
 .. code-block:: yaml
 
@@ -787,7 +788,7 @@ To find the annotation and tp specify the order of routes this has to be used to
             providerFactory: \Neos\Flow\Mvc\Routing\AttributeRoutesProviderFactory
             providerOptions:
               classNames:
-                - Vendor\Example\Controller\ExampleController
+                - Vendor\Example\Controller\*
 
 Route Loading Order and the Flow Application Context
 ====================================================

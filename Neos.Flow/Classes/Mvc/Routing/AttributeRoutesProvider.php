@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Mvc\Routing;
 
+use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\InvalidActionNameException;
 use Neos\Flow\Mvc\Routing\Exception\InvalidControllerException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -24,33 +25,43 @@ use Neos\Utility\Arrays;
 /**
  * Allows to annotate controller methods with route configurations
  *
- * Implementation:
+ * Internal implementation:
+ * -----------------------
  *
  * Flows routing configuration is declared via \@package, \@subpackage, \@controller and \@action
  * The first three options will resolve to a fully qualified class name {@see \Neos\Flow\Mvc\ActionRequest::getControllerObjectName()}
  * which is instantiated in the dispatcher {@see \Neos\Flow\Mvc\Dispatcher::dispatch()}
  *
- * The latter \@action option will be treated internally by each controller.
- * By convention and implementation of the default ActionController inside processRequest
- * {@see \Neos\Flow\Mvc\Controller\ActionController::callActionMethod()} will be used to concatenate the "Action" suffix
- * to the action name and invoke it internally with prepared method arguments.
- * The \@action is just another routing value while the dispatcher does not really know about "actions" from the "outside".
+ * The latter \@action option will be treated internally by each controller. From the perspective of the dispatcher \@action is just another routing value.
+ * By convention during processRequest in the default ActionController {@see \ActionController::resolveActionMethodName()} will be used
+ * to concatenate the "Action" suffix to the action name
+ * and {@see ActionController::callActionMethod()} will invoke the method internally with prepared method arguments.
  *
- * Creating routes by annotation must make a few assumptions to work.
- * As not every FQ class name is representable via the routing configuration (e.g. the class has to end with "Controller"),
+ * Creating routes by annotation must make a few assumptions to work:
+ *
+ * 1. As not every FQ class name is representable via the routing configuration (e.g. the class has to end with "Controller"),
  * only classes can be annotated that reside in a correct location and have the correct suffix.
  * Otherwise, an exception will be thrown as the class is not discoverable by the dispatcher.
  *
- * The routing annotation is placed at methods.
- * It is validated that the annotated method ends with "Action" and a routing value with the suffix trimmed will be generated.
- * Using the annotations on any controller makes the assumption that the controller will delegate the request to the dedicate
- * action by depending "Action".
- * This thesis is true for the ActionController.
+ * 2. As the ActionController requires a little magic and is the main use case we currently only support this controller.
+ * For that reason it is validated that the annotation is inside an ActionController and the method ends with "Action".
+ * The routing value with the suffix trimmed will be generated:
  *
- * As discussed in https://discuss.neos.io/t/rfc-future-of-routing-mvc-in-flow/6535 we want to refactor the routing values
- * to include the fully qualified controller name, so it can be easier generated without strong restrictions.
- * Additionally, the action mapping should include its full name and be guaranteed to called.
- * Either by invoking the action in the dispatcher or by documenting this feature as part of a implementation of a ControllerInterface
+ *     class MyThingController extends ActionController
+ *     {
+ *         #[Flow\Route(path: 'foo')]
+ *         public function someAction()
+ *         {
+ *         }
+ *     }
+ *
+ * The example will genrate the configuration:
+ *
+ *     \@package My.Package
+ *     \@controller MyThing
+ *     \@action some
+ *
+ * TODO for a future scope of `Flow\Action` see {@link https://github.com/neos/flow-development-collection/issues/3335}
  */
 final class AttributeRoutesProvider implements RoutesProviderInterface
 {
@@ -80,6 +91,11 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
             if (!$includeClassName) {
                 continue;
             }
+
+            if (!in_array(ActionController::class, class_parents($className), true)) {
+                throw new InvalidControllerException('TODO: Currently #[Flow\Route] is only supported for ActionController. See https://github.com/neos/flow-development-collection/issues/3335.');
+            }
+
             $controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($className);
             $controllerPackageKey = $this->objectManager->getPackageKeyByObjectName($controllerObjectName);
             $controllerPackageNamespace = str_replace('.', '\\', $controllerPackageKey);
