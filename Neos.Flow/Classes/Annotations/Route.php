@@ -27,7 +27,7 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @Target({"METHOD"})
  */
 #[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-final class Route
+final readonly class Route
 {
     /**
      * Magic route values cannot be set as default nor be contained as segments like `{\@action}` or `{\@controller}` in the uriPattern.
@@ -36,16 +36,16 @@ final class Route
     private const PRESERVED_DEFAULTS = ['@package', '@subpackage', '@controller', '@action'];
 
     /**
-     * @param string $uriPattern The uri-pattern for the route without leading '/'.
-     * @param string $name (default null) The name ouf the route as it shows up in the route:list command
-     * @param array $httpMethods (default []) List of http verbs like 'GET', 'POST', 'PUT', 'DELETE', if not specified any will be matched
-     * @param array $defaults (default []) Values to set for this route.
+     * @param string $uriPattern The uri-pattern for the route without leading '/'. Might contain route values in the form of `path/{foo}`
+     * @param string $name The suffix of the route name as shown in `route:list` (defaults to the action name: "My.Package :: Site :: index")
+     * @param array $httpMethods List of uppercase http verbs like 'GET', 'POST', 'PUT', 'DELETE', if not specified any request method will be matched
+     * @param array $defaults Values to set for this route
      */
     public function __construct(
-        public readonly string $uriPattern,
-        public readonly string $name = '',
-        public readonly array $httpMethods = [],
-        public readonly array $defaults = [],
+        public string $uriPattern,
+        public string $name = '',
+        public array $httpMethods = [],
+        public array $defaults = [],
     ) {
         if ($uriPattern === '' || str_starts_with($uriPattern, '/')) {
             throw new \DomainException(sprintf('Uri pattern must not be empty or begin with a slash: "%s"', $uriPattern), 1711529592);
