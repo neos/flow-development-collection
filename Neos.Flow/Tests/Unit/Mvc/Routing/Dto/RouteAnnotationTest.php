@@ -38,19 +38,6 @@ class RouteAnnotationTest extends TestCase
     /**
      * @test
      */
-    public function httpMethodIsUpperCase()
-    {
-        /** @see \Neos\Flow\Mvc\Routing\Route::matches() where we do case-sensitive comparison */
-        $route = new Flow\Route(
-            uriPattern: 'my/other/path',
-            httpMethods: ['post']
-        );
-        self::assertSame(['POST'], $route->httpMethods);
-    }
-
-    /**
-     * @test
-     */
     public function preservedDefaults()
     {
         $this->expectExceptionCode(1711129638);
@@ -83,7 +70,7 @@ class RouteAnnotationTest extends TestCase
      */
     public function uriPatternMustNotBeEmpty()
     {
-        $this->expectExceptionCode(1711529595);
+        $this->expectExceptionCode(1711529592);
 
         new Flow\Route(uriPattern: '');
     }
@@ -96,5 +83,19 @@ class RouteAnnotationTest extends TestCase
         $this->expectExceptionCode(1711530485);
 
         new Flow\Route(uriPattern: 'foo', httpMethods: ['']);
+    }
+
+    /**
+     * @test
+     */
+    public function httpMethodMustBeUpperCase()
+    {
+        $this->expectExceptionCode(1711530485);
+
+        /** @see \Neos\Flow\Mvc\Routing\Route::matches() where we do case-sensitive comparison against uppercase */
+        new Flow\Route(
+            uriPattern: 'my/other/path',
+            httpMethods: ['post']
+        );
     }
 }

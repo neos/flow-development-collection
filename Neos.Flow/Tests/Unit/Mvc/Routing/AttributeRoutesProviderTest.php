@@ -76,7 +76,12 @@ class AttributeRoutesProviderTest extends UnitTestCase
             ->with('Vendor\Example\Controller\ExampleController', 'specialAction', Flow\Route::class)
             ->willReturn([
                 new Flow\Route(uriPattern: 'my/path'),
-                new Flow\Route(uriPattern: 'my/other/path', name: 'specialRoute', defaults: ['test' => 'foo'], httpMethods: ['get', 'post'])
+                new Flow\Route(
+                    uriPattern: 'my/other/path',
+                    name: 'specialRoute',
+                    httpMethods: ['GET', 'POST'],
+                    defaults: ['test' => 'foo']
+                )
             ]);
 
         $this->mockObjectManager->expects($this->once())
@@ -111,7 +116,7 @@ class AttributeRoutesProviderTest extends UnitTestCase
             '@format' => 'html',
             'test' => 'foo',
         ]);
-        $expectedRoute2->setHttpMethods(['get', 'post']);
+        $expectedRoute2->setHttpMethods(['GET', 'POST']);
 
         $this->assertEquals(
             Routes::create($expectedRoute1, $expectedRoute2),

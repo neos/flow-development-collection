@@ -30,22 +30,38 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 final class Route
 {
     /**
-     * @param string $uriPattern The uri-pattern for the route without leading '/'. Must not contain `{@action}` or `{@controller}`.
-     * @param string|null $name (default null) The name ouf the route as it shows up in the route:list command
-     * @param array $httpMethods (default []) List of http verbs like 'GET', 'POST', 'PUT', 'DELETE', if not specified 'any' is used
-     * @param array $defaults (default []) Values to set for this route. Dan define arguments but also specify the `@format` if required.
+     * Magic route values cannot be set as default nor be contained as segments like `{\@action}` or `{\@controller}` in the uriPattern.
+     * The magic route value `\@format` is allowed if necessary.
+     */
+    private const PRESERVED_DEFAULTS = ['@package', '@subpackage', '@controller', '@action'];
+
+    /**
+     * @param string $uriPattern The uri-pattern for the route without leading '/'.
+     * @param string $name (default null) The name ouf the route as it shows up in the route:list command
+     * @param array $httpMethods (default []) List of http verbs like 'GET', 'POST', 'PUT', 'DELETE', if not specified any will be matched
+     * @param array $defaults (default []) Values to set for this route.
      */
     public function __construct(
         public readonly string $uriPattern,
-        public readonly ?string $name = null,
+        public readonly string $name = '',
         public readonly array $httpMethods = [],
         public readonly array $defaults = [],
     ) {
-        if (str_contains($uriPattern, '{@controller}') || str_contains($uriPattern, '{@action}')) {
-            throw new \DomainException(sprintf('It is not allowed to override {@controller} or {@action} in route annotations "%s"', $uriPattern), 1711129634);
+        if ($uriPattern === '' || str_starts_with($uriPattern, '/')) {
+            throw new \DomainException(sprintf('Uri pattern must not be empty or begin with a slash: "%s"', $uriPattern), 1711529592);
         }
-        if (in_array(array_keys($defaults), ['@package', '@subpackage', '@controller', '@action'])) {
-            throw new \DomainException(sprintf('It is not allowed to override @package, @controller, @subpackage and @action in route annotation defaults "%s"', $uriPattern), 1711129638);
+        foreach ($httpMethods as $httpMethod) {
+            if ($httpMethod === '' || ctype_lower($httpMethod)) {
+                throw new \DomainException(sprintf('Http method must not be empty or be lower case: "%s"', $httpMethod), 1711530485);
+            }
+        }
+        foreach (self::PRESERVED_DEFAULTS as $preservedDefaultName) {
+            if (str_contains($uriPattern, sprintf('{%s}', $preservedDefaultName))) {
+                throw new \DomainException(sprintf('It is not allowed to use "%s" in the uri pattern "%s"', $preservedDefaultName, $uriPattern), 1711129634);
+            }
+            if (array_key_exists($preservedDefaultName, $defaults)) {
+                throw new \DomainException(sprintf('It is not allowed to override "%s" as default', $preservedDefaultName), 1711129638);
+            }
         }
     }
 }
