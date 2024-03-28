@@ -7,6 +7,21 @@ namespace Neos\Flow\Package;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Composer\ComposerUtility;
 
+/**
+ * (Legacy) Flow representation of a package key.
+ *
+ * With the rise of composer each package _has_ a key like "vendor/foo-bar".
+ * But before the adaption Flow already established the package keys like "Vendor.Foo.Bar",
+ * which is represented and validated by this value object.
+ *
+ * The Flow package keys are currently inferred from the composer manifest {@see FlowPackageKey::getPackageKeyFromManifest()},
+ * and can also be tried to be reverse calculated: {@see FlowPackageKey::guessComposerPackageName()}
+ *
+ * The idea around the Flow package key is obsolete since composer and will eventually be replaced.
+ * Still major parts of Flow depend on the concept.
+ *
+ * @internal Only meant to be used inside the Flow core until replaced by composer keys.
+ */
 final readonly class FlowPackageKey implements \JsonSerializable
 {
     public const PATTERN = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i';
