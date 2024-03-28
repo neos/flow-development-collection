@@ -738,7 +738,7 @@ It also is possible to specify a `providerFactory` and (optional) `providerOptio
     Flow:
       mvc:
         routes:
-          Vendor.Example:
+          Vendor.Example.attributes:
             position: 'before Neos.Neos'
             providerFactory: \Neos\Flow\Mvc\Routing\AttributeRoutesProviderFactory
             providerOptions:
@@ -783,7 +783,7 @@ To find the annotation and tp specify the order of routes this has to be used to
     Flow:
       mvc:
         routes:
-          Vendor.Example:
+          Vendor.Example.attributes:
             position: 'before Neos.Neos'
             providerFactory: \Neos\Flow\Mvc\Routing\AttributeRoutesProviderFactory
             providerOptions:
