@@ -42,31 +42,6 @@ final class UriHelper
     ];
 
     /**
-     * Get the username component of the given Uri
-     *
-     * @param UriInterface $uri
-     * @return string If the URI had no username an empty string is returned.
-     */
-    public static function getUsername(UriInterface $uri): string
-    {
-        $userInfo = explode(':', $uri->getUserInfo());
-        return (isset($userInfo[0]) ? $userInfo[0] : '');
-    }
-
-    /**
-     * Get the password component of the given Uri
-     *
-     * @param UriInterface $uri
-     * @return string If the URI had no password an empty string is returned.
-     */
-    public static function getPassword(UriInterface $uri): string
-    {
-        $userInfo = explode(':', $uri->getUserInfo());
-
-        return (isset($userInfo[1]) ? $userInfo[1] : '');
-    }
-
-    /**
      * Returns the path relative to the $baseUri
      *
      * @param UriInterface $baseUri The base URI to start from
