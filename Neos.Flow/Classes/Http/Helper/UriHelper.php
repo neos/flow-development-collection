@@ -112,12 +112,12 @@ final class UriHelper
     }
 
     /**
-     * Merges recursively into the current {@see UriInterface::getQuery} these additional query parameters.
+     * Merges the additional query parameters recursively into the current query parameters.
      *
      * @param array $queryParameters
-     * @return UriInterface A new instance with the additional query.
+     * @return UriInterface A new instance with the additional query parameters.
      */
-    public static function withAdditionalQueryParameters(UriInterface $uri, array $queryParameters): UriInterface
+    public static function uriWithAdditionalQueryParameters(UriInterface $uri, array $queryParameters): UriInterface
     {
         if ($queryParameters === []) {
             return $uri;

@@ -224,7 +224,7 @@ final class UriConstraints
             $temporaryUriWithQuery = $temporaryUriWithQuery->withQuery($this->constraints[self::CONSTRAINT_QUERY_STRING]);
         }
         // temporary, otherwise empty, uri to satisfy and reuse helper
-        $temporaryUriWithQuery = UriHelper::withAdditionalQueryParameters($temporaryUriWithQuery, $values);
+        $temporaryUriWithQuery = UriHelper::uriWithAdditionalQueryParameters($temporaryUriWithQuery, $values);
         $newConstraints[self::CONSTRAINT_QUERY_STRING] = $temporaryUriWithQuery->getQuery();
         return new static($newConstraints);
     }

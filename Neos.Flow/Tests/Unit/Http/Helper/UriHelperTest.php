@@ -22,7 +22,7 @@ class UriHelperTest extends UnitTestCase
     {
         self::assertEquals(
             new Uri('http://localhost/index?param1=foo&param2[0]=bar'),
-            UriHelper::withAdditionalQueryParameters(new Uri('http://localhost/index?param1=foo&param2[0]=bar'), [])
+            UriHelper::uriWithAdditionalQueryParameters(new Uri('http://localhost/index?param1=foo&param2[0]=bar'), [])
         );
     }
 
@@ -31,7 +31,7 @@ class UriHelperTest extends UnitTestCase
     {
         self::assertEquals(
             new Uri('http://localhost/index?param=123'),
-            UriHelper::withAdditionalQueryParameters(new Uri('http://localhost/index'), ['param' => 123])
+            UriHelper::uriWithAdditionalQueryParameters(new Uri('http://localhost/index'), ['param' => 123])
         );
     }
 
@@ -40,7 +40,7 @@ class UriHelperTest extends UnitTestCase
     {
         self::assertEquals(
             new Uri('http://localhost/index?param1=foo&param2[a]=bar&param2[b]=huhu&param3=123'),
-            UriHelper::withAdditionalQueryParameters(
+            UriHelper::uriWithAdditionalQueryParameters(
                 new Uri('http://localhost/index?param1=foo&param2[a]=bar'),
                 [
                     'param2' => [
@@ -49,6 +49,15 @@ class UriHelperTest extends UnitTestCase
                     'param3' => 123,
                 ]
             )
+        );
+    }
+
+    /** @test */
+    public function additionalQueryParametersAreEncoded()
+    {
+        self::assertEquals(
+            new Uri('http://localhost/index?param=with+space&second=sp%C3%A4cial-chars%26stuff%3A'),
+            UriHelper::uriWithAdditionalQueryParameters(new Uri('http://localhost/index'), ['param' => 'with space', 'second' => 'späcial-chars&stuff:'])
         );
     }
 }
