@@ -25,7 +25,7 @@ final class UriHelper
     }
 
     /**
-     * @var array
+     * @var array<string, int>
      */
     private static $defaultPortsByScheme = [
         'http' => 80,
@@ -45,14 +45,14 @@ final class UriHelper
      * Returns the path relative to the $baseUri
      *
      * @param UriInterface $baseUri The base URI to start from
-     * @param UriInterface $uri The URI in quesiton
+     * @param UriInterface $uri The URI in question
      * @return string
      */
     public static function getRelativePath(UriInterface $baseUri, UriInterface $uri): string
     {
         $baseUriString = (string)$baseUri;
         $uriString = (string)$uri;
-        if (empty($baseUriString) || strpos($uriString, $baseUriString) !== 0) {
+        if (empty($baseUriString) || !str_starts_with($uriString, $baseUriString)) {
             return '';
         }
 
@@ -63,7 +63,7 @@ final class UriHelper
     /**
      * Sets and replaces the query parameters.
      *
-     * @param array $queryParameters
+     * @param array<string, mixed> $queryParameters
      * @return UriInterface A new instance with the replaced query parameters.
      */
     public static function uriWithQueryParameters(UriInterface $uri, array $queryParameters): UriInterface
@@ -75,7 +75,7 @@ final class UriHelper
     /**
      * Merges the additional query parameters recursively into the current query parameters.
      *
-     * @param array $queryParameters
+     * @param array<string, mixed> $queryParameters
      * @return UriInterface A new instance with the additional query parameters.
      */
     public static function uriWithAdditionalQueryParameters(UriInterface $uri, array $queryParameters): UriInterface

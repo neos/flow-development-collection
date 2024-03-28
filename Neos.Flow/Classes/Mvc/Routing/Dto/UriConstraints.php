@@ -14,7 +14,6 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Helper\UriHelper;
-use Neos\Utility\Arrays;
 use Psr\Http\Message\UriInterface;
 
 /**
