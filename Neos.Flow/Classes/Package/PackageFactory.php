@@ -40,13 +40,10 @@ class PackageFactory
             $packageClassInformation = $this->detectFlowPackageFilePath($packageKey, $absolutePackagePath);
         }
 
-        $packageClassName = Package::class;
-        if (!empty($packageClassInformation)) {
-            $packageClassName = $packageClassInformation['className'];
-            $packageClassPath = !empty($packageClassInformation['pathAndFilename']) ? Files::concatenatePaths([$absolutePackagePath, $packageClassInformation['pathAndFilename']]) : null;
-        }
+        $packageClassName = $packageClassInformation['className'];
 
-        if (!empty($packageClassPath)) {
+        if (!empty($packageClassInformation['pathAndFilename'])) {
+            $packageClassPath = Files::concatenatePaths([$absolutePackagePath, $packageClassInformation['pathAndFilename']]);
             require_once($packageClassPath);
         }
 
@@ -54,6 +51,9 @@ class PackageFactory
         $package = new $packageClassName($packageKey->value, $composerName, $absolutePackagePath, $autoloadConfiguration);
         if (!$package instanceof PackageInterface) {
             throw new Exception\CorruptPackageException(sprintf('The package class of package "%s" does not implement \Neos\Flow\Package\PackageInterface. Check the file "%s".', $packageKey->value, $packageClassInformation['pathAndFilename']), 1427193370);
+        }
+        if (!$package instanceof PackageKeyAwareInterface) {
+            throw new Exception\CorruptPackageException(sprintf('The package class of package "%s" does not implement \Neos\Flow\Package\PackageKeyAwareInterface. Check the file "%s".', $packageKey->value, $packageClassInformation['pathAndFilename']), 1711665156);
         }
         return $package;
     }
