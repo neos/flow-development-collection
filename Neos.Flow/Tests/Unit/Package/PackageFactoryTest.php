@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Package;
 
 use Neos\Flow\Package\Exception\CorruptPackageException;
 use Neos\Flow\Package\Exception\InvalidPackagePathException;
+use Neos\Flow\Package\FlowPackageKey;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Package\Package;
@@ -54,7 +55,7 @@ class PackageFactoryTest extends UnitTestCase
     public function createThrowsExceptionWhenSpecifyingANonExistingPackagePath()
     {
         $this->expectException(InvalidPackagePathException::class);
-        $this->packageFactory->create('vfs://Packages/', 'Some/Non/Existing/Path/Some.Package/', 'Some.Package', 'some/package');
+        $this->packageFactory->create('vfs://Packages/', 'Some/Non/Existing/Path/Some.Package/', FlowPackageKey::fromString('Some.Package'), 'some/package');
     }
 
     /**
@@ -69,7 +70,7 @@ class PackageFactoryTest extends UnitTestCase
         file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "neos-test", "autoload": { "psr-0": { "Foo": "bar" }}}');
         file_put_contents($packageFilePath, '<?php // no class');
 
-        $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package');
+        $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', FlowPackageKey::fromString('Some.Package'), 'some/package');
     }
 
     /**
@@ -86,7 +87,7 @@ class PackageFactoryTest extends UnitTestCase
 
         require($packageFilePath);
 
-        $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package');
+        $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', FlowPackageKey::fromString('Some.Package'), 'some/package');
     }
 
     /**
@@ -102,7 +103,7 @@ class PackageFactoryTest extends UnitTestCase
 
         require($packageFilePath);
 
-        $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package');
+        $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', FlowPackageKey::fromString('Some.Package'), 'some/package');
         self::assertSame('Neos\Flow\Fixtures\CustomPackage2', get_class($package));
     }
 
@@ -121,7 +122,7 @@ class PackageFactoryTest extends UnitTestCase
 
         require($packageFilePath);
 
-        $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package', $composerManifest['autoload']);
+        $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', FlowPackageKey::fromString('Some.Package'), 'some/package', $composerManifest['autoload']);
         self::assertSame('Neos\Flow\Fixtures\CustomPackage3', get_class($package));
     }
 
@@ -134,7 +135,7 @@ class PackageFactoryTest extends UnitTestCase
         mkdir($packagePath, 0777, true);
         file_put_contents($packagePath . 'composer.json', '{"name": "some/package", "type": "neos-test"}');
 
-        $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', 'Some.Package', 'some/package');
+        $package = $this->packageFactory->create('vfs://Packages/', 'Some/Path/Some.Package/', FlowPackageKey::fromString('Some.Package'), 'some/package');
         self::assertSame(Package::class, get_class($package));
     }
 }

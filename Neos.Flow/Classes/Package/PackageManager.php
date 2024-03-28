@@ -595,7 +595,7 @@ class PackageManager
             $packageKey = FlowPackageKey::getPackageKeyFromManifest($composerManifest, $packagePath);
             $this->composerNameToPackageKeyMap[strtolower($composerManifest['name'])] = $packageKey->value;
 
-            $packageConfiguration = $this->preparePackageStateConfiguration($packageKey->value, $packagePath, $composerManifest);
+            $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest);
             if (isset($newPackageStatesConfiguration['packages'][$composerManifest['name']])) {
                 throw new PackageException(
                     sprintf(
@@ -640,19 +640,15 @@ class PackageManager
     }
 
     /**
-     * @param string $packageKey
-     * @param string $packagePath
-     * @param array $composerManifest
-     * @return array
      * @throws Exception\CorruptPackageException
      * @throws Exception\InvalidPackagePathException
      */
-    protected function preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest): array
+    protected function preparePackageStateConfiguration(FlowPackageKey $packageKey, string $packagePath, array $composerManifest): array
     {
         $autoload = $composerManifest['autoload'] ?? [];
 
         return [
-            'packageKey' => $packageKey,
+            'packageKey' => $packageKey->value,
             'packagePath' => str_replace($this->packagesBasePath, '', $packagePath),
             'composerName' => $composerManifest['name'],
             'autoloadConfiguration' => $autoload,
@@ -687,7 +683,7 @@ class PackageManager
     {
         $packagePath = $packageStateConfiguration['packagePath'] ?? null;
         $packageClassInformation = $packageStateConfiguration['packageClassInformation'] ?? null;
-        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageStateConfiguration['packageKey'], $composerName, $packageStateConfiguration['autoloadConfiguration'], $packageClassInformation);
+        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, FlowPackageKey::fromString($packageStateConfiguration['packageKey']), $composerName, $packageStateConfiguration['autoloadConfiguration'], $packageClassInformation);
         $this->packageKeys[strtolower($package->getPackageKey())] = $package->getPackageKey();
         $this->packages[$package->getPackageKey()] = $package;
     }
