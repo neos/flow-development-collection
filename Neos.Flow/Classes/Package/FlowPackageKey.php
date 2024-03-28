@@ -47,15 +47,13 @@ final readonly class FlowPackageKey implements \JsonSerializable
      * case version of the composer name / namespace will be used, with backslashes replaced by dots.
      *
      * Else the composer name will be used with the slash replaced by a dot
-     *
-     * @param array $manifest
-     * @param string $packagePath
-     * @return string
      */
-    protected function getPackageKeyFromManifest(array $manifest, $packagePath): string
+    public static function getPackageKeyFromManifest(array $manifest, string $packagePath): self
     {
-        if (isset($manifest['extra']['neos']['package-key']) && $this->isPackageKeyValid($manifest['extra']['neos']['package-key'])) {
-            return $manifest['extra']['neos']['package-key'];
+        $definedFlowPackageKey = $manifest['extra']['neos']['package-key'] ?? null;
+
+        if ($definedFlowPackageKey && self::isPackageKeyValid($definedFlowPackageKey)) {
+            return new self($definedFlowPackageKey);
         }
 
         $composerName = $manifest['name'];
@@ -70,7 +68,7 @@ final readonly class FlowPackageKey implements \JsonSerializable
             $type = $manifest['type'];
         }
 
-        return $this->derivePackageKey($composerName, $type, $packagePath, $autoloadNamespace);
+        return self::derivePackageKey($composerName, $type, $packagePath, $autoloadNamespace);
     }
 
     /**
@@ -80,14 +78,8 @@ final readonly class FlowPackageKey implements \JsonSerializable
      * - package install path
      * - first found autoload namespace
      * - composer name
-     *
-     * @param string $composerName
-     * @param string $packageType
-     * @param string $packagePath
-     * @param string $autoloadNamespace
-     * @return string
      */
-    protected function derivePackageKey(string $composerName, string $packageType = null, string $packagePath = '', string $autoloadNamespace = null): string
+    private static function derivePackageKey(string $composerName, string $packageType = null, string $packagePath = '', string $autoloadNamespace = null): self
     {
         $packageKey = '';
 
@@ -98,18 +90,18 @@ final readonly class FlowPackageKey implements \JsonSerializable
             }
         }
 
-        if ($autoloadNamespace !== null && ($packageKey === null || $this->isPackageKeyValid($packageKey) === false)) {
+        if ($autoloadNamespace !== null && ($packageKey === null || self::isPackageKeyValid($packageKey) === false)) {
             $packageKey = str_replace('\\', '.', $autoloadNamespace);
         }
 
-        if ($packageKey === null || $this->isPackageKeyValid($packageKey) === false) {
+        if ($packageKey === null || self::isPackageKeyValid($packageKey) === false) {
             $packageKey = str_replace('/', '.', $composerName);
         }
 
         $packageKey = trim($packageKey, '.');
         $packageKey = preg_replace('/[^A-Za-z0-9.]/', '', $packageKey);
 
-        return $packageKey;
+        return new self($packageKey);
     }
 
     public function jsonSerialize(): string

@@ -592,10 +592,10 @@ class PackageManager
                 continue;
             }
 
-            $packageKey = $this->getPackageKeyFromManifest($composerManifest, $packagePath);
-            $this->composerNameToPackageKeyMap[strtolower($composerManifest['name'])] = $packageKey;
+            $packageKey = FlowPackageKey::getPackageKeyFromManifest($composerManifest, $packagePath);
+            $this->composerNameToPackageKeyMap[strtolower($composerManifest['name'])] = $packageKey->value;
 
-            $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest);
+            $packageConfiguration = $this->preparePackageStateConfiguration($packageKey->value, $packagePath, $composerManifest);
             if (isset($newPackageStatesConfiguration['packages'][$composerManifest['name']])) {
                 throw new PackageException(
                     sprintf(
