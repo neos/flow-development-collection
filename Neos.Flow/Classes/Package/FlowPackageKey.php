@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\Flow\Package;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Composer\ComposerUtility;
 
 final readonly class FlowPackageKey implements \JsonSerializable
 {
@@ -35,6 +36,80 @@ final readonly class FlowPackageKey implements \JsonSerializable
     public static function isPackageKeyValid(string $string): bool
     {
         return preg_match(self::PATTERN, $string) === 1;
+    }
+
+    /**
+     * Resolves package key from Composer manifest
+     *
+     * If it is a Flow package the name of the containing directory will be used.
+     *
+     * Else if the composer name of the package matches the first part of the lowercased namespace of the package, the mixed
+     * case version of the composer name / namespace will be used, with backslashes replaced by dots.
+     *
+     * Else the composer name will be used with the slash replaced by a dot
+     *
+     * @param array $manifest
+     * @param string $packagePath
+     * @return string
+     */
+    protected function getPackageKeyFromManifest(array $manifest, $packagePath): string
+    {
+        if (isset($manifest['extra']['neos']['package-key']) && $this->isPackageKeyValid($manifest['extra']['neos']['package-key'])) {
+            return $manifest['extra']['neos']['package-key'];
+        }
+
+        $composerName = $manifest['name'];
+        $autoloadNamespace = null;
+        $type = null;
+        if (isset($manifest['autoload']['psr-0']) && is_array($manifest['autoload']['psr-0'])) {
+            $namespaces = array_keys($manifest['autoload']['psr-0']);
+            $autoloadNamespace = reset($namespaces);
+        }
+
+        if (isset($manifest['type'])) {
+            $type = $manifest['type'];
+        }
+
+        return $this->derivePackageKey($composerName, $type, $packagePath, $autoloadNamespace);
+    }
+
+    /**
+     * Derive a flow package key from the given information.
+     * The order of importance is:
+     *
+     * - package install path
+     * - first found autoload namespace
+     * - composer name
+     *
+     * @param string $composerName
+     * @param string $packageType
+     * @param string $packagePath
+     * @param string $autoloadNamespace
+     * @return string
+     */
+    protected function derivePackageKey(string $composerName, string $packageType = null, string $packagePath = '', string $autoloadNamespace = null): string
+    {
+        $packageKey = '';
+
+        if ($packageType !== null && ComposerUtility::isFlowPackageType($packageType)) {
+            $lastSegmentOfPackagePath = substr(trim($packagePath, '/'), strrpos(trim($packagePath, '/'), '/') + 1);
+            if (strpos($lastSegmentOfPackagePath, '.') !== false) {
+                $packageKey = $lastSegmentOfPackagePath;
+            }
+        }
+
+        if ($autoloadNamespace !== null && ($packageKey === null || $this->isPackageKeyValid($packageKey) === false)) {
+            $packageKey = str_replace('\\', '.', $autoloadNamespace);
+        }
+
+        if ($packageKey === null || $this->isPackageKeyValid($packageKey) === false) {
+            $packageKey = str_replace('/', '.', $composerName);
+        }
+
+        $packageKey = trim($packageKey, '.');
+        $packageKey = preg_replace('/[^A-Za-z0-9.]/', '', $packageKey);
+
+        return $packageKey;
     }
 
     public function jsonSerialize(): string
