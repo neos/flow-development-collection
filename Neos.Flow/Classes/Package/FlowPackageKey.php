@@ -18,7 +18,7 @@ final readonly class FlowPackageKey implements \JsonSerializable
         public string $value
     ) {
         if (!self::isPackageKeyValid($value)) {
-            throw new \InvalidArgumentException(sprintf('Not a valid Flow package key: "%s"', $value), 1711659821);
+            throw new Exception\InvalidPackageKeyException('The package key "' . $value . '" is invalid', 1220722210);
         }
     }
 

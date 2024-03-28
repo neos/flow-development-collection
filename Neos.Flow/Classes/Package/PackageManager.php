@@ -68,7 +68,7 @@ class PackageManager
     /**
      * A translation table between lower cased and upper camel cased package keys
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $packageKeys = [];
 
@@ -175,11 +175,11 @@ class PackageManager
      * Returns true if a package is available (the package's files exist in the packages directory)
      * or false if it's not.
      *
-     * @param string $packageKey The key of the package to check
+     * @param string|FlowPackageKey $packageKey The key of the package to check
      * @return boolean true if the package is available, otherwise false
      * @api
      */
-    public function isPackageAvailable($packageKey): bool
+    public function isPackageAvailable(string|FlowPackageKey $packageKey): bool
     {
         return ($this->getCaseSensitivePackageKey($packageKey) !== false);
     }
@@ -197,15 +197,16 @@ class PackageManager
     /**
      * Returns a PackageInterface object for the specified package.
      *
-     * @param string $packageKey
+     * @param string|FlowPackageKey $packageKey
      * @return PackageInterface The requested package object
      * @throws Exception\UnknownPackageException if the specified package is not known
      * @api
      */
-    public function getPackage($packageKey): PackageInterface
+    public function getPackage(string|FlowPackageKey $packageKey): PackageInterface
     {
         if (!$this->isPackageAvailable($packageKey)) {
-            throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available. Please check if the package exists and that the package key is correct (package keys are case sensitive).', 1166546734);
+            $packageKeyString = $packageKey instanceof FlowPackageKey ? $packageKey->value : $packageKey;
+            throw new Exception\UnknownPackageException('Package "' . $packageKeyString . '" is not available. Please check if the package exists and that the package key is correct (package keys are case sensitive).', 1166546734);
         }
 
         return $this->packages[$this->getCaseSensitivePackageKey($packageKey)];
@@ -314,13 +315,13 @@ class PackageManager
      * @throws InvalidConfigurationException
      * @api
      */
-    public function createPackage($packageKey, array $manifest = [], $packagesPath = null): PackageInterface
+    public function createPackage(string|FlowPackageKey $packageKey, array $manifest = [], $packagesPath = null): PackageInterface
     {
-        if (!$this->isPackageKeyValid($packageKey)) {
-            throw new Exception\InvalidPackageKeyException('The package key "' . $packageKey . '" is invalid', 1220722210);
+        if (!$packageKey instanceof FlowPackageKey) {
+            $packageKey = FlowPackageKey::fromString($packageKey);
         }
         if ($this->isPackageAvailable($packageKey)) {
-            throw new Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey . '" already exists', 1220722873);
+            throw new Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey->value . '" already exists', 1220722873);
         }
         if (!isset($manifest['type'])) {
             $manifest['type'] = PackageInterface::DEFAULT_COMPOSER_TYPE;
@@ -352,7 +353,7 @@ class PackageManager
             $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([$this->packagesBasePath, $packagesPath]));
         }
 
-        $packagePath = Files::concatenatePaths([$packagesPath, $packageKey]) . '/';
+        $packagePath = Files::concatenatePaths([$packagesPath, $packageKey->value]) . '/';
         Files::createDirectoryRecursively($packagePath);
 
         foreach (
@@ -388,9 +389,9 @@ class PackageManager
         $refreshedPackageStatesConfiguration = $this->rescanPackages();
         $this->packageStatesConfiguration = $refreshedPackageStatesConfiguration;
         $this->registerPackageFromStateConfiguration($manifest['name'], $this->packageStatesConfiguration['packages'][$manifest['name']]);
-        $package = $this->packages[$packageKey];
+        $package = $this->packages[$packageKey->value];
         if ($package instanceof FlowPackageInterface) {
-            $this->flowPackages[$packageKey] = $package;
+            $this->flowPackages[$packageKey->value] = $package;
         }
 
         return $package;
@@ -782,13 +783,15 @@ class PackageManager
      * Returns the correctly cased version of the given package key or false
      * if no such package is available.
      *
-     * @param string $unknownCasedPackageKey The package key to convert
+     * @param string|FlowPackageKey $unknownCasedPackageKey The package key to convert
      * @return string|false The upper camel cased package key or false if no such package exists
      * @api
      */
-    public function getCaseSensitivePackageKey($unknownCasedPackageKey)
+    public function getCaseSensitivePackageKey(string|FlowPackageKey $unknownCasedPackageKey): string|false
     {
-        $lowerCasedPackageKey = strtolower($unknownCasedPackageKey);
+        $lowerCasedPackageKey = strtolower(
+            $unknownCasedPackageKey instanceof FlowPackageKey ? $unknownCasedPackageKey->value : $unknownCasedPackageKey
+        );
 
         return $this->packageKeys[$lowerCasedPackageKey] ?? false;
     }
@@ -821,7 +824,7 @@ class PackageManager
      *
      * @param string $packageKey The package key to validate
      * @return boolean If the package key is valid, returns true otherwise false
-     * @api
+     * @deprecated with Flow 9.0 {@see FlowPackageKey::isPackageKeyValid()}
      */
     public function isPackageKeyValid($packageKey): bool
     {

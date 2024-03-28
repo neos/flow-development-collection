@@ -19,6 +19,7 @@ use Neos\Flow\Package\Exception\InvalidPackageKeyException;
 use Neos\Flow\Package\Exception\PackageKeyAlreadyExistsException;
 use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\FlowPackageKey;
 use Neos\Flow\Package\PackageFactory;
 use Neos\Flow\Package\PackageInterface;
 use org\bovigo\vfs\vfsStream;
@@ -234,14 +235,15 @@ class PackageManagerTest extends UnitTestCase
      */
     public function packageStatesConfigurationContainsRelativePaths()
     {
+        /** @var list<FlowPackageKey> $packageKeys */
         $packageKeys = [
-            'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true)),
-            'Neos.Flow' . md5(uniqid(mt_rand(), true)),
-            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
+            FlowPackageKey::fromString('RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true))),
+            FlowPackageKey::fromString('Neos.Flow' . md5(uniqid(mt_rand(), true))),
+            FlowPackageKey::fromString('Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true))),
         ];
 
         foreach ($packageKeys as $packageKey) {
-            $packagePath = 'vfs://Test/Packages/Application/' . $packageKey . '/';
+            $packagePath = 'vfs://Test/Packages/Application/' . $packageKey->value . '/';
 
             mkdir($packagePath, 0770, true);
             mkdir($packagePath . 'Classes');
@@ -252,7 +254,7 @@ class PackageManagerTest extends UnitTestCase
         $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
         $packageManager->_set('packageInformationCacheFilePath', 'vfs://Test/Configuration/PackageStates.php');
 
-        $packageFactory = new PackageFactory($packageManager);
+        $packageFactory = new PackageFactory();
         $this->inject($packageManager, 'packageFactory', $packageFactory);
 
         $packageManager->_set('packages', []);
@@ -262,10 +264,10 @@ class PackageManagerTest extends UnitTestCase
         foreach ($packageKeys as $packageKey) {
             $composerName = ComposerUtility::getComposerPackageNameFromPackageKey($packageKey);
             $expectedPackageStatesConfiguration[$composerName] = [
-                'packagePath' => 'Application/' . $packageKey . '/',
+                'packagePath' => 'Application/' . $packageKey->value . '/',
                 'composerName' => $composerName,
                 'packageClassInformation' => ['className' => 'Neos\Flow\Package\GenericPackage', 'pathAndFilename' => ''],
-                'packageKey' => $packageKey,
+                'packageKey' => $packageKey->value,
                 'autoloadConfiguration' => []
             ];
         }

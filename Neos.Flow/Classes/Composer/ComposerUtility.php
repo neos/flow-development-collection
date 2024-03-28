@@ -12,6 +12,7 @@ namespace Neos\Flow\Composer;
  */
 
 use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\FlowPackageKey;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Files;
 
@@ -127,13 +128,10 @@ class ComposerUtility
 
     /**
      * Determines the composer package name ("vendor/foo-bar") from the Flow package key ("Vendor.Foo.Bar")
-     *
-     * @param string $packageKey
-     * @return string
      */
-    public static function getComposerPackageNameFromPackageKey(string $packageKey): string
+    public static function getComposerPackageNameFromPackageKey(FlowPackageKey $packageKey): string
     {
-        $nameParts = explode('.', $packageKey);
+        $nameParts = explode('.', $packageKey->value);
         $vendor = array_shift($nameParts);
         return strtolower($vendor . '/' . implode('-', $nameParts));
     }
@@ -142,11 +140,11 @@ class ComposerUtility
      * Write a composer manifest for the package.
      *
      * @param string $manifestPath
-     * @param string $packageKey
+     * @param FlowPackageKey $packageKey
      * @param array $composerManifestData
      * @return array the manifest data written
      */
-    public static function writeComposerManifest(string $manifestPath, string $packageKey, array $composerManifestData = []): array
+    public static function writeComposerManifest(string $manifestPath, FlowPackageKey $packageKey, array $composerManifestData = []): array
     {
         $manifest = [
             'description' => ''
@@ -164,11 +162,11 @@ class ComposerUtility
         }
 
         if (!isset($manifest['autoload'])) {
-            $namespace = str_replace('.', '\\', $packageKey) . '\\';
+            $namespace = str_replace('.', '\\', $packageKey->value) . '\\';
             $manifest['autoload'] = ['psr-4' => [$namespace => FlowPackageInterface::DIRECTORY_CLASSES]];
         }
 
-        $manifest['extra']['neos']['package-key'] = $packageKey;
+        $manifest['extra']['neos']['package-key'] = $packageKey->value;
 
         if (defined('JSON_PRETTY_PRINT')) {
             file_put_contents(Files::concatenatePaths([$manifestPath, 'composer.json']), json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
