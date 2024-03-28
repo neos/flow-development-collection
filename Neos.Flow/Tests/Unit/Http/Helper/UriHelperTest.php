@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Flow\Tests\Unit\Http;
+namespace Neos\Flow\Tests\Unit\Http\Helper;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -12,7 +12,7 @@ namespace Neos\Flow\Tests\Unit\Http;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Http\UriHelper;
+use Neos\Flow\Http\Helper\UriHelper;
 use Neos\Flow\Tests\UnitTestCase;
 
 class UriHelperTest extends UnitTestCase

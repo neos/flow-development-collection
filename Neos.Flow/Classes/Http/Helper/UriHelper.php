@@ -11,13 +11,19 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
+use Neos\Utility\Arrays;
 use Psr\Http\Message\UriInterface;
 
 /**
  * Helper to extract information from Uris.
  */
-abstract class UriHelper
+final class UriHelper
 {
+    // this class only has static helpers
+    private function __construct()
+    {
+    }
+
     /**
      * @var array
      */
@@ -103,6 +109,27 @@ abstract class UriHelper
     {
         $query = http_build_query($arguments, '', '&', PHP_QUERY_RFC3986);
         return $uri->withQuery($query);
+    }
+
+    /**
+     * Merges recursively into the current {@see UriInterface::getQuery} these additional query parameters.
+     *
+     * @param array $queryParameters
+     * @return UriInterface A new instance with the additional query.
+     */
+    public static function withAdditionalQueryParameters(UriInterface $uri, array $queryParameters): UriInterface
+    {
+        if ($queryParameters === []) {
+            return $uri;
+        }
+        if ($uri->getQuery() === '') {
+            $mergedQuery = $queryParameters;
+        } else {
+            $queryParametersFromUri = [];
+            parse_str($uri->getQuery(), $queryParametersFromUri);
+            $mergedQuery = Arrays::arrayMergeRecursiveOverrule($queryParametersFromUri, $queryParameters);
+        }
+        return $uri->withQuery(http_build_query($mergedQuery, '', '&'));
     }
 
     /**
