@@ -79,22 +79,22 @@ final readonly class FlowPackageKey implements \JsonSerializable
      * - first found autoload namespace
      * - composer name
      */
-    private static function derivePackageKey(string $composerName, string $packageType = null, string $packagePath = '', string $autoloadNamespace = null): self
+    private static function derivePackageKey(string $composerName, ?string $packageType, string $packagePath, ?string $autoloadNamespace): self
     {
         $packageKey = '';
 
         if ($packageType !== null && ComposerUtility::isFlowPackageType($packageType)) {
             $lastSegmentOfPackagePath = substr(trim($packagePath, '/'), strrpos(trim($packagePath, '/'), '/') + 1);
-            if (strpos($lastSegmentOfPackagePath, '.') !== false) {
+            if (str_contains($lastSegmentOfPackagePath, '.')) {
                 $packageKey = $lastSegmentOfPackagePath;
             }
         }
 
-        if ($autoloadNamespace !== null && ($packageKey === null || self::isPackageKeyValid($packageKey) === false)) {
+        if ($autoloadNamespace !== null && (self::isPackageKeyValid($packageKey) === false)) {
             $packageKey = str_replace('\\', '.', $autoloadNamespace);
         }
 
-        if ($packageKey === null || self::isPackageKeyValid($packageKey) === false) {
+        if (self::isPackageKeyValid($packageKey) === false) {
             $packageKey = str_replace('/', '.', $composerName);
         }
 
