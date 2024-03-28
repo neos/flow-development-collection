@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Neos\Http\Factories;
 
+use GuzzleHttp\Psr7\BufferStream;
 use GuzzleHttp\Psr7\Stream;
-use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -17,11 +17,9 @@ trait StreamFactoryTrait
      */
     public function createStream(string $content = ''): StreamInterface
     {
-        $fileHandle = fopen('php://temp', 'r+');
-        fwrite($fileHandle, $content);
-        rewind($fileHandle);
-
-        return $this->createStreamFromResource($fileHandle);
+        $stream = new BufferStream();
+        $stream->write($content);
+        return $stream;
     }
 
     /**
