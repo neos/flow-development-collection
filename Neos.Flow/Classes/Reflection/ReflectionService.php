@@ -1273,7 +1273,7 @@ class ReflectionService
             if (!isset($this->classesByMethodAnnotations[$annotationClassName][$className])) {
                 $this->classesByMethodAnnotations[$annotationClassName][$className] = [];
             }
-            $this->classesByMethodAnnotations[$annotationClassName][$className][] = $methodName;
+            $this->classesByMethodAnnotations[$annotationClassName][$className][$methodName] = $methodName;
         }
 
         $returnType = $method->getDeclaredReturnType();
