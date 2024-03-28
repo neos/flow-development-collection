@@ -19,7 +19,7 @@ use Neos\Utility\Files;
 /**
  * Utility to access composer information like composer manifests (composer.json) and the lock file.
  *
- * Meant to be used only inside the Flow package management code.
+ * @internal Meant to be used only inside the Flow package management code.
  */
 class ComposerUtility
 {
@@ -127,16 +127,6 @@ class ComposerUtility
     }
 
     /**
-     * Determines the composer package name ("vendor/foo-bar") from the Flow package key ("Vendor.Foo.Bar")
-     */
-    public static function getComposerPackageNameFromPackageKey(FlowPackageKey $packageKey): string
-    {
-        $nameParts = explode('.', $packageKey->value);
-        $vendor = array_shift($nameParts);
-        return strtolower($vendor . '/' . implode('-', $nameParts));
-    }
-
-    /**
      * Write a composer manifest for the package.
      *
      * @param string $manifestPath
@@ -154,7 +144,7 @@ class ComposerUtility
             $manifest = array_merge($manifest, $composerManifestData);
         }
         if (!isset($manifest['name']) || empty($manifest['name'])) {
-            $manifest['name'] = static::getComposerPackageNameFromPackageKey($packageKey);
+            $manifest['name'] = $packageKey->guessComposerPackageName();
         }
 
         if (!isset($manifest['require']) || empty($manifest['require'])) {

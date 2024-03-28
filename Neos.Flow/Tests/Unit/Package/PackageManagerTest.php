@@ -262,7 +262,7 @@ class PackageManagerTest extends UnitTestCase
 
         $expectedPackageStatesConfiguration = [];
         foreach ($packageKeys as $packageKey) {
-            $composerName = ComposerUtility::getComposerPackageNameFromPackageKey($packageKey);
+            $composerName = $packageKey->guessComposerPackageName();
             $expectedPackageStatesConfiguration[$composerName] = [
                 'packagePath' => 'Application/' . $packageKey->value . '/',
                 'composerName' => $composerName,

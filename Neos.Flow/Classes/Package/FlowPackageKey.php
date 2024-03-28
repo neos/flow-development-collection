@@ -104,6 +104,16 @@ final readonly class FlowPackageKey implements \JsonSerializable
         return new self($packageKey);
     }
 
+    /**
+     * Determines the composer package name ("vendor/foo-bar") from the Flow package key ("Vendor.Foo.Bar")
+     */
+    public function guessComposerPackageName(): string
+    {
+        $nameParts = explode('.', $this->value);
+        $vendor = array_shift($nameParts);
+        return strtolower($vendor . '/' . implode('-', $nameParts));
+    }
+
     public function jsonSerialize(): string
     {
         return $this->value;
