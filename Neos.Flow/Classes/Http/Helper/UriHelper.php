@@ -86,28 +86,14 @@ final class UriHelper
     }
 
     /**
-     * Parses the URIs query string into an array of arguments
+     * Sets and replaces the query parameters.
      *
-     * @param UriInterface $uri
-     * @return array
+     * @param array $queryParameters
+     * @return UriInterface A new instance with the replaced query parameters.
      */
-    public static function parseQueryIntoArguments(UriInterface $uri): array
+    public static function uriWithQueryParameters(UriInterface $uri, array $queryParameters): UriInterface
     {
-        $arguments = [];
-        parse_str($uri->getQuery(), $arguments);
-        return $arguments;
-    }
-
-    /**
-     * Returns an Uri object with the query string being generated from the array of arguments given
-     *
-     * @param UriInterface $uri
-     * @param array $arguments
-     * @return UriInterface
-     */
-    public static function uriWithArguments(UriInterface $uri, array $arguments): UriInterface
-    {
-        $query = http_build_query($arguments, '', '&', PHP_QUERY_RFC3986);
+        $query = http_build_query($queryParameters, '', '&');
         return $uri->withQuery($query);
     }
 
@@ -123,13 +109,13 @@ final class UriHelper
             return $uri;
         }
         if ($uri->getQuery() === '') {
-            $mergedQuery = $queryParameters;
+            $mergedQueryParameters = $queryParameters;
         } else {
             $queryParametersFromUri = [];
             parse_str($uri->getQuery(), $queryParametersFromUri);
-            $mergedQuery = Arrays::arrayMergeRecursiveOverrule($queryParametersFromUri, $queryParameters);
+            $mergedQueryParameters = Arrays::arrayMergeRecursiveOverrule($queryParametersFromUri, $queryParameters);
         }
-        return $uri->withQuery(http_build_query($mergedQuery, '', '&'));
+        return self::uriWithQueryParameters($uri, $mergedQueryParameters);
     }
 
     /**
