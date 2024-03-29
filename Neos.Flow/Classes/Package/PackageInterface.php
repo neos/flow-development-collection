@@ -18,7 +18,7 @@ namespace Neos\Flow\Package;
  */
 interface PackageInterface
 {
-    /** @deprecated please use the FlowPackageKey instead */
+    /** @deprecated with Flow 9, please use {@see PackageManager::isPackageKeyValid()} instead. */
     const PATTERN_MATCH_PACKAGEKEY = FlowPackageKey::PATTERN;
     const DEFAULT_COMPOSER_TYPE = 'neos-package';
 
