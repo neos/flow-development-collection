@@ -14,8 +14,8 @@ use Neos\Flow\Composer\ComposerUtility;
  * But before the adaption Flow already established the package keys like "Vendor.Foo.Bar",
  * which is represented and validated by this value object.
  *
- * The Flow package keys are currently inferred from the composer manifest {@see FlowPackageKey::getPackageKeyFromManifest()},
- * and can also be tried to be reverse calculated: {@see FlowPackageKey::guessComposerPackageName()}
+ * The Flow package keys are currently inferred from the composer manifest {@see FlowPackageKey::deriveFromManifestOrPath()},
+ * and can also be tried to be reverse calculated: {@see FlowPackageKey::deriveComposerPackageName()}
  *
  * The idea around the Flow package key is obsolete since composer and will eventually be replaced.
  * Still major parts of Flow depend on the concept.
@@ -63,7 +63,7 @@ final readonly class FlowPackageKey implements \JsonSerializable
      *
      * Else the composer name will be used with the slash replaced by a dot
      */
-    public static function getPackageKeyFromManifest(array $manifest, string $packagePath): self
+    public static function deriveFromManifestOrPath(array $manifest, string $packagePath): self
     {
         $definedFlowPackageKey = $manifest['extra']['neos']['package-key'] ?? null;
 
@@ -73,17 +73,12 @@ final readonly class FlowPackageKey implements \JsonSerializable
 
         $composerName = $manifest['name'];
         $autoloadNamespace = null;
-        $type = null;
+        $type = $manifest['type'] ?? null;
         if (isset($manifest['autoload']['psr-0']) && is_array($manifest['autoload']['psr-0'])) {
             $namespaces = array_keys($manifest['autoload']['psr-0']);
             $autoloadNamespace = reset($namespaces);
         }
-
-        if (isset($manifest['type'])) {
-            $type = $manifest['type'];
-        }
-
-        return self::derivePackageKey($composerName, $type, $packagePath, $autoloadNamespace);
+        return self::derivePackageKeyInternal($composerName, $type, $packagePath, $autoloadNamespace);
     }
 
     /**
@@ -94,7 +89,7 @@ final readonly class FlowPackageKey implements \JsonSerializable
      * - first found autoload namespace
      * - composer name
      */
-    private static function derivePackageKey(string $composerName, ?string $packageType, string $packagePath, ?string $autoloadNamespace): self
+    private static function derivePackageKeyInternal(string $composerName, ?string $packageType, string $packagePath, ?string $autoloadNamespace): self
     {
         $packageKey = '';
 
@@ -121,8 +116,11 @@ final readonly class FlowPackageKey implements \JsonSerializable
 
     /**
      * Determines the composer package name ("vendor/foo-bar") from the Flow package key ("Vendor.Foo.Bar")
+     *
+     * TODO: This is NOT necessary the reverse calculation when the package key was inferred via {@see self::deriveFromManifestOrPath()}
+     * For example vendor/foo-bar will become vendor.foobar which in turn will be converted via this method to vendor/foobar
      */
-    public function guessComposerPackageName(): string
+    public function deriveComposerPackageName(): string
     {
         $nameParts = explode('.', $this->value);
         $vendor = array_shift($nameParts);

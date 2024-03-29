@@ -590,7 +590,7 @@ class PackageManager
                 continue;
             }
 
-            $packageKey = FlowPackageKey::getPackageKeyFromManifest($composerManifest, $packagePath);
+            $packageKey = FlowPackageKey::deriveFromManifestOrPath($composerManifest, $packagePath);
             $this->composerNameToPackageKeyMap[strtolower($composerManifest['name'])] = $packageKey->value;
 
             $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest);

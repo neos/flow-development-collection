@@ -144,7 +144,7 @@ class ComposerUtility
             $manifest = array_merge($manifest, $composerManifestData);
         }
         if (!isset($manifest['name']) || empty($manifest['name'])) {
-            $manifest['name'] = $packageKey->guessComposerPackageName();
+            $manifest['name'] = $packageKey->deriveComposerPackageName();
         }
 
         if (!isset($manifest['require']) || empty($manifest['require'])) {
