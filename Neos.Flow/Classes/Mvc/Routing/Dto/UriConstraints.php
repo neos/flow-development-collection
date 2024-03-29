@@ -14,7 +14,6 @@ namespace Neos\Flow\Mvc\Routing\Dto;
 use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Helper\UriHelper;
-use Neos\Utility\Arrays;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -219,11 +218,13 @@ final class UriConstraints
     public function withAddedQueryValues(array $values): self
     {
         $newConstraints = $this->constraints;
+        $temporaryUriWithQuery = new Uri();
         if (isset($this->constraints[self::CONSTRAINT_QUERY_STRING])) {
-            parse_str($this->constraints[self::CONSTRAINT_QUERY_STRING], $existingValues);
-            $values = Arrays::arrayMergeRecursiveOverrule($existingValues, $values);
+            $temporaryUriWithQuery = $temporaryUriWithQuery->withQuery($this->constraints[self::CONSTRAINT_QUERY_STRING]);
         }
-        $newConstraints[self::CONSTRAINT_QUERY_STRING] = http_build_query($values, '', '&');
+        // temporary, otherwise empty, uri to satisfy and reuse helper
+        $temporaryUriWithQuery = UriHelper::uriWithAdditionalQueryParameters($temporaryUriWithQuery, $values);
+        $newConstraints[self::CONSTRAINT_QUERY_STRING] = $temporaryUriWithQuery->getQuery();
         return new static($newConstraints);
     }
 
