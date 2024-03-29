@@ -19,7 +19,7 @@ use Neos\Utility\Files;
 /**
  * Utility to access composer information like composer manifests (composer.json) and the lock file.
  *
- * @internal Meant to be used only inside the Flow package management code.
+ * @internal Only meant to be used only inside the Flow package management code.
  */
 class ComposerUtility
 {

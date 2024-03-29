@@ -20,7 +20,7 @@ use Neos\Flow\Composer\ComposerUtility;
  * The idea around the Flow package key is obsolete since composer and will eventually be replaced.
  * Still major parts of Flow depend on the concept.
  *
- * @internal Only meant to be used inside the Flow core until replaced by composer keys.
+ * @internal Only meant to be used only inside the Flow package management code. Should NOT leak into public APIs.
  */
 final readonly class FlowPackageKey implements \JsonSerializable
 {

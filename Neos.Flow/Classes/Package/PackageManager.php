@@ -175,11 +175,11 @@ class PackageManager
      * Returns true if a package is available (the package's files exist in the packages directory)
      * or false if it's not.
      *
-     * @param string|FlowPackageKey $packageKey The key of the package to check
+     * @param string $packageKey The key of the package to check
      * @return boolean true if the package is available, otherwise false
      * @api
      */
-    public function isPackageAvailable(string|FlowPackageKey $packageKey): bool
+    public function isPackageAvailable($packageKey): bool
     {
         return ($this->getCaseSensitivePackageKey($packageKey) !== false);
     }
@@ -197,16 +197,15 @@ class PackageManager
     /**
      * Returns a PackageInterface object for the specified package.
      *
-     * @param string|FlowPackageKey $packageKey
+     * @param string $packageKey
      * @return PackageInterface The requested package object
      * @throws Exception\UnknownPackageException if the specified package is not known
      * @api
      */
-    public function getPackage(string|FlowPackageKey $packageKey): PackageInterface
+    public function getPackage($packageKey): PackageInterface
     {
         if (!$this->isPackageAvailable($packageKey)) {
-            $packageKeyString = $packageKey instanceof FlowPackageKey ? $packageKey->value : $packageKey;
-            throw new Exception\UnknownPackageException('Package "' . $packageKeyString . '" is not available. Please check if the package exists and that the package key is correct (package keys are case sensitive).', 1166546734);
+            throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available. Please check if the package exists and that the package key is correct (package keys are case sensitive).', 1166546734);
         }
 
         return $this->packages[$this->getCaseSensitivePackageKey($packageKey)];
@@ -315,12 +314,10 @@ class PackageManager
      * @throws InvalidConfigurationException
      * @api
      */
-    public function createPackage(string|FlowPackageKey $packageKey, array $manifest = [], $packagesPath = null): PackageInterface
+    public function createPackage($packageKey, array $manifest = [], $packagesPath = null): PackageInterface
     {
-        if (!$packageKey instanceof FlowPackageKey) {
-            $packageKey = FlowPackageKey::fromString($packageKey);
-        }
-        if ($this->isPackageAvailable($packageKey)) {
+        $packageKey = FlowPackageKey::fromString($packageKey);
+        if ($this->isPackageAvailable($packageKey->value)) {
             throw new Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey->value . '" already exists', 1220722873);
         }
         if (!isset($manifest['type'])) {
@@ -783,15 +780,13 @@ class PackageManager
      * Returns the correctly cased version of the given package key or false
      * if no such package is available.
      *
-     * @param string|FlowPackageKey $unknownCasedPackageKey The package key to convert
+     * @param string $unknownCasedPackageKey The package key to convert
      * @return string|false The upper camel cased package key or false if no such package exists
      * @api
      */
-    public function getCaseSensitivePackageKey(string|FlowPackageKey $unknownCasedPackageKey): string|false
+    public function getCaseSensitivePackageKey($unknownCasedPackageKey)
     {
-        $lowerCasedPackageKey = strtolower(
-            $unknownCasedPackageKey instanceof FlowPackageKey ? $unknownCasedPackageKey->value : $unknownCasedPackageKey
-        );
+        $lowerCasedPackageKey = strtolower($unknownCasedPackageKey);
 
         return $this->packageKeys[$lowerCasedPackageKey] ?? false;
     }
@@ -824,7 +819,7 @@ class PackageManager
      *
      * @param string $packageKey The package key to validate
      * @return boolean If the package key is valid, returns true otherwise false
-     * @deprecated with Flow 9.0 {@see FlowPackageKey::isPackageKeyValid()}
+     * @api
      */
     public function isPackageKeyValid($packageKey): bool
     {
