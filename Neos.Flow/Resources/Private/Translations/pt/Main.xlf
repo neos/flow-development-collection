@@ -3,39 +3,39 @@
   <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="pt-PT">
     <body>
       <trans-unit id="authentication.required" xml:space="preserve">
-				<source>Authentication required</source>
+        <source>Authentication required</source>
         <target state="translated">Autenticação necessária</target>
       </trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
-				<source>Username</source>
+        <source>Username</source>
         <target state="translated">Nome de Usuário</target>
       </trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
-				<source>Password</source>
+        <source>Password</source>
         <target state="translated">Senha</target>
       </trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
-				<source>New password</source>
+        <source>New password</source>
         <target state="translated">Nova palavra-passe</target>
       </trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve">
-				<source>Login</source>
-        <target state="needs-translation">Login</target>
+        <source>Login</source>
+        <target state="translated">Autenticar</target>
       </trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve">
-				<source>Logout</source>
-        <target state="needs-translation">Sair</target>
+        <source>Logout</source>
+        <target state="translated">Sair</target>
       </trans-unit>
       <trans-unit id="update" xml:space="preserve">
-				<source>Update</source>
+        <source>Update</source>
         <target state="translated">Atualizar</target>
       </trans-unit>
       <trans-unit id="submit" xml:space="preserve">
-				<source>Submit</source>
+        <source>Submit</source>
         <target state="translated">Enviar</target>
       </trans-unit>
       <trans-unit id="configurationSchemaValidator.anErrorOccurredDuringValidationOfTheConfiguration.body" xml:space="preserve">
-				<source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
+        <source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
         <target state="translated">O tipo de configuração "{0}" não foi encontrado. Apenas os seguintes tipos de configuração são suportados: "{1}"</target>
       </trans-unit>
     </body>
