@@ -22,7 +22,7 @@ use Neos\Flow\Composer\ComposerUtility;
  *
  * @internal Only meant to be used only inside the Flow package management code. Should NOT leak into public APIs.
  */
-final readonly class FlowPackageKey implements \JsonSerializable
+final readonly class FlowPackageKey
 {
     public const PATTERN = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i';
 
@@ -47,6 +47,7 @@ final readonly class FlowPackageKey implements \JsonSerializable
      *
      * @param string $string The package key to validate
      * @return boolean If the package key is valid, returns true otherwise false
+     * @internal please use {@see PackageManager::isPackageKeyValid()}
      */
     public static function isPackageKeyValid(string $string): bool
     {
@@ -117,7 +118,7 @@ final readonly class FlowPackageKey implements \JsonSerializable
     /**
      * Determines the composer package name ("vendor/foo-bar") from the Flow package key ("Vendor.Foo.Bar")
      *
-     * TODO: This is NOT necessary the reverse calculation when the package key was inferred via {@see self::deriveFromManifestOrPath()}
+     * WARNING: This is NOT necessary the reverse calculation when the package key was inferred via {@see self::deriveFromManifestOrPath()}
      * For example vendor/foo-bar will become vendor.foobar which in turn will be converted via this method to vendor/foobar
      */
     public function deriveComposerPackageName(): string
@@ -125,10 +126,5 @@ final readonly class FlowPackageKey implements \JsonSerializable
         $nameParts = explode('.', $this->value);
         $vendor = array_shift($nameParts);
         return strtolower($vendor . '/' . implode('-', $nameParts));
-    }
-
-    public function jsonSerialize(): string
-    {
-        return $this->value;
     }
 }
