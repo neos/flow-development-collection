@@ -18,7 +18,8 @@ namespace Neos\Flow\Package;
  */
 interface PackageInterface
 {
-    const PATTERN_MATCH_PACKAGEKEY = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i';
+    /** @deprecated with Flow 9, please use {@see PackageManager::isPackageKeyValid()} instead. */
+    const PATTERN_MATCH_PACKAGEKEY = FlowPackageKey::PATTERN;
     const DEFAULT_COMPOSER_TYPE = 'neos-package';
 
     /**
