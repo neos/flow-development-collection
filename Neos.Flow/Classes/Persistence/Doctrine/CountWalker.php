@@ -63,7 +63,8 @@ class CountWalker extends TreeWalkerAdapter
         $AST->orderByClause = null;
     }
 
-    private function isDistinctRequired(): bool {
+    private function isDistinctRequired(): bool
+    {
         foreach ($this->getQueryComponents() as $queryComponent) {
             if (isset($queryComponent['relation']['type']) && $queryComponent['relation']['type'] === ClassMetadataInfo::ONE_TO_MANY) {
                 return true;
