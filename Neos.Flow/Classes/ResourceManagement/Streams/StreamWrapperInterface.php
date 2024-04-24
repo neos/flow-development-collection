@@ -133,7 +133,7 @@ interface StreamWrapperInterface
      * This method is called in response to stream_select().
      *
      * @param integer $castType Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
-     * @return resource Should return the underlying stream resource used by the wrapper, or false.
+     * @return resource|false Should return the underlying stream resource used by the wrapper, or false.
      * @api
      */
     public function cast($castType);

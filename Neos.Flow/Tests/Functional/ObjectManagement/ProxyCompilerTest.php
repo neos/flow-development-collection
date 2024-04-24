@@ -22,6 +22,7 @@ use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassExtendingClassWithPrivateConstructor;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterfaceWithConstructor;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithPrivateConstructor;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP8\ClassWithUnionTypes;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\BackedEnumWithMethod;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassK;
@@ -33,6 +34,18 @@ use Neos\Flow\Tests\FunctionalTestCase;
  */
 class ProxyCompilerTest extends FunctionalTestCase
 {
+    /**
+     * Make sure that we are actually testing proxy classes and not the
+     * original PHP class.
+     *
+     * @test
+     */
+    public function classWithUnionTypesIsProxied(): void
+    {
+        $object = new ClassWithUnionTypes();
+        self::assertInstanceOf(ProxyInterface::class, $object);
+    }
+
     /**
      * @test
      */
@@ -140,10 +153,6 @@ class ProxyCompilerTest extends FunctionalTestCase
      */
     public function enumsAreNotProxied(): void
     {
-        if (PHP_VERSION_ID <= 80100) {
-            $this->markTestSkipped('Only for PHP.1 8 with Enums');
-        }
-
         # PHP < 8.1 would fail compiling this test case if we used the syntax BackedEnumWithMethod::ESPRESSO->label()
         $this->assertSame('Espresso', BackedEnumWithMethod::getLabel(BackedEnumWithMethod::ESPRESSO));
     }
@@ -215,9 +224,6 @@ class ProxyCompilerTest extends FunctionalTestCase
      */
     public function attributesArePreserved(): void
     {
-        if (PHP_MAJOR_VERSION < 8) {
-            $this->markTestSkipped('Only for PHP 8 with Attributes');
-        }
         $reflectionClass = new ClassReflection(Fixtures\ClassWithPhpAttributes::class);
         $attributes = $reflectionClass->getAttributes();
         self::assertCount(2, $attributes);
@@ -244,14 +250,16 @@ class ProxyCompilerTest extends FunctionalTestCase
      */
     public function complexPropertyTypesArePreserved(): void
     {
-        if (PHP_MAJOR_VERSION < 8) {
-            $this->markTestSkipped('Only for PHP 8 with UnionTypes');
-        }
         $reflectionClass = new ClassReflection(Fixtures\PHP8\ClassWithUnionTypes::class);
 
         foreach ($reflectionClass->getProperties() as $property) {
             assert($property instanceof PropertyReflection);
-            if ($property->getName() !== 'propertyA' && $property->getName() !== 'propertyB' && !str_starts_with($property->getName(), 'Flow_')) {
+            if (
+                $property->getName() !== 'classA' &&
+                $property->getName() !== 'propertyA' &&
+                $property->getName() !== 'propertyB' &&
+                !str_starts_with($property->getName(), 'Flow_')
+            ) {
                 self::assertInstanceOf(\ReflectionUnionType::class, $property->getType(), sprintf('Property "%s" is of type "%s"', $property->getName(), $property->getType()));
             }
         }
@@ -267,9 +275,6 @@ class ProxyCompilerTest extends FunctionalTestCase
      */
     public function complexMethodReturnTypesArePreserved(): void
     {
-        if (PHP_MAJOR_VERSION < 8) {
-            $this->markTestSkipped('Only for PHP 8 with UnionTypes');
-        }
         $reflectionClass = new ClassReflection(Fixtures\PHP8\ClassWithUnionTypes::class);
         foreach ($reflectionClass->getMethods() as $method) {
             if (str_starts_with($method->getName(), 'get') &&
@@ -287,12 +292,27 @@ class ProxyCompilerTest extends FunctionalTestCase
 
     /**
      * @test
+     * @throws
+     */
+    public function complexMethodParametersArePreserved(): void
+    {
+        $proxyClassReflection = new ClassReflection(Fixtures\PHP8\ClassWithUnionTypes::class);
+        $originalClassReflection = new ClassReflection(get_parent_class(Fixtures\PHP8\ClassWithUnionTypes::class));
+
+        $proxyMethodReflection = $proxyClassReflection->getMethod('setPropertyF');
+        $originalMethodReflection = $originalClassReflection->getMethod('setPropertyF');
+
+        self::assertEquals(
+            $proxyMethodReflection->getParameters()[0]->getType()->getTypes(),
+            $originalMethodReflection->getParameters()[0]->getType()->getTypes(),
+        );
+    }
+
+    /**
+     * @test
      */
     public function constructorPropertiesArePreserved(): void
     {
-        if (PHP_MAJOR_VERSION < 8) {
-            $this->markTestSkipped('Only for PHP 8 with Constructor properties');
-        }
         $reflectionClass = new ClassReflection(Fixtures\PHP8\ClassWithConstructorProperties::class);
         /** @var PropertyReflection $property */
         self::assertTrue($reflectionClass->hasProperty('propertyA'));

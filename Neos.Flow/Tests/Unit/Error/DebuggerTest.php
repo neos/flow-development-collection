@@ -68,9 +68,6 @@ class DebuggerTest extends UnitTestCase
      */
     public function uninitializedTypedPropertiesAreNotAccessed()
     {
-        if (PHP_VERSION_ID < 70400) {
-            self::markTestSkipped('Test only works on PHP 7.4 and above');
-        }
         // if the test fails, an exception raises an error, no assertion needed
         $this->expectNotToPerformAssertions();
 

@@ -466,16 +466,9 @@ Neos\Flow\Session\SessionInterface:
   factoryObjectName: Neos\Flow\Session\SessionManagerInterface
   factoryMethodName: getCurrentSession
 
-Neos\Flow\Session\Session:
+Neos\Flow\Session\Data\SessionKeyValueStore:
   properties:
-    metaDataCache:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Flow_Session_MetaData
-    storageCache:
+    cache:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
@@ -483,25 +476,16 @@ Neos\Flow\Session\Session:
           1:
             value: Flow_Session_Storage
 
-Neos\Flow\Session\SessionManagerInterface:
-  className: Neos\Flow\Session\SessionManager
-
-Neos\Flow\Session\SessionManager:
+Neos\Flow\Session\Data\SessionMetaDataStore:
   properties:
-    metaDataCache:
+    cache:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: Flow_Session_MetaData
-    storageCache:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Flow_Session_Storage
+
 #
 # Utility
 #

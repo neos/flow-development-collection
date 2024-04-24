@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\Flow\Session;
 
 /*
@@ -12,7 +13,6 @@ namespace Neos\Flow\Session;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Utility\Algorithms;
 
 /**
@@ -20,83 +20,46 @@ use Neos\Flow\Utility\Algorithms;
  *
  * This session behaves like any other session except that it only stores the
  * data during one request.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope("singleton")]
 class TransientSession implements SessionInterface
 {
-    /**
-     * The session Id
-     *
-     * @var string
-     */
-    protected $sessionId;
+    protected string $sessionId;
+    protected bool $started = false;
+    protected array $data = [];
+    protected ?int $lastActivityTimestamp = null;
+    protected array $tags;
 
-    /**
-     * If this session has been started
-     *
-     * @var boolean
-     */
-    protected $started = false;
-
-    /**
-     * The session data
-     *
-     * @var array
-     */
-    protected $data = [];
-
-    /**
-     * @var integer
-     */
-    protected $lastActivityTimestamp;
-
-    /**
-     * @var array
-     */
-    protected $tags;
-
-    /**
-     * Tells if the session has been started already.
-     *
-     * @return boolean
-     */
-    public function isStarted()
+    public function isStarted(): bool
     {
         return $this->started;
     }
 
     /**
-     * Starts the session, if it has not been already started
-     *
-     * @return void
+     * @throws \Exception
      */
-    public function start()
+    public function start(): void
     {
         $this->sessionId = Algorithms::generateRandomString(13);
         $this->started = true;
     }
 
-    /**
-     * Returns true if there is a session that can be resumed. false otherwise
-     *
-     * @return boolean
-     */
-    public function canBeResumed()
+    public function canBeResumed(): bool
     {
         return true;
     }
 
     /**
-     * Resumes an existing session, if any.
-     *
-     * @return void
+     * @throws \Exception
      */
-    public function resume()
+    public function resume(): ?int
     {
+        $lastActivitySecondsAgo = null;
         if ($this->started === false) {
             $this->start();
+            $lastActivitySecondsAgo = (time() - $this->lastActivityTimestamp);
         }
+        return $lastActivitySecondsAgo;
     }
 
     /**
@@ -104,8 +67,9 @@ class TransientSession implements SessionInterface
      * to the new session.
      *
      * @return string The new session ID
+     * @throws \Exception
      */
-    public function renewId()
+    public function renewId(): string
     {
         $this->sessionId = Algorithms::generateRandomString(13);
         return $this->sessionId;
@@ -117,7 +81,7 @@ class TransientSession implements SessionInterface
      * @return string The current session ID
      * @throws Exception\SessionNotStartedException
      */
-    public function getId()
+    public function getId(): string
     {
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034659);
@@ -132,21 +96,15 @@ class TransientSession implements SessionInterface
      * @return mixed The data associated with the given key or NULL
      * @throws Exception\SessionNotStartedException
      */
-    public function getData($key)
+    public function getData(string $key): mixed
     {
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034660);
         }
-        return (array_key_exists($key, $this->data)) ? $this->data[$key] : null;
+        return $this->data[$key] ?? null;
     }
 
-    /**
-     * Returns true if $key is available.
-     *
-     * @param string $key
-     * @return boolean
-     */
-    public function hasKey($key)
+    public function hasKey(string $key): bool
     {
         return array_key_exists($key, $this->data);
     }
@@ -155,11 +113,11 @@ class TransientSession implements SessionInterface
      * Stores the given data under the given key in the session
      *
      * @param string $key The key under which the data should be stored
-     * @param object $data The data to be stored
+     * @param mixed $data The data to be stored
      * @return void
      * @throws Exception\SessionNotStartedException
      */
-    public function putData($key, $data)
+    public function putData(string $key, mixed $data): void
     {
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034661);
@@ -170,10 +128,9 @@ class TransientSession implements SessionInterface
     /**
      * Closes the session
      *
-     * @return void
      * @throws Exception\SessionNotStartedException
      */
-    public function close()
+    public function close(): void
     {
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034662);
@@ -184,11 +141,11 @@ class TransientSession implements SessionInterface
     /**
      * Explicitly destroys all session data
      *
-     * @param string $reason A reason for destroying the session – used by the LoggingAspect
+     * @param string|null $reason A reason for destroying the session – used by the LoggingAspect
      * @return void
      * @throws Exception\SessionNotStartedException
      */
-    public function destroy($reason = null)
+    public function destroy(?string $reason = null): void
     {
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034663);
@@ -198,31 +155,12 @@ class TransientSession implements SessionInterface
     }
 
     /**
-     * No operation for transient session.
-     *
-     * @param Bootstrap $bootstrap
-     * @return void
-     */
-    public static function destroyAll(Bootstrap $bootstrap)
-    {
-    }
-
-    /**
-     * No operation for transient session.
-     *
-     * @return void
-     */
-    public function collectGarbage()
-    {
-    }
-
-    /**
      * Returns the unix time stamp marking the last point in time this session has
      * been in use.
      *
-     * @return integer unix timestamp
+     * @return int unix timestamp
      */
-    public function getLastActivityTimestamp()
+    public function getLastActivityTimestamp(): int
     {
         if ($this->lastActivityTimestamp === null) {
             $this->touch();
@@ -232,10 +170,8 @@ class TransientSession implements SessionInterface
 
     /**
      * Updates the last activity time to "now".
-     *
-     * @return void
      */
-    public function touch()
+    public function touch(): void
     {
         $this->lastActivityTimestamp = time();
     }
@@ -252,7 +188,7 @@ class TransientSession implements SessionInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function addTag($tag)
+    public function addTag(string $tag): void
     {
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1422551048);
@@ -268,7 +204,7 @@ class TransientSession implements SessionInterface
      * @throws Exception\SessionNotStartedException
      * @api
      */
-    public function removeTag($tag)
+    public function removeTag(string $tag): void
     {
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1422551049);
@@ -285,7 +221,7 @@ class TransientSession implements SessionInterface
      * @throws Exception\SessionNotStartedException
      * @api
      */
-    public function getTags()
+    public function getTags(): array
     {
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1422551050);

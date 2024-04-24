@@ -106,7 +106,7 @@ class FileSystemStorage implements StorageInterface
      * stored in this storage.
      *
      * @param PersistentResource $resource The resource stored in this storage
-     * @return resource|boolean The resource stream or false if the stream could not be obtained
+     * @return resource|false The resource stream or false if the stream could not be obtained
      */
     public function getStreamByResource(PersistentResource $resource)
     {
@@ -119,7 +119,7 @@ class FileSystemStorage implements StorageInterface
      * stored in this storage.
      *
      * @param string $relativePath A path relative to the storage root, for example "MyFirstDirectory/SecondDirectory/Foo.css"
-     * @return resource|boolean A URI (for example the full path and filename) leading to the resource file or false if it does not exist
+     * @return resource|false A URI (for example the full path and filename) leading to the resource file or false if it does not exist
      */
     public function getStreamByResourcePath($relativePath)
     {

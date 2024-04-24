@@ -17,18 +17,16 @@ namespace Neos\Flow\Tests;
  * Don't sub class this test case but rather choose a more specialized base test case,
  * such as UnitTestCase or FunctionalTestCase
  *
- * @api
+ * @deprecated its utilities are deprecated.
  */
 abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var array
      */
-    protected $backupGlobalsBlacklist = ['GLOBALS', 'bootstrap', '__PHPUNIT_BOOTSTRAP'];
+    protected $backupGlobalsExcludeList = ['GLOBALS', 'bootstrap', '__PHPUNIT_BOOTSTRAP'];
 
     /**
-     * Enable or disable the backup and restoration of static attributes.
-     *
      * @var boolean
      */
     protected $backupStaticAttributes = false;
@@ -37,7 +35,8 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * Returns a mock object which allows for calling protected methods and access
      * of protected properties.
      *
-     * @param string $originalClassName Full qualified name of the original class
+     * @template T of object
+     * @param class-string<T> $originalClassName Full qualified name of the original class
      * @param array $methods
      * @param array $arguments
      * @param string $mockClassName
@@ -47,8 +46,8 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * @param boolean $cloneArguments
      * @param boolean $callOriginalMethods
      * @param object $proxyTarget
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     * @api
+     * @return T&\PHPUnit\Framework\MockObject\MockObject&AccessibleProxyInterface
+     * @deprecated please don't use this {@see AccessibleProxyInterface}
      */
     protected function getAccessibleMock($originalClassName, $methods = [], array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
     {
@@ -87,7 +86,8 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * Returns a mock object which allows for calling protected methods and access
      * of protected properties.
      *
-     * @param string $originalClassName Full qualified name of the original class
+     * @template T of object
+     * @param class-string<T> $originalClassName Full qualified name of the original class
      * @param array $arguments
      * @param string $mockClassName
      * @param boolean $callOriginalConstructor
@@ -95,8 +95,8 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * @param boolean $callAutoload
      * @param array $mockedMethods
      * @param boolean $cloneArguments
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     * @api
+     * @return T&\PHPUnit\Framework\MockObject\MockObject&AccessibleProxyInterface
+     * @deprecated please don't use this {@see AccessibleProxyInterface}
      */
     protected function getAccessibleMockForAbstractClass($originalClassName, array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $mockedMethods = [], $cloneArguments = false)
     {
@@ -109,7 +109,7 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      *
      * @param string $className Full qualified name of the original class
      * @return string Full qualified name of the built class
-     * @api
+     * @deprecated please don't use this {@see AccessibleProxyInterface}
      */
     protected function buildAccessibleProxy($className)
     {
@@ -162,13 +162,11 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * @return void
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
+     * @deprecated please specify properties via constructor, call the injector manually or use - if you must - ObjectAccess::setProperty instead.
      */
-    protected function inject($target, $name, $dependency)
+    protected function inject(object $target, string $name, mixed $dependency)
     {
-        if (!is_object($target)) {
-            throw new \InvalidArgumentException('Wrong type for argument $target, must be object.');
-        }
-
+        // we don't use ObjectAccess::setProperty as it doesn't support `inject*`
         $objectReflection = new \ReflectionObject($target);
         $methodNamePart = strtoupper($name[0]) . substr($name, 1);
         if ($objectReflection->hasMethod('set' . $methodNamePart)) {

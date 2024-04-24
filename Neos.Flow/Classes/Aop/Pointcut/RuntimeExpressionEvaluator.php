@@ -11,7 +11,7 @@ namespace Neos\Flow\Aop\Pointcut;
  * source code.
  */
 
-use Neos\Cache\Frontend\StringFrontend;
+use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Cache\CacheManager;
@@ -28,7 +28,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 class RuntimeExpressionEvaluator
 {
     /**
-     * @var StringFrontend
+     * @var FrontendInterface
      */
     protected $runtimeExpressionsCache;
 
@@ -54,7 +54,6 @@ class RuntimeExpressionEvaluator
     {
         if ($this->objectManager === null) {
             $this->objectManager = $objectManager;
-            /** @var CacheManager $cacheManager */
             $cacheManager = $this->objectManager->get(CacheManager::class);
             $this->runtimeExpressionsCache = $cacheManager->getCache('Flow_Aop_RuntimeExpressions');
         }

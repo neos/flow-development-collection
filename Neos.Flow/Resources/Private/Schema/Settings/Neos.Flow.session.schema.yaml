@@ -2,6 +2,7 @@ type: dictionary
 additionalProperties: false
 properties:
   'inactivityTimeout': { type: integer, required: true }
+  'updateMetadataThreshold': { type: integer, required: true }
   'name': { type: [string, 'null'], required: true }
   'garbageCollection':
     type: dictionary

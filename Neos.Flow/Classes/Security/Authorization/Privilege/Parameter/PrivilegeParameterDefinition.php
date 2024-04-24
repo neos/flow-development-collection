@@ -24,13 +24,13 @@ class PrivilegeParameterDefinition
     protected $name;
 
     /**
-     * @var string
+     * @var class-string<PrivilegeParameterInterface>
      */
     protected $parameterClassName;
 
     /**
      * @param string $name
-     * @param string $parameterClassName
+     * @param class-string<PrivilegeParameterInterface> $parameterClassName
      */
     public function __construct($name, $parameterClassName)
     {
@@ -46,7 +46,7 @@ class PrivilegeParameterDefinition
     }
 
     /**
-     * @return string
+     * @return class-string<PrivilegeParameterInterface>
      */
     public function getParameterClassName()
     {

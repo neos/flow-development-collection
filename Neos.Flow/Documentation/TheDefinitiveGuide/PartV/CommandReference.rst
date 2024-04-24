@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2024-02-23
+The following reference was automatically generated from code on 2024-04-24
 
 
 .. _`Flow Command Reference: NEOS.FLOW`:
@@ -613,7 +613,7 @@ Options
 ^^^^^^^
 
 ``--version``
-  The version to migrate to
+  The version to migrate to. Can be either a version number ("20231211133500"), a full migration class name ("Neos\Flow\Persistence\Doctrine\Migrations\Version20231211133500"), "previous", "next" or "latest" (default)
 ``--output``
   A file to write SQL to, instead of executing it
 ``--dry-run``

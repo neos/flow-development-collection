@@ -204,7 +204,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * This method can be overridden by custom RoutePartHandlers to implement custom resolving mechanisms.
      *
      * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
-     * @return string|array value to resolve.
+     * @return string|array|null value to resolve.
      * @api
      */
     protected function findValueToResolve(array $routeValues)

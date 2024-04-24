@@ -162,12 +162,14 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $request->setControllerPackageKey('Neos.Flow');
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
-        $view->setControllerContext(new ControllerContext(
-            $request,
-            new ActionResponse(),
-            new Arguments([]),
-            $uriBuilder
-        ));
+        if (method_exists($view, 'setControllerContext')) {
+            $view->setControllerContext(new ControllerContext(
+                $request,
+                new ActionResponse(),
+                new Arguments([]),
+                $uriBuilder
+            ));
+        }
 
         if (isset($renderingOptions['variables'])) {
             $view->assignMultiple($renderingOptions['variables']);
@@ -213,6 +215,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         if (!isset($this->options['renderingGroups'])) {
             return null;
         }
+
         foreach ($this->options['renderingGroups'] as $renderingGroupName => $renderingGroupSettings) {
             if (isset($renderingGroupSettings['matchingExceptionClassNames'])) {
                 foreach ($renderingGroupSettings['matchingExceptionClassNames'] as $exceptionClassName) {
@@ -221,8 +224,9 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
                     }
                 }
             }
-            if (isset($renderingGroupSettings['matchingStatusCodes']) && $exception instanceof FlowException) {
-                if (in_array($exception->getStatusCode(), $renderingGroupSettings['matchingStatusCodes'])) {
+            if (isset($renderingGroupSettings['matchingStatusCodes'])) {
+                $statusCode = $exception instanceof FlowException ? $exception->getStatusCode(): 500;
+                if (in_array($statusCode, $renderingGroupSettings['matchingStatusCodes'])) {
                     return $renderingGroupName;
                 }
             }

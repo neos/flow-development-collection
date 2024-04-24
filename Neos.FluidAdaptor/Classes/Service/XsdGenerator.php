@@ -104,12 +104,13 @@ class XsdGenerator extends AbstractGenerator
         $argumentDefinitions = $viewHelper->prepareArguments();
 
         foreach ($argumentDefinitions as $argumentDefinition) {
+            /** @var \SimpleXMLElement $xsdAttribute */
             $xsdAttribute = $xsdElement->addChild('xsd:attribute');
-            $xsdAttribute['type'] = 'xsd:string';
-            $xsdAttribute['name'] = $argumentDefinition->getName();
+            $xsdAttribute->offsetSet('type', 'xsd:string');
+            $xsdAttribute->offsetSet('name', $argumentDefinition->getName());
             $this->addDocumentation($argumentDefinition->getDescription(), $xsdAttribute);
             if ($argumentDefinition->isRequired()) {
-                $xsdAttribute['use'] = 'required';
+                $xsdAttribute->offsetSet('use', 'required');
             }
         }
     }

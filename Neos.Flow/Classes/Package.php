@@ -11,6 +11,7 @@ namespace Neos\Flow;
  * source code.
  */
 
+use Neos\Flow\Annotations\Route;
 use Neos\Flow\Cache\AnnotationsCacheFlusher;
 use Neos\Flow\Configuration\Loader\AppendLoader;
 use Neos\Flow\Configuration\Source\YamlSource;
@@ -158,6 +159,7 @@ class Package extends BasePackage
 
         $dispatcher->connect(Proxy\Compiler::class, 'compiledClasses', function (array $classNames) use ($bootstrap) {
             $annotationsCacheFlusher = $bootstrap->getObjectManager()->get(AnnotationsCacheFlusher::class);
+            $annotationsCacheFlusher->registerAnnotation(Route::class, ['Flow_Mvc_Routing_Route', 'Flow_Mvc_Routing_Resolve']);
             $annotationsCacheFlusher->flushConfigurationCachesByCompiledClass($classNames);
         });
     }

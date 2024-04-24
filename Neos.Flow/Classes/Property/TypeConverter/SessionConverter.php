@@ -32,7 +32,7 @@ class SessionConverter extends AbstractTypeConverter
     const PATTERN_MATCH_SESSIONIDENTIFIER = '/([a-zA-Z0-9]){32}/';
 
     /**
-     * @var array
+     * @var array<string>
      */
     protected $sourceTypes = ['string'];
 

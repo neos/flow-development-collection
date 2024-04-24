@@ -117,7 +117,7 @@ class DateTimeConverter extends AbstractTypeConverter
      * @param string $targetType must be "DateTime"
      * @param array $convertedChildProperties not used currently
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return \DateTimeInterface|Error
+     * @return \DateTimeInterface|null|Error
      * @throws InvalidPropertyMappingConfigurationException
      * @throws TypeConverterException
      */

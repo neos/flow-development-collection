@@ -18,13 +18,14 @@ namespace Neos\Flow\Package;
  */
 interface PackageInterface
 {
-    const PATTERN_MATCH_PACKAGEKEY = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i';
+    /** @deprecated with Flow 9, please use {@see PackageManager::isPackageKeyValid()} instead. */
+    const PATTERN_MATCH_PACKAGEKEY = FlowPackageKey::PATTERN;
     const DEFAULT_COMPOSER_TYPE = 'neos-package';
 
     /**
      * Returns the array of filenames of the class files
      *
-     * @return array An array of class names (key) and their filename, including the relative path to the package's directory
+     * @return iterable An array or yields the class names (key) and their filename, including the relative path to the package's directory
      * @api
      */
     public function getClassFiles();

@@ -91,7 +91,7 @@ class RoutingCommandController extends CommandController
      */
     public function showCommand(int $index): void
     {
-        $route = $this->routesProvider->getRoutes()[$index - 1] ?? null;
+        $route = iterator_to_array($this->routesProvider->getRoutes())[$index - 1] ?? null;
         if ($route === null) {
             $this->outputLine('<error>Route %d was not found!</error>', [$index]);
             $this->outputLine('Run <i>./flow routing:list</i> to show all registered routes');

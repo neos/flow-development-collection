@@ -92,7 +92,7 @@ class Route
      * Contains the routing results (indexed by "package", "controller" and
      * "action") after a successful call of matches()
      *
-     * @var array
+     * @var array|null
      */
     protected $matchResults = [];
 

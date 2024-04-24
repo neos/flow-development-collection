@@ -84,12 +84,20 @@ class RoutesLoader implements LoaderInterface
     protected function includeSubRoutesFromSettings(array $routeDefinitions, array $routeSettings): array
     {
         $sortedRouteSettings = (new PositionalArraySorter($routeSettings))->toArray();
-        foreach ($sortedRouteSettings as $packageKey => $routeFromSettings) {
+        foreach ($sortedRouteSettings as $configurationKey => $routeFromSettings) {
             if ($routeFromSettings === false) {
                 continue;
             }
-            $subRoutesName = $packageKey . 'SubRoutes';
-            $subRoutesConfiguration = ['package' => $packageKey];
+            if (isset($routeFromSettings['providerFactory'])) {
+                $routeDefinitions[] = [
+                    'name' => $configurationKey,
+                    'providerFactory' => $routeFromSettings['providerFactory'],
+                    'providerOptions' => $routeFromSettings['providerOptions'] ?? [],
+                ];
+                continue;
+            }
+            $subRoutesName = $configurationKey . 'SubRoutes';
+            $subRoutesConfiguration = ['package' => $configurationKey];
             if (isset($routeFromSettings['variables'])) {
                 $subRoutesConfiguration['variables'] = $routeFromSettings['variables'];
             }
@@ -97,7 +105,7 @@ class RoutesLoader implements LoaderInterface
                 $subRoutesConfiguration['suffix'] = $routeFromSettings['suffix'];
             }
             $routeDefinitions[] = [
-                'name' => $packageKey,
+                'name' => $configurationKey,
                 'uriPattern' => '<' . $subRoutesName . '>',
                 'subRoutes' => [
                     $subRoutesName => $subRoutesConfiguration
@@ -128,6 +136,10 @@ class RoutesLoader implements LoaderInterface
             }
             $mergedSubRoutesConfiguration = [$routeConfiguration];
             foreach ($routeConfiguration['subRoutes'] as $subRouteKey => $subRouteOptions) {
+                if (isset($subRouteOptions['providerFactory'])) {
+                    $mergedRoutesConfiguration[] = $subRouteOptions;
+                    continue;
+                }
                 if (!isset($subRouteOptions['package'])) {
                     throw new ParseErrorException(sprintf('Missing package configuration for SubRoute in Route "%s".', ($routeConfiguration['name'] ?? 'unnamed Route')), 1318414040);
                 }

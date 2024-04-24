@@ -305,7 +305,7 @@ class DoctrineCommandController extends CommandController
      * Adjusts the database structure by applying the pending
      * migrations provided by currently active packages.
      *
-     * @param string $version The version to migrate to
+     * @param string $version The version to migrate to. Can be either a version number ("20231211133500"), a full migration class name ("Neos\Flow\Persistence\Doctrine\Migrations\Version20231211133500"), "previous", "next" or "latest" (default)
      * @param string|null $output A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
      * @param boolean $quiet If set, only the executed migration versions will be output, one per line
@@ -544,6 +544,9 @@ class DoctrineCommandController extends CommandController
      */
     private function normalizeVersion(string $version): string
     {
+        if ($version === 'previous') {
+            return 'prev';
+        }
         if (!is_numeric($version)) {
             return $version;
         }

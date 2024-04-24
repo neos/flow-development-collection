@@ -250,7 +250,10 @@ class ActionController extends AbstractController
         }
         if ($this->view !== null) {
             $this->view->assign('settings', $this->settings);
-            $this->view->setControllerContext($this->controllerContext);
+            $this->view->assign('request', $this->request);
+            if (method_exists($this->view, 'setControllerContext')) {
+                $this->view->setControllerContext($this->controllerContext);
+            }
             $this->initializeView($this->view);
         }
 
@@ -824,50 +827,18 @@ class ActionController extends AbstractController
     }
 
     /**
-     * Renders the view and applies the result to the response object.
+     * Renders the view and returns the psr response.
      *
-     * @param ResponseInterface $httpResponse The most likely empty response, previously available as $this->response
+     * If a stream is returned it will be applied (to the most likely empty response) which was previously available as $this->response.
      */
     protected function renderView(ResponseInterface $httpResponse): ResponseInterface
     {
         $result = $this->view->render();
 
-        if (is_string($result)) {
-            return $httpResponse->withBody(Utils::streamFor($result));
-        }
-
-        if ($result instanceof ActionResponse) {
-            // deprecated behaviour to return an ActionResponse from a view
-            $subResponse = $result->buildHttpResponse();
-            // legacy behaviour of "mergeIntoParentResponse":
-            // transfer possible headers
-            foreach ($subResponse->getHeaders() as $name => $values) {
-                $httpResponse = $httpResponse->withHeader($name, $values);
-            }
-            // if the status code is 200 we assume it's the default and will not overrule it
-            if ($subResponse->getStatusCode() !== 200) {
-                $httpResponse = $httpResponse->withStatus($subResponse->getStatusCode());
-            }
-            // if the known body size is not empty replace the body
-            if ($subResponse->getBody()->getSize() !== 0) {
-                $httpResponse = $httpResponse->withBody($subResponse->getBody());
-            }
-            return $httpResponse;
-        }
-
-        if ($result instanceof ResponseInterface) {
-            return $result;
-        }
-
         if ($result instanceof StreamInterface) {
             return $httpResponse->withBody($result);
         }
 
-        if ($result instanceof \Stringable) {
-            return $httpResponse->withBody(Utils::streamFor((string)$result));
-        }
-
-        // Case should not happen. Contract of the view was not obeyed.
-        return $httpResponse;
+        return $result;
     }
 }

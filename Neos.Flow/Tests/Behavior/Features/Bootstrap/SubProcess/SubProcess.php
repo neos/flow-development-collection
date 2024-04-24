@@ -18,7 +18,7 @@ use Neos\Flow\Core\ApplicationContext;
 class SubProcess
 {
     /**
-     * @var resource|boolean
+     * @var resource|false
      */
     protected $subProcess = false;
 

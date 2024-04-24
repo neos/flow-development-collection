@@ -21,7 +21,6 @@ use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\ViewNotFoundException;
 use Neos\Flow\Property\Exception;
-use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -37,7 +36,7 @@ abstract class AbstractWidgetController extends ActionController
     /**
      * Configuration for this widget.
      *
-     * @var array{objects: QueryResultInterface}
+     * @var array
      * @api
      */
     protected $widgetConfiguration;

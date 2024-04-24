@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\Flow\Session;
 
 /*
@@ -11,46 +12,36 @@ namespace Neos\Flow\Session;
  * source code.
  */
 
-/**
- * Contract for a session.
- */
 interface SessionInterface
 {
     /**
      * Tells if the session has been started already.
-     *
-     * @return boolean
      */
-    public function isStarted();
+    public function isStarted(): bool;
 
     /**
-     * Starts the session, if is has not been already started
-     *
-     * @return void
+     * Starts the session, if it has not been already started
      */
-    public function start();
+    public function start(): void;
 
     /**
      * Returns true if there is a session that can be resumed. false otherwise
-     *
-     * @return boolean
      */
-    public function canBeResumed();
+    public function canBeResumed(): bool;
 
     /**
      * Resumes an existing session, if any.
      *
-     * @return void
+     * @return null|int If a session was resumed, the inactivity of this session since the last request is returned
      */
-    public function resume();
+    public function resume(): ?int;
 
     /**
      * Returns the current session ID.
      *
-     * @return string The current session ID
      * @throws Exception\SessionNotStartedException
      */
-    public function getId();
+    public function getId(): string;
 
     /**
      * Generates and propagates a new session ID and transfers all existing data
@@ -60,7 +51,7 @@ interface SessionInterface
      *
      * @return string The new session ID
      */
-    public function renewId();
+    public function renewId(): string;
 
     /**
      * Returns the content (mixed) associated with the given key.
@@ -69,15 +60,15 @@ interface SessionInterface
      * @return mixed The contents associated with the given key
      * @throws Exception\SessionNotStartedException
      */
-    public function getData($key);
+    public function getData(string $key): mixed;
 
     /**
      * Returns true if $key is available.
      *
      * @param string $key
-     * @return boolean
+     * @return bool
      */
-    public function hasKey($key);
+    public function hasKey(string $key): bool;
 
     /**
      * Stores the given data under the given key in the session
@@ -87,7 +78,7 @@ interface SessionInterface
      * @return void
      * @throws Exception\SessionNotStartedException
      */
-    public function putData($key, $data);
+    public function putData(string $key, mixed $data): void;
 
     /**
      * Tags this session with the given tag.
@@ -101,7 +92,7 @@ interface SessionInterface
      * @throws \InvalidArgumentException
      * @api
      */
-    public function addTag($tag);
+    public function addTag(string $tag): void;
 
     /**
      * Removes the specified tag from this session.
@@ -111,7 +102,7 @@ interface SessionInterface
      * @throws Exception\SessionNotStartedException
      * @api
      */
-    public function removeTag($tag);
+    public function removeTag(string $tag): void;
 
     /**
      * Returns the tags this session has been tagged with.
@@ -120,15 +111,14 @@ interface SessionInterface
      * @throws Exception\SessionNotStartedException
      * @api
      */
-    public function getTags();
+    public function getTags(): array;
 
     /**
      * Updates the last activity time to "now".
      *
-     * @return void
      * @api
      */
-    public function touch();
+    public function touch(): void;
 
     /**
      * Returns the unix time stamp marking the last point in time this session has
@@ -137,33 +127,24 @@ interface SessionInterface
      * For the current (local) session, this method will always return the current
      * time. For a remote session, the unix timestamp will be returned.
      *
-     * @return integer unix timestamp
+     * @return int unix timestamp
      * @api
      */
-    public function getLastActivityTimestamp();
+    public function getLastActivityTimestamp(): int;
 
     /**
      * Explicitly writes (persists) and closes the session
      *
-     * @return void
      * @throws Exception\SessionNotStartedException
      */
-    public function close();
+    public function close(): void;
 
     /**
      * Explicitly destroys all session data
      *
-     * @param string $reason A reason for destroying the session – used by the LoggingAspect
+     * @param string|null $reason A reason for destroying the session – used by the LoggingAspect
      * @return void
      * @throws Exception\SessionNotStartedException
      */
-    public function destroy($reason = null);
-
-    /**
-     * Remove data of all sessions which are considered to be expired.
-     *
-     * @return integer|null The number of outdated entries removed or NULL if no such information could be determined
-     * @deprecated will be removed with Flow 9, use SessionManager->collectGarbage
-     */
-    public function collectGarbage();
+    public function destroy(?string $reason = null): void;
 }

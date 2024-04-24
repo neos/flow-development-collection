@@ -68,7 +68,7 @@ class PackageManager
     /**
      * A translation table between lower cased and upper camel cased package keys
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $packageKeys = [];
 
@@ -316,11 +316,9 @@ class PackageManager
      */
     public function createPackage($packageKey, array $manifest = [], $packagesPath = null): PackageInterface
     {
-        if (!$this->isPackageKeyValid($packageKey)) {
-            throw new Exception\InvalidPackageKeyException('The package key "' . $packageKey . '" is invalid', 1220722210);
-        }
-        if ($this->isPackageAvailable($packageKey)) {
-            throw new Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey . '" already exists', 1220722873);
+        $packageKey = FlowPackageKey::fromString($packageKey);
+        if ($this->isPackageAvailable($packageKey->value)) {
+            throw new Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey->value . '" already exists', 1220722873);
         }
         if (!isset($manifest['type'])) {
             $manifest['type'] = PackageInterface::DEFAULT_COMPOSER_TYPE;
@@ -352,7 +350,7 @@ class PackageManager
             $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([$this->packagesBasePath, $packagesPath]));
         }
 
-        $packagePath = Files::concatenatePaths([$packagesPath, $packageKey]) . '/';
+        $packagePath = Files::concatenatePaths([$packagesPath, $packageKey->value]) . '/';
         Files::createDirectoryRecursively($packagePath);
 
         foreach (
@@ -388,9 +386,9 @@ class PackageManager
         $refreshedPackageStatesConfiguration = $this->rescanPackages();
         $this->packageStatesConfiguration = $refreshedPackageStatesConfiguration;
         $this->registerPackageFromStateConfiguration($manifest['name'], $this->packageStatesConfiguration['packages'][$manifest['name']]);
-        $package = $this->packages[$packageKey];
+        $package = $this->packages[$packageKey->value];
         if ($package instanceof FlowPackageInterface) {
-            $this->flowPackages[$packageKey] = $package;
+            $this->flowPackages[$packageKey->value] = $package;
         }
 
         return $package;
@@ -592,8 +590,8 @@ class PackageManager
                 continue;
             }
 
-            $packageKey = $this->getPackageKeyFromManifest($composerManifest, $packagePath);
-            $this->composerNameToPackageKeyMap[strtolower($composerManifest['name'])] = $packageKey;
+            $packageKey = FlowPackageKey::deriveFromManifestOrPath($composerManifest, $packagePath);
+            $this->composerNameToPackageKeyMap[strtolower($composerManifest['name'])] = $packageKey->value;
 
             $packageConfiguration = $this->preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest);
             if (isset($newPackageStatesConfiguration['packages'][$composerManifest['name']])) {
@@ -640,19 +638,15 @@ class PackageManager
     }
 
     /**
-     * @param string $packageKey
-     * @param string $packagePath
-     * @param array $composerManifest
-     * @return array
      * @throws Exception\CorruptPackageException
      * @throws Exception\InvalidPackagePathException
      */
-    protected function preparePackageStateConfiguration($packageKey, $packagePath, $composerManifest): array
+    protected function preparePackageStateConfiguration(FlowPackageKey $packageKey, string $packagePath, array $composerManifest): array
     {
         $autoload = $composerManifest['autoload'] ?? [];
 
         return [
-            'packageKey' => $packageKey,
+            'packageKey' => $packageKey->value,
             'packagePath' => str_replace($this->packagesBasePath, '', $packagePath),
             'composerName' => $composerManifest['name'],
             'autoloadConfiguration' => $autoload,
@@ -687,7 +681,7 @@ class PackageManager
     {
         $packagePath = $packageStateConfiguration['packagePath'] ?? null;
         $packageClassInformation = $packageStateConfiguration['packageClassInformation'] ?? null;
-        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, $packageStateConfiguration['packageKey'], $composerName, $packageStateConfiguration['autoloadConfiguration'], $packageClassInformation);
+        $package = $this->packageFactory->create($this->packagesBasePath, $packagePath, FlowPackageKey::fromString($packageStateConfiguration['packageKey']), $composerName, $packageStateConfiguration['autoloadConfiguration'], $packageClassInformation);
         $this->packageKeys[strtolower($package->getPackageKey())] = $package->getPackageKey();
         $this->packages[$package->getPackageKey()] = $package;
     }
@@ -829,81 +823,7 @@ class PackageManager
      */
     public function isPackageKeyValid($packageKey): bool
     {
-        return preg_match(PackageInterface::PATTERN_MATCH_PACKAGEKEY, $packageKey) === 1;
-    }
-
-    /**
-     * Resolves package key from Composer manifest
-     *
-     * If it is a Flow package the name of the containing directory will be used.
-     *
-     * Else if the composer name of the package matches the first part of the lowercased namespace of the package, the mixed
-     * case version of the composer name / namespace will be used, with backslashes replaced by dots.
-     *
-     * Else the composer name will be used with the slash replaced by a dot
-     *
-     * @param array $manifest
-     * @param string $packagePath
-     * @return string
-     */
-    protected function getPackageKeyFromManifest(array $manifest, $packagePath): string
-    {
-        if (isset($manifest['extra']['neos']['package-key']) && $this->isPackageKeyValid($manifest['extra']['neos']['package-key'])) {
-            return $manifest['extra']['neos']['package-key'];
-        }
-
-        $composerName = $manifest['name'];
-        $autoloadNamespace = null;
-        $type = null;
-        if (isset($manifest['autoload']['psr-0']) && is_array($manifest['autoload']['psr-0'])) {
-            $namespaces = array_keys($manifest['autoload']['psr-0']);
-            $autoloadNamespace = reset($namespaces);
-        }
-
-        if (isset($manifest['type'])) {
-            $type = $manifest['type'];
-        }
-
-        return $this->derivePackageKey($composerName, $type, $packagePath, $autoloadNamespace);
-    }
-
-    /**
-     * Derive a flow package key from the given information.
-     * The order of importance is:
-     *
-     * - package install path
-     * - first found autoload namespace
-     * - composer name
-     *
-     * @param string $composerName
-     * @param string $packageType
-     * @param string $packagePath
-     * @param string $autoloadNamespace
-     * @return string
-     */
-    protected function derivePackageKey(string $composerName, string $packageType = null, string $packagePath = '', string $autoloadNamespace = null): string
-    {
-        $packageKey = '';
-
-        if ($packageType !== null && ComposerUtility::isFlowPackageType($packageType)) {
-            $lastSegmentOfPackagePath = substr(trim($packagePath, '/'), strrpos(trim($packagePath, '/'), '/') + 1);
-            if (strpos($lastSegmentOfPackagePath, '.') !== false) {
-                $packageKey = $lastSegmentOfPackagePath;
-            }
-        }
-
-        if ($autoloadNamespace !== null && ($packageKey === null || $this->isPackageKeyValid($packageKey) === false)) {
-            $packageKey = str_replace('\\', '.', $autoloadNamespace);
-        }
-
-        if ($packageKey === null || $this->isPackageKeyValid($packageKey) === false) {
-            $packageKey = str_replace('/', '.', $composerName);
-        }
-
-        $packageKey = trim($packageKey, '.');
-        $packageKey = preg_replace('/[^A-Za-z0-9.]/', '', $packageKey);
-
-        return $packageKey;
+        return FlowPackageKey::isPackageKeyValid($packageKey);
     }
 
     /**
