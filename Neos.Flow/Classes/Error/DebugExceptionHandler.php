@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * A basic but solid exception handler which catches everything which
@@ -76,7 +77,15 @@ EOD;
         }
 
         try {
-            echo $this->buildView($exception, $this->renderingOptions)->render();
+            $stream = $this->buildView($exception, $this->renderingOptions)->render();
+            if ($stream instanceof ResponseInterface) {
+                /**
+                 * The http status code will already be sent, and we are only currently interested in the content stream
+                 * Thus, we unwrap the repose here:
+                 */
+                $stream = $stream->getBody();
+            }
+            ResponseInformationHelper::sendStream($stream);
         } catch (\Throwable $throwable) {
             $this->renderStatically($statusCode, $throwable);
         }

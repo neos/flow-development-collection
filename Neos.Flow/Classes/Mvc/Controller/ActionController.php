@@ -246,7 +246,10 @@ class ActionController extends AbstractController
         }
         if ($this->view !== null) {
             $this->view->assign('settings', $this->settings);
-            $this->view->setControllerContext($this->controllerContext);
+            $this->view->assign('request', $this->request);
+            if (method_exists($this->view, 'setControllerContext')) {
+                $this->view->setControllerContext($this->controllerContext);
+            }
             $this->initializeView($this->view);
         }
 
@@ -820,23 +823,11 @@ class ActionController extends AbstractController
     {
         $result = $this->view->render();
 
-        if (is_string($result)) {
-            $this->response->setContent($result);
-        }
-
-        if ($result instanceof ActionResponse) {
-            $result->mergeIntoParentResponse($this->response);
-        }
-
         if ($result instanceof ResponseInterface) {
             $this->response->replaceHttpResponse($result);
             if ($result->hasHeader('Content-Type')) {
                 $this->response->setContentType($result->getHeaderLine('Content-Type'));
             }
-        }
-
-        if (is_object($result) && is_callable([$result, '__toString'])) {
-            $this->response->setContent((string)$result);
         }
 
         if ($result instanceof StreamInterface) {
