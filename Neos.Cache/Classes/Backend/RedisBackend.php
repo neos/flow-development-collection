@@ -178,7 +178,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
                 if ($tries > 8) {
                     throw $exception;
                 }
-                usleep($tries^2 * 100000);
+                usleep($tries**2 * 100000);
                 $tries++;
             }
         } while (true);
