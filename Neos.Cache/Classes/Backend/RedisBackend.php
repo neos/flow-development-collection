@@ -34,6 +34,7 @@ use Neos\Error\Messages\Result;
  *  - port:            The TCP port of the redis server (will be ignored if connecting to a socket)
  *  - database:        The database index that will be used. By default,
  *                     Redis has 16 databases with index number 0 - 15
+ *  - username:         The username needed for the redis clients to connect to the server (hostname)
  *  - password:        The password needed for redis clients to connect to the server (hostname)
  *  - batchSize:       Maximum number of parameters per query for batch operations
  *
@@ -68,6 +69,8 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     protected int $port = 6379;
 
     protected int $database = 0;
+
+    protected string $username = '';
 
     protected string $password = '';
 
@@ -468,6 +471,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         $this->database = (int)$database;
     }
 
+    public function setUsername(string $username): void
+    {
+        $this->username = $username;
+    }
+
     public function setPassword(string $password): void
     {
         $this->password = $password;
@@ -535,7 +543,8 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             }
         }
 
-        if ($this->password !== '' && !$redis->auth($this->password)) {
+        $credentials = array_values(array_filter([$this->username, $this->password]));
+        if (!empty($credentials) && !$redis->auth($credentials)) {
             throw new CacheException('Redis authentication failed.', 1502366200);
         }
         $redis->select($this->database);
