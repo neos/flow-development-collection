@@ -14,8 +14,6 @@ namespace Neos\Utility;
  * source code.
  */
 
-use Neos\Utility\Exception\InvalidPositionException;
-
 /**
  * Flexible array sorter that sorts an array according to a "position" metadata.
  * The expected format for the $subject is:
@@ -72,7 +70,7 @@ final class PositionalArraySorter
      * Returns a sorted copy of the subject array
      *
      * @return array
-     * @throws InvalidPositionException
+     * @throws Exception\InvalidPositionException
      */
     public function toArray(): array
     {
