@@ -89,11 +89,11 @@ class InstallerScripts
         }
 
         if ($operation instanceof InstallOperation && isset($packageExtraConfig['neos/flow']['post-install'])) {
-            self::runPackageScripts($packageExtraConfig['neos/flow']['post-install']);
+            self::runPackageScripts($packageExtraConfig['neos/flow']['post-install'], $event);
         }
 
         if ($operation instanceof UpdateOperation && isset($packageExtraConfig['neos/flow']['post-update'])) {
-            self::runPackageScripts($packageExtraConfig['neos/flow']['post-update']);
+            self::runPackageScripts($packageExtraConfig['neos/flow']['post-update'], $event);
         }
     }
 
@@ -121,10 +121,11 @@ class InstallerScripts
      * Calls a static method from it's string representation
      *
      * @param string $staticMethodReference
+     * @param PackageEvent $event
      * @return void
      * @throws Exception\InvalidConfigurationException
      */
-    protected static function runPackageScripts(string $staticMethodReference): void
+    protected static function runPackageScripts(string $staticMethodReference, PackageEvent $event): void
     {
         $className = substr($staticMethodReference, 0, strpos($staticMethodReference, '::'));
         $methodName = substr($staticMethodReference, strpos($staticMethodReference, '::') + 2);
@@ -135,6 +136,6 @@ class InstallerScripts
         if (!is_callable($staticMethodReference)) {
             throw new Exception\InvalidConfigurationException('Method "' . $staticMethodReference . '" is not callable', 1348751082);
         }
-        $className::$methodName();
+        $className::$methodName($event);
     }
 }
