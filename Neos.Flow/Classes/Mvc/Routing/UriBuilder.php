@@ -159,18 +159,18 @@ class UriBuilder
     /**
      * Specifies the format of the target (e.g. "html" or "xml")
      *
-     * @param string $format (e.g. "html" or "xml"), will be transformed to lowercase!
+     * @param string|null $format (e.g. "html" or "xml"), will be transformed to lowercase!
      * @return UriBuilder the current UriBuilder to allow method chaining
      * @api
      */
     public function setFormat($format)
     {
-        $this->format = strtolower($format);
+        $this->format = $format !== null ? strtolower($format) : null;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      * @api
      */
     public function getFormat()
