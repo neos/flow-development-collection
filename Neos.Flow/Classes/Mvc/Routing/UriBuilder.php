@@ -73,11 +73,13 @@ class UriBuilder
 
     /**
      * @var boolean
+     * @deprecated with Flow 9.0
      */
     protected $addQueryString = false;
 
     /**
      * @var array
+     * @deprecated with Flow 9.0
      */
     protected $argumentsToBeExcludedFromQueryString = [];
 
@@ -205,7 +207,7 @@ class UriBuilder
      *
      * @param boolean $addQueryString
      * @return UriBuilder the current UriBuilder to allow method chaining
-     * @api
+     * @deprecated with Flow 9.0
      */
     public function setAddQueryString($addQueryString)
     {
@@ -215,7 +217,7 @@ class UriBuilder
 
     /**
      * @return boolean
-     * @api
+     * @deprecated with Flow 9.0
      */
     public function getAddQueryString()
     {
@@ -228,7 +230,7 @@ class UriBuilder
      *
      * @param array $argumentsToBeExcludedFromQueryString
      * @return UriBuilder the current UriBuilder to allow method chaining
-     * @api
+     * @deprecated with Flow 9.0
      */
     public function setArgumentsToBeExcludedFromQueryString(array $argumentsToBeExcludedFromQueryString)
     {
@@ -238,7 +240,7 @@ class UriBuilder
 
     /**
      * @return array
-     * @api
+     * @deprecated with Flow 9.0
      */
     public function getArgumentsToBeExcludedFromQueryString()
     {
