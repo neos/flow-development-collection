@@ -50,11 +50,6 @@ class SessionTest extends UnitTestCase
     protected $httpRequest;
 
     /**
-     * @var ResponseInterface
-     */
-    protected $httpResponse;
-
-    /**
      * @var Context|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockSecurityContext;
@@ -102,11 +97,9 @@ class SessionTest extends UnitTestCase
 
         $serverRequestFactory = new ServerRequestFactory(new UriFactory());
         $this->httpRequest = $serverRequestFactory->createServerRequest('GET', new Uri('http://localhost'));
-        $this->httpResponse = new Response();
 
         $mockRequestHandler = $this->createMock(RequestHandler::class);
         $mockRequestHandler->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->httpRequest));
-        $mockRequestHandler->expects(self::any())->method('getHttpResponse')->will(self::returnValue($this->httpResponse));
 
         $this->mockBootstrap = $this->createMock(Bootstrap::class);
         $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockRequestHandler));
