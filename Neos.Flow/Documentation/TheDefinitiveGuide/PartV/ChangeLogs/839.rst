@@ -1,0 +1,77 @@
+`8.3.9 (2024-05-24) <https://github.com/neos/flow-development-collection/releases/tag/8.3.9>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix count for query across OneToMany joins <https://github.com/neos/flow-development-collection/pull/3345>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The ``Query->count`` now returns the correct count when a criterion is added on a OneToMany relation.
+
+**Review instructions**
+
+The problem is described in details in #3331. Same as PR #3342, but this time against the correct branch.
+
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Flow``
+
+`BUGFIX: Pass composer event to update and install scripts <https://github.com/neos/flow-development-collection/pull/3348>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Currently it is not possible to get the composer event in install and update scripts. With this fix it is possible if the script should be interactive, for example: ``$event->getIO()->isInteractive()``
+
+* Packages: ``Flow``
+
+`BUGFIX: Discover autoloader from FLOW_ROOTPATH rather than __DIR__ <https://github.com/neos/flow-development-collection/pull/3343>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+**The Problem**
+
+In my development setups (for contribution), I prefer to have every repo that is under development installed via composer ``path`` repositories, like so:
+
+```json
+{
+    "name": "vendor/dev-distribution",
+    "require": {
+        "neos/flow-development-collection": "9.0.x-dev",
+        "neos/neos-development-collection": "9.0.x-dev",
+        "neos/neos-ui": "9.0.x-dev",
+        "vendor/site": "^1.0"
+    },
+    "repositories": {
+        "local": {
+            "type": "path",
+            "url": "./DistributionPackages/*"
+        },
+       "dev": {
+            "type": "path",
+            "url": "./DevelopmentPackages/*"
+        }
+    }
+}
+```
+
+Now if I clone, say, ``neos/neos-development-collection`` into ``DevelopmentPackages/``, composer will install the local version rather than the one from packagist.
+
+This works for ``neos/neos-development-collection``, ``neos/neos-ui`` and pretty much any other package around, but not for ``neos/flow-development-collection``.
+
+The ``flow`` CLI script makes the assumption that it is always located under ``Packages/*/`` and uses this assumption to discover the ``autoload.php`` script. It does so starting at its own path using the ``__DIR__`` constant.
+
+Unfortunately, PHP resolves symlinks before it sets the ``__DIR__`` constant. So when flow is installed via symlink, ``__DIR__`` does not contain its symlinked location, but its *real* location. This way it guesses the wrong path for ``autoload.php``, rendering the ``flow`` CLI script unusable.
+
+**The solution**
+
+The ``flow`` CLI script also figures out the ``FLOW_ROOTPATH``. It does so just after the autoload discovery.
+
+I guessed that it would be a safe assumption that the ``autoload.php`` can always be found under ``FLOW_ROOTPATH/Packages/Libraries/autoload.php``. *(though actually, this path may have been configured differently, but flow wouldn't be able to handle that as of right now)*
+
+Therefore, I moved the composer autload discovery below the ``FLOW_ROOTPATH`` discovery, to then use ``FLOW_ROOTPATH`` as a starting point.
+
+I'm pretty sure this is applicable to lower branches as well, but I didn't test this yet, so I'm targeting ``9.0`` for now.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.3.8...8.3.9>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
