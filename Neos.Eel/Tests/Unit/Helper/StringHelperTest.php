@@ -46,6 +46,29 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
+
+    public function includesExamples()
+    {
+        return [
+            'empty string' => ['Hello, World!', '', 0, true],
+            'included at start' => ['Hello, World!', 'Hello',  0, true],
+            'case sensitive' => ['Hello, World!', 'hello',  0, false],
+            'cut containing part' => ['Hello, World!', 'Hello',  5, false],
+            'not included' => ['Hello, World!', 'Eel',  0, false],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider includesExamples
+     */
+    public function includesWorks($string, $searchString, $position, $expected)
+    {
+        $helper = new StringHelper();
+        $result = $helper->includes($string, $searchString, $position);
+        self::assertSame($expected, $result);
+    }
+
     public function substringExamples()
     {
         return [

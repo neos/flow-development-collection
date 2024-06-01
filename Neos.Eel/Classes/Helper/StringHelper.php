@@ -85,6 +85,30 @@ class StringHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * performs a case-sensitive search to determine whether a given
+     * string may be found within this string, returning true or false as appropriate.
+     *
+     * This implementation follows the JavaScript specification for "includes".
+     *
+     * Examples::
+     *
+     *     String.includes('Hello, World!', '') == true
+     *     String.includes('Hello, World!', 'Hello') == true
+     *     String.includes('Hello, World!', 'hello') == false
+     *     String.includes('Hello, World!', 'Hello', 5) == false
+     *     String.includes('Hello, World!', 'Eel') == false
+     *
+     * @param string $string
+     * @param string $searchString
+     * @param int $position
+     * @return bool true if the search string is found anywhere within the given string, including when searchString is an empty string; otherwise, false.
+     */
+    public function includes(string $string, string $searchString, int $position = 0): bool
+    {
+        return str_contains(mb_substr($string, $position), $searchString);
+    }
+
+    /**
      * Get the character at a specific position
      *
      * Example::

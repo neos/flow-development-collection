@@ -27,6 +27,27 @@ use Neos\Eel\ProtectedContextAwareInterface;
  */
 class ArrayHelper implements ProtectedContextAwareInterface
 {
+
+    /**
+     * determines whether an array includes a certain value among its entries,
+     * returning true or false as appropriate.
+     *
+     * If fromIndex is non-negative, the sequence will start at that offset in the array.
+     * If fromIndex is negative, the sequence will start that far from the end of the array.
+     *
+     * @param iterable $array
+     * @param mixed $searchElement The value to search for.
+     * @param int $fromIndex Zero-based index at which to start searching
+     * @return bool
+     */
+    public function includes(iterable $array, mixed $searchElement, int $fromIndex = 0): bool
+    {
+        if ($array instanceof \Traversable) {
+            $array = iterator_to_array($array);
+        }
+        return in_array($searchElement, (array)array_slice($array, $fromIndex));
+    }
+
     /**
      * Concatenate arrays or values to a new array
      *
