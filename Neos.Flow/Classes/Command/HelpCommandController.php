@@ -215,6 +215,8 @@ class HelpCommandController extends CommandController
             foreach ($optionDescriptions as $optionDescription) {
                 $this->outputLine($optionDescription);
             }
+            $this->outputLine('--help');
+            $this->outputLine('Shows information about the specific command and which parameters are available');
         }
 
         if ($command->getDescription() !== '') {
