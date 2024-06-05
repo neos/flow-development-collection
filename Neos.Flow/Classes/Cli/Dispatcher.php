@@ -77,6 +77,7 @@ class Dispatcher
      * @param Response $response
      * @param CommandControllerInterface $controller
      * @return void
+     * @Flow\Signal
      */
     protected function emitBeforeControllerInvocation(Request $request, Response $response, CommandControllerInterface $controller)
     {
@@ -90,6 +91,7 @@ class Dispatcher
      * @param Response $response
      * @param CommandControllerInterface $controller
      * @return void
+     * @Flow\Signal
      */
     protected function emitAfterControllerInvocation(Request $request, Response $response, CommandControllerInterface $controller)
     {
