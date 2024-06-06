@@ -56,6 +56,8 @@ class Package extends BasePackage
         }
 
         if ($context->isTesting()) {
+            // TODO: This is technically not necessary as we can register the request handler in the functional bootstrap
+            // A future commit will remove this aftter BuildEssentials is adapted
             /** @phpstan-ignore-next-line composer doesnt autoload this class */
             $bootstrap->registerRequestHandler(new Tests\FunctionalTestRequestHandler($bootstrap));
         }
