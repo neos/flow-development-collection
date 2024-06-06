@@ -149,7 +149,7 @@ class FileStorage implements ThrowableStorageInterface
         }
 
         if (!file_exists($this->storagePath)) {
-            mkdir($this->storagePath);
+            Files::createDirectoryRecursively($this->storagePath);
         }
         if (!file_exists($this->storagePath) || !is_dir($this->storagePath) || !is_writable($this->storagePath)) {
             return sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', $this->storagePath);
