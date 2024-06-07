@@ -11,9 +11,14 @@ namespace Neos\Flow\Testing\RequestHandler;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\RequestHandlerInterface;
+use Neos\Flow\Tests\PhpBench\Core\BootstrapBench;
 
 /**
- * A test request handler that does absolutely nothing
+ * A test request handler that does absolutely nothing.
+ *
+ * Useful for testing a Flow Bootstrap without having run a full boot sequence. E.g. performance of
+ * Bootstrap->run() without boot sequence (to compare against with boot sequence).
+ * @see BootstrapBench
  *
  * @Flow\Proxy(false)
  */

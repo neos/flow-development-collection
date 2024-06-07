@@ -16,6 +16,10 @@ use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 
 /**
+ * Benchmark cases for PersistentResources
+ * Checks performance of creating a PersistentResource (object) as
+ * well as persisting it via ORM
+ *
  * @BeforeClassMethods("enablePersistence")
  * @AfterClassMethods("cleanUpPersistence")
  */

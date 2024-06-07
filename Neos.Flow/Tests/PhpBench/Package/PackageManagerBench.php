@@ -13,7 +13,8 @@ use Neos\BuildEssentials\PhpBench\FrameworkEnabledBenchmark;
 use Neos\Flow\Package\PackageManager;
 
 /**
- *
+ * PackageManager benchmark cases
+ * Checks performance for various basic operations used in the codebase.
  */
 class PackageManagerBench extends FrameworkEnabledBenchmark
 {

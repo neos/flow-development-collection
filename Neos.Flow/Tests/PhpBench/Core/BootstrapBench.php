@@ -16,7 +16,8 @@ use Neos\Flow\Testing\RequestHandler\EmptyRequestHandler;
 use Neos\Flow\Testing\RequestHandler\RuntimeSequenceInvokingRequestHandler;
 
 /**
- *
+ * Benchmark cases for the Flow bootstrap
+ * Shows performance of constructing and running a bootstrap and also a full runtime boot sequence
  */
 class BootstrapBench extends FrameworkEnabledBenchmark
 {

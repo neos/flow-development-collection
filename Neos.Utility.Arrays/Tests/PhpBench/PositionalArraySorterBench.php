@@ -5,7 +5,9 @@ namespace Neos\Utility\Arrays\Tests\PhpBench;
 use Neos\Utility\PositionalArraySorter;
 
 /**
- *
+ * PositionalArraySorter benchmark cases
+ * Provides values for basic cases of using it, given that we make heavy use of this throughout the codebase it is
+ * important this doesn't slow down and is as optimized as possible.
  */
 class PositionalArraySorterBench
 {

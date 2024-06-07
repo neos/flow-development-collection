@@ -13,7 +13,8 @@ use Neos\BuildEssentials\PhpBench\FrameworkEnabledBenchmark;
 use Neos\Flow\Configuration\ConfigurationManager;
 
 /**
- *
+ * Benchmark cases for the ConfigurationManager
+ * Check performance of getting different types of configuration and handling the low level configuration caches.
  */
 class ConfigurationManagerBench extends FrameworkEnabledBenchmark
 {
