@@ -25,7 +25,6 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManager;
-use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\Flow\Validation\ValidatorResolver;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -126,8 +125,7 @@ class InternalRequestEngine implements RequestEngineInterface
         }
 
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
-        /** @phpstan-ignore-next-line composer doesnt autoload this class */
-        if (!$requestHandler instanceof FunctionalTestRequestHandler) {
+        if (!$this->bootstrap->getContext()->isTesting()) {
             throw new Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
         }
 
