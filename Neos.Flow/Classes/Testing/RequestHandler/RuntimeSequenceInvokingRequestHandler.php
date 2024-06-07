@@ -25,10 +25,7 @@ use Neos\Flow\Core\RequestHandlerInterface;
  */
 class RuntimeSequenceInvokingRequestHandler implements RequestHandlerInterface
 {
-    /**
-     * @var \Neos\Flow\Core\Bootstrap
-     */
-    protected $bootstrap;
+    protected Bootstrap $bootstrap;
 
     /**
      * Constructor
@@ -45,7 +42,7 @@ class RuntimeSequenceInvokingRequestHandler implements RequestHandlerInterface
      *
      * @return boolean If the context is Testing, true otherwise false
      */
-    public function canHandleRequest()
+    public function canHandleRequest(): bool
     {
         return true;
     }
@@ -59,7 +56,7 @@ class RuntimeSequenceInvokingRequestHandler implements RequestHandlerInterface
      *
      * @return integer The priority of the request handler.
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 0;
     }
@@ -69,7 +66,7 @@ class RuntimeSequenceInvokingRequestHandler implements RequestHandlerInterface
      *
      * @return void
      */
-    public function handleRequest()
+    public function handleRequest(): void
     {
         $sequence = $this->bootstrap->buildRuntimeSequence();
         $sequence->invoke($this->bootstrap);
