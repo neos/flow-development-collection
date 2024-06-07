@@ -17,7 +17,7 @@ use Neos\Flow\Core\RequestHandlerInterface;
  *
  * @Flow\Proxy(false)
  */
-class EmptyRequestHandler implements RequestHandlerInterface
+final class EmptyRequestHandler implements RequestHandlerInterface
 {
     public function handleRequest(): void
     {
