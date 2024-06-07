@@ -15,7 +15,7 @@ use Neos\Flow\Http\HttpRequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Everything from `RuntimeSequenceInvokingRequestHandler` applies to this.
+ * Everything from {@see RuntimeSequenceInvokingRequestHandler} applies to this.
  *
  * Additionally, it also provides some support for HTTP request testing scenarios.
  * For that reason it features a setRequest() method which is used by the FunctionalTestCase
