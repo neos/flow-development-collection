@@ -117,7 +117,7 @@ class PackageCommandController extends CommandController
         $tableHeaderRows = ['Package Key', 'Installed Version', 'Frozen State'];
         /** @var PackageInterface|PackageKeyAwareInterface $package */
         foreach ($availablePackages as $packageKey => $package) {
-            $frozenState = ($freezeSupported && $this->packageManager->isPackageFrozen($packageKey) ? 'Frozen' : 'Not Frozen');
+            $frozenState = ($freezeSupported && $this->packageManager->isPackageFrozen($packageKey) ? '✓' : '✗');
             $tableRows[] = [$package->getPackageKey(), $package->getInstalledVersion(), $frozenState];
         }
         $this->output->outputTable($tableRows, $tableHeaderRows);
