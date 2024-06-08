@@ -103,46 +103,24 @@ class PackageCommandController extends CommandController
     /**
      * List available packages
      *
-     * Lists all locally available packages. Displays the package key, version and
-     * package title.
+     * Lists all locally available packages. Displays the package key, installed version and package title.
      *
-     * @param boolean $loadingOrder The returned packages are ordered by their loading order.
      * @return void The list of packages
      */
-    public function listCommand(bool $loadingOrder = false)
+    public function listCommand(): void
     {
-        $availablePackages = [];
-        $frozenPackages = [];
-        $longestPackageKey = 0;
+        $availablePackages = $this->packageManager->getAvailablePackages();
+        ksort($availablePackages);
         $freezeSupported = $this->bootstrap->getContext()->isDevelopment();
 
-        foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
-            if (strlen($packageKey) > $longestPackageKey) {
-                $longestPackageKey = strlen($packageKey);
-            }
-
-            $availablePackages[$packageKey] = $package;
-
-            if ($this->packageManager->isPackageFrozen($packageKey)) {
-                $frozenPackages[$packageKey] = $package;
-            }
-        }
-
-        if ($loadingOrder === false) {
-            ksort($availablePackages);
-        }
-
-        $this->outputLine('PACKAGES:');
+        $tableRows = [];
+        $tableHeaderRows = ['Package Key', 'Installed Version', 'Frozen State'];
         /** @var PackageInterface|PackageKeyAwareInterface $package */
-        foreach ($availablePackages as $package) {
-            $frozenState = ($freezeSupported && isset($frozenPackages[$package->getPackageKey()]) ? '* ' : '  ');
-            $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . $frozenState . str_pad($package->getInstalledVersion(), 15));
+        foreach ($availablePackages as $packageKey => $package) {
+            $frozenState = ($freezeSupported && $this->packageManager->isPackageFrozen($packageKey) ? 'Frozen' : 'Not Frozen');
+            $tableRows[] = [$package->getPackageKey(), $package->getInstalledVersion(), $frozenState];
         }
-
-        if (count($frozenPackages) > 0 && $freezeSupported) {
-            $this->outputLine();
-            $this->outputLine(' * frozen package');
-        }
+        $this->output->outputTable($tableRows, $tableHeaderRows);
     }
 
     /**
