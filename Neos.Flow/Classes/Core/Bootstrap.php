@@ -503,6 +503,7 @@ class Bootstrap
                 $expectedPath = Files::getUnixStylePath(realpath(FLOW_PATH_FLOW)) . '/';
                 if ($testPath !== $expectedPath) {
                     echo('Flow: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $testPath . '" does not lead to' . PHP_EOL . '"' . $expectedPath . '"' . PHP_EOL);
+                    http_response_code(500);
                     exit(1);
                 }
                 define('FLOW_PATH_ROOT', $rootPath);
@@ -561,16 +562,19 @@ class Bootstrap
         }
         if (DIRECTORY_SEPARATOR !== '/' && PHP_WINDOWS_VERSION_MAJOR < 6) {
             echo('Flow does not support Windows versions older than Windows Vista or Windows Server 2008 (Error #1312463704)' . PHP_EOL);
+            http_response_code(500);
             exit(1);
         }
 
         if (!extension_loaded('Reflection')) {
             echo('The PHP extension "Reflection" is required by Flow.' . PHP_EOL);
+            http_response_code(500);
             exit(1);
         }
         $method = new \ReflectionMethod(__CLASS__, __FUNCTION__);
         if ($method->getDocComment() === false || $method->getDocComment() === '') {
             echo('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.' . PHP_EOL);
+            http_response_code(500);
             exit(1);
         }
 
@@ -583,12 +587,14 @@ class Bootstrap
         if (!is_dir(FLOW_PATH_DATA) && !is_link(FLOW_PATH_DATA)) {
             if (!@mkdir(FLOW_PATH_DATA)) {
                 echo('Flow could not create the directory "' . FLOW_PATH_DATA . '". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1347526552)');
+                http_response_code(500);
                 exit(1);
             }
         }
         if (!is_dir(FLOW_PATH_DATA . 'Persistent') && !is_link(FLOW_PATH_DATA . 'Persistent')) {
             if (!@mkdir(FLOW_PATH_DATA . 'Persistent')) {
                 echo('Flow could not create the directory "' . FLOW_PATH_DATA . 'Persistent". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1347526553)');
+                http_response_code(500);
                 exit(1);
             }
         }
@@ -597,6 +603,7 @@ class Bootstrap
             $oldMask = umask(000);
             if (!@mkdir(FLOW_PATH_TEMPORARY, 0777, true)) {
                 echo('Flow could not create the directory "' . FLOW_PATH_TEMPORARY . '". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1441354578)');
+                http_response_code(500);
                 exit(1);
             }
             umask($oldMask);
