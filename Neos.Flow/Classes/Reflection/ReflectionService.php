@@ -985,6 +985,10 @@ class ReflectionService
      */
     public function getClassSchema(string|object $classNameOrObject): ?ClassSchema
     {
+        if (!$this->initialized) {
+            $this->initialize();
+        }
+
         $className = $classNameOrObject;
         if (is_object($classNameOrObject)) {
             $className = TypeHandling::getTypeForValue($classNameOrObject);
@@ -1159,6 +1163,10 @@ class ReflectionService
      */
     public function reflectClassProperty(string $className, PropertyReflection $property): int
     {
+        if (!$this->initialized) {
+            $this->initialize();
+        }
+
         $propertyName = $property->getName();
         $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName] = [];
         if ($property->hasType()) {

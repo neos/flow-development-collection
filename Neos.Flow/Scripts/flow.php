@@ -39,18 +39,6 @@ if (isset($argv[1]) && ($argv[1] === 'neos.flow:core:setfilepermissions' || $arg
     array_shift($argv);
     require(__DIR__ . '/migrate.php');
 } else {
-    $autoloaderPath = dirname(__DIR__, 3) . '/Libraries/autoload.php';
-    if (!file_exists($autoloaderPath)) {
-        echo 'Composers "autoload.php" file was not found. The file is expected to be located in the path:' . PHP_EOL . PHP_EOL;
-        echo $autoloaderPath . PHP_EOL . PHP_EOL;
-        echo 'This could be due to a missing "config" => "vendor-dir" section of your root "composer.json" file.' . PHP_EOL . PHP_EOL;
-        echo 'The section key and value should look like the following:' . PHP_EOL;
-        echo '"vendor-dir": "Packages/Libraries"' . PHP_EOL;
-        echo 'Update your "composer.json" file accordingly and run the "composer update" command.' . PHP_EOL;
-        exit(1);
-    }
-    $composerAutoloader = require($autoloaderPath);
-
     if (DIRECTORY_SEPARATOR !== '/' && trim(getenv('FLOW_ROOTPATH'), '"\' ') === '') {
         $absoluteRootpath = dirname(realpath(__DIR__ . '/../../../'));
         if (realpath(getcwd()) === $absoluteRootpath) {
@@ -64,6 +52,18 @@ if (isset($argv[1]) && ($argv[1] === 'neos.flow:core:setfilepermissions' || $arg
     } else {
         $_SERVER['FLOW_ROOTPATH'] = trim(getenv('FLOW_ROOTPATH'), '"\' ') ?: dirname($_SERVER['PHP_SELF']);
     }
+
+    $autoloaderPath = $_SERVER['FLOW_ROOTPATH'] . '/Packages/Libraries/autoload.php';
+    if (!file_exists($autoloaderPath)) {
+        echo 'Composers "autoload.php" file was not found. The file is expected to be located in the path:' . PHP_EOL . PHP_EOL;
+        echo $autoloaderPath . PHP_EOL . PHP_EOL;
+        echo 'This could be due to a missing "config" => "vendor-dir" section of your root "composer.json" file.' . PHP_EOL . PHP_EOL;
+        echo 'The section key and value should look like the following:' . PHP_EOL;
+        echo '"vendor-dir": "Packages/Libraries"' . PHP_EOL;
+        echo 'Update your "composer.json" file accordingly and run the "composer update" command.' . PHP_EOL;
+        exit(1);
+    }
+    $composerAutoloader = require($autoloaderPath);
 
     $context = trim((string)\Neos\Flow\Core\Bootstrap::getEnvironmentConfigurationSetting('FLOW_CONTEXT'), '"\' ') ?: 'Development';
 
