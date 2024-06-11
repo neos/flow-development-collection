@@ -52,7 +52,7 @@
         "symfony/dom-crawler": "^5.1",
         "symfony/console": "^5.1",
 
-        "composer/composer": "^2.2.8",
+        "composer/composer": "~2.2.24 || ^2.7.7",
 
         "egulias/email-validator": "^2.1.17 || ^3.0"
     },

@@ -148,23 +148,23 @@
         <target state="translated">The length of this text must be between {0,number} and {1,number} characters</target>
       </trans-unit>
       <group id="1238108068" restype="x-gettext-plurals">
-        <trans-unit id="1238108068[0]">
+        <trans-unit id="1238108068[0]" xml:space="preserve">
           <source>This field must contain at least {0,number} character</source>
-          <target state="needs-translation">This field must contain at least {0,number} character</target>
+          <target state="translated">Este campo deve conter ao menos {0,number} caractere</target>
         </trans-unit>
-        <trans-unit id="1238108068[1]">
+        <trans-unit id="1238108068[1]" xml:space="preserve">
           <source>This field must contain at least {0,number} characters</source>
-          <target state="needs-translation">This field must contain at least {0,number} characters</target>
+          <target state="translated">Este campo deve conter ao menos {0,number} caracteres</target>
         </trans-unit>
       </group>
       <group id="1238108069" restype="x-gettext-plurals">
-        <trans-unit id="1238108069[0]">
+        <trans-unit id="1238108069[0]" xml:space="preserve">
           <source>This text may not exceed {0,number} character</source>
-          <target state="needs-translation">This text may not exceed {0,number} character</target>
+          <target state="translated">Esse texto não deve ter mais que {0,number} caractere</target>
         </trans-unit>
-        <trans-unit id="1238108069[1]">
+        <trans-unit id="1238108069[1]" xml:space="preserve">
           <source>This text may not exceed {0,number} characters</source>
-          <target state="needs-translation">This text may not exceed {0,number} characters</target>
+          <target state="translated">Esse texto não deve ter mais que {0,number} caracteres</target>
         </trans-unit>
       </group>
       <!-- StringValidator -->
