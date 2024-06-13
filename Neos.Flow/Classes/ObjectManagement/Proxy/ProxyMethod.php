@@ -165,7 +165,7 @@ class ProxyMethod
         $staticKeyword = $this->reflectionService->isMethodStatic($this->fullOriginalClassName, $this->methodName) ? 'static ' : '';
 
         $returnType = $this->reflectionService->getMethodDeclaredReturnType($this->fullOriginalClassName, $this->methodName);
-        $returnTypeIsVoid = $returnType === 'void';
+        $returnTypeIsVoidOrNull = $returnType === 'void' || $returnType === null;
         $returnTypeDeclaration = ($returnType !== null ? ' : ' . $returnType : '');
 
 
@@ -179,7 +179,7 @@ class ProxyMethod
             } else {
                 $code .= $this->addedPreParentCallCode;
                 if ($this->addedPostParentCallCode !== '') {
-                    if ($returnTypeIsVoid) {
+                    if ($returnTypeIsVoidOrNull) {
                         if ($callParentMethodCode !== '') {
                             $code .= '            ' . $callParentMethodCode;
                         }
@@ -187,11 +187,11 @@ class ProxyMethod
                         $code .= '            $result = ' . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
                     }
                     $code .= $this->addedPostParentCallCode;
-                    if (!$returnTypeIsVoid) {
+                    if (!$returnTypeIsVoidOrNull) {
                         $code .= "        return \$result;\n";
                     }
                 } else {
-                    if (!$returnTypeIsVoid && $callParentMethodCode !== '') {
+                    if (!$returnTypeIsVoidOrNull && $callParentMethodCode !== '') {
                         $code .= '        return ' . $callParentMethodCode . ";\n";
                     }
                 }
