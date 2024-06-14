@@ -110,7 +110,6 @@ class PackageCommandController extends CommandController
     public function listCommand(): void
     {
         $availablePackages = $this->packageManager->getAvailablePackages();
-        ksort($availablePackages);
         $freezeSupported = $this->bootstrap->getContext()->isDevelopment();
 
         $tableRows = [];
