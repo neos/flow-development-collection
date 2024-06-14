@@ -189,7 +189,6 @@ class ReflectionService
         $this->statusCache = $cache;
         $backend = $this->statusCache->getBackend();
         if (is_callable([$backend, 'initializeObject'])) {
-            /** @phpstan-ignore-next-line will be refactored with neos 9 */
             $backend->initializeObject();
         }
     }

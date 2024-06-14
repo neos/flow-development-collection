@@ -18,6 +18,7 @@ final class ProxyConstructorGenerator extends ProxyMethodGenerator
 {
     private ?string $originalVisibility = null;
 
+    /** @phpstan-ignore constructor.unusedParameter */
     public function __construct($name = null, array $parameters = [], $flags = self::FLAG_PUBLIC, $body = null, $docBlock = null)
     {
         if ($docBlock === null) {

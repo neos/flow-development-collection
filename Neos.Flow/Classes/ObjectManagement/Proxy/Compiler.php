@@ -129,6 +129,7 @@ class Compiler
      */
     public function getProxyClass(string $fullClassName): bool|ProxyClass
     {
+        /** @phpstan-ignore-next-line Class BaseTestCase not found */
         if (interface_exists($fullClassName) || in_array(BaseTestCase::class, class_parents($fullClassName), true)) {
             return false;
         }
@@ -403,9 +404,10 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
     private function getClassNameTokenIndex(array $tokens): ?int
     {
+        $classToken = null;
         foreach ($tokens as $i => $token) {
             # $token is an array: [0] => token id, [1] => token text, [2] => line number
-            if (isset($classToken) && is_array($token) && $token[0] === T_STRING) {
+            if (!empty($classToken) && is_array($token) && $token[0] === T_STRING) {
                 return $i;
             }
             # search first T_CLASS token that is not a `Foo::class` class name resolution
