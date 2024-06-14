@@ -5,8 +5,19 @@
         "MIT"
     ],
     "type": "neos-package-collection",
+    "scripts": {
+        "test:behavioral": [
+            "../../flow doctrine:migrate --quiet",
+            "../../bin/behat -f progress -c Neos.Flow/Tests/Behavior/behat.yml"
+        ],
+        "lint:phpstan": "../../bin/phpstan analyse",
+        "lint": [
+            "@lint:phpstan"
+        ]
+    },
     "require": {
-        "php": "^8.0",
+        "behat/behat": "^3.10",
+        "php": "^8.2",
         "psr/simple-cache": "^2.0 || ^3.0",
         "psr/cache": "^2.0 || ^3.0",
         "psr/log": "^2.0 || ^3.0",
@@ -24,7 +35,8 @@
         "psr/http-server-handler": "^1.0",
         "psr/http-client": "^1.0",
         "ramsey/uuid": "^3.0 || ^4.0",
-        "doctrine/orm": "^2.9.3",
+        "laminas/laminas-code": "^4.10",
+        "doctrine/orm": "^2.12.0",
         "doctrine/migrations": "^3.0",
         "doctrine/dbal": "^2.13",
         "doctrine/common": "^3.0.3",
@@ -62,12 +74,6 @@
         "neos/utility-pdo": "self.version",
         "neos/utility-schema": "self.version",
         "neos/utility-unicode": "self.version"
-    },
-    "scripts": {
-        "lint:phpstan": "../../bin/phpstan analyse",
-        "lint": [
-            "@lint:phpstan"
-        ]
     },
     "suggest": {
         "ext-memcache": "If you have a memcache server and want to use it for caching.",
@@ -132,6 +138,11 @@
     "require-dev": {
         "mikey179/vfsstream": "^1.6.10",
         "phpunit/phpunit": "~9.1"
+    },
+    "provide": {
+        "psr/cache-implementation": "2.0.0 || 3.0.0",
+        "psr/simple-cache-implementation": "2.0.0 || 3.0.0",
+        "psr/log-implementation": "2.0.0 || 3.0.0"
     },
     "autoload-dev": {
         "psr-4": {
