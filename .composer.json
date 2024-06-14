@@ -3,7 +3,14 @@
   "description": "Flow packages in a joined repository for pull requests.",
   "license": ["MIT"],
   "type": "neos-package-collection",
+  "scripts": {
+    "test:behavioral": [
+      "../../flow doctrine:migrate --quiet",
+      "../../bin/behat -f progress -c Neos.Flow/Tests/Behavior/behat.yml"
+    ]
+  },
   "require": {
+    "behat/behat": "^3.10"
   },
   "replace": {
   },

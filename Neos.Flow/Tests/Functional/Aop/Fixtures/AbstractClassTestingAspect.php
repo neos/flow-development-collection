@@ -29,7 +29,7 @@ class AbstractClassTestingAspect
     public function abstractMethodInSubClassAdvice(JoinPointInterface $joinPoint)
     {
         $result = $joinPoint->getAdviceChain()->proceed($joinPoint);
-        return $result . ' adviced';
+        return $result . ' advised';
     }
 
     /**
@@ -40,6 +40,6 @@ class AbstractClassTestingAspect
     public function concreteMethodInAbstractClassAdvice(JoinPointInterface $joinPoint)
     {
         $result = $joinPoint->getAdviceChain()->proceed($joinPoint);
-        return $result . ' adviced';
+        return $result . ' advised';
     }
 }

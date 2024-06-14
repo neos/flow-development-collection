@@ -273,8 +273,11 @@ class ObjectManager implements ObjectManagerInterface
      * Returns the object name corresponding to a given class name.
      *
      * @param string $className The class name
-     * @return string The object name corresponding to the given class name or false if no object is configured to use that class
+     *
+     * @return string|false The object name corresponding to the given class name or false if no object is configured to use that class
+     *
      * @throws \InvalidArgumentException
+     *
      * @api
      */
     public function getObjectNameByClassName($className)

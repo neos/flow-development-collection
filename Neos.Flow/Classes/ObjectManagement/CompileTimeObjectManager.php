@@ -117,7 +117,7 @@ class CompileTimeObjectManager extends ObjectManager
     }
 
     /**
-     * Initializes the the object configurations and some other parts of this Object Manager.
+     * Initializes the object configurations and some other parts of this Object Manager.
      *
      * @param PackageInterface[] $packages An array of active packages to consider
      * @return void
@@ -132,6 +132,7 @@ class CompileTimeObjectManager extends ObjectManager
         $configurationBuilder = new ConfigurationBuilder();
         $configurationBuilder->injectReflectionService($this->reflectionService);
         $configurationBuilder->injectLogger($this->logger);
+        $configurationBuilder->injectExcludeClassesFromConstructorAutowiring($this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.object.dependencyInjection.excludeClassesFromConstructorAutowiring'));
 
         $this->objectConfigurations = $configurationBuilder->buildObjectConfigurations($this->registeredClassNames, $rawCustomObjectConfigurations);
 

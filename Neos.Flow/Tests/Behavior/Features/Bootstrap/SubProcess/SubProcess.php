@@ -10,7 +10,10 @@ use Neos\Flow\Core\ApplicationContext;
  *  $subProcess = new SubProcess($applicationContext);
  *  $subProcessResponse = $subProcess->execute('some:flow:command');
  *
- * @deprecated This will probably move to a separate package in a future version, you should not rely on it.
+ * See {@see IsolatedBehatStepsTrait} documentation for a detailed explanation of Flow's isolated behat tests.
+ *
+ * @deprecated todo the policy features depending on this handcrafted isolated behat test infrastructure will be refactored and this infrastructure removed.
+ * @internal only allowed to be used internally for Neos.Flow behavioral tests!
  */
 class SubProcess
 {

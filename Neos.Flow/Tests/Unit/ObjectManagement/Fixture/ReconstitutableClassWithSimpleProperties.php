@@ -24,7 +24,7 @@ class ReconstitutableClassWithSimpleProperties implements PersistenceMagicInterf
     public $publicProperty;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $constructorHasBeenCalled = false;
 
@@ -34,7 +34,7 @@ class ReconstitutableClassWithSimpleProperties implements PersistenceMagicInterf
     protected $stringDependency;
 
     /**
-     * The constructor - similar to what you would find in a AOP proxy class.
+     * The constructor - similar to what you would find in an AOP proxy class.
      *
      */
     public function __construct($someArgument, ObjectManagerInterface $Flow_Aop_Proxy_objectManager)

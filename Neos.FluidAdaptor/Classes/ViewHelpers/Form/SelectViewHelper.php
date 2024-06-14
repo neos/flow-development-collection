@@ -375,7 +375,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
             $output .= ' selected="selected"';
         }
 
-        $output .= '>' . htmlspecialchars((string)$label) . '</option>';
+        $output .= '>' . htmlspecialchars($label) . '</option>';
 
         return $output;
     }

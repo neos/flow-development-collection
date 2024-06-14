@@ -15,6 +15,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A class of scope prototype (but without explicit scope annotation)
+ *
+ * @Flow\Entity
  */
 class PrototypeClassF
 {

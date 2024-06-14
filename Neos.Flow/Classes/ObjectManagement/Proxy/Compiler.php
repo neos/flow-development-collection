@@ -11,11 +11,16 @@ namespace Neos\Flow\ObjectManagement\Proxy;
  * source code.
  */
 
+use Neos\Cache\Exception;
+use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
+use Neos\Flow\ObjectManagement\Exception\ProxyCompilerException;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\BaseTestCase;
+use ReflectionAttribute;
+use ReflectionClass;
 
 /**
  * Builder for proxy classes which are used to implement Dependency Injection and
@@ -29,7 +34,7 @@ class Compiler
     /**
      * @var string
      */
-    const ORIGINAL_CLASSNAME_SUFFIX = '_Original';
+    public const ORIGINAL_CLASSNAME_SUFFIX = '_Original';
 
     /**
      * @var CompileTimeObjectManager
@@ -61,7 +66,7 @@ class Compiler
      * Length of the prefix that will be checked for exclusion of proxy building.
      * See above.
      *
-     * @var integer
+     * @var int
      */
     protected $excludedSubPackagesLength;
 
@@ -84,7 +89,7 @@ class Compiler
      * @param CompileTimeObjectManager $objectManager
      * @return void
      */
-    public function injectObjectManager(CompileTimeObjectManager $objectManager)
+    public function injectObjectManager(CompileTimeObjectManager $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
@@ -96,7 +101,7 @@ class Compiler
      * @return void
      * @Flow\Autowiring(false)
      */
-    public function injectClassesCache(PhpFrontend $classesCache)
+    public function injectClassesCache(PhpFrontend $classesCache): void
     {
         $this->classesCache = $classesCache;
     }
@@ -105,7 +110,7 @@ class Compiler
      * @param ReflectionService $reflectionService
      * @return void
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
@@ -120,11 +125,11 @@ class Compiler
      * false will be returned
      *
      * @param string $fullClassName Name of the original class
-     * @return ProxyClass|boolean
+     * @return ProxyClass|bool
      */
-    public function getProxyClass(string $fullClassName)
+    public function getProxyClass(string $fullClassName): bool|ProxyClass
     {
-        if (interface_exists($fullClassName) || (class_exists(BaseTestCase::class) && in_array(BaseTestCase::class, class_parents($fullClassName), true))) {
+        if (interface_exists($fullClassName) || in_array(BaseTestCase::class, class_parents($fullClassName), true)) {
             return false;
         }
 
@@ -132,7 +137,7 @@ class Compiler
             return false;
         }
 
-        $classReflection = new \ReflectionClass($fullClassName);
+        $classReflection = new ReflectionClass($fullClassName);
         if ($classReflection->isInternal() === true) {
             return false;
         }
@@ -141,12 +146,11 @@ class Compiler
             return false;
         }
 
-        $proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, Flow\Proxy::class);
-        if ($proxyAnnotation !== null && $proxyAnnotation->enabled === false) {
+        if ($this->reflectionService->getClassAnnotation($fullClassName, Flow\Proxy::class)?->enabled === false) {
             return false;
         }
 
-        if (in_array(substr($fullClassName, 0, $this->excludedSubPackagesLength), $this->excludedSubPackages)) {
+        if (in_array(substr($fullClassName, 0, $this->excludedSubPackagesLength), $this->excludedSubPackages, true)) {
             return false;
         }
         // Annotation classes (like \Neos\Flow\Annotations\Entity) must never be proxied because that would break the Doctrine AnnotationParser
@@ -167,9 +171,9 @@ class Compiler
      * monitor or some other mechanism.
      *
      * @param string $fullClassName Name of the original class
-     * @return boolean true if a cache entry exists
+     * @return bool true if a cache entry exists
      */
-    public function hasCacheEntryForClass($fullClassName)
+    public function hasCacheEntryForClass(string $fullClassName): bool
     {
         if (isset($this->proxyClasses[$fullClassName])) {
             return false;
@@ -181,9 +185,9 @@ class Compiler
      * Compiles the configured proxy classes and methods as static PHP code and stores it in the proxy class code cache.
      * Also builds the static object container which acts as a registry for non-prototype objects during runtime.
      *
-     * @return integer Number of classes which have been compiled
+     * @return int Number of classes which have been compiled
      */
-    public function compile()
+    public function compile(): int
     {
         $compiledClasses = [];
         foreach ($this->objectManager->getRegisteredClassNames() as $fullOriginalClassNames) {
@@ -191,16 +195,14 @@ class Compiler
                 if (isset($this->proxyClasses[$fullOriginalClassName])) {
                     $proxyClassCode = $this->proxyClasses[$fullOriginalClassName]->render();
                     if ($proxyClassCode !== '') {
-                        $class = new \ReflectionClass($fullOriginalClassName);
+                        $class = new ReflectionClass($fullOriginalClassName);
                         $classPathAndFilename = $class->getFileName();
                         $this->cacheOriginalClassFileAndProxyCode($fullOriginalClassName, $classPathAndFilename, $proxyClassCode);
                         $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
                         $compiledClasses[] = $fullOriginalClassName;
                     }
-                } else {
-                    if ($this->classesCache->has(str_replace('\\', '_', $fullOriginalClassName))) {
-                        $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
-                    }
+                } elseif ($this->classesCache->has(str_replace('\\', '_', $fullOriginalClassName))) {
+                    $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
                 }
             }
         }
@@ -210,25 +212,24 @@ class Compiler
 
     /**
      * @param array<string> $classNames
+     *
      * @Flow\Signal
      */
-    public function emitCompiledClasses(array $classNames)
+    public function emitCompiledClasses(array $classNames): void
     {
     }
 
     /**
      * @return string
      */
-    public function getStoredProxyClassMap()
+    public function getStoredProxyClassMap(): string
     {
-        $return = '<?php
+        return '<?php
 /**
  * This is a cached list of all proxy classes. Only classes in this array will
  * actually be loaded from the proxy class cache in the ClassLoader.
  */
 return ' . var_export($this->storedProxyClasses, true) . ';';
-
-        return $return;
     }
 
     /**
@@ -241,22 +242,18 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      * @return void
      *
      * @throws Exception If the original class filename doesn't match the actual class name inside the file.
+     * @throws InvalidDataException
+     * @throws Exception
+     * @throws ProxyCompilerException
      */
-    protected function cacheOriginalClassFileAndProxyCode($className, $pathAndFilename, $proxyClassCode)
+    protected function cacheOriginalClassFileAndProxyCode(string $className, string $pathAndFilename, string $proxyClassCode): void
     {
         $classCode = file_get_contents($pathAndFilename);
         $classCode = $this->replaceClassName($classCode, $pathAndFilename);
+        $classCode = $this->replaceSelfWithStatic($classCode);
+        $classCode = $this->makePrivateConstructorPublic($classCode, $pathAndFilename);
         $classCode = $this->stripOpeningPhpTag($classCode);
-
-        // comment out "final" keyword, if the method is final and if it is advised (= part of the $proxyClassCode)
-        // Note: Method name regex according to http://php.net/manual/en/language.oop5.basic.php
-        $classCode = preg_replace_callback('/^(\s*)((public|protected)\s+)?final(\s+(public|protected))?(\s+function\s+)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]+\s*\()/m', static function ($matches) use ($proxyClassCode) {
-            // the method is not advised => don't remove the final keyword
-            if (strpos($proxyClassCode, $matches[0]) === false) {
-                return $matches[0];
-            }
-            return $matches[1] . $matches[2] . '/*final*/' . $matches[4] . $matches[6] . $matches[7];
-        }, $classCode);
+        $classCode = $this->commentOutFinalKeywordForMethods($classCode, $proxyClassCode);
 
         $classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
 
@@ -276,7 +273,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      * @param string $classCode
      * @return string the original class code without opening php tag
      */
-    protected function stripOpeningPhpTag($classCode)
+    protected function stripOpeningPhpTag(string $classCode): string
     {
         return preg_replace('/^\s*\\<\\?php(.*\n|.*)/', '$1', $classCode, 1);
     }
@@ -284,10 +281,10 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
     /**
      * Render the source (string) form of a PHP Attribute.
-     * @param \ReflectionAttribute $attribute
+     * @param ReflectionAttribute $attribute
      * @return string
      */
-    public static function renderAttribute($attribute): string
+    public static function renderAttribute(ReflectionAttribute $attribute): string
     {
         $attributeAsString = '\\' . $attribute->getName();
         if (count($attribute->getArguments()) > 0) {
@@ -308,10 +305,10 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     /**
      * Render the source (string) form of an Annotation instance.
      *
-     * @param \Doctrine\Common\Annotations\Annotation $annotation
+     * @param object $annotation
      * @return string
      */
-    public static function renderAnnotation($annotation)
+    public static function renderAnnotation(object $annotation): string
     {
         $annotationAsString = '@\\' . get_class($annotation);
 
@@ -335,15 +332,10 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
             } elseif (is_array($optionValue)) {
                 $optionValueAsString = self::renderOptionArrayValueAsString($optionValue);
             }
-            switch ($optionName) {
-                case 'value':
-                    $optionsAsStrings[] = $optionValueAsString;
-                    break;
-                default:
-                    if ($optionValue === $optionDefaults[$optionName]) {
-                        break;
-                    }
-                    $optionsAsStrings[] = $optionName . '=' . $optionValueAsString;
+            if ($optionName === 'value') {
+                $optionsAsStrings[] = $optionValueAsString;
+            } elseif ($optionValue !== $optionDefaults[$optionName]) {
+                $optionsAsStrings[] = $optionName . '=' . $optionValueAsString;
             }
         }
         return $annotationAsString . ($optionsAsStrings !== [] ? '(' . implode(', ', $optionsAsStrings) . ')' : '');
@@ -355,7 +347,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      * @param array $optionValue
      * @return string
      */
-    protected static function renderOptionArrayValueAsString(array $optionValue)
+    protected static function renderOptionArrayValueAsString(array $optionValue): string
     {
         $values = [];
         foreach ($optionValue as $k => $v) {
@@ -411,8 +403,6 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
     private function getClassNameTokenIndex(array $tokens): ?int
     {
-        $classToken = null;
-        $previousToken = null;
         foreach ($tokens as $i => $token) {
             # $token is an array: [0] => token id, [1] => token text, [2] => line number
             if (isset($classToken) && is_array($token) && $token[0] === T_STRING) {
@@ -425,5 +415,70 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
             $previousToken = $token;
         }
         return null;
+    }
+
+    /**
+     * If a constructor exists, and it is private, this method will change its visibility to public
+     * in the given class code. This is only necessary in order to allow the proxy class to call its
+     * parent constructor.
+     *
+     * @throws ProxyCompilerException
+     */
+    protected function makePrivateConstructorPublic(string $classCode, string $pathAndFilename): string
+    {
+        $result = preg_replace('/private\s+function\s+__construct/', 'public function __construct', $classCode, 1);
+        if ($result === null) {
+            throw new ProxyCompilerException(sprintf('Could not make private constructor public in class file "%s".', $pathAndFilename), 1686149268);
+        }
+        return $result;
+    }
+
+    protected function commentOutFinalKeywordForMethods(string $classCode, string $proxyClassCode): string
+    {
+        // comment out "final" keyword, if the method is final and if it is advised (= part of the $proxyClassCode)
+        // Note: Method name regex according to http://php.net/manual/en/language.oop5.basic.php
+        $classCode = preg_replace_callback('/^(\s*)((public|protected)\s+)?final(\s+(public|protected))?(\s+function\s+)([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]+\s*\()/m', static function ($matches) use ($proxyClassCode) {
+            // the method is not advised => don't remove the final keyword
+            if (!str_contains($proxyClassCode, $matches[0])) {
+                return $matches[0];
+            }
+            return $matches[1] . $matches[2] . '/*final*/' . $matches[4] . $matches[6] . $matches[7];
+        }, $classCode);
+        assert(is_string($classCode), 'preg_replace_callback() failed');
+        return $classCode;
+    }
+
+    /**
+     * Replace occurrences of "self" with "static" for instantiation with new self()
+     * and function return declarations like "public function foo(): self".
+     *
+     * References to constants like "self::FOO" are not replaced.
+     */
+    protected function replaceSelfWithStatic(string $classCode): string
+    {
+        if (!str_contains($classCode, 'self')) {
+            return $classCode;
+        }
+
+        $tokens = token_get_all($classCode);
+        $tokensCount = count($tokens);
+        $newClassCode = '';
+        /** @noinspection ForeachInvariantsInspection */
+        for ($i = 0; $i < $tokensCount; $i++) {
+            if (is_array($tokens[$i])) {
+                if ($tokens[$i][0] === T_NEW && $tokens[$i + 2][0] === T_STRING && $tokens[$i + 2][1] === 'self') {
+                    $newClassCode .= $tokens[$i][1] . $tokens[$i + 1][1] . 'static';
+                    $i += 2;
+                } elseif ($tokens[$i][0] === T_STRING && $tokens[$i][1] === 'self' && $tokens[$i + 1][0] !== T_DOUBLE_COLON) {
+                    $newClassCode .= 'static';
+                } else {
+                    $newClassCode .= $tokens[$i][1];
+                }
+            } else {
+                $newClassCode .= $tokens[$i];
+            }
+        }
+
+        return $newClassCode;
     }
 }

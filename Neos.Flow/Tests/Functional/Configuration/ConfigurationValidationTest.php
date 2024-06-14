@@ -11,80 +11,45 @@ namespace Neos\Flow\Tests\Functional\Configuration;
  * source code.
  */
 
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Result;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
 use Neos\Flow\Configuration\Loader\RoutesLoader;
 use Neos\Flow\Configuration\Loader\SettingsLoader;
-use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Core\ApplicationContext;
-use Neos\Error\Messages\Error;
-use Neos\Error\Messages\Result;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\Functional\Configuration\Fixtures\RootDirectoryIgnoringYamlSource;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Testcase for Configuration Validation
  */
 class ConfigurationValidationTest extends FunctionalTestCase
 {
-    /**
-     * @var array<string>
-     */
-    protected $contextNames = ['Development', 'Production', 'Testing'];
+    protected array $contextNames = ['Development', 'Production', 'Testing'];
+    protected array $configurationTypes = ['Caches', 'Objects', 'Policy', 'Routes', 'Settings'];
+    protected array $schemaPackageKeys = ['Neos.Flow'];
+    protected array $configurationPackageKeys = ['Neos.Flow', 'Neos.FluidAdaptor', 'Neos.Eel', 'Neos.Kickstart'];
+    protected ConfigurationSchemaValidator $configurationSchemaValidator;
+    protected ConfigurationManager $originalConfigurationManager;
+    protected ConfigurationManager $mockConfigurationManager;
 
-    /**
-     * @var array<string>
-     */
-    protected $configurationTypes = ['Caches', 'Objects', 'Policy', 'Routes', 'Settings'];
-
-    /**
-     * @var array<string>
-     */
-    protected $schemaPackageKeys = ['Neos.Flow'];
-
-    /**
-     * @var array<string>
-     */
-    protected $configurationPackageKeys = ['Neos.Flow', 'Neos.FluidAdaptor', 'Neos.Eel', 'Neos.Kickstart'];
-
-    /**
-     *
-     * @var ConfigurationSchemaValidator
-     */
-    protected $configurationSchemaValidator;
-
-    /**
-     * @var ConfigurationManager
-     */
-    protected $originalConfigurationManager;
-
-    /**
-     * @var ConfigurationManager
-     */
-    protected $mockConfigurationManager;
-
-    /**
-     * @return void
-     */
     protected function setUp(): void
     {
         parent::setUp();
 
         //
-        // create a mock packageManager that only returns the the packages that contain schema files
+        // create a mock packageManager that only returns the packages that contain schema files
         //
 
-        $schemaPackages = [];
         $configurationPackages = [];
 
         // get all packages and select the ones we want to test
         $temporaryPackageManager = $this->objectManager->get(PackageManager::class);
         foreach ($temporaryPackageManager->getAvailablePackages() as $package) {
-            if (in_array($package->getPackageKey(), $this->getSchemaPackageKeys())) {
-                $schemaPackages[$package->getPackageKey()] = $package;
-            }
-            if (in_array($package->getPackageKey(), $this->getConfigurationPackageKeys())) {
+            if (in_array($package->getPackageKey(), $this->getConfigurationPackageKeys(), true)) {
                 $configurationPackages[$package->getPackageKey()] = $package;
             }
         }
@@ -111,9 +76,6 @@ class ConfigurationValidationTest extends FunctionalTestCase
         $this->inject($this->configurationSchemaValidator, 'configurationManager', $this->mockConfigurationManager);
     }
 
-    /**
-     * @return void
-     */
     protected function tearDown(): void
     {
         $this->objectManager->setInstance(ConfigurationManager::class, $this->originalConfigurationManager);
@@ -121,11 +83,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
         parent::tearDown();
     }
 
-    /**
-     * @param ApplicationContext $context
-     * @return void
-     */
-    protected function injectApplicationContextIntoConfigurationManager(ApplicationContext $context)
+    protected function injectApplicationContextIntoConfigurationManager(ApplicationContext $context): void
     {
         ObjectAccess::setProperty(
             $this->mockConfigurationManager,
@@ -142,10 +100,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function configurationValidationDataProvider()
+    public function configurationValidationDataProvider(): array
     {
         $result = [];
         foreach ($this->getContextNames() as $contextName) {
@@ -157,12 +112,11 @@ class ConfigurationValidationTest extends FunctionalTestCase
     }
 
     /**
-     * @param string $contextName
-     * @param string $configurationType
      * @test
      * @dataProvider configurationValidationDataProvider
+     * @throws
      */
-    public function configurationValidationTests($contextName, $configurationType)
+    public function configurationValidationTests(string $contextName, string $configurationType): void
     {
         $this->injectApplicationContextIntoConfigurationManager(new ApplicationContext($contextName));
         $schemaFiles = [];
@@ -170,11 +124,7 @@ class ConfigurationValidationTest extends FunctionalTestCase
         $this->assertValidationResultContainsNoErrors($validationResult);
     }
 
-    /**
-     * @param Result $validationResult
-     * @return void
-     */
-    protected function assertValidationResultContainsNoErrors(Result $validationResult)
+    protected function assertValidationResultContainsNoErrors(Result $validationResult): void
     {
         if ($validationResult->hasErrors()) {
             $errors = $validationResult->getFlattenedErrors();
@@ -190,34 +140,22 @@ class ConfigurationValidationTest extends FunctionalTestCase
         self::assertFalse($validationResult->hasErrors());
     }
 
-    /**
-     * @return array<string>
-     */
-    protected function getContextNames()
+    protected function getContextNames(): array
     {
         return $this->contextNames;
     }
 
-    /**
-     * @return array<string>
-     */
-    protected function getConfigurationTypes()
+    protected function getConfigurationTypes(): array
     {
         return $this->configurationTypes;
     }
 
-    /**
-     * @return array<string>
-     */
-    protected function getSchemaPackageKeys()
+    protected function getSchemaPackageKeys(): array
     {
         return $this->schemaPackageKeys;
     }
 
-    /**
-     * @return array<string>
-     */
-    protected function getConfigurationPackageKeys()
+    protected function getConfigurationPackageKeys(): array
     {
         return $this->configurationPackageKeys;
     }

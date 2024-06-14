@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.0', '8.1', '8.2', '8.3']
+        php-versions: ['8.2', '8.3']
         # see https://mariadb.com/kb/en/mariadb-server-release-dates/
         # this should be a current release, e.g. the LTS version
         mariadb-versions: ['10.6']
@@ -32,7 +32,7 @@ jobs:
         static-analysis: ['no']
         experimental: [false]
         include:
-          - php-versions: '8.0'
+          - php-versions: '8.2'
             mariadb-versions: '' # skip mariadb setup
             postgresql-versions: '' # skip postgresql setup
             static-analysis: 'yes'
@@ -40,7 +40,7 @@ jobs:
             dependencies: 'highest'
 
           # Build for minimum dependencies.
-          - php-versions: '8.0'
+          - php-versions: '8.2'
             mariadb-versions: '10.2'
             postgresql-versions: '10-alpine'
             static-analysis: 'no'
@@ -176,8 +176,8 @@ jobs:
         if: ${{ matrix.static-analysis == 'no' && matrix.dependencies != 'lowest' }}
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
-          bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
+          cd Packages/Framework
+          composer test:behavioral
 
       - name: Setup Flow configuration (PGSQL)
         run: |
@@ -213,8 +213,8 @@ jobs:
         if: ${{ matrix.static-analysis == 'no' && matrix.dependencies != 'lowest' }}
         #if: env.BEHAT == true
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup && ./flow doctrine:create && ./flow doctrine:migrationversion --add --version all
-          bin/behat --stop-on-failure -f progress -c Packages/Framework/Neos.Flow/Tests/Behavior/behat.yml.dist
+          cd Packages/Framework
+          composer test:behavioral
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"

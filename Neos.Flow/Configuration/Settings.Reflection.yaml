@@ -8,6 +8,7 @@ Neos:
       # A list of tags to be ignored during reflection
       ignoredTags:
         'const': true
+        'configkey': true
         'scope': true
         'test': true
         'expectedException': true
@@ -24,7 +25,6 @@ Neos:
         'AfterScenario': true
         'BeforeSuite': true
         'AfterSuite': true
-        'fixtures': true
         'Isolated': true
         'AfterFeature': true
         'BeforeFeature': true
