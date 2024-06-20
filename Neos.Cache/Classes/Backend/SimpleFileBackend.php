@@ -87,6 +87,13 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     protected $baseDirectory;
 
     /**
+     * Maximum time to wait for getting a file lock for read/write operations.
+     *
+     * @var int
+     */
+    protected $maxLockWaitMicroseconds = 1000;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options = [])
@@ -254,7 +261,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
             throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1334756961);
         }
         $cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-        for ($i = 0; $i < 3; $i++) {
+
+        $waitTime = 0;
+        while ($waitTime < $this->maxLockWaitMicroseconds) {
             try {
                 $result = $this->tryRemoveWithLock($cacheEntryPathAndFilename);
 
@@ -265,7 +274,10 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                 }
             } catch (\Exception $e) {
             }
-            usleep(rand(10, 500));
+
+            $sleepTime = rand(10, 500);
+            usleep($sleepTime);
+            $waitTime += $sleepTime;
         }
 
         return false;
@@ -449,6 +461,14 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     }
 
     /**
+     * @param int $maxLockWaitMicroseconds
+     */
+    public function setMaxLockWaitMicroseconds(int $maxLockWaitMicroseconds): void
+    {
+        $this->maxLockWaitMicroseconds = $maxLockWaitMicroseconds;
+    }
+
+    /**
      * @throws Exception
      */
     protected function configureCacheDirectory(): void
@@ -495,7 +515,8 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      */
     protected function readCacheFile(string $cacheEntryPathAndFilename, int $offset = null, int $maxlen = null)
     {
-        for ($i = 0; $i < 3; $i++) {
+        $waitTime = 0;
+        while ($waitTime < $this->maxLockWaitMicroseconds) {
             $data = false;
             try {
                 $file = fopen($cacheEntryPathAndFilename, 'rb');
@@ -525,7 +546,10 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
             if ($data !== false) {
                 return $data;
             }
-            usleep(rand(10, 500));
+
+            $sleepTime = rand(10, 500);
+            usleep($sleepTime);
+            $waitTime += $sleepTime;
         }
 
         return false;
@@ -540,11 +564,10 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      */
     protected function writeCacheFile(string $cacheEntryPathAndFilename, string $data): bool
     {
-        // Once vfs is fixed for file_put_contents with LOCK_EX,
-        // see https://github.com/mikey179/vfsStream/wiki/Known-Issues
-        // this can be replaced by a simple:
-        // return !(file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX) === false);
-        for ($i = 0; $i < 3; $i++) {
+        $waitTime = 0;
+        while ($waitTime < $this->maxLockWaitMicroseconds) {
+            // This can be replaced by a simple file_put_contents($cacheEntryPathAndFilename, $data, LOCK_EX) once vfs
+            // is fixed for file_put_contents with LOCK_EX, see https://github.com/mikey179/vfsStream/wiki/Known-Issues
             $result = false;
             try {
                 // It's important that we use the 'c' flag below, as `fopen` will otherwise truncate the file
@@ -567,7 +590,10 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                 clearstatcache(true, $cacheEntryPathAndFilename);
                 return $result;
             }
-            usleep(rand(10, 500));
+
+            $sleepTime = rand(10, 500);
+            usleep($sleepTime);
+            $waitTime += $sleepTime;
         }
 
         return false;
