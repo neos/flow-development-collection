@@ -145,13 +145,13 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
     }
 
     /**
-     * Add a new operation to the operation list and return the new FlowQuery
-     * object. If the operation is final, we directly compute the result and
-     * return the value.
+     * Add a new operation to the operation list and return the new FlowQuery object.
+     *
+     * If the operation is final, we directly compute the result and return the value.
      *
      * @param string $operationName
      * @param array $arguments
-     * @return FlowQuery
+     * @return FlowQuery|mixed
      */
     public function __call($operationName, array $arguments)
     {
@@ -257,7 +257,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * Should only be called inside an operation.
      *
-     * @return string the next operation name or NULL if no next operation found.
+     * @return string|null the next operation name or NULL if no next operation found.
      */
     public function peekOperationName()
     {

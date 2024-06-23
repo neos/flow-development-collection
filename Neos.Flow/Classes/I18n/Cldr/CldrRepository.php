@@ -73,7 +73,7 @@ class CldrRepository
      * file.
      *
      * @param string $filename Relative (from CLDR root) path to existing CLDR file
-     * @return CldrModel|boolean A CldrModel instance or false on failure
+     * @return CldrModel|false A CldrModel instance or false on failure
      */
     public function getModel($filename)
     {
@@ -104,7 +104,7 @@ class CldrRepository
      *
      * @param I18n\Locale $locale A locale
      * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
-     * @return CldrModel A CldrModel instance or NULL on failure
+     * @return CldrModel|null A CldrModel instance or NULL on failure
      */
     public function getModelForLocale(I18n\Locale $locale, $directoryPath = 'main')
     {

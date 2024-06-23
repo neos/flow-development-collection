@@ -320,7 +320,6 @@ class TextIteratorTest extends \PHPUnit\Framework\TestCase
     public function followingBasicallyWorks()
     {
         $iterator = new TextIterator('This is a test string. Let\'s iterate it by word', TextIterator::WORD);
-
         self::assertEquals($iterator->following(11), 14, 'Wrong offset for the following element returned.');
     }
 

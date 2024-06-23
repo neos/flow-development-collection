@@ -27,7 +27,7 @@ use Neos\Utility\MediaTypes;
 class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConverterInterface
 {
     /**
-     * @var string
+     * @var array<string>
      */
     protected $sourceTypes = ['string'];
 
@@ -92,19 +92,9 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
                 }
                 break;
             case 'xml':
-                // TODO: Remove those lines once the minimum PHP version is 8.0
-                if (PHP_MAJOR_VERSION < 8) {
-                    $entityLoaderValue = libxml_disable_entity_loader(true);
-                }
                 try {
                     $xmlElement = new \SimpleXMLElement(urldecode($requestBody), LIBXML_NOERROR);
-                    if (PHP_MAJOR_VERSION < 8) {
-                        libxml_disable_entity_loader($entityLoaderValue);
-                    }
                 } catch (\Exception $exception) {
-                    if (PHP_MAJOR_VERSION < 8) {
-                        libxml_disable_entity_loader($entityLoaderValue);
-                    }
                     return [];
                 }
                 $result = Arrays::convertObjectToArray($xmlElement);

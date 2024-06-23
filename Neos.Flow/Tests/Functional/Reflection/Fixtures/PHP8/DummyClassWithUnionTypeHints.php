@@ -13,19 +13,21 @@ namespace Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8;
 
 /**
  * Dummy class for the Reflection tests
- *
  */
 class DummyClassWithUnionTypeHints
 {
     public function methodWithUnionReturnTypeA(): string|false
     {
+        return '';
     }
 
     public function methodWithUnionReturnTypesB(): false|DummyClassWithUnionTypeHints
     {
+        return false;
     }
 
     public function methodWithUnionReturnTypesC(): null|DummyClassWithUnionTypeHints
     {
+        return null;
     }
 }

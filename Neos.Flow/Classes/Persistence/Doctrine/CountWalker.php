@@ -8,6 +8,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  * with this package in the file License-BSD.txt.                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\Query\AST\AggregateExpression;
 use Doctrine\ORM\Query\AST\PathExpression;
 use Doctrine\ORM\Query\AST\SelectExpression;
@@ -40,6 +41,10 @@ class CountWalker extends TreeWalkerAdapter
             }
         }
 
+        if ($this->isDistinctRequired()) {
+            $AST->selectClause->isDistinct = true;
+        }
+
         $pathExpression = new PathExpression(
             PathExpression::TYPE_STATE_FIELD | PathExpression::TYPE_SINGLE_VALUED_ASSOCIATION,
             $parentName,
@@ -56,5 +61,15 @@ class CountWalker extends TreeWalkerAdapter
 
         // ORDER BY is not needed, only increases query execution through unnecessary sorting.
         $AST->orderByClause = null;
+    }
+
+    private function isDistinctRequired(): bool
+    {
+        foreach ($this->getQueryComponents() as $queryComponent) {
+            if (isset($queryComponent['relation']['type']) && $queryComponent['relation']['type'] === ClassMetadataInfo::ONE_TO_MANY) {
+                return true;
+            }
+        }
+        return false;
     }
 }

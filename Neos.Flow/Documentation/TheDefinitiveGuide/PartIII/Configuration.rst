@@ -313,12 +313,12 @@ of a classes' package and output some option value:
   a few settings you might want to inject those specifically with the Inject
   annotation described below.
 
-Injection of single settings into properties
---------------------------------------------
+Injection of single settings
+----------------------------
 
-Flow provides a way to inject specific settings through the ``InjectConfiguration`` annotation directly into your
-properties.
-The annotation provides three optional attributes related to configuration injection:
+Flow provides a way to inject specific settings through the ``InjectConfiguration`` PHP attribute directly into class
+properties and constructor arguments.
+The attribute is configured through three optional properties related to configuration injection:
 
 * ``package`` specifies the package to get the configuration from. Defaults to the package the current class belongs to.
 * ``path`` specifies the path to the setting that should be injected. If it's not set all settings of the current (or
@@ -326,11 +326,11 @@ The annotation provides three optional attributes related to configuration injec
   from, defaults to ConfigurationManager::CONFIGURATION_TYPE_SETTINGS.
 
 .. note::
-  As a best-practice for testing and extensibility you should also provide setters for
-  any setting you add to your class, although this is not required for the injection
-  to work.
+  As a best-practice for testing and extensibility you should prefer constructor arguments
+  over properties or provide setters for any setting you add to your class.
+  Annotations based on doc-comments supported but deprecated, therefore use PHP attributes instead.
 
-**Example: single setting injection**
+**Example: injecting settings**
 
 .. code-block:: yaml
 
@@ -351,32 +351,22 @@ The annotation provides three optional attributes related to configuration injec
 
     class SomeClass
     {
+      #[Flow\InjectConfiguration(path: "email", package: "SomeOther.Package")]
+      protected string $email;
 
       /**
-       * @Flow\InjectConfiguration(path="administrator.name")
-       * @var string
-       */
-      protected $name;
-
-      /**
-       * @Flow\InjectConfiguration(package="SomeOther.Package", path="email")
-       * @var string
-       */
-      protected $email;
-
-      /**
+       * Deprecated: doc-comment based annotation
+       *
        * @Flow\InjectConfiguration(package="SomeOther.Package")
        * @var array
        */
       protected $someOtherPackageSettings = array();
 
-      /**
-       * Overrides the name
-       */
-      public function setName($name): void
-      {
-        $this->name = $name;
-      }
+      public function __construct(
+        #[Flow\InjectConfiguration(path="administrator.name")]
+        readonly protected string $name
+      )
+      {}
 
       /**
        * Overrides the email

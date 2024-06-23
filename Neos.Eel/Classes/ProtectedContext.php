@@ -67,31 +67,6 @@ class ProtectedContext extends Context
         return $context;
     }
 
-
-    /**
-     * Allow the given method (or array of methods) for calls
-     *
-     * Method can be allowed on the root level of the context or
-     * for arbitrary paths. A special method "*" will allow all methods
-     * to be called.
-     *
-     * Examples:
-     *
-     *   $context->allow('myMethod');
-     *
-     *   $context->allow('*');
-     *
-     *   $context->allow(array('String.*', 'Array.reverse'));
-     *
-     * @param array|string $pathOrMethods
-     * @return void
-     * @deprecated Use allow() instead. See https://github.com/neos/flow-development-collection/pull/2024
-     */
-    public function whitelist($pathOrMethods)
-    {
-        $this->allow($pathOrMethods);
-    }
-
     /**
      * Allow the given method (or array of methods) for calls
      *

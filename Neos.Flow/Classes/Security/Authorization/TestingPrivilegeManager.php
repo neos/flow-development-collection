@@ -21,7 +21,7 @@ use Neos\Flow\Annotations as Flow;
 class TestingPrivilegeManager extends PrivilegeManager
 {
     /**
-     * @var boolean
+     * @var boolean|null
      */
     protected $overrideDecision = null;
 

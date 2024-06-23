@@ -150,7 +150,7 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
             if (!$providerConfiguration) {
                 continue;
             }
-            
+
             if (!is_array($providerConfiguration) || !isset($providerConfiguration['provider'])) {
                 throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" needs a "provider" option!', 1248209521);
             }
@@ -164,17 +164,15 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
                 $providerOptions = $providerConfiguration['providerOptions'];
             }
 
-            /** @var $providerInstance AuthenticationProviderInterface */
+            /** @var AuthenticationProviderInterface $providerInstance */
             $providerInstance = $providerObjectName::create($providerName, $providerOptions);
             $this->providers[$providerName] = $providerInstance;
 
-            /** @var $tokenInstance TokenInterface */
             $tokenInstance = null;
             foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
                 if (isset($providerConfiguration['token'])) {
                     $tokenClassName = $this->tokenResolver->resolveTokenClass((string)$providerConfiguration['token']);
                 }
-                /** @noinspection PhpMethodParametersCountMismatchInspection */
                 $tokenInstance = $this->objectManager->get($tokenClassName, $providerConfiguration['tokenOptions'] ?? []);
                 if (!$tokenInstance instanceof TokenInterface) {
                     throw new Exception\InvalidAuthenticationProviderException(sprintf('The specified token is not an instance of %s but a %s. Please adjust the "token" configuration of the "%s" authentication provider', TokenInterface::class, is_object($tokenInstance) ? get_class($tokenInstance) : gettype($tokenInstance), $providerName), 1585921152);
@@ -221,7 +219,7 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
                     throw new Exception\NoEntryPointFoundException('An entry point with the name: "' . $entryPointName . '" could not be resolved. Make sure it is a valid class name, either fully qualified or relative to Neos\Flow\Security\Authentication\EntryPoint!', 1236767282);
                 }
 
-                /** @var $entryPoint EntryPointInterface */
+                /** @var EntryPointInterface $entryPoint */
                 $entryPoint = new $entryPointClassName();
                 if (isset($providerConfiguration['entryPointOptions'])) {
                     $entryPoint->setOptions($providerConfiguration['entryPointOptions']);

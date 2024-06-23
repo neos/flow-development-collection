@@ -32,8 +32,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
-use Neos\Flow\Security\Exception\InvalidHashException;
 use Neos\Utility\TypeHandling;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -229,13 +227,8 @@ class ActionController extends AbstractController
         if (method_exists($this, $actionInitializationMethodName)) {
             call_user_func([$this, $actionInitializationMethodName]);
         }
-        try {
-            $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
-        } catch (InvalidArgumentForHashGenerationException|InvalidHashException $e) {
-            $message = $this->throwableStorage->logThrowable($e);
-            $this->logger->notice('Property mapping configuration failed due to HMAC errors. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
-            $this->throwStatus(400, null, 'Invalid HMAC submitted');
-        }
+
+        $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
 
         try {
             $this->mapRequestArgumentsToControllerArguments();
@@ -253,7 +246,10 @@ class ActionController extends AbstractController
         }
         if ($this->view !== null) {
             $this->view->assign('settings', $this->settings);
-            $this->view->setControllerContext($this->controllerContext);
+            $this->view->assign('request', $this->request);
+            if (method_exists($this->view, 'setControllerContext')) {
+                $this->view->setControllerContext($this->controllerContext);
+            }
             $this->initializeView($this->view);
         }
 
@@ -827,23 +823,11 @@ class ActionController extends AbstractController
     {
         $result = $this->view->render();
 
-        if (is_string($result)) {
-            $this->response->setContent($result);
-        }
-
-        if ($result instanceof ActionResponse) {
-            $result->mergeIntoParentResponse($this->response);
-        }
-
         if ($result instanceof ResponseInterface) {
             $this->response->replaceHttpResponse($result);
             if ($result->hasHeader('Content-Type')) {
                 $this->response->setContentType($result->getHeaderLine('Content-Type'));
             }
-        }
-
-        if (is_object($result) && is_callable([$result, '__toString'])) {
-            $this->response->setContent((string)$result);
         }
 
         if ($result instanceof StreamInterface) {

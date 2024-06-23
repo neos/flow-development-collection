@@ -11,7 +11,7 @@ namespace Neos\FluidAdaptor\Core\Parser\Interceptor;
  * source code.
  */
 
-use Neos\Flow\Package\Package;
+use Neos\Flow\Package\FlowPackageKey;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\ResourceUriNode;
 use TYPO3Fluid\Fluid\Core\Parser\InterceptorInterface;
 use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
@@ -53,7 +53,7 @@ class ResourceInterceptor implements InterceptorInterface
      * Is the text at hand a resource URI and what are path/package?
      *
      * @var string
-     * @see \Neos\Flow\Package\Package::PATTERN_MATCH_PACKAGEKEY
+     * @see \Neos\Flow\Package\FlowPackageKey::PATTERN
      */
     const PATTERN_MATCH_RESOURCE_URI = '!(?:../)*(?:(?P<Package>[A-Za-z0-9]+\.(?:[A-Za-z0-9][\.a-z0-9]*)+)/Resources/)?Public/(?P<Path>[^"]+)!';
 
@@ -74,7 +74,7 @@ class ResourceInterceptor implements InterceptorInterface
      */
     public function setDefaultPackageKey($defaultPackageKey)
     {
-        if (!preg_match(Package::PATTERN_MATCH_PACKAGEKEY, $defaultPackageKey)) {
+        if (!FlowPackageKey::isPackageKeyValid($defaultPackageKey)) {
             throw new \InvalidArgumentException('The given argument was not a valid package key.', 1277287099);
         }
         $this->defaultPackageKey = $defaultPackageKey;
@@ -91,7 +91,9 @@ class ResourceInterceptor implements InterceptorInterface
      */
     public function process(NodeInterface $node, $interceptorPosition, ParsingState $parsingState)
     {
-        /** @var $node TextNode */
+        if (!$node instanceof TextNode) {
+            return $node;
+        }
         if (strpos($node->getText(), 'Public/') === false) {
             return $node;
         }
@@ -107,7 +109,7 @@ class ResourceInterceptor implements InterceptorInterface
                 if ($this->defaultPackageKey !== null) {
                     $arguments['package'] = new TextNode($this->defaultPackageKey);
                 }
-                if (isset($matches['Package']) && preg_match(Package::PATTERN_MATCH_PACKAGEKEY, $matches['Package'])) {
+                if (isset($matches['Package']) && FlowPackageKey::isPackageKeyValid($matches['Package'])) {
                     $arguments['package'] = new TextNode($matches['Package']);
                 }
 

@@ -11,15 +11,21 @@ namespace Neos\Flow\Http\Helper;
  * source code.
  */
 
+use Neos\Utility\Arrays;
 use Psr\Http\Message\UriInterface;
 
 /**
  * Helper to extract information from Uris.
  */
-abstract class UriHelper
+final class UriHelper
 {
+    // this class only has static helpers
+    private function __construct()
+    {
+    }
+
     /**
-     * @var array
+     * @var array<string, int>
      */
     private static $defaultPortsByScheme = [
         'http' => 80,
@@ -36,42 +42,17 @@ abstract class UriHelper
     ];
 
     /**
-     * Get the username component of the given Uri
-     *
-     * @param UriInterface $uri
-     * @return string If the URI had no username an empty string is returned.
-     */
-    public static function getUsername(UriInterface $uri): string
-    {
-        $userInfo = explode(':', $uri->getUserInfo());
-        return (isset($userInfo[0]) ? $userInfo[0] : '');
-    }
-
-    /**
-     * Get the password component of the given Uri
-     *
-     * @param UriInterface $uri
-     * @return string If the URI had no password an empty string is returned.
-     */
-    public static function getPassword(UriInterface $uri): string
-    {
-        $userInfo = explode(':', $uri->getUserInfo());
-
-        return (isset($userInfo[1]) ? $userInfo[1] : '');
-    }
-
-    /**
      * Returns the path relative to the $baseUri
      *
      * @param UriInterface $baseUri The base URI to start from
-     * @param UriInterface $uri The URI in quesiton
+     * @param UriInterface $uri The URI in question
      * @return string
      */
     public static function getRelativePath(UriInterface $baseUri, UriInterface $uri): string
     {
         $baseUriString = (string)$baseUri;
         $uriString = (string)$uri;
-        if (empty($baseUriString) || strpos($uriString, $baseUriString) !== 0) {
+        if (empty($baseUriString) || !str_starts_with($uriString, $baseUriString)) {
             return '';
         }
 
@@ -80,29 +61,36 @@ abstract class UriHelper
     }
 
     /**
-     * Parses the URIs query string into an array of arguments
+     * Sets and replaces the query parameters.
      *
-     * @param UriInterface $uri
-     * @return array
+     * @param array<string, mixed> $queryParameters
+     * @return UriInterface A new instance with the replaced query parameters.
      */
-    public static function parseQueryIntoArguments(UriInterface $uri): array
+    public static function uriWithQueryParameters(UriInterface $uri, array $queryParameters): UriInterface
     {
-        $arguments = [];
-        parse_str($uri->getQuery(), $arguments);
-        return $arguments;
+        $query = http_build_query($queryParameters, '', '&');
+        return $uri->withQuery($query);
     }
 
     /**
-     * Returns an Uri object with the query string being generated from the array of arguments given
+     * Merges the additional query parameters recursively into the current query parameters.
      *
-     * @param UriInterface $uri
-     * @param array $arguments
-     * @return UriInterface
+     * @param array<string, mixed> $queryParameters
+     * @return UriInterface A new instance with the additional query parameters.
      */
-    public static function uriWithArguments(UriInterface $uri, array $arguments): UriInterface
+    public static function uriWithAdditionalQueryParameters(UriInterface $uri, array $queryParameters): UriInterface
     {
-        $query = http_build_query($arguments, '', '&', PHP_QUERY_RFC3986);
-        return $uri->withQuery($query);
+        if ($queryParameters === []) {
+            return $uri;
+        }
+        if ($uri->getQuery() === '') {
+            $mergedQueryParameters = $queryParameters;
+        } else {
+            $queryParametersFromUri = [];
+            parse_str($uri->getQuery(), $queryParametersFromUri);
+            $mergedQueryParameters = Arrays::arrayMergeRecursiveOverrule($queryParametersFromUri, $queryParameters);
+        }
+        return self::uriWithQueryParameters($uri, $mergedQueryParameters);
     }
 
     /**

@@ -735,7 +735,7 @@ the object belongs to and pass it to the ``injectSettings`` method.
 The ``doSomething`` method will output the settings of the ``MyPackage`` package.
 
 In case you only need a specific setting, there's an even more convenient way to inject a single
-setting value into a class property:
+setting value into a class property or constructor argument:
 
 .. code-block:: php
 
@@ -745,21 +745,17 @@ setting value into a class property:
 
 	class SomeClass {
 
-		/**
-		 * @var string
-		 * @Flow\InjectConfiguration("administrator.name")
-		 */
-		protected $name;
+		#[Flow\InjectConfiguration(path: "email", package: "SomeOther.Package")]
+		protected string $email;
 
-		/**
-		 * @var string
-		 * @Flow\InjectConfiguration(path="email", package="SomeOther.Package")
-		 */
-		protected $emailAddress;
-
+		public function __construct(
+		  #[Flow\InjectConfiguration(path: "administrator.name")]
+		  readonly protected string $name
+		  )
+		  {}
 	}
 
-The ``InjectConfiguration`` annotation also supports for injecting all settings of a package. And it can also be used
+The ``InjectConfiguration`` attribute also supports for injecting all settings of a package. And it can also be used
 to inject any other registered configuration type:
 
 .. code-block:: php
@@ -768,18 +764,11 @@ to inject any other registered configuration type:
 
 	class SomeClass {
 
-		/**
-		 * @var array
-		 * @Flow\InjectConfiguration(package="SomeOther.Package")
-		 */
-		protected $allSettingsOfSomeOtherPackage;
+		#[Flow\InjectConfiguration(package: "SomeOther.Package")]
+		protected array $allSettingsOfSomeOtherPackage;
 
-		/**
-		 * @var array
-		 * @Flow\InjectConfiguration(type="Views")
-		 */
-		protected $viewsConfiguration;
-
+		#[Flow\InjectConfiguration(type: "Views")]
+		protected array $viewsConfiguration;
 	}
 
 Required Dependencies

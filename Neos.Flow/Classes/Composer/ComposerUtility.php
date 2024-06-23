@@ -12,13 +12,14 @@ namespace Neos\Flow\Composer;
  */
 
 use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\FlowPackageKey;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Files;
 
 /**
  * Utility to access composer information like composer manifests (composer.json) and the lock file.
  *
- * Meant to be used only inside the Flow package management code.
+ * @internal Only meant to be used only inside the Flow package management code.
  */
 class ComposerUtility
 {
@@ -126,27 +127,14 @@ class ComposerUtility
     }
 
     /**
-     * Determines the composer package name ("vendor/foo-bar") from the Flow package key ("Vendor.Foo.Bar")
-     *
-     * @param string $packageKey
-     * @return string
-     */
-    public static function getComposerPackageNameFromPackageKey(string $packageKey): string
-    {
-        $nameParts = explode('.', $packageKey);
-        $vendor = array_shift($nameParts);
-        return strtolower($vendor . '/' . implode('-', $nameParts));
-    }
-
-    /**
      * Write a composer manifest for the package.
      *
      * @param string $manifestPath
-     * @param string $packageKey
+     * @param FlowPackageKey $packageKey
      * @param array $composerManifestData
      * @return array the manifest data written
      */
-    public static function writeComposerManifest(string $manifestPath, string $packageKey, array $composerManifestData = []): array
+    public static function writeComposerManifest(string $manifestPath, FlowPackageKey $packageKey, array $composerManifestData = []): array
     {
         $manifest = [
             'description' => ''
@@ -156,7 +144,7 @@ class ComposerUtility
             $manifest = array_merge($manifest, $composerManifestData);
         }
         if (!isset($manifest['name']) || empty($manifest['name'])) {
-            $manifest['name'] = static::getComposerPackageNameFromPackageKey($packageKey);
+            $manifest['name'] = $packageKey->deriveComposerPackageName();
         }
 
         if (!isset($manifest['require']) || empty($manifest['require'])) {
@@ -164,11 +152,11 @@ class ComposerUtility
         }
 
         if (!isset($manifest['autoload'])) {
-            $namespace = str_replace('.', '\\', $packageKey) . '\\';
+            $namespace = str_replace('.', '\\', $packageKey->value) . '\\';
             $manifest['autoload'] = ['psr-4' => [$namespace => FlowPackageInterface::DIRECTORY_CLASSES]];
         }
 
-        $manifest['extra']['neos']['package-key'] = $packageKey;
+        $manifest['extra']['neos']['package-key'] = $packageKey->value;
 
         if (defined('JSON_PRETTY_PRINT')) {
             file_put_contents(Files::concatenatePaths([$manifestPath, 'composer.json']), json_encode($manifest, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));

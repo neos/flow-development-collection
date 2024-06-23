@@ -62,7 +62,7 @@ class AuthenticationProviderManagerTest extends UnitTestCase
         $this->mockSession = $this->getMockBuilder(SessionInterface::class)->getMock();
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockSessionManager = $this->getMockBuilder(SessionManager::class)->getMock();
+        $this->mockSessionManager = $this->getMockBuilder(SessionManager::class)->disableOriginalConstructor()->getMock();
         $this->mockSessionManager->expects(self::any())->method('getCurrentSession')->willReturn($this->mockSession);
 
         $this->inject($this->authenticationProviderManager, 'sessionManager', $this->mockSessionManager);

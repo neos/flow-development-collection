@@ -73,16 +73,18 @@ class UriBuilder
 
     /**
      * @var boolean
+     * @deprecated with Flow 9.0
      */
     protected $addQueryString = false;
 
     /**
      * @var array
+     * @deprecated with Flow 9.0
      */
     protected $argumentsToBeExcludedFromQueryString = [];
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $format = null;
 
@@ -159,18 +161,18 @@ class UriBuilder
     /**
      * Specifies the format of the target (e.g. "html" or "xml")
      *
-     * @param string $format (e.g. "html" or "xml"), will be transformed to lowercase!
+     * @param string|null $format (e.g. "html" or "xml"), will be transformed to lowercase!
      * @return UriBuilder the current UriBuilder to allow method chaining
      * @api
      */
     public function setFormat($format)
     {
-        $this->format = strtolower($format);
+        $this->format = $format !== null ? strtolower($format) : null;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      * @api
      */
     public function getFormat()
@@ -205,7 +207,7 @@ class UriBuilder
      *
      * @param boolean $addQueryString
      * @return UriBuilder the current UriBuilder to allow method chaining
-     * @api
+     * @deprecated with Flow 9.0
      */
     public function setAddQueryString($addQueryString)
     {
@@ -215,7 +217,7 @@ class UriBuilder
 
     /**
      * @return boolean
-     * @api
+     * @deprecated with Flow 9.0
      */
     public function getAddQueryString()
     {
@@ -228,7 +230,7 @@ class UriBuilder
      *
      * @param array $argumentsToBeExcludedFromQueryString
      * @return UriBuilder the current UriBuilder to allow method chaining
-     * @api
+     * @deprecated with Flow 9.0
      */
     public function setArgumentsToBeExcludedFromQueryString(array $argumentsToBeExcludedFromQueryString)
     {
@@ -238,7 +240,7 @@ class UriBuilder
 
     /**
      * @return array
-     * @api
+     * @deprecated with Flow 9.0
      */
     public function getArgumentsToBeExcludedFromQueryString()
     {

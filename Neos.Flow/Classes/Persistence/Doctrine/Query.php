@@ -13,10 +13,10 @@ namespace Neos\Flow\Persistence\Doctrine;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Comparison;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -56,7 +56,7 @@ class Query implements QueryInterface
     protected $queryBuilder;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -96,7 +96,7 @@ class Query implements QueryInterface
     protected $parameterIndex = 1;
 
     /**
-     * @var array
+     * @var ArrayCollection<int, Parameter>
      */
     protected $parameters;
 
@@ -421,12 +421,12 @@ class Query implements QueryInterface
      * @return object
      * @api
      */
-    public function logicalAnd($constraint1)
+    public function logicalAnd(mixed $constraint1, mixed ...$constraints)
     {
         if (is_array($constraint1)) {
             $constraints = $constraint1;
         } else {
-            $constraints = func_get_args();
+            $constraints = [$constraint1, ...$constraints];
         }
         return $this->queryBuilder->expr()->andX(...$constraints);
     }
@@ -440,12 +440,12 @@ class Query implements QueryInterface
      * @return object
      * @api
      */
-    public function logicalOr($constraint1)
+    public function logicalOr(mixed $constraint1, mixed ...$constraints)
     {
         if (is_array($constraint1)) {
             $constraints = $constraint1;
         } else {
-            $constraints = func_get_args();
+            $constraints = [$constraint1, ...$constraints];
         }
         return $this->queryBuilder->expr()->orX(...$constraints);
     }
@@ -685,7 +685,7 @@ class Query implements QueryInterface
     /**
      * Return the SQL statements representing this Query.
      *
-     * @return array
+     * @return string
      */
     public function getSql()
     {

@@ -27,7 +27,7 @@ use Neos\Flow\Validation\Error;
 class RoleConverter extends AbstractTypeConverter
 {
     /**
-     * @var array
+     * @var array<string>
      */
     protected $sourceTypes = ['string'];
 

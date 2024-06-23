@@ -82,7 +82,7 @@ class GenericPackage implements PackageInterface, PackageKeyAwareInterface
     /**
      * Returns the array of filenames of the class files
      *
-     * @return \Generator A Generator for class names (key) and their filename, including the absolute path.
+     * @return iterable A Generator for class names (key) and their filename, including the absolute path.
      */
     public function getClassFiles()
     {

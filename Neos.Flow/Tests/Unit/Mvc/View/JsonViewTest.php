@@ -267,7 +267,7 @@ class JsonViewTest extends UnitTestCase
     {
         $this->response->expects(self::once())->method('setHeader')->with('Content-Type', 'application/json');
 
-        $this->view->render();
+        $this->view->render()->getBody()->getContents();
     }
 
     /**
@@ -280,7 +280,7 @@ class JsonViewTest extends UnitTestCase
         $this->view->assign('value', $object);
 
         $expectedResult = '{"foo":"Foo"}';
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         self::assertEquals($expectedResult, $actualResult);
     }
 
@@ -293,7 +293,7 @@ class JsonViewTest extends UnitTestCase
         $this->view->assign('value', $array);
 
         $expectedResult = '{"foo":"Foo","bar":"Bar"}';
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         self::assertEquals($expectedResult, $actualResult);
     }
 
@@ -306,7 +306,7 @@ class JsonViewTest extends UnitTestCase
         $this->view->assign('value', $value);
 
         $expectedResult = '"Foo"';
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         self::assertEquals($expectedResult, $actualResult);
     }
 
@@ -319,7 +319,7 @@ class JsonViewTest extends UnitTestCase
         $this->view->assign('foo', $value);
 
         $expectedResult = 'null';
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         self::assertEquals($expectedResult, $actualResult);
     }
 
@@ -333,7 +333,7 @@ class JsonViewTest extends UnitTestCase
             ->assign('someOtherVariable', 'Foo');
 
         $expectedResult = '"Value"';
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         self::assertEquals($expectedResult, $actualResult);
     }
 
@@ -347,7 +347,7 @@ class JsonViewTest extends UnitTestCase
         $this->view->setVariablesToRender(['foo']);
 
         $expectedResult = '"Foo"';
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         self::assertEquals($expectedResult, $actualResult);
     }
 
@@ -363,7 +363,7 @@ class JsonViewTest extends UnitTestCase
         $this->view->setVariablesToRender(['value', 'secondValue']);
 
         $expectedResult = '{"value":"Value1","secondValue":"Value2"}';
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         self::assertEquals($expectedResult, $actualResult);
     }
 
@@ -383,7 +383,7 @@ class JsonViewTest extends UnitTestCase
         $this->view->setVariablesToRender(['array', 'object']);
 
         $expectedResult = '{"array":{"foo":{"bar":"Baz"}},"object":{"foo":"Foo"}}';
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         self::assertEquals($expectedResult, $actualResult);
     }
 
@@ -404,7 +404,7 @@ class JsonViewTest extends UnitTestCase
         ]);
 
         $expectedResult = '[{"name":"Foo"},{"name":"Bar"}]';
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         self::assertEquals($expectedResult, $actualResult);
     }
 
@@ -425,7 +425,7 @@ class JsonViewTest extends UnitTestCase
         ]);
 
         $expectedResult = '[{"name":"Foo","secret":true},{"name":"Bar","secret":true}]';
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         self::assertEquals($expectedResult, $actualResult);
     }
 
@@ -445,7 +445,7 @@ class JsonViewTest extends UnitTestCase
         ]);
 
         $expectedResult = '{"name":"Foo"}';
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         self::assertEquals($expectedResult, $actualResult);
     }
 
@@ -462,7 +462,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = json_encode($array, JSON_PRETTY_PRINT);
 
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         self::assertEquals($expectedResult, $actualResult);
 
         $unexpectedResult = json_encode($array);
@@ -482,7 +482,7 @@ class JsonViewTest extends UnitTestCase
 
         $expectedResult = json_encode(['foo' => '2021-05-02 13:00:00 GMT+0000']);
 
-        $actualResult = $this->view->render();
+        $actualResult = $this->view->render()->getBody()->getContents();
         $this->assertEquals($expectedResult, $actualResult);
     }
 }

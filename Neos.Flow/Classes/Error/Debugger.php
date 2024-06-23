@@ -286,10 +286,13 @@ class Debugger
                     if (preg_match(self::$excludedPropertyNames, $property->getName())) {
                         continue;
                     }
+                    if ($property->isStatic()) {
+                        continue;
+                    }
                     $dump .= chr(10);
                     $dump .= str_repeat(' ', $level) . ($plaintext ? '' : '<span class="debug-property">') . self::ansiEscapeWrap($property->getName(), '36', $ansiColors) . ($plaintext ? '' : '</span>') . ' => ';
                     $property->setAccessible(true);
-                    if (PHP_VERSION_ID >= 70400 && $property->isInitialized($object) === false) {
+                    if ($property->isInitialized($object) === false) {
                         $value = null;
                     } else {
                         $value = $property->getValue($object);

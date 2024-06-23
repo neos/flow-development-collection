@@ -81,7 +81,7 @@ class FileMonitor
     /**
      * Array of directories and files that were cached on the last run.
      *
-     * @var array
+     * @var array|null
      */
     protected $directoriesAndFiles = null;
 

@@ -17,7 +17,7 @@ namespace Neos\Flow\Fixtures;
 class ClassWithIntegerConstructor
 {
     /**
-     * @var string
+     * @var int
      */
     public $value;
 

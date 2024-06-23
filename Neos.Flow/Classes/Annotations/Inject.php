@@ -43,9 +43,6 @@ final class Inject
      */
     public $name;
 
-    /**
-     * @param array $values
-     */
     public function __construct(?string $name = null, bool $lazy = true)
     {
         $this->lazy = $lazy;

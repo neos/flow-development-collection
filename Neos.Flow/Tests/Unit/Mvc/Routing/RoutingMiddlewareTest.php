@@ -12,11 +12,12 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  */
 
 use GuzzleHttp\Psr7\Response;
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Router;
+use Neos\Flow\Mvc\Routing\Routes;
+use Neos\Flow\Mvc\Routing\RoutesProviderInterface;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,11 +38,6 @@ class RoutingMiddlewareTest extends UnitTestCase
      * @var Router|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockRouter;
-
-    /**
-     * @var ConfigurationManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockConfigurationManager;
 
     /**
      * @var RequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
@@ -66,9 +62,10 @@ class RoutingMiddlewareTest extends UnitTestCase
     {
         $this->routingMiddleware = new RoutingMiddleware();
 
-        $this->mockRouter = $this->getMockBuilder(Router::class)->getMock();
-        $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
-        $this->inject($this->mockRouter, 'configurationManager', $this->mockConfigurationManager);
+        $this->mockRouter = $this->createMock(Router::class);
+        $mockRoutesProvider = $this->createMock(RoutesProviderInterface::class);
+        $mockRoutesProvider->method('getRoutes')->willReturn(Routes::empty());
+        $this->inject($this->mockRouter, 'routesProvider', $mockRoutesProvider);
 
         $this->inject($this->routingMiddleware, 'router', $this->mockRouter);
 

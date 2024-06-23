@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Neos\Http\Factories;
 
 use GuzzleHttp\Psr7\Uri;
-use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 
 /**

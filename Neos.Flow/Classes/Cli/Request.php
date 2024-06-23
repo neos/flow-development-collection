@@ -32,7 +32,7 @@ class Request
     protected $controllerCommandName = 'default';
 
     /**
-     * @var Command
+     * @var Command|null
      */
     protected $command;
 

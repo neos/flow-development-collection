@@ -18,7 +18,7 @@ use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
  * A composite of controller arguments
  *
  * @api
- * @extends \ArrayObject<Argument>
+ * @extends \ArrayObject<string, Argument>
  */
 class Arguments extends \ArrayObject
 {
@@ -78,9 +78,6 @@ class Arguments extends \ArrayObject
         parent::offsetUnset($translatedOffset);
 
         unset($this->argumentNames[$translatedOffset]);
-        if ($offset != $translatedOffset) {
-            unset($this->argumentShortNames[$offset]);
-        }
     }
 
     /**
@@ -224,7 +221,7 @@ class Arguments extends \ArrayObject
      * string is returned.
      *
      * @param string $argumentName argument name
-     * @return string long argument name or empty string
+     * @return string|false long argument name or empty string
      */
     protected function validateArgumentExistence($argumentName)
     {

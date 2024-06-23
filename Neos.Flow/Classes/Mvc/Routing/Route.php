@@ -31,6 +31,7 @@ use Neos\Utility\ObjectAccess;
 
 /**
  * Implementation of a standard route
+ * @phpstan-consistent-constructor
  */
 class Route
 {
@@ -91,7 +92,7 @@ class Route
      * Contains the routing results (indexed by "package", "controller" and
      * "action") after a successful call of matches()
      *
-     * @var array
+     * @var array|null
      */
     protected $matchResults = [];
 
@@ -141,14 +142,14 @@ class Route
     /**
      * Container for Route Parts.
      *
-     * @var array
+     * @var array<RoutePartInterface>
      */
     protected $routeParts = [];
 
     /**
      * If not empty only the specified HTTP verbs are accepted by this route
      *
-     * @var array non-associative array e.g. array('GET', 'POST')
+     * @var list<string> non-associative array e.g. array('GET', 'POST')
      */
     protected $httpMethods = [];
 
@@ -171,6 +172,41 @@ class Route
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    public static function fromConfiguration(array $configuration): static
+    {
+        /** @phpstan-ignore-next-line phpstan doesn't respekt the consistent constructor flag in the class doc block */
+        $route = new static();
+        if (isset($configuration['name'])) {
+            $route->setName($configuration['name']);
+        }
+        $uriPattern = $configuration['uriPattern'];
+        $route->setUriPattern($uriPattern);
+        if (isset($configuration['defaults'])) {
+            $route->setDefaults($configuration['defaults']);
+        }
+        if (isset($configuration['routeParts'])) {
+            $route->setRoutePartsConfiguration($configuration['routeParts']);
+        }
+        if (isset($configuration['toLowerCase'])) {
+            $route->setLowerCase($configuration['toLowerCase']);
+        }
+        if (isset($configuration['appendExceedingArguments'])) {
+            $route->setAppendExceedingArguments($configuration['appendExceedingArguments']);
+        }
+        if (isset($configuration['cache'])) {
+            if (isset($configuration['cache']['lifetime'])) {
+                $route->setCacheLifetime(RouteLifetime::fromInt($configuration['cache']['lifetime']));
+            }
+            if (isset($configuration['cache']['tags']) && !empty($configuration['cache']['lifetime'])) {
+                $route->setCacheTags(RouteTags::createFromArray($configuration['cache']['tags']));
+            }
+        }
+        if (isset($configuration['httpMethods'])) {
+            $route->setHttpMethods($configuration['httpMethods']);
+        }
+        return $route;
+    }
 
     /**
      * Sets Route name.
@@ -459,7 +495,6 @@ class Route
         $routePath = trim($routePath, '/');
         $skipOptionalParts = false;
         $optionalPartCount = 0;
-        /** @var $routePart RoutePartInterface */
         foreach ($this->routeParts as $routePart) {
             if ($routePart->isOptional()) {
                 $optionalPartCount++;
@@ -543,7 +578,6 @@ class Route
         $requireOptionalRouteParts = false;
         $matchingOptionalUriPortion = '';
         $routeValues = $resolveContext->getRouteValues();
-        /** @var $routePart RoutePartInterface */
         foreach ($this->routeParts as $routePart) {
             if ($routePart instanceof ParameterAwareRoutePartInterface) {
                 $resolveResult = $routePart->resolveWithParameters($routeValues, $resolveContext->getParameters());
@@ -738,7 +772,7 @@ class Route
         $matches = [];
         preg_match_all(self::PATTERN_EXTRACTROUTEPARTS, $this->uriPattern, $matches, PREG_SET_ORDER);
 
-        /** @var $lastRoutePart RoutePartInterface */
+        /** @var RoutePartInterface|null $lastRoutePart */
         $lastRoutePart = null;
         foreach ($matches as $match) {
             $routePartType = empty($match['dynamic']) ? self::ROUTEPART_TYPE_STATIC : self::ROUTEPART_TYPE_DYNAMIC;

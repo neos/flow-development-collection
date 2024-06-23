@@ -39,7 +39,7 @@ class CacheItem implements CacheItemInterface
 
 
     /**
-     * @var \DateTime|null
+     * @var \DateTimeInterface|null
      */
     protected $expirationDate;
 
@@ -110,7 +110,7 @@ class CacheItem implements CacheItemInterface
 
     /**
      * @param \DateInterval|int|null $time
-     * @return CacheItem|static
+     * @return static
      */
     public function expiresAfter(int|\DateInterval|null $time): static
     {
@@ -127,7 +127,7 @@ class CacheItem implements CacheItemInterface
     }
 
     /**
-     * @return \DateTime|null
+     * @return \DateTimeInterface|null
      */
     public function getExpirationDate()
     {

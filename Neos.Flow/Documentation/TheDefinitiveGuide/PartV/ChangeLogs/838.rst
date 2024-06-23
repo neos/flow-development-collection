@@ -1,0 +1,160 @@
+`8.3.8 (2024-02-23) <https://github.com/neos/flow-development-collection/releases/tag/8.3.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Dont log stack trace for `InvalidHashException` in Production <https://github.com/neos/flow-development-collection/pull/3247>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+This configures an ``invalidHashExceptions`` exception handler rendering group and configures it to not dump stack traces in ``Production`` context. For ``Development`` context stack traces are still written to ease debugging.
+
+* See: `#3159 <https://github.com/neos/flow-development-collection/issues/3159>`_
+
+**Upgrade instructions**
+
+In case you need trace dumps for ``InvalidHashException`` in production context, override the settings as needed.
+
+**Review instructions**
+
+* See: `#3159 <https://github.com/neos/flow-development-collection/issues/3159>`_ for ways to trigger those exceptions. Then check if a trace is dumped.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Use configured cache factory <https://github.com/neos/flow-development-collection/pull/3318>`_
+-------------------------------------------------------------------------------------------------------
+
+The previously used method to select the configured CacheFactory class from the Objects.yaml never returned a result as the raw configuration split by package name was accessed, therefore the fallback was used and it was not possible to provide a custom CacheFactory.
+
+* Resolves: `#3317 <https://github.com/neos/flow-development-collection/issues/3317>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Normalize source type for converting floats to ValueObjects <https://github.com/neos/flow-development-collection/pull/3319>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+This change allows the ScalarTypeToObjectConverter to convert from floats to ValueObjects. The type converter uses ``gettype()`` which will return ``double`` for ``floats``. As the constructor argument type of the ValueObject is passed through ``TypeHandling::normalizeType()``, it will always be ``float`` and never ``double`` which will lead to floats not being converted by this type converter.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Web-Exception messages preserve whitespace (ASCII Art) <https://github.com/neos/flow-development-collection/pull/2697>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Closes `#2696 <https://github.com/neos/flow-development-collection/issues/2696>`_
+
+Exceptions which have multiple spaces in their $message where previously not as expected displayed.
+Exceptions outputted to the CLI or logged did preserve multiple whitespaces naturally, but since they are collapsed in HTML by default, they are not shown in the browser.
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+- [x] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: More descriptive reflection error if attribute does not exist <https://github.com/neos/flow-development-collection/pull/3179>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Adds error catching and more context information if an attribute could not be instantiated.
+
+* Resolves: `#3178 <https://github.com/neos/flow-development-collection/issues/3178>`_
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`TASK: Followup 8.3 Revert "BUGFIX: Sanitize uploaded svg files for suspicious contents" <https://github.com/neos/flow-development-collection/pull/3273>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Followup `#3249 <https://github.com/neos/flow-development-collection/issues/3249>`_
+
+This reverts commit https://github.com/neos/flow-development-collection/commit/`a1642ef31f19a974f34a302c98c13c77b6422ba1 <https://github.com/neos/flow-development-collection/commit/a1642ef31f19a974f34a302c98c13c77b6422ba1>`_ fully for 8.3
+
+In the upmerge https://github.com/neos/flow-development-collection/commit/`e2b895120eb00a6c2a352ce22d84f0302b6c3c71 <https://github.com/neos/flow-development-collection/commit/e2b895120eb00a6c2a352ce22d84f0302b6c3c71>``_#diff-``b54379d1fdcdc7a8433b179ba5a080f729e68a55 <https://github.com/neos/flow-development-collection/commit/b54379d1fdcdc7a8433b179ba5a080f729e68a55>`_9cd2a6203e9d1c49b7789c3e this composer json adjustment in Flow got lost.
+
+* Packages: ``Flow``
+
+`BUGFIX: Fix documentation of `maximumThrowableDump` defaults <https://github.com/neos/flow-development-collection/pull/3269>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+* Related: `#3158 <https://github.com/neos/flow-development-collection/issues/3158>`_
+
+* Packages: ``Flow``
+
+`TASK: ObjectManagement limit debugBacktrace <https://github.com/neos/flow-development-collection/pull/3033>`_
+--------------------------------------------------------------------------------------------------------------
+
+``debug_backtrace`` is expensive, and we are only interested in the second callee.
+
+* Packages: ``Flow``
+
+`TASK: Scripts.php avoid use of same references for exec <https://github.com/neos/flow-development-collection/pull/3171>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Followup to https://github.com/neos/flow-development-collection/pull/3116
+
+I debugged with @dlubitz a problem and we found that in theory?  $output _might_ be possibly already filled?
+I dont know if that can happen but just to be sure we set it to empty as its also a bad practice.
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`TASK: Fix errors in Middleware code example <https://github.com/neos/flow-development-collection/pull/3299>`_
+--------------------------------------------------------------------------------------------------------------
+
+I found two small errors in the Middleware code example in the documentation.
+
+
+* Packages: ``Flow``
+
+`TASK: Correct doc types StringFrontend::get <https://github.com/neos/flow-development-collection/pull/3274>`_
+--------------------------------------------------------------------------------------------------------------
+
+... and document FrontendInterface::get correctly
+
+This is required for the phpstan migration in Neos Cms ;)
+
+* Packages: ``Flow`` ``Cache``
+
+`TASK: Adjust phpstan command to Neos' dev collection <https://github.com/neos/flow-development-collection/pull/3271>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+There we also use ``composer run lint:phpstan`` and ``composer run lint``
+
+* Packages: ``Flow``
+
+`TASK: Phpstan level 2 for Flow 8.3 and ignore to be fixed things <https://github.com/neos/flow-development-collection/pull/3264>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Flow 9 Pr https://github.com/neos/flow-development-collection/pull/3217
+
+**Upgrade instructions**
+
+
+* Packages: ``.github`` ``Eel`` ``Flow`` ``FluidAdaptor``
+
+`TASK: Correct symfony dependencies in Flow composer.json <https://github.com/neos/flow-development-collection/pull/3255>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+The upmerge commit ``e2b895120eb00a6c2a352ce22d84f0302b6c3c71 <https://github.com/neos/flow-development-collection/commit/e2b895120eb00a6c2a352ce22d84f0302b6c3c71>``_`` wrongly removed symfony 6.0 in the version constraints of ``neos/flow``.
+
+* Relates: `#2999 <https://github.com/neos/flow-development-collection/issues/2999>`_
+
+* Packages: ``Flow``
+
+`TASK: Correct Flow composer.json <https://github.com/neos/flow-development-collection/pull/3252>`_
+---------------------------------------------------------------------------------------------------
+
+The upmerge commit `42e3fd7886d5bed317511a2046d4119867216923 <https://github.com/neos/flow-development-collection/commit/42e3fd7886d5bed317511a2046d4119867216923>`_ wrongly overwrote major parts of Flows composer.json, introducing older versions of PHP and psr/log as well as removing dependencies on some other psr packages. This change corrects the issue and needs to be upmerged accordingly.
+
+The changes were never merged into the collection composer.json so that the issue was not noticed in development environments.
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.3.7...8.3.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

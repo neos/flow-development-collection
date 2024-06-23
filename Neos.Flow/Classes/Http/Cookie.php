@@ -169,7 +169,7 @@ class Cookie
      * rather than the created cookie.
      *
      * @param string $header The Set-Cookie string without the actual "Set-Cookie:" part
-     * @return Cookie
+     * @return Cookie|null
      * @see http://tools.ietf.org/html/rfc6265
      */
     public static function createFromRawSetCookieHeader($header)
@@ -318,7 +318,7 @@ class Cookie
      * This information is rendered as the Max-Age attribute (RFC 6265, 4.1.2.2).
      * Note that not all browsers support this attribute.
      *
-     * @return integer The maximum age in seconds, or NULL if none has been defined.
+     * @return integer|null The maximum age in seconds, or NULL if none has been defined.
      * @api
      */
     public function getMaximumAge()

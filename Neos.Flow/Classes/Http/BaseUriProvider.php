@@ -32,7 +32,7 @@ class BaseUriProvider
     /**
      * Get the configured framework base URI.
      *
-     * @return Uri|null
+     * @return UriInterface|null
      */
     private function getConfiguredBaseUri(): ?UriInterface
     {

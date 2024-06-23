@@ -16,6 +16,7 @@ require_once(__DIR__ . '/../../Fixtures/ClassWithIntegerConstructor.php');
 require_once(__DIR__ . '/../../Fixtures/ClassWithBoolConstructor.php');
 
 use Neos\Flow\Fixtures\ClassWithBoolConstructor;
+use Neos\Flow\Fixtures\ClassWithFloatConstructor;
 use Neos\Flow\Fixtures\ClassWithIntegerConstructor;
 use Neos\Flow\Fixtures\ClassWithStringConstructor;
 use Neos\Flow\Property\TypeConverter\ScalarTypeToObjectConverter;
@@ -106,6 +107,23 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
             ]]);
         $this->inject($converter, 'reflectionService', $this->reflectionMock);
         $canConvert = $converter->canConvertFrom(42, ClassWithIntegerConstructor::class);
+        self::assertTrue($canConvert);
+    }
+
+    /**
+     * @test
+     */
+    public function canConvertFromFloatToValueObject()
+    {
+        $converter = new ScalarTypeToObjectConverter();
+
+        $this->reflectionMock->expects(self::once())
+            ->method('getMethodParameters')
+            ->willReturn([[
+                'type' => 'float'
+            ]]);
+        $this->inject($converter, 'reflectionService', $this->reflectionMock);
+        $canConvert = $converter->canConvertFrom(4.2, ClassWithFloatConstructor::class);
         self::assertTrue($canConvert);
     }
 }

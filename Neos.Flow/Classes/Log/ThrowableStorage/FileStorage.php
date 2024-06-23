@@ -149,7 +149,7 @@ class FileStorage implements ThrowableStorageInterface
         }
 
         if (!file_exists($this->storagePath)) {
-            mkdir($this->storagePath);
+            Files::createDirectoryRecursively($this->storagePath);
         }
         if (!file_exists($this->storagePath) || !is_dir($this->storagePath) || !is_writable($this->storagePath)) {
             return sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', $this->storagePath);
@@ -266,7 +266,6 @@ class FileStorage implements ThrowableStorageInterface
         if ($this->maximumThrowableDumpAge > 0) {
             $cutoffTime = time() - $this->maximumThrowableDumpAge;
 
-            /** @var \SplFileInfo $directoryEntry */
             $iterator = new \DirectoryIterator($this->storagePath);
             foreach ($iterator as $directoryEntry) {
                 if ($directoryEntry->isFile() && $directoryEntry->getCTime() < $cutoffTime) {

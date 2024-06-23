@@ -134,33 +134,9 @@ class ResourceRepository extends Repository
     }
 
     /**
-     * Allow to iterate on an IterableResult and return a Generator
-     *
-     * This methos is useful for batch processing huge result set. The callback
-     * is executed after every iteration. It can be used to clear the state of
-     * the persistence layer.
-     *
-     * @param IterableResult $iterator
-     * @param callable $callback
-     * @return \Generator
-     */
-    public function iterate(IterableResult $iterator, callable $callback = null)
-    {
-        $iteration = 0;
-        foreach ($iterator as $object) {
-            $object = current($object);
-            yield $object;
-            if ($callback !== null) {
-                call_user_func($callback, $iteration, $object);
-            }
-            $iteration++;
-        }
-    }
-
-    /**
      * Finds all objects and return an IterableResult
      *
-     * @return IterableResult
+     * @return iterable<int, PersistentResource>
      */
     public function findAllIterator()
     {
@@ -169,14 +145,14 @@ class ResourceRepository extends Repository
         return $queryBuilder
             ->select('PersistentResource')
             ->from($this->getEntityClassName(), 'PersistentResource')
-            ->getQuery()->iterate();
+            ->getQuery()->toIterable();
     }
 
     /**
      * Finds all objects by collection name and return an IterableResult
      *
      * @param string $collectionName
-     * @return IterableResult
+     * @return iterable<int, PersistentResource>
      */
     public function findByCollectionNameIterator($collectionName)
     {
@@ -187,7 +163,7 @@ class ResourceRepository extends Repository
             ->from($this->getEntityClassName(), 'PersistentResource')
             ->where('PersistentResource.collectionName = :collectionName')
             ->setParameter(':collectionName', $collectionName)
-            ->getQuery()->iterate();
+            ->getQuery()->toIterable();
     }
 
     /**

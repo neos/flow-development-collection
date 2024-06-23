@@ -63,7 +63,7 @@ class PersistentObjectConverter extends ObjectConverter
     const CONFIGURATION_IDENTITY_CREATION_ALLOWED = 5;
 
     /**
-     * @var array
+     * @var array<string>
      */
     protected $sourceTypes = ['string', 'array'];
 
@@ -156,7 +156,7 @@ class PersistentObjectConverter extends ObjectConverter
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return object|TargetNotFoundError the converted entity/value object or an instance of TargetNotFoundError if the object could not be resolved
+     * @return object|TargetNotFoundError|null the converted entity/value object or an instance of TargetNotFoundError if the object could not be resolved
      * @throws \InvalidArgumentException|InvalidTargetException
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)

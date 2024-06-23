@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Neos\Flow\Session;
 
 /*
@@ -11,112 +12,74 @@ namespace Neos\Flow\Session;
  * source code.
  */
 
+use Neos\Cache\Exception as CacheException;
 use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Flow\Annotations as Flow;
-use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Http\Cookie;
-use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Session\Data\SessionIdentifier;
+use Neos\Flow\Session\Data\SessionKeyValueStore;
+use Neos\Flow\Session\Data\SessionMetaDataStore;
+use Neos\Flow\Session\Exception\InvalidDataInSessionDataStoreException;
+use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Utility\Algorithms;
-use Psr\Log\LoggerInterface;
 
-/**
- * Session Manager
- *
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope("singleton")]
 class SessionManager implements SessionManagerInterface
 {
-    /**
-     * @var SessionInterface
-     */
-    protected $currentSession;
+    protected ?SessionInterface $currentSession = null;
+    protected array $remoteSessions = [];
 
-    /**
-     * @var array
-     */
-    protected $remoteSessions;
-
-    /**
-     * Meta data cache used by sessions
-     *
-     * @Flow\Inject
-     * @var VariableFrontend
-     */
-    protected $metaDataCache;
-
-    /**
-     * Storage cache for by sessions
-     *
-     * @Flow\Inject
-     * @var VariableFrontend
-     */
-    protected $storageCache;
-
-    /**
-     * @var float
-     * @Flow\InjectConfiguration(path="session.garbageCollection.probability")
-     */
-    protected $garbageCollectionProbability;
-
-    /**
-     * @Flow\InjectConfiguration(path="session.garbageCollection.maximumPerRun")
-     * @var integer
-     */
-    protected $garbageCollectionMaximumPerRun;
-
-    /**
-     * @Flow\InjectConfiguration(path="session.inactivityTimeout")
-     * @var integer
-     */
-    protected $inactivityTimeout;
-
-    /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
-     * @var LoggerInterface
-     */
-    protected $logger;
+    public function __construct(
+        readonly protected SessionMetaDataStore $sessionMetaDataStore,
+        readonly protected SessionKeyValueStore $sessionKeyValueStore,
+        #[Flow\InjectConfiguration(path: "session.garbageCollection.probability")]
+        readonly protected float $garbageCollectionProbability,
+        #[Flow\InjectConfiguration(path: "session.garbageCollection.maximumPerRun")]
+        readonly protected int $garbageCollectionMaximumPerRun,
+        #[Flow\InjectConfiguration(path: "session.inactivityTimeout")]
+        readonly protected int $inactivityTimeout,
+    ) {
+    }
 
     /**
      * Returns the currently active session which stores session data for the
      * current HTTP request on this local system.
      *
-     * @return SessionInterface
      * @api
      */
-    public function getCurrentSession()
+    public function getCurrentSession(): SessionInterface
     {
         if ($this->currentSession === null) {
-            $this->currentSession = new Session();
+            $this->currentSession = Session::create();
         }
         return $this->currentSession;
     }
 
     /**
-     * @param Cookie $cookie
-     * @return bool
+     * @throws InvalidDataInSessionDataStoreException
      */
-    public function initializeCurrentSessionFromCookie(Cookie $cookie)
+    public function initializeCurrentSessionFromCookie(Cookie $cookie): bool
     {
         if ($this->currentSession !== null && $this->currentSession->isStarted()) {
             return false;
         }
 
-        $sessionIdentifier = $cookie->getValue();
-        $sessionInfo = $this->metaDataCache->get($sessionIdentifier);
+        $sessionIdentifierString = $cookie->getValue();
+        $sessionIdentifier = SessionIdentifier::createFromString($sessionIdentifierString);
+        $sessionMetaData = $this->sessionMetaDataStore->retrieve($sessionIdentifier);
 
-        if (!$sessionInfo) {
+        if (!$sessionMetaData) {
             return false;
         }
 
-        $this->currentSession = Session::createFromCookieAndSessionInformation($cookie, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
+        $this->currentSession = Session::createFromCookieAndSessionInformation($cookie, $sessionMetaData->storageIdentifier->value, $sessionMetaData->lastActivityTimestamp, $sessionMetaData->tags);
         return true;
     }
 
     /**
-     * @param Cookie $cookie
-     * @return bool
+     * @throws \Exception
      */
-    public function createCurrentSessionFromCookie(Cookie $cookie)
+    public function createCurrentSessionFromCookie(Cookie $cookie): bool
     {
         if ($this->currentSession !== null && $this->currentSession->isStarted()) {
             return false;
@@ -131,11 +94,11 @@ class SessionManager implements SessionManagerInterface
      * Returns the specified session. If no session with the given identifier exists,
      * NULL is returned.
      *
-     * @param string $sessionIdentifier The session identifier
-     * @return SessionInterface|null
+     * @throws InvalidDataInSessionDataStoreException
+     * @throws SessionNotStartedException
      * @api
      */
-    public function getSession($sessionIdentifier)
+    public function getSession(string $sessionIdentifier): ?SessionInterface
     {
         if ($this->currentSession !== null && $this->currentSession->isStarted() && $this->currentSession->getId() === $sessionIdentifier) {
             return $this->currentSession;
@@ -143,24 +106,30 @@ class SessionManager implements SessionManagerInterface
         if (isset($this->remoteSessions[$sessionIdentifier])) {
             return $this->remoteSessions[$sessionIdentifier];
         }
-        if ($this->metaDataCache->has($sessionIdentifier)) {
-            $sessionInfo = $this->metaDataCache->get($sessionIdentifier);
-            $this->remoteSessions[$sessionIdentifier] = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
-            return $this->remoteSessions[$sessionIdentifier];
+        $sessionIdentifierObject = SessionIdentifier::createFromString($sessionIdentifier);
+        if (!$this->sessionMetaDataStore->has($sessionIdentifierObject)) {
+            return null;
         }
+        $sessionMetaData = $this->sessionMetaDataStore->retrieve($sessionIdentifierObject);
+        if ($sessionMetaData === null) {
+            return null;
+        }
+        $this->remoteSessions[$sessionIdentifierObject->value] = Session::createRemoteFromSessionMetaData($sessionMetaData);
+        return $this->remoteSessions[$sessionIdentifierObject->value];
     }
 
     /**
      * Returns all active sessions, even remote ones.
      *
      * @return array<SessionInterface>
+     * @throws NotSupportedByBackendException
      * @api
      */
-    public function getActiveSessions()
+    public function getActiveSessions(): array
     {
         $activeSessions = [];
-        foreach ($this->metaDataCache->getByTag('session') as $sessionIdentifier => $sessionInfo) {
-            $session = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
+        foreach ($this->sessionMetaDataStore->retrieveAll() as $sessionMetaData) {
+            $session = Session::createRemoteFromSessionMetaData($sessionMetaData);
             $activeSessions[] = $session;
         }
         return $activeSessions;
@@ -171,13 +140,14 @@ class SessionManager implements SessionManagerInterface
      *
      * @param string $tag A valid Cache Frontend tag
      * @return array A collection of Session objects or an empty array if tag did not match
+     * @throws NotSupportedByBackendException
      * @api
      */
-    public function getSessionsByTag($tag)
+    public function getSessionsByTag(string $tag): array
     {
         $taggedSessions = [];
-        foreach ($this->metaDataCache->getByTag(Session::TAG_PREFIX . $tag) as $sessionIdentifier => $sessionInfo) {
-            $session = new Session($sessionIdentifier, $sessionInfo['storageIdentifier'], $sessionInfo['lastActivityTimestamp'], $sessionInfo['tags']);
+        foreach ($this->sessionMetaDataStore->retrieveByTag($tag) as $sessionMetaData) {
+            $session = Session::createRemoteFromSessionMetaData($sessionMetaData);
             $taggedSessions[] = $session;
         }
         return $taggedSessions;
@@ -188,13 +158,14 @@ class SessionManager implements SessionManagerInterface
      *
      * @param string $tag A valid Cache Frontend tag
      * @param string $reason A reason to mention in log output for why the sessions have been destroyed. For example: "The corresponding account was deleted"
-     * @return integer Number of sessions which have been destroyed
+     * @return int Number of sessions which have been destroyed
+     * @throws SessionNotStartedException
+     * @throws NotSupportedByBackendException
      */
-    public function destroySessionsByTag($tag, $reason = '')
+    public function destroySessionsByTag(string $tag, string $reason = ''): int
     {
         $sessions = $this->getSessionsByTag($tag);
         foreach ($sessions as $session) {
-            /** @var SessionInterface $session */
             $session->destroy($reason);
         }
         return count($sessions);
@@ -204,7 +175,8 @@ class SessionManager implements SessionManagerInterface
      * Iterates over all existing sessions and removes their data if the inactivity
      * timeout was reached.
      *
-     * @return integer|null The number of outdated entries removed, null in case the garbage-collection was already running
+     * @return int|null The number of outdated entries removed, null in case the garbage-collection was already running
+     * @throws CacheException
      * @api
      */
     public function collectGarbage(): ?int
@@ -212,40 +184,29 @@ class SessionManager implements SessionManagerInterface
         if ($this->inactivityTimeout === 0) {
             return 0;
         }
-        if ($this->metaDataCache->has('_garbage-collection-running')) {
+        if ($this->sessionMetaDataStore->isGarbageCollectionRunning()) {
             return null;
         }
 
         $now = time();
         $sessionRemovalCount = 0;
-        $this->metaDataCache->set('_garbage-collection-running', true, [], 120);
+        $this->sessionMetaDataStore->startGarbageCollection();
 
-        foreach ($this->metaDataCache->getIterator() as $sessionIdentifier => $sessionInfo) {
-            if ($sessionIdentifier === '_garbage-collection-running') {
-                continue;
-            }
-            if (!is_array($sessionInfo)) {
-                $sessionInfo = [
-                    'sessionMetaData' => $sessionInfo,
-                    'lastActivityTimestamp' => 0,
-                    'storageIdentifier' => null
-                ];
-                $this->logger->warning('SESSION INFO INVALID: ' . $sessionIdentifier, $sessionInfo + LogEnvironment::fromMethodName(__METHOD__));
-            }
-            $lastActivitySecondsAgo = $now - $sessionInfo['lastActivityTimestamp'];
+        foreach ($this->sessionMetaDataStore->retrieveAll() as $sessionMetadata) {
+            $lastActivitySecondsAgo = $now - $sessionMetadata->lastActivityTimestamp;
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
-                if ($sessionInfo['storageIdentifier'] !== null) {
-                    $this->storageCache->flushByTag($sessionInfo['storageIdentifier']);
+                if ($sessionMetadata->lastActivityTimestamp !== null) {
+                    $this->sessionKeyValueStore->remove($sessionMetadata->storageIdentifier);
                     $sessionRemovalCount++;
                 }
-                $this->metaDataCache->remove($sessionIdentifier);
+                $this->sessionMetaDataStore->remove($sessionMetadata);
             }
             if ($sessionRemovalCount >= $this->garbageCollectionMaximumPerRun) {
                 break;
             }
         }
 
-        $this->metaDataCache->remove('_garbage-collection-running');
+        $this->sessionMetaDataStore->endGarbageCollection();
         return $sessionRemovalCount;
     }
 
@@ -256,15 +217,17 @@ class SessionManager implements SessionManagerInterface
      * management.
      *
      * @return void
-     * @throws Exception\DataNotSerializableException
-     * @throws Exception\SessionNotStartedException
      * @throws NotSupportedByBackendException
-     * @throws \Neos\Cache\Exception
+     * @throws CacheException
      */
-    public function shutdownObject()
+    public function shutdownObject(): void
     {
-        $decimals = strlen(strrchr((string)$this->garbageCollectionProbability, '.')) - 1;
-        $factor = ($decimals > -1) ? $decimals * 10 : 1;
+        if (str_contains((string)$this->garbageCollectionProbability, '.')) {
+            $decimals = strlen(strrchr((string)$this->garbageCollectionProbability, '.')) - 1;
+            $factor = $decimals * 10;
+        } else {
+            $factor = 1;
+        }
         if (rand(1, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
             $this->collectGarbage();
         }

@@ -92,7 +92,7 @@ class FormViewHelper extends AbstractFormViewHelper
     protected $authenticationManager;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $formActionUri;
 
@@ -118,12 +118,13 @@ class FormViewHelper extends AbstractFormViewHelper
         $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"', false, '');
         $this->registerArgument('additionalParams', 'array', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, []);
         $this->registerArgument('absolute', 'boolean', 'If set, an absolute action URI is rendered (only active if $actionUri is not set)', false, false);
-        $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
-        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
         $this->registerArgument('fieldNamePrefix', 'string', 'Prefix that will be added to all field names within this form', false, null);
         $this->registerArgument('actionUri', 'string', 'can be used to overwrite the "action" attribute of the form tag', false, null);
         $this->registerArgument('objectName', 'string', 'name of the object that is bound to this form. If this argument is not specified, the name attribute of this form is used to determine the FormObjectName', false, null);
         $this->registerArgument('useParentRequest', 'boolean', 'If set, the parent Request will be used instead ob the current one', false, false);
+        // @deprecated with Flow 9:
+        $this->registerArgument('addQueryString', 'boolean', 'Deprecated with Flow 9. If set, the current query parameters will be kept in the URI', false, false);
+        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'Deprecated with Flow 9. arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
 
         $this->registerUniversalTagAttributes();
     }
@@ -371,7 +372,7 @@ class FormViewHelper extends AbstractFormViewHelper
      * If the "objectName" argument has been specified, this is returned. Otherwise the name attribute of this form.
      * If neither objectName nor name arguments have been set, NULL is returned.
      *
-     * @return string specified Form name or NULL if neither $objectName nor $name arguments have been specified
+     * @return string|null specified Form name or NULL if neither $objectName nor $name arguments have been specified
      */
     protected function getFormObjectName()
     {

@@ -131,6 +131,7 @@ Flow_Session_MetaData:
   backend: Neos\Cache\Backend\FileBackend
   persistent: true
 Flow_Session_Storage:
+  frontend: Neos\Cache\Frontend\StringFrontend
   backend: Neos\Cache\Backend\FileBackend
   persistent: true
 

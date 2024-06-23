@@ -217,17 +217,19 @@ abstract class Arrays
     }
 
     /**
-     * Returns a type safe accessor for a value in a nested array by following the specifed path.
+     * Returns a type safe accessor for a value in a nested array by following the specified path.
      *
+     * See {@see ValueAccessor}
+     *
+     * @internal experimental feature, not stable API
      * @param array $array The array to traverse
      * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
      * @return ValueAccessor
      */
     public static function getAccessorByPath(array $array, array|string $path): ValueAccessor
     {
-        $pathinfo = is_array($path) ? implode('.', $path) : $path;
         $value = self::getValueByPath($array, $path);
-        return new ValueAccessor($value, $pathinfo);
+        return ValueAccessor::forValueInPath($value, $path);
     }
 
     /**

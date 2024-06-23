@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\ViewHelper;
 
 /*
@@ -13,32 +14,77 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
 
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
 use TYPO3Fluid\Fluid\Core\Variables\StandardVariableProvider;
-use TYPO3Fluid\Fluid\Core\Variables\VariableProviderInterface;
 
 /**
  * Provides the variables inside fluid template. Adds TemplateObjectAccessInterface functionality.
  *
  * @api
  */
-class TemplateVariableContainer extends StandardVariableProvider implements VariableProviderInterface
+class TemplateVariableContainer extends StandardVariableProvider
 {
     /**
      * Get a variable by dotted path expression, retrieving the
      * variable from nested arrays/objects one segment at a time.
+     *
+     * This sadly mostly copies the parent method to add handling for
+     * subjects of type TemplateObjectAccessInterface.
      *
      * @param string $path
      * @return mixed
      */
     public function getByPath($path)
     {
-        $subject = parent::getByPath($path);
+        // begin copy of parent method
+        $subject = $this->variables;
+        $subVariableReferences = explode('.', $this->resolveSubVariableReferences($path));
+        foreach ($subVariableReferences as $pathSegment) {
+            // begin TemplateObjectAccessInterface handling
+            if ($subject instanceof TemplateObjectAccessInterface) {
+                $subject = $subject->objectAccess();
+            }
+            // end TemplateObjectAccessInterface handling
+            if ((is_array($subject) && array_key_exists($pathSegment, $subject))
+                || ($subject instanceof \ArrayAccess && $subject->offsetExists($pathSegment))
+            ) {
+                $subject = $subject[$pathSegment];
+                continue;
+            }
+            if (is_object($subject)) {
+                $upperCasePropertyName = ucfirst($pathSegment);
+                $getMethod = 'get' . $upperCasePropertyName;
+                if (method_exists($subject, $getMethod)) {
+                    $subject = $subject->$getMethod();
+                    continue;
+                }
+                $isMethod = 'is' . $upperCasePropertyName;
+                if (method_exists($subject, $isMethod)) {
+                    $subject = $subject->$isMethod();
+                    continue;
+                }
+                $hasMethod = 'has' . $upperCasePropertyName;
+                if (method_exists($subject, $hasMethod)) {
+                    $subject = $subject->$hasMethod();
+                    continue;
+                }
+                if (property_exists($subject, $pathSegment)) {
+                    $subject = $subject->$pathSegment;
+                    continue;
+                }
+            }
+            // begin TemplateObjectAccessInterface handling
+            $subject = null;
+            break;
+            // end TemplateObjectAccessInterface handling
+        }
+        // end copy of parent method
 
         if ($subject === null) {
             $subject = $this->getBooleanValue($path);
         }
 
+        // we might still have a TemplateObjectAccessInterface instance
         if ($subject instanceof TemplateObjectAccessInterface) {
-            return $subject->objectAccess();
+            $subject = $subject->objectAccess();
         }
 
         return $subject;
@@ -63,11 +109,8 @@ class TemplateVariableContainer extends StandardVariableProvider implements Vari
 
     /**
      * Tries to interpret the given path as boolean value, either returns the boolean value or null.
-     *
-     * @param $path
-     * @return boolean|null
      */
-    protected function getBooleanValue($path)
+    protected function getBooleanValue(string $path): ?bool
     {
         $normalizedPath = strtolower($path);
 

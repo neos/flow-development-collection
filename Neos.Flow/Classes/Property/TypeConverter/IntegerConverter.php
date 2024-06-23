@@ -49,13 +49,13 @@ class IntegerConverter extends AbstractTypeConverter
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return integer|Error
+     * @return integer|null|Error
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         if ($source instanceof \DateTimeInterface) {
-            return $source->format('U');
+            return (int)$source->format('U');
         }
 
         if ($source === null || $source === '') {

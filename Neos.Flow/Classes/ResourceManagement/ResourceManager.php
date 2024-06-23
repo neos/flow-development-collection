@@ -279,7 +279,7 @@ class ResourceManager
      * data. Note that this stream handle may only be used read-only.
      *
      * @param PersistentResource $resource The resource to retrieve the stream for
-     * @return resource|boolean The resource stream or false if the stream could not be obtained
+     * @return resource|false The resource stream or false if the stream could not be obtained
      * @api
      */
     public function getStreamByResource(PersistentResource $resource)
@@ -370,7 +370,7 @@ class ResourceManager
      * Returns the web accessible URI for the given resource object
      *
      * @param PersistentResource $resource The resource object
-     * @return string|boolean A URI as a string or false if the collection of the resource is not found
+     * @return string|false A URI as a string or false if the collection of the resource is not found
      * @api
      */
     public function getPublicPersistentResourceUri(PersistentResource $resource)
@@ -468,7 +468,7 @@ class ResourceManager
      * Returns a Storage instance by the given name
      *
      * @param string $storageName Name of the storage as defined in the settings
-     * @return StorageInterface or NULL
+     * @return StorageInterface|null
      */
     public function getStorage($storageName)
     {
@@ -481,7 +481,7 @@ class ResourceManager
      * Returns a Collection instance by the given name
      *
      * @param string $collectionName Name of the collection as defined in the settings
-     * @return CollectionInterface or NULL
+     * @return CollectionInterface|null
      * @api
      */
     public function getCollection($collectionName)
