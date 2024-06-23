@@ -13,7 +13,7 @@ namespace Neos\Flow\Command;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Core\Booting\Scripts;
+use Neos\Flow\Core\PhpCliCommandHandler;
 
 /**
  * Command controller for starting the development-server
@@ -43,7 +43,7 @@ class ServerCommandController extends CommandController
      */
     public function runCommand(string $host = '127.0.0.1', int $port = 8081)
     {
-        $command = Scripts::buildPhpCommand($this->settings);
+        $command = PhpCliCommandHandler::buildAndValidatePhpCommand($this->settings);
 
         $address = sprintf('%s:%s', $host, $port);
         $command .= ' -S ' . escapeshellarg($address) . ' -t ' . escapeshellarg(FLOW_PATH_WEB) . ' ' . escapeshellarg(FLOW_PATH_FLOW . '/Scripts/PhpDevelopmentServerRouter.php');
