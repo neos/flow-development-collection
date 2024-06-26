@@ -61,7 +61,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
     {
         $valueObject = new Fixtures\TestValueObject('value');
 
-        $this->assertObjectHasAttribute('Persistence_Object_Identifier', $valueObject);
+        $this->assertObjectHasProperty('Persistence_Object_Identifier', $valueObject);
         self::assertNotEmpty($this->persistenceManager->getIdentifierByObject($valueObject));
     }
 

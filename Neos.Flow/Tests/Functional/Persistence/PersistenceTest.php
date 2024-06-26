@@ -473,10 +473,10 @@ class PersistenceTest extends FunctionalTestCase
         self::assertNull($persistedExtendedTypesEntity->getDateTimeTz(), 'DateTimeTz');
         self::assertNull($persistedExtendedTypesEntity->getDate(), 'Date');
         self::assertNull($persistedExtendedTypesEntity->getTime(), 'Time');
+        self::assertNull($persistedExtendedTypesEntity->getJsonArray(), 'Json Array');
 
         // These types always returns an array, never NULL, even if the property is nullable
         self::assertEquals([], $persistedExtendedTypesEntity->getSimpleArray(), 'Simple Array');
-        self::assertEquals([], $persistedExtendedTypesEntity->getJsonArray(), 'Json Array');
     }
 
     /**

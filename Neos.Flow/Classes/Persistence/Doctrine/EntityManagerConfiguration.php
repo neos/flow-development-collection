@@ -24,7 +24,6 @@ use Doctrine\ORM\EntityManager;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception\NoSuchCacheException;
 use Neos\Cache\Psr\Cache\CacheFactory;
-use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
