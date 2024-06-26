@@ -5,7 +5,6 @@ namespace Neos\Flow\Persistence\Doctrine\DataTypes;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\JsonType as DoctrineJsonType;
 use Doctrine\ORM\Mapping\Entity as ORMEntity;
@@ -44,11 +43,6 @@ class JsonArrayType extends DoctrineJsonType
      */
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        if ($platform instanceof PostgreSQL94Platform) {
-            // FIXME: Is this special case still needed as of Doctrine/DBAL 3.3?
-            return 'jsonb';
-        }
-
         return $platform->getJsonTypeDeclarationSQL($column);
     }
 
