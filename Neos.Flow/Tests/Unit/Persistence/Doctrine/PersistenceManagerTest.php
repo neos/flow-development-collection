@@ -12,7 +12,9 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
  */
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\Exception as DBALException;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
@@ -61,7 +63,7 @@ class PersistenceManagerTest extends UnitTestCase
 
     protected function setUp(): void
     {
-        $this->persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Doctrine\PersistenceManager::class)->setMethods(['emitAllObjectsPersisted', 'ping'])->getMock();
+        $this->persistenceManager = $this->getMockBuilder(\Neos\Flow\Persistence\Doctrine\PersistenceManager::class)->setMethods(['emitAllObjectsPersisted'])->getMock();
 
         $this->mockEntityManager = $this->getMockBuilder(\Doctrine\ORM\EntityManager::class)->disableOriginalConstructor()->getMock();
         $this->mockEntityManager->method('isOpen')->willReturn(true);
@@ -71,8 +73,6 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockEntityManager->method('getUnitOfWork')->willReturn($this->mockUnitOfWork);
 
         $this->mockConnection = $this->getMockBuilder(\Doctrine\DBAL\Connection::class)->disableOriginalConstructor()->getMock();
-        $this->mockPing = $this->persistenceManager->method('ping');
-        $this->mockPing->willReturn(true);
         $this->mockEntityManager->method('getConnection')->willReturn($this->mockConnection);
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
@@ -84,7 +84,7 @@ class PersistenceManagerTest extends UnitTestCase
 
         $allowedObjectsContainer = new AllowedObjectsContainer();
         $this->inject($this->persistenceManager, 'allowedObjects', $allowedObjectsContainer);
-        $allowedObjectsListener = new AllowedObjectsListener();
+        $allowedObjectsListener = $this->getMockBuilder(AllowedObjectsListener::class)->setMethods(['ping'])->getMock();
         $this->inject($allowedObjectsListener, 'allowedObjects', $allowedObjectsContainer);
         $this->inject($allowedObjectsListener, 'logger', $this->mockSystemLogger);
         $this->inject($allowedObjectsListener, 'throwableStorage', $mockThrowableStorage);
@@ -92,6 +92,8 @@ class PersistenceManagerTest extends UnitTestCase
         $this->mockEntityManager->method('flush')->willReturnCallback(function () use ($allowedObjectsListener) {
             $allowedObjectsListener->onFlush(new OnFlushEventArgs($this->mockEntityManager));
         });
+        $this->mockPing = $allowedObjectsListener->method('ping')->withAnyParameters();
+        $this->mockPing->willReturn(true);
     }
 
     /**
@@ -199,10 +201,11 @@ class PersistenceManagerTest extends UnitTestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function persistAllCatchesConnectionExceptions()
     {
-        $this->mockPing->willThrow($this->mockConnectionException);
+        $this->mockConnection->method('connect')->withAnyParameters()->willThrowException(new ConnectionException());
         $this->persistenceManager->persistAll();
     }
 }
