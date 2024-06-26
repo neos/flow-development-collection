@@ -21,17 +21,13 @@ use Doctrine\ORM\Cache\DefaultCacheFactory;
 use Doctrine\ORM\Cache\RegionsConfiguration;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
-use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception\NoSuchCacheException;
-use Neos\Cache\Psr\Cache\CacheFactory;
-use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\Doctrine\Logging\SqlLogger;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Utility\Environment;
-use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * EntityManager configuration handler
@@ -173,11 +169,11 @@ class EntityManagerConfiguration
      */
     protected function applyCacheConfiguration(Configuration $config): void
     {
-        $cache = $this->createPsrCachePoolForConfiguredCache('Flow_Persistence_Doctrine');
+        $cache = $this->objectManager->get(CacheManager::class)->getCacheItemPool('Flow_Persistence_Doctrine');
         $config->setMetadataCache($cache);
         $config->setQueryCache($cache);
 
-        $resultCache = $this->createPsrCachePoolForConfiguredCache('Flow_Persistence_Doctrine_Results');
+        $resultCache = $this->objectManager->get(CacheManager::class)->getCacheItemPool('Flow_Persistence_Doctrine_Results');
         $config->setResultCache($resultCache);
     }
 
@@ -215,7 +211,10 @@ class EntityManagerConfiguration
             }
         }
 
-        $factory = new DefaultCacheFactory($regionsConfiguration, $this->createPsrCachePoolForConfiguredCache('Flow_Persistence_Doctrine_SecondLevel'));
+        $factory = new DefaultCacheFactory(
+            $regionsConfiguration,
+            $this->objectManager->get(CacheManager::class)->getCacheItemPool('Flow_Persistence_Doctrine_SecondLevel')
+        );
         $doctrineSecondLevelCacheConfiguration->setCacheFactory($factory);
     }
 
@@ -243,15 +242,5 @@ class EntityManagerConfiguration
                 $entityManager->getFilters()->enable($filterName);
             }
         }
-    }
-
-    protected function createPsrCachePoolForConfiguredCache(string $cacheIdentifier): CacheItemPoolInterface
-    {
-        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
-        $applicationIdentifier = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.cache.applicationIdentifier');
-        $environmentConfiguration = new EnvironmentConfiguration($applicationIdentifier, $this->objectManager->get(Environment::class)->getPathToTemporaryDirectory());
-        $cacheFactory = new CacheFactory($environmentConfiguration);
-        $cacheConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES, $cacheIdentifier);
-        return $cacheFactory->create($cacheIdentifier, $cacheConfiguration['backend'], $cacheConfiguration['backendOptions'] ?? []);
     }
 }
