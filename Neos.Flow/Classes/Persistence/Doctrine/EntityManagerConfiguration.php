@@ -15,18 +15,24 @@ namespace Neos\Flow\Persistence\Doctrine;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Cache\DefaultCacheFactory;
+use Doctrine\ORM\Cache\RegionsConfiguration;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
+use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception\NoSuchCacheException;
+use Neos\Cache\Psr\Cache\CacheFactory;
 use Neos\Flow\Cache\CacheManager;
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\Doctrine\Logging\SqlLogger;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Utility\Environment;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * EntityManager configuration handler
@@ -168,16 +174,12 @@ class EntityManagerConfiguration
      */
     protected function applyCacheConfiguration(Configuration $config): void
     {
-        $cache = new CacheAdapter();
-        // must use ObjectManager in compile phase...
-        $cache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine'));
-        $config->setMetadataCacheImpl($cache);
-        $config->setQueryCacheImpl($cache);
+        $cache = $this->createPsrCachePoolForConfiguredCache('Flow_Persistence_Doctrine');
+        $config->setMetadataCache($cache);
+        $config->setQueryCache($cache);
 
-        $resultCache = new CacheAdapter();
-        // must use ObjectManager in compile phase...
-        $resultCache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine_Results'));
-        $config->setResultCacheImpl($resultCache);
+        $resultCache = $this->createPsrCachePoolForConfiguredCache('Flow_Persistence_Doctrine_Results');
+        $config->setResultCache($resultCache);
     }
 
     /**
@@ -195,7 +197,12 @@ class EntityManagerConfiguration
         }
 
         $doctrineConfiguration->setSecondLevelCacheEnabled();
-        $regionsConfiguration = $doctrineConfiguration->getSecondLevelCacheConfiguration()->getRegionsConfiguration();
+        $doctrineSecondLevelCacheConfiguration = $doctrineConfiguration->getSecondLevelCacheConfiguration();
+        if ($doctrineSecondLevelCacheConfiguration === null) {
+            throw new \RuntimeException('No doctrine second level cache configuration found.', 1719343602);
+        }
+        /** @var RegionsConfiguration $regionsConfiguration */
+        $regionsConfiguration = $doctrineSecondLevelCacheConfiguration->getRegionsConfiguration();
         if (isset($configuredSettings['defaultLifetime'])) {
             $regionsConfiguration->setDefaultLifetime($configuredSettings['defaultLifetime']);
         }
@@ -209,12 +216,8 @@ class EntityManagerConfiguration
             }
         }
 
-        $cache = new CacheAdapter();
-        // must use ObjectManager in compile phase...
-        $cache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine_SecondLevel'));
-
-        $factory = new DefaultCacheFactory($regionsConfiguration, $cache);
-        $doctrineConfiguration->getSecondLevelCacheConfiguration()->setCacheFactory($factory);
+        $factory = new DefaultCacheFactory($regionsConfiguration, $this->createPsrCachePoolForConfiguredCache('Flow_Persistence_Doctrine_SecondLevel'));
+        $doctrineSecondLevelCacheConfiguration->setCacheFactory($factory);
     }
 
     /**
@@ -222,7 +225,7 @@ class EntityManagerConfiguration
      *
      * @param Configuration $config
      * @param EntityManager $entityManager
-     * @throws DBALException
+     * @throws Exception
      */
     public function enhanceEntityManager(Configuration $config, EntityManager $entityManager): void
     {
@@ -241,5 +244,15 @@ class EntityManagerConfiguration
                 $entityManager->getFilters()->enable($filterName);
             }
         }
+    }
+
+    protected function createPsrCachePoolForConfiguredCache(string $cacheIdentifier): CacheItemPoolInterface
+    {
+        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
+        $applicationIdentifier = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.cache.applicationIdentifier');
+        $environmentConfiguration = new EnvironmentConfiguration($applicationIdentifier, $this->objectManager->get(Environment::class)->getPathToTemporaryDirectory());
+        $cacheFactory = new CacheFactory($environmentConfiguration);
+        $cacheConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES, $cacheIdentifier);
+        return $cacheFactory->create($cacheIdentifier, $cacheConfiguration['backend'], $cacheConfiguration['backendOptions'] ?? []);
     }
 }

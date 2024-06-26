@@ -67,7 +67,7 @@ class AllowedObjectsListener
      * @param OnFlushEventArgs $args
      * @throws PersistenceException
      */
-    public function onFlush(OnFlushEventArgs $args)
+    public function onFlush(OnFlushEventArgs $args): void
     {
         $unitOfWork = $args->getEntityManager()->getUnitOfWork();
         if ($unitOfWork->getScheduledEntityInsertions() === []
@@ -89,7 +89,7 @@ class AllowedObjectsListener
 
         $connection = $args->getEntityManager()->getConnection();
         try {
-            if ($this->ping() === false) {
+            if ($this->ping($connection) === false) {
                 $this->logger->info('Reconnecting the Doctrine EntityManager to the persistence backend.', LogEnvironment::fromMethodName(__METHOD__));
                 $connection->close();
                 $connection->connect();
@@ -120,7 +120,7 @@ class AllowedObjectsListener
      * @return void
      * @throws \Neos\Flow\Persistence\Exception
      */
-    protected function throwExceptionIfObjectIsNotAllowed($object)
+    protected function throwExceptionIfObjectIsNotAllowed($object): void
     {
         if (!$this->allowedObjects->contains($object)) {
             $message = 'Detected modified or new objects (' . get_class($object) . ', uuid:' . $this->persistenceManager->getIdentifierByObject($object) . ') to be persisted which is not allowed for "safe requests"' . chr(10) .
