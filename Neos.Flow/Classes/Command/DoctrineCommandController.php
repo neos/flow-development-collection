@@ -12,7 +12,9 @@ namespace Neos\Flow\Command;
  */
 
 use Doctrine\Common\Util\Debug;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\Migrations\Exception\MigrationException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\ToolsException;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
@@ -199,7 +201,7 @@ class DoctrineCommandController extends CommandController
      * @param boolean $dumpMappingData If set, the mapping data will be output
      * @param string|null $entityClassName If given, the mapping data for just this class will be output
      * @return void
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      * @see neos.flow:doctrine:validate
      */
     public function entityStatusCommand(bool $dumpMappingData = false, string $entityClassName = null): void
@@ -283,7 +285,7 @@ class DoctrineCommandController extends CommandController
      * @param boolean $showMigrations Output a list of all migrations and their status
      * @return void
      * @throws StopCommandException
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationgenerate
@@ -392,7 +394,7 @@ class DoctrineCommandController extends CommandController
      * @param boolean $delete The migration to mark as not migrated
      * @return void
      * @throws StopCommandException
-     * @throws \Doctrine\DBAL\Exception
+     * @throws DBALException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationexecute
@@ -440,7 +442,7 @@ class DoctrineCommandController extends CommandController
      * @param string|null $filterExpression Only include tables/sequences matching the filter expression regexp
      * @param boolean $force Generate migrations even if there are migrations left to execute
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      * @throws StopCommandException
      * @throws FilesException
      * @see neos.flow:doctrine:migrate
@@ -495,8 +497,8 @@ class DoctrineCommandController extends CommandController
             $this->outputLine();
 
             if ($selectedPackage !== $choices[0]) {
-                /** @var Package $selectedPackage */
                 $selectedPackage = $packages[$selectedPackage];
+                /** @var Package $selectedPackage */
                 $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)]);
                 Files::createDirectoryRecursively(dirname($targetPathAndFilename));
                 rename($migrationClassPathAndFilename, $targetPathAndFilename);
