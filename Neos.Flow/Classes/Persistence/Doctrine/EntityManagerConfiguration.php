@@ -28,6 +28,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\Doctrine\Logging\SqlLogger;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Annotations as Flow;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * EntityManager configuration handler
@@ -169,12 +170,19 @@ class EntityManagerConfiguration
      */
     protected function applyCacheConfiguration(Configuration $config): void
     {
-        $cache = $this->objectManager->get(CacheManager::class)->getCacheItemPool('Flow_Persistence_Doctrine');
+        // Here we do not use the wrapper as below as the metadata cannot change at runtime anyway.
+        $cache = $this->objectManager->get(CacheManager::class)->getCacheItemPool('Flow_Persistence_Doctrine_Metadata');
         $config->setMetadataCache($cache);
-        $config->setQueryCache($cache);
 
-        $resultCache = $this->objectManager->get(CacheManager::class)->getCacheItemPool('Flow_Persistence_Doctrine_Results');
-        $config->setResultCache($resultCache);
+        /**
+         * FIXME:
+         * We shouldn't need this wrapper adding the security hash as {@see SqlFilter::addFilterConstraint does that already,
+         * and the parameters there are hashed into the query cache key in doctrines Query class.
+         * But tests fail if it doesn't happen
+         */
+        $config->setQueryCache($this->getPsrCacheItemPool('Flow_Persistence_Doctrine'));
+
+        $config->setResultCache($this->getPsrCacheItemPool('Flow_Persistence_Doctrine_Results'));
     }
 
     /**
@@ -213,7 +221,7 @@ class EntityManagerConfiguration
 
         $factory = new DefaultCacheFactory(
             $regionsConfiguration,
-            $this->objectManager->get(CacheManager::class)->getCacheItemPool('Flow_Persistence_Doctrine_SecondLevel')
+            $this->getPsrCacheItemPool('Flow_Persistence_Doctrine_SecondLevel')
         );
         $doctrineSecondLevelCacheConfiguration->setCacheFactory($factory);
     }
@@ -242,5 +250,11 @@ class EntityManagerConfiguration
                 $entityManager->getFilters()->enable($filterName);
             }
         }
+    }
+
+    private function getPsrCacheItemPool(string $cacheIdentifier): CacheItemPoolInterface
+    {
+        $cache = $this->objectManager->get(CacheManager::class)->getCache($cacheIdentifier);
+        return new CachePool($cacheIdentifier, $cache->getBackend());
     }
 }

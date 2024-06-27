@@ -7,6 +7,8 @@
 # This cache contains meta data for the Doctrine ORM.
 Flow_Persistence_Doctrine:
   backend: Neos\Cache\Backend\TransientMemoryBackend
+Flow_Persistence_Doctrine_Metadata:
+  backend: Neos\Cache\Backend\TransientMemoryBackend
 Flow_Persistence_Doctrine_Results:
   backend: Neos\Cache\Backend\TransientMemoryBackend
 
@@ -29,4 +31,3 @@ Flow_I18n_Cldr_Reader_PluralsReaderCache:
   backend: Neos\Cache\Backend\TransientMemoryBackend
 Flow_I18n_Cldr_Reader_CurrencyReaderCache:
   backend: Neos\Cache\Backend\TransientMemoryBackend
-  
