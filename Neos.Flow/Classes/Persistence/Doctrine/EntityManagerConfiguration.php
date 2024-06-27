@@ -176,7 +176,7 @@ class EntityManagerConfiguration
 
         /**
          * FIXME:
-         * We shouldn't need this wrapper adding the security hash as {@see SqlFilter::addFilterConstraint does that already,
+         * We shouldn't need this wrapper adding the security hash as {@see SqlFilter::addFilterConstraint} does that already,
          * and the parameters there are hashed into the query cache key in doctrines Query class.
          * But tests fail if it doesn't happen
          */
