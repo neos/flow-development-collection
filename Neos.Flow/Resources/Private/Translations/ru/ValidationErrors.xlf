@@ -32,15 +32,15 @@
         <target state="final">Заданное значение не является годной датой</target>
       </trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
-				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
-        <target state="translated">Данная дата должна быть между  {0,datetime,datetime} и {1,datetime,datetime}</target>
+				<source>The given date must be between {0,datetime,dateTime} and {1,datetime,dateTime}</source>
+        <target state="translated">Данная дата должна быть между  {0,datetime,dateTime} и {1,datetime,dateTime}</target>
       </trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
-				<source>The given date must be after {0,datetime,datetime}</source>
-        <target state="translated">Дата должна быть позже чем {0,datetime,datetime}</target>
+				<source>The given date must be after {0,datetime,dateTime}</source>
+        <target state="translated">Дата должна быть позже чем {0,datetime,dateTime}</target>
       </trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
-				<source>The given date must be before {0,datetime,datetime}</source>
+				<source>The given date must be before {0,datetime,dateTime}</source>
         <target state="translated">Дата должна быть раньше чем {formatLatestDate}</target>
       </trans-unit>
       <!-- DateTimeValidator -->

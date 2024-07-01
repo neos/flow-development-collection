@@ -32,16 +32,16 @@
         <target state="final">Podana wartość nie jest poprawną datą</target>
       </trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
-				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
-        <target state="translated">Podana data musi być pomiędzy {0,datetime,datetime} a {1,datetime,datetime}</target>
+				<source>The given date must be between {0,datetime,dateTime} and {1,datetime,dateTime}</source>
+        <target state="translated">Podana data musi być pomiędzy {0,datetime,dateTime} a {1,datetime,dateTime}</target>
       </trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
-				<source>The given date must be after {0,datetime,datetime}</source>
-        <target state="translated">Podana data musi być po {0,datetime,datetime}</target>
+				<source>The given date must be after {0,datetime,dateTime}</source>
+        <target state="translated">Podana data musi być po {0,datetime,dateTime}</target>
       </trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
-				<source>The given date must be before {0,datetime,datetime}</source>
-        <target state="translated">Podana data musi być przed {0,datetime,datetime}</target>
+				<source>The given date must be before {0,datetime,dateTime}</source>
+        <target state="translated">Podana data musi być przed {0,datetime,dateTime}</target>
       </trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve" approved="yes">

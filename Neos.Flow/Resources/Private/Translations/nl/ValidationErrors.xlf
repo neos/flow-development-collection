@@ -32,16 +32,16 @@
         <target state="final">De opgegeven waarde is geen geldige datum</target>
       </trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
-				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
-        <target state="translated">De gegeven datum moet tussen {0,datetime,datetime} en {1,datatime,datetime} liggen</target>
+				<source>The given date must be between {0,datetime,dateTime} and {1,datetime,dateTime}</source>
+        <target state="translated">De gegeven datum moet tussen {0,datetime,dateTime} en {1,datatime,datetime} liggen</target>
       </trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
-				<source>The given date must be after {0,datetime,datetime}</source>
-        <target state="translated">De gegeven datum moet na {0,datetime,datetime} liggen</target>
+				<source>The given date must be after {0,datetime,dateTime}</source>
+        <target state="translated">De gegeven datum moet na {0,datetime,dateTime} liggen</target>
       </trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
-				<source>The given date must be before {0,datetime,datetime}</source>
-        <target state="translated">De gegeven datum moet voor {0,datetime,datetime} liggen</target>
+				<source>The given date must be before {0,datetime,dateTime}</source>
+        <target state="translated">De gegeven datum moet voor {0,datetime,dateTime} liggen</target>
       </trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve" approved="yes">
