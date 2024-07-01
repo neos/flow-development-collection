@@ -26,14 +26,14 @@
 				<source>The given value is not a valid date</source>
 			<target state="translated">o valor fornecido não é uma data válida</target></trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
-				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
-			<target state="translated">A data dada deve estar entre {0,datetime,datetime} e {1,datetime,datetime}</target></trans-unit>
+				<source>The given date must be between {0,datetime,dateTime} and {1,datetime,dateTime}</source>
+			<target state="translated">A data dada deve estar entre {0,datetime,dateTime} e {1,datetime,dateTime}</target></trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
-				<source>The given date must be after {0,datetime,datetime}</source>
-			<target state="translated">A data dada deve ser depois de {0,datetime,datetime}</target></trans-unit>
+				<source>The given date must be after {0,datetime,dateTime}</source>
+			<target state="translated">A data dada deve ser depois de {0,datetime,dateTime}</target></trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
-				<source>The given date must be before {0,datetime,datetime}</source>
-			<target state="translated">A data dada deve ser antes de {0,datetime,datetime}</target></trans-unit>
+				<source>The given date must be before {0,datetime,dateTime}</source>
+			<target state="translated">A data dada deve ser antes de {0,datetime,dateTime}</target></trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve">
 				<source>The "locale" option can be only set to string identifier, or Locale object</source>

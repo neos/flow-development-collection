@@ -32,16 +32,16 @@
         <target state="final">Noteiktā vērtība nav derīgs datums</target>
       </trans-unit>
       <trans-unit id="1325615630" xml:space="preserve">
-				<source>The given date must be between {0,datetime,datetime} and {1,datetime,datetime}</source>
-        <target state="translated">Norādītajam datumam jābūt no {0,datetime,datetime} līdz {1,datetime,datetime}</target>
+				<source>The given date must be between {0,datetime,dateTime} and {1,datetime,dateTime}</source>
+        <target state="translated">Norādītajam datumam jābūt no {0,datetime,dateTime} līdz {1,datetime,dateTime}</target>
       </trans-unit>
       <trans-unit id="1324315107" xml:space="preserve">
-				<source>The given date must be after {0,datetime,datetime}</source>
-        <target state="translated">Datumam ir jābūt pēc {0,datetime,datetime}</target>
+				<source>The given date must be after {0,datetime,dateTime}</source>
+        <target state="translated">Datumam ir jābūt pēc {0,datetime,dateTime}</target>
       </trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
-				<source>The given date must be before {0,datetime,datetime}</source>
-        <target state="translated">Norādītajam datumam jābūt pirms {0,datetime,datetime}</target>
+				<source>The given date must be before {0,datetime,dateTime}</source>
+        <target state="translated">Norādītajam datumam jābūt pirms {0,datetime,dateTime}</target>
       </trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve" approved="yes">
