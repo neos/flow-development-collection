@@ -185,9 +185,9 @@ class EntityManagerConfiguration
          * and the parameters there are hashed into the query cache key in doctrines Query class.
          * But tests fail if it doesn't happen
          */
-        $config->setQueryCache($this->getPsrCacheItemPool('Flow_Persistence_Doctrine'));
+        $config->setQueryCache($this->getSecurityHashAwareCacheItemPool('Flow_Persistence_Doctrine'));
 
-        $config->setResultCache($this->getPsrCacheItemPool('Flow_Persistence_Doctrine_Results'));
+        $config->setResultCache($this->getSecurityHashAwareCacheItemPool('Flow_Persistence_Doctrine_Results'));
     }
 
     /**
@@ -226,7 +226,7 @@ class EntityManagerConfiguration
 
         $factory = new DefaultCacheFactory(
             $regionsConfiguration,
-            $this->getPsrCacheItemPool('Flow_Persistence_Doctrine_SecondLevel')
+            $this->getSecurityHashAwareCacheItemPool('Flow_Persistence_Doctrine_SecondLevel')
         );
         $doctrineSecondLevelCacheConfiguration->setCacheFactory($factory);
     }
@@ -257,7 +257,7 @@ class EntityManagerConfiguration
         }
     }
 
-    private function getPsrCacheItemPool(string $cacheIdentifier): CacheItemPoolInterface
+    private function getSecurityHashAwareCacheItemPool(string $cacheIdentifier): CacheItemPoolInterface
     {
         $cache = $this->objectManager->get(CacheManager::class)->getCache($cacheIdentifier);
         return new CachePool($cacheIdentifier, $cache->getBackend());
