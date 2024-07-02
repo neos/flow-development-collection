@@ -15,7 +15,7 @@ namespace Neos\Flow\Persistence\Doctrine;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Cache\DefaultCacheFactory;
 use Doctrine\ORM\Cache\RegionsConfiguration;
@@ -25,6 +25,7 @@ use Neos\Cache\Exception\NoSuchCacheException;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Package;
 use Neos\Flow\Persistence\Doctrine\Logging\SqlLogger;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Annotations as Flow;
@@ -41,18 +42,18 @@ class EntityManagerConfiguration
      * @Flow\Inject
      * @var ObjectManagerInterface
      */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
     /**
-     * @var array
+     * @var array{"doctrine": array<string, mixed>}
      */
-    protected $settings = [];
+    protected array $settings;
 
     /**
      * Injects the Flow settings, the persistence part is kept
      * for further use.
      *
-     * @param array $settings
+     * @param array<string, mixed> $settings
      * @return void
      * @throws InvalidConfigurationException
      */
@@ -65,13 +66,17 @@ class EntityManagerConfiguration
     }
 
     /**
-     * Configure the Doctrine EntityManager according to configuration settings before it's creation.
+     * Configure the Doctrine EntityManager according to configuration settings before its creation.
+     *
+     * Note that this is called via SignalSlot in {@see Package} and therefore the arguments are
+     * defined by what beforeDoctrineEntityManagerCreation provides (leaving the first argument unused here).
      *
      * @param Connection $connection
      * @param Configuration $config
      * @param EventManager $eventManager
      * @throws InvalidConfigurationException
      * @throws IllegalObjectTypeException
+     * @throws NoSuchCacheException
      */
     public function configureEntityManager(Connection $connection, Configuration $config, EventManager $eventManager): void
     {
@@ -231,7 +236,7 @@ class EntityManagerConfiguration
      *
      * @param Configuration $config
      * @param EntityManager $entityManager
-     * @throws Exception
+     * @throws DbalException
      */
     public function enhanceEntityManager(Configuration $config, EntityManager $entityManager): void
     {
