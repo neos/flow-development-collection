@@ -12,7 +12,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -204,7 +204,7 @@ class Query implements QueryInterface
             $message = $this->throwableStorage->logThrowable($ormException);
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return [];
-        } catch (Exception $dbalException) {
+        } catch (DbalException $dbalException) {
             $message = $this->throwableStorage->logThrowable($dbalException);
             $this->logger->debug($message);
 
