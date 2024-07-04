@@ -497,8 +497,8 @@ class DoctrineCommandController extends CommandController
             $this->outputLine();
 
             if ($selectedPackage !== $choices[0]) {
-                $selectedPackage = $packages[$selectedPackage];
                 /** @var Package $selectedPackage */
+                $selectedPackage = $packages[$selectedPackage];
                 $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)]);
                 Files::createDirectoryRecursively(dirname($targetPathAndFilename));
                 rename($migrationClassPathAndFilename, $targetPathAndFilename);

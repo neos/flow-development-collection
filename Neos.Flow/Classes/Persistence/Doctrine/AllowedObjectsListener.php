@@ -67,7 +67,7 @@ class AllowedObjectsListener
      * @param OnFlushEventArgs $args
      * @throws PersistenceException
      */
-    public function onFlush(OnFlushEventArgs $args): void
+    public function onFlush(OnFlushEventArgs $args)
     {
         $unitOfWork = $args->getObjectManager()->getUnitOfWork();
         if ($unitOfWork->getScheduledEntityInsertions() === []
@@ -120,7 +120,7 @@ class AllowedObjectsListener
      * @return void
      * @throws \Neos\Flow\Persistence\Exception
      */
-    protected function throwExceptionIfObjectIsNotAllowed($object): void
+    protected function throwExceptionIfObjectIsNotAllowed($object)
     {
         if (!$this->allowedObjects->contains($object)) {
             $message = 'Detected modified or new objects (' . get_class($object) . ', uuid:' . $this->persistenceManager->getIdentifierByObject($object) . ') to be persisted which is not allowed for "safe requests"' . chr(10) .

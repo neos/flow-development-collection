@@ -124,8 +124,8 @@ class DatabaseCommandController extends CommandController
 
         $statements[] = 'ALTER DATABASE ' . $this->connection->quoteIdentifier($this->persistenceSettings['backendOptions']['dbname']) . ' CHARACTER SET ' . $characterSet . ' COLLATE ' . $collation;
 
-        $schemaManager = method_exists($this->connection, 'createSchemaManager') ? $this->connection->createSchemaManager() : $this->connection->getSchemaManager();
-        foreach ($schemaManager?->listTableNames() ?? [] as $tableName) {
+        $tableNames = $this->connection->getSchemaManager()?->listTableNames() ?? [];
+        foreach ($tableNames as $tableName) {
             $statements[] = 'ALTER TABLE ' . $this->connection->quoteIdentifier($tableName) . ' DEFAULT CHARACTER SET ' . $characterSet . ' COLLATE ' . $collation;
             $statements[] = 'ALTER TABLE ' . $this->connection->quoteIdentifier($tableName) . ' CONVERT TO CHARACTER SET ' . $characterSet . ' COLLATE ' . $collation;
         }

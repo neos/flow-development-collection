@@ -218,7 +218,6 @@ class CacheManager
      *
      * @param string $identifier
      * @return CacheItemPoolInterface
-     * @throws NoSuchCacheException
      */
     public function getCacheItemPool(string $identifier): CacheItemPoolInterface
     {
