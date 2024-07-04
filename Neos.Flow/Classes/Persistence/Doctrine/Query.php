@@ -14,7 +14,6 @@ namespace Neos\Flow\Persistence\Doctrine;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\ORM\EntityManager;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Query\Expr\Comparison;
