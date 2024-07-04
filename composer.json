@@ -38,7 +38,7 @@
         "laminas/laminas-code": "^4.10",
         "doctrine/orm": "^2.13.0",
         "doctrine/migrations": "^3.3",
-        "doctrine/dbal": "^3.3",
+        "doctrine/dbal": "^2.13 || ^3",
         "doctrine/common": "^3.1",
         "doctrine/annotations": "^1.13",
         "symfony/yaml": "^5.1||^6.0",
