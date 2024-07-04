@@ -12,18 +12,15 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Comparison;
 use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
-use Neos\Flow\Persistence\Doctrine\Exception\DatabaseConnectionException;
-use Neos\Flow\Persistence\Doctrine\Exception\DatabaseException;
-use Neos\Flow\Persistence\Doctrine\Exception\DatabaseStructureException;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
@@ -187,9 +184,9 @@ class Query implements QueryInterface
      * This should only ever be executed from the QueryResult class.
      *
      * @return array result set
-     * @throws DatabaseException
-     * @throws DatabaseConnectionException
-     * @throws DatabaseStructureException
+     * @throws Exception\DatabaseException
+     * @throws Exception\DatabaseConnectionException
+     * @throws Exception\DatabaseStructureException
      */
     public function getResult()
     {
@@ -203,19 +200,19 @@ class Query implements QueryInterface
             $message = $this->throwableStorage->logThrowable($ormException);
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return [];
-        } catch (DbalException $dbalException) {
+        } catch (DBALException $dbalException) {
             $message = $this->throwableStorage->logThrowable($dbalException);
             $this->logger->debug($message);
 
             if (stripos($dbalException->getMessage(), 'no database selected') !== false) {
                 $message = 'No database name was specified in the configuration.';
-                $exception = new DatabaseConnectionException($message, $dbalException->getCode());
+                $exception = new Exception\DatabaseConnectionException($message, $dbalException->getCode());
             } elseif (stripos($dbalException->getMessage(), 'table') !== false && stripos($dbalException->getMessage(), 'not') !== false && stripos($dbalException->getMessage(), 'exist') !== false) {
                 $message = 'A table or view seems to be missing from the database.';
-                $exception = new DatabaseStructureException($message, $dbalException->getCode());
+                $exception = new Exception\DatabaseStructureException($message, $dbalException->getCode());
             } else {
                 $message = 'An error occurred in the Database Abstraction Layer.';
-                $exception = new DatabaseException($message, $dbalException->getCode());
+                $exception = new Exception\DatabaseException($message, $dbalException->getCode());
             }
 
             throw $exception;
@@ -226,14 +223,14 @@ class Query implements QueryInterface
             if (stripos($pdoException->getMessage(), 'unknown database') !== false
                 || (stripos($pdoException->getMessage(), 'database') !== false && strpos($pdoException->getMessage(), 'not') !== false && strpos($pdoException->getMessage(), 'exist') !== false)) {
                 $message = 'The database which was specified in the configuration does not exist.';
-                $exception = new DatabaseConnectionException($message, $pdoException->getCode());
+                $exception = new Exception\DatabaseConnectionException($message, $pdoException->getCode());
             } elseif (stripos($pdoException->getMessage(), 'access denied') !== false
                 || stripos($pdoException->getMessage(), 'connection refused') !== false) {
                 $message = 'The database username / password specified in the configuration seem to be wrong.';
-                $exception = new DatabaseConnectionException($message, $pdoException->getCode());
+                $exception = new Exception\DatabaseConnectionException($message, $pdoException->getCode());
             } else {
                 $message = 'An error occurred while using the PDO Driver: ' . $pdoException->getMessage();
-                $exception = new DatabaseException($message, $pdoException->getCode());
+                $exception = new Exception\DatabaseException($message, $pdoException->getCode());
             }
 
             throw $exception;
@@ -244,7 +241,7 @@ class Query implements QueryInterface
      * Returns the query result count
      *
      * @return integer The query result count
-     * @throws DatabaseConnectionException
+     * @throws Exception\DatabaseConnectionException
      * @api
      */
     public function count(): int
@@ -272,7 +269,7 @@ class Query implements QueryInterface
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return 0;
         } catch (\PDOException $pdoException) {
-            throw new DatabaseConnectionException($pdoException->getMessage(), (int)$pdoException->getCode());
+            throw new Exception\DatabaseConnectionException($pdoException->getMessage(), (int)$pdoException->getCode());
         }
     }
 
@@ -688,7 +685,7 @@ class Query implements QueryInterface
     /**
      * Return the SQL statements representing this Query.
      *
-     * @return string|string[]
+     * @return string
      */
     public function getSql()
     {
