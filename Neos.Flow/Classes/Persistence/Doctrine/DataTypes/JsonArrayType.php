@@ -5,8 +5,9 @@ namespace Neos\Flow\Persistence\Doctrine\DataTypes;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\DBAL\Types\ConversionException;
-use Doctrine\DBAL\Types\JsonType as DoctrineJsonType;
+use Doctrine\DBAL\Types\JsonType;
 use Doctrine\ORM\Mapping\Entity as ORMEntity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
@@ -22,7 +23,7 @@ use Neos\Utility\TypeHandling;
  *
  * @Flow\Proxy(false)
  */
-class JsonArrayType extends DoctrineJsonType
+class JsonArrayType extends JsonType
 {
     public const FLOW_JSON_ARRAY = 'flow_json_array';
     protected ?PersistenceManagerInterface $persistenceManager = null;
@@ -43,6 +44,9 @@ class JsonArrayType extends DoctrineJsonType
      */
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
+        if ($platform instanceof PostgreSQL94Platform) {
+            return 'jsonb';
+        }
         return $platform->getJsonTypeDeclarationSQL($column);
     }
 

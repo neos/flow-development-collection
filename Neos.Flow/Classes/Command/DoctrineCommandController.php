@@ -14,7 +14,6 @@ namespace Neos\Flow\Command;
 use Doctrine\Common\Util\Debug;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\Migrations\Exception\MigrationException;
-use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\ToolsException;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
@@ -201,7 +200,7 @@ class DoctrineCommandController extends CommandController
      * @param boolean $dumpMappingData If set, the mapping data will be output
      * @param string|null $entityClassName If given, the mapping data for just this class will be output
      * @return void
-     * @throws ORMException
+     * @throws \Doctrine\ORM\ORMException
      * @see neos.flow:doctrine:validate
      */
     public function entityStatusCommand(bool $dumpMappingData = false, string $entityClassName = null): void
