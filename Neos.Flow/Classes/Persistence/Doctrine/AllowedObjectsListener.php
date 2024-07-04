@@ -69,7 +69,7 @@ class AllowedObjectsListener
      */
     public function onFlush(OnFlushEventArgs $args)
     {
-        $unitOfWork = $args->getObjectManager()->getUnitOfWork();
+        $unitOfWork = $args->getEntityManager()->getUnitOfWork();
         if ($unitOfWork->getScheduledEntityInsertions() === []
             && $unitOfWork->getScheduledEntityUpdates() === []
             && $unitOfWork->getScheduledEntityDeletions() === []
@@ -87,7 +87,7 @@ class AllowedObjectsListener
             }
         }
 
-        $connection = $args->getObjectManager()->getConnection();
+        $connection = $args->getEntityManager()->getConnection();
         try {
             if ($this->ping($connection) === false) {
                 $this->logger->info('Reconnecting the Doctrine EntityManager to the persistence backend.', LogEnvironment::fromMethodName(__METHOD__));
