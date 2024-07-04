@@ -256,11 +256,11 @@ class Query implements QueryInterface
             $dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, [CountWalker::class]);
             $offset = $dqlQuery->getFirstResult();
             $limit = $dqlQuery->getMaxResults();
-            if ($offset !== 0) {
+            if (!empty($offset)) {
                 $dqlQuery->setFirstResult(null);
             }
             $numberOfResults = (int)$dqlQuery->getSingleScalarResult();
-            if ($offset !== 0) {
+            if (!empty($offset)) {
                 $numberOfResults = max(0, $numberOfResults - $offset);
             }
             if ($limit !== null) {
