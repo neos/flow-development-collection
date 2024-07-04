@@ -86,8 +86,6 @@ Flow_Object_Configuration:
 # This cache contains meta data for the Doctrine ORM.
 Flow_Persistence_Doctrine:
   backend: Neos\Cache\Backend\SimpleFileBackend
-Flow_Persistence_Doctrine_Metadata:
-  backend: Neos\Cache\Backend\SimpleFileBackend
 Flow_Persistence_Doctrine_Results:
   backend: Neos\Cache\Backend\FileBackend
   backendOptions:
