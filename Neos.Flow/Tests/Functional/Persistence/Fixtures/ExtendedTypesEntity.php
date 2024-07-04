@@ -43,7 +43,7 @@ class ExtendedTypesEntity
 
     /**
      * @var array
-     * @ORM\Column(type="json_array", nullable=true)
+     * @ORM\Column(type="flow_json_array", nullable=true)
      */
     protected $jsonArray;
 

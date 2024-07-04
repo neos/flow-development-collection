@@ -186,7 +186,7 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->restrictableEntityDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 2);
+        self::assertEquals(2, count($result));
 
         self::assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, Fixtures\RestrictableEntity::class));
         self::assertNotNull($this->persistenceManager->getObjectByIdentifier($deletedEntityIdentifier, Fixtures\RestrictableEntity::class));
