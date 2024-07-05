@@ -14,6 +14,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\DBAL\Exception\ConnectionException;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -88,7 +89,7 @@ class AllowedObjectsListener
 
         $connection = $args->getEntityManager()->getConnection();
         try {
-            if ($connection->ping() === false) {
+            if ($this->ping($connection) === false) {
                 $this->logger->info('Reconnecting the Doctrine EntityManager to the persistence backend.', LogEnvironment::fromMethodName(__METHOD__));
                 $connection->close();
                 $connection->connect();
@@ -96,6 +97,19 @@ class AllowedObjectsListener
         } catch (ConnectionException $exception) {
             $message = $this->throwableStorage->logThrowable($exception);
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
+        }
+    }
+
+    /**
+     * Execute a dummy query on the given connection and return false if the connection is not open
+     */
+    protected function ping(Connection $connection): bool
+    {
+        try {
+            $connection->executeQuery($connection->getDatabasePlatform()->getDummySelectSQL());
+            return true;
+        } catch (ConnectionException $e) {
+            return false;
         }
     }
 

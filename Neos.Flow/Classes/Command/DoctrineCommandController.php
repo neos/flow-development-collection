@@ -12,6 +12,7 @@ namespace Neos\Flow\Command;
  */
 
 use Doctrine\Common\Util\Debug;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\Migrations\Exception\MigrationException;
 use Doctrine\ORM\Tools\ToolsException;
 use Doctrine\Persistence\Mapping\ClassMetadata;
@@ -283,7 +284,7 @@ class DoctrineCommandController extends CommandController
      * @param boolean $showMigrations Output a list of all migrations and their status
      * @return void
      * @throws StopCommandException
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationgenerate
@@ -392,7 +393,7 @@ class DoctrineCommandController extends CommandController
      * @param boolean $delete The migration to mark as not migrated
      * @return void
      * @throws StopCommandException
-     * @throws \Doctrine\DBAL\Exception
+     * @throws DBALException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationexecute
@@ -440,7 +441,7 @@ class DoctrineCommandController extends CommandController
      * @param string|null $filterExpression Only include tables/sequences matching the filter expression regexp
      * @param boolean $force Generate migrations even if there are migrations left to execute
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      * @throws StopCommandException
      * @throws FilesException
      * @see neos.flow:doctrine:migrate

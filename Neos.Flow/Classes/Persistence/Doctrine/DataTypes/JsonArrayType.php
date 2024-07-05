@@ -21,8 +21,6 @@ use Neos\Utility\TypeHandling;
 /**
  * Extends the default doctrine JsonArrayType to work with entities.
  *
- * TODO: If doctrine supports a Postgres 9.4 platform we could default to jsonb.
- *
  * @Flow\Proxy(false)
  */
 class JsonArrayType extends JsonType
@@ -49,12 +47,11 @@ class JsonArrayType extends JsonType
         if ($platform instanceof PostgreSQL94Platform) {
             return 'jsonb';
         }
-
         return $platform->getJsonTypeDeclarationSQL($column);
     }
 
     /**
-     * We map jsonb fields to our datatype by default. Doctrine doesn't use jsonb at all.
+     * We map jsonb fields to our datatype by default.
      */
     public function getMappedDatabaseTypes(AbstractPlatform $platform): array
     {

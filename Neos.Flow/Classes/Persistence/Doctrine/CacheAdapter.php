@@ -18,6 +18,8 @@ use Neos\Flow\Security\Context;
 
 /**
  * Cache adapter to use Flow caches as Doctrine cache
+ *
+ * @deprecated with Flow 8.4 – will be replaced by a dedicated CachePool implementation with Flow 9.0
  */
 class CacheAdapter implements Cache
 {
