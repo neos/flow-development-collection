@@ -12,7 +12,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -193,7 +193,7 @@ class Query implements QueryInterface
         try {
             $query = $this->queryBuilder->getQuery();
             if ($this->cacheResult === true || $this->settings['cacheAllQueryResults']) {
-                $query->useResultCache(true);
+                $query->enableResultCache();
             }
             return $query->getResult();
         } catch (ORMException $ormException) {
@@ -253,11 +253,11 @@ class Query implements QueryInterface
             $dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, [CountWalker::class]);
             $offset = $dqlQuery->getFirstResult();
             $limit = $dqlQuery->getMaxResults();
-            if ($offset !== null) {
+            if (!empty($offset)) {
                 $dqlQuery->setFirstResult(null);
             }
             $numberOfResults = (int)$dqlQuery->getSingleScalarResult();
-            if ($offset !== null) {
+            if (!empty($offset)) {
                 $numberOfResults = max(0, $numberOfResults - $offset);
             }
             if ($limit !== null) {
