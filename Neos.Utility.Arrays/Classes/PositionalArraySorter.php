@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Utility;
 
 /*
@@ -12,7 +15,7 @@ namespace Neos\Utility;
  */
 
 /**
- * Flexible array sorter that sorts an array according to a "position" meta data.
+ * Flexible array sorter that sorts an array according to a "position" metadata.
  * The expected format for the $subject is:
  *
  * array(
@@ -35,66 +38,43 @@ namespace Neos\Utility;
  *
  * where "weight" is the priority that defines which of two conflicting positions overrules the other,
  * "key" is a string that references another key in the $subject
- * and "numerical-order" is an integer that defines the order independently from the other keys.
+ * and "numerical-order" is an integer that defines the order independently of the other keys.
  *
  * With the $positionPropertyPath parameter the property path to the position string can be changed.
  */
-class PositionalArraySorter
+final class PositionalArraySorter
 {
-    /**
-     * @var array
-     */
-    protected $subject;
+    private array $startKeys;
 
-    /**
-     * @var string
-     */
-    protected $positionPropertyPath;
+    private array $middleKeys;
 
-    /**
-     * @var array
-     */
-    protected $startKeys;
+    private array $endKeys;
 
-    /**
-     * @var array
-     */
-    protected $middleKeys;
+    private array $beforeKeys;
 
-    /**
-     * @var array
-     */
-    protected $endKeys;
-
-    /**
-     * @var array
-     */
-    protected $beforeKeys;
-
-    /**
-     * @var array
-     */
-    protected $afterKeys;
+    private array $afterKeys;
 
     /**
      * @param array $subject The source array to sort
      * @param string $positionPropertyPath optional property path to the string that contains the position
+     * @param bool $removeNullValues if set to TRUE (default), null-values of the subject are removed
      */
-    public function __construct(array $subject, string $positionPropertyPath = 'position')
-    {
-        $this->subject = $subject;
-        $this->positionPropertyPath = $positionPropertyPath;
+    public function __construct(
+        private readonly array $subject,
+        private readonly string $positionPropertyPath = 'position',
+        private readonly bool $removeNullValues = true,
+    ) {
     }
 
     /**
      * Returns a sorted copy of the subject array
      *
      * @return array
+     * @throws Exception\InvalidPositionException
      */
     public function toArray(): array
     {
         $sortedArrayKeys = $this->getSortedKeys();
-
         $sortedArray = [];
         foreach ($sortedArrayKeys as $key) {
             $sortedArray[$key] = $this->subject[$key];
@@ -121,22 +101,19 @@ class PositionalArraySorter
         $this->extractBeforeKeys($arrayKeysWithPosition, $existingKeys);
         $this->extractAfterKeys($arrayKeysWithPosition, $existingKeys);
 
-        foreach ($arrayKeysWithPosition as $unresolvedKey => $unresolvedPosition) {
-            throw new Exception\InvalidPositionException(sprintf('The positional string "%s" (defined for key "%s") is not supported.', $unresolvedPosition, $unresolvedKey), 1379429920);
+        if ($arrayKeysWithPosition !== []) {
+            $unresolvedKey = array_key_first($arrayKeysWithPosition);
+            throw new Exception\InvalidPositionException(sprintf('The positional string "%s" (defined for key "%s") is not supported.', $arrayKeysWithPosition[$unresolvedKey], $unresolvedKey), 1379429920);
         }
-
         return $this->generateSortedKeysMap();
     }
 
     /**
      * Extracts all "middle" keys from $arrayKeysWithPosition. Those are all keys with a numeric position.
-     * The result is a multi-dimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
+     * The result is a multidimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
      * This also removes matching keys from the given $arrayKeysWithPosition
-     *
-     * @param array $arrayKeysWithPosition
-     * @return void
      */
-    protected function extractMiddleKeys(array &$arrayKeysWithPosition)
+    private function extractMiddleKeys(array &$arrayKeysWithPosition): void
     {
         $this->middleKeys = [];
         foreach ($arrayKeysWithPosition as $key => $position) {
@@ -151,13 +128,10 @@ class PositionalArraySorter
 
     /**
      * Extracts all "start" keys from $arrayKeysWithPosition. Those are all keys with a position starting with "start"
-     * The result is a multi-dimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
+     * The result is a multidimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
      * This also removes matching keys from the given $arrayKeysWithPosition
-     *
-     * @param array $arrayKeysWithPosition
-     * @return void
      */
-    protected function extractStartKeys(array &$arrayKeysWithPosition)
+    private function extractStartKeys(array &$arrayKeysWithPosition): void
     {
         $this->startKeys = [];
         foreach ($arrayKeysWithPosition as $key => $position) {
@@ -176,13 +150,10 @@ class PositionalArraySorter
 
     /**
      * Extracts all "end" keys from $arrayKeysWithPosition. Those are all keys with a position starting with "end"
-     * The result is a multi-dimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
+     * The result is a multidimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
      * This also removes matching keys from the given $arrayKeysWithPosition
-     *
-     * @param array $arrayKeysWithPosition
-     * @return void
      */
-    protected function extractEndKeys(array &$arrayKeysWithPosition)
+    private function extractEndKeys(array &$arrayKeysWithPosition): void
     {
         $this->endKeys = [];
         foreach ($arrayKeysWithPosition as $key => $position) {
@@ -201,14 +172,10 @@ class PositionalArraySorter
 
     /**
      * Extracts all "before" keys from $arrayKeysWithPosition. Those are all keys with a position starting with "before"
-     * The result is a multi-dimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
+     * The result is a multidimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
      * This also removes matching keys from the given $arrayKeysWithPosition
-     *
-     * @param array $arrayKeysWithPosition
-     * @param array $existingKeys
-     * @return void
      */
-    protected function extractBeforeKeys(array &$arrayKeysWithPosition, array $existingKeys)
+    private function extractBeforeKeys(array &$arrayKeysWithPosition, array $existingKeys): void
     {
         $this->beforeKeys = [];
         foreach ($arrayKeysWithPosition as $key => $position) {
@@ -232,14 +199,10 @@ class PositionalArraySorter
 
     /**
      * Extracts all "after" keys from $arrayKeysWithPosition. Those are all keys with a position starting with "after"
-     * The result is a multi-dimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
+     * The result is a multidimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
      * This also removes matching keys from the given $arrayKeysWithPosition
-     *
-     * @param array $arrayKeysWithPosition
-     * @param array $existingKeys
-     * @return void
      */
-    protected function extractAfterKeys(array &$arrayKeysWithPosition, array $existingKeys)
+    private function extractAfterKeys(array &$arrayKeysWithPosition, array $existingKeys): void
     {
         $this->afterKeys = [];
         foreach ($arrayKeysWithPosition as $key => $position) {
@@ -267,13 +230,12 @@ class PositionalArraySorter
      *
      * @return array an associative array where each key of $subject has a position string assigned
      */
-    protected function collectArrayKeysAndPositions(): array
+    private function collectArrayKeysAndPositions(): array
     {
         $arrayKeysWithPosition = [];
 
         foreach ($this->subject as $key => $value) {
-            // if the value was set to NULL it was unset and should not be used
-            if ($value === null) {
+            if ($value === null && $this->removeNullValues) {
                 continue;
             }
             $position = ObjectAccess::getPropertyPath($value, $this->positionPropertyPath);
@@ -291,10 +253,8 @@ class PositionalArraySorter
 
     /**
      * Flattens start-, middle-, end-, before- and afterKeys to a single dimension and merges them together to a single array
-     *
-     * @return array
      */
-    protected function generateSortedKeysMap(): array
+    private function generateSortedKeysMap(): array
     {
         $sortedKeysMap = [];
 

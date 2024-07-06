@@ -15,7 +15,7 @@ namespace Neos\Flow\Persistence\Doctrine;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DbalException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Cache\DefaultCacheFactory;
 use Doctrine\ORM\Cache\RegionsConfiguration;
@@ -176,6 +176,7 @@ class EntityManagerConfiguration
     protected function applyCacheConfiguration(Configuration $config): void
     {
         // Here we do not use the wrapper as below as the metadata cannot change at runtime anyway.
+        // must use ObjectManager in compile phase...
         $cache = $this->objectManager->get(CacheManager::class)->getCacheItemPool('Flow_Persistence_Doctrine_Metadata');
         $config->setMetadataCache($cache);
 
