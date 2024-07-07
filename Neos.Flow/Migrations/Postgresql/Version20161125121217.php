@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
@@ -15,7 +16,7 @@ class Version20161125121217 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform), 'Migration can only be executed safely on "postgresql".');
 
         $this->addSql("UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'TYPO3.Flow:', 'Neos.Flow:')");
         $this->addSql("UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'TYPO3.Neos:', 'Neos.Neos:')");
@@ -29,7 +30,7 @@ class Version20161125121217 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform), 'Migration can only be executed safely on "postgresql".');
 
         $this->addSql("UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'Neos.Flow:', 'TYPO3.Flow:')");
         $this->addSql("UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'Neos.Neos:', 'TYPO3.Neos:')");

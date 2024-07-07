@@ -2,6 +2,7 @@
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Persistence\PersistenceManagerInterface;

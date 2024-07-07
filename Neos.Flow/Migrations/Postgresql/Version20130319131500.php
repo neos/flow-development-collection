@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Neos\Utility\Files;
@@ -16,7 +17,7 @@ class Version20130319131500 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("CREATE TABLE typo3_flow_security_account_roles_join (flow_security_account VARCHAR(40) NOT NULL, flow_policy_role VARCHAR(255) NOT NULL, PRIMARY KEY(flow_security_account, flow_policy_role))");
         $this->addSql("CREATE INDEX IDX_ADF11BBC58842EFC ON typo3_flow_security_account_roles_join (flow_security_account)");
@@ -43,7 +44,7 @@ class Version20130319131500 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("DROP TABLE typo3_flow_security_account_roles_join");
         $this->addSql("DROP TABLE typo3_flow_security_policy_role_parentroles_join");

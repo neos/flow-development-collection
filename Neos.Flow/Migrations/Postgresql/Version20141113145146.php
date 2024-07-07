@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
@@ -15,7 +16,7 @@ class Version20141113145146 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         // skip execution of corresponding sql queries if migration has been applied already (see https://review.typo3.org/36299)
         $this->skipIf(array_key_exists('roleidentifiers', $this->sm->listTableColumns('typo3_flow_security_account')), 'Migration not needed, already applied earlier.');
@@ -37,7 +38,7 @@ class Version20141113145146 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("CREATE TABLE typo3_flow_security_policy_role (identifier VARCHAR(255) NOT NULL, sourcehint VARCHAR(6) NOT NULL, PRIMARY KEY(identifier))");
         $this->addSql("CREATE TABLE typo3_flow_security_authorization_resource_securitypublis_861cb (persistence_object_identifier VARCHAR(40) NOT NULL, allowedroles TEXT NOT NULL, PRIMARY KEY(persistence_object_identifier))");
