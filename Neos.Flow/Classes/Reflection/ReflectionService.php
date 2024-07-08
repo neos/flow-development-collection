@@ -1387,7 +1387,7 @@ class ReflectionService
         // and then we try to find "use" statements for the class.
         $className = $class->getName();
         if (!isset($this->useStatementsForClassCache[$className])) {
-            $this->useStatementsForClassCache[$className] = $this->getDoctrinePhpParser()->parseClass($class);
+            $this->useStatementsForClassCache[$className] = $this->getDoctrinePhpParser()->parseUseStatements($class);
         }
         $useStatementsForClass = $this->useStatementsForClassCache[$className];
 

@@ -116,7 +116,7 @@ class EntityManagerFactory
         }
 
         $this->emitBeforeDoctrineEntityManagerCreation($connection, $config, $eventManager);
-        $entityManager = EntityManager::create($connection, $config, $eventManager);
+        $entityManager = new EntityManager($connection, $config, $eventManager);
         $flowAnnotationDriver->setEntityManager($entityManager);
         $this->emitAfterDoctrineEntityManagerCreation($config, $entityManager);
 
