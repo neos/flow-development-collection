@@ -41,7 +41,6 @@ use Doctrine\Migrations\Version\ExecutionResult;
 use Doctrine\Migrations\Version\Version;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\MappingException;
-use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\SchemaValidator;
 use Doctrine\ORM\Tools\ToolsException;
@@ -166,7 +165,6 @@ class Service
      * mapping information contains errors or not.
      *
      * @return array
-     * @throws ORMException
      */
     public function getEntityStatus(): array
     {
@@ -626,7 +624,7 @@ class Service
     }
 
     /**
-     * Get name of current database platform
+     * Get class name of current database platform
      *
      * @return string
      * @throws DBALException
@@ -634,7 +632,8 @@ class Service
      */
     public function getDatabasePlatformName(): string
     {
-        return ucfirst($this->entityManager->getConnection()->getDatabasePlatform()->getName());
+        $platform = $this->entityManager->getConnection()->getDatabasePlatform();
+        return $platform !== null ? get_class($platform) : '';
     }
 
     /**

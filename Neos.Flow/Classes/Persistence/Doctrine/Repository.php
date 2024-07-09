@@ -13,10 +13,6 @@ namespace Neos\Flow\Persistence\Doctrine;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Internal\Hydration\IterableResult;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
-use Doctrine\ORM\TransactionRequiredException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
@@ -97,7 +93,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @param object $object The object to add
      * @return void
      * @throws IllegalObjectTypeException
-     * @throws ORMException
      * @api
      */
     public function add($object): void
@@ -115,7 +110,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @param object $object The object to remove
      * @return void
      * @throws IllegalObjectTypeException
-     * @throws ORMException
      * @api
      */
     public function remove($object): void
@@ -142,41 +136,16 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Find all objects and return an IterableResult
      *
-     * @return IterableResult
+     * @return iterable
      */
-    public function findAllIterator(): IterableResult
+    public function findAllIterator(): iterable
     {
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->createQueryBuilder();
         return $queryBuilder
             ->select('entity')
             ->from($this->getEntityClassName(), 'entity')
-            ->getQuery()->iterate();
-    }
-
-    /**
-     * Iterate over an IterableResult and return a Generator
-     *
-     * This method is useful for batch processing a huge result set.
-     *
-     * @param IterableResult $iterator
-     * @param callable|null $callback
-     * @return \Generator
-     *
-     * @deprecated Will be removed with Flow 9. The {@see findAllIterator} will return an \iterable directly
-     */
-    public function iterate(IterableResult $iterator, callable $callback = null): ?\Generator
-    {
-        $iteration = 0;
-        foreach ($iterator as $object) {
-            $object = current($object);
-            yield $object;
-            if ($callback !== null) {
-                $callback($iteration, $object);
-            }
-
-            $iteration++;
-        }
+            ->getQuery()->toIterable();
     }
 
     /**
@@ -184,9 +153,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      *
      * @param mixed $identifier The identifier of the object to find
      * @return object|null The matching object if found, otherwise NULL
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws TransactionRequiredException
      * @api
      */
     public function findByIdentifier($identifier)
@@ -239,7 +205,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      *
      * @return void
      * @throws IllegalObjectTypeException
-     * @throws ORMException
      * @todo maybe use DQL here, would be much more performant
      * @api
      */
