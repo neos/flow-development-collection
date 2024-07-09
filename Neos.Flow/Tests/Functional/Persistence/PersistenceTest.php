@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Functional\Persistence;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Persistence\Exception;
