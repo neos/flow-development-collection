@@ -26,7 +26,6 @@ use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package;
-use Neos\Flow\Persistence\Doctrine\Logging\SqlLogger;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Annotations as Flow;
 use Psr\Cache\CacheItemPoolInterface;
@@ -80,10 +79,6 @@ class EntityManagerConfiguration
      */
     public function configureEntityManager(Connection $connection, Configuration $config, EventManager $eventManager): void
     {
-        if (isset($this->settings['doctrine']['sqlLogger']) && is_string($this->settings['doctrine']['sqlLogger']) && class_exists($this->settings['doctrine']['sqlLogger'])) {
-            $this->enableSqlLogger($this->settings['doctrine']['sqlLogger'], $config);
-        }
-
         if (isset($this->settings['doctrine']['eventSubscribers']) && is_array($this->settings['doctrine']['eventSubscribers'])) {
             $this->registerEventSubscribers($this->settings['doctrine']['eventSubscribers'], $eventManager);
         }
@@ -100,21 +95,6 @@ class EntityManagerConfiguration
 
         if (isset($this->settings['doctrine']['dql']) && is_array($this->settings['doctrine']['dql'])) {
             $this->applyDqlSettingsToConfiguration($this->settings['doctrine']['dql'], $config);
-        }
-    }
-
-    /**
-     * @param string $configuredSqlLogger
-     * @param Configuration $doctrineConfiguration
-     * @throws InvalidConfigurationException
-     */
-    protected function enableSqlLogger(string $configuredSqlLogger, Configuration $doctrineConfiguration): void
-    {
-        $sqlLoggerInstance = new $configuredSqlLogger();
-        if ($sqlLoggerInstance instanceof SQLLogger) {
-            $doctrineConfiguration->setSQLLogger($sqlLoggerInstance);
-        } else {
-            throw new InvalidConfigurationException(sprintf('Neos.Flow.persistence.doctrine.sqlLogger must point to a \Doctrine\DBAL\Logging\SQLLogger implementation, %s given.', get_class($sqlLoggerInstance)), 1426150388);
         }
     }
 
