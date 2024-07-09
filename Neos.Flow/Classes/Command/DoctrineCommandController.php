@@ -283,22 +283,24 @@ class DoctrineCommandController extends CommandController
      * available, executed and pending migrations.
      *
      * @param boolean $showMigrations Output a list of all migrations and their status
+     * @param string|null $migrationFolder Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
      * @return void
-     * @throws StopCommandException
      * @throws DBALException
+     * @throws StopCommandException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrationStatusCommand(bool $showMigrations = false): void
+    public function migrationStatusCommand(bool $showMigrations = false, ?string $migrationFolder = null): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration status not available, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
         }
 
-        $this->outputLine($this->doctrineService->getFormattedMigrationStatus($showMigrations));
+        $this->maybeOutputMigrationFolderWarning($migrationFolder);
+        $this->outputLine($this->doctrineService->getFormattedMigrationStatus($showMigrations, $migrationFolder));
     }
 
     /**
@@ -311,6 +313,7 @@ class DoctrineCommandController extends CommandController
      * @param string|null $output A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
      * @param boolean $quiet If set, only the executed migration versions will be output, one per line
+     * @param string|null $migrationFolder Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
      * @return void
      * @throws StopCommandException
      * @see neos.flow:doctrine:migrationstatus
@@ -318,7 +321,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrateCommand(string $version = 'latest', string $output = null, bool $dryRun = false, bool $quiet = false): void
+    public function migrateCommand(string $version = 'latest', string $output = null, bool $dryRun = false, bool $quiet = false, ?string $migrationFolder = null): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -329,8 +332,9 @@ class DoctrineCommandController extends CommandController
             $this->outputLine(sprintf('The path "%s" is not writeable!', dirname($output)));
         }
 
+        $this->maybeOutputMigrationFolderWarning($migrationFolder);
         try {
-            $result = $this->doctrineService->executeMigrations($this->normalizeVersion($version), $output, $dryRun, $quiet);
+            $result = $this->doctrineService->executeMigrations($this->normalizeVersion($version), $output, $dryRun, $quiet, $migrationFolder);
             if ($result !== '' && $quiet === false) {
                 $this->outputLine($result);
             }
@@ -358,6 +362,7 @@ class DoctrineCommandController extends CommandController
      * @param string $direction Whether to execute the migration up (default) or down
      * @param string|null $output A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
+     * @param string|null $migrationFolder Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
      * @return void
      * @throws StopCommandException
      * @see neos.flow:doctrine:migrate
@@ -365,7 +370,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrationExecuteCommand(string $version, string $direction = 'up', string $output = null, bool $dryRun = false): void
+    public function migrationExecuteCommand(string $version, string $direction = 'up', string $output = null, bool $dryRun = false, ?string $migrationFolder = null): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -376,8 +381,9 @@ class DoctrineCommandController extends CommandController
             $this->outputLine(sprintf('The path "%s" is not writeable!', dirname($output)));
         }
 
+        $this->maybeOutputMigrationFolderWarning($migrationFolder);
         try {
-            $this->outputLine($this->doctrineService->executeMigration($this->normalizeVersion($version), $direction, $output, $dryRun));
+            $this->outputLine($this->doctrineService->executeMigration($this->normalizeVersion($version), $direction, $output, $dryRun, $migrationFolder));
         } catch (\Exception $exception) {
             $this->handleException($exception);
         }
@@ -392,15 +398,17 @@ class DoctrineCommandController extends CommandController
      * @param string $version The migration to execute
      * @param boolean $add The migration to mark as migrated
      * @param boolean $delete The migration to mark as not migrated
+     * @param string|null $migrationFolder Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
      * @return void
-     * @throws StopCommandException
      * @throws DBALException
+     * @throws FilesException
+     * @throws StopCommandException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationgenerate
      */
-    public function migrationVersionCommand(string $version, bool $add = false, bool $delete = false): void
+    public function migrationVersionCommand(string $version, bool $add = false, bool $delete = false, ?string $migrationFolder = null): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -411,8 +419,9 @@ class DoctrineCommandController extends CommandController
             throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
         }
 
+        $this->maybeOutputMigrationFolderWarning($migrationFolder);
         try {
-            $this->doctrineService->markAsMigrated($this->normalizeVersion($version), $add ?: false);
+            $this->doctrineService->markAsMigrated($this->normalizeVersion($version), $add ?: false, $migrationFolder);
         } catch (MigrationException $exception) {
             $this->outputLine($exception->getMessage());
             $this->quit(1);
@@ -441,6 +450,7 @@ class DoctrineCommandController extends CommandController
      * @param boolean $diffAgainstCurrent Whether to base the migration on the current schema structure
      * @param string|null $filterExpression Only include tables/sequences matching the filter expression regexp
      * @param boolean $force Generate migrations even if there are migrations left to execute
+     * @param string|null $migrationFolder Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
      * @return void
      * @throws DBALException
      * @throws StopCommandException
@@ -450,14 +460,14 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrationGenerateCommand(bool $diffAgainstCurrent = true, string $filterExpression = null, bool $force = false): void
+    public function migrationGenerateCommand(bool $diffAgainstCurrent = true, string $filterExpression = null, bool $force = false, ?string $migrationFolder = null): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
             $this->quit(1);
         }
 
-        $migrationStatus = $this->doctrineService->getMigrationStatus();
+        $migrationStatus = $this->doctrineService->getMigrationStatus($migrationFolder);
         if ($force === false && $migrationStatus['new'] !== 0) {
             $this->outputLine('There are %d new migrations available. To avoid duplication those should be executed via `doctrine:migrate` before creating additional migrations.', [$migrationStatus['new']]);
             $this->quit(1);
@@ -475,7 +485,9 @@ class DoctrineCommandController extends CommandController
             }
         }
 
-        [$status, $migrationClassPathAndFilename] = $this->doctrineService->generateMigration($diffAgainstCurrent, $filterExpression);
+        $this->maybeOutputMigrationFolderWarning($migrationFolder);
+
+        [$status, $migrationClassPathAndFilename] = $this->doctrineService->generateMigration($diffAgainstCurrent, $filterExpression, $migrationFolder);
 
         $this->outputLine('<info>%s</info>', [$status]);
         $this->outputLine();
@@ -496,10 +508,12 @@ class DoctrineCommandController extends CommandController
             $selectedPackage = $this->output->select('Do you want to move the migration to one of these packages?', $choices, $choices[0]);
             $this->outputLine();
 
+            $migrationPlatformFolderPart = $migrationFolder ?? $this->doctrineService->getMigrationFolderName();
+
             if ($selectedPackage !== $choices[0]) {
                 $selectedPackage = $packages[$selectedPackage];
                 /** @var Package $selectedPackage */
-                $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $this->doctrineService->getDatabasePlatformName(), basename($migrationClassPathAndFilename)]);
+                $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $migrationPlatformFolderPart, basename($migrationClassPathAndFilename)]);
                 Files::createDirectoryRecursively(dirname($targetPathAndFilename));
                 rename($migrationClassPathAndFilename, $targetPathAndFilename);
                 $this->outputLine('The migration was moved to: <comment>%s</comment>', [substr($targetPathAndFilename, strlen(FLOW_PATH_ROOT))]);
@@ -507,7 +521,7 @@ class DoctrineCommandController extends CommandController
                 $this->outputLine('Next Steps:');
             } else {
                 $this->outputLine('Next Steps:');
-                $this->outputLine(sprintf('- Move <comment>%s</comment> to YourPackage/<comment>Migrations/%s/</comment>', $migrationClassPathAndFilename, $this->doctrineService->getDatabasePlatformName()));
+                $this->outputLine(sprintf('- Move <comment>%s</comment> to YourPackage/<comment>Migrations/%s/</comment>', $migrationClassPathAndFilename, $migrationPlatformFolderPart));
             }
             $this->outputLine('- Review and adjust the generated migration.');
             $this->outputLine('- (optional) execute the migration using <comment>%s doctrine:migrate</comment>', [$this->getFlowInvocationString()]);
@@ -553,5 +567,12 @@ class DoctrineCommandController extends CommandController
             return $version;
         }
         return sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
+    }
+
+    private function maybeOutputMigrationFolderWarning(?string $migrationFolder = null)
+    {
+        if ($migrationFolder !== null) {
+            $this->outputLine('<comment>Migration folder override is in effect, migration files are not searched in folder matching the configured connection but in ...Migrations/%s/</comment>', [$migrationFolder]);
+        }
     }
 }
