@@ -217,7 +217,7 @@ class EntityManagerConfiguration
      *
      * @param Configuration $config
      * @param EntityManager $entityManager
-     * @throws DbalException
+     * @throws DBALException
      */
     public function enhanceEntityManager(Configuration $config, EntityManager $entityManager): void
     {

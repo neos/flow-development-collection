@@ -203,7 +203,7 @@ class Query implements QueryInterface
             $message = $this->throwableStorage->logThrowable($ormException);
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return [];
-        } catch (DbalException $dbalException) {
+        } catch (DBALException $dbalException) {
             $message = $this->throwableStorage->logThrowable($dbalException);
             $this->logger->debug($message);
 
