@@ -468,7 +468,6 @@ class PersistenceTest extends FunctionalTestCase
         $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
 
         self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        self::assertNull($persistedExtendedTypesEntity->getCommonObject(), 'Common Object');
         self::assertNull($persistedExtendedTypesEntity->getDateTime(), 'DateTime');
         self::assertNull($persistedExtendedTypesEntity->getDateTimeTz(), 'DateTimeTz');
         self::assertNull($persistedExtendedTypesEntity->getDate(), 'Date');
@@ -477,33 +476,6 @@ class PersistenceTest extends FunctionalTestCase
 
         // These types always returns an array, never NULL, even if the property is nullable
         self::assertEquals([], $persistedExtendedTypesEntity->getSimpleArray(), 'Simple Array');
-    }
-
-    /**
-     * @test
-     */
-    public function commonObjectIsPersistedAndIsReconstituted()
-    {
-        if ($this->objectManager->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.persistence.backendOptions.driver') === 'pdo_pgsql') {
-            $this->markTestSkipped('Doctrine ORM on PostgreSQL cannot store serialized data, thus storing objects with Type::OBJECT would fail. See http://www.doctrine-project.org/jira/browse/DDC-3241');
-        }
-
-        $commonObject = new Fixtures\CommonObject();
-        $commonObject->setFoo('foo');
-
-        $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
-        $extendedTypesEntity->setCommonObject($commonObject);
-
-        $this->persistenceManager->add($extendedTypesEntity);
-        $this->persistenceManager->persistAll();
-        $this->persistenceManager->clearState();
-
-        /**  @var Fixtures\ExtendedTypesEntity $persistedExtendedTypesEntity */
-        $persistedExtendedTypesEntity = $this->extendedTypesEntityRepository->findAll()->getFirst();
-
-        self::assertInstanceOf(Fixtures\ExtendedTypesEntity::class, $persistedExtendedTypesEntity);
-        self::assertInstanceOf(Fixtures\CommonObject::class, $persistedExtendedTypesEntity->getCommonObject());
-        self::assertEquals('foo', $persistedExtendedTypesEntity->getCommonObject()->getFoo());
     }
 
     /**
