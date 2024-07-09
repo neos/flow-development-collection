@@ -22,6 +22,9 @@ use Neos\Utility\TypeHandling;
  * and strips singletons from the data to be stored.
  *
  * @Flow\Proxy(false)
+ *
+ * @deprecated will be removed in Flow 9. Checkout {@see JsonArrayType}
+ * This hasn't been used in the Flow/Neos codebase for a long time and there are no tests.
  */
 class ObjectArray extends Types\ArrayType
 {

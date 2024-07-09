@@ -630,6 +630,7 @@ class Service
      *
      * @return string
      * @throws DBALException
+     * @deprecated will be removed in Flow 9. Compare the connection class name instead.
      */
     public function getDatabasePlatformName(): string
     {

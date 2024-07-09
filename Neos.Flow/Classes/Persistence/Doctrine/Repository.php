@@ -162,6 +162,8 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * @param IterableResult $iterator
      * @param callable|null $callback
      * @return \Generator
+     *
+     * @deprecated Will be removed with Flow 9. The {@see findAllIterator} will return an \iterable directly
      */
     public function iterate(IterableResult $iterator, callable $callback = null): ?\Generator
     {
