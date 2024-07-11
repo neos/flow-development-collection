@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
@@ -15,7 +16,7 @@ class Version20120412194611 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("CREATE TABLE typo3_flow3_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY KEY(hash))");
         $this->addSql("CREATE TABLE typo3_flow3_mvc_routing_objectpathmapping (objecttype VARCHAR(255) NOT NULL, uripattern VARCHAR(255) NOT NULL, pathsegment VARCHAR(255) NOT NULL, identifier VARCHAR(255) NOT NULL, PRIMARY KEY(objecttype, uripattern, pathsegment))");
@@ -40,7 +41,7 @@ class Version20120412194611 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         if ($this->isPartyPackageInstalled()) {
             $this->addSql("ALTER TABLE typo3_flow3_security_account DROP CONSTRAINT FK_65EFB31C89954EE0");

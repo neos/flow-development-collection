@@ -248,7 +248,7 @@ class RepositoryTest extends FunctionalTestCase
         $iterator = $this->superEntityRepository->findAllIterator();
         $expectedCount = 0;
 
-        foreach ($this->superEntityRepository->iterate($iterator) as $entity) {
+        foreach ($iterator as $entity) {
             $expectedCount++;
         }
 

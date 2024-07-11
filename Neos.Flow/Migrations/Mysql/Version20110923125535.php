@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
@@ -15,7 +16,7 @@ class Version20110923125535 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_flow3_resource_resource DROP FOREIGN KEY typo3_flow3_resource_resource_ibfk_1");
         $this->addSql("DROP INDEX IDX_11FFD19FD0275681 ON typo3_flow3_resource_resource");
@@ -40,7 +41,7 @@ class Version20110923125535 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
 
         $this->addSql("ALTER TABLE typo3_flow3_resource_resource DROP FOREIGN KEY typo3_flow3_resource_resource_ibfk_1");
         $this->addSql("DROP INDEX IDX_B4D45B323CB65D1 ON typo3_flow3_resource_resource");

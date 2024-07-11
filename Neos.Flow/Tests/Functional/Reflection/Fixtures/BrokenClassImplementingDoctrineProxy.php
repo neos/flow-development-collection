@@ -33,6 +33,6 @@ namespace Neos\Flow\Persistence\Doctrine\Proxies;
  * result in an exception.
  *
  */
-abstract class FakePackageDomainModelBrokenClassProxy implements \Doctrine\ORM\Proxy\Proxy
+abstract class FakePackageDomainModelBrokenClassProxy implements \Doctrine\Persistence\Proxy
 {
 }

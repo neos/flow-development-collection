@@ -12,7 +12,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\ToolsException;
 use Doctrine\ORM\UnitOfWork;

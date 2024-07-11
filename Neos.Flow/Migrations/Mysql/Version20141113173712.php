@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
@@ -15,7 +16,7 @@ class Version20141113173712 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
 
         // skip execution of corresponding sql queries if migration has been applied already (see https://review.typo3.org/36299)
         $this->skipIf(array_key_exists('roleidentifiers', $this->sm->listTableColumns('typo3_flow_security_account')), 'Migration not needed, already applied earlier.');
@@ -39,7 +40,7 @@ class Version20141113173712 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
 
         $this->addSql("CREATE TABLE typo3_flow_security_account_roles_join (flow_security_account VARCHAR(40) NOT NULL, flow_policy_role VARCHAR(255) NOT NULL, INDEX IDX_ADF11BBC58842EFC (flow_security_account), INDEX IDX_ADF11BBC23A1047C (flow_policy_role), PRIMARY KEY(flow_security_account, flow_policy_role)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
         $this->addSql("CREATE TABLE typo3_flow_security_authorization_resource_securitypublis_861cb (persistence_object_identifier VARCHAR(40) NOT NULL, allowedroles LONGTEXT NOT NULL COMMENT '(DC2Type:array)', PRIMARY KEY(persistence_object_identifier)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");

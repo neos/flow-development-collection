@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
@@ -21,7 +22,7 @@ class Version20180622074422 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform), 'Migration can only be executed safely on "postgresql".');
 
         if (array_key_exists('typo3_flow_resource_resource', $this->sm->listTableNames()) !== false
             && array_key_exists(strtolower('IDX_35DC14F03332102A'), $this->sm->listTableIndexes('typo3_flow_resource_resource')) === false) {
@@ -38,7 +39,7 @@ class Version20180622074422 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform), 'Migration can only be executed safely on "postgresql".');
 
         $this->addSql('DROP INDEX IDX_35DC14F03332102A');
     }

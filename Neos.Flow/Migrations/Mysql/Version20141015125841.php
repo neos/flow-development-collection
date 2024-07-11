@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Neos\Utility\Files;
@@ -23,7 +24,7 @@ class Version20141015125841 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
 
         $this->addSql('ALTER TABLE typo3_flow_resource_resource DROP FOREIGN KEY FK_B4D45B32A4A851AF');
         $this->addSql('ALTER TABLE typo3_flow_resource_resource DROP FOREIGN KEY typo3_flow_resource_resource_ibfk_1');
@@ -85,7 +86,7 @@ class Version20141015125841 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
         $this->addSql('CREATE TABLE typo3_flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY KEY(hash)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
 
         $this->addSql('ALTER TABLE typo3_flow_resource_resource ADD publishingconfiguration VARCHAR(40) DEFAULT NULL, CHANGE sha1 resourcepointer VARCHAR(255) NOT NULL, DROP md5, DROP collectionname, DROP mediatype, DROP relativepublicationpath, DROP filesize, ADD fileextension VARCHAR(255) NOT NULL');

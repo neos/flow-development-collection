@@ -18,15 +18,17 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Cache\DefaultCacheFactory;
+use Doctrine\ORM\Cache\RegionsConfiguration;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Neos\Cache\Exception\NoSuchCacheException;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Persistence\Doctrine\Logging\SqlLogger;
+use Neos\Flow\Package;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Annotations as Flow;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * EntityManager configuration handler
@@ -39,18 +41,18 @@ class EntityManagerConfiguration
      * @Flow\Inject
      * @var ObjectManagerInterface
      */
-    protected $objectManager;
+    protected ObjectManagerInterface $objectManager;
 
     /**
-     * @var array
+     * @var array{"doctrine": array<string, mixed>}
      */
-    protected $settings = [];
+    protected array $settings;
 
     /**
      * Injects the Flow settings, the persistence part is kept
      * for further use.
      *
-     * @param array $settings
+     * @param array<string, mixed> $settings
      * @return void
      * @throws InvalidConfigurationException
      */
@@ -63,20 +65,20 @@ class EntityManagerConfiguration
     }
 
     /**
-     * Configure the Doctrine EntityManager according to configuration settings before it's creation.
+     * Configure the Doctrine EntityManager according to configuration settings before its creation.
+     *
+     * Note that this is called via SignalSlot in {@see Package} and therefore the arguments are
+     * defined by what beforeDoctrineEntityManagerCreation provides (leaving the first argument unused here).
      *
      * @param Connection $connection
      * @param Configuration $config
      * @param EventManager $eventManager
      * @throws InvalidConfigurationException
      * @throws IllegalObjectTypeException
+     * @throws NoSuchCacheException
      */
     public function configureEntityManager(Connection $connection, Configuration $config, EventManager $eventManager): void
     {
-        if (isset($this->settings['doctrine']['sqlLogger']) && is_string($this->settings['doctrine']['sqlLogger']) && class_exists($this->settings['doctrine']['sqlLogger'])) {
-            $this->enableSqlLogger($this->settings['doctrine']['sqlLogger'], $config);
-        }
-
         if (isset($this->settings['doctrine']['eventSubscribers']) && is_array($this->settings['doctrine']['eventSubscribers'])) {
             $this->registerEventSubscribers($this->settings['doctrine']['eventSubscribers'], $eventManager);
         }
@@ -93,21 +95,6 @@ class EntityManagerConfiguration
 
         if (isset($this->settings['doctrine']['dql']) && is_array($this->settings['doctrine']['dql'])) {
             $this->applyDqlSettingsToConfiguration($this->settings['doctrine']['dql'], $config);
-        }
-    }
-
-    /**
-     * @param string $configuredSqlLogger
-     * @param Configuration $doctrineConfiguration
-     * @throws InvalidConfigurationException
-     */
-    protected function enableSqlLogger(string $configuredSqlLogger, Configuration $doctrineConfiguration): void
-    {
-        $sqlLoggerInstance = new $configuredSqlLogger();
-        if ($sqlLoggerInstance instanceof SQLLogger) {
-            $doctrineConfiguration->setSQLLogger($sqlLoggerInstance);
-        } else {
-            throw new InvalidConfigurationException(sprintf('Neos.Flow.persistence.doctrine.sqlLogger must point to a \Doctrine\DBAL\Logging\SQLLogger implementation, %s given.', get_class($sqlLoggerInstance)), 1426150388);
         }
     }
 
@@ -168,16 +155,20 @@ class EntityManagerConfiguration
      */
     protected function applyCacheConfiguration(Configuration $config): void
     {
-        $cache = new CacheAdapter();
+        // Here we do not use the wrapper as below as the metadata cannot change at runtime anyway.
         // must use ObjectManager in compile phase...
-        $cache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine'));
-        $config->setMetadataCacheImpl($cache);
-        $config->setQueryCacheImpl($cache);
+        $cache = $this->objectManager->get(CacheManager::class)->getCacheItemPool('Flow_Persistence_Doctrine_Metadata');
+        $config->setMetadataCache($cache);
 
-        $resultCache = new CacheAdapter();
-        // must use ObjectManager in compile phase...
-        $resultCache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine_Results'));
-        $config->setResultCacheImpl($resultCache);
+        /**
+         * FIXME:
+         * We shouldn't need this wrapper adding the security hash as {@see SqlFilter::addFilterConstraint} does that already,
+         * and the parameters there are hashed into the query cache key in doctrines Query class.
+         * But tests fail if it doesn't happen
+         */
+        $config->setQueryCache($this->getSecurityHashAwareCacheItemPool('Flow_Persistence_Doctrine'));
+
+        $config->setResultCache($this->getSecurityHashAwareCacheItemPool('Flow_Persistence_Doctrine_Results'));
     }
 
     /**
@@ -195,7 +186,12 @@ class EntityManagerConfiguration
         }
 
         $doctrineConfiguration->setSecondLevelCacheEnabled();
-        $regionsConfiguration = $doctrineConfiguration->getSecondLevelCacheConfiguration()->getRegionsConfiguration();
+        $doctrineSecondLevelCacheConfiguration = $doctrineConfiguration->getSecondLevelCacheConfiguration();
+        if ($doctrineSecondLevelCacheConfiguration === null) {
+            throw new \RuntimeException('No doctrine second level cache configuration found.', 1719343602);
+        }
+        /** @var RegionsConfiguration $regionsConfiguration */
+        $regionsConfiguration = $doctrineSecondLevelCacheConfiguration->getRegionsConfiguration();
         if (isset($configuredSettings['defaultLifetime'])) {
             $regionsConfiguration->setDefaultLifetime($configuredSettings['defaultLifetime']);
         }
@@ -209,12 +205,11 @@ class EntityManagerConfiguration
             }
         }
 
-        $cache = new CacheAdapter();
-        // must use ObjectManager in compile phase...
-        $cache->setCache($this->objectManager->get(CacheManager::class)->getCache('Flow_Persistence_Doctrine_SecondLevel'));
-
-        $factory = new DefaultCacheFactory($regionsConfiguration, $cache);
-        $doctrineConfiguration->getSecondLevelCacheConfiguration()->setCacheFactory($factory);
+        $factory = new DefaultCacheFactory(
+            $regionsConfiguration,
+            $this->getSecurityHashAwareCacheItemPool('Flow_Persistence_Doctrine_SecondLevel')
+        );
+        $doctrineSecondLevelCacheConfiguration->setCacheFactory($factory);
     }
 
     /**
@@ -241,5 +236,11 @@ class EntityManagerConfiguration
                 $entityManager->getFilters()->enable($filterName);
             }
         }
+    }
+
+    private function getSecurityHashAwareCacheItemPool(string $cacheIdentifier): CacheItemPoolInterface
+    {
+        $cache = $this->objectManager->get(CacheManager::class)->getCache($cacheIdentifier);
+        return new CachePool($cacheIdentifier, $cache->getBackend());
     }
 }

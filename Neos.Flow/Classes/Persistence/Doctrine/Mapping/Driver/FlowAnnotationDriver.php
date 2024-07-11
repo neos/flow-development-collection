@@ -26,6 +26,7 @@ use Neos\Flow\Aop\Builder\ClassNameIndex;
 use Neos\Flow\Aop\Pointcut\PointcutFilterInterface;
 use Neos\Flow\ObjectManagement\Proxy\Compiler;
 use Neos\Flow\Persistence\Doctrine\Mapping\Exception\ClassSchemaNotFoundException;
+use Neos\Flow\Persistence\Exception;
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
 
@@ -426,7 +427,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             if (array_diff($idProperties, $metadata->getIdentifierFieldNames()) !== []) {
                 $uniqueIndexName = $this->truncateIdentifier('flow_identity_' . $primaryTable['name']);
                 foreach ($idProperties as $idProperty) {
-                    $primaryTable['uniqueConstraints'][$uniqueIndexName]['columns'][] = isset($metadata->columnNames[$idProperty]) ? $metadata->columnNames[$idProperty] : strtolower($idProperty);
+                    $primaryTable['uniqueConstraints'][$uniqueIndexName]['columns'][] = $metadata->fieldMappings[$idProperty]['columnName'] ?? strtolower($idProperty);
                 }
             }
         }
@@ -811,7 +812,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                                     throw ORM\MappingException::missingRequiredOption($property->getName(), 'OneToOne', sprintf('The property "%s" in class "%s" has a non standard data type and doesn\'t define the type of the relation. You have to use one of these annotations: @OneToOne, @OneToMany, @ManyToOne, @ManyToMany', $property->getName(), $className));
                                 }
                             } else {
-                                throw ORM\MappingException::propertyTypeIsRequired($className, $property->getName());
+                                throw new Exception(sprintf('Property Type is required for %s::%s', $className, $property->getName()), 1720281797);
                             }
                     }
                 }

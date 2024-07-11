@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
@@ -17,7 +18,7 @@ class Version20151110113651 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql('ALTER TABLE typo3_flow_security_account ADD lastsuccessfulauthenticationdate timestamp(0) DEFAULT NULL, ADD failedauthenticationcount INT DEFAULT 0');
     }
@@ -28,7 +29,7 @@ class Version20151110113651 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql('ALTER TABLE typo3_flow_security_account DROP lastsuccessfulauthenticationdate, DROP failedauthenticationcount');
     }
