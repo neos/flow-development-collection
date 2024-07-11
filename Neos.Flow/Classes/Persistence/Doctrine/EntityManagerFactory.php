@@ -162,7 +162,7 @@ class EntityManagerFactory
     protected function enableSqlLogger(string $configuredSqlLogger, Configuration $doctrineConfiguration): Configuration
     {
         $sqlLoggerInstance = $this->objectManager->get($configuredSqlLogger);
-        if (!$sqlLoggerInstance instanceof SQLLogger) {
+        if (!$sqlLoggerInstance instanceof SqlLogger) {
             throw new InvalidConfigurationException(sprintf('Neos.Flow.persistence.doctrine.sqlLogger must be \Neos\Flow\Persistence\Doctrine\Logging\SqlLogger, %s given.', get_class($sqlLoggerInstance)), 1426150388);
         }
 
