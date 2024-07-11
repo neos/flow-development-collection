@@ -22,7 +22,7 @@ class Version20180622074421 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         if (array_key_exists('typo3_flow_resource_resource', $this->sm->listTableNames()) !== false
             && array_key_exists(strtolower('IDX_35DC14F03332102A'), $this->sm->listTableIndexes('typo3_flow_resource_resource')) === false) {
@@ -39,7 +39,7 @@ class Version20180622074421 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         if (array_key_exists('typo3_flow_resource_resource', $this->sm->listTableNames()) !== false
             && array_key_exists(strtolower('IDX_35DC14F03332102A'), $this->sm->listTableIndexes('typo3_flow_resource_resource')) !== false) {

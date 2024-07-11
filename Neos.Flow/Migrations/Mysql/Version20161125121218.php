@@ -16,7 +16,7 @@ class Version20161125121218 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         $this->addSql("UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'TYPO3.Flow:', 'Neos.Flow:')");
         $this->addSql("UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'TYPO3.Neos:', 'Neos.Neos:')");
@@ -30,7 +30,7 @@ class Version20161125121218 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         $this->addSql("UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'Neos.Flow:', 'TYPO3.Flow:')");
         $this->addSql("UPDATE neos_flow_security_account SET roleidentifiers=REPLACE(roleidentifiers, 'Neos.Neos:', 'TYPO3.Neos:')");

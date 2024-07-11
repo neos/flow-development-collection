@@ -18,7 +18,7 @@ class Version20151110113650 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
 
         $this->addSql('ALTER TABLE typo3_flow_security_account ADD lastsuccessfulauthenticationdate DATETIME DEFAULT NULL, ADD failedauthenticationcount INT DEFAULT 0');
     }
@@ -29,7 +29,7 @@ class Version20151110113650 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
 
         $this->addSql('ALTER TABLE typo3_flow_security_account DROP lastsuccessfulauthenticationdate, DROP failedauthenticationcount');
     }

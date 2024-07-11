@@ -27,7 +27,7 @@ class Version20200908155620 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         $this->addSql('ALTER TABLE neos_flow_resourcemanagement_persistentresource DROP md5');
     }
@@ -40,7 +40,7 @@ class Version20200908155620 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         $this->addSql('ALTER TABLE neos_flow_resourcemanagement_persistentresource ADD md5 VARCHAR(32) NOT NULL');
     }

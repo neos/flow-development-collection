@@ -26,7 +26,7 @@ class Version20180827132710 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         $this->addSql('CREATE INDEX IDX_535A651E772E836ADCCB5599802C8F9D ON neos_flow_mvc_routing_objectpathmapping (identifier, uripattern, pathsegment)');
     }
@@ -38,7 +38,7 @@ class Version20180827132710 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on "mysql".');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform), 'Migration can only be executed safely on "mysql".');
 
         $this->addSql('DROP INDEX IDX_535A651E772E836ADCCB5599802C8F9D ON neos_flow_mvc_routing_objectpathmapping');
      }
