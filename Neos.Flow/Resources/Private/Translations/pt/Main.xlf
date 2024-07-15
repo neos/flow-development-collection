@@ -8,11 +8,11 @@
       </trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve">
         <source>Username</source>
-        <target state="translated">Nome de Usuário</target>
+        <target state="translated">Nome de Utilizador</target>
       </trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve">
         <source>Password</source>
-        <target state="translated">Senha</target>
+        <target state="translated">Palavra-Passe</target>
       </trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve">
         <source>New password</source>
