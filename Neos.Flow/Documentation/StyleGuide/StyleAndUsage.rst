@@ -143,8 +143,8 @@ Capitalize:
 Command Line
 ------------
 
-Write as two separate words when referring to the noun and use the hypenated form ``command-line``
-for and adjective.
+Write as two separate words when referring to the noun and use the hyphenated form ``command-line``
+for an adjective.
 
 Commas
 ------
@@ -153,7 +153,7 @@ Use a serial comma before ``and`` or ``or`` in a list of three or more items.
 
 Correct: ``Apple sells MacBook Pro computers, the AirPort Extreme Card, and Final Cut Pro software.``
 
-Incorrect: ``Apple sells MacBook Pro computers, the AirPort Extreme Card and Final Cut Pro software.``
+Incorrect: ``Apple sells MacBook Pro computers, the AirPort Extreme Card, and Final Cut Pro software.``
 
 Dash (em)
 ---------
@@ -189,7 +189,7 @@ follows:
 
 - Keyboard shortcuts using combination keystrokes:
 	Use an en dash between key names in a combination keystroke when at least one of those
-	names is two words or a hyphenated word::
+	names are two words or a hyphenated word::
 
 		Command–Option–Up Arrow, Command–Shift–double-click See also key, keys.
 
@@ -204,6 +204,6 @@ dash with the word (or number) before it and the word (or number) after it.
 Kickstarter
 -----------
 
-A small application provided by the Kickstart paackage, which generates scaffolding for packages,
-models, controllers and more.
+A small application provided by the Kickstart package, which generates scaffolding for packages,
+models, controllers, and more.
 
