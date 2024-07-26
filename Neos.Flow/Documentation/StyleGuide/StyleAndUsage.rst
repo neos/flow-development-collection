@@ -153,7 +153,7 @@ Use a serial comma before ``and`` or ``or`` in a list of three or more items.
 
 Correct: ``Apple sells MacBook Pro computers, the AirPort Extreme Card, and Final Cut Pro software.``
 
-Incorrect: ``Apple sells MacBook Pro computers, the AirPort Extreme Card, and Final Cut Pro software.``
+Incorrect: ``Apple sells MacBook Pro computers, the AirPort Extreme Card and Final Cut Pro software.``
 
 Dash (em)
 ---------
