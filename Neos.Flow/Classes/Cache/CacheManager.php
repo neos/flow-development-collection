@@ -20,6 +20,8 @@ use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
 use Neos\Flow\Utility\PhpAnalyzer;
@@ -46,6 +48,11 @@ class CacheManager
      * @var ConfigurationManager
      */
     protected $configurationManager;
+
+    /**
+     * @var PackageManager
+     */
+    protected $packageManager;
 
     /**
      * @var LoggerInterface
@@ -116,6 +123,11 @@ class CacheManager
     public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
+    }
+
+    public function injectPackageManager(PackageManager $packageManager): void
+    {
+        $this->packageManager = $packageManager;
     }
 
     /**
@@ -352,15 +364,35 @@ class CacheManager
         $modifiedAspectClassNamesWithUnderscores = [];
         $modifiedClassNamesWithUnderscores = [];
         foreach ($changedFiles as $pathAndFilename => $status) {
-            if (!file_exists($pathAndFilename)) {
+            $classNameWithUnderscores = null;
+            if ($status !== ChangeDetectionStrategyInterface::STATUS_DELETED) {
+                $fileContents = file_get_contents($pathAndFilename);
+                $className = (new PhpAnalyzer($fileContents))->extractFullyQualifiedClassName();
+                if ($className === null) {
+                    continue;
+                }
+                $classNameWithUnderscores = str_replace('\\', '_', $className);
+            } else {
+                // file was deleted
+                foreach ($this->packageManager->getFlowPackages() as $flowPackage) {
+                    if (!str_starts_with($pathAndFilename, $flowPackage->getPackagePath())) {
+                        continue;
+                    }
+                    foreach ($flowPackage->getFlattenedAutoloadConfiguration() as $autoloadConfiguration) {
+                        if (!str_starts_with($pathAndFilename, $autoloadConfiguration['classPath'])) {
+                            continue;
+                        }
+                        $relativePath = substr($pathAndFilename, strlen($autoloadConfiguration['classPath']), -strlen('.php'));
+                        $classNameWithUnderscores = str_replace('\\', '_', rtrim($autoloadConfiguration['namespace'], '\\')) . '_' . str_replace('/', '_', ltrim($relativePath, '/'));
+                        break 2;
+                    }
+                }
+            }
+
+            if ($classNameWithUnderscores === null) {
                 continue;
             }
-            $fileContents = file_get_contents($pathAndFilename);
-            $className = (new PhpAnalyzer($fileContents))->extractFullyQualifiedClassName();
-            if ($className === null) {
-                continue;
-            }
-            $classNameWithUnderscores = str_replace('\\', '_', $className);
+
             $modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = true;
 
             // If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
