@@ -1800,6 +1800,7 @@ class ReflectionService
         $this->classesCurrentlyBeingForgotten[$className] = true;
 
         if (class_exists($className)) {
+            // optimisation to flush only precisely the affected interfaces
             $interfaceNames = class_implements($className);
             foreach ($interfaceNames as $interfaceName) {
                 if (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className])) {
@@ -1807,11 +1808,9 @@ class ReflectionService
                 }
             }
         } else {
-            foreach ($this->availableClassNames as $interfaceNames) {
-                foreach ($interfaceNames as $interfaceName) {
-                    if (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className])) {
-                        unset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className]);
-                    }
+            foreach ($this->classReflectionData as &$possibleInterfaceReflectionData) {
+                if (isset($possibleInterfaceReflectionData[self::DATA_INTERFACE_IMPLEMENTATIONS][$className])) {
+                    unset($possibleInterfaceReflectionData[self::DATA_INTERFACE_IMPLEMENTATIONS][$className]);
                 }
             }
         }
