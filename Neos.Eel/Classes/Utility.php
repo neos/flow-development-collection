@@ -90,7 +90,7 @@ class Utility
      * @return mixed
      * @throws Exception
      */
-    public static function evaluateEelExpression($expression, EelEvaluatorInterface $eelEvaluator, array $contextVariables, array $defaultContextConfiguration = [])
+    public static function evaluateEelExpression($expression, EelEvaluatorInterface $eelEvaluator, array $contextVariables, array $defaultContextConfiguration = [], ?EelInvocationTracerInterface $tracer = null)
     {
         $eelExpression = self::parseEelExpression($expression);
         if ($eelExpression === null) {
@@ -100,7 +100,7 @@ class Utility
         $defaultContextVariables = self::getDefaultContextVariables($defaultContextConfiguration);
         $contextVariables = array_merge($defaultContextVariables, $contextVariables);
 
-        $context = new ProtectedContext($contextVariables);
+        $context = new ProtectedContext($contextVariables, $tracer);
         $context->allow('q');
 
         // Allow functions on the uppermost context level to allow calling them without
