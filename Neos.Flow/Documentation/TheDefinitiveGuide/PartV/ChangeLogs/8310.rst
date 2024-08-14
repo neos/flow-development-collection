@@ -1,0 +1,65 @@
+`8.3.10 (2024-08-14) <https://github.com/neos/flow-development-collection/releases/tag/8.3.10>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: DateTime translation for validator <https://github.com/neos/flow-development-collection/pull/3374>`_
+-------------------------------------------------------------------------------------------------------------
+
+This will close `#3323 <https://github.com/neos/flow-development-collection/issues/3323>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Streamline exit(1) to web response with HTTP status code 500 <https://github.com/neos/flow-development-collection/pull/3365>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+With this critical error messages like the following now sends the HTTP status code 500 instead 200 in order to state something is not okay on the server side:
+
+``Flow could not create the directory "/var/www/html/Data/Persistent". Please check the file permissions manually or run "sudo ./flow flow:core:setfilepermissions" to fix the problem. (Error #1347526553)``
+
+Resolved: `#3364 <https://github.com/neos/flow-development-collection/issues/3364>`_
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Avoid insecure composer/composer versions <https://github.com/neos/flow-development-collection/pull/3366>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This adjusts the dependency to ``~2.2.24 || ^2.7.7`` to avoid versions vulnerable to multiple command injections via malicious branch names.
+
+More details in:
+
+- https://blog.packagist.com/composer-2-7-7/
+- https://github.com/advisories/GHSA-v9qv-c7wm-wgmf
+- https://github.com/advisories/GHSA-47f6-5gq3-vx9c
+
+
+* Packages: ``Flow``
+
+`BUGFIX: First exception cannot be written in subcontext when booting <https://github.com/neos/flow-development-collection/pull/3362>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`BUGFIX: ReflectionService must always initialize <https://github.com/neos/flow-development-collection/pull/3360>`_
+-------------------------------------------------------------------------------------------------------------------
+
+The ReflectionService lazy loads reflection data from cache, but every method making use of the data needs to call initialize.
+This change adds missing calls that seem to never happen first in regular flow applications. Still better to prevent broken reflection in case we optimize other uses in the future.
+
+* Packages: ``Flow``
+
+`TASK: Update "egulias/email-validator" version constraints  <https://github.com/neos/flow-development-collection/pull/3356>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Updates the version constraints of "egulias/email-validator" and allows to use 4.x versions. 
+Also removes the support of the 2.x versions
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.3.9...8.3.10>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
