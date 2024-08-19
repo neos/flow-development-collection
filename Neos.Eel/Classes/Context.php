@@ -94,7 +94,6 @@ class Context
         if ($this->value === null) {
             return null;
         } elseif (is_object($this->value)) {
-            $this->tracer?->recordMethodCall($this->value, $method);
             $callback = [$this->value, $method];
         } elseif (is_array($this->value)) {
             if (!array_key_exists($method, $this->value)) {
@@ -111,6 +110,14 @@ class Context
         for ($i = 0; $i < $argumentsCount; $i++) {
             if ($arguments[$i] instanceof Context) {
                 $arguments[$i] = $arguments[$i]->unwrap();
+            }
+        }
+        if ($this->tracer !== null) {
+            // optional experimental tracing
+            if (is_object($this->value)) {
+                $this->tracer->recordMethodCall($this->value, $method, $arguments);
+            } else {
+                $this->tracer->recordFunctionCall($callback, $method, $arguments);
             }
         }
         return call_user_func_array($callback, $arguments);

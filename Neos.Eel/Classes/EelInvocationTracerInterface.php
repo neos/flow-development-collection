@@ -9,5 +9,13 @@ interface EelInvocationTracerInterface
 {
     public function recordPropertyAccess(object $object, string $propertyName): void;
 
-    public function recordMethodCall(object $object, string $methodName): void;
+    /**
+     * @param array<int, mixed> $arguments
+     */
+    public function recordMethodCall(object $object, string $methodName, array $arguments): void;
+
+    /**
+     * @param array<int, mixed> $arguments
+     */
+    public function recordFunctionCall(callable $function, string $functionName, array $arguments): void;
 }
