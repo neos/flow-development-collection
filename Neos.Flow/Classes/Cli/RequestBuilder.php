@@ -118,8 +118,7 @@ class RequestBuilder
         $request = new Request();
         $request->setControllerObjectName(HelpCommandController::class);
 
-        // @TODO: Can this be implemented even better/cleaner?
-        if (in_array('--help', $commandLine)) {
+        if (is_array($commandLine) && in_array('--help', $commandLine, true)) {
             $request->setControllerCommandName('help');
             $request->setArguments(['commandIdentifier' => $commandLine[0]]);
             $request->setControllerObjectName(HelpCommandController::class);
