@@ -14,7 +14,6 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
-use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\CropViewHelper
