@@ -37,7 +37,7 @@ class PaddingViewHelperTest extends ViewHelperBaseTestcase
      */
     public function stringsArePaddedWithBlanksByDefault()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('foo'));
+        $this->simulateViewHelperChildNodeContent($this->viewHelper, 'foo');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['padLength' => 10]);
         $actualResult = $this->viewHelper->render();
         self::assertEquals('foo       ', $actualResult);
@@ -48,7 +48,7 @@ class PaddingViewHelperTest extends ViewHelperBaseTestcase
      */
     public function paddingStringCanBeSpecified()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('foo'));
+        $this->simulateViewHelperChildNodeContent($this->viewHelper, 'foo');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['padLength' => 10, 'padString' => '-=']);
         $actualResult = $this->viewHelper->render();
         self::assertEquals('foo-=-=-=-', $actualResult);
@@ -59,7 +59,7 @@ class PaddingViewHelperTest extends ViewHelperBaseTestcase
      */
     public function stringIsNotTruncatedIfPadLengthIsBelowStringLength()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('some long string'));
+        $this->simulateViewHelperChildNodeContent($this->viewHelper, 'some long string');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['padLength' => 5]);
         $actualResult = $this->viewHelper->render();
         self::assertEquals('some long string', $actualResult);
@@ -70,7 +70,7 @@ class PaddingViewHelperTest extends ViewHelperBaseTestcase
      */
     public function integersArePaddedCorrectly()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue(123));
+        $this->simulateViewHelperChildNodeContent($this->viewHelper, 123);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['padLength' => 5, 'padString' => '0']);
         $actualResult = $this->viewHelper->render(5, '0');
         self::assertEquals('12300', $actualResult);

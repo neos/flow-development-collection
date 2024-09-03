@@ -17,6 +17,8 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
+use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 /**
@@ -174,5 +176,13 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
         $viewHelper->validateArguments();
         $viewHelper->initialize();
         return $viewHelper;
+    }
+
+    protected function simulateViewHelperChildNodeContent(AbstractViewHelper&MockObject $viewHelper, string|int $content): void
+    {
+        $viewHelper->method('renderChildren')->willReturn($content);
+        $mockThenViewHelperNode = $this->createMock(ViewHelperNode::class);
+        $mockThenViewHelperNode->method('evaluateChildNodes')->willReturn($content);
+        $viewHelper->setViewHelperNode($mockThenViewHelperNode);
     }
 }

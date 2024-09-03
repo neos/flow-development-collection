@@ -14,6 +14,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\CropViewHelper
@@ -37,7 +38,7 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperDoesNotCropTextIfMaxCharactersIsLargerThanNumberOfCharacters()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('some text'));
+        $this->simulateViewHelperChildNodeContent($this->viewHelper, 'some text');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 50]);
         $actualResult = $this->viewHelper->render();
         self::assertEquals('some text', $actualResult);
@@ -48,7 +49,7 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperAppendsEllipsisToTruncatedText()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('some text'));
+        $this->simulateViewHelperChildNodeContent($this->viewHelper, 'some text');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 5]);
         $actualResult = $this->viewHelper->render();
         self::assertEquals('some ...', $actualResult);
@@ -59,7 +60,7 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperAppendsCustomSuffix()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('some text'));
+        $this->simulateViewHelperChildNodeContent($this->viewHelper, 'some text');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 3, 'append' => '[custom suffix]']);
         $actualResult = $this->viewHelper->render();
         self::assertEquals('som[custom suffix]', $actualResult);
@@ -70,7 +71,7 @@ class CropViewHelperTest extends ViewHelperBaseTestcase
      */
     public function viewHelperAppendsSuffixEvenIfResultingTextIsLongerThanMaxCharacters()
     {
-        $this->viewHelper->expects(self::once())->method('renderChildren')->will(self::returnValue('some text'));
+        $this->simulateViewHelperChildNodeContent($this->viewHelper, 'some text');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['maxCharacters' => 8]);
         $actualResult = $this->viewHelper->render();
         self::assertEquals('some tex...', $actualResult);
