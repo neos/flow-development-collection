@@ -64,11 +64,11 @@ class FileSizeValidator extends AbstractValidator
             return;
         }
         if ($this->options['minimum'] && $filesize < $this->options['minimum']) {
-            $this->addError('The file is larger than allowed.', 1677934908);
+            $this->addError('The file is smaller than allowed.', 1677934908);
             return;
         }
         if ($this->options['maximum'] && $filesize > $this->options['maximum']) {
-            $this->addError('The file is smaller than allowed.', 1677934903);
+            $this->addError('The file is larger than allowed.', 1677934903);
             return;
         }
     }
