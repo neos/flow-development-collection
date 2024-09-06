@@ -3,7 +3,7 @@
 Flow Signals Reference
 ======================
 
-This reference was automatically generated from code on 2024-09-03
+This reference was automatically generated from code on 2024-09-06
 
 
 .. _`Flow Signals Reference: AbstractAdvice (``Neos\Flow\Aop\Advice\AbstractAdvice``)`:
@@ -298,6 +298,29 @@ finishedCompilationRun
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Signals that the compile command was successfully finished.
+
+
+
+
+
+
+.. _`Flow Signals Reference: Dispatcher (``Neos\Flow\Cli\Dispatcher``)`:
+
+Dispatcher (``Neos\Flow\Cli\Dispatcher``)
+-----------------------------------------
+
+This class contains the following signals.
+
+beforeControllerInvocation
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This signal is emitted directly before the request is been dispatched to a controller.
+
+afterControllerInvocation
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This signal is emitted directly after the request has been dispatched to a controller and the controller
+returned control back to the dispatcher.
 
 
 
