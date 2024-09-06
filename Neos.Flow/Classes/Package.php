@@ -17,6 +17,7 @@ use Neos\Flow\Configuration\Loader\AppendLoader;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Booting\Step;
 use Neos\Flow\Http\Helper\SecurityHelper;
+use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\Proxy;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Package\PackageManager;
@@ -70,10 +71,11 @@ class Package extends BasePackage
 
         $dispatcher->connect(Mvc\Dispatcher::class, 'afterControllerInvocation', function ($request) use ($bootstrap) {
             // No auto-persistence if there is no PersistenceManager registered
+            // This signal will not be fired at compile time, as it's only emitted for web requests which happen at runtime.
             if (
                 $bootstrap->getObjectManager()->has(Persistence\PersistenceManagerInterface::class)
             ) {
-                if (!$request instanceof Mvc\ActionRequest || SecurityHelper::hasSafeMethod($request->getHttpRequest()) !== true) {
+                if (SecurityHelper::hasSafeMethod($request->getHttpRequest()) !== true) {
                     $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();
                 } elseif (SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
                     /** @phpstan-ignore-next-line the persistence manager interface doesn't specify this method */
@@ -81,6 +83,17 @@ class Package extends BasePackage
                 }
             }
         });
+
+        $dispatcher->connect(Cli\Dispatcher::class, 'afterControllerInvocation', function () use ($bootstrap) {
+            // No auto-persistence if there is no PersistenceManager registered or during compile time
+            if (
+                $bootstrap->getObjectManager()->has(Persistence\PersistenceManagerInterface::class)
+                && !($bootstrap->getObjectManager() instanceof CompileTimeObjectManager)
+            ) {
+                $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();
+            }
+        });
+
         $dispatcher->connect(Cli\SlaveRequestHandler::class, 'dispatchedCommandLineSlaveRequest', Persistence\PersistenceManagerInterface::class, 'persistAll', false);
 
         $dispatcher->connect(Command\CacheCommandController::class, 'warmupCaches', PrecomposedHashProvider::class, 'precomposeHash');
