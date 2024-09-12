@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\NoSuchOptionException;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
@@ -20,13 +21,13 @@ use Neos\Flow\Mvc\Controller\Exception\InvalidControllerException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\ForwardException;
-use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\FirewallInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -85,8 +86,6 @@ class Dispatcher
      * Dispatches a request to a controller
      *
      * @param ActionRequest $request The request to dispatch
-     * @param ActionResponse $response The response, to be modified by the controller
-     * @return void
      * @throws AccessDeniedException
      * @throws AuthenticationRequiredException
      * @throws InfiniteLoopException
@@ -95,13 +94,13 @@ class Dispatcher
      * @throws MissingConfigurationException
      * @api
      */
-    public function dispatch(ActionRequest $request, ActionResponse $response)
+    public function dispatch(ActionRequest $request): ResponseInterface
     {
         try {
             if ($this->securityContext->areAuthorizationChecksDisabled() !== true) {
                 $this->firewall->blockIllegalRequests($request);
             }
-            $this->initiateDispatchLoop($request, $response);
+            $response = $this->initiateDispatchLoop($request);
         } catch (AuthenticationRequiredException $exception) {
             // Rethrow as the SecurityEntryPoint middleware will take care of the rest
             throw $exception->attachInterceptedRequest($request);
@@ -111,52 +110,52 @@ class Dispatcher
             $securityLogger->warning('Access denied', LogEnvironment::fromMethodName(__METHOD__));
             throw $exception;
         }
+
+        return $response;
     }
 
     /**
      * Try processing the request until it is successfully marked "dispatched"
      *
      * @param ActionRequest $request
-     * @param ActionResponse $parentResponse
-     * @return ActionResponse
-     * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException|UnsupportedRequestTypeException
+     * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException
      */
-    protected function initiateDispatchLoop(ActionRequest $request, ActionResponse $parentResponse)
+    protected function initiateDispatchLoop(ActionRequest $request): ResponseInterface
     {
         $dispatchLoopCount = 0;
-        while ($request !== null && $request->isDispatched() === false) {
+        while ($request->isDispatched() === false) {
             if ($dispatchLoopCount++ > 99) {
                 throw new Exception\InfiniteLoopException(sprintf('Could not ultimately dispatch the request after %d iterations.', $dispatchLoopCount), 1217839467);
             }
             $controller = $this->resolveController($request);
-            $response = new ActionResponse();
+            $this->emitBeforeControllerInvocation($request, $controller);
             try {
-                $this->emitBeforeControllerInvocation($request, $response, $controller);
-                $controller->processRequest($request, $response);
+                $response = $controller->processRequest($request);
                 $this->emitAfterControllerInvocation($request, $response, $controller);
-            } catch (StopActionException $exception) {
-                $this->emitAfterControllerInvocation($request, $response, $controller);
-                if ($exception instanceof ForwardException) {
-                    $request = $exception->getNextRequest();
-                } elseif (!$request->isMainRequest()) {
+            } catch (StopActionException $stopActionException) {
+                $this->emitAfterControllerInvocation($request, $stopActionException->response, $controller);
+                $response = $stopActionException->response;
+                if (!$request->isMainRequest()) {
                     $request = $request->getParentRequest();
                 }
+            } catch (ForwardException $forwardException) {
+                $this->emitAfterControllerInvocation($request, null, $controller);
+                $request = $forwardException->nextRequest;
             }
-            $parentResponse = $response->mergeIntoParentResponse($parentResponse);
         }
-        return $parentResponse;
+        // TODO $response is never _null_ at this point, except a `forwardToRequest` and the `nextRequest` is already dispatched == true, which seems illegal af
+        return $response ?? new Response();
     }
 
     /**
-     * This signal is emitted directly before the request is been dispatched to a controller.
+     * This signal is emitted directly before the request is being dispatched to a controller.
      *
      * @param ActionRequest $request
-     * @param ActionResponse $response
      * @param ControllerInterface $controller
      * @return void
      * @Flow\Signal
      */
-    protected function emitBeforeControllerInvocation(ActionRequest $request, ActionResponse $response, ControllerInterface $controller)
+    protected function emitBeforeControllerInvocation(ActionRequest $request, ControllerInterface $controller)
     {
     }
 
@@ -165,12 +164,12 @@ class Dispatcher
      * returned control back to the dispatcher.
      *
      * @param ActionRequest $request
-     * @param ActionResponse $response
+     * @param ResponseInterface|null $response The readonly response the controller returned or null, if it was just forwarding a request.
      * @param ControllerInterface $controller
      * @return void
      * @Flow\Signal
      */
-    protected function emitAfterControllerInvocation(ActionRequest $request, ActionResponse $response, ControllerInterface $controller)
+    protected function emitAfterControllerInvocation(ActionRequest $request, ?ResponseInterface $response, ControllerInterface $controller)
     {
     }
 
@@ -180,10 +179,9 @@ class Dispatcher
      *
      * @param ActionRequest $request The request to dispatch
      * @return ControllerInterface
-     * @throws NoSuchOptionException
-     * @throws Controller\Exception\InvalidControllerException
+     * @throws InvalidControllerException
      */
-    protected function resolveController(ActionRequest $request)
+    protected function resolveController(ActionRequest $request): ControllerInterface
     {
         /** @var ActionRequest $request */
         $controllerObjectName = $request->getControllerObjectName();

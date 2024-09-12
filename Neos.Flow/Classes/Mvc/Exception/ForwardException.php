@@ -11,40 +11,43 @@ namespace Neos\Flow\Mvc\Exception;
  * source code.
  */
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\AbstractController;
 
 /**
  * This exception is thrown by a controller to stop the execution of the current
- * action and return the control to the dispatcher for the special case of a
- * forward().
+ * action and return the control to the dispatcher for the special case of a forward.
+ *
+ * See {@see AbstractController::forward()} for more information.
+ *
+ * Other control flow exceptions: {@see StopActionException}
  *
  * @api
  */
-class ForwardException extends StopActionException
+final class ForwardException extends \Neos\Flow\Mvc\Exception
 {
     /**
-     * @var ActionRequest
+     * The next request the MVC Dispatcher should handle.
      */
-    protected $nextRequest;
+    public readonly ActionRequest $nextRequest;
 
-    /**
-     * Sets the next request, containing the information about the next action to
-     * execute.
-     *
-     * @param ActionRequest $nextRequest
-     * @return void
-     */
-    public function setNextRequest(ActionRequest $nextRequest)
+    private function __construct(string $message, int $code, ?\Throwable $previous, ActionRequest $nextRequest)
     {
+        parent::__construct($message, $code, $previous);
         $this->nextRequest = $nextRequest;
     }
 
     /**
-     * Returns the next request
-     *
-     * @return ActionRequest
+     * @param ActionRequest $nextRequest The next request the MVC Dispatcher should handle.
+     * @param string $details Additional details just for this exception, in case it is logged (the regular exception message).
      */
-    public function getNextRequest()
+    public static function createForNextRequest(ActionRequest $nextRequest, string $details): self
     {
-        return $this->nextRequest;
+        if (empty($details)) {
+            $details = sprintf(
+                'Forward action to %s controller.',
+                $nextRequest->getControllerObjectName()
+            );
+        }
+        return new self($details, 1706272103, null, $nextRequest);
     }
 }

@@ -3,6 +3,8 @@ namespace Neos\Flow\Mvc;
 
 use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Http\Cookie;
+use Neos\Flow\Mvc\Controller\AbstractController;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use Psr\Http\Message\ResponseInterface;
 use Neos\Flow\Annotations as Flow;
 use Psr\Http\Message\StreamInterface;
@@ -10,11 +12,34 @@ use Psr\Http\Message\UriInterface;
 use GuzzleHttp\Psr7\Response;
 
 /**
- * The minimal MVC response object.
- * It allows for simple interactions with the HTTP response from within MVC actions. More specific requirements can be implemented via HTTP middlewares.
+ * The legacy MVC response object.
  *
+ * Previously Flows MVC needed a single mutable response which was passed from dispatcher to controllers
+ * and even further to the view and other places via the controller context: {@see ControllerContext::getResponse()}.
+ * This allowed to manipulate the response at every place.
+ *
+ * With the dispatcher and controllers now directly returning a response, the mutability is no longer required.
+ * Additionally, the abstraction offers naturally nothing, that cant be archived by the psr response,
+ * as it directly translates to one: {@see ActionResponse::buildHttpResponse()}
+ *
+ * So you can and should use the immutable psr {@see ResponseInterface} instead where-ever possible.
+ *
+ * For backwards compatibility, each controller will might now manage an own instance of the action response
+ * via `$this->response` {@see AbstractController::$response} and pass it along to places.
+ * But this behaviour is deprecated!
+ *
+ * Instead, you can directly return a PSR repose {@see \GuzzleHttp\Psr7\Response} from a controller:
+ *
+ * ```php
+ * public function myAction()
+ * {
+ *     return (new Response(status: 200, body: $output))
+ *         ->withAddedHeader('X-My-Header', 'foo');
+ * }
+ * ```
+ *
+ * @deprecated with Flow 9
  * @Flow\Proxy(false)
- * @api
  */
 final class ActionResponse
 {
@@ -66,7 +91,7 @@ final class ActionResponse
     /**
      * @param string|StreamInterface $content
      * @return void
-     * @api
+     * @deprecated please use {@see ResponseInterface::withBody()} in combination with {@see \GuzzleHttp\Psr7\Utils::streamFor} instead
      */
     public function setContent($content): void
     {
@@ -82,7 +107,7 @@ final class ActionResponse
      *
      * @param string $contentType
      * @return void
-     * @api
+     * @deprecated please use {@see ResponseInterface::withHeader()} with "Content-Type" instead.
      */
     public function setContentType(string $contentType): void
     {
@@ -95,7 +120,7 @@ final class ActionResponse
      * @param UriInterface $uri
      * @param int $statusCode
      * @return void
-     * @api
+     * @deprecated please use {@see ResponseInterface::withStatus()} and {@see ResponseInterface::withHeader()} with "Header" instead.
      */
     public function setRedirectUri(UriInterface $uri, int $statusCode = 303): void
     {
@@ -109,7 +134,7 @@ final class ActionResponse
      *
      * @param int $statusCode
      * @return void
-     * @api
+     * @deprecated please use {@see ResponseInterface::withStatus()} instead.
      */
     public function setStatusCode(int $statusCode): void
     {
@@ -121,7 +146,7 @@ final class ActionResponse
      * This leads to a corresponding `Set-Cookie` header to be set in the HTTP response
      *
      * @param Cookie $cookie Cookie to be set in the HTTP response
-     * @api
+     * @deprecated please use {@see ResponseInterface::withHeader()} with "Set-Cookie" instead.
      */
     public function setCookie(Cookie $cookie): void
     {
@@ -133,7 +158,7 @@ final class ActionResponse
      * This leads to a corresponding `Set-Cookie` header with an expired Cookie to be set in the HTTP response
      *
      * @param string $cookieName Name of the cookie to delete
-     * @api
+     * @deprecated
      */
     public function deleteCookie(string $cookieName): void
     {
@@ -144,6 +169,8 @@ final class ActionResponse
 
     /**
      * Set the specified header in the response, overwriting any previous value set for this header.
+     *
+     * This behaviour is unsafe and partially unspecified: https://github.com/neos/flow-development-collection/issues/2492
      *
      * @param string $headerName The name of the header to set
      * @param array|string|\DateTime $headerValue An array of values or a single value for the specified header field
@@ -162,6 +189,8 @@ final class ActionResponse
 
     /**
      * Add the specified header to the response, without overwriting any previous value set for this header.
+     *
+     * This behaviour is unsafe and partially unspecified: https://github.com/neos/flow-development-collection/issues/2492
      *
      * @param string $headerName The name of the header to set
      * @param array|string|\DateTime $headerValue An array of values or a single value for the specified header field
@@ -232,7 +261,9 @@ final class ActionResponse
     }
 
     /**
-     * Use this if you want build your own HTTP Response inside your action
+     * Unsafe. Please avoid the use of this escape hatch as the behaviour is partly unspecified
+     * https://github.com/neos/flow-development-collection/issues/2492
+     *
      * @param ResponseInterface $response
      */
     public function replaceHttpResponse(ResponseInterface $response): void
@@ -274,13 +305,16 @@ final class ActionResponse
     }
 
     /**
-     * Note this is a special use case method that will apply the internal properties (Content-Type, StatusCode, Location, Set-Cookie and Content)
-     * to the given PSR-7 Response and return a modified response. This is used to merge the ActionResponse properties into a possible HttpResponse
-     * created in a View (see ActionController::renderView()) because those would be overwritten otherwise. Note that any component parameters will
-     * still run through the component chain and will not be propagated here.
+     * During the migration of {@see ActionResponse} to {@see HttpResponse} this might come in handy.
+     *
+     * Note this is a special use case method that will apply the internal properties
+     * (Content-Type, StatusCode, Location, Set-Cookie and Content)
+     * to a new or replaced PSR-7 Response and return it.
+     *
+     * Possibly unsafe when used in combination with {@see self::replaceHttpResponse()}
+     * https://github.com/neos/flow-development-collection/issues/2492
      *
      * @return ResponseInterface
-     * @internal
      */
     public function buildHttpResponse(): ResponseInterface
     {

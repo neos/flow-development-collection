@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Session;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
@@ -36,7 +35,6 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use org\bovigo\vfs\vfsStream;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -48,11 +46,6 @@ class SessionTest extends UnitTestCase
      * @var ServerRequestInterface
      */
     protected $httpRequest;
-
-    /**
-     * @var ResponseInterface
-     */
-    protected $httpResponse;
 
     /**
      * @var Context|\PHPUnit\Framework\MockObject\MockObject
@@ -102,11 +95,9 @@ class SessionTest extends UnitTestCase
 
         $serverRequestFactory = new ServerRequestFactory(new UriFactory());
         $this->httpRequest = $serverRequestFactory->createServerRequest('GET', new Uri('http://localhost'));
-        $this->httpResponse = new Response();
 
         $mockRequestHandler = $this->createMock(RequestHandler::class);
         $mockRequestHandler->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->httpRequest));
-        $mockRequestHandler->expects(self::any())->method('getHttpResponse')->will(self::returnValue($this->httpResponse));
 
         $this->mockBootstrap = $this->createMock(Bootstrap::class);
         $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockRequestHandler));

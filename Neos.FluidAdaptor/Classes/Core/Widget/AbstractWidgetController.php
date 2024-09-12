@@ -12,9 +12,17 @@ namespace Neos\FluidAdaptor\Core\Widget;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\ForwardException;
+use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
+use Neos\Flow\Mvc\Exception\NoSuchActionException;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
+use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Exception\ViewNotFoundException;
+use Neos\Flow\Property\Exception;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * This is the base class for all widget controllers.
@@ -37,19 +45,27 @@ abstract class AbstractWidgetController extends ActionController
      * Handles a request. The result output is returned by altering the given response.
      *
      * @param ActionRequest $request The request object
-     * @param ActionResponse $response The response, modified by this handler
-     * @return void
+     * @return ResponseInterface The response, created by this handler
      * @throws WidgetContextNotFoundException
-     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws InvalidActionVisibilityException
+     * @throws InvalidArgumentTypeException
+     * @throws NoSuchActionException
+     * @throws NoSuchArgumentException
+     * @throws StopActionException
+     * @throws ForwardException
+     * @throws ViewNotFoundException
+     * @throws Exception
+     * @throws \Neos\Flow\Security\Exception
      * @api
      */
-    public function processRequest(ActionRequest $request, ActionResponse $response)
+    public function processRequest(ActionRequest $request): ResponseInterface
     {
+        /** @var WidgetContext $widgetContext */
         $widgetContext = $request->getInternalArgument('__widgetContext');
         if (!$widgetContext instanceof WidgetContext) {
             throw new WidgetContextNotFoundException('The widget context could not be found in the request.', 1307450180);
         }
         $this->widgetConfiguration = $widgetContext->getWidgetConfiguration();
-        parent::processRequest($request, $response);
+        return parent::processRequest($request);
     }
 }

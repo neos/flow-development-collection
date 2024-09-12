@@ -15,7 +15,6 @@ namespace Neos\FluidAdaptor\Core\Widget;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequestFactory;
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Dispatcher;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
@@ -80,12 +79,7 @@ class AjaxWidgetMiddleware implements MiddlewareInterface
         $actionRequest = $this->actionRequestFactory->createActionRequest($httpRequest, ['__widgetContext' => $widgetContext]);
         $actionRequest->setControllerObjectName($widgetContext->getControllerObjectName());
         $this->securityContext->setRequest($actionRequest);
-
-        $actionResponse = new ActionResponse();
-
-        $this->dispatcher->dispatch($actionRequest, $actionResponse);
-
-        return $actionResponse->buildHttpResponse();
+        return $this->dispatcher->dispatch($actionRequest);
     }
 
     /**

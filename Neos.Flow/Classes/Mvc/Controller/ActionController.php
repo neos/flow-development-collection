@@ -11,6 +11,7 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Utils;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
@@ -22,13 +23,14 @@ use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\Exception\ViewNotFoundException;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Mvc\ViewConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
@@ -200,26 +202,28 @@ class ActionController extends AbstractController
      * Handles a request. The result output is returned by altering the given response.
      *
      * @param ActionRequest $request The request object
-     * @param ActionResponse $response The response, modified by this handler
-     * @return void
+     * @return ResponseInterface
      * @throws InvalidActionVisibilityException
      * @throws InvalidArgumentTypeException
      * @throws NoSuchActionException
-     * @throws UnsupportedRequestTypeException
-     * @throws ViewNotFoundException
-     * @throws \Neos\Flow\Mvc\Exception\RequiredArgumentMissingException
      * @throws StopActionException
+     * @throws ForwardException
+     * @throws ViewNotFoundException
+     * @throws NoSuchArgumentException
+     * @throws Exception
+     * @throws \Neos\Flow\Security\Exception
      * @api
      */
-    public function processRequest(ActionRequest $request, ActionResponse $response)
+    public function processRequest(ActionRequest $request): ResponseInterface
     {
+        $response = new ActionResponse();
         $this->initializeController($request, $response);
 
-        $this->actionMethodName = $this->resolveActionMethodName();
+        $this->actionMethodName = $this->resolveActionMethodName($request);
 
-        $this->initializeActionMethodArguments();
+        $this->initializeActionMethodArguments($this->arguments);
         if ($this->enableDynamicTypeValidation !== true) {
-            $this->initializeActionMethodValidators();
+            $this->initializeActionMethodValidators($this->arguments);
         }
 
         $this->initializeAction();
@@ -228,21 +232,21 @@ class ActionController extends AbstractController
             call_user_func([$this, $actionInitializationMethodName]);
         }
 
-        $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
+        $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($request, $this->arguments);
 
         try {
-            $this->mapRequestArgumentsToControllerArguments();
+            $this->mapRequestArgumentsToControllerArguments($request, $this->arguments);
         } catch (RequiredArgumentMissingException $e) {
             $message = $this->throwableStorage->logThrowable($e);
             $this->logger->notice('Request argument mapping failed due to a missing required argument. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
             $this->throwStatus(400, null, 'Required argument is missing');
         }
         if ($this->enableDynamicTypeValidation === true) {
-            $this->initializeActionMethodValidators();
+            $this->initializeActionMethodValidators($this->arguments);
         }
 
         if ($this->view === null) {
-            $this->view = $this->resolveView();
+            $this->view = $this->resolveView($request);
         }
         if ($this->view !== null) {
             $this->view->assign('settings', $this->settings);
@@ -253,23 +257,26 @@ class ActionController extends AbstractController
             $this->initializeView($this->view);
         }
 
-        $this->callActionMethod();
+        $httpResponse = $this->callActionMethod($request, $this->arguments, $response->buildHttpResponse());
 
-        if (!$this->response->hasContentType()) {
-            $this->response->setContentType($this->negotiatedMediaType);
+        if (!$httpResponse->hasHeader('Content-Type')) {
+            $httpResponse = $httpResponse->withHeader('Content-Type', $this->negotiatedMediaType);
         }
+
+        return $httpResponse;
     }
 
     /**
      * Resolves and checks the current action method name
      *
+     * @param ActionRequest $request
      * @return string Method name of the current action
-     * @throws NoSuchActionException
      * @throws InvalidActionVisibilityException
+     * @throws NoSuchActionException
      */
-    protected function resolveActionMethodName()
+    protected function resolveActionMethodName(ActionRequest $request): string
     {
-        $actionMethodName = $this->request->getControllerActionName() . 'Action';
+        $actionMethodName = $request->getControllerActionName() . 'Action';
         if (!is_callable([$this, $actionMethodName])) {
             throw new NoSuchActionException(sprintf('An action "%s" does not exist in controller "%s".', $actionMethodName, get_class($this)), 1186669086);
         }
@@ -290,7 +297,7 @@ class ActionController extends AbstractController
      * @throws InvalidArgumentTypeException
      * @see initializeArguments()
      */
-    protected function initializeActionMethodArguments()
+    protected function initializeActionMethodArguments(Arguments $arguments)
     {
         $actionMethodParameters = static::getActionMethodParameters($this->objectManager);
         if (isset($actionMethodParameters[$this->actionMethodName])) {
@@ -299,7 +306,7 @@ class ActionController extends AbstractController
             $methodParameters = [];
         }
 
-        $this->arguments->removeAll();
+        $arguments->removeAll();
         foreach ($methodParameters as $parameterName => $parameterInfo) {
             $dataType = null;
             if (isset($parameterInfo['type'])) {
@@ -315,7 +322,7 @@ class ActionController extends AbstractController
                 $dataType = TypeHandling::stripNullableType($dataType);
             }
             $mapRequestBody = isset($parameterInfo['mapRequestBody']) && $parameterInfo['mapRequestBody'] === true;
-            $this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue, $mapRequestBody);
+            $arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue, $mapRequestBody);
         }
     }
 
@@ -372,16 +379,16 @@ class ActionController extends AbstractController
     /**
      * Adds the needed validators to the Arguments:
      *
-     * - Validators checking the data type from the @param annotation
+     * - Validators checking the data type from the "@param" annotation
      * - Custom validators specified with validate annotations.
      * - Model-based validators (validate annotations in the model)
      * - Custom model validator classes
      *
      * @return void
      */
-    protected function initializeActionMethodValidators()
+    protected function initializeActionMethodValidators(Arguments $arguments)
     {
-        list($validateGroupAnnotations, $actionMethodParameters, $actionValidateAnnotations, $actionIgnoredArguments) = $this->getInformationNeededForInitializeActionMethodValidators();
+        [$validateGroupAnnotations, $actionMethodParameters, $actionValidateAnnotations, $actionIgnoredArguments] = $this->getInformationNeededForInitializeActionMethodValidators();
 
         if (isset($validateGroupAnnotations[$this->actionMethodName])) {
             $validationGroups = $validateGroupAnnotations[$this->actionMethodName];
@@ -409,7 +416,7 @@ class ActionController extends AbstractController
         }
 
         /* @var $argument Argument */
-        foreach ($this->arguments as $argument) {
+        foreach ($arguments as $argument) {
             $argumentName = $argument->getName();
             if (isset($ignoredArguments[$argumentName]) && !$ignoredArguments[$argumentName]['evaluate']) {
                 continue;
@@ -503,19 +510,18 @@ class ActionController extends AbstractController
      * response object. If the action doesn't return anything and a valid
      * view exists, the view is rendered automatically.
      *
-     * TODO: In next major this will no longer append content and the response will probably be unique per call.
-     *
-     *
-     * @return void
+     * @param ActionRequest $request
+     * @param Arguments $arguments
+     * @param ResponseInterface $httpResponse The most likely empty response, previously available as $this->response
      */
-    protected function callActionMethod()
+    protected function callActionMethod(ActionRequest $request, Arguments $arguments, ResponseInterface $httpResponse): ResponseInterface
     {
         $preparedArguments = [];
-        foreach ($this->arguments as $argument) {
+        foreach ($arguments as $argument) {
             $preparedArguments[] = $argument->getValue();
         }
 
-        $validationResult = $this->arguments->getValidationResults();
+        $validationResult = $arguments->getValidationResults();
 
         if (!$validationResult->hasErrors()) {
             $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
@@ -549,11 +555,15 @@ class ActionController extends AbstractController
             }
         }
 
-        if ($actionResult === null && $this->view instanceof ViewInterface) {
-            $this->renderView();
-        } else {
-            $this->response->setContent($actionResult);
+        if ($actionResult instanceof ResponseInterface) {
+            return $actionResult;
         }
+
+        if ($actionResult === null && $this->view instanceof ViewInterface) {
+            return $this->renderView($httpResponse);
+        }
+
+        return $httpResponse->withBody(Utils::streamFor($actionResult));
     }
 
     /**
@@ -620,14 +630,14 @@ class ActionController extends AbstractController
      * @return ViewInterface the resolved view
      * @throws ViewNotFoundException if no view can be resolved
      */
-    protected function resolveView()
+    protected function resolveView(ActionRequest $request)
     {
-        $viewsConfiguration = $this->viewConfigurationManager->getViewConfiguration($this->request);
+        $viewsConfiguration = $this->viewConfigurationManager->getViewConfiguration($request);
         $viewObjectName = $this->defaultViewImplementation;
         if (!empty($this->defaultViewObjectName)) {
             $viewObjectName = $this->defaultViewObjectName;
         }
-        $viewObjectName = $this->resolveViewObjectName() ?: $viewObjectName;
+        $viewObjectName = $this->resolveViewObjectName($request) ?: $viewObjectName;
         if (isset($viewsConfiguration['viewObjectName'])) {
             $viewObjectName = $viewsConfiguration['viewObjectName'];
         }
@@ -636,12 +646,12 @@ class ActionController extends AbstractController
             throw new ViewNotFoundException(sprintf(
                 'View class has to implement ViewInterface but "%s" in action "%s" of controller "%s" does not.',
                 $viewObjectName,
-                $this->request->getControllerActionName(),
+                $request->getControllerActionName(),
                 get_class($this)
             ), 1355153188);
         }
 
-        $viewOptions = isset($viewsConfiguration['options']) ? $viewsConfiguration['options'] : [];
+        $viewOptions = $viewsConfiguration['options'] ?? [];
         $view = $viewObjectName::createWithOptions($viewOptions);
 
         $this->emitViewResolved($view);
@@ -667,19 +677,19 @@ class ActionController extends AbstractController
      * @return mixed The fully qualified view object name or false if no matching view could be found.
      * @api
      */
-    protected function resolveViewObjectName()
+    protected function resolveViewObjectName(ActionRequest $request)
     {
         $possibleViewObjectName = $this->viewObjectNamePattern;
-        $packageKey = $this->request->getControllerPackageKey();
-        $subpackageKey = $this->request->getControllerSubpackageKey();
-        $format = $this->request->getFormat();
+        $packageKey = $request->getControllerPackageKey();
+        $subpackageKey = $request->getControllerSubpackageKey();
+        $format = $request->getFormat();
 
         if ($subpackageKey !== null && $subpackageKey !== '') {
             $packageKey .= '\\' . $subpackageKey;
         }
         $possibleViewObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleViewObjectName);
-        $possibleViewObjectName = str_replace('@controller', $this->request->getControllerName(), $possibleViewObjectName);
-        $possibleViewObjectName = str_replace('@action', $this->request->getControllerActionName(), $possibleViewObjectName);
+        $possibleViewObjectName = str_replace('@controller', $request->getControllerName(), $possibleViewObjectName);
+        $possibleViewObjectName = str_replace('@action', $request->getControllerActionName(), $possibleViewObjectName);
 
         $viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', $format, $possibleViewObjectName)));
         if ($viewObjectName === null) {
@@ -817,21 +827,18 @@ class ActionController extends AbstractController
     }
 
     /**
-     * Renders the view and applies the result to the response object.
+     * Renders the view and returns the psr response.
+     *
+     * If a stream is returned it will be applied (to the most likely empty response) which was previously available as $this->response.
      */
-    protected function renderView()
+    protected function renderView(ResponseInterface $httpResponse): ResponseInterface
     {
         $result = $this->view->render();
 
-        if ($result instanceof ResponseInterface) {
-            $this->response->replaceHttpResponse($result);
-            if ($result->hasHeader('Content-Type')) {
-                $this->response->setContentType($result->getHeaderLine('Content-Type'));
-            }
+        if ($result instanceof StreamInterface) {
+            return $httpResponse->withBody($result);
         }
 
-        if ($result instanceof StreamInterface) {
-            $this->response->setContent($result);
-        }
+        return $result;
     }
 }

@@ -121,17 +121,6 @@ class RequestHandler implements HttpRequestHandlerInterface
     }
 
     /**
-     * Returns the HTTP response corresponding to the currently handled request
-     *
-     * @return ResponseInterface|null
-     * @deprecated since 6.0. Don't depend on this method. The HTTP response only exists after the innermost middleware (dispatch) is done. For that stage use a middleware instead.
-     */
-    public function getHttpResponse()
-    {
-        throw new \BadMethodCallException(sprintf('The method %s was removed with Flow version 7.0 since its behavior is unreliable. To get hold of the response a middleware should be used instead.', __METHOD__), 1606467754);
-    }
-
-    /**
      * Boots up Flow to runtime
      *
      * @return void
