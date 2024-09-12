@@ -227,7 +227,9 @@ final class ActionResponse
     public function getContent(): string
     {
         $content = $this->content->getContents();
-        $this->content->rewind();
+        if ($this->content->isSeekable()) {
+            $this->content->rewind();
+        }
         return $content;
     }
 
