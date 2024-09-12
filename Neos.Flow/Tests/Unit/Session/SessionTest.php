@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Session;
  * source code.
  */
 
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
@@ -36,7 +35,6 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use org\bovigo\vfs\vfsStream;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
