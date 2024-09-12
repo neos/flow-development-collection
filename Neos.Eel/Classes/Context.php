@@ -27,16 +27,12 @@ use Neos\Utility\ObjectAccess;
 class Context
 {
     /**
-     * @var mixed
-     */
-    protected $value;
-
-    /**
      * @param mixed $value
      */
-    public function __construct($value = null)
-    {
-        $this->value = $value;
+    public function __construct(
+        protected mixed $value = null,
+        private ?EelInvocationTracerInterface $tracer = null
+    ) {
     }
 
     /**
@@ -62,6 +58,7 @@ class Context
             if (is_array($this->value)) {
                 return array_key_exists($path, $this->value) ? $this->value[$path] : null;
             } elseif (is_object($this->value)) {
+                $this->tracer?->recordPropertyAccess($this->value, $path);
                 try {
                     return ObjectAccess::getProperty($this->value, $path);
                 } catch (PropertyNotAccessibleException $exception) {
@@ -115,6 +112,14 @@ class Context
                 $arguments[$i] = $arguments[$i]->unwrap();
             }
         }
+        if ($this->tracer !== null) {
+            // optional experimental tracing
+            if (is_object($this->value)) {
+                $this->tracer->recordMethodCall($this->value, $method, $arguments);
+            } else {
+                $this->tracer->recordFunctionCall($callback, $method, $arguments);
+            }
+        }
         return call_user_func_array($callback, $arguments);
     }
 
@@ -139,7 +144,7 @@ class Context
     public function wrap($value)
     {
         if (!$value instanceof Context) {
-            return new static($value);
+            return new static($value, $this->tracer);
         } else {
             return $value;
         }
