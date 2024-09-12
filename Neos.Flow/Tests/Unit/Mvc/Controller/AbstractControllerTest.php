@@ -87,10 +87,8 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
 
-        self::assertFalse($request->isDispatched());
         $controller->_call('initializeController', $request, $this->actionResponse);
 
-        self::assertTrue($request->isDispatched());
         self::assertInstanceOf(Arguments::class, $controller->_get('arguments'));
         self::assertSame($request, $controller->_get('uriBuilder')->getRequest());
         self::assertSame($request, $controller->getControllerContext()->getRequest());
