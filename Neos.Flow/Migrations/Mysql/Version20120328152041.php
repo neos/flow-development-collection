@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
@@ -15,7 +16,7 @@ class Version20120328152041 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
 
         $this->addSql("RENAME TABLE typo3_flow3_mvc_web_routing_objectpathmapping TO typo3_flow3_mvc_routing_objectpathmapping");
     }
@@ -26,7 +27,7 @@ class Version20120328152041 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
 
         $this->addSql("RENAME TABLE typo3_flow3_mvc_routing_objectpathmapping TO typo3_flow3_mvc_web_routing_objectpathmapping");
     }

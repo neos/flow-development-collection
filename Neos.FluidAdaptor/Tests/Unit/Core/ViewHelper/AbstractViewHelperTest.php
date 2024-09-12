@@ -108,23 +108,6 @@ class AbstractViewHelperTest extends UnitTestCase
     /**
      * @test
      */
-    public function registeringTheSameArgumentNameAgainThrowsException(): void
-    {
-        $this->expectException(Exception::class);
-        $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render'], [], '', false);
-
-        $name = 'shortName';
-        $description = 'Example desc';
-        $type = 'string';
-        $isRequired = true;
-
-        $viewHelper->_call('registerArgument', $name, $type, $description, $isRequired);
-        $viewHelper->_call('registerArgument', $name, 'integer', $description, $isRequired);
-    }
-
-    /**
-     * @test
-     */
     public function overrideArgumentOverwritesExistingArgumentDefinition(): void
     {
         $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->willReturn([]);

@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Neos\Utility\Files;
@@ -22,7 +23,7 @@ class Version20141118174722 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql('ALTER TABLE typo3_flow_resource_resource DROP CONSTRAINT fk_b4d45b32a4a851af');
         $this->addSql('ALTER TABLE typo3_flow_resource_resource DROP CONSTRAINT fk_b4d45b323cb65d1');
@@ -99,7 +100,7 @@ class Version20141118174722 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql');
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql('CREATE TABLE typo3_flow_resource_publishing_abstractpublishingconfiguration (persistence_object_identifier VARCHAR(40) NOT NULL, dtype VARCHAR(255) NOT NULL, PRIMARY KEY(persistence_object_identifier))');
         $this->addSql('CREATE TABLE typo3_flow_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY KEY(hash))');

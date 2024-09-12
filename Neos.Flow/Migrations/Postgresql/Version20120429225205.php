@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
@@ -15,7 +16,7 @@ class Version20120429225205 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("CREATE UNIQUE INDEX flow3_identity_typo3_flow3_security_account ON typo3_flow3_security_account (accountidentifier, authenticationprovidername)");
     }
@@ -26,7 +27,7 @@ class Version20120429225205 extends AbstractMigration
      */
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         $this->addSql("DROP INDEX flow3_identity_typo3_flow3_security_account");
     }

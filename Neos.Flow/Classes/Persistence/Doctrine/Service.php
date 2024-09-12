@@ -15,13 +15,15 @@ namespace Neos\Flow\Persistence\Doctrine;
 
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
+use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Schema\Identifier;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
 use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\Exception\MigrationClassNotFound;
-use Doctrine\Migrations\Exception\MigrationException;
 use Doctrine\Migrations\Exception\NoMigrationsFoundWithCriteria;
 use Doctrine\Migrations\Exception\NoMigrationsToExecute;
 use Doctrine\Migrations\Exception\UnknownMigrationVersion;
@@ -36,12 +38,12 @@ use Doctrine\Migrations\Tools\Console\ConsoleLogger;
 use Doctrine\Migrations\Tools\Console\Exception\InvalidOptionUsage;
 use Doctrine\Migrations\Tools\Console\Exception\VersionAlreadyExists;
 use Doctrine\Migrations\Tools\Console\Exception\VersionDoesNotExist;
+use Doctrine\Migrations\Version\Comparator;
 use Doctrine\Migrations\Version\Direction;
 use Doctrine\Migrations\Version\ExecutionResult;
 use Doctrine\Migrations\Version\Version;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\MappingException;
-use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\SchemaValidator;
 use Doctrine\ORM\Tools\ToolsException;
@@ -166,7 +168,6 @@ class Service
      * mapping information contains errors or not.
      *
      * @return array
-     * @throws ORMException
      */
     public function getEntityStatus(): array
     {
@@ -212,10 +213,12 @@ class Service
     /**
      * Return the configuration needed for Migrations.
      *
+     * @param string|null $overrideMigrationFolderName
      * @return DependencyFactory
-     * @throws DBALException|FilesException
+     * @throws DBALException
+     * @throws FilesException
      */
-    protected function getDependencyFactory(): DependencyFactory
+    protected function getDependencyFactory(?string $overrideMigrationFolderName = null): DependencyFactory
     {
         $migrationsPath = Files::concatenatePaths([FLOW_PATH_TEMPORARY, 'DoctrineMigrations']);
         if (!is_dir($migrationsPath)) {
@@ -235,7 +238,7 @@ class Service
         $logger = new ConsoleLogger($this->logMessages);
 
         $dependencyFactory = DependencyFactory::fromEntityManager($configurationLoader, $entityManagerLoader);
-        $dependencyFactory->setService(MigrationFinderInterface::class, new MigrationFinder($this->getDatabasePlatformName()));
+        $dependencyFactory->setService(MigrationFinderInterface::class, new MigrationFinder($overrideMigrationFolderName ?? $this->getMigrationFolderName()));
         $dependencyFactory->setService(LoggerInterface::class, $logger);
 
         return $dependencyFactory;
@@ -248,21 +251,23 @@ class Service
      * @return string
      * @throws DBALException
      */
-    public function getFormattedMigrationStatus($showMigrations = false): string
+    public function getFormattedMigrationStatus($showMigrations = false, ?string $overrideMigrationFolderName = null): string
     {
-        $this->initializeMetadataStorage();
+        $this->initializeMetadataStorage($overrideMigrationFolderName);
+        $dependencyFactory = $this->getDependencyFactory($overrideMigrationFolderName);
 
-        $infosHelper = $this->getDependencyFactory()->getMigrationStatusInfosHelper();
+        $infosHelper = $dependencyFactory->getMigrationStatusInfosHelper();
         $infosHelper->showMigrationsInfo($this->logMessages);
 
         if ($showMigrations) {
             $versions = $this->getSortedVersions(
-                $this->getDependencyFactory()->getMigrationPlanCalculator()->getMigrations(), // available migrations
-                $this->getDependencyFactory()->getMetadataStorage()->getExecutedMigrations() // executed migrations
+                $dependencyFactory->getMigrationPlanCalculator()->getMigrations(), // available migrations
+                $dependencyFactory->getMetadataStorage()->getExecutedMigrations(), // executed migrations,
+                $dependencyFactory->getVersionComparator()
             );
 
             $this->logMessages->writeln('');
-            $this->getDependencyFactory()->getMigrationStatusInfosHelper()->listVersions($versions, $this->logMessages);
+            $dependencyFactory->getMigrationStatusInfosHelper()->listVersions($versions, $this->logMessages);
         }
 
         return $this->logMessages->fetch();
@@ -271,10 +276,10 @@ class Service
     /**
      * @param AvailableMigrationsList $availableMigrations
      * @param ExecutedMigrationsList $executedMigrations
+     * @param Comparator $comparator
      * @return Version[]
-     * @throws DBALException
      */
-    private function getSortedVersions(AvailableMigrationsList $availableMigrations, ExecutedMigrationsList $executedMigrations): array
+    private function getSortedVersions(AvailableMigrationsList $availableMigrations, ExecutedMigrationsList $executedMigrations, Comparator $comparator): array
     {
         $availableVersions = array_map(static function (AvailableMigration $availableMigration): Version {
             return $availableMigration->getVersion();
@@ -286,7 +291,6 @@ class Service
 
         $versions = array_unique(array_merge($availableVersions, $executedVersions));
 
-        $comparator = $this->getDependencyFactory()->getVersionComparator();
         uasort($versions, static function (Version $a, Version $b) use ($comparator): int {
             return $comparator->compare($a, $b);
         });
@@ -306,11 +310,12 @@ class Service
      * @return string
      * @throws DBALException
      */
-    public function executeMigrations(string $version = 'latest', string $outputPathAndFilename = null, $dryRun = false, $quiet = false): string
+    public function executeMigrations(string $version = 'latest', string $outputPathAndFilename = null, $dryRun = false, $quiet = false, ?string $overrideMigrationFolderName = null): string
     {
-        $this->initializeMetadataStorage();
+        $this->initializeMetadataStorage($overrideMigrationFolderName);
+        $dependencyFactory = $this->getDependencyFactory($overrideMigrationFolderName);
 
-        $migrationRepository = $this->getDependencyFactory()->getMigrationRepository();
+        $migrationRepository = $dependencyFactory->getMigrationRepository();
         if (count($migrationRepository->getMigrations()) === 0) {
             return sprintf(
                 'The version "%s" can\'t be reached, there are no registered migrations.',
@@ -319,20 +324,22 @@ class Service
         }
 
         try {
-            $resolvedVersion = $this->getDependencyFactory()->getVersionAliasResolver()->resolveVersionAlias($version);
+            $resolvedVersion = $dependencyFactory->getVersionAliasResolver()->resolveVersionAlias($version);
         } catch (UnknownMigrationVersion $e) {
             return sprintf(
                 'Unknown version: %s',
                 OutputFormatter::escape($version)
             );
         } catch (NoMigrationsToExecute | NoMigrationsFoundWithCriteria $e) {
-            return ($quiet === false ? $this->exitMessageForAlias($version) : '');
+            $currentVersion = $dependencyFactory->getVersionAliasResolver()->resolveVersionAlias('current');
+            return ($quiet === false ? $this->exitMessageForAlias($currentVersion, $version) : '');
         }
 
-        $planCalculator = $this->getDependencyFactory()->getMigrationPlanCalculator();
+        $planCalculator = $dependencyFactory->getMigrationPlanCalculator();
         $plan = $planCalculator->getPlanUntilVersion($resolvedVersion);
         if (count($plan) === 0) {
-            return ($quiet === false ? $this->exitMessageForAlias($version) : '');
+            $currentVersion = $dependencyFactory->getVersionAliasResolver()->resolveVersionAlias('current');
+            return ($quiet === false ? $this->exitMessageForAlias($currentVersion, $version) : '');
         }
 
         if ($quiet === false) {
@@ -349,7 +356,7 @@ class Service
         $migratorConfiguration = new MigratorConfiguration();
         $migratorConfiguration->setDryRun($dryRun || $outputPathAndFilename !== null);
 
-        $migrator = $this->getDependencyFactory()->getMigrator();
+        $migrator = $dependencyFactory->getMigrator();
         $sql = $migrator->migrate($plan, $migratorConfiguration);
 
         if ($quiet === false) {
@@ -365,7 +372,7 @@ class Service
         }
 
         if (is_string($outputPathAndFilename)) {
-            $writer = $this->getDependencyFactory()->getQueryWriter();
+            $writer = $dependencyFactory->getQueryWriter();
             $writer->write($outputPathAndFilename, $plan->getDirection(), $sql);
             if ($quiet === false) {
                 $output .= PHP_EOL . sprintf('SQL written to %s', $outputPathAndFilename);
@@ -375,27 +382,25 @@ class Service
         return $output;
     }
 
-    private function exitMessageForAlias(string $versionAlias): string
+    private function exitMessageForAlias(Version $currentVersion, string $versionAlias): string
     {
-        $version = $this->getDependencyFactory()->getVersionAliasResolver()->resolveVersionAlias('current');
-
         // Allow meaningful message when latest version already reached.
         if (in_array($versionAlias, ['current', 'latest', 'first'], true)) {
             $message = sprintf(
                 'Already at the %s version ("%s")',
                 $versionAlias,
-                (string)$version
+                (string)$currentVersion
             );
         } elseif (in_array($versionAlias, ['next', 'prev'], true) || strpos($versionAlias, 'current') === 0) {
             $message = sprintf(
                 'The version "%s" couldn\'t be reached, you are at version "%s"',
                 $versionAlias,
-                (string)$version
+                (string)$currentVersion
             );
         } else {
             $message = sprintf(
                 'You are already at version "%s"',
-                (string)$version
+                (string)$currentVersion
             );
         }
 
@@ -410,14 +415,17 @@ class Service
      * @param string $direction
      * @param string|null $outputPathAndFilename A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
+     * @param string|null $overrideMigrationFolderName
      * @return string
      * @throws DBALException
+     * @throws FilesException
      */
-    public function executeMigration(string $version, string $direction = 'up', string $outputPathAndFilename = null, bool $dryRun = false): string
+    public function executeMigration(string $version, string $direction = 'up', string $outputPathAndFilename = null, bool $dryRun = false, ?string $overrideMigrationFolderName = null): string
     {
-        $this->initializeMetadataStorage();
+        $this->initializeMetadataStorage($overrideMigrationFolderName);
+        $dependencyFactory = $this->getDependencyFactory($overrideMigrationFolderName);
 
-        $migrationRepository = $this->getDependencyFactory()->getMigrationRepository();
+        $migrationRepository = $dependencyFactory->getMigrationRepository();
         if (!$migrationRepository->hasMigration($version)) {
             return sprintf('Version %s is not available', $version);
         }
@@ -425,7 +433,7 @@ class Service
         $migratorConfiguration = new MigratorConfiguration();
         $migratorConfiguration->setDryRun($dryRun || $outputPathAndFilename !== null);
 
-        $planCalculator = $this->getDependencyFactory()->getMigrationPlanCalculator();
+        $planCalculator = $dependencyFactory->getMigrationPlanCalculator();
         $plan = $planCalculator->getPlanForVersions([new Version($version)], $direction);
 
         $output = sprintf(
@@ -435,7 +443,7 @@ class Service
             $version
         );
 
-        $migrator = $this->getDependencyFactory()->getMigrator();
+        $migrator = $dependencyFactory->getMigrator();
         $sql = $migrator->migrate($plan, $migratorConfiguration);
 
         $output .= PHP_EOL;
@@ -449,7 +457,7 @@ class Service
         $output .= $this->logMessages->fetch();
 
         if ($outputPathAndFilename !== null) {
-            $writer = $this->getDependencyFactory()->getQueryWriter();
+            $writer = $dependencyFactory->getQueryWriter();
             $writer->write($outputPathAndFilename, $direction, $sql);
         }
 
@@ -464,31 +472,32 @@ class Service
      *
      * @param string $version The version to add or remove
      * @param boolean $markAsMigrated
+     * @param string|null $overrideMigrationFolderName
      * @return void
-     * @throws MigrationException
-     * @throws \LogicException
      * @throws DBALException
+     * @throws FilesException
      */
-    public function markAsMigrated(string $version, bool $markAsMigrated): void
+    public function markAsMigrated(string $version, bool $markAsMigrated, ?string $overrideMigrationFolderName = null): void
     {
-        $this->initializeMetadataStorage();
+        $this->initializeMetadataStorage($overrideMigrationFolderName);
+        $dependencyFactory = $this->getDependencyFactory($overrideMigrationFolderName);
 
         $output = new BufferedOutput();
 
-        $executedMigrations = $this->getDependencyFactory()->getMetadataStorage()->getExecutedMigrations();
-        $availableVersions = $this->getDependencyFactory()->getMigrationPlanCalculator()->getMigrations();
+        $executedMigrations = $dependencyFactory->getMetadataStorage()->getExecutedMigrations();
+        $availableVersions = $dependencyFactory->getMigrationPlanCalculator()->getMigrations();
         if ($version === 'all') {
             if ($markAsMigrated === false) {
                 foreach ($executedMigrations->getItems() as $availableMigration) {
-                    $this->mark($output, $availableMigration->getVersion(), false, $executedMigrations, !$markAsMigrated);
+                    $this->mark($output, $availableMigration->getVersion(), false, $executedMigrations, !$markAsMigrated, $overrideMigrationFolderName);
                 }
             }
 
             foreach ($availableVersions->getItems() as $availableMigration) {
-                $this->mark($output, $availableMigration->getVersion(), true, $executedMigrations, !$markAsMigrated);
+                $this->mark($output, $availableMigration->getVersion(), true, $executedMigrations, !$markAsMigrated, $overrideMigrationFolderName);
             }
         } elseif ($version !== null) {
-            $this->mark($output, new Version($version), false, $executedMigrations, !$markAsMigrated);
+            $this->mark($output, new Version($version), false, $executedMigrations, !$markAsMigrated, $overrideMigrationFolderName);
         } else {
             throw InvalidOptionUsage::new('You must specify the version or use the --all argument.');
         }
@@ -500,17 +509,21 @@ class Service
      * @param bool $all
      * @param ExecutedMigrationsList $executedMigrations
      * @param bool $delete
+     * @param string|null $overrideMigrationFolderName
      * @throws DBALException
+     * @throws FilesException
      */
-    private function mark(OutputInterface $output, Version $version, bool $all, ExecutedMigrationsList $executedMigrations, bool $delete): void
+    private function mark(OutputInterface $output, Version $version, bool $all, ExecutedMigrationsList $executedMigrations, bool $delete, ?string $overrideMigrationFolderName = null): void
     {
+        $dependencyFactory = $this->getDependencyFactory($overrideMigrationFolderName);
+
         try {
-            $availableMigration = $this->getDependencyFactory()->getMigrationRepository()->getMigration($version);
+            $availableMigration = $dependencyFactory->getMigrationRepository()->getMigration($version);
         } catch (MigrationClassNotFound $e) {
             $availableMigration = null;
         }
 
-        $storage = $this->getDependencyFactory()->getMetadataStorage();
+        $storage = $dependencyFactory->getMetadataStorage();
         if ($availableMigration === null) {
             if ($delete === false) {
                 throw UnknownMigrationVersion::new((string)$version);
@@ -570,15 +583,19 @@ class Service
     /**
      * Returns the current migration status as an array.
      *
-     * @return array
+     * @param string|null $overrideMigrationFolderName
+     * @return array<string, int>
      * @throws DBALException
+     * @throws FilesException
      */
-    public function getMigrationStatus(): array
+    public function getMigrationStatus(?string $overrideMigrationFolderName = null): array
     {
-        $executedMigrations = $this->getDependencyFactory()->getMetadataStorage()->getExecutedMigrations();
-        $availableMigrations = $this->getDependencyFactory()->getMigrationPlanCalculator()->getMigrations();
-        $executedUnavailableMigrations = $this->getDependencyFactory()->getMigrationStatusCalculator()->getExecutedUnavailableMigrations();
-        $newMigrations = $this->getDependencyFactory()->getMigrationStatusCalculator()->getNewMigrations();
+        $dependencyFactory = $this->getDependencyFactory($overrideMigrationFolderName);
+
+        $executedMigrations = $dependencyFactory->getMetadataStorage()->getExecutedMigrations();
+        $availableMigrations = $dependencyFactory->getMigrationPlanCalculator()->getMigrations();
+        $executedUnavailableMigrations = $dependencyFactory->getMigrationStatusCalculator()->getExecutedUnavailableMigrations();
+        $newMigrations = $dependencyFactory->getMigrationStatusCalculator()->getNewMigrations();
 
         return [
             'executed' => count($executedMigrations),
@@ -601,21 +618,25 @@ class Service
      *
      * @param boolean $diffAgainstCurrent
      * @param string|null $filterExpression
+     * @param string|null $overrideMigrationFolderName
      * @return array Path to the new file
      * @throws DBALException
+     * @throws FilesException
      */
-    public function generateMigration(bool $diffAgainstCurrent = true, string $filterExpression = null): array
+    public function generateMigration(bool $diffAgainstCurrent = true, string $filterExpression = null, ?string $overrideMigrationFolderName = null): array
     {
-        $fqcn = $this->getDependencyFactory()->getClassNameGenerator()->generateClassName(self::DOCTRINE_MIGRATIONSNAMESPACE);
+        $dependencyFactory = $this->getDependencyFactory($overrideMigrationFolderName);
+
+        $fqcn = $dependencyFactory->getClassNameGenerator()->generateClassName(self::DOCTRINE_MIGRATIONSNAMESPACE);
 
         if ($diffAgainstCurrent === false) {
-            $migrationGenerator = $this->getDependencyFactory()->getMigrationGenerator();
+            $migrationGenerator = $dependencyFactory->getMigrationGenerator();
             $path = $migrationGenerator->generateMigration($fqcn);
 
             return ['Generated new migration class!', $path];
         }
 
-        $diffGenerator = $this->getDependencyFactory()->getDiffGenerator();
+        $diffGenerator = $dependencyFactory->getDiffGenerator();
         try {
             $path = $diffGenerator->generate($fqcn, $filterExpression);
         } catch (NoChangesDetected $exception) {
@@ -626,14 +647,20 @@ class Service
     }
 
     /**
-     * Get name of current database platform
+     * Get a migration folder name based on current connection platform
      *
      * @return string
      * @throws DBALException
      */
-    public function getDatabasePlatformName(): string
+    public function getMigrationFolderName(): string
     {
-        return ucfirst($this->entityManager->getConnection()->getDatabasePlatform()->getName());
+        $platform = $this->entityManager->getConnection()->getDatabasePlatform();
+        return match (true) {
+            $platform instanceof MySqlPlatform => 'Mysql',
+            $platform instanceof PostgreSqlPlatform => 'Postgresql',
+            $platform instanceof SqlitePlatform => 'Sqlite',
+            default => ''
+        };
     }
 
     /**
@@ -727,13 +754,16 @@ class Service
 
     /**
      * Calls `ensureInitialized()` on the Metadata Storage and applies pending changes
+     *
+     * @param string|null $overrideMigrationFolderName
+     * @throws DBALException
+     * @throws FilesException
      * @see MetadataStorage::ensureInitialized()
      *
-     * @throws DBALException | FilesException
      */
-    private function initializeMetadataStorage(): void
+    private function initializeMetadataStorage(?string $overrideMigrationFolderName = null): void
     {
-        $this->getDependencyFactory()->getMetadataStorage()->ensureInitialized();
+        $this->getDependencyFactory($overrideMigrationFolderName)->getMetadataStorage()->ensureInitialized();
         $this->entityManager->flush();
     }
 }

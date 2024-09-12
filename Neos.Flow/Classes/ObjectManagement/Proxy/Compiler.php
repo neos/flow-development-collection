@@ -406,7 +406,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
         $previousToken = null;
         foreach ($tokens as $i => $token) {
             # $token is an array: [0] => token id, [1] => token text, [2] => line number
-            if (isset($classToken) && is_array($token) && $token[0] === T_STRING) {
+            if (!empty($classToken) && is_array($token) && $token[0] === T_STRING) {
                 return $i;
             }
             # search first T_CLASS token that is not a `Foo::class` class name resolution

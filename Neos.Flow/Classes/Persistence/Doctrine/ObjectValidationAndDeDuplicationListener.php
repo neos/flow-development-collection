@@ -14,6 +14,7 @@ namespace Neos\Flow\Persistence\Doctrine;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Reflection\ClassSchema;
@@ -21,7 +22,6 @@ use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
  * An onFlush listener for Flow's Doctrine PersistenceManager.
@@ -62,10 +62,10 @@ class ObjectValidationAndDeDuplicationListener
      * This removes all existing value objects in doctrines identity map. This is needed as doctrine handles their
      * identity based on the object and not based on the
      *
-     * @param LifecycleEventArgs $eventArgs
+     * @param PrePersistEventArgs $eventArgs
      * @return void
      */
-    public function prePersist(LifecycleEventArgs $eventArgs)
+    public function prePersist(PrePersistEventArgs $eventArgs)
     {
         $entityManager = $eventArgs->getObjectManager();
         $unitOfWork = $entityManager->getUnitOfWork();
@@ -95,7 +95,7 @@ class ObjectValidationAndDeDuplicationListener
      */
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        $this->entityManager = $eventArgs->getEntityManager();
+        $this->entityManager = $eventArgs->getObjectManager();
         $validatedInstancesContainer = new \SplObjectStorage();
 
         $this->deduplicateValueObjectInsertions();

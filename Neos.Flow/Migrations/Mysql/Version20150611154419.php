@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Neos\Utility\Files;
@@ -16,7 +17,7 @@ class Version20150611154419 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
+        $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
 
         if (!$this->sm->tablesExist(['typo3_flow_resource_resource'])) {
             return;

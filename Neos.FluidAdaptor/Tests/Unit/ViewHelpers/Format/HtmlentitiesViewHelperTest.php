@@ -60,7 +60,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderUsesChildnodesAsSourceIfSpecified()
     {
-        $this->viewHelper->expects(self::atLeastOnce())->method('renderChildren')->will(self::returnValue('Some string'));
+        $this->simulateViewHelperChildNodeContent($this->viewHelper, 'Some string');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
         self::assertEquals('Some string', $actualResult);

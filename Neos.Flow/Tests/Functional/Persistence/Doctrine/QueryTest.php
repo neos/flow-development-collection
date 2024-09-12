@@ -353,6 +353,45 @@ class QueryTest extends FunctionalTestCase
         self::assertEquals([$testEntity2], $unserializedQuery->execute()->toArray());
     }
 
+    /**
+     * @test
+     */
+    public function countReturnsCorrectNumberOfEntities()
+    {
+        $testEntityRepository = new \Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
+        $testEntityRepository->removeAll();
+
+        $testEntity = new \Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+        $testEntity->setName('Flow');
+
+        $subEntity1 = new \Neos\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
+        $subEntity1->setContent('foo');
+        $subEntity1->setParentEntity($testEntity);
+        $testEntity->addSubEntity($subEntity1);
+        $this->persistenceManager->add($subEntity1);
+
+        $subEntity2 = new \Neos\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
+        $subEntity2->setContent('foo');
+        $subEntity2->setParentEntity($testEntity);
+        $testEntity->addSubEntity($subEntity2);
+        $this->persistenceManager->add($subEntity2);
+
+        $testEntityRepository->add($testEntity);
+
+        $this->persistenceManager->persistAll();
+
+        $query = new Query(\Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity::class);
+
+        $constraint = $query->logicalAnd($query->equals('subEntities.content', 'foo'));
+        $result = $query->matching($constraint)->execute();
+
+        $count = $result->count();
+        $arrayCount = $result->toArray();
+
+        self::assertEquals(1, count($arrayCount), 'This correctly returns 1');
+        self::assertEquals(1, $count, 'this returns 2');
+    }
+
     protected function assertQueryEquals(Query $expected, Query $actual)
     {
         self::assertEquals($expected->getConstraint(), $actual->getConstraint());

@@ -58,7 +58,7 @@ class UrlencodeViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderUsesChildnodesAsSourceIfSpecified()
     {
-        $this->viewHelper->expects(self::atLeastOnce())->method('renderChildren')->will(self::returnValue('Source'));
+        $this->simulateViewHelperChildNodeContent($this->viewHelper, 'Source');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
         self::assertEquals('Source', $actualResult);

@@ -18,23 +18,16 @@ use Doctrine\ORM\Mapping as ORM;
  * Testing advanced properties of types:
  *
  * \Doctrine\DBAL\Types\Type::SIMPLE_ARRAY
- * \Doctrine\DBAL\Types\Type::JSON_ARRAY
+ * \Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType
  * \Doctrine\DBAL\Types\Type::DATETIME
  * \Doctrine\DBAL\Types\Type::DATETIMETZ
  * \Doctrine\DBAL\Types\Type::DATE
  * \Doctrine\DBAL\Types\Type::TIME
- * \Doctrine\DBAL\Types\Type::OBJECT
  *
  * @Flow\Entity
  */
 class ExtendedTypesEntity
 {
-    /**
-     * @var CommonObject
-     * @ORM\Column(type="object", nullable=true)
-     */
-    protected $commonObject;
-
     /**
      * @var array
      * @ORM\Column(type="simple_array", nullable=true)
@@ -43,7 +36,7 @@ class ExtendedTypesEntity
 
     /**
      * @var array
-     * @ORM\Column(type="json_array", nullable=true)
+     * @ORM\Column(type="flow_json_array", nullable=true)
      */
     protected $jsonArray;
 
@@ -190,24 +183,6 @@ class ExtendedTypesEntity
     public function getDateTimeInterface()
     {
         return $this->dateTimeInterface;
-    }
-
-    /**
-     * @param CommonObject $commonObject
-     * @return $this
-     */
-    public function setCommonObject(CommonObject $commonObject = null)
-    {
-        $this->commonObject = $commonObject;
-        return $this;
-    }
-
-    /**
-     * @return CommonObject
-     */
-    public function getCommonObject()
-    {
-        return $this->commonObject;
     }
 
     /**

@@ -14,6 +14,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\DBAL\Exception\ConnectionException;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -66,9 +67,9 @@ class AllowedObjectsListener
      * @param OnFlushEventArgs $args
      * @throws PersistenceException
      */
-    public function onFlush(OnFlushEventArgs $args)
+    public function onFlush(OnFlushEventArgs $args): void
     {
-        $unitOfWork = $args->getEntityManager()->getUnitOfWork();
+        $unitOfWork = $args->getObjectManager()->getUnitOfWork();
         if ($unitOfWork->getScheduledEntityInsertions() === []
             && $unitOfWork->getScheduledEntityUpdates() === []
             && $unitOfWork->getScheduledEntityDeletions() === []
@@ -86,9 +87,9 @@ class AllowedObjectsListener
             }
         }
 
-        $connection = $args->getEntityManager()->getConnection();
+        $connection = $args->getObjectManager()->getConnection();
         try {
-            if ($connection->ping() === false) {
+            if ($this->ping($connection) === false) {
                 $this->logger->info('Reconnecting the Doctrine EntityManager to the persistence backend.', LogEnvironment::fromMethodName(__METHOD__));
                 $connection->close();
                 $connection->connect();
@@ -100,13 +101,26 @@ class AllowedObjectsListener
     }
 
     /**
+     * Execute a dummy query on the given connection and return false if the connection is not open
+     */
+    protected function ping(Connection $connection): bool
+    {
+        try {
+            $connection->executeQuery($connection->getDatabasePlatform()->getDummySelectSQL());
+            return true;
+        } catch (ConnectionException $e) {
+            return false;
+        }
+    }
+
+    /**
      * Checks if the given object is allowed and if not, throws an exception
      *
      * @param object $object
      * @return void
      * @throws \Neos\Flow\Persistence\Exception
      */
-    protected function throwExceptionIfObjectIsNotAllowed($object)
+    protected function throwExceptionIfObjectIsNotAllowed($object): void
     {
         if (!$this->allowedObjects->contains($object)) {
             $message = 'Detected modified or new objects (' . get_class($object) . ', uuid:' . $this->persistenceManager->getIdentifierByObject($object) . ') to be persisted which is not allowed for "safe requests"' . chr(10) .
