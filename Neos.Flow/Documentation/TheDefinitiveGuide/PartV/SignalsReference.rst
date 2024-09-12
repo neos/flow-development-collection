@@ -3,7 +3,7 @@
 Flow Signals Reference
 ======================
 
-This reference was automatically generated from code on 2024-09-06
+This reference was automatically generated from code on 2024-09-12
 
 
 .. _`Flow Signals Reference: AbstractAdvice (``Neos\Flow\Aop\Advice\AbstractAdvice``)`:
@@ -337,7 +337,7 @@ This class contains the following signals.
 beforeControllerInvocation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This signal is emitted directly before the request is been dispatched to a controller.
+This signal is emitted directly before the request is being dispatched to a controller.
 
 afterControllerInvocation
 ^^^^^^^^^^^^^^^^^^^^^^^^^
