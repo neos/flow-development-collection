@@ -63,26 +63,6 @@ before passing it on to further rendering
 
 
 
-.. _`Flow Signals Reference: ActionRequest (``Neos\Flow\Mvc\ActionRequest``)`:
-
-ActionRequest (``Neos\Flow\Mvc\ActionRequest``)
------------------------------------------------
-
-This class contains the following signals.
-
-requestDispatched
-^^^^^^^^^^^^^^^^^
-
-Emits a signal when a Request has been dispatched
-
-The action request is not proxyable, so the signal is dispatched manually here.
-The safeguard allows unit tests without the dispatcher dependency.
-
-
-
-
-
-
 .. _`Flow Signals Reference: AfterAdvice (``Neos\Flow\Aop\Advice\AfterAdvice``)`:
 
 AfterAdvice (``Neos\Flow\Aop\Advice\AfterAdvice``)
