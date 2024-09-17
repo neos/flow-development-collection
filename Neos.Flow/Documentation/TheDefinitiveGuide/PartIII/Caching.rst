@@ -567,6 +567,9 @@ Options
 |                  | unit tests and should not be    |           |           |           |
 |                  | used if possible.               |           |           |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
+| username         | Username to use for the         | No        |           |           |
+|                  | database connection.            |           |           |           |
++------------------+---------------------------------+-----------+-----------+-----------+
 | password         | Password used to connect to the | No        | string    |           |
 |                  | redis instance if the redis     |           |           |           |
 |                  | server needs authentication.    |           |           |           |
