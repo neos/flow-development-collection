@@ -1,0 +1,9 @@
+`8.3.11 (2024-09-17) <https://github.com/neos/flow-development-collection/releases/tag/8.3.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.3.10...8.3.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
