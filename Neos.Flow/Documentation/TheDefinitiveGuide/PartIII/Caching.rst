@@ -567,7 +567,7 @@ Options
 |                  | unit tests and should not be    |           |           |           |
 |                  | used if possible.               |           |           |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
-| username         | Username to use for the         | No        |           |           |
+| username         | Username to use for the         | No        | string    |           |
 |                  | database connection.            |           |           |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
 | password         | Password used to connect to the | No        | string    |           |
@@ -580,7 +580,7 @@ Options
 | compressionLevel | Set gzip compression level to a | No        | integer   | 0         |
 |                  | specific value.                 |           | (0 to 9)  |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
-| batchSize        | Maximum number of parameters    | No        | int       | 100000    |
+| batchSize        | Maximum number of parameters    | No        | integer   | 100000    |
 |                  | per query for batch operations. |           |           |           |
 |                  |                                 |           |           |           |
 |                  | Redis supports up to            |           |           |           |
