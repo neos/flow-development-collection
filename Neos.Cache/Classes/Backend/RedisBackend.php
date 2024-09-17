@@ -612,7 +612,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $prefixLength = strlen($prefix);
             $keys = $this->redis->keys($prefix . '*');
             if (is_array($keys)) {
-                $entryIdentifiers = array_map(static fn(string $key) => substr($key, $prefixLength), $keys);
+                $entryIdentifiers = array_map(static fn (string $key) => substr($key, $prefixLength), $keys);
             } else {
                 $entryIdentifiers = [];
             }

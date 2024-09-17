@@ -40,8 +40,6 @@ use RedisException;
  */
 class RedisBackendAuthenticationTest extends BaseTestCase
 {
-
-
     /**
      * Set up test case
      *
@@ -110,5 +108,4 @@ class RedisBackendAuthenticationTest extends BaseTestCase
             ['hostname' => '127.0.0.1', 'database' => 0, 'username' => 'test_password', 'password' => 'incorrect_password']
         );
     }
-
 }
