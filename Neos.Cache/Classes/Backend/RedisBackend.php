@@ -233,10 +233,15 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     {
         // language=lua
         $script = "
-        local keys = redis.call('KEYS', ARGV[1] .. '*')
-        for k1,key in ipairs(keys) do
-            redis.call('DEL', key)
-        end
+        local cursor = '0'
+        repeat
+            local result = redis.call('SCAN', cursor, 'MATCH', ARGV[1] .. '*')
+            cursor = result[1]
+            local keys = result[2]
+            for _, key in ipairs(keys) do
+                redis.call('DEL', key)
+            end
+        until cursor == '0'
         ";
         $this->redis->eval($script, [$this->getPrefixedIdentifier('')], 0);
 
