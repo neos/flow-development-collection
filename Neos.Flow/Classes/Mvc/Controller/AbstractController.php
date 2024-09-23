@@ -304,6 +304,7 @@ abstract class AbstractController implements ControllerInterface
         if ($subpackageKey !== null) {
             $packageKey .= '\\' . $subpackageKey;
         }
+        $this->uriBuilder->setRequest($request);
         $this->redirect($request->getControllerActionName(), $request->getControllerName(), $packageKey, $request->getArguments(), $delay, $statusCode, $request->getFormat());
     }
 
