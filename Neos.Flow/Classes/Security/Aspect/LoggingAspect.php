@@ -127,14 +127,14 @@ class LoggingAspect
 
         switch ($token->getAuthenticationStatus()) {
             case TokenInterface::AUTHENTICATION_SUCCESSFUL:
-                $this->securityLogger->notice(sprintf('Successfully authenticated token: %s', $token), $this->getLogEnvironmentFromJoinPoint($joinPoint));
+                $this->securityLogger->info(sprintf('Successfully authenticated token: %s', $token), $this->getLogEnvironmentFromJoinPoint($joinPoint));
                 $this->alreadyLoggedAuthenticateCall = true;
                 break;
             case TokenInterface::WRONG_CREDENTIALS:
-                $this->securityLogger->warning(sprintf('Wrong credentials given for token: %s', $token), $this->getLogEnvironmentFromJoinPoint($joinPoint));
+                $this->securityLogger->notice(sprintf('Wrong credentials given for token: %s', $token), $this->getLogEnvironmentFromJoinPoint($joinPoint));
                 break;
             case TokenInterface::NO_CREDENTIALS_GIVEN:
-                $this->securityLogger->warning(sprintf('No credentials given or no account found for token: %s', $token), $this->getLogEnvironmentFromJoinPoint($joinPoint));
+                $this->securityLogger->notice(sprintf('No credentials given or no account found for token: %s', $token), $this->getLogEnvironmentFromJoinPoint($joinPoint));
                 break;
         }
     }
