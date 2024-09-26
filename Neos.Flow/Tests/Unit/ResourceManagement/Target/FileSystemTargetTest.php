@@ -18,6 +18,7 @@ use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Collection;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
+use Neos\Flow\ResourceManagement\Storage\StorageObject;
 use Neos\Flow\ResourceManagement\Target\FileSystemTarget;
 use Neos\Flow\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
@@ -192,20 +193,19 @@ class FileSystemTargetTest extends UnitTestCase
 
         $this->inject($packageStorage, 'packageManager', $packageManager);
 
-        $oneResourcePublished = false;
-
-        $_publicationCallback = function ($i) use (&$oneResourcePublished) {
-            $oneResourcePublished = true;
-        };
-
         $staticCollection = new Collection('testStaticCollection', $packageStorage, $this->fileSystemTarget, ['*']);
 
         $fileSystemTarget = new FileSystemTarget('test', ['path' => 'vfs://Test/Publish']);
         $fileSystemTarget->initializeObject(ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
         $fileSystemTarget->injectLogger($mockSystemLogger);
-        $fileSystemTarget->onPublish($_publicationCallback);
-        $fileSystemTarget->publishCollection($staticCollection);
 
-        self::assertTrue($oneResourcePublished);
+        $publishResults = iterator_to_array($fileSystemTarget->publishCollection($staticCollection));
+        self::assertCount(1, $publishResults);
+
+        foreach ($publishResults as $publishResult) {
+            self::assertSame('File Some.Testing.Package/Test/Packages/Application/Some.Testing.Package/composer.json was published', $publishResult->message);
+            self::assertSame(0, $publishResult->iteration);
+            self::assertInstanceOf(StorageObject::class, $publishResult->metaData);
+        }
     }
 }
