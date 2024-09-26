@@ -104,14 +104,11 @@ class ResourceCommandController extends CommandController
                     $progressIndicator?->start('Published 0');
                     $target = $collection->getTarget();
                     $lastIteration = 0;
-                    $target->onPublish(function ($iteration) use ($progressIndicator, &$lastIteration) {
-                        $iteration += 1;
+                    foreach ($target->publishCollection($collection) as $publishResult) {
                         $progressIndicator?->advance();
-                        $progressIndicator?->setMessage(sprintf('Published %s', $iteration));
-                        $this->clearState($iteration);
-                        $lastIteration = $iteration;
-                    });
-                    $target->publishCollection($collection);
+                        $progressIndicator?->setMessage(sprintf('Published %s', $lastIteration = $publishResult->iteration + 1));
+                        $this->clearState($publishResult->iteration);
+                    }
                     $progressIndicator?->finish(sprintf('Published %s', $lastIteration));
                 } catch (Exception $exception) {
                     $message = sprintf(
@@ -192,7 +189,10 @@ class ResourceCommandController extends CommandController
 
         if ($publish) {
             $this->outputLine('Publishing copied resources to the target "%s" ...', [$targetCollection->getTarget()->getName()]);
-            $targetCollection->getTarget()->publishCollection($sourceCollection);
+            $publisher = $targetCollection->getTarget()->publishCollection($sourceCollection);
+            while ($publisher->valid()) {
+                $publisher->next();
+            }
         }
 
         $this->outputLine('Done.');
