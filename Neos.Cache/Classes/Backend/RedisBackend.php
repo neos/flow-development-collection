@@ -34,6 +34,7 @@ use Neos\Error\Messages\Result;
  *  - port:            The TCP port of the redis server (will be ignored if connecting to a socket)
  *  - database:        The database index that will be used. By default,
  *                     Redis has 16 databases with index number 0 - 15
+ *  - username:         The username needed for the redis clients to connect to the server (hostname)
  *  - password:        The password needed for redis clients to connect to the server (hostname)
  *  - batchSize:       Maximum number of parameters per query for batch operations
  *
@@ -68,6 +69,8 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     protected int $port = 6379;
 
     protected int $database = 0;
+
+    protected string $username = '';
 
     protected string $password = '';
 
@@ -192,8 +195,8 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * old entries for the identifier still exist, they are removed as well.
      *
      * @param string $entryIdentifier Specifies the cache entry to remove
-     * @throws \RuntimeException
      * @return boolean true if (at least) an entry could be removed or false if no entry was found
+     * @throws \RuntimeException
      * @api
      */
     public function remove(string $entryIdentifier): bool
@@ -257,8 +260,8 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * Removes all cache entries of this cache which are tagged by the specified tag.
      *
      * @param string $tag The tag the entries must have
-     * @throws \RuntimeException
      * @return integer The number of entries which have been affected by this flush
+     * @throws \RuntimeException
      * @api
      */
     public function flushByTag(string $tag): int
@@ -290,8 +293,8 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * Removes all cache entries of this cache which are tagged by the specified tags.
      *
      * @param array<string> $tags The tag the entries must have
-     * @throws \RuntimeException
      * @return integer The number of entries which have been affected by this flush
+     * @throws \RuntimeException
      * @api
      */
     public function flushByTags(array $tags): int
@@ -468,6 +471,11 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         $this->database = (int)$database;
     }
 
+    public function setUsername(string $username): void
+    {
+        $this->username = $username;
+    }
+
     public function setPassword(string $password): void
     {
         $this->password = $password;
@@ -500,7 +508,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         if (empty($value)) {
             return $value;
         }
-        return $this->useCompression() ? gzdecode((string) $value) : $value;
+        return $this->useCompression() ? gzdecode((string)$value) : $value;
     }
 
     private function compress(string $value): string
@@ -535,8 +543,16 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             }
         }
 
-        if ($this->password !== '' && !$redis->auth($this->password)) {
-            throw new CacheException('Redis authentication failed.', 1502366200);
+        if ($this->username !== '' && $this->password !== '') {
+            $result = $redis->auth([$this->username, $this->password]);
+            if ($result === false) {
+                throw new CacheException(sprintf('Redis authentication failed, using username "%s" and a %s bytes long password.', $this->username, strlen($this->password)), 1725607160);
+            }
+        } elseif ($this->password !== '') {
+            $result = $redis->auth($this->password);
+            if ($result === false) {
+                throw new CacheException(sprintf('Redis authentication failed, using a %s bytes long password.', strlen($this->password)), 1502366200);
+            }
         }
         $redis->select($this->database);
         return $redis;
