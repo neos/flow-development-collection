@@ -14,6 +14,7 @@ namespace Neos\Flow\Tests;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Core\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -45,12 +46,12 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
      */
     protected $httpRequest;
 
-    /**
-     * Constructor
-     *
-     * @param \Neos\Flow\Core\Bootstrap $bootstrap
-     */
-    public function __construct(Bootstrap $bootstrap)
+    public static function fromBootstrap(Bootstrap $bootstrap): RequestHandlerInterface
+    {
+        return new self($bootstrap);
+    }
+
+    private function __construct(Bootstrap $bootstrap)
     {
         $this->bootstrap = $bootstrap;
     }
@@ -74,7 +75,7 @@ class FunctionalTestRequestHandler implements \Neos\Flow\Http\HttpRequestHandler
      *
      * @return integer The priority of the request handler.
      */
-    public function getPriority()
+    public static function getPriority(): int
     {
         return 0;
     }

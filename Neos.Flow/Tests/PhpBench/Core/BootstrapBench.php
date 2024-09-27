@@ -41,7 +41,6 @@ class BootstrapBench extends FrameworkEnabledBenchmark
     public function benchBootstrapRunWithoutBootSequence(): void
     {
         $flowBootstrap = new Bootstrap(TestableFramework::getApplicationContext());
-        $flowBootstrap->registerRequestHandler(new EmptyRequestHandler());
         $flowBootstrap->setPreselectedRequestHandlerClassName(EmptyRequestHandler::class);
         $flowBootstrap->run();
     }
@@ -57,7 +56,6 @@ class BootstrapBench extends FrameworkEnabledBenchmark
     public function benchBootstrapRunWithRuntimeBootSequence(): void
     {
         $flowBootstrap = new Bootstrap(TestableFramework::getApplicationContext());
-        $flowBootstrap->registerRequestHandler(new RuntimeSequenceInvokingRequestHandler($flowBootstrap));
         $flowBootstrap->setPreselectedRequestHandlerClassName(RuntimeSequenceInvokingRequestHandler::class);
         $flowBootstrap->run();
     }

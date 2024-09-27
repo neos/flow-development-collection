@@ -50,17 +50,17 @@ class Package extends BasePackage
         $context = $bootstrap->getContext();
 
         if (PHP_SAPI === 'cli') {
-            $bootstrap->registerRequestHandler(new Cli\SlaveRequestHandler($bootstrap));
-            $bootstrap->registerRequestHandler(new Cli\CommandRequestHandler($bootstrap));
+            $bootstrap->registerRequestHandlerClassName(Cli\SlaveRequestHandler::class);
+            $bootstrap->registerRequestHandlerClassName(Cli\CommandRequestHandler::class);
         } else {
-            $bootstrap->registerRequestHandler(new Http\RequestHandler($bootstrap));
+            $bootstrap->registerRequestHandlerClassName(Http\RequestHandler::class);
         }
 
         if ($context->isTesting()) {
             // TODO: This is technically not necessary as we can register the request handler in the functional bootstrap
             // A future commit will remove this aftter BuildEssentials is adapted
             /** @phpstan-ignore-next-line composer doesnt autoload this class */
-            $bootstrap->registerRequestHandler(new Tests\FunctionalTestRequestHandler($bootstrap));
+            $bootstrap->registerRequestHandlerClassName(Tests\FunctionalTestRequestHandler::class);
         }
 
         $bootstrap->registerCompiletimeCommand('neos.flow:core:*');

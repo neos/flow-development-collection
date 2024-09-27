@@ -51,10 +51,12 @@ class CommandRequestHandler implements RequestHandlerInterface
      */
     protected $response;
 
-    /**
-    * @param Bootstrap $bootstrap
-     */
-    public function __construct(Bootstrap $bootstrap)
+    public static function fromBootstrap(Bootstrap $bootstrap): RequestHandlerInterface
+    {
+        return new self($bootstrap);
+    }
+
+    private function __construct(Bootstrap $bootstrap)
     {
         $this->bootstrap = $bootstrap;
     }
@@ -75,7 +77,7 @@ class CommandRequestHandler implements RequestHandlerInterface
      *
      * @return integer The priority of the request handler.
      */
-    public function getPriority(): int
+    public static function getPriority(): int
     {
         return 100;
     }
