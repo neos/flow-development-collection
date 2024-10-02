@@ -377,6 +377,7 @@ class Scripts
         $cacheManager = new CacheManager();
         $cacheManager->setCacheConfigurations($configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_CACHES));
         $cacheManager->injectConfigurationManager($configurationManager);
+        $cacheManager->injectPackageManager($bootstrap->getEarlyInstance(PackageManager::class));
         $cacheManager->injectLogger($bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $cacheManager->injectEnvironment($environment);
         $cacheManager->injectCacheFactory($cacheFactory);

@@ -174,6 +174,11 @@ class ReflectionService
      */
     protected array $updatedReflectionData = [];
 
+    /**
+     * Array with removed reflection information (e.g. in Development context after classes were deleted)
+     */
+    protected array $removedReflectionDataClasses = [];
+
     protected bool $initialized = false;
 
     /**
@@ -1795,6 +1800,7 @@ class ReflectionService
         $this->classesCurrentlyBeingForgotten[$className] = true;
 
         if (class_exists($className)) {
+            // optimisation to flush only precisely the affected interfaces
             $interfaceNames = class_implements($className);
             foreach ($interfaceNames as $interfaceName) {
                 if (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className])) {
@@ -1802,11 +1808,9 @@ class ReflectionService
                 }
             }
         } else {
-            foreach ($this->availableClassNames as $interfaceNames) {
-                foreach ($interfaceNames as $interfaceName) {
-                    if (isset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className])) {
-                        unset($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className]);
-                    }
+            foreach ($this->classReflectionData as &$possibleInterfaceReflectionData) {
+                if (isset($possibleInterfaceReflectionData[self::DATA_INTERFACE_IMPLEMENTATIONS][$className])) {
+                    unset($possibleInterfaceReflectionData[self::DATA_INTERFACE_IMPLEMENTATIONS][$className]);
                 }
             }
         }
@@ -1833,6 +1837,8 @@ class ReflectionService
 
         unset($this->classReflectionData[$className]);
         unset($this->classesCurrentlyBeingForgotten[$className]);
+
+        $this->removedReflectionDataClasses[$className] = true;
     }
 
     /**
@@ -2024,7 +2030,7 @@ class ReflectionService
             $this->reflectionDataRuntimeCache->set('__availableClassNames', $this->availableClassNames);
         }
 
-        if ($this->updatedReflectionData !== []) {
+        if ($this->updatedReflectionData !== [] || $this->removedReflectionDataClasses !== []) {
             $this->updateReflectionData();
         }
 
@@ -2092,7 +2098,7 @@ class ReflectionService
      */
     protected function updateReflectionData(): void
     {
-        $this->log(sprintf('Found %s classes whose reflection data was not cached previously.', count($this->updatedReflectionData)), LogLevel::DEBUG);
+        $this->log(sprintf('Found %s classes whose reflection data was not cached previously and %s classes which were deleted.', count($this->updatedReflectionData), count($this->removedReflectionDataClasses)), LogLevel::DEBUG);
 
         foreach (array_keys($this->updatedReflectionData) as $className) {
             $this->statusCache->set($this->produceCacheIdentifierFromClassName($className), '');
