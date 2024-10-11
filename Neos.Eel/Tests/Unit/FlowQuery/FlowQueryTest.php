@@ -44,6 +44,20 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @test
      */
+    public function accessPropertiesDirectly()
+    {
+        $myObject = new \stdClass();
+        $myObject->stringProperty = 'abc';
+        $myObject2 = new \stdClass();
+        $myObject2->stringProperty = 'def';
+
+        $query = $this->createFlowQuery([$myObject, $myObject2]);
+        self::assertSame('abc', $query->stringProperty);
+    }
+
+    /**
+     * @test
+     */
     public function firstReturnsFirstObject()
     {
         $myObject = new \stdClass();

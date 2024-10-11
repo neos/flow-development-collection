@@ -14,6 +14,8 @@ namespace Neos\Utility\ObjectHandling\Tests\Unit;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\ArrayAccessClass;
+use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\DummyClassWithCall;
+use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\DummyClassWithCallAndGet;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\DummyClassWithGettersAndSetters;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\ProxiedClassWithPrivateProperty;
 use Neos\Utility\ObjectHandling\Tests\Unit\Fixture\Model\EntityWithDoctrineProxy;
@@ -21,6 +23,8 @@ use Neos\Utility\TypeHandling;
 
 require_once('Fixture/DummyClassWithGettersAndSetters.php');
 require_once('Fixture/ArrayAccessClass.php');
+require_once('Fixture/DummyClassWithCallAndGet.php');
+require_once('Fixture/DummyClassWithCall.php');
 require_once('Fixture/Model/EntityWithDoctrineProxy.php');
 require_once('Fixture/ProxiedClassWithPrivateProperty.php');
 
@@ -272,6 +276,26 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $this->expectException(PropertyNotAccessibleException::class);
         $splObjectStorage = new \SplObjectStorage();
         ObjectAccess::getProperty($splObjectStorage, 'something');
+    }
+
+    /**
+     * @test
+     */
+    public function getPropertyInvokesMagicGetMethodIfExistent()
+    {
+        $dummyClassWithCallAndGet = new DummyClassWithCallAndGet();
+        $actualResult = ObjectAccess::getProperty($dummyClassWithCallAndGet, 'key');
+        self::assertEquals('__get key', $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function getPropertyInvokesMagicCallMethod()
+    {
+        $classWithCall = new DummyClassWithCall();
+        $actualResult = ObjectAccess::getProperty($classWithCall, 'key');
+        self::assertEquals('__call getKey []', $actualResult);
     }
 
     /**
@@ -560,7 +584,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     public function setPropertyUsingDirectAccessWorksOnPrivatePropertyOfProxyParent()
     {
         $proxyObject = new ProxiedClassWithPrivateProperty();
- 
+
         ObjectAccess::setProperty($proxyObject, 'property', 'changed', true);
         self::assertEquals('changed', $proxyObject->getProperty());
     }

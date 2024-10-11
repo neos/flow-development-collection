@@ -143,6 +143,10 @@ abstract class ObjectAccess
             return null;
         }
 
+        if (method_exists($subject, '__get')) {
+            return $subject->__get($propertyName);
+        }
+
         $cacheIdentifier = $className . '|' . $propertyName;
         self::initializePropertyGetterCache($cacheIdentifier, $subject, $propertyName);
 
