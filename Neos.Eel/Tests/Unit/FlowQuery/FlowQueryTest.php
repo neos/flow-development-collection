@@ -52,7 +52,7 @@ class FlowQueryTest extends UnitTestCase
         $myObject2->stringProperty = 'def';
 
         $query = $this->createFlowQuery([$myObject, $myObject2]);
-        self::assertSame('abc', $query->getStringProperty());
+        self::assertSame('abc', $query->stringProperty);
     }
 
     /**
