@@ -749,8 +749,8 @@ It also is possible to specify a `providerFactory` and (optional) `providerOptio
 
 	You can use the ``flow:routing:list`` command to list all routes which are currently active, see `CLI`_
 
-Subroutes from Annotations
---------------------------
+Subroutes from Attributes
+-------------------------
 
 The ``Flow\Route`` attribute allows to define routes directly on the affected method.
 (Currently only ActionController are supported https://github.com/neos/flow-development-collection/issues/3335)
@@ -774,8 +774,7 @@ The ``Flow\Route`` attribute allows to define routes directly on the affected me
       }
   }
 
-To find the annotation and tp specify the order of routes this has to be used together with the
-`\Neos\Flow\Mvc\Routing\AttributeRoutesProviderFactory` as `providerFactory` in  Setting `Neos.Flow.mvc.routes`
+In order to make attribute routes discoverable and to specify their order relative to explicitly configured routes, the `providerFactory` has to be specified in Setting `Neos.Flow.mvc.routes`:
 
 .. code-block:: yaml
 
