@@ -164,6 +164,35 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function singletonCannotBeInstantiatedViaNew(): void
+    {
+        $this->expectException(\Throwable::class);
+        new Fixtures\SingletonClassA();
+    }
+
+    /**
+     * TODO remove this test, only to proof our currently invalid? situation.
+     *
+     * @test
+     */
+    public function singletonCurrentlyCanBeInstantiatedViaNewAndReplacesInstanceInObjectManager(): void
+    {
+        $this->addWarning('This test should not succeed, but does.');
+
+        $singletonFromObjectManager = $this->objectManager->get(Fixtures\SingletonClassA::class);
+
+        $newSingleton = new Fixtures\SingletonClassA();
+
+        $this->assertNotSame($singletonFromObjectManager, $newSingleton);
+        $this->assertSame(
+            $this->objectManager->get(Fixtures\SingletonClassA::class),
+            $newSingleton
+        );
+    }
+
+    /**
+     * @test
+     */
     public function onCreationOfObjectInjectionInParentClassIsDoneOnlyOnce(): void
     {
         $prototypeDsub = $this->objectManager->get(Fixtures\PrototypeClassDsub::class);
