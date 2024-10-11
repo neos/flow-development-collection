@@ -20,6 +20,42 @@ use Neos\Utility\Exception\FilesException;
 abstract class Files
 {
     /**
+     * Checks if the path starts from the root.
+     * On windows the path is root if it starts with a driver letter.
+     */
+    public static function isAbsolutePath(string $path): bool
+    {
+        if ($path === '') {
+            return false;
+        }
+        $isAbsolutePathInWindowsStyle = preg_match('`^[a-zA-Z]:[/\\\\][^/\\\\]`', $path) === 1;
+        $isAbsolutePathInUnixStyle = str_starts_with($path, '/');
+        return $isAbsolutePathInUnixStyle || $isAbsolutePathInWindowsStyle;
+    }
+
+    /**
+     * Check if a path looks like a canonical pathname
+     *
+     * something like
+     *  - /Users/Me-eh-eh/code/neos-flow/Packages/Framework
+     *
+     * the criteria are
+     *  - the path is absolute
+     *  - the path doesn't contain directory traversal /../ or /./
+     *
+     * to ensure the path matches the criteria, {@see realpath} can be used.
+     */
+    public static function isAbsolutePathWithoutDirectoryTraversal(string $path): bool
+    {
+        if (!self::isAbsolutePath($path)) {
+            return false;
+        }
+        $hasWindowsStyleDirectoryTraversal = str_contains($path, '\\..\\') || str_contains($path, '\\.\\');
+        $hasUnixStyleDirectoryTraversal = str_contains($path, '/../') || str_contains($path, '/./');
+        return !($hasWindowsStyleDirectoryTraversal || $hasUnixStyleDirectoryTraversal);
+    }
+
+    /**
      * Replacing backslashes and double slashes to slashes.
      * It's needed to compare paths (especially on windows).
      *
@@ -37,6 +73,8 @@ abstract class Files
 
     /**
      * Makes sure path has a trailing slash
+     *
+     * Must only be used on directory paths!
      *
      * @param string $path
      * @return string
