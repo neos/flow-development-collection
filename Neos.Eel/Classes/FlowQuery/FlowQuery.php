@@ -14,6 +14,8 @@ namespace Neos\Eel\FlowQuery;
 use Neos\Eel\Exception;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\Exception\PropertyNotAccessibleException;
+use Neos\Utility\ObjectAccess;
 
 /**
  * FlowQuery is jQuery for PHP, a selector and traversal engine for object sets.
@@ -155,6 +157,12 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      */
     public function __call($operationName, array $arguments)
     {
+        if (str_starts_with($operationName, 'get') && !$this->operationResolver->hasOperation($operationName)) {
+            // FIXME implementing __get instead doesnt work because __call is used with "get" + $propertyName: https://github.com/neos/flow-development-collection/issues/2785
+            $path = lcfirst(substr($operationName, 3));
+            return $this->evaluateAndGetPropertyOfFirst($path);
+        }
+
         $updatedOperations = $this->operations;
         $updatedOperations[] = [
             'name' => $operationName,
@@ -217,6 +225,19 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
             $lastOperationResult = $operation->evaluate($this, $op['arguments']);
         }
         return $lastOperationResult;
+    }
+
+    protected function evaluateAndGetPropertyOfFirst($path): mixed
+    {
+        $value = $this->__call('get', [0]);
+        if (is_array($value) || is_object($value)) {
+            try {
+                return ObjectAccess::getProperty($value, $path);
+            } catch (PropertyNotAccessibleException $exception) {
+                return null;
+            }
+        }
+        return null;
     }
 
     /**
