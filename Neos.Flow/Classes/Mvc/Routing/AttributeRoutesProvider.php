@@ -78,9 +78,7 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
     public function getRoutes(): Routes
     {
         $routes = [];
-        $annotatedClasses = $this->reflectionService->getClassesContainingMethodsAnnotatedWith(Flow\Route::class);
-
-        foreach ($annotatedClasses as $className) {
+        foreach (static::compileRoutesConfiguration($this->objectManager) as $className => $routesForClass) {
             $includeClassName = false;
             foreach ($this->classNames as $classNamePattern) {
                 if (fnmatch($classNamePattern, $className, FNM_NOESCAPE)) {
@@ -92,12 +90,37 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
                 continue;
             }
 
+            $routes = [...$routes, ...$routesForClass];
+        }
+
+        $routes = array_map(static fn(array $routeConfiguration): Route => Route::fromConfiguration($routeConfiguration), $routes);
+        return Routes::create(...$routes);
+    }
+
+    /**
+     * @param ObjectManagerInterface $objectManager
+     * @return array<string, array<int, mixed>
+     * @throws InvalidActionNameException
+     * @throws InvalidControllerException
+     * @throws \Neos\Flow\Utility\Exception
+     * @throws \Neos\Utility\Exception\FilesException
+     * @throws \ReflectionException
+     */
+    #[Flow\CompileStatic]
+    public static function compileRoutesConfiguration(ObjectManagerInterface $objectManager): array
+    {
+        $reflectionService = $objectManager->get(ReflectionService::class);
+
+        $routesByClassName = [];
+        $annotatedClasses = $reflectionService->getClassesContainingMethodsAnnotatedWith(Flow\Route::class);
+
+        foreach ($annotatedClasses as $className) {
             if (!in_array(ActionController::class, class_parents($className), true)) {
                 throw new InvalidControllerException('TODO: Currently #[Flow\Route] is only supported for ActionController. See https://github.com/neos/flow-development-collection/issues/3335.');
             }
 
-            $controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($className);
-            $controllerPackageKey = $this->objectManager->getPackageKeyByObjectName($controllerObjectName);
+            $controllerObjectName = $objectManager->getCaseSensitiveObjectName($className);
+            $controllerPackageKey = $objectManager->getPackageKeyByObjectName($controllerObjectName);
             $controllerPackageNamespace = str_replace('.', '\\', $controllerPackageKey);
             if (!str_ends_with($className, 'Controller')) {
                 throw new InvalidControllerException('Only for controller classes');
@@ -109,17 +132,18 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
                 $controllerName = substr($localClassName, 11);
                 $subPackage = null;
             } elseif (str_contains($localClassName, '\\Controller\\')) {
-                list($subPackage, $controllerName) = explode('\\Controller\\', $localClassName);
+                [$subPackage, $controllerName] = explode('\\Controller\\', $localClassName);
             } else {
                 throw new InvalidControllerException('Unknown controller pattern');
             }
 
-            $annotatedMethods = $this->reflectionService->getMethodsAnnotatedWith($className, Flow\Route::class);
+            $routesByClassName[$className] = [];
+            $annotatedMethods = $reflectionService->getMethodsAnnotatedWith($className, Flow\Route::class);
             foreach ($annotatedMethods as $methodName) {
                 if (!str_ends_with($methodName, 'Action')) {
                     throw new InvalidActionNameException('Only for action methods');
                 }
-                $annotations = $this->reflectionService->getMethodAnnotations($className, $methodName, Flow\Route::class);
+                $annotations = $reflectionService->getMethodAnnotations($className, $methodName, Flow\Route::class);
                 foreach ($annotations as $annotation) {
                     if ($annotation instanceof Flow\Route) {
                         $controller = substr($controllerName, 0, -10);
@@ -139,11 +163,12 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
                                 $annotation->defaults ?? []
                             )
                         ];
-                        $routes[] = Route::fromConfiguration($configuration);
+                        $routesByClassName[$className][] = $configuration;
                     }
                 }
             }
         }
-        return Routes::create(...$routes);
+
+        return $routesByClassName;
     }
 }
