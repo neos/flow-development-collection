@@ -98,7 +98,7 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
 
     /**
      * @param ObjectManagerInterface $objectManager
-     * @return array<string, array<int, mixed>
+     * @return array<string, array<int, mixed>>
      * @throws InvalidActionNameException
      * @throws InvalidControllerException
      * @throws \Neos\Flow\Utility\Exception
