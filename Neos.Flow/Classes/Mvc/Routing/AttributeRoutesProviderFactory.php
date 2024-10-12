@@ -15,12 +15,10 @@ declare(strict_types=1);
 namespace Neos\Flow\Mvc\Routing;
 
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Reflection\ReflectionService;
 
 class AttributeRoutesProviderFactory implements RoutesProviderFactoryInterface
 {
     public function __construct(
-        public readonly ReflectionService $reflectionService,
         public readonly ObjectManagerInterface $objectManager,
     ) {
     }
@@ -31,7 +29,6 @@ class AttributeRoutesProviderFactory implements RoutesProviderFactoryInterface
     public function createRoutesProvider(array $options): RoutesProviderInterface
     {
         return new AttributeRoutesProvider(
-            $this->reflectionService,
             $this->objectManager,
             $options['classNames'] ?? [],
         );

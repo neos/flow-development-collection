@@ -69,7 +69,6 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
      * @param array<string> $classNames
      */
     public function __construct(
-        public readonly ReflectionService $reflectionService,
         public readonly ObjectManagerInterface $objectManager,
         public readonly array $classNames,
     ) {
@@ -93,7 +92,7 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
             $routes = [...$routes, ...$routesForClass];
         }
 
-        $routes = array_map(static fn(array $routeConfiguration): Route => Route::fromConfiguration($routeConfiguration), $routes);
+        $routes = array_map(static fn (array $routeConfiguration): Route => Route::fromConfiguration($routeConfiguration), $routes);
         return Routes::create(...$routes);
     }
 
