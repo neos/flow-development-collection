@@ -35,8 +35,12 @@ class AttributeRoutesProviderTest extends UnitTestCase
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
 
+        $this->mockObjectManager->expects(self::any())
+            ->method('get')
+            ->with(ReflectionService::class)
+            ->willReturn($this->mockReflectionService);
+
         $this->annotationRoutesProvider = new Routing\AttributeRoutesProvider(
-            $this->mockReflectionService,
             $this->mockObjectManager,
             ['Vendor\\Example\\Controller\\*']
         );
@@ -136,10 +140,22 @@ class AttributeRoutesProviderTest extends UnitTestCase
      */
     public function annotationsOutsideClassNamesAreIgnored(): void
     {
+        $controllerclassName = 'Neos\Flow\Mvc\Controller\StandardController';
+
+        $this->mockObjectManager->expects(self::once())
+            ->method('getCaseSensitiveObjectName')
+            ->with($controllerclassName)
+            ->willReturn($controllerclassName);
+
+        $this->mockObjectManager->expects(self::once())
+            ->method('getPackageKeyByObjectName')
+            ->with($controllerclassName)
+            ->willReturn('Neos.Flow');
+
         $this->mockReflectionService->expects($this->once())
             ->method('getClassesContainingMethodsAnnotatedWith')
             ->with(Flow\Route::class)
-            ->willReturn(['Vendor\Other\Controller\ExampleController']);
+            ->willReturn([$controllerclassName]);
 
         $this->assertEquals(Routes::empty(), $this->annotationRoutesProvider->getRoutes());
     }
