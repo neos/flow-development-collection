@@ -279,7 +279,6 @@ class ResourceCommandController extends CommandController
                             $resource->getCollectionName()
                         ]);
                         $resource->disableLifecycleEvents();
-                        $this->resourceRepository->remove($resource);
                         if ($mediaPackagePresent && $assetRepository !== null && $thumbnailRepository !== null) {
                             if (isset($relatedAssets[$resource])) {
                                 foreach ($relatedAssets[$resource] as $asset) {
@@ -294,6 +293,7 @@ class ResourceCommandController extends CommandController
                                 }
                             }
                         }
+                        $this->resourceRepository->remove($resource);
                         $this->persistenceManager->persistAll();
                     }
                     $brokenResourcesCounter = count($brokenResources);
