@@ -20,7 +20,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class DecendantOfNodetypeConditionGenerator implements SqlGeneratorInterface
 {
-
     private array $nodetypes;
 
     /**
