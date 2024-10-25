@@ -59,7 +59,7 @@
     },
     "require-dev": {
         "mikey179/vfsstream": "^1.6.10",
-        "phpunit/phpunit": "~9.1"
+        "phpunit/phpunit": "^9.6 || ^10.5 || ^11.3"
     },
     "replace": {
         "symfony/polyfill-php70": "*",
