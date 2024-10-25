@@ -15,6 +15,7 @@ use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Parser\NumberParser;
 use Neos\Flow\Validation\Validator\NumberValidator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 require_once('AbstractValidatorTestcase.php');
 
@@ -31,6 +32,8 @@ class NumberValidatorTest extends AbstractValidatorTestcase
     protected $sampleLocale;
 
     protected $numberParser;
+
+    protected NumberParser|MockObject $mockNumberParser;
 
     /**
      * @return void

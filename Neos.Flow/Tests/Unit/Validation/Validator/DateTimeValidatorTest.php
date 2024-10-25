@@ -31,6 +31,8 @@ class DateTimeValidatorTest extends AbstractValidatorTestcase
 
     protected $mockDatetimeParser;
 
+    protected mixed $mockObjectManagerReturnValues;
+
     /**
      * @return void
      */

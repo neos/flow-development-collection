@@ -18,6 +18,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
+use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperInterface;
 
 /**
  * Base test class for testing view helpers
@@ -73,6 +74,11 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
      * @var \Neos\FluidAdaptor\Core\Rendering\RenderingContext|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $renderingContext;
+
+    /**
+     * @var ViewHelperInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $viewHelper;
 
     /**
      * @return void

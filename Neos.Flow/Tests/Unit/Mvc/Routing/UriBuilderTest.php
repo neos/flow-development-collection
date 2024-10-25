@@ -61,6 +61,11 @@ class UriBuilderTest extends UnitTestCase
     protected $mockSubSubRequest;
 
     /**
+     * @var Http\BaseUriProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $mockBaseUriProvider;
+
+    /**
      * Sets up the test case
      *
      */
