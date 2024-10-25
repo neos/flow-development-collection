@@ -164,6 +164,12 @@ class ConfigurationManager
     protected $unprocessedConfiguration = [];
 
     /**
+     * @var YamlSource
+     * @internal only used in tests
+     */
+    protected $configurationSource;
+
+    /**
      * Constructs the configuration manager
      *
      * @param ApplicationContext $context The application context to fetch configuration for
