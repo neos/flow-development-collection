@@ -19,6 +19,7 @@ use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterDefinition;
 use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterInterface;
+use Neos\Flow\Security\Authorization\Privilege\Permission;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Exception as SecurityException;
@@ -152,7 +153,7 @@ class PolicyService
             if ($privilegeTarget->hasParameters()) {
                 continue;
             }
-            $everybodyRole->addPrivilege($privilegeTarget->createPrivilege(PrivilegeInterface::ABSTAIN));
+            $everybodyRole->addPrivilege($privilegeTarget->createPrivilege(Permission::ABSTAIN));
         }
         $this->roles['Neos.Flow:Everybody'] = $everybodyRole;
 
@@ -205,7 +206,7 @@ class PolicyService
                 }
 
                 $label = $privilegeTargetConfiguration['label'] ?? $privilegeTargetIdentifier;
-                $privilegeTarget = new PrivilegeTarget($privilegeTargetIdentifier, $privilegeClassName, $privilegeTargetConfiguration['matcher'], $parameterDefinitions, $label);
+                $privilegeTarget = new PrivilegeTarget($privilegeTargetIdentifier, $privilegeClassName, $privilegeTargetConfiguration, $parameterDefinitions, $label);
                 $privilegeTarget->injectObjectManager($this->objectManager);
                 $this->privilegeTargets[$privilegeTargetIdentifier] = $privilegeTarget;
             }

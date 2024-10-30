@@ -23,49 +23,25 @@ use Neos\Flow\Security\Exception as SecurityException;
 class PrivilegeTarget
 {
     /**
-     * @var string
-     */
-    protected $identifier;
-
-    /**
-     * @var string
-     */
-    protected $privilegeClassName;
-
-    /**
-     * @var string
-     */
-    protected $matcher;
-
-    /**
-     * @var Parameter\PrivilegeParameterDefinition[]
-     */
-    protected $parameterDefinitions;
-
-    /**
      * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
-     * @var string
-     */
-    protected $label;
-
-    /**
-     * @param string $identifier
-     * @param string $privilegeClassName
-     * @param string $matcher
+     * @param class-string<PrivilegeInterface> $privilegeClassName
+     * @param array<string, mixed> $options
      * @param Parameter\PrivilegeParameterDefinition[] $parameterDefinitions
-     * @param string $label
      */
-    public function __construct(string $identifier, string $privilegeClassName, string $matcher, array $parameterDefinitions = [], string $label = '')
-    {
-        $this->identifier = $identifier;
-        $this->label = empty($label) ? $identifier : $label;
-        $this->privilegeClassName = $privilegeClassName;
-        $this->matcher = $matcher;
-        $this->parameterDefinitions = $parameterDefinitions;
+    public function __construct(
+        public readonly string $identifier,
+        public readonly string $privilegeClassName,
+        public readonly array $options,
+        public readonly array $parameterDefinitions = [],
+        public readonly string $label = ''
+    ) {
+        if (!is_subclass_of($this->privilegeClassName, PrivilegeInterface::class)) {
+            throw new SecurityException(sprintf('Expected instance of %s, got "%s"', PrivilegeInterface::class, $this->privilegeClassName), 1395869340);
+        }
     }
 
     /**
@@ -80,7 +56,7 @@ class PrivilegeTarget
     }
 
     /**
-     * @return string
+     * @deprecated with Flow 9.0 - use the public property {@see self::identifier}
      */
     public function getIdentifier(): string
     {
@@ -88,7 +64,7 @@ class PrivilegeTarget
     }
 
     /**
-     * @return string
+     * @deprecated with Flow 9.0 - use the public property {@see self::privilegeClassName}
      */
     public function getPrivilegeClassName(): string
     {
@@ -96,14 +72,7 @@ class PrivilegeTarget
     }
 
     /**
-     * @return string
-     */
-    public function getMatcher(): string
-    {
-        return $this->matcher;
-    }
-
-    /**
+     * @deprecated with Flow 9.0 - use the public property {@see self::parameterDefinitions}
      * @return Parameter\PrivilegeParameterDefinition[]
      */
     public function getParameterDefinitions(): array
@@ -120,45 +89,41 @@ class PrivilegeTarget
     }
 
     /**
-     * @param string $permission one of "GRANT", "DENY" or "ABSTAIN"
+     * @param Permission|string $permissionOrString a Permission instance (or a string of "GRANT", "DENY" or "ABSTAIN" for backwards compatibility)
      * @param array $parameters Optional key/value array with parameter names and -values
      * @return PrivilegeInterface
      * @throws SecurityException
      */
-    public function createPrivilege(string $permission, array $parameters = []): PrivilegeInterface
+    public function createPrivilege(Permission|string $permissionOrString, array $parameters = []): PrivilegeInterface
     {
-        $permission = strtolower($permission);
-        if ($permission !== PrivilegeInterface::GRANT && $permission !== PrivilegeInterface::DENY && $permission !== PrivilegeInterface::ABSTAIN) {
-            throw new SecurityException(sprintf('permission must be either "GRANT", "DENY" or "ABSTAIN", given: "%s"', $permission), 1401878462);
+        if (is_string($permissionOrString)) {
+            $permission = Permission::tryFrom($permissionOrString);
+            if ($permission === null) {
+                throw new SecurityException(sprintf('permission must be either "GRANT", "DENY" or "ABSTAIN", given: "%s"', $permissionOrString), 1401878462);
+            }
+        } else {
+            $permission = $permissionOrString;
         }
 
-        $privilegeParameters = array_map($this->createParameterMapper($parameters), $this->parameterDefinitions);
-        $privilege = new $this->privilegeClassName($this, $this->matcher, $permission, $privilegeParameters);
-        if (!$privilege instanceof PrivilegeInterface) {
-            throw new SecurityException(sprintf('Expected instance of PrivilegeInterface, got "%s"', get_class($privilege)), 1395869340);
+        /** @var PrivilegeParameterInterface[] $privilegeParameters */
+        $privilegeParameters = array_map(fn (PrivilegeParameterDefinition $parameterDefinition) => $this->createParameter($parameterDefinition, $parameters), $this->parameterDefinitions);
+        $options = $this->options;
+        foreach ($privilegeParameters as $parameter) {
+            foreach ($options as $key => $option) {
+                if (is_string($option)) {
+                    $options[$key] = str_replace('{parameters.' . $parameter->getName() . '}', $parameter->getValue(), $option);
+                }
+            }
         }
-        $privilege->injectObjectManager($this->objectManager);
-
-        return $privilege;
+        return ($this->privilegeClassName)::create($this, $options, $permission, $this->objectManager);
     }
 
     /**
-     * @return string
+     * @deprecated with Flow 9.0 - use the public property {@see self::label}
      */
     public function getLabel(): string
     {
         return $this->label;
-    }
-
-    /**
-     * @param array $parameters
-     * @return \Closure
-     */
-    protected function createParameterMapper(array $parameters): \Closure
-    {
-        return function (PrivilegeParameterDefinition $parameterDefinition) use ($parameters) {
-            return $this->createParameter($parameterDefinition, $parameters);
-        };
     }
 
     /**

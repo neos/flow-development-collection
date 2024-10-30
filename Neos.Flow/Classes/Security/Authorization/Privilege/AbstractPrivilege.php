@@ -140,7 +140,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
      */
     public function isAbstained()
     {
-        return $this->permission === self::ABSTAIN;
+        return $this->permission === Permission::ABSTAIN;
     }
 
     /**
@@ -149,7 +149,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
 
     public function isDenied()
     {
-        return $this->permission === self::DENY;
+        return $this->permission === Permission::DENY;
     }
 
     /**
@@ -169,7 +169,7 @@ abstract class AbstractPrivilege implements PrivilegeInterface
      */
     public function getPrivilegeTargetIdentifier()
     {
-        return $this->privilegeTarget->getIdentifier();
+        return $this->privilegeTarget->identifier;
     }
 
     /**

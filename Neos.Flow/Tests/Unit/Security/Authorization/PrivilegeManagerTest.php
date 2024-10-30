@@ -17,6 +17,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\Privilege\AbstractPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
+use Neos\Flow\Security\Authorization\Privilege\Permission;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManager;
 use Neos\Flow\Security\Context;
@@ -76,21 +77,21 @@ class PrivilegeManagerTest extends UnitTestCase
         $this->privilegeManager = new PrivilegeManager($this->mockObjectManager, $this->mockSecurityContext);
 
         $this->grantPrivilege = $this->getMockBuilder(AbstractPrivilege::class)->disableOriginalConstructor()->getMock();
-        $this->grantPrivilege->expects(self::any())->method('getPermission')->will(self::returnValue(PrivilegeInterface::GRANT));
+        $this->grantPrivilege->expects(self::any())->method('getPermission')->will(self::returnValue(Permission::GRANT));
         $this->grantPrivilege->expects(self::any())->method('matchesSubject')->will(self::returnValue(true));
         $this->grantPrivilege->expects(self::any())->method('getParameters')->will(self::returnValue([]));
         $this->grantPrivilege->expects(self::any())->method('isGranted')->will(self::returnValue(true));
         $this->grantPrivilege->expects(self::any())->method('isDenied')->will(self::returnValue(false));
 
         $this->denyPrivilege = $this->getMockBuilder(AbstractPrivilege::class)->disableOriginalConstructor()->getMock();
-        $this->denyPrivilege->expects(self::any())->method('getPermission')->will(self::returnValue(PrivilegeInterface::DENY));
+        $this->denyPrivilege->expects(self::any())->method('getPermission')->will(self::returnValue(Permission::DENY));
         $this->denyPrivilege->expects(self::any())->method('matchesSubject')->will(self::returnValue(true));
         $this->denyPrivilege->expects(self::any())->method('getParameters')->will(self::returnValue([]));
         $this->denyPrivilege->expects(self::any())->method('isGranted')->will(self::returnValue(false));
         $this->denyPrivilege->expects(self::any())->method('isDenied')->will(self::returnValue(true));
 
         $this->abstainPrivilege = $this->getMockBuilder(AbstractPrivilege::class)->disableOriginalConstructor()->getMock();
-        $this->abstainPrivilege->expects(self::any())->method('getPermission')->will(self::returnValue(PrivilegeInterface::ABSTAIN));
+        $this->abstainPrivilege->expects(self::any())->method('getPermission')->will(self::returnValue(Permission::ABSTAIN));
         $this->abstainPrivilege->expects(self::any())->method('matchesSubject')->will(self::returnValue(true));
         $this->abstainPrivilege->expects(self::any())->method('getParameters')->will(self::returnValue([]));
         $this->abstainPrivilege->expects(self::any())->method('isGranted')->will(self::returnValue(false));

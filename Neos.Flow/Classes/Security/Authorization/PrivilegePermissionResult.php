@@ -71,7 +71,7 @@ class PrivilegePermissionResult
         }, $privilege->getParameters());
 
         $privilegeName = $privilege->getPrivilegeTargetIdentifier() . ($parameterStrings !== [] ? ' (with parameters: ' . implode(', ', $parameterStrings) . ')' : '');
-        $newResult->effectivePrivilegeIdentifiersWithPermission[] = sprintf('"%s": %s', $privilegeName, strtoupper($privilege->getPermission()));
+        $newResult->effectivePrivilegeIdentifiersWithPermission[] = sprintf('"%s": %s', $privilegeName, $privilege->getPermission()->value);
 
         return $newResult;
     }

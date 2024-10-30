@@ -207,7 +207,7 @@ class PolicyServiceTest extends UnitTestCase
             ],
         ];
         self::assertCount(1, $this->policyService->getPrivilegeTargets());
-        self::assertSame('Some.PrivilegeTarget:Identifier', $this->policyService->getPrivilegeTargets()['Some.PrivilegeTarget:Identifier']->getIdentifier());
+        self::assertSame('Some.PrivilegeTarget:Identifier', $this->policyService->getPrivilegeTargets()['Some.PrivilegeTarget:Identifier']->identifier);
     }
 
     /**
@@ -236,7 +236,7 @@ class PolicyServiceTest extends UnitTestCase
 
         $privilegeTarget = $this->policyService->getPrivilegeTargetByIdentifier('Some.PrivilegeTarget:Identifier');
         self::assertInstanceOf(PrivilegeTarget::class, $privilegeTarget);
-        self::assertSame('Some.PrivilegeTarget:Identifier', $privilegeTarget->getIdentifier());
+        self::assertSame('Some.PrivilegeTarget:Identifier', $privilegeTarget->identifier);
     }
 
     /**

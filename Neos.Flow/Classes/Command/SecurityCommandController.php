@@ -19,6 +19,7 @@ use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Mvc\Controller\AbstractController;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Security\Authorization\Privilege\Permission;
 use Neos\Flow\Security\Cryptography\RsaWalletServicePhp;
 use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
@@ -216,7 +217,7 @@ class SecurityCommandController extends CommandController
 
             /** @var Role $requestedRole */
             foreach ($requestedRoles as $requestedRole) {
-                $privilegeType = $requestedRole->getPrivilegeForTarget($definedPrivilege->getPrivilegeTarget()->getIdentifier());
+                $privilegeType = $requestedRole->getPrivilegeForTarget($definedPrivilege->getPrivilegeTarget()->identifier);
 
                 if ($privilegeType === null) {
                     continue;
@@ -315,9 +316,9 @@ class SecurityCommandController extends CommandController
             list($argumentName, $argumentValue) = explode(':', $argument, 2);
             $privilegeParameters[$argumentName] = $argumentValue;
         }
-        $privilege = $privilegeTargetInstance->createPrivilege(PrivilegeInterface::GRANT, $privilegeParameters);
+        $privilege = $privilegeTargetInstance->createPrivilege(Permission::GRANT, $privilegeParameters);
         if (!$privilege instanceof MethodPrivilegeInterface) {
-            $this->outputLine('The privilegeTarget "%s" does not refer to a MethodPrivilege but to a privilege of type "%s"', [$privilegeTarget, $privilege->getPrivilegeTarget()->getPrivilegeClassName()]);
+            $this->outputLine('The privilegeTarget "%s" does not refer to a MethodPrivilege but to a privilege of type "%s"', [$privilegeTarget, $privilege->getPrivilegeTarget()->privilegeClassName]);
             $this->quit(1);
         }
 
@@ -415,9 +416,9 @@ class SecurityCommandController extends CommandController
         } else {
             foreach ($privileges as $privilege) {
                 $target = $privilege->getPrivilegeTarget();
-                $this->outputLine(' * %s: <i>%s</i>', [$privilege->getPrivilegeTargetIdentifier(), strtoupper($privilege->getPermission())]);
-                if ($target->getLabel() !== $privilege->getPrivilegeTargetIdentifier()) {
-                    $this->outputFormatted($target->getLabel(), [], 5);
+                $this->outputLine(' * %s: <i>%s</i>', [$privilege->getPrivilegeTargetIdentifier(), $privilege->getPermission()->value]);
+                if ($target->label !== '') {
+                    $this->outputFormatted($target->label, [], 5);
                 }
             }
         }

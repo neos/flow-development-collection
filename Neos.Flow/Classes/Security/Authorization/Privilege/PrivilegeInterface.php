@@ -22,61 +22,37 @@ use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
  */
 interface PrivilegeInterface extends CacheAwareInterface
 {
-    const ABSTAIN = 'abstain';
-    const GRANT = 'grant';
-    const DENY = 'deny';
+    /**
+     * @param array<string, mixed> $options privilege options with parameters replaced
+     */
+    public static function create(PrivilegeTarget $privilegeTarget, array $options, Permission $permission, ObjectManagerInterface $objectManager): self;
+
+    public function getPermission(): Permission;
 
     /**
-     * Note: We can't define constructors in interfaces, but this is assumed to exist in the concrete implementation!
-     *
-     * @param PrivilegeTarget $privilegeTarget
-     * @param string $matcher
-     * @param integer $permission One of the constants ABSTAIN, GRANT or DENY
-     * @param PrivilegeParameterInterface[] $parameters
+     * @deprecated with Flow 9.0 - use `$privilege::getPermission() === Permission::GRANT`
      */
-    // public function __construct(PrivilegeTarget $privilegeTarget, $matcher, $permission, array $parameters) {
+    public function isGranted(): bool;
 
     /**
-     * This object is created very early so we can't rely on AOP for the property injection
-     *
-     * @param ObjectManagerInterface $objectManager
-     * @return void
+     * @deprecated with Flow 9.0 - use `$privilege::getPermission() === Permission::ABSTAIN`
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager);
+    public function isAbstained(): bool;
 
     /**
-     * @return string
+     * @deprecated with Flow 9.0 - use `$privilege::getPermission() === Permission::DENY`
      */
-    public function getPermission();
-
-    /**
-     * @return boolean
-     */
-    public function isGranted();
-
-    /**
-     * @return boolean
-     */
-    public function isAbstained();
-
-    /**
-     * @return boolean
-     */
-    public function isDenied();
+    public function isDenied(): bool;
 
     /**
      * Returns the related privilege target
-     *
-     * @return PrivilegeTarget
      */
-    public function getPrivilegeTarget();
+    public function getPrivilegeTarget(): PrivilegeTarget;
 
     /**
      * Unique name of the related privilege target (for example "Neos.Flow:PublicMethods")
-     *
-     * @return string
      */
-    public function getPrivilegeTargetIdentifier();
+    public function getPrivilegeTargetIdentifier(): string;
 
     /**
      * A matcher string, describing the privilegeTarget (e.g. pointcut expression for methods or EEL expression for entities)
